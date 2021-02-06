@@ -1,0 +1,160 @@
+
+line 652: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Operator ge_thunk not defined for user-defined types]
+
+line 663: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Operator ge_zero not defined for user-defined types]
+
+line 667: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Operator gt_zero not defined for user-defined types]
+
+line 671: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Operator lt_zero not defined for user-defined types]
+
+line 675: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Operator le_zero not defined for user-defined types]
+
+line 679: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Incompatible type for C=le_thunk(A,Thunk):
+input A type [int16_t] and Thunk type [user_int] not compatible]
+line 768: info 5
+line 774: info 5
+
+line 784: info 6, error logger:
+[GraphBLAS error: GrB_INVALID_INDEX
+function: GrB_Vector_removeElement (v, i)
+Row index 9999 out of range; must be < 43]
+
+line 787: info 6, error logger:
+[GraphBLAS error: GrB_INVALID_INDEX
+function: GrB_Matrix_removeElement (C, row, col)
+Column index 9999 out of range; must be < 8]
+
+line 790: info 6, error logger:
+[GraphBLAS error: GrB_INVALID_INDEX
+function: GrB_Matrix_removeElement (C, row, col)
+Row index 9999 out of range; must be < 8]
+
+line 850: info 4, error logger:
+[GraphBLAS error: GrB_NULL_POINTER
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Required argument is null: [Thunk]]
+
+line 856: info 5, error logger:
+[GraphBLAS error: GrB_INVALID_VALUE
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+User-defined operator select_plus_one(A,Thunk) has a Thunk input,
+which must not be empty]
+
+line 863: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+User-defined operator select_plus_one(A,Thunk) has a Thunk input
+type of [double], which must exactly match the type of the
+Thunk parameter; parameter to GxB_select has type [float]]
+
+line 869: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+User-defined operator select_nothing(A,Thunk) does not take a Thunk
+input, but Thunk parameter is non-NULL]
+line 876: info 2
+line 879: info 3
+line 884: info 2
+line 960: info 3
+line 1015: info 5
+line 1017: info 5
+
+line 1057: info 10, error logger:
+[]
+
+line 1070: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_BOOL (C, row, col, x)
+Input scalar of type [bool]
+cannot be typecast to entry of type [user_int]]
+
+line 1072: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_INT8 (C, row, col, x)
+Input scalar of type [int8_t]
+cannot be typecast to entry of type [user_int]]
+
+line 1074: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_INT16 (C, row, col, x)
+Input scalar of type [int16_t]
+cannot be typecast to entry of type [user_int]]
+
+line 1076: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_INT32 (C, row, col, x)
+Input scalar of type [int32_t]
+cannot be typecast to entry of type [user_int]]
+
+line 1078: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_INT64 (C, row, col, x)
+Input scalar of type [int64_t]
+cannot be typecast to entry of type [user_int]]
+
+line 1080: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_UINT8 (C, row, col, x)
+Input scalar of type [uint8_t]
+cannot be typecast to entry of type [user_int]]
+
+line 1082: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_UINT16 (C, row, col, x)
+Input scalar of type [uint16_t]
+cannot be typecast to entry of type [user_int]]
+
+line 1084: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_UINT32 (C, row, col, x)
+Input scalar of type [uint32_t]
+cannot be typecast to entry of type [user_int]]
+
+line 1086: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_UINT64 (C, row, col, x)
+Input scalar of type [uint64_t]
+cannot be typecast to entry of type [user_int]]
+
+line 1088: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_FP32 (C, row, col, x)
+Input scalar of type [float]
+cannot be typecast to entry of type [user_int]]
+
+line 1090: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_FP64 (C, row, col, x)
+Input scalar of type [double]
+cannot be typecast to entry of type [user_int]]
+
+line 1092: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_setElement_FC32 (C, row, col, x)
+Input scalar of type [float complex]
+cannot be typecast to entry of type [user_int]]
+
+line 1094: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_setElement_FC64 (C, row, col, x)
+Input scalar of type [double complex]
+cannot be typecast to entry of type [user_int]]
+line 1151: info 10

@@ -1,0 +1,4161 @@
+
+========================================================
+=== GB_mex_errors : testing error handling =============
+========================================================
+many errors are expected
+line 134: info 5
+random seed is 7.73439e+18
+random seed is now 1
+line 216: info 5
+line 221: info 5
+line 229: info 4
+line 230: info 4
+line 231: info 4
+line 232: info 4
+line 241: info 4
+line 242: info 4
+line 243: info 4
+line 253: info 2
+line 306: info 4
+line 308: info 4
+line 311: info 4
+line 314: info 4
+line 317: info 4
+line 320: info 4
+line 325: info 2
+line 328: info 2
+line 331: info 2
+line 340: info 4
+line 341: info 4
+line 343: info 4
+line 346: info 4
+line 363: info 2
+line 366: info 2
+line 404: info 4
+line 406: info 4
+line 410: info 4
+line 413: info 4
+line 416: info 4
+line 419: info 4
+line 424: info 2
+line 427: info 2
+line 430: info 2
+line 438: info 4
+line 439: info 4
+line 440: info 4
+line 449: info 2
+line 452: info 2
+line 455: info 2
+line 499: info 4
+line 503: info 4
+line 523: info 4
+line 536: info 4
+line 537: info 4
+line 538: info 4
+line 539: info 4
+line 540: info 4
+line 541: info 4
+line 542: info 4
+line 543: info 4
+line 544: info 4
+line 545: info 4
+line 546: info 4
+line 547: info 4
+line 549: info 4
+line 550: info 4
+line 551: info 4
+line 552: info 4
+line 553: info 4
+line 554: info 4
+line 555: info 4
+line 556: info 4
+line 557: info 4
+line 558: info 4
+line 559: info 4
+line 560: info 4
+line 564: info 2
+line 565: info 2
+line 566: info 2
+line 567: info 2
+line 568: info 2
+line 569: info 2
+line 570: info 2
+line 571: info 2
+line 572: info 2
+line 573: info 2
+line 574: info 2
+line 577: info 4
+line 580: info 2
+line 584: info 4
+line 589: info 7
+line 595: info 7
+line 599: info 7
+line 602: info 7
+line 605: info 7
+line 608: info 7
+line 611: info 7
+line 614: info 7
+line 617: info 7
+line 620: info 7
+line 623: info 7
+line 626: info 7
+line 629: info 7
+line 632: info 7
+line 635: info 7
+line 644: info 4
+line 645: info 4
+line 647: info 4
+line 663: info 4
+line 664: info 4
+line 665: info 4
+line 666: info 4
+line 675: info 2
+line 680: info 4
+line 681: info 4
+line 682: info 4
+line 696: info 2
+line 717: info 4
+line 718: info 4
+line 720: info 4
+line 723: info 4
+line 726: info 4
+line 731: info 2
+line 734: info 2
+line 739: info 7
+line 757: info 4
+line 758: info 4
+line 759: info 4
+line 762: info 4
+line 763: info 4
+line 764: info 4
+line 774: info 2
+line 779: info 2
+
+line 848: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Scalar_setElement_INT32 (w, x)
+Input scalar of type [int32_t]
+cannot be typecast to entry of type [int]]
+line 849: info 7
+line 864: info 4
+line 865: info 4
+line 866: info 4
+line 871: info 5
+line 904: info 4
+line 905: info 4
+line 906: info 4
+line 907: info 4
+line 908: info 4
+line 910: info 4
+line 915: info 2
+line 922: info 4
+line 923: info 4
+line 924: info 4
+line 925: info 4
+line 926: info 4
+line 935: info 2
+line 936: info 2
+line 957: info 4
+line 958: info 4
+line 959: info 4
+line 960: info 4
+line 975: info 3
+line 984: info 4
+line 986: info 4
+line 987: info 4
+line 988: info 4
+line 993: info 2
+line 994: info 2
+line 995: info 2
+line 999: info 2
+line 1014: info 4
+line 1015: info 4
+line 1016: info 4
+line 1017: info 4
+line 1018: info 4
+line 1019: info 4
+line 1020: info 4
+line 1021: info 4
+line 1022: info 4
+line 1023: info 4
+line 1024: info 4
+line 1025: info 4
+
+line 1029: info 2, error logger:
+[]
+
+line 1030: info 2, error logger:
+[]
+
+line 1031: info 2, error logger:
+[]
+
+line 1032: info 2, error logger:
+[]
+
+line 1033: info 2, error logger:
+[]
+
+line 1034: info 2, error logger:
+[]
+
+line 1035: info 2, error logger:
+[]
+
+line 1036: info 2, error logger:
+[]
+
+line 1037: info 2, error logger:
+[]
+
+line 1038: info 2, error logger:
+[]
+
+line 1039: info 2, error logger:
+[]
+
+line 1040: info 2, error logger:
+[]
+
+line 1045: info 4, error logger:
+[]
+
+line 1046: info 4, error logger:
+[]
+
+line 1050: info 5, error logger:
+[GraphBLAS error: GrB_INVALID_VALUE
+function: GrB_Vector_build_FP64 (w, I, X, nvals, dup)
+List of row indices cannot be GrB_ALL]
+
+line 1052: info 5, error logger:
+[GraphBLAS error: GrB_INVALID_VALUE
+function: GrB_Vector_build_FP64 (w, I, X, nvals, dup)
+Problem too large: nvals 1152921504606846977 exceeds 1152921504606846976]
+
+line 1056: info 2, error logger:
+[]
+
+line 1060: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_build_FP64 (w, I, X, nvals, dup)
+All domains of dup operator for assembling duplicates must be identical.
+operator is: [bool] = le ([double],[double])]
+
+line 1061: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_build_UDT (w, I, X, nvals, dup)
+Numerical values of tuples of type [user-defined]
+cannot be typecast as input to the dup operator
+z=plus(x,y), whose input types are [double]]
+
+    GraphBLAS BinaryOp: Complex-plus op (user-defined) z=complex_plus(x,y)
+    GraphBLAS type: ztype user-defined: [GxB_FC64_t] size: 16
+    GraphBLAS type: xtype user-defined: [GxB_FC64_t] size: 16
+    GraphBLAS type: ytype user-defined: [GxB_FC64_t] size: 16
+    GraphBLAS type: Complex user type user-defined: [GxB_FC64_t] size: 16
+    GraphBLAS type: Complex built-in type double complex size: 16
+
+line 1074: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_build_FP64 (w, I, X, nvals, dup)
+Operator [complex_plus] for assembling duplicates has type [GxB_FC64_t],
+cannot be typecast to entries in output of type [double]]
+
+line 1081: info 9, error logger:
+[GraphBLAS error: GrB_OUTPUT_NOT_EMPTY
+function: GrB_Vector_build_FP64 (w, I, X, nvals, dup)
+Output already has existing entries]
+
+line 1090: info 5, error logger:
+[GraphBLAS error: GrB_INVALID_VALUE
+function: GrB_Vector_build_FP64 (w, I, X, nvals, dup)
+nvals cannot be GxB_RANGE, GxB_STRIDE, or GxB_BACKWARDS]
+
+line 1097: info 12, error logger:
+[]
+line 1105: info 3
+
+line 1112: info 12, error logger:
+[]
+line 1115: info 3
+line 1130: info 4
+line 1131: info 4
+line 1132: info 4
+line 1133: info 4
+line 1134: info 4
+line 1135: info 4
+line 1136: info 4
+line 1137: info 4
+line 1138: info 4
+line 1139: info 4
+line 1140: info 4
+line 1141: info 4
+
+line 1142: info 4, error logger:
+[]
+
+line 1146: info 2, error logger:
+[]
+
+line 1147: info 2, error logger:
+[]
+
+line 1148: info 2, error logger:
+[]
+
+line 1149: info 2, error logger:
+[]
+
+line 1150: info 2, error logger:
+[]
+
+line 1151: info 2, error logger:
+[]
+
+line 1152: info 2, error logger:
+[]
+
+line 1153: info 2, error logger:
+[]
+
+line 1154: info 2, error logger:
+[]
+
+line 1155: info 2, error logger:
+[]
+
+line 1156: info 2, error logger:
+[]
+
+line 1157: info 2, error logger:
+[]
+
+line 1161: info 6, error logger:
+[GraphBLAS error: GrB_INVALID_INDEX
+function: GrB_Vector_setElement_INT32 (w, x, row)
+Row index 18446744073709551615 out of range; must be < 10]
+
+line 1165: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_setElement_UDT (w, x, row)
+Input scalar of type [user-defined]
+cannot be typecast to entry of type [double]]
+line 1174: info 4
+line 1175: info 4
+line 1176: info 4
+line 1177: info 4
+line 1178: info 4
+line 1179: info 4
+line 1180: info 4
+line 1181: info 4
+line 1182: info 4
+line 1183: info 4
+line 1184: info 4
+line 1185: info 4
+line 1187: info 4
+line 1188: info 4
+line 1189: info 4
+line 1190: info 4
+line 1191: info 4
+line 1192: info 4
+line 1193: info 4
+line 1194: info 4
+line 1195: info 4
+line 1196: info 4
+line 1197: info 4
+line 1198: info 4
+line 1202: info 2
+line 1203: info 2
+line 1204: info 2
+line 1205: info 2
+line 1206: info 2
+line 1207: info 2
+line 1208: info 2
+line 1209: info 2
+line 1210: info 2
+line 1211: info 2
+line 1212: info 2
+line 1213: info 2
+line 1217: info 6
+line 1218: info 6
+line 1222: info 7
+vector nvals: 3
+line 1256: info 4
+line 1257: info 4
+line 1258: info 4
+line 1259: info 4
+line 1260: info 4
+line 1261: info 4
+line 1262: info 4
+line 1263: info 4
+line 1264: info 4
+line 1265: info 4
+line 1266: info 4
+line 1267: info 4
+line 1269: info 4
+line 1270: info 4
+line 1271: info 4
+line 1272: info 4
+line 1273: info 4
+line 1274: info 4
+line 1275: info 4
+line 1276: info 4
+line 1277: info 4
+line 1278: info 4
+line 1279: info 4
+line 1280: info 4
+line 1284: info 2
+line 1285: info 2
+line 1286: info 2
+line 1287: info 2
+line 1288: info 2
+line 1289: info 2
+line 1290: info 2
+line 1291: info 2
+line 1292: info 2
+line 1293: info 2
+line 1294: info 2
+line 1295: info 2
+line 1300: info 11
+0: v(0) = 77.3
+1: v(2) = 22.8
+2: v(4) = 44.9
+
+line 1312: info 7
+line 1324: info 4
+line 1325: info 4
+line 1326: info 4
+line 1331: info 5
+line 1332: info 5
+line 1364: info 4
+line 1365: info 4
+line 1366: info 4
+line 1367: info 4
+line 1368: info 4
+line 1370: info 4
+line 1375: info 2
+line 1376: info 2
+line 1377: info 2
+line 1378: info 2
+line 1386: info 4
+line 1387: info 4
+line 1388: info 4
+line 1389: info 4
+line 1390: info 4
+line 1393: info 4
+line 1394: info 4
+line 1395: info 4
+line 1396: info 4
+line 1397: info 4
+line 1408: info 2
+
+line 1414: info 6, error logger:
+[GraphBLAS error: GrB_INVALID_INDEX
+function: GrB_Matrix_setElement_INT32 (C, row, col, x)
+Column index 1000 out of range; must be < 8]
+line 1419: info 4
+line 1420: info 4
+line 1421: info 4
+line 1422: info 4
+line 1434: info 4
+line 1436: info 4
+line 1437: info 4
+line 1438: info 4
+line 1443: info 2
+line 1444: info 2
+line 1445: info 2
+line 1449: info 2
+line 1464: info 4
+line 1465: info 4
+line 1466: info 4
+line 1467: info 4
+line 1468: info 4
+line 1469: info 4
+line 1470: info 4
+line 1471: info 4
+line 1472: info 4
+line 1473: info 4
+line 1474: info 4
+line 1475: info 4
+
+line 1479: info 2, error logger:
+[]
+
+line 1480: info 2, error logger:
+[]
+
+line 1481: info 2, error logger:
+[]
+
+line 1482: info 2, error logger:
+[]
+
+line 1483: info 2, error logger:
+[]
+
+line 1484: info 2, error logger:
+[]
+
+line 1485: info 2, error logger:
+[]
+
+line 1486: info 2, error logger:
+[]
+
+line 1487: info 2, error logger:
+[]
+
+line 1488: info 2, error logger:
+[]
+
+line 1489: info 2, error logger:
+[]
+
+line 1490: info 2, error logger:
+[]
+
+line 1495: info 4, error logger:
+[]
+
+line 1496: info 4, error logger:
+[]
+
+line 1497: info 4, error logger:
+[]
+
+line 1498: info 4, error logger:
+[]
+
+line 1503: info 5, error logger:
+[GraphBLAS error: GrB_INVALID_VALUE
+function: GrB_Matrix_build_FP64 (C, I, J, X, nvals, dup)
+List of row indices cannot be GrB_ALL]
+
+line 1504: info 5, error logger:
+[GraphBLAS error: GrB_INVALID_VALUE
+function: GrB_Matrix_build_FP64 (C, I, J, X, nvals, dup)
+List of column indices cannot be GrB_ALL]
+
+line 1505: info 5, error logger:
+[GraphBLAS error: GrB_INVALID_VALUE
+function: GrB_Matrix_build_FP64 (C, I, J, X, nvals, dup)
+Problem too large: nvals 1152921504606846977 exceeds 1152921504606846976]
+
+line 1509: info 2, error logger:
+[]
+
+line 1513: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_build_FP64 (C, I, J, X, nvals, dup)
+All domains of dup operator for assembling duplicates must be identical.
+operator is: [bool] = le ([double],[double])]
+
+line 1522: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_build_FP64 (C, I, J, X, nvals, dup)
+Operator [complex_plus] for assembling duplicates has type [GxB_FC64_t],
+cannot be typecast to entries in output of type [double]]
+
+line 1524: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_build_UDT (C, I, J, X, nvals, dup)
+Numerical values of tuples of type [user-defined]
+cannot be typecast as input to the dup operator
+z=plus(x,y), whose input types are [double]]
+
+line 1529: info 9, error logger:
+[GraphBLAS error: GrB_OUTPUT_NOT_EMPTY
+function: GrB_Matrix_build_FP64 (C, I, J, X, nvals, dup)
+Output already has existing entries]
+
+line 1537: info 12, error logger:
+[]
+line 1540: info 3
+
+line 1548: info 12, error logger:
+[]
+line 1551: info 3
+line 1566: info 4
+line 1567: info 4
+line 1568: info 4
+line 1569: info 4
+line 1570: info 4
+line 1571: info 4
+line 1572: info 4
+line 1573: info 4
+line 1574: info 4
+line 1575: info 4
+line 1576: info 4
+line 1577: info 4
+
+line 1578: info 4, error logger:
+[]
+
+line 1582: info 2, error logger:
+[]
+
+line 1583: info 2, error logger:
+[]
+
+line 1584: info 2, error logger:
+[]
+
+line 1585: info 2, error logger:
+[]
+
+line 1586: info 2, error logger:
+[]
+
+line 1587: info 2, error logger:
+[]
+
+line 1588: info 2, error logger:
+[]
+
+line 1589: info 2, error logger:
+[]
+
+line 1590: info 2, error logger:
+[]
+
+line 1591: info 2, error logger:
+[]
+
+line 1592: info 2, error logger:
+[]
+
+line 1593: info 2, error logger:
+[]
+
+line 1597: info 6, error logger:
+[GraphBLAS error: GrB_INVALID_INDEX
+function: GrB_Matrix_setElement_INT32 (C, row, col, x)
+Row index 18446744073709551615 out of range; must be < 10]
+
+line 1601: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_setElement_UDT (C, row, col, x)
+Input scalar of type [user-defined]
+cannot be typecast to entry of type [double]]
+line 1610: info 4
+line 1611: info 4
+line 1612: info 4
+line 1613: info 4
+line 1614: info 4
+line 1615: info 4
+line 1616: info 4
+line 1617: info 4
+line 1618: info 4
+line 1619: info 4
+line 1620: info 4
+line 1621: info 4
+line 1623: info 4
+line 1624: info 4
+line 1625: info 4
+line 1626: info 4
+line 1627: info 4
+line 1628: info 4
+line 1629: info 4
+line 1630: info 4
+line 1631: info 4
+line 1632: info 4
+line 1633: info 4
+line 1634: info 4
+line 1638: info 2
+line 1639: info 2
+line 1640: info 2
+line 1641: info 2
+line 1642: info 2
+line 1643: info 2
+line 1644: info 2
+line 1645: info 2
+line 1646: info 2
+line 1647: info 2
+line 1648: info 2
+line 1649: info 2
+line 1653: info 6
+line 1654: info 6
+line 1655: info 6
+line 1659: info 7
+nvals: 3
+line 1691: info 4
+line 1692: info 4
+line 1693: info 4
+line 1694: info 4
+line 1695: info 4
+line 1696: info 4
+line 1697: info 4
+line 1698: info 4
+line 1699: info 4
+line 1700: info 4
+line 1701: info 4
+line 1702: info 4
+line 1704: info 4
+line 1705: info 4
+line 1706: info 4
+line 1707: info 4
+line 1708: info 4
+line 1709: info 4
+line 1710: info 4
+line 1711: info 4
+line 1712: info 4
+line 1713: info 4
+line 1714: info 4
+line 1715: info 4
+line 1719: info 2
+line 1720: info 2
+line 1721: info 2
+line 1722: info 2
+line 1723: info 2
+line 1724: info 2
+line 1725: info 2
+line 1726: info 2
+line 1727: info 2
+line 1728: info 2
+line 1729: info 2
+line 1730: info 2
+line 1735: info 11
+0: A(0,0) = 707.3
+1: A(2,0) = 22.8
+2: A(4,0) = 44.9
+
+line 1748: info 7
+line 1763: info 4
+
+line 1771: info 4, error logger:
+[]
+line 1772: info 4
+
+line 1774: info 4, error logger:
+[]
+line 1775: info 4
+
+line 1779: info 2, error logger:
+[]
+line 1780: info 2
+
+line 1782: info 2, error logger:
+[]
+line 1783: info 2
+line 1795: info 5
+
+line 1796: info 5, error logger:
+[]
+line 1798: info 5
+
+line 1799: info 5, error logger:
+[]
+
+line 1801: info 5, error logger:
+[]
+
+line 1804: info 5, error logger:
+[]
+
+line 1807: info 5, error logger:
+[]
+
+line 1810: info 5, error logger:
+[]
+
+line 1813: info 5, error logger:
+[]
+
+line 1817: info 5, error logger:
+[]
+
+line 1820: info 5, error logger:
+[]
+
+line 1823: info 5, error logger:
+[]
+
+line 1826: info 5, error logger:
+[]
+
+line 1829: info 5, error logger:
+[]
+
+line 1882: info 5, error logger:
+[]
+line 1889: info 3
+line 1890: info 3
+line 1894: info 3
+line 1895: info 3
+line 1899: info 3
+line 1900: info 3
+line 1904: info 3
+line 1905: info 3
+
+line 1962: info 2, error logger:
+[]
+
+line 1963: info 2, error logger:
+[]
+
+line 1964: info 2, error logger:
+[]
+
+line 1965: info 2, error logger:
+[]
+
+line 1966: info 2, error logger:
+[]
+
+line 1967: info 2, error logger:
+[]
+
+line 1968: info 2, error logger:
+[]
+
+line 1970: info 2, error logger:
+[]
+
+line 1971: info 2, error logger:
+[]
+
+line 1972: info 2, error logger:
+[]
+
+line 1973: info 2, error logger:
+[]
+
+line 1974: info 2, error logger:
+[]
+
+line 1975: info 2, error logger:
+[]
+
+line 1976: info 2, error logger:
+[]
+
+line 1978: info 2, error logger:
+[]
+
+line 1979: info 2, error logger:
+[]
+
+line 1980: info 2, error logger:
+[]
+
+line 1981: info 2, error logger:
+[]
+
+line 1982: info 2, error logger:
+[]
+
+line 1983: info 2, error logger:
+[]
+
+line 1984: info 2, error logger:
+[]
+line 1988: info 4
+
+line 1989: info 4, error logger:
+[]
+
+line 1990: info 4, error logger:
+[]
+
+line 1991: info 4, error logger:
+[]
+line 1993: info 4
+
+line 1994: info 4, error logger:
+[]
+
+line 1995: info 4, error logger:
+[]
+
+line 1996: info 4, error logger:
+[]
+line 1998: info 4
+
+line 1999: info 4, error logger:
+[]
+
+line 2000: info 4, error logger:
+[]
+
+line 2001: info 4, error logger:
+[]
+
+line 2005: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_mxm (C, M, accum, semiring, A, B, desc)
+Dimensions not compatible:
+output is 3-by-2
+first input is 4-by-2
+second input is 3-by-4]
+
+line 2006: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_mxm (C, M, accum, semiring, A, B, desc)
+M is 3-by-4; does not match output dimensions (3-by-2)]
+
+line 2009: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_mxm (C, M, accum, semiring, A, B, desc)
+Incompatible type for z=plus(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2010: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_mxm (C, M, accum, semiring, A, B, desc)
+Incompatible type for z=plus(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 2019: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_mxm (C, M, accum, semiring, A, B, desc)
+Result of computation of type [GxB_FC64_t]
+cannot be typecast to final output of type [double]]
+
+line 2020: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_mxm (C, M, accum, semiring, A, B, desc)
+Result of computation of type [float]
+cannot be typecast to final output of type [GxB_FC64_t]]
+
+line 2021: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_mxm (C, M, accum, semiring, A, B, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2060: info 4, error logger:
+[]
+
+line 2061: info 4, error logger:
+[]
+
+line 2062: info 4, error logger:
+[]
+
+line 2063: info 4, error logger:
+[]
+
+line 2065: info 4, error logger:
+[]
+
+line 2066: info 4, error logger:
+[]
+
+line 2067: info 4, error logger:
+[]
+
+line 2068: info 4, error logger:
+[]
+
+line 2070: info 4, error logger:
+[]
+
+line 2071: info 4, error logger:
+[]
+
+line 2072: info 4, error logger:
+[]
+
+line 2073: info 4, error logger:
+[]
+
+line 2075: info 4, error logger:
+[]
+
+line 2076: info 4, error logger:
+[]
+
+line 2077: info 4, error logger:
+[]
+
+line 2078: info 4, error logger:
+[]
+
+line 2080: info 4, error logger:
+[]
+
+line 2081: info 4, error logger:
+[]
+
+line 2082: info 4, error logger:
+[]
+
+line 2083: info 4, error logger:
+[]
+
+line 2085: info 4, error logger:
+[]
+
+line 2086: info 4, error logger:
+[]
+
+line 2087: info 4, error logger:
+[]
+
+line 2088: info 4, error logger:
+[]
+
+line 2090: info 4, error logger:
+[]
+
+line 2091: info 4, error logger:
+[]
+
+line 2092: info 4, error logger:
+[]
+
+line 2093: info 4, error logger:
+[]
+
+line 2095: info 4, error logger:
+[]
+
+line 2096: info 4, error logger:
+[]
+
+line 2097: info 4, error logger:
+[]
+
+line 2098: info 4, error logger:
+[]
+
+line 2100: info 4, error logger:
+[]
+
+line 2101: info 4, error logger:
+[]
+
+line 2102: info 4, error logger:
+[]
+
+line 2103: info 4, error logger:
+[]
+
+line 2105: info 4, error logger:
+[]
+
+line 2106: info 4, error logger:
+[]
+
+line 2107: info 4, error logger:
+[]
+
+line 2108: info 4, error logger:
+[]
+
+line 2110: info 4, error logger:
+[]
+
+line 2111: info 4, error logger:
+[]
+
+line 2112: info 4, error logger:
+[]
+
+line 2113: info 4, error logger:
+[]
+
+line 2115: info 4, error logger:
+[]
+
+line 2116: info 4, error logger:
+[]
+
+line 2117: info 4, error logger:
+[]
+
+line 2118: info 4, error logger:
+[]
+
+line 2128: info 2, error logger:
+[]
+
+line 2129: info 2, error logger:
+[]
+
+line 2130: info 2, error logger:
+[]
+
+line 2131: info 2, error logger:
+[]
+
+line 2132: info 2, error logger:
+[]
+
+line 2133: info 2, error logger:
+[]
+
+line 2135: info 2, error logger:
+[]
+
+line 2136: info 2, error logger:
+[]
+
+line 2137: info 2, error logger:
+[]
+
+line 2138: info 2, error logger:
+[]
+
+line 2139: info 2, error logger:
+[]
+
+line 2140: info 2, error logger:
+[]
+
+line 2142: info 2, error logger:
+[]
+
+line 2143: info 2, error logger:
+[]
+
+line 2144: info 2, error logger:
+[]
+
+line 2145: info 2, error logger:
+[]
+
+line 2146: info 2, error logger:
+[]
+
+line 2147: info 2, error logger:
+[]
+
+line 2149: info 2, error logger:
+[]
+
+line 2150: info 2, error logger:
+[]
+
+line 2151: info 2, error logger:
+[]
+
+line 2152: info 2, error logger:
+[]
+
+line 2153: info 2, error logger:
+[]
+
+line 2154: info 2, error logger:
+[]
+
+line 2156: info 2, error logger:
+[]
+
+line 2157: info 2, error logger:
+[]
+
+line 2158: info 2, error logger:
+[]
+
+line 2159: info 2, error logger:
+[]
+
+line 2160: info 2, error logger:
+[]
+
+line 2161: info 2, error logger:
+[]
+
+line 2163: info 2, error logger:
+[]
+
+line 2164: info 2, error logger:
+[]
+
+line 2165: info 2, error logger:
+[]
+
+line 2166: info 2, error logger:
+[]
+
+line 2167: info 2, error logger:
+[]
+
+line 2168: info 2, error logger:
+[]
+
+line 2170: info 2, error logger:
+[]
+
+line 2171: info 2, error logger:
+[]
+
+line 2172: info 2, error logger:
+[]
+
+line 2173: info 2, error logger:
+[]
+
+line 2174: info 2, error logger:
+[]
+
+line 2175: info 2, error logger:
+[]
+
+line 2177: info 2, error logger:
+[]
+
+line 2178: info 2, error logger:
+[]
+
+line 2179: info 2, error logger:
+[]
+
+line 2180: info 2, error logger:
+[]
+
+line 2181: info 2, error logger:
+[]
+
+line 2182: info 2, error logger:
+[]
+
+line 2184: info 2, error logger:
+[]
+
+line 2185: info 2, error logger:
+[]
+
+line 2186: info 2, error logger:
+[]
+
+line 2187: info 2, error logger:
+[]
+
+line 2188: info 2, error logger:
+[]
+
+line 2189: info 2, error logger:
+[]
+
+line 2191: info 2, error logger:
+[]
+
+line 2192: info 2, error logger:
+[]
+
+line 2193: info 2, error logger:
+[]
+
+line 2194: info 2, error logger:
+[]
+
+line 2195: info 2, error logger:
+[]
+
+line 2196: info 2, error logger:
+[]
+
+line 2198: info 2, error logger:
+[]
+
+line 2199: info 2, error logger:
+[]
+
+line 2200: info 2, error logger:
+[]
+
+line 2201: info 2, error logger:
+[]
+
+line 2202: info 2, error logger:
+[]
+
+line 2203: info 2, error logger:
+[]
+
+line 2205: info 2, error logger:
+[]
+
+line 2206: info 2, error logger:
+[]
+
+line 2207: info 2, error logger:
+[]
+
+line 2208: info 2, error logger:
+[]
+
+line 2209: info 2, error logger:
+[]
+
+line 2210: info 2, error logger:
+[]
+
+line 2213: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2214: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 2215: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Result of computation of type [GxB_FC64_t]
+cannot be typecast to final output of type [double]]
+
+line 2216: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Result of computation of type [GxB_FC64_t]
+cannot be typecast to final output of type [double]]
+
+line 2217: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Result of computation of type [GxB_FC64_t]
+cannot be typecast to final output of type [double]]
+
+line 2218: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+First input of type [double]
+cannot be typecast to final output of type [GxB_FC64_t]]
+
+line 2226: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2232: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Second input of type [double]
+cannot be typecast to final output of type [GxB_FC64_t]]
+
+line 2233: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Result of computation of type [float]
+cannot be typecast to final output of type [GxB_FC64_t]]
+
+line 2242: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Incompatible type for z=f3(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2243: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Incompatible type for z=complex_complex(x,y):
+operator output z of type [GxB_FC64_t]
+cannot be typecast to result of type [double]]
+
+line 2248: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Dimensions not compatible:
+output is 3-by-2
+first input is 3-by-4
+second input is 4-by-2]
+
+line 2249: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Dimensions not compatible:
+output is 3-by-2
+first input is 4-by-3 (transposed)
+second input is 4-by-2]
+
+line 2250: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Dimensions not compatible:
+output is 3-by-2
+first input is 3-by-4
+second input is 2-by-4 (transposed)]
+
+line 2251: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)
+Dimensions not compatible:
+output is 3-by-2
+first input is 4-by-3 (transposed)
+second input is 2-by-4 (transposed)]
+
+line 2275: info 4, error logger:
+[]
+
+line 2276: info 4, error logger:
+[]
+
+line 2277: info 4, error logger:
+[]
+
+line 2287: info 2, error logger:
+[]
+
+line 2288: info 2, error logger:
+[]
+
+line 2289: info 2, error logger:
+[]
+
+line 2290: info 2, error logger:
+[]
+
+line 2291: info 2, error logger:
+[]
+
+line 2292: info 2, error logger:
+[]
+
+line 2296: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2297: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 2298: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)
+Result of computation of type [GxB_FC64_t]
+cannot be typecast to final output of type [double]]
+
+line 2299: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)
+Result of computation of type [GxB_FC64_t]
+cannot be typecast to final output of type [double]]
+
+line 2300: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)
+Result of computation of type [GxB_FC64_t]
+cannot be typecast to final output of type [double]]
+
+line 2301: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2305: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)
+Dimensions not compatible::
+output is 3-by-2; must be 12-by-8
+first input is 3-by-4 with 7 entries
+second input is 4-by-2 with 4 entries]
+
+line 2306: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)
+Dimensions not compatible::
+output is 3-by-2; must be 16-by-6
+first input is 4-by-3 (transposed) with 7 entries
+second input is 4-by-2 with 4 entries]
+
+line 2307: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)
+Dimensions not compatible::
+output is 3-by-2; must be 6-by-16
+first input is 3-by-4 with 7 entries
+second input is 2-by-4 (transposed) with 4 entries]
+
+line 2308: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)
+Dimensions not compatible::
+output is 3-by-2; must be 8-by-12
+first input is 4-by-3 (transposed) with 7 entries
+second input is 2-by-4 (transposed) with 4 entries]
+
+line 2324: info 4, error logger:
+[]
+
+line 2325: info 4, error logger:
+[]
+
+line 2326: info 4, error logger:
+[]
+
+line 2328: info 4, error logger:
+[]
+
+line 2329: info 4, error logger:
+[]
+
+line 2330: info 4, error logger:
+[]
+
+line 2332: info 4, error logger:
+[]
+
+line 2333: info 4, error logger:
+[]
+
+line 2334: info 4, error logger:
+[]
+
+line 2335: info 4, error logger:
+[]
+
+line 2344: info 2, error logger:
+[]
+
+line 2345: info 2, error logger:
+[]
+
+line 2346: info 2, error logger:
+[]
+
+line 2347: info 2, error logger:
+[]
+
+line 2348: info 2, error logger:
+[]
+
+line 2350: info 2, error logger:
+[]
+
+line 2351: info 2, error logger:
+[]
+
+line 2352: info 2, error logger:
+[]
+
+line 2353: info 2, error logger:
+[]
+
+line 2354: info 2, error logger:
+[]
+
+line 2356: info 2, error logger:
+[]
+
+line 2357: info 2, error logger:
+[]
+
+line 2358: info 2, error logger:
+[]
+
+line 2359: info 2, error logger:
+[]
+
+line 2360: info 2, error logger:
+[]
+
+line 2367: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_extract (w, M, accum, u, I, ni, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2368: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_extract (w, M, accum, u, I, ni, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2369: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_extract (w, M, accum, u, I, ni, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2370: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_extract (w, M, accum, u, I, ni, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2371: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_extract (w, M, accum, u, I, ni, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 2373: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Col_extract (w, M, accum, A, I, ni, j, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2374: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Col_extract (w, M, accum, A, I, ni, j, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2375: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Col_extract (w, M, accum, A, I, ni, j, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2376: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Col_extract (w, M, accum, A, I, ni, j, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2377: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Col_extract (w, M, accum, A, I, ni, j, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 2379: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2380: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2381: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2382: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2383: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 2387: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)
+Dimensions not compatible:
+required size of output is 1-by-2
+but actual size output is  3-by-4
+]
+
+line 2388: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)
+Dimensions not compatible:
+required size of output is 1-by-2
+but actual size output is  3-by-4
+]
+
+line 2396: info 6, error logger:
+[GraphBLAS error: GrB_INVALID_INDEX
+function: GrB_Col_extract (w, M, accum, A, I, ni, j, desc)
+Column index j=911 out of bounds; must be < 4]
+
+line 2403: info 12, error logger:
+[GraphBLAS error: GrB_INDEX_OUT_OF_BOUNDS
+function: GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)
+index 3 out of bounds, must be < 3]
+
+line 2407: info 12, error logger:
+[GraphBLAS error: GrB_INDEX_OUT_OF_BOUNDS
+function: GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)
+index 4 out of bounds, must be < 4]
+
+line 2424: info 4, error logger:
+[]
+
+line 2425: info 4, error logger:
+[]
+
+line 2426: info 4, error logger:
+[]
+
+line 2428: info 4, error logger:
+[]
+
+line 2429: info 4, error logger:
+[]
+
+line 2430: info 4, error logger:
+[]
+
+line 2431: info 4, error logger:
+[]
+
+line 2433: info 4, error logger:
+[]
+
+line 2434: info 4, error logger:
+[]
+
+line 2435: info 4, error logger:
+[]
+
+line 2437: info 4, error logger:
+[]
+
+line 2438: info 4, error logger:
+[]
+
+line 2439: info 4, error logger:
+[]
+
+line 2441: info 4, error logger:
+[]
+
+line 2442: info 4, error logger:
+[]
+
+line 2444: info 4, error logger:
+[]
+
+line 2445: info 4, error logger:
+[]
+
+line 2447: info 4, error logger:
+[]
+
+line 2448: info 4, error logger:
+[]
+
+line 2450: info 4, error logger:
+[]
+
+line 2451: info 4, error logger:
+[]
+
+line 2453: info 4, error logger:
+[]
+
+line 2454: info 4, error logger:
+[]
+
+line 2456: info 4, error logger:
+[]
+
+line 2457: info 4, error logger:
+[]
+
+line 2459: info 4, error logger:
+[]
+
+line 2460: info 4, error logger:
+[]
+
+line 2462: info 4, error logger:
+[]
+
+line 2463: info 4, error logger:
+[]
+
+line 2465: info 4, error logger:
+[]
+
+line 2466: info 4, error logger:
+[]
+
+line 2468: info 4, error logger:
+[]
+
+line 2469: info 4, error logger:
+[]
+
+line 2471: info 4, error logger:
+[]
+
+line 2472: info 4, error logger:
+[]
+
+line 2474: info 4, error logger:
+[]
+
+line 2475: info 4, error logger:
+[]
+
+line 2476: info 4, error logger:
+[]
+
+line 2479: info 4, error logger:
+[]
+
+line 2480: info 4, error logger:
+[]
+
+line 2481: info 4, error logger:
+[]
+
+line 2483: info 4, error logger:
+[]
+
+line 2484: info 4, error logger:
+[]
+
+line 2485: info 4, error logger:
+[]
+
+line 2487: info 4, error logger:
+[]
+
+line 2488: info 4, error logger:
+[]
+
+line 2489: info 4, error logger:
+[]
+
+line 2491: info 4, error logger:
+[]
+
+line 2492: info 4, error logger:
+[]
+
+line 2493: info 4, error logger:
+[]
+
+line 2495: info 4, error logger:
+[]
+
+line 2496: info 4, error logger:
+[]
+
+line 2497: info 4, error logger:
+[]
+
+line 2499: info 4, error logger:
+[]
+
+line 2500: info 4, error logger:
+[]
+
+line 2501: info 4, error logger:
+[]
+
+line 2503: info 4, error logger:
+[]
+
+line 2504: info 4, error logger:
+[]
+
+line 2505: info 4, error logger:
+[]
+
+line 2507: info 4, error logger:
+[]
+
+line 2508: info 4, error logger:
+[]
+
+line 2509: info 4, error logger:
+[]
+
+line 2511: info 4, error logger:
+[]
+
+line 2512: info 4, error logger:
+[]
+
+line 2513: info 4, error logger:
+[]
+
+line 2515: info 4, error logger:
+[]
+
+line 2516: info 4, error logger:
+[]
+
+line 2517: info 4, error logger:
+[]
+
+line 2519: info 4, error logger:
+[]
+
+line 2520: info 4, error logger:
+[]
+
+line 2521: info 4, error logger:
+[]
+
+line 2523: info 4, error logger:
+[]
+
+line 2524: info 4, error logger:
+[]
+
+line 2525: info 4, error logger:
+[]
+
+line 2526: info 4, error logger:
+[]
+
+line 2535: info 2, error logger:
+[]
+
+line 2536: info 2, error logger:
+[]
+
+line 2537: info 2, error logger:
+[]
+
+line 2538: info 2, error logger:
+[]
+
+line 2539: info 2, error logger:
+[]
+
+line 2541: info 2, error logger:
+[]
+
+line 2542: info 2, error logger:
+[]
+
+line 2543: info 2, error logger:
+[]
+
+line 2544: info 2, error logger:
+[]
+
+line 2545: info 2, error logger:
+[]
+
+line 2547: info 2, error logger:
+[]
+
+line 2548: info 2, error logger:
+[]
+
+line 2549: info 2, error logger:
+[]
+
+line 2550: info 2, error logger:
+[]
+
+line 2551: info 2, error logger:
+[]
+
+line 2553: info 2, error logger:
+[]
+
+line 2554: info 2, error logger:
+[]
+
+line 2555: info 2, error logger:
+[]
+
+line 2556: info 2, error logger:
+[]
+
+line 2557: info 2, error logger:
+[]
+
+line 2559: info 2, error logger:
+[]
+
+line 2560: info 2, error logger:
+[]
+
+line 2561: info 2, error logger:
+[]
+
+line 2562: info 2, error logger:
+[]
+
+line 2564: info 2, error logger:
+[]
+
+line 2565: info 2, error logger:
+[]
+
+line 2566: info 2, error logger:
+[]
+
+line 2567: info 2, error logger:
+[]
+
+line 2569: info 2, error logger:
+[]
+
+line 2570: info 2, error logger:
+[]
+
+line 2571: info 2, error logger:
+[]
+
+line 2572: info 2, error logger:
+[]
+
+line 2574: info 2, error logger:
+[]
+
+line 2575: info 2, error logger:
+[]
+
+line 2576: info 2, error logger:
+[]
+
+line 2577: info 2, error logger:
+[]
+
+line 2579: info 2, error logger:
+[]
+
+line 2580: info 2, error logger:
+[]
+
+line 2581: info 2, error logger:
+[]
+
+line 2582: info 2, error logger:
+[]
+
+line 2584: info 2, error logger:
+[]
+
+line 2585: info 2, error logger:
+[]
+
+line 2586: info 2, error logger:
+[]
+
+line 2587: info 2, error logger:
+[]
+
+line 2589: info 2, error logger:
+[]
+
+line 2590: info 2, error logger:
+[]
+
+line 2591: info 2, error logger:
+[]
+
+line 2592: info 2, error logger:
+[]
+
+line 2594: info 2, error logger:
+[]
+
+line 2595: info 2, error logger:
+[]
+
+line 2596: info 2, error logger:
+[]
+
+line 2597: info 2, error logger:
+[]
+
+line 2599: info 2, error logger:
+[]
+
+line 2600: info 2, error logger:
+[]
+
+line 2601: info 2, error logger:
+[]
+
+line 2602: info 2, error logger:
+[]
+
+line 2604: info 2, error logger:
+[]
+
+line 2605: info 2, error logger:
+[]
+
+line 2606: info 2, error logger:
+[]
+
+line 2607: info 2, error logger:
+[]
+
+line 2609: info 2, error logger:
+[]
+
+line 2610: info 2, error logger:
+[]
+
+line 2611: info 2, error logger:
+[]
+
+line 2612: info 2, error logger:
+[]
+
+line 2614: info 2, error logger:
+[]
+
+line 2615: info 2, error logger:
+[]
+
+line 2616: info 2, error logger:
+[]
+
+line 2617: info 2, error logger:
+[]
+
+line 2619: info 2, error logger:
+[]
+
+line 2620: info 2, error logger:
+[]
+
+line 2621: info 2, error logger:
+[]
+
+line 2622: info 2, error logger:
+[]
+
+line 2624: info 2, error logger:
+[]
+
+line 2625: info 2, error logger:
+[]
+
+line 2626: info 2, error logger:
+[]
+
+line 2627: info 2, error logger:
+[]
+
+line 2629: info 2, error logger:
+[]
+
+line 2630: info 2, error logger:
+[]
+
+line 2631: info 2, error logger:
+[]
+
+line 2632: info 2, error logger:
+[]
+
+line 2634: info 2, error logger:
+[]
+
+line 2635: info 2, error logger:
+[]
+
+line 2636: info 2, error logger:
+[]
+
+line 2637: info 2, error logger:
+[]
+
+line 2639: info 2, error logger:
+[]
+
+line 2640: info 2, error logger:
+[]
+
+line 2641: info 2, error logger:
+[]
+
+line 2642: info 2, error logger:
+[]
+
+line 2644: info 2, error logger:
+[]
+
+line 2645: info 2, error logger:
+[]
+
+line 2646: info 2, error logger:
+[]
+
+line 2647: info 2, error logger:
+[]
+
+line 2649: info 2, error logger:
+[]
+
+line 2650: info 2, error logger:
+[]
+
+line 2651: info 2, error logger:
+[]
+
+line 2652: info 2, error logger:
+[]
+
+line 2654: info 2, error logger:
+[]
+
+line 2655: info 2, error logger:
+[]
+
+line 2656: info 2, error logger:
+[]
+
+line 2657: info 2, error logger:
+[]
+
+line 2659: info 2, error logger:
+[]
+
+line 2660: info 2, error logger:
+[]
+
+line 2661: info 2, error logger:
+[]
+
+line 2662: info 2, error logger:
+[]
+
+line 2664: info 2, error logger:
+[]
+
+line 2665: info 2, error logger:
+[]
+
+line 2666: info 2, error logger:
+[]
+
+line 2667: info 2, error logger:
+[]
+
+line 2669: info 2, error logger:
+[]
+
+line 2670: info 2, error logger:
+[]
+
+line 2671: info 2, error logger:
+[]
+
+line 2672: info 2, error logger:
+[]
+
+line 2674: info 2, error logger:
+[]
+
+line 2675: info 2, error logger:
+[]
+
+line 2676: info 2, error logger:
+[]
+
+line 2677: info 2, error logger:
+[]
+
+line 2685: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign (w, M, accum, u, Rows, nRows, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2686: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign (w, M, accum, u, Rows, nRows, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2687: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign (w, M, accum, u, Rows, nRows, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2688: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign (w, M, accum, u, Rows, nRows, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2689: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign (w, M, accum, u, Rows, nRows, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 2690: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign (w, M, accum, u, Rows, nRows, desc)
+Input of type [GxB_FC64_t]
+cannot be typecast to output of type [double]]
+
+line 2692: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2693: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2694: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2695: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2696: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 2697: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Input of type [GxB_FC64_t]
+cannot be typecast to output of type [double]]
+
+line 2699: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Col_subassign (C, M, accum, u, Rows, nRows, col, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2700: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Col_subassign (C, M, accum, u, Rows, nRows, col, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2701: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Col_subassign (C, M, accum, u, Rows, nRows, col, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2702: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Col_subassign (C, M, accum, u, Rows, nRows, col, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2703: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Col_subassign (C, M, accum, u, Rows, nRows, col, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 2704: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Col_subassign (C, M, accum, u, Rows, nRows, col, desc)
+Input of type [GxB_FC64_t]
+cannot be typecast to output of type [double]]
+
+line 2706: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Row_subassign (C, M, accum, u, row, Cols, nCols, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2707: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Row_subassign (C, M, accum, u, row, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2708: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Row_subassign (C, M, accum, u, row, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2709: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Row_subassign (C, M, accum, u, row, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2710: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Row_subassign (C, M, accum, u, row, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 2711: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Row_subassign (C, M, accum, u, row, Cols, nCols, desc)
+Input of type [GxB_FC64_t]
+cannot be typecast to output of type [double]]
+
+line 2713: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign_FP64 (w, M, accum, x, Rows, nRows, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2721: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign_FP64 (w, M, accum, x, Rows, nRows, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2726: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign_UDT (w, M, accum, x, Rows, nRows, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2734: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign_FP64 (w, M, accum, x, Rows, nRows, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2737: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign_UDT (w, M, accum, x, Rows, nRows, desc)
+Incompatible type for z=max(x,y):
+second input of type [user-defined]
+cannot be typecast to y input of type [float]]
+
+line 2738: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Vector_subassign_UDT (w, M, accum, x, Rows, nRows, desc)
+Input scalar of type [user-defined]
+cannot be typecast to output of type [double]]
+
+line 2750: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign_FP64 (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2751: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign_FP64 (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 2754: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign_FP64 (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 2757: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign_UDT (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 2758: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign_UDT (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+second input of type [user-defined]
+cannot be typecast to y input of type [float]]
+
+line 2759: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_subassign_UDT (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+Input scalar of type [user-defined]
+cannot be typecast to output of type [double]]
+
+line 2763: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Dimensions not compatible:
+C(Rows,Cols) is 2-by-3
+input is 3-by-4]
+
+line 2764: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Dimensions not compatible:
+C(Rows,Cols) is 2-by-3
+input is 4-by-3 (transposed)]
+
+line 2765: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GxB_Row_subassign (C, M, accum, u, row, Cols, nCols, desc)
+M is 1-by-5 (transposed), must match size of result C(I,J): 1-by-0]
+
+line 2781: info 12, error logger:
+[GraphBLAS error: GrB_INDEX_OUT_OF_BOUNDS
+function: GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+index 8 out of bounds, must be < 3]
+
+line 2797: info 12, error logger:
+[GraphBLAS error: GrB_INDEX_OUT_OF_BOUNDS
+function: GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+index 999 out of bounds, must be < 2]
+
+line 2801: info 12, error logger:
+[GraphBLAS error: GrB_INDEX_OUT_OF_BOUNDS
+function: GxB_Matrix_subassign_FP64 (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+index 4 out of bounds, must be < 4]
+
+line 2808: info 12, error logger:
+[GraphBLAS error: GrB_INDEX_OUT_OF_BOUNDS
+function: GxB_Matrix_subassign_FP64 (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+index 3 out of bounds, must be < 3]
+
+line 2825: info 4, error logger:
+[]
+
+line 2826: info 4, error logger:
+[]
+
+line 2827: info 4, error logger:
+[]
+
+line 2829: info 4, error logger:
+[]
+
+line 2830: info 4, error logger:
+[]
+
+line 2831: info 4, error logger:
+[]
+
+line 2832: info 4, error logger:
+[]
+
+line 2834: info 4, error logger:
+[]
+
+line 2835: info 4, error logger:
+[]
+
+line 2836: info 4, error logger:
+[]
+
+line 2838: info 4, error logger:
+[]
+
+line 2839: info 4, error logger:
+[]
+
+line 2840: info 4, error logger:
+[]
+
+line 2842: info 4, error logger:
+[]
+
+line 2843: info 4, error logger:
+[]
+
+line 2845: info 4, error logger:
+[]
+
+line 2846: info 4, error logger:
+[]
+
+line 2848: info 4, error logger:
+[]
+
+line 2849: info 4, error logger:
+[]
+
+line 2851: info 4, error logger:
+[]
+
+line 2852: info 4, error logger:
+[]
+
+line 2854: info 4, error logger:
+[]
+
+line 2855: info 4, error logger:
+[]
+
+line 2857: info 4, error logger:
+[]
+
+line 2858: info 4, error logger:
+[]
+
+line 2860: info 4, error logger:
+[]
+
+line 2861: info 4, error logger:
+[]
+
+line 2863: info 4, error logger:
+[]
+
+line 2864: info 4, error logger:
+[]
+
+line 2866: info 4, error logger:
+[]
+
+line 2867: info 4, error logger:
+[]
+
+line 2869: info 4, error logger:
+[]
+
+line 2870: info 4, error logger:
+[]
+
+line 2872: info 4, error logger:
+[]
+
+line 2873: info 4, error logger:
+[]
+
+line 2875: info 4, error logger:
+[]
+
+line 2876: info 4, error logger:
+[]
+
+line 2877: info 4, error logger:
+[]
+
+line 2879: info 4, error logger:
+[]
+
+line 2880: info 4, error logger:
+[]
+
+line 2881: info 4, error logger:
+[]
+
+line 2883: info 4, error logger:
+[]
+
+line 2884: info 4, error logger:
+[]
+
+line 2885: info 4, error logger:
+[]
+
+line 2887: info 4, error logger:
+[]
+
+line 2888: info 4, error logger:
+[]
+
+line 2889: info 4, error logger:
+[]
+
+line 2891: info 4, error logger:
+[]
+
+line 2892: info 4, error logger:
+[]
+
+line 2893: info 4, error logger:
+[]
+
+line 2895: info 4, error logger:
+[]
+
+line 2896: info 4, error logger:
+[]
+
+line 2897: info 4, error logger:
+[]
+
+line 2899: info 4, error logger:
+[]
+
+line 2900: info 4, error logger:
+[]
+
+line 2901: info 4, error logger:
+[]
+
+line 2903: info 4, error logger:
+[]
+
+line 2904: info 4, error logger:
+[]
+
+line 2905: info 4, error logger:
+[]
+
+line 2907: info 4, error logger:
+[]
+
+line 2908: info 4, error logger:
+[]
+
+line 2909: info 4, error logger:
+[]
+
+line 2911: info 4, error logger:
+[]
+
+line 2912: info 4, error logger:
+[]
+
+line 2913: info 4, error logger:
+[]
+
+line 2915: info 4, error logger:
+[]
+
+line 2916: info 4, error logger:
+[]
+
+line 2917: info 4, error logger:
+[]
+
+line 2919: info 4, error logger:
+[]
+
+line 2920: info 4, error logger:
+[]
+
+line 2921: info 4, error logger:
+[]
+
+line 2923: info 4, error logger:
+[]
+
+line 2924: info 4, error logger:
+[]
+
+line 2925: info 4, error logger:
+[]
+
+line 2926: info 4, error logger:
+[]
+
+line 2935: info 2, error logger:
+[]
+
+line 2936: info 2, error logger:
+[]
+
+line 2937: info 2, error logger:
+[]
+
+line 2938: info 2, error logger:
+[]
+
+line 2939: info 2, error logger:
+[]
+
+line 2941: info 2, error logger:
+[]
+
+line 2942: info 2, error logger:
+[]
+
+line 2943: info 2, error logger:
+[]
+
+line 2944: info 2, error logger:
+[]
+
+line 2945: info 2, error logger:
+[]
+
+line 2947: info 2, error logger:
+[]
+
+line 2948: info 2, error logger:
+[]
+
+line 2949: info 2, error logger:
+[]
+
+line 2950: info 2, error logger:
+[]
+
+line 2951: info 2, error logger:
+[]
+
+line 2953: info 2, error logger:
+[]
+
+line 2954: info 2, error logger:
+[]
+
+line 2955: info 2, error logger:
+[]
+
+line 2956: info 2, error logger:
+[]
+
+line 2957: info 2, error logger:
+[]
+
+line 2959: info 2, error logger:
+[]
+
+line 2960: info 2, error logger:
+[]
+
+line 2961: info 2, error logger:
+[]
+
+line 2962: info 2, error logger:
+[]
+
+line 2964: info 2, error logger:
+[]
+
+line 2965: info 2, error logger:
+[]
+
+line 2966: info 2, error logger:
+[]
+
+line 2967: info 2, error logger:
+[]
+
+line 2969: info 2, error logger:
+[]
+
+line 2970: info 2, error logger:
+[]
+
+line 2971: info 2, error logger:
+[]
+
+line 2972: info 2, error logger:
+[]
+
+line 2974: info 2, error logger:
+[]
+
+line 2975: info 2, error logger:
+[]
+
+line 2976: info 2, error logger:
+[]
+
+line 2977: info 2, error logger:
+[]
+
+line 2979: info 2, error logger:
+[]
+
+line 2980: info 2, error logger:
+[]
+
+line 2981: info 2, error logger:
+[]
+
+line 2982: info 2, error logger:
+[]
+
+line 2984: info 2, error logger:
+[]
+
+line 2985: info 2, error logger:
+[]
+
+line 2986: info 2, error logger:
+[]
+
+line 2987: info 2, error logger:
+[]
+
+line 2989: info 2, error logger:
+[]
+
+line 2990: info 2, error logger:
+[]
+
+line 2991: info 2, error logger:
+[]
+
+line 2992: info 2, error logger:
+[]
+
+line 2994: info 2, error logger:
+[]
+
+line 2995: info 2, error logger:
+[]
+
+line 2996: info 2, error logger:
+[]
+
+line 2997: info 2, error logger:
+[]
+
+line 2999: info 2, error logger:
+[]
+
+line 3000: info 2, error logger:
+[]
+
+line 3001: info 2, error logger:
+[]
+
+line 3002: info 2, error logger:
+[]
+
+line 3004: info 2, error logger:
+[]
+
+line 3005: info 2, error logger:
+[]
+
+line 3006: info 2, error logger:
+[]
+
+line 3007: info 2, error logger:
+[]
+
+line 3009: info 2, error logger:
+[]
+
+line 3010: info 2, error logger:
+[]
+
+line 3011: info 2, error logger:
+[]
+
+line 3012: info 2, error logger:
+[]
+
+line 3014: info 2, error logger:
+[]
+
+line 3015: info 2, error logger:
+[]
+
+line 3016: info 2, error logger:
+[]
+
+line 3017: info 2, error logger:
+[]
+
+line 3019: info 2, error logger:
+[]
+
+line 3020: info 2, error logger:
+[]
+
+line 3021: info 2, error logger:
+[]
+
+line 3022: info 2, error logger:
+[]
+
+line 3024: info 2, error logger:
+[]
+
+line 3025: info 2, error logger:
+[]
+
+line 3026: info 2, error logger:
+[]
+
+line 3027: info 2, error logger:
+[]
+
+line 3029: info 2, error logger:
+[]
+
+line 3030: info 2, error logger:
+[]
+
+line 3031: info 2, error logger:
+[]
+
+line 3032: info 2, error logger:
+[]
+
+line 3034: info 2, error logger:
+[]
+
+line 3035: info 2, error logger:
+[]
+
+line 3036: info 2, error logger:
+[]
+
+line 3037: info 2, error logger:
+[]
+
+line 3039: info 2, error logger:
+[]
+
+line 3040: info 2, error logger:
+[]
+
+line 3041: info 2, error logger:
+[]
+
+line 3042: info 2, error logger:
+[]
+
+line 3044: info 2, error logger:
+[]
+
+line 3045: info 2, error logger:
+[]
+
+line 3046: info 2, error logger:
+[]
+
+line 3047: info 2, error logger:
+[]
+
+line 3049: info 2, error logger:
+[]
+
+line 3050: info 2, error logger:
+[]
+
+line 3051: info 2, error logger:
+[]
+
+line 3052: info 2, error logger:
+[]
+
+line 3054: info 2, error logger:
+[]
+
+line 3055: info 2, error logger:
+[]
+
+line 3056: info 2, error logger:
+[]
+
+line 3057: info 2, error logger:
+[]
+
+line 3059: info 2, error logger:
+[]
+
+line 3060: info 2, error logger:
+[]
+
+line 3061: info 2, error logger:
+[]
+
+line 3062: info 2, error logger:
+[]
+
+line 3064: info 2, error logger:
+[]
+
+line 3065: info 2, error logger:
+[]
+
+line 3066: info 2, error logger:
+[]
+
+line 3067: info 2, error logger:
+[]
+
+line 3069: info 2, error logger:
+[]
+
+line 3070: info 2, error logger:
+[]
+
+line 3071: info 2, error logger:
+[]
+
+line 3072: info 2, error logger:
+[]
+
+line 3074: info 2, error logger:
+[]
+
+line 3075: info 2, error logger:
+[]
+
+line 3076: info 2, error logger:
+[]
+
+line 3077: info 2, error logger:
+[]
+
+line 3086: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign (w, M, accum, u, Rows, nRows, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 3087: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign (w, M, accum, u, Rows, nRows, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3088: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign (w, M, accum, u, Rows, nRows, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3089: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign (w, M, accum, u, Rows, nRows, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 3090: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign (w, M, accum, u, Rows, nRows, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 3091: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign (w, M, accum, u, Rows, nRows, desc)
+Input of type [GxB_FC64_t]
+cannot be typecast to output of type [double]]
+
+line 3093: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 3094: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3095: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3096: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 3097: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 3098: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Input of type [GxB_FC64_t]
+cannot be typecast to output of type [double]]
+
+line 3100: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Col_assign (C, M, accum, u, Rows, nRows, col, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 3101: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Col_assign (C, M, accum, u, Rows, nRows, col, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3102: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Col_assign (C, M, accum, u, Rows, nRows, col, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3103: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Col_assign (C, M, accum, u, Rows, nRows, col, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 3104: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Col_assign (C, M, accum, u, Rows, nRows, col, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 3105: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Col_assign (C, M, accum, u, Rows, nRows, col, desc)
+Input of type [GxB_FC64_t]
+cannot be typecast to output of type [double]]
+
+line 3107: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Row_assign (C, M, accum, u, row, Cols, nCols, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 3108: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Row_assign (C, M, accum, u, row, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3109: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Row_assign (C, M, accum, u, row, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3110: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Row_assign (C, M, accum, u, row, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 3111: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Row_assign (C, M, accum, u, row, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+second input of type [GxB_FC64_t]
+cannot be typecast to y input of type [float]]
+
+line 3112: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Row_assign (C, M, accum, u, row, Cols, nCols, desc)
+Input of type [GxB_FC64_t]
+cannot be typecast to output of type [double]]
+
+line 3125: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign_FP64 (w, M, accum, x, Rows, nRows, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 3126: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign_FP64 (w, M, accum, x, Rows, nRows, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3127: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign_FP64 (w, M, accum, x, Rows, nRows, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 3128: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign_FP64 (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3129: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign_FP64 (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+first input of type [GxB_FC64_t]
+cannot be typecast to x input of type [float]]
+
+line 3133: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign_UDT (w, M, accum, x, Rows, nRows, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3134: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign_UDT (w, M, accum, x, Rows, nRows, desc)
+Incompatible type for z=max(x,y):
+second input of type [user-defined]
+cannot be typecast to y input of type [float]]
+
+line 3135: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Vector_assign_UDT (w, M, accum, x, Rows, nRows, desc)
+Input scalar of type [user-defined]
+cannot be typecast to output of type [double]]
+
+line 3139: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign_FP64 (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 3142: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign_UDT (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3143: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign_UDT (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+Incompatible type for z=max(x,y):
+second input of type [user-defined]
+cannot be typecast to y input of type [float]]
+
+line 3144: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_assign_UDT (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+Input scalar of type [user-defined]
+cannot be typecast to output of type [double]]
+
+line 3148: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_assign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Dimensions not compatible:
+C(Rows,Cols) is 2-by-3
+input is 3-by-4]
+
+line 3149: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_assign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Dimensions not compatible:
+C(Rows,Cols) is 2-by-3
+input is 4-by-3 (transposed)]
+
+line 3150: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Row_assign (C, M, accum, u, row, Cols, nCols, desc)
+Mask vector m length is 5; must match the number of columns of C (4)]
+
+line 3157: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Col_assign (C, M, accum, u, Rows, nRows, col, desc)
+Mask vector m length is 5; must match the number of rows of C (3)]
+
+line 3167: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_assign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)
+Mask M is 5-by-5; must match result C (3-by-4)]
+
+line 3197: info 4, error logger:
+[]
+
+line 3198: info 4, error logger:
+[]
+
+line 3199: info 4, error logger:
+[GraphBLAS error: GrB_NULL_POINTER
+function: GrB_Vector_apply (w, M, accum, op, u, desc)
+Required argument is null: [op]]
+
+line 3201: info 4, error logger:
+[]
+
+line 3202: info 4, error logger:
+[]
+
+line 3203: info 4, error logger:
+[GraphBLAS error: GrB_NULL_POINTER
+function: GrB_Matrix_apply (C, M, accum, op, A, desc)
+Required argument is null: [op]]
+
+line 3212: info 2, error logger:
+[]
+
+line 3213: info 2, error logger:
+[]
+
+line 3214: info 2, error logger:
+[]
+
+line 3215: info 2, error logger:
+[]
+
+line 3216: info 2, error logger:
+[]
+
+line 3217: info 2, error logger:
+[]
+
+line 3219: info 2, error logger:
+[]
+
+line 3220: info 2, error logger:
+[]
+
+line 3221: info 2, error logger:
+[]
+
+line 3222: info 2, error logger:
+[]
+
+line 3223: info 2, error logger:
+[]
+
+line 3224: info 2, error logger:
+[]
+
+line 3229: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_apply (C, M, accum, op, A, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 3240: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_apply (C, M, accum, op, A, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3241: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_apply (C, M, accum, op, A, desc)
+Incompatible type for z=ainv(x):
+input A of type [GxB_FC64_t]
+cannot be typecast to x input of type [double]]
+
+line 3242: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_apply_BinaryOp1st_INT32(C, M, accum, op, x, A, desc)
+Incompatible type for z=complex_plus(x,y):
+input scalar of type [int32_t]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3243: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_apply_BinaryOp2nd_INT32(C, M, accum, op, A, y, desc)
+Incompatible type for z=complex_plus(x,y):
+input A of type [int32_t]
+cannot be typecast to y input of type [GxB_FC64_t]]
+
+line 3246: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_apply (C, M, accum, op, A, desc)
+Incompatible type for z=ainv(x):
+input A of type [GxB_FC64_t]
+cannot be typecast to x input of type [double]]
+
+line 3247: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_apply (C, M, accum, op, A, desc)
+Incompatible type for z=ainv(x):
+input A of type [GxB_FC64_t]
+cannot be typecast to x input of type [double]]
+
+line 3248: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_apply (C, M, accum, op, A, desc)
+Result of computation of type [double]
+cannot be typecast to final output of type [GxB_FC64_t]]
+
+line 3250: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_apply_BinaryOp1st_INT32(C, M, accum, op, x, A, desc)
+Incompatible type for z=complex_plus(x,y):
+input A of type [double]
+cannot be typecast to y input of type [GxB_FC64_t]]
+
+line 3251: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_apply_BinaryOp2nd_INT32(C, M, accum, op, A, y, desc)
+Incompatible type for z=complex_plus(x,y):
+input scalar of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3260: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_apply (C, M, accum, op, A, desc)
+Dimensions not compatible:
+output is 3-by-4
+input is 3-by-2]
+
+line 3274: info 4, error logger:
+[]
+
+line 3275: info 4, error logger:
+[]
+
+line 3276: info 4, error logger:
+[]
+
+line 3278: info 4, error logger:
+[]
+
+line 3279: info 4, error logger:
+[]
+
+line 3280: info 4, error logger:
+[]
+line 3287: info 2
+
+line 3297: info 2, error logger:
+[]
+
+line 3298: info 2, error logger:
+[]
+
+line 3299: info 2, error logger:
+[]
+
+line 3300: info 2, error logger:
+[]
+
+line 3301: info 2, error logger:
+[]
+
+line 3302: info 2, error logger:
+[]
+
+line 3304: info 2, error logger:
+[]
+
+line 3305: info 2, error logger:
+[]
+
+line 3306: info 2, error logger:
+[]
+
+line 3307: info 2, error logger:
+[]
+
+line 3308: info 2, error logger:
+[]
+
+line 3309: info 2, error logger:
+[]
+
+line 3328: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3329: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Incompatible type for C=fselect(A,Thunk):
+input A type [GxB_FC64_t]
+cannot be typecast to operator input of type [double]]
+
+line 3332: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 3333: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3334: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Result of computation of type [GxB_FC64_t]
+cannot be typecast to final output of type [double]]
+
+line 3335: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Result of computation of type [double]
+cannot be typecast to final output of type [GxB_FC64_t]]
+
+line 3348: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Dimensions not compatible:
+output is 3-by-4
+input is 3-by-2]
+line 3364: info 4
+line 3365: info 4
+line 3366: info 4
+line 3368: info 4
+line 3369: info 4
+line 3370: info 4
+line 3372: info 4
+line 3373: info 4
+line 3374: info 4
+line 3376: info 4
+line 3377: info 4
+line 3378: info 4
+line 3380: info 4
+line 3381: info 4
+line 3382: info 4
+line 3384: info 4
+line 3385: info 4
+line 3386: info 4
+line 3388: info 4
+line 3389: info 4
+line 3390: info 4
+line 3392: info 4
+line 3393: info 4
+line 3394: info 4
+line 3396: info 4
+line 3397: info 4
+line 3398: info 4
+line 3400: info 4
+line 3401: info 4
+line 3402: info 4
+line 3404: info 4
+line 3405: info 4
+line 3406: info 4
+line 3408: info 4
+line 3409: info 4
+line 3410: info 4
+line 3414: info 4
+line 3415: info 4
+line 3416: info 4
+line 3418: info 4
+line 3419: info 4
+line 3420: info 4
+line 3422: info 4
+line 3423: info 4
+line 3424: info 4
+line 3426: info 4
+line 3427: info 4
+line 3428: info 4
+line 3430: info 4
+line 3431: info 4
+line 3432: info 4
+line 3434: info 4
+line 3435: info 4
+line 3436: info 4
+line 3438: info 4
+line 3439: info 4
+line 3440: info 4
+line 3442: info 4
+line 3443: info 4
+line 3444: info 4
+line 3446: info 4
+line 3447: info 4
+line 3448: info 4
+line 3450: info 4
+line 3451: info 4
+line 3452: info 4
+line 3454: info 4
+line 3455: info 4
+line 3456: info 4
+line 3458: info 4
+line 3459: info 4
+line 3460: info 4
+line 3471: info 2
+line 3472: info 2
+line 3473: info 2
+line 3475: info 2
+line 3476: info 2
+line 3477: info 2
+line 3479: info 2
+line 3480: info 2
+line 3481: info 2
+line 3483: info 2
+line 3484: info 2
+line 3485: info 2
+line 3487: info 2
+line 3488: info 2
+line 3489: info 2
+line 3491: info 2
+line 3492: info 2
+line 3493: info 2
+line 3495: info 2
+line 3496: info 2
+line 3497: info 2
+line 3499: info 2
+line 3500: info 2
+line 3501: info 2
+line 3503: info 2
+line 3504: info 2
+line 3505: info 2
+line 3507: info 2
+line 3508: info 2
+line 3509: info 2
+line 3511: info 2
+line 3512: info 2
+line 3513: info 2
+line 3515: info 2
+line 3516: info 2
+line 3517: info 2
+line 3521: info 2
+line 3522: info 2
+line 3523: info 2
+line 3525: info 2
+line 3526: info 2
+line 3527: info 2
+line 3529: info 2
+line 3530: info 2
+line 3531: info 2
+line 3533: info 2
+line 3534: info 2
+line 3535: info 2
+line 3537: info 2
+line 3538: info 2
+line 3539: info 2
+line 3541: info 2
+line 3542: info 2
+line 3543: info 2
+line 3545: info 2
+line 3546: info 2
+line 3547: info 2
+line 3549: info 2
+line 3550: info 2
+line 3551: info 2
+line 3553: info 2
+line 3554: info 2
+line 3555: info 2
+line 3557: info 2
+line 3558: info 2
+line 3559: info 2
+line 3561: info 2
+line 3562: info 2
+line 3563: info 2
+line 3565: info 2
+line 3566: info 2
+line 3567: info 2
+line 3586: info 7
+line 3587: info 7
+line 3588: info 7
+line 3589: info 7
+line 3590: info 7
+
+line 3603: info 4, error logger:
+[]
+
+line 3604: info 4, error logger:
+[]
+
+line 3605: info 4, error logger:
+[]
+
+line 3607: info 4, error logger:
+[]
+
+line 3608: info 4, error logger:
+[]
+
+line 3609: info 4, error logger:
+[]
+
+line 3619: info 2, error logger:
+[]
+
+line 3620: info 2, error logger:
+[]
+
+line 3621: info 2, error logger:
+[]
+
+line 3622: info 2, error logger:
+[]
+
+line 3623: info 2, error logger:
+[]
+
+line 3624: info 2, error logger:
+[]
+
+line 3626: info 2, error logger:
+[]
+
+line 3627: info 2, error logger:
+[]
+
+line 3628: info 2, error logger:
+[]
+
+line 3629: info 2, error logger:
+[]
+
+line 3630: info 2, error logger:
+[]
+
+line 3631: info 2, error logger:
+[]
+
+line 3642: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 3643: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)
+Result of computation of type [double]
+cannot be typecast to final output of type [GxB_FC64_t]]
+
+line 3644: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3645: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)
+Incompatible type for reduction monoid z=plus(x,y):
+input matrix A of type [GxB_FC64_t]
+cannot be typecast to reduction monoid of type [double]]
+
+line 3647: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_reduce_Monoid (w, M, accum, monoid, A, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 3648: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_reduce_Monoid (w, M, accum, monoid, A, desc)
+Result of computation of type [double]
+cannot be typecast to final output of type [GxB_FC64_t]]
+
+line 3649: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_reduce_Monoid (w, M, accum, monoid, A, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3650: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_reduce_Monoid (w, M, accum, monoid, A, desc)
+Incompatible type for reduction monoid z=plus(x,y):
+input matrix A of type [GxB_FC64_t]
+cannot be typecast to reduction monoid of type [double]]
+
+line 3653: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)
+Invalid binary operator: z=eq(x,y) has no equivalent monoid
+]
+
+line 3657: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)
+w=reduce(A'):  length of w is 5;
+it must match the number of columns of A, which is 4.]
+
+line 3658: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)
+w=reduce(A):  length of w is 5;
+it must match the number of rows of A, which is 3.]
+
+line 3660: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_reduce_Monoid (w, M, accum, monoid, A, desc)
+w=reduce(A'):  length of w is 5;
+it must match the number of columns of A, which is 4.]
+
+line 3661: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_Matrix_reduce_Monoid (w, M, accum, monoid, A, desc)
+w=reduce(A):  length of w is 5;
+it must match the number of rows of A, which is 3.]
+line 3670: info 4
+
+line 3671: info 4, error logger:
+[]
+
+line 3675: info 2, error logger:
+[]
+
+line 3676: info 2, error logger:
+[]
+
+line 3677: info 2, error logger:
+[]
+
+line 3678: info 2, error logger:
+[]
+
+line 3679: info 2, error logger:
+[]
+
+line 3684: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_transpose (C, M, accum, A, desc)
+M of type [GxB_FC64_t] cannot be typecast to boolean]
+
+line 3685: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_transpose (C, M, accum, A, desc)
+Result of computation of type [GxB_FC64_t]
+cannot be typecast to final output of type [double]]
+
+line 3686: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_transpose (C, M, accum, A, desc)
+Result of computation of type [GxB_FC64_t]
+cannot be typecast to final output of type [double]]
+
+line 3687: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_transpose (C, M, accum, A, desc)
+Result of computation of type [double]
+cannot be typecast to final output of type [GxB_FC64_t]]
+
+line 3688: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_transpose (C, M, accum, A, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3689: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_transpose (C, M, accum, A, desc)
+Incompatible type for z=complex_plus(x,y):
+first input of type [double]
+cannot be typecast to x input of type [GxB_FC64_t]]
+
+line 3690: info 7, error logger:
+[GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GrB_transpose (C, M, accum, A, desc)
+Incompatible type for z=complex_plus(x,y):
+second input of type [double]
+cannot be typecast to y input of type [GxB_FC64_t]]
+
+line 3694: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_transpose (C, M, accum, A, desc)
+Dimensions not compatible:
+output is 3-by-4
+input is 4-by-3 (transposed)]
+
+line 3695: info 8, error logger:
+[GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GrB_transpose (C, M, accum, A, desc)
+Dimensions not compatible:
+output is 3-by-2
+input is 3-by-4]
+line 3711: info 4
+line 3712: info 4
+line 3718: info 2
+line 3734: info 2
+line 3745: info 2
+line 3751: info 3
+line 3755: info 3
+line 3789: info 2
+line 3795: info 3
+line 3799: info 3
+line 3803: info 3
+line 3807: info 3
+line 3835: info 2
+line 3841: info 3
+line 3845: info 3
+line 3849: info 3
+line 3853: info 3
+line 3857: info 3
+line 3886: info 2
+line 3892: info 3
+line 3896: info 3
+line 3900: info 3
+line 3928: info 2
+line 3934: info 3
+line 3938: info 3
+line 3967: info 2
+line 3973: info 3
+line 3977: info 3
+line 3981: info 3
+line 4007: info 2
+line 4013: info 3
+line 4053: info 3
+line 4061: info 2
+line 4069: info 3
+line 4074: info 3
+line 4107: info 2
+line 4114: info 3
+line 4118: info 3
+line 4122: info 3
+line 4127: info 3
+line 4183: info 3
+line 4189: info 3
+line 4194: info 3
+line 4199: info 3
+line 4204: info 3
+line 4209: info 3
+line 4214: info 3
+line 4219: info 3
+line 4236: info 3
+line 4243: info 3
+line 4253: info 3
+line 4268: info 3
+line 4269: info 3
+line 4277: info 3
+line 4378: info 12
+line 4380: info 3
+
+line 4446: info 4, error logger:
+[]
+line 4449: info 4
+line 4452: info 4
+line 4457: info 4
+line 4461: info 4
+line 4466: info 4
+line 4467: info 4
+line 4470: info 5
+line 4472: info 5
+
+line 4476: info 5, error logger:
+[]
+line 4480: info 5
+line 4483: info 5
+
+line 4485: info 5, error logger:
+[]
+
+line 4489: info 5, error logger:
+[]
+line 4505: info 3
+line 4511: info 3
+line 4519: info 3
+line 4541: info 3
+line 4542: info 3
+line 4543: info 3
+line 4598: info 2
+line 4599: info 2
+line 4600: info 2
+line 4601: info 2
+line 4602: info 2
+line 4603: info 2
+line 4604: info 2
+line 4605: info 2
+line 4607: info 2
+line 4609: info 2
+line 4610: info 2
+line 4611: info 2
+line 4612: info 2
+line 4613: info 2
+line 4614: info 2
+line 4615: info 2
+line 4616: info 2
+line 4618: info 2
+line 4661: info 3
+line 4670: info 5
+line 5175: info 4
+line 5178: info 4
+line 5181: info 4
+line 5184: info 4
+line 5187: info 4
+line 5190: info 4
+line 5193: info 4
+line 5196: info 4
+line 5199: info 4
+line 5202: info 4
+line 5206: info 4
+line 5209: info 4
+line 5212: info 4
+line 5215: info 4
+line 5218: info 4
+line 5221: info 4
+line 5224: info 4
+line 5227: info 4
+line 5230: info 4
+line 5233: info 4
+line 5239: info 4
+line 5243: info 4
+line 5247: info 4
+line 5251: info 4
+line 5255: info 4
+line 5259: info 4
+line 5263: info 4
+line 5267: info 4
+line 5271: info 4
+line 5275: info 4
+line 5279: info 4
+line 5283: info 4
+line 5287: info 4
+line 5295: info 4
+line 5299: info 4
+line 5303: info 4
+line 5307: info 4
+line 5311: info 4
+line 5315: info 4
+line 5319: info 4
+line 5323: info 4
+line 5327: info 4
+line 5331: info 4
+line 5335: info 4
+line 5339: info 4
+line 5343: info 4
+line 5354: info 4
+line 5357: info 4
+line 5360: info 4
+line 5363: info 4
+line 5366: info 4
+line 5371: info 5
+line 5374: info 5
+line 5377: info 5
+line 5393: info 4
+line 5396: info 4
+line 5399: info 4
+line 5402: info 4
+line 5407: info 5
+line 5410: info 5
+line 5413: info 5
+line 5431: info 4
+line 5435: info 4
+line 5439: info 4
+line 5443: info 4
+line 5447: info 4
+line 5451: info 4
+line 5458: info 5
+line 5462: info 5
+line 5466: info 5
+line 5486: info 4
+line 5490: info 4
+line 5494: info 4
+line 5498: info 4
+line 5502: info 4
+line 5506: info 4
+line 5512: info 5
+line 5516: info 5
+line 5520: info 5
+line 5549: info 4
+line 5550: info 4
+line 5551: info 4
+line 5552: info 4
+line 5553: info 4
+line 5554: info 4
+line 5555: info 4
+line 5556: info 4
+line 5563: info 4
+line 5564: info 4
+line 5565: info 4
+line 5566: info 4
+line 5569: info 5
+line 5570: info 5
+
+All error-handling tests passed (all errors above were expected)

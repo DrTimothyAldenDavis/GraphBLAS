@@ -82,6 +82,7 @@ GrB_Info GB_AemultB
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int emult_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,

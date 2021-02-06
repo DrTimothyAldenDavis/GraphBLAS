@@ -66,6 +66,8 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
     const int C_sparsity,
+    // from GB_emult_sparsity:
+    const int emult_method,
     // original input:
     const GrB_Matrix M,             // optional mask, may be NULL
     const bool Mask_struct,         // if true, use the only structure of M
@@ -192,7 +194,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
         #define GB_BINOP_WORKER(mult,xname)                                 \
         {                                                                   \
-            info = GB_AemultB(mult,xname) (C, C_sparsity,                   \
+            info = GB_AemultB(mult,xname) (C, C_sparsity, emult_method,     \
                 M, Mask_struct, Mask_comp,                                  \
                 A, B, C_to_M, C_to_A, C_to_B,                               \
                 TaskList, C_ntasks, C_nthreads, Context) ;                  \

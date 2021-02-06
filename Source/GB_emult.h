@@ -12,6 +12,22 @@
 #include "GB.h"
 #include "GB_bitmap_assign_methods.h"
 
+#define GB_EMULT_METHOD_99 99       /* punt */
+
+#define GB_EMULT_METHOD_ADD 0       /* use GB_add instead of emult */
+
+#define GB_EMULT_METHOD_01A 1       /* use GB_emult_01 (A,B) */
+#define GB_EMULT_METHOD_01B (-1)    /* use GB_emult_01 (B,A, flipxy true) */
+
+#define GB_EMULT_METHOD_18  18      /* use bitmap method 18 */
+#define GB_EMULT_METHOD_19  19      /* use bitmap method 19 */
+#define GB_EMULT_METHOD_20  20      /* use bitmap method 20 */
+
+#define GB_EMULT_METHOD_100  100
+
+#define GB_EMULT_METHOD_101A 101    /* use GB_emult_101 (M,A,B) */
+#define GB_EMULT_METHOD_101B (-101) /* use GB_emult_101 (M,B,A, flipxy true) */
+
 GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
@@ -85,6 +101,8 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
     const int C_sparsity,
+    // from GB_emult_sparsity:
+    const int emult_method,
     // original input:
     const GrB_Matrix M,             // optional mask, may be NULL
     const bool Mask_struct,         // if true, use the only structure of M
@@ -98,11 +116,7 @@ int GB_emult_sparsity       // return the sparsity structure for C
 (
     // output:
     bool *apply_mask,       // if true then mask will be applied by GB_emult
-    bool *use_add_instead,  // if true then use GB_add instead of GB_emult
-    bool *C_is_jumbled,     // if true then C is computed as jumbled
-    bool *M_must_be_unjumbled,  // if true then M must be unjumbled first
-    bool *A_must_be_unjumbled,  // if true then A must be unjumbled first
-    bool *B_must_be_unjumbled,  // if true then B must be unjumbled first
+    int *emult_method,      // method to use (0: add, 1: GB_emult_01, etc)
     // input:
     const GrB_Matrix M,     // optional mask for C, unused if NULL
     const bool Mask_comp,   // if true, use !M

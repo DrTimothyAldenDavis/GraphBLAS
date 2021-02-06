@@ -22,7 +22,7 @@
     // accum operator.
     int64_t cnvals = 0 ;
 
-    if (M == NULL)
+    if (emult_method == GB_EMULT_METHOD_18)     // (M == NULL)
     {
 
         //----------------------------------------------------------------------
@@ -32,9 +32,9 @@
         //      ------------------------------------------
         //      C       =           A       .*      B
         //      ------------------------------------------
-        //      bitmap  .           bitmap          bitmap
-        //      bitmap  .           bitmap          full  
-        //      bitmap  .           full            bitmap
+        //      bitmap  .           bitmap          bitmap  (method: 18)
+        //      bitmap  .           bitmap          full    (method: 18)
+        //      bitmap  .           full            bitmap  (method: 18)
 
         //----------------------------------------------------------------------
         // Method18: C bitmap, A and B are bitmap or full
@@ -63,7 +63,7 @@
         }
 
     }
-    else if (M_is_sparse_or_hyper)
+    else if (emult_method == GB_EMULT_METHOD_19) // (M_is_sparse_or_hyper)
     { 
 
         //----------------------------------------------------------------------
@@ -73,9 +73,9 @@
         //      ------------------------------------------
         //      C       <!M>=       A       .*      B
         //      ------------------------------------------
-        //      bitmap  sparse      bitmap          bitmap
-        //      bitmap  sparse      bitmap          full  
-        //      bitmap  sparse      full            bitmap
+        //      bitmap  sparse      bitmap          bitmap  (method: 19)
+        //      bitmap  sparse      bitmap          full    (method: 19)
+        //      bitmap  sparse      full            bitmap  (method: 19)
 
         // M is sparse and complemented.  If M is sparse and not
         // complemented, then C is constructed as sparse, not bitmap.
@@ -134,7 +134,7 @@
         }
 
     }
-    else
+    else // if (emult_method == GB_EMULT_METHOD_20)
     {
 
         //----------------------------------------------------------------------
@@ -144,30 +144,30 @@
         //      ------------------------------------------
         //      C      <M> =        A       .*      B
         //      ------------------------------------------
-        //      bitmap  bitmap      bitmap          bitmap
-        //      bitmap  bitmap      bitmap          full  
-        //      bitmap  bitmap      full            bitmap
+        //      bitmap  bitmap      bitmap          bitmap  (method: 20)
+        //      bitmap  bitmap      bitmap          full    (method: 20)
+        //      bitmap  bitmap      full            bitmap  (method: 20)
 
         //      ------------------------------------------
         //      C      <M> =        A       .*      B
         //      ------------------------------------------
-        //      bitmap  full        bitmap          bitmap
-        //      bitmap  full        bitmap          full  
-        //      bitmap  full        full            bitmap
+        //      bitmap  full        bitmap          bitmap  (method: 20)
+        //      bitmap  full        bitmap          full    (method: 20)
+        //      bitmap  full        full            bitmap  (method: 20)
 
         //      ------------------------------------------
         //      C      <!M> =       A       .*      B
         //      ------------------------------------------
-        //      bitmap  bitmap      bitmap          bitmap
-        //      bitmap  bitmap      bitmap          full  
-        //      bitmap  bitmap      full            bitmap
+        //      bitmap  bitmap      bitmap          bitmap  (method: 20)
+        //      bitmap  bitmap      bitmap          full    (method: 20)
+        //      bitmap  bitmap      full            bitmap  (method: 20)
 
         //      ------------------------------------------
         //      C      <!M> =       A       .*      B
         //      ------------------------------------------
-        //      bitmap  full        bitmap          bitmap
-        //      bitmap  full        bitmap          full  
-        //      bitmap  full        full            bitmap
+        //      bitmap  full        bitmap          bitmap  (method: 20)
+        //      bitmap  full        bitmap          full    (method: 20)
+        //      bitmap  full        full            bitmap  (method: 20)
 
         ASSERT (M_is_bitmap || M_is_full) ;
 

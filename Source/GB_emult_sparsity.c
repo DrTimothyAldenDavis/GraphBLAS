@@ -27,11 +27,7 @@ int GB_emult_sparsity       // return the sparsity structure for C
 (
     // output:
     bool *apply_mask,       // if true then mask will be applied by GB_emult
-    bool *use_add_instead,  // if true then use GB_add instead of GB_emult
-    bool *C_is_jumbled,     // if true then C is computed as jumbled
-    bool *M_must_be_unjumbled,  // if true then M must be unjumbled first
-    bool *A_must_be_unjumbled,  // if true then A must be unjumbled first
-    bool *B_must_be_unjumbled,  // if true then B must be unjumbled first
+    int *emult_method,      // method to use (0: add, 1: GB_emult_01, etc)
     // input:
     const GrB_Matrix M,     // optional mask for C, unused if NULL
     const bool Mask_comp,   // if true, use !M
@@ -46,36 +42,18 @@ int GB_emult_sparsity       // return the sparsity structure for C
 
     // Unless deciding otherwise, use the mask if it appears
     (*apply_mask) = (M != NULL) ;
-
     int C_sparsity ;
-    (*C_is_jumbled) = false ;
-    (*M_must_be_unjumbled) = GB_JUMBLED (M) ;
-    (*A_must_be_unjumbled) = GB_JUMBLED (A) ;
-    (*B_must_be_unjumbled) = GB_JUMBLED (B) ;
 
     // In the table below, sparse/hypersparse are listed as "sparse".  If C is
-    // listed as sparse: it is hypersparse if M is hypersparse (and not
-    // complemented), or if both A and B are hypersparse, and sparse otherwise.
-    // This is determined by GB_emult_phase0.
+    // listed as sparse, it will become sparse or hypersparse, depending on the
+    // method.
 
     bool M_is_sparse_or_hyper = GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M) ;
     bool A_is_sparse_or_hyper = GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A) ;
     bool B_is_sparse_or_hyper = GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B) ;
 
-    bool A_is_bitmap_or_full = !A_is_sparse_or_hyper ;
-    bool B_is_bitmap_or_full = !B_is_sparse_or_hyper ;
-
     bool A_is_full = GB_as_if_full (A) ;
     bool B_is_full = GB_as_if_full (B) ;
-
-    bool M_is_jumbled = GB_JUMBLED (M) ;
-    bool A_is_jumbled = GB_JUMBLED (A) ;
-    bool B_is_jumbled = GB_JUMBLED (B) ;
-
-    // Methods labeled as "use GB_add" give the same results with GB_add and
-    // GB_emult, when A and B are both full.  For those cases, GB_ewise
-    // calls GB_add instead of an emult method.
-    (*use_add_instead) = A_is_full && B_is_full ;
 
     if (M == NULL)
     {
@@ -83,50 +61,45 @@ int GB_emult_sparsity       // return the sparsity structure for C
         //      ------------------------------------------
         //      C       =           A       .*      B
         //      ------------------------------------------
-        //      sparse  .           sparse          sparse
-        //      sparse  .           sparse          bitmap  (method 01)
-        //      sparse  .           sparse          full    (method 01)
-        //      sparse  .           bitmap          sparse  (method 01)
-        //      bitmap  .           bitmap          bitmap
-        //      bitmap  .           bitmap          full  
-        //      sparse  .           full            sparse  (method 01)
-        //      bitmap  .           full            bitmap
-        //      full    .           full            full    (use GB_add)
+        //      sparse  .           sparse          sparse  (method: 99)
+        //      sparse  .           sparse          bitmap  (method: 01a)
+        //      sparse  .           sparse          full    (method: 01a)
+        //      sparse  .           bitmap          sparse  (method: 01b)
+        //      bitmap  .           bitmap          bitmap  (method: 18)
+        //      bitmap  .           bitmap          full    (method: 18)
+        //      sparse  .           full            sparse  (method: 01b)
+        //      bitmap  .           full            bitmap  (method: 18)
+        //      full    .           full            full    (method: GB_add)
 
-        if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
-        { 
-            // C=A.*B with A or B sparse/hyper, C sparse
+        if (A_is_sparse_or_hyper && B_is_sparse_or_hyper)
+        {
+            // C=A.*B with A and B both sparse/hyper, C sparse
             C_sparsity = GxB_SPARSE ;
-
-            // determine if A and B must be unjumbled
-            if (A_is_bitmap_or_full)
-            {
-                // B can be left jumbled; then C is jumbled on output
-                (*C_is_jumbled) = B_is_jumbled ;
-            }
-            else if (B_is_bitmap_or_full)
-            {
-                // A can be left jumbled; then C is jumbled on output
-                (*C_is_jumbled) = A_is_jumbled ;
-            }
-            else
-            {
-                // A and B must be unjumbled first
-                (*A_must_be_unjumbled) = A_is_jumbled ;
-                (*B_must_be_unjumbled) = B_is_jumbled ;
-            }
-
+            (*emult_method) = GB_EMULT_METHOD_99 ;
+        }
+        else if (A_is_sparse_or_hyper)
+        {
+            // C=A.*B with A sparse/hyper, B bitmap/full
+            C_sparsity = GxB_SPARSE ;
+            (*emult_method) = GB_EMULT_METHOD_01A ;
+        }
+        else if (B_is_sparse_or_hyper)
+        { 
+            // C=A.*B with B sparse/hyper, A bitmap/full
+            C_sparsity = GxB_SPARSE ;
+            (*emult_method) = GB_EMULT_METHOD_01B ;
         }
         else if (A_is_full && B_is_full)
         { 
-            // C=A.*B with A and B full, C full
+            // C=A.*B with A and B full, use GB_add
             C_sparsity = GxB_FULL ;
+            (*emult_method) = GB_EMULT_METHOD_ADD ;
         }
         else
         { 
             // C=A.*B, otherwise, C bitmap
-            // A and B can be left jumbled
             C_sparsity = GxB_BITMAP ;
+            (*emult_method) = GB_EMULT_METHOD_18 ;
         }
 
     }
@@ -139,26 +112,47 @@ int GB_emult_sparsity       // return the sparsity structure for C
             //      ------------------------------------------
             //      C       <M>=        A       .*      B
             //      ------------------------------------------
-            //      sparse  sparse      sparse          sparse
-            //      sparse  sparse      sparse          bitmap
-            //      sparse  sparse      sparse          full  
-            //      sparse  sparse      bitmap          sparse
-            //      sparse  sparse      bitmap          bitmap
-            //      sparse  sparse      bitmap          full  
-            //      sparse  sparse      full            sparse
-            //      sparse  sparse      full            bitmap
-            //      sparse  sparse      full            full    (use GB_add)
-
-            // TODO: check same condition as GB_add, for very sparse mask M.
+            //      sparse  sparse      sparse          sparse  (method: 99)
+            //      sparse  sparse      sparse          bitmap  (method: 101a)
+            //      sparse  sparse      sparse          full    (method: 101a)
+            //      sparse  sparse      bitmap          sparse  (method: 101b)
+            //      sparse  sparse      bitmap          bitmap  (method: 100)
+            //      sparse  sparse      bitmap          full    (method: 100)
+            //      sparse  sparse      full            sparse  (method: 101b)
+            //      sparse  sparse      full            bitmap  (method: 100)
+            //      sparse  sparse      full            full    (method: GB_add)
 
             // C<M>=A.*B with M sparse/hyper, C sparse
             C_sparsity = GxB_SPARSE ;
 
-            // no matrix can be jumbled
-            (*M_must_be_unjumbled) = M_is_jumbled ;
-            (*A_must_be_unjumbled) = A_is_jumbled ;
-            (*B_must_be_unjumbled) = B_is_jumbled ;
-            (*C_is_jumbled) = false ;
+            if (A_is_sparse_or_hyper && B_is_sparse_or_hyper)
+            {
+                // C=A.*B with A and B both sparse/hyper, C sparse
+                // TODO: check if M should be used now or later
+                (*emult_method) = GB_EMULT_METHOD_99 ;
+            }
+            else if (A_is_sparse_or_hyper)
+            {
+                // C=A.*B with A sparse/hyper, B bitmap/full
+                // TODO: check if M should be used now or later
+                (*emult_method) = GB_EMULT_METHOD_101A ;
+            }
+            else if (B_is_sparse_or_hyper)
+            { 
+                // C=A.*B with B sparse/hyper, A bitmap/full
+                // TODO: check if M should be used now or later
+                (*emult_method) = GB_EMULT_METHOD_101B ;
+            }
+            else if (A_is_full && B_is_full)
+            { 
+                // C=A.*B with A and B full, use GB_add
+                (*emult_method) = GB_EMULT_METHOD_ADD ;
+            }
+            else
+            { 
+                // C=A.*B, otherwise
+                (*emult_method) = GB_EMULT_METHOD_100 ;
+            }
 
         }
         else
@@ -167,59 +161,60 @@ int GB_emult_sparsity       // return the sparsity structure for C
             //      ------------------------------------------
             //      C      <M> =        A       .*      B
             //      ------------------------------------------
-            //      sparse  bitmap      sparse          sparse
-            //      sparse  bitmap      sparse          bitmap  (method 01)
-            //      sparse  bitmap      sparse          full    (method 01)
-            //      sparse  bitmap      bitmap          sparse  (method 01)
-            //      bitmap  bitmap      bitmap          bitmap
-            //      bitmap  bitmap      bitmap          full  
-            //      sparse  bitmap      full            sparse  (method 01)
-            //      bitmap  bitmap      full            bitmap
-            //      bitmap  bitmap      full            full    (use GB_add)
+            //      sparse  bitmap      sparse          sparse  (method: 99)
+            //      sparse  bitmap      sparse          bitmap  (method: 01a)
+            //      sparse  bitmap      sparse          full    (method: 01a)
+            //      sparse  bitmap      bitmap          sparse  (method: 01b)
+            //      bitmap  bitmap      bitmap          bitmap  (method: 20)
+            //      bitmap  bitmap      bitmap          full    (method: 20)
+            //      sparse  bitmap      full            sparse  (method: 01b)
+            //      bitmap  bitmap      full            bitmap  (method: 20)
+            //      bitmap  bitmap      full            full    (method: GB_add)
 
             //      ------------------------------------------
             //      C      <M> =        A       .*      B
             //      ------------------------------------------
-            //      sparse  full        sparse          sparse
-            //      sparse  full        sparse          bitmap  (method 01)
-            //      sparse  full        sparse          full    (method 01)
-            //      sparse  full        bitmap          sparse  (method 01)
-            //      bitmap  full        bitmap          bitmap
-            //      bitmap  full        bitmap          full  
-            //      sparse  full        full            sparse  (method 01)
-            //      bitmap  full        full            bitmap
-            //      bitmap  full        full            full    (use GB_add)
+            //      sparse  full        sparse          sparse  (method: 99)
+            //      sparse  full        sparse          bitmap  (method: 01a)
+            //      sparse  full        sparse          full    (method: 01a)
+            //      sparse  full        bitmap          sparse  (method: 01b)
+            //      bitmap  full        bitmap          bitmap  (method: 20)
+            //      bitmap  full        bitmap          full    (method: 20)
+            //      sparse  full        full            sparse  (method: 01b)
+            //      bitmap  full        full            bitmap  (method: 20)
+            //      bitmap  full        full            full    (method: GB_add)
 
-            // The mask is very efficient to use in the case, when C is sparse.
-
-            if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
-            { 
-                // C<M>=A.*B with A or B sparse/hyper, M bitmap/full, C sparse
+            if (A_is_sparse_or_hyper && B_is_sparse_or_hyper)
+            {
+                // C=A.*B with A and B both sparse/hyper, C sparse
                 C_sparsity = GxB_SPARSE ;
-
-                // determine if A and B must be unjumbled
-                if (A_is_bitmap_or_full)
-                {
-                    // B can be left jumbled; then C is jumbled on output
-                    (*C_is_jumbled) = B_is_jumbled ;
-                }
-                else if (B_is_bitmap_or_full)
-                {
-                    // A can be left jumbled; then C is jumbled on output
-                    (*C_is_jumbled) = A_is_jumbled ;
-                }
-                else
-                {
-                    // A and B must be unjumbled first
-                    (*A_must_be_unjumbled) = A_is_jumbled ;
-                    (*B_must_be_unjumbled) = B_is_jumbled ;
-                }
-
+                (*emult_method) = GB_EMULT_METHOD_99 ;
+            }
+            else if (A_is_sparse_or_hyper)
+            {
+                // C=A.*B with A sparse/hyper, B bitmap/full
+                C_sparsity = GxB_SPARSE ;
+                // (*emult_method) = GB_EMULT_METHOD_01A ;  TODO
+                (*emult_method) = GB_EMULT_METHOD_99 ;
+            }
+            else if (B_is_sparse_or_hyper)
+            { 
+                // C=A.*B with B sparse/hyper, A bitmap/full
+                C_sparsity = GxB_SPARSE ;
+                // (*emult_method) = GB_EMULT_METHOD_01B ; TODO
+                (*emult_method) = GB_EMULT_METHOD_99 ;
+            }
+            else if (A_is_full && B_is_full)
+            { 
+                // C=A.*B with A and B full, use GB_add
+                C_sparsity = GxB_BITMAP ;
+                (*emult_method) = GB_EMULT_METHOD_ADD ;
             }
             else
             { 
-                // C<M>=A.*B with A, B, and M bitmap/full, C bitmap
+                // C=A.*B, otherwise, C bitmap
                 C_sparsity = GxB_BITMAP ;
+                (*emult_method) = GB_EMULT_METHOD_20 ;
             }
         }
 
@@ -227,101 +222,124 @@ int GB_emult_sparsity       // return the sparsity structure for C
     else // Mask_comp
     {
 
-        //      ------------------------------------------
-        //      C       <!M>=       A       .*      B
-        //      ------------------------------------------
-        //      sparse  sparse      sparse          sparse  (mask later)
-        //      sparse  sparse      sparse          bitmap  (01: mask later)
-        //      sparse  sparse      sparse          full    (01: mask later)
-        //      sparse  sparse      bitmap          sparse  (01: mask later)
-        //      bitmap  sparse      bitmap          bitmap
-        //      bitmap  sparse      bitmap          full  
-        //      sparse  sparse      full            sparse  (01: mask later)
-        //      bitmap  sparse      full            bitmap
-        //      bitmap  sparse      full            full    (use GB_add)
+        if (M_is_sparse_or_hyper)
+        {
 
-        //      ------------------------------------------
-        //      C      <!M> =       A       .*      B
-        //      ------------------------------------------
-        //      sparse  bitmap      sparse          sparse
-        //      sparse  bitmap      sparse          bitmap  (method 01)
-        //      sparse  bitmap      sparse          full    (method 01)
-        //      sparse  bitmap      bitmap          sparse  (method 01)
-        //      bitmap  bitmap      bitmap          bitmap
-        //      bitmap  bitmap      bitmap          full  
-        //      sparse  bitmap      full            sparse  (method 01)
-        //      bitmap  bitmap      full            bitmap
-        //      bitmap  bitmap      full            full    (use GB_add)
+            //      ------------------------------------------
+            //      C       <!M>=       A       .*      B
+            //      ------------------------------------------
+            //      sparse  sparse      sparse          sparse  (99: M later)
+            //      sparse  sparse      sparse          bitmap  (01a: M later)
+            //      sparse  sparse      sparse          full    (01a: M later)
+            //      sparse  sparse      bitmap          sparse  (01b: M later)
+            //      bitmap  sparse      bitmap          bitmap  (method: 19)
+            //      bitmap  sparse      bitmap          full    (method: 19)
+            //      sparse  sparse      full            sparse  (01b: M later)
+            //      bitmap  sparse      full            bitmap  (method: 19)
+            //      bitmap  sparse      full            full    (method: GB_add)
 
-        //      ------------------------------------------
-        //      C      <!M> =       A       .*      B
-        //      ------------------------------------------
-        //      sparse  full        sparse          sparse
-        //      sparse  full        sparse          bitmap  (method 01)
-        //      sparse  full        sparse          full    (method 01)
-        //      sparse  full        bitmap          sparse  (method 01)
-        //      bitmap  full        bitmap          bitmap
-        //      bitmap  full        bitmap          full  
-        //      sparse  full        full            sparse  (method 01)
-        //      bitmap  full        full            bitmap
-        //      bitmap  full        full            full    (use GB_add)
-
-        // GB_emult where C is sparse/hypersparse and C<!M>=A.*B:
-        // Do not use a complemented mask in this case.  Do it later.
-
-        if (A_is_sparse_or_hyper || B_is_sparse_or_hyper)
-        { 
-            // C<!M>=A.*B with A or B sparse/hyper, C sparse
-            C_sparsity = GxB_SPARSE ;
-
-            // the mask is only applied in GB_emult if it is sparse or hyper,
-            // so it does not (yet) have to be unjumbled.
-            (*apply_mask) = !M_is_sparse_or_hyper ;
-
-            // determine if A and B must be unjumbled
-            if (A_is_bitmap_or_full)
+            if (A_is_sparse_or_hyper && B_is_sparse_or_hyper)
             {
-                // B can be left jumbled; then C is jumbled on output
-                (*C_is_jumbled) = B_is_jumbled ;
+                // C=A.*B with A and B both sparse/hyper, C sparse
+                (*apply_mask) = false ;
+                C_sparsity = GxB_SPARSE ;
+                (*emult_method) = GB_EMULT_METHOD_99 ;
             }
-            else if (B_is_bitmap_or_full)
+            else if (A_is_sparse_or_hyper)
             {
-                // A can be left jumbled; then C is jumbled on output
-                (*C_is_jumbled) = A_is_jumbled ;
+                // C=A.*B with A sparse/hyper, B bitmap/full
+                (*apply_mask) = false ;
+                C_sparsity = GxB_SPARSE ;
+                (*emult_method) = GB_EMULT_METHOD_01A ;
+            }
+            else if (B_is_sparse_or_hyper)
+            { 
+                // C=A.*B with B sparse/hyper, A bitmap/full
+                (*apply_mask) = false ;
+                C_sparsity = GxB_SPARSE ;
+                (*emult_method) = GB_EMULT_METHOD_01B ;
+            }
+            else if (A_is_full && B_is_full)
+            { 
+                // C=A.*B with A and B full, use GB_add
+                C_sparsity = GxB_FULL ;
+                (*emult_method) = GB_EMULT_METHOD_ADD ;
             }
             else
-            {
-                // A and B must be unjumbled first
-                (*A_must_be_unjumbled) = A_is_jumbled ;
-                (*B_must_be_unjumbled) = B_is_jumbled ;
+            { 
+                // C=A.*B, otherwise, C bitmap
+                C_sparsity = GxB_BITMAP ;
+                (*emult_method) = GB_EMULT_METHOD_19 ;
             }
 
         }
         else
-        { 
-            // C<!M>=A.*B with A and B bitmap/full, C bitmap
-            C_sparsity = GxB_BITMAP ;
+        {
+
+            //      ------------------------------------------
+            //      C      <!M> =       A       .*      B
+            //      ------------------------------------------
+            //      sparse  bitmap      sparse          sparse  (method: 99)
+            //      sparse  bitmap      sparse          bitmap  (method: 01a)
+            //      sparse  bitmap      sparse          full    (method: 01a)
+            //      sparse  bitmap      bitmap          sparse  (method: 01b)
+            //      bitmap  bitmap      bitmap          bitmap  (method: 20)
+            //      bitmap  bitmap      bitmap          full    (method: 20)
+            //      sparse  bitmap      full            sparse  (method: 01b)
+            //      bitmap  bitmap      full            bitmap  (method: 20)
+            //      bitmap  bitmap      full            full    (method: GB_add)
+
+            //      ------------------------------------------
+            //      C      <!M> =       A       .*      B
+            //      ------------------------------------------
+            //      sparse  full        sparse          sparse  (method: 99)
+            //      sparse  full        sparse          bitmap  (method: 01a)
+            //      sparse  full        sparse          full    (method: 01a)
+            //      sparse  full        bitmap          sparse  (method: 01b)
+            //      bitmap  full        bitmap          bitmap  (method: 20)
+            //      bitmap  full        bitmap          full    (method: 20)
+            //      sparse  full        full            sparse  (method: 01b)
+            //      bitmap  full        full            bitmap  (method: 20)
+            //      bitmap  full        full            full    (method: GB_add)
+
+            if (A_is_sparse_or_hyper && B_is_sparse_or_hyper)
+            {
+                // C=A.*B with A and B both sparse/hyper, C sparse
+                C_sparsity = GxB_SPARSE ;
+                (*emult_method) = GB_EMULT_METHOD_99 ;
+            }
+            else if (A_is_sparse_or_hyper)
+            {
+                // C=A.*B with A sparse/hyper, B bitmap/full
+                C_sparsity = GxB_SPARSE ;
+                (*apply_mask) = false ;     // TODO
+                (*emult_method) = GB_EMULT_METHOD_01A ;
+            }
+            else if (B_is_sparse_or_hyper)
+            { 
+                // C=A.*B with B sparse/hyper, A bitmap/full
+                C_sparsity = GxB_SPARSE ;
+                (*apply_mask) = false ;     // TODO
+                (*emult_method) = GB_EMULT_METHOD_01B ;
+            }
+            else if (A_is_full && B_is_full)
+            { 
+                // C=A.*B with A and B full, use GB_add
+                C_sparsity = GxB_FULL ;
+                (*emult_method) = GB_EMULT_METHOD_ADD ;
+            }
+            else
+            { 
+                // C=A.*B, otherwise, C bitmap
+                C_sparsity = GxB_BITMAP ;
+                (*emult_method) = GB_EMULT_METHOD_20 ;
+            }
         }
     }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
-
-    if ((C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) &&
-        (M == NULL || !(*apply_mask)) &&
-        (A_is_bitmap_or_full || B_is_bitmap_or_full))
-    {
-        (*M_must_be_unjumbled) = false ;
-        (*A_must_be_unjumbled) = false ;
-        (*B_must_be_unjumbled) = false ;
-    }
-    else
-    {
-        (*M_must_be_unjumbled) = GB_JUMBLED (M) ;
-        (*A_must_be_unjumbled) = GB_JUMBLED (A) ;
-        (*B_must_be_unjumbled) = GB_JUMBLED (B) ;
-    }
 
     return (C_sparsity) ;
 }

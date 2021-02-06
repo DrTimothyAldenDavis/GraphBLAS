@@ -11,6 +11,7 @@
 
 #include "GB.h"
 #ifndef GBCOMPACT
+#include "GB_emult.h"
 #include "GB_control.h"
 #include "GB_ek_slice.h"
 #include "GB_dense.h"
@@ -315,6 +316,7 @@ GrB_Info GB_AemultB__land_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int emult_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,

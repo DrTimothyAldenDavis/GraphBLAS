@@ -234,6 +234,9 @@
             if (M == NULL)
             {
 
+                ASSERT (A_is_sparse || A_is_hyper) ;
+                ASSERT (B_is_sparse || B_is_hyper) ;
+
                 if (ajnz > 32 * bjnz)
                 {
 
