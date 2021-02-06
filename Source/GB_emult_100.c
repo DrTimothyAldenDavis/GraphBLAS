@@ -85,12 +85,6 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
         GB_sparsity_char_matrix (A),
         GB_sparsity_char_matrix (B)) ;
 
-//  printf ("emult_sbb:(%s<%s>=%s.*%s)\n",
-//      GB_sparsity_char (C_sparsity),
-//      GB_sparsity_char_matrix (M),
-//      GB_sparsity_char_matrix (A),
-//      GB_sparsity_char_matrix (B)) ;
-
     //--------------------------------------------------------------------------
     // declare workspace
     //--------------------------------------------------------------------------

@@ -127,11 +127,6 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
         GB_sparsity_char_matrix (A),
         GB_sparsity_char_matrix (B)) ;
 
-//  printf ("\nemult_sb:(%s=%s.*%s)\n",
-//      GB_sparsity_char (C_sparsity),
-//      GB_sparsity_char_matrix (A),
-//      GB_sparsity_char_matrix (B)) ;
-
     //--------------------------------------------------------------------------
     // declare workspace
     //--------------------------------------------------------------------------
@@ -315,14 +310,12 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     // handle flipxy
     //--------------------------------------------------------------------------
 
-//  printf ("flipxy: %d\n", flipxy) ;
     if (flipxy)
     {
         bool handled ;
         op = GB_flip_op (op, &handled) ;
         if (handled) flipxy = false ;
     }
-//  printf ("now flipxy: %d\n", flipxy) ;
     ASSERT_BINARYOP_OK (op, "final op for emult_01", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -353,11 +346,6 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     // A is passed as x, and B as y, in z = op(x,y)
     bool A_is_pattern = op_is_second || op_is_pair || op_is_positional ;
     bool B_is_pattern = op_is_first  || op_is_pair || op_is_positional ;
-//  printf ("op is positional: %d\n", op_is_positional) ;
-//  printf ("op is first:  %d\n", op_is_first) ;
-//  printf ("op is second: %d\n", op_is_second) ;
-//  printf ("A is pattern: %d\n", A_is_pattern) ;
-//  printf ("B is pattern: %d\n", B_is_pattern) ;
 
     //--------------------------------------------------------------------------
     // using a built-in binary operator (except for positional operators)
