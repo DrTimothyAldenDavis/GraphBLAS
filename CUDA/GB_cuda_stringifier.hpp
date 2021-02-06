@@ -8,14 +8,16 @@
 #pragma once
 #include <iostream>
 #include "GB.h"
+#include "GB_binop.h"
 #include "GB_stringify.h"
+#include <cstdint>
 
 // Define function pointer we will use later
 //std::istream* (*file_callback)(std::string, std::iostream&);
 
 // Define a factory class for building any buffer of text
 class GB_cuda_stringifier {
-  char callback_buffer[2048];
+  char callback_buffer[4096];
   char *callback_string;
   const char *include_filename;
 
@@ -32,6 +34,7 @@ class GB_cuda_stringifier {
 
 //------------------------------------------------------------------------------
 // callback: return string as if it was read from a file 
+// this is a pointed to by a global function pointer
 //------------------------------------------------------------------------------
 
     std::istream* callback( std::string filename, std::iostream& tmp_stream) 
@@ -47,7 +50,14 @@ class GB_cuda_stringifier {
         }
     }
 
-    void enumify_semiring {}
+//------------------------------------------------------------------------------
+// Enumify takes a set of inputs describing and operation (semiring, mask,
+// datatypes, sparsity formats) and produces a numerical unique value for those
+// This allows rapid lookups to see if we have handled this case before, 
+// and avoids the need to generate and manage strings at this stage.
+//------------------------------------------------------------------------------
+
+    void enumify_semiring 
     (
         // output:
         uint64_t *scode,        // unique encoding of the entire semiring
@@ -66,24 +76,41 @@ class GB_cuda_stringifier {
         int B_sparsity          // sparsity structure of B
     )
     {
-        C_sparsity = GB_sparsity (C) ;
-        ...
+       GB_enumify_semiring (
+	    // output:
+	    scode,        // unique encoding of the entire semiring
+	    // input:
+	    semiring,  // the semiring to enumify
+	    flipxy,            // multiplier is: mult(a,b) or mult(b,a)
+	    ctype,         // the type of C
+	    mtype,         // the type of M, or NULL if no mask
+	    atype,         // the type of A
+	    btype,         // the type of B
+	    Mask_struct,       // mask is structural
+	    Mask_comp,         // mask is complemented
+	    C_sparsity,         // sparsity structure of C
+	    M_sparsity,         // sparsity structure of M
+	    A_sparsity,         // sparsity structure of A
+	    B_sparsity          // sparsity structure of B
+       ) ;
+
     }
 
-    void macrofy_semiring {}
+    void macrofy_semiring 
     (
-        // output:
-        char *semiring_macros,  // List of types and macro defs
         // input:
         uint64_t scode          // unique encoding of the entire semiring
     )
     {
+       GB_macrofy_semiring (
+	    // output:
+	    callback_buffer,      // all macros that define the semiring
+	    // input:
+	    scode
+       ) ;
 
     }
 
-{
 
-
-
-};
+}; // GB_cuda_stringifier
 
