@@ -136,5 +136,18 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     GB_Context Context
 ) ;
 
+GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
+(
+    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    const GrB_Type ctype,   // type of output matrix C
+    const bool C_is_csc,    // format of output matrix C
+    const GrB_Matrix M,     // sparse/hyper, not NULL
+    const bool Mask_struct, // if true, use the only structure of M
+    const GrB_Matrix A,     // input A matrix (bitmap/full)
+    const GrB_Matrix B,     // input B matrix (bitmap/full)
+    const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    GB_Context Context
+) ;
+
 #endif
 

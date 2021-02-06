@@ -24,6 +24,7 @@
 // A+B function (eWiseAdd):         GB_AaddB__ge_fp64
 // A.*B function (eWiseMult):       GB_AemultB__ge_fp64
 // A.*B function (eWiseMult):       GB_AemultB_01__ge_fp64
+// A.*B function (eWiseMult):       GB_AemultB_100__ge_fp64
 // A*D function (colscale):         GB_AxD__ge_fp64
 // D*A function (rowscale):         GB_DxB__ge_fp64
 // C+=B function (dense accum):     GB_Cdense_accumB__ge_fp64
@@ -388,6 +389,33 @@ GrB_Info GB_AemultB_01__ge_fp64
         #define GB_FLIPPED 0
         #include "GB_emult_01_template.c"
     #endif
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
+//------------------------------------------------------------------------------
+
+GrB_Info GB_AemultB_100__ge_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT pstart_Mslice,
+    const int64_t *GB_RESTRICT kfirst_Mslice,
+    const int64_t *GB_RESTRICT klast_Mslice,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int M_ntasks,
+    const int M_nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_emult_100_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

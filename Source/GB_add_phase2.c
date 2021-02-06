@@ -227,6 +227,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             #include "GB_binop_factory.c"
         }
 
+        // TODO: M, A, and B can be sliced before calling the worker, then
+        // the worker can't run out of memory. Then pass in the ek_slice
+        // arrays to the worker.
         if (info == GrB_OUT_OF_MEMORY)
         { 
             // out of memory

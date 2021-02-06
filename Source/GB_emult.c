@@ -56,7 +56,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     ASSERT_MATRIX_OK (A, "A for emult phased", GB0) ;
     ASSERT_MATRIX_OK (B, "B for emult phased", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phased", GB0) ;
-    ASSERT_BINARYOP_OK_OR_NULL (op, "op for emult phased", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for emult phased", GB0) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim && A->vlen == M->vlen)) ;
 
@@ -259,7 +259,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // punt
             break ;
 
-        case GB_EMULT_METHOD_100 : break ; // punt
+        case GB_EMULT_METHOD_100 : 
 
             //      ------------------------------------------
             //      C       <M>=        A       .*      B
@@ -268,8 +268,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      sparse  sparse      bitmap          full    (method: 100)
             //      sparse  sparse      full            bitmap  (method: 100)
 
-            // TODO: this can be a 2-pass method.  just slice M and lookup
-            // A and B, and the pattern of C is a subset of M.
+            return (GB_emult_100 (Chandle, ctype, C_is_csc, M, Mask_struct,
+                A, B, op, Context)) ;
 
         case GB_EMULT_METHOD_101A : break ; // punt
 

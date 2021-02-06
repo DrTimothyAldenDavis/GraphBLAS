@@ -111,6 +111,21 @@ GrB_Info GB_AemultB_01
     const int A_nthreads
 ) ;
 
+GrB_Info GB_AemultB_100
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT pstart_Mslice,
+    const int64_t *GB_RESTRICT kfirst_Mslice,
+    const int64_t *GB_RESTRICT klast_Mslice,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int M_ntasks,
+    const int M_nthreads
+) ;
+
 if_binop_bind1st_is_enabled
 GrB_Info GB_bind1st
 (
