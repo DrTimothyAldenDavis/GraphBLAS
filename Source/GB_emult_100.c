@@ -19,6 +19,7 @@
 
 // TODO: this function can also do eWiseAdd, just as easily.
 // Just change the "&&" to "||" in the GB_emult_100_template. 
+// It can also handle the case when both A and B are full.
 
 #include "GB_emult.h"
 #include "GB_binop.h"
@@ -73,22 +74,22 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     ASSERT (!GB_PENDING (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
-    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A) || GB_as_if_full (A)) ;
+    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B) || GB_as_if_full (B)) ;
 
     int C_sparsity = GB_sparsity (M) ;
 
-    GBURBLE ("emult_sbb:(%s<%s>=%s.*%s) ",
+    GBURBLE ("emult_100:(%s<%s>=%s.*%s) ",
         GB_sparsity_char (C_sparsity),
         GB_sparsity_char_matrix (M),
         GB_sparsity_char_matrix (A),
         GB_sparsity_char_matrix (B)) ;
 
-    printf ("emult_sbb:(%s<%s>=%s.*%s)\n",
-        GB_sparsity_char (C_sparsity),
-        GB_sparsity_char_matrix (M),
-        GB_sparsity_char_matrix (A),
-        GB_sparsity_char_matrix (B)) ;
+//  printf ("emult_sbb:(%s<%s>=%s.*%s)\n",
+//      GB_sparsity_char (C_sparsity),
+//      GB_sparsity_char_matrix (M),
+//      GB_sparsity_char_matrix (A),
+//      GB_sparsity_char_matrix (B)) ;
 
     //--------------------------------------------------------------------------
     // declare workspace
@@ -113,6 +114,7 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     const int64_t vdim = M->vdim ;
     const int64_t nvec = M->nvec ;
     const int64_t mnz = GB_NNZ (M) ;
+    const size_t  msize = M->type->size ;
 
     const int8_t *GB_RESTRICT Ab = A->b ;
     const int8_t *GB_RESTRICT Bb = B->b ;
@@ -174,7 +176,7 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
             int64_t cjnz = 0 ;
             for ( ; pM < pM_end ; pM++)
             { 
-                bool mij = GB_mcast (Mx, pM, vlen) ;
+                bool mij = GB_mcast (Mx, pM, msize) ;
                 if (mij)
                 {
                     int64_t i = Mi [pM] ;
@@ -299,7 +301,7 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     if (!done)
     { 
-        // TODO: make this a template
+        // TODO: make this a function
         // see GB_emult_01, GB_emult_phase2, and even GB_add_phase2
 
         GB_BURBLE_MATRIX (C, "(generic emult_100: %s) ", op->name) ;
@@ -308,7 +310,6 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
         size_t csize, asize, bsize, xsize, ysize, zsize ;
         GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;
 
-        // C = A .* B with optional typecasting
         fmult = op->function ;      // NULL if op is positional
         csize = ctype->size ;
         asize = B->type->size ;

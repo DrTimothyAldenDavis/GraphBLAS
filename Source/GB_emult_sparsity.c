@@ -146,7 +146,8 @@ int GB_emult_sparsity       // return the sparsity structure for C
             else if (A_is_full && B_is_full)
             { 
                 // C=A.*B with A and B full, use GB_add
-                (*emult_method) = GB_EMULT_METHOD_ADD ;
+                // (*emult_method) = GB_EMULT_METHOD_ADD ;  TODO
+                (*emult_method) = GB_EMULT_METHOD_100 ;
             }
             else
             { 
@@ -208,7 +209,8 @@ int GB_emult_sparsity       // return the sparsity structure for C
             { 
                 // C=A.*B with A and B full, use GB_add
                 C_sparsity = GxB_BITMAP ;
-                (*emult_method) = GB_EMULT_METHOD_ADD ;
+                // (*emult_method) = GB_EMULT_METHOD_ADD ;  TODO
+                (*emult_method) = GB_EMULT_METHOD_20 ;
             }
             else
             { 
@@ -262,8 +264,9 @@ int GB_emult_sparsity       // return the sparsity structure for C
             else if (A_is_full && B_is_full)
             { 
                 // C=A.*B with A and B full, use GB_add
-                C_sparsity = GxB_FULL ;
-                (*emult_method) = GB_EMULT_METHOD_ADD ;
+                C_sparsity = GxB_BITMAP ;
+                // (*emult_method) = GB_EMULT_METHOD_ADD ;  TODO
+                (*emult_method) = GB_EMULT_METHOD_19 ;
             }
             else
             { 
@@ -325,7 +328,7 @@ int GB_emult_sparsity       // return the sparsity structure for C
             else if (A_is_full && B_is_full)
             { 
                 // C=A.*B with A and B full, use GB_add
-                C_sparsity = GxB_FULL ;
+                C_sparsity = GxB_BITMAP ;
                 (*emult_method) = GB_EMULT_METHOD_ADD ;
             }
             else

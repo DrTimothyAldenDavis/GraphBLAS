@@ -227,7 +227,8 @@ fprintf (f, 'define(`GB_binaryop'', `$1 = %s'')\n', op) ;
 
 % handle the flip
 switch (binop)
-    case { 'pow', 'bget', 'bset', 'bclr', 'bshift', 'atan2', 'fmod', 'remainder', 'copysign', 'ldexp'}
+    case { 'pow', 'bget', 'bset', 'bclr', 'bshift', 'atan2', 'fmod', ...
+        'remainder', 'copysign', 'ldexp', 'cmplx' }
         fprintf (f, 'define(`GB_binaryop_flip'', `1'')\n') ;
     otherwise
         fprintf (f, 'define(`GB_binaryop_flip'', `0'')\n') ;

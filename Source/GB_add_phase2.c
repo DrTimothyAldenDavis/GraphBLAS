@@ -271,7 +271,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         }
         else
         { 
-            // normal case, C = A + B with optional typecasting
+            // normal case, with optional typecasting
             fadd = op->function ;       // NULL if op is positional
             csize = ctype->size ;
             asize = A->type->size ;

@@ -479,6 +479,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // C<M> = accum (C,T): accumulate the results into C via the mask
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (T, "T from GB_ewise, prior to C<M>=accum(C,T)", GB0) ;
+
     if ((accum == NULL) && (C->is_csc == T->is_csc)
         && (M == NULL || (M != NULL && mask_applied))
         && (C_replace || GB_NNZ_UPPER_BOUND (C) == 0))

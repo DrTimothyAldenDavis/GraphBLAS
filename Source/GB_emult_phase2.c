@@ -235,7 +235,6 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
         size_t csize, asize, bsize, xsize, ysize, zsize ;
         GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;
 
-        // C = A .* B with optional typecasting
         fmult = op->function ;      // NULL if op is positional
         csize = ctype->size ;
         asize = A->type->size ;

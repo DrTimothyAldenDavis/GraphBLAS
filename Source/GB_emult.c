@@ -20,8 +20,13 @@
 // If just A(i,j) is present but not B(i,j), or
 // if just B(i,j) is present but not A(i,j), then C(i,j) is not present.
 
-// ctype is the type of matrix C.  The pattern of C is the intersection of A
-// and B, and also intersection with M if present.
+// ctype is the type of matrix C, and currently it is always op->ztype.
+
+// The pattern of C is the intersection of A and B, and also intersection with
+// M if present and not complemented.
+
+// TODO: if C is bitmap on input and C_sparsity is GxB_BITMAP, then C=A.*B,
+// C<M>=A.*B and C<M>+=A.*B can all be done in-place.
 
 #include "GB_emult.h"
 #include "GB_add.h"
@@ -122,13 +127,13 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      ------------------------------------------
             //      C       <M> =       A       .*      B
             //      ------------------------------------------
-            //      sparse  bitmap      sparse          bitmap  (method: 01a)
-            //      sparse  bitmap      sparse          full    (method: 01a)
+// TODO     //      sparse  bitmap      sparse          bitmap  (method: 01a)
+// TODO     //      sparse  bitmap      sparse          full    (method: 01a)
             //      ------------------------------------------
             //      C       <M> =       A       .*      B
             //      ------------------------------------------
-            //      sparse  full        sparse          bitmap  (method: 01a)
-            //      sparse  full        sparse          full    (method: 01a)
+// TODO     //      sparse  full        sparse          bitmap  (method: 01a)
+// TODO     //      sparse  full        sparse          full    (method: 01a)
             //      ------------------------------------------
             //      C       <!M>=       A       .*      B
             //      ------------------------------------------
@@ -137,16 +142,17 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      ------------------------------------------
             //      C       <!M> =       A       .*      B
             //      ------------------------------------------
-            //      sparse  bitmap      sparse          bitmap  (method: 01a)
-            //      sparse  bitmap      sparse          full    (method: 01a)
+// TODO     //      sparse  bitmap      sparse          bitmap  (method: 01a)
+// TODO     //      sparse  bitmap      sparse          full    (method: 01a)
             //      ------------------------------------------
             //      C       <!M> =       A       .*      B
             //      ------------------------------------------
-            //      sparse  full        sparse          bitmap  (method: 01a)
-            //      sparse  full        sparse          full    (method: 01a)
+// TODO     //      sparse  full        sparse          bitmap  (method: 01a)
+// TODO     //      sparse  full        sparse          full    (method: 01a)
 
             // A is sparse/hyper and B is bitmap/full.  M is either not
-            // present, not applied (!M when sparse/hyper), or bitmap/full.
+            // present, not applied (!M when sparse/hyper), or
+            // TODO:bitmap/full.
             // This method does not handle the case when M is sparse/hyper,
             // unless M is ignored and applied later.
 
@@ -163,13 +169,13 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      ------------------------------------------
             //      C       <M> =       A       .*      B
             //      ------------------------------------------
-            //      sparse  bitmap      bitmap          sparse  (method: 01b)
-            //      sparse  bitmap      full            sparse  (method: 01b)
+//TODO      //      sparse  bitmap      bitmap          sparse  (method: 01b)
+//TODO      //      sparse  bitmap      full            sparse  (method: 01b)
             //      ------------------------------------------
             //      C       <M> =       A       .*      B
             //      ------------------------------------------
-            //      sparse  full        bitmap          sparse  (method: 01b)
-            //      sparse  full        full            sparse  (method: 01b)
+//TODO      //      sparse  full        bitmap          sparse  (method: 01b)
+//TODO      //      sparse  full        full            sparse  (method: 01b)
             //      ------------------------------------------
             //      C       <!M>=       A       .*      B
             //      ------------------------------------------
@@ -178,15 +184,16 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      ------------------------------------------
             //      C       <!M> =      A       .*      B
             //      ------------------------------------------
-            //      sparse  bitmap      bitmap          sparse  (method: 01b)
-            //      sparse  bitmap      full            sparse  (method: 01b)
+//TODO      //      sparse  bitmap      bitmap          sparse  (method: 01b)
+//TODO      //      sparse  bitmap      full            sparse  (method: 01b)
             //      ------------------------------------------
             //      C       <!M> =      A       .*      B
             //      ------------------------------------------
-            //      sparse  full        bitmap          sparse  (method: 01b)
-            //      sparse  full        full            sparse  (method: 01b)
+//TODO      //      sparse  full        bitmap          sparse  (method: 01b)
+//TODO      //      sparse  full        full            sparse  (method: 01b)
 
             // A is bitmap/full and B is sparse/hyper, with flipxy true.
+            // M is not present, not applied, or TODO: bitmap/full
 
             return (GB_emult_01 (Chandle, ctype, C_is_csc, B, A, op, true,
                 Context)) ;
@@ -251,7 +258,16 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      bitmap  full        bitmap          full    (method: 20)
             //      bitmap  full        full            bitmap  (method: 20)
 
-//          TODO
+            // For methods 18, 19, and 20, C is constructed as bitmap.
+            // Both A and B are bitmap/full.  M is either not present,
+            // complemented, or not complemented and bitmap/full.  The
+            // case when M is not complemented and sparse/hyper is handled
+            // by method 100, which constructs C as sparse/hyper (the same
+            // structure as M), not bitmap.
+
+// TODO: if C is bitmap on input and C_sparsity is GxB_BITMAP, then C=A.*B,
+// C<M>=A.*B and C<M>+=A.*B can all be done in-place.
+
 //          return (GB_bitmap_emult (Chandle, ctype, C_is_csc,
 //              emult_method, M, Mask_struct, Mask_comp, mask_applied, A, B,
 //              op, Context)) ;

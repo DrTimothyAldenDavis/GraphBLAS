@@ -90,7 +90,7 @@
 
 // true if the binop must be flipped
 #define GB_BINOP_FLIP \
-    0
+    1
 
 // op is second
 #define GB_OP_IS_SECOND \

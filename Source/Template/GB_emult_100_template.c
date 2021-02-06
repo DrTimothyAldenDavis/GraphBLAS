@@ -26,6 +26,7 @@
     const int64_t *GB_RESTRICT Mi = M->i ;
     const GB_void *GB_RESTRICT Mx = (GB_void *) ((Mask_struct) ? NULL : M->x) ;
     const int64_t vlen = M->vlen ;
+    const size_t  msize = M->type->size ;
 
     const int64_t  *GB_RESTRICT Cp = C->p ;
           int64_t  *GB_RESTRICT Ci = C->i ;
@@ -51,7 +52,7 @@
             for ( ; pM < pM_end ; pM++)
             {
                 int64_t i = Mi [pM] ;
-                if (GB_mcast (Mx, pM, vlen) &&
+                if (GB_mcast (Mx, pM, msize) &&
                     (GBB (Ab, pstart + i)
                     &&  // TODO: for GB_add, use || instead
                     GBB (Bb, pstart + i)))

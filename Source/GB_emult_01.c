@@ -109,11 +109,10 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     GrB_Matrix C = NULL ;
     (*Chandle) = NULL ;
 
-    // int pr = (op->opcode == GB_BSHIFT_opcode) ? GB3 : GB0 ;
-
     ASSERT_MATRIX_OK (A, "A for emult_01", GB0) ;
     ASSERT_MATRIX_OK (B, "B for emult_01", GB0) ;
     ASSERT_BINARYOP_OK (op, "op for emult_01", GB0) ;
+    ASSERT_TYPE_OK (ctype, "ctype for emult_01", GB0) ;
 
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
     ASSERT (!GB_PENDING (A)) ;
@@ -123,7 +122,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     int C_sparsity = GB_sparsity (A) ;
 
-    GBURBLE ("emult_sb:(%s=%s.*%s) ",
+    GBURBLE ("emult_sb:(%s=%s.*%s)",
         GB_sparsity_char (C_sparsity),
         GB_sparsity_char_matrix (A),
         GB_sparsity_char_matrix (B)) ;
@@ -409,7 +408,6 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
         size_t csize, asize, bsize, xsize, ysize, zsize ;
         GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;
 
-        // C = A .* B with optional typecasting
         fmult = op->function ;      // NULL if op is positional
         csize = ctype->size ;
         asize = flipxy ? A->type->size : B->type->size ;
