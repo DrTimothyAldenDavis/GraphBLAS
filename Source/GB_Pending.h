@@ -167,7 +167,7 @@ static inline bool GB_Pending_add   // add a tuple to the list
 // GB_shall_block: see if the matrix should be finished
 //------------------------------------------------------------------------------
 
-// returns true if GB_Matrix_wait (A) should be done
+// returns true if GB_Matrix_wait should be done
 
 static inline bool GB_shall_block
 (

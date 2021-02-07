@@ -1176,6 +1176,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_Matrix_wait         // finish all pending computations
 (
     GrB_Matrix A,               // matrix with pending computations
+    const char *name,           // name of the matrix
     GB_Context Context
 ) ;
 
@@ -1211,27 +1212,27 @@ GrB_Info GB_unjumble        // unjumble a matrix
     (GB_PENDING (A) || GB_ZOMBIES (A) || GB_JUMBLED (A))
 
 // wait if condition holds
-#define GB_WAIT_IF(condition,A)                                         \
+#define GB_WAIT_IF(condition,A,name)                                    \
 {                                                                       \
     if (condition)                                                      \
     {                                                                   \
         GrB_Info info ;                                                 \
-        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, Context)) ;              \
+        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, name, Context)) ;        \
     }                                                                   \
 }
 
 // do all pending work:  zombies, pending tuples, and unjumble
-#define GB_MATRIX_WAIT(A) GB_WAIT_IF (GB_ANY_PENDING_WORK (A), A)
+#define GB_MATRIX_WAIT(A) GB_WAIT_IF (GB_ANY_PENDING_WORK (A), A, GB_STR (A))
 
 // do all pending work if pending tuples; zombies and jumbled are OK
-#define GB_MATRIX_WAIT_IF_PENDING(A) GB_WAIT_IF (GB_PENDING (A), A)
+#define GB_MATRIX_WAIT_IF_PENDING(A) GB_WAIT_IF (GB_PENDING (A), A, GB_STR (A))
 
 // delete zombies and assemble any pending tuples; jumbled is O
 #define GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES(A)                         \
-    GB_WAIT_IF (GB_PENDING_OR_ZOMBIES (A), A)
+    GB_WAIT_IF (GB_PENDING_OR_ZOMBIES (A), A, GB_STR (A))
 
 // ensure A is not jumbled
-#define GB_MATRIX_WAIT_IF_JUMBLED(A) GB_WAIT_IF (GB_JUMBLED (A), A)
+#define GB_MATRIX_WAIT_IF_JUMBLED(A) GB_WAIT_IF (GB_JUMBLED (A), A, GB_STR (A))
 
 // true if a matrix has no entries; zombies OK
 #define GB_IS_EMPTY(A) ((GB_NNZ (A) == 0) && !GB_PENDING (A))

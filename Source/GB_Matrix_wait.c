@@ -51,6 +51,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_Matrix_wait         // finish all pending computations
 (
     GrB_Matrix A,               // matrix with pending computations
+    const char *name,           // name of the matrix
     GB_Context Context
 )
 {
@@ -90,7 +91,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     int64_t npending = GB_Pending_n (A) ;
     if (nzombies > 0 || npending > 0 || A->jumbled)
     { 
-        GB_BURBLE_MATRIX (A, "(wait: " GBd " %s, " GBd " pending%s) ",
+        GB_BURBLE_MATRIX (A, "(wait:%s " GBd " %s, " GBd " pending%s) ", name,
             nzombies, (nzombies == 1) ? "zombie" : "zombies", npending,
             A->jumbled ? ", jumbled" : "") ;
     }

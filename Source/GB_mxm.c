@@ -189,7 +189,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
             // are ignored.  But valgrind complains about it, so they are
             // killed now.  Also see the discussion in GB_transplant.
             GBURBLE ("(wait, so zombies are not typecasted) ") ;
-            GB_OK (GB_Matrix_wait (T, Context)) ;
+            GB_OK (GB_Matrix_wait (T, "T", Context)) ;
         }
         GB_OK (GB_transplant_conform (C, C->type, &T, Context)) ;
         // C may be returned with zombies and jumbled, but no pending tuples

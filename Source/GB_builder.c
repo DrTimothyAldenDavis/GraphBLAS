@@ -1023,9 +1023,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // order, and no duplicates appear.  All that is required is to copy S
         // into Tx.  S can be directly transplanted into T->x since S is
         // provided as S_work.  GB_builder must either transplant or free
-        // S_work.  The transplant can be used by GB_Matrix_wait (whenever the
+        // S_work.  The transplant can be used by GB_Matrix_wait, whenever the
         // tuples are already sorted, with no duplicates, and no typecasting is
-        // needed, since S_work is always A->Pending->x).  This transplant can
+        // needed, since S_work is always A->Pending->x.  This transplant can
         // rarely be used for GB_transpose, in the case when op is NULL and the
         // transposed tuples happen to be sorted (which is unlikely).
 

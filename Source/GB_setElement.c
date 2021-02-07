@@ -91,15 +91,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     // sort C if needed; do not assemble pending tuples or kill zombies yet
     //--------------------------------------------------------------------------
 
-    if (C->jumbled)
-    { 
-        // C must not be jumbled; this also kills zombies and assembles
-        // pending tuples
-        GB_OK (GB_Matrix_wait (C, Context)) ;
-        ASSERT (!GB_JUMBLED (C)) ;
-        ASSERT (!GB_PENDING (C)) ;
-        ASSERT (!GB_ZOMBIES (C)) ;
-    }
+    GB_MATRIX_WAIT_IF_JUMBLED (C) ;
 
     // zombies and pending tuples are still OK, but C is no longer jumbled
     ASSERT (!GB_JUMBLED (C)) ;
@@ -269,7 +261,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             #endif
 
             // delete any lingering zombies and assemble the pending tuples
-            GB_OK (GB_Matrix_wait (C, Context)) ;
+            GB_OK (GB_Matrix_wait (C, "C", Context)) ;
 
             #if GB_BURBLE
             if (burble)

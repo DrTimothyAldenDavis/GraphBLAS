@@ -41,7 +41,7 @@ GrB_Info set_ ## name                                                       \
     }                                                                       \
     if (debug_wait)                                                         \
     {                                                                       \
-        return (GB_Matrix_wait (A, NULL)) ;                                 \
+        return (GB_Matrix_wait (A, "A", NULL)) ;                            \
     }                                                                       \
     return (GrB_SUCCESS) ;                                                  \
 }
@@ -81,7 +81,7 @@ GrB_Info vset_ ## name                                                      \
     }                                                                       \
     if (debug_wait)                                                         \
     {                                                                       \
-        return (GB_Matrix_wait (A, NULL)) ;                                 \
+        return (GB_Matrix_wait (A, "A", NULL)) ;                            \
     }                                                                       \
     return (GrB_SUCCESS) ;                                                  \
 }
