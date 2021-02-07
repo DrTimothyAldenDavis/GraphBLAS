@@ -285,7 +285,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      sparse  sparse      full            bitmap  (method: 100)
 
             return (GB_emult_100 (Chandle, ctype, C_is_csc, M, Mask_struct,
-                A, B, op, Context)) ;
+                mask_applied, A, B, op, Context)) ;
 
         case GB_EMULT_METHOD_101A : break ; // punt
 

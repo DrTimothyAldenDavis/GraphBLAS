@@ -480,6 +480,14 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (T, "T from GB_ewise, prior to C<M>=accum(C,T)", GB0) ;
+//  printf ("(accum == NULL) %d\n", (accum == NULL)) ;
+//  printf ("(C->is_csc == T->is_csc) %d\n", (C->is_csc == T->is_csc)) ;
+//  printf ("(M == NULL) %d || (M != NULL && mask_applied) %d: %d\n",
+//      (M == NULL), (M != NULL && mask_applied),
+//      (M == NULL || (M != NULL && mask_applied))) ;
+//  printf ("(C_replace %d || GB_NNZ_UPPER_BOUND (C) == 0) %d) : %d\n",
+//      C_replace, GB_NNZ_UPPER_BOUND (C) == 0,
+//      (C_replace || GB_NNZ_UPPER_BOUND (C) == 0)) ;
 
     if ((accum == NULL) && (C->is_csc == T->is_csc)
         && (M == NULL || (M != NULL && mask_applied))
@@ -492,6 +500,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // needed.  If no typecasting is done then this takes no time at all
         // and is a pure transplant.  Also conform C to its desired
         // hypersparsity.
+//      printf ("\newise transplant-conform: ") ;
         GB_Matrix_free (&MT) ;
         GB_OK (GB_transplant_conform (C, C->type, &T, Context)) ;
         return (GB_block (C, Context)) ;
@@ -500,6 +509,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // C<M> = accum (C,T)
         // GB_accum_mask also conforms C to its desired hypersparsity
+//      printf ("\newise accum-mask: ") ;
         info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
             Mask_struct, Context) ;
         GB_Matrix_free (&MT) ;
