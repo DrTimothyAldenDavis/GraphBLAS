@@ -22,7 +22,7 @@
     // accum operator.
     int64_t cnvals = 0 ;
 
-    if (emult_method == GB_EMULT_METHOD_18)     // (M == NULL)
+    if (ewise_method == GB_EMULT_METHOD_18)     // (M == NULL)
     {
 
         //----------------------------------------------------------------------
@@ -63,7 +63,7 @@
         }
 
     }
-    else if (emult_method == GB_EMULT_METHOD_19) // (M_is_sparse_or_hyper)
+    else if (ewise_method == GB_EMULT_METHOD_19) // (M_is_sparse_or_hyper)
     { 
 
         //----------------------------------------------------------------------
@@ -132,7 +132,7 @@
         }
 
     }
-    else // if (emult_method == GB_EMULT_METHOD_20)
+    else // if (ewise_method == GB_EMULT_METHOD_20)
     {
 
         //----------------------------------------------------------------------

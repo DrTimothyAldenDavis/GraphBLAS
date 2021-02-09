@@ -66,6 +66,7 @@
         //      sparse  full        bitmap          sparse
         //      sparse  full        full            sparse
 
+#include "GB_ewise.h"
 #include "GB_emult.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
@@ -75,9 +76,7 @@
 
 #define GB_FREE_WORK            \
 {                               \
-    GB_FREE (Wfirst) ;          \
-    GB_FREE (Wlast) ;           \
-    GB_FREE (Cp_kfirst) ;       \
+    GB_FREE (Work) ;            \
     GB_FREE (A_ek_slicing) ;    \
 }
 
@@ -131,8 +130,9 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     // declare workspace
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Wfirst = NULL ;
-    int64_t *GB_RESTRICT Wlast = NULL ;
+    int64_t *Work = NULL ;
+    int64_t *GB_RESTRICT Wfirst    = NULL ;
+    int64_t *GB_RESTRICT Wlast     = NULL ;
     int64_t *GB_RESTRICT Cp_kfirst = NULL ;
     int64_t *A_ek_slicing = NULL ;
 
@@ -155,9 +155,10 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     // allocate C->p and C->h
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_new (&C,      // sparse or hyper (same as A), new header
+    GB_OK (GB_new (Chandle,      // sparse or hyper (same as A), new header
         ctype, vlen, vdim, GB_Ap_calloc, C_is_csc,
         C_sparsity, A->hyper_switch, nvec, Context)) ;
+    C = (*Chandle) ;
     int64_t *GB_RESTRICT Cp = C->p ;
 
     //--------------------------------------------------------------------------
@@ -182,16 +183,16 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
         // allocate workspace
         //----------------------------------------------------------------------
 
-        // TODO: use one malloc
-        Wfirst = GB_MALLOC (A_ntasks, int64_t) ;
-        Wlast  = GB_MALLOC (A_ntasks, int64_t) ;
-        Cp_kfirst = GB_MALLOC (A_ntasks, int64_t) ;
-        if (Wfirst == NULL || Wlast  == NULL || Cp_kfirst == NULL)
+        Work = GB_MALLOC (3*A_ntasks, int64_t) ;
+        if (Work == NULL)
         { 
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
+        Wfirst    = Work ;
+        Wlast     = Work + A_ntasks ;
+        Cp_kfirst = Work + A_ntasks * 2 ;
 
         //----------------------------------------------------------------------
         // count entries in C
@@ -255,7 +256,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     // copy pattern into C
     //--------------------------------------------------------------------------
 
-    // TODO: could make these components of C shallow instead
+    // TODO: could make these components of C shallow instead of memcpy
 
     if (GB_IS_HYPERSPARSE (A))
     {
@@ -314,6 +315,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
         if (handled) flipxy = false ;
     }
     ASSERT_BINARYOP_OK (op, "final op for emult_01", GB0) ;
+    // printf ("final flipxy: %d\n", flipxy) ;
 
     //--------------------------------------------------------------------------
     // get the opcode
@@ -387,165 +389,17 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     if (!done)
     { 
         GB_BURBLE_MATRIX (C, "(generic emult_01: %s) ", op->name) ;
-
-        GxB_binary_function fmult ;
-        size_t csize, asize, bsize, xsize, ysize, zsize ;
-        GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;
-
-        fmult = op->function ;      // NULL if op is positional
-        csize = ctype->size ;
-        asize = flipxy ? A->type->size : B->type->size ;
-        bsize = flipxy ? B->type->size : A->type->size ;
-
-        GrB_Type xtype = flipxy ? op->ytype : op->xtype ;
-        GrB_Type ytype = flipxy ? op->xtype : op->ytype ;
-
-        if (A_is_pattern)
-        { 
-            // the op does not depend on the value of A(i,j)
-            xsize = 1 ;
-            cast_A_to_X = NULL ;
-        }
-        else
-        { 
-            xsize = xtype->size ;
-            cast_A_to_X = GB_cast_factory (xtype->code, A->type->code) ;
-        }
-
-        if (B_is_pattern)
-        { 
-            // the op does not depend on the value of B(i,j)
-            ysize = 1 ;
-            cast_B_to_Y = NULL ;
-        }
-        else
-        { 
-            ysize = ytype->size ;
-            cast_B_to_Y = GB_cast_factory (ytype->code, B->type->code) ;
-        }
-
-        zsize = op->ztype->size ;
-        cast_Z_to_C = GB_cast_factory (ccode, op->ztype->code) ;
-
-        // aij = (xtype) A(i,j), located in Ax [pA]
-        #define GB_GETA(aij,Ax,pA)                                          \
-            GB_void aij [GB_VLA(xsize)] ;                                   \
-            if (cast_A_to_X != NULL)                                        \
-            {                                                               \
-                cast_A_to_X (aij, Ax +((pA)*asize), asize) ;                \
-            }
-
-        // bij = (ytype) B(i,j), located in Bx [pB]
-        #define GB_GETB(bij,Bx,pB)                                          \
-            GB_void bij [GB_VLA(ysize)] ;                                   \
-            if (cast_B_to_Y != NULL)                                        \
-            {                                                               \
-                cast_B_to_Y (bij, Bx +((pB)*bsize), bsize) ;                \
-            }
-
-        // address of Cx [p]
-        #define GB_CX(p) Cx +((p)*csize)
-
-        #define GB_ATYPE GB_void
-        #define GB_BTYPE GB_void
-        #define GB_CTYPE GB_void
-
-        #define GB_FLIPPED 0
-
-        if (op_is_positional)
-        { 
-
-            //------------------------------------------------------------------
-            // C(i,j) = positional_op (aij, bij)
-            //------------------------------------------------------------------
-
-            int64_t offset = GB_positional_offset (opcode) ;
-
-            if (op->ztype == GrB_INT64)
-            {
-                switch (opcode)
-                {
-                    case GB_FIRSTI_opcode    : // z = first_i(A(i,j),y) == i
-                    case GB_FIRSTI1_opcode   : // z = first_i1(A(i,j),y) == i+1
-                    case GB_SECONDI_opcode   : // z = second_i(x,A(i,j)) == i
-                    case GB_SECONDI1_opcode  : // z = second_i1(x,A(i,j)) == i+1
-                        #undef  GB_BINOP
-                        #define GB_BINOP(cij, aij, bij, i, j)   \
-                            int64_t z = i + offset ;            \
-                            cast_Z_to_C (cij, &z, csize) ;
-                        #include "GB_emult_01_template.c"
-                        break ;
-                    case GB_FIRSTJ_opcode    : // z = first_j(A(i,j),y) == j
-                    case GB_FIRSTJ1_opcode   : // z = first_j1(A(i,j),y) == j+1
-                    case GB_SECONDJ_opcode   : // z = second_j(x,A(i,j)) == j
-                    case GB_SECONDJ1_opcode  : // z = second_j1(x,A(i,j)) == j+1
-                        #undef  GB_BINOP
-                        #define GB_BINOP(cij, aij, bij, i, j)   \
-                            int64_t z = j + offset ;            \
-                            cast_Z_to_C (cij, &z, csize) ;
-                        #include "GB_emult_01_template.c"
-                        break ;
-                    default: ;
-                }
-            }
-            else
-            {
-                switch (opcode)
-                {
-                    case GB_FIRSTI_opcode    : // z = first_i(A(i,j),y) == i
-                    case GB_FIRSTI1_opcode   : // z = first_i1(A(i,j),y) == i+1
-                    case GB_SECONDI_opcode   : // z = second_i(x,A(i,j)) == i
-                    case GB_SECONDI1_opcode  : // z = second_i1(x,A(i,j)) == i+1
-                        #undef  GB_BINOP
-                        #define GB_BINOP(cij, aij, bij, i, j)       \
-                            int32_t z = (int32_t) (i + offset) ;    \
-                            cast_Z_to_C (cij, &z, csize) ;
-                        #include "GB_emult_01_template.c"
-                        break ;
-                    case GB_FIRSTJ_opcode    : // z = first_j(A(i,j),y) == j
-                    case GB_FIRSTJ1_opcode   : // z = first_j1(A(i,j),y) == j+1
-                    case GB_SECONDJ_opcode   : // z = second_j(x,A(i,j)) == j
-                    case GB_SECONDJ1_opcode  : // z = second_j1(x,A(i,j)) == j+1
-                        #undef  GB_BINOP
-                        #define GB_BINOP(cij, aij, bij, i, j)       \
-                            int32_t z = (int32_t) (j + offset) ;    \
-                            cast_Z_to_C (cij, &z, csize) ;
-                        #include "GB_emult_01_template.c"
-                        break ;
-                    default: ;
-                }
-            }
-
-        }
-        else
-        { 
-
-            //------------------------------------------------------------------
-            // standard binary operator
-            //------------------------------------------------------------------
-
-            // C(i,j) = (ctype) (A(i,j) + B(i,j))
-            #undef  GB_BINOP
-            #define GB_BINOP(cij, aij, bij, i, j)   \
-                GB_void z [GB_VLA(zsize)] ;         \
-                if (flipxy)                         \
-                {                                   \
-                    fmult (z, bij, aij) ;           \
-                }                                   \
-                else                                \
-                {                                   \
-                    fmult (z, aij, bij) ;           \
-                }                                   \
-                cast_Z_to_C (cij, z, csize) ;
-            #include "GB_emult_01_template.c"
-        }
+        int ewise_method = flipxy ? GB_EMULT_METHOD_01B : GB_EMULT_METHOD_01A ;
+        GB_ewise_generic (Chandle, op, NULL, 0, 0,
+            NULL, NULL, NULL, C_sparsity, ewise_method, Cp_kfirst,
+            NULL, 0, 0, A_ek_slicing, A_ntasks, A_nthreads, NULL, 0, 0,
+            NULL, false, false, A, B, Context) ;
     }
 
     //--------------------------------------------------------------------------
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
-    // TODO: allow C->h to be shallow; if modified, make a copy
     GB_OK (GB_hypermatrix_prune (C, Context)) ;
 
     //--------------------------------------------------------------------------

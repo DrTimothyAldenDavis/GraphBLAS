@@ -56,7 +56,7 @@
     if (Wf == NULL || Wax == NULL || Wcx == NULL)
     { 
         // out of memory
-        GB_FREE_WORK ;
+        GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 

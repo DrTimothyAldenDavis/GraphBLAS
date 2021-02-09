@@ -22,8 +22,6 @@
 #include "GB_search_for_vector_template.c"
 #include "GB_bitmap_assign_methods.h"
 
-#define GB_FREE_ALL GB_FREE (M_ek_slicing) ;
-
 GrB_Info GB_AxB_saxpy_generic
 (
     GrB_Matrix C,
@@ -46,7 +44,6 @@ GrB_Info GB_AxB_saxpy_generic
     // get operators, functions, workspace, contents of A, B, and C
     //--------------------------------------------------------------------------
 
-    int64_t *M_ek_slicing = NULL ;
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_Monoid add = semiring->add ;
     ASSERT (mult->ztype == add->op->ztype) ;
@@ -387,7 +384,6 @@ GrB_Info GB_AxB_saxpy_generic
         }
     }
 
-    GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
 }
 

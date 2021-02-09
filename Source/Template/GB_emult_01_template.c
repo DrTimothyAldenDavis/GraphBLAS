@@ -21,6 +21,10 @@
     const int8_t  *GB_RESTRICT Bb = B->b ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
 
+    const int64_t *GB_RESTRICT kfirst_Aslice = A_ek_slicing ;
+    const int64_t *GB_RESTRICT klast_Aslice  = A_ek_slicing + A_ntasks ;
+    const int64_t *GB_RESTRICT pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
+
     #if GB_FLIPPED
     const GB_BTYPE *GB_RESTRICT Ax = (GB_BTYPE *) A->x ;
     const GB_ATYPE *GB_RESTRICT Bx = (GB_ATYPE *) B->x ;

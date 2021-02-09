@@ -102,7 +102,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     const int64_t *GB_RESTRICT C_to_B,
     const int C_sparsity,
     // from GB_emult_sparsity:
-    const int emult_method,
+    const int ewise_method,
     // to slice M, A, and/or B,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads,
@@ -120,7 +120,7 @@ int GB_emult_sparsity       // return the sparsity structure for C
 (
     // output:
     bool *apply_mask,       // if true then mask will be applied by GB_emult
-    int *emult_method,      // method to use (0: add, 1: GB_emult_01, etc)
+    int *ewise_method,      // method to use (0: add, 1: GB_emult_01, etc)
     // input:
     const GrB_Matrix M,     // optional mask for C, unused if NULL
     const bool Mask_comp,   // if true, use !M

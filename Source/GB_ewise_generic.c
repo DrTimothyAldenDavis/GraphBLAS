@@ -7,6 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// GB_ewise_generic handles the generic case for ewise operations, when no
+// built-in worker in the switch factory can handle this case.  This occurs
+// for user-defined operators, when typecasting occurs, or for FIRST[IJ]* and
+// SECOND[IJ]* positional operators.
+
 #include "GB_ewise.h"
 #include "GB_emult.h"
 #include "GB_binop.h"
@@ -34,9 +39,9 @@ void GB_ewise_generic       // generic ewise
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
     const int C_sparsity,
-    // from GB_emult_sparsity:
-    const int emult_method,
-    // from GB_emult_100:
+    // from GB_emult_sparsity or GB_add_sparsity:
+    const int ewise_method,
+    // from GB_emult_100 and GB_emult_01:
     const int64_t *GB_RESTRICT Cp_kfirst,
     // to slice M, A, and/or B,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
@@ -52,159 +57,197 @@ void GB_ewise_generic       // generic ewise
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     ASSERT_MATRIX_OK_OR_NULL (M, "M for ewise generic", GB0) ;
     ASSERT_MATRIX_OK (A, "A for ewise generic", GB0) ;
     ASSERT_MATRIX_OK (B, "B for ewise generic", GB0) ;
-//  printf ("noew here %d %d\n", M_ntasks, M_nthreads) ;
+    ASSERT_BINARYOP_OK (op, "op for ewise generic", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // get C
+    //--------------------------------------------------------------------------
 
     GrB_Matrix C = (*Chandle) ;
-    GrB_Type ctype = C->type ;
-    GB_Type_code ccode = ctype->code ;
+    const GrB_Type ctype = C->type ;
+    const GB_Type_code ccode = ctype->code ;
+
+    //--------------------------------------------------------------------------
+    // get the opcode and define the typecasting functions
+    //--------------------------------------------------------------------------
+
     GB_Opcode opcode = op->opcode ;
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
-    bool op_is_first  = (opcode == GB_FIRST_opcode) ;
-    bool op_is_second = (opcode == GB_SECOND_opcode) ;
-    bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
 
-        GxB_binary_function fmult ;
-        size_t csize, asize, bsize, xsize, ysize, zsize ;
-        GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;
+    // the following booleans are all false if flipxy is true, since flipxy has
+    // already been handled in the caller, in this case.
+    const bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    const bool op_is_first  = (opcode == GB_FIRST_opcode) ;
+    const bool op_is_second = (opcode == GB_SECOND_opcode) ;
+    const bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
+    const bool A_is_pattern = (op_is_second || op_is_pair || op_is_positional) ;
+    const bool B_is_pattern = (op_is_first  || op_is_pair || op_is_positional) ;
 
-        fmult = op->function ;      // NULL if op is positional
-        csize = ctype->size ;
-        asize = A->type->size ;
-        bsize = B->type->size ;
+    // if flipxy true use fop(y,x) else fop(x,y)
+//  const bool flipxy = (ewise_method < 0) ;        TODO
+    const bool flipxy = (ewise_method == GB_EMULT_METHOD_01B) ;
+//  printf ("method: %d flipxy: %d\n", ewise_method, flipxy) ;
 
-        if (op_is_second || op_is_pair || op_is_positional)
-        { 
-            // the op does not depend on the value of A(i,j)
-//          printf ("\nA is pattern\n") ;
-            xsize = 1 ;
-            cast_A_to_X = NULL ;
+    const GxB_binary_function fop = op->function ; // NULL if op positional
+    const size_t csize = ctype->size ;
+    const size_t asize = A->type->size ;
+    const size_t bsize = B->type->size ;
+    const GrB_Type xtype = flipxy ? op->ytype : op->xtype ;
+    const GrB_Type ytype = flipxy ? op->xtype : op->ytype ;
+
+//  printf ("generic: asize %ld bsize %ld\n", asize, bsize) ;
+//  GxB_print (xtype, 3) ;
+//  GxB_print (ytype, 3) ;
+
+    const size_t xsize = (A_is_pattern) ? 1 : xtype->size ;
+    const size_t ysize = (B_is_pattern) ? 1 : ytype->size ;
+    const size_t zsize = op->ztype->size ;
+
+    const GB_cast_function cast_A_to_X =
+        (A_is_pattern) ? NULL : GB_cast_factory (xtype->code, A->type->code) ;
+
+    const GB_cast_function cast_B_to_Y = 
+        (B_is_pattern) ? NULL : GB_cast_factory (ytype->code, B->type->code) ;
+
+    const GB_cast_function cast_Z_to_C =
+        GB_cast_factory (ccode, op->ztype->code) ;
+
+    // aij = (xtype) A(i,j), located in Ax [pA]
+    #define GB_GETA(aij,Ax,pA)                                          \
+        GB_void aij [GB_VLA(xsize)] ;                                   \
+        if (cast_A_to_X != NULL)                                        \
+        {                                                               \
+            cast_A_to_X (aij, Ax +((pA)*asize), asize) ;                \
         }
-        else
-        { 
-            xsize = op->xtype->size ;
-            cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
+
+    // bij = (ytype) B(i,j), located in Bx [pB]
+    #define GB_GETB(bij,Bx,pB)                                          \
+        GB_void bij [GB_VLA(ysize)] ;                                   \
+        if (cast_B_to_Y != NULL)                                        \
+        {                                                               \
+            cast_B_to_Y (bij, Bx +((pB)*bsize), bsize) ;                \
         }
 
-        if (op_is_first || op_is_pair || op_is_positional)
-        { 
-            // the op does not depend on the value of B(i,j)
-//          printf ("\nB is pattern\n") ;
-            ysize = 1 ;
-            cast_B_to_Y = NULL ;
-        }
-        else
-        { 
-            ysize = op->ytype->size ;
-            cast_B_to_Y = GB_cast_factory (op->ytype->code, B->type->code) ;
-        }
+    // address of Cx [p]
+    #define GB_CX(p) Cx +((p)*csize)
 
-        zsize = op->ztype->size ;
-        cast_Z_to_C = GB_cast_factory (ccode, op->ztype->code) ;
-//      printf ("cast_Z_to_C: %p\n", cast_Z_to_C) ;
+    #define GB_ATYPE GB_void
+    #define GB_BTYPE GB_void
+    #define GB_CTYPE GB_void
 
-        // aij = (xtype) A(i,j), located in Ax [pA]
-        #define GB_GETA(aij,Ax,pA)                                          \
-            GB_void aij [GB_VLA(xsize)] ;                                   \
-            if (cast_A_to_X != NULL)                                        \
-            {                                                               \
-                cast_A_to_X (aij, Ax +((pA)*asize), asize) ;                \
-            }
+    #define GB_PHASE_2_OF_2
 
-        // bij = (ytype) B(i,j), located in Bx [pB]
-        #define GB_GETB(bij,Bx,pB)                                          \
-            GB_void bij [GB_VLA(ysize)] ;                                   \
-            if (cast_B_to_Y != NULL)                                        \
-            {                                                               \
-                cast_B_to_Y (bij, Bx +((pB)*bsize), bsize) ;                \
-            }
+    // loops cannot be vectorized
+    #define GB_PRAGMA_SIMD_VECTORIZE ;
 
-        // address of Cx [p]
-        #define GB_CX(p) Cx +((p)*csize)
+    // flipxy is handled in the definition of GB_BINOP, not in the tempate
+    #define GB_FLIPPED 0
 
-        #define GB_ATYPE GB_void
-        #define GB_BTYPE GB_void
-        #define GB_CTYPE GB_void
+    //--------------------------------------------------------------------------
+    // do the ewise operation
+    //--------------------------------------------------------------------------
 
-        #define GB_PHASE_2_OF_2
+    if (op_is_positional)
+    { 
 
-        // loops cannot be vectorized
-        #define GB_PRAGMA_SIMD_VECTORIZE ;
+        //----------------------------------------------------------------------
+        // C(i,j) = positional_op (aij, bij)
+        //----------------------------------------------------------------------
 
-        if (op_is_positional)
-        { 
-
-            //------------------------------------------------------------------
-            // C(i,j) = positional_op (aij, bij)
-            //------------------------------------------------------------------
-
-            const int64_t offset = GB_positional_offset (opcode) ;
-            const bool index_is_i = 
-                (opcode == GB_FIRSTI_opcode  ) ||
-                (opcode == GB_FIRSTI1_opcode ) ||
-                (opcode == GB_SECONDI_opcode ) ||
-                (opcode == GB_SECONDI1_opcode) ;
-            if (op->ztype == GrB_INT64)
-            {
-                #undef  GB_BINOP
-                #define GB_BINOP(cij, aij, bij, i, j)                         \
-                    int64_t z = ((index_is_i) ? i : j) + offset ;             \
-                    cast_Z_to_C (cij, &z, csize) ;
-                if (emult_method == GB_EMULT_METHOD_100)
-                {
-                    #include "GB_emult_100_template.c"
-                }
-                else
-                {
-                    #include "GB_emult_template.c"
-                }
-            }
-            else
-            {
-                #undef  GB_BINOP
-                #define GB_BINOP(cij, aij, bij, i, j)                         \
-                    int32_t z = (int32_t) (((index_is_i) ? i : j) + offset) ; \
-                    cast_Z_to_C (cij, &z, csize) ;
-                if (emult_method == GB_EMULT_METHOD_100)
-                {
-                    #include "GB_emult_100_template.c"
-                }
-                else
-                {
-                    #include "GB_emult_template.c"
-                }
-            }
-
-        }
-        else
-        { 
-
-            //------------------------------------------------------------------
-            // standard binary operator
-            //------------------------------------------------------------------
-
-            // C(i,j) = (ctype) (A(i,j) + B(i,j))
-            // not used if op is null
+        const int64_t offset = GB_positional_offset (opcode) ;
+        const bool index_is_i = 
+            (opcode == GB_FIRSTI_opcode  ) ||
+            (opcode == GB_FIRSTI1_opcode ) ||
+            (opcode == GB_SECONDI_opcode ) ||
+            (opcode == GB_SECONDI1_opcode) ;
+        if (op->ztype == GrB_INT64)
+        {
             #undef  GB_BINOP
-            #define GB_BINOP(cij, aij, bij, i, j)   \
-                ASSERT (op != NULL) ;               \
-                GB_void z [GB_VLA(zsize)] ;         \
-                fmult (z, aij, bij) ;               \
-                cast_Z_to_C (cij, z, csize) ;
-            if (emult_method == GB_EMULT_METHOD_100)
+            #define GB_BINOP(cij, aij, bij, i, j)                         \
+                int64_t z = ((index_is_i) ? i : j) + offset ;             \
+                cast_Z_to_C (cij, &z, csize) ;
+            if (ewise_method == GB_EMULT_METHOD_01A ||
+                ewise_method == GB_EMULT_METHOD_01B)
             {
-//              printf ("\nemult100\n") ;
-//  printf ("ok here %d %d\n", M_ntasks, M_nthreads) ;
+                #include "GB_emult_01_template.c"
+            }
+            else if (ewise_method == GB_EMULT_METHOD_100)
+            {
                 #include "GB_emult_100_template.c"
             }
             else
             {
-//  printf ("too here %d %d\n", M_ntasks, M_nthreads) ;
                 #include "GB_emult_template.c"
             }
         }
+        else
+        {
+            #undef  GB_BINOP
+            #define GB_BINOP(cij, aij, bij, i, j)                         \
+                int32_t z = (int32_t) (((index_is_i) ? i : j) + offset) ; \
+                cast_Z_to_C (cij, &z, csize) ;
+            if (ewise_method == GB_EMULT_METHOD_01A ||
+                ewise_method == GB_EMULT_METHOD_01B)
+            {
+                #include "GB_emult_01_template.c"
+            }
+            else if (ewise_method == GB_EMULT_METHOD_100)
+            {
+                #include "GB_emult_100_template.c"
+            }
+            else
+            {
+                #include "GB_emult_template.c"
+            }
+        }
+
+    }
+    else
+    { 
+
+        //----------------------------------------------------------------------
+        // standard binary operator
+        //----------------------------------------------------------------------
+
+        // C(i,j) = (ctype) (A(i,j) + B(i,j))
+        if (ewise_method == GB_EMULT_METHOD_01A ||
+            ewise_method == GB_EMULT_METHOD_01B)
+        {
+            // handle flipxy
+            #undef  GB_BINOP
+            #define GB_BINOP(cij, aij, bij, i, j)   \
+                GB_void z [GB_VLA(zsize)] ;         \
+                if (flipxy)                         \
+                {                                   \
+                    fop (z, bij, aij) ;             \
+                }                                   \
+                else                                \
+                {                                   \
+                    fop (z, aij, bij) ;             \
+                }                                   \
+                cast_Z_to_C (cij, z, csize) ;
+            #include "GB_emult_01_template.c"
+        }
+        else if (ewise_method == GB_EMULT_METHOD_100)
+        {
+            #undef  GB_BINOP
+            #define GB_BINOP(cij, aij, bij, i, j)   \
+                GB_void z [GB_VLA(zsize)] ;         \
+                fop (z, aij, bij) ;                 \
+                cast_Z_to_C (cij, z, csize) ;
+            #include "GB_emult_100_template.c"
+        }
+        else
+        {
+            #include "GB_emult_template.c"
+        }
+    }
 
     ASSERT_MATRIX_OK (C, "C from ewise generic", GB0) ;
 }

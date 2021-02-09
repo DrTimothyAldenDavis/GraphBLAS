@@ -58,7 +58,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     const int64_t *GB_RESTRICT C_to_B,
     const int C_sparsity,
     // from GB_emult_sparsity:
-    const int emult_method,
+    const int ewise_method,
     // to slice M, A, and/or B,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads,
@@ -94,7 +94,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     ASSERT (!GB_PENDING (M)) ;
 
     ASSERT (A->vdim == B->vdim) ;
-//  printf ("method %d M_ntasks: %d M_nthreads %d\n", emult_method,
+//  printf ("method %d M_ntasks: %d M_nthreads %d\n", ewise_method,
 //      M_ntasks, M_nthreads) ;
 
     //--------------------------------------------------------------------------
@@ -188,7 +188,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
         #define GB_BINOP_WORKER(mult,xname)                                 \
         {                                                                   \
-            info = GB_AemultB(mult,xname) (C, C_sparsity, emult_method,     \
+            info = GB_AemultB(mult,xname) (C, C_sparsity, ewise_method,     \
                 M, Mask_struct, Mask_comp,                                  \
                 A, B, C_to_M, C_to_A, C_to_B,                               \
                 M_ek_slicing, M_ntasks, M_nthreads,                         \
@@ -218,10 +218,8 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     if (!done)
     { 
         GB_BURBLE_MATRIX (C, "(generic emult: %s) ", op->name) ;
-//      printf ("here method %d M_ntasks: %d M_nthreads %d\n", emult_method,
-//          M_ntasks, M_nthreads) ;
         GB_ewise_generic (Chandle, op, TaskList, C_ntasks, C_nthreads,
-            C_to_M, C_to_A, C_to_B, C_sparsity, emult_method, NULL,
+            C_to_M, C_to_A, C_to_B, C_sparsity, ewise_method, NULL,
             M_ek_slicing, M_ntasks, M_nthreads,
             A_ek_slicing, A_ntasks, A_nthreads,
             B_ek_slicing, B_ntasks, B_nthreads,
@@ -232,11 +230,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     // construct the final C->h
     //--------------------------------------------------------------------------
 
-    if (C_is_hyper)
-    { 
-        C->nvec_nonempty = -1 ;
-        GB_OK (GB_hypermatrix_prune (C, Context)) ;
-    }
+    GB_OK (GB_hypermatrix_prune (C, Context)) ;
 
     //--------------------------------------------------------------------------
     // return result

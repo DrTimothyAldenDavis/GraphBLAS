@@ -11,8 +11,8 @@
 // or C=A*B, and this template is used when C is bitmap.  C can be modified
 // in-place if the accum operator is the same as the monoid.
 
-#undef  GB_FREE_WORK
-#define GB_FREE_WORK            \
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL             \
 {                               \
     GB_FREE (Wf) ;              \
     GB_FREE (Wax) ;             \
@@ -121,7 +121,6 @@
         mnvec = M->nvec ;
         mvlen = M->vlen ;
 
-        // TODO: move this into the caller
         GB_SLICE_MATRIX (M, 8) ;
 
         // if M is sparse or hypersparse, scatter it into the C bitmap
@@ -214,7 +213,7 @@
         if (!GB_pslice (&B_slice, Bp, bnvec, nbslice, false))
         { 
             // out of memory
-            GB_FREE_WORK ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -399,7 +398,7 @@
             if (!GB_pslice (&A_slice, Ap, anvec, nfine_tasks_per_vector, true))
             { 
                 // out of memory
-                GB_FREE_WORK ;
+                GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
         }
@@ -601,8 +600,8 @@
     // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_ALL ;
 }
 
-#undef GB_FREE_WORK
+#undef GB_FREE_ALL
 

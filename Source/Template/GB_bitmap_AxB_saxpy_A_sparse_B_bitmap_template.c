@@ -27,7 +27,7 @@
         if (GH_slice == NULL)
         {
             // out of memory
-            GB_FREE_WORK ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -66,7 +66,7 @@
         if (Wf == NULL || Wcx == NULL || Wbx == NULL)
         {
             // out of memory
-            GB_FREE_WORK ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -620,7 +620,7 @@
         if (Wf == NULL || Wcx == NULL)
         { 
             // out of memory
-            GB_FREE_WORK ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 

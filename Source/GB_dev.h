@@ -29,8 +29,7 @@
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
-// TODO:: compact is on
-#define GBCOMPACT 1
+// #define GBCOMPACT 1
 
 //------------------------------------------------------------------------------
 // notes on future work

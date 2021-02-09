@@ -107,16 +107,16 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     bool apply_mask ;           // if true, mask is applied during emult
-    int emult_method ;          // method to use
+    int ewise_method ;          // method to use
 
-    int C_sparsity = GB_emult_sparsity (&apply_mask, &emult_method,
+    int C_sparsity = GB_emult_sparsity (&apply_mask, &ewise_method,
         M, Mask_comp, A, B) ;
 
     //--------------------------------------------------------------------------
     // C<M or !M> = A.*B
     //--------------------------------------------------------------------------
 
-    switch (emult_method)
+    switch (ewise_method)
     {
 
         case GB_EMULT_METHOD_ADD :  // A and B both full (or as-if-full)
@@ -297,7 +297,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 // C<M>=A.*B and C<M>+=A.*B can all be done in-place.
 
 //          return (GB_bitmap_emult (Chandle, ctype, C_is_csc,
-//              emult_method, M, Mask_struct, Mask_comp, mask_applied, A, B,
+//              ewise_method, M, Mask_struct, Mask_comp, mask_applied, A, B,
 //              op, Context)) ;
 
             // punt
@@ -421,7 +421,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         C_nthreads = GB_nthreads (A->vlen * A->vdim, chunk, nthreads_max) ;
 
         // slice the M matrix for method 19
-        if (emult_method == GB_EMULT_METHOD_19)
+        if (ewise_method == GB_EMULT_METHOD_19)
         {
 //          printf ("slice M for method19\n") ;
             GB_SLICE_MATRIX (M, 8) ;
@@ -445,7 +445,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B, C_sparsity,
         // from GB_emult_sparsity:
-        emult_method,
+        ewise_method,
         // to slice M, A, and/or B:
         M_ek_slicing, M_ntasks, M_nthreads,
         A_ek_slicing, A_ntasks, A_nthreads,
