@@ -76,8 +76,6 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
 
-    // #include "GB_AxB_dot4_mkl_template.c
-
     //--------------------------------------------------------------------------
     // get the semiring operators
     //--------------------------------------------------------------------------

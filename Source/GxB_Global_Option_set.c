@@ -145,8 +145,6 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             }
             break ;
 
-        // #include "GxB_Global_Option_set_mkl_template.c"
-
         default : 
 
             return (GrB_INVALID_VALUE) ;

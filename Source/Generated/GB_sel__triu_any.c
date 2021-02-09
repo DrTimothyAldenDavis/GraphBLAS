@@ -54,9 +54,7 @@ void GB_sel_phase1__triu_any
     const int64_t ithunk,
     const GB_void *GB_RESTRICT xthunk,
     const GxB_select_function user_select,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     ;
@@ -81,9 +79,7 @@ void GB_sel_phase2__triu_any
     const int64_t ithunk,
     const GB_void *GB_RESTRICT xthunk,
     const GxB_select_function user_select,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     ;

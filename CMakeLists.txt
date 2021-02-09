@@ -186,45 +186,6 @@ message ( STATUS "CMAKE thread library:      " ${CMAKE_THREAD_LIBS_INIT} )
 message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 
 #-------------------------------------------------------------------------------
-# find the BLAS
-#-------------------------------------------------------------------------------
-
-# FUTURE: CBLAS disabled for now because of a linking issue.  The problem is
-# that GraphBLAS gets linked with both libgomp and libiomp, when the MKL BLAS
-# is used.  The FindOpenMP includes libgomp and FindBLAS with BLA_VENDOR set to
-# Intel10_64ilp includes libiomp.  When this happens, incorrect results are
-# obtained from cblas_saxpy and cblas_daxpy.  The Intel MKL can work with
-# libgomp, but not when libiomp is also included.
-
-# This is fixed in the alternative/Makefile, which only loads libgomp.
-# It is not yet fixed in this CMake script.
-
-#   if ( CMAKE_VERSION VERSION_GREATER "3.13" )
-#       # Look for the parallel 64-bit MKL BLAS by default
-#       set ( BLA_VENDOR Intel10_64ilp )
-#       include ( FindBLAS )
-#       if ( ${BLAS_FOUND} )
-#           set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DMKL_ILP64 " )
-#       else ( )
-#           message ( STATUS "CBLAS : Intel MKL not found" )
-#           # FUTURE: enable other BLAS flavors here
-#           # set ( BLA_VENDOR ... )
-#           # include ( FindBLAS )
-#       endif ( )
-#   endif ( )
-
-#   if ( ${BLAS_FOUND} )
-#       # BLAS_LINKER_FLAGS: uncached list of required linker flags
-#       # (excluding -l and -L).
-#       message ( STATUS "CBLAS:                     found" )
-#       message ( STATUS "CBLAS linker flags:        " ${BLAS_LINKER_FLAGS} )
-#       # BLAS_LIBRARIES: list of libraries to link against (may be empty)
-#       message ( STATUS "CBLAS libraries:    " ${BLAS_LIBRARIES} )
-#   else ( )
-#       message ( STATUS "CBLAS:                     not found" )
-#   endif ( )
-
-#-------------------------------------------------------------------------------
 # include directories for both graphblas and graphblasdemo libraries
 #-------------------------------------------------------------------------------
 
@@ -399,14 +360,6 @@ if ( CMAKE_THREAD_LIBS_INIT )
         target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} )
     endif ( )
 endif ( )
-
-# FUTURE:
-# if ( BLAS_FOUND )
-#   # use the dense CBLAS
-#   message ( STATUS "Using dense CBLAS for faster dense matrix/vector operations" )
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAS_CBLAS " )
-#   target_link_libraries ( graphblas ${BLAS_LIBRARIES} )
-# endif ( )
 
 #-------------------------------------------------------------------------------
 # determine the default matrix format

@@ -96,18 +96,6 @@
 #define GB_OP_IS_SECOND \
     0
 
-// op is plus_fp32 or plus_fp64
-#define GB_OP_IS_PLUS_REAL \
-    0
-
-// op is minus_fp32 or minus_fp64
-#define GB_OP_IS_MINUS_REAL \
-    0
-
-// GB_cblas_*axpy gateway routine, if it exists for this operator and type:
-#define GB_CBLAS_AXPY \
-    (none)
-
 // do the numerical phases of GB_add and GB_emult
 #define GB_PHASE_2_OF_2
 
@@ -167,9 +155,7 @@ GrB_Info GB_Cdense_accumB__lor_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *B_ek_slicing,
-    const int B_ntasks,
-    const int B_nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 )
 {
     #if GB_DISABLE
@@ -221,9 +207,7 @@ GrB_Info GB_AxD__lor_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     #if GB_DISABLE
@@ -350,9 +334,7 @@ GrB_Info GB_AemultB_01__lor_int64
     const GrB_Matrix B,
     const bool flipxy,
     const int64_t *GB_RESTRICT Cp_kfirst,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     #if GB_DISABLE
@@ -398,9 +380,7 @@ GrB_Info GB_AemultB_100__lor_int64
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *GB_RESTRICT Cp_kfirst,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 )
 { 
     #if GB_DISABLE

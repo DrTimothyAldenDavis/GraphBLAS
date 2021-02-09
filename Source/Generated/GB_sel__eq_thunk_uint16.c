@@ -54,9 +54,7 @@ void GB_sel_phase1__eq_thunk_uint16
     const int64_t ithunk,
     const uint16_t *GB_RESTRICT xthunk,
     const GxB_select_function user_select,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     uint16_t thunk = (*xthunk) ;
@@ -81,9 +79,7 @@ void GB_sel_phase2__eq_thunk_uint16
     const int64_t ithunk,
     const uint16_t *GB_RESTRICT xthunk,
     const GxB_select_function user_select,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     uint16_t thunk = (*xthunk) ;

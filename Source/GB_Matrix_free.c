@@ -25,7 +25,6 @@ void GB_Matrix_free             // free a matrix
         { 
             // free all content of A
             GB_phbix_free (A) ;
-            // #include "GB_Matrix_free_mkl_template.c
             // free the error logger string
             GB_FREE (A->logger) ;
             // free the header of A itself

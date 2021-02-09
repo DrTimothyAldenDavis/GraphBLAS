@@ -176,8 +176,6 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
             }
             break ;
 
-        // #include "GxB_Desc_set_mkl_template.c"
-
         default : 
 
             GB_ERROR (GrB_INVALID_VALUE,

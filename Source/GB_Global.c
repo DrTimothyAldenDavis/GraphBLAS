@@ -123,8 +123,6 @@ typedef struct
     //--------------------------------------------------------------------------
 
     double timing [20] ;
-
-    // #include "GB_Global_struct_mkl_template.c"
 }
 GB_Global_struct ;
 
@@ -191,8 +189,6 @@ GB_Global_struct GB_Global =
 
     // for MATLAB interface only
     .print_one_based = false,   // if true, print 1-based indices
-
-    // #include "GB_Global_init_mkl_template.c'
 
     // CUDA environment (DRAFT: in progress)
     .gpu_count = 0,                     // # of GPUs in the system
@@ -800,6 +796,4 @@ double GB_Global_timing_get (int k)
 {
     return (GB_Global.timing [k]) ;
 }
-
-// #include "GB_Global_mkl_template.c
 

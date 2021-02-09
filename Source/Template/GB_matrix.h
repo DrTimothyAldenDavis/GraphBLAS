@@ -540,5 +540,3 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
 
 #endif
 
-// #include "GB_matrix_mkl_template.h"
-

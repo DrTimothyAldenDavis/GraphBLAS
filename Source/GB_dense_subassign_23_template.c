@@ -49,42 +49,14 @@
         //----------------------------------------------------------------------
 
         ASSERT (GB_is_dense (B)) ;
+        int64_t p ;
+        #pragma omp parallel for num_threads(B_nthreads) schedule(static)
+        for (p = 0 ; p < cnz ; p++)
+        { 
+            GB_GETB (bij, Bx, p) ;                  // bij = B(i,j)
+            GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;  // C(i,j) += bij
+        }
 
-        #if defined ( GB_HAS_CBLAS ) && GB_OP_IS_PLUS_REAL
-
-            // C += B via GB_cblas_daxpy or GB_cblas_saxpy
-            GB_CBLAS_AXPY           // Y += alpha*X
-            (
-                cnz,                // length of X and Y (note: int64_t)
-                (GB_CTYPE) 1,       // alpha is 1.0
-                Bx,                 // X, always stride 1
-                Cx,                 // Y, always stride 1
-                B_nthreads            // maximum # of threads to use
-            ) ;
-
-        #elif defined ( GB_HAS_CBLAS ) && GB_OP_IS_MINUS_REAL
-
-            // C -= B via GB_cblas_daxpy or GB_cblas_saxpy
-            GB_CBLAS_AXPY           // Y += alpha*X
-            (
-                cnz,                // length of X and Y (note: int64_t)
-                (GB_CTYPE) -1,      // alpha is -1.0
-                Bx,                 // X, always stride 1
-                Cx,                 // Y, always stride 1
-                B_nthreads            // maximum # of threads to use
-            ) ;
-
-        #else
-
-            int64_t p ;
-            #pragma omp parallel for num_threads(B_nthreads) schedule(static)
-            for (p = 0 ; p < cnz ; p++)
-            { 
-                GB_GETB (bij, Bx, p) ;                  // bij = B(i,j)
-                GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;  // C(i,j) += bij
-            }
-
-        #endif
     }
     else
     {
@@ -149,58 +121,17 @@
                     // both C(:,j) and B(:,j) are dense
                     //----------------------------------------------------------
 
-                    #if defined ( GB_HAS_CBLAS ) && GB_OP_IS_PLUS_REAL
 
-                        // y += x via GB_cblas_daxpy or GB_cblas_saxpy.
-                        // use a single thread since this is already in a
-                        // parallel region.
-
-                        int64_t len = my_pB_end - my_pB_start ;
-                        int64_t i = my_pB_start - pB_start ;
+                    GB_PRAGMA_SIMD_VECTORIZE
+                    for (int64_t pB = my_pB_start ; pB < my_pB_end ; pB++)
+                    { 
+                        int64_t i = pB - pB_start ;
                         int64_t p = pC + i ;
-
-                        GB_CBLAS_AXPY           // Y += alpha*X
-                        (
-                            len,                // length of X and Y
-                            (GB_CTYPE) 1,       // alpha is 1.0
-                            Bx + my_pB_start,   // X, always stride 1
-                            Cx + p,             // Y, always stride 1
-                            1                   // use a single thread
-                        ) ;
-
-                    #elif defined ( GB_HAS_CBLAS ) && GB_OP_IS_MINUS_REAL
-
-                        // y -= x via GB_cblas_daxpy or GB_cblas_saxpy.
-                        // use a single thread since this is already in a
-                        // parallel region.
-
-                        int64_t len = my_pB_end - my_pB_start ;
-                        int64_t i = my_pB_start - pB_start ;
-                        int64_t p = pC + i ;
-
-                        GB_CBLAS_AXPY           // Y += alpha*X
-                        (
-                            len,                // length of X and Y
-                            (GB_CTYPE) -1,      // alpha is -1.0
-                            Bx + my_pB_start,   // X, always stride 1
-                            Cx + p,             // Y, always stride 1
-                            1                   // use a single thread
-                        ) ;
-
-                    #else
-
-                        GB_PRAGMA_SIMD_VECTORIZE
-                        for (int64_t pB = my_pB_start ; pB < my_pB_end ; pB++)
-                        { 
-                            int64_t i = pB - pB_start ;
-                            int64_t p = pC + i ;
-                            // bij = B(i,j)
-                            GB_GETB (bij, Bx, pB) ;
-                            // C(i,j) += bij
-                            GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
-                        }
-
-                    #endif
+                        // bij = B(i,j)
+                        GB_GETB (bij, Bx, pB) ;
+                        // C(i,j) += bij
+                        GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
+                    }
 
                 }
                 else

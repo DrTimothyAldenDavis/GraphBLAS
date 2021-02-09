@@ -174,8 +174,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
-    // #include "GB_AxB_saxpy3_mkl_template.c
-
     //--------------------------------------------------------------------------
     // define workspace
     //--------------------------------------------------------------------------

@@ -150,8 +150,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->h = NULL ;
     A->p_shallow = false ;
     A->h_shallow = false ;
-    // #include "GB_new_mkl_template.c"
-
     A->logger = NULL ;          // no error logged yet
 
     // content that is freed or reset in GB_bix_free

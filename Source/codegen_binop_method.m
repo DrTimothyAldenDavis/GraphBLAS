@@ -100,31 +100,6 @@ else
     fprintf (f, 'define(`GB_op_is_second'', `0'')\n') ;
 end
 
-% determine the names of the dense GB_cblas_* gateway routines to use
-is_fp32 = isequal (xtype, 'float') ;
-is_fp64 = isequal (xtype, 'double') ;
-is_real = is_fp32 || is_fp64 ;
-is_plus  = isequal (binop, 'plus') ;
-is_minus = isequal (binop, 'minus') ;
-if (is_real && (is_plus || is_minus))
-    if (is_plus)
-        fprintf (f, 'define(`GB_op_is_plus_real'', `1'')\n') ;
-        fprintf (f, 'define(`GB_op_is_minus_real'', `0'')\n') ;
-    else
-        fprintf (f, 'define(`GB_op_is_plus_real'', `0'')\n') ;
-        fprintf (f, 'define(`GB_op_is_minus_real'', `1'')\n') ;
-    end
-    if (is_fp32)
-        fprintf (f, 'define(`GB_cblas_axpy'', `GB_cblas_saxpy'')\n') ;
-    else
-        fprintf (f, 'define(`GB_cblas_axpy'', `GB_cblas_daxpy'')\n') ;
-    end
-else
-    fprintf (f, 'define(`GB_op_is_plus_real'', `0'')\n') ;
-    fprintf (f, 'define(`GB_op_is_minus_real'', `0'')\n') ;
-    fprintf (f, 'define(`GB_cblas_axpy'', `(none)'')\n') ;
-end
-
 % determine type of z, x, and y from xtype and binop
 switch (binop)
     case { 'eq', 'ne', 'gt', 'lt', 'ge', 'le' }
@@ -246,7 +221,7 @@ fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fclose (f) ;
 
-trim = 43 ;
+trim = 40 ;
 
 % construct the *.c file
 cmd = sprintf (...
