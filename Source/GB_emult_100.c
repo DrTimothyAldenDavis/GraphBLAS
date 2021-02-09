@@ -21,6 +21,7 @@
 // Just change the "&&" to "||" in the GB_emult_100_template. 
 // It can also handle the case when both A and B are full.
 
+#include "GB_ewise.h"
 #include "GB_emult.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
@@ -39,7 +40,7 @@
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORK ;              \
-    GB_Matrix_free (&C) ;       \
+    GB_Matrix_free (Chandle) ;  \
 }
 
 GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
@@ -63,7 +64,6 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     GrB_Info info ;
     ASSERT (Chandle != NULL) ;
-    GrB_Matrix C = NULL ;
     (*Chandle) = NULL ;
 
     ASSERT_MATRIX_OK (M, "M for emult_100", GB0) ;
@@ -116,17 +116,18 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // allocate C->p and C->h
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_new (&C,      // sparse or hyper (same as M), new header
+    GB_OK (GB_new (Chandle,      // sparse or hyper (same as M), new header
         ctype, vlen, vdim, GB_Ap_calloc, C_is_csc,
         C_sparsity, M->hyper_switch, nvec, Context)) ;
+    GrB_Matrix C = (*Chandle) ;
     int64_t *GB_RESTRICT Cp = C->p ;
 
     //--------------------------------------------------------------------------
     // slice the mask matrix M
     //--------------------------------------------------------------------------
 
-    int M_nthreads, M_ntasks ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int M_ntasks, M_nthreads ;
     GB_SLICE_MATRIX (M, 8) ;
 
     //--------------------------------------------------------------------------
@@ -292,10 +293,15 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     if (!done)
     { 
-        // TODO: make this a function
-        // see GB_emult_01, GB_emult_phase2, and even GB_add_phase2
-
         GB_BURBLE_MATRIX (C, "(generic emult_100: %s) ", op->name) ;
+        GB_ewise_generic (Chandle, op, NULL, 0, 0,
+            NULL, NULL, NULL, C_sparsity, GB_EMULT_METHOD_100, Cp_kfirst,
+            M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
+            M, Mask_struct, false, A, B, Context) ;
+
+#if 0
+
+        // see GB_emult_01, GB_emult_phase2, and even GB_add_phase2
 
         GxB_binary_function fmult ;
         size_t csize, asize, bsize, xsize, ysize, zsize ;
@@ -439,6 +445,7 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
                 cast_Z_to_C (cij, z, csize) ;
             #include "GB_emult_100_template.c"
         }
+#endif
     }
 
     //--------------------------------------------------------------------------
@@ -454,7 +461,6 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "C output for emult_100", GB0) ;
-    (*Chandle) = C ;
     (*mask_applied) = true ;
     return (GrB_SUCCESS) ;
 }

@@ -28,9 +28,13 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (M, "M for bitmap scatter, whoe", GB0) ;
+    ASSERT_MATRIX_OK (M, "M for bitmap scatter, whole", GB0) ;
     ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
+//  printf ("M_ntasks %d threads %d\n", M_ntasks, M_nthreads) ;
+    ASSERT (M_ntasks > 0) ;
+    ASSERT (M_nthreads > 0) ;
+    ASSERT (M_ek_slicing != NULL) ;
 
     //--------------------------------------------------------------------------
     // get C and M

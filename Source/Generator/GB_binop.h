@@ -21,9 +21,7 @@ GrB_Info GB_Cdense_accumB
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *B_ek_slicing,
-    const int B_ntasks,
-    const int B_nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb
@@ -40,9 +38,7 @@ GrB_Info GB_AxD
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB
@@ -87,6 +83,7 @@ GrB_Info GB_AemultB
     const int64_t *GB_RESTRICT C_to_M,
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
     const int C_nthreads,
@@ -100,9 +97,7 @@ GrB_Info GB_AemultB_01
     const GrB_Matrix B,
     const bool flipxy,
     const int64_t *GB_RESTRICT Cp_kfirst,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_AemultB_100
@@ -113,9 +108,7 @@ GrB_Info GB_AemultB_100
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *GB_RESTRICT Cp_kfirst,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
 
 if_binop_bind1st_is_enabled

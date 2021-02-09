@@ -537,7 +537,7 @@ void GB_bitmap_M_scatter        // scatter M into the C bitmap
     const bool Mask_struct,     // true if M is structural, false if valued
     const int assign_kind,      // row assign, col assign, assign, or subassign
     const int operation,        // +=2, -=2, or %=2
-    const int64_t *GB_RESTRICT M_ek_slicing,    // size M_ntasks+1
+    const int64_t *M_ek_slicing,    // size M_ntasks+1
     const int M_ntasks,
     const int M_nthreads,
     GB_Context Context
@@ -551,7 +551,7 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
     const GrB_Matrix M,         // mask to scatter into the C bitmap
     const bool Mask_struct,     // true if M is structural, false if valued
     const int operation,        // +=2, -=2, or %=2
-    const int64_t *GB_RESTRICT M_ek_slicing,    // size M_ntasks+1
+    const int64_t *M_ek_slicing,    // size M_ntasks+1
     const int M_ntasks,
     const int M_nthreads,
     GB_Context Context

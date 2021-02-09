@@ -11,9 +11,7 @@ void GB_sel_phase1
     const int64_t ithunk,
     const GB_atype *GB_RESTRICT xthunk,
     const GxB_select_function user_select,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 endif_phase1
 
@@ -29,9 +27,7 @@ void GB_sel_phase2
     const int64_t ithunk,
     const GB_atype *GB_RESTRICT xthunk,
     const GxB_select_function user_select,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 if_bitmap

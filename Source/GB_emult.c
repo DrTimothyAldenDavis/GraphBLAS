@@ -33,7 +33,22 @@
 #include "GB_emult.h"
 #include "GB_add.h"
 
-#define GB_FREE_ALL ;
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE (TaskList) ;        \
+    GB_FREE (C_to_M) ;          \
+    GB_FREE (C_to_A) ;          \
+    GB_FREE (C_to_B) ;          \
+    GB_FREE (M_ek_slicing) ;    \
+    GB_FREE (A_ek_slicing) ;    \
+    GB_FREE (B_ek_slicing) ;    \
+}
+
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WORK ;              \
+    GB_Matrix_free (Chandle) ;  \
+}
 
 GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 (
@@ -57,7 +72,6 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     GrB_Info info ;
     ASSERT (Chandle != NULL) ;
-    GrB_Matrix C = NULL ;
     (*Chandle) = NULL ;
 
     ASSERT_MATRIX_OK (A, "A for emult phased", GB0) ;
@@ -66,6 +80,18 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     ASSERT_BINARYOP_OK (op, "op for emult phased", GB0) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
     ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim && A->vlen == M->vlen)) ;
+
+    //--------------------------------------------------------------------------
+    // declare workspace
+    //--------------------------------------------------------------------------
+
+    int64_t *M_ek_slicing = NULL ; int M_ntasks = 0 ; int M_nthreads = 0 ;
+    int64_t *A_ek_slicing = NULL ; int A_ntasks = 0 ; int A_nthreads = 0 ;
+    int64_t *B_ek_slicing = NULL ; int B_ntasks = 0 ; int B_nthreads = 0 ;
+    GB_task_struct *TaskList = NULL ;
+    int64_t *GB_RESTRICT C_to_M = NULL ;
+    int64_t *GB_RESTRICT C_to_A = NULL ;
+    int64_t *GB_RESTRICT C_to_B = NULL ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
@@ -337,28 +363,19 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     int64_t Cnvec, Cnvec_nonempty ;
     int64_t *GB_RESTRICT Cp = NULL ;
     const int64_t *GB_RESTRICT Ch = NULL ;  // shallow; must not be freed
-    int64_t *GB_RESTRICT C_to_M = NULL ;
-    int64_t *GB_RESTRICT C_to_A = NULL ;
-    int64_t *GB_RESTRICT C_to_B = NULL ;
     int C_ntasks = 0, TaskList_size = 0, C_nthreads ;
-    GB_task_struct *TaskList = NULL ;
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity C and find the vectors in C
     //--------------------------------------------------------------------------
 
-    info = GB_emult_phase0 (
+    GB_OK (GB_emult_phase0 (
         // computed by phase0:
         &Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B,
         // input/output to phase0:
         &C_sparsity,
         // original input:
-        (apply_mask) ? M : NULL, A, B, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        return (info) ;
-    }
+        (apply_mask) ? M : NULL, A, B, Context)) ;
 
     //--------------------------------------------------------------------------
     // phase1: split C into tasks, and count entries in each vector of C
@@ -372,24 +389,16 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         //----------------------------------------------------------------------
 
         // phase1a: split C into tasks
-        info = GB_ewise_slice (
+        GB_OK (GB_ewise_slice (
             // computed by phase1a:
             &TaskList, &TaskList_size, &C_ntasks, &C_nthreads,
             // computed by phase0:
             Cnvec, Ch, C_to_M, C_to_A, C_to_B, false,
             // original input:
-            (apply_mask) ? M : NULL, A, B, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory; free everything allocated by GB_emult_phase0
-            GB_FREE (C_to_M) ;
-            GB_FREE (C_to_A) ;
-            GB_FREE (C_to_B) ;
-            return (info) ;
-        }
+            (apply_mask) ? M : NULL, A, B, Context)) ;
 
         // count the number of entries in each vector of C
-        info = GB_emult_phase1 (
+        GB_OK (GB_emult_phase1 (
             // computed by phase1:
             &Cp, &Cnvec_nonempty,
             // from phase1a:
@@ -397,27 +406,26 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // from phase0:
             Cnvec, Ch, C_to_M, C_to_A, C_to_B,
             // original input:
-            (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory; free everything allocated by phase 0
-            GB_FREE (TaskList) ;
-            GB_FREE (C_to_M) ;
-            GB_FREE (C_to_A) ;
-            GB_FREE (C_to_B) ;
-            return (info) ;
-        }
+            (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context)) ;
 
     }
     else
     { 
 
         //----------------------------------------------------------------------
-        // C is bitmap or full: only determine how many threads to use
+        // C is bitmap or full
         //----------------------------------------------------------------------
 
+        // determine how many threads to use
         GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
         C_nthreads = GB_nthreads (A->vlen * A->vdim, chunk, nthreads_max) ;
+
+        // slice the M matrix for method 19
+        if (emult_method == GB_EMULT_METHOD_19)
+        {
+//          printf ("slice M for method19\n") ;
+            GB_SLICE_MATRIX (M, 8) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -427,9 +435,9 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // Cp is either freed by phase2, or transplanted into C.
     // Either way, it is not freed here.
 
-    info = GB_emult_phase2 (
+    GB_OK (GB_emult_phase2 (
         // computed or used by phase2:
-        &C, ctype, C_is_csc, op,
+        Chandle, ctype, C_is_csc, op,
         // from phase1:
         Cp, Cnvec_nonempty,
         // from phase1a:
@@ -438,31 +446,20 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         Cnvec, Ch, C_to_M, C_to_A, C_to_B, C_sparsity,
         // from GB_emult_sparsity:
         emult_method,
+        // to slice M, A, and/or B:
+        M_ek_slicing, M_ntasks, M_nthreads,
+        A_ek_slicing, A_ntasks, A_nthreads,
+        B_ek_slicing, B_ntasks, B_nthreads,
         // original input:
-        (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context) ;
-
-    // free workspace
-    GB_FREE (TaskList) ;
-    GB_FREE (C_to_M) ;
-    GB_FREE (C_to_A) ;
-    GB_FREE (C_to_B) ;
-
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory; note that Cp is already freed, and Ch is shallow
-        return (info) ;
-    }
+        (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context)) ;
 
     //--------------------------------------------------------------------------
-    // return result
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C output for emult phased", GB0) ;
-    (*Chandle) = C ;
+    GB_FREE_WORK ;
+    ASSERT_MATRIX_OK (*Chandle, "C output for emult phased", GB0) ;
     (*mask_applied) = apply_mask ;
-    ASSERT (!GB_ZOMBIES (C)) ;
-    ASSERT (!GB_JUMBLED (C)) ;
-    ASSERT (!GB_PENDING (C)) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -39,7 +39,6 @@
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_full = GB_as_if_full (A) ;
-    int A_nthreads, A_ntasks ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
@@ -49,7 +48,6 @@
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_full = GB_as_if_full (B) ;
-    int B_nthreads, B_ntasks ;
 
     const int64_t *GB_RESTRICT Mp = NULL ;
     const int64_t *GB_RESTRICT Mh = NULL ;
@@ -61,7 +59,6 @@
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool M_is_full = GB_as_if_full (M) ;
     const bool M_is_sparse_or_hyper = M_is_sparse || M_is_hyper ;
-    int M_nthreads, M_ntasks ;
     size_t msize = 0 ;
     if (M != NULL)
     { 

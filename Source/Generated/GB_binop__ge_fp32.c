@@ -305,6 +305,8 @@ GrB_Info GB_AaddB__ge_fp32
     #endif
 }
 
+#undef  GB_FREE_ALL
+
 //------------------------------------------------------------------------------
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
@@ -322,6 +324,7 @@ GrB_Info GB_AemultB__ge_fp32
     const int64_t *GB_RESTRICT C_to_M,
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
     const int C_nthreads,
@@ -331,11 +334,7 @@ GrB_Info GB_AemultB__ge_fp32
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int64_t *M_ek_slicing = NULL ;
-    int64_t *A_ek_slicing = NULL ;
-    int64_t *B_ek_slicing = NULL ;
     #include "GB_emult_template.c"
-    GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
     #endif
 }

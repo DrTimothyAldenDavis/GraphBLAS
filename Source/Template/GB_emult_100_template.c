@@ -32,6 +32,10 @@
           int64_t  *GB_RESTRICT Ci = C->i ;
           GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
 
+    const int64_t *GB_RESTRICT kfirst_Mslice = M_ek_slicing ;
+    const int64_t *GB_RESTRICT klast_Mslice  = M_ek_slicing + M_ntasks ;
+    const int64_t *GB_RESTRICT pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
+
     //--------------------------------------------------------------------------
     // C<M>=A.*B where M is sparse/hyper, A and B are bitmap/full
     //--------------------------------------------------------------------------

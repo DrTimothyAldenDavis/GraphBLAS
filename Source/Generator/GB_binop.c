@@ -167,9 +167,7 @@ GrB_Info GB_Cdense_accumB
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *B_ek_slicing,
-    const int B_ntasks,
-    const int B_nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 )
 {
     #if GB_DISABLE
@@ -221,9 +219,7 @@ GrB_Info GB_AxD
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     #if GB_DISABLE
@@ -305,6 +301,8 @@ GrB_Info GB_AaddB
     #endif
 }
 
+#undef  GB_FREE_ALL
+
 //------------------------------------------------------------------------------
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
@@ -322,6 +320,7 @@ GrB_Info GB_AemultB
     const int64_t *GB_RESTRICT C_to_M,
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
     const int C_nthreads,
@@ -331,11 +330,7 @@ GrB_Info GB_AemultB
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int64_t *M_ek_slicing = NULL ;
-    int64_t *A_ek_slicing = NULL ;
-    int64_t *B_ek_slicing = NULL ;
     #include "GB_emult_template.c"
-    GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -351,9 +346,7 @@ GrB_Info GB_AemultB_01
     const GrB_Matrix B,
     const bool flipxy,
     const int64_t *GB_RESTRICT Cp_kfirst,
-    const int64_t *A_ek_slicing,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     #if GB_DISABLE
@@ -399,9 +392,7 @@ GrB_Info GB_AemultB_100
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *GB_RESTRICT Cp_kfirst,
-    const int64_t *M_ek_slicing,
-    const int M_ntasks,
-    const int M_nthreads
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 )
 { 
     #if GB_DISABLE
