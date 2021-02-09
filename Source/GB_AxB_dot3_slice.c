@@ -33,7 +33,7 @@
 }
 
 #include "GB_mxm.h"
-#include "GB_ek_slice.h"
+#include "GB_search_for_vector_template.c"
 
 //------------------------------------------------------------------------------
 // GB_AxB_dot3_slice

@@ -32,7 +32,7 @@
 
         const int8_t *GB_RESTRICT Bb = B->b ;
         int64_t p ;
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        #pragma omp parallel for num_threads(B_nthreads) schedule(static)
         for (p = 0 ; p < cnz ; p++)
         { 
             if (!Bb [p]) continue ;
@@ -41,7 +41,7 @@
         }
 
     }
-    else if (kfirst_slice == NULL)
+    else if (B_ek_slicing == NULL)
     {
 
         //----------------------------------------------------------------------
@@ -59,7 +59,7 @@
                 (GB_CTYPE) 1,       // alpha is 1.0
                 Bx,                 // X, always stride 1
                 Cx,                 // Y, always stride 1
-                nthreads            // maximum # of threads to use
+                B_nthreads            // maximum # of threads to use
             ) ;
 
         #elif defined ( GB_HAS_CBLAS ) && GB_OP_IS_MINUS_REAL
@@ -71,13 +71,13 @@
                 (GB_CTYPE) -1,      // alpha is -1.0
                 Bx,                 // X, always stride 1
                 Cx,                 // Y, always stride 1
-                nthreads            // maximum # of threads to use
+                B_nthreads            // maximum # of threads to use
             ) ;
 
         #else
 
             int64_t p ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            #pragma omp parallel for num_threads(B_nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
             { 
                 GB_GETB (bij, Bx, p) ;                  // bij = B(i,j)
@@ -102,14 +102,18 @@
         const int64_t cvlen = C->vlen ;
         bool B_jumbled = B->jumbled ;
 
+        const int64_t *GB_RESTRICT kfirst_Bslice = B_ek_slicing ;
+        const int64_t *GB_RESTRICT klast_Bslice  = kfirst_Bslice + B_ntasks ;
+        const int64_t *GB_RESTRICT pstart_Bslice = klast_Bslice + B_ntasks ;
+
         int taskid ;
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-        for (taskid = 0 ; taskid < ntasks ; taskid++)
+        #pragma omp parallel for num_threads(B_nthreads) schedule(dynamic,1)
+        for (taskid = 0 ; taskid < B_ntasks ; taskid++)
         {
 
             // if kfirst > klast then taskid does no work at all
-            int64_t kfirst = kfirst_slice [taskid] ;
-            int64_t klast  = klast_slice  [taskid] ;
+            int64_t kfirst = kfirst_Bslice [taskid] ;
+            int64_t klast  = klast_Bslice  [taskid] ;
 
             //------------------------------------------------------------------
             // C(:,kfirst:klast) += B(:,kfirst:klast)
@@ -125,7 +129,7 @@
                 int64_t j = GBH (Bh, k) ;
                 int64_t my_pB_start, my_pB_end ;
                 GB_get_pA (&my_pB_start, &my_pB_end, taskid, k,
-                    kfirst, klast, pstart_slice, Bp, bvlen) ;
+                    kfirst, klast, pstart_Bslice, Bp, bvlen) ;
 
                 int64_t pB_start = GBP (Bp, k, bvlen) ;
                 int64_t pB_end   = GBP (Bp, k+1, bvlen) ;

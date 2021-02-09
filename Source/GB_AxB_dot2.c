@@ -32,7 +32,7 @@
     GB_Matrix_free (&M2) ;                                              \
     GB_FREE (A_slice) ;                                                 \
     GB_FREE (B_slice) ;                                                 \
-    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
+    GB_FREE (M_ek_slicing) ;                                            \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -79,9 +79,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GrB_Matrix M, M2 = NULL ;
     int64_t *GB_RESTRICT A_slice = NULL ;
     int64_t *GB_RESTRICT B_slice = NULL ;
-    int64_t *GB_RESTRICT pstart_Mslice = NULL ;
-    int64_t *GB_RESTRICT kfirst_Mslice = NULL ;
-    int64_t *GB_RESTRICT klast_Mslice  = NULL ;
+    int64_t *M_ek_slicing = NULL ;
     ASSERT (A_in->vlen == B_in->vlen) ;
     ASSERT (A_in->vlen > 0) ;
 
@@ -275,22 +273,14 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // However, in the future, this method might be able to modify C on
         // input, in which case C->b will not be all zero.
 
-        int mthreads = GB_nthreads (GB_NNZ (M) + M->nvec, chunk, nthreads_max) ;
-        int mtasks = (mthreads == 1) ? 1 : (8 * mthreads) ;
-        if (!GB_ek_slice (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice,
-            M, &mtasks))
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
+        int M_ntasks, M_nthreads ;
+        GB_SLICE_MATRIX (M, 8) ;
 
         // Cb [pC] += 2 for each entry M(i,j) in the mask
         GB_bitmap_M_scatter (C,
             NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
             M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_PLUS_2,
-            pstart_Mslice, kfirst_Mslice, klast_Mslice,
-            mthreads, mtasks, Context) ;
+            M_ek_slicing, M_ntasks, M_nthreads, Context) ;
         // the bitmap of C now contains:
         //  Cb (i,j) = 0:   cij not present, mij zero
         //  Cb (i,j) = 1:   cij present, mij zero           (not used yet)

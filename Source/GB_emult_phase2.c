@@ -32,11 +32,11 @@
 #endif
 
 #undef  GB_FREE_WORK
-#define GB_FREE_WORK                                                    \
-{                                                                       \
-    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
-    GB_ek_slice_free (&pstart_Aslice, &kfirst_Aslice, &klast_Aslice) ;  \
-    GB_ek_slice_free (&pstart_Bslice, &kfirst_Bslice, &klast_Bslice) ;  \
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE (M_ek_slicing) ;    \
+    GB_FREE (A_ek_slicing) ;    \
+    GB_FREE (B_ek_slicing) ;    \
 }
 
 #undef  GB_FREE_ALL
@@ -100,9 +100,9 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
     ASSERT (A->vdim == B->vdim) ;
 
-    int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
-    int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
-    int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
+    int64_t *M_ek_slicing = NULL ;
+    int64_t *A_ek_slicing = NULL ;
+    int64_t *B_ek_slicing = NULL ;
 
     //--------------------------------------------------------------------------
     // get the opcode

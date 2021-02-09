@@ -94,8 +94,8 @@
 #define GB_J_WORK(t) (((t) < 0) ? -1 : ((J_work == NULL) ? 0 : J_work [t]))
 #define GB_K_WORK(t) (((t) < 0) ? -1 : ((K_work == NULL) ? t : K_work [t]))
 
-#define GB_FREE_WORK                                                \
-{                                                                   \
+#define GB_FREE_WORK                \
+{                                   \
     GB_FREE (tstart_slice) ;        \
     GB_FREE (tnvec_slice) ;         \
     GB_FREE (tnz_slice) ;           \

@@ -24,8 +24,7 @@
 
 #include "GB_bitmap_assign_methods.h"
 
-#define GB_FREE_ALL \
-    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;
+#define GB_FREE_ALL GB_FREE (M_ek_slicing) ;
 
 GrB_Info GB_bitmap_assign_notM_accum_whole
 (
@@ -72,8 +71,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
     // Cb [pC] += 2 for each entry M(i,j) in the mask
     GB_bitmap_M_scatter_whole (C,
         M, Mask_struct, GB_BITMAP_M_SCATTER_PLUS_2,
-        pstart_Mslice, kfirst_Mslice, klast_Mslice,
-        M_nthreads, M_ntasks, Context) ;
+        M_ek_slicing, M_ntasks, M_nthreads, Context) ;
     // the bitmap of C now contains:
     //  Cb (i,j) = 0:   cij not present, mij zero
     //  Cb (i,j) = 1:   cij present, mij zero
@@ -311,8 +309,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
                 // Cb [pC] -= 2 for each entry M(i,j) in the mask
                 GB_bitmap_M_scatter_whole (C,
                     M, Mask_struct, GB_BITMAP_M_SCATTER_MINUS_2,
-                    pstart_Mslice, kfirst_Mslice, klast_Mslice,
-                    M_nthreads, M_ntasks, Context) ;
+                    M_ek_slicing, M_ntasks, M_nthreads, Context) ;
             }
         }
     }

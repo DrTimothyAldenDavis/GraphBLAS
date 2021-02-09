@@ -89,10 +89,12 @@
         // scatter M into the C bitmap
         //----------------------------------------------------------------------
 
+        // TODO: do not slice the matrix here.  Instead, do it in the
+        // caller and pass in pstart_Mslice, kfirst_Mslice, etc.
         GB_SLICE_MATRIX (M, 8) ;
+
         GB_bitmap_M_scatter_whole (C, M, Mask_struct, GB_BITMAP_M_SCATTER_SET_2,
-            pstart_Mslice, kfirst_Mslice, klast_Mslice,
-            M_nthreads, M_ntasks, Context) ;
+            M_ek_slicing, M_ntasks, M_nthreads, Context) ;
 
         // C(i,j) has been marked, in Cb, with the value 2 where M(i,j)=1.
         // These positions will not be computed in C(i,j).  C(i,j) can only

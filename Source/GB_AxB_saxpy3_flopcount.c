@@ -71,11 +71,11 @@
 #include "GB_bracket.h"
 #include "GB_AxB_saxpy3.h"
 
-#define GB_FREE_WORK                                                    \
-{                                                                       \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;     \
-    GB_FREE (Wfirst) ;                                                  \
-    GB_FREE (Wlast) ;                                                   \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE (B_ek_slicing) ;    \
+    GB_FREE (Wfirst) ;          \
+    GB_FREE (Wlast) ;           \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -118,11 +118,9 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    int64_t bnz = GB_NNZ_HELD (B) ;
     int64_t bnvec = B->nvec ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (bnz + bnvec, chunk, nthreads_max) ;
 
     // clear Bflops
     GB_memset (Bflops, 0, (bnvec+1) * sizeof (int64_t), nthreads_max) ;
@@ -171,32 +169,24 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // construct the parallel tasks
     //--------------------------------------------------------------------------
 
-    // taskid does entries pstart_slice [taskid] to pstart_slice [taskid+1]-1
-    // and vectors kfirst_slice [taskid] to klast_slice [taskid].  The first
-    // and last vectors may be shared with prior slices and subsequent slices.
+    int64_t *GB_RESTRICT Wfirst = NULL ;       // size B_ntasks
+    int64_t *GB_RESTRICT Wlast = NULL ;        // size B_ntasks
 
-    int64_t *GB_RESTRICT Wfirst = NULL ;       // size ntasks
-    int64_t *GB_RESTRICT Wlast = NULL ;        // size ntasks
-
-    int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
-    int64_t *pstart_slice, *kfirst_slice, *klast_slice ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, B, &ntasks))
-    { 
-        // out of memory
-        GB_FREE_WORK ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
+    int64_t *B_ek_slicing = NULL ;
+    int B_ntasks, B_nthreads ;
+    GB_SLICE_MATRIX (B, 64) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Wfirst = GB_MALLOC (ntasks, int64_t) ;
-    Wlast  = GB_MALLOC (ntasks, int64_t) ;
+    // TODO: use one malloc
+    Wfirst = GB_MALLOC (B_ntasks, int64_t) ;
+    Wlast  = GB_MALLOC (B_ntasks, int64_t) ;
     if (Wfirst == NULL || Wlast == NULL)
     { 
         // out of memory
-        GB_FREE_WORK ;
+        GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -206,17 +196,17 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
     int64_t total_Mwork = 0 ;
     int taskid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+    #pragma omp parallel for num_threads(B_nthreads) schedule(dynamic,1) \
         reduction(+:total_Mwork)
-    for (taskid = 0 ; taskid < ntasks ; taskid++)
+    for (taskid = 0 ; taskid < B_ntasks ; taskid++)
     {
 
         //----------------------------------------------------------------------
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        int64_t kfirst = kfirst_slice [taskid] ;
-        int64_t klast  = klast_slice  [taskid] ;
+        int64_t kfirst = kfirst_Bslice [taskid] ;
+        int64_t klast  = klast_Bslice  [taskid] ;
         Wfirst [taskid] = 0 ;
         Wlast  [taskid] = 0 ;
         int64_t mpleft = 0 ;     // for GB_lookup of the mask M
@@ -240,7 +230,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
             int64_t pB, pB_end ;
             GB_get_pA (&pB, &pB_end, taskid, kk,
-                kfirst, klast, pstart_slice, Bp, bvlen) ;
+                kfirst, klast, pstart_Bslice, Bp, bvlen) ;
             int64_t my_bjnz = pB_end - pB ;
             int64_t j = GBH (Bh, kk) ;
 
@@ -389,21 +379,21 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
     int64_t kprior = -1 ;
 
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    for (int taskid = 0 ; taskid < B_ntasks ; taskid++)
     {
 
         //----------------------------------------------------------------------
         // sum up the partial flops that taskid computed for kfirst
         //----------------------------------------------------------------------
 
-        int64_t kfirst = kfirst_slice [taskid] ;
-        int64_t klast  = klast_slice  [taskid] ;
+        int64_t kfirst = kfirst_Bslice [taskid] ;
+        int64_t klast  = klast_Bslice  [taskid] ;
 
         if (kfirst <= klast)
         {
-            int64_t pB = pstart_slice [taskid] ;
+            int64_t pB = pstart_Bslice [taskid] ;
             int64_t pB_end = GBP (Bp, kfirst+1, bvlen) ;
-            pB_end = GB_IMIN (pB_end, pstart_slice [taskid+1]) ;
+            pB_end = GB_IMIN (pB_end, pstart_Bslice [taskid+1]) ;
             if (pB < pB_end)
             {
                 if (kprior < kfirst)
@@ -428,7 +418,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
         if (kfirst < klast)
         {
             int64_t pB = GBP (Bp, klast, bvlen) ;
-            int64_t pB_end = pstart_slice [taskid+1] ;
+            int64_t pB_end = pstart_Bslice [taskid+1] ;
             if (pB < pB_end)
             {
                 /* if */ ASSERT (kprior < klast) ;
@@ -459,7 +449,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
     // Bflops = cumsum ([0 Bflops]) ;
     ASSERT (Bflops [bnvec] == 0) ;
-    GB_cumsum (Bflops, bnvec, NULL, nthreads) ;
+    GB_cumsum (Bflops, bnvec, NULL, B_nthreads) ;
     // Bflops [bnvec] is now the total flop count, including the time to
     // compute A*B and to handle the mask.  total_Mwork is part of this total
     // flop count, but is also returned separtely.
@@ -468,7 +458,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_ALL ;
     (*Mwork) = total_Mwork ;
     return (GrB_SUCCESS) ;
 }

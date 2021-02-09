@@ -27,10 +27,10 @@
 #include "GB_unused.h"
 
 #undef  GB_FREE_WORK
-#define GB_FREE_WORK                                                    \
-{                                                                       \
-    GB_ek_slice_free (&pstart_Cslice, &kfirst_Cslice, &klast_Cslice) ;  \
-    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE (C_ek_slicing) ;    \
+    GB_FREE (M_ek_slicing) ;    \
 }
 
 #undef  GB_FREE_ALL
@@ -93,8 +93,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
     ASSERT (C->type == Z->type) ;
 
-    int64_t *pstart_Cslice = NULL, *kfirst_Cslice = NULL, *klast_Cslice = NULL ;
-    int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
+    int64_t *C_ek_slicing = NULL ;
+    int64_t *M_ek_slicing = NULL ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix R

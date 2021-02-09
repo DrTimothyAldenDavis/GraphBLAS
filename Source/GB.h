@@ -956,13 +956,13 @@ bool GB_size_t_multiply     // true if ok, false if overflow
     const size_t b
 ) ;
 
-bool GB_extract_vector_list     // true if successful, false if out of memory
+GrB_Info GB_extract_vector_list     // extract vector list from a matrix
 (
     // output:
-    int64_t *GB_RESTRICT J,        // size nnz(A) or more
+    int64_t *GB_RESTRICT J,         // size nnz(A) or more
     // input:
     const GrB_Matrix A,
-    int nthreads
+    GB_Context Context
 ) ;
 
 GrB_Info GB_extractTuples       // extract all tuples from a matrix

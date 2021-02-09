@@ -15,8 +15,13 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_WORK \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;
+#define GB_FREE_WORK GB_FREE (A_ek_slicing) ;
+
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WORK ;              \
+    GB_Matrix_free (Chandle) ;  \
+}
 
 GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 (
@@ -50,6 +55,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     ASSERT (!GB_IS_BITMAP (A)) ;        // TODO: ok for now
     ASSERT (!GB_IS_BITMAP (D)) ;
     ASSERT (!GB_IS_FULL (D)) ;
+    int64_t *A_ek_slicing = NULL ;
 
     GBURBLE ("(%s=%s*%s) ",
         GB_sparsity_char_matrix (A),    // C has the sparsity structure of A
@@ -73,12 +79,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     // allocate C->x but do not initialize it
     (*Chandle) = NULL ;
-    info = GB_dup (Chandle, A, false, mult->ztype, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        return (info) ;
-    }
+    GB_OK (GB_dup (Chandle, A, false, mult->ztype, Context)) ;
     GrB_Matrix C = (*Chandle) ;
 
     //--------------------------------------------------------------------------
@@ -142,14 +143,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
                 default:  ;
             }
         }
-        info = GB_apply_op (C->x, op1,      // positional unary op only
-            NULL, NULL, false, A, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            GB_Matrix_free (Chandle) ;
-            return (info) ;
-        }
+        GB_OK (GB_apply_op (C->x, op1,      // positional unary op only
+            NULL, NULL, false, A, Context)) ;
         ASSERT_MATRIX_OK (C, "colscale positional: C = A*D output", GB0) ;
         return (GrB_SUCCESS) ;
     }
@@ -158,27 +153,14 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    int64_t anz = GB_NNZ_HELD (A) ;
-    int64_t anvec = A->nvec ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
-    int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
-    // Task tid does entries pstart_slice [tid] to pstart_slice [tid+1]-1 and
-    // vectors kfirst_slice [tid] to klast_slice [tid].  The first and last
-    // vectors may be shared with prior slices and subsequent slices.
-
-    int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, &ntasks))
-    { 
-        // out of memory
-        GB_Matrix_free (Chandle) ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
+    int A_nthreads, A_ntasks ;
+    GB_SLICE_MATRIX (A, 32) ;
 
     //--------------------------------------------------------------------------
     // determine if the values are accessed
@@ -228,7 +210,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         #define GB_BINOP_WORKER(mult,xname)                                  \
         {                                                                    \
             info = GB_AxD(mult,xname) (C, A, A_is_pattern, D, D_is_pattern,  \
-                kfirst_slice, klast_slice, pstart_slice, ntasks, nthreads) ; \
+                A_ek_slicing, A_ntasks, A_nthreads) ;                        \
             done = (info != GrB_NO_VALUE) ;                                  \
         }                                                                    \
         break ;

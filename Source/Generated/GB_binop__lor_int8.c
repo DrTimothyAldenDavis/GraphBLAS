@@ -167,11 +167,9 @@ GrB_Info GB_Cdense_accumB__lor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing,
+    const int B_ntasks,
+    const int B_nthreads
 )
 {
     #if GB_DISABLE
@@ -223,11 +221,9 @@ GrB_Info GB_AxD__lor_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 )
 { 
     #if GB_DISABLE
@@ -271,11 +267,11 @@ GrB_Info GB_DxB__lor_int8
 //------------------------------------------------------------------------------
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                                                     \
-{                                                                       \
-    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
-    GB_ek_slice_free (&pstart_Aslice, &kfirst_Aslice, &klast_Aslice) ;  \
-    GB_ek_slice_free (&pstart_Bslice, &kfirst_Bslice, &klast_Bslice) ;  \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE (M_ek_slicing) ;    \
+    GB_FREE (A_ek_slicing) ;    \
+    GB_FREE (B_ek_slicing) ;    \
 }
 
 GrB_Info GB_AaddB__lor_int8
@@ -300,9 +296,9 @@ GrB_Info GB_AaddB__lor_int8
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
-    int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
-    int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
+    int64_t *M_ek_slicing = NULL ;
+    int64_t *A_ek_slicing = NULL ;
+    int64_t *B_ek_slicing = NULL ;
     #include "GB_add_template.c"
     GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
@@ -335,9 +331,9 @@ GrB_Info GB_AemultB__lor_int8
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
-    int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
-    int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
+    int64_t *M_ek_slicing = NULL ;
+    int64_t *A_ek_slicing = NULL ;
+    int64_t *B_ek_slicing = NULL ;
     #include "GB_emult_template.c"
     GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
@@ -354,10 +350,8 @@ GrB_Info GB_AemultB_01__lor_int8
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool flipxy,
-    const int64_t *GB_RESTRICT pstart_Aslice,
-    const int64_t *GB_RESTRICT kfirst_Aslice,
-    const int64_t *GB_RESTRICT klast_Aslice,
     const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads
 )
@@ -404,10 +398,8 @@ GrB_Info GB_AemultB_100__lor_int8
     const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT pstart_Mslice,
-    const int64_t *GB_RESTRICT kfirst_Mslice,
-    const int64_t *GB_RESTRICT klast_Mslice,
     const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads
 )

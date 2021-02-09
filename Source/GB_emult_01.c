@@ -73,12 +73,12 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_WORK                                                    \
-{                                                                       \
-    GB_FREE (Wfirst) ;                                                  \
-    GB_FREE (Wlast) ;                                                   \
-    GB_FREE (Cp_kfirst) ;                                               \
-    GB_ek_slice_free (&pstart_Aslice, &kfirst_Aslice, &klast_Aslice) ;  \
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE (Wfirst) ;          \
+    GB_FREE (Wlast) ;           \
+    GB_FREE (Cp_kfirst) ;       \
+    GB_FREE (A_ek_slicing) ;    \
 }
 
 #define GB_FREE_ALL             \
@@ -134,9 +134,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     int64_t *GB_RESTRICT Wfirst = NULL ;
     int64_t *GB_RESTRICT Wlast = NULL ;
     int64_t *GB_RESTRICT Cp_kfirst = NULL ;
-    int64_t *GB_RESTRICT pstart_Aslice = NULL ;
-    int64_t *GB_RESTRICT kfirst_Aslice = NULL ;
-    int64_t *GB_RESTRICT klast_Aslice  = NULL ;
+    int64_t *A_ek_slicing = NULL ;
 
     //--------------------------------------------------------------------------
     // get A and B
@@ -241,10 +239,9 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
         // finalize Cp, cumulative sum of Cp and compute Cp_kfirst
         //----------------------------------------------------------------------
 
-        GB_ek_slice_merge1 (Cp, Wfirst, Wlast, kfirst_Aslice, klast_Aslice,
-            A_ntasks) ;
+        GB_ek_slice_merge1 (Cp, Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
         GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst, Cp, nvec,
-            Wfirst, Wlast, kfirst_Aslice, klast_Aslice, A_ntasks, A_nthreads) ;
+            Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads) ;
     }
 
     //--------------------------------------------------------------------------
@@ -364,8 +361,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
         #define GB_BINOP_WORKER(mult,xname)                                 \
         {                                                                   \
             info = GB_AemultB_01(mult,xname) (C, A, B, flipxy,              \
-                pstart_Aslice, kfirst_Aslice, klast_Aslice, Cp_kfirst,      \
-                A_ntasks, A_nthreads) ;                                     \
+                Cp_kfirst, A_ek_slicing, A_ntasks, A_nthreads) ;            \
             done = (info != GrB_NO_VALUE) ;                                 \
         }                                                                   \
         break ;

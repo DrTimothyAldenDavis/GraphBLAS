@@ -25,7 +25,7 @@
 
 #define GB_FREE_WORK                \
 {                                   \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ; \
+    GB_FREE (A_ek_slicing) ;        \
     GB_FREE (Wfirst) ;              \
     GB_FREE (Wlast) ;               \
     GB_FREE (Cp_kfirst) ;           \
@@ -184,6 +184,7 @@ GrB_Info GB_selector
     int64_t *GB_RESTRICT Wfirst = NULL ;
     int64_t *GB_RESTRICT Wlast = NULL ;
     int64_t *GB_RESTRICT Cp_kfirst = NULL ;
+    int64_t *A_ek_slicing = NULL ;
 
     //--------------------------------------------------------------------------
     // allocate the new vector pointers of C
@@ -205,37 +206,24 @@ GrB_Info GB_selector
     // determine the number of threads and tasks to use
     //--------------------------------------------------------------------------
 
-    int64_t anz = GB_NNZ_HELD (A) ;
-    double work = 8*anvec + ((opcode == GB_DIAG_opcode) ? 0 : anz) ;
-
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
-    int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
-    // Task tid does entries pstart_slice [tid] to pstart_slice [tid+1]-1 and
-    // vectors kfirst_slice [tid] to klast_slice [tid].  The first and last
-    // vectors may be shared with prior slices and subsequent slices.
-
-    int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, &ntasks))
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
+    int A_ntasks, A_nthreads ;
+    double work = 8*anvec + ((opcode == GB_DIAG_opcode) ? 0 : GB_NNZ_HELD (A)) ;
+    GB_SLICE_MATRIX_WORK (A, 8, work) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace for each task
     //--------------------------------------------------------------------------
 
     // TODO: use one malloc
-    Wfirst = GB_MALLOC (ntasks, int64_t) ;
-    Wlast  = GB_MALLOC (ntasks, int64_t) ;
-    Cp_kfirst = GB_MALLOC (ntasks, int64_t) ;
+    Wfirst = GB_MALLOC (A_ntasks, int64_t) ;
+    Wlast  = GB_MALLOC (A_ntasks, int64_t) ;
+    Cp_kfirst = GB_MALLOC (A_ntasks, int64_t) ;
     if (Wfirst == NULL || Wlast  == NULL || Cp_kfirst == NULL)
     { 
         // out of memory
@@ -270,12 +258,13 @@ GrB_Info GB_selector
     // define the worker for the switch factory
     #define GB_SELECT_PHASE1
     #define GB_sel1(opname,aname) GB_sel_phase1_ ## opname ## aname
-    #define GB_SEL_WORKER(opname,aname,atype)                           \
-    {                                                                   \
-        GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast,                 \
-            A, kfirst_slice, klast_slice, pstart_slice, flipij, ithunk, \
-            (atype *) xthunk, user_select, ntasks, nthreads) ;          \
-    }                                                                   \
+    #define GB_SEL_WORKER(opname,aname,atype)               \
+    {                                                       \
+        GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast,     \
+            A, flipij, ithunk,                              \
+            (atype *) xthunk, user_select,                  \
+            A_ek_slicing, A_ntasks, A_nthreads) ;           \
+    }                                                       \
     break ;
 
     // launch the switch factory
@@ -290,7 +279,7 @@ GrB_Info GB_selector
 
     int64_t C_nvec_nonempty ;
     GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst, Cp, anvec,
-        Wfirst, Wlast, kfirst_slice, klast_slice, ntasks, nthreads) ;
+        Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads) ;
 
     //--------------------------------------------------------------------------
     // allocate new space for the compacted Ci and Cx
@@ -320,13 +309,14 @@ GrB_Info GB_selector
     // define the worker for the switch factory
     #define GB_SELECT_PHASE2
     #define GB_sel2(opname,aname) GB_sel_phase2_ ## opname ## aname
-    #define GB_SEL_WORKER(opname,aname,atype)                           \
-    {                                                                   \
-        GB_sel2 (opname, aname) (Ci, (atype *) Cx,                      \
-            Zp, Cp, Cp_kfirst,                                          \
-            A, kfirst_slice, klast_slice, pstart_slice, flipij, ithunk, \
-            (atype *) xthunk, user_select, ntasks, nthreads) ;          \
-    }                                                                   \
+    #define GB_SEL_WORKER(opname,aname,atype)           \
+    {                                                   \
+        GB_sel2 (opname, aname) (Ci, (atype *) Cx,      \
+            Zp, Cp, Cp_kfirst,                          \
+            A, flipij, ithunk,                          \
+            (atype *) xthunk, user_select,              \
+            A_ek_slicing, A_ntasks, A_nthreads) ;       \
+    }                                                   \
     break ;
 
     // launch the switch factory

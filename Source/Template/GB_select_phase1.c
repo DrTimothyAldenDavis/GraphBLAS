@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+    const int64_t *GB_RESTRICT kfirst_Aslice = A_ek_slicing ;
+    const int64_t *GB_RESTRICT klast_Aslice  = A_ek_slicing + A_ntasks ;
+    const int64_t *GB_RESTRICT pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
+
 #if defined ( GB_ENTRY_SELECTOR )
 
     //--------------------------------------------------------------------------
@@ -45,13 +49,13 @@
 
     // each thread reduces its own part in parallel
     int tid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (tid = 0 ; tid < ntasks ; tid++)
+    #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
+    for (tid = 0 ; tid < A_ntasks ; tid++)
     {
 
         // if kfirst > klast then thread tid does no work at all
-        int64_t kfirst = kfirst_slice [tid] ;
-        int64_t klast  = klast_slice  [tid] ;
+        int64_t kfirst = kfirst_Aslice [tid] ;
+        int64_t klast  = klast_Aslice  [tid] ;
         Wfirst [tid] = 0 ;
         Wlast  [tid] = 0 ;
 
@@ -69,7 +73,7 @@
             GB_GET_J ; // int64_t j = GBH (Ah, k) ; but for user selectop only
             int64_t pA, pA_end ;
             GB_get_pA (&pA, &pA_end, tid, k,
-                kfirst, klast, pstart_slice, Ap, avlen) ;
+                kfirst, klast, pstart_Aslice, Ap, avlen) ;
 
             //------------------------------------------------------------------
             // count entries in Ax [pA ... pA_end-1]
@@ -99,7 +103,7 @@
     // reduce the first and last vector of each slice using a single thread
     //--------------------------------------------------------------------------
 
-    GB_ek_slice_merge1 (Cp, Wfirst, Wlast, kfirst_slice, klast_slice, ntasks) ;
+    GB_ek_slice_merge1 (Cp, Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
 
 #else
 
@@ -119,7 +123,7 @@
     //--------------------------------------------------------------------------
 
     int64_t k ;
-    #pragma omp parallel for num_threads(nthreads) schedule(guided)
+    #pragma omp parallel for num_threads(A_nthreads) schedule(guided)
     for (k = 0 ; k < anvec ; k++)
     {
 
@@ -231,23 +235,23 @@
     // compute Wfirst and Wlast for each task
     //--------------------------------------------------------------------------
 
-    // Wfirst [0..ntasks-1] and Wlast [0..ntasks-1] are required for
-    // constructing C_start_slice [0..ntasks-1] in GB_selector.
+    // Wfirst [0..A_ntasks-1] and Wlast [0..A_ntasks-1] are required for
+    // constructing C_start_slice [0..A_ntasks-1] in GB_selector.
 
-    for (int tid = 0 ; tid < ntasks ; tid++)
+    for (int tid = 0 ; tid < A_ntasks ; tid++)
     {
 
         // if kfirst > klast then task tid does no work at all
-        int64_t kfirst = kfirst_slice [tid] ;
-        int64_t klast  = klast_slice  [tid] ;
+        int64_t kfirst = kfirst_Aslice [tid] ;
+        int64_t klast  = klast_Aslice  [tid] ;
         Wfirst [tid] = 0 ;
         Wlast  [tid] = 0 ;
 
         if (kfirst <= klast)
         {
-            int64_t pA_start = pstart_slice [tid] ;
+            int64_t pA_start = pstart_Aslice [tid] ;
             int64_t pA_end   = GBP (Ap, kfirst+1, avlen) ;
-            pA_end = GB_IMIN (pA_end, pstart_slice [tid+1]) ;
+            pA_end = GB_IMIN (pA_end, pstart_Aslice [tid+1]) ;
             if (pA_start < pA_end)
             { 
                 #if defined ( GB_TRIL_SELECTOR )
@@ -286,7 +290,7 @@
         if (kfirst < klast)
         {
             int64_t pA_start = GBP (Ap, klast, avlen) ;
-            int64_t pA_end   = pstart_slice [tid+1] ;
+            int64_t pA_end   = pstart_Aslice [tid+1] ;
             if (pA_start < pA_end)
             { 
                 #if defined ( GB_TRIL_SELECTOR )

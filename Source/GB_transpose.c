@@ -886,8 +886,14 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // must be done before Chandle is created below, since that step
             // destroys A.
 
-            int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
-            GB_extract_vector_list (iwork, A, nthreads) ;
+            info = GB_extract_vector_list (iwork, A, Context) ;
+            if (info != GrB_SUCCESS)
+            { 
+                // out of memory
+                GB_FREE (iwork) ;
+                GB_FREE_C ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
 
             //------------------------------------------------------------------
             // allocate the output matrix and additional space (jwork and S)
@@ -980,7 +986,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // jwork = Ai, making a deep copy.  jwork is freed by
                 // GB_builder.  A->i is not modified, even if out of memory.
-                GB_memcpy (jwork, Ai, anz * sizeof (int64_t), nthreads) ;
+                GB_memcpy (jwork, Ai, anz * sizeof (int64_t), nthreads_max) ;
             }
 
             // numerical values: apply the op, typecast, or make shallow copy

@@ -15,19 +15,34 @@
 // GB_SLICE_MATRIX: slice a single matrix using GB_ek_slice
 //------------------------------------------------------------------------------
 
-#define GB_SLICE_MATRIX(X,NTASKS_PER_THREAD)                                   \
-{                                                                              \
-    X ## _nthreads = GB_nthreads (GB_NNZ (X) + X->nvec, chunk, nthreads_max) ; \
+#define GB_SLICE_MATRIX_WORK(X,NTASKS_PER_THREAD,work)                         \
+    X ## _nthreads = GB_nthreads (work, chunk, nthreads_max) ;                 \
     X ## _ntasks = (X ## _nthreads == 1) ? 1 :                                 \
         ((NTASKS_PER_THREAD) * (X ## _nthreads)) ;                             \
-    if (!GB_ek_slice (&(pstart_ ## X ## slice), &(kfirst_ ## X ## slice),      \
-        &(klast_ ## X ## slice), X, &(X ## _ntasks)))                          \
+    if (!GB_ek_slice (&(X ## _ek_slicing), X, &(X ## _ntasks)))                \
     {                                                                          \
         /* out of memory */                                                    \
         GB_FREE_ALL ;                                                          \
         return (GrB_OUT_OF_MEMORY) ;                                           \
     }                                                                          \
-}
+    const int64_t *kfirst_ ## X ## slice = X ## _ek_slicing ;                  \
+    const int64_t *klast_  ## X ## slice = X ## _ek_slicing + X ## _ntasks ;   \
+    const int64_t *pstart_ ## X ## slice = X ## _ek_slicing + X ## _ntasks*2 ;
+
+#define GB_SLICE_MATRIX(X,NTASKS_PER_THREAD)                                   \
+    X ## _nthreads = GB_nthreads (GB_NNZ_HELD (X) + X->nvec,                   \
+        chunk, nthreads_max) ;                                                 \
+    X ## _ntasks = (X ## _nthreads == 1) ? 1 :                                 \
+        ((NTASKS_PER_THREAD) * (X ## _nthreads)) ;                             \
+    if (!GB_ek_slice (&(X ## _ek_slicing), X, &(X ## _ntasks)))                \
+    {                                                                          \
+        /* out of memory */                                                    \
+        GB_FREE_ALL ;                                                          \
+        return (GrB_OUT_OF_MEMORY) ;                                           \
+    }                                                                          \
+    const int64_t *kfirst_ ## X ## slice = X ## _ek_slicing ;                  \
+    const int64_t *klast_  ## X ## slice = X ## _ek_slicing + X ## _ntasks ;   \
+    const int64_t *pstart_ ## X ## slice = X ## _ek_slicing + X ## _ntasks*2 ;
 
 //------------------------------------------------------------------------------
 // GB_ek_slice prototypes
@@ -45,20 +60,11 @@
 bool GB_ek_slice        // true if successful, false if out of memory
 (
     // output:
-    int64_t *GB_RESTRICT *pstart_slice_handle, // size ntasks+1
-    int64_t *GB_RESTRICT *kfirst_slice_handle, // size ntasks
-    int64_t *GB_RESTRICT *klast_slice_handle,  // size ntasks
+    int64_t **ek_slicing_handle,    // size 3*ntasks+1
     // input:
     GrB_Matrix A,                   // matrix to slize
     // input/output:
     int *ntasks_handle              // # of tasks (may be modified)
-) ;
-
-void GB_ek_slice_free
-(
-    int64_t *GB_RESTRICT *pstart_slice_handle,
-    int64_t *GB_RESTRICT *kfirst_slice_handle,
-    int64_t *GB_RESTRICT *klast_slice_handle
 ) ;
 
 void GB_ek_slice_merge1     // merge column counts for the matrix C
@@ -68,8 +74,7 @@ void GB_ek_slice_merge1     // merge column counts for the matrix C
     // input:
     const int64_t *GB_RESTRICT Wfirst,          // size ntasks
     const int64_t *GB_RESTRICT Wlast,           // size ntasks
-    const int64_t *GB_RESTRICT kfirst_Aslice,   // size ntasks
-    const int64_t *GB_RESTRICT klast_Aslice,    // size ntasks
+    const int64_t *ek_slicing,                  // size 3*ntasks+1
     const int ntasks                            // # of tasks
 ) ;
 
@@ -84,14 +89,10 @@ void GB_ek_slice_merge2     // merge final results for matrix C
     const int64_t cnvec,
     const int64_t *GB_RESTRICT Wfirst,          // size ntasks
     const int64_t *GB_RESTRICT Wlast,           // size ntasks
-    const int64_t *GB_RESTRICT kfirst_Aslice,   // size ntasks
-    const int64_t *GB_RESTRICT klast_Aslice,    // size ntasks
+    const int64_t *ek_slicing,                  // size 3*ntasks+1
     const int ntasks,                   // # of tasks used to construct C
     const int nthreads                  // # of threads to use
 ) ;
-
-// define the static inline function GB_search_for_vector
-#include "GB_search_for_vector_template.c"
 
 //------------------------------------------------------------------------------
 // GB_get_pA_and_pC: find the part of A(:,k) and C(:,k) for this task

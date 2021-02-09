@@ -21,11 +21,9 @@ GrB_Info GB_Cdense_accumB
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing,
+    const int B_ntasks,
+    const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb
@@ -42,11 +40,9 @@ GrB_Info GB_AxD
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing,
+    const int A_ntasks,
+    const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB
@@ -103,10 +99,8 @@ GrB_Info GB_AemultB_01
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool flipxy,
-    const int64_t *GB_RESTRICT pstart_Aslice,
-    const int64_t *GB_RESTRICT kfirst_Aslice,
-    const int64_t *GB_RESTRICT klast_Aslice,
     const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads
 ) ;
@@ -118,10 +112,8 @@ GrB_Info GB_AemultB_100
     const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT pstart_Mslice,
-    const int64_t *GB_RESTRICT kfirst_Mslice,
-    const int64_t *GB_RESTRICT klast_Mslice,
     const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads
 ) ;

@@ -24,13 +24,12 @@
 // A may be jumbled.
 
 #include "GB_ek_slice.h"
+#include "GB_search_for_vector_template.c"
 
 bool GB_ek_slice        // true if successful, false if out of memory
 (
     // output:
-    int64_t *GB_RESTRICT *pstart_slice_handle, // size ntasks+1
-    int64_t *GB_RESTRICT *kfirst_slice_handle, // size ntasks
-    int64_t *GB_RESTRICT *klast_slice_handle,  // size ntasks
+    int64_t **ek_slicing_handle,    // size 3*ntasks+1
     // input:
     GrB_Matrix A,                   // matrix to slice
     // input/output:
@@ -42,9 +41,7 @@ bool GB_ek_slice        // true if successful, false if out of memory
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (pstart_slice_handle != NULL) ;
-    ASSERT (kfirst_slice_handle != NULL) ;
-    ASSERT (klast_slice_handle  != NULL) ;
+    ASSERT (ek_slicing_handle != NULL) ;
     ASSERT (ntasks_handle != NULL) ;
 
     //--------------------------------------------------------------------------
@@ -75,23 +72,16 @@ bool GB_ek_slice        // true if successful, false if out of memory
     // allocate result
     //--------------------------------------------------------------------------
 
-    (*pstart_slice_handle) = NULL ;
-    (*kfirst_slice_handle) = NULL ;
-    (*klast_slice_handle ) = NULL ;
-
-    int64_t *GB_RESTRICT pstart_slice = GB_CALLOC (ntasks+1, int64_t) ;
-    int64_t *GB_RESTRICT kfirst_slice = GB_CALLOC (ntasks  , int64_t) ;
-    int64_t *GB_RESTRICT klast_slice  = GB_CALLOC (ntasks  , int64_t) ;
-
-    if (pstart_slice == NULL || kfirst_slice == NULL || klast_slice == NULL)
+    (*ek_slicing_handle) = GB_CALLOC (3*ntasks+1, int64_t) ;
+    if ((*ek_slicing_handle) == NULL)
     { 
-        GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;
+        // out of memory
         return (false) ;
     }
 
-    (*pstart_slice_handle) = pstart_slice ;
-    (*kfirst_slice_handle) = kfirst_slice ;
-    (*klast_slice_handle ) = klast_slice ;
+    int64_t *GB_RESTRICT kfirst_slice = (*ek_slicing_handle) ;
+    int64_t *GB_RESTRICT klast_slice  = (*ek_slicing_handle) + ntasks ;
+    int64_t *GB_RESTRICT pstart_slice = (*ek_slicing_handle) + ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // quick return for empty matrices

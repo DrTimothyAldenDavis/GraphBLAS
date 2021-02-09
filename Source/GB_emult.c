@@ -26,7 +26,9 @@
 // M if present and not complemented.
 
 // TODO: if C is bitmap on input and C_sparsity is GxB_BITMAP, then C=A.*B,
-// C<M>=A.*B and C<M>+=A.*B can all be done in-place.
+// C<M>=A.*B and C<M>+=A.*B can all be done in-place.  Also, if C is bitmap
+// but T<M>=A.*B is sparse (M sparse, with A and B bitmap), then it too can
+// be done in place.
 
 #include "GB_emult.h"
 #include "GB_add.h"
