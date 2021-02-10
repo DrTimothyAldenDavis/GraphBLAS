@@ -324,12 +324,15 @@ GrB_Info GB_AemultB__eq_fc64
 }
 
 //------------------------------------------------------------------------------
-// eWiseMult: C = A.*B when A is sparse/hyper and B is bitmap/full
+// eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
 GrB_Info GB_AemultB_01__eq_fc64
 (
     GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool flipxy,

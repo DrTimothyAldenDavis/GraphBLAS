@@ -129,6 +129,9 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
+    const GrB_Matrix M,     // optional mask, unused if NULL
+    const bool Mask_struct, // if true, use the only structure of M
+    const bool Mask_comp,   // if true, use !M
     const GrB_Matrix A,     // input A matrix (sparse/hyper)
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     GrB_BinaryOp op,        // op to perform C = op (A,B)

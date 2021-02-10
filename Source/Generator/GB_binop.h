@@ -92,6 +92,9 @@ GrB_Info GB_AemultB
 GrB_Info GB_AemultB_01
 (
     GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool flipxy,
