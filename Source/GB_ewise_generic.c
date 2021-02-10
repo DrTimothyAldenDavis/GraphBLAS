@@ -162,10 +162,9 @@ void GB_ewise_generic       // generic ewise
 
         const int64_t offset = GB_positional_offset (opcode) ;
         const bool index_is_i = 
-            (opcode == GB_FIRSTI_opcode  ) ||
-            (opcode == GB_FIRSTI1_opcode ) ||
-            (opcode == GB_SECONDI_opcode ) ||
-            (opcode == GB_SECONDI1_opcode) ;
+            (opcode == GB_FIRSTI_opcode  ) || (opcode == GB_FIRSTI1_opcode ) ||
+            (opcode == GB_SECONDI_opcode ) || (opcode == GB_SECONDI1_opcode) ;
+
         if (op->ztype == GrB_INT64)
         {
             #undef  GB_BINOP
@@ -180,6 +179,10 @@ void GB_ewise_generic       // generic ewise
             else if (ewise_method == GB_EMULT_METHOD_100)
             {
                 #include "GB_emult_100_template.c"
+            }
+            else if (C_sparsity == GxB_BITMAP)
+            {
+                #include "GB_bitmap_emult_template.c"
             }
             else
             {
@@ -200,6 +203,10 @@ void GB_ewise_generic       // generic ewise
             else if (ewise_method == GB_EMULT_METHOD_100)
             {
                 #include "GB_emult_100_template.c"
+            }
+            else if (C_sparsity == GxB_BITMAP)
+            {
+                #include "GB_bitmap_emult_template.c"
             }
             else
             {
@@ -242,6 +249,10 @@ void GB_ewise_generic       // generic ewise
                 fop (z, aij, bij) ;                 \
                 cast_Z_to_C (cij, z, csize) ;
             #include "GB_emult_100_template.c"
+        }
+        else if (C_sparsity == GxB_BITMAP)
+        {
+            #include "GB_bitmap_emult_template.c"
         }
         else
         {

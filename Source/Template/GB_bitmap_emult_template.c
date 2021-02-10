@@ -7,16 +7,30 @@
 
 //------------------------------------------------------------------------------
 
-// C is bitmap.  The mask M can have any sparsity structure, and is efficient
-// to apply (all methods are asymptotically optimal).  A and B are bitmap or
-// full (with at least one of them bitmap).  All cases (no M, M, !M) are
-// handled.
+// C is bitmap.  A and B are bitmap or full.  M depends on the method
 
 {
 
-    ASSERT (A_is_bitmap || B_is_bitmap) ;
-    ASSERT (A_is_bitmap || A_is_full) ;
-    ASSERT (B_is_bitmap || B_is_full) ;
+    //--------------------------------------------------------------------------
+    // get C, A, and B
+    //--------------------------------------------------------------------------
+
+    const int8_t  *GB_RESTRICT Ab = A->b ;
+    const int8_t  *GB_RESTRICT Bb = B->b ;
+    const int64_t vlen = A->vlen ;
+
+    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A) || GB_as_if_full (A)) ;
+    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (A) || GB_as_if_full (B)) ;
+
+    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
+    const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) B->x ;
+          int8_t   *GB_RESTRICT Cb = C->b ;
+          GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
+    const int64_t cnz = GB_NNZ_HELD (C) ;
+
+    //--------------------------------------------------------------------------
+    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B: C is bitmap
+    //--------------------------------------------------------------------------
 
     // TODO modify this method so it can modify C in-place, and also use the
     // accum operator.
@@ -63,7 +77,7 @@
         }
 
     }
-    else if (ewise_method == GB_EMULT_METHOD_19) // (M_is_sparse_or_hyper)
+    else if (ewise_method == GB_EMULT_METHOD_19)
     { 
 
         //----------------------------------------------------------------------
@@ -79,7 +93,9 @@
 
         // M is sparse and complemented.  If M is sparse and not
         // complemented, then C is constructed as sparse, not bitmap.
+        ASSERT (M != NULL) ;
         ASSERT (Mask_comp) ;
+        ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
 
         // C(i,j) = A(i,j) .* B(i,j) can only be computed where M(i,j) is
         // not present in the sparse pattern of M, and where it is present
@@ -167,12 +183,17 @@
         //      bitmap  full        bitmap          full    (method: 20)
         //      bitmap  full        full            bitmap  (method: 20)
 
-        ASSERT (M_is_bitmap || M_is_full) ;
+        ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
+
+        const int8_t  *GB_RESTRICT Mb = M->b ;
+        const GB_void *GB_RESTRICT Mx = 
+            (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+        size_t msize = M->type->size ;
 
         #undef  GB_GET_MIJ     
         #define GB_GET_MIJ(p)                                           \
             bool mij = GBB (Mb, p) && GB_mcast (Mx, p, msize) ;         \
-            if (Mask_comp) mij = !mij ;
+            if (Mask_comp) mij = !mij ; /* TODO: use ^ */
 
         //----------------------------------------------------------------------
         // Method20: C is bitmap; M, A, and B are bitmap or full

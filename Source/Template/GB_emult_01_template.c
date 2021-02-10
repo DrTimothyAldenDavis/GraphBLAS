@@ -7,6 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// C is sparse, with the same sparsity structure as A.  No mask is present.
+// A is sparse/hyper, and B is bitmap/full.  This method also handles the case
+// when the original input A is bitmap/full and B is sparse/hyper, by computing
+// B.*A with the operator flipped.
+
 {
 
     //--------------------------------------------------------------------------
@@ -19,7 +24,6 @@
     const int64_t vlen = A->vlen ;
 
     const int8_t  *GB_RESTRICT Bb = B->b ;
-    const bool B_is_bitmap = GB_IS_BITMAP (B) ;
 
     const int64_t *GB_RESTRICT kfirst_Aslice = A_ek_slicing ;
     const int64_t *GB_RESTRICT klast_Aslice  = A_ek_slicing + A_ntasks ;
@@ -41,7 +45,7 @@
     // C=A.*B
     //--------------------------------------------------------------------------
 
-    if (B_is_bitmap)
+    if (GB_IS_BITMAP (B))
     {
 
         //----------------------------------------------------------------------

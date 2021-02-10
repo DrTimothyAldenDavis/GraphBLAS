@@ -43,6 +43,18 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     GB_Context Context
 ) ;
 
+int GB_emult_sparsity       // return the sparsity structure for C
+(
+    // output:
+    bool *apply_mask,       // if true then mask will be applied by GB_emult
+    int *ewise_method,      // method to use (0: add, 1: GB_emult_01, etc)
+    // input:
+    const GrB_Matrix M,     // optional mask for C, unused if NULL
+    const bool Mask_comp,   // if true, use !M
+    const GrB_Matrix A,     // input A matrix
+    const GrB_Matrix B      // input B matrix
+) ;
+
 GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
@@ -103,10 +115,6 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     const int C_sparsity,
     // from GB_emult_sparsity:
     const int ewise_method,
-    // to slice M, A, and/or B,
-    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
-    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads,
-    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads,
     // original input:
     const GrB_Matrix M,             // optional mask, may be NULL
     const bool Mask_struct,         // if true, use the only structure of M
@@ -114,18 +122,6 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
-) ;
-
-int GB_emult_sparsity       // return the sparsity structure for C
-(
-    // output:
-    bool *apply_mask,       // if true then mask will be applied by GB_emult
-    int *ewise_method,      // method to use (0: add, 1: GB_emult_01, etc)
-    // input:
-    const GrB_Matrix M,     // optional mask for C, unused if NULL
-    const bool Mask_comp,   // if true, use !M
-    const GrB_Matrix A,     // input A matrix
-    const GrB_Matrix B      // input B matrix
 ) ;
 
 GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
@@ -147,6 +143,22 @@ GrB_Info GB_emult_100       // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // sparse/hyper, not NULL
     const bool Mask_struct, // if true, use the only structure of M
+    bool *mask_applied,     // if true, the mask was applied
+    const GrB_Matrix A,     // input A matrix (bitmap/full)
+    const GrB_Matrix B,     // input B matrix (bitmap/full)
+    const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    GB_Context Context
+) ;
+
+GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
+(
+    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    const int ewise_method,
+    const GrB_Type ctype,   // type of output matrix C
+    const bool C_is_csc,    // format of output matrix C
+    const GrB_Matrix M,     // optional mask, unused if NULL
+    const bool Mask_struct, // if true, use the only structure of M
+    const bool Mask_comp,   // if true, use !M
     bool *mask_applied,     // if true, the mask was applied
     const GrB_Matrix A,     // input A matrix (bitmap/full)
     const GrB_Matrix B,     // input B matrix (bitmap/full)

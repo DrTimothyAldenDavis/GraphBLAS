@@ -83,7 +83,7 @@
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORK ;              \
-    GB_Matrix_free (&C) ;       \
+    GB_Matrix_free (Chandle) ;  \
 }
 
 GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
@@ -105,7 +105,6 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     GrB_Info info ;
     ASSERT (Chandle != NULL) ;
-    GrB_Matrix C = NULL ;
     (*Chandle) = NULL ;
 
     ASSERT_MATRIX_OK (A, "A for emult_01", GB0) ;
@@ -158,7 +157,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     GB_OK (GB_new (Chandle,      // sparse or hyper (same as A), new header
         ctype, vlen, vdim, GB_Ap_calloc, C_is_csc,
         C_sparsity, A->hyper_switch, nvec, Context)) ;
-    C = (*Chandle) ;
+    GrB_Matrix C = (*Chandle) ;
     int64_t *GB_RESTRICT Cp = C->p ;
 
     //--------------------------------------------------------------------------
@@ -408,7 +407,6 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "C output for emult_01", GB0) ;
-    (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }
 

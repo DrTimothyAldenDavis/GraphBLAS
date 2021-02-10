@@ -39,9 +39,6 @@
     GB_FREE (C_to_M) ;          \
     GB_FREE (C_to_A) ;          \
     GB_FREE (C_to_B) ;          \
-    GB_FREE (M_ek_slicing) ;    \
-    GB_FREE (A_ek_slicing) ;    \
-    GB_FREE (B_ek_slicing) ;    \
 }
 
 #define GB_FREE_ALL             \
@@ -85,9 +82,6 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // declare workspace
     //--------------------------------------------------------------------------
 
-    int64_t *M_ek_slicing = NULL ; int M_ntasks = 0 ; int M_nthreads = 0 ;
-    int64_t *A_ek_slicing = NULL ; int A_ntasks = 0 ; int A_nthreads = 0 ;
-    int64_t *B_ek_slicing = NULL ; int B_ntasks = 0 ; int B_nthreads = 0 ;
     GB_task_struct *TaskList = NULL ;
     int64_t *GB_RESTRICT C_to_M = NULL ;
     int64_t *GB_RESTRICT C_to_A = NULL ;
@@ -108,7 +102,6 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     bool apply_mask ;           // if true, mask is applied during emult
     int ewise_method ;          // method to use
-
     int C_sparsity = GB_emult_sparsity (&apply_mask, &ewise_method,
         M, Mask_comp, A, B) ;
 
@@ -157,9 +150,6 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      ------------------------------------------
 // TODO     //      sparse  bitmap      sparse          bitmap  (method: 01a)
 // TODO     //      sparse  bitmap      sparse          full    (method: 01a)
-            //      ------------------------------------------
-            //      C       <M> =       A       .*      B
-            //      ------------------------------------------
 // TODO     //      sparse  full        sparse          bitmap  (method: 01a)
 // TODO     //      sparse  full        sparse          full    (method: 01a)
             //      ------------------------------------------
@@ -172,9 +162,6 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      ------------------------------------------
 // TODO     //      sparse  bitmap      sparse          bitmap  (method: 01a)
 // TODO     //      sparse  bitmap      sparse          full    (method: 01a)
-            //      ------------------------------------------
-            //      C       <!M> =       A       .*      B
-            //      ------------------------------------------
 // TODO     //      sparse  full        sparse          bitmap  (method: 01a)
 // TODO     //      sparse  full        sparse          full    (method: 01a)
 
@@ -199,9 +186,6 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      ------------------------------------------
 //TODO      //      sparse  bitmap      bitmap          sparse  (method: 01b)
 //TODO      //      sparse  bitmap      full            sparse  (method: 01b)
-            //      ------------------------------------------
-            //      C       <M> =       A       .*      B
-            //      ------------------------------------------
 //TODO      //      sparse  full        bitmap          sparse  (method: 01b)
 //TODO      //      sparse  full        full            sparse  (method: 01b)
             //      ------------------------------------------
@@ -214,9 +198,6 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      ------------------------------------------
 //TODO      //      sparse  bitmap      bitmap          sparse  (method: 01b)
 //TODO      //      sparse  bitmap      full            sparse  (method: 01b)
-            //      ------------------------------------------
-            //      C       <!M> =      A       .*      B
-            //      ------------------------------------------
 //TODO      //      sparse  full        bitmap          sparse  (method: 01b)
 //TODO      //      sparse  full        full            sparse  (method: 01b)
 
@@ -226,7 +207,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             return (GB_emult_01 (Chandle, ctype, C_is_csc, B, A, op, true,
                 Context)) ;
 
-        case GB_EMULT_METHOD_99 :   break ; // punt
+        case GB_EMULT_METHOD_99 : 
 
             //      ------------------------------------------
             //      C       =           A       .*      B
@@ -246,6 +227,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      sparse  full        sparse          sparse  (method: 99)
 
             // TODO: break this into different methods
+            break ;
 
         case GB_EMULT_METHOD_18 : 
 
@@ -293,15 +275,9 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // by method 100, which constructs C as sparse/hyper (the same
             // structure as M), not bitmap.
 
-// TODO: if C is bitmap on input and C_sparsity is GxB_BITMAP, then C=A.*B,
-// C<M>=A.*B and C<M>+=A.*B can all be done in-place.
-
-//          return (GB_bitmap_emult (Chandle, ctype, C_is_csc,
-//              ewise_method, M, Mask_struct, Mask_comp, mask_applied, A, B,
-//              op, Context)) ;
-
-            // punt
-            break ;
+            return (GB_bitmap_emult (Chandle, ewise_method, ctype, C_is_csc,
+                M, Mask_struct, Mask_comp, mask_applied, A, B,
+                op, Context)) ;
 
         case GB_EMULT_METHOD_100 : 
 
@@ -328,6 +304,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // The method will compute the 2-way intersection of M and A,
             // using the same parallization as C=A.*B when both A and B are
             // both sparse.  It will then lookup B in O(1) time.
+            // M and A must not be jumbled.
 
         case GB_EMULT_METHOD_101B : break ; // punt
 
@@ -338,13 +315,16 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      sparse  sparse      full            sparse  (method: 101b)
 
             // TODO: this will use 101 (M,B,A, flipxy=true)
+            // M and B must not be jumbled.
 
         default : ;
     }
 
     //--------------------------------------------------------------------------
-    // punt
+    // method 99 (and for now, 101a and 101b)
     //--------------------------------------------------------------------------
+
+    ASSERT (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) ;
 
     GB_MATRIX_WAIT (M) ;
     GB_MATRIX_WAIT (A) ;
@@ -381,52 +361,25 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // phase1: split C into tasks, and count entries in each vector of C
     //--------------------------------------------------------------------------
 
-    if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
-    {
+    // phase1a: split C into tasks
+    GB_OK (GB_ewise_slice (
+        // computed by phase1a:
+        &TaskList, &TaskList_size, &C_ntasks, &C_nthreads,
+        // computed by phase0:
+        Cnvec, Ch, C_to_M, C_to_A, C_to_B, false,
+        // original input:
+        (apply_mask) ? M : NULL, A, B, Context)) ;
 
-        //----------------------------------------------------------------------
-        // C is sparse or hypersparse: slice and analyze the C matrix
-        //----------------------------------------------------------------------
-
-        // phase1a: split C into tasks
-        GB_OK (GB_ewise_slice (
-            // computed by phase1a:
-            &TaskList, &TaskList_size, &C_ntasks, &C_nthreads,
-            // computed by phase0:
-            Cnvec, Ch, C_to_M, C_to_A, C_to_B, false,
-            // original input:
-            (apply_mask) ? M : NULL, A, B, Context)) ;
-
-        // count the number of entries in each vector of C
-        GB_OK (GB_emult_phase1 (
-            // computed by phase1:
-            &Cp, &Cnvec_nonempty,
-            // from phase1a:
-            TaskList, C_ntasks, C_nthreads,
-            // from phase0:
-            Cnvec, Ch, C_to_M, C_to_A, C_to_B,
-            // original input:
-            (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context)) ;
-
-    }
-    else
-    { 
-
-        //----------------------------------------------------------------------
-        // C is bitmap or full
-        //----------------------------------------------------------------------
-
-        // determine how many threads to use
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-        C_nthreads = GB_nthreads (A->vlen * A->vdim, chunk, nthreads_max) ;
-
-        // slice the M matrix for method 19
-        if (ewise_method == GB_EMULT_METHOD_19)
-        {
-//          printf ("slice M for method19\n") ;
-            GB_SLICE_MATRIX (M, 8) ;
-        }
-    }
+    // count the number of entries in each vector of C
+    GB_OK (GB_emult_phase1 (
+        // computed by phase1:
+        &Cp, &Cnvec_nonempty,
+        // from phase1a:
+        TaskList, C_ntasks, C_nthreads,
+        // from phase0:
+        Cnvec, Ch, C_to_M, C_to_A, C_to_B,
+        // original input:
+        (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context)) ;
 
     //--------------------------------------------------------------------------
     // phase2: compute the entries (indices and values) in each vector of C
@@ -446,10 +399,6 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         Cnvec, Ch, C_to_M, C_to_A, C_to_B, C_sparsity,
         // from GB_emult_sparsity:
         ewise_method,
-        // to slice M, A, and/or B:
-        M_ek_slicing, M_ntasks, M_nthreads,
-        A_ek_slicing, A_ntasks, A_nthreads,
-        B_ek_slicing, B_ntasks, B_nthreads,
         // original input:
         (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context)) ;
 

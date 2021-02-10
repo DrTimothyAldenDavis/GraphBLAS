@@ -75,38 +75,24 @@
     const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) B->x ;
     const int64_t  *GB_RESTRICT Cp = C->p ;
     const int64_t  *GB_RESTRICT Ch = C->h ;
-          int8_t   *GB_RESTRICT Cb = C->b ;
           int64_t  *GB_RESTRICT Ci = C->i ;
           GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
-    // when C is bitmap or full:
-    const int64_t cnz = GB_NNZ_HELD (C) ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     #endif
 
     //--------------------------------------------------------------------------
-    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B: 2 cases for the sparsity of C
+    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B: C is sparse or hypersparse
     //--------------------------------------------------------------------------
 
     #if defined ( GB_PHASE_1_OF_2 )
 
         // phase1: symbolic phase
-        // C is sparse or hypersparse (never bitmap or full)
         #include "GB_sparse_emult_template.c"
 
     #else
 
         // phase2: numerical phase
-        if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
-        { 
-            // C is sparse or hypersparse
-            #include "GB_sparse_emult_template.c"
-        }
-        else // C_sparsity == GxB_BITMAP
-        { 
-            // C is bitmap (phase2 only)
-            ASSERT (C_sparsity == GxB_BITMAP) ;
-            #include "GB_bitmap_emult_template.c"
-        }
+        ASSERT (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) ;
+        #include "GB_sparse_emult_template.c"
 
     #endif
 }

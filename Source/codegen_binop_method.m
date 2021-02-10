@@ -20,6 +20,7 @@ fprintf (f, 'define(`GB_AaddB'', `GB_AaddB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AemultB'', `GB_AemultB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AemultB_01'', `GB_AemultB_01__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AemultB_100'', `GB_AemultB_100__%s'')\n', name) ;
+fprintf (f, 'define(`GB_AemultB_bitmap'', `GB_AemultB_bitmap__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_accumB'', `GB_Cdense_accumB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_accumb'', `GB_Cdense_accumb__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_ewise3_noaccum'', `GB_Cdense_ewise3_noaccum__%s'')\n', name) ;
@@ -221,7 +222,7 @@ fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fclose (f) ;
 
-trim = 40 ;
+trim = 41 ;
 
 % construct the *.c file
 cmd = sprintf (...

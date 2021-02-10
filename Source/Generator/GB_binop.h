@@ -83,7 +83,6 @@ GrB_Info GB_AemultB
     const int64_t *GB_RESTRICT C_to_M,
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
-    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
     const int C_nthreads,
@@ -109,6 +108,20 @@ GrB_Info GB_AemultB_100
     const GrB_Matrix B,
     const int64_t *GB_RESTRICT Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
+    const int C_nthreads,
+    GB_Context Context
 ) ;
 
 if_binop_bind1st_is_enabled
