@@ -15,7 +15,7 @@
 
 #include "GB_mxm.h"
 
-GrB_Info GrB_vxm                    // w'<M> = accum (w, u'*A)
+GrB_Info GrB_vxm                    // w'<M> = accum (w', u'*A)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector M,             // optional mask for w, unused if NULL
@@ -49,8 +49,8 @@ GrB_Info GrB_vxm                    // w'<M> = accum (w, u'*A)
     // w'<M'> = accum (w',u'*A) and variations, using the mxm kernel
     //--------------------------------------------------------------------------
 
-    // w, M, and u are passed as matrices to GB_mxm
-    // A and u are swapped, and A_transpose is negated:
+    // w, M, and u are treated as column vectors and passed as n-by-1 matrices
+    // to GB_mxm A and u are swapped, and A_transpose is negated:
     //      u'*A  == A'*u
     //      u'*A' == A*u
     // Since A and u are swapped, in all the matrix multiply kernels,
