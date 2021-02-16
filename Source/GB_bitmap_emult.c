@@ -8,46 +8,46 @@
 //------------------------------------------------------------------------------
 
 
-// GB_EMULT_METHOD_18 : 
+// GB_EMULT_METHOD_05 : 
 
             //      ------------------------------------------
             //      C       =           A       .*      B
             //      ------------------------------------------
-            //      bitmap  .           bitmap          bitmap  (method: 18)
-            //      bitmap  .           bitmap          full    (method: 18)
-            //      bitmap  .           full            bitmap  (method: 18)
+            //      bitmap  .           bitmap          bitmap  (method: 05)
+            //      bitmap  .           bitmap          full    (method: 05)
+            //      bitmap  .           full            bitmap  (method: 05)
 
-// GB_EMULT_METHOD_19 : 
+// GB_EMULT_METHOD_06 : 
 
             //      ------------------------------------------
             //      C       <!M>=       A       .*      B
             //      ------------------------------------------
-            //      bitmap  sparse      bitmap          bitmap  (method: 19)
-            //      bitmap  sparse      bitmap          full    (method: 19)
-            //      bitmap  sparse      full            bitmap  (method: 19)
+            //      bitmap  sparse      bitmap          bitmap  (method: 06)
+            //      bitmap  sparse      bitmap          full    (method: 06)
+            //      bitmap  sparse      full            bitmap  (method: 06)
 
-// GB_EMULT_METHOD_20 : 
+// GB_EMULT_METHOD_07 : 
 
             //      ------------------------------------------
             //      C      <M> =        A       .*      B
             //      ------------------------------------------
-            //      bitmap  bitmap      bitmap          bitmap  (method: 20)
-            //      bitmap  bitmap      bitmap          full    (method: 20)
-            //      bitmap  bitmap      full            bitmap  (method: 20)
-            //      bitmap  full        bitmap          bitmap  (method: 20)
-            //      bitmap  full        bitmap          full    (method: 20)
-            //      bitmap  full        full            bitmap  (method: 20)
+            //      bitmap  bitmap      bitmap          bitmap  (method: 07)
+            //      bitmap  bitmap      bitmap          full    (method: 07)
+            //      bitmap  bitmap      full            bitmap  (method: 07)
+            //      bitmap  full        bitmap          bitmap  (method: 07)
+            //      bitmap  full        bitmap          full    (method: 07)
+            //      bitmap  full        full            bitmap  (method: 07)
             //      ------------------------------------------
             //      C      <!M> =       A       .*      B
             //      ------------------------------------------
-            //      bitmap  bitmap      bitmap          bitmap  (method: 20)
-            //      bitmap  bitmap      bitmap          full    (method: 20)
-            //      bitmap  bitmap      full            bitmap  (method: 20)
-            //      bitmap  full        bitmap          bitmap  (method: 20)
-            //      bitmap  full        bitmap          full    (method: 20)
-            //      bitmap  full        full            bitmap  (method: 20)
+            //      bitmap  bitmap      bitmap          bitmap  (method: 07)
+            //      bitmap  bitmap      bitmap          full    (method: 07)
+            //      bitmap  bitmap      full            bitmap  (method: 07)
+            //      bitmap  full        bitmap          bitmap  (method: 07)
+            //      bitmap  full        bitmap          full    (method: 07)
+            //      bitmap  full        full            bitmap  (method: 07)
 
-            // For methods 18, 19, and 20, C is constructed as bitmap.
+            // For methods 05, 06, and 07, C is constructed as bitmap.
             // Both A and B are bitmap/full.  M is either not present,
             // complemented, or not complemented and bitmap/full.  The
             // case when M is not complemented and sparse/hyper is handled
@@ -138,8 +138,8 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     int64_t cnz = (A->vlen*A->vdim) ;
     int C_nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
 
-    // slice the M matrix for method 19
-    if (ewise_method == GB_EMULT_METHOD_19)
+    // slice the M matrix for method 06
+    if (ewise_method == GB_EMULT_METHOD_06)
     {
         GB_SLICE_MATRIX (M, 8) ;
     }

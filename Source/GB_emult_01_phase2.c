@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_phase2: C=A.*B, C<M>=A.*B, or C<!M>=A.*B
+// GB_emult_01_phase2: C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,12 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-// GB_emult_phase2 computes C=A.*B, C<M>=A.*B, or C<!M>=A.*B.  It is preceded
-// first by GB_emult_phase0, which computes the list of vectors of C to compute
-// (Ch) and their location in M, A, and B (C_to_[MAB]).  Next, GB_emult_phase1
-// counts the entries in each vector C(:,j) and computes Cp.
+// GB_emult_01_phase2 computes C=A.*B, C<M>=A.*B, or C<!M>=A.*B.  It is
+// preceded first by GB_emult_01_phase0, which computes the list of vectors of
+// C to compute (Ch) and their location in M, A, and B (C_to_[MAB]).  Next,
+// GB_emult_01_phase1 counts the entries in each vector C(:,j) and computes Cp.
 
-// GB_emult_phase2 computes the pattern and values of each vector of C(:,j),
+// GB_emult_01_phase2 computes the pattern and values of each vector of C(:,j),
 // entirely in parallel.
 
 // C, M, A, and B can be have any sparsity structure.  If M is sparse or
@@ -36,7 +36,7 @@
     GB_Matrix_free (Chandle) ;  \
 }
 
-GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
+GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
@@ -46,7 +46,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     const int64_t *GB_RESTRICT Cp,      // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase1a:
-    const GB_task_struct *GB_RESTRICT TaskList,  // array of structs
+    const GB_task_struct *GB_RESTRICT TaskList, // array of structs
     const int C_ntasks,                         // # of tasks
     const int C_nthreads,                       // # of threads to use
     // analysis from phase0:
@@ -134,14 +134,14 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
     C = (*Chandle) ;
 
-    // transplant Cp into C as the vector pointers, from GB_emult_phase1.
+    // transplant Cp into C as the vector pointers, from GB_emult_01_phase1
     if (C_is_sparse_or_hyper)
     { 
         C->nvec_nonempty = Cnvec_nonempty ;
         C->p = (int64_t *) Cp ;
     }
 
-    // add Ch as the the hypersparse list for C, from GB_emult_phase0
+    // add Ch as the hypersparse list for C, from GB_emult_01_phase0
     if (C_is_hyper)
     { 
         // C->h is currently shallow; a copy is made at the end
@@ -179,11 +179,11 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_AemultB(mult,xname) GB_AemultB_ ## mult ## xname
+        #define GB_AemultB_01(mult,xname) GB_AemultB_01_ ## mult ## xname
 
         #define GB_BINOP_WORKER(mult,xname)                                 \
         {                                                                   \
-            info = GB_AemultB(mult,xname) (C, C_sparsity, ewise_method,     \
+            info = GB_AemultB_01(mult,xname) (C, C_sparsity, ewise_method,  \
                 M, Mask_struct, Mask_comp,                                  \
                 A, B, C_to_M, C_to_A, C_to_B,                               \
                 TaskList, C_ntasks, C_nthreads, Context) ;                  \

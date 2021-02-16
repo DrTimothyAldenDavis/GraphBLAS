@@ -1160,9 +1160,10 @@ void GB_cast_array              // typecast an array
         return (C_replace ? GB_clear (C, Context) : GrB_SUCCESS) ;          \
     }
 
-// GB_MASK_VERY_SPARSE is true if C<M>=A+B or C<M>=accum(C,T) is being
-// computed, and the mask M is very sparse compared with A and B.
-#define GB_MASK_VERY_SPARSE(M,A,B) (8 * GB_NNZ (M) < GB_NNZ (A) + GB_NNZ (B))
+// GB_MASK_VERY_SPARSE is true if C<M>=A+B, C<M>=A.*B or C<M>=accum(C,T) is
+// being computed, and the mask M is very sparse compared with A and B.
+#define GB_MASK_VERY_SPARSE(alpha,M,A,B) \
+    ((alpha) * GB_NNZ (M) < GB_NNZ (A) + GB_NNZ (B))
 
 //------------------------------------------------------------------------------
 // Pending upddate and zombies

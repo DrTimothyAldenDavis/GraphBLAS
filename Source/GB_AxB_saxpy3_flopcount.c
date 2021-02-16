@@ -73,9 +73,8 @@
 
 #define GB_FREE_ALL             \
 {                               \
+    GB_FREE (Work) ;            \
     GB_FREE (B_ek_slicing) ;    \
-    GB_FREE (Wfirst) ;          \
-    GB_FREE (Wlast) ;           \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -166,11 +165,16 @@ GrB_Info GB_AxB_saxpy3_flopcount
     const bool B_jumbled = B->jumbled ;
 
     //--------------------------------------------------------------------------
-    // construct the parallel tasks
+    // declare workspace
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Wfirst = NULL ;       // size B_ntasks
-    int64_t *GB_RESTRICT Wlast = NULL ;        // size B_ntasks
+    int64_t *Work = NULL ;
+    int64_t *GB_RESTRICT Wfirst = NULL ;
+    int64_t *GB_RESTRICT Wlast  = NULL ;
+
+    //--------------------------------------------------------------------------
+    // construct the parallel tasks
+    //--------------------------------------------------------------------------
 
     int64_t *B_ek_slicing = NULL ;
     int B_ntasks, B_nthreads ;
@@ -180,15 +184,15 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    // TODO: use one malloc
-    Wfirst = GB_MALLOC (B_ntasks, int64_t) ;
-    Wlast  = GB_MALLOC (B_ntasks, int64_t) ;
-    if (Wfirst == NULL || Wlast == NULL)
+    Work = GB_MALLOC (2*B_ntasks, int64_t) ;
+    if (Work == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+    Wfirst = Work ;
+    Wlast  = Work + B_ntasks ;
 
     //--------------------------------------------------------------------------
     // compute flop counts for C=A*B, C<M>=A*B, or C<!M>=A*B

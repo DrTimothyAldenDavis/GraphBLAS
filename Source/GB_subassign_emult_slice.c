@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Constructs a set of tasks to compute C for GB_subassign_08n, based on
-// slicing two input matricies (A and M).  Fine tasks must also find their
+// slicing two input matrices (A and M).  Fine tasks must also find their
 // location in their vector C(:,jC).
 
 // This method is used only by GB_subassign_08n.  New zombies cannot be
@@ -127,7 +127,7 @@ GrB_Info GB_subassign_emult_slice
     int64_t Znvec ;
     int64_t *GB_RESTRICT Zh_shallow = NULL ;
     int Z_sparsity = GxB_SPARSE ;
-    GB_OK (GB_emult_phase0 (
+    GB_OK (GB_emult_01_phase0 (
         &Znvec, &Zh_shallow, NULL, &Z_to_A, &Z_to_M, &Z_sparsity,
         NULL, A, M, Context)) ;
 

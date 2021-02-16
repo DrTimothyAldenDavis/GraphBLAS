@@ -70,7 +70,7 @@ GrB_Info GB_AaddB
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB
+GrB_Info GB_AemultB_01
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -89,7 +89,7 @@ GrB_Info GB_AemultB
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB_01
+GrB_Info GB_AemultB_02
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -102,7 +102,7 @@ GrB_Info GB_AemultB_01
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
-GrB_Info GB_AemultB_100
+GrB_Info GB_AemultB_03
 (
     GrB_Matrix C,
     const GrB_Matrix M,

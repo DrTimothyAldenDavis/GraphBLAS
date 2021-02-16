@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_01: C = A.*B where A is sparse/hyper and B is bitmap/full
+// GB_emult_02: C = A.*B where A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -87,7 +87,7 @@
     GB_Matrix_free (Chandle) ;  \
 }
 
-GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
+GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
@@ -111,11 +111,11 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     ASSERT (Chandle != NULL) ;
     (*Chandle) = NULL ;
 
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for emult_01", GB0) ;
-    ASSERT_MATRIX_OK (A, "A for emult_01", GB0) ;
-    ASSERT_MATRIX_OK (B, "B for emult_01", GB0) ;
-    ASSERT_BINARYOP_OK (op, "op for emult_01", GB0) ;
-    ASSERT_TYPE_OK (ctype, "ctype for emult_01", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for emult_02", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for emult_02", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for emult_02", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for emult_02", GB0) ;
+    ASSERT_TYPE_OK (ctype, "ctype for emult_02", GB0) ;
 
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
     ASSERT (!GB_PENDING (A)) ;
@@ -128,14 +128,14 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     if (M == NULL)
     {
-        GBURBLE ("emult_sb:(%s=%s.*%s)",
+        GBURBLE ("emult_02:(%s=%s.*%s)",
             GB_sparsity_char (C_sparsity),
             GB_sparsity_char_matrix (A),
             GB_sparsity_char_matrix (B)) ;
     }
     else
     {
-        GBURBLE ("emult_sb:(%s<%s%s%s>=%s.*%s) ",
+        GBURBLE ("emult_02:(%s<%s%s%s>=%s.*%s) ",
             GB_sparsity_char (C_sparsity),
             Mask_comp ? "!" : "",
             GB_sparsity_char_matrix (M),
@@ -398,8 +398,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
         op = GB_flip_op (op, &handled) ;
         if (handled) flipxy = false ;
     }
-    ASSERT_BINARYOP_OK (op, "final op for emult_01", GB0) ;
-    // printf ("final flipxy: %d\n", flipxy) ;
+    ASSERT_BINARYOP_OK (op, "final op for emult_02", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the opcode
@@ -442,11 +441,11 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_AemultB_01(mult,xname) GB_AemultB_01_ ## mult ## xname
+        #define GB_AemultB_02(mult,xname) GB_AemultB_02_ ## mult ## xname
 
         #define GB_BINOP_WORKER(mult,xname)                             \
         {                                                               \
-            info = GB_AemultB_01(mult,xname) (C,                        \
+            info = GB_AemultB_02(mult,xname) (C,                        \
                 M, Mask_struct, Mask_comp, A, B, flipxy,                \
                 Cp_kfirst, A_ek_slicing, A_ntasks, A_nthreads) ;        \
             done = (info != GrB_NO_VALUE) ;                             \
@@ -473,8 +472,8 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     if (!done)
     { 
-        GB_BURBLE_MATRIX (C, "(generic emult_01: %s) ", op->name) ;
-        int ewise_method = flipxy ? GB_EMULT_METHOD_01B : GB_EMULT_METHOD_01A ;
+        GB_BURBLE_MATRIX (C, "(generic emult_02: %s) ", op->name) ;
+        int ewise_method = flipxy ? GB_EMULT_METHOD_02B : GB_EMULT_METHOD_02A ;
         GB_ewise_generic (Chandle, op, NULL, 0, 0,
             NULL, NULL, NULL, C_sparsity, ewise_method, Cp_kfirst,
             NULL, 0, 0, A_ek_slicing, A_ntasks, A_nthreads, NULL, 0, 0,
@@ -492,7 +491,7 @@ GrB_Info GB_emult_01        // C=A.*B when A is sparse/hyper, B bitmap/full
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    ASSERT_MATRIX_OK (C, "C output for emult_01", GB0) ;
+    ASSERT_MATRIX_OK (C, "C output for emult_02", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

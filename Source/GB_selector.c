@@ -26,9 +26,7 @@
 #define GB_FREE_WORK                \
 {                                   \
     GB_FREE (A_ek_slicing) ;        \
-    GB_FREE (Wfirst) ;              \
-    GB_FREE (Wlast) ;               \
-    GB_FREE (Cp_kfirst) ;           \
+    GB_FREE (Work) ;                \
     GB_FREE (Zp) ;                  \
     GB_FREE (Cp) ;                  \
     GB_FREE (Ch) ;                  \
@@ -68,6 +66,17 @@ GrB_Info GB_selector
     { 
         (*Chandle) = NULL ;
     }
+
+    //--------------------------------------------------------------------------
+    // declare workspace
+    //--------------------------------------------------------------------------
+
+    int64_t *GB_RESTRICT Zp = NULL ;
+    int64_t *Work = NULL ;
+    int64_t *GB_RESTRICT Wfirst = NULL ;
+    int64_t *GB_RESTRICT Wlast = NULL ;
+    int64_t *GB_RESTRICT Cp_kfirst = NULL ;
+    int64_t *A_ek_slicing = NULL ;
 
     //--------------------------------------------------------------------------
     // get Thunk
@@ -177,16 +186,6 @@ GrB_Info GB_selector
     bool A_jumbled = A->jumbled ;
 
     //--------------------------------------------------------------------------
-    // declare workspace
-    //--------------------------------------------------------------------------
-
-    int64_t *GB_RESTRICT Zp = NULL ;
-    int64_t *GB_RESTRICT Wfirst = NULL ;
-    int64_t *GB_RESTRICT Wlast = NULL ;
-    int64_t *GB_RESTRICT Cp_kfirst = NULL ;
-    int64_t *A_ek_slicing = NULL ;
-
-    //--------------------------------------------------------------------------
     // allocate the new vector pointers of C
     //--------------------------------------------------------------------------
 
@@ -220,16 +219,16 @@ GrB_Info GB_selector
     // allocate workspace for each task
     //--------------------------------------------------------------------------
 
-    // TODO: use one malloc
-    Wfirst = GB_MALLOC (A_ntasks, int64_t) ;
-    Wlast  = GB_MALLOC (A_ntasks, int64_t) ;
-    Cp_kfirst = GB_MALLOC (A_ntasks, int64_t) ;
-    if (Wfirst == NULL || Wlast  == NULL || Cp_kfirst == NULL)
+    Work = GB_MALLOC (3*A_ntasks, int64_t) ;
+    if (Work == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+    Wfirst    = Work ;
+    Wlast     = Work + A_ntasks ;
+    Cp_kfirst = Work + A_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // count the live entries in each vector

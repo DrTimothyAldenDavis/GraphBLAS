@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_100_template: C<M>= A.*B, M sparse/hyper, A and B bitmap/full
+// GB_emult_03_template: C<M>= A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // C is sparse, with the same sparsity structure as M.
+// A and B are both bitmap/full.
 
 {
 

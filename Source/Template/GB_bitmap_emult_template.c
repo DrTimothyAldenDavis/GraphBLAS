@@ -36,23 +36,19 @@
     // accum operator.
     int64_t cnvals = 0 ;
 
-    if (ewise_method == GB_EMULT_METHOD_18)     // (M == NULL)
+    if (ewise_method == GB_EMULT_METHOD_05)
     {
 
         //----------------------------------------------------------------------
-        // M is not present
+        // C is bitmap, M is not present
         //----------------------------------------------------------------------
 
         //      ------------------------------------------
         //      C       =           A       .*      B
         //      ------------------------------------------
-        //      bitmap  .           bitmap          bitmap  (method: 18)
-        //      bitmap  .           bitmap          full    (method: 18)
-        //      bitmap  .           full            bitmap  (method: 18)
-
-        //----------------------------------------------------------------------
-        // Method18: C bitmap, A and B are bitmap or full
-        //----------------------------------------------------------------------
+        //      bitmap  .           bitmap          bitmap  (method: 05)
+        //      bitmap  .           bitmap          full    (method: 05)
+        //      bitmap  .           full            bitmap  (method: 05)
 
         int tid ;
         #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
@@ -77,19 +73,19 @@
         }
 
     }
-    else if (ewise_method == GB_EMULT_METHOD_19)
+    else if (ewise_method == GB_EMULT_METHOD_06)
     { 
 
         //----------------------------------------------------------------------
-        // C is bitmap, M is sparse or hyper
+        // C is bitmap, !M is sparse or hyper
         //----------------------------------------------------------------------
 
         //      ------------------------------------------
         //      C       <!M>=       A       .*      B
         //      ------------------------------------------
-        //      bitmap  sparse      bitmap          bitmap  (method: 19)
-        //      bitmap  sparse      bitmap          full    (method: 19)
-        //      bitmap  sparse      full            bitmap  (method: 19)
+        //      bitmap  sparse      bitmap          bitmap  (method: 06)
+        //      bitmap  sparse      bitmap          full    (method: 06)
+        //      bitmap  sparse      full            bitmap  (method: 06)
 
         // M is sparse and complemented.  If M is sparse and not
         // complemented, then C is constructed as sparse, not bitmap.
@@ -111,10 +107,6 @@
         // C(i,j) has been marked, in Cb, with the value 2 where M(i,j)=1.
         // These positions will not be computed in C(i,j).  C(i,j) can only
         // be modified where Cb [p] is zero.
-
-        //----------------------------------------------------------------------
-        // Method19(!M,sparse): C is bitmap, both A and B are bitmap or full
-        //----------------------------------------------------------------------
 
         int tid ;
         #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
@@ -148,7 +140,7 @@
         }
 
     }
-    else // if (ewise_method == GB_EMULT_METHOD_20)
+    else // if (ewise_method == GB_EMULT_METHOD_07)
     {
 
         //----------------------------------------------------------------------
@@ -158,30 +150,30 @@
         //      ------------------------------------------
         //      C      <M> =        A       .*      B
         //      ------------------------------------------
-        //      bitmap  bitmap      bitmap          bitmap  (method: 20)
-        //      bitmap  bitmap      bitmap          full    (method: 20)
-        //      bitmap  bitmap      full            bitmap  (method: 20)
+        //      bitmap  bitmap      bitmap          bitmap  (method: 07)
+        //      bitmap  bitmap      bitmap          full    (method: 07)
+        //      bitmap  bitmap      full            bitmap  (method: 07)
 
         //      ------------------------------------------
         //      C      <M> =        A       .*      B
         //      ------------------------------------------
-        //      bitmap  full        bitmap          bitmap  (method: 20)
-        //      bitmap  full        bitmap          full    (method: 20)
-        //      bitmap  full        full            bitmap  (method: 20)
+        //      bitmap  full        bitmap          bitmap  (method: 07)
+        //      bitmap  full        bitmap          full    (method: 07)
+        //      bitmap  full        full            bitmap  (method: 07)
 
         //      ------------------------------------------
         //      C      <!M> =       A       .*      B
         //      ------------------------------------------
-        //      bitmap  bitmap      bitmap          bitmap  (method: 20)
-        //      bitmap  bitmap      bitmap          full    (method: 20)
-        //      bitmap  bitmap      full            bitmap  (method: 20)
+        //      bitmap  bitmap      bitmap          bitmap  (method: 07)
+        //      bitmap  bitmap      bitmap          full    (method: 07)
+        //      bitmap  bitmap      full            bitmap  (method: 07)
 
         //      ------------------------------------------
         //      C      <!M> =       A       .*      B
         //      ------------------------------------------
-        //      bitmap  full        bitmap          bitmap  (method: 20)
-        //      bitmap  full        bitmap          full    (method: 20)
-        //      bitmap  full        full            bitmap  (method: 20)
+        //      bitmap  full        bitmap          bitmap  (method: 07)
+        //      bitmap  full        bitmap          full    (method: 07)
+        //      bitmap  full        full            bitmap  (method: 07)
 
         ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
 
@@ -194,10 +186,6 @@
         #define GB_GET_MIJ(p)                                           \
             bool mij = GBB (Mb, p) && GB_mcast (Mx, p, msize) ;         \
             if (Mask_comp) mij = !mij ; /* TODO: use ^ */
-
-        //----------------------------------------------------------------------
-        // Method20: C is bitmap; M, A, and B are bitmap or full
-        //----------------------------------------------------------------------
 
         int tid ;
         #pragma omp parallel for num_threads(C_nthreads) schedule(static) \

@@ -22,9 +22,9 @@
 // C=binop(A,B) is defined by the following types and operators:
 
 // A+B function (eWiseAdd):         GB_AaddB__min_int32
-// A.*B function (eWiseMult):       GB_AemultB__min_int32
-// A.*B function (eWiseMult):       GB_AemultB_01__min_int32
-// A.*B function (eWiseMult):       GB_AemultB_100__min_int32
+// A.*B function (eWiseMult):       GB_AemultB
+// A.*B function (eWiseMult):       GB_AemultB_02__min_int32
+// A.*B function (eWiseMult):       GB_AemultB_03__min_int32
 // A.*B function (eWiseMult):       GB_AemultB_bitmap__min_int32
 // A*D function (colscale):         GB_AxD__min_int32
 // D*A function (rowscale):         GB_DxB__min_int32
@@ -296,7 +296,7 @@ GrB_Info GB_AaddB__min_int32
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB__min_int32
+GrB_Info GB_AemultB_01__min_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -318,7 +318,7 @@ GrB_Info GB_AemultB__min_int32
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_template.c"
+    #include "GB_emult_01_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -327,7 +327,7 @@ GrB_Info GB_AemultB__min_int32
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_01__min_int32
+GrB_Info GB_AemultB_02__min_int32
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -351,21 +351,21 @@ GrB_Info GB_AemultB_01__min_int32
             // use fmult(y,x)
             #undef  GB_FLIPPED
             #define GB_FLIPPED 1
-            #include "GB_emult_01_template.c"
+            #include "GB_emult_02_template.c"
         }
         else
         {
             // use fmult(x,y)
             #undef  GB_FLIPPED
             #define GB_FLIPPED 0
-            #include "GB_emult_01_template.c"
+            #include "GB_emult_02_template.c"
         }
     #else
         // No need to handle the flip: the operator is either commutative, or
         // has been handled by changing z=div(y,x) to z=rdiv(x,y) for example.
         #undef  GB_FLIPPED
         #define GB_FLIPPED 0
-        #include "GB_emult_01_template.c"
+        #include "GB_emult_02_template.c"
     #endif
     return (GrB_SUCCESS) ;
     #endif
@@ -375,7 +375,7 @@ GrB_Info GB_AemultB_01__min_int32
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_100__min_int32
+GrB_Info GB_AemultB_03__min_int32
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -389,7 +389,7 @@ GrB_Info GB_AemultB_100__min_int32
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_100_template.c"
+    #include "GB_emult_03_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_phase1: # of entries in C=A.*B or C<M or !M>=A.*B (C sparse/hyper)
+// GB_emult_01_phase1: # entries in C=A.*B or C<M or !M>=A.*B (C sparse/hyper)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,21 +7,21 @@
 
 //------------------------------------------------------------------------------
 
-// GB_emult_phase1 counts the number of entries in each vector of C, for
+// GB_emult_01_phase1 counts the number of entries in each vector of C, for
 // C=A.*B, C<M>=A.*B, or C<!M>=A.*B and then does a cumulative sum to find Cp.
-// GB_emult_phase1 is preceded by GB_emult_phase0, which finds the non-empty
-// vectors of C.  If the mask M is saprse, it is not complemented; only a
-// bitmap or full M is complemented.
+// GB_emult_01_phase1 is preceded by GB_emult_01_phase0, which finds the
+// non-empty vectors of C.  If the mask M is saprse, it is not complemented;
+// only a bitmap or full M is complemented.
 
 // C is sparse or hypersparse, as determined by GB_add_sparsity.  
 // M, A, and B can have any sparsity structure, but only a specific set of
-// cases will be used (see the list if Template/GB_sparse_emult_template.c).
+// cases will be used (see GB_emult_sparsity for details).
 
-// Cp is either freed by GB_emult_phase2, or transplanted into C.
+// Cp is either freed by GB_emult_01_phase2, or transplanted into C.
 
 #include "GB_emult.h"
 
-GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
+GrB_Info GB_emult_01_phase1                 // count nnz in each C(:,j)
 (
     int64_t *GB_RESTRICT *Cp_handle,        // output of size Cnvec+1
     int64_t *Cnvec_nonempty,                // # of non-empty vectors in C
@@ -92,7 +92,7 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     #define GB_PHASE_1_OF_2
-    #include "GB_emult_template.c"
+    #include "GB_emult_01_meta.c"
 
     //--------------------------------------------------------------------------
     // cumulative sum of Cp and fine tasks in TaskList
