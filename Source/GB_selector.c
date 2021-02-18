@@ -386,7 +386,7 @@ GrB_Info GB_selector
 
         ASSERT (C == NULL) ;
         int sparsity = (A->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-        info = GB_new (&C, // sparse or hyper (from A), new header
+        info = GB_new (&C, false, // sparse or hyper (from A), new header
             A->type, avlen, avdim, GB_Ap_null, true,
             sparsity, A->hyper_switch, anvec, Context) ;
         GB_OK (info) ;

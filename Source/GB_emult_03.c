@@ -116,7 +116,7 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // allocate C->p and C->h
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_new (Chandle,      // sparse or hyper (same as M), new header
+    GB_OK (GB_new (Chandle, false,  // sparse or hyper (same as M), new header
         ctype, vlen, vdim, GB_Ap_calloc, C_is_csc,
         C_sparsity, M->hyper_switch, nvec, Context)) ;
     GrB_Matrix C = (*Chandle) ;

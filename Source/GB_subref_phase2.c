@@ -70,7 +70,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     // allocate the result C (but do not allocate C->p or C->h)
     GrB_Matrix C = NULL ;
     int sparsity = C_is_hyper ? GxB_HYPERSPARSE : GxB_SPARSE ;
-    GrB_Info info = GB_new_bix (&C, // sparse or hyper, new header
+    GrB_Info info = GB_new_bix (&C, false, // sparse or hyper, new header
         ctype, nI, nJ, GB_Ap_null, C_is_csc,
         sparsity, true, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)

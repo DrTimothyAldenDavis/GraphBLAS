@@ -110,7 +110,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 
     // allocate the result R (but do not allocate R->p or R->h)
     GrB_Matrix R = NULL ;
-    GrB_Info info = GB_new_bix (&R, // any sparsity, new header
+    GrB_Info info = GB_new_bix (&R, false, // any sparsity, new header
         C->type, C->vlen, C->vdim, GB_Ap_null, R_is_csc,
         R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, Context) ;
     if (info != GrB_SUCCESS)

@@ -84,7 +84,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // C has the exact same sparsity structure as A.
     GrB_Info info ;
     GrB_Matrix C = NULL ;
-    info = GB_new (&C, // full, bitmap, sparse or hyper; new header
+    info = GB_new (&C, false, // full, bitmap, sparse or hyper; new header
         ztype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         GB_sparsity (A), A->hyper_switch, 0, Context) ;
     if (info != GrB_SUCCESS)

@@ -54,7 +54,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     GrB_Info info ;
     GrB_Matrix C = NULL ;
     int sparsity = GB_sparsity (C) ;
-    info = GB_new (&C, // sparse or hyper, new header
+    info = GB_new (&C, false, // sparse or hyper, new header
         A->type, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         sparsity, A->hyper_switch, 0, Context) ;
     if (info != GrB_SUCCESS)

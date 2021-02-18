@@ -371,7 +371,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // allocated by the transplant if needed.  Z has the same
             // hypersparsity as T.
 
-            info = GB_new (&Z, // sparse or hyper, new header
+            info = GB_new (&Z, false, // sparse or hyper, new header
                 C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc,
                 GB_sparsity (T), T->hyper_switch, T->plen, Context) ;
             GB_OK (info) ;

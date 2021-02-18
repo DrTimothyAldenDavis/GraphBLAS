@@ -940,7 +940,7 @@ GrB_Info GB_assign_prep
         { 
             // Instead of duplicating C, create a new empty matrix C2.
             int sparsity = (C->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-            GB_OK (GB_new (&C2, // sparse or hyper, new header
+            GB_OK (GB_new (&C2, false, // sparse or hyper, new header
                 C->type, C->vlen, C->vdim, GB_Ap_calloc, C_is_csc,
                 sparsity, C->hyper_switch, 1, Context)) ;
             GBURBLE ("(C alias cleared; C_replace early) ") ;

@@ -119,7 +119,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // C->p is allocated but not initialized.
     GrB_Info info ;
     GrB_Matrix C = NULL ;
-    GB_OK (GB_new_bix (&C, // sparse, new header
+    GB_OK (GB_new_bix (&C, false, // sparse, new header
         ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
         GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, Context)) ;
 

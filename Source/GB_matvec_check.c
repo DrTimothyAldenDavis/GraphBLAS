@@ -274,7 +274,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     #if GB_DEVELOPER
     // a matrix contains 1 to 9 different allocated blocks
-    int64_t nallocs = 1 +                       // header
+    int64_t nallocs = (!A->static_header) +     // header
         (A->p != NULL && !A->p_shallow) +       // A->p, if not shallow
         (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
         (A->b != NULL && !A->b_shallow) +       // A->b, if not shallow

@@ -111,7 +111,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     // B is constructed in O(1) time and space, even though it is m-by-1
     int64_t m = A_transpose ? GB_NROWS (A) : GB_NCOLS (A) ;
-    GB_OK (GB_new (&B,  // full, new header
+    GB_OK (GB_new (&B, false,  // full, new header
         ztype, m, 1, GB_Ap_null, true, GxB_FULL, GB_NEVER_HYPER, 1, Context)) ;
     B->nzmax = m ;
     B->magic = GB_MAGIC ;

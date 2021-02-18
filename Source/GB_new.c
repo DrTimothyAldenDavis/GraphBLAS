@@ -39,6 +39,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_new                 // create matrix, except for indices & values
 (
     GrB_Matrix *Ahandle,        // handle of matrix to create
+    const bool A_static_header, // true if Ahandle is statically allocated
     const GrB_Type type,        // matrix type
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
@@ -68,13 +69,20 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool allocated_header = false ;
     if ((*Ahandle) == NULL)
     {
-        (*Ahandle) = GB_CALLOC (1, struct GB_Matrix_opaque) ;
+        (*Ahandle) = GB_CALLOC (1, struct GB_Matrix_opaque) ; // TODO::malloc
         if (*Ahandle == NULL)
         { 
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }
         allocated_header = true ;
+        (*Ahandle)->static_header = false ;  // header of A has been malloc'd
+    }
+    else
+    {
+        // the header of A has been provided on input.  It may already be
+        // malloc'd, or it might be statically allocated in the caller. 
+        (*Ahandle)->static_header = A_static_header ;
     }
 
     GrB_Matrix A = *Ahandle ;

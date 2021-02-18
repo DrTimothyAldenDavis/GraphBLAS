@@ -159,7 +159,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     // allocate the result C (but do not allocate C->p or C->h)
-    GB_OK (GB_new_bix (Chandle,     // any sparsity, new header
+    GB_OK (GB_new_bix (Chandle, false,  // any sparsity, new header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         GxB_BITMAP, true, A->hyper_switch, -1, cnz, true, Context)) ;
     GrB_Matrix C = (*Chandle) ;

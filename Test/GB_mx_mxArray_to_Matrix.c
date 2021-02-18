@@ -230,7 +230,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     {
 
         // create the GraphBLAS matrix
-        info = GB_new (&A, // sparse or full, new header
+        info = GB_new (&A, false, // sparse or full, new header
             atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
             GB_Ap_calloc, is_csc, sparsity, GxB_HYPER_DEFAULT, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -265,7 +265,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // MATLAB matrix and must not be modified.
 
         // [ create the GraphBLAS matrix, do not allocate A->p
-        info = GB_new (&A, // sparse or full, new header
+        info = GB_new (&A, false, // sparse or full, new header
             atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
             GB_Ap_null, is_csc, sparsity, GxB_HYPER_DEFAULT, 0, Context) ;
         if (info != GrB_SUCCESS)

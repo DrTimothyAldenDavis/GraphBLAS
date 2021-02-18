@@ -104,6 +104,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     GBURBLE ("(transpose) ") ;
     GrB_Matrix A, C ;
     bool in_place_C, in_place_A ;
+    bool C_static_header = false ;
 
     if (A_in == NULL)
     { 
@@ -122,6 +123,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         in_place_C = true ;         // C is modified in-place
         in_place_A = false ;
         ASSERT (A == C && A == (*Chandle)) ;
+        C_static_header = C->static_header ;
 
     }
     else if (Chandle == NULL || (*Chandle) == A_in)
@@ -142,6 +144,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         in_place_C = false ;
         in_place_A = true ;         // A is modified in-place
         ASSERT (A == C && A == (*Chandle)) ;
+        C_static_header = A->static_header ;
 
     }
     else
@@ -162,6 +165,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         in_place_C = false ;        // C and A are different matrices
         in_place_A = false ;
         ASSERT (A != C && A != (*Chandle)) ;
+        C_static_header = false ;
     }
 
     bool in_place = (in_place_A || in_place_C) ;
@@ -316,7 +320,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // A is empty; create a new empty matrix C, with the new type and
         // dimensions.  C is hypersparse for now but may convert when
         // returned.
-        info = GB_new_bix (Chandle, // hyper, old or new header
+        info = GB_new_bix (Chandle, C_static_header, // hyper, old or new header
             ctype, avdim, avlen, GB_Ap_calloc, C_is_csc,
             GxB_HYPERSPARSE, true, A_hyper_switch, 1, 1, true, Context) ;
         if (info != GrB_SUCCESS)
@@ -352,14 +356,14 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         if (T_cheap)
         { 
             // allocate just the header of T, not T->b or T->x
-            info = GB_new (&T,  // bitmap or full, new header
+            info = GB_new (&T, false,  // bitmap or full, new header
                 ctype, avdim, avlen, GB_Ap_null, C_is_csc,
                 sparsity, A_hyper_switch, 1, Context) ;
         }
         else
         { 
             // allocate all of T, including T->b and T->x
-            info = GB_new_bix (&T,  // bitmap or full, new header
+            info = GB_new_bix (&T, false,  // bitmap or full, new header
                 ctype, avdim, avlen, GB_Ap_null, C_is_csc,
                 sparsity, true, A_hyper_switch, 1, anzmax, true, Context) ;
         }
@@ -434,7 +438,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // allocate the output matrix C as a full or bitmap matrix
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, // bitmap or full, old or new header
+        info = GB_new (Chandle, C_static_header, // bitmap/full, old/new header
             ctype, avdim, avlen, GB_Ap_null, C_is_csc,
             sparsity, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -479,7 +483,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // is hypersparse.  This step does not allocate anything if in-place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, // hyper; old or new header
+        info = GB_new (Chandle, C_static_header, // hyper; old or new header
             ctype, 1, avlen, GB_Ap_null, C_is_csc,
             GxB_HYPERSPARSE, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -626,7 +630,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // place.
 
         // if *Chandle == NULL, allocate a new header; otherwise reuse existing
-        info = GB_new (Chandle, // sparse; old or new header
+        info = GB_new (Chandle, C_static_header, // sparse; old or new header
             ctype, avdim, 1, GB_Ap_null, C_is_csc,
             GxB_SPARSE, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
@@ -906,7 +910,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // allocate anything if in-place.
 
             // if *Chandle == NULL, allocate a new header; otherwise reuse
-            info = GB_new (Chandle, // hyper, old or new header
+            info = GB_new (Chandle, C_static_header, // hyper, old or new header
                 ctype, avdim, avlen, GB_Ap_null, C_is_csc,
                 GxB_HYPERSPARSE, A_hyper_switch, 0, Context) ;
             if (info != GrB_SUCCESS)

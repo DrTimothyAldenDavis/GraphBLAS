@@ -476,7 +476,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     else if (is_empty)
     { 
         // selectop is always false, so T is an empty matrix
-        info = GB_new (&T, // auto (sparse or hyper), new header
+        info = GB_new (&T, false, // auto (sparse or hyper), new header
             A->type, A->vlen, A->vdim, GB_Ap_calloc, A_csc,
             GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ),
             1, Context) ;
