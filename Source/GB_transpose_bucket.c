@@ -20,7 +20,9 @@
 // A->is_csc is ignored.
 
 // The input can be hypersparse or non-hypersparse.  The output C is always
-// non-hypersparse, and never shallow.
+// non-hypersparse, and never shallow.  On input, if *Chandle is then the
+// header for C is dynamically allocated.  Otherwise, *Chandle is assumed to
+// be a static header for C.
 
 // If A is m-by-n in CSC format, with e nonzeros, the time and memory taken is
 // O(m+n+e) if A is non-hypersparse, or O(m+e) if hypersparse.  This is fine if
@@ -50,7 +52,7 @@
 
 #define GB_FREE_ALL                                                     \
 {                                                                       \
-    GB_Matrix_free (&C) ;                                               \
+    GB_Matrix_free (Chandle) ;                                          \
     GB_FREE_WORK ;                                                      \
 }
 
@@ -76,7 +78,6 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //--------------------------------------------------------------------------
 
     ASSERT (Chandle != NULL) ;
-    (*Chandle) = NULL ;
     ASSERT_TYPE_OK (ctype, "ctype for transpose", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for transpose_bucket", GB0) ;
     ASSERT (!GB_PENDING (A)) ;
@@ -118,11 +119,12 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     // C->p is allocated but not initialized.
     GrB_Info info ;
-    GrB_Matrix C = NULL ;
-    GB_OK (GB_new_bix (&C, false, // sparse, new header
+    bool C_static_header = ((*Chandle) != NULL) ;
+    GB_OK (GB_new_bix (Chandle, C_static_header, // sparse, old/new header
         ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
         GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, Context)) ;
 
+    GrB_Matrix C = (*Chandle) ;
     int64_t *GB_RESTRICT Cp = C->p ;
 
     //--------------------------------------------------------------------------
@@ -184,7 +186,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         }
 
         // cumulative sum of the workspace, and copy back into C->p
-        GB_cumsum (workspace, vlen, (&C->nvec_nonempty), 1) ;
+        GB_cumsum (workspace, vlen, &(C->nvec_nonempty), 1) ;
         memcpy (Cp, workspace, (vlen + 1) * sizeof (int64_t)) ;
 
     }
@@ -219,7 +221,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         C->jumbled = true ; // atomic transpose leaves C jumbled
 
         // cumulative sum of the workspace, and copy back into C->p
-        GB_cumsum (workspace, vlen, (&C->nvec_nonempty), nth) ;
+        GB_cumsum (workspace, vlen, &(C->nvec_nonempty), nth) ;
         GB_memcpy (Cp, workspace, (vlen+ 1) * sizeof (int64_t), nth) ;
 
     }
@@ -324,7 +326,6 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "C transpose of A", GB0) ;
     ASSERT (C->h == NULL) ;
-    (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }
 

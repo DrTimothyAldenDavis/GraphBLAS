@@ -21,8 +21,6 @@
 // is GxB_FULL or GxB_BITMAP.  The Ap_option is ignored.  For a full or
 // bitmap matrix, only the header is allocated, if NULL on input.
 
-// Only GrB_SUCCESS and GrB_OUT_OF_MEMORY can be returned by this function.
-
 // The GrB_Matrix object holds both a sparse vector and a sparse matrix.  A
 // vector is represented as an vlen-by-1 matrix, but it is sometimes treated
 // differently in various methods.  Vectors are never transposed via a
@@ -69,7 +67,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool allocated_header = false ;
     if ((*Ahandle) == NULL)
     {
-        (*Ahandle) = GB_CALLOC (1, struct GB_Matrix_opaque) ; // TODO::malloc
+        (*Ahandle) = GB_MALLOC (1, struct GB_Matrix_opaque) ;
         if (*Ahandle == NULL)
         { 
             // out of memory
@@ -94,6 +92,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // basic information
     A->magic = GB_MAGIC2 ;                 // object is not yet valid
     A->type = type ;
+    A->logger = NULL ;          // no error logged yet
 
     // CSR/CSC format
     A->is_csc = is_csc ;
@@ -158,7 +157,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->h = NULL ;
     A->p_shallow = false ;
     A->h_shallow = false ;
-    A->logger = NULL ;          // no error logged yet
 
     // content that is freed or reset in GB_bix_free
     A->b = NULL ;
