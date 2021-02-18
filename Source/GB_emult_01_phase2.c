@@ -89,8 +89,6 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
     ASSERT (!GB_PENDING (M)) ;
 
     ASSERT (A->vdim == B->vdim) ;
-//  printf ("method %d M_ntasks: %d M_nthreads %d\n", ewise_method,
-//      M_ntasks, M_nthreads) ;
 
     //--------------------------------------------------------------------------
     // get the opcode

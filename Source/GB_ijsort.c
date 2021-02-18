@@ -21,9 +21,7 @@
 
 #define GB_FREE_WORK    \
 {                       \
-    GB_FREE (Count) ;   \
-    GB_FREE (I1) ;      \
-    GB_FREE (I1k) ;     \
+    GB_FREE (Work) ;    \
 }
 
 GrB_Info GB_ijsort
@@ -41,6 +39,7 @@ GrB_Info GB_ijsort
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (I != NULL) ;
     ASSERT (p_ni != NULL) ;
     ASSERT (p_I2 != NULL) ;
@@ -50,13 +49,11 @@ GrB_Info GB_ijsort
     // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Index *GB_RESTRICT I1  = NULL ;
-    GrB_Index *GB_RESTRICT I1k = NULL ;
+    GrB_Index *Work = NULL ;
     GrB_Index *GB_RESTRICT I2  = NULL ;
     GrB_Index *GB_RESTRICT I2k = NULL ;
     int64_t ni = *p_ni ;
     ASSERT (ni > 1) ;
-    int64_t *GB_RESTRICT Count = NULL ;        // size ntasks+1
     int ntasks = 0 ;
 
     //--------------------------------------------------------------------------
@@ -67,17 +64,27 @@ GrB_Info GB_ijsort
     int nthreads = GB_nthreads (ni, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
+    // determine number of tasks to create
+    //--------------------------------------------------------------------------
+
+    ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
+    ntasks = GB_IMIN (ntasks, ni) ;
+    ntasks = GB_IMAX (ntasks, 1) ;
+
+    //--------------------------------------------------------------------------
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    I1  = GB_MALLOC (ni, GrB_Index) ;
-    I1k = GB_MALLOC (ni, GrB_Index) ;
-    if (I1 == NULL || I1k == NULL)
+    Work = GB_MALLOC (2*ni + ntasks + 1, GrB_Index) ;
+    if (Work == NULL)
     { 
         // out of memory
-        GB_FREE_WORK ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+
+    GrB_Index *GB_RESTRICT I1  = Work ;                         // size ni
+    GrB_Index *GB_RESTRICT I1k = Work + ni ;                    // size ni
+    int64_t *GB_RESTRICT Count = (int64_t *) (Work + 2*ni) ;    // size ntasks+1
 
     //--------------------------------------------------------------------------
     // copy I into I1 and construct I1k
@@ -99,22 +106,8 @@ GrB_Info GB_ijsort
     // sort [I1 I1k]
     //--------------------------------------------------------------------------
 
-    GB_msort_2b ((int64_t *) I1, (int64_t *) I1k, ni, nthreads) ;
-
-    //--------------------------------------------------------------------------
-    // determine number of tasks to create
-    //--------------------------------------------------------------------------
-
-    ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, ni) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
-
-    //--------------------------------------------------------------------------
-    // allocate workspace
-    //--------------------------------------------------------------------------
-
-    Count = GB_MALLOC (ntasks+1, int64_t) ;
-    if (Count == NULL)
+    info = GB_msort_2b ((int64_t *) I1, (int64_t *) I1k, ni, nthreads) ;
+    if (info != GrB_SUCCESS)
     { 
         // out of memory
         GB_FREE_WORK ;
@@ -220,7 +213,6 @@ GrB_Info GB_ijsort
     *(p_I2 ) = (GrB_Index *) I2 ;
     *(p_I2k) = (GrB_Index *) I2k ;
     *(p_ni ) = (int64_t    ) ni2 ;
-
     return (GrB_SUCCESS) ;
 }
 

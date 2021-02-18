@@ -33,8 +33,6 @@ void *GB_calloc_memory      // pointer to allocated block of memory
     // make sure at least one byte is allocated
     size_of_item = GB_IMAX (1, size_of_item) ;
 
-// printf ("calloc %ld\n", nitems * size_of_item) ;
-
     bool ok = GB_size_t_multiply (&size, nitems, size_of_item) ;
     if (!ok || nitems > GxB_INDEX_MAX || size_of_item > GxB_INDEX_MAX)
     { 

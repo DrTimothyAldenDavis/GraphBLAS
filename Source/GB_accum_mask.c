@@ -145,7 +145,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT (Thandle != NULL) ;
     GrB_Info info ;
     GrB_Matrix T = *Thandle ;
-    GrB_Matrix MT = NULL ;
+    struct GB_Matrix_opaque MT_header ;
+    GrB_Matrix MT = GB_clear_header (&MT_header, true) ;
     GrB_Matrix M = M_in ;
     GrB_Matrix Z = NULL ;
 
@@ -195,7 +196,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // cannot have any zombies or pending tuples.
         // T can be jumbled.
         ASSERT (GB_JUMBLED_OK (T)) ;
-        GB_OK (GB_transpose (Thandle, NULL, C->is_csc, NULL,
+        GB_OK (GB_transpose (Thandle, NULL, C->is_csc, NULL,    // in-place
             NULL, NULL, NULL, false, Context)) ;
         #if GB_BURBLE
         T_transposed = true ;
@@ -219,6 +220,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             ASSERT (GB_JUMBLED_OK (M)) ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C->is_csc, M,
                 NULL, NULL, NULL, false, Context)) ;
+            ASSERT (MT->static_header) ;
             // use the transpose mask
             M = MT ;
             ASSERT (GB_JUMBLED_OK (M)) ;

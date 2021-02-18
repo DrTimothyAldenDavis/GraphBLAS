@@ -535,13 +535,52 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // sort all the tuples
         if (vdim > 1)
         {
+
             // sort a set of (j,i,k) tuples
-            GB_msort_3b (J_work, I_work, K_work, nvals, nthreads) ;
+            info = GB_msort_3b (J_work, I_work, K_work, nvals, nthreads) ;
+
+            #ifdef GB_DEBUG
+            if (info == GrB_SUCCESS)
+            {
+                int64_t ilast = -1 ;
+                int64_t jlast = -1 ;
+                for (int64_t k = 0 ; k < nvals ; k++)
+                {
+                    int64_t i = I_work [k] ;
+                    int64_t j = J_work [k] ;
+                    ASSERT ((jlast < j) || (jlast == j && ilast <= i)) ;
+                    ilast = i ;
+                    jlast = j ;
+                }
+            }
+            #endif
+
         }
         else
         {
             // sort a set of (i,k) tuples
-            GB_msort_2b (I_work, K_work, nvals, nthreads) ;
+            info = GB_msort_2b (I_work, K_work, nvals, nthreads) ;
+
+            #ifdef GB_DEBUG
+            if (info == GrB_SUCCESS)
+            {
+                int64_t ilast = -1 ;
+                for (int64_t k = 0 ; k < nvals ; k++)
+                {
+                    int64_t i = I_work [k] ;
+                    ASSERT (ilast <= i) ;
+                    ilast = i ;
+                }
+            }
+            #endif
+
+        }
+
+        if (info != GrB_SUCCESS)
+        {
+            // out of memory in GB_msort_*
+            GB_FREE_WORK ;
+            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 

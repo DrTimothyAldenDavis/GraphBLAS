@@ -21,12 +21,20 @@
 // This function is CSR/CSC agnostic; it sets the output matrix format from
 // C_is_csc but otherwise ignores the CSR/CSC type of A and C.
 
-// If A_in is NULL, then C = (*Chandle) is transposed in-place.  If out of
-// memory, (*Chandle) is always returned as NULL, which frees the input matrix
-// C if the transpose is done in-place.
+// There are 3 ways to use this function:
 
-// If A_in is not NULL and Chandle is NULL, then A is modified in-place, and
-// the A_in matrix is not freed when done.
+// Method1 (in_place_C): If A_in is not NULL and Chandle is NULL, then A is
+// modified in-place, and the A_in matrix is not freed when done.
+
+// Method2 (in_place_A): If A_in is NULL, then C = (*Chandle) is transposed
+// in-place.  If out of memory, (*Chandle) is always returned as NULL, which
+// frees the input matrix C if the transpose is done in-place.
+
+// Method3 (C=A'): Otherwise, A_in and Chandle are non-NULL, and C=A' is
+// computed.  If (*Chandle) is NULL on input, then a new header is allocated.
+// If (*Chandle) is non-NULL on input, it is assumed to be an uninitialized
+// static header, not obtained from malloc.  On output, C->static_header will
+// be true.
 
 // The bucket sort is parallel, but not highly scalable.  If e=nnz(A) and A is
 // m-by-n, then at most O(e/n) threads are used.  The GB_builder method is more
@@ -110,7 +118,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     { 
 
         //----------------------------------------------------------------------
-        // C = C' ; &C is transposed in-place
+        // Method1 (in_place_C): C = C' ; &C is transposed in-place
         //----------------------------------------------------------------------
 
         // GB_transpose (&C, ctype, csc, NULL, op) ;
@@ -130,7 +138,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     { 
 
         //----------------------------------------------------------------------
-        // A = A' ; A is transposed in-place; reuse the header of A
+        // Method2 (in_place_A): A = A' ; A transposed in-place
         //----------------------------------------------------------------------
 
         // GB_transpose (NULL, ctype, csc, A, op) ;
@@ -151,21 +159,32 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     { 
 
         //----------------------------------------------------------------------
-        // C = A' ; C and A are different
+        // Method3 (C=A'): C and A are different; C may be a static header
         //----------------------------------------------------------------------
 
         // GB_transpose (&C, ctype, csc, A, op) ;
-        // C and A are both non-NULL, and not aliased.
+        // &C and A are both non-NULL, and not aliased.
         // C=A' where C is a new matrix constructed here.
-        // The matrix C is freed if an error occurs, and C is set to NULL.
+        // The matrix C is freed if an error occurs, and C is set to NULL
+        // unless C has a static header.
+
+        // If C is NULL, a new header is allocated and returned as (*Chandle).
+        // Otherwise, C = (*Chandle) is assumed to be an uninitialized static
+        // header, and (*Chandle) is not modified.
 
         A = A_in ;
-        C = NULL ;
-        (*Chandle) = NULL ;         // C must be allocated; freed on error
+        C = (*Chandle) ;            // NULL, or pre-existing static header
         in_place_C = false ;        // C and A are different matrices
         in_place_A = false ;
-        ASSERT (A != C && A != (*Chandle)) ;
-        C_static_header = false ;
+        ASSERT (A != C) ;
+        C_static_header = (C != NULL) ;
+        if (C_static_header)
+        { 
+            GB_clear_header (C, true) ;             // clear the C static header
+            C->hyper_switch = A->hyper_switch ;     // transfer the controls
+            C->bitmap_switch = A->bitmap_switch ;
+            C->sparsity = A->sparsity ;
+        }
     }
 
     bool in_place = (in_place_A || in_place_C) ;
@@ -433,7 +452,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         GB_FREE_IN_PLACE_A ;
 
         //----------------------------------------------------------------------
-        // transplace T into C
+        // transplant T into C
         //----------------------------------------------------------------------
 
         // allocate the output matrix C as a full or bitmap matrix
@@ -1116,7 +1135,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             }
             else if (in_place_C)
             { 
-                // free all of C, including the header, if done in-place of C
+                // free all of C, including the header, if done in-place of C.
+                // This does not free a static header of C.
                 GB_Matrix_free (Chandle) ;
             }
 
@@ -1138,13 +1158,26 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 info = GB_transplant (A, ctype, &T, Context) ;
                 ASSERT (info == GrB_SUCCESS) ;
             }
+            else if ((*Chandle) == NULL)
+            { 
+                // If C=C' is done in-place of C and C is not a static header,
+                // it has been freed above.  Or, if C=A' was computed not
+                // in-place, and (*Chandle) is NULL on input, it is still NULL.
+                // In both cases, the output T can now be moved to the Chandle.
+                (*Chandle) = T ;
+                T = NULL ;
+            }
             else
             { 
-                // If C=A' is done in-place of C, then the header and content
-                // of the input C has been freed.  The output T can now be
-                // moved to the Chandle.
-                ASSERT (*Chandle == NULL) ;
-                (*Chandle) = T ;
+                // The static header of C still exists.   Either C=C' was
+                // computed, or C=A' and C is a static header.  Transplant T
+                // back into C and free T.  T is not shallow and no typecast is
+                // done so this will always succeed.
+                ASSERT (C != NULL && C == (*Chandle) && C->static_header) ;
+                C->sparsity = A_sparsity ;
+                C->bitmap_switch = T->bitmap_switch ;
+                info = GB_transplant (C, ctype, &T, Context) ;
+                ASSERT (info == GrB_SUCCESS) ;
             }
         }
     }

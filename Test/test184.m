@@ -86,6 +86,7 @@ J = J (randperm (nz)) ;
 X = X (randperm (nz)) ;
 I0 = uint64 (I) - 1 ;
 J0 = uint64 (J) - 1 ;
+
 A1 = sparse (I, J, X, m, n) ;
 A2 = GB_mex_Matrix_build (I0, J0, X, m, n, [ ]) ;
 
