@@ -527,10 +527,12 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_new (&A, GrB_BOOL, 10000, 10000)) ;
-    OK (GB_shallow_copy (&C, A->is_csc, A, NULL)) ;
-    OK (GxB_Matrix_fprint_(C, GxB_COMPLETE, NULL)) ;
+    struct GB_Matrix_opaque Q_header ;
+    GrB_Matrix Q = GB_clear_header (&Q_header, true) ;
+    OK (GB_shallow_copy (Q, A->is_csc, A, NULL)) ;
+    OK (GxB_Matrix_fprint_(Q, GxB_COMPLETE, NULL)) ;
     GrB_Matrix_free_(&A) ;
-    GrB_Matrix_free_(&C) ;
+    GrB_Matrix_free_(&Q) ;
 
     //--------------------------------------------------------------------------
     // tests with memory tracking off

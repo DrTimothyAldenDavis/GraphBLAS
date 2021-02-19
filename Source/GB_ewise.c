@@ -52,7 +52,12 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // C may be aliased with M, A, and/or B
 
     GrB_Info info ;
-    GrB_Matrix MT = NULL, BT = NULL, AT = NULL, T = NULL ;
+
+    struct GB_Matrix_opaque T_header, MT_header, AT_header, BT_header ;
+    GrB_Matrix T  = GB_clear_header (&T_header,  true) ;
+    GrB_Matrix MT = NULL ;
+    GrB_Matrix AT = GB_clear_header (&AT_header, true) ;
+    GrB_Matrix BT = GB_clear_header (&BT_header, true) ;
 
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
 
@@ -183,7 +188,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // MT = M'
         // transpose: no typecast, no op, not in-place
         GBURBLE ("(M transpose) ") ;
-        GB_OK (GB_transpose (&MT, GrB_BOOL, T_is_csc, M,
+        MT = GB_clear_header (&MT_header, true) ;
+        GB_OK (GB_transpose (&MT, GrB_BOOL, T_is_csc, M,    // MT static
             NULL, NULL, NULL, false, Context)) ;
         M1 = MT ;
     }
@@ -198,7 +204,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // AT = A'
         // transpose: no typecast, no op, not in-place
         GBURBLE ("(A transpose) ") ;
-        GB_OK (GB_transpose (&AT, NULL, T_is_csc, A,
+        GB_OK (GB_transpose (&AT, NULL, T_is_csc, A,        // AT static
             NULL, NULL, NULL, false, Context)) ;
         A1 = AT ;
         ASSERT_MATRIX_OK (AT, "AT from transpose", GB0) ;
@@ -214,7 +220,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // BT = B'
         // transpose: no typecast, no op, not in-place
         GBURBLE ("(B transpose) ") ;
-        GB_OK (GB_transpose (&BT, NULL, T_is_csc, B,
+        GB_OK (GB_transpose (&BT, NULL, T_is_csc, B,        // BT static
             NULL, NULL, NULL, false, Context)) ;
         B1 = BT ;
     }
@@ -224,10 +230,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     //--------------------------------------------------------------------------
 
     // FUTURE::: handle more special cases:
-    // C<M>=A+B when C and A are dense, B is sparse.  M can be sparse.
-    // C<M>=A+B when C and B are dense, A is sparse.  M can be sparse.
-    // C<M>=A+B when C, A, and B are dense.  M can be sparse.
-    // Also do:
     // C<M>+=A+B when C and A are dense, B is sparse.  M can be sparse.
     // C<M>+=A+B when C and B are dense, A is sparse.  M can be sparse.
     // C<M>+=A+B when C, A, and B are dense.  M can be sparse.

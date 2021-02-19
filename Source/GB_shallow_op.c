@@ -29,7 +29,7 @@
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_shallow_op      // create shallow matrix and apply operator
 (
-    GrB_Matrix *Chandle,    // output matrix C, of type op*->ztype
+    GrB_Matrix C,           // output C, of type op*->ztype, static header
     const bool C_is_csc,    // desired CSR/CSC format of C
         const GrB_UnaryOp op1,          // unary operator to apply
         const GrB_BinaryOp op2,         // binary operator to apply
@@ -44,7 +44,8 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (Chandle != NULL) ;
+    ASSERT (C != NULL) ;
+    ASSERT (C->static_header) ;
     ASSERT_MATRIX_OK (A, "A for shallow_op", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
@@ -74,24 +75,17 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         ztype = op2->ztype ;
     }
 
-    (*Chandle) = NULL ;
-
     //--------------------------------------------------------------------------
     // construct a shallow copy of A for the pattern of C
     //--------------------------------------------------------------------------
 
-    // allocate the struct for C, but do not allocate C->{p,h,b,i,x}
+    // initialized the header for C, but do not allocate C->{p,h,b,i,x}
     // C has the exact same sparsity structure as A.
     GrB_Info info ;
-    GrB_Matrix C = NULL ;
-    info = GB_new (&C, false, // full, bitmap, sparse or hyper; new header
+    info = GB_new (&C, true, // any sparsity, static header
         ztype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         GB_sparsity (A), A->hyper_switch, 0, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        return (info) ;
-    }
+    ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------
     // make a shallow copy of the vector pointers
@@ -124,7 +118,6 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         C->x_shallow = false ;
         C->jumbled = false ;
         ASSERT_MATRIX_OK (C, "C = quick copy of empty A", GB0) ;
-        (*Chandle) = C ;
         return (GrB_SUCCESS) ;
     }
 
@@ -160,7 +153,6 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         C->x = A->x ;
         C->x_shallow = true ;       // C->x will not be freed when freeing C
         ASSERT_MATRIX_OK (C, "C = pure shallow (A)", GB0) ;
-        (*Chandle) = C ;
         return (GrB_SUCCESS) ;
     }
 
@@ -194,7 +186,6 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C = shallow (op (A))", GB0) ;
-    (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }
 

@@ -665,7 +665,7 @@ GrB_Info GB_assign_prep
         // TODO: if accum is present and it does not depend on the values of
         // A,  only construct the pattern of AT, not the values.
         GBURBLE ("(A transpose) ") ;
-        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,
+        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,    // TODO:: static
             NULL, NULL, NULL, false, Context)) ;
         GB_MATRIX_WAIT (AT) ;       // A cannot be jumbled
         A = AT ;
@@ -696,7 +696,7 @@ GrB_Info GB_assign_prep
             // transpose: typecast, no op, not in-place
             // TODO: if Mask_struct, only construct the pattern of MT
             GBURBLE ("(M transpose) ") ;
-            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
+            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, // TODO:: static
                 NULL, NULL, NULL, false, Context)) ;
             GB_MATRIX_WAIT (MT) ;       // M cannot be jumbled
             M = MT ;
@@ -949,13 +949,14 @@ GrB_Info GB_assign_prep
         else
         { 
             // finish any computations in C, but leave it jumbled
+            // TODO:: keep zombies in C
             GBURBLE ("(C alias: make duplicate) ") ;
             GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (C) ;
             ASSERT (!GB_ZOMBIES (C)) ;
             ASSERT (GB_JUMBLED_OK (C)) ;
             ASSERT (!GB_PENDING (C)) ;
             // C2 = duplicate of C, which must be freed when done
-            GB_OK (GB_dup (&C2, C, true, NULL, Context)) ;
+            GB_OK (GB_dup2 (&C2, C, true, NULL, Context)) ;
         }
         // C2 must be transplanted back into C when done
         C = C2 ;

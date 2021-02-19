@@ -136,6 +136,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     { 
         // out of memory
         GB_FREE_ALL ;
+// printf ("here %d\n", __LINE__) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -146,6 +147,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         { 
             // out of memory
             GB_FREE_ALL ;
+// printf ("here %d\n", __LINE__) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
         Workspaces [tid] = workspace ;
@@ -160,6 +162,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     { 
         // out of memory
         GB_FREE_ALL ;
+// printf ("here %d\n", __LINE__) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -326,6 +329,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "C transpose of A", GB0) ;
     ASSERT (C->h == NULL) ;
+//         printf ("here %d\n", __LINE__) ;
     return (GrB_SUCCESS) ;
 }
 

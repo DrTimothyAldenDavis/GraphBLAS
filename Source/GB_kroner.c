@@ -56,8 +56,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GrB_Info info ;
     ASSERT (Chandle != NULL) ;
     (*Chandle) = NULL ;
-    GrB_Matrix A2 = NULL ;
-    GrB_Matrix B2 = NULL ;
+
+    struct GB_Matrix_opaque A2_header, B2_header ;
+    GrB_Matrix A2 = GB_clear_header (&A2_header, true) ;
+    GrB_Matrix B2 = GB_clear_header (&B2_header, true) ;
 
     ASSERT_MATRIX_OK (A_in, "A_in for kron (A,B)", GB0) ;
     ASSERT_MATRIX_OK (B_in, "B_in for kron (A,B)", GB0) ;
@@ -78,7 +80,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (A))
     { 
         GBURBLE ("A:") ;
-        GB_OK (GB_dup2 (&A2, A, true, A->type, Context)) ;
+        GB_OK (GB_dup2 (&A2, A, true, A->type, Context)) ;  // static header
         GB_OK (GB_convert_bitmap_to_sparse (A2, Context)) ;
         A = A2 ;
     }
@@ -87,7 +89,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (B))
     { 
         GBURBLE ("B:") ;
-        GB_OK (GB_dup2 (&B2, B, true, B->type, Context)) ;
+        GB_OK (GB_dup2 (&B2, B, true, B->type, Context)) ;  // static header
         GB_OK (GB_convert_bitmap_to_sparse (B2, Context)) ;
         B = B2 ;
     }

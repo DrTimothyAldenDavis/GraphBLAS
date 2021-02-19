@@ -13,6 +13,10 @@
 
 // TODO: GB_selector does not exploit the mask.
 
+// If Chandle is NULL on input, A is modified in-place.
+
+// If *Chandle is NULL, ... TODO::here
+
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 #include "GB_sel__include.h"

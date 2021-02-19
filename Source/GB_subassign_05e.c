@@ -89,7 +89,7 @@ GrB_Info GB_subassign_05e
 
     bool C_is_csc = C->is_csc ;
     GB_phbix_free (C) ;
-    GB_OK (GB_dup2 (&C, M, false, C->type, Context)) ;
+    GB_OK (GB_dup2 (&C, M, false, C->type, Context)) ;  // reuse old header
     C->is_csc = C_is_csc ;
     int64_t pC ;
 

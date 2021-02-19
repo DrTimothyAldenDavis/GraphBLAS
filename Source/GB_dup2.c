@@ -11,6 +11,9 @@
 
 // if numeric is false, C->x is allocated but not initialized.
 
+// If *Chandle is not NULL, the header is reused.  It may be a static or
+// dynamic header, depending on C->static_header.
+
 #include "GB.h"
 
 GrB_Info GB_dup2            // make an exact copy of a matrix
@@ -22,6 +25,15 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     GB_Context Context
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (Chandle != NULL) ;
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -42,6 +54,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     int64_t anvec = A->nvec ;
     int64_t anvals = A->nvals ;
     int64_t anvec_nonempty = A->nvec_nonempty ;
+    int64_t A_nzombies = A->nzombies ;
     bool A_jumbled = A->jumbled ;
     int sparsity = A->sparsity ;
     GrB_Type atype = A->type ;
@@ -57,7 +70,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     // existing header if (*Chandle) is not NULL.
     GrB_Matrix C = (*Chandle) ;
     bool C_static_header = (C == NULL) ? false : C->static_header ;
-    GrB_Info info = GB_new_bix (&C, C_static_header, // old or new header
+    GrB_Info info = GB_new_bix (&C, C_static_header, // new/old/static header
         numeric ? atype : ctype, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
         GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, Context) ;
     if (info != GrB_SUCCESS)
@@ -74,6 +87,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     C->nvec_nonempty = anvec_nonempty ;
     C->nvals = anvals ;             // for bitmap only
     C->jumbled = A_jumbled ;        // C is jumbled if A is jumbled
+    C->nzombies = A_nzombies ;      // zombies can be duplicated
     C->sparsity = sparsity ;        // copy in the sparsity control
 
     if (Ap != NULL)

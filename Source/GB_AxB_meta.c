@@ -33,6 +33,8 @@
 #include "GB_mxm.h"
 #include "GB_transpose.h"
 
+// TODO: make Chandle a static header
+
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 (
@@ -40,7 +42,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     GrB_Matrix C_in,                // input/output matrix, if done in-place
     bool C_replace,                 // C matrix descriptor
     const bool C_is_csc,            // desired CSR/CSC format of C
-    GrB_Matrix *MT_handle,          // return MT = M' to caller, if computed
+    GrB_Matrix MT,                  // return MT = M' (static header)
+    bool *M_transposed,             // true if MT = M' was computed
     const GrB_Matrix M_in,          // mask for C<M> (not complemented)
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
@@ -89,16 +92,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     //--------------------------------------------------------------------------
 
     (*Chandle) = NULL ;
-    if (MT_handle != NULL)
-    { 
-        (*MT_handle) = NULL ;
-    }
+    ASSERT (MT != NULL && MT->static_header) ;
 
     GrB_Info info ;
 
-    GrB_Matrix AT = NULL ;
-    GrB_Matrix BT = NULL ;
-    GrB_Matrix MT = NULL ;
+    struct GB_Matrix_opaque AT_header, BT_header ;
+    GrB_Matrix AT = GB_clear_header (&AT_header, true) ;
+    GrB_Matrix BT = GB_clear_header (&BT_header, true) ;
 
     (*mask_applied) = false ;
     (*done_in_place) = false ;
@@ -288,10 +288,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     //--------------------------------------------------------------------------
 
     // all uses of GB_transpose below:
-    // transpose: typecast, no op, not in-place
+    // transpose: typecast, no op, not in-place, static header
 
     GrB_Matrix M ;
-    bool M_transposed ;
 
     // TODO: if Mask_struct is true, do not create values of MT = M'
 
@@ -300,16 +299,16 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // MT = M_in' also typecasting to boolean.  It is not freed here
         // unless an error occurs, but is returned to the caller.
         GBURBLE ("(M transpose) ") ;
-        GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M_in,
+        GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M_in,     // MT static
             NULL, NULL, NULL, false, Context)) ;
         M = MT ;
-        M_transposed = true ;
+        (*M_transposed) = true ;
     }
     else
     { 
         // M_in can be used as-is; it may be NULL
         M = M_in ;
-        M_transposed = false ;
+        (*M_transposed) = false ;
     }
 
     ASSERT_MATRIX_OK_OR_NULL (M, "final M for A*B", GB0) ;
@@ -430,7 +429,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // with the swap_rule as defined above, this case will never occur.
             // The code is left here in case swap_rule changes in the future.
             ASSERT (GB_DEAD_CODE) ;
-            GB_OK (GB_transpose (&BT, btype_required, true, B,
+            GB_OK (GB_transpose (&BT, btype_required, true, B,  // BT static
                 NULL, NULL, NULL, false, Context)) ;
             B = BT ;
         }
@@ -498,7 +497,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (axb_method == GB_USE_COLSCALE || axb_method == GB_USE_SAXPY)
         {
             // AT = A'
-            GB_OK (GB_transpose (&AT, atype_required, true, A,
+            GB_OK (GB_transpose (&AT, atype_required, true, A,  // AT static
                 NULL, NULL, NULL, false, Context)) ;
             // do not use colscale if AT is now bitmap
             if (GB_IS_BITMAP (AT))
@@ -580,7 +579,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (axb_method != GB_USE_COLSCALE)
         {
             // BT = B'
-            GB_OK (GB_transpose (&BT, btype_required, true, B,
+            GB_OK (GB_transpose (&BT, btype_required, true, B,  // BT static
                 NULL, NULL, NULL, false, Context)) ;
             // do not use rowscale if BT is now bitmap
             if (axb_method == GB_USE_ROWSCALE && GB_IS_BITMAP (BT))
@@ -613,7 +612,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C<M>=A*B' via dot product, or C_in<M>+=A*B' if in-place
                 GBURBLE ("C%s=A*B', dot_product (transposed %s) "
                     "(transposed %s) ", M_str, A_str, B_str) ;
-                GB_OK (GB_transpose (&AT, atype_required, true, A,
+                GB_OK (GB_transpose (&AT, atype_required, true, A,  // AT static
                     NULL, NULL, NULL, false, Context)) ;
                 GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in : NULL,
                     M, Mask_comp, Mask_struct, AT, BT, semiring, flipxy,
@@ -658,7 +657,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C<M>=A*B via dot product, or C_in<M>+=A*B if in-place.
             // only use the dot product method if explicitly requested
             GBURBLE ("C%s=A*B', dot_product (transposed %s) ", M_str, A_str) ;
-            GB_OK (GB_transpose (&AT, atype_required, true, A,
+            GB_OK (GB_transpose (&AT, atype_required, true, A,  // AT static
                 NULL, NULL, NULL, false, Context)) ;
             GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in : NULL,
                 M, Mask_comp, Mask_struct, AT, B, semiring, flipxy,
@@ -674,7 +673,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
     }
 
-    if (M_transposed) { GBURBLE ("(M transposed) ") ; }
+    if (*M_transposed) { GBURBLE ("(M transposed) ") ; }
     if ((M != NULL) && !(*mask_applied)) { GBURBLE ("(mask later) ") ; }
 
     //--------------------------------------------------------------------------
@@ -707,18 +706,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     GB_Matrix_free (&AT) ;
     GB_Matrix_free (&BT) ;
-    ASSERT_MATRIX_OK_OR_NULL (MT, "MT if computed", GB0) ;
-    if (MT_handle != NULL)
-    { 
-        // return MT to the caller, if computed and the caller wants it
-        (*MT_handle) = MT ;
-    }
-    else
-    { 
-        // otherwise, free it
-        GB_Matrix_free (&MT) ;
-    }
-
+    // do not free MT; return it to the caller
+    if (*M_transposed) ASSERT_MATRIX_OK (MT, "MT computed", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

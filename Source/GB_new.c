@@ -223,8 +223,13 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // out of memory
         if (allocated_header)
         { 
-            // only free the header if it was allocated here
+            // free all of A, including the header
             GB_Matrix_free (Ahandle) ;
+        }
+        else
+        {
+            // the header was not allocated here; only free the content of A
+            GB_phbix_free (A) ;
         }
         return (GrB_OUT_OF_MEMORY) ;
     }

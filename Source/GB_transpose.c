@@ -13,7 +13,7 @@
 //  C = A'      both C and A are passed in, not Chandle
 //  C = C'      C is transposed in-place, (C==A aliased)
 // In both cases, require the header for C and A to be allocated already
-// (either static or dynamic).   A is never modified.
+// (either static or dynamic).   A is never modified, unless C==A.
 // C and A cannot be NULL on input.  If C==A then C contains a valid
 // matrix on input (the input matrix A), otherise GB_phbix_free(C) is 
 // immediately done.  Either header may be static or dynamic.
@@ -397,9 +397,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             return (info) ;
         }
 
-        ASSERT (T->static_header) ;
-        ASSERT (T = &T_header) ;
-
         T->magic = GB_MAGIC ;
         if (sparsity == GxB_BITMAP)
         { 
@@ -485,10 +482,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             return (info) ;
         }
         ASSERT_MATRIX_OK (*Chandle, "Chandle, GB_transpose, bitmap/full", GB0) ;
-
-        // the header of T has not been freed
-        ASSERT (T->static_header) ;
-        ASSERT (T = &T_header) ;
 
     }
     else if (avdim == 1)
@@ -916,6 +909,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // out of memory
                 GB_FREE_C ;
+//        printf ("here %s %d\n", __FILE__, __LINE__) ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
@@ -930,6 +924,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 // out of memory
                 GB_FREE (iwork) ;
                 GB_FREE_C ;
+//        printf ("here %s %d\n", __FILE__, __LINE__) ;
                 return (info) ;
             }
 
@@ -954,6 +949,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 ASSERT (!C_static_header) ;     // or if C has a static header
                 GB_FREE (iwork) ;
                 GB_FREE_C ;
+//        printf ("here %s %d\n", __FILE__, __LINE__) ;
                 return (info) ;
             }
 
@@ -1005,6 +1001,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 GB_FREE (Swork) ;
                 GB_FREE_IN_PLACE_A ;
                 GB_FREE_C ;
+//        printf ("here %s %d\n", __FILE__, __LINE__) ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
@@ -1076,11 +1073,15 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // If op is not NULL, then Swork can be transplanted into T in
             // GB_builder, instead.  However, this requires the tuples to be
             // sorted on input, which is possible but rare for GB_transpose.
+// printf ("here in %s %d, nmalloc %ld\n",
+//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
 
-            GrB_Matrix T = NULL ;       // TODO: remove and use static header
+//     printf ("work: %p %p %p nmalloc %ld\n",
+//     iwork, jwork, Swork, GB_Global_nmalloc_get ()) ; 
+
             info = GB_builder
             (
-                &T,         // create T
+                T,          // create T using a static header
                 ctype,      // T is of type ctype
                 avdim,      // T->vlen = A->vdim, always > 1
                 avlen,      // T->vdim = A->vlen, always > 1
@@ -1100,6 +1101,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 Context
             ) ;
 
+//     printf ("now work: %p %p %p nmalloc %ld\n",
+//     iwork, jwork, Swork, GB_Global_nmalloc_get ()) ; 
+
+// printf ("here in %s %d, nmalloc %ld\n",
+//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
+
             // GB_builder always frees jwork, and either frees iwork or
             // transplants it in to T->i and sets iwork to NULL.  So iwork and
             // jwork are always NULL on output.  GB_builder does not modify S.
@@ -1117,21 +1124,16 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // out of memory in GB_builder
                 GB_FREE_C ;
+// printf ("here in %s %d, nmalloc %ld\n",
+//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
                 return (info) ;
             }
-
-            // the header of T is not yet static
-            ASSERT (! (T->static_header)) ;     // TODO
-            ASSERT (T != &T_header) ;           // TODO
 
             // Transplant T in to the result C.  The matrix T is not shallow
             // and no typecasting is done, so this will always succeed.
             ASSERT (!GB_JUMBLED (T)) ;
             info = GB_transplant (*Chandle, ctype, &T, Context) ;
             ASSERT (info == GrB_SUCCESS) ;
-
-            // the header of T has been freed (not yet static)
-            ASSERT (T == NULL) ;
 
         }
         else
@@ -1172,7 +1174,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (GB_JUMBLED_OK (T)) ;
 
             // allocate the output matrix C (just the header)
-            // if *Chandle == NULL, allocate a new header; otherwise reuse existing
+            // if *Chandle == NULL, allocate a new header; otherwise reuse
             info = GB_new (Chandle, C_static_header, // old/new header
                 ctype, avdim, avlen, GB_Ap_null, C_is_csc,
                 GxB_SPARSE, A_hyper_switch, 0, Context) ;
@@ -1186,17 +1188,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 return (info) ;
             }
 
-            // the header of T is static
-            ASSERT (T->static_header) ;
-            ASSERT (T == &T_header) ;
-
             // Transplant T back into C and free T.  T is not shallow and
             // no typecast is done so this will always succeed.
             info = GB_transplant (*Chandle, ctype, &T, Context) ;
             ASSERT (info == GrB_SUCCESS) ;
-
-            ASSERT (T->static_header) ;
-            ASSERT (T = &T_header) ;
         }
     }
 

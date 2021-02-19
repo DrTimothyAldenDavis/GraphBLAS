@@ -72,7 +72,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     // allocate C->x but do not initialize it
     (*Chandle) = NULL ;
-    info = GB_dup (Chandle, B, false, mult->ztype, Context) ;
+    info = GB_dup2 (Chandle, B, false, mult->ztype, Context) ;   // new header
     if (info != GrB_SUCCESS)
     { 
         // out of memory

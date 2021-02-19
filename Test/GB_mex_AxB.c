@@ -31,7 +31,7 @@
 
 GrB_Info info ;
 bool malloc_debug = false ;
-bool ignore = false, ignore2 = false ;
+bool ignore = false, ignore1 = false, ignore2 = false ;
 bool atranspose = false ;
 bool btranspose = false ;
 GrB_Matrix A = NULL, B = NULL, C = NULL, Aconj = NULL, Bconj = NULL,
@@ -64,11 +64,15 @@ GrB_Info axb (GB_Context Context)
         return (info) ;
     }
 
+    struct GB_Matrix_opaque MT_header ;
+    GrB_Matrix MT = GB_clear_header (&MT_header, true) ;
+
     // C = A*B, A'*B, A*B', or A'*B'
     info = GB_AxB_meta (&C, NULL,       // C cannot be computed in place
         false,      // C_replace
         true,       // CSC
-        NULL,       // no MT returned
+        MT,         // no MT returned
+        &ignore1,   // M_transposed will be false
         NULL,       // no Mask
         false,      // mask not complemented
         false,      // mask not structural
@@ -157,10 +161,14 @@ GrB_Info axb_complex (GB_Context Context)
         }
     }
 
+    struct GB_Matrix_opaque MT_header ;
+    GrB_Matrix MT = GB_clear_header (&MT_header, true) ;
+
     info = GB_AxB_meta (&C, NULL,       // C cannot be computed in place
         false,      // C_replace
         true,       // CSC
-        NULL,       // no MT returned
+        MT,         // no MT returned
+        &ignore1,   // M_transposed will be false
         NULL,       // no Mask
         false,      // mask not complemented
         false,      // mask not structural
@@ -197,6 +205,7 @@ void mexFunction
     info = GrB_SUCCESS ;
     malloc_debug = GB_mx_get_global (true) ;
     ignore = false ;
+    ignore1 = false ;
     ignore2 = false ;
     A = NULL ;
     B = NULL ;

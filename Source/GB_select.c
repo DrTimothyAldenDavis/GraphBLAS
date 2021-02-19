@@ -471,7 +471,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     if (use_dup)
     { 
         // selectop is always true, so use GB_dup to do T = A
-        GB_OK (GB_dup (&T, A, true, A->type, Context)) ;
+        GB_OK (GB_dup2 (&T, A, true, A->type, Context)) ;   // new header
     }
     else if (is_empty)
     { 

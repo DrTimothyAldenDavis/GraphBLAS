@@ -154,27 +154,21 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
     #endif
 
     //--------------------------------------------------------------------------
-    // assign first and last task boundaries
-    //--------------------------------------------------------------------------
-
-    Slice [0] = 0 ;
-    Slice [ntasks] = n ;
-
-    //--------------------------------------------------------------------------
-    // slice the work for remainder of the tasks, 1:ntasks-1
+    // slice the work
     //--------------------------------------------------------------------------
 
     if (Ap == NULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // A is full or bitmap
         //----------------------------------------------------------------------
 
-        for (int taskid = 1 ; taskid < ntasks ; taskid++)
-        { 
-            Slice [taskid] = (int64_t) GB_PART (taskid, n, ntasks) ;
-        }
+        GB_eslice (Slice, n, ntasks) ;
+//      for (int taskid = 1 ; taskid < ntasks ; taskid++)
+//      { 
+//          Slice [taskid] = (int64_t) GB_PART (taskid, n, ntasks) ;
+//      }
 
     }
     else
@@ -185,17 +179,21 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
         //----------------------------------------------------------------------
 
         if (n == 0 || ntasks <= 1 || Ap [n] == 0)
-        {
+        { 
             // matrix is empty, or a single thread is used
-            for (int taskid = 1 ; taskid < ntasks ; taskid++)
-            { 
-                // slice sparse/hyper with 1 task, n == 0, or no work
-                Slice [taskid] = 0 ;
-            }
+            memset (Slice, 0, ntasks * sizeof (int64_t)) ;
+//          for (int taskid = 1 ; taskid < ntasks ; taskid++)
+//          { 
+//              // slice sparse/hyper with 1 task, n == 0, or no work
+//              Slice [taskid] = 0 ;
+//          }
+            Slice [ntasks] = n ;
         }
         else
         {
             // slice Ap by # of entries
+            Slice [0] = 0 ;
+            Slice [ntasks] = n ;
             if (perfectly_balanced)
             {
                 // this method is costly, and should only be used if the

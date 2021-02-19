@@ -48,7 +48,7 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     { 
         // A = A', done in-place, to put A in CSR format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose (NULL, NULL, false, *A,
+        GB_OK (GB_transpose (NULL, NULL, false, *A, // in_place_A
             NULL, NULL, NULL, false, Context)) ;
     }
 

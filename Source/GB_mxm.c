@@ -40,8 +40,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_Context Context
 )
 {
-// GB_Global_timing_clear_all ( ) ;
-// double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -50,7 +48,10 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // C may be aliased with M, A, and/or B
 
     GrB_Info info ;
-    GrB_Matrix T = NULL, MT = NULL ;
+    GrB_Matrix T = NULL ;       // TODO:: make this a static header
+
+    struct GB_Matrix_opaque MT_header ;
+    GrB_Matrix MT = GB_clear_header (&MT_header, true) ;
 
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
@@ -134,9 +135,11 @@ GrB_Info GB_mxm                     // C<M> = A*B
 
     bool mask_applied = false ;
     bool done_in_place = false ;
-    GB_OK (GB_AxB_meta (&T, C, C_replace, C->is_csc, &MT, M, Mask_comp,
-        Mask_struct, accum, A, B, semiring, A_transpose, B_transpose, flipxy,
-        &mask_applied, &done_in_place, AxB_method, do_sort, Context)) ;
+    bool M_transposed = false ;
+    GB_OK (GB_AxB_meta (&T, C, C_replace, C->is_csc, MT, &M_transposed, M,
+        Mask_comp, Mask_struct, accum, A, B, semiring, A_transpose,
+        B_transpose, flipxy, &mask_applied, &done_in_place, AxB_method,
+        do_sort, Context)) ;
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (1, ttt) ;
@@ -157,7 +160,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     }
 
     ASSERT_MATRIX_OK (T, "T=A*B from GB_AxB_meta", GB0) ;
-    ASSERT_MATRIX_OK_OR_NULL (MT, "MT from GB_AxB_meta", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M_transposed ? MT : NULL, "MT from meta", GB0) ;
     ASSERT (GB_ZOMBIES_OK (T)) ;
     ASSERT (GB_JUMBLED_OK (T)) ;
     ASSERT (!GB_PENDING (T)) ;
@@ -203,8 +206,8 @@ GrB_Info GB_mxm                     // C<M> = A*B
     { 
         // C<M> = accum (C,T)
         // GB_accum_mask also conforms C to its desired hypersparsity.
-        info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
-            Mask_struct, Context) ;
+        info = GB_accum_mask (C, M, (M_transposed) ? MT : NULL, accum, &T,
+            C_replace, Mask_comp, Mask_struct, Context) ;
         GB_Matrix_free (&MT) ;
         #ifdef GB_DEBUG
         if (info == GrB_SUCCESS)

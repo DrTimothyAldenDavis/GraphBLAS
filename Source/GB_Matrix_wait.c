@@ -61,7 +61,9 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     //--------------------------------------------------------------------------
 
     GB_void *W = NULL ;
-    GrB_Matrix T = NULL, S = NULL, A1 = NULL ;
+    struct GB_Matrix_opaque T_header ;
+    GrB_Matrix T = GB_clear_header (&T_header, true) ;
+    GrB_Matrix S = NULL, A1 = NULL ;
     GrB_Info info = GrB_SUCCESS ;
 
     ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
@@ -109,6 +111,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     int64_t anz_orig = GB_NNZ (A) ;
     int64_t asize = A->type->size ;
 
+    // TODO: make this a seperate function
     if (GB_is_shallow (A))
     {
         // shallow matrices will never have any pending tuples
@@ -118,6 +121,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         { 
             int64_t len = A->plen * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void) ;
+            if (W == NULL)
+            {
+                // out of memory
+                return (GrB_OUT_OF_MEMORY) ;
+            }
             GB_memcpy (W, A->p, len, nthreads_max) ;
             A->p = (int64_t *) W ;
             A->p_shallow = false ;
@@ -128,6 +136,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         { 
             int64_t len = A->nvec * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void) ;
+            if (W == NULL)
+            {
+                // out of memory
+                return (GrB_OUT_OF_MEMORY) ;
+            }
             GB_memcpy (W, A->h, len, nthreads_max) ;
             A->h = W ;
             A->h_shallow = false ;
@@ -138,6 +151,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         { 
             int64_t len = anz_orig * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void) ;
+            if (W == NULL)
+            {
+                // out of memory
+                return (GrB_OUT_OF_MEMORY) ;
+            }
             GB_memcpy (W, A->i, len, nthreads_max) ;
             A->i = (int64_t *) W ;
             A->i_shallow = false ;
@@ -148,6 +166,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         { 
             int64_t len = anz_orig * asize ;
             W = GB_MALLOC (len, GB_void) ;
+            if (W == NULL)
+            {
+                // out of memory
+                return (GrB_OUT_OF_MEMORY) ;
+            }
             GB_memcpy (W, A->x, len, nthreads_max) ;
             A->x = (GB_void *) W ;
             A->x_shallow = false ;
@@ -190,7 +213,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         info = GB_builder
         (
-            &T,                     // create T
+            T,                      // create T using a static header
             A->type,                // T->type = A->type
             A->vlen,                // T->vlen = A->vlen
             A->vdim,                // T->vdim = A->vdim

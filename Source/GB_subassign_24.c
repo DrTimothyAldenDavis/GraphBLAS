@@ -116,7 +116,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         bool C_is_csc = C->is_csc ;
         GB_phbix_free (C) ;
         // copy the pattern, not the values
-        GB_OK (GB_dup2 (&C, A, false, C->type, Context)) ;
+        GB_OK (GB_dup2 (&C, A, false, C->type, Context)) ;  // reuse old header
         C->is_csc = C_is_csc ;      // do not change the CSR/CSC format of C
     }
 

@@ -4774,11 +4774,14 @@ void mexFunction
     OK (GrB_Matrix_new (&C, GrB_FP32, 1, 1)) ;
     OK (GB_Matrix_check (A, "A for shallow op", G3, NULL)) ;
     Context->where = "GB_shallow_op" ;
-    OK (GB_shallow_op (&B, true,
+
+    struct GB_Matrix_opaque Q_header ;
+    GrB_Matrix Q = GB_clear_header (&Q_header, true) ;
+    OK (GB_shallow_op (Q, true,
         GrB_AINV_FP32, NULL, NULL, false,
         C, Context)) ;
-    OK (GB_Matrix_check (B, "B empty, float", G3, NULL)) ;
-    GrB_Matrix_free_(&B) ;
+    OK (GB_Matrix_check (Q, "Q empty, float", G3, NULL)) ;
+    GrB_Matrix_free_(&Q) ;
 
     bool b1, b2 ;
     int64_t imin, imax ;
