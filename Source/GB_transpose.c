@@ -909,7 +909,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // out of memory
                 GB_FREE_C ;
-//        printf ("here %s %d\n", __FILE__, __LINE__) ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
@@ -924,7 +923,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 // out of memory
                 GB_FREE (iwork) ;
                 GB_FREE_C ;
-//        printf ("here %s %d\n", __FILE__, __LINE__) ;
                 return (info) ;
             }
 
@@ -949,7 +947,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 ASSERT (!C_static_header) ;     // or if C has a static header
                 GB_FREE (iwork) ;
                 GB_FREE_C ;
-//        printf ("here %s %d\n", __FILE__, __LINE__) ;
                 return (info) ;
             }
 
@@ -1001,7 +998,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 GB_FREE (Swork) ;
                 GB_FREE_IN_PLACE_A ;
                 GB_FREE_C ;
-//        printf ("here %s %d\n", __FILE__, __LINE__) ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
@@ -1073,11 +1069,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // If op is not NULL, then Swork can be transplanted into T in
             // GB_builder, instead.  However, this requires the tuples to be
             // sorted on input, which is possible but rare for GB_transpose.
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
-
-//     printf ("work: %p %p %p nmalloc %ld\n",
-//     iwork, jwork, Swork, GB_Global_nmalloc_get ()) ; 
 
             info = GB_builder
             (
@@ -1101,12 +1092,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 Context
             ) ;
 
-//     printf ("now work: %p %p %p nmalloc %ld\n",
-//     iwork, jwork, Swork, GB_Global_nmalloc_get ()) ; 
-
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
-
             // GB_builder always frees jwork, and either frees iwork or
             // transplants it in to T->i and sets iwork to NULL.  So iwork and
             // jwork are always NULL on output.  GB_builder does not modify S.
@@ -1124,8 +1109,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // out of memory in GB_builder
                 GB_FREE_C ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
                 return (info) ;
             }
 
@@ -1148,7 +1131,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // replaced with the new matrix T.
 
             // T = A' and typecast to ctype
-            info = GB_transpose_bucket (&T, ctype, C_is_csc, A,
+            info = GB_transpose_bucket (T, ctype, C_is_csc, A,
                 op1, op2, scalar, binop_bind1st,
                 nworkspaces_bucket, nthreads_bucket, Context) ;
 

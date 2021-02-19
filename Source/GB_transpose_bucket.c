@@ -20,9 +20,7 @@
 // A->is_csc is ignored.
 
 // The input can be hypersparse or non-hypersparse.  The output C is always
-// non-hypersparse, and never shallow.  On input, if *Chandle is then the
-// header for C is dynamically allocated.  Otherwise, *Chandle is assumed to
-// be a static header for C.
+// non-hypersparse, and never shallow.  On input, C is a static header.
 
 // If A is m-by-n in CSC format, with e nonzeros, the time and memory taken is
 // O(m+n+e) if A is non-hypersparse, or O(m+e) if hypersparse.  This is fine if
@@ -52,13 +50,13 @@
 
 #define GB_FREE_ALL                                                     \
 {                                                                       \
-    GB_Matrix_free (Chandle) ;                                          \
+    GB_Matrix_free (&C) ;                                               \
     GB_FREE_WORK ;                                                      \
 }
 
 GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 (
-    GrB_Matrix *Chandle,        // output matrix (unallocated on input)
+    GrB_Matrix C,               // output matrix (static header)
     const GrB_Type ctype,       // type of output matrix C
     const bool C_is_csc,        // format of output matrix C
     const GrB_Matrix A,         // input matrix
@@ -77,7 +75,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (Chandle != NULL) ;
+    ASSERT (C != NULL) ;
+    ASSERT (C->static_header) ;
     ASSERT_TYPE_OK (ctype, "ctype for transpose", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for transpose_bucket", GB0) ;
     ASSERT (!GB_PENDING (A)) ;
@@ -119,12 +118,10 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     // C->p is allocated but not initialized.
     GrB_Info info ;
-    bool C_static_header = ((*Chandle) != NULL) ;
-    GB_OK (GB_new_bix (Chandle, C_static_header, // sparse, old/new header
+    GB_OK (GB_new_bix (&C, true, // sparse, static header
         ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
         GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, Context)) ;
 
-    GrB_Matrix C = (*Chandle) ;
     int64_t *GB_RESTRICT Cp = C->p ;
 
     //--------------------------------------------------------------------------
@@ -136,7 +133,6 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     { 
         // out of memory
         GB_FREE_ALL ;
-// printf ("here %d\n", __LINE__) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -147,7 +143,6 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         { 
             // out of memory
             GB_FREE_ALL ;
-// printf ("here %d\n", __LINE__) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
         Workspaces [tid] = workspace ;
@@ -162,7 +157,6 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     { 
         // out of memory
         GB_FREE_ALL ;
-// printf ("here %d\n", __LINE__) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -329,7 +323,6 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "C transpose of A", GB0) ;
     ASSERT (C->h == NULL) ;
-//         printf ("here %d\n", __LINE__) ;
     return (GrB_SUCCESS) ;
 }
 

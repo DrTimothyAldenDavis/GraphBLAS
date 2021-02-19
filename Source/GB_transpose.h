@@ -38,7 +38,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
 GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 (
-    GrB_Matrix *Chandle,        // output matrix (unallocated on input)
+    GrB_Matrix C,               // output matrix (static header)
     const GrB_Type ctype,       // type of output matrix C
     const bool C_is_csc,        // format of output matrix C
     const GrB_Matrix A,         // input matrix

@@ -149,9 +149,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (S_work_handle != NULL) ;
     ASSERT (!GB_OP_IS_POSITIONAL (dup)) ;
 
-// printf ("GB_builder start in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
-
     //--------------------------------------------------------------------------
     // get S
     //--------------------------------------------------------------------------
@@ -194,18 +191,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
     // allocate workspace
     //--------------------------------------------------------------------------
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
 
     int64_t *Work = GB_CALLOC (5*(nthreads+1), int64_t) ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
     if (Work == NULL)
     { 
         // out of memory
         GB_FREE_WORK ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -224,13 +215,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // depends only on nvals.
 
     GB_eslice (tstart_slice, nvals, nthreads) ;
-
-//  tstart_slice [0] = 0 ;
-//  for (int tid = 1 ; tid < nthreads ; tid++)
-//  { 
-//      tstart_slice [tid] = GB_PART (tid, nvals, nthreads) ;
-//  }
-//  tstart_slice [nthreads] = nvals ;
 
     // tstart_slice [tid]: first tuple in slice tid
     // tnvec_slice [tid]: # of vectors that start in a slice.  If a vector
@@ -280,19 +264,13 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // freed in GB_builder.
 
         ASSERT (J_work == NULL) ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
         I_work = GB_MALLOC (nvals, int64_t) ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
         (*I_work_handle) = I_work ;
         ijslen = nvals ;
         if (I_work == NULL)
         { 
             // out of memory
             GB_FREE_WORK ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -408,18 +386,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
             if (vdim > 1 && !known_sorted)
             {
                 // copy J_input into J_work, so the tuples can be sorted
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
                 J_work = GB_MALLOC (nvals, int64_t) ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
                 (*J_work_handle) = J_work ;
                 if (J_work == NULL)
                 { 
                     // out of memory
                     GB_FREE_WORK ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
                     return (GrB_OUT_OF_MEMORY) ;
                 }
                 GB_memcpy (J_work, J_input, nvals * sizeof (int64_t), nthreads);
@@ -522,17 +494,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     {
 
         // create the k part of each tuple
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
         K_work = GB_MALLOC (nvals, int64_t) ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
         if (K_work == NULL)
         { 
             // out of memory
             GB_FREE_WORK ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -599,8 +565,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
         {
             // out of memory in GB_msort_*
             GB_FREE_WORK ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
     }
@@ -773,32 +737,16 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
     // allocate T; always hypersparse
     //--------------------------------------------------------------------------
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
-// printf ("T->p %p h %p b %p i %p x %p nmalloc %ld\n",
-//     T->p, T->h, T->b, T->i, T->x, GB_Global_nmalloc_get ()) ;
 
     // allocate T; allocate T->p and T->h but do not initialize them.
     // T is always hypersparse.
     info = GB_new (&T, true, // always hyper, static header
         ttype, vlen, vdim, GB_Ap_malloc, is_csc,
         GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec, Context) ;
-// printf ("T->p %p h %p b %p i %p x %p nmalloc %ld\n",
-//     T->p, T->h, T->b, T->i, T->x, GB_Global_nmalloc_get ()) ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__,
-//     GB_Global_nmalloc_get ()) ;
-
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
         GB_FREE_WORK ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
-// printf ("T->p %p h %p b %p i %p x %p nmalloc %ld\n",
-//     T->p, T->h, T->b, T->i, T->x, GB_Global_nmalloc_get ()) ;
         return (info) ;
     }
 
@@ -935,11 +883,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
             // this cannot fail since the size is shrinking.
             bool ok ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
             GB_REALLOC (I_work, T->nzmax, ijslen, int64_t, &ok) ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
             ASSERT (ok) ;
         }
         // transplant I_work into T->i
@@ -950,18 +894,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
     else
     {
         // duplicates exist, so allocate a new T->i.  I_work must be freed later
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
         T->i = GB_MALLOC (tnz, int64_t) ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
         if (T->i == NULL)
         { 
             // out of memory
             GB_Matrix_free (&T) ;
             GB_FREE_WORK ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
     }
@@ -1126,18 +1064,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // allocate T->x
         //----------------------------------------------------------------------
 
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
         T->x = GB_MALLOC (tnz * ttype->size, GB_void) ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
         if (T->x == NULL)
         { 
             // out of memory
             GB_Matrix_free (&T) ;
             GB_FREE_WORK ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -1358,8 +1290,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     T->jumbled = false ;
     ASSERT_MATRIX_OK (T, "T built", GB0) ;
     ASSERT (GB_IS_HYPERSPARSE (T)) ;
-// printf ("here in %s %d, nmalloc %ld\n",
-//     __FILE__, __LINE__, GB_Global_nmalloc_get ()) ;
     return (GrB_SUCCESS) ;
 }
 

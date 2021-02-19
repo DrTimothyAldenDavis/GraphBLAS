@@ -41,7 +41,7 @@ GrB_Info GB_selector
 
 GrB_Info GB_bitmap_selector
 (
-    GrB_Matrix *Chandle,        // output matrix, NULL to modify A in-place
+    GrB_Matrix *C,              // output matrix, TODO: static header
     GB_Select_Opcode opcode,    // selector opcode
     const GxB_select_function user_select,      // user select function
     const bool flipij,          // if true, flip i and j for user operator
