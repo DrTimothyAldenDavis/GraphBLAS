@@ -52,7 +52,7 @@
 
 GrB_Info GB_masker          // R = masker (C, M, Z)
 (
-    GrB_Matrix *Rhandle,    // output matrix (unallocated on input)
+    GrB_Matrix R,           // output matrix, static header
     const bool R_is_csc,    // format of output matrix R
     const GrB_Matrix M,     // required input mask
     const bool Mask_comp,   // descriptor for M
@@ -69,7 +69,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
 
     GrB_Info info ;
 
-    ASSERT (Rhandle != NULL) ;
+    ASSERT (R != NULL && R->static_header) ;
 
     ASSERT_MATRIX_OK (M, "M for masker", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -102,7 +102,6 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     // initializations
     //--------------------------------------------------------------------------
 
-    GrB_Matrix R = NULL ;
     int64_t Rnvec, Rnvec_nonempty ;
     int64_t *Rp = NULL, *Rh = NULL ;
     int64_t *R_to_M = NULL, *R_to_C = NULL, *R_to_Z = NULL ;
@@ -207,7 +206,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
 
     info = GB_masker_phase2 (
         // computed or used by phase2:
-        &R, R_is_csc,
+        R, R_is_csc,
         // from phase1:
         Rp, Rnvec_nonempty,
         // from phase1a:
@@ -236,7 +235,6 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (R, "R output for masker", GB0) ;
-    (*Rhandle) = R ;
     return (GrB_SUCCESS) ;
 }
 

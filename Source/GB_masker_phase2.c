@@ -42,7 +42,7 @@
 
 GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 (
-    GrB_Matrix *Rhandle,            // output matrix (unallocated on input)
+    GrB_Matrix R,                   // output matrix, static header
     const bool R_is_csc,            // format of output matrix R
     // from phase1:
     const int64_t *GB_RESTRICT Rp,  // vector pointers for R
@@ -106,20 +106,12 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     ASSERT (R_is_hyper == (Rh != NULL)) ;
 
     int64_t rnz = (R_is_sparse_or_hyper) ? Rp [Rnvec] : C->vlen*C->vdim ;
-    (*Rhandle) = NULL ;
 
     // allocate the result R (but do not allocate R->p or R->h)
-    GrB_Matrix R = NULL ;
-    GrB_Info info = GB_new_bix (&R, false, // any sparsity, new header
+    GrB_Info info = GB_new_bix (&R, true, // any sparsity, static header
         C->type, C->vlen, C->vdim, GB_Ap_null, R_is_csc,
         R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory; caller must free R_to_M, R_to_C, R_to_Z
-        GB_FREE (Rp) ;
-        GB_FREE (Rh) ;
-        return (info) ;
-    }
+    ASSERT (info == GrB_SUCCESS) ;
 
     // add Rp as the vector pointers for R, from GB_masker_phase1
     if (R_is_sparse_or_hyper)
@@ -161,7 +153,6 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     ASSERT (!GB_ZOMBIES (R)) ; 
     ASSERT (!GB_JUMBLED (R)) ;
     ASSERT (!GB_PENDING (R)) ; 
-    (*Rhandle) = R ;
     return (GrB_SUCCESS) ;
 }
 

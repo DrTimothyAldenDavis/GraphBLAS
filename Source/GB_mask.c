@@ -168,11 +168,11 @@ GrB_Info GB_mask                // C<M> = Z
 
     GrB_Info info = GrB_SUCCESS ;
 
-    GrB_Matrix R = NULL ;
     GrB_Matrix C = NULL ;
 
-    struct GB_Matrix_opaque C0_header ;
+    struct GB_Matrix_opaque C0_header, R_header ;
     GrB_Matrix C0 = GB_clear_static_header (&C0_header) ;
+    GrB_Matrix R  = GB_clear_static_header (&R_header) ;
 
     //--------------------------------------------------------------------------
     // apply the mask
@@ -318,7 +318,7 @@ GrB_Info GB_mask                // C<M> = Z
         // R = masker (C, M, Z):  compute C<M>=Z, placing results in R
         //----------------------------------------------------------------------
 
-        GB_OK (GB_masker (&R, R_is_csc, M, Mask_comp, Mask_struct, C, Z,
+        GB_OK (GB_masker (R, R_is_csc, M, Mask_comp, Mask_struct, C, Z,
             Context)) ;
 
         //----------------------------------------------------------------------
