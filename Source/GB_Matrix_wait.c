@@ -61,9 +61,10 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     //--------------------------------------------------------------------------
 
     GB_void *W = NULL ;
-    struct GB_Matrix_opaque T_header ;
-    GrB_Matrix T = GB_clear_header (&T_header, true) ;
-    GrB_Matrix S = NULL, A1 = NULL ;
+    struct GB_Matrix_opaque T_header, A1_header ;
+    GrB_Matrix T = GB_clear_static_header (&T_header) ;
+    GrB_Matrix A1 = NULL ;
+    GrB_Matrix S = NULL ;
     GrB_Info info = GrB_SUCCESS ;
 
     ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
@@ -111,7 +112,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     int64_t anz_orig = GB_NNZ (A) ;
     int64_t asize = A->type->size ;
 
-    // TODO: make this a seperate function
+    // TODO: make this a separate function
     if (GB_is_shallow (A))
     {
         // shallow matrices will never have any pending tuples
@@ -428,7 +429,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             //------------------------------------------------------------------
 
             // A1 = [0, A (:, kA:end)], hypersparse with same dimensions as A
-            GB_OK (GB_new (&A1, false, // hyper, new header
+            A1 = GB_clear_static_header (&A1_header) ;
+            GB_OK (GB_new (&A1, true, // hyper, static header
                 A->type, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
                 GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA, Context)) ;
 
@@ -470,7 +472,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             // S = A1 + T, with no operator or mask
             //------------------------------------------------------------------
 
-            GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, 0, &ignore,
+            GB_OK (GB_add (&S,      // TODO:: use static header for S
+                A->type, A->is_csc, NULL, 0, 0, &ignore,
                 A1, T, NULL, Context)) ;
 
             ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
@@ -554,7 +557,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         // FUTURE:: if GB_add could tolerate zombies in A, then the initial
         // prune of zombies can be skipped.
 
-        GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T, NULL,
+        GB_OK (GB_add (&S, // TODO:: use static header for S
+            A->type, A->is_csc, NULL, 0, 0, &ignore, A, T, NULL,
             Context)) ;
         GB_Matrix_free (&T) ;
         ASSERT_MATRIX_OK (S, "S after GB_Matrix_wait:add", GB0) ;

@@ -65,7 +65,7 @@ GrB_Info axb (GB_Context Context)
     }
 
     struct GB_Matrix_opaque MT_header ;
-    GrB_Matrix MT = GB_clear_header (&MT_header, true) ;
+    GrB_Matrix MT = GB_clear_static_header (&MT_header) ;
 
     // C = A*B, A'*B, A*B', or A'*B'
     info = GB_AxB_meta (&C, NULL,       // C cannot be computed in place
@@ -162,7 +162,7 @@ GrB_Info axb_complex (GB_Context Context)
     }
 
     struct GB_Matrix_opaque MT_header ;
-    GrB_Matrix MT = GB_clear_header (&MT_header, true) ;
+    GrB_Matrix MT = GB_clear_static_header (&MT_header) ;
 
     info = GB_AxB_meta (&C, NULL,       // C cannot be computed in place
         false,      // C_replace

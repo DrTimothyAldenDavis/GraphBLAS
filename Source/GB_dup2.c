@@ -15,6 +15,7 @@
 // dynamic header, depending on C->static_header.
 
 #include "GB.h"
+#define GB_FREE_ALL ;
 
 GrB_Info GB_dup2            // make an exact copy of a matrix
 (
@@ -30,6 +31,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (Chandle != NULL) ;
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
@@ -66,18 +68,14 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     // create C; allocate C->p and do not initialize it.
     // C has the exact same sparsity structure as A.
 
-    // allocate a new header for C if (*Chandle) is NULL, or reuse the
-    // existing header if (*Chandle) is not NULL.
+    // allocate a new user header for C if (*Chandle) is NULL, or reuse the
+    // existing static or dynamic header if (*Chandle) is not NULL.
     GrB_Matrix C = (*Chandle) ;
     bool C_static_header = (C == NULL) ? false : C->static_header ;
-    GrB_Info info = GB_new_bix (&C, C_static_header, // new/old/static header
+    GB_OK (GB_new_bix (Chandle, C_static_header, // new/old/static header
         numeric ? atype : ctype, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
-        GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        return (info) ;
-    }
+        GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, Context)) ;
+    C = (*Chandle) ;
 
     //--------------------------------------------------------------------------
     // copy the contents of A into C
@@ -120,7 +118,6 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     // return the result
     //--------------------------------------------------------------------------
 
-    (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }
 

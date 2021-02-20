@@ -146,7 +146,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     GrB_Info info ;
     GrB_Matrix T = *Thandle ;
     struct GB_Matrix_opaque MT_header ;
-    GrB_Matrix MT = GB_clear_header (&MT_header, true) ;
+    GrB_Matrix MT = GB_clear_static_header (&MT_header) ;
     GrB_Matrix M = M_in ;
     GrB_Matrix Z = NULL ;
 
@@ -405,7 +405,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // be used in GB_mask, below.  So ignore the mask_applied return
             // flag from GB_add.
             bool ignore ;
-            GB_OK (GB_add (&Z, C->type, C->is_csc, (apply_mask) ? M : NULL,
+            GB_OK (GB_add (&Z, // TODO use static header
+                C->type, C->is_csc, (apply_mask) ? M : NULL,
                 Mask_struct, Mask_comp, &ignore, C, T, accum, Context)) ;
             GB_Matrix_free (Thandle) ;
         }

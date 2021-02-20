@@ -45,6 +45,7 @@ GrB_Info GB_dup             // make an exact copy of a matrix
 
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A to duplicate", GB0) ;
+    (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
@@ -56,7 +57,6 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     // C = A
     //--------------------------------------------------------------------------
 
-    (*Chandle) = NULL ; // create a new header for C
-    return (GB_dup2 (Chandle, A, true, NULL, Context)) ;    // new header
+    return (GB_dup2 (Chandle, A, true, NULL, Context)) ;    // new user header
 }
 

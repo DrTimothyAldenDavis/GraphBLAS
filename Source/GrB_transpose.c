@@ -29,7 +29,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     //--------------------------------------------------------------------------
 
     struct GB_Matrix_opaque T_header ;
-    GrB_Matrix T = GB_clear_header (&T_header, true) ;
+    GrB_Matrix T = GB_clear_static_header (&T_header) ;
 
     // C may be aliased with M and/or A
 

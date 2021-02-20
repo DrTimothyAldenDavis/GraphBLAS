@@ -14,12 +14,12 @@
 
 #define USAGE "C = GB_mex_AplusB (A, B, op)"
 
-#define FREE_ALL                        \
-{                                       \
-    GrB_Matrix_free_(&A) ;               \
-    GrB_Matrix_free_(&B) ;               \
-    GrB_Matrix_free_(&C) ;               \
-    GB_mx_put_global (true) ;           \
+#define FREE_ALL                \
+{                               \
+    GrB_Matrix_free_(&A) ;      \
+    GrB_Matrix_free_(&B) ;      \
+    GrB_Matrix_free_(&C) ;      \
+    GB_mx_put_global (true) ;   \
 }
 
 
@@ -75,7 +75,8 @@ void mexFunction
 
     // C = A+B using the op.  No mask
     bool ignore ;
-    METHOD (GB_add (&C, A->type, true, NULL, false, false, &ignore, A, B, op,
+    METHOD (GB_add (&C, // TODO: use static header??
+        A->type, true, NULL, false, false, &ignore, A, B, op,
         Context)) ;
 
     // return C to MATLAB as a plain sparse matrix

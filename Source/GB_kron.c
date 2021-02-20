@@ -46,9 +46,10 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     // C may be aliased with M, A, and/or B
 
     GrB_Info info ;
-    struct GB_Matrix_opaque AT_header, BT_header ;
-    GrB_Matrix AT = GB_clear_header (&AT_header, true) ;
-    GrB_Matrix BT = GB_clear_header (&BT_header, true) ;
+    struct GB_Matrix_opaque T_header, AT_header, BT_header ;
+    GrB_Matrix T  = GB_clear_static_header (&T_header) ;
+    GrB_Matrix AT = GB_clear_static_header (&AT_header) ;
+    GrB_Matrix BT = GB_clear_static_header (&BT_header) ;
     GrB_BinaryOp op = op_in ;
 
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
@@ -158,8 +159,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     // T = kron(A,B)
     //--------------------------------------------------------------------------
 
-    GrB_Matrix T ;
-    GB_OK (GB_kroner (&T, T_is_csc, op,
+    GB_OK (GB_kroner (T, T_is_csc, op,
         A_transpose ? AT : A, A_is_pattern,
         B_transpose ? BT : B, B_is_pattern, Context)) ;
 

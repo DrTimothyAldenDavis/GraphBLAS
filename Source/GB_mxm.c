@@ -51,7 +51,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GrB_Matrix T = NULL ;       // TODO:: make this a static header
 
     struct GB_Matrix_opaque MT_header ;
-    GrB_Matrix MT = GB_clear_header (&MT_header, true) ;
+    GrB_Matrix MT = GB_clear_static_header (&MT_header) ;
 
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;

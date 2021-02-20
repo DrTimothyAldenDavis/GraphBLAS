@@ -104,11 +104,11 @@ GrB_Info GB_assign_prep
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign/subassign", GB0) ;
     ASSERT (scalar_code <= GB_UDT_code) ;
 
-    GrB_Matrix C2 = NULL ;
-    GrB_Matrix M2 = NULL ;
-    GrB_Matrix A2 = NULL ;
-    GrB_Matrix MT = NULL ;
-    GrB_Matrix AT = NULL ;
+    GrB_Matrix C2 = NULL ;      // TODO use static header
+    GrB_Matrix M2 = NULL ;      // TODO use static header
+    GrB_Matrix A2 = NULL ;      // TODO use static header
+    GrB_Matrix MT = NULL ;      // TODO use static header
+    GrB_Matrix AT = NULL ;      // TODO use static header
 
     GrB_Index *I2 = NULL ;
     GrB_Index *J2 = NULL ;
@@ -940,7 +940,7 @@ GrB_Info GB_assign_prep
         { 
             // Instead of duplicating C, create a new empty matrix C2.
             int sparsity = (C->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-            GB_OK (GB_new (&C2, false, // sparse or hyper, new header
+            GB_OK (GB_new (&C2, false, // sparse or hyper, new header (TODO)
                 C->type, C->vlen, C->vdim, GB_Ap_calloc, C_is_csc,
                 sparsity, C->hyper_switch, 1, Context)) ;
             GBURBLE ("(C alias cleared; C_replace early) ") ;
@@ -956,7 +956,7 @@ GrB_Info GB_assign_prep
             ASSERT (GB_JUMBLED_OK (C)) ;
             ASSERT (!GB_PENDING (C)) ;
             // C2 = duplicate of C, which must be freed when done
-            GB_OK (GB_dup2 (&C2, C, true, NULL, Context)) ;
+            GB_OK (GB_dup2 (&C2, C, true, NULL, Context)) ; // TODO use static
         }
         // C2 must be transplanted back into C when done
         C = C2 ;

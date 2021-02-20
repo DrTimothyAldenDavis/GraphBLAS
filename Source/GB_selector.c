@@ -13,9 +13,8 @@
 
 // TODO: GB_selector does not exploit the mask.
 
-// If Chandle is NULL on input, A is modified in-place.
-
-// If *Chandle is NULL, ... TODO::here
+// If C is NULL on input, A is modified in-place.
+// Otherwise, C is an uninitialized static header.
 
 #include "GB_select.h"
 #include "GB_ek_slice.h"
@@ -40,7 +39,7 @@
 
 GrB_Info GB_selector
 (
-    GrB_Matrix *Chandle,        // output matrix, NULL to modify A in-place
+    GrB_Matrix C,               // output matrix, NULL or static header
     GB_Select_Opcode opcode,    // selector opcode
     const GxB_SelectOp op,      // user operator
     const bool flipij,          // if true, flip i and j for user operator
@@ -66,10 +65,8 @@ GrB_Info GB_selector
     ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (A))) ;
 
     GrB_Info info ;
-    if (Chandle != NULL)
-    { 
-        (*Chandle) = NULL ;
-    }
+    bool in_place_A = (C == NULL) ; // GrB_Matrix_wait and GB_resize only
+    ASSERT (C == NULL || (C != NULL && C->static_header)) ;
 
     //--------------------------------------------------------------------------
     // declare workspace
@@ -168,8 +165,10 @@ GrB_Info GB_selector
 
     if (use_bitmap_selector)
     { 
+        // this case is only used by GB_select
         GB_BURBLE_MATRIX (A, "(bitmap select: %s) ", op->name) ;
-        return (GB_bitmap_selector (Chandle, opcode, user_select, flipij, A,
+        ASSERT (C != NULL && C->static_header) ;
+        return (GB_bitmap_selector (C, opcode, user_select, flipij, A,
             ithunk, xthunk, Context)) ;
     }
 
@@ -193,7 +192,6 @@ GrB_Info GB_selector
     // allocate the new vector pointers of C
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL ;
     int64_t *GB_RESTRICT Cp = GB_CALLOC (anvec+1, int64_t) ;
     int64_t *GB_RESTRICT Ch = NULL ;
     int64_t *GB_RESTRICT Ci = NULL ;
@@ -329,11 +327,11 @@ GrB_Info GB_selector
     // create the result
     //--------------------------------------------------------------------------
 
-    if (Chandle == NULL)
+    if (in_place_A)
     {
 
         //----------------------------------------------------------------------
-        // transplant C back into A
+        // transplant Cp, Ci, Cx back into A
         //----------------------------------------------------------------------
 
         // TODO: this is not parallel: use GB_hyper_prune
@@ -388,12 +386,12 @@ GrB_Info GB_selector
         // create C and transplant Cp, Ch, Ci, Cx into C
         //----------------------------------------------------------------------
 
-        ASSERT (C == NULL) ;
         int sparsity = (A->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-        info = GB_new (&C, false, // sparse or hyper (from A), new header
+        ASSERT (C != NULL && C->static_header) ;
+        info = GB_new (&C, true, // sparse or hyper (from A), static header
             A->type, avlen, avdim, GB_Ap_null, true,
             sparsity, A->hyper_switch, anvec, Context) ;
-        GB_OK (info) ;
+        ASSERT (info == GrB_SUCCESS) ;
 
         if (A->h != NULL)
         { 
@@ -435,7 +433,6 @@ GrB_Info GB_selector
         C->nvec_nonempty = C_nvec_nonempty ;
         C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
 
-        (*Chandle) = C ;
         ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;
 
         // positional selector (tril, triu, diag, offdiag, resize): not jumbled

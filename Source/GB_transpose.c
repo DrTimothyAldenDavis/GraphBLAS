@@ -115,7 +115,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     bool in_place_C, in_place_A ;
     bool C_static_header = false ;
     struct GB_Matrix_opaque T_header ;
-    GrB_Matrix T = GB_clear_header (&T_header, true) ;
+    GrB_Matrix T = GB_clear_static_header (&T_header) ;
 
     if (A_in == NULL)
     { 
@@ -184,7 +184,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         C_static_header = (C != NULL) ;
         if (C_static_header)
         { 
-            GB_clear_header (C, true) ;     // clear the C static header
+            GB_clear_static_header (C) ;
         }
     }
 

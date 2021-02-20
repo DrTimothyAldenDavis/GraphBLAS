@@ -97,8 +97,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     GrB_Info info ;
 
     struct GB_Matrix_opaque AT_header, BT_header ;
-    GrB_Matrix AT = GB_clear_header (&AT_header, true) ;
-    GrB_Matrix BT = GB_clear_header (&BT_header, true) ;
+    GrB_Matrix AT = GB_clear_static_header (&AT_header) ;
+    GrB_Matrix BT = GB_clear_static_header (&BT_header) ;
 
     (*mask_applied) = false ;
     (*done_in_place) = false ;

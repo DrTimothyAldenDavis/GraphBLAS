@@ -173,7 +173,7 @@ void mexFunction
 
     // K is a shallow copy of M, except for its numerical values
     struct GB_Matrix_opaque K_header ;
-    GrB_Matrix K = GB_clear_header (&K_header, true) ;
+    GrB_Matrix K = GB_clear_static_header (&K_header) ;
 
     OK (GB_shallow_copy (K, GxB_BY_COL, M, Context)) ;
     OK (GxB_Matrix_Option_get (K, GxB_SPARSITY_STATUS, &sparsity)) ;

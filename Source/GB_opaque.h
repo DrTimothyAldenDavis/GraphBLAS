@@ -434,17 +434,14 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
     #include "GB_matrix.h"
 } ;
 
-static inline GrB_Matrix GB_clear_header    // clear the contents of a header
+static inline GrB_Matrix GB_clear_static_header // clear a static header
 (
-    GrB_Matrix C,                   // header to clear
-    const bool C_static_header      // true if C is statically allocated
+    GrB_Matrix C    // static header to clear
 )
 { 
-    if (C != NULL)
-    {
-        memset (C, 0, sizeof (struct GB_Matrix_opaque)) ;
-        C->static_header = C_static_header ;
-    }
+    ASSERT (C != NULL) ;
+    memset (C, 0, sizeof (struct GB_Matrix_opaque)) ;
+    C->static_header = true ;
     return (C) ;
 }
 

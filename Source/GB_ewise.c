@@ -53,11 +53,11 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     GrB_Info info ;
 
-    struct GB_Matrix_opaque T_header, MT_header, AT_header, BT_header ;
-    GrB_Matrix T  = GB_clear_header (&T_header,  true) ;
     GrB_Matrix MT = NULL ;
-    GrB_Matrix AT = GB_clear_header (&AT_header, true) ;
-    GrB_Matrix BT = GB_clear_header (&BT_header, true) ;
+    struct GB_Matrix_opaque T_header, MT_header, AT_header, BT_header ;
+    GrB_Matrix T  = GB_clear_static_header (&T_header) ;
+    GrB_Matrix AT = GB_clear_static_header (&AT_header) ;
+    GrB_Matrix BT = GB_clear_static_header (&BT_header) ;
 
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
 
@@ -188,7 +188,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // MT = M'
         // transpose: no typecast, no op, not in-place
         GBURBLE ("(M transpose) ") ;
-        MT = GB_clear_header (&MT_header, true) ;
+        MT = GB_clear_static_header (&MT_header) ;
         GB_OK (GB_transpose (&MT, GrB_BOOL, T_is_csc, M,    // MT static
             NULL, NULL, NULL, false, Context)) ;
         M1 = MT ;
@@ -338,7 +338,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // the final C and the mask is no longer needed.  In this case, it
         // could be faster to exploit the mask duing GB_add.
 
-        GB_OK (GB_add (&T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
+        GB_OK (GB_add (&T, // TODO: use static header
+            T_type, T_is_csc, M1, Mask_struct, Mask_comp,
             &mask_applied, A1, B1, op, Context)) ;
 
     }
@@ -356,7 +357,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // starts as a shallow copy of A1->h, B1->h, or M1->h, but it may be
         // pruned by GB_hypermatrix_prune, and thus no longer shallow.
 
-        GB_OK (GB_emult (&T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
+        GB_OK (GB_emult (&T,    // TODO use static header
+            T_type, T_is_csc, M1, Mask_struct, Mask_comp,
             &mask_applied, A1, B1, op, Context)) ;
 
         //----------------------------------------------------------------------

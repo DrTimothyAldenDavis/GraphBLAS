@@ -49,7 +49,7 @@
 
 GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 (
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    GrB_Matrix *Chandle,    // output matrix TODO use static header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask, unused if NULL
@@ -137,7 +137,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // must be used for C=A.*B if all 3 matrices are full.  Otherwise,
             // GB_emult method can be used as well.
 
-            return (GB_add (Chandle, ctype, C_is_csc, M, Mask_struct,
+            return (GB_add (Chandle, // TODO use static header
+                ctype, C_is_csc, M, Mask_struct,
                 Mask_comp, mask_applied, A, B, op, Context)) ;
 
         case GB_EMULT_METHOD_02A :  // A sparse/hyper, B bitmap/full
@@ -172,7 +173,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // This method does not handle the case when M is sparse/hyper,
             // unless M is ignored and applied later.
 
-            return (GB_emult_02 (Chandle, ctype, C_is_csc,
+            return (GB_emult_02 (Chandle, // TODO use static header
+                ctype, C_is_csc,
                 (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
                 A, B, op, false, Context)) ;
 
@@ -207,7 +209,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // M is not present, not applied, or bitmap/full
             // Note that A and B are flipped.
 
-            return (GB_emult_02 (Chandle, ctype, C_is_csc,
+            return (GB_emult_02 (Chandle, // TODO use static header
+                ctype, C_is_csc,
                 (apply_mask) ? M : NULL, Mask_struct, Mask_comp,
                 B, A, op, true, Context)) ;
 
@@ -284,7 +287,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // by method 03, which constructs C as sparse/hyper (the same
             // structure as M), not bitmap.
 
-            return (GB_bitmap_emult (Chandle, ewise_method, ctype, C_is_csc,
+            return (GB_bitmap_emult (Chandle, // TODO use static header
+                ewise_method, ctype, C_is_csc,
                 M, Mask_struct, Mask_comp, mask_applied, A, B,
                 op, Context)) ;
 
@@ -298,7 +302,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      sparse  sparse      full            bitmap  (method: 03)
             //      sparse  sparse      full            full    (GB_add or 03)
 
-            return (GB_emult_03 (Chandle, ctype, C_is_csc, M, Mask_struct,
+            return (GB_emult_03 (Chandle, // TODO use static header
+                ctype, C_is_csc, M, Mask_struct,
                 mask_applied, A, B, op, Context)) ;
 
         case GB_EMULT_METHOD_04A : break ; // punt
@@ -400,7 +405,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     GB_OK (GB_emult_01_phase2 (
         // computed or used by phase2:
-        Chandle, ctype, C_is_csc, op,
+        Chandle, // TODO use static header
+            ctype, C_is_csc, op,
         // from phase1:
         Cp, Cnvec_nonempty,
         // from phase1a:

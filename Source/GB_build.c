@@ -134,7 +134,7 @@ GrB_Info GB_build               // build matrix
     int64_t *no_J_work = NULL ;
     GB_void *no_S_work = NULL ;
     struct GB_Matrix_opaque T_header ;
-    GrB_Matrix T = GB_clear_header (&T_header, true) ;
+    GrB_Matrix T = GB_clear_static_header (&T_header) ;
 
     GrB_Info info = GB_builder
     (

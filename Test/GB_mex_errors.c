@@ -4776,7 +4776,7 @@ void mexFunction
     Context->where = "GB_shallow_op" ;
 
     struct GB_Matrix_opaque Q_header ;
-    GrB_Matrix Q = GB_clear_header (&Q_header, true) ;
+    GrB_Matrix Q = GB_clear_static_header (&Q_header) ;
     OK (GB_shallow_op (Q, true,
         GrB_AINV_FP32, NULL, NULL, false,
         C, Context)) ;

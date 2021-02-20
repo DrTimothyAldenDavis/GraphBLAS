@@ -42,7 +42,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     // C may be aliased with M and/or A
 
     struct GB_Matrix_opaque T_header ;
-    GrB_Matrix T = GB_clear_header (&T_header, true) ;
+    GrB_Matrix T = GB_clear_static_header (&T_header) ;
 
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     ASSERT_MATRIX_OK (C, "C input for GB_apply", GB0) ;

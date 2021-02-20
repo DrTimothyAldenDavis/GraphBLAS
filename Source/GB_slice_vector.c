@@ -13,7 +13,7 @@
 
 //      C(:,j) = A(:,j) +  B(:,j) in GB_add
 //      C(:,j) = A(:,j) .* B(:,j) in GB_emult
-//      C(:,j)<M(:,j)> = B(:,j) in GB_mask (A is passed in as the input C)
+//      C(:,j)<M(:,j)> = B(:,j) in GB_mask; A is passed in as the input C
 //      union (A->h, B->h) in GB_add_phase0.
 
 // The vector index j is not needed here.  The vectors kA and kB are not
