@@ -26,8 +26,7 @@ void GB_Matrix_free             // free a matrix
         { 
             // free all content of A
             GB_phbix_free (A) ;
-            // free the error logger string
-            GB_FREE (A->logger) ;
+            // free the header of A
             if (A->static_header)
             { 
                 // A is static, not a pointer from malloc/calloc, so it cannot

@@ -984,7 +984,7 @@ GrB_Info GB_Monoid_new          // create a monoid
 
 GrB_Info GB_Semiring_new            // create a semiring
 (
-    GrB_Semiring *semiring,         // handle of semiring to create
+    GrB_Semiring semiring,          // semiring to create
     GrB_Monoid add,                 // additive monoid of the semiring
     GrB_BinaryOp multiply           // multiply operator of the semiring
 ) ;

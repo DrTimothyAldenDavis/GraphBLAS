@@ -49,14 +49,14 @@ GrB_BinaryOp GB_boolean_rename_op   // return renamed op
     const GrB_BinaryOp op           // op to rename
 ) ;
 
-GrB_Info GB_binop_new
+void GB_binop_new
 (
-    GrB_BinaryOp *binaryop,         // handle for the new binary operator
+    GrB_BinaryOp op,                // new binary operator
     GxB_binary_function function,   // binary function (may be NULL)
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x
     GrB_Type ytype,                 // type of input y
-    const char *name,               // name of the function
+    const char *name,               // name of the function (may be NULL)
     const GB_Opcode opcode          // opcode for the function
 ) ;
 

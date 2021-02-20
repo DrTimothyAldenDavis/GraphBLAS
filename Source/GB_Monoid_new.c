@@ -46,7 +46,6 @@ GrB_Info GB_Monoid_new          // create a monoid
     GB_RETURN_IF_NULL (identity) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 
-    ASSERT_BINARYOP_OK (op, "op for monoid", GB0) ;
     ASSERT (idcode <= GB_UDT_code) ;
 
     //--------------------------------------------------------------------------
@@ -91,7 +90,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     //--------------------------------------------------------------------------
 
     // allocate the monoid
-    (*monoid) = GB_CALLOC (1, struct GB_Monoid_opaque) ;
+    (*monoid) = GB_MALLOC (1, struct GB_Monoid_opaque) ;
     if (*monoid == NULL)
     { 
         // out of memory
