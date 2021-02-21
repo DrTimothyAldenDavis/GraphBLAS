@@ -105,7 +105,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     { 
         // no work to do; C is an empty matrix, normally hypersparse
         if (C_in != NULL) return (GrB_SUCCESS) ;
-        return (GB_new (Chandle, false, // auto sparsity, new header
+        return (GB_new (Chandle, false, // auto sparsity, TODO::static header
             semiring->add->op->ztype, A->vdim, B->vdim, GB_Ap_calloc, true,
             GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1, Context)) ;
     }

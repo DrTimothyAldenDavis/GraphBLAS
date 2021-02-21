@@ -74,12 +74,12 @@
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORK ;              \
-    GB_Matrix_free (Chandle) ;  \
+    GB_Matrix_free (&C) ;       \
 }
 
 GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 (
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    GrB_Matrix C,           // output matrix, static header
     const int ewise_method,
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
@@ -99,8 +99,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (Chandle != NULL) ;
-    (*Chandle) = NULL ;
+    ASSERT (C != NULL && C->static_header) ;
 
     ASSERT_MATRIX_OK (A, "A for bitmap emult ", GB0) ;
     ASSERT_MATRIX_OK (B, "B for bitmap emult ", GB0) ;
@@ -159,10 +158,9 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     // allocate the result C (but do not allocate C->p or C->h)
-    GB_OK (GB_new_bix (Chandle, false,  // any sparsity, new header
+    GB_OK (GB_new_bix (&C, true,  // any sparsity, static header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         GxB_BITMAP, true, A->hyper_switch, -1, cnz, true, Context)) ;
-    GrB_Matrix C = (*Chandle) ;
 
     C->magic = GB_MAGIC ;
     GB_Type_code ccode = ctype->code ;
@@ -226,7 +224,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     if (!done)
     { 
         GB_BURBLE_MATRIX (C, "(generic bitmap emult: %s) ", op->name) ;
-        GB_ewise_generic (Chandle, op, NULL, 0, C_nthreads,
+        GB_ewise_generic (C, op, NULL, 0, C_nthreads,
             NULL, NULL, NULL, GxB_BITMAP, ewise_method, NULL,
             M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
             M, Mask_struct, Mask_comp, A, B, Context) ;
@@ -237,7 +235,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    ASSERT_MATRIX_OK (*Chandle, "C output for emult_bitmap", GB0) ;
+    ASSERT_MATRIX_OK (C, "C output for emult_bitmap", GB0) ;
     (*mask_applied) = (M != NULL) ;
     return (GrB_SUCCESS) ;
 }

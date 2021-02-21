@@ -15,7 +15,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 (
     // output
-    GrB_Matrix *Chandle,
+    GrB_Matrix C,               // output matrix, static header
     // input, not modified
     const bool C_is_csc,        // requested format of C
     const GrB_Matrix A,
@@ -104,7 +104,7 @@ GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
 
 GrB_Info GB_subref_phase2   // C=A(I,J)
 (
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    GrB_Matrix C,               // output matrix, static header
     // from phase1:
     const int64_t *GB_RESTRICT *p_Cp,   // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
@@ -294,7 +294,7 @@ static inline int GB_subref_method  // return the method to use (1 to 12)
 GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 (
     // output
-    GrB_Matrix *Chandle,
+    GrB_Matrix C,               // output matrix, static header
     // input, not modified
     const bool C_is_csc,        // requested format of C
     const GrB_Matrix A,

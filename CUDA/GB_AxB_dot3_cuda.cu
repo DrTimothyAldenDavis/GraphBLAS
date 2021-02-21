@@ -148,7 +148,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // TODO tell GB_CREATE where to put the data: CPU or GPU (via
     // cudaMemAdvise), but this works as-is.
     int sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-    info = GB_new_bix (Chandle, false, // sparse or hyper (from M), new header
+    info = GB_new_bix (Chandle, false, // sparse or hyper (from M), TODO::static header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         sparsity, false, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork 

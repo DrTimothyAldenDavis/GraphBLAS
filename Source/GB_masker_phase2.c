@@ -111,7 +111,13 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     GrB_Info info = GB_new_bix (&R, true, // any sparsity, static header
         C->type, C->vlen, C->vdim, GB_Ap_null, R_is_csc,
         R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, Context) ;
-    ASSERT (info == GrB_SUCCESS) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory; caller must free R_to_M, R_to_C, R_to_Z
+        GB_FREE (Rp) ;
+        GB_FREE (Rh) ;
+        return (info) ;
+    }
 
     // add Rp as the vector pointers for R, from GB_masker_phase1
     if (R_is_sparse_or_hyper)

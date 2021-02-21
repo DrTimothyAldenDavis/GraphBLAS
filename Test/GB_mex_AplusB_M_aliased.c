@@ -30,13 +30,12 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-    // double tic2 [2] ;
-    // simple_tic (tic2) ;
+    struct GB_Matrix_opaque C_header ;
+    GrB_Matrix C = GB_clear_static_header (&C_header) ;
 
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL ;
     GrB_Matrix B = NULL ;
-    GrB_Matrix C = NULL ;
     GrB_BinaryOp op = NULL ;
 
     GB_CONTEXT (USAGE) ;
@@ -71,8 +70,8 @@ void mexFunction
 
     // C<B> = A+B using the op.  M == B alias
     bool ignore ;
-    METHOD (GB_add (&C, // TODO use static header?
-        A->type, true, B, false, false, &ignore, A, B, op, Context)) ;
+    METHOD (GB_add (C, A->type, true, B, false, false, &ignore, A, B, op,
+        Context)) ;
 
     // return C to MATLAB as a plain sparse matrix
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C<B>=A+B result", false) ;

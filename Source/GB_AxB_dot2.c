@@ -76,7 +76,11 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
 
     (*Chandle) = NULL ;
-    GrB_Matrix M, M2 = NULL ;
+    GrB_Matrix M = NULL ;
+
+    struct GB_Matrix_opaque M2_header ;
+    GrB_Matrix M2 = NULL ;
+
     int64_t *GB_RESTRICT A_slice = NULL ;
     int64_t *GB_RESTRICT B_slice = NULL ;
     int64_t *M_ek_slicing = NULL ;
@@ -148,8 +152,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     if (A_or_B_hyper && M_in != NULL)
     {
-        // M2 = M_in (Ah, Bh)
-        GB_OK (GB_subref (&M2, M_in->is_csc, M_in,
+        // M2 = M_in (Ah, Bh), where M2 has a static header
+        M2 = GB_clear_static_header (&M2_header) ;
+        GB_OK (GB_subref (M2, M_in->is_csc, M_in,
             (A_is_hyper) ? Ah : GrB_ALL, cvlen,
             (B_is_hyper) ? Bh : GrB_ALL, cvdim, false, Context)) ;
         // TODO: if Mask_struct is true, only extract the pattern of M_in
@@ -253,7 +258,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     bool M_is_sparse_or_hyper = (M != NULL) &&
         (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     GrB_Type ctype = add->op->ztype ;
-    GB_OK (GB_new_bix (Chandle, false, // bitmap, new header
+    GB_OK (GB_new_bix (Chandle, false, // bitmap, TODO::static header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         GxB_BITMAP, M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true,
         Context)) ;

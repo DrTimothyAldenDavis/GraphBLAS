@@ -79,7 +79,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     // allocate C->x but do not initialize it
     (*Chandle) = NULL ;
-    GB_OK (GB_dup2 (Chandle, A, false, mult->ztype, Context)) ; // new header
+    GB_OK (GB_dup2 (Chandle, A, false, mult->ztype, Context)) ; // TODO::static header
     GrB_Matrix C = (*Chandle) ;
 
     //--------------------------------------------------------------------------

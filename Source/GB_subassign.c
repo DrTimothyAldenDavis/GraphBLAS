@@ -69,6 +69,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     GrB_Matrix C2 = NULL ;
     GrB_Matrix M2 = NULL ;
     GrB_Matrix A2 = NULL ;
+    struct GB_Matrix_opaque
+        C2_header, M2_header, A2_header, MT_header, AT_header ;
     GrB_Index *I2  = NULL ;
     GrB_Index *J2  = NULL ;
 
@@ -79,6 +81,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     int assign_kind = GB_SUBASSIGN ;
 
     GB_OK (GB_assign_prep (&C, &M, &A, &C2, &M2, &A2,
+        &C2_header, &M2_header, &A2_header, &MT_header, &AT_header,
         &I, &I2, &ni, &nI, &Ikind, Icolon,
         &J, &J2, &nj, &nJ, &Jkind, Jcolon,
         &done, &atype, C_in, &C_replace, &assign_kind,
@@ -92,7 +95,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 
     if (done)
     { 
-        // GB_assign_prep has handle the entire assignment itself
+        // GB_assign_prep has handled the entire assignment itself
         ASSERT (C == C_in) ;
         ASSERT_MATRIX_OK (C_in, "Final C for subassign", GB0) ;
         return (GrB_SUCCESS) ;
@@ -123,6 +126,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         // Transplant the content of C2 into C_in and free C2.  Zombies and
         // pending tuples can be transplanted from C2 into C_in, and if C2 is
         // jumbled, C_in becomes jumbled too.
+        ASSERT (C2->static_header) ;
         GB_OK (GB_transplant (C_in, C_in->type, &C2, Context)) ;
     }
 

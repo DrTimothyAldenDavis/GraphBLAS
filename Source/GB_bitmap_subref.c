@@ -15,13 +15,13 @@
 
 #define GB_FREE_ALL             \
 {                               \
-    GB_Matrix_free (Chandle) ;  \
+    GB_Matrix_free (&C) ;       \
 }
 
 GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 (
     // output
-    GrB_Matrix *Chandle,
+    GrB_Matrix C,               // output matrix, static header
     // input, not modified
     const bool C_is_csc,        // requested format of C
     const GrB_Matrix A,
@@ -39,7 +39,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (Chandle != NULL) ;
+    ASSERT (C != NULL && C->static_header) ;
     ASSERT_MATRIX_OK (A, "A for C=A(I,J) bitmap subref", GB0) ;
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
     ASSERT (!GB_IS_SPARSE (A)) ;
@@ -47,7 +47,6 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
-    (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -92,7 +91,6 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     // allocate C
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL ;
     int64_t cnzmax ;
     bool ok = GB_Index_multiply ((GrB_Index *) (&cnzmax), nI, nJ) ;
     if (!ok)
@@ -102,10 +100,9 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     }
     GrB_Type ctype = symbolic ? GrB_INT64 : A->type ;
     int sparsity = GB_IS_BITMAP (A) ? GxB_BITMAP : GxB_FULL ;
-    GB_OK (GB_new_bix (Chandle, false, // bitmap or full, new header
+    GB_OK (GB_new_bix (&C, true, // bitmap or full, static header
         ctype, nI, nJ, GB_Ap_null, C_is_csc,
         sparsity, true, A->hyper_switch, -1, cnzmax, true, Context)) ;
-    C = (*Chandle) ;
 
     //--------------------------------------------------------------------------
     // get C

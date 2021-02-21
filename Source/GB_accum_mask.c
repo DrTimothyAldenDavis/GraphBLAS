@@ -148,7 +148,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     struct GB_Matrix_opaque MT_header ;
     GrB_Matrix MT = GB_clear_static_header (&MT_header) ;
     GrB_Matrix M = M_in ;
-    GrB_Matrix Z = NULL ;
+    struct GB_Matrix_opaque Z_header ;
+    GrB_Matrix Z = GB_clear_static_header (&Z_header) ;
 
     ASSERT_MATRIX_OK (C, "C input for C<M>=accum(C,T)", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_accum_mask", GB0) ;
@@ -373,7 +374,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // allocated by the transplant if needed.  Z has the same
             // hypersparsity as T.
 
-            info = GB_new (&Z, false, // sparse or hyper, new header
+            info = GB_new (&Z, true, // sparse or hyper, static header
                 C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc,
                 GB_sparsity (T), T->hyper_switch, T->plen, Context) ;
             GB_OK (info) ;
@@ -405,8 +406,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // be used in GB_mask, below.  So ignore the mask_applied return
             // flag from GB_add.
             bool ignore ;
-            GB_OK (GB_add (&Z, // TODO use static header
-                C->type, C->is_csc, (apply_mask) ? M : NULL,
+            GB_OK (GB_add (Z, C->type, C->is_csc, (apply_mask) ? M : NULL,
                 Mask_struct, Mask_comp, &ignore, C, T, accum, Context)) ;
             GB_Matrix_free (Thandle) ;
         }
@@ -425,7 +425,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
         ASSERT_MATRIX_OK (C, "C<M>=Z input", GB0) ;
         GB_OK (GB_mask (C, M, &Z, C_replace, Mask_comp, Mask_struct, Context)) ;
-        ASSERT (Z == NULL) ;
     }
 
     //--------------------------------------------------------------------------

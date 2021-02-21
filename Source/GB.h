@@ -261,10 +261,10 @@ GB_PUBLIC struct GB_SelectOp_opaque
 // error logging and parallel thread control
 //------------------------------------------------------------------------------
 
-// Error messages are logged in Context->logger, on the stack which is handle
-// to the input/output matrix/vector (typically C).  If the user-defined data
-// types, operators, etc have really long names, the error messages are safely
-// truncated (via snprintf).  This is intentional, but gcc with
+// Error messages are logged in Context->logger_handle, on the stack which is
+// handle to the input/output matrix/vector (typically C).  If the user-defined
+// data types, operators, etc have really long names, the error messages are
+// safely truncated (via snprintf).  This is intentional, but gcc with
 // -Wformat-truncation will print a warning (see pragmas above).  Ignore the
 // warning.
 
@@ -289,7 +289,7 @@ typedef struct
     double chunk ;              // chunk size for small problems
     int nthreads_max ;          // max # of threads to use
     const char *where ;         // GraphBLAS function where error occurred
-    char **logger ;             // error report
+    char **logger_handle ;      // error report
 }
 GB_Context_struct ;
 
@@ -317,7 +317,7 @@ typedef GB_Context_struct *GB_Context ;
     Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;        \
     Context->chunk = GB_Global_chunk_get ( ) ;                      \
     /* get the pointer to where any error will be logged */         \
-    Context->logger = NULL ;
+    Context->logger_handle = NULL ;
 
 #define GB_WHERE(C,where_string)                                    \
     if (!GB_Global_GrB_init_called_get ( ))                         \
@@ -329,7 +329,7 @@ typedef GB_Context_struct *GB_Context ;
     {                                                               \
         /* free any prior error logged in the object */             \
         GB_FREE (C->logger) ;                                       \
-        Context->logger = &(C->logger) ;                            \
+        Context->logger_handle = &(C->logger) ;                     \
     }
 
 #define GB_WHERE1(where_string)                                     \
@@ -411,13 +411,13 @@ const char *GB_status_code (GrB_Info info) ;
 {                                                                           \
     if (Context != NULL)                                                    \
     {                                                                       \
-        char **logger = Context->logger ;                                   \
-        if (logger != NULL)                                                 \
+        char **logger_handle = Context->logger_handle ;                     \
+        if (logger_handle != NULL)                                          \
         {                                                                   \
-            (*logger) = GB_MALLOC (GB_RLEN+1, char) ;                       \
-            if ((*logger) != NULL)                                          \
+            (*logger_handle) = GB_MALLOC (GB_RLEN+1, char) ;                \
+            if ((*logger_handle) != NULL)                                   \
             {                                                               \
-                snprintf ((*logger), GB_RLEN,                               \
+                snprintf ((*logger_handle), GB_RLEN,                        \
                     "GraphBLAS error: %s\nfunction: %s\n" format,           \
                     GB_status_code (info), Context->where, __VA_ARGS__) ;   \
             }                                                               \

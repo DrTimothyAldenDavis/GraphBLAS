@@ -86,7 +86,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_OK (GB_new_bix (Chandle, false, // new header,
+    GB_OK (GB_new_bix (Chandle, false, // TODO::static header
         ctype, A->vlen, B->vdim, GB_Ap_null, true,
         C_sparsity, true, GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, Context)) ;
     GrB_Matrix C = *Chandle ;

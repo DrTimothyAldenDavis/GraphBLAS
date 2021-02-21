@@ -19,7 +19,7 @@
 
 GrB_Info GB_dup2            // make an exact copy of a matrix
 (
-    GrB_Matrix *Chandle,    // handle of output matrix to create 
+    GrB_Matrix *Chandle,    // output matrix, NULL or existing static/dynamic
     const GrB_Matrix A,     // input matrix to copy
     const bool numeric,     // if true, duplicate the numeric values
     const GrB_Type ctype,   // type of C, if numeric is false

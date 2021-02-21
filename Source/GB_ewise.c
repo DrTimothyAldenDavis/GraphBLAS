@@ -338,8 +338,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // the final C and the mask is no longer needed.  In this case, it
         // could be faster to exploit the mask duing GB_add.
 
-        GB_OK (GB_add (&T, // TODO: use static header
-            T_type, T_is_csc, M1, Mask_struct, Mask_comp,
+        GB_OK (GB_add (T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
             &mask_applied, A1, B1, op, Context)) ;
 
     }
@@ -357,8 +356,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // starts as a shallow copy of A1->h, B1->h, or M1->h, but it may be
         // pruned by GB_hypermatrix_prune, and thus no longer shallow.
 
-        GB_OK (GB_emult (&T,    // TODO use static header
-            T_type, T_is_csc, M1, Mask_struct, Mask_comp,
+        GB_OK (GB_emult (T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
             &mask_applied, A1, B1, op, Context)) ;
 
         //----------------------------------------------------------------------

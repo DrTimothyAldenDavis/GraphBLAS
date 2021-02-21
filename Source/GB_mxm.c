@@ -48,7 +48,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // C may be aliased with M, A, and/or B
 
     GrB_Info info ;
-    GrB_Matrix T = NULL ;       // TODO:: make this a static header
+    GrB_Matrix T = NULL ;       // TODO::static header
 
     struct GB_Matrix_opaque MT_header ;
     GrB_Matrix MT = GB_clear_static_header (&MT_header) ;

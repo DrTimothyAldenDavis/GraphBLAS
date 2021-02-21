@@ -53,7 +53,8 @@
     int64_t *GB_RESTRICT Z_to_S = NULL ;                                    \
     int64_t *GB_RESTRICT Z_to_A = NULL ;                                    \
     int64_t *GB_RESTRICT Z_to_M = NULL ;                                    \
-    GrB_Matrix S = NULL ;
+    struct GB_Matrix_opaque S_header ;                                      \
+    GrB_Matrix S = GB_clear_static_header (&S_header) ;
 
 //------------------------------------------------------------------------------
 // GB_GET_C: get the C matrix (cannot be bitmap)
@@ -1018,7 +1019,7 @@
 GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting the pattern not values
 (
     // output
-    GrB_Matrix *Shandle,        // output matrix 
+    GrB_Matrix S,               // output matrix, static header
     // inputs, not modified:
     const GrB_Matrix C,         // matrix to extract the pattern of
     const GrB_Index *I,         // index list for S = C(I,J), or GrB_ALL, etc.

@@ -35,9 +35,9 @@
     GB_Matrix_free (&C2) ;      \
     GB_Matrix_free (&M2) ;      \
     GB_Matrix_free (&A2) ;      \
+    GB_Matrix_free (&SubMask) ; \
     GB_FREE (I2) ;              \
     GB_FREE (J2) ;              \
-    GB_Matrix_free (&SubMask) ; \
 }
 
 GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
@@ -78,8 +78,12 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     GrB_Matrix C2 = NULL ;
     GrB_Matrix M2 = NULL ;
     GrB_Matrix A2 = NULL ;
+    struct GB_Matrix_opaque
+        C2_header, M2_header, A2_header, MT_header, AT_header ;
     GrB_Index *I2  = NULL ;
     GrB_Index *J2  = NULL ;
+
+    struct GB_Matrix_opaque SubMask_header ;
     GrB_Matrix SubMask = NULL ;
 
     GrB_Type atype = NULL ;
@@ -89,6 +93,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     ASSERT_MATRIX_OK (C_in, "C_in for assign", GB0) ;
 
     GB_OK (GB_assign_prep (&C, &M, &A, &C2, &M2, &A2,
+        &C2_header, &M2_header, &A2_header, &MT_header, &AT_header,
         &I, &I2, &ni, &nI, &Ikind, Icolon,
         &J, &J2, &nj, &nJ, &Jkind, Jcolon,
         &done, &atype, C_in, &C_replace, &assign_kind,
@@ -213,6 +218,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             //------------------------------------------------------------------
 
             ASSERT_MATRIX_OK (M, "big mask", GB0) ;
+            SubMask = GB_clear_static_header (&SubMask_header) ;
 
             const GrB_Index *I_SubMask = I ; int64_t ni_SubMask = ni ;
             const GrB_Index *J_SubMask = J ; int64_t nj_SubMask = nj ;
@@ -237,7 +243,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 ASSERT (M->vlen == C->vlen && M->vdim == C->vdim) ;
             }
 
-            GB_OK (GB_subref (&SubMask, true, M,
+            GB_OK (GB_subref (SubMask, true, M,
                 I_SubMask, ni_SubMask, J_SubMask, nj_SubMask,
                 false, Context)) ;
 

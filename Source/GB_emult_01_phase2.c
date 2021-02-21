@@ -33,12 +33,12 @@
 
 #define GB_FREE_ALL             \
 {                               \
-    GB_Matrix_free (Chandle) ;  \
+    GB_Matrix_free (&C) ;       \
 }
 
 GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
 (
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    GrB_Matrix C,           // output matrix, static header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
@@ -71,6 +71,8 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
+
+    ASSERT (C != NULL && C->static_header) ;
 
     ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
     ASSERT_MATRIX_OK (A, "A for emult phase2", GB0) ;
@@ -118,19 +120,16 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
     int64_t cnz = (C_is_sparse_or_hyper) ? Cp [Cnvec] : (A->vlen*A->vdim) ;
 
     // allocate the result C (but do not allocate C->p or C->h)
-    GrB_Matrix C = NULL ;
-    GrB_Info info = GB_new_bix (Chandle, false, // any sparsity, new header
+    GrB_Info info = GB_new_bix (&C, true, // any sparsity, static header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
-    { 
+    {
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
         // Ch must not be freed since Ch is always shallow
         GB_FREE (Cp) ;
         return (info) ;
     }
-
-    C = (*Chandle) ;
 
     // transplant Cp into C as the vector pointers, from GB_emult_01_phase1
     if (C_is_sparse_or_hyper)
@@ -210,7 +209,7 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
     if (!done)
     { 
         GB_BURBLE_MATRIX (C, "(generic emult: %s) ", op->name) ;
-        GB_ewise_generic (Chandle, op, TaskList, C_ntasks, C_nthreads,
+        GB_ewise_generic (C, op, TaskList, C_ntasks, C_nthreads,
             C_to_M, C_to_A, C_to_B, C_sparsity, ewise_method, NULL,
             NULL, 0, 0, NULL, 0, 0, NULL, 0, 0,
             M, Mask_struct, Mask_comp, A, B, Context) ;

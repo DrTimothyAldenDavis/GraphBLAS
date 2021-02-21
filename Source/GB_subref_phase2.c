@@ -15,7 +15,7 @@
 
 GrB_Info GB_subref_phase2   // C=A(I,J)
 (
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    GrB_Matrix C,               // output matrix, static header
     // from phase1:
     const int64_t *GB_RESTRICT *p_Cp,   // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
@@ -50,6 +50,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (C != NULL && C->static_header) ;
     const int64_t *GB_RESTRICT Ch = *p_Ch ;
     const int64_t *GB_RESTRICT Cp = *p_Cp ;
     ASSERT (Cp != NULL) ;
@@ -61,16 +62,14 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     //--------------------------------------------------------------------------
 
     int64_t cnz = Cp [Cnvec] ;
-    (*Chandle) = NULL ;
 
     bool C_is_hyper = (Ch != NULL) ;
 
     GrB_Type ctype = (symbolic) ? GrB_INT64 : A->type ;
 
     // allocate the result C (but do not allocate C->p or C->h)
-    GrB_Matrix C = NULL ;
     int sparsity = C_is_hyper ? GxB_HYPERSPARSE : GxB_SPARSE ;
-    GrB_Info info = GB_new_bix (&C, false, // sparse or hyper, new header
+    GrB_Info info = GB_new_bix (&C, true, // sparse or hyper, static header
         ctype, nI, nJ, GB_Ap_null, C_is_csc,
         sparsity, true, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
@@ -135,7 +134,6 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
 
     // caller must not free Cp or Ch
     ASSERT_MATRIX_OK (C, "C output for subref phase2", GB0) ;
-    (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }
 

@@ -32,7 +32,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 void GB_ewise_generic       // generic ewise
 (
     // input/output:
-    GrB_Matrix *Chandle,    // output matrix
+    GrB_Matrix C,           // output matrix, static header
     // input:
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     // tasks from phase1a:
