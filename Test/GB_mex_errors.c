@@ -2034,12 +2034,15 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Index huge = GxB_INDEX_MAX ;
-    GrB_Matrix HugeRow, HugeMatrix = NULL ;
+    GrB_Matrix HugeRow ;
     OK (GrB_Matrix_new (&HugeRow, GrB_FP64, 1, huge)) ;
     GB_Matrix_check (HugeRow, "huge row", G3, NULL) ;
     GxB_Matrix_fprint (HugeRow, "HugeRow", G3, ff) ;
 
-    OK (GB_AxB_dot2 (&HugeMatrix, NULL, false, false, HugeRow, HugeRow,
+    struct GB_Matrix_opaque HugeMatrix_header ;
+    GrB_Matrix HugeMatrix = GB_clear_static_header (&HugeMatrix_header) ;
+
+    OK (GB_AxB_dot2 (HugeMatrix, NULL, false, false, HugeRow, HugeRow,
         GxB_PLUS_TIMES_FP64, false, Context)) ;
 
     GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", G3, ff) ;

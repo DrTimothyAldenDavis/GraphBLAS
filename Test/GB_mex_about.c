@@ -1149,11 +1149,13 @@ void mexFunction
     OK (GrB_Matrix_new (&B, GrB_FP32, 0, n)) ;
     expected = GrB_OUT_OF_MEMORY ;
     bool ignore ;
-    ERR (GB_bitmap_AxB_saxpy (&C, GxB_BITMAP, NULL, false, false, A, B,
+    struct GB_Matrix_opaque G_header ;
+    GrB_Matrix G = GB_clear_static_header (&G_header) ;
+    ERR (GB_bitmap_AxB_saxpy (G, GxB_BITMAP, NULL, false, false, A, B,
         GrB_PLUS_TIMES_SEMIRING_FP32, false, &ignore, NULL)) ;
     GrB_Matrix_free_(&A) ;
     GrB_Matrix_free_(&B) ;
-    CHECK (C == NULL) ;
+    CHECK (G->x == NULL) ;
 
     //--------------------------------------------------------------------------
     // wrapup

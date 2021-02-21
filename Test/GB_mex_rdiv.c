@@ -17,9 +17,9 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GrB_Matrix_free_(&A) ;               \
-    GrB_Matrix_free_(&B) ;               \
-    GrB_Matrix_free_(&C) ;               \
+    GrB_Matrix_free_(&A) ;              \
+    GrB_Matrix_free_(&B) ;              \
+    GrB_Matrix_free_(&C) ;              \
     GrB_BinaryOp_free_(&My_rdiv) ;      \
     GrB_Semiring_free_(&My_plus_rdiv) ; \
     GB_mx_put_global (true) ;           \
@@ -31,12 +31,13 @@ GrB_Info info ;
 bool malloc_debug = false ;
 bool ignore = false, ignore1 = false, ignore2 = false ;
 bool cprint = false ;
-GrB_Matrix A = NULL, B = NULL, C = NULL ;
+GrB_Matrix A = NULL, B = NULL, C = NULL, MT = NULL ;
 int64_t anrows = 0 ;
 int64_t ancols = 0 ;
 int64_t bnrows = 0 ;
 int64_t bncols = 0 ;
 GrB_Desc_Value AxB_method = GxB_DEFAULT ;
+struct GB_Matrix_opaque MT_header, C_header ;
 
 GrB_Info axb (GB_Context Context, bool cprint) ;
 
@@ -66,11 +67,11 @@ GrB_Info axb (GB_Context Context, bool cprint)
         return (info) ;
     }
 
-    struct GB_Matrix_opaque MT_header ;
-    GrB_Matrix MT = GB_clear_static_header (&MT_header) ;
+    MT = GB_clear_static_header (&MT_header) ;
+    C  = GB_clear_static_header (&C_header) ;
 
     // C = A*B
-    info = GB_AxB_meta (&C, NULL,       // C cannot be computed in place
+    info = GB_AxB_meta (C, NULL,       // C cannot be computed in place
         false,      // C_replace
         true,       // CSC
         MT,         // no MT returned

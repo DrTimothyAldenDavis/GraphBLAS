@@ -35,7 +35,7 @@ bool malloc_debug = false ;
 bool ignore = false, ignore1 = false, ignore2 = false ;
 bool atranspose = false ;
 bool btranspose = false ;
-GrB_Matrix A = NULL, B = NULL, B64 = NULL, C = NULL, T = NULL ;
+GrB_Matrix A = NULL, B = NULL, B64 = NULL, C = NULL, T = NULL, MT = NULL ;
 int64_t anrows = 0 ;
 int64_t ancols = 0 ;
 int64_t bnrows = 0 ;
@@ -44,6 +44,7 @@ GrB_Desc_Value AxB_method = GxB_DEFAULT ;
 bool flipxy = false ;
 bool done_in_place = false ;
 double C_scalar = 0 ;
+struct GB_Matrix_opaque MT_header, T_header ;
 
 GrB_Info axb (GB_Context Context) ;
 
@@ -98,11 +99,11 @@ GrB_Info axb (GB_Context Context)
         }
     }
 
-    struct GB_Matrix_opaque MT_header ;
-    GrB_Matrix MT = GB_clear_static_header (&MT_header) ;
+    MT = GB_clear_static_header (&MT_header) ;
+    T  = GB_clear_static_header (&T_header) ;
 
     // C = A*B or C += A*B
-    info = GB_AxB_meta (&T, C,  // can be done in place if C != NULL
+    info = GB_AxB_meta (T, C,  // can be done in place if C != NULL
         false,      // C_replace
         true,       // CSC
         MT,         // no MT returned
@@ -131,15 +132,16 @@ GrB_Info axb (GB_Context Context)
         if (!done_in_place)
         {
             GrB_Matrix_free_(&C) ;
-            C = T ;
-            T = NULL ;
+            info = GrB_Matrix_dup (&C, T) ;
         }
     }
-    else
+
+    if (info != GrB_SUCCESS)
     {
         GrB_Matrix_free_(&C) ;
-        GrB_Matrix_free_(&T) ;
     }
+
+    GrB_Matrix_free_(&T) ;
 
     GrB_BinaryOp_free_(&My_rdiv2) ;
     GrB_Semiring_free_(&My_plus_rdiv2) ;

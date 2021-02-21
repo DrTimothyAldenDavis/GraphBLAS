@@ -12,10 +12,7 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_Matrix_free (Chandle) ;  \
-}
+#define GB_FREE_ALL GB_Matrix_free (&C) ;
 
 //------------------------------------------------------------------------------
 // GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B
@@ -27,7 +24,7 @@
 GB_PUBLIC                           // for testing only
 GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
 (
-    GrB_Matrix *Chandle,            // output matrix (not computed in-place)
+    GrB_Matrix C,                   // output matrix, static header
     const int C_sparsity,
     const GrB_Matrix M,             // optional mask matrix
     const bool Mask_comp,           // if true, use !M
@@ -48,8 +45,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     GrB_Info info ;
 
     (*mask_applied) = false ;
-    ASSERT (Chandle != NULL) ;
-    ASSERT (*Chandle == NULL) ;
+    ASSERT (C != NULL && C->static_header) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for bitmap saxpy A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -86,10 +82,9 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_OK (GB_new_bix (Chandle, false, // TODO::static header
+    GB_OK (GB_new_bix (&C, true, // static header
         ctype, A->vlen, B->vdim, GB_Ap_null, true,
         C_sparsity, true, GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, Context)) ;
-    GrB_Matrix C = *Chandle ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

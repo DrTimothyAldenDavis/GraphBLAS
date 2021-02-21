@@ -48,10 +48,10 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // C may be aliased with M, A, and/or B
 
     GrB_Info info ;
-    GrB_Matrix T = NULL ;       // TODO::static header
 
-    struct GB_Matrix_opaque MT_header ;
+    struct GB_Matrix_opaque MT_header, T_header ;
     GrB_Matrix MT = GB_clear_static_header (&MT_header) ;
+    GrB_Matrix T  = GB_clear_static_header (&T_header) ;
 
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
@@ -136,7 +136,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     bool mask_applied = false ;
     bool done_in_place = false ;
     bool M_transposed = false ;
-    GB_OK (GB_AxB_meta (&T, C, C_replace, C->is_csc, MT, &M_transposed, M,
+    GB_OK (GB_AxB_meta (T, C, C_replace, C->is_csc, MT, &M_transposed, M,
         Mask_comp, Mask_struct, accum, A, B, semiring, A_transpose,
         B_transpose, flipxy, &mask_applied, &done_in_place, AxB_method,
         do_sort, Context)) ;

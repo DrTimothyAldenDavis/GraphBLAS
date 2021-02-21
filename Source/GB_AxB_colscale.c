@@ -20,12 +20,12 @@
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORK ;              \
-    GB_Matrix_free (Chandle) ;  \
+    GB_Matrix_free (&C) ;       \
 }
 
 GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 (
-    GrB_Matrix *Chandle,            // output matrix
+    GrB_Matrix C,                   // output matrix, static header
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix D,             // diagonal input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*D
@@ -39,7 +39,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (Chandle != NULL) ;
+    ASSERT (C != NULL && C->static_header) ;
     ASSERT_MATRIX_OK (A, "A for colscale A*D", GB0) ;
     ASSERT_MATRIX_OK (D, "D for colscale A*D", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
@@ -78,9 +78,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     // allocate C->x but do not initialize it
-    (*Chandle) = NULL ;
-    GB_OK (GB_dup2 (Chandle, A, false, mult->ztype, Context)) ; // TODO::static header
-    GrB_Matrix C = (*Chandle) ;
+    GB_OK (GB_dup2 (&C, A, false, mult->ztype, Context)) ; // static header
 
     //--------------------------------------------------------------------------
     // apply a positional operator: convert C=A*D to C=op(A)
@@ -323,7 +321,6 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "colscale: C = A*D output", GB0) ;
-    ASSERT (*Chandle == C) ;
     GB_FREE_WORK ;
     return (GrB_SUCCESS) ;
 }

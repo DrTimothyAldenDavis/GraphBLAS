@@ -38,7 +38,7 @@
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 (
-    GrB_Matrix *Chandle,            // output matrix
+    GrB_Matrix C,                   // output matrix, static header
     const GrB_Matrix M_in,          // mask matrix for C<!M>=A'*B, may be NULL
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
@@ -57,8 +57,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     GrB_Info info ;
 
-    ASSERT (Chandle != NULL) ;
-    ASSERT (*Chandle == NULL) ;
+    ASSERT (C != NULL && C->static_header) ;
     ASSERT_MATRIX_OK_OR_NULL (M_in, "M for dot A'*B", GB0) ;
     ASSERT_MATRIX_OK (A_in, "A for dot A'*B", GB0) ;
     ASSERT_MATRIX_OK (B_in, "B for dot A'*B", GB0) ;
@@ -75,7 +74,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
 
-    (*Chandle) = NULL ;
     GrB_Matrix M = NULL ;
 
     struct GB_Matrix_opaque M2_header ;
@@ -258,11 +256,10 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     bool M_is_sparse_or_hyper = (M != NULL) &&
         (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     GrB_Type ctype = add->op->ztype ;
-    GB_OK (GB_new_bix (Chandle, false, // bitmap, TODO::static header
+    GB_OK (GB_new_bix (&C, true, // bitmap, static header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         GxB_BITMAP, M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true,
         Context)) ;
-    GrB_Matrix C = (*Chandle) ;
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (18, ttt) ;
@@ -378,7 +375,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         if (Cp == NULL || (B_is_hyper && Ch == NULL) || Ci == NULL)
         { 
             // out of memory
-            GB_Matrix_free (Chandle) ;
+            GB_Matrix_free (&C) ;
             GB_FREE (Cp) ;
             GB_FREE (Ch) ;
             GB_FREE (Ci) ;
@@ -464,7 +461,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT (*Chandle == C) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;

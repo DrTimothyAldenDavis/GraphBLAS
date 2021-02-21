@@ -42,6 +42,7 @@ int64_t anrows = 0 ;
 int64_t ancols = 0 ;
 int64_t bnrows = 0 ;
 int64_t bncols = 0 ;
+struct GB_Matrix_opaque C_header ;
 
 GrB_Desc_Value AxB_method = GxB_DEFAULT ;
 
@@ -68,7 +69,7 @@ GrB_Info axb (GB_Context Context)
     GrB_Matrix MT = GB_clear_static_header (&MT_header) ;
 
     // C = A*B, A'*B, A*B', or A'*B'
-    info = GB_AxB_meta (&C, NULL,       // C cannot be computed in place
+    info = GB_AxB_meta (C, NULL,
         false,      // C_replace
         true,       // CSC
         MT,         // no MT returned
@@ -164,7 +165,7 @@ GrB_Info axb_complex (GB_Context Context)
     struct GB_Matrix_opaque MT_header ;
     GrB_Matrix MT = GB_clear_static_header (&MT_header) ;
 
-    info = GB_AxB_meta (&C, NULL,       // C cannot be computed in place
+    info = GB_AxB_meta (C, NULL,
         false,      // C_replace
         true,       // CSC
         MT,         // no MT returned
@@ -273,6 +274,8 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("invalid dimensions") ;
     }
+
+    C = GB_clear_static_header (&C_header) ;
 
     if (A->type == Complex)
     {
