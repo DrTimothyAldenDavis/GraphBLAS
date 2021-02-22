@@ -251,14 +251,6 @@ GrB_Info GB_DxB__max_uint8
 // eWiseAdd: C = A+B or C<M> = A+B
 //------------------------------------------------------------------------------
 
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_WERK (M_ek_slicing) ;   \
-    GB_FREE_WERK (A_ek_slicing) ;   \
-    GB_FREE_WERK (B_ek_slicing) ;   \
-}
-
 GrB_Info GB_AaddB__max_uint8
 (
     GrB_Matrix C,
@@ -285,12 +277,9 @@ GrB_Info GB_AaddB__max_uint8
     int64_t *A_ek_slicing = NULL ;
     int64_t *B_ek_slicing = NULL ;
     #include "GB_add_template.c"
-    GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
     #endif
 }
-
-#undef  GB_FREE_ALL
 
 //------------------------------------------------------------------------------
 // eWiseMult: C = A.*B or C<M> = A.*B

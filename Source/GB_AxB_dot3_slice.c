@@ -145,12 +145,14 @@ GrB_Info GB_AxB_dot3_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    if (!GB_pslice (&Coarse, Cwork, cnz, ntasks1, false))
+    Coarse = GB_MALLOC_WERK (ntasks1 + 1, int64_t) ;
+    if (Coarse == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+    GB_pslice (Coarse, Cwork, cnz, ntasks1, false) ;
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine

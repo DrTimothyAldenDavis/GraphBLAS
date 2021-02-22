@@ -66,12 +66,13 @@ GrB_Info GB_unjumble        // unjumble a matrix
     // slice the work
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT A_slice = NULL ;   // size ntasks + 1
-    if (!GB_pslice (&A_slice, Ap, anvec, ntasks, false))
+    int64_t *GB_RESTRICT A_slice = GB_MALLOC_WERK (ntasks + 1, int64_t) ;
+    if (A_slice == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
+    GB_pslice (A_slice, Ap, anvec, ntasks, false) ;
 
     //--------------------------------------------------------------------------
     // sort the vectors

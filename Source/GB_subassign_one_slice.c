@@ -156,12 +156,14 @@ GrB_Info GB_subassign_one_slice
     //--------------------------------------------------------------------------
 
     // M may be hypersparse, sparse, bitmap, or full
-    if (!GB_pslice (&Coarse, Mp, mnvec, ntasks1, false))
+    Coarse = GB_MALLOC_WERK (ntasks1 + 1, int64_t) ;
+    if (Coarse == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+    GB_pslice (Coarse, Mp, mnvec, ntasks1, false) ;
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine

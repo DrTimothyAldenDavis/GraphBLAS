@@ -26,6 +26,8 @@
 #include "GB_ek_slice.h"
 #include "GB_search_for_vector_template.c"
 
+// TODO: allocate result in the caller, not here
+
 bool GB_ek_slice        // true if successful, false if out of memory
 (
     // output:

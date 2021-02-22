@@ -153,12 +153,14 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //==========================================================================
 
     // slice the A matrix, perfectly balanced for one task per thread
-    if (!GB_pslice (&A_slice, A->p, A->nvec, nthreads, true))
+    A_slice = GB_MALLOC_WERK (nthreads + 1, int64_t) ;
+    if (A_slice == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+    GB_pslice (A_slice, A->p, A->nvec, nthreads, true) ;
 
     // sum up the row counts and find C->p
     if (nthreads == 1)

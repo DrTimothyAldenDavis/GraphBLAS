@@ -236,13 +236,16 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // A and B can have any sparsity: full, bitmap, sparse, or hypersparse.
     // C is always created as bitmap
 
-    if (!GB_pslice (&A_slice, A->p, A->nvec, naslice, false) ||
-        !GB_pslice (&B_slice, B->p, B->nvec, nbslice, false))
+    A_slice = GB_MALLOC_WERK (naslice + 1, int64_t) ;
+    B_slice = GB_MALLOC_WERK (nbslice + 1, int64_t) ;
+    if (A_slice == NULL || B_slice == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+    GB_pslice (A_slice, A->p, A->nvec, naslice, false) ;
+    GB_pslice (B_slice, B->p, B->nvec, nbslice, false) ;
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (17, ttt) ;

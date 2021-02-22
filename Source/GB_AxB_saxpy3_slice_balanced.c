@@ -432,12 +432,14 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         // construct initial coarse tasks
         //----------------------------------------------------------------------
 
-        if (!GB_pslice (&Coarse_initial, Bflops, bnvec, ntasks_initial, true))
+        Coarse_initial = GB_MALLOC_WERK (ntasks_initial + 1, int64_t) ;
+        if (Coarse_initial == NULL)
         { 
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
+        GB_pslice (Coarse_initial, Bflops, bnvec, ntasks_initial, true) ;
 
         //----------------------------------------------------------------------
         // split the work into coarse and fine tasks
@@ -642,8 +644,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                         // slice B(:,j) into fine tasks
                         int team_size = ceil (jflops / target_fine_size) ;
                         ASSERT (Fine_slice != NULL) ;
-                        GB_pslice (&Fine_slice, Fine_fl, bjnz, team_size,
-                            false) ;
+                        GB_pslice (Fine_slice, Fine_fl, bjnz, team_size, false);
 
                         // shared hash table for all fine tasks for A*B(:,j)
                         int64_t hsize = 

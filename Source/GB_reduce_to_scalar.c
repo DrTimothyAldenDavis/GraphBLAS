@@ -31,8 +31,8 @@
 
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_FREE_WERK (W) ;              \
-    GB_FREE_WERK (F) ;              \
+    GB_WERK_POP (F, bool) ;         \
+    GB_WERK_POP (W, GB_void) ;      \
 }
 
 GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
@@ -54,8 +54,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL (c) ;
-    GB_void *GB_RESTRICT W = NULL ;
-    bool    *GB_RESTRICT F = NULL ;
+    GB_WERK_DECLARE (W, GB_void) ;
+    GB_WERK_DECLARE (F, bool) ;
 
     ASSERT_TYPE_OK (ctype, "type of scalar c", GB0) ;
     ASSERT_MONOID_OK (reduce, "reduce for reduce_to_scalar", GB0) ;
@@ -129,8 +129,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         // allocate workspace
         //----------------------------------------------------------------------
 
-        W = GB_MALLOC_WERK (ntasks * zsize, GB_void) ;
-        F = GB_MALLOC_WERK (ntasks, bool) ;
+        GB_WERK_PUSH (W, false, ntasks * zsize, GB_void) ;
+        GB_WERK_PUSH (F, false, ntasks, bool) ;
         if (W == NULL || F == NULL)
         { 
             // out of memory

@@ -571,10 +571,9 @@ void mexFunction
     // GB_pslice
     //--------------------------------------------------------------------------
 
-    int64_t *Slice = NULL ;
-    GB_pslice (&Slice, NULL, 0, 4, true) ;
+    int64_t Slice [30] ;
+    GB_pslice (Slice, NULL, 0, 4, true) ;
     for (int t = 0 ; t < 4 ; t++) CHECK (Slice [t] == 0) ;
-    GB_FREE (Slice) ;
 
     //--------------------------------------------------------------------------
     // renamed boolean monoids

@@ -128,18 +128,15 @@ void mexFunction
     // GB_pslice
     //--------------------------------------------------------------------------
 
-    int64_t *Slice = NULL ;
-    GB_pslice (&Slice, A->p, n, 2, true) ;
+    int64_t Slice [30] ;
+    GB_pslice (Slice, A->p, n, 2, true) ;
     CHECK (Slice [0] == 0) ;
-    GB_FREE (Slice) ;
 
-    int64_t Ap [11] = { 1, 1, 1, 1, 1,
-                        1, 1, 1, 1, 1, 1 } ;
-    bool ok = GB_pslice (&Slice, Ap, 10, 10, false) ;
+    int64_t Ap [11] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ;
+    GB_pslice (Slice, Ap, 10, 10, false) ;
     printf ("Slice: ") ;
     for (int k = 0 ; k <= 10 ; k++) printf (" %ld", Slice [k]) ;
     printf ("\n") ;
-    GB_FREE (Slice) ;
 
     GrB_Matrix_free_(&A) ;
 
@@ -378,7 +375,7 @@ void mexFunction
     // malloc/realloc wrappers
     //--------------------------------------------------------------------------
 
-    ok = false ;
+    bool ok = false ;
     int *p = GB_malloc_memory (4, sizeof (int)) ;
     CHECK (p != NULL) ;
     p = GB_realloc_memory (4, 4, sizeof (int), p, &ok) ;
