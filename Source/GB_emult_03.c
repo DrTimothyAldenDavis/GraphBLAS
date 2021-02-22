@@ -30,16 +30,16 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE (Work) ;            \
-    GB_FREE (M_ek_slicing) ;    \
+#define GB_FREE_WORK                \
+{                                   \
+    GB_FREE_WERK (Work) ;           \
+    GB_FREE_WERK (M_ek_slicing) ;   \
 }
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_Matrix_free (&C) ;       \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WORK ;                  \
+    GB_Matrix_free (&C) ;           \
 }
 
 GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
@@ -132,7 +132,7 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Work = GB_MALLOC (3*M_ntasks, int64_t) ;
+    Work = GB_MALLOC_WERK (3*M_ntasks, int64_t) ;
     if (Work == NULL)
     { 
         // out of memory

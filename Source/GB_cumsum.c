@@ -83,7 +83,7 @@ void GB_cumsum                      // cumulative sum of an array
             //------------------------------------------------------------------
 
             // allocate workspace
-            int64_t *ws = GB_MALLOC (nthreads, int64_t) ;
+            int64_t *ws = GB_MALLOC_WERK (nthreads, int64_t) ;
             if (ws == NULL)
             { 
                 // out of memory; use a single thread instead
@@ -130,7 +130,7 @@ void GB_cumsum                      // cumulative sum of an array
             }
 
             // free workspace
-            GB_FREE (ws) ;
+            GB_FREE_WERK (ws) ;
         }
 
     }
@@ -164,7 +164,7 @@ void GB_cumsum                      // cumulative sum of an array
             // cumsum with multiple threads, also compute k
             //------------------------------------------------------------------
 
-            int64_t *ws = GB_MALLOC (2*nthreads, int64_t) ;
+            int64_t *ws = GB_MALLOC_WERK (2*nthreads, int64_t) ;
             if (ws == NULL)
             { 
                 // out of memory; use a single thread instead
@@ -223,7 +223,7 @@ void GB_cumsum                      // cumulative sum of an array
             (*kresult) = k ;
 
             // free workspace
-            GB_FREE (ws) ;
+            GB_FREE_WERK (ws) ;
         }
     }
 }

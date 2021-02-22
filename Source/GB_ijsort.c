@@ -19,9 +19,9 @@
 #include "GB_ij.h"
 #include "GB_sort.h"
 
-#define GB_FREE_WORK    \
-{                       \
-    GB_FREE (Work) ;    \
+#define GB_FREE_WORK        \
+{                           \
+    GB_FREE_WERK (Work) ;   \
 }
 
 GrB_Info GB_ijsort
@@ -75,7 +75,7 @@ GrB_Info GB_ijsort
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Work = GB_MALLOC (2*ni + ntasks + 1, GrB_Index) ;
+    Work = GB_MALLOC_WERK (2*ni + ntasks + 1, GrB_Index) ;
     if (Work == NULL)
     { 
         // out of memory
@@ -141,14 +141,14 @@ GrB_Info GB_ijsort
     // allocate the result I2
     //--------------------------------------------------------------------------
 
-    I2  = GB_MALLOC (ni2, GrB_Index) ;
-    I2k = GB_MALLOC (ni2, GrB_Index) ;
+    I2  = GB_MALLOC_WERK (ni2, GrB_Index) ;
+    I2k = GB_MALLOC_WERK (ni2, GrB_Index) ;
     if (I2 == NULL || I2k == NULL)
     { 
         // out of memory
         GB_FREE_WORK ;
-        GB_FREE (I2) ;
-        GB_FREE (I2k) ;
+        GB_FREE_WERK (I2) ;
+        GB_FREE_WERK (I2k) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 

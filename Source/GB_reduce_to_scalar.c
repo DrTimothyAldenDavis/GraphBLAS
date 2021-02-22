@@ -31,8 +31,8 @@
 
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_FREE (W) ;                   \
-    GB_FREE (F) ;                   \
+    GB_FREE_WERK (W) ;              \
+    GB_FREE_WERK (F) ;              \
 }
 
 GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
@@ -129,8 +129,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         // allocate workspace
         //----------------------------------------------------------------------
 
-        W = GB_MALLOC (ntasks * zsize, GB_void) ;
-        F = GB_MALLOC (ntasks, bool) ;
+        W = GB_MALLOC_WERK (ntasks * zsize, GB_void) ;
+        F = GB_MALLOC_WERK (ntasks, bool) ;
         if (W == NULL || F == NULL)
         { 
             // out of memory

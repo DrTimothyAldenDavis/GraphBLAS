@@ -26,7 +26,10 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_ALL GB_FREE (B_ek_slicing) ;
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WERK (B_ek_slicing) ;   \
+}
 
 GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
 (

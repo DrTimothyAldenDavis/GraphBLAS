@@ -97,11 +97,11 @@
 
 #define GB_FREE_WORK                \
 {                                   \
-    GB_FREE (Work) ;                \
+    GB_FREE_WERK (Work) ;           \
     GB_FREE (*I_work_handle) ;      \
     GB_FREE (*J_work_handle) ;      \
     GB_FREE (*S_work_handle) ;      \
-    GB_FREE (K_work) ;              \
+    GB_FREE_WERK (K_work) ;         \
 }
 
 //------------------------------------------------------------------------------
@@ -192,7 +192,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int64_t *Work = GB_CALLOC (5*(nthreads+1), int64_t) ;
+    int64_t *Work = GB_CALLOC_WERK (5*(nthreads+1), int64_t) ;
     if (Work == NULL)
     { 
         // out of memory
@@ -386,7 +386,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             if (vdim > 1 && !known_sorted)
             {
                 // copy J_input into J_work, so the tuples can be sorted
-                J_work = GB_MALLOC (nvals, int64_t) ;
+                J_work = GB_MALLOC (nvals, int64_t) ;   // WERK?
                 (*J_work_handle) = J_work ;
                 if (J_work == NULL)
                 { 
@@ -494,7 +494,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     {
 
         // create the k part of each tuple
-        K_work = GB_MALLOC (nvals, int64_t) ;
+        K_work = GB_MALLOC_WERK (nvals, int64_t) ;
         if (K_work == NULL)
         { 
             // out of memory

@@ -25,10 +25,10 @@
     GB_Matrix_free (&AT) ;      \
     GB_Matrix_free (&M2) ;      \
     GB_Matrix_free (&MT) ;      \
-    GB_FREE (I2) ;              \
-    GB_FREE (J2) ;              \
-    GB_FREE (I2k) ;             \
-    GB_FREE (J2k) ;             \
+    GB_FREE_WERK (I2) ;         \
+    GB_FREE_WERK (J2) ;         \
+    GB_FREE_WERK (I2k) ;        \
+    GB_FREE_WERK (J2k) ;        \
 }
 
 GrB_Info GB_assign_prep
@@ -862,8 +862,8 @@ GrB_Info GB_assign_prep
             M = M2 ;
         }
 
-        GB_FREE (I2k) ;
-        GB_FREE (J2k) ;
+        GB_FREE_WERK (I2k) ;
+        GB_FREE_WERK (J2k) ;
     }
 
     // I and J are now sorted, with no duplicate entries.  They are either

@@ -75,10 +75,10 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE (Work) ;            \
-    GB_FREE (A_ek_slicing) ;    \
+#define GB_FREE_WORK                \
+{                                   \
+    GB_FREE_WERK (Work) ;           \
+    GB_FREE_WERK (A_ek_slicing) ;   \
 }
 
 #define GB_FREE_ALL             \
@@ -204,7 +204,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
         // allocate workspace
         //----------------------------------------------------------------------
 
-        Work = GB_MALLOC (3*A_ntasks, int64_t) ;
+        Work = GB_MALLOC_WERK (3*A_ntasks, int64_t) ;
         if (Work == NULL)
         { 
             // out of memory

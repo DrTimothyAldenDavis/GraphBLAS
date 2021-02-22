@@ -37,18 +37,18 @@
 #endif
 
 #undef  GB_FREE_WORK
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE (M_ek_slicing) ;    \
-    GB_FREE (A_ek_slicing) ;    \
-    GB_FREE (B_ek_slicing) ;    \
+#define GB_FREE_WORK                \
+{                                   \
+    GB_FREE_WERK (M_ek_slicing) ;   \
+    GB_FREE_WERK (A_ek_slicing) ;   \
+    GB_FREE_WERK (B_ek_slicing) ;   \
 }
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_Matrix_free (&C) ;       \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WORK ;                  \
+    GB_Matrix_free (&C) ;           \
 }
 
 GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B

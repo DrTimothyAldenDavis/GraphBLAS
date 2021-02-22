@@ -127,7 +127,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE (A_slice) ;
+    GB_FREE_WERK (A_slice) ;
     A->jumbled = false ;        // A has been unjumbled
     ASSERT_MATRIX_OK (A, "A unjumbled", GB0) ;
     return (GrB_SUCCESS) ;

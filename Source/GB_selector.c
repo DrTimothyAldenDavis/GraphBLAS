@@ -28,9 +28,9 @@
 
 #define GB_FREE_WORK                \
 {                                   \
-    GB_FREE (A_ek_slicing) ;        \
-    GB_FREE (Work) ;                \
-    GB_FREE (Zp) ;                  \
+    GB_FREE_WERK (A_ek_slicing) ;   \
+    GB_FREE_WERK (Work) ;           \
+    GB_FREE_WERK (Zp) ;             \
     GB_FREE (Cp) ;                  \
     GB_FREE (Ch) ;                  \
     GB_FREE (Ci) ;                  \
@@ -221,7 +221,7 @@ GrB_Info GB_selector
     // allocate workspace for each task
     //--------------------------------------------------------------------------
 
-    Work = GB_MALLOC (3*A_ntasks, int64_t) ;
+    Work = GB_MALLOC_WERK (3*A_ntasks, int64_t) ;
     if (Work == NULL)
     { 
         // out of memory
@@ -243,7 +243,7 @@ GrB_Info GB_selector
     if (opcode <= GB_RESIZE_opcode)
     {
         // allocate Zp
-        Zp = GB_MALLOC (anvec, int64_t) ;
+        Zp = GB_MALLOC_WERK (anvec, int64_t) ;
         if (Zp == NULL)
         { 
             // out of memory

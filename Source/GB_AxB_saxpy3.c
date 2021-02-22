@@ -94,18 +94,18 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK        \
-{                           \
-    GB_FREE (TaskList) ;    \
-    GB_FREE (Hi_all) ;      \
-    GB_FREE (Hf_all) ;      \
-    GB_FREE (Hx_all) ;      \
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE_WERK (TaskList) ;   \
+    GB_FREE_WERK (Hi_all) ;     \
+    GB_FREE_WERK (Hf_all) ;     \
+    GB_FREE_WERK (Hx_all) ;     \
 }
 
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE_WORK ;          \
-    GB_Matrix_free (&C) ;   \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WORK ;              \
+    GB_Matrix_free (&C) ;       \
 }
 
 //------------------------------------------------------------------------------
@@ -448,16 +448,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (Hi_size_total > 0)
     { 
-        Hi_all = GB_MALLOC (Hi_size_total, int64_t) ;
+        Hi_all = GB_MALLOC_WERK (Hi_size_total, int64_t) ;
     }
     if (Hf_size_total > 0)
     { 
         // Hf must be calloc'd to initialize all entries as empty 
-        Hf_all = GB_CALLOC (Hf_size_total, int64_t) ;
+        Hf_all = GB_CALLOC_WERK (Hf_size_total, int64_t) ;
     }
     if (Hx_size_total > 0)
     { 
-        Hx_all = GB_MALLOC (Hx_size_total * csize, GB_void) ;
+        Hx_all = GB_MALLOC_WERK (Hx_size_total * csize, GB_void) ;
     }
 
     if ((Hi_size_total > 0 && Hi_all == NULL) ||

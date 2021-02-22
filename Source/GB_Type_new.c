@@ -47,7 +47,7 @@ GrB_Info GB_Type_new
     //--------------------------------------------------------------------------
 
     // allocate the type
-    (*type) = GB_CALLOC (1, struct GB_Type_opaque) ;
+    (*type) = GB_MALLOC (1, struct GB_Type_opaque) ;
     if (*type == NULL)
     { 
         // out of memory
@@ -59,13 +59,11 @@ GrB_Info GB_Type_new
     t->magic = GB_MAGIC ;
     t->size = GB_IMAX (sizeof_ctype, 1) ;
     t->code = GB_UDT_code ;     // user-defined type
+    t->name [0] = '\0' ;
 
     //--------------------------------------------------------------------------
     // get the name
     //--------------------------------------------------------------------------
-
-    // if no name found, a generic name is used instead
-    strncpy (t->name, "user-type", GB_LEN-1) ;
 
     char input2 [GB_LEN+1] ;
     char *p = NULL ;
@@ -94,6 +92,10 @@ GrB_Info GB_Type_new
         // p now contains the final name, copy it to the output name
         strncpy (t->name, p, GB_LEN-1) ;
     }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
 
     return (GrB_SUCCESS) ;
 }

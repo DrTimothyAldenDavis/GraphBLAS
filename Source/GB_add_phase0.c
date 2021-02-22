@@ -58,11 +58,11 @@
 
 #include "GB_add.h"
 
-#define GB_FREE_WORK        \
-{                           \
-    GB_FREE (kA_start) ;    \
-    GB_FREE (kB_start) ;    \
-    GB_FREE (kC_start) ;    \
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE_WERK (kA_start) ;   \
+    GB_FREE_WERK (kB_start) ;   \
+    GB_FREE_WERK (kC_start) ;   \
 }
 
 //------------------------------------------------------------------------------
@@ -86,17 +86,17 @@ static inline bool GB_allocate_result
     }
     if (C_to_M_handle != NULL)
     { 
-        (*C_to_M_handle) = GB_MALLOC (Cnvec, int64_t) ;
+        (*C_to_M_handle) = GB_MALLOC_WERK (Cnvec, int64_t) ;
         ok = ok && (*C_to_M_handle != NULL) ;
     }
     if (C_to_A_handle != NULL)
     { 
-        *C_to_A_handle = GB_MALLOC (Cnvec, int64_t) ;
+        *C_to_A_handle = GB_MALLOC_WERK (Cnvec, int64_t) ;
         ok = ok && (*C_to_A_handle != NULL) ;
     }
     if (C_to_B_handle != NULL)
     { 
-        *C_to_B_handle = GB_MALLOC (Cnvec, int64_t) ;
+        *C_to_B_handle = GB_MALLOC_WERK (Cnvec, int64_t) ;
         ok = ok && (*C_to_B_handle != NULL) ;
     }
 
@@ -109,15 +109,15 @@ static inline bool GB_allocate_result
         }
         if (C_to_M_handle != NULL)
         { 
-            GB_FREE (*C_to_M_handle) ;
+            GB_FREE_WERK (*C_to_M_handle) ;
         }
         if (C_to_A_handle != NULL)
         { 
-            GB_FREE (*C_to_A_handle) ;
+            GB_FREE_WERK (*C_to_A_handle) ;
         }
         if (C_to_B_handle != NULL)
         { 
-            GB_FREE (*C_to_B_handle) ;
+            GB_FREE_WERK (*C_to_B_handle) ;
         }
     }
     return (ok) ;
@@ -328,9 +328,9 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         ntasks = GB_IMIN (ntasks, work) ;
 
         // allocate workspace
-        kA_start = GB_MALLOC (ntasks+1, int64_t) ;
-        kB_start = GB_MALLOC (ntasks+1, int64_t) ;
-        kC_start = GB_MALLOC (ntasks+1, int64_t) ;
+        kA_start = GB_MALLOC_WERK (ntasks+1, int64_t) ;
+        kB_start = GB_MALLOC_WERK (ntasks+1, int64_t) ;
+        kC_start = GB_MALLOC_WERK (ntasks+1, int64_t) ;
         if (kA_start == NULL || kB_start == NULL || kC_start == NULL)
         { 
             // out of memory

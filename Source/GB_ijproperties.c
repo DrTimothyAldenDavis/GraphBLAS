@@ -199,7 +199,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         imax = -1 ;
 
         // allocate workspace for imin and imax
-        int64_t *Work = GB_MALLOC (2*ntasks, int64_t) ;
+        int64_t *Work = GB_MALLOC_WERK (2*ntasks, int64_t) ;
         if (Work == NULL)
         { 
             // out of memory
@@ -262,7 +262,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         }
 
         // free workspace
-        GB_FREE (Work) ;
+        GB_FREE_WERK (Work) ;
 
         #ifdef GB_DEBUG
         {

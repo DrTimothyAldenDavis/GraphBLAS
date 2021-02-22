@@ -35,10 +35,10 @@
 
 #define GB_FREE_WORK            \
 {                               \
-    GB_FREE (TaskList) ;        \
-    GB_FREE (C_to_M) ;          \
-    GB_FREE (C_to_A) ;          \
-    GB_FREE (C_to_B) ;          \
+    GB_FREE_WERK (TaskList) ;   \
+    GB_FREE_WERK (C_to_M) ;     \
+    GB_FREE_WERK (C_to_A) ;     \
+    GB_FREE_WERK (C_to_B) ;     \
 }
 
 #define GB_FREE_ALL             \

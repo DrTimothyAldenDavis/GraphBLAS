@@ -15,16 +15,16 @@
 // M, A, B: any sparsity structure (hypersparse, sparse, bitmap, or full).
 // C: constructed as sparse or hypersparse in the caller.
 
-#define GB_FREE_WORK    \
-{                       \
-    GB_FREE (Coarse) ;  \
-    GB_FREE (Cwork) ;   \
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE_WERK (Coarse) ;     \
+    GB_FREE_WERK (Cwork) ;      \
 }
 
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE_WORK ;          \
-    GB_FREE (TaskList) ;    \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WORK ;              \
+    GB_FREE_WERK (TaskList) ;   \
 }
 
 #include "GB.h"
@@ -108,7 +108,7 @@ GrB_Info GB_ewise_slice
     GB_task_struct *GB_RESTRICT TaskList = NULL ;
     int max_ntasks = 0 ;
     int ntasks0 = (M == NULL && nthreads_max == 1) ? 1 : (32 * nthreads_max) ;
-    GB_REALLOC_TASK_LIST (TaskList, ntasks0, max_ntasks) ;
+    GB_REALLOC_TASK_WERK (TaskList, ntasks0, max_ntasks) ;
 
     //--------------------------------------------------------------------------
     // check for quick return for a single task
@@ -154,7 +154,7 @@ GrB_Info GB_ewise_slice
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Cwork = GB_MALLOC (Cnvec+1, int64_t) ;
+    Cwork = GB_MALLOC_WERK (Cnvec+1, int64_t) ;
     if (Cwork == NULL)
     { 
         // out of memory
@@ -318,7 +318,7 @@ GrB_Info GB_ewise_slice
 
             // This is a non-empty coarse-grain task that does two or more
             // entire vectors of C, vectors k:klast, inclusive.
-            GB_REALLOC_TASK_LIST (TaskList, ntasks + 1, max_ntasks) ;
+            GB_REALLOC_TASK_WERK (TaskList, ntasks + 1, max_ntasks) ;
             TaskList [ntasks].kfirst = k ;
             TaskList [ntasks].klast  = klast ;
             ntasks++ ;
@@ -455,7 +455,7 @@ GrB_Info GB_ewise_slice
             nfine = GB_IMAX (nfine, 1) ;
 
             // make the TaskList bigger, if needed
-            GB_REALLOC_TASK_LIST (TaskList, ntasks + nfine, max_ntasks) ;
+            GB_REALLOC_TASK_WERK (TaskList, ntasks + nfine, max_ntasks) ;
 
             //------------------------------------------------------------------
             // create the fine-grain tasks

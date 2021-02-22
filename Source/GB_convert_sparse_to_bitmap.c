@@ -12,7 +12,10 @@
 #include "GB_type__include.h"
 #endif
 
-#define GB_FREE_WORK GB_FREE (A_ek_slicing) ;
+#define GB_FREE_WORK                    \
+{                                       \
+    GB_FREE_WERK (A_ek_slicing) ;       \
+}
 
 #define GB_FREE_ALL                     \
 {                                       \

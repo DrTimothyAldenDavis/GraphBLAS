@@ -325,7 +325,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         {
             // allocate new space for the GraphBLAS values
             A->nzmax = GB_IMAX (anz, 1) ;
-            A->x = GB_MALLOC (A->nzmax * atype_out->size, GB_void) ;
+            A->x = (GB_void *) GB_malloc_memory (A->nzmax * atype_out->size,
+                sizeof (GB_void)) ;
             if (A->x == NULL)
             {
                 FREE_ALL ;

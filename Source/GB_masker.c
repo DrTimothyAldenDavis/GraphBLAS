@@ -158,9 +158,9 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         { 
             // out of memory; free everything allocated by GB_add_phase0
             GB_FREE (Rh) ;
-            GB_FREE (R_to_M) ;
-            GB_FREE (R_to_C) ;
-            GB_FREE (R_to_Z) ;
+            GB_FREE_WERK (R_to_M) ;
+            GB_FREE_WERK (R_to_C) ;
+            GB_FREE_WERK (R_to_Z) ;
             return (info) ;
         }
 
@@ -177,11 +177,11 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         if (info != GrB_SUCCESS)
         { 
             // out of memory; free everything allocated by GB_add_phase0
-            GB_FREE (TaskList) ;
             GB_FREE (Rh) ;
-            GB_FREE (R_to_M) ;
-            GB_FREE (R_to_C) ;
-            GB_FREE (R_to_Z) ;
+            GB_FREE_WERK (TaskList) ;
+            GB_FREE_WERK (R_to_M) ;
+            GB_FREE_WERK (R_to_C) ;
+            GB_FREE_WERK (R_to_Z) ;
             return (info) ;
         }
 
@@ -219,10 +219,10 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     // if successful, Rh and Rp must not be freed; they are now R->h and R->p
 
     // free workspace
-    GB_FREE (TaskList) ;
-    GB_FREE (R_to_M) ;
-    GB_FREE (R_to_C) ;
-    GB_FREE (R_to_Z) ;
+    GB_FREE_WERK (TaskList) ;
+    GB_FREE_WERK (R_to_M) ;
+    GB_FREE_WERK (R_to_C) ;
+    GB_FREE_WERK (R_to_Z) ;
 
     if (info != GrB_SUCCESS)
     { 

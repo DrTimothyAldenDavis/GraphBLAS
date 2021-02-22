@@ -252,11 +252,11 @@ GrB_Info (node)
 //------------------------------------------------------------------------------
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE (M_ek_slicing) ;    \
-    GB_FREE (A_ek_slicing) ;    \
-    GB_FREE (B_ek_slicing) ;    \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WERK (M_ek_slicing) ;   \
+    GB_FREE_WERK (A_ek_slicing) ;   \
+    GB_FREE_WERK (B_ek_slicing) ;   \
 }
 
 GrB_Info GB_AaddB__bclr_int64

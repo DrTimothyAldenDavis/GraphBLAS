@@ -66,15 +66,15 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE (M_ek_slicing) ;    \
+#define GB_FREE_WORK                \
+{                                   \
+    GB_FREE_WERK (M_ek_slicing) ;   \
 }
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_Matrix_free (&C) ;       \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WORK ;                  \
+    GB_Matrix_free (&C) ;           \
 }
 
 GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B

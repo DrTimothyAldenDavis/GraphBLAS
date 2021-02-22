@@ -168,7 +168,7 @@ GrB_Info GB_subassign_08n
         &Znvec, &Zh_shallow, &Z_to_A, &Z_to_M,
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
         A, M, Context)) ;
-    GB_ALLOCATE_NPENDING ;
+    GB_ALLOCATE_NPENDING_WERK ;
 
     //--------------------------------------------------------------------------
     // phase 1: undelete zombies, update entries, and count pending tuples

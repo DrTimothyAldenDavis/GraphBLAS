@@ -66,7 +66,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         const int64_t *GB_RESTRICT Ap_old = A->p ;
         bool Ap_old_shallow = A->p_shallow ;
 
-        int64_t *GB_RESTRICT Count = GB_MALLOC (ntasks+1, int64_t) ;
+        int64_t *GB_RESTRICT Count = GB_MALLOC_WERK (ntasks+1, int64_t) ;
         if (Count == NULL)
         { 
             // out of memory
@@ -103,7 +103,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         if (Ap_new == NULL || Ah_new == NULL)
         { 
             // out of memory
-            GB_FREE (Count) ;
+            GB_FREE_WERK (Count) ;
             GB_FREE (Ap_new) ;
             GB_FREE (Ah_new) ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -149,7 +149,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         // free workspace, and free the old A->p unless it's shallow
         //----------------------------------------------------------------------
 
-        GB_FREE (Count) ;
+        GB_FREE_WERK (Count) ;
         if (!Ap_old_shallow)
         { 
             GB_FREE (Ap_old) ;

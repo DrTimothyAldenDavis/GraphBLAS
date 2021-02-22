@@ -42,7 +42,7 @@ GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
     //--------------------------------------------------------------------------
 
     // allocate the unary operator
-    (*unaryop) = GB_CALLOC (1, struct GB_UnaryOp_opaque) ;
+    (*unaryop) = GB_MALLOC (1, struct GB_UnaryOp_opaque) ;
     if (*unaryop == NULL)
     { 
         // out of memory
@@ -56,17 +56,13 @@ GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
     op->ztype = ztype ;
     op->function = function ;
     op->opcode = GB_USER_opcode ;     // user-defined operator
+    op->name [0] = '\0' ;
 
     //--------------------------------------------------------------------------
     // find the name of the operator
     //--------------------------------------------------------------------------
 
-    if (name == NULL)
-    { 
-        // if no name , a generic name is used instead
-        strncpy (op->name, "user_unary_operator", GB_LEN-1) ;
-    }
-    else
+    if (name != NULL)
     {
         // see if the typecast "(GxB_unary_function)" appears in the name
         char *p = NULL ;

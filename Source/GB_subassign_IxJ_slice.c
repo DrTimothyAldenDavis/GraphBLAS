@@ -46,9 +46,9 @@
 #include "GB_subassign_methods.h"
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE (TaskList) ;    \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WERK (TaskList) ;   \
 }
 
 //------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ GrB_Info GB_subassign_IxJ_slice
     double work = ((double) nI) * ((double) nJ) ;
     nthreads = GB_nthreads (work, chunk, nthreads_max) ;
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;
-    GB_REALLOC_TASK_LIST (TaskList, ntasks0, max_ntasks) ;
+    GB_REALLOC_TASK_WERK (TaskList, ntasks0, max_ntasks) ;
 
     //--------------------------------------------------------------------------
     // check for quick return for a single task
@@ -163,7 +163,7 @@ GrB_Info GB_subassign_IxJ_slice
         nI_fine_tasks = GB_IMAX (nI_fine_tasks, 2) ;
         ntasks = 0 ;
 
-        GB_REALLOC_TASK_LIST (TaskList, nJ * nI_fine_tasks, max_ntasks) ;
+        GB_REALLOC_TASK_WERK (TaskList, nJ * nI_fine_tasks, max_ntasks) ;
 
         //----------------------------------------------------------------------
         // construct fine tasks for index j

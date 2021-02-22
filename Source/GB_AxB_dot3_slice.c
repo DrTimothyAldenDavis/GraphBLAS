@@ -23,13 +23,15 @@
 // of a single entry C(i,j) can be broken into multiple tasks.  The slice of
 // A(:,i) and B(:,j) would use GB_slice_vector, where no mask would be used.
 
-#define GB_FREE_WORK \
-    GB_FREE (Coarse) ;
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE_WERK (Coarse) ;     \
+}
 
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE_WORK ;          \
-    GB_FREE (TaskList) ;    \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WORK ;              \
+    GB_FREE_WERK (TaskList) ;   \
 }
 
 #include "GB_mxm.h"
@@ -109,7 +111,7 @@ GrB_Info GB_AxB_dot3_slice
     int max_ntasks = 0 ;
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;
-    GB_REALLOC_TASK_LIST (TaskList, ntasks0, max_ntasks) ;
+    GB_REALLOC_TASK_WERK (TaskList, ntasks0, max_ntasks) ;
 
     //--------------------------------------------------------------------------
     // check for quick return for a single task
@@ -184,7 +186,7 @@ GrB_Info GB_AxB_dot3_slice
             // vector, ending at Ci,Cx [pC_end-1] or Ci,Cx [plast].  This
             // slice strategy is the same as GB_ek_slice.
 
-            GB_REALLOC_TASK_LIST (TaskList, ntasks + 1, max_ntasks) ;
+            GB_REALLOC_TASK_WERK (TaskList, ntasks + 1, max_ntasks) ;
             TaskList [ntasks].kfirst = kfirst ;
             TaskList [ntasks].klast  = klast ;
             ASSERT (kfirst <= klast) ;

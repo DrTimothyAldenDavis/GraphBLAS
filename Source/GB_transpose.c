@@ -639,7 +639,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ntasks = 8 * nth ;
             ntasks = GB_IMIN (ntasks, avdim) ;
             ntasks = GB_IMAX (ntasks, 1) ;
-            Count = GB_CALLOC (ntasks+1, int64_t) ;
+            Count = GB_CALLOC_WERK (ntasks+1, int64_t) ;
             if (Count == NULL)
             { 
                 // out of memory
@@ -664,7 +664,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (!in_place) ;            // cannot fail if in-place,
             ASSERT (!C_static_header) ;     // or if C has a static header
             GB_FREE_C ;
-            GB_FREE (Count) ;
+            GB_FREE_WERK (Count) ;
             return (info) ;
         }
 
@@ -704,7 +704,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_FREE (Cp) ;
             GB_FREE (Ci) ;
             GB_FREE (Cx) ;
-            GB_FREE (Count) ;
+            GB_FREE_WERK (Count) ;
             GB_FREE_IN_PLACE_A ;
             GB_FREE_C ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -866,7 +866,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // free prior space of A, if transpose done in-place, and free workspace
         GB_FREE_IN_PLACE_A ;
-        GB_FREE (Count) ;
+        GB_FREE_WERK (Count) ;
 
     }
     else

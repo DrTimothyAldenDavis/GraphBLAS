@@ -31,7 +31,10 @@
 #endif
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_FREE (M_ek_slicing) ;
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WERK (M_ek_slicing) ;   \
+}
 
 GrB_Info GB_dense_subassign_25
 (

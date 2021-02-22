@@ -40,7 +40,7 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_FREE (W) ;                       \
+    GB_FREE (W) ;  /* not workspace */  \
     GB_phbix_free (A) ;                 \
     GB_Matrix_free (&T) ;               \
     GB_Matrix_free (&S) ;               \

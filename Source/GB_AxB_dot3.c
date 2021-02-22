@@ -18,15 +18,15 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK        \
-{                           \
-    GB_FREE (TaskList) ;    \
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE_WERK (TaskList) ;   \
 }
 
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE_WORK ;          \
-    GB_Matrix_free (&C) ;   \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WORK ;              \
+    GB_Matrix_free (&C) ;       \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -235,7 +235,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // free the current tasks and construct the tasks for the second phase
     //--------------------------------------------------------------------------
 
-    GB_FREE (TaskList) ;
+    GB_FREE_WERK (TaskList) ;
     GB_OK (GB_AxB_dot3_slice (&TaskList, &max_ntasks, &ntasks, &nthreads,
         C, Context)) ;
 

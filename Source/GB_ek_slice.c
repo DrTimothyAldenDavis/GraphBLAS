@@ -72,7 +72,10 @@ bool GB_ek_slice        // true if successful, false if out of memory
     // allocate result
     //--------------------------------------------------------------------------
 
-    (*ek_slicing_handle) = GB_CALLOC (3*ntasks+1, int64_t) ;
+    // kfirst_slice and klast_slice are size ntasks.
+    // pstart_slice is size ntasks+1
+
+    (*ek_slicing_handle) = GB_MALLOC_WERK (3*ntasks+1, int64_t) ;
     if ((*ek_slicing_handle) == NULL)
     { 
         // out of memory

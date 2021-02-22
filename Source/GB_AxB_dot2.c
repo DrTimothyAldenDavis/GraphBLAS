@@ -27,12 +27,12 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_ALL                                                     \
-{                                                                       \
-    GB_Matrix_free (&M2) ;                                              \
-    GB_FREE (A_slice) ;                                                 \
-    GB_FREE (B_slice) ;                                                 \
-    GB_FREE (M_ek_slicing) ;                                            \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_Matrix_free (&M2) ;          \
+    GB_FREE_WERK (A_slice) ;        \
+    GB_FREE_WERK (B_slice) ;        \
+    GB_FREE_WERK (M_ek_slicing) ;   \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

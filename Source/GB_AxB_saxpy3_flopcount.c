@@ -71,10 +71,10 @@
 #include "GB_bracket.h"
 #include "GB_AxB_saxpy3.h"
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE (Work) ;            \
-    GB_FREE (B_ek_slicing) ;    \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WERK (Work) ;           \
+    GB_FREE_WERK (B_ek_slicing) ;   \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -184,7 +184,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Work = GB_MALLOC (2*B_ntasks, int64_t) ;
+    Work = GB_MALLOC_WERK (2*B_ntasks, int64_t) ;
     if (Work == NULL)
     { 
         // out of memory

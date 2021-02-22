@@ -18,10 +18,10 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK        \
-{                           \
-    GB_FREE (A_slice) ;     \
-    GB_FREE (B_slice) ;     \
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE_WERK (A_slice) ;    \
+    GB_FREE_WERK (B_slice) ;    \
 }
 
 GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method

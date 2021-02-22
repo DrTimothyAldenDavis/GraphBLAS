@@ -27,7 +27,10 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_ALL GB_FREE (A_ek_slicing) ;
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WERK (A_ek_slicing) ;   \
+}
 
 GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
 (

@@ -15,7 +15,10 @@
 
 #include "GB_ek_slice.h"
 
-#define GB_FREE_ALL GB_FREE (A_ek_slicing) ;
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WERK (A_ek_slicing) ;   \
+}
 
 GrB_Info GB_extract_vector_list     // extract vector list from a matrix
 (

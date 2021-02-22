@@ -70,20 +70,20 @@
 //      detected in A.  Since pa = Cx [pc] holds the position of the entry in
 //      A, the entry is a zombie if Ai [pa] has been flipped.
 
-#define GB_FREE_WORK        \
-{                           \
-    GB_FREE (TaskList) ;    \
-    GB_FREE (Ap_start) ;    \
-    GB_FREE (Ap_end) ;      \
-    GB_FREE (Mark) ;        \
-    GB_FREE (Inext) ;       \
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE_WERK (TaskList) ;   \
+    GB_FREE_WERK (Ap_start) ;   \
+    GB_FREE_WERK (Ap_end) ;     \
+    GB_FREE_WERK (Mark) ;       \
+    GB_FREE_WERK (Inext) ;      \
 }
 
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE (Cp) ;          \
-    GB_FREE (Ch) ;          \
-    GB_FREE_WORK ;          \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE (Cp) ;              \
+    GB_FREE (Ch) ;              \
+    GB_FREE_WORK ;              \
 }
 
 #include "GB_subref.h"

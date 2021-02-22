@@ -16,18 +16,18 @@
 #define GB_MWORK_ALPHA 0.01
 #define GB_MWORK_BETA 0.10
 
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE (Fine_fl) ;         \
-    GB_FREE (Coarse_Work) ;     \
-    GB_FREE (Coarse_initial) ;  \
-    GB_FREE (Fine_slice) ;      \
+#define GB_FREE_WORK                \
+{                                   \
+    GB_FREE_WERK (Fine_fl) ;        \
+    GB_FREE_WERK (Coarse_Work) ;    \
+    GB_FREE_WERK (Coarse_initial) ; \
+    GB_FREE_WERK (Fine_slice) ;     \
 }
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_FREE (TaskList) ;        \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WORK ;                  \
+    GB_FREE_WERK (TaskList) ;       \
 }
 
 //------------------------------------------------------------------------------
@@ -537,13 +537,13 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     // allocate the tasks, and workspace to construct fine tasks
     //--------------------------------------------------------------------------
 
-    TaskList    = GB_CALLOC ((*ntasks), GB_saxpy3task_struct) ;
-    Coarse_Work = GB_MALLOC (nthreads_max, int64_t) ;
+    TaskList    = GB_CALLOC_WERK ((*ntasks), GB_saxpy3task_struct) ;
+    Coarse_Work = GB_MALLOC_WERK (nthreads_max, int64_t) ;
     if (max_bjnz > 0)
     { 
         // also allocate workspace to construct fine tasks
-        Fine_slice = GB_MALLOC ((*ntasks)+1  , int64_t) ;
-        Fine_fl    = GB_MALLOC (max_bjnz+1, int64_t) ;
+        Fine_slice = GB_MALLOC_WERK ((*ntasks)+1  , int64_t) ;
+        Fine_fl    = GB_MALLOC_WERK (max_bjnz+1, int64_t) ;
     }
 
     if (TaskList == NULL || Coarse_Work == NULL ||

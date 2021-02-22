@@ -151,9 +151,9 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         { 
             // out of memory; free everything allocated by GB_add_phase0
             GB_FREE (Ch) ;
-            GB_FREE (C_to_M) ;
-            GB_FREE (C_to_A) ;
-            GB_FREE (C_to_B) ;
+            GB_FREE_WERK (C_to_M) ;
+            GB_FREE_WERK (C_to_A) ;
+            GB_FREE_WERK (C_to_B) ;
             return (info) ;
         }
 
@@ -170,11 +170,11 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         if (info != GrB_SUCCESS)
         { 
             // out of memory; free everything allocated by GB_add_phase0
-            GB_FREE (TaskList) ;
             GB_FREE (Ch) ;
-            GB_FREE (C_to_M) ;
-            GB_FREE (C_to_A) ;
-            GB_FREE (C_to_B) ;
+            GB_FREE_WERK (TaskList) ;
+            GB_FREE_WERK (C_to_M) ;
+            GB_FREE_WERK (C_to_A) ;
+            GB_FREE_WERK (C_to_B) ;
             return (info) ;
         }
 
@@ -211,10 +211,10 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // If the method failed, Cp and Ch have already been freed.
 
     // free workspace
-    GB_FREE (TaskList) ;
-    GB_FREE (C_to_M) ;
-    GB_FREE (C_to_A) ;
-    GB_FREE (C_to_B) ;
+    GB_FREE_WERK (TaskList) ;
+    GB_FREE_WERK (C_to_M) ;
+    GB_FREE_WERK (C_to_A) ;
+    GB_FREE_WERK (C_to_B) ;
 
     if (info != GrB_SUCCESS)
     { 

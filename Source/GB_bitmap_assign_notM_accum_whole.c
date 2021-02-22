@@ -24,7 +24,10 @@
 
 #include "GB_bitmap_assign_methods.h"
 
-#define GB_FREE_ALL GB_FREE (M_ek_slicing) ;
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WERK (M_ek_slicing) ;   \
+}
 
 GrB_Info GB_bitmap_assign_notM_accum_whole
 (

@@ -27,7 +27,10 @@
 #endif
 
 #undef  GB_FREE_WORK
-#define GB_FREE_WORK GB_FREE (M_ek_slicing) ;
+#define GB_FREE_WORK                \
+{                                   \
+    GB_FREE_WERK (M_ek_slicing) ;   \
+}
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_FREE_WORK

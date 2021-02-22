@@ -13,12 +13,15 @@
 // simple general-purpose method for slicing a single matrix.  It could be
 // called GB_one_slice, and used for other methods as well.
 
-#define GB_FREE_WORK GB_FREE (Coarse) ;
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE_WERK (Coarse) ;     \
+}
 
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE_WORK ;          \
-    GB_FREE (TaskList) ;    \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WORK ;              \
+    GB_FREE_WERK (TaskList) ;   \
 }
 
 #include "GB_mxm.h"
@@ -90,7 +93,7 @@ GrB_Info GB_AxB_dot3_one_slice
     int max_ntasks = 0 ;
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (GB_NTASKS_PER_THREAD * nthreads) ;
-    GB_REALLOC_TASK_LIST (TaskList, ntasks0, max_ntasks) ;
+    GB_REALLOC_TASK_WERK (TaskList, ntasks0, max_ntasks) ;
 
     //--------------------------------------------------------------------------
     // check for quick return for a single task
@@ -161,7 +164,7 @@ GrB_Info GB_AxB_dot3_one_slice
 
             // This is a non-empty coarse-grain task that does two or more
             // entire vectors of M and C, vectors k:klast, inclusive.
-            GB_REALLOC_TASK_LIST (TaskList, ntasks + 1, max_ntasks) ;
+            GB_REALLOC_TASK_WERK (TaskList, ntasks + 1, max_ntasks) ;
             TaskList [ntasks].kfirst = k ;
             TaskList [ntasks].klast  = klast ;
             ntasks++ ;
@@ -203,7 +206,7 @@ GrB_Info GB_AxB_dot3_one_slice
             nfine = GB_IMAX (nfine, 1) ;
 
             // make the TaskList bigger, if needed
-            GB_REALLOC_TASK_LIST (TaskList, ntasks + nfine, max_ntasks) ;
+            GB_REALLOC_TASK_WERK (TaskList, ntasks + nfine, max_ntasks) ;
 
             //------------------------------------------------------------------
             // create the fine-grain tasks

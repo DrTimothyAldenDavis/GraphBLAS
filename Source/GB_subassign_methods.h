@@ -26,17 +26,17 @@
 #endif
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE_WORK ;          \
-    GB_FREE (TaskList) ;    \
-    GB_FREE (Npending) ;    \
-    GB_FREE (Zh) ;          \
-    GB_FREE (Z_to_X) ;      \
-    GB_FREE (Z_to_S) ;      \
-    GB_FREE (Z_to_A) ;      \
-    GB_FREE (Z_to_M) ;      \
-    GB_Matrix_free (&S);    \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WORK ;              \
+    GB_FREE_WERK (TaskList) ;   \
+    GB_FREE_WERK (Npending) ;   \
+    GB_FREE (Zh) ;              \
+    GB_FREE_WERK (Z_to_X) ;     \
+    GB_FREE_WERK (Z_to_S) ;     \
+    GB_FREE_WERK (Z_to_A) ;     \
+    GB_FREE_WERK (Z_to_M) ;     \
+    GB_Matrix_free (&S);        \
 }
 
 //------------------------------------------------------------------------------
@@ -1506,11 +1506,11 @@ GrB_Info GB_subassign_19
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_ALLOCATE_NPENDING: allocate Npending workspace
+// GB_ALLOCATE_NPENDING_WERK: allocate Npending workspace
 //------------------------------------------------------------------------------
 
-#define GB_ALLOCATE_NPENDING                                                \
-    Npending = GB_MALLOC (ntasks+1, int64_t) ;                              \
+#define GB_ALLOCATE_NPENDING_WERK                                           \
+    Npending = GB_MALLOC_WERK (ntasks+1, int64_t) ;                         \
     if (Npending == NULL)                                                   \
     {                                                                       \
         GB_FREE_ALL ;                                                       \
@@ -1531,7 +1531,7 @@ GrB_Info GB_subassign_19
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
         M, Context)) ;                                                      \
-    GB_ALLOCATE_NPENDING ;
+    GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
 // GB_SUBASSIGN_TWO_SLICE: slice two matrices
@@ -1556,7 +1556,7 @@ GrB_Info GB_subassign_19
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
         Znvec, Zh, NULL, Z_to_X, Z_to_S, false,                             \
         NULL, X, S, Context)) ;                                             \
-    GB_ALLOCATE_NPENDING ;
+    GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
 // GB_SUBASSIGN_IXJ_SLICE: slice IxJ for a scalar assignement method
@@ -1570,7 +1570,7 @@ GrB_Info GB_subassign_19
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
         /* I, */ nI, /* Ikind, Icolon, J, */ nJ, /* Jkind, Jcolon, */       \
         Context)) ;                                                         \
-    GB_ALLOCATE_NPENDING ;
+    GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
 // GB_subassign_one_slice

@@ -36,8 +36,8 @@
     GB_Matrix_free (&M2) ;      \
     GB_Matrix_free (&A2) ;      \
     GB_Matrix_free (&SubMask) ; \
-    GB_FREE (I2) ;              \
-    GB_FREE (J2) ;              \
+    GB_FREE_WERK (I2) ;         \
+    GB_FREE_WERK (J2) ;         \
 }
 
 GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'

@@ -81,6 +81,6 @@
     // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE (A_ek_slicing) ;
+    GB_FREE_WERK (A_ek_slicing) ;
 }
 

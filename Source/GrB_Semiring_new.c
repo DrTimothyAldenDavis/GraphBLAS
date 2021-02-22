@@ -29,7 +29,10 @@
 
 #include "GB.h"
 
-#define GB_FREE_ALL GB_FREE (*semiring) ;
+#define GB_FREE_ALL         \
+{                           \
+    GB_FREE (*semiring) ;   \
+}
 
 GrB_Info GrB_Semiring_new           // create a semiring
 (

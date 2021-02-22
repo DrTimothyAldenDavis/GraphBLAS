@@ -129,11 +129,13 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
     // allocate result, unless it is already allocated on input
     //--------------------------------------------------------------------------
 
+    // TODO: pass in Slice already allocated
+
     int64_t *Slice ;
     if ((*Slice_handle) == NULL)
     {
         (*Slice_handle) = NULL ;
-        Slice = GB_MALLOC (ntasks+1, int64_t) ;
+        Slice = GB_MALLOC_WERK (ntasks+1, int64_t) ;
         if (Slice == NULL)
         { 
             // out of memory

@@ -12,16 +12,16 @@
 // in-place if the accum operator is the same as the monoid.
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE (Wf) ;              \
-    GB_FREE (Wax) ;             \
-    GB_FREE (Wbx) ;             \
-    GB_FREE (Wcx) ;             \
-    GB_FREE (GH_slice) ;        \
-    GB_FREE (A_slice) ;         \
-    GB_FREE (B_slice) ;         \
-    GB_FREE (M_ek_slicing) ;    \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WERK (Wf) ;             \
+    GB_FREE_WERK (Wax) ;            \
+    GB_FREE_WERK (Wbx) ;            \
+    GB_FREE_WERK (Wcx) ;            \
+    GB_FREE_WERK (GH_slice) ;       \
+    GB_FREE_WERK (A_slice) ;        \
+    GB_FREE_WERK (B_slice) ;        \
+    GB_FREE_WERK (M_ek_slicing) ;   \
 }
 
 {

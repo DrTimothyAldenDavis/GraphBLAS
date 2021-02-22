@@ -41,11 +41,11 @@
     {                                                                   \
         for (int tid = 0 ; tid < nworkspaces ; tid++)                   \
         {                                                               \
-            GB_FREE (Workspaces [tid]) ;                                \
+            GB_FREE_WERK (Workspaces [tid]) ;                           \
         }                                                               \
     }                                                                   \
-    GB_FREE (Workspaces) ;                                              \
-    GB_FREE (A_slice) ;                                                 \
+    GB_FREE_WERK (Workspaces) ;                                         \
+    GB_FREE_WERK (A_slice) ;                                            \
 }
 
 #define GB_FREE_ALL                                                     \
@@ -128,7 +128,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Workspaces = GB_CALLOC (nworkspaces, int64_t *) ;
+    Workspaces = GB_CALLOC_WERK (nworkspaces, int64_t *) ;
     if (Workspaces == NULL)
     { 
         // out of memory
@@ -138,7 +138,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     for (int tid = 0 ; tid < nworkspaces ; tid++)
     {
-        int64_t *workspace = GB_MALLOC (vlen + 1, int64_t) ;
+        int64_t *workspace = GB_MALLOC_WERK (vlen + 1, int64_t) ;
         if (workspace == NULL)
         { 
             // out of memory

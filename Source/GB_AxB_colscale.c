@@ -15,12 +15,15 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_WORK GB_FREE (A_ek_slicing) ;
+#define GB_FREE_WORK                \
+{                                   \
+    GB_FREE_WERK (A_ek_slicing) ;   \
+}
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_Matrix_free (&C) ;       \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WORK ;                  \
+    GB_Matrix_free (&C) ;           \
 }
 
 GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D

@@ -48,6 +48,7 @@
 #include "GB_zombie.h"
 #include "GB_partition.h"
 #include "GB_omp.h"
+#include "GB_memory.h"
 
 //------------------------------------------------------------------------------
 // internal definitions
@@ -673,17 +674,17 @@ typedef struct          // task descriptor
 }
 GB_task_struct ;
 
-// GB_REALLOC_TASK_LIST: Allocate or reallocate the TaskList so that it can
+// GB_REALLOC_TASK_WERK: Allocate or reallocate the TaskList so that it can
 // hold at least ntasks.  Double the size if it's too small.
 
-#define GB_REALLOC_TASK_LIST(TaskList,ntasks,max_ntasks)                    \
+#define GB_REALLOC_TASK_WERK(TaskList,ntasks,max_ntasks)                    \
 {                                                                           \
     if ((ntasks) >= max_ntasks)                                             \
     {                                                                       \
         bool ok ;                                                           \
         int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;               \
         int nnew = 2 * (ntasks) + 1 ;                                       \
-        GB_REALLOC (TaskList, nnew, nold, GB_task_struct, &ok) ;            \
+        GB_REALLOC_WERK (TaskList, nnew, nold, GB_task_struct, &ok) ;       \
         if (!ok)                                                            \
         {                                                                   \
             /* out of memory */                                             \
@@ -804,52 +805,6 @@ size_t GB_code_size             // return the size of a type, given its code
     const GB_Type_code code,    // input code of the type to find the size of
     const size_t usize          // known size of user-defined type
 ) ;
-
-//------------------------------------------------------------------------------
-// memory management
-//------------------------------------------------------------------------------
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void *GB_calloc_memory      // pointer to allocated block of memory
-(
-    size_t nitems,          // number of items to allocate
-    size_t size_of_item     // sizeof each item
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void *GB_malloc_memory      // pointer to allocated block of memory
-(
-    size_t nitems,          // number of items to allocate
-    size_t size_of_item     // sizeof each item
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void *GB_realloc_memory     // pointer to reallocated block of memory, or
-                            // to original block if the realloc failed.
-(
-    size_t nitems_new,      // new number of items in the object
-    size_t nitems_old,      // old number of items in the object
-    size_t size_of_item,    // sizeof each item
-    void *p,                // old object to reallocate
-    bool *ok                // true if successful, false otherwise
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void GB_free_memory
-(
-    void *p                 // pointer to allocated block of memory to free
-) ;
-
-#define GB_FREE(p)                                          \
-{                                                           \
-    GB_free_memory ((void *) p) ;                           \
-    (p) = NULL ;                                            \
-}
-
-#define GB_CALLOC(n,type) (type *) GB_calloc_memory (n, sizeof (type))
-#define GB_MALLOC(n,type) (type *) GB_malloc_memory (n, sizeof (type))
-#define GB_REALLOC(p,nnew,nold,type,ok) \
-    p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), (void *) p, ok)
 
 void GB_Matrix_free             // free a matrix
 (
