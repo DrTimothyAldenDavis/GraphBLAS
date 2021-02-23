@@ -31,9 +31,9 @@
 #endif
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_WERK (M_ek_slicing) ;   \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
 
 GrB_Info GB_dense_subassign_25
@@ -92,8 +92,8 @@ GrB_Info GB_dense_subassign_25
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
     int M_nthreads, M_ntasks ;
-    int64_t *M_ek_slicing = NULL ;
     GB_SLICE_MATRIX (M, 8) ;
 
     //--------------------------------------------------------------------------

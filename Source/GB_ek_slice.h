@@ -50,7 +50,7 @@ static inline void GB_ek_slice_ntasks
 #define GB_SLICE_MATRIX_WORK(X,NTASKS_PER_THREAD,work)                        \
     GB_ek_slice_ntasks (&(X ## _nthreads), &(X ## _ntasks), X,                \
         NTASKS_PER_THREAD, work, chunk, nthreads_max) ;                       \
-    X ## _ek_slicing = GB_MALLOC_WERK (3*(X ## _ntasks)+1, int64_t) ;         \
+    GB_WERK_PUSH (X ## _ek_slicing, 3*(X ## _ntasks)+1, int64_t) ;            \
     if (X ## _ek_slicing == NULL)                                             \
     {                                                                         \
         /* out of memory */                                                   \
@@ -65,7 +65,7 @@ static inline void GB_ek_slice_ntasks
 #define GB_SLICE_MATRIX(X,NTASKS_PER_THREAD)                                  \
     GB_ek_slice_ntasks (&(X ## _nthreads), &(X ## _ntasks), X,                \
         NTASKS_PER_THREAD, GB_NNZ_HELD (X) + X->nvec, chunk, nthreads_max) ;  \
-    X ## _ek_slicing = GB_MALLOC_WERK (3*(X ## _ntasks)+1, int64_t) ;         \
+    GB_WERK_PUSH (X ## _ek_slicing, 3*(X ## _ntasks)+1, int64_t) ;            \
     if (X ## _ek_slicing == NULL)                                             \
     {                                                                         \
         /* out of memory */                                                   \

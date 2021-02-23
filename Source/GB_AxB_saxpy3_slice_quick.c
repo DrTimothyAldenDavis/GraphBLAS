@@ -18,7 +18,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     // outputs
-    GB_saxpy3task_struct **TaskList_handle,
+    GB_saxpy3task_struct **SaxpyTasks_handle,
     int *ntasks,                    // # of tasks created (coarse and fine)
     int *nfine,                     // # of fine tasks created
     int *nthreads,                  // # of threads to use
@@ -41,8 +41,8 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     // allocate the task
     //--------------------------------------------------------------------------
 
-    GB_saxpy3task_struct *TaskList = GB_CALLOC_WERK (1, GB_saxpy3task_struct) ;
-    if (TaskList == NULL)
+    GB_saxpy3task_struct *SaxpyTasks = GB_CALLOC_WERK (1, GB_saxpy3task_struct) ;
+    if (SaxpyTasks == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
@@ -52,23 +52,23 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     // create a single Gustavson task
     //--------------------------------------------------------------------------
 
-    TaskList [0].start   = 0 ;
-    TaskList [0].end     = bnvec-1 ;
-    TaskList [0].vector  = -1 ;
-    TaskList [0].hsize   = cvlen ;
-    TaskList [0].Hi      = NULL ;      // assigned later
-    TaskList [0].Hf      = NULL ;      // assigned later
-    TaskList [0].Hx      = NULL ;      // assigned later
-    TaskList [0].my_cjnz = 0 ;         // unused
-    TaskList [0].leader  = 0 ;
-    TaskList [0].team_size = 1 ;
+    SaxpyTasks [0].start   = 0 ;
+    SaxpyTasks [0].end     = bnvec-1 ;
+    SaxpyTasks [0].vector  = -1 ;
+    SaxpyTasks [0].hsize   = cvlen ;
+    SaxpyTasks [0].Hi      = NULL ;      // assigned later
+    SaxpyTasks [0].Hf      = NULL ;      // assigned later
+    SaxpyTasks [0].Hx      = NULL ;      // assigned later
+    SaxpyTasks [0].my_cjnz = 0 ;         // unused
+    SaxpyTasks [0].leader  = 0 ;
+    SaxpyTasks [0].team_size = 1 ;
 
     if (bnvec == 1)
     { 
         // convert the single coarse task into a single fine task
-        TaskList [0].start  = 0 ;                   // first entry in B(:,0)
-        TaskList [0].end = GB_NNZ_HELD (B) - 1 ;    // last entry in B(:,0)
-        TaskList [0].vector = 0 ;
+        SaxpyTasks [0].start  = 0 ;                   // first entry in B(:,0)
+        SaxpyTasks [0].end = GB_NNZ_HELD (B) - 1 ;    // last entry in B(:,0)
+        SaxpyTasks [0].vector = 0 ;
         (*nfine) = 1 ;
     }
 
@@ -76,7 +76,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     // return result
     //--------------------------------------------------------------------------
 
-    (*TaskList_handle) = TaskList ;
+    (*SaxpyTasks_handle) = SaxpyTasks ;
     return (GrB_SUCCESS) ;
 }
 

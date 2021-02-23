@@ -37,11 +37,11 @@
 #endif
 
 #undef  GB_FREE_WORK
-#define GB_FREE_WORK                \
-{                                   \
-    GB_FREE_WERK (M_ek_slicing) ;   \
-    GB_FREE_WERK (A_ek_slicing) ;   \
-    GB_FREE_WERK (B_ek_slicing) ;   \
+#define GB_FREE_WORK                        \
+{                                           \
+    GB_WERK_POP (B_ek_slicing, int64_t) ;   \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
 
 #undef  GB_FREE_ALL
@@ -96,9 +96,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_JUMBLED (B)) ;
 
-    int64_t *M_ek_slicing = NULL ;
-    int64_t *A_ek_slicing = NULL ;
-    int64_t *B_ek_slicing = NULL ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
     // get the opcode

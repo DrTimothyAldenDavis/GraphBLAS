@@ -15,9 +15,9 @@
 
 #include "GB_ek_slice.h"
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_WERK (A_ek_slicing) ;   \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }
 
 GrB_Info GB_extract_vector_list     // extract vector list from a matrix
@@ -58,8 +58,8 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int A_ntasks, A_nthreads ;
-    int64_t *A_ek_slicing = NULL ;
     GB_SLICE_MATRIX (A, 2) ;
 
     //--------------------------------------------------------------------------

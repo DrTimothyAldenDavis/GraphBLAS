@@ -30,7 +30,7 @@ bool GB_Pending_alloc       // create a list of pending tuples
     // allocate the Pending header
     //--------------------------------------------------------------------------
 
-    GB_Pending Pending = GB_CALLOC (1, struct GB_Pending_struct) ;
+    GB_Pending Pending = GB_MALLOC (1, struct GB_Pending_struct) ;
     if (Pending == NULL)
     { 
         // out of memory
@@ -50,16 +50,7 @@ bool GB_Pending_alloc       // create a list of pending tuples
     Pending->op = op ;                  // pending operator (NULL is OK)
 
     Pending->i = GB_MALLOC (nmax, int64_t) ;
-
-    if (is_matrix)
-    { 
-        Pending->j = GB_MALLOC (nmax, int64_t) ;
-    }
-    else
-    { 
-        Pending->j = NULL ;
-    }
-
+    Pending->j = (is_matrix) ? GB_MALLOC (nmax, int64_t) : NULL ;
     Pending->x = GB_MALLOC (nmax * Pending->size, GB_void) ;
 
     if (Pending->i == NULL || Pending->x == NULL

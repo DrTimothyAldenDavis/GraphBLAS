@@ -20,21 +20,21 @@
 #include "GB_ek_slice.h"
 #include "GB_sel__include.h"
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_Matrix_free (&C) ;           \
-    GB_FREE_WORK ;                  \
+#define GB_FREE_WORK                        \
+{                                           \
+    GB_FREE_WERK (Zp) ;                     \
+    GB_WERK_POP (Work, int64_t) ;           \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
+    GB_FREE (Cp) ;                          \
+    GB_FREE (Ch) ;                          \
+    GB_FREE (Ci) ;                          \
+    GB_FREE (Cx) ;                          \
 }
 
-#define GB_FREE_WORK                \
-{                                   \
-    GB_FREE_WERK (Zp) ;             \
-    GB_WERK_POP (Work, int64_t) ;   \
-    GB_FREE_WERK (A_ek_slicing) ;   \
-    GB_FREE (Cp) ;                  \
-    GB_FREE (Ch) ;                  \
-    GB_FREE (Ci) ;                  \
-    GB_FREE (Cx) ;                  \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_Matrix_free (&C) ;                   \
+    GB_FREE_WORK ;                          \
 }
 
 GrB_Info GB_selector
@@ -77,7 +77,7 @@ GrB_Info GB_selector
     int64_t *GB_RESTRICT Wfirst = NULL ;
     int64_t *GB_RESTRICT Wlast = NULL ;
     int64_t *GB_RESTRICT Cp_kfirst = NULL ;
-    int64_t *A_ek_slicing = NULL ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
     // get Thunk

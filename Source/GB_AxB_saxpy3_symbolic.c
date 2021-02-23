@@ -31,7 +31,7 @@ void GB_AxB_saxpy3_symbolic
     const bool M_dense_in_place,
     const GrB_Matrix A,         // A matrix; only the pattern is accessed
     const GrB_Matrix B,         // B matrix; only the pattern is accessed
-    GB_saxpy3task_struct *TaskList,     // list of tasks, and workspace
+    GB_saxpy3task_struct *SaxpyTasks,     // list of tasks, and workspace
     int ntasks,                 // total number of tasks
     int nfine,                  // number of fine tasks
     int nthreads                // number of threads
@@ -136,7 +136,7 @@ void GB_AxB_saxpy3_symbolic
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        int64_t hash_size = TaskList [taskid].hsize ;
+        int64_t hash_size = SaxpyTasks [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
 
         if (taskid < nfine)
@@ -152,7 +152,7 @@ void GB_AxB_saxpy3_symbolic
             // get the task descriptor
             //------------------------------------------------------------------
 
-            int64_t kk = TaskList [taskid].vector ;
+            int64_t kk = SaxpyTasks [taskid].vector ;
             int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]) ;
             // no work to do if B(:,j) is empty
             if (bjnz == 0) continue ;
@@ -160,8 +160,8 @@ void GB_AxB_saxpy3_symbolic
             // partition M(:,j)
             GB_GET_M_j ;        // get M(:,j)
 
-            int team_size = TaskList [taskid].team_size ;
-            int leader    = TaskList [taskid].leader ;
+            int team_size = SaxpyTasks [taskid].team_size ;
+            int leader    = SaxpyTasks [taskid].leader ;
             int my_teamid = taskid - leader ;
             int64_t mystart, myend ;
             GB_PARTITION (mystart, myend, mjnz, my_teamid, team_size) ;
@@ -183,7 +183,7 @@ void GB_AxB_saxpy3_symbolic
                 if (mjnz > 0)
                 { 
                     int8_t *GB_RESTRICT
-                        Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
+                        Hf = (int8_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
                     GB_SCATTER_M_j (mystart, myend, 1) ;
                 }
 
@@ -210,7 +210,7 @@ void GB_AxB_saxpy3_symbolic
                 // h == i+1, f == 1: occupied with M(i,j)=1
 
                 int64_t *GB_RESTRICT
-                    Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
+                    Hf = (int64_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
                 int64_t hash_bits = (hash_size-1) ;
                 // scan my M(:,j)
                 for (int64_t pM = mystart ; pM < myend ; pM++)
@@ -245,9 +245,9 @@ void GB_AxB_saxpy3_symbolic
             //------------------------------------------------------------------
 
             int64_t *GB_RESTRICT
-                Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
-            int64_t kfirst = TaskList [taskid].start ;
-            int64_t klast  = TaskList [taskid].end ;
+                Hf = (int64_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
+            int64_t kfirst = SaxpyTasks [taskid].start ;
+            int64_t klast  = SaxpyTasks [taskid].end ;
             int64_t mark = 0 ;
 
             if (use_Gustavson)
@@ -302,7 +302,7 @@ void GB_AxB_saxpy3_symbolic
                 // phase1: coarse hash task
                 //--------------------------------------------------------------
 
-                int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
+                int64_t *GB_RESTRICT Hi = SaxpyTasks [taskid].Hi ;
                 int64_t hash_bits = (hash_size-1) ;
 
                 if (M == NULL || ignore_mask)
@@ -499,14 +499,14 @@ void GB_AxB_saxpy3_symbolic
     {
         for (taskid = 0 ; taskid < nfine ; taskid++)
         {
-            int64_t kk = TaskList [taskid].vector ;
+            int64_t kk = SaxpyTasks [taskid].vector ;
             ASSERT (kk >= 0 && kk < B->nvec) ;
             int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]) ;
             // no work to do if B(:,j) is empty
             if (bjnz == 0) continue ;
-            int64_t hash_size = TaskList [taskid].hsize ;
+            int64_t hash_size = SaxpyTasks [taskid].hsize ;
             bool use_Gustavson = (hash_size == cvlen) ;
-            int leader = TaskList [taskid].leader ;
+            int leader = SaxpyTasks [taskid].leader ;
             if (leader != taskid) continue ;
             GB_GET_M_j ;        // get M(:,j)
             if (mjnz == 0) continue ;
@@ -521,7 +521,7 @@ void GB_AxB_saxpy3_symbolic
             {
                 // phase1: fine Gustavson task, C<M>=A*B or C<!M>=A*B
                 int8_t *GB_RESTRICT
-                    Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
+                    Hf = (int8_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
                     GB_GET_M_ij (pM) ;               // get M(i,j)
@@ -541,7 +541,7 @@ void GB_AxB_saxpy3_symbolic
                 // h == 0,   f == 0: unoccupied and unlocked
                 // h == i+1, f == 1: occupied with M(i,j)=1
                 int64_t *GB_RESTRICT
-                    Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
+                    Hf = (int64_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
                 int64_t hash_bits = (hash_size-1) ;
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {

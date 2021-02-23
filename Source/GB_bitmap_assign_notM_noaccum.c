@@ -24,9 +24,9 @@
 
 #include "GB_bitmap_assign_methods.h"
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_WERK (M_ek_slicing) ;   \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
 
 GrB_Info GB_bitmap_assign_notM_noaccum

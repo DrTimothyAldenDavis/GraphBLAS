@@ -75,16 +75,16 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_WORK                \
-{                                   \
-    GB_WERK_POP (Work, int64_t) ;   \
-    GB_FREE_WERK (A_ek_slicing) ;   \
+#define GB_FREE_WORK                        \
+{                                           \
+    GB_WERK_POP (Work, int64_t) ;           \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_Matrix_free (&C) ;       \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_WORK ;                          \
+    GB_Matrix_free (&C) ;                   \
 }
 
 GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
@@ -151,7 +151,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     int64_t *GB_RESTRICT Wfirst    = NULL ;
     int64_t *GB_RESTRICT Wlast     = NULL ;
     int64_t *GB_RESTRICT Cp_kfirst = NULL ;
-    int64_t *A_ek_slicing = NULL ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
     // get M, A, and B

@@ -18,8 +18,8 @@
     // matrix assignment: slice the entries of A for each task
     //--------------------------------------------------------------------------
 
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int A_ntasks, A_nthreads ;
-    int64_t *A_ek_slicing = NULL ;
     GB_SLICE_MATRIX (A, 8) ;
 
     //--------------------------------------------------------------------------
@@ -81,6 +81,6 @@
     // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE_WERK (A_ek_slicing) ;
+    GB_WERK_POP (A_ek_slicing, int64_t) ;
 }
 

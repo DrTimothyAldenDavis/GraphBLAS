@@ -27,12 +27,12 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_ALL                     \
-{                                       \
-    GB_Matrix_free (&M2) ;              \
-    GB_FREE_WERK (M_ek_slicing) ;       \
-    GB_WERK_POP (B_slice, int64_t) ;    \
-    GB_WERK_POP (A_slice, int64_t) ;    \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_Matrix_free (&M2) ;                  \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
+    GB_WERK_POP (B_slice, int64_t) ;        \
+    GB_WERK_POP (A_slice, int64_t) ;        \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -78,10 +78,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     struct GB_Matrix_opaque M2_header ;
     GrB_Matrix M2 = NULL ;
-
     GB_WERK_DECLARE (A_slice, int64_t) ;
     GB_WERK_DECLARE (B_slice, int64_t) ;
-    int64_t *M_ek_slicing = NULL ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
     ASSERT (A_in->vlen == B_in->vlen) ;
     ASSERT (A_in->vlen > 0) ;
 
@@ -291,6 +290,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         //  Cb (i,j) = 1:   cij present, mij zero           (not used yet)
         //  Cb (i,j) = 2:   cij not present, mij 1
         //  Cb (i,j) = 3:   cij present, mij 1              (not used yet)
+        GB_WERK_POP (M_ek_slicing, int64_t) ;
     }
 
     //--------------------------------------------------------------------------

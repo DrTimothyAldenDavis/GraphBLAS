@@ -26,9 +26,9 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_WERK (B_ek_slicing) ;   \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (B_ek_slicing, int64_t) ;   \
 }
 
 GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
@@ -94,8 +94,9 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
-    int64_t *B_ek_slicing = NULL ;
+    GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
     int B_ntasks, B_nthreads ;
+
     if (GB_is_packed (B))
     { 
         // C is dense and B is either dense or bitmap
@@ -104,11 +105,13 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
         int64_t bnz = GB_NNZ_HELD (B) ;
         B_nthreads = GB_nthreads (bnz + bnvec, chunk, nthreads_max) ;
         B_ntasks = 0 ;   // unused
+        ASSERT (B_ek_slicing == NULL) ;
     }
     else
     {
         // create tasks to compute over the matrix B
         GB_SLICE_MATRIX (B, 32) ;
+        ASSERT (B_ek_slicing != NULL) ;
     }
 
     //--------------------------------------------------------------------------

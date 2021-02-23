@@ -267,11 +267,17 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
     bool X ## _on_stack = false ;                   \
     size_t X ## _nitems = 0 ;
 
+//  printf ("Werk push: %s (%d) type %s in %s line %d\n",         \
+//      GB_STR (X), (int) X ## _nitems, GB_STR (type), __FILE__, __LINE__) ; \
+
 // push werkspace X
 #define GB_WERK_PUSH(X,nitems,type)                 \
     X ## _nitems = (nitems) ;                       \
     X = (type *) GB_werk_push (&(X ## _on_stack),   \
         X ## _nitems, sizeof (type), Context) ; 
+
+//  printf ("Werk pop:  %s (%d) type %s in %s line %d\n",         \
+//      GB_STR (X), (int) X ## _nitems, GB_STR (type), __FILE__, __LINE__) ; \
 
 // pop werkspace X
 #define GB_WERK_POP(X,type)                         \

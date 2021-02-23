@@ -12,16 +12,16 @@
 // in-place if the accum operator is the same as the monoid.
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                     \
-{                                       \
-    GB_FREE_WERK (Wf) ;                 \
-    GB_FREE_WERK (Wax) ;                \
-    GB_FREE_WERK (Wbx) ;                \
-    GB_FREE_WERK (Wcx) ;                \
-    GB_FREE_WERK (M_ek_slicing) ;       \
-    GB_WERK_POP (GH_slice, int64_t) ;   \
-    GB_WERK_POP (A_slice, int64_t) ;    \
-    GB_WERK_POP (B_slice, int64_t) ;    \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_WERK (Wf) ;                     \
+    GB_FREE_WERK (Wax) ;                    \
+    GB_FREE_WERK (Wbx) ;                    \
+    GB_FREE_WERK (Wcx) ;                    \
+    GB_WERK_POP (GH_slice, int64_t) ;       \
+    GB_WERK_POP (A_slice, int64_t) ;        \
+    GB_WERK_POP (B_slice, int64_t) ;        \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
 
 {
@@ -37,7 +37,7 @@
     GB_WERK_DECLARE (GH_slice, int64_t) ;
     GB_WERK_DECLARE (A_slice, int64_t) ;
     GB_WERK_DECLARE (B_slice, int64_t) ;
-    int64_t *M_ek_slicing = NULL ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
     // determine max # of threads to use

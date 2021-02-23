@@ -63,15 +63,15 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 //------------------------------------------------------------------------------
 
 // A coarse task computes C(:,j1:j2) = A*B(:,j1:j2), for a contiguous set of
-// vectors j1:j2.  A coarse taskid is denoted byTaskList [taskid].vector == -1,
-// kfirst = TaskList [taskid].start, and klast = TaskList [taskid].end, and
-// where j1 = GBH (Bh, kstart) and likewise for j2.  No summation is needed for
-// the final result of each coarse task.
+// vectors j1:j2.  A coarse taskid is denoted by SaxpyTasks [taskid].vector ==
+// -1, kfirst = SaxpyTasks [taskid].start, and klast = SaxpyTasks [taskid].end,
+// and where j1 = GBH (Bh, kstart) and likewise for j2.  No summation is needed
+// for the final result of each coarse task.
 
 // A fine taskid computes A*B(k1:k2,j) for a single vector C(:,j), for a
 // contiguous range k1:k2, where kk = Tasklist[taskid].vector (which is >= 0),
-// k1 = Bi [TaskList [taskid].start], k2 = Bi [TaskList [taskid].end].  It sums
-// its computations in a hash table shared by all fine tasks that compute
+// k1 = Bi [SaxpyTasks [taskid].start], k2 = Bi [SaxpyTasks [taskid].end].  It
+// sums its computations in a hash table shared by all fine tasks that compute
 // C(:,j), via atomics.  The vector index j is GBH (Bh, kk).
 
 // Both tasks use a hash table allocated uniquely for the task, in Hi, Hf, and
@@ -127,7 +127,7 @@ void GB_AxB_saxpy3_symbolic
     const bool M_dense_in_place,
     const GrB_Matrix A,         // A matrix; only the pattern is accessed
     const GrB_Matrix B,         // B matrix; only the pattern is accessed
-    GB_saxpy3task_struct *TaskList,     // list of tasks, and workspace
+    GB_saxpy3task_struct *SaxpyTasks,     // list of tasks, and workspace
     int ntasks,                 // total number of tasks
     int nfine,                  // number of fine tasks
     int nthreads                // number of threads
@@ -140,7 +140,7 @@ void GB_AxB_saxpy3_symbolic
 void GB_AxB_saxpy3_cumsum
 (
     GrB_Matrix C,               // finalize C->p
-    GB_saxpy3task_struct *TaskList, // list of tasks, and workspace
+    GB_saxpy3task_struct *SaxpyTasks, // list of tasks, and workspace
     int nfine,                  // number of fine tasks
     double chunk,               // chunk size
     int nthreads,               // number of threads
@@ -161,7 +161,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     const GrB_Matrix B,             // input matrix B
     GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
     // outputs
-    GB_saxpy3task_struct **TaskList_handle,
+    GB_saxpy3task_struct **SaxpyTasks_handle,
     bool *apply_mask,               // if true, apply M during sapxy3
     bool *M_dense_in_place,         // if true, use M in-place
     int *ntasks,                    // # of tasks created (coarse and fine)
@@ -181,7 +181,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     // outputs
-    GB_saxpy3task_struct **TaskList_handle,
+    GB_saxpy3task_struct **SaxpyTasks_handle,
     int *ntasks,                    // # of tasks created (coarse and fine)
     int *nfine,                     // # of fine tasks created
     int *nthreads,                  // # of threads to use

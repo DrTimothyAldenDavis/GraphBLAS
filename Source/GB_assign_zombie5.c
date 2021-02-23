@@ -21,9 +21,9 @@
 #include "GB_ek_slice.h"
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_WERK (C_ek_slicing) ;   \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (C_ek_slicing, int64_t) ;   \
 }
 
 GrB_Info GB_assign_zombie5
@@ -96,7 +96,7 @@ GrB_Info GB_assign_zombie5
     //--------------------------------------------------------------------------
 
     int C_ntasks, C_nthreads ;
-    int64_t *C_ek_slicing = NULL ;
+    GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
     GB_SLICE_MATRIX (C, 64) ;
 
     //--------------------------------------------------------------------------

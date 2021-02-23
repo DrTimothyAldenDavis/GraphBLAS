@@ -78,7 +78,7 @@
 
 #define GB_SLICE_M                                                          \
     GB_GET_M                                                                \
-    int64_t *M_ek_slicing = NULL ;                                          \
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;                               \
     int M_ntasks, M_nthreads ;                                              \
     GB_SLICE_MATRIX (M, 8) ;
 

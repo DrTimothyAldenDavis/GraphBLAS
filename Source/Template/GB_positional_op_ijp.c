@@ -20,9 +20,9 @@
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int A_ntasks, A_nthreads ;
-    int64_t *A_ek_slicing = NULL ;
-    GB_SLICE_MATRIX (A, 32) ;       // TODO: move to the caller
+    GB_SLICE_MATRIX (A, 32) ;
 
     //--------------------------------------------------------------------------
     // Cx = positional_op (A)
@@ -70,7 +70,7 @@
     // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE_WERK (A_ek_slicing) ;
+    GB_WERK_POP (A_ek_slicing, int64_t) ;
 }
 
 #undef GB_POSITION

@@ -27,9 +27,9 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_WERK (A_ek_slicing) ;   \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }
 
 GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
@@ -52,7 +52,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     ASSERT (op1 != NULL || op2 != NULL) ;
     ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB0) ;
     ASSERT (GB_JUMBLED_OK (A)) ;        // A can be jumbled
-    int64_t *A_ek_slicing = NULL ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
     // get A

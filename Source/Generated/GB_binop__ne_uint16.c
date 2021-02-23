@@ -273,9 +273,9 @@ GrB_Info GB_AaddB__ne_uint16
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int64_t *M_ek_slicing = NULL ;
-    int64_t *A_ek_slicing = NULL ;
-    int64_t *B_ek_slicing = NULL ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
     #include "GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif

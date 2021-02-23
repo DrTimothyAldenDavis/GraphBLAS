@@ -12,16 +12,16 @@
 #include "GB_type__include.h"
 #endif
 
-#define GB_FREE_WORK                    \
-{                                       \
-    GB_FREE_WERK (A_ek_slicing) ;       \
+#define GB_FREE_WORK                        \
+{                                           \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }
 
-#define GB_FREE_ALL                     \
-{                                       \
-    GB_FREE_WORK ;                      \
-    if (!in_place) GB_FREE (Ax_new) ;   \
-    GB_FREE (Ab) ;                      \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_WORK ;                          \
+    if (!in_place) GB_FREE (Ax_new) ;       \
+    GB_FREE (Ab) ;                          \
 }
 
 GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
@@ -36,7 +36,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int64_t *A_ek_slicing = NULL ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int8_t *GB_RESTRICT Ab = NULL ;
     GB_void *GB_RESTRICT Ax_new = NULL ;
 

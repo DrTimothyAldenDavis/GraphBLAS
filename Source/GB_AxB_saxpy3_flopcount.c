@@ -71,10 +71,10 @@
 #include "GB_bracket.h"
 #include "GB_AxB_saxpy3.h"
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_WERK_POP (Work, int64_t) ;   \
-    GB_FREE_WERK (B_ek_slicing) ;   \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (Work, int64_t) ;           \
+    GB_WERK_POP (B_ek_slicing, int64_t) ;   \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -169,6 +169,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     //--------------------------------------------------------------------------
 
     GB_WERK_DECLARE (Work, int64_t) ;
+    GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
     int64_t *GB_RESTRICT Wfirst = NULL ;
     int64_t *GB_RESTRICT Wlast  = NULL ;
 
@@ -176,7 +177,6 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // construct the parallel tasks
     //--------------------------------------------------------------------------
 
-    int64_t *B_ek_slicing = NULL ;
     int B_ntasks, B_nthreads ;
     GB_SLICE_MATRIX (B, 64) ;
 

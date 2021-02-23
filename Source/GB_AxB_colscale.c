@@ -15,9 +15,9 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_WORK                \
-{                                   \
-    GB_FREE_WERK (A_ek_slicing) ;   \
+#define GB_FREE_WORK                        \
+{                                           \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }
 
 #define GB_FREE_ALL                 \
@@ -58,7 +58,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     ASSERT (!GB_IS_BITMAP (A)) ;        // TODO: ok for now
     ASSERT (!GB_IS_BITMAP (D)) ;
     ASSERT (!GB_IS_FULL (D)) ;
-    int64_t *A_ek_slicing = NULL ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     GBURBLE ("(%s=%s*%s) ",
         GB_sparsity_char_matrix (A),    // C has the sparsity structure of A

@@ -533,7 +533,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         GB_void *GB_RESTRICT Cx = NULL ;
         bool ok = true ;
         Cp = GB_MALLOC (anz+1, int64_t) ;
-        Ci = GB_CALLOC (anz  , int64_t) ;
+        Ci = GB_MALLOC (anz  , int64_t) ;
         ok = (Cp != NULL && Ci != NULL) ;
 
         if (allocate_new_Cx)
@@ -603,10 +603,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
         int64_t k ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (k = 0 ; k <= anz ; k++)
+        for (k = 0 ; k < anz ; k++)
         { 
+            Ci [k] = 0 ;
             Cp [k] = k ;
         }
+        Cp [anz] = anz ;
 
         C->nzmax = anz ;
         C->magic = GB_MAGIC ;
@@ -682,7 +684,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         int64_t *GB_RESTRICT Cp = NULL ;
         int64_t *GB_RESTRICT Ci = NULL ;
         bool ok = true ;
-        Cp = GB_CALLOC (2, int64_t) ;
+        Cp = GB_MALLOC (2, int64_t) ;
         ok = ok && (Cp != NULL) ;
         if (!A_is_hyper)
         { 
@@ -709,6 +711,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_FREE_C ;
             return (GrB_OUT_OF_MEMORY) ;
         }
+
+        Cp [0] = 0 ;
+        Cp [1] = 0 ;
 
         //----------------------------------------------------------------------
         // numerical values of C: apply the op, typecast, or make shallow copy

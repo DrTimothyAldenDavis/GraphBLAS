@@ -66,15 +66,15 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_WORK                \
-{                                   \
-    GB_FREE_WERK (M_ek_slicing) ;   \
+#define GB_FREE_WORK                        \
+{                                           \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_WORK ;                  \
-    GB_Matrix_free (&C) ;           \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_WORK ;                          \
+    GB_Matrix_free (&C) ;                   \
 }
 
 GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
@@ -113,7 +113,8 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // declare workspace
     //--------------------------------------------------------------------------
 
-    int64_t *M_ek_slicing = NULL ; int M_ntasks = 0 ; int M_nthreads = 0 ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+    int M_ntasks = 0 ; int M_nthreads = 0 ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples

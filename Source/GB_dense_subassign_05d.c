@@ -27,9 +27,9 @@
 #endif
 
 #undef  GB_FREE_WORK
-#define GB_FREE_WORK                \
-{                                   \
-    GB_FREE_WERK (M_ek_slicing) ;   \
+#define GB_FREE_WORK                        \
+{                                           \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
 
 #undef  GB_FREE_ALL
@@ -58,7 +58,7 @@ GrB_Info GB_dense_subassign_05d
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int64_t *M_ek_slicing = NULL ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
     ASSERT_MATRIX_OK (C, "C for subassign method_05d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
