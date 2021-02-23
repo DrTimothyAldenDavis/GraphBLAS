@@ -66,12 +66,14 @@ GrB_Info GB_unjumble        // unjumble a matrix
     // slice the work
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT A_slice = NULL ;   // size ntasks + 1
-    if (!GB_pslice (&A_slice, Ap, anvec, ntasks, false))
+    GB_WERK_DECLARE (A_slice, int64_t) ;
+    GB_WERK_PUSH (A_slice, ntasks + 1, int64_t) ;
+    if (A_slice == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
+    GB_pslice (A_slice, Ap, anvec, ntasks, false) ;
 
     //--------------------------------------------------------------------------
     // sort the vectors
@@ -127,7 +129,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE (A_slice) ;
+    GB_WERK_POP (A_slice, int64_t) ;
     A->jumbled = false ;        // A has been unjumbled
     ASSERT_MATRIX_OK (A, "A unjumbled", GB0) ;
     return (GrB_SUCCESS) ;

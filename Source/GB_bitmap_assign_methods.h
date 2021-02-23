@@ -78,10 +78,8 @@
 
 #define GB_SLICE_M                                                          \
     GB_GET_M                                                                \
-    int64_t *pstart_Mslice = NULL ;                                         \
-    int64_t *kfirst_Mslice = NULL ;                                         \
-    int64_t *klast_Mslice  = NULL ;                                         \
-    int M_nthreads, M_ntasks ;                                              \
+    int64_t *M_ek_slicing = NULL ;                                          \
+    int M_ntasks, M_nthreads ;                                              \
     GB_SLICE_MATRIX (M, 8) ;
 
 //------------------------------------------------------------------------------
@@ -539,11 +537,9 @@ void GB_bitmap_M_scatter        // scatter M into the C bitmap
     const bool Mask_struct,     // true if M is structural, false if valued
     const int assign_kind,      // row assign, col assign, assign, or subassign
     const int operation,        // +=2, -=2, or %=2
-    const int64_t *GB_RESTRICT pstart_Mslice, // size ntasks+1
-    const int64_t *GB_RESTRICT kfirst_Mslice, // size ntasks
-    const int64_t *GB_RESTRICT klast_Mslice,  // size ntasks
-    const int mthreads,
-    const int mtasks,
+    const int64_t *M_ek_slicing,    // size M_ntasks+1
+    const int M_ntasks,
+    const int M_nthreads,
     GB_Context Context
 ) ;
 
@@ -555,11 +551,9 @@ void GB_bitmap_M_scatter_whole  // scatter M into the C bitmap
     const GrB_Matrix M,         // mask to scatter into the C bitmap
     const bool Mask_struct,     // true if M is structural, false if valued
     const int operation,        // +=2, -=2, or %=2
-    const int64_t *GB_RESTRICT pstart_Mslice, // size ntasks+1
-    const int64_t *GB_RESTRICT kfirst_Mslice, // size ntasks
-    const int64_t *GB_RESTRICT klast_Mslice,  // size ntasks
-    const int mthreads,
-    const int mtasks,
+    const int64_t *M_ek_slicing,    // size M_ntasks+1
+    const int M_ntasks,
+    const int M_nthreads,
     GB_Context Context
 ) ;
 

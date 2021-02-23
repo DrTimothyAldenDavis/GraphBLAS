@@ -14,7 +14,7 @@
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    GrB_Matrix C,           // output matrix, static header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask for C, unused if NULL
@@ -69,7 +69,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 
 GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    GrB_Matrix C,           // output matrix, static header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op

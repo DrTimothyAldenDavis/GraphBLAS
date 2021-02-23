@@ -424,6 +424,7 @@ bool h_shallow ;        // true if h is a shallow copy
 bool b_shallow ;        // true if b is a shallow copy
 bool i_shallow ;        // true if i is a shallow copy
 bool x_shallow ;        // true if x is a shallow copy
+bool static_header ;    // true if this struct is statically allocated
 
 //------------------------------------------------------------------------------
 // other bool content
@@ -539,6 +540,4 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
         }
 
 #endif
-
-// #include "GB_matrix_mkl_template.h"
 

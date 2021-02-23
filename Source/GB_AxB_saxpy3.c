@@ -14,7 +14,7 @@
 
 // C is sparse or hypersparse.  M, A, and B can have any format.
 // The accum operator is not handled, and C is not modified in-place.  Instead,
-// C is constructed and returned in Chandle.
+// C is constructed in a static header.
 
 // For simplicity, this discussion and all comments in this code assume that
 // all matrices are in CSC format, but the algorithm is CSR/CSC agnostic.
@@ -94,18 +94,18 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK                                                        \
-{                                                                           \
-    GB_FREE (TaskList) ;                                                    \
-    GB_FREE (Hi_all) ;                                                      \
-    GB_FREE (Hf_all) ;                                                      \
-    GB_FREE (Hx_all) ;                                                      \
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE_WERK (TaskList) ;   \
+    GB_FREE_WERK (Hi_all) ;     \
+    GB_FREE_WERK (Hf_all) ;     \
+    GB_FREE_WERK (Hx_all) ;     \
 }
 
-#define GB_FREE_ALL                                                         \
-{                                                                           \
-    GB_FREE_WORK ;                                                          \
-    GB_Matrix_free (Chandle) ;                                              \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WORK ;              \
+    GB_Matrix_free (&C) ;       \
 }
 
 //------------------------------------------------------------------------------
@@ -114,7 +114,7 @@
 
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
-    GrB_Matrix *Chandle,            // output matrix (not done in-place)
+    GrB_Matrix C,                   // output matrix (not done in-place)
     int C_sparsity,                 // construct C as sparse or hypersparse
     const GrB_Matrix M_input,       // optional mask matrix
     const bool Mask_comp_input,     // if true, use !M
@@ -143,8 +143,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     (*mask_applied) = false ;
     bool apply_mask = false ;
 
-    ASSERT (Chandle != NULL) ;
-    ASSERT (*Chandle == NULL) ;
+    ASSERT (C != NULL && C->static_header) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -164,8 +163,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB0) ;
     ASSERT (A->vdim == B->vlen) ;
 
-    (*Chandle) = NULL ;
-
     ASSERT (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE) ;
 
     //--------------------------------------------------------------------------
@@ -173,8 +170,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-
-    // #include "GB_AxB_saxpy3_mkl_template.c
 
     //--------------------------------------------------------------------------
     // define workspace
@@ -239,7 +234,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t cvdim = bvdim ;
     int64_t cnvec = bnvec ;
 
-    info = GB_new (Chandle, // sparse or hyper, new header
+    info = GB_new (&C, true, // sparse or hyper, static header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         C_sparsity, B->hyper_switch, cnvec, Context) ;
     if (info != GrB_SUCCESS)
@@ -248,8 +243,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         GB_FREE_ALL ;
         return (info) ;
     }
-
-    GrB_Matrix C = (*Chandle) ;
 
     int64_t *GB_RESTRICT Cp = C->p ;
     int64_t *GB_RESTRICT Ch = C->h ;
@@ -455,16 +448,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (Hi_size_total > 0)
     { 
-        Hi_all = GB_MALLOC (Hi_size_total, int64_t) ;
+        Hi_all = GB_MALLOC_WERK (Hi_size_total, int64_t) ;
     }
     if (Hf_size_total > 0)
     { 
         // Hf must be calloc'd to initialize all entries as empty 
-        Hf_all = GB_CALLOC (Hf_size_total, int64_t) ;
+        Hf_all = GB_CALLOC_WERK (Hf_size_total, int64_t) ;
     }
     if (Hx_size_total > 0)
     { 
-        Hx_all = GB_MALLOC (Hx_size_total * csize, GB_void) ;
+        Hx_all = GB_MALLOC_WERK (Hx_size_total * csize, GB_void) ;
     }
 
     if ((Hi_size_total > 0 && Hi_all == NULL) ||
@@ -628,7 +621,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GB_FREE_WORK ;
     GB_OK (GB_hypermatrix_prune (C, Context)) ;
     ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ;
-    ASSERT (*Chandle == C) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     (*mask_applied) = apply_mask ;

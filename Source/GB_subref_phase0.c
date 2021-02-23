@@ -140,8 +140,10 @@ static inline void GB_find_Ap_start_end
 // GB_subref_phase0
 //------------------------------------------------------------------------------
 
-#define GB_FREE_WORK \
-    GB_FREE (Count) ;
+#define GB_FREE_WORK                \
+{                                   \
+    GB_WERK_POP (Count, int64_t) ;  \
+}
 
 GrB_Info GB_subref_phase0
 (
@@ -301,7 +303,6 @@ GrB_Info GB_subref_phase0
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = 1, ntasks = 1 ;
     int max_ntasks = nthreads_max * 8 ;
-    int64_t *GB_RESTRICT Count = NULL ;        // size max_ntasks+1
 
     #define GB_GET_NTHREADS_AND_NTASKS(work)                    \
     {                                                           \
@@ -315,7 +316,8 @@ GrB_Info GB_subref_phase0
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Count = GB_CALLOC (max_ntasks+1, int64_t) ;
+    GB_WERK_DECLARE (Count, int64_t) ;
+    GB_WERK_PUSH (Count, max_ntasks+1, int64_t) ;
     if (Count == NULL)
     { 
         // out of memory
@@ -412,7 +414,7 @@ GrB_Info GB_subref_phase0
             Count [tid] = my_Cnvec ;
         }
 
-        GB_cumsum (Count, ntasks, NULL, 1) ;
+        GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
         Cnvec = Count [ntasks] ;
 
     }
@@ -449,7 +451,7 @@ GrB_Info GB_subref_phase0
             Count [tid] = my_Cnvec ;
         }
 
-        GB_cumsum (Count, ntasks, NULL, 1) ;
+        GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
         Cnvec = Count [ntasks] ;
     }
 
@@ -474,15 +476,15 @@ GrB_Info GB_subref_phase0
 
     if (Cnvec > 0)
     {
-        Ap_start = GB_MALLOC (Cnvec, int64_t) ;
-        Ap_end   = GB_MALLOC (Cnvec, int64_t) ;
+        Ap_start = GB_MALLOC_WERK (Cnvec, int64_t) ;
+        Ap_end   = GB_MALLOC_WERK (Cnvec, int64_t) ;
         if (Ap_start == NULL || Ap_end == NULL)
         { 
             // out of memory
             GB_FREE_WORK ;
             GB_FREE (Ch) ;
-            GB_FREE (Ap_start) ;
-            GB_FREE (Ap_end) ;
+            GB_FREE_WERK (Ap_start) ;
+            GB_FREE_WERK (Ap_end) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
     }

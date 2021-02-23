@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// On input, A->p and A->h may be shallow.  If modified, new arrays A->p and
+// A->h are created, which are not shallow.  If these arrays are not modified,
+// and are shallow on input, then they remain shallow on output.
+
 #include "GB.h"
 
 GrB_Info GB_hypermatrix_prune
@@ -56,8 +60,12 @@ GrB_Info GB_hypermatrix_prune
             // out of memory
             return (info) ;
         }
-        // free the old A->p and A->h (they might be shallow)
+        // free the old A->p and A->h.  If shallow, just remove them from A
+        // but do not free them since they come from another matrix.
         GB_ph_free (A) ;
+        // A->p and A->h are now NULL and thus not shallow
+        ASSERT (!A->p_shallow) ;
+        ASSERT (!A->h_shallow) ;
         // transplant the new hyperlist into A
         A->p = Ap_new ;
         A->h = Ah_new ;
@@ -65,8 +73,6 @@ GrB_Info GB_hypermatrix_prune
         A->plen = nvec_new ;
         A->nvec_nonempty = nvec_new ;
         A->magic = GB_MAGIC ;
-        ASSERT (!A->p_shallow) ;
-        ASSERT (!A->h_shallow) ;
     }
 
     return (GrB_SUCCESS) ;

@@ -40,7 +40,7 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_FREE (W) ;                       \
+    GB_FREE (W) ;  /* not workspace */  \
     GB_phbix_free (A) ;                 \
     GB_Matrix_free (&T) ;               \
     GB_Matrix_free (&S) ;               \
@@ -61,7 +61,10 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     //--------------------------------------------------------------------------
 
     GB_void *W = NULL ;
-    GrB_Matrix T = NULL, S = NULL, A1 = NULL ;
+    struct GB_Matrix_opaque T_header, A1_header, S_header ;
+    GrB_Matrix T  = GB_clear_static_header (&T_header) ;
+    GrB_Matrix A1 = NULL ;
+    GrB_Matrix S  = GB_clear_static_header (&S_header) ;
     GrB_Info info = GrB_SUCCESS ;
 
     ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
@@ -109,6 +112,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     int64_t anz_orig = GB_NNZ (A) ;
     int64_t asize = A->type->size ;
 
+    // TODO: make this a separate function
     if (GB_is_shallow (A))
     {
         // shallow matrices will never have any pending tuples
@@ -118,6 +122,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         { 
             int64_t len = A->plen * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void) ;
+            if (W == NULL)
+            {
+                // out of memory
+                return (GrB_OUT_OF_MEMORY) ;
+            }
             GB_memcpy (W, A->p, len, nthreads_max) ;
             A->p = (int64_t *) W ;
             A->p_shallow = false ;
@@ -128,6 +137,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         { 
             int64_t len = A->nvec * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void) ;
+            if (W == NULL)
+            {
+                // out of memory
+                return (GrB_OUT_OF_MEMORY) ;
+            }
             GB_memcpy (W, A->h, len, nthreads_max) ;
             A->h = W ;
             A->h_shallow = false ;
@@ -138,6 +152,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         { 
             int64_t len = anz_orig * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void) ;
+            if (W == NULL)
+            {
+                // out of memory
+                return (GrB_OUT_OF_MEMORY) ;
+            }
             GB_memcpy (W, A->i, len, nthreads_max) ;
             A->i = (int64_t *) W ;
             A->i_shallow = false ;
@@ -148,6 +167,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         { 
             int64_t len = anz_orig * asize ;
             W = GB_MALLOC (len, GB_void) ;
+            if (W == NULL)
+            {
+                // out of memory
+                return (GrB_OUT_OF_MEMORY) ;
+            }
             GB_memcpy (W, A->x, len, nthreads_max) ;
             A->x = (GB_void *) W ;
             A->x_shallow = false ;
@@ -190,7 +214,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         info = GB_builder
         (
-            &T,                     // create T
+            T,                      // create T using a static header
             A->type,                // T->type = A->type
             A->vlen,                // T->vlen = A->vlen
             A->vdim,                // T->vdim = A->vdim
@@ -405,7 +429,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             //------------------------------------------------------------------
 
             // A1 = [0, A (:, kA:end)], hypersparse with same dimensions as A
-            GB_OK (GB_new (&A1, // hyper, new header
+            A1 = GB_clear_static_header (&A1_header) ;
+            GB_OK (GB_new (&A1, true, // hyper, static header
                 A->type, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
                 GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA, Context)) ;
 
@@ -447,7 +472,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             // S = A1 + T, with no operator or mask
             //------------------------------------------------------------------
 
-            GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, 0, &ignore,
+            GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore,
                 A1, T, NULL, Context)) ;
 
             ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
@@ -531,7 +556,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         // FUTURE:: if GB_add could tolerate zombies in A, then the initial
         // prune of zombies can be skipped.
 
-        GB_OK (GB_add (&S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T, NULL,
+        GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T, NULL,
             Context)) ;
         GB_Matrix_free (&T) ;
         ASSERT_MATRIX_OK (S, "S after GB_Matrix_wait:add", GB0) ;

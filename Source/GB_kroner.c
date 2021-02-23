@@ -33,12 +33,12 @@
 #define GB_FREE_ALL         \
 {                           \
     GB_FREE_WORK ;          \
-    GB_Matrix_free (Chandle) ; \
+    GB_Matrix_free (&C) ;   \
 }
 
 GrB_Info GB_kroner                  // C = kron (A,B)
 (
-    GrB_Matrix *Chandle,            // output matrix
+    GrB_Matrix C,                   // output matrix (static header)
     const bool C_is_csc,            // desired format of C
     const GrB_BinaryOp op,          // multiply operator
     const GrB_Matrix A_in,          // input matrix
@@ -54,10 +54,11 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (Chandle != NULL) ;
-    (*Chandle) = NULL ;
-    GrB_Matrix A2 = NULL ;
-    GrB_Matrix B2 = NULL ;
+    ASSERT (C != NULL && C->static_header) ;
+
+    struct GB_Matrix_opaque A2_header, B2_header ;
+    GrB_Matrix A2 = GB_clear_static_header (&A2_header) ;
+    GrB_Matrix B2 = GB_clear_static_header (&B2_header) ;
 
     ASSERT_MATRIX_OK (A_in, "A_in for kron (A,B)", GB0) ;
     ASSERT_MATRIX_OK (B_in, "B_in for kron (A,B)", GB0) ;
@@ -78,7 +79,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (A))
     { 
         GBURBLE ("A:") ;
-        GB_OK (GB_dup2 (&A2, A, true, A->type, Context)) ;
+        GB_OK (GB_dup2 (&A2, A, true, A->type, Context)) ;  // static header
         GB_OK (GB_convert_bitmap_to_sparse (A2, Context)) ;
         A = A2 ;
     }
@@ -87,7 +88,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (B))
     { 
         GBURBLE ("B:") ;
-        GB_OK (GB_dup2 (&B2, B, true, B->type, Context)) ;
+        GB_OK (GB_dup2 (&B2, B, true, B->type, Context)) ;  // static header
         GB_OK (GB_convert_bitmap_to_sparse (B2, Context)) ;
         B = B2 ;
     }
@@ -146,11 +147,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int sparsity = C_is_full ? GxB_FULL :
         ((C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
 
-    GrB_Matrix C = NULL ;           // allocate a new header for C
-    GB_OK (GB_new_bix (&C, // full, sparse, or hyper; new header
+    GB_OK (GB_new_bix (&C, true, // full, sparse, or hyper; static header
         op->ztype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
         sparsity, true, B->hyper_switch, cnvec, cnzmax, true, Context)) ;
-    (*Chandle) = C ;
 
     //--------------------------------------------------------------------------
     // get C and the operator
@@ -218,7 +217,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             }
         }
 
-        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
+        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads, Context) ;
         if (C_is_hyper) C->nvec = cnvec ;
     }
 

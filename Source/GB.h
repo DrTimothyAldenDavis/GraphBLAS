@@ -11,7 +11,7 @@
 #define GB_H
 
 //------------------------------------------------------------------------------
-// defintions that modify GraphBLAS.h
+// definitions that modify GraphBLAS.h
 //------------------------------------------------------------------------------
 
 #include "GB_warnings.h"
@@ -48,7 +48,8 @@
 #include "GB_zombie.h"
 #include "GB_partition.h"
 #include "GB_omp.h"
-// #include "GB_mkl.h"
+#include "GB_memory.h"
+#include "GB_context.h"
 
 //------------------------------------------------------------------------------
 // internal definitions
@@ -259,178 +260,6 @@ GB_PUBLIC struct GB_SelectOp_opaque
     GB_opaque_GxB_LE_THUNK ;
 
 //------------------------------------------------------------------------------
-// error logging and parallel thread control
-//------------------------------------------------------------------------------
-
-// Error messages are logged in Context->logger, on the stack which is handle
-// to the input/output matrix/vector (typically C).  If the user-defined data
-// types, operators, etc have really long names, the error messages are safely
-// truncated (via snprintf).  This is intentional, but gcc with
-// -Wformat-truncation will print a warning (see pragmas above).  Ignore the
-// warning.
-
-// The Context also contains the number of threads to use in the operation.  It
-// is normally determined from the user's descriptor, with a default of
-// nthreads_max = GxB_DEFAULT (that is, zero).  The default rule is to let
-// GraphBLAS determine the number of threads automatically by selecting a
-// number of threads between 1 and nthreads_max.  GrB_init initializes
-// nthreads_max to omp_get_max_threads.  Both the global value and the value in
-// a descriptor can set/queried by GxB_set / GxB_get.
-
-// Some GrB_Matrix and GrB_Vector methods do not take a descriptor, however
-// (GrB_*_dup, _build, _exportTuples, _clear, _nvals, _wait, and GxB_*_resize).
-// For those methods the default rule is always used (nthreads_max =
-// GxB_DEFAULT), which then relies on the global nthreads_max.
-
-#define GB_RLEN 384
-#define GB_DLEN 256
-
-typedef struct
-{
-    double chunk ;              // chunk size for small problems
-    int nthreads_max ;          // max # of threads to use
-    const char *where ;         // GraphBLAS function where error occurred
-    char **logger ;             // error report
-    // #include "GB_Context_struct_mkl_template.h"
-}
-GB_Context_struct ;
-
-typedef GB_Context_struct *GB_Context ;
-
-// GB_WHERE keeps track of the currently running user-callable function.
-// User-callable functions in this implementation are written so that they do
-// not call other unrelated user-callable functions (except for GrB_*free).
-// Related user-callable functions can call each other since they all report
-// the same type-generic name.  Internal functions can be called by many
-// different user-callable functions, directly or indirectly.  It would not be
-// helpful to report the name of an internal function that flagged an error
-// condition.  Thus, each time a user-callable function is entered (except
-// GrB_*free), it logs the name of the function with the GB_WHERE macro.
-// GrB_*free does not encounter error conditions so it doesn't need to be
-// logged by the GB_WHERE macro.
-
-#define GB_CONTEXT(where_string)                                    \
-    /* construct the Context */                                     \
-    GB_Context_struct Context_struct ;                              \
-    GB_Context Context = &Context_struct ;                          \
-    /* set Context->where so GrB_error can report it if needed */   \
-    Context->where = where_string ;                                 \
-    /* get the default max # of threads and default chunk size */   \
-    Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;        \
-    Context->chunk = GB_Global_chunk_get ( ) ;                      \
-    /* get the pointer to where any error will be logged */         \
-    Context->logger = NULL ;
-
-// #include "GB_CONTEXT_mkl_template.h"
-
-#define GB_WHERE(C,where_string)                                    \
-    if (!GB_Global_GrB_init_called_get ( ))                         \
-    {                                                               \
-        return (GrB_PANIC) ; /* GrB_init not called */              \
-    }                                                               \
-    GB_CONTEXT (where_string)                                       \
-    if (C != NULL)                                                  \
-    {                                                               \
-        /* free any prior error logged in the object */             \
-        GB_FREE (C->logger) ;                                       \
-        Context->logger = &(C->logger) ;                            \
-    }
-
-#define GB_WHERE1(where_string)                                     \
-    if (!GB_Global_GrB_init_called_get ( ))                         \
-    {                                                               \
-        return (GrB_PANIC) ; /* GrB_init not called */              \
-    }                                                               \
-    GB_CONTEXT (where_string)
-
-//------------------------------------------------------------------------------
-// GB_GET_NTHREADS_MAX:  determine max # of threads for OpenMP parallelism.
-//------------------------------------------------------------------------------
-
-//      GB_GET_NTHREADS_MAX obtains the max # of threads to use and the chunk
-//      size from the Context.  If Context is NULL then a single thread *must*
-//      be used.  If Context->nthreads_max is <= GxB_DEFAULT, then select
-//      automatically: between 1 and nthreads_max, depending on the problem
-//      size.  Below is the default rule.  Any function can use its own rule
-//      instead, based on Context, chunk, nthreads_max, and the problem size.
-//      No rule can exceed nthreads_max.
-
-#define GB_GET_NTHREADS_MAX(nthreads_max,chunk,Context)                     \
-    int nthreads_max = (Context == NULL) ? 1 : Context->nthreads_max ;      \
-    if (nthreads_max <= GxB_DEFAULT)                                        \
-    {                                                                       \
-        nthreads_max = GB_Global_nthreads_max_get ( ) ;                     \
-    }                                                                       \
-    double chunk = (Context == NULL) ? GxB_DEFAULT : Context->chunk ;       \
-    if (chunk <= GxB_DEFAULT)                                               \
-    {                                                                       \
-        chunk = GB_Global_chunk_get ( ) ;                                   \
-    }
-
-//------------------------------------------------------------------------------
-// GB_nthreads: determine # of threads to use for a parallel loop or region
-//------------------------------------------------------------------------------
-
-// If work < 2*chunk, then only one thread is used.
-// else if work < 3*chunk, then two threads are used, and so on.
-
-static inline int GB_nthreads   // return # of threads to use
-(
-    double work,                // total work to do
-    double chunk,               // give each thread at least this much work
-    int nthreads_max            // max # of threads to use
-)
-{
-    work  = GB_IMAX (work, 1) ;
-    chunk = GB_IMAX (chunk, 1) ;
-    int64_t nthreads = (int64_t) floor (work / chunk) ;
-    nthreads = GB_IMIN (nthreads, nthreads_max) ;
-    nthreads = GB_IMAX (nthreads, 1) ;
-    return ((int) nthreads) ;
-}
-
-//------------------------------------------------------------------------------
-// error logging
-//------------------------------------------------------------------------------
-
-// The GB_ERROR macro logs an error in the logger error string.
-//
-//  if (i >= nrows)
-//  {
-//      GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS,
-//          "Row index %d out of bounds; must be < %d", i, nrows) ;
-//  }
-//
-// The user can then do:
-//
-//  const char *error ;
-//  GrB_error (&error, A) ;
-//  printf ("%s", error) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-const char *GB_status_code (GrB_Info info) ;
-
-// log an error in the error logger string and return the error
-#define GB_ERROR(info,format,...)                                           \
-{                                                                           \
-    if (Context != NULL)                                                    \
-    {                                                                       \
-        char **logger = Context->logger ;                                   \
-        if (logger != NULL)                                                 \
-        {                                                                   \
-            (*logger) = GB_MALLOC (GB_RLEN+1, char) ;                       \
-            if ((*logger) != NULL)                                          \
-            {                                                               \
-                snprintf ((*logger), GB_RLEN,                               \
-                    "GraphBLAS error: %s\nfunction: %s\n" format,           \
-                    GB_status_code (info), Context->where, __VA_ARGS__) ;   \
-            }                                                               \
-        }                                                                   \
-    }                                                                       \
-    return (info) ;                                                         \
-}
-
-//------------------------------------------------------------------------------
 // internal GraphBLAS functions
 //------------------------------------------------------------------------------
 
@@ -462,6 +291,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_new                 // create matrix, except for indices & values
 (
     GrB_Matrix *Ahandle,        // handle of matrix to create
+    const bool A_static_header, // true if Ahandle is statically allocated
     const GrB_Type type,        // matrix type
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
@@ -478,6 +308,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
 GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 (
     GrB_Matrix *Ahandle,        // output matrix to create
+    const bool A_static_header, // true if Ahandle is statically allocated
     const GrB_Type type,        // type of output matrix
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
@@ -509,8 +340,6 @@ GrB_Info GB_dup             // make an exact copy of a matrix
 (
     GrB_Matrix *Chandle,    // handle of output matrix to create
     const GrB_Matrix A,     // input matrix to copy
-    const bool numeric,     // if true, duplicate the numeric values
-    const GrB_Type ctype,   // type of C, if numeric is false
     GB_Context Context
 ) ;
 
@@ -677,17 +506,17 @@ typedef struct          // task descriptor
 }
 GB_task_struct ;
 
-// GB_REALLOC_TASK_LIST: Allocate or reallocate the TaskList so that it can
+// GB_REALLOC_TASK_WERK: Allocate or reallocate the TaskList so that it can
 // hold at least ntasks.  Double the size if it's too small.
 
-#define GB_REALLOC_TASK_LIST(TaskList,ntasks,max_ntasks)                    \
+#define GB_REALLOC_TASK_WERK(TaskList,ntasks,max_ntasks)                    \
 {                                                                           \
     if ((ntasks) >= max_ntasks)                                             \
     {                                                                       \
         bool ok ;                                                           \
         int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;               \
         int nnew = 2 * (ntasks) + 1 ;                                       \
-        GB_REALLOC (TaskList, nnew, nold, GB_task_struct, &ok) ;            \
+        GB_REALLOC_WERK (TaskList, nnew, nold, GB_task_struct, &ok) ;       \
         if (!ok)                                                            \
         {                                                                   \
             /* out of memory */                                             \
@@ -762,7 +591,8 @@ void GB_task_cumsum
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     GB_task_struct *GB_RESTRICT TaskList,  // array of structs
     const int ntasks,                   // # of tasks
-    const int nthreads                  // # of threads
+    const int nthreads,                 // # of threads
+    GB_Context Context
 ) ;
 
 //------------------------------------------------------------------------------
@@ -809,55 +639,9 @@ size_t GB_code_size             // return the size of a type, given its code
     const size_t usize          // known size of user-defined type
 ) ;
 
-//------------------------------------------------------------------------------
-// memory management
-//------------------------------------------------------------------------------
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void *GB_calloc_memory      // pointer to allocated block of memory
-(
-    size_t nitems,          // number of items to allocate
-    size_t size_of_item     // sizeof each item
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void *GB_malloc_memory      // pointer to allocated block of memory
-(
-    size_t nitems,          // number of items to allocate
-    size_t size_of_item     // sizeof each item
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void *GB_realloc_memory     // pointer to reallocated block of memory, or
-                            // to original block if the realloc failed.
-(
-    size_t nitems_new,      // new number of items in the object
-    size_t nitems_old,      // old number of items in the object
-    size_t size_of_item,    // sizeof each item
-    void *p,                // old object to reallocate
-    bool *ok                // true if successful, false otherwise
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void GB_free_memory
-(
-    void *p                 // pointer to allocated block of memory to free
-) ;
-
-#define GB_FREE(p)                                          \
-{                                                           \
-    GB_free_memory ((void *) p) ;                           \
-    (p) = NULL ;                                            \
-}
-
-#define GB_CALLOC(n,type) (type *) GB_calloc_memory (n, sizeof (type))
-#define GB_MALLOC(n,type) (type *) GB_malloc_memory (n, sizeof (type))
-#define GB_REALLOC(p,nnew,nold,type,ok) \
-    p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), (void *) p, ok)
-
 void GB_Matrix_free             // free a matrix
 (
-    GrB_Matrix *matrix_handle   // handle of matrix to free
+    GrB_Matrix *Ahandle         // handle of matrix to free
 ) ;
 
 //------------------------------------------------------------------------------
@@ -870,12 +654,12 @@ GrB_Type GB_code_type           // return the GrB_Type corresponding to the code
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-bool GB_pslice          // slice Ap; return true if ok, false if out of memory
+void GB_pslice                      // slice Ap
 (
-    int64_t *GB_RESTRICT *Slice_handle,    // size ntasks+1
-    const int64_t *GB_RESTRICT Ap,         // array of size n+1
+    int64_t *GB_RESTRICT Slice,     // size ntasks+1
+    const int64_t *GB_RESTRICT Ap,  // array size n+1 (NULL if full or bitmap)
     const int64_t n,
-    const int ntasks,                       // # of tasks
+    const int ntasks,               // # of tasks
     const bool perfectly_balanced
 ) ;
 
@@ -894,7 +678,8 @@ void GB_cumsum                      // cumulative sum of an array
     int64_t *GB_RESTRICT count,     // size n+1, input/output
     const int64_t n,
     int64_t *GB_RESTRICT kresult,   // return k, if needed by the caller
-    int nthreads
+    int nthreads,
+    GB_Context Context
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -956,13 +741,13 @@ bool GB_size_t_multiply     // true if ok, false if overflow
     const size_t b
 ) ;
 
-bool GB_extract_vector_list     // true if successful, false if out of memory
+GrB_Info GB_extract_vector_list     // extract vector list from a matrix
 (
     // output:
-    int64_t *GB_RESTRICT J,        // size nnz(A) or more
+    int64_t *GB_RESTRICT J,         // size nnz(A) or more
     // input:
     const GrB_Matrix A,
-    int nthreads
+    GB_Context Context
 ) ;
 
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
@@ -988,7 +773,7 @@ GrB_Info GB_Monoid_new          // create a monoid
 
 GrB_Info GB_Semiring_new            // create a semiring
 (
-    GrB_Semiring *semiring,         // handle of semiring to create
+    GrB_Semiring semiring,          // semiring to create
     GrB_Monoid add,                 // additive monoid of the semiring
     GrB_BinaryOp multiply           // multiply operator of the semiring
 ) ;
@@ -1164,9 +949,10 @@ void GB_cast_array              // typecast an array
         return (C_replace ? GB_clear (C, Context) : GrB_SUCCESS) ;          \
     }
 
-// GB_MASK_VERY_SPARSE is true if C<M>=A+B or C<M>=accum(C,T) is being
-// computed, and the mask M is very sparse compared with A and B.
-#define GB_MASK_VERY_SPARSE(M,A,B) (8 * GB_NNZ (M) < GB_NNZ (A) + GB_NNZ (B))
+// GB_MASK_VERY_SPARSE is true if C<M>=A+B, C<M>=A.*B or C<M>=accum(C,T) is
+// being computed, and the mask M is very sparse compared with A and B.
+#define GB_MASK_VERY_SPARSE(alpha,M,A,B) \
+    ((alpha) * GB_NNZ (M) < GB_NNZ (A) + GB_NNZ (B))
 
 //------------------------------------------------------------------------------
 // Pending upddate and zombies

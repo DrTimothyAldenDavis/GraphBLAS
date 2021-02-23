@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_phase0: find vectors of C to compute for C=A.*B or C<M>=A.*B
+// GB_emult_01_phase0: find vectors of C to compute for C=A.*B or C<M>=A.*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -38,7 +38,7 @@
 
 #include "GB_emult.h"
 
-GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
+GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
     const int64_t *GB_RESTRICT *Ch_handle,  // Ch is M->h, A->h, B->h, or NULL
@@ -404,7 +404,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     if (M_is_hyper && Ch != Mh)
     {
         // allocate C_to_M
-        C_to_M = GB_MALLOC (Cnvec, int64_t) ;
+        C_to_M = GB_MALLOC_WERK (Cnvec, int64_t) ;
         if (C_to_M == NULL)
         { 
             // out of memory
@@ -434,11 +434,11 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     if (A_is_hyper && Ch != Ah)
     {
         // allocate C_to_A
-        C_to_A = GB_MALLOC (Cnvec, int64_t) ;
+        C_to_A = GB_MALLOC_WERK (Cnvec, int64_t) ;
         if (C_to_A == NULL)
         { 
             // out of memory
-            GB_FREE (C_to_M) ;
+            GB_FREE_WERK (C_to_M) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -464,12 +464,12 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     if (B_is_hyper && Ch != Bh)
     {
         // allocate C_to_B
-        C_to_B = GB_MALLOC (Cnvec, int64_t) ;
+        C_to_B = GB_MALLOC_WERK (Cnvec, int64_t) ;
         if (C_to_B == NULL)
         { 
             // out of memory
-            GB_FREE (C_to_M) ;
-            GB_FREE (C_to_A) ;
+            GB_FREE_WERK (C_to_M) ;
+            GB_FREE_WERK (C_to_A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 

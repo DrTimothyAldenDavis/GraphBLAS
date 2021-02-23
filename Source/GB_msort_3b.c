@@ -349,7 +349,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT W = GB_MALLOC (3*n + 6*ntasks + 1, int64_t) ;
+    int64_t *GB_RESTRICT W = GB_MALLOC_WERK (3*n + 6*ntasks + 1, int64_t) ;
     if (W == NULL)
     { 
         // out of memory
@@ -451,7 +451,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE (W) ;
+    GB_FREE_WERK (W) ;
     return (GrB_SUCCESS) ;
 }
 

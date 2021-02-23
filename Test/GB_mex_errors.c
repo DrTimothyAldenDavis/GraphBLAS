@@ -2034,12 +2034,15 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Index huge = GxB_INDEX_MAX ;
-    GrB_Matrix HugeRow, HugeMatrix = NULL ;
+    GrB_Matrix HugeRow ;
     OK (GrB_Matrix_new (&HugeRow, GrB_FP64, 1, huge)) ;
     GB_Matrix_check (HugeRow, "huge row", G3, NULL) ;
     GxB_Matrix_fprint (HugeRow, "HugeRow", G3, ff) ;
 
-    OK (GB_AxB_dot2 (&HugeMatrix, NULL, false, false, HugeRow, HugeRow,
+    struct GB_Matrix_opaque HugeMatrix_header ;
+    GrB_Matrix HugeMatrix = GB_clear_static_header (&HugeMatrix_header) ;
+
+    OK (GB_AxB_dot2 (HugeMatrix, NULL, false, false, HugeRow, HugeRow,
         GxB_PLUS_TIMES_FP64, false, Context)) ;
 
     GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", G3, ff) ;
@@ -4774,11 +4777,14 @@ void mexFunction
     OK (GrB_Matrix_new (&C, GrB_FP32, 1, 1)) ;
     OK (GB_Matrix_check (A, "A for shallow op", G3, NULL)) ;
     Context->where = "GB_shallow_op" ;
-    OK (GB_shallow_op (&B, true,
+
+    struct GB_Matrix_opaque Q_header ;
+    GrB_Matrix Q = GB_clear_static_header (&Q_header) ;
+    OK (GB_shallow_op (Q, true,
         GrB_AINV_FP32, NULL, NULL, false,
         C, Context)) ;
-    OK (GB_Matrix_check (B, "B empty, float", G3, NULL)) ;
-    GrB_Matrix_free_(&B) ;
+    OK (GB_Matrix_check (Q, "Q empty, float", G3, NULL)) ;
+    GrB_Matrix_free_(&Q) ;
 
     bool b1, b2 ;
     int64_t imin, imax ;

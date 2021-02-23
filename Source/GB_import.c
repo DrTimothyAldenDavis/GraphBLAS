@@ -160,7 +160,7 @@ GrB_Info GB_import      // import a matrix in any format
     // allocate just the header of the matrix, not the content
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_new (A, // any sparsity, new header
+    GrB_Info info = GB_new (A, false, // any sparsity, new user header
         type, vlen, vdim, GB_Ap_null, is_csc,
         sparsity, GB_Global_hyper_switch_get ( ), nvec, Context) ;
     if (info != GrB_SUCCESS)

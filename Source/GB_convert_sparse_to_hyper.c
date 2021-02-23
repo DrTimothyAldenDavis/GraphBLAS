@@ -66,7 +66,8 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         const int64_t *GB_RESTRICT Ap_old = A->p ;
         bool Ap_old_shallow = A->p_shallow ;
 
-        int64_t *GB_RESTRICT Count = GB_MALLOC (ntasks+1, int64_t) ;
+        GB_WERK_DECLARE (Count, int64_t) ;
+        GB_WERK_PUSH (Count, ntasks+1, int64_t) ;
         if (Count == NULL)
         { 
             // out of memory
@@ -90,7 +91,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         // compute cumulative sum of Counts and nvec_nonempty
         //----------------------------------------------------------------------
 
-        GB_cumsum (Count, ntasks, NULL, 1) ;
+        GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
         int64_t nvec_nonempty = Count [ntasks] ;
         A->nvec_nonempty = nvec_nonempty ;
 
@@ -103,7 +104,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         if (Ap_new == NULL || Ah_new == NULL)
         { 
             // out of memory
-            GB_FREE (Count) ;
+            GB_WERK_POP (Count, int64_t) ;
             GB_FREE (Ap_new) ;
             GB_FREE (Ah_new) ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -149,7 +150,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         // free workspace, and free the old A->p unless it's shallow
         //----------------------------------------------------------------------
 
-        GB_FREE (Count) ;
+        GB_WERK_POP (Count, int64_t) ;
         if (!Ap_old_shallow)
         { 
             GB_FREE (Ap_old) ;

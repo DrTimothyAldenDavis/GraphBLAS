@@ -759,7 +759,7 @@
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
-    GB_AxB_saxpy3_cumsum (C, TaskList, nfine, chunk, nthreads) ;
+    GB_AxB_saxpy3_cumsum (C, TaskList, nfine, chunk, nthreads, Context) ;
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (10, ttt) ;

@@ -46,7 +46,7 @@
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    GrB_Matrix C,           // output matrix, static header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask for C, unused if NULL
@@ -66,9 +66,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     GrB_Info info ;
 
-    ASSERT (Chandle != NULL) ;
-    (*Chandle) = NULL ;
-    GrB_Matrix C = NULL ;
+    ASSERT (C != NULL && C->static_header) ;
 
     ASSERT (mask_applied != NULL) ;
     (*mask_applied) = false ;
@@ -153,9 +151,9 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         { 
             // out of memory; free everything allocated by GB_add_phase0
             GB_FREE (Ch) ;
-            GB_FREE (C_to_M) ;
-            GB_FREE (C_to_A) ;
-            GB_FREE (C_to_B) ;
+            GB_FREE_WERK (C_to_M) ;
+            GB_FREE_WERK (C_to_A) ;
+            GB_FREE_WERK (C_to_B) ;
             return (info) ;
         }
 
@@ -172,11 +170,11 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         if (info != GrB_SUCCESS)
         { 
             // out of memory; free everything allocated by GB_add_phase0
-            GB_FREE (TaskList) ;
             GB_FREE (Ch) ;
-            GB_FREE (C_to_M) ;
-            GB_FREE (C_to_A) ;
-            GB_FREE (C_to_B) ;
+            GB_FREE_WERK (TaskList) ;
+            GB_FREE_WERK (C_to_M) ;
+            GB_FREE_WERK (C_to_A) ;
+            GB_FREE_WERK (C_to_B) ;
             return (info) ;
         }
 
@@ -201,7 +199,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     info = GB_add_phase2 (
         // computed or used by phase2:
-        &C, ctype, C_is_csc, op,
+        C, ctype, C_is_csc, op,
         // from phase1 and phase1a:
         Cp, Cnvec_nonempty, TaskList, C_ntasks, C_nthreads,
         // from phase0:
@@ -213,10 +211,10 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // If the method failed, Cp and Ch have already been freed.
 
     // free workspace
-    GB_FREE (TaskList) ;
-    GB_FREE (C_to_M) ;
-    GB_FREE (C_to_A) ;
-    GB_FREE (C_to_B) ;
+    GB_FREE_WERK (TaskList) ;
+    GB_FREE_WERK (C_to_M) ;
+    GB_FREE_WERK (C_to_A) ;
+    GB_FREE_WERK (C_to_B) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -229,7 +227,6 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C output for add", GB0) ;
-    (*Chandle) = C ;
     (*mask_applied) = apply_mask ;
     return (GrB_SUCCESS) ;
 }

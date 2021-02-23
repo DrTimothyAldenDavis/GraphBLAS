@@ -41,7 +41,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     // allocate the task
     //--------------------------------------------------------------------------
 
-    GB_saxpy3task_struct *TaskList = GB_CALLOC (1, GB_saxpy3task_struct) ;
+    GB_saxpy3task_struct *TaskList = GB_CALLOC_WERK (1, GB_saxpy3task_struct) ;
     if (TaskList == NULL)
     { 
         // out of memory

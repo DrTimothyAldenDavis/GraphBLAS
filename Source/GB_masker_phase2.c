@@ -27,10 +27,10 @@
 #include "GB_unused.h"
 
 #undef  GB_FREE_WORK
-#define GB_FREE_WORK                                                    \
-{                                                                       \
-    GB_ek_slice_free (&pstart_Cslice, &kfirst_Cslice, &klast_Cslice) ;  \
-    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
+#define GB_FREE_WORK                \
+{                                   \
+    GB_FREE_WERK (C_ek_slicing) ;   \
+    GB_FREE_WERK (M_ek_slicing) ;   \
 }
 
 #undef  GB_FREE_ALL
@@ -42,7 +42,7 @@
 
 GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 (
-    GrB_Matrix *Rhandle,            // output matrix (unallocated on input)
+    GrB_Matrix R,                   // output matrix, static header
     const bool R_is_csc,            // format of output matrix R
     // from phase1:
     const int64_t *GB_RESTRICT Rp,  // vector pointers for R
@@ -93,8 +93,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
     ASSERT (C->type == Z->type) ;
 
-    int64_t *pstart_Cslice = NULL, *kfirst_Cslice = NULL, *klast_Cslice = NULL ;
-    int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
+    int64_t *C_ek_slicing = NULL ;
+    int64_t *M_ek_slicing = NULL ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix R
@@ -106,11 +106,9 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     ASSERT (R_is_hyper == (Rh != NULL)) ;
 
     int64_t rnz = (R_is_sparse_or_hyper) ? Rp [Rnvec] : C->vlen*C->vdim ;
-    (*Rhandle) = NULL ;
 
     // allocate the result R (but do not allocate R->p or R->h)
-    GrB_Matrix R = NULL ;
-    GrB_Info info = GB_new_bix (&R, // any sparsity, new header
+    GrB_Info info = GB_new_bix (&R, true, // any sparsity, static header
         C->type, C->vlen, C->vdim, GB_Ap_null, R_is_csc,
         R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, Context) ;
     if (info != GrB_SUCCESS)
@@ -161,7 +159,6 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     ASSERT (!GB_ZOMBIES (R)) ; 
     ASSERT (!GB_JUMBLED (R)) ;
     ASSERT (!GB_PENDING (R)) ; 
-    (*Rhandle) = R ;
     return (GrB_SUCCESS) ;
 }
 

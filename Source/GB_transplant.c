@@ -14,6 +14,9 @@
 // shallow.  This function is not user-callable.  The new type of C (ctype)
 // must be compatible with A->type.
 
+// C->hyper_switch, C->bitmap_switch, C->sparsity, and C->static_header are
+// not modified by the transplant.
+
 #include "GB.h"
 
 GrB_Info GB_transplant          // transplant one matrix into another
@@ -88,8 +91,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (C->i == NULL) ;
     ASSERT (C->x == NULL) ;
     ASSERT (C->Pending == NULL) ;
-
-    // C->hyper_switch and C->bitmap_switch are not modified by the transplant
 
     // determine if C should be constructed as a bitmap or full matrix
     bool C_is_bitmap = GB_IS_BITMAP (A) ;

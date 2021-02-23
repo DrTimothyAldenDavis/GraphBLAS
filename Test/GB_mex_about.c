@@ -527,10 +527,12 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_new (&A, GrB_BOOL, 10000, 10000)) ;
-    OK (GB_shallow_copy (&C, A->is_csc, A, NULL)) ;
-    OK (GxB_Matrix_fprint_(C, GxB_COMPLETE, NULL)) ;
+    struct GB_Matrix_opaque Q_header ;
+    GrB_Matrix Q = GB_clear_static_header (&Q_header) ;
+    OK (GB_shallow_copy (Q, A->is_csc, A, NULL)) ;
+    OK (GxB_Matrix_fprint_(Q, GxB_COMPLETE, NULL)) ;
     GrB_Matrix_free_(&A) ;
-    GrB_Matrix_free_(&C) ;
+    GrB_Matrix_free_(&Q) ;
 
     //--------------------------------------------------------------------------
     // tests with memory tracking off
@@ -569,10 +571,9 @@ void mexFunction
     // GB_pslice
     //--------------------------------------------------------------------------
 
-    int64_t *Slice = NULL ;
-    GB_pslice (&Slice, NULL, 0, 4, true) ;
+    int64_t Slice [30] ;
+    GB_pslice (Slice, NULL, 0, 4, true) ;
     for (int t = 0 ; t < 4 ; t++) CHECK (Slice [t] == 0) ;
-    GB_FREE (Slice) ;
 
     //--------------------------------------------------------------------------
     // renamed boolean monoids
@@ -1147,11 +1148,13 @@ void mexFunction
     OK (GrB_Matrix_new (&B, GrB_FP32, 0, n)) ;
     expected = GrB_OUT_OF_MEMORY ;
     bool ignore ;
-    ERR (GB_bitmap_AxB_saxpy (&C, GxB_BITMAP, NULL, false, false, A, B,
+    struct GB_Matrix_opaque G_header ;
+    GrB_Matrix G = GB_clear_static_header (&G_header) ;
+    ERR (GB_bitmap_AxB_saxpy (G, GxB_BITMAP, NULL, false, false, A, B,
         GrB_PLUS_TIMES_SEMIRING_FP32, false, &ignore, NULL)) ;
     GrB_Matrix_free_(&A) ;
     GrB_Matrix_free_(&B) ;
-    CHECK (C == NULL) ;
+    CHECK (G->x == NULL) ;
 
     //--------------------------------------------------------------------------
     // wrapup

@@ -25,10 +25,10 @@
     GB_Matrix_free (&AT) ;      \
     GB_Matrix_free (&M2) ;      \
     GB_Matrix_free (&MT) ;      \
-    GB_FREE (I2) ;              \
-    GB_FREE (J2) ;              \
-    GB_FREE (I2k) ;             \
-    GB_FREE (J2k) ;             \
+    GB_FREE_WERK (I2) ;         \
+    GB_FREE_WERK (J2) ;         \
+    GB_FREE_WERK (I2k) ;        \
+    GB_FREE_WERK (J2k) ;        \
 }
 
 GrB_Info GB_assign_prep
@@ -42,6 +42,13 @@ GrB_Info GB_assign_prep
     GrB_Matrix *C2_handle,          // NULL, or a copy of C
     GrB_Matrix *M2_handle,          // NULL, or a temporary matrix
     GrB_Matrix *A2_handle,          // NULL, or a temporary matrix
+
+    // static headers for C2, M2, A2, MT and AT
+    GrB_Matrix *C2_header_handle,
+    GrB_Matrix *M2_header_handle,
+    GrB_Matrix *A2_header_handle,
+    GrB_Matrix *MT_header_handle,
+    GrB_Matrix *AT_header_handle,
 
     // modified versions of the Rows/Cols lists, and their analysis:
     const GrB_Index **I_handle,     // Rows, Cols, or a modified copy I2
@@ -665,7 +672,8 @@ GrB_Info GB_assign_prep
         // TODO: if accum is present and it does not depend on the values of
         // A,  only construct the pattern of AT, not the values.
         GBURBLE ("(A transpose) ") ;
-        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,
+        AT = GB_clear_static_header (AT_header_handle) ;
+        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,    // static header
             NULL, NULL, NULL, false, Context)) ;
         GB_MATRIX_WAIT (AT) ;       // A cannot be jumbled
         A = AT ;
@@ -696,7 +704,8 @@ GrB_Info GB_assign_prep
             // transpose: typecast, no op, not in-place
             // TODO: if Mask_struct, only construct the pattern of MT
             GBURBLE ("(M transpose) ") ;
-            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M,
+            MT = GB_clear_static_header (MT_header_handle) ;
+            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, // static header
                 NULL, NULL, NULL, false, Context)) ;
             GB_MATRIX_WAIT (MT) ;       // M cannot be jumbled
             M = MT ;
@@ -824,27 +833,37 @@ GrB_Info GB_assign_prep
         if (!scalar_expansion)
         { 
             // A2 = A (Iinv, Jinv)
-            GB_OK (GB_subref (&A2, A->is_csc, A, Iinv, ni, Jinv, nj, false,
+            A2 = GB_clear_static_header (A2_header_handle) ;
+            GB_OK (GB_subref (A2, A->is_csc, A, Iinv, ni, Jinv, nj, false,
                 Context)) ;
             // GB_subref can return a jumbled result
             ASSERT (GB_JUMBLED_OK (A2)) ;
-            if (A == AT) GB_Matrix_free (&AT) ;
+            if (A == AT)
+            { 
+                GB_Matrix_free (&AT) ;
+                AT = NULL ;
+            }
             A = A2 ;
         }
 
         if (M != NULL && (*assign_kind) == GB_SUBASSIGN)
         { 
             // M2 = M (Iinv, Jinv)
-            GB_OK (GB_subref (&M2, M->is_csc, M, Iinv, ni, Jinv, nj, false,
+            M2 = GB_clear_static_header (M2_header_handle) ;
+            GB_OK (GB_subref (M2, M->is_csc, M, Iinv, ni, Jinv, nj, false,
                 Context)) ;
             // GB_subref can return a jumbled result
             ASSERT (GB_JUMBLED_OK (M2)) ;
-            if (M == MT) GB_Matrix_free (&MT) ;
+            if (M == MT)
+            {
+                GB_Matrix_free (&MT) ;
+                MT = NULL ;
+            }
             M = M2 ;
         }
 
-        GB_FREE (I2k) ;
-        GB_FREE (J2k) ;
+        GB_FREE_WERK (I2k) ;
+        GB_FREE_WERK (J2k) ;
     }
 
     // I and J are now sorted, with no duplicate entries.  They are either
@@ -936,11 +955,12 @@ GrB_Info GB_assign_prep
     if (C_aliased)
     {
         // C is aliased with M or A: make a copy of C to assign into
+        C2 = GB_clear_static_header (C2_header_handle) ;
         if (C_replace_may_be_done_early)
         { 
             // Instead of duplicating C, create a new empty matrix C2.
             int sparsity = (C->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-            GB_OK (GB_new (&C2, // sparse or hyper, new header
+            GB_OK (GB_new (&C2, true, // sparse or hyper, static header
                 C->type, C->vlen, C->vdim, GB_Ap_calloc, C_is_csc,
                 sparsity, C->hyper_switch, 1, Context)) ;
             GBURBLE ("(C alias cleared; C_replace early) ") ;
@@ -949,16 +969,18 @@ GrB_Info GB_assign_prep
         else
         { 
             // finish any computations in C, but leave it jumbled
+            // TODO:: keep zombies in C
             GBURBLE ("(C alias: make duplicate) ") ;
             GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (C) ;
             ASSERT (!GB_ZOMBIES (C)) ;
             ASSERT (GB_JUMBLED_OK (C)) ;
             ASSERT (!GB_PENDING (C)) ;
             // C2 = duplicate of C, which must be freed when done
-            GB_OK (GB_dup (&C2, C, true, NULL, Context)) ;
+            GB_OK (GB_dup2 (&C2, C, true, NULL, Context)) ; // static header
         }
         // C2 must be transplanted back into C when done
         C = C2 ;
+        ASSERT (C->static_header) ;
     }
     else
     {

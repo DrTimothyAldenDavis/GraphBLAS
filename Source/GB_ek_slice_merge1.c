@@ -29,17 +29,19 @@ void GB_ek_slice_merge1     // merge column counts for the matrix C
     // input/output:
     int64_t *GB_RESTRICT Cp,                    // column counts
     // input:
-    const int64_t *GB_RESTRICT Wfirst,          // size ntasks
-    const int64_t *GB_RESTRICT Wlast,           // size ntasks
-    const int64_t *GB_RESTRICT kfirst_Aslice,   // size ntasks
-    const int64_t *GB_RESTRICT klast_Aslice,    // size ntasks
-    const int ntasks                            // # of tasks
+    const int64_t *GB_RESTRICT Wfirst,          // size A_ntasks
+    const int64_t *GB_RESTRICT Wlast,           // size A_ntasks
+    const int64_t *A_ek_slicing,                // size 3*A_ntasks+1
+    const int A_ntasks                          // # of tasks
 )
 {
 
+    const int64_t *GB_RESTRICT kfirst_Aslice = A_ek_slicing ;
+    const int64_t *GB_RESTRICT klast_Aslice  = A_ek_slicing + A_ntasks ;
+
     int64_t kprior = -1 ;
 
-    for (int tid = 0 ; tid < ntasks ; tid++)
+    for (int tid = 0 ; tid < A_ntasks ; tid++)
     {
 
         //----------------------------------------------------------------------

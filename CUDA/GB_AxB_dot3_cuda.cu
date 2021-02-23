@@ -47,12 +47,12 @@ const std::vector<std::string> header_names ={};
 #define GB_FREE_ALL                                                     \
 {                                                                       \
     GB_FREE_WORK ;                                                      \
-    GrB_Matrix_free (Chandle) ;                                         \
+    GrB_Matrix_free (&C) ;                                              \
 }
 
 GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 (
-    GrB_Matrix *Chandle,            // output matrix
+    GrB_Matrix C,                   // output matrix, static header
     const GrB_Matrix M,             // mask matrix
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix
@@ -68,8 +68,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (Chandle != NULL) ;
-    ASSERT (*Chandle == NULL) ;
+    ASSERT (C != NULL && C->static_header) ;
 
     ASSERT_MATRIX_OK (M, "M for dot3 cuda A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot3 cuda A'*B", GB0) ;
@@ -101,7 +100,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     int64_t *Bucket = NULL;
     int64_t *Bucketp = NULL;
     int64_t *offset = NULL;
-    (*Chandle) = NULL ;
 
     // just in case M is jumbled and we don't handle it yet (TODO)
     GB_MATRIX_WAIT (M) ;
@@ -148,7 +146,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // TODO tell GB_CREATE where to put the data: CPU or GPU (via
     // cudaMemAdvise), but this works as-is.
     int sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-    info = GB_new_bix (Chandle, // sparse or hyper (from M), new header
+    info = GB_new_bix (&C, true, // sparse or hyper (from M), static header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         sparsity, false, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork 
@@ -161,7 +159,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         return (info) ;
     }
 
-    GrB_Matrix C = (*Chandle) ;
     //int64_t *Citemp =  C->i ;        
     //auto *Cxtemp = C->x ;        
     //cudaMalloc ((void**) &(C->i), cnz * sizeof( int64_t) ); 

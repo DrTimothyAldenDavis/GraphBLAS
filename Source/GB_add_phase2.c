@@ -37,23 +37,23 @@
 #endif
 
 #undef  GB_FREE_WORK
-#define GB_FREE_WORK                                                    \
-{                                                                       \
-    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
-    GB_ek_slice_free (&pstart_Aslice, &kfirst_Aslice, &klast_Aslice) ;  \
-    GB_ek_slice_free (&pstart_Bslice, &kfirst_Bslice, &klast_Bslice) ;  \
+#define GB_FREE_WORK                \
+{                                   \
+    GB_FREE_WERK (M_ek_slicing) ;   \
+    GB_FREE_WERK (A_ek_slicing) ;   \
+    GB_FREE_WERK (B_ek_slicing) ;   \
 }
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE_WORK ;          \
-    GB_Matrix_free (&C) ;   \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WORK ;                  \
+    GB_Matrix_free (&C) ;           \
 }
 
 GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    GrB_Matrix C,           // output matrix, static header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
@@ -96,9 +96,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_JUMBLED (B)) ;
 
-    int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
-    int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
-    int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
+    int64_t *M_ek_slicing = NULL ;
+    int64_t *A_ek_slicing = NULL ;
+    int64_t *B_ek_slicing = NULL ;
 
     //--------------------------------------------------------------------------
     // get the opcode
@@ -145,11 +145,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // C acquires the same hyperatio as A.
 
     int64_t cnz = (C_is_sparse_or_hyper) ? Cp [Cnvec] : (A->vlen*A->vdim) ;
-    (*Chandle) = NULL ;
 
     // allocate the result C (but do not allocate C->p or C->h)
-    GrB_Matrix C = NULL ;
-    GrB_Info info = GB_new_bix (&C, // any sparsity, new header
+    GrB_Info info = GB_new_bix (&C, true, // any sparsity, static header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
@@ -247,6 +245,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     {
         GB_BURBLE_MATRIX (C, "(generic add: %s) ",
             (op == NULL) ? "second" : op->name) ;
+
+// TODO:: use GB_ewise_generic
 
         GxB_binary_function fadd ;
         size_t csize, asize, bsize, xsize, ysize, zsize ;
@@ -441,7 +441,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // caller must free C_to_M, C_to_A, and C_to_B, but not Cp or Ch
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "C output for add phase2", GB0) ;
-    (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }
 

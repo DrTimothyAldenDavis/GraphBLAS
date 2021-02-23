@@ -20,11 +20,11 @@
 #include "GB_subassign_methods.h"
 #include "GB_ek_slice.h"
 
-#undef  GB_FREE_WORK
-#define GB_FREE_WORK \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_FREE_WORK
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WERK (C_ek_slicing) ;   \
+}
 
 GrB_Info GB_assign_zombie5
 (
@@ -89,42 +89,32 @@ GrB_Info GB_assign_zombie5
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    const int64_t znz = GB_NNZ_HELD (C) ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (znz, chunk, nthreads_max) ;
-    int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
-    // Task tid does entries pstart_slice [tid] to pstart_slice [tid+1]-1 and
-    // vectors kfirst_slice [tid] to klast_slice [tid].  The first and last
-    // vectors may be shared with prior slices and subsequent slices.
-
-    int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, C, &ntasks))
-    { 
-        // out of memory
-        return (GrB_OUT_OF_MEMORY) ;
-    }
+    int C_ntasks, C_nthreads ;
+    int64_t *C_ek_slicing = NULL ;
+    GB_SLICE_MATRIX (C, 64) ;
 
     //--------------------------------------------------------------------------
     // each task creates its own zombies
     //--------------------------------------------------------------------------
 
     int tid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+    #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1) \
         reduction(+:nzombies)
-    for (tid = 0 ; tid < ntasks ; tid++)
+    for (tid = 0 ; tid < C_ntasks ; tid++)
     {
 
         //----------------------------------------------------------------------
         // get the task description
         //----------------------------------------------------------------------
 
-        int64_t kfirst = kfirst_slice [tid] ;
-        int64_t klast  = klast_slice  [tid] ;
+        int64_t kfirst = kfirst_Cslice [tid] ;
+        int64_t klast  = klast_Cslice  [tid] ;
 
         //----------------------------------------------------------------------
         // scan vectors kfirst to klast for entries to delete
@@ -142,7 +132,7 @@ GrB_Info GB_assign_zombie5
             bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
             int64_t pC_start, pC_end ;
             GB_get_pA (&pC_start, &pC_end, tid, k,
-                kfirst, klast, pstart_slice, Cp, zvlen) ;
+                kfirst, klast, pstart_Cslice, Cp, zvlen) ;
 
             //------------------------------------------------------------------
             // get M(:,j)
@@ -201,7 +191,7 @@ GrB_Info GB_assign_zombie5
     //--------------------------------------------------------------------------
 
     C->nzombies = nzombies ;
-    GB_FREE_WORK ;
+    GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
 }
 

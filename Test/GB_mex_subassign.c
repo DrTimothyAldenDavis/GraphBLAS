@@ -743,7 +743,6 @@ void mexFunction
     if (C == A) A = NULL ;      // do not free A if it is aliased to C
     if (C == M) M = NULL ;      // do not free M if it is aliased to C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C assign result", true) ;
-
     FREE_ALL ;
 }
 

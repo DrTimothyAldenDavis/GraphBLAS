@@ -12,7 +12,6 @@
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_control.h"
-#include "GB_ek_slice.h"
 #include "GB_bracket.h"
 #include "GB_sort.h"
 #include "GB_atomics.h"

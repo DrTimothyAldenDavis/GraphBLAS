@@ -13,7 +13,9 @@
 #endif
 
 #define GB_FREE_WORK                    \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;
+{                                       \
+    GB_FREE_WERK (A_ek_slicing) ;       \
+}
 
 #define GB_FREE_ALL                     \
 {                                       \
@@ -34,7 +36,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
+    int64_t *A_ek_slicing = NULL ;
     int8_t *GB_RESTRICT Ab = NULL ;
     GB_void *GB_RESTRICT Ax_new = NULL ;
 
@@ -157,16 +159,8 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         // scatter the values and pattern of A into the bitmap
         //----------------------------------------------------------------------
 
-        int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
-        int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
-        if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A,
-            &ntasks))
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-
+        int A_nthreads, A_ntasks ;
+        GB_SLICE_MATRIX (A, 8) ;
         bool done = false ;
 
         #ifndef GBCOMPACT
@@ -178,8 +172,8 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
             #define GB_convert_s2b_(cname) GB_convert_s2b_ ## cname
             #define GB_WORKER(cname)                                        \
             {                                                               \
-                info = GB_convert_s2b_(cname) (A, Ax_new, Ab, kfirst_slice, \
-                    klast_slice, pstart_slice, ntasks, nthreads) ;          \
+                info = GB_convert_s2b_(cname) (A, Ax_new, Ab,               \
+                    A_ek_slicing, A_ntasks, A_nthreads) ;                   \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;

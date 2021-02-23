@@ -40,7 +40,7 @@ GrB_Info GB_build               // build matrix
 
 GrB_Info GB_builder                 // build a matrix from tuples
 (
-    GrB_Matrix *Thandle,            // matrix T to build
+    GrB_Matrix T,                   // matrix T to build (static header)
     const GrB_Type ttype,           // type of output matrix T
     const int64_t vlen,             // length of each vector of T
     const int64_t vdim,             // number of vectors in T

@@ -26,17 +26,17 @@
 #endif
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE_WORK ;          \
-    GB_FREE (TaskList) ;    \
-    GB_FREE (Npending) ;    \
-    GB_FREE (Zh) ;          \
-    GB_FREE (Z_to_X) ;      \
-    GB_FREE (Z_to_S) ;      \
-    GB_FREE (Z_to_A) ;      \
-    GB_FREE (Z_to_M) ;      \
-    GB_Matrix_free (&S);    \
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_FREE_WORK ;                      \
+    GB_WERK_POP (Npending, int64_t) ;   \
+    GB_FREE_WERK (TaskList) ;           \
+    GB_FREE (Zh) ;                      \
+    GB_FREE_WERK (Z_to_X) ;             \
+    GB_FREE_WERK (Z_to_S) ;             \
+    GB_FREE_WERK (Z_to_A) ;             \
+    GB_FREE_WERK (Z_to_M) ;             \
+    GB_Matrix_free (&S);                \
 }
 
 //------------------------------------------------------------------------------
@@ -47,13 +47,14 @@
     GrB_Info info ;                                                         \
     int taskid, ntasks = 0, max_ntasks = 0, nthreads ;                      \
     GB_task_struct *TaskList = NULL ;                                       \
-    int64_t *GB_RESTRICT Npending = NULL ;                                  \
+    GB_WERK_DECLARE (Npending, int64_t) ;                                   \
     int64_t *GB_RESTRICT Zh = NULL ;                                        \
     int64_t *GB_RESTRICT Z_to_X = NULL ;                                    \
     int64_t *GB_RESTRICT Z_to_S = NULL ;                                    \
     int64_t *GB_RESTRICT Z_to_A = NULL ;                                    \
     int64_t *GB_RESTRICT Z_to_M = NULL ;                                    \
-    GrB_Matrix S = NULL ;
+    struct GB_Matrix_opaque S_header ;                                      \
+    GrB_Matrix S = GB_clear_static_header (&S_header) ;
 
 //------------------------------------------------------------------------------
 // GB_GET_C: get the C matrix (cannot be bitmap)
@@ -1018,7 +1019,7 @@
 GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting the pattern not values
 (
     // output
-    GrB_Matrix *Shandle,        // output matrix 
+    GrB_Matrix S,               // output matrix, static header
     // inputs, not modified:
     const GrB_Matrix C,         // matrix to extract the pattern of
     const GrB_Index *I,         // index list for S = C(I,J), or GrB_ALL, etc.
@@ -1505,11 +1506,11 @@ GrB_Info GB_subassign_19
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_ALLOCATE_NPENDING: allocate Npending workspace
+// GB_ALLOCATE_NPENDING_WERK: allocate Npending workspace
 //------------------------------------------------------------------------------
 
-#define GB_ALLOCATE_NPENDING                                                \
-    Npending = GB_MALLOC (ntasks+1, int64_t) ;                              \
+#define GB_ALLOCATE_NPENDING_WERK                                           \
+    GB_WERK_PUSH (Npending, ntasks+1, int64_t) ;                            \
     if (Npending == NULL)                                                   \
     {                                                                       \
         GB_FREE_ALL ;                                                       \
@@ -1530,7 +1531,7 @@ GrB_Info GB_subassign_19
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
         M, Context)) ;                                                      \
-    GB_ALLOCATE_NPENDING ;
+    GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
 // GB_SUBASSIGN_TWO_SLICE: slice two matrices
@@ -1555,7 +1556,7 @@ GrB_Info GB_subassign_19
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
         Znvec, Zh, NULL, Z_to_X, Z_to_S, false,                             \
         NULL, X, S, Context)) ;                                             \
-    GB_ALLOCATE_NPENDING ;
+    GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
 // GB_SUBASSIGN_IXJ_SLICE: slice IxJ for a scalar assignement method
@@ -1569,7 +1570,7 @@ GrB_Info GB_subassign_19
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
         /* I, */ nI, /* Ikind, Icolon, J, */ nJ, /* Jkind, Jcolon, */       \
         Context)) ;                                                         \
-    GB_ALLOCATE_NPENDING ;
+    GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
 // GB_subassign_one_slice
@@ -1814,7 +1815,7 @@ GrB_Info GB_subassign_emult_slice
 
 #define GB_PENDING_CUMSUM                                                   \
     C->nzombies = nzombies ;                                                \
-    GB_cumsum (Npending, ntasks, NULL, 1) ;                                 \
+    GB_cumsum (Npending, ntasks, NULL, 1, NULL) ;                           \
     int64_t nnew = Npending [ntasks] ;                                      \
     if (nnew == 0)                                                          \
     {                                                                       \

@@ -50,7 +50,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     { 
         // A = A', done in-place, to put A in CSC format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose (NULL, NULL, true, *A,
+        GB_OK (GB_transpose (NULL, NULL, true, *A,  // in_place_A
             NULL, NULL, NULL, false, Context)) ;
     }
 

@@ -273,8 +273,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     GB_Pending Pending = A->Pending ;
 
     #if GB_DEVELOPER
-    // a matrix contains 1 to 9 different allocated blocks
-    int64_t nallocs = 1 +                       // header
+    // a matrix contains 0 to 9 dynamically malloc'd blocks
+    int64_t nallocs = (!A->static_header) +     // header
         (A->p != NULL && !A->p_shallow) +       // A->p, if not shallow
         (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
         (A->b != NULL && !A->b_shallow) +       // A->b, if not shallow
@@ -286,10 +286,18 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         (Pending != NULL && Pending->x != NULL) ;
     if (pr_short || pr_complete)
     {
-        GBPR ("  header %p number of memory blocks: " GBd "\n", A, nallocs) ;
+        if (A->static_header)
+        { 
+            GBPR ("  static header,") ;
+        }
+        else
+        { 
+            GBPR ("  header %p", A) ;
+        }
+        GBPR (" number of memory blocks: " GBd "\n", nallocs) ;
     }
     #endif
-
+ 
     //--------------------------------------------------------------------------
     // check the type
     //--------------------------------------------------------------------------

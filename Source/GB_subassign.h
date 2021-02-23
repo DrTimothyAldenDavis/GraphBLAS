@@ -103,6 +103,13 @@ GrB_Info GB_assign_prep
     GrB_Matrix *M2_handle,          // NULL, or a temporary matrix
     GrB_Matrix *A2_handle,          // NULL, or a temporary matrix
 
+    // static headers for C2, M2, A2, MT and AT
+    GrB_Matrix *C2_header_handle,
+    GrB_Matrix *M2_header_handle,
+    GrB_Matrix *A2_header_handle,
+    GrB_Matrix *MT_header_handle,
+    GrB_Matrix *AT_header_handle,
+
     // modified versions of the Rows/Cols lists, and their analysis:
     const GrB_Index **I_handle,     // Rows, Cols, or a modified copy I2
     GrB_Index **I2_handle,          // NULL, or sorted/pruned Rows or Cols

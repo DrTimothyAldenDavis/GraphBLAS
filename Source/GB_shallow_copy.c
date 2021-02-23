@@ -26,7 +26,7 @@
 GB_PUBLIC                   // used by GraphBLAS MATLAB interface
 GrB_Info GB_shallow_copy    // create a purely shallow matrix
 (
-    GrB_Matrix *Chandle,    // output matrix C
+    GrB_Matrix C,           // output matrix C, with a static header
     const bool C_is_csc,    // desired CSR/CSC format of C
     const GrB_Matrix A,     // input matrix
     GB_Context Context
@@ -37,13 +37,13 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (Chandle != NULL) ;
+    ASSERT (C != NULL) ;
+    ASSERT (C->static_header) ;
     ASSERT_MATRIX_OK (A, "A for shallow copy", GB0) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
-    (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------
     // construct a shallow copy of A for the pattern of C
@@ -52,16 +52,10 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     // allocate the struct for C, but do not allocate C->[p,h,b,i,x].
     // C has the exact same sparsity structure as A.
     GrB_Info info ;
-    GrB_Matrix C = NULL ;
-    int sparsity = GB_sparsity (C) ;
-    info = GB_new (&C, // sparse or hyper, new header
+    info = GB_new (&C, true, // sparse or hyper, static header
         A->type, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        sparsity, A->hyper_switch, 0, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        return (info) ;
-    }
+        GB_sparsity (A), A->hyper_switch, 0, Context) ;
+    ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------
     // make a shallow copy of the vector pointers
@@ -95,7 +89,6 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
         C->x_shallow = false ;
         C->jumbled = false ;
         ASSERT_MATRIX_OK (C, "C = quick copy of empty A", GB0) ;
-        (*Chandle) = C ;
         return (GrB_SUCCESS) ;
     }
 
@@ -117,7 +110,6 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->x = A->x ;
     C->x_shallow = (A->x != NULL) ; // C->x will not be freed when freeing C
     ASSERT_MATRIX_OK (C, "C = pure shallow (A)", GB0) ;
-    (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }
 

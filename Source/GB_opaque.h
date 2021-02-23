@@ -391,7 +391,6 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     double chunk ;          // chunk size for # of threads for small problems
     bool predefined ;       // if true, descriptor is predefined
     bool do_sort ;          // if nonzero, do the sort in GrB_mxm
-    // #include "GB_Descriptor_opaque_mkl_template.h"
 } ;
 
 //------------------------------------------------------------------------------
@@ -434,6 +433,17 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 {
     #include "GB_matrix.h"
 } ;
+
+static inline GrB_Matrix GB_clear_static_header // clear a static header
+(
+    GrB_Matrix C    // static header to clear
+)
+{ 
+    ASSERT (C != NULL) ;
+    memset (C, 0, sizeof (struct GB_Matrix_opaque)) ;
+    C->static_header = true ;
+    return (C) ;
+}
 
 //------------------------------------------------------------------------------
 // Accessing the content of a scalar, vector, or matrix

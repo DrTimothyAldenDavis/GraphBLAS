@@ -303,8 +303,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
-        // #include "GxB_Global_Option_get_mkl_template.c"
-
         default : 
 
             return (GrB_INVALID_VALUE) ;

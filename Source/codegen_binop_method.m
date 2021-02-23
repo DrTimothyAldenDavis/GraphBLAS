@@ -17,9 +17,10 @@ name = sprintf ('%s_%s', binop, fname) ;
 
 % function names
 fprintf (f, 'define(`GB_AaddB'', `GB_AaddB__%s'')\n', name) ;
-fprintf (f, 'define(`GB_AemultB'', `GB_AemultB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AemultB_01'', `GB_AemultB_01__%s'')\n', name) ;
-fprintf (f, 'define(`GB_AemultB_100'', `GB_AemultB_100__%s'')\n', name) ;
+fprintf (f, 'define(`GB_AemultB_02'', `GB_AemultB_02__%s'')\n', name) ;
+fprintf (f, 'define(`GB_AemultB_03'', `GB_AemultB_03__%s'')\n', name) ;
+fprintf (f, 'define(`GB_AemultB_bitmap'', `GB_AemultB_bitmap__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_accumB'', `GB_Cdense_accumB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_accumb'', `GB_Cdense_accumb__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_ewise3_noaccum'', `GB_Cdense_ewise3_noaccum__%s'')\n', name) ;
@@ -98,31 +99,6 @@ if (isequal (binop, 'second'))
     fprintf (f, 'define(`GB_op_is_second'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_op_is_second'', `0'')\n') ;
-end
-
-% determine the names of the dense GB_cblas_* gateway routines to use
-is_fp32 = isequal (xtype, 'float') ;
-is_fp64 = isequal (xtype, 'double') ;
-is_real = is_fp32 || is_fp64 ;
-is_plus  = isequal (binop, 'plus') ;
-is_minus = isequal (binop, 'minus') ;
-if (is_real && (is_plus || is_minus))
-    if (is_plus)
-        fprintf (f, 'define(`GB_op_is_plus_real'', `1'')\n') ;
-        fprintf (f, 'define(`GB_op_is_minus_real'', `0'')\n') ;
-    else
-        fprintf (f, 'define(`GB_op_is_plus_real'', `0'')\n') ;
-        fprintf (f, 'define(`GB_op_is_minus_real'', `1'')\n') ;
-    end
-    if (is_fp32)
-        fprintf (f, 'define(`GB_cblas_axpy'', `GB_cblas_saxpy'')\n') ;
-    else
-        fprintf (f, 'define(`GB_cblas_axpy'', `GB_cblas_daxpy'')\n') ;
-    end
-else
-    fprintf (f, 'define(`GB_op_is_plus_real'', `0'')\n') ;
-    fprintf (f, 'define(`GB_op_is_minus_real'', `0'')\n') ;
-    fprintf (f, 'define(`GB_cblas_axpy'', `(none)'')\n') ;
 end
 
 % determine type of z, x, and y from xtype and binop
@@ -246,7 +222,7 @@ fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fclose (f) ;
 
-trim = 43 ;
+trim = 41 ;
 
 % construct the *.c file
 cmd = sprintf (...

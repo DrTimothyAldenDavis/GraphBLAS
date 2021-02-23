@@ -25,7 +25,7 @@ GrB_Info GB_mask                // C<M> = Z
 
 GrB_Info GB_masker          // R = masker (C, M, Z)
 (
-    GrB_Matrix *Rhandle,    // output matrix (unallocated on input)
+    GrB_Matrix R,           // output matrix, static header
     const bool R_is_csc,    // format of output matrix R
     const GrB_Matrix M,     // required input mask
     const bool Mask_comp,   // descriptor for M
@@ -60,7 +60,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
 
 GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 (
-    GrB_Matrix *Rhandle,            // output matrix (unallocated on input)
+    GrB_Matrix R,                   // output matrix, static header
     const bool R_is_csc,            // format of output matrix R
     // from phase1:
     const int64_t *GB_RESTRICT Rp,  // vector pointers for R

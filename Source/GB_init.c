@@ -103,8 +103,6 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_free_function_set    (free_function   ) ;
     GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
 
-    // #include "GB_init_mkl_template.c"
-
     //--------------------------------------------------------------------------
     // max number of threads
     //--------------------------------------------------------------------------

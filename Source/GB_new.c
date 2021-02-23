@@ -21,8 +21,6 @@
 // is GxB_FULL or GxB_BITMAP.  The Ap_option is ignored.  For a full or
 // bitmap matrix, only the header is allocated, if NULL on input.
 
-// Only GrB_SUCCESS and GrB_OUT_OF_MEMORY can be returned by this function.
-
 // The GrB_Matrix object holds both a sparse vector and a sparse matrix.  A
 // vector is represented as an vlen-by-1 matrix, but it is sometimes treated
 // differently in various methods.  Vectors are never transposed via a
@@ -39,6 +37,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_new                 // create matrix, except for indices & values
 (
     GrB_Matrix *Ahandle,        // handle of matrix to create
+    const bool A_static_header, // true if Ahandle is statically allocated
     const GrB_Type type,        // matrix type
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
@@ -68,13 +67,20 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool allocated_header = false ;
     if ((*Ahandle) == NULL)
     {
-        (*Ahandle) = GB_CALLOC (1, struct GB_Matrix_opaque) ;
+        (*Ahandle) = GB_MALLOC (1, struct GB_Matrix_opaque) ;
         if (*Ahandle == NULL)
         { 
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }
         allocated_header = true ;
+        (*Ahandle)->static_header = false ;  // header of A has been malloc'd
+    }
+    else
+    {
+        // the header of A has been provided on input.  It may already be
+        // malloc'd, or it might be statically allocated in the caller. 
+        (*Ahandle)->static_header = A_static_header ;
     }
 
     GrB_Matrix A = *Ahandle ;
@@ -86,6 +92,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // basic information
     A->magic = GB_MAGIC2 ;                 // object is not yet valid
     A->type = type ;
+    A->logger = NULL ;          // no error logged yet
 
     // CSR/CSC format
     A->is_csc = is_csc ;
@@ -150,9 +157,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->h = NULL ;
     A->p_shallow = false ;
     A->h_shallow = false ;
-    // #include "GB_new_mkl_template.c"
-
-    A->logger = NULL ;          // no error logged yet
 
     // content that is freed or reset in GB_bix_free
     A->b = NULL ;
@@ -219,8 +223,13 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // out of memory
         if (allocated_header)
         { 
-            // only free the header if it was allocated here
+            // free all of A, including the header
             GB_Matrix_free (Ahandle) ;
+        }
+        else
+        {
+            // the header was not allocated here; only free the content of A
+            GB_phbix_free (A) ;
         }
         return (GrB_OUT_OF_MEMORY) ;
     }

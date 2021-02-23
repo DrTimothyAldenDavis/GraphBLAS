@@ -20,7 +20,7 @@
 
 GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 (
-    GrB_Matrix *Chandle,            // output matrix (if not done in-place)
+    GrB_Matrix C,                   // output, static header
     const GrB_Matrix M,             // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
@@ -40,8 +40,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     //--------------------------------------------------------------------------
 
     (*mask_applied) = false ;
-    ASSERT (Chandle != NULL) ;
-    ASSERT (*Chandle == NULL) ;
+    ASSERT (C != NULL && C->static_header) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -98,7 +97,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         //----------------------------------------------------------------------
 
         // GB_AxB_saxpy3 assumes C and B have the same sparsity structure
-        return (GB_AxB_saxpy3 (Chandle, C_sparsity, M, Mask_comp, Mask_struct,
+        return (GB_AxB_saxpy3 (C, C_sparsity, M, Mask_comp, Mask_struct,
             A, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
             Context)) ;
 
@@ -110,7 +109,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         // C=A*B, C<M>=A*B or C<!M>=A*B: bitmap/full, possibly in-place 
         //----------------------------------------------------------------------
 
-        return (GB_bitmap_AxB_saxpy (Chandle, C_sparsity, M, Mask_comp,
+        return (GB_bitmap_AxB_saxpy (C, C_sparsity, M, Mask_comp,
             Mask_struct, A, B, semiring, flipxy, mask_applied, Context)) ;
     }
 }

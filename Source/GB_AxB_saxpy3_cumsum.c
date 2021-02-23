@@ -18,7 +18,8 @@ void GB_AxB_saxpy3_cumsum
     GB_saxpy3task_struct *TaskList, // list of tasks, and workspace
     int nfine,                  // number of fine tasks
     double chunk,               // chunk size
-    int nthreads                // number of threads
+    int nthreads,               // number of threads
+    GB_Context Context
 )
 {
 
@@ -133,7 +134,7 @@ void GB_AxB_saxpy3_cumsum
     // fine tasks or coarse tasks, and where j == GBH (Bh, kk) 
 
     int nth = GB_nthreads (cnvec, chunk, nthreads) ;
-    GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth) ;
+    GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth, Context) ;
 
     //--------------------------------------------------------------------------
     // cumulative sum of nnz (C (:,j)) for each team of fine tasks

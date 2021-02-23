@@ -13,11 +13,6 @@
 #include "GB.h"
 #include "GB_partition.h"
 
-#define GB_FREE_ALL     \
-{                       \
-    GB_FREE (W) ;       \
-}
-
 GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
 (
     // outputs:
@@ -87,10 +82,10 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
         //----------------------------------------------------------------------
 
         // allocate one row of W per thread, each row of length avdim
-        W = GB_MALLOC (nthreads * avdim, int64_t) ;
+        W = GB_MALLOC_WERK (nthreads * avdim, int64_t) ;
         if (W == NULL)
         {
-            GB_FREE_ALL ;
+            // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -139,7 +134,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     //--------------------------------------------------------------------------
 
     int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
-    GB_cumsum (Ap, avdim, anvec_nonempty, nth) ;
+    GB_cumsum (Ap, avdim, anvec_nonempty, nth, Context) ;
     int64_t anz = Ap [avdim] ;
     ASSERT (anz == A->nvals) ;
 
@@ -229,7 +224,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     // free workspace return result
     //--------------------------------------------------------------------------
 
-    GB_FREE (W) ;
+    GB_FREE_WERK (W) ;
     return (GrB_SUCCESS) ;
 }
 

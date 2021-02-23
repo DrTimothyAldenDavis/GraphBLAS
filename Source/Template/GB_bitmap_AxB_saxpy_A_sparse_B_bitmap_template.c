@@ -23,11 +23,11 @@
         // allocate workspace for each task
         //----------------------------------------------------------------------
 
-        GH_slice = GB_MALLOC (2*ntasks, int64_t) ;
+        GB_WERK_PUSH (GH_slice, 2*ntasks, int64_t) ;
         if (GH_slice == NULL)
         {
             // out of memory
-            GB_FREE_WORK ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -60,13 +60,13 @@
         size_t wfspace = gfspace + hwork * cvlen ;
         size_t wbxspace = gwork * bvlenx ;
         size_t wcxspace = hwork * cvlenx ;
-        Wf = GB_MALLOC (wfspace, int8_t) ;
-        Wbx = GB_MALLOC (wbxspace, GB_void) ;
-        Wcx = GB_MALLOC (wcxspace, GB_void) ;
+        Wf  = GB_MALLOC_WERK (wfspace, int8_t) ;
+        Wbx = GB_MALLOC_WERK (wbxspace, GB_void) ;
+        Wcx = GB_MALLOC_WERK (wcxspace, GB_void) ;
         if (Wf == NULL || Wcx == NULL || Wbx == NULL)
         {
             // out of memory
-            GB_FREE_WORK ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -614,13 +614,13 @@
         //----------------------------------------------------------------------
 
         size_t workspace = cvlen * ntasks ;
-        Wf = GB_CALLOC (workspace, int8_t) ;
         size_t cxsize = (GB_IS_ANY_PAIR_SEMIRING) ? 0 : GB_CSIZE ;
-        Wcx = GB_MALLOC (workspace * cxsize, GB_void) ;
+        Wf  = GB_CALLOC_WERK (workspace, int8_t) ;
+        Wcx = GB_MALLOC_WERK (workspace * cxsize, GB_void) ;
         if (Wf == NULL || Wcx == NULL)
         { 
             // out of memory
-            GB_FREE_WORK ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 

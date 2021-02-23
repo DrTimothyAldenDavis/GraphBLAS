@@ -22,9 +22,10 @@
 // C=binop(A,B) is defined by the following types and operators:
 
 // A+B function (eWiseAdd):         GB_AaddB__le_int32
-// A.*B function (eWiseMult):       GB_AemultB__le_int32
-// A.*B function (eWiseMult):       GB_AemultB_01__le_int32
-// A.*B function (eWiseMult):       GB_AemultB_100__le_int32
+// A.*B function (eWiseMult):       GB_AemultB
+// A.*B function (eWiseMult):       GB_AemultB_02__le_int32
+// A.*B function (eWiseMult):       GB_AemultB_03__le_int32
+// A.*B function (eWiseMult):       GB_AemultB_bitmap__le_int32
 // A*D function (colscale):         GB_AxD__le_int32
 // D*A function (rowscale):         GB_DxB__le_int32
 // C+=B function (dense accum):     GB_Cdense_accumB__le_int32
@@ -96,18 +97,6 @@
 #define GB_OP_IS_SECOND \
     0
 
-// op is plus_fp32 or plus_fp64
-#define GB_OP_IS_PLUS_REAL \
-    0
-
-// op is minus_fp32 or minus_fp64
-#define GB_OP_IS_MINUS_REAL \
-    0
-
-// GB_cblas_*axpy gateway routine, if it exists for this operator and type:
-#define GB_CBLAS_AXPY \
-    (none)
-
 // do the numerical phases of GB_add and GB_emult
 #define GB_PHASE_2_OF_2
 
@@ -167,11 +156,7 @@ GrB_Info GB_Cdense_accumB__le_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 )
 {
     #if GB_DISABLE
@@ -223,11 +208,7 @@ GrB_Info GB_AxD__le_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     #if GB_DISABLE
@@ -270,14 +251,6 @@ GrB_Info GB_DxB__le_int32
 // eWiseAdd: C = A+B or C<M> = A+B
 //------------------------------------------------------------------------------
 
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL                                                     \
-{                                                                       \
-    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
-    GB_ek_slice_free (&pstart_Aslice, &kfirst_Aslice, &klast_Aslice) ;  \
-    GB_ek_slice_free (&pstart_Bslice, &kfirst_Bslice, &klast_Bslice) ;  \
-}
-
 GrB_Info GB_AaddB__le_int32
 (
     GrB_Matrix C,
@@ -300,11 +273,10 @@ GrB_Info GB_AaddB__le_int32
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
-    int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
-    int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
+    int64_t *M_ek_slicing = NULL ;
+    int64_t *A_ek_slicing = NULL ;
+    int64_t *B_ek_slicing = NULL ;
     #include "GB_add_template.c"
-    GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -313,11 +285,11 @@ GrB_Info GB_AaddB__le_int32
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB__le_int32
+GrB_Info GB_AemultB_01__le_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
-    const int emult_method,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -335,31 +307,26 @@ GrB_Info GB_AemultB__le_int32
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    int64_t *pstart_Mslice = NULL, *kfirst_Mslice = NULL, *klast_Mslice = NULL ;
-    int64_t *pstart_Aslice = NULL, *kfirst_Aslice = NULL, *klast_Aslice = NULL ;
-    int64_t *pstart_Bslice = NULL, *kfirst_Bslice = NULL, *klast_Bslice = NULL ;
-    #include "GB_emult_template.c"
-    GB_FREE_ALL ;
+    #include "GB_emult_01_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
 
 //------------------------------------------------------------------------------
-// eWiseMult: C = A.*B when A is sparse/hyper and B is bitmap/full
+// eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_01__le_int32
+GrB_Info GB_AemultB_02__le_int32
 (
     GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool flipxy,
-    const int64_t *GB_RESTRICT pstart_Aslice,
-    const int64_t *GB_RESTRICT kfirst_Aslice,
-    const int64_t *GB_RESTRICT klast_Aslice,
     const int64_t *GB_RESTRICT Cp_kfirst,
-    const int A_ntasks,
-    const int A_nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     #if GB_DISABLE
@@ -373,21 +340,21 @@ GrB_Info GB_AemultB_01__le_int32
             // use fmult(y,x)
             #undef  GB_FLIPPED
             #define GB_FLIPPED 1
-            #include "GB_emult_01_template.c"
+            #include "GB_emult_02_template.c"
         }
         else
         {
             // use fmult(x,y)
             #undef  GB_FLIPPED
             #define GB_FLIPPED 0
-            #include "GB_emult_01_template.c"
+            #include "GB_emult_02_template.c"
         }
     #else
         // No need to handle the flip: the operator is either commutative, or
         // has been handled by changing z=div(y,x) to z=rdiv(x,y) for example.
         #undef  GB_FLIPPED
         #define GB_FLIPPED 0
-        #include "GB_emult_01_template.c"
+        #include "GB_emult_02_template.c"
     #endif
     return (GrB_SUCCESS) ;
     #endif
@@ -397,25 +364,47 @@ GrB_Info GB_AemultB_01__le_int32
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_100__le_int32
+GrB_Info GB_AemultB_03__le_int32
 (
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT pstart_Mslice,
-    const int64_t *GB_RESTRICT kfirst_Mslice,
-    const int64_t *GB_RESTRICT klast_Mslice,
     const int64_t *GB_RESTRICT Cp_kfirst,
-    const int M_ntasks,
-    const int M_nthreads
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 )
 { 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_emult_100_template.c"
+    #include "GB_emult_03_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
+//------------------------------------------------------------------------------
+
+GrB_Info GB_AemultB_bitmap__le_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
+    const int C_nthreads,
+    GB_Context Context
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_bitmap_emult_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

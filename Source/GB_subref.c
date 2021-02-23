@@ -70,20 +70,20 @@
 //      detected in A.  Since pa = Cx [pc] holds the position of the entry in
 //      A, the entry is a zombie if Ai [pa] has been flipped.
 
-#define GB_FREE_WORK        \
-{                           \
-    GB_FREE (TaskList) ;    \
-    GB_FREE (Ap_start) ;    \
-    GB_FREE (Ap_end) ;      \
-    GB_FREE (Mark) ;        \
-    GB_FREE (Inext) ;       \
+#define GB_FREE_WORK            \
+{                               \
+    GB_FREE_WERK (TaskList) ;   \
+    GB_FREE_WERK (Ap_start) ;   \
+    GB_FREE_WERK (Ap_end) ;     \
+    GB_FREE_WERK (Mark) ;       \
+    GB_FREE_WERK (Inext) ;      \
 }
 
-#define GB_FREE_ALL         \
-{                           \
-    GB_FREE (Cp) ;          \
-    GB_FREE (Ch) ;          \
-    GB_FREE_WORK ;          \
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE (Cp) ;              \
+    GB_FREE (Ch) ;              \
+    GB_FREE_WORK ;              \
 }
 
 #include "GB_subref.h"
@@ -92,7 +92,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 (
     // output
-    GrB_Matrix *Chandle,
+    GrB_Matrix C,               // output matrix, static header
     // input, not modified
     const bool C_is_csc,        // requested format of C
     const GrB_Matrix A,
@@ -110,7 +110,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (Chandle != NULL) ;
+    ASSERT (C != NULL && C->static_header) ;
     ASSERT_MATRIX_OK (A, "A for C=A(I,J) subref", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;    // A is sorted, below, if jumbled on input
@@ -123,7 +123,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
     { 
         // C is constructed with same sparsity as A (bitmap or full)
-        return (GB_bitmap_subref (Chandle, C_is_csc, A, I, ni, J, nj, symbolic,
+        return (GB_bitmap_subref (C, C_is_csc, A, I, ni, J, nj, symbolic,
             Context)) ;
     }
 
@@ -138,7 +138,6 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     int64_t *GB_RESTRICT Mark = NULL ;
     int64_t *GB_RESTRICT Inext = NULL ;
     GB_task_struct *TaskList = NULL ;
-    GrB_Matrix C = NULL ;
 
     int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
     bool post_sort, need_qsort ;
@@ -196,7 +195,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 
     GB_OK (GB_subref_phase2 (
         // computed by phase2:
-        &C,
+        C,
         // from phase1:
         &Cp, Cnvec_nonempty,
         // from phase0b:
@@ -222,7 +221,6 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
-    (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }
 

@@ -28,7 +28,8 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix T = NULL ;
+    struct GB_Matrix_opaque T_header ;
+    GrB_Matrix T = GB_clear_static_header (&T_header) ;
 
     // C may be aliased with M and/or A
 
@@ -90,7 +91,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
             // If there is no accum operator, T is transplanted into Z and
             // typecasted into the C->type during the transpose.
             // transpose: typecast, no op, not in-place
-            GB_OK (GB_transpose (&T, C->type, C_is_csc, A,
+            GB_OK (GB_transpose (&T, C->type, C_is_csc, A,  // T static
                 NULL, NULL, NULL, false, Context)) ;
         }
         else
@@ -101,7 +102,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
             // typecast of T (if any) must wait, and be done in call to GB_add
             // in GB_accum_mask.
             // transpose: no typecast, no op, not in-place
-            GB_OK (GB_transpose (&T, A->type, C_is_csc, A,
+            GB_OK (GB_transpose (&T, A->type, C_is_csc, A,  // T static
                 NULL, NULL, NULL, false, Context)) ;
         }
 
@@ -119,7 +120,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
         // differ.  That can be postponed at no cost since the following step
         // is free.
         GBURBLE ("(cheap) ") ;
-        GB_OK (GB_shallow_copy (&T, C_is_csc, A, Context)) ;
+        GB_OK (GB_shallow_copy (T, C_is_csc, A, Context)) ;
     }
 
     ASSERT (T->is_csc == C->is_csc) ;
@@ -132,7 +133,6 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 
     info = GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp, 
         Mask_struct, Context) ;
-    ASSERT (T == NULL) ;
     if (info == GrB_SUCCESS)
     {
         ASSERT_MATRIX_OK (C, "final C for GrB_transpose", GB0) ;

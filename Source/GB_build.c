@@ -113,7 +113,8 @@ GrB_Info GB_build               // build matrix
     // free all content of C
     //--------------------------------------------------------------------------
 
-    // the type, dimensions, and hyper_switch are still preserved in C.
+    // the type, dimensions, hyper_switch, bitmap_switch and sparsity control
+    // are still preserved in C.
     GB_phbix_free (C) ;
     ASSERT (GB_IS_EMPTY (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -123,7 +124,7 @@ GrB_Info GB_build               // build matrix
     // build the matrix T
     //--------------------------------------------------------------------------
 
-    // T is always built as hypersparse .  Its type is the same as the z output
+    // T is always built as hypersparse.  Its type is the same as the z output
     // of the z=dup(x,y) operator.
 
     // S_input must be treated as read-only, so GB_builder is not allowed to
@@ -132,11 +133,12 @@ GrB_Info GB_build               // build matrix
     int64_t *no_I_work = NULL ;
     int64_t *no_J_work = NULL ;
     GB_void *no_S_work = NULL ;
-    GrB_Matrix T = NULL ;
+    struct GB_Matrix_opaque T_header ;
+    GrB_Matrix T = GB_clear_static_header (&T_header) ;
 
     GrB_Info info = GB_builder
     (
-        &T,             // create T
+        T,              // create T using a static header
         dup->ztype,     // T has the type determined by the dup operator
         C->vlen,        // T->vlen = C->vlen
         C->vdim,        // T->vdim = C->vdim
