@@ -143,7 +143,8 @@ void GB_AxB_saxpy3_cumsum
     GB_saxpy3task_struct *TaskList, // list of tasks, and workspace
     int nfine,                  // number of fine tasks
     double chunk,               // chunk size
-    int nthreads                // number of threads
+    int nthreads,               // number of threads
+    GB_Context Context
 ) ;
 
 //------------------------------------------------------------------------------

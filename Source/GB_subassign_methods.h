@@ -26,17 +26,17 @@
 #endif
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_FREE_WERK (TaskList) ;   \
-    GB_FREE_WERK (Npending) ;   \
-    GB_FREE (Zh) ;              \
-    GB_FREE_WERK (Z_to_X) ;     \
-    GB_FREE_WERK (Z_to_S) ;     \
-    GB_FREE_WERK (Z_to_A) ;     \
-    GB_FREE_WERK (Z_to_M) ;     \
-    GB_Matrix_free (&S);        \
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_FREE_WORK ;                      \
+    GB_WERK_POP (Npending, int64_t) ;   \
+    GB_FREE_WERK (TaskList) ;           \
+    GB_FREE (Zh) ;                      \
+    GB_FREE_WERK (Z_to_X) ;             \
+    GB_FREE_WERK (Z_to_S) ;             \
+    GB_FREE_WERK (Z_to_A) ;             \
+    GB_FREE_WERK (Z_to_M) ;             \
+    GB_Matrix_free (&S);                \
 }
 
 //------------------------------------------------------------------------------
@@ -47,7 +47,7 @@
     GrB_Info info ;                                                         \
     int taskid, ntasks = 0, max_ntasks = 0, nthreads ;                      \
     GB_task_struct *TaskList = NULL ;                                       \
-    int64_t *GB_RESTRICT Npending = NULL ;                                  \
+    GB_WERK_DECLARE (Npending, int64_t) ;                                   \
     int64_t *GB_RESTRICT Zh = NULL ;                                        \
     int64_t *GB_RESTRICT Z_to_X = NULL ;                                    \
     int64_t *GB_RESTRICT Z_to_S = NULL ;                                    \
@@ -1510,7 +1510,7 @@ GrB_Info GB_subassign_19
 //------------------------------------------------------------------------------
 
 #define GB_ALLOCATE_NPENDING_WERK                                           \
-    Npending = GB_MALLOC_WERK (ntasks+1, int64_t) ;                         \
+    GB_WERK_PUSH (Npending, ntasks+1, int64_t) ;                            \
     if (Npending == NULL)                                                   \
     {                                                                       \
         GB_FREE_ALL ;                                                       \
@@ -1815,7 +1815,7 @@ GrB_Info GB_subassign_emult_slice
 
 #define GB_PENDING_CUMSUM                                                   \
     C->nzombies = nzombies ;                                                \
-    GB_cumsum (Npending, ntasks, NULL, 1) ;                                 \
+    GB_cumsum (Npending, ntasks, NULL, 1, NULL) ;                           \
     int64_t nnew = Npending [ntasks] ;                                      \
     if (nnew == 0)                                                          \
     {                                                                       \

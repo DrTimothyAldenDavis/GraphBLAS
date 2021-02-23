@@ -591,7 +591,8 @@ void GB_task_cumsum
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     GB_task_struct *GB_RESTRICT TaskList,  // array of structs
     const int ntasks,                   // # of tasks
-    const int nthreads                  // # of threads
+    const int nthreads,                 // # of threads
+    GB_Context Context
 ) ;
 
 //------------------------------------------------------------------------------
@@ -677,7 +678,8 @@ void GB_cumsum                      // cumulative sum of an array
     int64_t *GB_RESTRICT count,     // size n+1, input/output
     const int64_t n,
     int64_t *GB_RESTRICT kresult,   // return k, if needed by the caller
-    int nthreads
+    int nthreads,
+    GB_Context Context
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

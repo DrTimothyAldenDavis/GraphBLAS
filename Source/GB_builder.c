@@ -97,7 +97,7 @@
 
 #define GB_FREE_WORK                \
 {                                   \
-    GB_FREE_WERK (Work) ;           \
+    GB_WERK_POP (Work, int64_t) ;   \
     GB_FREE (*I_work_handle) ;      \
     GB_FREE (*J_work_handle) ;      \
     GB_FREE (*S_work_handle) ;      \
@@ -192,7 +192,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int64_t *Work = GB_CALLOC_WERK (5*(nthreads+1), int64_t) ;
+    GB_WERK_DECLARE (Work, int64_t) ;
+    GB_WERK_PUSH (Work, 5*(nthreads+1), int64_t) ;
     if (Work == NULL)
     { 
         // out of memory
@@ -200,6 +201,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         return (GrB_OUT_OF_MEMORY) ;
     }
 
+    memset (Work, 0, Work_nitems * sizeof (int64_t)) ;
     int64_t *GB_RESTRICT tstart_slice = Work ;                  // nthreads+1
     int64_t *GB_RESTRICT tnvec_slice  = Work +   (nthreads+1) ; // nthreads+1
     int64_t *GB_RESTRICT tnz_slice    = Work + 2*(nthreads+1) ; // nthreads+1
@@ -724,11 +726,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // Replace tnvec_slice with its cumulative sum, after which each slice tid
     // will be responsible for the # vectors in T that range from tnvec_slice
     // [tid] to tnvec_slice [tid+1]-1.
-    GB_cumsum (tnvec_slice, nthreads, NULL, 1) ;
+    GB_cumsum (tnvec_slice, nthreads, NULL, 1, NULL) ;
     int64_t tnvec = tnvec_slice [nthreads] ;
 
     // Replace tnz_slice with its cumulative sum
-    GB_cumsum (tnz_slice, nthreads, NULL, 1) ;
+    GB_cumsum (tnz_slice, nthreads, NULL, 1, NULL) ;
 
     // find the total # of final entries, after assembling duplicates
     int64_t tnz = tnz_slice [nthreads] ;

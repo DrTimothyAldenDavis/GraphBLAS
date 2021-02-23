@@ -73,7 +73,7 @@ GrB_Info GB_hyper_prune
     }
 
     int64_t nvec ;
-    GB_cumsum (W, nvec_old, &nvec, nthreads) ;
+    GB_cumsum (W, nvec_old, &nvec, nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // allocate the result

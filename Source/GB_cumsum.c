@@ -26,7 +26,8 @@ void GB_cumsum                      // cumulative sum of an array
     int64_t *GB_RESTRICT count,     // size n+1, input/output
     const int64_t n,
     int64_t *GB_RESTRICT kresult,   // return k, if needed by the caller
-    int nthreads
+    int nthreads,
+    GB_Context Context
 )
 {
 
@@ -83,11 +84,12 @@ void GB_cumsum                      // cumulative sum of an array
             //------------------------------------------------------------------
 
             // allocate workspace
-            int64_t *ws = GB_MALLOC_WERK (nthreads, int64_t) ;
+            GB_WERK_DECLARE (ws, int64_t) ;
+            GB_WERK_PUSH (ws, nthreads, int64_t) ;
             if (ws == NULL)
             { 
                 // out of memory; use a single thread instead
-                GB_cumsum (count, n, NULL, 1) ;
+                GB_cumsum (count, n, NULL, 1, NULL) ;
                 return ;
             }
 
@@ -130,7 +132,7 @@ void GB_cumsum                      // cumulative sum of an array
             }
 
             // free workspace
-            GB_FREE_WERK (ws) ;
+            GB_WERK_POP (ws, int64_t) ;
         }
 
     }
@@ -164,14 +166,19 @@ void GB_cumsum                      // cumulative sum of an array
             // cumsum with multiple threads, also compute k
             //------------------------------------------------------------------
 
-            int64_t *ws = GB_MALLOC_WERK (2*nthreads, int64_t) ;
-            if (ws == NULL)
+            // allocate workspace
+            GB_WERK_DECLARE (ws, int64_t) ;
+            GB_WERK_DECLARE (wk, int64_t) ;
+            GB_WERK_PUSH (ws, nthreads, int64_t) ;
+            GB_WERK_PUSH (wk, nthreads, int64_t) ;
+            if (ws == NULL || wk == NULL)
             { 
                 // out of memory; use a single thread instead
-                GB_cumsum (count, n, kresult, 1) ;
+                GB_WERK_POP (wk, int64_t) ;
+                GB_WERK_POP (ws, int64_t) ;
+                GB_cumsum (count, n, kresult, 1, NULL) ;
                 return ;
             }
-            int64_t *wk = ws + nthreads ;
 
             int tid ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -223,7 +230,8 @@ void GB_cumsum                      // cumulative sum of an array
             (*kresult) = k ;
 
             // free workspace
-            GB_FREE_WERK (ws) ;
+            GB_WERK_POP (wk, int64_t) ;
+            GB_WERK_POP (ws, int64_t) ;
         }
     }
 }

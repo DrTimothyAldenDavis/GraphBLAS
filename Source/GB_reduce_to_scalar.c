@@ -129,8 +129,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         // allocate workspace
         //----------------------------------------------------------------------
 
-        GB_WERK_PUSH (W, false, ntasks * zsize, GB_void) ;
-        GB_WERK_PUSH (F, false, ntasks, bool) ;
+        GB_WERK_PUSH (W, ntasks * zsize, GB_void) ;
+        GB_WERK_PUSH (F, ntasks, bool) ;
         if (W == NULL || F == NULL)
         { 
             // out of memory

@@ -12,16 +12,16 @@
 // in-place if the accum operator is the same as the monoid.
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_WERK (Wf) ;             \
-    GB_FREE_WERK (Wax) ;            \
-    GB_FREE_WERK (Wbx) ;            \
-    GB_FREE_WERK (Wcx) ;            \
-    GB_FREE_WERK (GH_slice) ;       \
-    GB_FREE_WERK (A_slice) ;        \
-    GB_FREE_WERK (B_slice) ;        \
-    GB_FREE_WERK (M_ek_slicing) ;   \
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_FREE_WERK (Wf) ;                 \
+    GB_FREE_WERK (Wax) ;                \
+    GB_FREE_WERK (Wbx) ;                \
+    GB_FREE_WERK (Wcx) ;                \
+    GB_FREE_WERK (M_ek_slicing) ;       \
+    GB_WERK_POP (GH_slice, int64_t) ;   \
+    GB_WERK_POP (A_slice, int64_t) ;    \
+    GB_WERK_POP (B_slice, int64_t) ;    \
 }
 
 {
@@ -34,9 +34,9 @@
     GB_void *GB_RESTRICT Wax = NULL ;
     GB_void *GB_RESTRICT Wbx = NULL ;
     GB_void *GB_RESTRICT Wcx = NULL ;
-    int64_t *GB_RESTRICT GH_slice = NULL ;
-    int64_t *GB_RESTRICT A_slice = NULL ;
-    int64_t *GB_RESTRICT B_slice = NULL ;
+    GB_WERK_DECLARE (GH_slice, int64_t) ;
+    GB_WERK_DECLARE (A_slice, int64_t) ;
+    GB_WERK_DECLARE (B_slice, int64_t) ;
     int64_t *M_ek_slicing = NULL ;
 
     //--------------------------------------------------------------------------
@@ -210,7 +210,7 @@
         ntasks = naslice * nbslice ;
 
         // slice the matrix B
-        B_slice = GB_MALLOC_WERK (nbslice + 1, int64_t) ;
+        GB_WERK_PUSH (B_slice, nbslice + 1, int64_t) ;
         if (B_slice == NULL)
         { 
             // out of memory
@@ -397,7 +397,7 @@
             ASSERT (nfine_tasks_per_vector > 1) ;
 
             // slice the matrix A for each team of fine tasks
-            A_slice = GB_MALLOC_WERK (nfine_tasks_per_vector + 1, int64_t) ;
+            GB_WERK_PUSH (A_slice, nfine_tasks_per_vector + 1, int64_t) ;
             if (A_slice == NULL)
             { 
                 // out of memory

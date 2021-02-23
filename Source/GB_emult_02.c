@@ -77,7 +77,7 @@
 
 #define GB_FREE_WORK                \
 {                                   \
-    GB_FREE_WERK (Work) ;           \
+    GB_WERK_POP (Work, int64_t) ;   \
     GB_FREE_WERK (A_ek_slicing) ;   \
 }
 
@@ -147,7 +147,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     // declare workspace
     //--------------------------------------------------------------------------
 
-    int64_t *Work = NULL ;
+    GB_WERK_DECLARE (Work, int64_t) ;
     int64_t *GB_RESTRICT Wfirst    = NULL ;
     int64_t *GB_RESTRICT Wlast     = NULL ;
     int64_t *GB_RESTRICT Cp_kfirst = NULL ;
@@ -204,7 +204,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
         // allocate workspace
         //----------------------------------------------------------------------
 
-        Work = GB_MALLOC_WERK (3*A_ntasks, int64_t) ;
+        GB_WERK_PUSH (Work, 3*A_ntasks, int64_t) ;
         if (Work == NULL)
         { 
             // out of memory
@@ -323,7 +323,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
         GB_ek_slice_merge1 (Cp, Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
         GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst, Cp, nvec,
-            Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads) ;
+            Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Context) ;
     }
 
     //--------------------------------------------------------------------------

@@ -134,7 +134,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     //--------------------------------------------------------------------------
 
     int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
-    GB_cumsum (Ap, avdim, anvec_nonempty, nth) ;
+    GB_cumsum (Ap, avdim, anvec_nonempty, nth, Context) ;
     int64_t anz = Ap [avdim] ;
     ASSERT (anz == A->nvals) ;
 

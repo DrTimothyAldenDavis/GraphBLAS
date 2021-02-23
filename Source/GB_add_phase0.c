@@ -58,11 +58,9 @@
 
 #include "GB_add.h"
 
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE_WERK (kA_start) ;   \
-    GB_FREE_WERK (kB_start) ;   \
-    GB_FREE_WERK (kC_start) ;   \
+#define GB_FREE_WORK                \
+{                                   \
+    GB_WERK_POP (Work, int64_t) ;   \
 }
 
 //------------------------------------------------------------------------------
@@ -203,9 +201,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     int64_t *GB_RESTRICT C_to_A = NULL ;
     int64_t *GB_RESTRICT C_to_B = NULL ;
 
-    int64_t *GB_RESTRICT kA_start = NULL ;
-    int64_t *GB_RESTRICT kB_start = NULL ;
-    int64_t *GB_RESTRICT kC_start = NULL ;
+    GB_WERK_DECLARE (Work, int64_t) ;
     int ntasks = 0 ;
 
     //--------------------------------------------------------------------------
@@ -328,15 +324,16 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         ntasks = GB_IMIN (ntasks, work) ;
 
         // allocate workspace
-        kA_start = GB_MALLOC_WERK (ntasks+1, int64_t) ;
-        kB_start = GB_MALLOC_WERK (ntasks+1, int64_t) ;
-        kC_start = GB_MALLOC_WERK (ntasks+1, int64_t) ;
-        if (kA_start == NULL || kB_start == NULL || kC_start == NULL)
+        GB_WERK_PUSH (Work, 3*(ntasks+1), int64_t) ;
+        if (Work == NULL)
         { 
             // out of memory
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
+        int64_t *GB_RESTRICT kA_start = Work ;
+        int64_t *GB_RESTRICT kB_start = Work + (ntasks+1) ;
+        int64_t *GB_RESTRICT kC_start = Work + (ntasks+1)*2 ;
 
         kA_start [0] = (Anvec == 0) ? -1 : 0 ;
         kB_start [0] = (Bnvec == 0) ? -1 : 0 ;
@@ -398,7 +395,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         // cumulative sum of entries in Ch for each task
         //----------------------------------------------------------------------
 
-        GB_cumsum (kC_start, ntasks, NULL, 1) ;
+        GB_cumsum (kC_start, ntasks, NULL, 1, NULL) ;
         Cnvec = kC_start [ntasks] ;
 
         //----------------------------------------------------------------------

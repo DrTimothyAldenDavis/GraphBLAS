@@ -23,7 +23,7 @@
         // allocate workspace for each task
         //----------------------------------------------------------------------
 
-        GH_slice = GB_MALLOC_WERK (2*ntasks, int64_t) ;
+        GB_WERK_PUSH (GH_slice, 2*ntasks, int64_t) ;
         if (GH_slice == NULL)
         {
             // out of memory

@@ -134,7 +134,7 @@ GrB_Info GB_ijsort
         Count [tid] = my_count ;
     }
 
-    GB_cumsum (Count, ntasks, NULL, 1) ;
+    GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
     int64_t ni2 = Count [ntasks] ;
 
     //--------------------------------------------------------------------------

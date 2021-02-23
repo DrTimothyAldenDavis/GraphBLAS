@@ -46,7 +46,8 @@ void GB_ek_slice_merge2     // merge final results for matrix C
     const int64_t *GB_RESTRICT Wlast,           // size ntasks
     const int64_t *A_ek_slicing,        // size 3*ntasks+1
     const int ntasks,                   // # of tasks used to construct C
-    const int nthreads                  // # of threads to use
+    const int nthreads,                 // # of threads to use
+    GB_Context Context
 )
 {
 
@@ -54,7 +55,7 @@ void GB_ek_slice_merge2     // merge final results for matrix C
     // Cp = cumsum (Cp)
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cp, cnvec, C_nvec_nonempty, nthreads) ;
+    GB_cumsum (Cp, cnvec, C_nvec_nonempty, nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // determine the slice boundaries in the new C matrix

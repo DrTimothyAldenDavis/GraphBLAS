@@ -44,8 +44,8 @@
             GB_FREE_WERK (Workspaces [tid]) ;                           \
         }                                                               \
     }                                                                   \
-    GB_FREE_WERK (Workspaces) ;                                         \
-    GB_FREE_WERK (A_slice) ;                                            \
+    GB_WERK_POP (A_slice, int64_t) ;                                    \
+    GB_WERK_POP (Workspaces, int64_t *) ;                               \
 }
 
 #define GB_FREE_ALL                                                     \
@@ -91,8 +91,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
-    int64_t *GB_RESTRICT A_slice = NULL ;          // size nthreads+1
-    int64_t *GB_RESTRICT *Workspaces = NULL ;      // size nworkspaces
+    GB_WERK_DECLARE (A_slice, int64_t) ;            // size nthreads+1
+    GB_WERK_DECLARE (Workspaces, int64_t *) ;       // size nworkspaces
 
     //--------------------------------------------------------------------------
     // get A
@@ -128,7 +128,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Workspaces = GB_CALLOC_WERK (nworkspaces, int64_t *) ;
+    GB_WERK_PUSH (Workspaces, nworkspaces, int64_t *) ;
     if (Workspaces == NULL)
     { 
         // out of memory
@@ -136,16 +136,18 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         return (GrB_OUT_OF_MEMORY) ;
     }
 
+    bool ok = true ;
     for (int tid = 0 ; tid < nworkspaces ; tid++)
-    {
-        int64_t *workspace = GB_MALLOC_WERK (vlen + 1, int64_t) ;
-        if (workspace == NULL)
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-        Workspaces [tid] = workspace ;
+    { 
+        Workspaces [tid] = GB_MALLOC_WERK (vlen + 1, int64_t) ;
+        ok = ok && (Workspaces [tid] != NULL) ;
+    }
+
+    if (!ok)
+    { 
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     //==========================================================================
@@ -153,7 +155,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //==========================================================================
 
     // slice the A matrix, perfectly balanced for one task per thread
-    A_slice = GB_MALLOC_WERK (nthreads + 1, int64_t) ;
+    GB_WERK_PUSH (A_slice, nthreads + 1, int64_t) ;
     if (A_slice == NULL)
     { 
         // out of memory
@@ -185,7 +187,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         }
 
         // cumulative sum of the workspace, and copy back into C->p
-        GB_cumsum (workspace, vlen, &(C->nvec_nonempty), 1) ;
+        GB_cumsum (workspace, vlen, &(C->nvec_nonempty), 1, NULL) ;
         memcpy (Cp, workspace, (vlen + 1) * sizeof (int64_t)) ;
 
     }
@@ -220,7 +222,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         C->jumbled = true ; // atomic transpose leaves C jumbled
 
         // cumulative sum of the workspace, and copy back into C->p
-        GB_cumsum (workspace, vlen, &(C->nvec_nonempty), nth) ;
+        GB_cumsum (workspace, vlen, &(C->nvec_nonempty), nth, Context) ;
         GB_memcpy (Cp, workspace, (vlen+ 1) * sizeof (int64_t), nth) ;
 
     }
@@ -282,7 +284,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         Cp [vlen] = 0 ;
 
         // compute the vector pointers for C
-        GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nth) ;
+        GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nth, Context) ;
 
         // add Cp back to all Workspaces
         #pragma omp parallel for num_threads(nth) schedule(static)

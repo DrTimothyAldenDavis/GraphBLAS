@@ -18,7 +18,8 @@ void GB_task_cumsum
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     GB_task_struct *GB_RESTRICT TaskList,  // array of structs
     const int ntasks,                   // # of tasks
-    const int nthreads                  // # of threads
+    const int nthreads,                 // # of threads
+    GB_Context Context
 )
 {
 
@@ -61,7 +62,7 @@ void GB_task_cumsum
     // replace Cp with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cp, Cnvec, Cnvec_nonempty, nthreads) ;
+    GB_cumsum (Cp, Cnvec, Cnvec_nonempty, nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // shift the cumulative sum of the fine tasks

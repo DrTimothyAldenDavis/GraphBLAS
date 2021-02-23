@@ -73,7 +73,7 @@
 
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_FREE_WERK (Work) ;           \
+    GB_WERK_POP (Work, int64_t) ;   \
     GB_FREE_WERK (B_ek_slicing) ;   \
 }
 
@@ -168,7 +168,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // declare workspace
     //--------------------------------------------------------------------------
 
-    int64_t *Work = NULL ;
+    GB_WERK_DECLARE (Work, int64_t) ;
     int64_t *GB_RESTRICT Wfirst = NULL ;
     int64_t *GB_RESTRICT Wlast  = NULL ;
 
@@ -184,7 +184,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Work = GB_MALLOC_WERK (2*B_ntasks, int64_t) ;
+    GB_WERK_PUSH (Work, 2*B_ntasks, int64_t) ;
     if (Work == NULL)
     { 
         // out of memory
@@ -453,7 +453,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
     // Bflops = cumsum ([0 Bflops]) ;
     ASSERT (Bflops [bnvec] == 0) ;
-    GB_cumsum (Bflops, bnvec, NULL, B_nthreads) ;
+    GB_cumsum (Bflops, bnvec, NULL, B_nthreads, Context) ;
     // Bflops [bnvec] is now the total flop count, including the time to
     // compute A*B and to handle the mask.  total_Mwork is part of this total
     // flop count, but is also returned separtely.

@@ -13,15 +13,15 @@
 // simple general-purpose method for slicing a single matrix.  It could be
 // called GB_one_slice, and used for other methods as well.
 
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE_WERK (Coarse) ;     \
+#define GB_FREE_WORK                    \
+{                                       \
+    GB_WERK_POP (Coarse, int64_t) ;     \
 }
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_FREE_WERK (TaskList) ;   \
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_FREE_WORK ;                      \
+    GB_FREE_WERK (TaskList) ;           \
 }
 
 #include "GB_mxm.h"
@@ -86,7 +86,7 @@ GrB_Info GB_AxB_dot3_one_slice
     // allocate the initial TaskList
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Coarse = NULL ;
+    GB_WERK_DECLARE (Coarse, int64_t) ;
     int ntasks1 = 0 ;
     int nthreads = GB_nthreads (mnz, chunk, nthreads_max) ;
     GB_task_struct *GB_RESTRICT TaskList = NULL ;
@@ -124,7 +124,7 @@ GrB_Info GB_AxB_dot3_one_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    Coarse = GB_MALLOC_WERK (ntasks1 + 1, int64_t) ;
+    GB_WERK_PUSH (Coarse, ntasks1 + 1, int64_t) ;
     if (Coarse == NULL)
     { 
         // out of memory

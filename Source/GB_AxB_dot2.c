@@ -27,12 +27,12 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_Matrix_free (&M2) ;          \
-    GB_FREE_WERK (A_slice) ;        \
-    GB_FREE_WERK (B_slice) ;        \
-    GB_FREE_WERK (M_ek_slicing) ;   \
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_Matrix_free (&M2) ;              \
+    GB_FREE_WERK (M_ek_slicing) ;       \
+    GB_WERK_POP (B_slice, int64_t) ;    \
+    GB_WERK_POP (A_slice, int64_t) ;    \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -79,8 +79,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     struct GB_Matrix_opaque M2_header ;
     GrB_Matrix M2 = NULL ;
 
-    int64_t *GB_RESTRICT A_slice = NULL ;
-    int64_t *GB_RESTRICT B_slice = NULL ;
+    GB_WERK_DECLARE (A_slice, int64_t) ;
+    GB_WERK_DECLARE (B_slice, int64_t) ;
     int64_t *M_ek_slicing = NULL ;
     ASSERT (A_in->vlen == B_in->vlen) ;
     ASSERT (A_in->vlen > 0) ;
@@ -236,8 +236,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // A and B can have any sparsity: full, bitmap, sparse, or hypersparse.
     // C is always created as bitmap
 
-    A_slice = GB_MALLOC_WERK (naslice + 1, int64_t) ;
-    B_slice = GB_MALLOC_WERK (nbslice + 1, int64_t) ;
+    GB_WERK_PUSH (A_slice, naslice + 1, int64_t) ;
+    GB_WERK_PUSH (B_slice, nbslice + 1, int64_t) ;
     if (A_slice == NULL || B_slice == NULL)
     { 
         // out of memory

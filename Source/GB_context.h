@@ -35,9 +35,9 @@
 // GxB_DEFAULT), which then relies on the global nthreads_max.
 
 // GB_WERK_SIZE is the size of a small fixed-sized array in the Context, used
-// for small werkspace allocations.  GB_WERK_SIZE must be a multiple of 8.
-// The Werk array is placed first in the GB_Context struct, to ensure
-// proper alignment.
+// for small werkspace allocations (typically O(# of threads or # tasks)).
+// GB_WERK_SIZE must be a multiple of 8.  The Werk array is placed first in the
+// GB_Context struct, to ensure proper alignment.
 
 #define GB_WERK_SIZE 65536
 
@@ -137,7 +137,7 @@ static inline int GB_nthreads   // return # of threads to use
     double chunk,               // give each thread at least this much work
     int nthreads_max            // max # of threads to use
 )
-{
+{ 
     work  = GB_IMAX (work, 1) ;
     chunk = GB_IMAX (chunk, 1) ;
     int64_t nthreads = (int64_t) floor (work / chunk) ;
@@ -202,18 +202,17 @@ const char *GB_status_code (GrB_Info info) ;
 #define GB_ROUND8(s) (((s) + 7) & (~0x7))
 
 //------------------------------------------------------------------------------
-// GB_werk_push: allocate werkspace from the Werk stack or malloc/calloc
+// GB_werk_push: allocate werkspace from the Werk stack or malloc
 //------------------------------------------------------------------------------
 
 // The werkspace is allocated from the Werk static if it small enough and space
-// is available.  Otherwise it is allocated by malloc or calloc.
+// is available.  Otherwise it is allocated by malloc.
 
 static inline void *GB_werk_push    // return pointer to newly allocated space
 (
     // output
     bool *on_stack,                 // true if werkspace is from Werk stack
     // input
-    bool do_calloc,                 // if true, zero the space
     size_t nitems,                  // # of items to allocate
     size_t size_of_item,            // size of each item
     GB_Context Context
@@ -226,12 +225,12 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
 
     size_t size ;
     if (Context == NULL || nitems > GB_WERK_SIZE || size_of_item > GB_WERK_SIZE)
-    {
+    { 
         // no context, or werkspace is too large to allocate from the Werk stack
         (*on_stack) = false ;
     }
     else
-    {
+    { 
         // try to allocate from the Werk stack
         size = GB_ROUND8 (nitems * size_of_item) ;
         ASSERT (size % 8 == 0) ;        // size is rounded up to a multiple of 8
@@ -245,31 +244,39 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
     //--------------------------------------------------------------------------
 
     if (*on_stack)
-    {
+    { 
         // allocate the werkspace from the Werk stack
         GB_void *p = Context->Werk + Context->pwerk ;
         Context->pwerk += size ;
-        if (do_calloc) memset (p, 0, size) ;
         return ((void *) p) ;
     }
     else
-    {
-        // allocate the werkspace from malloc/calloc
-        return (do_calloc ?
-            GB_calloc_memory (nitems, size_of_item) :
-            GB_malloc_memory (nitems, size_of_item)) ;
+    { 
+        // allocate the werkspace from malloc
+        return (GB_malloc_memory (nitems, size_of_item)) ;
     }
 }
 
-#define GB_WERK_DECLARE(X,type)                                         \
-    type *GB_RESTRICT X = NULL ;                                        \
-    bool X ## _on_stack = false ;                                       \
+//------------------------------------------------------------------------------
+// GB_WERK helper macros
+//------------------------------------------------------------------------------
+
+// declare a werkspace X of a given type
+#define GB_WERK_DECLARE(X,type)                     \
+    type *GB_RESTRICT X = NULL ;                    \
+    bool X ## _on_stack = false ;                   \
     size_t X ## _nitems = 0 ;
 
-#define GB_WERK_PUSH(X,do_calloc,nitems,type)                           \
-    X ## _nitems = (nitems) ;                                           \
-    X = (type *) GB_werk_push (&(X ## _on_stack), do_calloc,            \
+// push werkspace X
+#define GB_WERK_PUSH(X,nitems,type)                 \
+    X ## _nitems = (nitems) ;                       \
+    X = (type *) GB_werk_push (&(X ## _on_stack),   \
         X ## _nitems, sizeof (type), Context) ; 
+
+// pop werkspace X
+#define GB_WERK_POP(X,type)                         \
+    X = (type *) GB_werk_pop (X, X ## _on_stack,    \
+        X ## _nitems, sizeof (type), Context) ;
 
 //------------------------------------------------------------------------------
 // GB_werk_pop:  free werkspace from the Werk stack
@@ -294,11 +301,11 @@ static inline void *GB_werk_pop     // free the top block of werkspace memory
 {
 
     if (p == NULL)
-    {
+    { 
         // nothing to do
     }
     else if (on_stack)
-    {
+    { 
         // werkspace was allocated from the Werk stack
         size_t size = GB_ROUND8 (nitems * size_of_item) ;
         ASSERT (Context != NULL) ;
@@ -307,16 +314,12 @@ static inline void *GB_werk_pop     // free the top block of werkspace memory
         Context->pwerk = ((GB_void *) p) - Context->Werk ;
     }
     else
-    {
-        // werkspace was allocated from malloc/calloc
+    { 
+        // werkspace was allocated from malloc
         GB_free_memory (p) ;
     }
     return (NULL) ;                 // return NULL to indicate p was freed
 }
-
-#define GB_WERK_POP(X,type)                                         \
-    X = (type *) GB_werk_pop (X, X ## _on_stack, X ## _nitems,      \
-        sizeof (type), Context) ;
 
 #endif
 

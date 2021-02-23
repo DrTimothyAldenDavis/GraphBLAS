@@ -98,7 +98,8 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     // cumulative sum of Rp and fine tasks in TaskList
     //--------------------------------------------------------------------------
 
-    GB_task_cumsum (Rp, Rnvec, Rnvec_nonempty, TaskList, R_ntasks, R_nthreads) ;
+    GB_task_cumsum (Rp, Rnvec, Rnvec_nonempty, TaskList, R_ntasks, R_nthreads,
+        Context) ;
 
     //--------------------------------------------------------------------------
     // return the result

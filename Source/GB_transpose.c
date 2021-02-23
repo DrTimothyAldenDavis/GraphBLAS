@@ -632,14 +632,14 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         int ntasks = 0 ;
         int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
-        int64_t *GB_RESTRICT Count = NULL ;
+        GB_WERK_DECLARE (Count, int64_t) ;
         if (nth > 1 && !A_is_hyper)
         {
             // ntasks and Count are not needed if nth == 1
             ntasks = 8 * nth ;
             ntasks = GB_IMIN (ntasks, avdim) ;
             ntasks = GB_IMAX (ntasks, 1) ;
-            Count = GB_CALLOC_WERK (ntasks+1, int64_t) ;
+            GB_WERK_PUSH (Count, ntasks+1, int64_t) ;
             if (Count == NULL)
             { 
                 // out of memory
@@ -664,7 +664,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (!in_place) ;            // cannot fail if in-place,
             ASSERT (!C_static_header) ;     // or if C has a static header
             GB_FREE_C ;
-            GB_FREE_WERK (Count) ;
+            GB_WERK_POP (Count, int64_t) ;
             return (info) ;
         }
 
@@ -704,7 +704,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_FREE (Cp) ;
             GB_FREE (Ci) ;
             GB_FREE (Cx) ;
-            GB_FREE_WERK (Count) ;
+            GB_WERK_POP (Count, int64_t) ;
             GB_FREE_IN_PLACE_A ;
             GB_FREE_C ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -811,7 +811,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                     Count [tid] = k ;
                 }
 
-                GB_cumsum (Count, ntasks, NULL, 1) ;
+                GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
                 ASSERT (Count [ntasks] == anz) ;
 
                 #pragma omp parallel for num_threads(nth) schedule(dynamic,1)
@@ -866,7 +866,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         // free prior space of A, if transpose done in-place, and free workspace
         GB_FREE_IN_PLACE_A ;
-        GB_FREE_WERK (Count) ;
+        GB_WERK_POP (Count, int64_t) ;
 
     }
     else

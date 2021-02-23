@@ -15,10 +15,10 @@
 // M, A, B: any sparsity structure (hypersparse, sparse, bitmap, or full).
 // C: constructed as sparse or hypersparse in the caller.
 
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE_WERK (Coarse) ;     \
-    GB_FREE_WERK (Cwork) ;      \
+#define GB_FREE_WORK                \
+{                                   \
+    GB_WERK_POP (Coarse, int64_t) ; \
+    GB_FREE_WERK (Cwork) ;          \
 }
 
 #define GB_FREE_ALL             \
@@ -84,7 +84,7 @@ GrB_Info GB_ewise_slice
     (*p_nthreads  ) = 1 ;
 
     int64_t *GB_RESTRICT Cwork = NULL ;
-    int64_t *GB_RESTRICT Coarse = NULL ; // size ntasks1+1
+    GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
     int ntasks1 = 0 ;
 
     //--------------------------------------------------------------------------
@@ -257,7 +257,7 @@ GrB_Info GB_ewise_slice
     // replace Cwork with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cwork, Cnvec, NULL, nthreads_for_Cwork) ;
+    GB_cumsum (Cwork, Cnvec, NULL, nthreads_for_Cwork, Context) ;
     double cwork = (double) Cwork [Cnvec] ;
 
     //--------------------------------------------------------------------------
@@ -276,7 +276,7 @@ GrB_Info GB_ewise_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    Coarse = GB_MALLOC_WERK (ntasks1 + 1, int64_t) ;
+    GB_WERK_PUSH (Coarse, ntasks1 + 1, int64_t) ;
     if (Coarse == NULL)
     { 
         // out of memory

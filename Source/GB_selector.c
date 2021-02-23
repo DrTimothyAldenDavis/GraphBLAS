@@ -28,9 +28,9 @@
 
 #define GB_FREE_WORK                \
 {                                   \
-    GB_FREE_WERK (A_ek_slicing) ;   \
-    GB_FREE_WERK (Work) ;           \
     GB_FREE_WERK (Zp) ;             \
+    GB_WERK_POP (Work, int64_t) ;   \
+    GB_FREE_WERK (A_ek_slicing) ;   \
     GB_FREE (Cp) ;                  \
     GB_FREE (Ch) ;                  \
     GB_FREE (Ci) ;                  \
@@ -73,7 +73,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     int64_t *GB_RESTRICT Zp = NULL ;
-    int64_t *Work = NULL ;
+    GB_WERK_DECLARE (Work, int64_t) ;
     int64_t *GB_RESTRICT Wfirst = NULL ;
     int64_t *GB_RESTRICT Wlast = NULL ;
     int64_t *GB_RESTRICT Cp_kfirst = NULL ;
@@ -221,7 +221,7 @@ GrB_Info GB_selector
     // allocate workspace for each task
     //--------------------------------------------------------------------------
 
-    Work = GB_MALLOC_WERK (3*A_ntasks, int64_t) ;
+    GB_WERK_PUSH (Work, 3*A_ntasks, int64_t) ;
     if (Work == NULL)
     { 
         // out of memory
@@ -280,7 +280,7 @@ GrB_Info GB_selector
 
     int64_t C_nvec_nonempty ;
     GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst, Cp, anvec,
-        Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads) ;
+        Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // allocate new space for the compacted Ci and Cx

@@ -18,10 +18,10 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE_WERK (A_slice) ;    \
-    GB_FREE_WERK (B_slice) ;    \
+#define GB_FREE_WORK                    \
+{                                       \
+    GB_WERK_POP (B_slice, int64_t) ;    \
+    GB_WERK_POP (A_slice, int64_t) ;    \
 }
 
 GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
@@ -59,8 +59,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     ASSERT_SEMIRING_OK (semiring, "semiring for in-place += A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
 
-    int64_t *GB_RESTRICT A_slice = NULL ;
-    int64_t *GB_RESTRICT B_slice = NULL ;
+    GB_WERK_DECLARE (A_slice, int64_t) ;
+    GB_WERK_DECLARE (B_slice, int64_t) ;
 
     GBURBLE ("(%s+=%s'*%s) ",
         GB_sparsity_char_matrix (C),
@@ -129,8 +129,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     naslice = GB_IMIN (naslice, anvec) ;
     nbslice = GB_IMIN (nbslice, bnvec) ;
 
-    A_slice = GB_MALLOC_WERK (naslice + 1, int64_t) ;
-    B_slice = GB_MALLOC_WERK (nbslice + 1, int64_t) ;
+    GB_WERK_PUSH (A_slice, naslice + 1, int64_t) ;
+    GB_WERK_PUSH (B_slice, nbslice + 1, int64_t) ;
     if (A_slice == NULL || B_slice == NULL)
     { 
         // out of memory

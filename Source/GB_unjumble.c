@@ -66,7 +66,8 @@ GrB_Info GB_unjumble        // unjumble a matrix
     // slice the work
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT A_slice = GB_MALLOC_WERK (ntasks + 1, int64_t) ;
+    GB_WERK_DECLARE (A_slice, int64_t) ;
+    GB_WERK_PUSH (A_slice, ntasks + 1, int64_t) ;
     if (A_slice == NULL)
     { 
         // out of memory
@@ -128,7 +129,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WERK (A_slice) ;
+    GB_WERK_POP (A_slice, int64_t) ;
     A->jumbled = false ;        // A has been unjumbled
     ASSERT_MATRIX_OK (A, "A unjumbled", GB0) ;
     return (GrB_SUCCESS) ;

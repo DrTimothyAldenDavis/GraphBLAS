@@ -16,18 +16,18 @@
 #define GB_MWORK_ALPHA 0.01
 #define GB_MWORK_BETA 0.10
 
-#define GB_FREE_WORK                \
-{                                   \
-    GB_FREE_WERK (Fine_fl) ;        \
-    GB_FREE_WERK (Coarse_Work) ;    \
-    GB_FREE_WERK (Coarse_initial) ; \
-    GB_FREE_WERK (Fine_slice) ;     \
+#define GB_FREE_WORK                        \
+{                                           \
+    GB_WERK_POP (Fine_fl, int64_t) ;        \
+    GB_WERK_POP (Fine_slice, int64_t) ;     \
+    GB_WERK_POP (Coarse_Work, int64_t) ;    \
+    GB_WERK_POP (Coarse_initial, int64_t) ; \
 }
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_WORK ;                  \
-    GB_FREE_WERK (TaskList) ;       \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_WORK ;                          \
+    GB_FREE_WERK (TaskList) ;               \
 }
 
 //------------------------------------------------------------------------------
@@ -225,10 +225,10 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
 
     GB_saxpy3task_struct *GB_RESTRICT TaskList = NULL ;
 
-    int64_t *GB_RESTRICT Coarse_initial = NULL ;    // initial coarse tasks
-    int64_t *GB_RESTRICT Coarse_Work = NULL ;       // workspace for flop counts
-    int64_t *GB_RESTRICT Fine_slice = NULL ;
-    int64_t *GB_RESTRICT Fine_fl = NULL ;
+    GB_WERK_DECLARE (Coarse_initial, int64_t) ;     // initial coarse tasks
+    GB_WERK_DECLARE (Coarse_Work, int64_t) ;        // workspace for flop counts
+    GB_WERK_DECLARE (Fine_slice, int64_t) ;
+    GB_WERK_DECLARE (Fine_fl, int64_t) ;
 
     //--------------------------------------------------------------------------
     // get A, and B
@@ -432,7 +432,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         // construct initial coarse tasks
         //----------------------------------------------------------------------
 
-        Coarse_initial = GB_MALLOC_WERK (ntasks_initial + 1, int64_t) ;
+        GB_WERK_PUSH (Coarse_initial, ntasks_initial + 1, int64_t) ;
         if (Coarse_initial == NULL)
         { 
             // out of memory
@@ -539,13 +539,14 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     // allocate the tasks, and workspace to construct fine tasks
     //--------------------------------------------------------------------------
 
-    TaskList    = GB_CALLOC_WERK ((*ntasks), GB_saxpy3task_struct) ;
-    Coarse_Work = GB_MALLOC_WERK (nthreads_max, int64_t) ;
+    TaskList = GB_CALLOC_WERK ((*ntasks), GB_saxpy3task_struct) ;
+    GB_WERK_PUSH (Coarse_Work, nthreads_max, int64_t) ;
     if (max_bjnz > 0)
     { 
         // also allocate workspace to construct fine tasks
-        Fine_slice = GB_MALLOC_WERK ((*ntasks)+1  , int64_t) ;
-        Fine_fl    = GB_MALLOC_WERK (max_bjnz+1, int64_t) ;
+        GB_WERK_PUSH (Fine_slice, (*ntasks)+1, int64_t) ;
+        // Fine_fl will only fit on the Werk stack if max_bjnz is small
+        GB_WERK_PUSH (Fine_fl, max_bjnz+1, int64_t) ;
     }
 
     if (TaskList == NULL || Coarse_Work == NULL ||
@@ -639,7 +640,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                         }
 
                         // cumulative sum of flops to compute A*B(:,j)
-                        GB_cumsum (Fine_fl, bjnz, NULL, nth) ;
+                        GB_cumsum (Fine_fl, bjnz, NULL, nth, Context) ;
 
                         // slice B(:,j) into fine tasks
                         int team_size = ceil (jflops / target_fine_size) ;
