@@ -63,6 +63,8 @@ typedef struct
     void   (* free_function    ) (void *)         ;
     bool malloc_is_thread_safe ;   // default is true
 
+    void *rmm_pool ;    // RMM pool for GraphBLAS to use (NULL if not using RMM)
+
     //--------------------------------------------------------------------------
     // memory usage tracking: for testing and debugging only
     //--------------------------------------------------------------------------
@@ -176,6 +178,7 @@ GB_Global_struct GB_Global =
     .realloc_function = realloc,
     .free_function    = free,
     .malloc_is_thread_safe = true,
+    .rmm_pool = NULL,
 
     // malloc tracking, for testing, statistics, and debugging only
     .malloc_tracking = false,
@@ -372,6 +375,20 @@ void GB_Global_abort_function (void)
 }
 
 //------------------------------------------------------------------------------
+// RMM pool
+//------------------------------------------------------------------------------
+
+void GB_Global_rmm_pool_set (void *rmm_pool)
+{ 
+    GB_Global.rmm_pool = rmm_pool ;
+}
+
+void *GB_Global_rmm_pool_get (void)
+{ 
+    return (GB_Global.rmm_pool) ;
+}
+
+//------------------------------------------------------------------------------
 // malloc_function
 //------------------------------------------------------------------------------
 
@@ -382,7 +399,6 @@ void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
 
 void * GB_Global_malloc_function (size_t size)
 { 
-    bool ok = true ;
     void *p = NULL ;
     if (GB_Global.malloc_is_thread_safe)
     {
@@ -395,7 +411,7 @@ void * GB_Global_malloc_function (size_t size)
             p = GB_Global.malloc_function (size) ;
         }
     }
-    return (ok ? p : NULL) ;
+    return (p) ;
 }
 
 //------------------------------------------------------------------------------

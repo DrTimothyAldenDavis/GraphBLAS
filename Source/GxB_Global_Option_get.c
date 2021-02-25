@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// TODO:: allow user to query malloc, calloc, realloc, and free.
+// also "is malloc/etc thread-safe?"
+
 #include "GB.h"
 
 GrB_Info GxB_Global_Option_get      // gets the current global option

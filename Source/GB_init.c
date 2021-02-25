@@ -48,6 +48,8 @@ GrB_Info GB_init            // start up GraphBLAS
 
     bool caller_is_GxB_cuda_init,       // true for GxB_cuda_init only
 
+    void *rmm_pool,
+
     GB_Context Context      // from GrB_init or GxB_init
 )
 {

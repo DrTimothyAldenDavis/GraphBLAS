@@ -143,6 +143,12 @@ configure_file (
 )
 
 #-------------------------------------------------------------------------------
+# determine RMM is available
+#-------------------------------------------------------------------------------
+
+find_package ( rmm )
+
+#-------------------------------------------------------------------------------
 # determine what user threading model to use
 #-------------------------------------------------------------------------------
 
@@ -399,6 +405,11 @@ if ( CMAKE_THREAD_LIBS_INIT )
     endif ( )
 endif ( )
 
+target_link_libraries ( graphblas PUBLIC rmm::rmm )
+if ( BUILD_GRB_STATIC_LIBRARY )
+    target_link_libraries ( graphblas_static PUBLIC rmm::rmm ) 
+endif ( )
+
 # FUTURE:
 # if ( BLAS_FOUND )
 #   # use the dense CBLAS
@@ -435,6 +446,7 @@ SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
     C_STANDARD_REQUIRED 11 )
 set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
 target_link_libraries ( graphblasdemo ${M_LIB} graphblas  ${GB_CUDA} )
+target_link_libraries ( graphblasdemo PUBLIC rmm::rmm )
 
 if ( BUILD_GRB_STATIC_LIBRARY )
     add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
@@ -443,6 +455,7 @@ if ( BUILD_GRB_STATIC_LIBRARY )
         C_STANDARD_REQUIRED 11 )
     set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
     target_link_libraries ( graphblasdemo_static  graphblas_static  ${GB_CUDA} )
+    target_link_libraries ( graphblasdemo_static  PUBLIC rmm::rmm )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -473,6 +486,18 @@ target_link_libraries ( simple_demo   graphblasdemo ${GB_CUDA} )
 target_link_libraries ( wildtype_demo graphblas ${GB_CUDA} )
 target_link_libraries ( reduce_demo   graphblas ${GB_CUDA} )
 target_link_libraries ( import_demo   graphblas graphblasdemo ${GB_CUDA} )
+
+target_link_libraries ( pagerank_demo PUBLIC rmm::rmm )
+target_link_libraries ( bfs_demo      PUBLIC rmm::rmm )
+target_link_libraries ( tri_demo      PUBLIC rmm::rmm )
+target_link_libraries ( openmp_demo   PUBLIC rmm::rmm )
+target_link_libraries ( mis_demo      PUBLIC rmm::rmm )
+target_link_libraries ( complex_demo  PUBLIC rmm::rmm )
+target_link_libraries ( kron_demo     PUBLIC rmm::rmm )
+target_link_libraries ( simple_demo   PUBLIC rmm::rmm )
+target_link_libraries ( wildtype_demo PUBLIC rmm::rmm )
+target_link_libraries ( reduce_demo   PUBLIC rmm::rmm )
+target_link_libraries ( import_demo   PUBLIC rmm::rmm )
 
 #-------------------------------------------------------------------------------
 # graphblas installation location
