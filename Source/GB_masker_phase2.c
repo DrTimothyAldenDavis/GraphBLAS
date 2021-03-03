@@ -45,7 +45,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     GrB_Matrix R,                   // output matrix, static header
     const bool R_is_csc,            // format of output matrix R
     // from phase1:
-    const int64_t *GB_RESTRICT Rp,  // vector pointers for R
+    int64_t **Rp_handle,            // vector pointers for R
+    size_t Rp_size,
     const int64_t Rnvec_nonempty,   // # of non-empty vectors in R
     // tasks from phase1a:
     const GB_task_struct *GB_RESTRICT TaskList,     // array of structs
@@ -53,7 +54,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     const int R_nthreads,             // # of threads to use
     // analysis from phase0:
     const int64_t Rnvec,
-    const int64_t *GB_RESTRICT Rh,
+    int64_t **Rh_handle,
+    size_t Rh_size,
     const int64_t *GB_RESTRICT R_to_M,
     const int64_t *GB_RESTRICT R_to_C,
     const int64_t *GB_RESTRICT R_to_Z,
@@ -96,6 +98,11 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
+    ASSERT (Rp_handle != NULL) ;
+    ASSERT (Rh_handle != NULL) ;
+    int64_t *Rp = (*Rp_handle) ;
+    int64_t *Rh = (*Rh_handle) ;
+
     //--------------------------------------------------------------------------
     // allocate the output matrix R
     //--------------------------------------------------------------------------
@@ -114,8 +121,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free R_to_M, R_to_C, R_to_Z
-        GB_FREE (Rp) ;
-        GB_FREE (Rh) ;
+        GB_FREE (Rp_handle, Rp_size) ;
+        GB_FREE (Rh_handle, Rh_size) ;
         return (info) ;
     }
 
@@ -123,17 +130,21 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     if (R_is_sparse_or_hyper)
     { 
         R->nvec_nonempty = Rnvec_nonempty ;
-        R->p = (int64_t *) Rp ;
+        R->p = (int64_t *) Rp ; R->p_size = Rp_size ;
+        (*Rp_handle) = NULL ;
     }
 
     // add Rh as the hypersparse list for R, from GB_add_phase0
     if (R_is_hyper)
     { 
-        R->h = (int64_t *) Rh ;
+        R->h = (int64_t *) Rh ; R->h_size = Rh_size ;
         R->nvec = Rnvec ;
+        (*Rh_handle) = NULL ;
     }
 
     // now Rp and Rh have been transplanted into R, so they must not be freed.
+    ASSERT ((*Rp_handle) == NULL) ;
+    ASSERT ((*Rh_handle) == NULL) ;
     R->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

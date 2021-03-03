@@ -67,7 +67,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool allocated_header = false ;
     if ((*Ahandle) == NULL)
     {
-        (*Ahandle) = GB_MALLOC (1, struct GB_Matrix_opaque) ;
+        size_t header_size ;
+        (*Ahandle) = GB_MALLOC (1, struct GB_Matrix_opaque, &header_size) ;
         if (*Ahandle == NULL)
         { 
             // out of memory
@@ -75,6 +76,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         }
         allocated_header = true ;
         (*Ahandle)->static_header = false ;  // header of A has been malloc'd
+        (*Ahandle)->header_size = header_size ;
     }
     else
     {
@@ -93,6 +95,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->magic = GB_MAGIC2 ;                 // object is not yet valid
     A->type = type ;
     A->logger = NULL ;          // no error logged yet
+    A->logger_size = 0 ;
 
     // CSR/CSC format
     A->is_csc = is_csc ;
@@ -153,20 +156,15 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         A->nvec_nonempty = 0 ;
     }
 
-    A->p = NULL ;
-    A->h = NULL ;
-    A->p_shallow = false ;
-    A->h_shallow = false ;
+    // no content yet
+    A->p = NULL ; A->p_shallow = false ; A->p_size = 0 ;
+    A->h = NULL ; A->h_shallow = false ; A->h_size = 0 ;
+    A->b = NULL ; A->b_shallow = false ; A->b_size = 0 ;
+    A->i = NULL ; A->i_shallow = false ; A->i_size = 0 ;
+    A->x = NULL ; A->x_shallow = false ; A->x_size = 0 ;
 
-    // content that is freed or reset in GB_bix_free
-    A->b = NULL ;
-    A->i = NULL ;
-    A->x = NULL ;
     A->nzmax = 0 ;              // GB_NNZ(A) checks nzmax==0 before Ap[nvec]
     A->nvals = 0 ;              // for bitmapped matrices only
-    A->b_shallow = false ;
-    A->i_shallow = false ;
-    A->x_shallow = false ;
     A->nzombies = 0 ;
     A->jumbled = false ;
     A->Pending = NULL ;
@@ -192,12 +190,13 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     {
         // Sets the vector pointers to zero, which defines all vectors as empty
         A->magic = GB_MAGIC ;
-        A->p = GB_CALLOC (A->plen+1, int64_t) ;
+        A->p = GB_CALLOC (A->plen+1, int64_t, &(A->p_size)) ;
+        ASSERT (A->p_size == GB_Global_memtable_size (A->p)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
             // since nvec is zero, there is never any need to initialize A->h
-            A->h = GB_MALLOC (A->plen, int64_t) ;
+            A->h = GB_MALLOC (A->plen, int64_t, &(A->h_size)) ;
             ok = ok && (A->h != NULL) ;
         }
     }
@@ -209,11 +208,12 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // before returning the matrix to the user application.  GB_NNZ(A) must
         // check A->nzmax == 0 since A->p [A->nvec] might be undefined.
         A->magic = GB_MAGIC2 ;
-        A->p = GB_MALLOC (A->plen+1, int64_t) ;
+        A->p = GB_MALLOC (A->plen+1, int64_t, &(A->p_size)) ;
+        ASSERT (A->p_size == GB_Global_memtable_size (A->p)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
-            A->h = GB_MALLOC (A->plen, int64_t) ;
+            A->h = GB_MALLOC (A->plen, int64_t, &(A->h_size)) ;
             ok = ok && (A->h != NULL) ;
         }
     }

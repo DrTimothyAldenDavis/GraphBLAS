@@ -43,12 +43,14 @@ GrB_Info GB_BinaryOp_new
     // allocate the binary op
     //--------------------------------------------------------------------------
 
-    (*op) = GB_MALLOC (1, struct GB_BinaryOp_opaque) ;
+    size_t header_size ;
+    (*op) = GB_MALLOC (1, struct GB_BinaryOp_opaque, &header_size) ;
     if (*op == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
+    (*op)->header_size = header_size ;
 
     //--------------------------------------------------------------------------
     // create the binary op

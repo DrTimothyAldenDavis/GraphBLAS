@@ -41,10 +41,11 @@
     {                                                                   \
         for (int tid = 0 ; tid < nworkspaces ; tid++)                   \
         {                                                               \
-            GB_FREE_WERK (Workspaces [tid]) ;                           \
+            GB_FREE_WERK (&(Workspaces [tid]), Workspaces_size [tid]) ; \
         }                                                               \
     }                                                                   \
     GB_WERK_POP (A_slice, int64_t) ;                                    \
+    GB_WERK_POP (Workspaces_size, size_t) ;                             \
     GB_WERK_POP (Workspaces, int64_t *) ;                               \
 }
 
@@ -93,6 +94,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     GB_WERK_DECLARE (A_slice, int64_t) ;            // size nthreads+1
     GB_WERK_DECLARE (Workspaces, int64_t *) ;       // size nworkspaces
+    GB_WERK_DECLARE (Workspaces_size, size_t) ;     // size nworkspaces
 
     //--------------------------------------------------------------------------
     // get A
@@ -129,7 +131,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //--------------------------------------------------------------------------
 
     GB_WERK_PUSH (Workspaces, nworkspaces, int64_t *) ;
-    if (Workspaces == NULL)
+    GB_WERK_PUSH (Workspaces_size, nworkspaces, size_t) ;
+    if (Workspaces == NULL || Workspaces_size == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
@@ -139,7 +142,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     bool ok = true ;
     for (int tid = 0 ; tid < nworkspaces ; tid++)
     { 
-        Workspaces [tid] = GB_MALLOC_WERK (vlen + 1, int64_t) ;
+        Workspaces [tid] = GB_MALLOC_WERK (vlen + 1, int64_t,
+            &Workspaces_size [tid]) ;
         ok = ok && (Workspaces [tid] != NULL) ;
     }
 

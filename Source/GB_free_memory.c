@@ -14,10 +14,14 @@
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_free_memory
 (
-    void *p                 // pointer to allocated block of memory to free
+    // input/output
+    void **p,               // pointer to allocated block of memory to free
+    // input
+    size_t size_allocated   // # of bytes actually allocated
 )
 {
-    if (p != NULL)
+
+    if (p != NULL && (*p) != NULL)
     { 
 
         if (GB_Global_malloc_tracking_get ( ))
@@ -34,7 +38,9 @@ void GB_free_memory
         // free the memory
         //----------------------------------------------------------------------
 
-        GB_Global_free_function (p) ;
+        ASSERT (size_allocated == GB_Global_memtable_size (*p)) ;
+        GB_Global_free_function (*p) ;
+        (*p) = NULL ;
     }
 }
 

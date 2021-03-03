@@ -17,14 +17,14 @@
 
 #define USAGE "C = GB_mex_export_import (A, format_matrix, format_export)"
 
-#define FREE_WORK                       \
-{                                       \
-    GB_FREE (Cp) ;                      \
-    GB_FREE (Ch) ;                      \
-    GB_FREE (Ci) ;                      \
-    GB_FREE (Cx) ;                      \
-    GB_FREE (Cb) ;                      \
-    GrB_Matrix_free_(&C) ;              \
+#define FREE_WORK                                               \
+{                                                               \
+    REMOVE (Cp) ; if (Cp != NULL) mxFree (Cp) ; Cp = NULL ;     \
+    REMOVE (Ch) ; if (Ch != NULL) mxFree (Ch) ; Ch = NULL ;     \
+    REMOVE (Cb) ; if (Cb != NULL) mxFree (Cb) ; Cb = NULL ;     \
+    REMOVE (Ci) ; if (Ci != NULL) mxFree (Ci) ; Ci = NULL ;     \
+    REMOVE (Cx) ; if (Cx != NULL) mxFree (Cx) ; Cx = NULL ;     \
+    GrB_Matrix_free_(&C) ;                                      \
 }
 
 #define FREE_ALL                        \
@@ -52,12 +52,11 @@ int8_t *Cb = NULL ;
 GB_Context Context = NULL ;
 GrB_Index nvec = 0, nvals = 0, nrows = 0, ncols = 0 ;
 
+GrB_Index Cp_size = 0 ;
+GrB_Index Ch_size = 0 ;
+GrB_Index Cb_size = 0 ;
 GrB_Index Ci_size = 0 ;
 GrB_Index Cx_size = 0 ;
-GrB_Index Cp_size = 0 ;
-GrB_Index Cj_size = 0 ;
-GrB_Index Cb_size = 0 ;
-GrB_Index Ch_size = 0 ;
 
 int64_t ignore = -1 ;
 bool jumbled = false ;

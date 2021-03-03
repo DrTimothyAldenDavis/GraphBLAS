@@ -42,8 +42,16 @@ void GB_mx_put_global
     GrB_finalize ( ) ;
 
     //--------------------------------------------------------------------------
-    // check nmalloc
+    // check nmemtable and nmalloc
     //--------------------------------------------------------------------------
+
+    int nmemtable = GB_Global_memtable_n ( ) ;
+    if (nmemtable != 0)
+    {
+        printf ("in GB_mx_put_global: GraphBLAS nmemtable %d!\n", nmemtable) ;
+        GB_Global_memtable_dump ( ) ;
+        mexErrMsgTxt ("memory leak in test!") ;
+    }
 
     int64_t nmalloc = GB_Global_nmalloc_get ( ) ;
     if (nmalloc != 0)

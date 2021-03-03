@@ -55,9 +55,13 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
     const int64_t *GB_RESTRICT *Ch_handle,  // Ch is M->h, A->h, B->h, or NULL
+    size_t *Ch_size_handle,
     int64_t *GB_RESTRICT *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
+    size_t *C_to_M_size_handle,
     int64_t *GB_RESTRICT *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
+    size_t *C_to_A_size_handle,
     int64_t *GB_RESTRICT *C_to_B_handle,    // C_to_B: size Cnvec, or NULL
+    size_t *C_to_B_size_handle,
     int *C_sparsity,            // sparsity structure of C
     // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
@@ -68,7 +72,9 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
 GrB_Info GB_emult_01_phase1                 // count nnz in each C(:,j)
 (
-    int64_t *GB_RESTRICT *Cp_handle,        // output of size Cnvec+1
+    // computed by phase1:
+    int64_t **Cp_handle,                    // output of size Cnvec+1
+    size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,                // # of non-empty vectors in C
     // tasks from phase1a:
     GB_task_struct *GB_RESTRICT TaskList,   // array of structs
@@ -89,22 +95,24 @@ GrB_Info GB_emult_01_phase1                 // count nnz in each C(:,j)
     GB_Context Context
 ) ;
 
-GrB_Info GB_emult_01_phase2                 // C=A.*B or C<M>=A.*B
+GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
 (
     GrB_Matrix C,           // output matrix, static header
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     // from phase1:
-    const int64_t *GB_RESTRICT Cp,      // vector pointers for C
+    int64_t **Cp_handle,    // vector pointers for C
+    size_t Cp_size,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase1a:
-    const GB_task_struct *GB_RESTRICT TaskList,  // array of structs
+    const GB_task_struct *GB_RESTRICT TaskList, // array of structs
     const int C_ntasks,                         // # of tasks
     const int C_nthreads,                       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *GB_RESTRICT Ch,
+    size_t Ch_size,
     const int64_t *GB_RESTRICT C_to_M,
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,

@@ -34,7 +34,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     ASSERT (GB_IS_BITMAP (A)) ;
     ASSERT (Ap != NULL) ;           // must be provided on input, size avdim+1
 
-    int64_t *GB_RESTRICT W = NULL ;
+    int64_t *GB_RESTRICT W = NULL ; size_t W_size = 0 ;
     const int64_t avdim = A->vdim ;
     const int64_t avlen = A->vlen ;
     const size_t asize = A->type->size ;
@@ -82,7 +82,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
         //----------------------------------------------------------------------
 
         // allocate one row of W per thread, each row of length avdim
-        W = GB_MALLOC_WERK (nthreads * avdim, int64_t) ;
+        W = GB_MALLOC_WERK (nthreads * avdim, int64_t, &W_size) ;
         if (W == NULL)
         {
             // out of memory
@@ -224,7 +224,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     // free workspace return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WERK (W) ;
+    GB_FREE_WERK (&W, W_size) ;
     return (GrB_SUCCESS) ;
 }
 

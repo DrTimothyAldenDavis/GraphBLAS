@@ -24,10 +24,10 @@
     GB_WERK_POP (Coarse_initial, int64_t) ; \
 }
 
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_FREE_WORK ;                          \
-    GB_FREE_WERK (SaxpyTasks) ;             \
+#define GB_FREE_ALL                                 \
+{                                                   \
+    GB_FREE_WORK ;                                  \
+    GB_FREE_WERK (&SaxpyTasks, SaxpyTasks_size) ;   \
 }
 
 //------------------------------------------------------------------------------
@@ -177,6 +177,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
     // outputs
     GB_saxpy3task_struct **SaxpyTasks_handle,
+    size_t *SaxpyTasks_size_handle,
     bool *apply_mask,               // if true, apply M during sapxy3
     bool *M_dense_in_place,         // if true, use M in-place
     int *ntasks,                    // # of tasks created (coarse and fine)
@@ -224,6 +225,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     //--------------------------------------------------------------------------
 
     GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks = NULL ;
+    size_t SaxpyTasks_size = 0 ;
 
     GB_WERK_DECLARE (Coarse_initial, int64_t) ; // initial coarse tasks
     GB_WERK_DECLARE (Coarse_Work, int64_t) ;    // workspace for flop counts
@@ -539,7 +541,8 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     // allocate the tasks, and workspace to construct fine tasks
     //--------------------------------------------------------------------------
 
-    SaxpyTasks = GB_CALLOC_WERK ((*ntasks), GB_saxpy3task_struct) ;
+    SaxpyTasks = GB_MALLOC_WERK ((*ntasks), GB_saxpy3task_struct,
+        &SaxpyTasks_size) ;
     GB_WERK_PUSH (Coarse_Work, nthreads_max, int64_t) ;
     if (max_bjnz > 0)
     { 
@@ -558,6 +561,9 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+
+    // clear SaxpyTasks
+    memset (SaxpyTasks, 0, SaxpyTasks_size) ;
 
     //--------------------------------------------------------------------------
     // create the tasks
@@ -721,6 +727,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
 
     GB_FREE_WORK ;
     (*SaxpyTasks_handle) = SaxpyTasks ;
+    (*SaxpyTasks_size_handle) = SaxpyTasks_size ;
     return (GrB_SUCCESS) ;
 }
 

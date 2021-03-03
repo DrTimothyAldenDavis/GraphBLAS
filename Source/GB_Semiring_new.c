@@ -41,7 +41,6 @@ GrB_Info GB_Semiring_new            // create a semiring
     semiring->magic = GB_MAGIC ;
     semiring->add = add ;
     semiring->multiply = multiply ;
-    semiring->semiring_is_builtin = false ;
 
     ASSERT_SEMIRING_OK (semiring, "new semiring", GB0) ;
     return (GrB_SUCCESS) ;

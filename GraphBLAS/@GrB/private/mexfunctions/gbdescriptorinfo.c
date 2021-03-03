@@ -14,6 +14,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: GrB.descriptorinfo or GrB.descriptorinfo (desc)"
+
 void mexFunction
 (
     int nargout,
@@ -27,8 +29,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout == 0,
-        "usage: GrB.descriptorinfo or GrB.descriptorinfo (desc)") ;
+    gb_usage (nargin <= 1 && nargout == 0, USAGE) ;
 
     //--------------------------------------------------------------------------
     // construct the GraphBLAS descriptor

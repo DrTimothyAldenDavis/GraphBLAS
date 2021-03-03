@@ -130,9 +130,9 @@ GrB_Info GB_build               // build matrix
     // S_input must be treated as read-only, so GB_builder is not allowed to
     // transplant it into T->x.
 
-    int64_t *no_I_work = NULL ;
-    int64_t *no_J_work = NULL ;
-    GB_void *no_S_work = NULL ;
+    int64_t *no_I_work = NULL ; size_t I_work_size = 0 ;
+    int64_t *no_J_work = NULL ; size_t J_work_size = 0 ;
+    GB_void *no_S_work = NULL ; size_t S_work_size = 0 ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = GB_clear_static_header (&T_header) ;
 
@@ -144,8 +144,11 @@ GrB_Info GB_build               // build matrix
         C->vdim,        // T->vdim = C->vdim
         C->is_csc,      // T has the same CSR/CSC format as C
         &no_I_work,     // I_work_handle, not used here
+        &I_work_size,
         &no_J_work,     // J_work_handle, not used here
+        &J_work_size,
         &no_S_work,     // S_work_handle, not used here
+        &S_work_size,
         false,          // known_sorted: not yet known
         false,          // known_no_duplicates: not yet known
         0,              // I_work, J_work, and S_work not used here

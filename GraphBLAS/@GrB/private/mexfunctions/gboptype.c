@@ -13,6 +13,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: c = GrB.optype (atype, btype)"
+
 void mexFunction
 (
     int nargout,
@@ -26,7 +28,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 2 && nargout <= 1, "usage: c = GrB.optype (a, b)");
+    gb_usage (nargin == 2 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get atype and btype

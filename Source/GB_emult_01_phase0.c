@@ -42,9 +42,13 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
     const int64_t *GB_RESTRICT *Ch_handle,  // Ch is M->h, A->h, B->h, or NULL
+    size_t *Ch_size_handle,
     int64_t *GB_RESTRICT *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
+    size_t *C_to_M_size_handle,
     int64_t *GB_RESTRICT *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
+    size_t *C_to_A_size_handle,
     int64_t *GB_RESTRICT *C_to_B_handle,    // C_to_B: size Cnvec, or NULL
+    size_t *C_to_B_size_handle,
     int *C_sparsity,            // sparsity structure of C
     // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
@@ -62,6 +66,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
     ASSERT (p_Cnvec != NULL) ;
     ASSERT (Ch_handle != NULL) ;
+    ASSERT (Ch_size_handle != NULL) ;
     ASSERT (C_to_A_handle != NULL) ;
     ASSERT (C_to_B_handle != NULL) ;
 
@@ -91,6 +96,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
     (*p_Cnvec) = 0 ;          
     (*Ch_handle) = NULL ;
+    (*Ch_size_handle) = 0 ;
     if (C_to_M_handle != NULL)
     { 
         (*C_to_M_handle) = NULL ;
@@ -108,10 +114,10 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         return (GrB_SUCCESS) ;
     }
 
-    const int64_t *GB_RESTRICT Ch = NULL ;
-    int64_t *GB_RESTRICT C_to_M = NULL ;
-    int64_t *GB_RESTRICT C_to_A = NULL ;
-    int64_t *GB_RESTRICT C_to_B = NULL ;
+    const int64_t *GB_RESTRICT Ch = NULL ; size_t Ch_size = 0 ;
+    int64_t *GB_RESTRICT C_to_M = NULL ; size_t C_to_M_size = 0 ;
+    int64_t *GB_RESTRICT C_to_A = NULL ; size_t C_to_A_size = 0 ;
+    int64_t *GB_RESTRICT C_to_B = NULL ; size_t C_to_B_size = 0 ;
 
     //--------------------------------------------------------------------------
     // get content of M, A, and B
@@ -169,15 +175,15 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
                     nvec = GB_IMIN (nvec, Mnvec) ;
                     if (nvec == Anvec)
                     { 
-                        Ch = Ah ;
+                        Ch = Ah ; Ch_size = A->h_size ;
                     }
                     else if (nvec == Bnvec)
                     { 
-                        Ch = Bh ;
+                        Ch = Bh ; Ch_size = B->h_size ;
                     }
                     else // (nvec == Mnvec)
                     { 
-                        Ch = Mh ;
+                        Ch = Mh ; Ch_size = M->h_size ;
                     }
 
                 }
@@ -191,11 +197,11 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
                     // Ch = smaller of Ah, Bh
                     if (Anvec <= Bnvec)
                     { 
-                        Ch = Ah ;
+                        Ch = Ah ; Ch_size = A->h_size ;
                     }
                     else
                     { 
-                        Ch = Bh ;
+                        Ch = Bh ; Ch_size = B->h_size ;
                     }
                 }
 
@@ -213,11 +219,11 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
                     // Ch = smaller of Mh, Ah
                     if (Anvec <= Mnvec)
                     { 
-                        Ch = Ah ;
+                        Ch = Ah ; Ch_size = A->h_size ;
                     }
                     else
                     { 
-                        Ch = Mh ;
+                        Ch = Mh ; Ch_size = M->h_size ;
                     }
 
                 }
@@ -228,7 +234,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
                     // (4) A hyper, B sparse, M sparse: C hyper
                     //----------------------------------------------------------
 
-                    Ch = Ah ;
+                    Ch = Ah ; Ch_size = A->h_size ;
                 }
             }
 
@@ -249,11 +255,11 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
                     if (Bnvec <= Mnvec)
                     { 
-                        Ch = Bh ;
+                        Ch = Bh ; Ch_size = B->h_size ;
                     }
                     else
                     { 
-                        Ch = Mh ;
+                        Ch = Mh ; Ch_size = M->h_size ;
                     }
 
                 }
@@ -264,7 +270,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
                     // (6) A sparse, B hyper, M sparse: C hyper
                     //----------------------------------------------------------
 
-                    Ch = Bh ;
+                    Ch = Bh ; Ch_size = B->h_size ;
 
                 }
             }
@@ -278,7 +284,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
                     // (7) A sparse, B sparse, M hyper: C hyper
                     //----------------------------------------------------------
 
-                    Ch = Mh ;
+                    Ch = Mh ; Ch_size = M->h_size ;
 
                 }
                 else
@@ -315,11 +321,11 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
                 // Ch = smaller of Ah, Bh
                 if (Anvec <= Bnvec)
                 { 
-                    Ch = Ah ;
+                    Ch = Ah ; Ch_size = A->h_size ;
                 }
                 else
                 { 
-                    Ch = Bh ;
+                    Ch = Bh ; Ch_size = B->h_size ;
                 }
             }
             else
@@ -329,7 +335,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
                 // (2) A hyper, B sparse: C hyper
                 //--------------------------------------------------------------
 
-                Ch = Ah ;
+                Ch = Ah ; Ch_size = A->h_size ;
 
             }
 
@@ -344,7 +350,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
                 // (3) A sparse, B hyper: C hyper
                 //--------------------------------------------------------------
 
-                Ch = Bh ;
+                Ch = Bh ; Ch_size = B->h_size ;
 
             }
             else
@@ -404,7 +410,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     if (M_is_hyper && Ch != Mh)
     {
         // allocate C_to_M
-        C_to_M = GB_MALLOC_WERK (Cnvec, int64_t) ;
+        C_to_M = GB_MALLOC_WERK (Cnvec, int64_t, &C_to_M_size) ;
         if (C_to_M == NULL)
         { 
             // out of memory
@@ -434,11 +440,11 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     if (A_is_hyper && Ch != Ah)
     {
         // allocate C_to_A
-        C_to_A = GB_MALLOC_WERK (Cnvec, int64_t) ;
+        C_to_A = GB_MALLOC_WERK (Cnvec, int64_t, &C_to_A_size) ;
         if (C_to_A == NULL)
         { 
             // out of memory
-            GB_FREE_WERK (C_to_M) ;
+            GB_FREE_WERK (&C_to_M, C_to_M_size) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -464,12 +470,12 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     if (B_is_hyper && Ch != Bh)
     {
         // allocate C_to_B
-        C_to_B = GB_MALLOC_WERK (Cnvec, int64_t) ;
+        C_to_B = GB_MALLOC_WERK (Cnvec, int64_t, &C_to_B_size) ;
         if (C_to_B == NULL)
         { 
             // out of memory
-            GB_FREE_WERK (C_to_M) ;
-            GB_FREE_WERK (C_to_A) ;
+            GB_FREE_WERK (&C_to_M, C_to_M_size) ;
+            GB_FREE_WERK (&C_to_A, C_to_A_size) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -494,12 +500,14 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
     (*p_Cnvec) = Cnvec ;
     (*Ch_handle) = Ch ;
+    (*Ch_size_handle) = Ch_size ;
     if (C_to_M_handle != NULL)
     {
         (*C_to_M_handle) = C_to_M ;
+        (*C_to_M_size_handle) = C_to_M_size ;
     }
-    (*C_to_A_handle) = C_to_A ;
-    (*C_to_B_handle) = C_to_B ;
+    (*C_to_A_handle) = C_to_A ; (*C_to_A_size_handle) = C_to_A_size ;
+    (*C_to_B_handle) = C_to_B ; (*C_to_B_size_handle) = C_to_B_size ;
 
     //--------------------------------------------------------------------------
     // The code below describes what the output contains:

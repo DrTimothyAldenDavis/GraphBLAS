@@ -18,15 +18,15 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE_WERK (TaskList) ;   \
+#define GB_FREE_WORK                            \
+{                                               \
+    GB_FREE_WERK (&TaskList, TaskList_size) ;   \
 }
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_Matrix_free (&C) ;       \
+#define GB_FREE_ALL                             \
+{                                               \
+    GB_FREE_WORK ;                              \
+    GB_Matrix_free (&C) ;                       \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -68,8 +68,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
 
-    int ntasks, max_ntasks = 0, nthreads ;
-    GB_task_struct *TaskList = NULL ;
+    int ntasks, nthreads ;
+    GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
 
     GBURBLE ("(%s%s%s%s=%s'*%s) ",
         GB_sparsity_char_matrix (M),    // C has the same sparsity as M
@@ -202,7 +202,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
-    GB_OK (GB_AxB_dot3_one_slice (&TaskList, &max_ntasks, &ntasks, &nthreads,
+    GB_OK (GB_AxB_dot3_one_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
         M, Context)) ;
 
     //--------------------------------------------------------------------------
@@ -235,8 +235,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // free the current tasks and construct the tasks for the second phase
     //--------------------------------------------------------------------------
 
-    GB_FREE_WERK (TaskList) ;
-    GB_OK (GB_AxB_dot3_slice (&TaskList, &max_ntasks, &ntasks, &nthreads,
+    GB_FREE_WERK (&TaskList, TaskList_size) ;
+    GB_OK (GB_AxB_dot3_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
         C, Context)) ;
 
     GBURBLE ("nthreads %d ntasks %d ", nthreads, ntasks) ;

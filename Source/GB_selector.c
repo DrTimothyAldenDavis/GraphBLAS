@@ -22,13 +22,13 @@
 
 #define GB_FREE_WORK                        \
 {                                           \
-    GB_FREE_WERK (Zp) ;                     \
+    GB_FREE_WERK (&Zp, Zp_size) ;           \
     GB_WERK_POP (Work, int64_t) ;           \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
-    GB_FREE (Cp) ;                          \
-    GB_FREE (Ch) ;                          \
-    GB_FREE (Ci) ;                          \
-    GB_FREE (Cx) ;                          \
+    GB_FREE (&Cp, Cp_size) ;                \
+    GB_FREE (&Ch, Ch_size) ;                \
+    GB_FREE (&Ci, Ci_size) ;                \
+    GB_FREE (&Cx, Cx_size) ;                \
 }
 
 #define GB_FREE_ALL                         \
@@ -72,7 +72,7 @@ GrB_Info GB_selector
     // declare workspace
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Zp = NULL ;
+    int64_t *GB_RESTRICT Zp = NULL ; size_t Zp_size = 0 ;
     GB_WERK_DECLARE (Work, int64_t) ;
     int64_t *GB_RESTRICT Wfirst = NULL ;
     int64_t *GB_RESTRICT Wlast = NULL ;
@@ -179,10 +179,10 @@ GrB_Info GB_selector
     // the case when A is bitmap is always handled above by GB_bitmap_selector
     ASSERT (!GB_IS_BITMAP (A)) ;
 
-    int64_t *GB_RESTRICT Ap = A->p ;
+    int64_t *GB_RESTRICT Ap = A->p ; size_t Ap_size = A->p_size ;
     int64_t *GB_RESTRICT Ah = A->h ;
-    int64_t *GB_RESTRICT Ai = A->i ;
-    GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
+    int64_t *GB_RESTRICT Ai = A->i ; size_t Ai_size = A->i_size ;
+    GB_void *GB_RESTRICT Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
     int64_t anvec = A->nvec ;
@@ -192,11 +192,13 @@ GrB_Info GB_selector
     // allocate the new vector pointers of C
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Cp = GB_CALLOC (anvec+1, int64_t) ;
-    int64_t *GB_RESTRICT Ch = NULL ;
-    int64_t *GB_RESTRICT Ci = NULL ;
-    GB_void *GB_RESTRICT Cx = NULL ;
+    int64_t *GB_RESTRICT Cp = NULL ; size_t Cp_size = 0 ;
+    int64_t *GB_RESTRICT Ch = NULL ; size_t Ch_size = 0 ;
+    int64_t *GB_RESTRICT Ci = NULL ; size_t Ci_size = 0 ;
+    GB_void *GB_RESTRICT Cx = NULL ; size_t Cx_size = 0 ;
     int64_t cnz = 0 ;
+
+    Cp = GB_CALLOC (anvec+1, int64_t, &Cp_size) ;
     if (Cp == NULL)
     { 
         // out of memory
@@ -243,7 +245,7 @@ GrB_Info GB_selector
     if (opcode <= GB_RESIZE_opcode)
     {
         // allocate Zp
-        Zp = GB_MALLOC_WERK (anvec, int64_t) ;
+        Zp = GB_MALLOC_WERK (anvec, int64_t, &Zp_size) ;
         if (Zp == NULL)
         { 
             // out of memory
@@ -287,8 +289,9 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     cnz = Cp [anvec] ;
-    Ci = GB_MALLOC (cnz, int64_t) ;
-    Cx = GB_MALLOC (cnz * asize, GB_void) ;
+    cnz = GB_IMAX (cnz, 1) ;
+    Ci = GB_MALLOC (cnz, int64_t, &Ci_size) ;
+    Cx = GB_MALLOC (cnz * asize, GB_void, &Cx_size) ;
     if (Ci == NULL || Cx == NULL)
     { 
         // out of memory
@@ -351,20 +354,22 @@ GrB_Info GB_selector
             Ap [cnvec] = Cp [anvec] ;
             A->nvec = cnvec ;
             ASSERT (A->nvec == C_nvec_nonempty) ;
-            GB_FREE (Cp) ;
+            GB_FREE (&Cp, Cp_size) ;
         }
         else
         { 
-            GB_FREE (Ap) ;
-            A->p = Cp ; Cp = NULL ;
+            // free the old A->p and transplant in Cp as the new A->p
+            GB_FREE (&Ap, Ap_size) ;
+            A->p = Cp ; Cp = NULL ; A->p_size = Cp_size ;
         }
 
         ASSERT (Cp == NULL) ;
 
-        GB_FREE (Ai) ;
-        GB_FREE (Ax) ;
-        A->i = Ci ; Ci = NULL ;
-        A->x = Cx ; Cx = NULL ;
+        GB_FREE (&Ai, Ai_size) ;
+        GB_FREE (&Ax, Ax_size) ;
+        A->i = Ci ; Ci = NULL ; A->i_size = Ci_size ;
+        A->x = Cx ; Cx = NULL ; A->x_size = Cx_size ;
+        ASSERT (A->x_size % A->type->size == 0) ;
         A->nzmax = cnz ;
         A->nvec_nonempty = C_nvec_nonempty ;
         A->jumbled = A_jumbled ;        // A remains jumbled (in-place select)
@@ -400,7 +405,7 @@ GrB_Info GB_selector
             // A and C are hypersparse: copy non-empty vectors from Ah to Ch
             //------------------------------------------------------------------
 
-            Ch = GB_MALLOC (anvec, int64_t) ;
+            Ch = GB_MALLOC (anvec, int64_t, &Ch_size) ;
             if (Ch == NULL)
             { 
                 // out of memory
@@ -424,10 +429,11 @@ GrB_Info GB_selector
             ASSERT (C->nvec == C_nvec_nonempty) ;
         }
 
-        C->p = Cp ; Cp = NULL ;
-        C->h = Ch ; Ch = NULL ;
-        C->i = Ci ; Ci = NULL ;
-        C->x = Cx ; Cx = NULL ;
+        C->p = Cp ; Cp = NULL ; C->p_size = Cp_size ;
+        C->h = Ch ; Ch = NULL ; C->h_size = Ch_size ;
+        C->i = Ci ; Ci = NULL ; C->i_size = Ci_size ;
+        C->x = Cx ; Cx = NULL ; C->x_size = Cx_size ;
+        ASSERT (C->x_size % C->type->size == 0) ;
         C->nzmax = cnz ;
         C->magic = GB_MAGIC ;
         C->nvec_nonempty = C_nvec_nonempty ;

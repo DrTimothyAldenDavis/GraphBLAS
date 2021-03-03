@@ -17,8 +17,8 @@
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:
-    int64_t *GB_RESTRICT *p_Ap,        // size nvec+1
-    int64_t *GB_RESTRICT *p_Ah,        // size nvec
+    int64_t *GB_RESTRICT *p_Ap, size_t *p_Ap_size,      // size nvec+1
+    int64_t *GB_RESTRICT *p_Ah, size_t *p_Ah_size,      // size nvec
     int64_t *p_nvec,                // # of vectors, all nonempty
     // input, not modified
     const int64_t *Ap_old,          // size nvec_old+1
@@ -38,9 +38,13 @@ GrB_Info GB_hyper_prune
     ASSERT (Ap_old != NULL) ;
     ASSERT (Ah_old != NULL) ;
     ASSERT (nvec_old >= 0) ;
-    (*p_Ap) = NULL ;
-    (*p_Ah) = NULL ;
+    (*p_Ap) = NULL ;    (*p_Ap_size) = 0 ;
+    (*p_Ah) = NULL ;    (*p_Ah_size) = 0 ;
     (*p_nvec) = -1 ;
+
+    int64_t *GB_RESTRICT W  = NULL ; size_t W_size  = 0 ;
+    int64_t *GB_RESTRICT Ap = NULL ; size_t Ap_size = 0 ;
+    int64_t *GB_RESTRICT Ah = NULL ; size_t Ah_size = 0 ;
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use
@@ -53,7 +57,7 @@ GrB_Info GB_hyper_prune
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT W = GB_MALLOC_WERK (nvec_old+1, int64_t) ;
+    W = GB_MALLOC_WERK (nvec_old+1, int64_t, &W_size) ;
     if (W == NULL)
     { 
         // out of memory
@@ -79,14 +83,14 @@ GrB_Info GB_hyper_prune
     // allocate the result
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Ap = GB_MALLOC (nvec+1, int64_t) ;
-    int64_t *GB_RESTRICT Ah = GB_MALLOC (nvec  , int64_t) ;
+    Ap = GB_MALLOC (nvec+1, int64_t, &Ap_size) ;
+    Ah = GB_MALLOC (nvec  , int64_t, &Ah_size) ;
     if (Ap == NULL || Ah == NULL)
     { 
         // out of memory
-        GB_FREE_WERK (W) ;
-        GB_FREE (Ap) ;
-        GB_FREE (Ah) ;
+        GB_FREE_WERK (&W, W_size) ;
+        GB_FREE (&Ap, Ap_size) ;
+        GB_FREE (&Ah, Ah_size) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -111,9 +115,9 @@ GrB_Info GB_hyper_prune
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WERK (W) ;
-    (*p_Ap) = Ap ;
-    (*p_Ah) = Ah ;
+    GB_FREE_WERK (&W, W_size) ;
+    (*p_Ap) = Ap ; (*p_Ap_size) = Ap_size ;
+    (*p_Ah) = Ah ; (*p_Ah_size) = Ah_size ;
     (*p_nvec) = nvec ;
     return (GrB_SUCCESS) ;
 }

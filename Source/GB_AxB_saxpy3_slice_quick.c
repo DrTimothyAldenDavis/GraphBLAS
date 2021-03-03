@@ -19,6 +19,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     const GrB_Matrix B,             // input matrix B
     // outputs
     GB_saxpy3task_struct **SaxpyTasks_handle,
+    size_t *SaxpyTasks_size_handle,
     int *ntasks,                    // # of tasks created (coarse and fine)
     int *nfine,                     // # of fine tasks created
     int *nthreads,                  // # of threads to use
@@ -41,12 +42,17 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     // allocate the task
     //--------------------------------------------------------------------------
 
-    GB_saxpy3task_struct *SaxpyTasks = GB_CALLOC_WERK (1, GB_saxpy3task_struct) ;
+    size_t SaxpyTasks_size = 0 ;
+    GB_saxpy3task_struct *SaxpyTasks = GB_MALLOC_WERK (1, GB_saxpy3task_struct,
+        &SaxpyTasks_size) ;
     if (SaxpyTasks == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
+
+    // clear SaxpyTasks
+    memset (SaxpyTasks, 0, SaxpyTasks_size) ;
 
     //--------------------------------------------------------------------------
     // create a single Gustavson task
@@ -77,6 +83,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     //--------------------------------------------------------------------------
 
     (*SaxpyTasks_handle) = SaxpyTasks ;
+    (*SaxpyTasks_size_handle) = SaxpyTasks_size ;
     return (GrB_SUCCESS) ;
 }
 

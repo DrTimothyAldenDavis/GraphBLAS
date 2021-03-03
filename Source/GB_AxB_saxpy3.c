@@ -88,18 +88,17 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
-#include "GB_Global.h"
 #include "GB_is_nonzero.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE_WERK (SaxpyTasks) ; \
-    GB_FREE_WERK (Hi_all) ;     \
-    GB_FREE_WERK (Hf_all) ;     \
-    GB_FREE_WERK (Hx_all) ;     \
+#define GB_FREE_WORK                                \
+{                                                   \
+    GB_FREE_WERK (&SaxpyTasks, SaxpyTasks_size) ;   \
+    GB_FREE_WERK (&Hi_all, Hi_all_size) ;           \
+    GB_FREE_WERK (&Hf_all, Hf_all_size) ;           \
+    GB_FREE_WERK (&Hx_all, Hx_all_size) ;           \
 }
 
 #define GB_FREE_ALL             \
@@ -175,10 +174,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // define workspace
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Hi_all = NULL ;
-    int64_t *GB_RESTRICT Hf_all = NULL ;
-    GB_void *GB_RESTRICT Hx_all = NULL ;
-    GB_saxpy3task_struct *SaxpyTasks = NULL ;
+    int64_t *GB_RESTRICT Hi_all = NULL ; size_t Hi_all_size = 0 ;
+    int64_t *GB_RESTRICT Hf_all = NULL ; size_t Hf_all_size = 0 ;
+    GB_void *GB_RESTRICT Hx_all = NULL ; size_t Hx_all_size = 0 ;
+    GB_saxpy3task_struct *SaxpyTasks = NULL ; size_t SaxpyTasks_size = 0 ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -280,7 +279,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // single Gustavson task only (fine task if B has one vector, coarse
         // otherwise).  In this case, the flop count analysis is not needed.
         GB_OK (GB_AxB_saxpy3_slice_quick (C, A, B,
-            &SaxpyTasks, &ntasks, &nfine, &nthreads, Context)) ;
+            &SaxpyTasks, &SaxpyTasks_size, &ntasks, &nfine, &nthreads,
+            Context)) ;
         GBURBLE ("(single-threaded Gustavson) ") ;
     }
     else
@@ -289,8 +289,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // the general case.  This may select a single task for a single thread
         // anyway, but this decision would be based on the analysis.
         GB_OK (GB_AxB_saxpy3_slice_balanced (C, M, Mask_comp, A, B, AxB_method,
-            &SaxpyTasks, &apply_mask, &M_dense_in_place, &ntasks, &nfine,
-            &nthreads, Context)) ;
+            &SaxpyTasks, &SaxpyTasks_size, &apply_mask, &M_dense_in_place,
+            &ntasks, &nfine, &nthreads, Context)) ;
     }
 
     if (do_sort) GBURBLE ("sort ") ;
@@ -448,16 +448,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (Hi_size_total > 0)
     { 
-        Hi_all = GB_MALLOC_WERK (Hi_size_total, int64_t) ;
+        Hi_all = GB_MALLOC_WERK (Hi_size_total, int64_t, &Hi_all_size) ;
     }
     if (Hf_size_total > 0)
     { 
         // Hf must be calloc'd to initialize all entries as empty 
-        Hf_all = GB_CALLOC_WERK (Hf_size_total, int64_t) ;
+        Hf_all = GB_CALLOC_WERK (Hf_size_total, int64_t, &Hf_all_size) ;
     }
     if (Hx_size_total > 0)
     { 
-        Hx_all = GB_MALLOC_WERK (Hx_size_total * csize, GB_void) ;
+        Hx_all = GB_MALLOC_WERK (Hx_size_total * csize, GB_void, &Hx_all_size) ;
     }
 
     if ((Hi_size_total > 0 && Hi_all == NULL) ||

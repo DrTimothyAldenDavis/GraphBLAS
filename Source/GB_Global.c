@@ -57,10 +57,10 @@ typedef struct
     // All threads must use the same malloc/calloc/realloc/free functions.
     // They default to the ANSI C11 functions, but can be defined by GxB_init.
 
-    void * (* malloc_function  ) (size_t)         ;
-    void * (* calloc_function  ) (size_t, size_t) ;
-    void * (* realloc_function ) (void *, size_t) ;
-    void   (* free_function    ) (void *)         ;
+    void * (* malloc_function  ) (size_t)         ;     // required
+    void * (* calloc_function  ) (size_t, size_t) ;     // may be NULL
+    void * (* realloc_function ) (void *, size_t) ;     // may be NULL
+    void   (* free_function    ) (void *)         ;     // required
     bool malloc_is_thread_safe ;   // default is true
 
     //--------------------------------------------------------------------------
@@ -123,6 +123,18 @@ typedef struct
     //--------------------------------------------------------------------------
 
     double timing [20] ;
+
+    //--------------------------------------------------------------------------
+    // for malloc debugging only
+    //--------------------------------------------------------------------------
+
+    #ifdef GB_DEBUG
+    #define GB_MEMTABLE_SIZE 10000
+    GB_void *memtable_p [GB_MEMTABLE_SIZE] ;
+    size_t   memtable_s [GB_MEMTABLE_SIZE] ;
+    #endif
+    int nmemtable ;
+
 }
 GB_Global_struct ;
 
@@ -193,7 +205,10 @@ GB_Global_struct GB_Global =
     // CUDA environment (DRAFT: in progress)
     .gpu_count = 0,                     // # of GPUs in the system
     .gpu_control = GxB_DEFAULT,         // always, never, or default
-    .gpu_chunk = GB_GPU_CHUNK_DEFAULT   // min problem size for using a GPU
+    .gpu_chunk = GB_GPU_CHUNK_DEFAULT,  // min problem size for using a GPU
+
+    // for malloc debugging only
+    .nmemtable = 0,     // memtable is empty
 
 } ;
 
@@ -368,6 +383,168 @@ void GB_Global_abort_function (void)
 }
 
 //------------------------------------------------------------------------------
+// malloc debuging
+//------------------------------------------------------------------------------
+
+// These functions keep a separate record of the pointers to all allocated
+// blocks of memory and their sizes, just for sanity checks.
+
+GB_PUBLIC
+void GB_Global_memtable_dump (void)
+{
+    #ifdef GB_DEBUG
+    printf ("\nmemtable dump: %d nmalloc %ld\n", GB_Global.nmemtable,
+        GB_Global.nmalloc) ;
+    for (int k = 0 ; k < GB_Global.nmemtable ; k++)
+    {
+        printf ("  %4d: %12p : %ld\n", k,
+            GB_Global.memtable_p [k],
+            GB_Global.memtable_s [k]) ;
+    }
+    #endif
+}
+
+GB_PUBLIC
+int GB_Global_memtable_n (void)
+{
+    return (GB_Global.nmemtable) ;
+}
+
+GB_PUBLIC
+void GB_Global_memtable_clear (void)
+{
+    GB_Global.nmemtable = 0 ;
+}
+
+// add a pointer to the table of malloc'd blocks
+GB_PUBLIC
+void GB_Global_memtable_add (void *p, size_t size)
+{
+    #ifdef GB_DEBUG
+    ASSERT ((p == NULL) == (size == 0)) ;
+    if (p == NULL) return ;
+    bool fail = false ;
+//  printf ("memtable add %p size %ld\n", p, size) ;
+    #pragma omp critical(GB_memtable)
+    {
+        int n = GB_Global.nmemtable  ;
+        fail = (n > GB_MEMTABLE_SIZE) ;
+        if (!fail)
+        {
+            for (int i = 0 ; i < n ; i++)
+            {
+                if (p == GB_Global.memtable_p [i])
+                {
+                    printf ("\nadd duplicate %p size %ld\n", p, size) ;
+                    GB_Global_memtable_dump ( ) ;
+                    printf ("Hey %d %p\n", i,p) ;
+                    fail = true ;
+                    break ;
+                }
+            }
+        }
+        if (!fail && p != NULL)
+        {
+            GB_Global.memtable_p [n] = p ;
+            GB_Global.memtable_s [n] = size ;
+            GB_Global.nmemtable++ ;
+        }
+    }
+    ASSERT (!fail) ;
+//  GB_Global_memtable_dump ( ) ;
+    #endif
+}
+
+// get the size of a malloc'd block
+GB_PUBLIC
+size_t GB_Global_memtable_size (void *p)
+{
+    size_t size = 0 ;
+    #ifdef GB_DEBUG
+    if (p == NULL) return (0) ;
+    bool found = false ;
+    #pragma omp critical(GB_memtable)
+    {
+        int n = GB_Global.nmemtable  ;
+        for (int i = 0 ; i < n ; i++)
+        {
+            if (p == GB_Global.memtable_p [i])
+            {
+                size = GB_Global.memtable_s [i] ;
+                found = true ;
+                break ;
+            }
+        }
+    }
+    if (!found)
+    {
+        printf ("\nFAIL: %p not found\n", p) ;
+        GB_Global_memtable_dump ( ) ;
+        ASSERT (0) ;
+    }
+    #endif
+    return (size) ;
+}
+
+// test if a malloc'd block is in the table
+GB_PUBLIC
+bool GB_Global_memtable_find (void *p)
+{
+    bool found = false ;
+    #ifdef GB_DEBUG
+    if (p == NULL) return (false) ;
+    #pragma omp critical(GB_memtable)
+    {
+        int n = GB_Global.nmemtable  ;
+        for (int i = 0 ; i < n ; i++)
+        {
+            if (p == GB_Global.memtable_p [i])
+            {
+                found = true ;
+                break ;
+            }
+        }
+    }
+    #endif
+    return (found) ;
+}
+
+// remove a pointer from the table of malloc'd blocks
+GB_PUBLIC
+void GB_Global_memtable_remove (void *p)
+{
+    #ifdef GB_DEBUG
+    if (p == NULL) return ;
+    bool found = false ;
+//  printf ("memtable remove %p ", p) ;
+    #pragma omp critical(GB_memtable)
+    {
+        int n = GB_Global.nmemtable  ;
+        for (int i = 0 ; i < n ; i++)
+        {
+            if (p == GB_Global.memtable_p [i])
+            {
+                // found p in the table; remove it
+//              printf ("size %ld\n", GB_Global.memtable_s [i]) ;
+                GB_Global.memtable_p [i] = GB_Global.memtable_p [n-1] ; 
+                GB_Global.memtable_s [i] = GB_Global.memtable_s [n-1] ; 
+                GB_Global.nmemtable -- ;
+                found = true ;
+                break ;
+            }
+        }
+    }
+    if (!found)
+    {
+        printf ("remove %p NOT FOUND\n", p) ;
+        GB_Global_memtable_dump ( ) ;
+    }
+    ASSERT (found) ;
+//  GB_Global_memtable_dump ( ) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
 // malloc_function
 //------------------------------------------------------------------------------
 
@@ -378,7 +555,6 @@ void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
 
 void * GB_Global_malloc_function (size_t size)
 { 
-    bool ok = true ;
     void *p = NULL ;
     if (GB_Global.malloc_is_thread_safe)
     {
@@ -391,7 +567,10 @@ void * GB_Global_malloc_function (size_t size)
             p = GB_Global.malloc_function (size) ;
         }
     }
-    return (ok ? p : NULL) ;
+    #ifdef GB_DEBUG
+    GB_Global_memtable_add (p, size) ;
+    #endif
+    return (p) ;
 }
 
 //------------------------------------------------------------------------------
@@ -403,9 +582,13 @@ void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
     GB_Global.calloc_function = calloc_function ;
 }
 
+bool GB_Global_have_calloc_function (void)
+{ 
+    return (GB_Global.calloc_function != NULL) ;
+}
+
 void * GB_Global_calloc_function (size_t count, size_t size)
 { 
-    bool ok = true ;
     void *p = NULL ;
     if (GB_Global.malloc_is_thread_safe)
     {
@@ -418,7 +601,10 @@ void * GB_Global_calloc_function (size_t count, size_t size)
             p = GB_Global.calloc_function (count, size) ;
         }
     }
-    return (ok ? p : NULL) ;
+    #ifdef GB_DEBUG
+    GB_Global_memtable_add (p, count * size) ;
+    #endif
+    return (p) ;
 }
 
 //------------------------------------------------------------------------------
@@ -440,7 +626,6 @@ bool GB_Global_have_realloc_function (void)
 
 void * GB_Global_realloc_function (void *p, size_t size)
 { 
-    bool ok = true ;
     void *pnew = NULL ;
     if (GB_Global.malloc_is_thread_safe)
     {
@@ -453,7 +638,14 @@ void * GB_Global_realloc_function (void *p, size_t size)
             pnew = GB_Global.realloc_function (p, size) ;
         }
     }
-    return (ok ? pnew : NULL) ;
+    #ifdef GB_DEBUG
+    if (pnew != NULL)
+    {
+        GB_Global_memtable_remove (p) ;
+        GB_Global_memtable_add (pnew, size) ;
+    }
+    #endif
+    return (pnew) ;
 }
 
 //------------------------------------------------------------------------------
@@ -478,6 +670,9 @@ void GB_Global_free_function (void *p)
             GB_Global.free_function (p) ;
         }
     }
+    #ifdef GB_DEBUG
+    GB_Global_memtable_remove (p) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------

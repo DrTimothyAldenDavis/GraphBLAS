@@ -47,7 +47,8 @@ GrB_Info GB_Type_new
     //--------------------------------------------------------------------------
 
     // allocate the type
-    (*type) = GB_MALLOC (1, struct GB_Type_opaque) ;
+    size_t header_size ;
+    (*type) = GB_MALLOC (1, struct GB_Type_opaque, &header_size) ;
     if (*type == NULL)
     { 
         // out of memory
@@ -57,6 +58,7 @@ GrB_Info GB_Type_new
     // initialize the type
     GrB_Type t = *type ;
     t->magic = GB_MAGIC ;
+    t->header_size = header_size ;
     t->size = GB_IMAX (sizeof_ctype, 1) ;
     t->code = GB_UDT_code ;     // user-defined type
     t->name [0] = '\0' ;

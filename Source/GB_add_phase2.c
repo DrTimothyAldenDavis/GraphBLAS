@@ -58,7 +58,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
     // from phase1:
-    const int64_t *GB_RESTRICT Cp,  // vector pointers for C
+    int64_t **Cp_handle,    // vector pointers for C
+    size_t Cp_size,
     const int64_t Cnvec_nonempty,   // # of non-empty vectors in C
     // tasks from phase1a:
     const GB_task_struct *GB_RESTRICT TaskList,    // array of structs
@@ -66,7 +67,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int C_nthreads,       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    const int64_t *GB_RESTRICT Ch,
+    int64_t **Ch_handle,
+    size_t Ch_size,
     const int64_t *GB_RESTRICT C_to_M,
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
@@ -99,6 +101,11 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
+
+    ASSERT (Cp_handle != NULL) ;
+    ASSERT (Ch_handle != NULL) ;
+    int64_t *GB_RESTRICT Cp = (*Cp_handle) ;
+    int64_t *GB_RESTRICT Ch = (*Ch_handle) ;
 
     //--------------------------------------------------------------------------
     // get the opcode
@@ -153,8 +160,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
-        GB_FREE (Cp) ;
-        GB_FREE (Ch) ;
+        GB_FREE (Cp_handle, Cp_size) ;
+        GB_FREE (Ch_handle, Ch_size) ;
         return (info) ;
     }
 
@@ -162,17 +169,21 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     if (C_is_sparse_or_hyper)
     {
         C->nvec_nonempty = Cnvec_nonempty ;
-        C->p = (int64_t *) Cp ;
+        C->p = (int64_t *) Cp ; C->p_size = Cp_size ;
+        (*Cp_handle) = NULL ;
     }
 
     // add Ch as the hypersparse list for C, from GB_add_phase0
     if (C_is_hyper)
     { 
-        C->h = (int64_t *) Ch ;
+        C->h = (int64_t *) Ch ; C->h_size = Ch_size ;
         C->nvec = Cnvec ;
+        (*Ch_handle) = NULL ;
     }
 
-    // now Cp and Ch have been transplanted into C, so they must not be freed.
+    // now Cp and Ch have been transplanted into C
+    ASSERT ((*Cp_handle) == NULL) ;
+    ASSERT ((*Ch_handle) == NULL) ;
     C->magic = GB_MAGIC ;
     GB_Type_code ccode = ctype->code ;
 

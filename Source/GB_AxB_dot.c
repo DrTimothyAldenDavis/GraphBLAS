@@ -141,7 +141,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
         int ngpus_to_use = GB_ngpus_to_use (work) ;
         GBURBLE (" work:%g gpus:%d ", work, ngpus_to_use) ;
-        if (ngpus_to_use > 0 && semiring->semiring_is_builtin
+        if (ngpus_to_use > 0
+            && (semiring->header_size == 0)     // semiring is built-in
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code)
             && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))

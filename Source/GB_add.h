@@ -31,9 +31,13 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
     int64_t *GB_RESTRICT *Ch_handle,        // Ch: size Cnvec, or NULL
+    size_t *Ch_size_handle,                 // size of Ch in bytes
     int64_t *GB_RESTRICT *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
+    size_t *C_to_M_size_handle,             // size of C_to_M in bytes
     int64_t *GB_RESTRICT *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
+    size_t *C_to_A_size_handle,             // size of C_to_A in bytes
     int64_t *GB_RESTRICT *C_to_B_handle,    // C_to_B: of size Cnvec, or NULL
+    size_t *C_to_B_size_handle,             // size of C_to_A in bytes
     bool *p_Ch_is_Mh,           // if true, then Ch == Mh
     int *C_sparsity,            // sparsity structure of C
     const GrB_Matrix M,         // optional mask, may be NULL; not complemented
@@ -45,6 +49,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 (
     int64_t **Cp_handle,                // output of size Cnvec+1
+    size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // tasks from phase0b:
@@ -74,7 +79,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
     // from phase1:
-    const int64_t *GB_RESTRICT Cp,  // vector pointers for C
+    int64_t **Cp_handle,    // vector pointers for C
+    size_t Cp_size,
     const int64_t Cnvec_nonempty,   // # of non-empty vectors in C
     // tasks from phase1a:
     const GB_task_struct *GB_RESTRICT TaskList,    // array of structs
@@ -82,7 +88,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int C_nthreads,       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    const int64_t *GB_RESTRICT Ch,
+    int64_t **Ch_handle,
+    size_t Ch_size,
     const int64_t *GB_RESTRICT C_to_M,
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,

@@ -164,8 +164,8 @@ GrB_Info GB_subassign_08n
     int64_t Znvec ;
     int64_t *GB_RESTRICT Zh_shallow = NULL ;
     GB_OK (GB_subassign_emult_slice (
-        &TaskList, &max_ntasks, &ntasks, &nthreads,
-        &Znvec, &Zh_shallow, &Z_to_A, &Z_to_M,
+        &TaskList, &TaskList_size, &ntasks, &nthreads,
+        &Znvec, &Zh_shallow, &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size,
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
         A, M, Context)) ;
     GB_ALLOCATE_NPENDING_WERK ;

@@ -43,7 +43,8 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     // from phase1:
-    const int64_t *GB_RESTRICT Cp,      // vector pointers for C
+    int64_t **Cp_handle,    // vector pointers for C
+    size_t Cp_size,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase1a:
     const GB_task_struct *GB_RESTRICT TaskList, // array of structs
@@ -52,6 +53,7 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *GB_RESTRICT Ch,
+    size_t Ch_size,
     const int64_t *GB_RESTRICT C_to_M,
     const int64_t *GB_RESTRICT C_to_A,
     const int64_t *GB_RESTRICT C_to_B,
@@ -92,6 +94,9 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
 
     ASSERT (A->vdim == B->vdim) ;
 
+    ASSERT (Cp_handle != NULL) ;
+    int64_t *GB_RESTRICT Cp = (*Cp_handle) ;
+
     //--------------------------------------------------------------------------
     // get the opcode
     //--------------------------------------------------------------------------
@@ -127,7 +132,7 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
     {
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
         // Ch must not be freed since Ch is always shallow
-        GB_FREE (Cp) ;
+        GB_FREE (Cp_handle, Cp_size) ;
         return (info) ;
     }
 
@@ -135,18 +140,21 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
     if (C_is_sparse_or_hyper)
     { 
         C->nvec_nonempty = Cnvec_nonempty ;
-        C->p = (int64_t *) Cp ;
+        C->p = (int64_t *) Cp ; C->p_size = Cp_size ;
+        (*Cp_handle) = NULL ;
     }
 
     // add Ch as the hypersparse list for C, from GB_emult_01_phase0
     if (C_is_hyper)
     { 
         // C->h is currently shallow; a copy is made at the end
-        C->h = (int64_t *) Ch ;
+        C->h = (int64_t *) Ch ; C->h_size = Ch_size ;
         C->h_shallow = true ;
         C->nvec = Cnvec ;
     }
 
+    // Cp has been transplanted into C; so it is not freed here
+    ASSERT ((*Cp_handle) == NULL) ;
     C->magic = GB_MAGIC ;
     GB_Type_code ccode = ctype->code ;
 

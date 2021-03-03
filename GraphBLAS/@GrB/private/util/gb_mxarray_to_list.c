@@ -48,7 +48,9 @@ int64_t *gb_mxarray_to_list     // return List of integers
     if (*len == 0)
     { 
         (*allocated) = true ;
-        return ((int64_t *) mxCalloc (1, sizeof (int64_t))) ;
+        int64_t *List = (int64_t *) mxMalloc (1 * sizeof (int64_t)) ;
+        List [0] = 0 ;
+        return (List) ;
     }
     else if (class == mxINT64_CLASS && zerobased)
     { 

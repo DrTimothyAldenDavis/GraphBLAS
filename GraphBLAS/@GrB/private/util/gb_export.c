@@ -52,7 +52,6 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
         //----------------------------------------------------------------------
 
         // Typecast to double, if C is integer (int8, ..., uint64)
-
         return (gb_export_to_mxsparse (C_handle)) ;
 
     }
@@ -104,7 +103,6 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
 
         // No typecasting is needed since the MATLAB struct can hold all of the
         // opaque content of the GrB_Matrix.
-
         return (gb_export_to_mxstruct (C_handle)) ;
     }
 }

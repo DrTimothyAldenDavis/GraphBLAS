@@ -26,17 +26,17 @@
 #endif
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                     \
-{                                       \
-    GB_FREE_WORK ;                      \
-    GB_WERK_POP (Npending, int64_t) ;   \
-    GB_FREE_WERK (TaskList) ;           \
-    GB_FREE (Zh) ;                      \
-    GB_FREE_WERK (Z_to_X) ;             \
-    GB_FREE_WERK (Z_to_S) ;             \
-    GB_FREE_WERK (Z_to_A) ;             \
-    GB_FREE_WERK (Z_to_M) ;             \
-    GB_Matrix_free (&S);                \
+#define GB_FREE_ALL                             \
+{                                               \
+    GB_FREE_WORK ;                              \
+    GB_WERK_POP (Npending, int64_t) ;           \
+    GB_FREE_WERK (&TaskList, TaskList_size) ;   \
+    GB_FREE (&Zh, Zh_size) ;                    \
+    GB_FREE_WERK (&Z_to_X, Z_to_X_size) ;       \
+    GB_FREE_WERK (&Z_to_S, Z_to_S_size) ;       \
+    GB_FREE_WERK (&Z_to_A, Z_to_A_size) ;       \
+    GB_FREE_WERK (&Z_to_M, Z_to_M_size) ;       \
+    GB_Matrix_free (&S);                        \
 }
 
 //------------------------------------------------------------------------------
@@ -45,14 +45,14 @@
 
 #define GB_EMPTY_TASKLIST                                                   \
     GrB_Info info ;                                                         \
-    int taskid, ntasks = 0, max_ntasks = 0, nthreads ;                      \
-    GB_task_struct *TaskList = NULL ;                                       \
+    int taskid, ntasks = 0, nthreads ;                                      \
+    GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;            \
     GB_WERK_DECLARE (Npending, int64_t) ;                                   \
-    int64_t *GB_RESTRICT Zh = NULL ;                                        \
-    int64_t *GB_RESTRICT Z_to_X = NULL ;                                    \
-    int64_t *GB_RESTRICT Z_to_S = NULL ;                                    \
-    int64_t *GB_RESTRICT Z_to_A = NULL ;                                    \
-    int64_t *GB_RESTRICT Z_to_M = NULL ;                                    \
+    int64_t *GB_RESTRICT Zh     = NULL ; size_t Zh_size = 0 ;               \
+    int64_t *GB_RESTRICT Z_to_X = NULL ; size_t Z_to_X_size = 0 ;           \
+    int64_t *GB_RESTRICT Z_to_S = NULL ; size_t Z_to_S_size = 0 ;           \
+    int64_t *GB_RESTRICT Z_to_A = NULL ; size_t Z_to_A_size = 0 ;           \
+    int64_t *GB_RESTRICT Z_to_M = NULL ; size_t Z_to_M_size = 0 ;           \
     struct GB_Matrix_opaque S_header ;                                      \
     GrB_Matrix S = GB_clear_static_header (&S_header) ;
 
@@ -1528,7 +1528,7 @@ GrB_Info GB_subassign_19
 
 #define GB_SUBASSIGN_ONE_SLICE(M)                                           \
     GB_OK (GB_subassign_one_slice (                                         \
-        &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
+        &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
         M, Context)) ;                                                      \
     GB_ALLOCATE_NPENDING_WERK ;
@@ -1550,10 +1550,11 @@ GrB_Info GB_subassign_19
     int Z_sparsity = GxB_SPARSE ;                                           \
     int64_t Znvec ;                                                         \
     GB_OK (GB_add_phase0 (                                                  \
-        &Znvec, &Zh, NULL, &Z_to_X, &Z_to_S, NULL, &Z_sparsity,             \
+        &Znvec, &Zh, &Zh_size, NULL, NULL, &Z_to_X, &Z_to_X_size,           \
+        &Z_to_S, &Z_to_S_size, NULL, &Z_sparsity,                           \
         NULL, X, S, Context)) ;                                             \
     GB_OK (GB_ewise_slice (                                                 \
-        &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
+        &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
         Znvec, Zh, NULL, Z_to_X, Z_to_S, false,                             \
         NULL, X, S, Context)) ;                                             \
     GB_ALLOCATE_NPENDING_WERK ;
@@ -1567,7 +1568,7 @@ GrB_Info GB_subassign_19
 
 #define GB_SUBASSIGN_IXJ_SLICE                                              \
     GB_OK (GB_subassign_IxJ_slice (                                         \
-        &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
+        &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
         /* I, */ nI, /* Ikind, Icolon, J, */ nJ, /* Jkind, Jcolon, */       \
         Context)) ;                                                         \
     GB_ALLOCATE_NPENDING_WERK ;
@@ -1581,8 +1582,8 @@ GrB_Info GB_subassign_19
 GrB_Info GB_subassign_one_slice
 (
     // output:
-    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
-    int *p_max_ntasks,              // size of TaskList
+    GB_task_struct **p_TaskList,    // array of structs
+    size_t *p_TaskList_size,        // size of TaskList
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     // input:
@@ -1607,13 +1608,15 @@ GrB_Info GB_subassign_emult_slice
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
-    int *p_max_ntasks,              // size of TaskList
+    size_t *p_TaskList_size,        // size of TaskList
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
-    const int64_t *GB_RESTRICT *Zh_handle, // Zh_shallow is A->h, M->h, or NULL
-    int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output, size Znvec, or NULL
-    int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output, size Znvec, or NULL
+    const int64_t *GB_RESTRICT *Zh_handle,  // Zh_shallow is A->h, M->h, or NULL
+    int64_t *GB_RESTRICT *Z_to_A_handle,    // Z_to_A: size Znvec, or NULL
+    size_t *Z_to_A_size_handle,
+    int64_t *GB_RESTRICT *Z_to_M_handle,    // Z_to_M: size Znvec, or NULL
+    size_t *Z_to_M_size_handle,
     // input:
     const GrB_Matrix C,             // output matrix C
     const GrB_Index *I,

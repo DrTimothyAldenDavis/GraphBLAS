@@ -25,16 +25,17 @@
 // GB_ALLOCATE_WORK: allocate per-thread workspace
 //------------------------------------------------------------------------------
 
-#define GB_ALLOCATE_WORK(work_type)                             \
-    work_type *Work = GB_MALLOC (nthreads, work_type) ;         \
+#define GB_ALLOCATE_WORK(work_type)                                         \
+    size_t Work_size ;                                                      \
+    work_type *Work = GB_MALLOC (nthreads, work_type, &Work_size) ;         \
     if (Work == NULL) return (false) ;
 
 //------------------------------------------------------------------------------
 // GB_FREE_WORK: free per-thread workspace
 //------------------------------------------------------------------------------
 
-#define GB_FREE_WORK(work_type)                                 \
-    GB_FREE (Work) ;
+#define GB_FREE_WORK(work_type)                                             \
+    GB_FREE (&Work, Work_size) ;
 
 //------------------------------------------------------------------------------
 // GB_matlab_helper1: convert 0-based indices to 1-based for gbextracttuples
@@ -330,14 +331,19 @@ void GB_matlab_helper8
 // GB_matlab_helper9: compute the degree of each vector
 //------------------------------------------------------------------------------
 
+// TODO: use GrB_mxv or GrB_vxm when possible.
+
 bool GB_matlab_helper9  // true if successful, false if out of memory
 (
     GrB_Matrix A,       // input matrix
     int64_t **degree,   // degree of each vector, size nvec
+    size_t *degree_size,
     GrB_Index **list,   // list of non-empty vectors
+    size_t *list_size,
     GrB_Index *nvec     // # of non-empty vectors
 )
 {
+
     ASSERT_MATRIX_OK (A, "A for matlab helper9", GB0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A) || GB_IS_FULL (A)) ;
@@ -345,15 +351,25 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
     int64_t anvec = A->nvec ;
     GB_NTHREADS (anvec) ;
 
-    uint64_t *List   = GB_MALLOC (anvec, uint64_t) ;
-    int64_t  *Degree = GB_MALLOC (anvec, int64_t) ;
+    uint64_t *List   = NULL ; size_t List_size = 0 ;
+    int64_t  *Degree = NULL ; size_t Degree_size = 0 ;
+
+    List   = GB_MALLOC (anvec, uint64_t, &List_size) ;
+    Degree = GB_MALLOC (anvec, int64_t , &Degree_size) ;
 
     if (List == NULL || Degree == NULL)
     {
-        GB_FREE (List) ;
-        GB_FREE (Degree) ;
+        GB_FREE (&List, List_size) ;
+        GB_FREE (&Degree, Degree_size) ;
         return (false) ;
     }
+
+    #ifdef GB_DEBUG
+    // remove List and Degree from the debug memtable, since they will be
+    // imported as the degree vector d by GxB_Vector_import_CSC.
+    GB_Global_memtable_remove (List) ;
+    GB_Global_memtable_remove (Degree) ;
+    #endif
 
     int64_t *Ah = A->h ;
     int64_t *Ap = A->p ;
@@ -368,8 +384,8 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
     }
 
     // return result
-    (*degree) = Degree ;
-    (*list) = List ;
+    (*degree) = Degree ;    (*degree_size) = Degree_size ;
+    (*list) = List ;        (*list_size) = List_size ;
     (*nvec) = anvec ;
     return (true) ;
 }

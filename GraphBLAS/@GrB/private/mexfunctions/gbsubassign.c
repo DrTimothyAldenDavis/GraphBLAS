@@ -22,6 +22,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: C = GrB.subassign (Cin, M, accum, A, I, J, desc)"
+
 void mexFunction
 (
     int nargout,
@@ -30,7 +32,6 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-    gb_assign (nargout, pargout, nargin, pargin, true,
-        "usage: C = GrB.subassign (Cin, M, accum, A, I, J, desc)") ;
+    gb_assign (nargout, pargout, nargin, pargin, true, USAGE) ;
 }
 

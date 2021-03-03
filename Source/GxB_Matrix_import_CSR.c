@@ -41,7 +41,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     // import the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (A, type, ncols, nrows,
+    info = GB_import (A, type, ncols, nrows, false,
         Ap,   Ap_size,  // Ap
         NULL, 0,        // Ah
         NULL, 0,        // Ab

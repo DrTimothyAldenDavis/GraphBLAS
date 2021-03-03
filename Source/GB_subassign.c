@@ -28,8 +28,8 @@
     GB_Matrix_free (&C2) ;          \
     GB_Matrix_free (&M2) ;          \
     GB_Matrix_free (&A2) ;          \
-    GB_FREE_WERK (I2) ;             \
-    GB_FREE_WERK (J2) ;             \
+    GB_FREE_WERK (&I2, I2_size) ;   \
+    GB_FREE_WERK (&J2, J2_size) ;   \
 }
 
 GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
@@ -71,8 +71,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     GrB_Matrix A2 = NULL ;
     struct GB_Matrix_opaque
         C2_header, M2_header, A2_header, MT_header, AT_header ;
-    GrB_Index *I2  = NULL ;
-    GrB_Index *J2  = NULL ;
+    GrB_Index *I2 = NULL ; size_t I2_size = 0 ;
+    GrB_Index *J2 = NULL ; size_t J2_size = 0 ;
 
     GrB_Type atype = NULL ;
     bool done = false ;
@@ -82,8 +82,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 
     GB_OK (GB_assign_prep (&C, &M, &A, &C2, &M2, &A2,
         &C2_header, &M2_header, &A2_header, &MT_header, &AT_header,
-        &I, &I2, &ni, &nI, &Ikind, Icolon,
-        &J, &J2, &nj, &nJ, &Jkind, Jcolon,
+        &I, &I2, &I2_size, &ni, &nI, &Ikind, Icolon,
+        &J, &J2, &J2_size, &nj, &nJ, &Jkind, Jcolon,
         &done, &atype, C_in, &C_replace, &assign_kind,
         M_in, Mask_comp, Mask_struct, M_transpose, accum,
         A_in, A_transpose, Rows, nRows_in, Cols, nCols_in,

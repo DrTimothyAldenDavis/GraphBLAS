@@ -152,6 +152,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         C->nzmax = A->nzmax ;
         C->x = A->x ;
         C->x_shallow = true ;       // C->x will not be freed when freeing C
+        ASSERT (C->x_size == 0) ;
         ASSERT_MATRIX_OK (C, "C = pure shallow (A)", GB0) ;
         return (GrB_SUCCESS) ;
     }
@@ -162,7 +163,8 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
 
     // allocate new space for the numerical values of C
     C->nzmax = GB_IMAX (anz, 1) ;
-    C->x = GB_MALLOC (C->nzmax * C->type->size, GB_void) ;
+    C->x = GB_MALLOC (C->nzmax * C->type->size, GB_void, &(C->x_size)) ;
+    ASSERT (C->x_size % C->type->size == 0) ;
     C->x_shallow = false ;          // free C->x when freeing C
     if (C->x == NULL)
     { 

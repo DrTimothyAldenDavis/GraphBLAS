@@ -18,10 +18,10 @@
 
 #include "GB.h"
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WERK (Ap) ;         \
-    GB_FREE_WERK (X_bitmap) ;   \
+#define GB_FREE_ALL                             \
+{                                               \
+    GB_FREE_WERK (&Ap, Ap_size) ;               \
+    GB_FREE_WERK (&X_bitmap, X_bitmap_size) ;   \
 }
 
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
@@ -41,8 +41,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_void *GB_RESTRICT X_bitmap = NULL ; 
-    int64_t *GB_RESTRICT Ap = NULL ; 
+    GB_void *GB_RESTRICT X_bitmap = NULL ; size_t X_bitmap_size = 0 ;
+    int64_t *GB_RESTRICT Ap       = NULL ; size_t Ap_size = 0 ;
 
     ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
     ASSERT (p_nvals != NULL) ;
@@ -118,9 +118,9 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         { 
             // X must be typecasted
             int64_t anzmax = GB_IMAX (anz, 1) ;
-            X_bitmap = GB_MALLOC_WERK (anzmax * asize, GB_void) ;
+            X_bitmap = GB_MALLOC_WERK (anzmax*asize, GB_void, &X_bitmap_size) ;
         }
-        Ap = GB_MALLOC_WERK (A->vdim+1, int64_t) ;
+        Ap = GB_MALLOC_WERK (A->vdim+1, int64_t, &Ap_size) ;
         if (Ap == NULL || (need_typecast && X_bitmap == NULL))
         { 
             // out of memory

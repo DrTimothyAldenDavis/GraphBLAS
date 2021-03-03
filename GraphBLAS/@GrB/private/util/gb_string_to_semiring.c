@@ -66,7 +66,8 @@ GrB_Semiring gb_string_to_semiring      // return a semiring from a string
     // get the add operator
     //--------------------------------------------------------------------------
 
-    GrB_Type add_type = mult->ztype ;
+    GrB_Type add_type ;
+    OK (GxB_BinaryOp_ztype (&add_type, mult)) ;
     GrB_BinaryOp add = gb_string_and_type_to_binop (add_name, add_type, false) ;
     CHECK_ERROR (add == NULL, "invalid semiring (unknown add operator)") ;
 

@@ -19,9 +19,9 @@
 #include "GB_ij.h"
 #include "GB_sort.h"
 
-#define GB_FREE_WORK        \
-{                           \
-    GB_FREE_WERK (Work) ;   \
+#define GB_FREE_WORK                    \
+{                                       \
+    GB_FREE_WERK (&Work, Work_size) ;   \
 }
 
 GrB_Info GB_ijsort
@@ -30,7 +30,9 @@ GrB_Info GB_ijsort
     int64_t *GB_RESTRICT p_ni,      // : size of I, output: # of indices in I2
     GrB_Index *GB_RESTRICT *p_I2,   // size ni2, where I2 [0..ni2-1]
                         // contains the sorted indices with duplicates removed.
+    size_t *I2_size_handle,
     GrB_Index *GB_RESTRICT *p_I2k,  // output array of size ni2
+    size_t *I2k_size_handle,
     GB_Context Context
 )
 {
@@ -49,9 +51,9 @@ GrB_Info GB_ijsort
     // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Index *Work = NULL ;
-    GrB_Index *GB_RESTRICT I2  = NULL ;
-    GrB_Index *GB_RESTRICT I2k = NULL ;
+    GrB_Index *Work = NULL ; size_t Work_size = 0 ;
+    GrB_Index *GB_RESTRICT I2  = NULL ; size_t I2_size = 0 ;
+    GrB_Index *GB_RESTRICT I2k = NULL ; size_t I2k_size = 0 ;
     int64_t ni = *p_ni ;
     ASSERT (ni > 1) ;
     int ntasks = 0 ;
@@ -75,7 +77,7 @@ GrB_Info GB_ijsort
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Work = GB_MALLOC_WERK (2*ni + ntasks + 1, GrB_Index) ;
+    Work = GB_MALLOC_WERK (2*ni + ntasks + 1, GrB_Index, &Work_size) ;
     if (Work == NULL)
     { 
         // out of memory
@@ -141,14 +143,14 @@ GrB_Info GB_ijsort
     // allocate the result I2
     //--------------------------------------------------------------------------
 
-    I2  = GB_MALLOC_WERK (ni2, GrB_Index) ;
-    I2k = GB_MALLOC_WERK (ni2, GrB_Index) ;
+    I2  = GB_MALLOC_WERK (ni2, GrB_Index, &I2_size) ;
+    I2k = GB_MALLOC_WERK (ni2, GrB_Index, &I2k_size) ;
     if (I2 == NULL || I2k == NULL)
     { 
         // out of memory
         GB_FREE_WORK ;
-        GB_FREE_WERK (I2) ;
-        GB_FREE_WERK (I2k) ;
+        GB_FREE_WERK (&I2, I2_size) ;
+        GB_FREE_WERK (&I2k, I2k_size) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -210,8 +212,8 @@ GrB_Info GB_ijsort
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    *(p_I2 ) = (GrB_Index *) I2 ;
-    *(p_I2k) = (GrB_Index *) I2k ;
+    *(p_I2 ) = (GrB_Index *) I2  ; (*I2_size_handle ) = I2_size ;
+    *(p_I2k) = (GrB_Index *) I2k ; (*I2k_size_handle) = I2k_size ;
     *(p_ni ) = (int64_t    ) ni2 ;
     return (GrB_SUCCESS) ;
 }

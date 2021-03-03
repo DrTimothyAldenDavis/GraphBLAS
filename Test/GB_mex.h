@@ -288,9 +288,24 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
 
 //------------------------------------------------------------------------------
 
-#define AS_IF_FREE(p)                   \
+// remove a block that had been allocated from within GraphBLAS and then
+// exported.
+#define REMOVE(p)                                       \
+{                                                       \
+    if ((p) != NULL)                                    \
+    {                                                   \
+        GB_Global_nmalloc_decrement ( ) ;               \
+        if (GB_Global_memtable_find (p))                \
+        {                                               \
+            GB_Global_memtable_remove (p) ;             \
+        }                                               \
+    }                                                   \
+}
+
+#define GB_AS_IF_FREE(p)                \
 {                                       \
     GB_Global_nmalloc_decrement ( ) ;   \
+    GB_Global_memtable_remove (p) ;     \
     (p) = NULL ;                        \
 }
 

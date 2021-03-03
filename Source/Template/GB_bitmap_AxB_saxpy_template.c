@@ -14,10 +14,10 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_FREE_WERK (Wf) ;                     \
-    GB_FREE_WERK (Wax) ;                    \
-    GB_FREE_WERK (Wbx) ;                    \
-    GB_FREE_WERK (Wcx) ;                    \
+    GB_FREE_WERK (&Wf, Wf_size) ;           \
+    GB_FREE_WERK (&Wax, Wax_size) ;         \
+    GB_FREE_WERK (&Wbx, Wbx_size) ;         \
+    GB_FREE_WERK (&Wcx, Wcx_size) ;         \
     GB_WERK_POP (GH_slice, int64_t) ;       \
     GB_WERK_POP (A_slice, int64_t) ;        \
     GB_WERK_POP (B_slice, int64_t) ;        \
@@ -30,10 +30,10 @@
     // declare workspace
     //--------------------------------------------------------------------------
 
-    int8_t  *GB_RESTRICT Wf = NULL ;
-    GB_void *GB_RESTRICT Wax = NULL ;
-    GB_void *GB_RESTRICT Wbx = NULL ;
-    GB_void *GB_RESTRICT Wcx = NULL ;
+    int8_t  *GB_RESTRICT Wf  = NULL ; size_t Wf_size = 0 ;
+    GB_void *GB_RESTRICT Wax = NULL ; size_t Wax_size = 0 ;
+    GB_void *GB_RESTRICT Wbx = NULL ; size_t Wbx_size = 0 ;
+    GB_void *GB_RESTRICT Wcx = NULL ; size_t Wcx_size = 0 ;
     GB_WERK_DECLARE (GH_slice, int64_t) ;
     GB_WERK_DECLARE (A_slice, int64_t) ;
     GB_WERK_DECLARE (B_slice, int64_t) ;

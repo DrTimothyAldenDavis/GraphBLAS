@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_calloc_memory: wrapper for calloc_function
+// GB_calloc_memory: wrapper for calloc
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,22 +7,77 @@
 
 //------------------------------------------------------------------------------
 
-// A wrapper for calloc_function.  Space is set to zero.
+// A wrapper for calloc.  Space is set to zero.
 
-// Parameters are the same as the ANSI C11 calloc, except that asking to
-// allocate a block of zero size causes a block of size 1 to be allocated
-// instead.  This allows the return pointer p to be checked for the
+// The first two parameters are the same as the ANSI C11 calloc, except that
+// asking to allocate a block of zero size causes a block of size 1 to be
+// allocated instead.  This allows the return pointer p to be checked for the
 // out-of-memory condition, even when allocating an object of size zero.
 
 #include "GB.h"
+
+//------------------------------------------------------------------------------
+// GB_calloc_helper:  use calloc or malloc/memset to allocate space
+//------------------------------------------------------------------------------
+
+static inline void *GB_calloc_helper
+(
+    size_t nitems,          // number of items to allocate
+    size_t size_of_item,    // sizeof each item
+    // input/output
+    size_t *size_allocated, // on input: # of bytes requested
+                            // on output: # of bytes actually allocated
+    bool malloc_tracking                                
+)
+{
+    void *p ;
+    if (GB_Global_have_calloc_function ( ))
+    {
+        // use the calloc function provided when GraphBLAS was initialized 
+        p = (void *) GB_Global_calloc_function (nitems, size_of_item) ;
+        if (p == NULL)
+        {
+            // failed
+            (*size_allocated) = 0 ;
+        }
+        else
+        { 
+            // success
+            if (malloc_tracking) GB_Global_nmalloc_increment ( ) ;
+        }
+    }
+    else
+    {
+        // no calloc function provided: use malloc and memset instead
+        p = (void *) GB_malloc_memory (nitems, size_of_item, size_allocated) ;
+        if (p != NULL)
+        {
+            // TODO: use a parallel memset
+            memset (p, 0, *size_allocated) ;
+        }
+    }
+    return (p) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_calloc_memory
+//------------------------------------------------------------------------------
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void *GB_calloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
-    size_t size_of_item     // sizeof each item
+    size_t size_of_item,    // sizeof each item
+    // output
+    size_t *size_allocated  // # of bytes actually allocated
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (size_allocated != NULL) ;
 
     void *p ;
     size_t size ;
@@ -37,54 +92,55 @@ void *GB_calloc_memory      // pointer to allocated block of memory
     if (!ok || nitems > GxB_INDEX_MAX || size_of_item > GxB_INDEX_MAX)
     { 
         // overflow
-        p = NULL ;
+        (*size_allocated) = 0 ;
+        return (NULL) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // allocate the space
+    //--------------------------------------------------------------------------
+
+    if (GB_Global_malloc_tracking_get ( ))
+    {
+
+        //----------------------------------------------------------------------
+        // for memory usage testing only
+        //----------------------------------------------------------------------
+
+        // brutal memory debug; pretend to fail if (count-- <= 0).
+        bool pretend_to_fail = false ;
+        if (GB_Global_malloc_debug_get ( ))
+        {
+            pretend_to_fail = GB_Global_malloc_debug_count_decrement ( ) ;
+        }
+
+        // allocate the memory
+        if (pretend_to_fail)
+        { 
+            p = NULL ;
+        }
+        else
+        { 
+            p = (void *) GB_calloc_helper (nitems, size_of_item, &size, true) ;
+        }
+
     }
     else
     { 
 
-        if (GB_Global_malloc_tracking_get ( ))
-        {
+        //----------------------------------------------------------------------
+        // normal use, in production
+        //----------------------------------------------------------------------
 
-            //------------------------------------------------------------------
-            // for memory usage testing only
-            //------------------------------------------------------------------
-
-            // brutal memory debug; pretend to fail if (count-- <= 0).
-            bool pretend_to_fail = false ;
-            if (GB_Global_malloc_debug_get ( ))
-            {
-                pretend_to_fail = GB_Global_malloc_debug_count_decrement ( ) ;
-            }
-
-            // allocate the memory
-            if (pretend_to_fail)
-            { 
-                p = NULL ;
-            }
-            else
-            { 
-                p = (void *) GB_Global_calloc_function (nitems, size_of_item) ;
-            }
-
-            // check if successful
-            if (p != NULL)
-            { 
-                // success
-                GB_Global_nmalloc_increment ( ) ;
-            }
-
-        }
-        else
-        { 
-
-            //------------------------------------------------------------------
-            // normal use, in production
-            //------------------------------------------------------------------
-
-            p = (void *) GB_Global_calloc_function (nitems, size_of_item) ;
-        }
-
+        p = (void *) GB_calloc_helper (nitems, size_of_item, &size, false) ;
     }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    (*size_allocated) = (p == NULL) ? 0 : size ;
+    ASSERT (GB_IMPLIES (p != NULL, size == GB_Global_memtable_size (p))) ;
     return (p) ;
 }
 

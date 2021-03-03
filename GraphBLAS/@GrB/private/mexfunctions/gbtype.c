@@ -16,6 +16,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: type = gbtype (X)"
+
 void mexFunction
 (
     int nargout,
@@ -29,7 +31,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 1, "usage: type = gbtype (X)") ;
+    gb_usage (nargin == 1 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the type of the matrix

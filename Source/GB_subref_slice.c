@@ -29,18 +29,18 @@
 // Compare this function with GB_ewise_slice, which constructs coarse/fine
 // tasks for the eWise operations (C=A+B, C=A.*B, and C<M>=Z).
 
-#define GB_FREE_WORK                \
-{                                   \
-    GB_WERK_POP (Coarse, int64_t) ; \
-    GB_FREE_WERK (Cwork) ;          \
+#define GB_FREE_WORK                            \
+{                                               \
+    GB_WERK_POP (Coarse, int64_t) ;             \
+    GB_FREE_WERK (&Cwork, Cwork_size) ;         \
 }
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_FREE_WERK (TaskList) ;   \
-    GB_FREE_WERK (Mark) ;       \
-    GB_FREE_WERK (Inext) ;      \
+#define GB_FREE_ALL                             \
+{                                               \
+    GB_FREE_WORK ;                              \
+    GB_FREE_WERK (&TaskList, TaskList_size) ;   \
+    GB_FREE_WERK (&Mark, Mark_size) ;           \
+    GB_FREE_WERK (&Inext, Inext_size) ;         \
 }
 
 #include "GB_subref.h"
@@ -48,13 +48,15 @@
 GrB_Info GB_subref_slice
 (
     // output:
-    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
-    int *p_max_ntasks,              // size of TaskList
+    GB_task_struct **p_TaskList,    // array of structs
+    size_t *p_TaskList_size,        // size of TaskList
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads for subref operation
     bool *p_post_sort,              // true if a final post-sort is needed
     int64_t *GB_RESTRICT *p_Mark,      // for I inverse, if needed; size avlen
+    size_t *p_Mark_size,
     int64_t *GB_RESTRICT *p_Inext,     // for I inverse, if needed; size nI
+    size_t *p_Inext_size,
     int64_t *p_nduplicates,         // # of duplicates, if I inverse computed
     // from phase0:
     const int64_t *GB_RESTRICT Ap_start,   // location of A(imin:imax,kA)
@@ -77,7 +79,7 @@ GrB_Info GB_subref_slice
     //--------------------------------------------------------------------------
 
     ASSERT (p_TaskList != NULL) ;
-    ASSERT (p_max_ntasks != NULL) ;
+    ASSERT (p_TaskList_size != NULL) ;
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
     ASSERT (p_post_sort != NULL) ;
@@ -89,13 +91,14 @@ GrB_Info GB_subref_slice
     ASSERT ((Cnvec > 0) == (Ap_end != NULL)) ;
 
     (*p_TaskList) = NULL ;
+    (*p_TaskList_size) = 0 ;
     (*p_Mark    ) = NULL ;
     (*p_Inext   ) = NULL ;
 
-    int64_t *GB_RESTRICT Mark = NULL ;
-    int64_t *GB_RESTRICT Inext = NULL ;
+    int64_t *GB_RESTRICT Mark  = NULL ; size_t Mark_size = 0 ;
+    int64_t *GB_RESTRICT Inext = NULL ; size_t Inext_size = 0 ;
 
-    int64_t *GB_RESTRICT Cwork = NULL ;
+    int64_t *GB_RESTRICT Cwork = NULL ; size_t Cwork_size = 0 ;
     GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
     int ntasks1 = 0 ;
 
@@ -119,7 +122,7 @@ GrB_Info GB_subref_slice
     // When the mask is present, it is often fastest to break the work up
     // into tasks, even when nthreads_max is 1.
 
-    GB_task_struct *GB_RESTRICT TaskList = NULL ;
+    GB_task_struct *GB_RESTRICT TaskList = NULL ; size_t TaskList_size = 0 ;
     int max_ntasks = 0 ;
     int ntasks0 = (nthreads_max == 1) ? 1 : (32 * nthreads_max) ;
     GB_REALLOC_TASK_WERK (TaskList, ntasks0, max_ntasks) ;
@@ -149,7 +152,7 @@ GrB_Info GB_subref_slice
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Cwork = GB_MALLOC_WERK (Cnvec+1, int64_t) ;
+    Cwork = GB_MALLOC_WERK (Cnvec+1, int64_t, &Cwork_size) ;
     if (Cwork == NULL)
     { 
         // out of memory
@@ -216,7 +219,8 @@ GrB_Info GB_subref_slice
     int64_t ndupl = 0 ;
     if (need_I_inverse)
     { 
-        GB_OK (GB_I_inverse (I, nI, avlen, &Mark, &Inext, &ndupl, Context)) ;
+        GB_OK (GB_I_inverse (I, nI, avlen, &Mark, &Mark_size,
+            &Inext, &Inext_size, &ndupl, Context)) ;
         ASSERT (Mark != NULL) ;
         ASSERT (Inext != NULL) ;
     }
@@ -234,12 +238,14 @@ GrB_Info GB_subref_slice
         // free workspace and return result
         GB_FREE_WORK ;
         (*p_TaskList   ) = TaskList ;
-        (*p_max_ntasks ) = max_ntasks ;
+        (*p_TaskList_size) = TaskList_size ;
         (*p_ntasks     ) = (Cnvec == 0) ? 0 : 1 ;
         (*p_nthreads   ) = 1 ;
         (*p_post_sort  ) = false ;
         (*p_Mark       ) = Mark ;
+        (*p_Mark_size  ) = Mark_size ;
         (*p_Inext      ) = Inext ;
+        (*p_Inext_size ) = Inext_size ;
         (*p_nduplicates) = ndupl ;
         return (GrB_SUCCESS) ;
     }
@@ -453,12 +459,14 @@ GrB_Info GB_subref_slice
 
     GB_FREE_WORK ;
     (*p_TaskList   ) = TaskList ;
-    (*p_max_ntasks ) = max_ntasks ;
+    (*p_TaskList_size) = TaskList_size ;
     (*p_ntasks     ) = ntasks ;
     (*p_nthreads   ) = nthreads ;
     (*p_post_sort  ) = post_sort ;
     (*p_Mark       ) = Mark ;
+    (*p_Mark_size  ) = Mark_size ;
     (*p_Inext      ) = Inext ;
+    (*p_Inext_size ) = Inext_size ;
     (*p_nduplicates) = ndupl ;
     return (GrB_SUCCESS) ;
 }

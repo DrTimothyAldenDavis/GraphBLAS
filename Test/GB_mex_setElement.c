@@ -20,7 +20,7 @@ bool debug_wait = false ;
 
 #define FREE_ALL                        \
 {                                       \
-    GrB_Matrix_free_(&A) ;               \
+    GrB_Matrix_free_(&A) ;              \
     GB_mx_put_global (true) ;           \
 }
 

@@ -24,7 +24,9 @@
 
 GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
 (
+    // computed by phase1:
     int64_t **Rp_handle,            // output of size Rnvec+1
+    size_t *Rp_size_handle,
     int64_t *Rnvec_nonempty,        // # of non-empty vectors in R
     // tasks from phase1a:
     GB_task_struct *GB_RESTRICT TaskList,       // array of structs
@@ -51,6 +53,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     //--------------------------------------------------------------------------
 
     ASSERT (Rp_handle != NULL) ;
+    ASSERT (Rp_size_handle != NULL) ;
     ASSERT (Rnvec_nonempty != NULL) ;
 
     ASSERT_MATRIX_OK (M, "M for mask phase1", GB0) ;
@@ -73,14 +76,14 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
 
-    int64_t *GB_RESTRICT Rp = NULL ;
+    int64_t *GB_RESTRICT Rp = NULL ; size_t Rp_size = 0 ;
     (*Rp_handle) = NULL ;
 
     //--------------------------------------------------------------------------
     // allocate the result
     //--------------------------------------------------------------------------
 
-    Rp = GB_CALLOC (GB_IMAX (2, Rnvec+1), int64_t) ;
+    Rp = GB_CALLOC (GB_IMAX (2, Rnvec+1), int64_t, &Rp_size) ;
     if (Rp == NULL)
     { 
         // out of memory
@@ -106,6 +109,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     //--------------------------------------------------------------------------
 
     (*Rp_handle) = Rp ;
+    (*Rp_size_handle) = Rp_size ;
     return (GrB_SUCCESS) ;
 }
 

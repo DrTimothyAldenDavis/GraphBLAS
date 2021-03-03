@@ -25,6 +25,7 @@ void GB_Matrix_free             // free a matrix
         if (A != NULL && (A->magic == GB_MAGIC || A->magic == GB_MAGIC2))
         { 
             // free all content of A
+            size_t header_size = A->header_size ;
             GB_phbix_free (A) ;
             // free the header of A
             if (A->static_header)
@@ -37,7 +38,7 @@ void GB_Matrix_free             // free a matrix
             { 
                 // free the header of A itself
                 A->magic = GB_FREED ;       // to help detect dangling pointers
-                GB_FREE (*Ahandle) ;
+                GB_FREE (Ahandle, header_size) ;
                 (*Ahandle) = NULL ;
             }
         }

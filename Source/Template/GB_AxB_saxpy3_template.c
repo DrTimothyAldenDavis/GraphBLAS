@@ -782,6 +782,8 @@
     int64_t  *GB_RESTRICT Ci = C->i ;
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
 
+    ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
+
     #if GB_IS_ANY_PAIR_SEMIRING
 
         // TODO: create C as a constant-value matrix.

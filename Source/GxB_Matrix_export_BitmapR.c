@@ -67,7 +67,7 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     int sparsity ;
     bool is_csc ;
 
-    info = GB_export (A, type, ncols, nrows,
+    info = GB_export (A, type, ncols, nrows, false,
         NULL, NULL,     // Ap
         NULL, NULL,     // Ah
         Ab,   Ab_size,  // Ab

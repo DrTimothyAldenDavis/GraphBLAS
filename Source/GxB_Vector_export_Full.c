@@ -67,7 +67,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     bool is_csc ;
     GrB_Index vdim ;
 
-    info = GB_export ((GrB_Matrix *) v, type, n, &vdim,
+    info = GB_export ((GrB_Matrix *) v, type, n, &vdim, false,
         NULL, NULL,     // Ap
         NULL, NULL,     // Ah
         NULL, NULL,     // Ab

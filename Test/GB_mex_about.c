@@ -538,17 +538,20 @@ void mexFunction
     // tests with memory tracking off
     //--------------------------------------------------------------------------
 
+    size_t nbytes ;
     GB_Global_malloc_tracking_set (false) ;
-    GB_void *p = GB_malloc_memory (4, sizeof (int64_t)) ;
+    GB_void *p = GB_malloc_memory (4, sizeof (int64_t), &nbytes) ;
     CHECK (p != NULL) ;
-    GB_FREE (p) ;
-    p = GB_calloc_memory (4, sizeof (int64_t)) ;
+    GB_FREE (&p, nbytes) ;
+    CHECK (p == NULL) ;
+    p = GB_calloc_memory (4, sizeof (int64_t), &nbytes) ;
     CHECK (p != NULL) ;
     bool ok = true ;
-    p = GB_realloc_memory (6, 4, sizeof (int64_t), p, &ok) ;
+    p = GB_realloc_memory (6, 4, sizeof (int64_t), p, &nbytes, &ok) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
-    GB_FREE (p) ;
+    GB_FREE (&p, nbytes) ;
+    CHECK (p == NULL) ;
 
     CHECK (!GB_Global_malloc_is_thread_safe_get ( )) ;
     GB_Global_malloc_is_thread_safe_set (true) ;

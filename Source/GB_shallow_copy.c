@@ -109,6 +109,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->nzmax = A->nzmax ;
     C->x = A->x ;
     C->x_shallow = (A->x != NULL) ; // C->x will not be freed when freeing C
+    ASSERT (C->x_size == 0) ;       // C->x is shallow
     ASSERT_MATRIX_OK (C, "C = pure shallow (A)", GB0) ;
     return (GrB_SUCCESS) ;
 }

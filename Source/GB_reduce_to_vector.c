@@ -129,6 +129,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     struct GB_Semiring_opaque semiring_header ;
     GrB_Semiring semiring = &semiring_header ;
+    semiring->header_size = 0 ;
     info = GB_Semiring_new (semiring, monoid, op) ;
     ASSERT (info == GrB_SUCCESS) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for reduce-to-vector", GB0) ;

@@ -26,7 +26,7 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (desc != NULL && desc->predefined)
+    if (desc != NULL && desc->header_size == 0)
     { 
         // built-in descriptors may not be modified
         return (GrB_INVALID_VALUE) ;

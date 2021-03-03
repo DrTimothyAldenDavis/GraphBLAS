@@ -18,17 +18,17 @@
 #include "GB_subref.h"
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL             \
-{                               \
-    GB_Matrix_free (&C2) ;      \
-    GB_Matrix_free (&A2) ;      \
-    GB_Matrix_free (&AT) ;      \
-    GB_Matrix_free (&M2) ;      \
-    GB_Matrix_free (&MT) ;      \
-    GB_FREE_WERK (I2) ;         \
-    GB_FREE_WERK (J2) ;         \
-    GB_FREE_WERK (I2k) ;        \
-    GB_FREE_WERK (J2k) ;        \
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_Matrix_free (&C2) ;          \
+    GB_Matrix_free (&A2) ;          \
+    GB_Matrix_free (&AT) ;          \
+    GB_Matrix_free (&M2) ;          \
+    GB_Matrix_free (&MT) ;          \
+    GB_FREE_WERK (&I2, I2_size) ;   \
+    GB_FREE_WERK (&J2, J2_size) ;   \
+    GB_FREE_WERK (&I2k, I2k_size) ; \
+    GB_FREE_WERK (&J2k, J2k_size) ; \
 }
 
 GrB_Info GB_assign_prep
@@ -53,6 +53,7 @@ GrB_Info GB_assign_prep
     // modified versions of the Rows/Cols lists, and their analysis:
     const GrB_Index **I_handle,     // Rows, Cols, or a modified copy I2
     GrB_Index **I2_handle,          // NULL, or sorted/pruned Rows or Cols
+    size_t *I2_size_handle,
     int64_t *ni_handle,
     int64_t *nI_handle,
     int *Ikind_handle,
@@ -60,6 +61,7 @@ GrB_Info GB_assign_prep
 
     const GrB_Index **J_handle,     // Rows, Cols, or a modified copy J2
     GrB_Index **J2_handle,          // NULL, or sorted/pruned Rows or Cols
+    size_t *J2_size_handle,
     int64_t *nj_handle,
     int64_t *nJ_handle,
     int *Jkind_handle,
@@ -117,10 +119,10 @@ GrB_Info GB_assign_prep
     GrB_Matrix MT = NULL ;
     GrB_Matrix AT = NULL ;
 
-    GrB_Index *I2 = NULL ;
-    GrB_Index *J2 = NULL ;
-    GrB_Index *I2k = NULL ;
-    GrB_Index *J2k = NULL ;
+    GrB_Index *I2  = NULL ; size_t I2_size = 0 ;
+    GrB_Index *J2  = NULL ; size_t J2_size = 0 ;
+    GrB_Index *I2k = NULL ; size_t I2k_size = 0 ;
+    GrB_Index *J2k = NULL ; size_t J2k_size = 0 ;
     (*done) = false ;
     (*atype_handle) = NULL ;
 
@@ -134,12 +136,14 @@ GrB_Info GB_assign_prep
 
     (*I_handle) = NULL ; 
     (*I2_handle) = NULL ;
+    (*I2_size_handle) = 0 ;
     (*ni_handle) = 0 ;
     (*nI_handle) = 0 ;
     (*Ikind_handle) = 0 ;
 
     (*J_handle) = NULL ;
     (*J2_handle) = NULL ;
+    (*J2_size_handle) = 0 ;
     (*nj_handle) = 0 ;
     (*nJ_handle) = 0 ;
     (*Jkind_handle) = 0 ;
@@ -802,7 +806,7 @@ GrB_Info GB_assign_prep
         { 
             // I2 = sort I and remove duplicates
             ASSERT (Ikind == GB_LIST) ;
-            GB_OK (GB_ijsort (I, &ni, &I2, &I2k, Context)) ;
+            GB_OK (GB_ijsort (I, &ni, &I2, &I2_size, &I2k, &I2k_size, Context));
             // Recheck the length and properties of the new I2.  This may
             // convert I2 to GB_ALL or GB_RANGE, after I2 has been sorted.
             GB_ijlength (I2, ni, C->vlen, &nI, &Ikind, Icolon) ;
@@ -816,7 +820,7 @@ GrB_Info GB_assign_prep
         { 
             // J2 = sort J and remove duplicates
             ASSERT (Jkind == GB_LIST) ;
-            GB_OK (GB_ijsort (J, &nj, &J2, &J2k, Context)) ;
+            GB_OK (GB_ijsort (J, &nj, &J2, &J2_size, &J2k, &J2k_size, Context));
             // Recheck the length and properties of the new J2.  This may
             // convert J2 to GB_ALL or GB_RANGE, after J2 has been sorted.
             GB_ijlength (J2, nj, C->vdim, &nJ, &Jkind, Jcolon) ;
@@ -862,8 +866,8 @@ GrB_Info GB_assign_prep
             M = M2 ;
         }
 
-        GB_FREE_WERK (I2k) ;
-        GB_FREE_WERK (J2k) ;
+        GB_FREE_WERK (&I2k, I2k_size) ;
+        GB_FREE_WERK (&J2k, J2k_size) ;
     }
 
     // I and J are now sorted, with no duplicate entries.  They are either
@@ -1200,12 +1204,14 @@ GrB_Info GB_assign_prep
     // modified versions of the Rows/Cols lists, and their analysis:
     (*I_handle) = I ;           // either Rows, Cols, or I2
     (*I2_handle) = I2 ;         // temporary sorted copy of Rows or Cols list
+    (*I2_size_handle) = I2_size ;
     (*ni_handle) = ni ;
     (*nI_handle) = nI ;
     (*Ikind_handle) = Ikind ;
 
     (*J_handle) = J ;           // either Rows, Cols, or J2
     (*J2_handle) = J2 ;         // temporary sorted copy of Rows or Cols list
+    (*J2_size_handle) = J2_size ;
     (*nj_handle) = nj ;
     (*nJ_handle) = nJ ;
     (*Jkind_handle) = Jkind ;

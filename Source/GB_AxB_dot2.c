@@ -371,17 +371,20 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // allocate the sparse/hypersparse structure of the final C
         //----------------------------------------------------------------------
 
-        int64_t *GB_RESTRICT Cp = GB_MALLOC (cvdim+1, int64_t) ;
-        int64_t *GB_RESTRICT Ch =
-            B_is_hyper ? GB_MALLOC (cvdim, int64_t) : NULL ;
-        int64_t *GB_RESTRICT Ci = GB_MALLOC (cnz, int64_t) ;
+        int64_t *GB_RESTRICT Cp = NULL ; size_t Cp_size = 0 ;
+        int64_t *GB_RESTRICT Ch = NULL ; size_t Ch_size = 0 ;
+        int64_t *GB_RESTRICT Ci = NULL ; size_t Ci_size = 0 ;
+
+        Cp = GB_MALLOC (cvdim+1, int64_t, &Cp_size) ;
+        Ch = B_is_hyper ? GB_MALLOC (cvdim, int64_t, &Ch_size) : NULL ;
+        Ci = GB_MALLOC (cnz, int64_t, &Ci_size) ;
         if (Cp == NULL || (B_is_hyper && Ch == NULL) || Ci == NULL)
         { 
             // out of memory
             GB_Matrix_free (&C) ;
-            GB_FREE (Cp) ;
-            GB_FREE (Ch) ;
-            GB_FREE (Ci) ;
+            GB_FREE (&Cp, Cp_size) ;
+            GB_FREE (&Ch, Ch_size) ;
+            GB_FREE (&Ci, Ci_size) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -441,9 +444,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // transplant the new content and finalize C
         //----------------------------------------------------------------------
 
-        C->p = Cp ; Cp = NULL ;
-        C->h = Ch ; Ch = NULL ;
-        C->i = Ci ; Ci = NULL ;
+        C->p = Cp ; Cp = NULL ; C->p_size = Cp_size ;
+        C->h = Ch ; Ch = NULL ; C->h_size = Ch_size ;
+        C->i = Ci ; Ci = NULL ; C->i_size = Ci_size ;
         C->nzombies = cnz - C->nvals ;
         C->vdim = cvdim_final ;
         C->vlen = cvlen_final ;
@@ -453,7 +456,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
 
         // free the bitmap
-        GB_FREE (C->b) ;
+        GB_FREE ((&C->b), C->b_size) ;
 
         // C is now sparse or hypersparse
         ASSERT_MATRIX_OK (C, "dot2: unpacked C", GB0) ;

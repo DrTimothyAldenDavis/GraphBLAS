@@ -40,7 +40,7 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_FREE (W) ;  /* not workspace */  \
+    GB_FREE (&W, W_size) ;              \
     GB_phbix_free (A) ;                 \
     GB_Matrix_free (&T) ;               \
     GB_Matrix_free (&S) ;               \
@@ -60,7 +60,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_void *W = NULL ;
+    GB_void *W = NULL ; size_t W_size = 0 ;
     struct GB_Matrix_opaque T_header, A1_header, S_header ;
     GrB_Matrix T  = GB_clear_static_header (&T_header) ;
     GrB_Matrix A1 = NULL ;
@@ -120,15 +120,15 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         if (A->p_shallow)
         { 
-            int64_t len = A->plen * sizeof (int64_t) ;
-            W = GB_MALLOC (len, GB_void) ;
+            int64_t len = (A->plen + 1) * sizeof (int64_t) ;
+            W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
             {
                 // out of memory
                 return (GrB_OUT_OF_MEMORY) ;
             }
             GB_memcpy (W, A->p, len, nthreads_max) ;
-            A->p = (int64_t *) W ;
+            A->p = (int64_t *) W ; A->p_size = W_size ;
             A->p_shallow = false ;
             W = NULL ;
         }
@@ -136,14 +136,14 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         if (A->h_shallow)
         { 
             int64_t len = A->nvec * sizeof (int64_t) ;
-            W = GB_MALLOC (len, GB_void) ;
+            W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
             {
                 // out of memory
                 return (GrB_OUT_OF_MEMORY) ;
             }
             GB_memcpy (W, A->h, len, nthreads_max) ;
-            A->h = W ;
+            A->h = W ; A->h_size = W_size ;
             A->h_shallow = false ;
             W = NULL ;
         }
@@ -151,14 +151,14 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         if (A->i_shallow)
         { 
             int64_t len = anz_orig * sizeof (int64_t) ;
-            W = GB_MALLOC (len, GB_void) ;
+            W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
             {
                 // out of memory
                 return (GrB_OUT_OF_MEMORY) ;
             }
             GB_memcpy (W, A->i, len, nthreads_max) ;
-            A->i = (int64_t *) W ;
+            A->i = (int64_t *) W ; A->i_size = W_size ;
             A->i_shallow = false ;
             W = NULL ;
         }
@@ -166,14 +166,15 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         if (A->x_shallow)
         { 
             int64_t len = anz_orig * asize ;
-            W = GB_MALLOC (len, GB_void) ;
+            W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
             {
                 // out of memory
                 return (GrB_OUT_OF_MEMORY) ;
             }
             GB_memcpy (W, A->x, len, nthreads_max) ;
-            A->x = (GB_void *) W ;
+            A->x = (GB_void *) W ; A->x_size = W_size ;
+            ASSERT (A->x_size % A->type->size == 0) ;
             A->x_shallow = false ;
             W = NULL ;
         }
@@ -220,8 +221,11 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             A->vdim,                // T->vdim = A->vdim
             A->is_csc,              // T->is_csc = A->is_csc
             &(A->Pending->i),       // iwork_handle, becomes T->i on output
+            &(A->Pending->i_size),
             &(A->Pending->j),       // jwork_handle, free on output
+            &(A->Pending->j_size),
             &(A->Pending->x),       // Swork_handle, free on output
+            &(A->Pending->x_size),
             A->Pending->sorted,     // tuples may or may not be sorted
             false,                  // there might be duplicates; look for them
             A->Pending->nmax,       // size of Pending->[ijx] arrays
@@ -434,9 +438,13 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
                 A->type, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
                 GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA, Context)) ;
 
-            // the A1->i and A1->x content are shallow copies of A(:,kA:end)
+            // the A1->i and A1->x content are shallow copies of A(:,kA:end).
+            // They are not allocated pointers, but point to space inside
+            // Ai and Ax.
             A1->x = (void *) (Ax + asize * anz0) ;
+            A1->x_size = 0 ;        // A1->x is not a pointer to malloc'd block
             A1->i = Ai + anz0 ;
+            A1->i_size = 0 ;        // A1->i is not a pointer to malloc'd block
             A1->x_shallow = true ;
             A1->i_shallow = true ;
             A1->nzmax = anz1 ;

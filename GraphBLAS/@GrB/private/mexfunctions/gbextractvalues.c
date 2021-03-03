@@ -13,6 +13,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: X = GrB.extractvalues (A)"
+
 void mexFunction
 (
     int nargout,
@@ -26,7 +28,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 1, "usage: X = GrB.extractvalues (A)") ;
+    gb_usage (nargin == 1 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the matrix

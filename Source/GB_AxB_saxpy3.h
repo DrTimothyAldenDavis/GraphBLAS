@@ -162,6 +162,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
     // outputs
     GB_saxpy3task_struct **SaxpyTasks_handle,
+    size_t *SaxpyTasks_size_handle,
     bool *apply_mask,               // if true, apply M during sapxy3
     bool *M_dense_in_place,         // if true, use M in-place
     int *ntasks,                    // # of tasks created (coarse and fine)
@@ -182,6 +183,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     const GrB_Matrix B,             // input matrix B
     // outputs
     GB_saxpy3task_struct **SaxpyTasks_handle,
+    size_t *SaxpyTasks_size_handle,
     int *ntasks,                    // # of tasks created (coarse and fine)
     int *nfine,                     // # of fine tasks created
     int *nthreads,                  // # of threads to use

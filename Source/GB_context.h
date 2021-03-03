@@ -39,7 +39,7 @@
 // GB_WERK_SIZE must be a multiple of 8.  The Werk array is placed first in the
 // GB_Context struct, to ensure proper alignment.
 
-#define GB_WERK_SIZE 65536
+#define GB_WERK_SIZE 16384
 
 typedef struct
 {
@@ -47,6 +47,7 @@ typedef struct
     double chunk ;                  // chunk size for small problems
     const char *where ;             // GraphBLAS function where error occurred
     char **logger_handle ;          // error report
+    size_t *logger_size_handle ;
     int nthreads_max ;              // max # of threads to use
     int pwerk ;                     // top of Werk stack, initially zero
 }
@@ -61,10 +62,8 @@ typedef GB_Context_struct *GB_Context ;
 // the same type-generic name.  Internal functions can be called by many
 // different user-callable functions, directly or indirectly.  It would not be
 // helpful to report the name of an internal function that flagged an error
-// condition.  Thus, each time a user-callable function is entered (except
-// GrB_*free), it logs the name of the function with the GB_WHERE macro.
-// GrB_*free does not encounter error conditions so it doesn't need to be
-// logged by the GB_WHERE macro.
+// condition.  Thus, each time a user-callable function is entered, it logs the
+// name of the function with the GB_WHERE macro.
 
 #define GB_CONTEXT(where_string)                                    \
     /* construct the Context */                                     \
@@ -77,9 +76,11 @@ typedef GB_Context_struct *GB_Context ;
     Context->chunk = GB_Global_chunk_get ( ) ;                      \
     /* get the pointer to where any error will be logged */         \
     Context->logger_handle = NULL ;                                 \
+    Context->logger_size_handle = NULL ;                            \
     /* initialize the Werk stack */                                 \
     Context->pwerk = 0 ;
 
+// C is a matrix, vector, scalar, or descriptor
 #define GB_WHERE(C,where_string)                                    \
     if (!GB_Global_GrB_init_called_get ( ))                         \
     {                                                               \
@@ -89,10 +90,12 @@ typedef GB_Context_struct *GB_Context ;
     if (C != NULL)                                                  \
     {                                                               \
         /* free any prior error logged in the object */             \
-        GB_FREE (C->logger) ;                                       \
+        GB_FREE (&(C->logger), C->logger_size) ;                    \
         Context->logger_handle = &(C->logger) ;                     \
+        Context->logger_size_handle = &(C->logger_size) ;           \
     }
 
+// create the Context, with no error logging
 #define GB_WHERE1(where_string)                                     \
     if (!GB_Global_GrB_init_called_get ( ))                         \
     {                                                               \
@@ -178,7 +181,9 @@ const char *GB_status_code (GrB_Info info) ;
         char **logger_handle = Context->logger_handle ;                     \
         if (logger_handle != NULL)                                          \
         {                                                                   \
-            (*logger_handle) = GB_MALLOC (GB_LOGGER_LEN+1, char) ;          \
+            size_t *logger_size_handle = Context->logger_size_handle ;      \
+            (*logger_handle) = GB_MALLOC (GB_LOGGER_LEN+1, char,            \
+                logger_size_handle) ;                                       \
             if ((*logger_handle) != NULL)                                   \
             {                                                               \
                 snprintf ((*logger_handle), GB_LOGGER_LEN,                  \
@@ -211,6 +216,7 @@ const char *GB_status_code (GrB_Info info) ;
 static inline void *GB_werk_push    // return pointer to newly allocated space
 (
     // output
+    size_t *size_allocated,         // # of bytes actually allocated
     bool *on_stack,                 // true if werkspace is from Werk stack
     // input
     size_t nitems,                  // # of items to allocate
@@ -218,6 +224,13 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
     GB_Context Context
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (on_stack != NULL) ;
+    ASSERT (size_allocated != NULL) ;
 
     //--------------------------------------------------------------------------
     // determine where to allocate the werkspace
@@ -248,12 +261,13 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
         // allocate the werkspace from the Werk stack
         GB_void *p = Context->Werk + Context->pwerk ;
         Context->pwerk += size ;
+        (*size_allocated) = size ;
         return ((void *) p) ;
     }
     else
     { 
         // allocate the werkspace from malloc
-        return (GB_malloc_memory (nitems, size_of_item)) ;
+        return (GB_malloc_memory (nitems, size_of_item, size_allocated)) ;
     }
 }
 
@@ -265,24 +279,18 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
 #define GB_WERK_DECLARE(X,type)                     \
     type *GB_RESTRICT X = NULL ;                    \
     bool X ## _on_stack = false ;                   \
-    size_t X ## _nitems = 0 ;
-
-//  printf ("Werk push: %s (%d) type %s in %s line %d\n",         \
-//      GB_STR (X), (int) X ## _nitems, GB_STR (type), __FILE__, __LINE__) ; \
+    size_t X ## _nitems = 0, X ## _size_allocated = 0 ;
 
 // push werkspace X
-#define GB_WERK_PUSH(X,nitems,type)                 \
-    X ## _nitems = (nitems) ;                       \
-    X = (type *) GB_werk_push (&(X ## _on_stack),   \
+#define GB_WERK_PUSH(X,nitems,type)                                         \
+    X ## _nitems = (nitems) ;                                               \
+    X = (type *) GB_werk_push (&(X ## _size_allocated), &(X ## _on_stack),  \
         X ## _nitems, sizeof (type), Context) ; 
 
-//  printf ("Werk pop:  %s (%d) type %s in %s line %d\n",         \
-//      GB_STR (X), (int) X ## _nitems, GB_STR (type), __FILE__, __LINE__) ; \
-
 // pop werkspace X
-#define GB_WERK_POP(X,type)                         \
-    X = (type *) GB_werk_pop (X, X ## _on_stack,    \
-        X ## _nitems, sizeof (type), Context) ;
+#define GB_WERK_POP(X,type)                                                 \
+    X = (type *) GB_werk_pop (X, &(X ## _size_allocated), X ## _on_stack,   \
+        X ## _nitems, sizeof (type), Context) ; 
 
 //------------------------------------------------------------------------------
 // GB_werk_pop:  free werkspace from the Werk stack
@@ -298,6 +306,7 @@ static inline void *GB_werk_pop     // free the top block of werkspace memory
 (
     // input/output
     void *p,                        // werkspace to free
+    size_t *size_allocated,         // # of bytes actually allocated for p
     // input
     bool on_stack,                  // true if werkspace is from Werk stack
     size_t nitems,                  // # of items to allocate
@@ -305,6 +314,7 @@ static inline void *GB_werk_pop     // free the top block of werkspace memory
     GB_Context Context
 )
 {
+    ASSERT (size_allocated != NULL) ;
 
     if (p == NULL)
     { 
@@ -313,16 +323,18 @@ static inline void *GB_werk_pop     // free the top block of werkspace memory
     else if (on_stack)
     { 
         // werkspace was allocated from the Werk stack
-        size_t size = GB_ROUND8 (nitems * size_of_item) ;
+        ASSERT ((*size_allocated) == GB_ROUND8 (nitems * size_of_item)) ;
         ASSERT (Context != NULL) ;
-        ASSERT (size % 8 == 0) ;
-        ASSERT (((GB_void *) p) + size == Context->Werk + Context->pwerk) ;
+        ASSERT ((*size_allocated) % 8 == 0) ;
+        ASSERT (((GB_void *) p) + (*size_allocated) ==
+                Context->Werk + Context->pwerk) ;
         Context->pwerk = ((GB_void *) p) - Context->Werk ;
+        (*size_allocated) = 0 ;
     }
     else
     { 
         // werkspace was allocated from malloc
-        GB_free_memory (p) ;
+        GB_free_memory (&p, *size_allocated) ;
     }
     return (NULL) ;                 // return NULL to indicate p was freed
 }

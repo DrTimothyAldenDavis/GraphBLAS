@@ -18,11 +18,11 @@
 
 #define FREE_ALL                            \
 {                                           \
-    GrB_Matrix_free_(&A) ;                   \
-    GrB_Matrix_free_(&B) ;                   \
-    GrB_Matrix_free_(&B64) ;                 \
-    GrB_Matrix_free_(&C) ;                   \
-    GrB_Matrix_free_(&T) ;                   \
+    GrB_Matrix_free_(&A) ;                  \
+    GrB_Matrix_free_(&B) ;                  \
+    GrB_Matrix_free_(&B64) ;                \
+    GrB_Matrix_free_(&C) ;                  \
+    GrB_Matrix_free_(&T) ;                  \
     GrB_BinaryOp_free_(&My_rdiv2) ;         \
     GrB_Semiring_free_(&My_plus_rdiv2) ;    \
     GB_mx_put_global (true) ;               \

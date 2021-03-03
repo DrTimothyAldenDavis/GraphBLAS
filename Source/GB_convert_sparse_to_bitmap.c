@@ -12,16 +12,16 @@
 #include "GB_type__include.h"
 #endif
 
-#define GB_FREE_WORK                        \
-{                                           \
-    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
+#define GB_FREE_WORK                                \
+{                                                   \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;           \
 }
 
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_FREE_WORK ;                          \
-    if (!in_place) GB_FREE (Ax_new) ;       \
-    GB_FREE (Ab) ;                          \
+#define GB_FREE_ALL                                 \
+{                                                   \
+    GB_FREE_WORK ;                                  \
+    if (!in_place) GB_FREE (&Ax_new, Ax_new_size) ; \
+    GB_FREE (&Ab, Ab_size) ;                        \
 }
 
 GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
@@ -37,8 +37,8 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
 
     GrB_Info info ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    int8_t *GB_RESTRICT Ab = NULL ;
-    GB_void *GB_RESTRICT Ax_new = NULL ;
+    int8_t  *GB_RESTRICT Ab     = NULL ; size_t Ab_size = 0 ;
+    GB_void *GB_RESTRICT Ax_new = NULL ; size_t Ax_new_size = 0 ;
 
     ASSERT_MATRIX_OK (A, "A converting sparse/hypersparse to bitmap", GB0) ;
     ASSERT (!GB_IS_FULL (A)) ;
@@ -78,23 +78,17 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     }
     anzmax = GB_IMAX (anzmax, 1) ;
 
-    if (in_place)
+    if (in_place || anz > 0)
     { 
-        // if done in-place, malloc is fine since all of Ab will be set below
-        Ab = GB_MALLOC (anzmax, int8_t) ;
-    }
-    else if (anz > 0)
-    { 
-        // malloc Ab and set it to 0, in parallel.  This is faster than
-        // calloc since most of Ab will be set below.
-        Ab = GB_MALLOC (anzmax, int8_t) ;
+        // if any entries exist, use malloc since all of Ab will be set below.
+        Ab = GB_MALLOC (anzmax, int8_t, &Ab_size) ;
     }
     else
     { 
         // calloc Ab so all bitmap entries are zero; no need to touch them.
         // This case occurs when setting the GxB_SPARSITY_CONTROL of a new
         // matrix to GxB_BITMAP, with no entries.
-        Ab = GB_CALLOC (anzmax, int8_t) ;       // anz is zero
+        Ab = GB_CALLOC (anzmax, int8_t, &Ab_size) ; // calloc since anz is zero
     }
 
     if (Ab == NULL)
@@ -115,11 +109,12 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         // keep the existing A->x
         Ax_new = A->x ;
         Ax_shallow = A->x_shallow ;
+        Ax_new_size = A->x_size ;
     }
     else
     {
         // A->x must be modified to fit the bitmap structure
-        Ax_new = GB_MALLOC (anzmax * asize, GB_void) ;
+        Ax_new = GB_MALLOC (anzmax * asize, GB_void, &Ax_new_size) ;
         Ax_shallow = false ;
         if (Ax_new == NULL)
         { 
@@ -229,11 +224,12 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
 
     GB_phbix_free (A) ;
 
-    A->b = Ab ;
+    A->b = Ab ; A->b_size = Ab_size ;
     A->b_shallow = false ;
     Ab = NULL ;
 
-    A->x = Ax_new ;
+    A->x = Ax_new ; A->x_size = Ax_new_size ;
+    ASSERT (A->x_size % A->type->size == 0) ;
     A->x_shallow = Ax_shallow ;
     Ax_new = NULL ;
 

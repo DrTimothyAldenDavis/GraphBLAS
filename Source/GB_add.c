@@ -99,11 +99,14 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     int64_t Cnvec, Cnvec_nonempty ;
-    int64_t *Cp = NULL, *Ch = NULL ;
-    int64_t *C_to_M = NULL, *C_to_A = NULL, *C_to_B = NULL ;
+    int64_t *Cp     = NULL ; size_t Cp_size = 0 ;
+    int64_t *Ch     = NULL ; size_t Ch_size = 0 ; 
+    int64_t *C_to_M = NULL ; size_t C_to_M_size = 0 ;
+    int64_t *C_to_A = NULL ; size_t C_to_A_size = 0 ;
+    int64_t *C_to_B = NULL ; size_t C_to_B_size = 0 ;
     bool Ch_is_Mh ;
-    int C_ntasks = 0, TaskList_size = 0, C_nthreads ;
-    GB_task_struct *TaskList = NULL ;
+    int C_ntasks = 0, C_nthreads ;
+    GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity C and find the vectors in C
@@ -111,7 +114,8 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     info = GB_add_phase0 (
         // computed by by phase0:
-        &Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B, &Ch_is_Mh,
+        &Cnvec, &Ch, &Ch_size, &C_to_M, &C_to_M_size, &C_to_A, &C_to_A_size,
+        &C_to_B, &C_to_B_size, &Ch_is_Mh,
         // input/output to phase0:
         &C_sparsity,
         // original input:
@@ -150,17 +154,17 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         if (info != GrB_SUCCESS)
         { 
             // out of memory; free everything allocated by GB_add_phase0
-            GB_FREE (Ch) ;
-            GB_FREE_WERK (C_to_M) ;
-            GB_FREE_WERK (C_to_A) ;
-            GB_FREE_WERK (C_to_B) ;
+            GB_FREE (&Ch, Ch_size) ;
+            GB_FREE_WERK (&C_to_M, C_to_M_size) ;
+            GB_FREE_WERK (&C_to_A, C_to_A_size) ;
+            GB_FREE_WERK (&C_to_B, C_to_B_size) ;
             return (info) ;
         }
 
         // count the number of entries in each vector of C
         info = GB_add_phase1 (
             // computed or used by phase1:
-            &Cp, &Cnvec_nonempty, op == NULL,
+            &Cp, &Cp_size, &Cnvec_nonempty, op == NULL,
             // from phase1a:
             TaskList, C_ntasks, C_nthreads,
             // from phase0:
@@ -170,11 +174,11 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         if (info != GrB_SUCCESS)
         { 
             // out of memory; free everything allocated by GB_add_phase0
-            GB_FREE (Ch) ;
-            GB_FREE_WERK (TaskList) ;
-            GB_FREE_WERK (C_to_M) ;
-            GB_FREE_WERK (C_to_A) ;
-            GB_FREE_WERK (C_to_B) ;
+            GB_FREE_WERK (&TaskList, TaskList_size) ;
+            GB_FREE (&Ch, Ch_size) ;
+            GB_FREE_WERK (&C_to_M, C_to_M_size) ;
+            GB_FREE_WERK (&C_to_A, C_to_A_size) ;
+            GB_FREE_WERK (&C_to_B, C_to_B_size) ;
             return (info) ;
         }
 
@@ -200,10 +204,12 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     info = GB_add_phase2 (
         // computed or used by phase2:
         C, ctype, C_is_csc, op,
-        // from phase1 and phase1a:
-        Cp, Cnvec_nonempty, TaskList, C_ntasks, C_nthreads,
+        // from phase1
+        &Cp, Cp_size, Cnvec_nonempty,
+        // from phase1a:
+        TaskList, C_ntasks, C_nthreads,
         // from phase0:
-        Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh, C_sparsity,
+        Cnvec, &Ch, Ch_size, C_to_M, C_to_A, C_to_B, Ch_is_Mh, C_sparsity,
         // original input:
         (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Context) ;
 
@@ -211,10 +217,10 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // If the method failed, Cp and Ch have already been freed.
 
     // free workspace
-    GB_FREE_WERK (TaskList) ;
-    GB_FREE_WERK (C_to_M) ;
-    GB_FREE_WERK (C_to_A) ;
-    GB_FREE_WERK (C_to_B) ;
+    GB_FREE_WERK (&TaskList, TaskList_size) ;
+    GB_FREE_WERK (&C_to_M, C_to_M_size) ;
+    GB_FREE_WERK (&C_to_A, C_to_A_size) ;
+    GB_FREE_WERK (&C_to_B, C_to_B_size) ;
 
     if (info != GrB_SUCCESS)
     { 

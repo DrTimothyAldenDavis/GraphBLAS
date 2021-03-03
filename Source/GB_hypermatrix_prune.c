@@ -50,11 +50,11 @@ GrB_Info GB_hypermatrix_prune
     if (A->nvec_nonempty < A->nvec)     // A->nvec_nonempty used here
     {
         // create new Ap_new and Ah_new arrays, with no empty vectors
-        int64_t *GB_RESTRICT Ap_new = NULL ;
-        int64_t *GB_RESTRICT Ah_new = NULL ;
+        int64_t *GB_RESTRICT Ap_new = NULL ; size_t Ap_new_size = 0 ;
+        int64_t *GB_RESTRICT Ah_new = NULL ; size_t Ah_new_size = 0 ;
         int64_t nvec_new ;
-        GrB_Info info = GB_hyper_prune (&Ap_new, &Ah_new, &nvec_new,
-            A->p, A->h, A->nvec, Context) ;
+        GrB_Info info = GB_hyper_prune (&Ap_new, &Ap_new_size,
+            &Ah_new, &Ah_new_size, &nvec_new, A->p, A->h, A->nvec, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory
@@ -67,8 +67,8 @@ GrB_Info GB_hypermatrix_prune
         ASSERT (!A->p_shallow) ;
         ASSERT (!A->h_shallow) ;
         // transplant the new hyperlist into A
-        A->p = Ap_new ;
-        A->h = Ah_new ;
+        A->p = Ap_new ; A->p_size = Ap_new_size ;
+        A->h = Ah_new ; A->h_size = Ah_new_size ;
         A->nvec = nvec_new ;
         A->plen = nvec_new ;
         A->nvec_nonempty = nvec_new ;

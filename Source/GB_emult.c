@@ -33,12 +33,12 @@
 #include "GB_emult.h"
 #include "GB_add.h"
 
-#define GB_FREE_WORK            \
-{                               \
-    GB_FREE_WERK (TaskList) ;   \
-    GB_FREE_WERK (C_to_M) ;     \
-    GB_FREE_WERK (C_to_A) ;     \
-    GB_FREE_WERK (C_to_B) ;     \
+#define GB_FREE_WORK                            \
+{                                               \
+    GB_FREE_WERK (&TaskList, TaskList_size) ;   \
+    GB_FREE_WERK (&C_to_M, C_to_M_size) ;       \
+    GB_FREE_WERK (&C_to_A, C_to_A_size) ;       \
+    GB_FREE_WERK (&C_to_B, C_to_B_size) ;       \
 }
 
 #define GB_FREE_ALL             \
@@ -81,10 +81,10 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // declare workspace
     //--------------------------------------------------------------------------
 
-    GB_task_struct *TaskList = NULL ;
-    int64_t *GB_RESTRICT C_to_M = NULL ;
-    int64_t *GB_RESTRICT C_to_A = NULL ;
-    int64_t *GB_RESTRICT C_to_B = NULL ;
+    GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
+    int64_t *GB_RESTRICT C_to_M = NULL ; size_t C_to_M_size = 0 ;
+    int64_t *GB_RESTRICT C_to_A = NULL ; size_t C_to_A_size = 0 ;
+    int64_t *GB_RESTRICT C_to_B = NULL ; size_t C_to_B_size = 0 ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
@@ -350,9 +350,9 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     int64_t Cnvec, Cnvec_nonempty ;
-    int64_t *GB_RESTRICT Cp = NULL ;
-    const int64_t *GB_RESTRICT Ch = NULL ;  // shallow; must not be freed
-    int C_ntasks = 0, TaskList_size = 0, C_nthreads ;
+    int64_t *Cp = NULL ; size_t Cp_size = 0 ;
+    int64_t *Ch = NULL ; size_t Ch_size = 0 ;
+    int C_ntasks = 0, C_nthreads ;
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity C and find the vectors in C
@@ -360,7 +360,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     GB_OK (GB_emult_01_phase0 (
         // computed by phase0:
-        &Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B,
+        &Cnvec, &Ch, &Ch_size, &C_to_M, &C_to_M_size, &C_to_A, &C_to_A_size,
+        &C_to_B, &C_to_B_size,
         // input/output to phase0:
         &C_sparsity,
         // original input:
@@ -382,7 +383,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // count the number of entries in each vector of C
     GB_OK (GB_emult_01_phase1 (
         // computed by phase1:
-        &Cp, &Cnvec_nonempty,
+        &Cp, &Cp_size, &Cnvec_nonempty,
         // from phase1a:
         TaskList, C_ntasks, C_nthreads,
         // from phase0:
@@ -401,11 +402,11 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // computed or used by phase2:
         C, ctype, C_is_csc, op,
         // from phase1:
-        Cp, Cnvec_nonempty,
+        &Cp, Cp_size, Cnvec_nonempty,
         // from phase1a:
         TaskList, C_ntasks, C_nthreads,
         // from phase0:
-        Cnvec, Ch, C_to_M, C_to_A, C_to_B, C_sparsity,
+        Cnvec, Ch, Ch_size, C_to_M, C_to_A, C_to_B, C_sparsity,
         // from GB_emult_sparsity:
         ewise_method,
         // original input:

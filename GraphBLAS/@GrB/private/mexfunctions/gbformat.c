@@ -16,6 +16,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: [f,s] = GrB.format, GrB.format (f), GrB.format (G)"
+
 void mexFunction
 (
     int nargout,
@@ -29,8 +31,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout <= 2,
-        "usage: [f,s] = GrB.format, GrB.format (f), GrB.format (G)") ;
+    gb_usage (nargin <= 1 && nargout <= 2, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get/set the format

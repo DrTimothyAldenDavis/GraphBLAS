@@ -516,7 +516,8 @@ GB_task_struct ;
         bool ok ;                                                           \
         int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;               \
         int nnew = 2 * (ntasks) + 1 ;                                       \
-        GB_REALLOC_WERK (TaskList, nnew, nold, GB_task_struct, &ok) ;       \
+        GB_REALLOC_WERK (TaskList, nnew, nold, GB_task_struct,              \
+            &TaskList_size, &ok) ;                                          \
         if (!ok)                                                            \
         {                                                                   \
             /* out of memory */                                             \
@@ -545,8 +546,8 @@ GB_task_struct ;
 GrB_Info GB_ewise_slice
 (
     // output:
-    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
-    int *p_TaskList_size,           // size of TaskList
+    GB_task_struct **p_TaskList,    // array of structs
+    size_t *p_TaskList_size,        // size of TaskList
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads for eWise operation
     // input:
@@ -837,8 +838,8 @@ GrB_Info GB_conform_hyper       // conform a matrix to sparse/hypersparse
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:
-    int64_t *GB_RESTRICT *p_Ap,     // size nvec+1
-    int64_t *GB_RESTRICT *p_Ah,     // size nvec
+    int64_t *GB_RESTRICT *p_Ap, size_t *p_Ap_size,      // size nvec+1
+    int64_t *GB_RESTRICT *p_Ah, size_t *p_Ah_size,      // size nvec
     int64_t *p_nvec,                // # of vectors, all nonempty
     // input, not modified
     const int64_t *Ap_old,          // size nvec_old+1

@@ -86,7 +86,6 @@
 #include "GB_build.h"
 #include "GB_sort.h"
 #include "GB_binop.h"
-// #include "GB_Global.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
 #endif
@@ -95,13 +94,13 @@
 #define GB_J_WORK(t) (((t) < 0) ? -1 : ((J_work == NULL) ? 0 : J_work [t]))
 #define GB_K_WORK(t) (((t) < 0) ? -1 : ((K_work == NULL) ? t : K_work [t]))
 
-#define GB_FREE_WORK                \
-{                                   \
-    GB_WERK_POP (Work, int64_t) ;   \
-    GB_FREE (*I_work_handle) ;      \
-    GB_FREE (*J_work_handle) ;      \
-    GB_FREE (*S_work_handle) ;      \
-    GB_FREE_WERK (K_work) ;         \
+#define GB_FREE_WORK                        \
+{                                           \
+    GB_WERK_POP (Work, int64_t) ;           \
+    GB_FREE (I_work_handle, *I_work_size_handle) ; \
+    GB_FREE (J_work_handle, *J_work_size_handle) ; \
+    GB_FREE (S_work_handle, *S_work_size_handle) ; \
+    GB_FREE_WERK (&K_work, K_work_size) ;   \
 }
 
 //------------------------------------------------------------------------------
@@ -116,8 +115,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     const int64_t vdim,             // number of vectors in T
     const bool is_csc,              // true if T is CSC, false if CSR
     int64_t **I_work_handle,        // for (i,k) or (j,i,k) tuples
+    size_t *I_work_size_handle,
     int64_t **J_work_handle,        // for (j,i,k) tuples
+    size_t *J_work_size_handle,
     GB_void **S_work_handle,        // array of values of tuples, size ijslen
+    size_t *S_work_size_handle,
     bool known_sorted,              // true if tuples known to be sorted
     bool known_no_duplicates,       // true if tuples known to not have dupl
     int64_t ijslen,                 // size of I_work and J_work arrays
@@ -148,6 +150,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (J_work_handle != NULL) ;
     ASSERT (S_work_handle != NULL) ;
     ASSERT (!GB_OP_IS_POSITIONAL (dup)) ;
+    ASSERT (I_work_size_handle != NULL) ;
+    ASSERT (J_work_size_handle != NULL) ;
+    ASSERT (S_work_size_handle != NULL) ;
 
     //--------------------------------------------------------------------------
     // get S
@@ -179,7 +184,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
     GrB_Info info ;
     int64_t *GB_RESTRICT I_work = (*I_work_handle) ;
     int64_t *GB_RESTRICT J_work = (*J_work_handle) ;
-    int64_t *GB_RESTRICT K_work = NULL ;
+    int64_t *GB_RESTRICT K_work = NULL ; size_t K_work_size = 0 ;
+
+    ASSERT (*J_work_size_handle == GB_Global_memtable_size (J_work)) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -266,7 +273,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // freed in GB_builder.
 
         ASSERT (J_work == NULL) ;
-        I_work = GB_MALLOC (nvals, int64_t) ;
+        I_work = GB_MALLOC (nvals, int64_t, I_work_size_handle) ;
         (*I_work_handle) = I_work ;
         ijslen = nvals ;
         if (I_work == NULL)
@@ -388,7 +395,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             if (vdim > 1 && !known_sorted)
             {
                 // copy J_input into J_work, so the tuples can be sorted
-                J_work = GB_MALLOC (nvals, int64_t) ;   // WERK?
+                J_work = GB_MALLOC (nvals, int64_t, J_work_size_handle) ;
                 (*J_work_handle) = J_work ;
                 if (J_work == NULL)
                 { 
@@ -496,7 +503,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     {
 
         // create the k part of each tuple
-        K_work = GB_MALLOC_WERK (nvals, int64_t) ;
+        K_work = GB_MALLOC_WERK (nvals, int64_t, &K_work_size) ;
         if (K_work == NULL)
         { 
             // out of memory
@@ -868,7 +875,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
 
     ASSERT (J_work_handle != NULL) ;
-    GB_FREE (*J_work_handle) ;
+    GB_FREE (J_work_handle, *J_work_size_handle) ;
     J_work = NULL ;
 
     //--------------------------------------------------------------------------
@@ -885,18 +892,20 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
             // this cannot fail since the size is shrinking.
             bool ok ;
-            GB_REALLOC (I_work, T->nzmax, ijslen, int64_t, &ok) ;
+            GB_REALLOC (I_work, T->nzmax, ijslen, int64_t, I_work_size_handle,
+                &ok) ;
             ASSERT (ok) ;
         }
         // transplant I_work into T->i
-        T->i = I_work ;
+        T->i = I_work ; T->i_size = (*I_work_size_handle) ;
         I_work = NULL ;
         (*I_work_handle) = NULL ;
+        (*I_work_size_handle) = 0 ;
     }
     else
     {
         // duplicates exist, so allocate a new T->i.  I_work must be freed later
-        T->i = GB_MALLOC (tnz, int64_t) ;
+        T->i = GB_MALLOC (T->nzmax, int64_t, &(T->i_size)) ;
         if (T->i == NULL)
         { 
             // out of memory
@@ -1054,9 +1063,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // rarely be used for GB_transpose, in the case when op is NULL and the
         // transposed tuples happen to be sorted (which is unlikely).
 
-        T->x = S_work ;
+        T->x = S_work ; T->x_size = (*S_work_size_handle) ;
+        ASSERT (T->x_size % ttype->size == 0) ;
         S_work = NULL ;
         (*S_work_handle) = NULL ;
+        (*S_work_size_handle) = 0 ;
 
     }
     else
@@ -1066,7 +1077,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // allocate T->x
         //----------------------------------------------------------------------
 
-        T->x = GB_MALLOC (tnz * ttype->size, GB_void) ;
+        T->x = GB_MALLOC (T->nzmax * ttype->size, GB_void, &(T->x_size)) ;
+        ASSERT (T->x_size % ttype->size == 0) ;
         if (T->x == NULL)
         { 
             // out of memory

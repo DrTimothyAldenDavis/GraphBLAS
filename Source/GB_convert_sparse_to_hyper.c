@@ -64,6 +64,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         ASSERT (A->nvec == A->plen && A->plen == n) ;
 
         const int64_t *GB_RESTRICT Ap_old = A->p ;
+        size_t Ap_old_size = A->p_size ;
         bool Ap_old_shallow = A->p_shallow ;
 
         GB_WERK_DECLARE (Count, int64_t) ;
@@ -99,14 +100,16 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         // allocate the new A->p and A->h
         //----------------------------------------------------------------------
 
-        int64_t *GB_RESTRICT Ap_new = GB_MALLOC (nvec_nonempty+1, int64_t) ;
-        int64_t *GB_RESTRICT Ah_new = GB_MALLOC (nvec_nonempty  , int64_t) ;
+        int64_t *GB_RESTRICT Ap_new = NULL ; size_t Ap_new_size = 0 ;
+        int64_t *GB_RESTRICT Ah_new = NULL ; size_t Ah_new_size = 0 ;
+        Ap_new = GB_MALLOC (nvec_nonempty+1, int64_t, &Ap_new_size) ;
+        Ah_new = GB_MALLOC (nvec_nonempty  , int64_t, &Ah_new_size) ;
         if (Ap_new == NULL || Ah_new == NULL)
         { 
             // out of memory
             GB_WERK_POP (Count, int64_t) ;
-            GB_FREE (Ap_new) ;
-            GB_FREE (Ah_new) ;
+            GB_FREE (&Ap_new, Ap_new_size) ;
+            GB_FREE (&Ah_new, Ah_new_size) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
@@ -116,8 +119,8 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 
         A->plen = nvec_nonempty ;
         A->nvec = nvec_nonempty ;
-        A->p = Ap_new ;
-        A->h = Ah_new ;
+        A->p = Ap_new ; A->p_size = Ap_new_size ;
+        A->h = Ah_new ; A->h_size = Ah_new_size ;
         A->p_shallow = false ;
         A->h_shallow = false ;
 
@@ -153,7 +156,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         GB_WERK_POP (Count, int64_t) ;
         if (!Ap_old_shallow)
         { 
-            GB_FREE (Ap_old) ;
+            GB_FREE (&Ap_old, Ap_old_size) ;
         }
 
         //----------------------------------------------------------------------

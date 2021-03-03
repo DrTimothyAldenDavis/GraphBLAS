@@ -42,7 +42,8 @@ GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
     //--------------------------------------------------------------------------
 
     // allocate the unary operator
-    (*unaryop) = GB_MALLOC (1, struct GB_UnaryOp_opaque) ;
+    size_t header_size ;
+    (*unaryop) = GB_MALLOC (1, struct GB_UnaryOp_opaque, &header_size) ;
     if (*unaryop == NULL)
     { 
         // out of memory
@@ -52,6 +53,7 @@ GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
     // initialize the unary operator
     GrB_UnaryOp op = *unaryop ;
     op->magic = GB_MAGIC ;
+    op->header_size = header_size ;
     op->xtype = xtype ;
     op->ztype = ztype ;
     op->function = function ;

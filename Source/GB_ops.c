@@ -18,21 +18,19 @@
 
 // extern predefined type objects but opaque to the user
 struct GB_Type_opaque
-GB_opaque_GrB_BOOL   = {GB_MAGIC, sizeof(bool),     GB_BOOL_code  , "bool"    },
-GB_opaque_GrB_INT8   = {GB_MAGIC, sizeof(int8_t),   GB_INT8_code  , "int8_t"  },
-GB_opaque_GrB_UINT8  = {GB_MAGIC, sizeof(uint8_t),  GB_UINT8_code , "uint8_t" },
-GB_opaque_GrB_INT16  = {GB_MAGIC, sizeof(int16_t),  GB_INT16_code , "int16_t" },
-GB_opaque_GrB_UINT16 = {GB_MAGIC, sizeof(uint16_t), GB_UINT16_code, "uint16_t"},
-GB_opaque_GrB_INT32  = {GB_MAGIC, sizeof(int32_t),  GB_INT32_code , "int32_t" },
-GB_opaque_GrB_UINT32 = {GB_MAGIC, sizeof(uint32_t), GB_UINT32_code, "uint32_t"},
-GB_opaque_GrB_INT64  = {GB_MAGIC, sizeof(int64_t),  GB_INT64_code , "int64_t" },
-GB_opaque_GrB_UINT64 = {GB_MAGIC, sizeof(uint64_t), GB_UINT64_code, "uint64_t"},
-GB_opaque_GrB_FP32   = {GB_MAGIC, sizeof(float),    GB_FP32_code  , "float"   },
-GB_opaque_GrB_FP64   = {GB_MAGIC, sizeof(double),   GB_FP64_code  , "double"  },
-GB_opaque_GxB_FC32   =
-    {GB_MAGIC, sizeof (GxB_FC32_t), GB_FC32_code, "float complex" },
-GB_opaque_GxB_FC64   =
-    {GB_MAGIC, sizeof (GxB_FC64_t), GB_FC64_code, "double complex"} ;
+GB_opaque_GrB_BOOL   = {GB_MAGIC, 0, sizeof (bool)      , GB_BOOL_code  , "bool"          },
+GB_opaque_GrB_INT8   = {GB_MAGIC, 0, sizeof (int8_t)    , GB_INT8_code  , "int8_t"        },
+GB_opaque_GrB_UINT8  = {GB_MAGIC, 0, sizeof (uint8_t)   , GB_UINT8_code , "uint8_t"       },
+GB_opaque_GrB_INT16  = {GB_MAGIC, 0, sizeof (int16_t)   , GB_INT16_code , "int16_t"       },
+GB_opaque_GrB_UINT16 = {GB_MAGIC, 0, sizeof (uint16_t)  , GB_UINT16_code, "uint16_t"      },
+GB_opaque_GrB_INT32  = {GB_MAGIC, 0, sizeof (int32_t)   , GB_INT32_code , "int32_t"       },
+GB_opaque_GrB_UINT32 = {GB_MAGIC, 0, sizeof (uint32_t)  , GB_UINT32_code, "uint32_t"      },
+GB_opaque_GrB_INT64  = {GB_MAGIC, 0, sizeof (int64_t)   , GB_INT64_code , "int64_t"       },
+GB_opaque_GrB_UINT64 = {GB_MAGIC, 0, sizeof (uint64_t)  , GB_UINT64_code, "uint64_t"      },
+GB_opaque_GrB_FP32   = {GB_MAGIC, 0, sizeof (float)     , GB_FP32_code  , "float"         },
+GB_opaque_GrB_FP64   = {GB_MAGIC, 0, sizeof (double)    , GB_FP64_code  , "double"        },
+GB_opaque_GxB_FC32   = {GB_MAGIC, 0, sizeof (GxB_FC32_t), GB_FC32_code  , "float complex" },
+GB_opaque_GxB_FC64   = {GB_MAGIC, 0, sizeof (GxB_FC64_t), GB_FC64_code  , "double complex"} ;
 
 // extern predefined types (handles to opaque types)
 GrB_Type
@@ -59,14 +57,15 @@ GrB_Type
 #define GB_DESC(name,out,mask,in0,in1)                          \
 struct GB_Descriptor_opaque GB_opaque_desc_ ## name =           \
 {                                                               \
-    GB_MAGIC,               /* initialized */                   \
-    "",                                                         \
+    GB_MAGIC, 0,            /* initialized */                   \
+    "", 0,                  /* logger */                        \
+    (double) GxB_DEFAULT,   /* chunk */                         \
     (GrB_Desc_Value) (out),                                     \
     (GrB_Desc_Value) (mask),                                    \
     (GrB_Desc_Value) (in0),                                     \
     (GrB_Desc_Value) (in1),                                     \
-    o, o, o,                /* default: axb, #threads, chunk */ \
-    true                    /* pre-defined */                   \
+    o, o,                   /* default: axb, #threads */        \
+    0                       /* no sort */                       \
 } ;                                                             \
 GrB_Descriptor GrB_DESC_ ## name = & GB_opaque_desc_ ## name ;
 
@@ -141,7 +140,7 @@ GB_PRAGMA (warning (disable : 4146 ))
     extern void GB (op ## _f) (z_t *z, const x_t *x) ;                      \
     struct GB_UnaryOp_opaque GB (opaque_ ## prefix ## op) =                 \
     {                                                                       \
-        GB_MAGIC,                                                           \
+        GB_MAGIC, 0,                                                        \
         & GB_opaque (xtype),                                                \
         & GB_opaque (ztype),                                                \
         (GxB_unary_function) (& GB (op ## _f)),                             \
@@ -161,7 +160,7 @@ GB_PRAGMA (warning (disable : 4146 ))
     extern void GB (op ## _f) (z_t *z, const x_t *x, const y_t *y) ;        \
     struct GB_BinaryOp_opaque GB (opaque_ ## prefix ## op) =                \
     {                                                                       \
-        GB_MAGIC,                                                           \
+        GB_MAGIC, 0,                                                        \
         & GB_opaque (xtype),                                                \
         & GB_opaque (ytype),                                                \
         & GB_opaque (ztype),                                                \
@@ -299,7 +298,7 @@ GrB_BinaryOp GrB_LXNOR = & GB_opaque_GrB_EQ_BOOL ;
 #define GB_OP1_POS(op,str,type)                                             \
     struct GB_UnaryOp_opaque GB_opaque_GxB_ ## op ## type =                 \
     {                                                                       \
-        GB_MAGIC,                                                           \
+        GB_MAGIC, 0,                                                        \
         & GB_opaque (GrB ## type),                                          \
         & GB_opaque (GrB ## type),                                          \
         NULL,  /* op->function is NULL; it cannot be called */              \
@@ -312,7 +311,7 @@ GrB_BinaryOp GrB_LXNOR = & GB_opaque_GrB_EQ_BOOL ;
 #define GB_OP2_POS(op,str,type)                                             \
     struct GB_BinaryOp_opaque GB_opaque_GxB_ ## op ## type =                \
     {                                                                       \
-        GB_MAGIC,                                                           \
+        GB_MAGIC, 0,                                                        \
         & GB_opaque (GrB ## type),                                          \
         & GB_opaque (GrB ## type),                                          \
         & GB_opaque (GrB ## type),                                          \
@@ -353,85 +352,22 @@ GB_OP2_POS (SECONDJ1  , "secondj1"  , _INT64) ;
 // built-in select operators
 //------------------------------------------------------------------------------
 
-struct GB_SelectOp_opaque GB_opaque_GxB_TRIL =
-{
-    GB_MAGIC, NULL, NULL, NULL, "tril", GB_TRIL_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_TRIU =
-{
-    GB_MAGIC, NULL, NULL, NULL, "triu", GB_TRIU_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_DIAG =
-{
-    GB_MAGIC, NULL, NULL, NULL, "diag", GB_DIAG_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_OFFDIAG =
-{
-    GB_MAGIC, NULL, NULL, NULL, "offdiag", GB_OFFDIAG_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_NONZERO =
-{
-    GB_MAGIC, NULL, NULL, NULL, "nonzero", GB_NONZERO_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_EQ_ZERO =
-{
-    GB_MAGIC, NULL, NULL, NULL, "eq_zero", GB_EQ_ZERO_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_GT_ZERO =
-{
-    GB_MAGIC, NULL, NULL, NULL, "gt_zero", GB_GT_ZERO_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_GE_ZERO =
-{
-    GB_MAGIC, NULL, NULL, NULL, "ge_zero", GB_GE_ZERO_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_LT_ZERO =
-{
-    GB_MAGIC, NULL, NULL, NULL, "lt_zero", GB_LT_ZERO_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_LE_ZERO =
-{
-    GB_MAGIC, NULL, NULL, NULL, "le_zero", GB_LE_ZERO_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_NE_THUNK =
-{
-    GB_MAGIC, NULL, NULL, NULL, "ne_thunk", GB_NE_THUNK_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_EQ_THUNK =
-{
-    GB_MAGIC, NULL, NULL, NULL, "eq_thunk", GB_EQ_THUNK_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_GT_THUNK =
-{
-    GB_MAGIC, NULL, NULL, NULL, "gt_thunk", GB_GT_THUNK_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_GE_THUNK =
-{
-    GB_MAGIC, NULL, NULL, NULL, "ge_thunk", GB_GE_THUNK_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_LT_THUNK =
-{
-    GB_MAGIC, NULL, NULL, NULL, "lt_thunk", GB_LT_THUNK_opcode
-} ;
-
-struct GB_SelectOp_opaque GB_opaque_GxB_LE_THUNK =
-{
-    GB_MAGIC, NULL, NULL, NULL, "le_thunk", GB_LE_THUNK_opcode
-} ;
+struct GB_SelectOp_opaque GB_opaque_GxB_TRIL     = { GB_MAGIC, 0, NULL, NULL, NULL, "tril"    , GB_TRIL_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_TRIU     = { GB_MAGIC, 0, NULL, NULL, NULL, "triu"    , GB_TRIU_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_DIAG     = { GB_MAGIC, 0, NULL, NULL, NULL, "diag"    , GB_DIAG_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_OFFDIAG  = { GB_MAGIC, 0, NULL, NULL, NULL, "offdiag" , GB_OFFDIAG_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_NONZERO  = { GB_MAGIC, 0, NULL, NULL, NULL, "nonzero" , GB_NONZERO_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_EQ_ZERO  = { GB_MAGIC, 0, NULL, NULL, NULL, "eq_zero" , GB_EQ_ZERO_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_GT_ZERO  = { GB_MAGIC, 0, NULL, NULL, NULL, "gt_zero" , GB_GT_ZERO_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_GE_ZERO  = { GB_MAGIC, 0, NULL, NULL, NULL, "ge_zero" , GB_GE_ZERO_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_LT_ZERO  = { GB_MAGIC, 0, NULL, NULL, NULL, "lt_zero" , GB_LT_ZERO_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_LE_ZERO  = { GB_MAGIC, 0, NULL, NULL, NULL, "le_zero" , GB_LE_ZERO_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_NE_THUNK = { GB_MAGIC, 0, NULL, NULL, NULL, "ne_thunk", GB_NE_THUNK_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_EQ_THUNK = { GB_MAGIC, 0, NULL, NULL, NULL, "eq_thunk", GB_EQ_THUNK_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_GT_THUNK = { GB_MAGIC, 0, NULL, NULL, NULL, "gt_thunk", GB_GT_THUNK_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_GE_THUNK = { GB_MAGIC, 0, NULL, NULL, NULL, "ge_thunk", GB_GE_THUNK_opcode } ; 
+struct GB_SelectOp_opaque GB_opaque_GxB_LT_THUNK = { GB_MAGIC, 0, NULL, NULL, NULL, "lt_thunk", GB_LT_THUNK_opcode } ;
+struct GB_SelectOp_opaque GB_opaque_GxB_LE_THUNK = { GB_MAGIC, 0, NULL, NULL, NULL, "le_thunk", GB_LE_THUNK_opcode } ;
 
 GxB_SelectOp GxB_TRIL     = & GB_opaque_GxB_TRIL ;
 GxB_SelectOp GxB_TRIU     = & GB_opaque_GxB_TRIU ;
@@ -492,11 +428,11 @@ const GxB_Format_Value GxB_FORMAT_DEFAULT = GB_FORMAT_DEFAULT ;
 ztype GB_opaque_identity_ ## op = identity ;                                \
 struct GB_Monoid_opaque GB_opaque_GxB_ ## op ## _MONOID =                   \
 {                                                                           \
-    GB_MAGIC,                                                               \
+    GB_MAGIC, 0,                                                            \
     & GB_opaque_ ## prefix ## op,                                           \
     & GB_opaque_identity_ ## op,                                            \
     NULL,                                                                   \
-    true                                                                    \
+    0, 0                                                                    \
 } ;                                                                         \
 GrB_Monoid GxB_ ## op ## _MONOID = & GB_opaque_GxB_ ## op ## _MONOID ;
 
@@ -506,11 +442,11 @@ ztype GB_opaque_identity_ ## op = identity ;                                \
 ztype GB_opaque_terminal_ ## op = terminal ;                                \
 struct GB_Monoid_opaque GB_opaque_GxB_ ## op ## _MONOID =                   \
 {                                                                           \
-    GB_MAGIC,                                                               \
+    GB_MAGIC, 0,                                                            \
     & GB_opaque_ ## prefix ## op,                                           \
     & GB_opaque_identity_ ## op,                                            \
     & GB_opaque_terminal_ ## op,                                            \
-    true                                                                    \
+    0, 0                                                                    \
 } ;                                                                         \
 GrB_Monoid GxB_ ## op ## _MONOID = & GB_opaque_GxB_ ## op ## _MONOID ;
 
@@ -675,10 +611,9 @@ GB_MONOID_DEF  ( GrB_, BXNOR_UINT64 , uint64_t  , 0xFFFFFFFFFFFFFFFF )
 #define GB_SEMIRING_DEFINE(add,prefix,mult)                                 \
 struct GB_Semiring_opaque GB (GxB_ ## add ## _ ## mult) =                   \
 {                                                                           \
-    GB_MAGIC,                                                               \
+    GB_MAGIC, 0,                                                            \
     & GB_MONOID (add),                                                      \
-    & GB (prefix ## mult),                                                  \
-    true                                                                    \
+    & GB (prefix ## mult)                                                   \
 } ;                                                                         \
 GrB_Semiring GxB_NAME (add ## _ ## mult) = & GB (GxB_ ## add ## _ ## mult) ;
 
@@ -686,10 +621,9 @@ GrB_Semiring GxB_NAME (add ## _ ## mult) = & GB (GxB_ ## add ## _ ## mult) ;
 #define GB_SEMIRING_COMPARE_DEFINE(add,mult)                                \
 struct GB_Semiring_opaque GB (GxB_ ## add ## _ ## mult) =                   \
 {                                                                           \
-    GB_MAGIC,                                                               \
+    GB_MAGIC, 0,                                                            \
     & GB_BOOL_MONOID (add),                                                 \
-    & GB (GrB_ ## mult),                                                    \
-    true                                                                    \
+    & GB (GrB_ ## mult)                                                     \
 } ;                                                                         \
 GrB_Semiring GxB_NAME (add ## _ ## mult) = & GB (GxB_ ## add ## _ ## mult) ;
 

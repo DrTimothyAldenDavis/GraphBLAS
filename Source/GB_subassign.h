@@ -113,6 +113,7 @@ GrB_Info GB_assign_prep
     // modified versions of the Rows/Cols lists, and their analysis:
     const GrB_Index **I_handle,     // Rows, Cols, or a modified copy I2
     GrB_Index **I2_handle,          // NULL, or sorted/pruned Rows or Cols
+    size_t *I2_size_handle,
     int64_t *ni_handle,
     int64_t *nI_handle,
     int *Ikind_handle,
@@ -120,6 +121,7 @@ GrB_Info GB_assign_prep
 
     const GrB_Index **J_handle,     // Rows, Cols, or a modified copy J2
     GrB_Index **J2_handle,          // NULL, or sorted/pruned Rows or Cols
+    size_t *J2_size_handle,
     int64_t *nj_handle,
     int64_t *nJ_handle,
     int *Jkind_handle,
@@ -131,8 +133,7 @@ GrB_Info GB_assign_prep
     // input/output
     GrB_Matrix C_in,                // input/output matrix for results
     bool *C_replace,                // descriptor for C
-    int *assign_kind,               // row assign, col assign, assign, or
-                                    // subassign
+    int *assign_kind,               // row/col assign, assign, or subassign
 
     // input
     const GrB_Matrix M_in,          // optional mask for C
@@ -151,6 +152,8 @@ GrB_Info GB_assign_prep
     const GB_Type_code scalar_code, // type code of scalar to expand
     GB_Context Context
 ) ;
+
+    //--------------------------------------------------------------------------
 
 #define GB_SUBASSIGN_METHOD_01   1     // C(I,J) = scalar
 #define GB_SUBASSIGN_METHOD_02   2     // C(I,J) = A

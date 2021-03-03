@@ -23,15 +23,15 @@
 // of a single entry C(i,j) can be broken into multiple tasks.  The slice of
 // A(:,i) and B(:,j) would use GB_slice_vector, where no mask would be used.
 
-#define GB_FREE_WORK                    \
-{                                       \
-    GB_WERK_POP (Coarse, int64_t) ;     \
+#define GB_FREE_WORK                            \
+{                                               \
+    GB_WERK_POP (Coarse, int64_t) ;             \
 }
 
-#define GB_FREE_ALL                     \
-{                                       \
-    GB_FREE_WORK ;                      \
-    GB_FREE_WERK (TaskList) ;           \
+#define GB_FREE_ALL                             \
+{                                               \
+    GB_FREE_WORK ;                              \
+    GB_FREE_WERK (&TaskList, TaskList_size) ;   \
 }
 
 #include "GB_mxm.h"
@@ -44,8 +44,8 @@
 GrB_Info GB_AxB_dot3_slice
 (
     // output:
-    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
-    int *p_max_ntasks,              // size of TaskList
+    GB_task_struct **p_TaskList,    // array of structs
+    size_t *p_TaskList_size,        // size of TaskList
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     // input:
@@ -59,7 +59,7 @@ GrB_Info GB_AxB_dot3_slice
     //--------------------------------------------------------------------------
 
     ASSERT (p_TaskList != NULL) ;
-    ASSERT (p_max_ntasks != NULL) ;
+    ASSERT (p_TaskList_size != NULL) ;
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
     // ASSERT_MATRIX_OK (C, ...) cannot be done since C->i is the work need to
@@ -71,7 +71,7 @@ GrB_Info GB_AxB_dot3_slice
     ASSERT (!GB_IS_BITMAP (C)) ;
 
     (*p_TaskList  ) = NULL ;
-    (*p_max_ntasks) = 0 ;
+    (*p_TaskList_size) = 0 ;
     (*p_ntasks    ) = 0 ;
     (*p_nthreads  ) = 1 ;
 
@@ -108,7 +108,7 @@ GrB_Info GB_AxB_dot3_slice
     GB_WERK_DECLARE (Coarse, int64_t) ;
     int ntasks1 = 0 ;
     nthreads = GB_nthreads (total_work, chunk, nthreads_max) ;
-    GB_task_struct *GB_RESTRICT TaskList = NULL ;
+    GB_task_struct *GB_RESTRICT TaskList = NULL ; size_t TaskList_size = 0 ;
     int max_ntasks = 0 ;
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;
@@ -126,7 +126,7 @@ GrB_Info GB_AxB_dot3_slice
         TaskList [0].pC = 0 ;
         TaskList [0].pC_end  = cnz ;
         (*p_TaskList  ) = TaskList ;
-        (*p_max_ntasks) = max_ntasks ;
+        (*p_TaskList_size) = TaskList_size ;
         (*p_ntasks    ) = (cnvec == 0) ? 0 : 1 ;
         (*p_nthreads  ) = 1 ;
         return (GrB_SUCCESS) ;
@@ -217,7 +217,7 @@ GrB_Info GB_AxB_dot3_slice
 
     GB_FREE_WORK ;
     (*p_TaskList  ) = TaskList ;
-    (*p_max_ntasks) = max_ntasks ;
+    (*p_TaskList_size) = TaskList_size ;
     (*p_ntasks    ) = ntasks ;
     (*p_nthreads  ) = nthreads ;
     return (GrB_SUCCESS) ;

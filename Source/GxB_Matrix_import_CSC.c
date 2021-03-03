@@ -41,7 +41,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     // import the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (A, type, nrows, ncols,
+    info = GB_import (A, type, nrows, ncols, false,
         Ap,   Ap_size,  // Ap
         NULL, 0,        // Ah
         NULL, 0,        // Ab

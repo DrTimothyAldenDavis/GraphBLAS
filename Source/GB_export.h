@@ -17,6 +17,7 @@ GrB_Info GB_import      // import a matrix in any format
     GrB_Type type,      // type of matrix to create
     GrB_Index vlen,     // vector length
     GrB_Index vdim,     // vector dimension
+    bool is_sparse_vector,      // true if A is a sparse GrB_Vector
 
     // the 5 arrays:
     GrB_Index **Ap,     // pointers, for sparse and hypersparse formats.
@@ -54,6 +55,7 @@ GrB_Info GB_export      // export a matrix in any format
     GrB_Type *type,     // type of matrix to export
     GrB_Index *vlen,    // vector length
     GrB_Index *vdim,    // vector dimension
+    bool is_sparse_vector,      // true if A is a sparse GrB_Vector
 
     // the 5 arrays:
     GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse

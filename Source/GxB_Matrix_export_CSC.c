@@ -88,7 +88,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     int sparsity ;
     bool is_csc ;
 
-    info = GB_export (A, type, nrows, ncols,
+    info = GB_export (A, type, nrows, ncols, false,
         Ap,   Ap_size,  // Ap
         NULL, NULL,     // Ah
         NULL, NULL,     // Ab

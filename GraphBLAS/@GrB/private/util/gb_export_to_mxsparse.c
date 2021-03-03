@@ -130,6 +130,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         { 
             S = mxCreateSparse (nrows, ncols, 1, mxREAL) ;
         }
+        OK (GrB_Matrix_free (&T)) ;
 
     }
     else
@@ -174,32 +175,27 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         mxSetNzmax (S, Ti_size) ;
 
         // set the column pointers
-        void *p = mxGetJc (S) ;
-        gb_mxfree (&p) ;
+        void *p = mxGetJc (S) ; gb_mxfree (&p) ;
         mxSetJc (S, Tp) ;
 
         // set the row indices
-        p = mxGetIr (S) ;
-        gb_mxfree (&p) ;
+        p = mxGetIr (S) ; gb_mxfree (&p) ;
         mxSetIr (S, Ti) ;
 
         // set the values
         if (type == GrB_BOOL)
         { 
-            p = mxGetData (S) ;
-            gb_mxfree (&p) ;
+            p = mxGetData (S) ; gb_mxfree (&p) ;
             mxSetData (S, Tx) ;
         }
         else if (type == GxB_FC64)
         { 
-            p = mxGetComplexDoubles (S) ;
-            gb_mxfree (&p) ;
+            p = mxGetComplexDoubles (S) ; gb_mxfree (&p) ;
             mxSetComplexDoubles (S, Tx) ;
         }
         else // type == GrB_FP64
         { 
-            p = mxGetDoubles (S) ;
-            gb_mxfree (&p) ;
+            p = mxGetDoubles (S) ; gb_mxfree (&p) ;
             mxSetDoubles (S, Tx) ;
         }
     }

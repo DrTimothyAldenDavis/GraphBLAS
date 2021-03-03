@@ -54,7 +54,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     bool ok = true ;
     if (is_sparse)
     { 
-        A->i = GB_MALLOC (A->nzmax, int64_t) ;
+        A->i = GB_MALLOC (A->nzmax, int64_t, &(A->i_size)) ;
         ok = (A->i != NULL) ;
         if (ok && A->nzmax == 1) A->i [0] = 0 ;
     }
@@ -63,21 +63,22 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
         if (bitmap_calloc)
         { 
             // content is fully defined
-            A->b = GB_CALLOC (A->nzmax, int8_t) ;   // bitmap_calloc is true
+            A->b = GB_CALLOC (A->nzmax, int8_t, &(A->b_size)) ;
             A->magic = GB_MAGIC ;
         }
         else
         { 
             // bitmap is not defined and will be computed by the caller
-            A->b = GB_MALLOC (A->nzmax, int8_t) ;
+            A->b = GB_MALLOC (A->nzmax, int8_t, &(A->b_size)) ;
         }
         ok = (A->b != NULL) ;
     }
 
     if (numeric)
     { 
-        A->x = GB_MALLOC (A->nzmax * A->type->size, GB_void) ;
+        A->x = GB_MALLOC (A->nzmax * A->type->size, GB_void, &(A->x_size)) ;
         ok = ok && (A->x != NULL) ;
+        ASSERT (GB_IMPLIES (ok, A->x_size % A->type->size == 0)) ;
     }
 
     if (!ok)

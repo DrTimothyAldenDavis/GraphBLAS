@@ -74,27 +74,23 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
 
     int sparsity ;
     bool is_csc ;
-    int64_t *vp = NULL ;
-    GrB_Index vdim, vp_size ;
+    GrB_Index vdim ;
 
-    info = GB_export ((GrB_Matrix *) v, type, n, &vdim,
-        &vp,  &vp_size, // Ap
+    info = GB_export ((GrB_Matrix *) v, type, n, &vdim, true,
+        NULL, NULL,     // Ap
         NULL, NULL,     // Ah
         NULL, NULL,     // Ab
         vi,   vi_size,  // Ai
         vx,   vx_size,  // Ax
-        NULL, jumbled, NULL,                // jumbled or not
+        nvals, jumbled, NULL,               // jumbled or not
         &sparsity, &is_csc, Context) ;      // sparse by col
 
     if (info == GrB_SUCCESS)
     { 
-        (*nvals) = vp [1] ;
         ASSERT (sparsity == GxB_SPARSE) ;
         ASSERT (is_csc) ;
         ASSERT (vdim == 1) ;
-        ASSERT (vp_size == 2) ;
     }
-    GB_FREE (vp) ;
     GB_BURBLE_END ;
     return (info) ;
 }

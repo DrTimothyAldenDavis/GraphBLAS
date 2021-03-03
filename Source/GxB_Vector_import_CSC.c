@@ -39,25 +39,15 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     // import the vector
     //--------------------------------------------------------------------------
 
-    GrB_Index *vp = GB_MALLOC (2, int64_t) ;
-    if (vp == NULL)
-    { 
-        // out of memory
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-    vp [0] = 0 ;
-    vp [1] = nvals ;
-
-    info = GB_import ((GrB_Matrix *) v, type, n, 1,
-        &vp,  2,        // Ap
+    info = GB_import ((GrB_Matrix *) v, type, n, 1, true,
+        NULL, 0,        // Ap
         NULL, 0,        // Ah
         NULL, 0,        // Ab
         vi,   vi_size,  // Ai
         vx,   vx_size,  // Ax
-        0, jumbled, 0,                      // jumbled or not
+        nvals, jumbled, 0,                  // jumbled or not
         GxB_SPARSE, true, Context) ;        // sparse by col
 
-    GB_FREE (vp) ;
     GB_BURBLE_END ;
     return (info) ;
 }

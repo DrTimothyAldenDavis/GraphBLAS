@@ -88,7 +88,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     int sparsity ;
     bool is_csc ;
 
-    info = GB_export (A, type, ncols, nrows,
+    info = GB_export (A, type, ncols, nrows, false,
         Ap,   Ap_size,  // Ap
         NULL, NULL,     // Ah
         NULL, NULL,     // Ab
