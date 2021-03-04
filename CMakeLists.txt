@@ -329,9 +329,9 @@ else ( )
     set ( M_LIB "m" )
 endif ( )
 
-target_link_libraries ( graphblas ${M_LIB} )
+target_link_libraries ( graphblas PUBLIC ${M_LIB} )
 if ( BUILD_GRB_STATIC_LIBRARY )
-    target_link_libraries ( graphblas_static ${M_LIB} )
+    target_link_libraries ( graphblas_static PUBLIC ${M_LIB} )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -339,24 +339,24 @@ endif ( )
 #-------------------------------------------------------------------------------
 
 if ( USE_OPENMP )
-    target_link_libraries ( graphblas ${OpenMP_C_LIBRARIES} )
+    target_link_libraries ( graphblas PUBLIC ${OpenMP_C_LIBRARIES} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${OpenMP_C_LIBRARIES} )
+        target_link_libraries ( graphblas_static PUBLIC ${OpenMP_C_LIBRARIES} )
     endif ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} " )
 endif ( )
 
 if ( CMAKE_CUDA )
-    target_link_libraries ( graphblas ${GB_CUDA} )
+    target_link_libraries ( graphblas PUBLIC ${GB_CUDA} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${GB_CUDA} )
+        target_link_libraries ( graphblas_static PUBLIC ${GB_CUDA} )
     endif ( )
 endif ( )
 
 if ( CMAKE_THREAD_LIBS_INIT )
-    target_link_libraries ( graphblas ${CMAKE_THREAD_LIBS_INIT} )
+    target_link_libraries ( graphblas PUBLIC ${CMAKE_THREAD_LIBS_INIT} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} )
+        target_link_libraries ( graphblas_static PUBLIC ${CMAKE_THREAD_LIBS_INIT} )
     endif ( )
 endif ( )
 
@@ -387,7 +387,7 @@ SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
     SOVERSION ${GraphBLAS_VERSION_MAJOR}
     C_STANDARD_REQUIRED 11 )
 set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
-target_link_libraries ( graphblasdemo ${M_LIB} graphblas  ${GB_CUDA} )
+target_link_libraries ( graphblasdemo PUBLIC ${M_LIB} graphblas  ${GB_CUDA} )
 
 if ( BUILD_GRB_STATIC_LIBRARY )
     add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
@@ -395,7 +395,7 @@ if ( BUILD_GRB_STATIC_LIBRARY )
         VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
         C_STANDARD_REQUIRED 11 )
     set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
-    target_link_libraries ( graphblasdemo_static  graphblas_static  ${GB_CUDA} )
+    target_link_libraries ( graphblasdemo_static PUBLIC  graphblas_static  ${GB_CUDA} )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -415,17 +415,17 @@ add_executable ( reduce_demo   "Demo/Program/reduce_demo.c" )
 add_executable ( import_demo   "Demo/Program/import_demo.c" )
 
 # Libraries required for Demo programs
-target_link_libraries ( pagerank_demo graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( bfs_demo      graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( tri_demo      graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( openmp_demo   graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( mis_demo      graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( complex_demo  graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( kron_demo     graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( simple_demo   graphblasdemo ${GB_CUDA} )
-target_link_libraries ( wildtype_demo graphblas ${GB_CUDA} )
-target_link_libraries ( reduce_demo   graphblas ${GB_CUDA} )
-target_link_libraries ( import_demo   graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( pagerank_demo PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( bfs_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( tri_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( openmp_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( mis_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( complex_demo  PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( kron_demo     PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+target_link_libraries ( simple_demo   PUBLIC graphblasdemo ${GB_CUDA} )
+target_link_libraries ( wildtype_demo PUBLIC graphblas ${GB_CUDA} )
+target_link_libraries ( reduce_demo   PUBLIC graphblas ${GB_CUDA} )
+target_link_libraries ( import_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} )
 
 #-------------------------------------------------------------------------------
 # graphblas installation location
