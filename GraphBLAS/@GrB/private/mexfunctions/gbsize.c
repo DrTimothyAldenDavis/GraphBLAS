@@ -17,6 +17,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: [m n type] = gbsize (X)"
+
 void mexFunction
 (
     int nargout,
@@ -30,7 +32,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 4, "usage: [m n type] = gbsize (X)") ;
+    gb_usage (nargin == 1 && nargout <= 4, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the # of rows and columns of a GraphBLAS or MATLAB matrix

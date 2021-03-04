@@ -12,9 +12,15 @@
 void gb_usage       // check usage and make sure GrB.init has been called
 (
     bool ok,                // if false, then usage is not correct
-    const char *message     // error message if usage is not correct
+    const char *usage       // error message if usage is not correct
 )
 {
+
+    //--------------------------------------------------------------------------
+    // clear the debug memory table
+    //--------------------------------------------------------------------------
+
+    GB_Global_memtable_clear ( ) ;
 
     //--------------------------------------------------------------------------
     // make sure GrB.init has been called
@@ -30,8 +36,9 @@ void gb_usage       // check usage and make sure GrB.init has been called
         // must use mexPrintf to print to MATLAB Command Window
         GB_printf_function = mexPrintf ;
 
-        OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
-            false)) ;
+        OK (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree, false)) ;
+//      OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
+//          false)) ;
 
         // MATLAB matrices are stored by column
         OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
@@ -49,7 +56,7 @@ void gb_usage       // check usage and make sure GrB.init has been called
 
     if (!ok)
     {
-        ERROR (message) ;
+        ERROR (usage) ;
     }
 
     //--------------------------------------------------------------------------

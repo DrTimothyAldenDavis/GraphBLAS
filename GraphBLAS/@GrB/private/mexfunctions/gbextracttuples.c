@@ -22,6 +22,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: [I,J,X] = GrB.extracttuples (A, desc)"
+
 void mexFunction
 (
     int nargout,
@@ -35,8 +37,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 1 && nargin <= 2 && nargout <= 3,
-        "usage: [I,J,X] = GrB.extracttuples (A, desc)") ;
+    gb_usage (nargin >= 1 && nargin <= 2 && nargout <= 3, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the optional descriptor

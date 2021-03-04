@@ -5,9 +5,7 @@ function b = burble (b)
 %   GrB.burble (b) ;      % set the burble
 %
 % GrB.burble gets and/or sets the burble setting, which controls diagnostic
-% output in GraphBLAS.  To enable this parameter, the SuiteSparse:GraphBLAS
-% library must also be compiled with burble enabled (use -DGB_BURBLE=1).
-% The default burble is false.
+% output in GraphBLAS.
 %
 % See also spparms.
 

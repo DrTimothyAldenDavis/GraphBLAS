@@ -14,6 +14,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: GrB.semiringinfo (s) or GrB.semiringinfo (s,type)"
+
 void mexFunction
 (
     int nargout,
@@ -27,8 +29,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 1 && nargin <= 2 && nargout == 0,
-    "usage: GrB.semiringinfo (semiring) or GrB.semiringinfo (semiring,type)") ;
+    gb_usage (nargin >= 1 && nargin <= 2 && nargout == 0, USAGE) ;
 
     //--------------------------------------------------------------------------
     // construct the GraphBLAS semiring and print it

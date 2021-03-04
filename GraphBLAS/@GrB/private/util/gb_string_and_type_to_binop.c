@@ -762,6 +762,13 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
 
+    //--------------------------------------------------------------------------
+    // unknown type or operator
+    //--------------------------------------------------------------------------
+
+    // the type can be NULL for positional operators, but no others
+
+    CHECK_ERROR (type == NULL, "unknown type") ;
     ERROR2 ("unknown binary operator", op_name) ;
     return (NULL) ;
 }
