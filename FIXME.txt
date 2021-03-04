@@ -1,18 +1,3 @@
 
-GB_cuda_gateway:  change *Chandle to C in GB_AxB_dot3_cuda
-
-CMakeLists.txt: broken. fix version in sparse/GraphBLAS with RMM
-but with newer version number.
-
-CUDA/
-    GB_AxB_dot3_cuda_branch.cu
-        remove semiring_is_builtin, use header_size == 0
-
-    GB_AxB_dot3_cuda.cu
-        change *Chandle to C
-        change GB_new_bix
-
-
-    GB_cuda_cumsum.cu
-        change GB_malloc_memory, GB_free_memory
+CMakeLists.txt: broken, cannot find rmm
 
