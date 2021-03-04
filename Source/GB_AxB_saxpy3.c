@@ -453,7 +453,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     if (Hf_size_total > 0)
     { 
         // Hf must be calloc'd to initialize all entries as empty 
-        Hf_all = GB_CALLOC_WERK (Hf_size_total, int64_t, &Hf_all_size) ;
+        Hf_all = GB_CALLOC_WERK (Hf_size_total, int64_t, &Hf_all_size, Context);
     }
     if (Hx_size_total > 0)
     { 

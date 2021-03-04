@@ -544,10 +544,10 @@ void mexFunction
     CHECK (p != NULL) ;
     GB_FREE (&p, nbytes) ;
     CHECK (p == NULL) ;
-    p = GB_calloc_memory (4, sizeof (int64_t), &nbytes) ;
+    p = GB_calloc_memory (4, sizeof (int64_t), &nbytes, NULL) ;
     CHECK (p != NULL) ;
     bool ok = true ;
-    p = GB_realloc_memory (6, 4, sizeof (int64_t), p, &nbytes, &ok) ;
+    p = GB_realloc_memory (6, 4, sizeof (int64_t), p, &nbytes, &ok, NULL) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
     GB_FREE (&p, nbytes) ;

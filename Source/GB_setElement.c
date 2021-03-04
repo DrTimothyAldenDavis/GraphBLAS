@@ -290,7 +290,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         // NULL, which is the implicit SECOND_ctype operator.
 
         if (!GB_Pending_add (&(C->Pending), (GB_void *)scalar,
-            stype, NULL, i, j, C->vdim > 1))
+            stype, NULL, i, j, C->vdim > 1, Context))
         { 
             // out of memory
             GB_phbix_free (C) ;

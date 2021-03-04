@@ -20,7 +20,8 @@ void *GB_calloc_memory      // pointer to allocated block of memory
     size_t nitems,          // number of items to allocate
     size_t size_of_item,    // sizeof each item
     // output
-    size_t *size_allocated  // # of bytes actually allocated
+    size_t *size_allocated, // # of bytes actually allocated
+    GB_Context Context
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -43,7 +44,8 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     void *p,                // old object to reallocate
     // output
     size_t *size_allocated, // # of bytes actually allocated
-    bool *ok                // true if successful, false otherwise
+    bool *ok,               // true if successful, false otherwise
+    GB_Context Context
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -56,15 +58,17 @@ void GB_free_memory
 ) ;
 
 #define GB_FREE(p,s) GB_free_memory (p,s)
-#define GB_CALLOC(n,type,s) (type *) GB_calloc_memory (n, sizeof (type), s)
+#define GB_CALLOC(n,type,s,Context) \
+    (type *) GB_calloc_memory (n, sizeof (type), s, Context)
 #define GB_MALLOC(n,type,s) (type *) GB_malloc_memory (n, sizeof (type), s)
-#define GB_REALLOC(p,nnew,nold,type,s,ok) \
-    p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), (void *)p, s, ok)
+#define GB_REALLOC(p,nnew,nold,type,s,ok,Context) \
+    p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), (void *)p, s, \
+        ok, Context)
 
-#define GB_CALLOC_WERK(n,type,s) GB_CALLOC(n,type,s)
+#define GB_CALLOC_WERK(n,type,s,Context) GB_CALLOC(n,type,s,Context)
 #define GB_MALLOC_WERK(n,type,s) GB_MALLOC(n,type,s)
-#define GB_REALLOC_WERK(p,nnew,nold,type,s,ok) \
-             GB_REALLOC(p,nnew,nold,type,s,ok) 
+#define GB_REALLOC_WERK(p,nnew,nold,type,s,ok,Context) \
+             GB_REALLOC(p,nnew,nold,type,s,ok,Context) 
 #define GB_FREE_WERK(p,s) GB_FREE(p,s)
 
 #endif

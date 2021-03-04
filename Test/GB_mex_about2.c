@@ -379,7 +379,7 @@ void mexFunction
     bool ok = false ;
     int *p = GB_malloc_memory (4, sizeof (int), &nbytes) ;
     CHECK (p != NULL) ;
-    p = GB_realloc_memory (4, 4, sizeof (int), p, &nbytes, &ok) ;
+    p = GB_realloc_memory (4, 4, sizeof (int), p, &nbytes, &ok, NULL) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
     GB_free_memory (&p, nbytes) ;

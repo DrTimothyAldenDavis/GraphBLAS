@@ -24,10 +24,11 @@ bool GB_Pending_alloc       // create a list of pending tuples
     int64_t nmax            // # of pending tuples to hold
 ) ;
 
-bool GB_Pending_realloc     // reallocate a list of pending tuples
+bool GB_Pending_realloc         // reallocate a list of pending tuples
 (
-    GB_Pending *PHandle,    // Pending tuple list to reallocate
-    int64_t nnew            // # of new tuples to accomodate
+    GB_Pending *PHandle,        // Pending tuple list to reallocate
+    int64_t nnew,               // # of new tuples to accomodate
+    GB_Context Context
 ) ;
 
 void GB_Pending_free        // free a list of pending tuples
@@ -47,7 +48,8 @@ static inline bool GB_Pending_ensure
     GrB_Type type,          // type of pending tuples
     GrB_BinaryOp op,        // operator for assembling pending tuples
     bool is_matrix,         // true if Pending->j must be allocated
-    int64_t nnew            // # of pending tuples to add
+    int64_t nnew,           // # of pending tuples to add
+    GB_Context Context
 )
 {
 
@@ -67,7 +69,7 @@ static inline bool GB_Pending_ensure
     }
     else
     {
-        return (GB_Pending_realloc (PHandle, nnew)) ;
+        return (GB_Pending_realloc (PHandle, nnew, Context)) ;
     }
 }
 
@@ -83,7 +85,8 @@ static inline bool GB_Pending_add   // add a tuple to the list
     const GrB_BinaryOp op,      // new Pending->op, if list is created
     const int64_t i,            // index into vector
     const int64_t j,            // vector index
-    const bool is_matrix        // allocate Pending->j, if list is created
+    const bool is_matrix,       // allocate Pending->j, if list is created
+    GB_Context Context
 )
 {
 
@@ -97,7 +100,7 @@ static inline bool GB_Pending_add   // add a tuple to the list
     // allocate the Pending tuples, or ensure existing list is large enough
     //--------------------------------------------------------------------------
 
-    if (!GB_Pending_ensure (PHandle, type, op, is_matrix, 1))
+    if (!GB_Pending_ensure (PHandle, type, op, is_matrix, 1, Context))
     {
         return (false) ;
     }

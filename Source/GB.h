@@ -48,8 +48,9 @@
 #include "GB_zombie.h"
 #include "GB_partition.h"
 #include "GB_omp.h"
-#include "GB_memory.h"
 #include "GB_context.h"
+#include "GB_memory.h"
+#include "GB_werk.h"
 
 //------------------------------------------------------------------------------
 // internal definitions
@@ -517,7 +518,7 @@ GB_task_struct ;
         int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;               \
         int nnew = 2 * (ntasks) + 1 ;                                       \
         GB_REALLOC_WERK (TaskList, nnew, nold, GB_task_struct,              \
-            &TaskList_size, &ok) ;                                          \
+            &TaskList_size, &ok, NULL) ;                                    \
         if (!ok)                                                            \
         {                                                                   \
             /* out of memory */                                             \

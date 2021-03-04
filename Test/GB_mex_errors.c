@@ -4705,12 +4705,12 @@ void mexFunction
     CHECK (nbytes == 0) ;
 
     pp = (GB_void *) &x ;
-    pp = GB_calloc_memory (UINT64_MAX, 1, &nbytes) ;
+    pp = GB_calloc_memory (UINT64_MAX, 1, &nbytes, NULL) ;
     CHECK (pp == NULL) ;
     CHECK (nbytes == 0) ;
 
     ok = true ;
-    pp = GB_realloc_memory (UINT64_MAX, 0, 1, NULL, &nbytes, &ok) ;
+    pp = GB_realloc_memory (UINT64_MAX, 0, 1, NULL, &nbytes, &ok, NULL) ;
     CHECK (!ok) ;
     CHECK (nbytes == 0) ;
 

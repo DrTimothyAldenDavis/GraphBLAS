@@ -1829,7 +1829,8 @@ GrB_Info GB_subassign_emult_slice
         return (GrB_SUCCESS) ;                                              \
     }                                                                       \
     /* ensure that C->Pending is large enough to handle nnew more tuples */ \
-    if (!GB_Pending_ensure (&(C->Pending), atype, accum, is_matrix, nnew))  \
+    if (!GB_Pending_ensure (&(C->Pending), atype, accum, is_matrix, nnew,   \
+        Context))                                                           \
     {                                                                       \
         GB_FREE_ALL ;                                                       \
         return (GrB_OUT_OF_MEMORY) ;                                        \

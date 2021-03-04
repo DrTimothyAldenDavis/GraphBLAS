@@ -50,7 +50,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Mark  = GB_CALLOC_WERK (avlen, int64_t, &Mark_size) ;
+    Mark  = GB_CALLOC_WERK (avlen, int64_t, &Mark_size, Context) ;
     Inext = GB_MALLOC_WERK (nI,    int64_t, &Inext_size) ;
     if (Inext == NULL || Mark == NULL)
     { 

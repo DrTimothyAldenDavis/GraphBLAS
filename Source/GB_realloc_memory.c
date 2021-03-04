@@ -46,7 +46,8 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     void *p,                // old object to reallocate
     size_t *size_allocated, // # of bytes actually allocated
     // output
-    bool *ok                // true if successful, false otherwise
+    bool *ok,               // true if successful, false otherwise
+    GB_Context Context
 )
 {
 
@@ -167,8 +168,10 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                 // copy over the data from the old space to the new space
                 if (pnew != NULL)
                 { 
-                    // TODO: use a parallel memcpy
-                    memcpy (pnew, p, GB_IMIN (oldsize, newsize)) ;
+                    // copy from the old to new with a parallel memcpy
+                    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+                    GB_memcpy (pnew, p, GB_IMIN (oldsize, newsize),
+                        nthreads_max) ;
                     // free the old space
                     GB_free_memory (&p, oldsize_allocated) ;
                 }
