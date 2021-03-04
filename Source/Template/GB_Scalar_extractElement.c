@@ -39,7 +39,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
         GrB_Info info ;
         GB_WHERE1 (GB_WHERE_STRING) ;
         GB_BURBLE_START ("GxB_Scalar_extractElement") ;
-        GB_OK (GB_Matrix_wait ((GrB_Matrix) S, Context)) ;
+        GB_OK (GB_Matrix_wait ((GrB_Matrix) S, "s", Context)) ;
         GB_BURBLE_END ;
     }
 

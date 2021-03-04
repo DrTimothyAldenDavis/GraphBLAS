@@ -39,7 +39,7 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     // import the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (A, type, nrows, ncols,
+    info = GB_import (A, type, nrows, ncols, false,
         NULL, 0,        // Ap
         NULL, 0,        // Ah
         Ab,   Ab_size,  // Ab

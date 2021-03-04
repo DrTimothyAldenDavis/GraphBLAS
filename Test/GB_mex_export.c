@@ -11,15 +11,19 @@
 
 #define USAGE "C = GB_mex_export (C, format, hyper, csc, dump, clear_nvec)"
 
-#define FREE_ALL                        \
-{                                       \
-    GrB_Matrix_free_(&C) ;              \
-    GB_FREE (Ap) ;                      \
-    GB_FREE (Ah) ;                      \
-    GB_FREE (Ai) ;                      \
-    GB_FREE (Aj) ;                      \
-    GB_FREE (Ax) ;                      \
-    GB_mx_put_global (true) ;           \
+// If Ap, Ah, etc are exported, then they are not NULL and not in the global
+// memtable.  If they are not exported, they are NULL, and are part of the
+// matrix, and in the global memtable.
+
+#define FREE_ALL                                                \
+{                                                               \
+    GrB_Matrix_free_(&C) ;                                      \
+    REMOVE (Ap) ; if (Ap != NULL) mxFree (Ap) ; Ap = NULL ;     \
+    REMOVE (Ah) ; if (Ah != NULL) mxFree (Ah) ; Ah = NULL ;     \
+    REMOVE (Ai) ; if (Ai != NULL) mxFree (Ai) ; Ai = NULL ;     \
+    REMOVE (Aj) ; if (Aj != NULL) mxFree (Aj) ; Aj = NULL ;     \
+    REMOVE (Ax) ; if (Ax != NULL) mxFree (Ax) ; Ax = NULL ;     \
+    GB_mx_put_global (true) ;                                   \
 }
 
 #define OK(method)                      \
@@ -27,7 +31,7 @@
     info = method ;                     \
     if (info != GrB_SUCCESS)            \
     {                                   \
-        if (dump) printf ("%d: %d\n", __LINE__, info) ; \
+        if (dump) printf ("method fail %d: %d\n", __LINE__, info) ; \
         FREE_ALL ;                      \
         return (info) ;                 \
     }                                   \
@@ -47,7 +51,6 @@ GrB_Index Ai_size = 0 ;
 GrB_Index Ax_size = 0 ;
 GrB_Index Ap_size = 0 ;
 GrB_Index Aj_size = 0 ;
-GrB_Index Ab_size = 0 ;
 GrB_Index Ah_size = 0 ;
 int64_t ignore = -1 ;
 char *Ax = NULL ;
@@ -58,7 +61,7 @@ bool clear_nvec = false ;
 bool is_csc = true ;
 GrB_Info info = GrB_SUCCESS ;
 GrB_Descriptor desc = NULL ;
-bool dump = false ;
+bool dump = true ;
 GrB_Type type = NULL ;
 size_t asize = 0 ;
 GrB_Info import_export (void) ;
@@ -320,8 +323,8 @@ void mexFunction
         if (!is_csc)                                                        \
         {                                                                   \
             /* convert C to CSR */                                          \
-            GB_transpose (NULL, NULL, false, C, NULL, NULL, NULL, false,    \
-                NULL) ;                                                     \
+            GB_transpose (NULL, NULL, false, C, /* in_place_A */            \
+                NULL, NULL, NULL, false, NULL) ;                            \
         }                                                                   \
         if (is_hyper && !GB_IS_FULL (C))                                    \
         {                                                                   \

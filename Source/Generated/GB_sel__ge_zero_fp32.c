@@ -50,15 +50,11 @@ void GB_sel_phase1__ge_zero_fp32
     int64_t *GB_RESTRICT Wfirst,
     int64_t *GB_RESTRICT Wlast,
     const GrB_Matrix A,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
     const bool flipij,
     const int64_t ithunk,
     const float *GB_RESTRICT xthunk,
     const GxB_select_function user_select,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     ;
@@ -77,17 +73,13 @@ void GB_sel_phase2__ge_zero_fp32
     float *GB_RESTRICT Cx,
     const int64_t *GB_RESTRICT Zp,
     const int64_t *GB_RESTRICT Cp,
-    const int64_t *GB_RESTRICT C_pstart_slice,
+    const int64_t *GB_RESTRICT Cp_kfirst,
     const GrB_Matrix A,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
     const bool flipij,
     const int64_t ithunk,
     const float *GB_RESTRICT xthunk,
     const GxB_select_function user_select,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     ;

@@ -13,12 +13,14 @@
 
 //      C(:,j) = A(:,j) +  B(:,j) in GB_add
 //      C(:,j) = A(:,j) .* B(:,j) in GB_emult
-//      C(:,j)<M(:,j)> = B(:,j) in GB_mask (A is passed in as the input C)
+//      C(:,j)<M(:,j)> = B(:,j) in GB_mask; A is passed in as the input C
 //      union (A->h, B->h) in GB_add_phase0.
 
 // The vector index j is not needed here.  The vectors kA and kB are not
 // required, either; just the positions where the vectors appear in A and B
 // (pA_start, pA_end, pB_start, and pB_end).
+
+// The inputs Mi, Ai, and Bi must be sorted on input.
 
 // This method finds i so that nnz (A (i:end,kA)) + nnz (B (i:end,kB)) is
 // roughly equal to target_work.  The entries in A(i:end,kA) start at position
@@ -26,8 +28,8 @@
 // and Bx.  Once the work is split, pM is found for M(i:end,kM), if the mask M
 // is present.
 
-// The lists Ai and Bi can also be any sorted integer array.  This is used by
-// GB_add_phase0 to construct the set union of A->h and B->h.  In this case,
+// The lists Mi, Ai, and Bi can also be any sorted integer array.  This is used
+// by GB_add_phase0 to construct the set union of A->h and B->h.  In this case,
 // pA_start and pB_start are both zero, and pA_end and pB_end are A->nvec and
 // B->nvec, respectively.
 

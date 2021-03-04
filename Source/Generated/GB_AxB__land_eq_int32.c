@@ -12,7 +12,6 @@
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_control.h"
-#include "GB_ek_slice.h"
 #include "GB_bracket.h"
 #include "GB_sort.h"
 #include "GB_atomics.h"
@@ -368,7 +367,7 @@ GrB_Info GB_Asaxpy3B__land_eq_int32
     const bool M_dense_in_place,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    GB_saxpy3task_struct *GB_RESTRICT TaskList,
+    GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks,
     int ntasks,
     int nfine,
     int nthreads,

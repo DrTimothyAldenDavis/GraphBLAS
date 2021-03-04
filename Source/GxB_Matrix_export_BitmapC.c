@@ -48,7 +48,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     { 
         // A = A', done in-place, to put A in CSC format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose (NULL, NULL, true, *A,
+        GB_OK (GB_transpose (NULL, NULL, true, *A,      // in_place_A
             NULL, NULL, NULL, false, Context)) ;
     }
 
@@ -67,7 +67,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     int sparsity ;
     bool is_csc ;
 
-    info = GB_export (A, type, nrows, ncols,
+    info = GB_export (A, type, nrows, ncols, false,
         NULL, NULL,     // Ap
         NULL, NULL,     // Ah
         Ab,   Ab_size,  // Ab

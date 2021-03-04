@@ -16,7 +16,9 @@
 
 GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
 (
-    int64_t *GB_RESTRICT *Cp_handle,       // output of size Cnvec+1
+    // computed by phase1:
+    int64_t **Cp_handle,                // output of size Cnvec+1
+    size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     // tasks from phase0b:
     GB_task_struct *GB_RESTRICT TaskList,  // array of structs
@@ -46,6 +48,7 @@ GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     ASSERT (Cp_handle != NULL) ;
+    ASSERT (Cp_size_handle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase1", GB0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;    // GB_bitmap_subref is used instead
 
@@ -54,7 +57,9 @@ GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     (*Cp_handle) = NULL ;
-    int64_t *GB_RESTRICT Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t) ;
+    (*Cp_size_handle) = 0 ;
+    int64_t *GB_RESTRICT Cp = NULL ; size_t Cp_size = 0 ;
+    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t, &Cp_size, Context) ;
     if (Cp == NULL)
     { 
         // out of memory
@@ -83,13 +88,15 @@ GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
     // cumulative sum of Cp and fine tasks in TaskList
     //--------------------------------------------------------------------------
 
-    GB_task_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, ntasks, nthreads) ;
+    GB_task_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, ntasks, nthreads,
+        Context) ;
 
     //--------------------------------------------------------------------------
     // return the result
     //--------------------------------------------------------------------------
 
     (*Cp_handle) = Cp ;
+    (*Cp_size_handle) = Cp_size ;
     return (GrB_SUCCESS) ;
 }
 

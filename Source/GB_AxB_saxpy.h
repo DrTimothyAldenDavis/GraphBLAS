@@ -18,7 +18,7 @@
 
 GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 (
-    GrB_Matrix *Chandle,            // output matrix (if not done in-place)
+    GrB_Matrix C,                   // output matrix, static header
     const GrB_Matrix M,             // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
@@ -63,7 +63,7 @@ GrB_Info GB_AxB_saxpy_generic
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_saxpy3task_struct *GB_RESTRICT TaskList, // NULL if C is bitmap
+    GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks, // NULL if C is bitmap
     int ntasks,
     int nfine,
     int nthreads,

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_malloc_memory: wrapper for malloc_function
+// GB_malloc_memory: wrapper for malloc
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,11 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// A wrapper for malloc_function.  Space is not initialized.
+// A wrapper for malloc.  Space is not initialized.
 
-// Parameters are the same as the ANSI C11 calloc, except that asking to
-// allocate a block of zero size causes a block of size 1 to be allocated
-// instead.  This allows the return pointer p to be checked for the
+// The first two parameters are the same as the ANSI C11 calloc, except that
+// asking to allocate a block of zero size causes a block of size 1 to be
+// allocated instead.  This allows the return pointer p to be checked for the
 // out-of-memory condition, even when allocating an object of size zero.
 
 #include "GB.h"
@@ -20,9 +20,17 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void *GB_malloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
-    size_t size_of_item     // sizeof each item
+    size_t size_of_item,    // sizeof each item
+    // output
+    size_t *size_allocated  // # of bytes actually allocated
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (size_allocated != NULL) ;
 
     void *p ;
     size_t size ;
@@ -37,54 +45,64 @@ void *GB_malloc_memory      // pointer to allocated block of memory
     if (!ok || nitems > GxB_INDEX_MAX || size_of_item > GxB_INDEX_MAX)
     { 
         // overflow
-        p = NULL ;
+        (*size_allocated) = 0 ;
+        return (NULL) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // allocate the space
+    //--------------------------------------------------------------------------
+
+    if (GB_Global_malloc_tracking_get ( ))
+    {
+
+        //----------------------------------------------------------------------
+        // for memory usage testing only
+        //----------------------------------------------------------------------
+
+        // brutal memory debug; pretend to fail if (count-- <= 0).
+        bool pretend_to_fail = false ;
+        if (GB_Global_malloc_debug_get ( ))
+        {
+            pretend_to_fail = GB_Global_malloc_debug_count_decrement ( ) ;
+        }
+
+        // allocate the memory
+        if (pretend_to_fail)
+        { 
+            p = NULL ;
+        }
+        else
+        { 
+            // TODO optionally use RMM instead
+            p = (void *) GB_Global_malloc_function (size) ;
+        }
+
+        // check if successful
+        if (p != NULL)
+        { 
+            // success
+            GB_Global_nmalloc_increment ( ) ;
+        }
+
     }
     else
     { 
 
-        if (GB_Global_malloc_tracking_get ( ))
-        {
+        //----------------------------------------------------------------------
+        // normal use, in production
+        //----------------------------------------------------------------------
 
-            //------------------------------------------------------------------
-            // for memory usage testing only
-            //------------------------------------------------------------------
-
-            // brutal memory debug; pretend to fail if (count-- <= 0).
-            bool pretend_to_fail = false ;
-            if (GB_Global_malloc_debug_get ( ))
-            {
-                pretend_to_fail = GB_Global_malloc_debug_count_decrement ( ) ;
-            }
-
-            // allocate the memory
-            if (pretend_to_fail)
-            { 
-                p = NULL ;
-            }
-            else
-            { 
-                p = (void *) GB_Global_malloc_function (size) ;
-            }
-
-            // check if successful
-            if (p != NULL)
-            { 
-                // success
-                GB_Global_nmalloc_increment ( ) ;
-            }
-
-        }
-        else
-        { 
-
-            //------------------------------------------------------------------
-            // normal use, in production
-            //------------------------------------------------------------------
-
-            p = (void *) GB_Global_malloc_function (size) ;
-        }
-
+        // TODO optionally use RMM instead:  call GB_rmm_malloc
+        p = (void *) GB_Global_malloc_function (size) ;
     }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    (*size_allocated) = (p == NULL) ? 0 : size ;
+    ASSERT (GB_IMPLIES (p != NULL, size == GB_Global_memtable_size (p))) ;
     return (p) ;
 }
 

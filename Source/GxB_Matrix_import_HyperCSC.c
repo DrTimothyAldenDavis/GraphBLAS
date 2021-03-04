@@ -45,7 +45,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     // import the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (A, type, nrows, ncols,
+    info = GB_import (A, type, nrows, ncols, false,
         Ap,   Ap_size,  // Ap
         Ah,   Ah_size,  // Ah
         NULL, 0,        // Ab

@@ -128,18 +128,15 @@ void mexFunction
     // GB_pslice
     //--------------------------------------------------------------------------
 
-    int64_t *Slice = NULL ;
-    GB_pslice (&Slice, A->p, n, 2, true) ;
+    int64_t Slice [30] ;
+    GB_pslice (Slice, A->p, n, 2, true) ;
     CHECK (Slice [0] == 0) ;
-    GB_FREE (Slice) ;
 
-    int64_t Ap [11] = { 1, 1, 1, 1, 1,
-                        1, 1, 1, 1, 1, 1 } ;
-    bool ok = GB_pslice (&Slice, Ap, 10, 10, false) ;
+    int64_t Ap [11] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ;
+    GB_pslice (Slice, Ap, 10, 10, false) ;
     printf ("Slice: ") ;
     for (int k = 0 ; k <= 10 ; k++) printf (" %ld", Slice [k]) ;
     printf ("\n") ;
-    GB_FREE (Slice) ;
 
     GrB_Matrix_free_(&A) ;
 
@@ -159,8 +156,8 @@ void mexFunction
     OK (GrB_Matrix_wait (&A)) ;
     OK (GxB_Matrix_fprint (A, "valid matrix", GxB_SHORT, NULL)) ;
     // mangle the matrix
-    GB_FREE (A->p) ;
-    GB_FREE (A->x) ;
+    GB_FREE (&(A->p), A->p_size) ;
+    GB_FREE (&(A->x), A->x_size) ;
     expected = GrB_INVALID_OBJECT ;
     ERR (GxB_Matrix_fprint (A, "invalid sparse matrix", GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&A) ;
@@ -254,14 +251,14 @@ void mexFunction
     OK (GrB_Matrix_setElement_INT32 (A, 12345, 0, 0)) ;
     OK (GrB_Matrix_dup (&C, A)) ;
     CHECK (!GB_aliased (A, C)) ;
-    GB_FREE (C->p) ;
+    GB_FREE (&(C->p), C->p_size) ;
     C->p = A->p ;
     C->p_shallow = true ;
     CHECK (GB_aliased (A, C)) ;
     C->p = NULL ;
     C->p_shallow = false ;
     CHECK (!GB_aliased (A, C)) ;
-    GB_FREE (C->i) ;
+    GB_FREE (&(C->i), C->i_size) ;
     C->i = A->i ;
     C->i_shallow = true ;
     CHECK (GB_aliased (A, C)) ;
@@ -378,14 +375,14 @@ void mexFunction
     // malloc/realloc wrappers
     //--------------------------------------------------------------------------
 
-    ok = false ;
-    int *p = GB_malloc_memory (4, sizeof (int)) ;
+    size_t nbytes ;
+    bool ok = false ;
+    int *p = GB_malloc_memory (4, sizeof (int), &nbytes) ;
     CHECK (p != NULL) ;
-    p = GB_realloc_memory (4, 4, sizeof (int), p, &ok) ;
+    p = GB_realloc_memory (4, 4, sizeof (int), p, &nbytes, &ok, NULL) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
-    GB_free_memory (p) ;
-    p = NULL ;
+    GB_free_memory (&p, nbytes) ;
 
     //--------------------------------------------------------------------------
     // try to import a huge full matrix (this will fail):

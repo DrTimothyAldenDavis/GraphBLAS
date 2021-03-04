@@ -50,7 +50,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     ASSERT_MATRIX_OK (A, "A input for GB_select", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (Thunk_in, "Thunk_in for GB_select", GB0) ;
 
-    GrB_Matrix T = NULL ;
+    struct GB_Matrix_opaque T_header ;
+    GrB_Matrix T = GB_clear_static_header (&T_header) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Info info ;
@@ -321,7 +322,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
             case GB_GE_ZERO_opcode   :  // A(i,j) >= 0
 
-                // bool and uint: always true; use GB_dup
+                // bool and uint: always true; use GB_dup2
                 // user type: return error above
                 switch (typecode)
                 {
@@ -406,7 +407,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
             case GB_GE_THUNK_opcode   : // A(i,j) >= thunk
 
                 // bool: if thunk is true,  rename GxB_GE_THUNK to GxB_NONZERO
-                //       if thunk is false, use GB_dup
+                //       if thunk is false, use GB_dup2
                 // user type: return error above
                 if (typecode == GB_BOOL_code)
                 {
@@ -443,7 +444,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
             case GB_LE_THUNK_opcode   : // A(i,j) <= thunk
 
-                // bool: if thunk is true,  use GB_dup
+                // bool: if thunk is true,  use GB_dup2
                 //       if thunk is false, rename GxB_LE_ZERO to GxB_EQ_ZERO
                 // user type: return error
                 if (typecode == GB_BOOL_code)
@@ -470,22 +471,21 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     if (use_dup)
     { 
-        // selectop is always true, so use GB_dup to do T = A
-        GB_OK (GB_dup (&T, A, true, A->type, Context)) ;
+        // selectop is always true, so use GB_dup2 to do T = A
+        GB_OK (GB_dup2 (&T, A, true, A->type, Context)) ;   // static header
     }
     else if (is_empty)
     { 
         // selectop is always false, so T is an empty matrix
-        info = GB_new (&T, // auto (sparse or hyper), new header
+        GB_OK (GB_new (&T, true, // auto (sparse or hyper), static header
             A->type, A->vlen, A->vdim, GB_Ap_calloc, A_csc,
             GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ),
-            1, Context) ;
-        GB_OK (info) ;
+            1, Context)) ;
     }
     else
     { 
         // T = select (A, Thunk)
-        GB_OK (GB_selector (&T, opcode, op, flipij, A, ithunk,
+        GB_OK (GB_selector (T, opcode, op, flipij, A, ithunk,
             (op_is_thunk_comparator || op_is_user_defined) ? Thunk_in : NULL,
             Context)) ;
     }

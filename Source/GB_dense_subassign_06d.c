@@ -35,12 +35,11 @@
 #include "GB_type__include.h"
 #endif
 
-#undef  GB_FREE_WORK
-#define GB_FREE_WORK \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice) ;
-
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_FREE_WORK
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
+}
 
 GrB_Info GB_dense_subassign_06d
 (
@@ -57,7 +56,7 @@ GrB_Info GB_dense_subassign_06d
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     ASSERT_MATRIX_OK (C, "C for subassign method_06d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -87,32 +86,23 @@ GrB_Info GB_dense_subassign_06d
     // Parallel: slice A into equal-sized chunks
     //--------------------------------------------------------------------------
 
-    int64_t anz = GB_NNZ_HELD (A) ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (anz + A->nvec, chunk, nthreads_max) ;
-    int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
-    // Task tid does entries pstart_slice [tid] to pstart_slice [tid+1]-1 and
-    // vectors kfirst_slice [tid] to klast_slice [tid].  The first and last
-    // vectors may be shared with prior slices and subsequent slices.
-
+    int A_ntasks, A_nthreads ;
     if (A_is_bitmap || A_is_dense)
     { 
         // no need to construct tasks
-        ;
+        int64_t anz = GB_NNZ_HELD (A) ;
+        A_nthreads = GB_nthreads (anz + A->nvec, chunk, nthreads_max) ;
+        A_ntasks = (A_nthreads == 1) ? 1 : (8 * A_nthreads) ;
     }
     else
     {
-        if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A,
-            &ntasks))
-        { 
-            // out of memory
-            return (GrB_OUT_OF_MEMORY) ;
-        }
+        GB_SLICE_MATRIX (A, 8) ;
     }
 
     //--------------------------------------------------------------------------
@@ -132,7 +122,7 @@ GrB_Info GB_dense_subassign_06d
         #define GB_WORKER(cname)                                              \
         {                                                                     \
             info = GB_Cdense_06d(cname) (C, A, Mask_struct,                   \
-                kfirst_slice, klast_slice, pstart_slice, ntasks, nthreads) ;  \
+                A_ek_slicing, A_ntasks, A_nthreads) ;                         \
             done = (info != GrB_NO_VALUE) ;                                   \
         }                                                                     \
         break ;
@@ -203,7 +193,7 @@ GrB_Info GB_dense_subassign_06d
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_ALL ;
     ASSERT_MATRIX_OK (C, "C output for subassign method_06d", GB0) ;
     return (GrB_SUCCESS) ;
 }

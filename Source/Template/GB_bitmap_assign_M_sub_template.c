@@ -15,6 +15,10 @@
 // C is bitmap/full.  M is sparse/hyper, and can be jumbled.
 
 {
+    const int64_t *GB_RESTRICT kfirst_Mslice = M_ek_slicing ;
+    const int64_t *GB_RESTRICT klast_Mslice  = M_ek_slicing + M_ntasks ;
+    const int64_t *GB_RESTRICT pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
+
     int tid ;
     #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1) \
         reduction(+:cnvals)

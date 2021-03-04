@@ -30,9 +30,6 @@
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
 // #define GBCOMPACT 1
 
-// for code development only
-// #define GB_DEVELOPER 1
-
 //------------------------------------------------------------------------------
 // notes on future work
 //------------------------------------------------------------------------------

@@ -11,17 +11,17 @@
 // or C=A*B, and this template is used when C is bitmap.  C can be modified
 // in-place if the accum operator is the same as the monoid.
 
-#undef  GB_FREE_WORK
-#define GB_FREE_WORK                                                    \
-{                                                                       \
-    GB_FREE (Wf) ;                                                      \
-    GB_FREE (Wax) ;                                                     \
-    GB_FREE (Wbx) ;                                                     \
-    GB_FREE (Wcx) ;                                                     \
-    GB_FREE (GH_slice) ;                                                \
-    GB_FREE (A_slice) ;                                                 \
-    GB_FREE (B_slice) ;                                                 \
-    GB_ek_slice_free (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice) ;  \
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_WERK (&Wf, Wf_size) ;           \
+    GB_FREE_WERK (&Wax, Wax_size) ;         \
+    GB_FREE_WERK (&Wbx, Wbx_size) ;         \
+    GB_FREE_WERK (&Wcx, Wcx_size) ;         \
+    GB_WERK_POP (GH_slice, int64_t) ;       \
+    GB_WERK_POP (A_slice, int64_t) ;        \
+    GB_WERK_POP (B_slice, int64_t) ;        \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
 
 {
@@ -30,16 +30,14 @@
     // declare workspace
     //--------------------------------------------------------------------------
 
-    int8_t  *GB_RESTRICT Wf = NULL ;
-    GB_void *GB_RESTRICT Wax = NULL ;
-    GB_void *GB_RESTRICT Wbx = NULL ;
-    GB_void *GB_RESTRICT Wcx = NULL ;
-    int64_t *GB_RESTRICT GH_slice = NULL ;
-    int64_t *GB_RESTRICT A_slice = NULL ;
-    int64_t *GB_RESTRICT B_slice = NULL ;
-    int64_t *GB_RESTRICT pstart_Mslice = NULL ;
-    int64_t *GB_RESTRICT kfirst_Mslice = NULL ;
-    int64_t *GB_RESTRICT klast_Mslice  = NULL ;
+    int8_t  *GB_RESTRICT Wf  = NULL ; size_t Wf_size = 0 ;
+    GB_void *GB_RESTRICT Wax = NULL ; size_t Wax_size = 0 ;
+    GB_void *GB_RESTRICT Wbx = NULL ; size_t Wbx_size = 0 ;
+    GB_void *GB_RESTRICT Wcx = NULL ; size_t Wcx_size = 0 ;
+    GB_WERK_DECLARE (GH_slice, int64_t) ;
+    GB_WERK_DECLARE (A_slice, int64_t) ;
+    GB_WERK_DECLARE (B_slice, int64_t) ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
     // determine max # of threads to use
@@ -107,9 +105,8 @@
     const bool M_is_sparse_or_hyper = M_is_hyper || M_is_sparse ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool M_is_full   = GB_IS_FULL (M) ;
-    int64_t mnz = 0 ;
-    int mthreads = 0 ;
-    int mtasks = 0 ;
+    int M_nthreads = 0 ;
+    int M_ntasks = 0 ;
 
     if (M != NULL)
     { 
@@ -123,17 +120,8 @@
         msize = M->type->size ;
         mnvec = M->nvec ;
         mvlen = M->vlen ;
-        mnz = GB_NNZ (M) ;
 
-        mthreads = GB_nthreads (mnz + M->nvec, chunk, nthreads_max) ;
-        mtasks = (mthreads == 1) ? 1 : (8 * mthreads) ;
-        if (!GB_ek_slice (&pstart_Mslice, &kfirst_Mslice, &klast_Mslice,
-            M, &mtasks))
-        { 
-            // out of memory
-            GB_FREE_WORK ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
+        GB_SLICE_MATRIX (M, 8) ;
 
         // if M is sparse or hypersparse, scatter it into the C bitmap
         if (M_is_sparse_or_hyper)
@@ -142,8 +130,7 @@
             GB_bitmap_M_scatter (C,
                 NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
                 M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_PLUS_2,
-                pstart_Mslice, kfirst_Mslice, klast_Mslice,
-                mthreads, mtasks, Context) ;
+                M_ek_slicing, M_ntasks, M_nthreads, Context) ;
             // the bitmap of C now contains:
             //  Cb (i,j) = 0:   cij not present, mij zero
             //  Cb (i,j) = 1:   cij present, mij zero
@@ -223,12 +210,14 @@
         ntasks = naslice * nbslice ;
 
         // slice the matrix B
-        if (!GB_pslice (&B_slice, Bp, bnvec, nbslice, false))
+        GB_WERK_PUSH (B_slice, nbslice + 1, int64_t) ;
+        if (B_slice == NULL)
         { 
             // out of memory
-            GB_FREE_WORK ;
+            GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
+        GB_pslice (B_slice, Bp, bnvec, nbslice, false) ;
 
         if (M == NULL)
         { 
@@ -408,12 +397,14 @@
             ASSERT (nfine_tasks_per_vector > 1) ;
 
             // slice the matrix A for each team of fine tasks
-            if (!GB_pslice (&A_slice, Ap, anvec, nfine_tasks_per_vector, true))
+            GB_WERK_PUSH (A_slice, nfine_tasks_per_vector + 1, int64_t) ;
+            if (A_slice == NULL)
             { 
                 // out of memory
-                GB_FREE_WORK ;
+                GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
+            GB_pslice (A_slice, Ap, anvec, nfine_tasks_per_vector, true) ;
         }
 
         if (M == NULL)
@@ -606,16 +597,15 @@
         GB_bitmap_M_scatter (C,
             NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
             M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_MINUS_2,
-            pstart_Mslice, kfirst_Mslice, klast_Mslice,
-            mthreads, mtasks, Context) ;
+            M_ek_slicing, M_ntasks, M_nthreads, Context) ;
     }
 
     //--------------------------------------------------------------------------
     // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_ALL ;
 }
 
-#undef GB_FREE_WORK
+#undef GB_FREE_ALL
 

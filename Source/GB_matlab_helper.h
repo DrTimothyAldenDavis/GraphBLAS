@@ -97,7 +97,9 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
 (
     GrB_Matrix A,       // input matrix
     int64_t **degree,   // degree of each vector, size nvec
+    size_t *degree_size,
     GrB_Index **list,   // list of non-empty vectors
+    size_t *list_size,
     GrB_Index *nvec     // # of non-empty vectors
 ) ;
 

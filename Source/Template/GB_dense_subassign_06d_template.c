@@ -56,25 +56,26 @@
             {
                 // C<A,struct>=A with C bitmap, A dense
                 int64_t p ;
-                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
                     // Cx [p] = Ax [p]
                     GB_COPY_A_TO_C (Cx, p, Ax, p) ;
                 }
-                GB_memset (Cb, 1, anz, nthreads) ;
+                GB_memset (Cb, 1, anz, A_nthreads) ;
                 cnvals = anz ;
             }
             else
             {
                 // C<A>=A with C bitmap, A dense
                 int tid ;
-                #pragma omp parallel for num_threads(nthreads) schedule(static)\
-                    reduction(+:cnvals)
-                for (tid = 0 ; tid < nthreads ; tid++)
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(static) reduction(+:cnvals)
+                for (tid = 0 ; tid < A_nthreads ; tid++)
                 {
                     int64_t pA_start, pA_end, task_cnvals = 0 ;
-                    GB_PARTITION (pA_start, pA_end, anz, tid, nthreads) ;
+                    GB_PARTITION (pA_start, pA_end, anz, tid, A_nthreads) ;
                     for (int64_t p = pA_start ; p < pA_end ; p++)
                     {
                         if (GB_AX_MASK (Ax, p, asize))
@@ -101,7 +102,8 @@
             {
                 // C<A,struct>=A with C sparse/hyper/full
                 int64_t p ;
-                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
                     // Cx [p] = Ax [p]
@@ -112,7 +114,8 @@
             {
                 // C<A>=A with C sparse/hyper/full
                 int64_t p ;
-                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 {
                     if (GB_AX_MASK (Ax, p, asize))
@@ -142,12 +145,12 @@
             {
                 // C<A,struct>=A with A and C bitmap
                 int tid ;
-                #pragma omp parallel for num_threads(nthreads) schedule(static)\
-                    reduction(+:cnvals)
-                for (tid = 0 ; tid < nthreads ; tid++)
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(static) reduction(+:cnvals)
+                for (tid = 0 ; tid < A_nthreads ; tid++)
                 {
                     int64_t pA_start, pA_end, task_cnvals = 0 ;
-                    GB_PARTITION (pA_start, pA_end, anz, tid, nthreads) ;
+                    GB_PARTITION (pA_start, pA_end, anz, tid, A_nthreads) ;
                     for (int64_t p = pA_start ; p < pA_end ; p++)
                     {
                         if (Ab [p])
@@ -166,12 +169,12 @@
             {
                 // C<A>=A with A and C bitmap
                 int tid ;
-                #pragma omp parallel for num_threads(nthreads) schedule(static)\
-                    reduction(+:cnvals)
-                for (tid = 0 ; tid < nthreads ; tid++)
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(static) reduction(+:cnvals)
+                for (tid = 0 ; tid < A_nthreads ; tid++)
                 {
                     int64_t pA_start, pA_end, task_cnvals = 0 ;
-                    GB_PARTITION (pA_start, pA_end, anz, tid, nthreads) ;
+                    GB_PARTITION (pA_start, pA_end, anz, tid, A_nthreads) ;
                     for (int64_t p = pA_start ; p < pA_end ; p++)
                     {
                         if (Ab [p] && GB_AX_MASK (Ax, p, asize))
@@ -200,7 +203,8 @@
                 // this method is used by LAGraph_bfs_parent when q is
                 // a bitmap and pi is full.
                 int64_t p ;
-                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 {
                     // Cx [p] = Ax [p]
@@ -214,7 +218,8 @@
             {
                 // C<A>=A with A bitmap, and C hyper/sparse/full
                 int64_t p ;
-                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 {
                     if (Ab [p] && GB_AX_MASK (Ax, p, asize))
@@ -234,15 +239,19 @@
         // A is hypersparse or sparse; C is dense or a bitmap
         //----------------------------------------------------------------------
 
+        const int64_t *GB_RESTRICT kfirst_Aslice = A_ek_slicing ;
+        const int64_t *GB_RESTRICT klast_Aslice  = A_ek_slicing + A_ntasks ;
+        const int64_t *GB_RESTRICT pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
+
         int taskid ;
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1) \
             reduction(+:cnvals)
-        for (taskid = 0 ; taskid < ntasks ; taskid++)
+        for (taskid = 0 ; taskid < A_ntasks ; taskid++)
         {
 
             // if kfirst > klast then taskid does no work at all
-            int64_t kfirst = kfirst_slice [taskid] ;
-            int64_t klast  = klast_slice  [taskid] ;
+            int64_t kfirst = kfirst_Aslice [taskid] ;
+            int64_t klast  = klast_Aslice  [taskid] ;
             int64_t task_cnvals = 0 ;
 
             //------------------------------------------------------------------
@@ -259,7 +268,7 @@
                 int64_t j = GBH (Ah, k) ;
                 int64_t pA_start, pA_end ;
                 GB_get_pA (&pA_start, &pA_end, taskid, k,
-                    kfirst, klast, pstart_slice, Ap, avlen) ;
+                    kfirst, klast, pstart_Aslice, Ap, avlen) ;
 
                 // pC points to the start of C(:,j) if C is dense or bitmap
                 int64_t pC = j * cvlen ;

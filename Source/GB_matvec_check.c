@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// for additional diagnostics, use:
+// for code development only:
 // #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
@@ -272,23 +272,114 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     GB_Pending Pending = A->Pending ;
 
+    // a matrix contains 0 to 10 dynamically malloc'd blocks
+    int64_t nallocs = 0 ;
+    bool ok = true ;
+
+    if (!A->static_header)
+    {
+        nallocs++ ;
+        #ifdef GB_DEBUG
+        ok = ok && (A->header_size == GB_Global_memtable_size (A)) ;
+        #endif
+    }
+
+    if (A->p != NULL && !A->p_shallow)
+    {
+        nallocs++ ;
+        ok = ok && (A->p_size % sizeof (int64_t) == 0) ;
+        #ifdef GB_DEBUG
+        ok = ok && (A->p_size == GB_Global_memtable_size (A->p)) ;
+        #endif
+    }
+
+    if (A->h != NULL && !A->h_shallow)
+    {
+        nallocs++ ;
+        ok = ok && (A->h_size % sizeof (int64_t) == 0) ;
+        #ifdef GB_DEBUG
+        ok = ok && (A->h_size == GB_Global_memtable_size (A->h)) ;
+        #endif
+    }
+
+    if (A->b != NULL && !A->b_shallow)
+    {
+        nallocs++ ;
+        #ifdef GB_DEBUG
+        ok = ok && (A->b_size == GB_Global_memtable_size (A->b)) ;
+        #endif
+    }
+
+    if (A->i != NULL && !A->i_shallow)
+    {
+        nallocs++ ;
+        ok = ok && (A->i_size % sizeof (int64_t) == 0) ;
+        #ifdef GB_DEBUG
+        ok = ok && (A->i_size == GB_Global_memtable_size (A->i)) ;
+        #endif
+    }
+
+    if (A->x != NULL && !A->x_shallow)
+    {
+        nallocs++ ;
+        ok = ok && (A->x_size % A->type->size == 0) ;
+        #ifdef GB_DEBUG
+        ok = ok && (A->x_size == GB_Global_memtable_size (A->x)) ;
+        #endif
+    }
+
+    if (Pending != NULL)
+    {
+        nallocs++ ;
+        #ifdef GB_DEBUG
+        ok = ok && (Pending->header_size == GB_Global_memtable_size (Pending)) ;
+        #endif
+    }
+
+    if (Pending != NULL && Pending->i != NULL)
+    {
+        nallocs++ ;
+        #ifdef GB_DEBUG
+        ok = ok && (Pending->i_size == GB_Global_memtable_size (Pending->i)) ;
+        #endif
+    }
+
+    if (Pending != NULL && Pending->j != NULL)
+    {
+        nallocs++ ;
+        #ifdef GB_DEBUG
+        ok = ok && (Pending->j_size == GB_Global_memtable_size (Pending->j)) ;
+        #endif
+    }
+
+    if (Pending != NULL && Pending->x != NULL)
+    {
+        nallocs++ ;
+        #ifdef GB_DEBUG
+        ok = ok && (Pending->x_size == GB_Global_memtable_size (Pending->x)) ;
+        #endif
+    }
+
     #if GB_DEVELOPER
-    // a matrix contains 1 to 9 different allocated blocks
-    int64_t nallocs = 1 +                       // header
-        (A->p != NULL && !A->p_shallow) +       // A->p, if not shallow
-        (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
-        (A->b != NULL && !A->b_shallow) +       // A->b, if not shallow
-        (A->i != NULL && !A->i_shallow) +       // A->i, if not shallow
-        (A->x != NULL && !A->x_shallow) +       // A->x, if not shallow
-        (Pending != NULL) +
-        (Pending != NULL && Pending->i != NULL) +
-        (Pending != NULL && Pending->j != NULL) +
-        (Pending != NULL && Pending->x != NULL) ;
     if (pr_short || pr_complete)
     {
-        GBPR ("  header %p number of memory blocks: " GBd "\n", A, nallocs) ;
+        if (A->static_header)
+        { 
+            GBPR ("  static header,") ;
+        }
+        else
+        { 
+            GBPR ("  header %p", A) ;
+        }
+        GBPR (" number of memory blocks: " GBd "\n", nallocs) ;
     }
     #endif
+
+    if (!ok)
+    {
+        GBPR0 ("  internal memory error\n") ;
+        return (GrB_INVALID_OBJECT) ;
+    }
 
     //--------------------------------------------------------------------------
     // check the type

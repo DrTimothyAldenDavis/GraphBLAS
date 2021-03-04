@@ -84,7 +84,8 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
         // clear prior content and recreate it; use exising header for C.
         GB_phbix_free (C) ;
         int C_sparsity = C->sparsity ;  // save the sparsity control of C
-        info = GB_new_bix (&C,  // full, old header
+        bool C_static_header = C->static_header ;
+        info = GB_new_bix (&C, C_static_header,    // full, old header
             C->type, cvlen, cvdim, GB_Ap_null, C->is_csc,
             GxB_FULL, true, C->hyper_switch, -1, cnzmax, true, Context) ;
         if (info != GrB_SUCCESS)

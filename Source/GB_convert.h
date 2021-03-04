@@ -307,10 +307,11 @@ static inline char *GB_sparsity_char (int sparsity)
 
 static inline char *GB_sparsity_char_matrix (GrB_Matrix A)
 {
+    bool A_as_if_full = GB_as_if_full (A) ;
     if (A == NULL)             return (".") ;
-    if (GB_IS_HYPERSPARSE (A)) return ("H") ;
-    if (GB_IS_SPARSE (A))      return ("S") ;
-    if (GB_IS_BITMAP (A))      return ("B") ;
+    if (GB_IS_HYPERSPARSE (A)) return (A_as_if_full ? "Hf" : "H") ;
+    if (GB_IS_SPARSE (A))      return (A_as_if_full ? "Sf" : "S") ;
+    if (GB_IS_BITMAP (A))      return (A_as_if_full ? "Bf" : "B") ;
     if (GB_IS_FULL (A))        return ("F") ;
     ASSERT (0) ;               return ("?") ;
 }

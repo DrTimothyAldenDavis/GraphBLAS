@@ -19,7 +19,7 @@
 #include "GB_bracket.h"
 #include "GB_sort.h"
 #include "GB_atomics.h"
-#include "GB_ek_slice.h"
+#include "GB_search_for_vector_template.c"
 #include "GB_bitmap_assign_methods.h"
 
 GrB_Info GB_AxB_saxpy_generic
@@ -31,7 +31,7 @@ GrB_Info GB_AxB_saxpy_generic
     const GrB_Matrix B, bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    GB_saxpy3task_struct *GB_RESTRICT TaskList, // NULL if C is bitmap
+    GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks, // NULL if C is bitmap
     int ntasks,                     // 0 if C is bitmap (computed below)
     int nfine,                      // 0 if C is bitmap (not used)
     int nthreads,                   // 0 if C is bitmap (computed below)

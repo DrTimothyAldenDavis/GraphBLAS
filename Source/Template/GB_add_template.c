@@ -24,6 +24,21 @@
 
 // phase2: computes C, using the counts computed by phase1.
 
+#undef  GB_FREE_WORK
+#define GB_FREE_WORK                        \
+{                                           \
+    GB_WERK_POP (B_ek_slicing, int64_t) ;   \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;   \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
+}
+
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL                 \
+{                                   \
+    GB_FREE_WORK ;                  \
+    GB_Matrix_free (&C) ;           \
+}
+
 {
 
     //--------------------------------------------------------------------------
@@ -96,6 +111,7 @@
 
         // phase1: symbolic phase
         // C is sparse or hypersparse (never bitmap or full)
+        // Werk allocated: none
         #include "GB_sparse_add_template.c"
 
     #else
@@ -104,17 +120,20 @@
         if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
         { 
             // C is sparse or hypersparse
+            // Werk allocated: none
             #include "GB_sparse_add_template.c"
         }
         else if (C_sparsity == GxB_BITMAP)
         { 
             // C is bitmap (phase2 only)
+            // Werk: slice M and A, M and B, just A, or just B, or none
             #include "GB_bitmap_add_template.c"
         }
         else
         { 
             // C is full (phase2 only)
             ASSERT (C_sparsity == GxB_FULL) ;
+            // Werk: slice just A, just B, or none
             #include "GB_full_add_template.c"
         }
 

@@ -18,21 +18,21 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK        \
-{                           \
-    GB_FREE (TaskList) ;    \
+#define GB_FREE_WORK                            \
+{                                               \
+    GB_FREE_WERK (&TaskList, TaskList_size) ;   \
 }
 
-#define GB_FREE_ALL                                                     \
-{                                                                       \
-    GB_FREE_WORK ;                                                      \
-    GB_Matrix_free (Chandle) ;                                          \
+#define GB_FREE_ALL                             \
+{                                               \
+    GB_FREE_WORK ;                              \
+    GB_Matrix_free (&C) ;                       \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 (
-    GrB_Matrix *Chandle,            // output matrix
+    GrB_Matrix C,                   // output matrix, static header
     const GrB_Matrix M,             // mask matrix
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix
@@ -48,8 +48,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (Chandle != NULL) ;
-    ASSERT (*Chandle == NULL) ;
+    ASSERT (C != NULL && C->static_header) ;
     ASSERT_MATRIX_OK (M, "M for dot3 A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot3 A'*B", GB0) ;
     ASSERT_MATRIX_OK (B, "B for dot3 A'*B", GB0) ;
@@ -69,8 +68,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
 
-    int ntasks, max_ntasks = 0, nthreads ;
-    GB_task_struct *TaskList = NULL ;
+    int ntasks, nthreads ;
+    GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
 
     GBURBLE ("(%s%s%s%s=%s'*%s) ",
         GB_sparsity_char_matrix (M),    // C has the same sparsity as M
@@ -114,8 +113,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         ASSERT (GB_IMPLIES (!B_is_pattern,
             GB_Type_compatible (B->type, mult->ytype))) ;
     }
-
-    (*Chandle) = NULL ;
 
     //--------------------------------------------------------------------------
     // get M, A, and B
@@ -162,7 +159,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int C_sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
 
     // C is sparse or hypersparse, not full or bitmap
-    info = GB_new_bix (Chandle, // sparse or hyper (from M), new header
+    info = GB_new_bix (&C, true, // sparse or hyper (from M), static header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         C_sparsity, true, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
@@ -173,8 +170,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         GB_FREE_ALL ;
         return (info) ;
     }
-
-    GrB_Matrix C = (*Chandle) ;
 
     int64_t *GB_RESTRICT Cp = C->p ;
     int64_t *GB_RESTRICT Ch = C->h ;
@@ -207,7 +202,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
-    GB_OK (GB_AxB_dot3_one_slice (&TaskList, &max_ntasks, &ntasks, &nthreads,
+    GB_OK (GB_AxB_dot3_one_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
         M, Context)) ;
 
     //--------------------------------------------------------------------------
@@ -240,8 +235,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // free the current tasks and construct the tasks for the second phase
     //--------------------------------------------------------------------------
 
-    GB_FREE (TaskList) ;
-    GB_OK (GB_AxB_dot3_slice (&TaskList, &max_ntasks, &ntasks, &nthreads,
+    GB_FREE_WERK (&TaskList, TaskList_size) ;
+    GB_OK (GB_AxB_dot3_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
         C, Context)) ;
 
     GBURBLE ("nthreads %d ntasks %d ", nthreads, ntasks) ;
@@ -301,7 +296,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GB_FREE_WORK ;
     C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled
     ASSERT_MATRIX_OK (C, "dot3: C<M> = A'*B output", GB0) ;
-    ASSERT (*Chandle == C) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (!GB_PENDING (C)) ;

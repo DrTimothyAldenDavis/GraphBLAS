@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_sparse_emult_template: C=A.*B, C<M or !M>=A.*B when C is sparse/hyper
+// GB_emult_01_template: C=A.*B, C<M or !M>=A.*B when C is sparse/hyper
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -9,88 +9,46 @@
 
 // Computes C=A.*B, C<M>=A.*B, or C<!M>=A.*B when C is sparse or hypersparse:
 
-        //      ------------------------------------------
-        //      C       =           A       .*      B
-        //      ------------------------------------------
-        //      sparse  .           sparse          sparse
-        //      sparse  .           sparse          bitmap
-        //      sparse  .           sparse          full  
-        //      sparse  .           bitmap          sparse
-        //      sparse  .           full            sparse
-
-        //      ------------------------------------------
-        //      C       <M>=        A       .*      B
-        //      ------------------------------------------
-        //      sparse  sparse      sparse          sparse
-        //      sparse  sparse      sparse          bitmap
-        //      sparse  sparse      sparse          full  
-        //      sparse  sparse      bitmap          sparse
-        //      sparse  sparse      bitmap          bitmap
-        //      sparse  sparse      bitmap          full  
-        //      sparse  sparse      full            sparse
-        //      sparse  sparse      full            bitmap
-
-        //      ------------------------------------------
-        //      C      <M> =        A       .*      B
-        //      ------------------------------------------
-        //      sparse  bitmap      sparse          sparse
-        //      sparse  bitmap      sparse          bitmap
-        //      sparse  bitmap      sparse          full  
-        //      sparse  bitmap      bitmap          sparse
-        //      sparse  bitmap      full            sparse
-
-        //      ------------------------------------------
-        //      C      <M> =        A       .*      B
-        //      ------------------------------------------
-        //      sparse  full        sparse          sparse
-        //      sparse  full        sparse          bitmap
-        //      sparse  full        sparse          full  
-        //      sparse  full        bitmap          sparse
-        //      sparse  full        full            sparse
-
-        //      ------------------------------------------
-        //      C      <!M> =       A       .*      B
-        //      ------------------------------------------
-        //      sparse  bitmap      sparse          sparse
-        //      sparse  bitmap      sparse          bitmap
-        //      sparse  bitmap      sparse          full  
-        //      sparse  bitmap      bitmap          sparse
-        //      sparse  bitmap      full            sparse
-
-        //      ------------------------------------------
-        //      C      <!M> =       A       .*      B
-        //      ------------------------------------------
-        //      sparse  full        sparse          sparse
-        //      sparse  full        sparse          bitmap
-        //      sparse  full        sparse          full  
-        //      sparse  full        bitmap          sparse
-        //      sparse  full        full            sparse
-
-        // For these cases: the mask is done later, and C=A.*B is computed
-        // here, without the mask (M is passed as NULL):
-
-        //      ------------------------------------------
-        //      C       <!M>=       A       .*      B
-        //      ------------------------------------------
-        //      sparse  sparse      sparse          sparse  (mask later)
-        //      sparse  sparse      sparse          bitmap  (mask later)
-        //      sparse  sparse      sparse          full    (mask later)
-        //      sparse  sparse      bitmap          sparse  (mask later)
-        //      sparse  sparse      full            sparse  (mask later)
-
 // phase1: does not compute C itself, but just counts the # of entries in each
 // vector of C.  Fine tasks compute the # of entries in their slice of a
 // single vector of C, and the results are cumsum'd.
 
 // phase2: computes C, using the counts computed by phase1.
 
+// No input matrix can be jumbled, and C is constructed as unjumbled.
+
+// The following cases are handled:
+
+        //      ------------------------------------------
+        //      C       =           A       .*      B
+        //      ------------------------------------------
+        //      sparse  .           sparse          sparse  (method: 01)
+
+        //      ------------------------------------------
+        //      C       <M>=        A       .*      B
+        //      ------------------------------------------
+        //      sparse  sparse      sparse          sparse  (method: 01)
+        //      sparse  bitmap      sparse          sparse  (method: 01)
+        //      sparse  full        sparse          sparse  (method: 01)
+        //      sparse  sparse      sparse          bitmap  (04a or 02a)
+        //      sparse  sparse      sparse          full    (04a or 02a)
+        //      sparse  sparse      bitmap          sparse  (04b or 02b)
+        //      sparse  sparse      full            sparse  (04b or 02b)
+
+        //      ------------------------------------------
+        //      C       <!M>=       A       .*      B
+        //      ------------------------------------------
+        //      sparse  sparse      sparse          sparse  (01: M later)
+        //      sparse  bitmap      sparse          sparse  (method: 01)
+        //      sparse  full        sparse          sparse  (method: 01)
+
+// The 04a and 04b methods are not yet implemented.  This method handles
+// those cases.  Methods 02a and 02b can be used as well, but only if M is
+// applied later.  See GB_emult_sparsity for this decision.
+
 {
 
-    //--------------------------------------------------------------------------
-    // phase1: count entries in each C(:,j)
-    // phase2: compute C
-    //--------------------------------------------------------------------------
-
+    int taskid ;
     #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < C_ntasks ; taskid++)
     {
@@ -304,180 +262,25 @@
             {
 
                 //--------------------------------------------------------------
-                // M is not present, or !M is sparse but not applied here
+                // C = A.*B
                 //--------------------------------------------------------------
 
                 //      ------------------------------------------
                 //      C       =           A       .*      B
                 //      ------------------------------------------
-                //      sparse  .           sparse          sparse
-                //      sparse  .           sparse          bitmap
-                //      sparse  .           sparse          full  
-                //      sparse  .           bitmap          sparse
-                //      sparse  .           full            sparse
+                //      sparse  .           sparse          sparse  (method: 01)
+                //      sparse  sparse      sparse          sparse  (01 M later)
 
-                //      ------------------------------------------
-                //      C       <!M>=       A       .*      B
-                //      ------------------------------------------
-                //      sparse  sparse      sparse          sparse  (mask later)
-                //      sparse  sparse      sparse          bitmap  (mask later)
-                //      sparse  sparse      sparse          full    (mask later)
-                //      sparse  sparse      bitmap          sparse  (mask later)
-                //      sparse  sparse      full            sparse  (mask later)
+                // both A and B are sparse/hyper
+                ASSERT (A_is_sparse || A_is_hyper) ;
+                ASSERT (B_is_sparse || B_is_hyper) ;
 
-                // A or B are sparse/hyper, or both
-                ASSERT (A_is_sparse || A_is_hyper || B_is_sparse || B_is_hyper);
-
-                if (A_is_bitmap)
+                if (ajnz > 32 * bjnz)
                 {
 
                     //----------------------------------------------------------
-                    // Method01: A(:,j) is bitmap; B(:,j) is sparse/hyper
+                    // A(:,j) is much denser than B(:,j)
                     //----------------------------------------------------------
-
-                    // TODO: B can be jumbled; then so is C
-
-                    ASSERT (B_is_sparse || B_is_hyper) ;
-                    for ( ; pB < pB_end ; pB++)
-                    { 
-                        int64_t i = Bi [pB] ;
-                        int64_t pA = pA_start + i - iA_first ;
-                        if (!Ab [pA]) continue ;
-                        // C (i,j) = A (i,j) .* B (i,j)
-                        #if defined ( GB_PHASE_1_OF_2 )
-                        cjnz++ ;
-                        #else
-                        Ci [pC] = i ;
-                        GB_GETA (aij, Ax, pA) ;     
-                        GB_GETB (bij, Bx, pB) ;
-                        GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                        pC++ ;
-                        #endif
-                    }
-
-                }
-                else if (B_is_bitmap)
-                {
-
-                    //----------------------------------------------------------
-                    // Method02: B(:,j) is bitmap; A(:,j) is sparse/hyper
-                    //----------------------------------------------------------
-
-                    // TODO: A can be jumbled; then so is C
-
-                    ASSERT (A_is_sparse || A_is_hyper) ;
-                    for ( ; pA < pA_end ; pA++)
-                    { 
-                        int64_t i = Ai [pA] ;
-                        int64_t pB = pB_start + i - iB_first ;
-                        if (!Bb [pB]) continue ;
-                        // C (i,j) = A (i,j) .* B (i,j)
-                        #if defined ( GB_PHASE_1_OF_2 )
-                        cjnz++ ;
-                        #else
-                        Ci [pC] = i ;
-                        GB_GETA (aij, Ax, pA) ;     
-                        GB_GETB (bij, Bx, pB) ;
-                        GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                        pC++ ;
-                        #endif
-                    }
-
-                }
-                else if (adense && bdense)
-                {
-
-                    //----------------------------------------------------------
-                    // Method03: A(:,j) and B(:,j) dense: thus C(:,j) dense
-                    //----------------------------------------------------------
-
-                    // TODO: only do this if A and B are full, not just (:,j)
-                    // Then no matrix will be jumbled.
-
-                    ASSERT (ajnz == bjnz) ;
-                    ASSERT (iA_first == iB_first) ;
-                    ASSERT (iA_last  == iB_last ) ;
-                    #if defined ( GB_PHASE_1_OF_2 )
-                    cjnz = ajnz ;
-                    #else
-                    ASSERT (cjnz == ajnz) ;
-                    GB_PRAGMA_SIMD_VECTORIZE
-                    for (int64_t p = 0 ; p < ajnz ; p++)
-                    { 
-                        // C (i,j) = A (i,j) .* B (i,j)
-                        int64_t i = p + iA_first ;
-                        Ci [pC + p] = i ;
-                        ASSERT (GBI (Ai, pA + p, vlen) == i) ;
-                        ASSERT (GBI (Bi, pB + p, vlen) == i) ;
-                        GB_GETA (aij, Ax, pA + p) ;
-                        GB_GETB (bij, Bx, pB + p) ;
-                        GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
-                    }
-                    #endif
-
-                }
-                else if (adense)
-                {
-
-                    //----------------------------------------------------------
-                    // Method04: A(:,j) dense, B(:,j) sparse: C(:,j) sparse
-                    //----------------------------------------------------------
-
-                    // TODO: only do this if A is full, not just A(:,j)
-                    // TODO: B can be jumbled; then so is C
-
-                    #if defined ( GB_PHASE_1_OF_2 )
-                    cjnz = bjnz ;
-                    #else
-                    ASSERT (cjnz == bjnz) ;
-                    GB_PRAGMA_SIMD_VECTORIZE
-                    for (int64_t p = 0 ; p < bjnz ; p++)
-                    { 
-                        // C (i,j) = A (i,j) .* B (i,j)
-                        int64_t i = Bi [pB + p] ;
-                        Ci [pC + p] = i ;
-                        GB_GETA (aij, Ax, pA + i - iA_first) ;
-                        GB_GETB (bij, Bx, pB + p) ;
-                        GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
-                    }
-                    #endif
-
-                }
-                else if (bdense)
-                {
-
-                    //----------------------------------------------------------
-                    // Method05: A(:,j) sparse, B(:,j) dense: C(:,j) sparse
-                    //----------------------------------------------------------
-
-                    // TODO: only do this if B is full, not just B(:,j)
-                    // TODO: A can be jumbled; then so is C
-
-                    #if defined ( GB_PHASE_1_OF_2 )
-                    cjnz = ajnz ;
-                    #else
-                    ASSERT (cjnz == ajnz) ;
-                    GB_PRAGMA_SIMD_VECTORIZE
-                    for (int64_t p = 0 ; p < ajnz ; p++)
-                    { 
-                        // C (i,j) = A (i,j) .* B (i,j)
-                        int64_t i = Ai [pA + p] ;
-                        Ci [pC + p] = i ;
-                        GB_GETA (aij, Ax, pA + p) ;
-                        GB_GETB (bij, Bx, pB + i - iB_first) ;
-                        GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
-                    }
-                    #endif
-
-                }
-                else if (ajnz > 32 * bjnz)
-                {
-
-                    //----------------------------------------------------------
-                    // Method06: A(:,j) is much denser than B(:,j)
-                    //----------------------------------------------------------
-
-                    // A and B cannot be jumbled
 
                     for ( ; pB < pB_end ; pB++)
                     {
@@ -510,10 +313,8 @@
                 {
 
                     //----------------------------------------------------------
-                    // Method07: B(:,j) is much denser than A(:,j)
+                    // B(:,j) is much denser than A(:,j)
                     //----------------------------------------------------------
-
-                    // A and B cannot be jumbled
 
                     for ( ; pA < pA_end ; pA++)
                     {
@@ -546,11 +347,10 @@
                 {
 
                     //----------------------------------------------------------
-                    // Method08: A(:,j) and B(:,j) about the sparsity
+                    // A(:,j) and B(:,j) about the sparsity
                     //----------------------------------------------------------
 
                     // linear-time scan of A(:,j) and B(:,j)
-                    // A and B cannot be jumbled
 
                     while (pA < pA_end && pB < pB_end)
                     {
@@ -595,25 +395,26 @@
             {
 
                 //--------------------------------------------------------------
-                // Method09: C and M are sparse or hypersparse
+                // C and M are sparse or hypersparse
                 //--------------------------------------------------------------
 
                 //      ------------------------------------------
                 //      C       <M>=        A       .*      B
                 //      ------------------------------------------
-                //      sparse  sparse      sparse          sparse
-                //      sparse  sparse      sparse          bitmap
-                //      sparse  sparse      sparse          full  
-                //      sparse  sparse      bitmap          sparse
-                //      sparse  sparse      bitmap          bitmap
-                //      sparse  sparse      bitmap          full  
-                //      sparse  sparse      full            sparse
-                //      sparse  sparse      full            bitmap
+                //      sparse  sparse      sparse          sparse  (method: 01)
+                //      sparse  sparse      sparse          bitmap  (04a or 02a)
+                //      sparse  sparse      sparse          full    (04a or 02a)
+                //      sparse  sparse      bitmap          sparse  (04b or 02b)
+                //      sparse  sparse      full            sparse  (04b or 02b)
+
+                // Method 04 is not yet implemented; using this method
+                // (GB_emult_01) instead.
+
+                // ether A or B are sparse/hyper
+                ASSERT (A_is_sparse || A_is_hyper || B_is_sparse || B_is_hyper);
 
                 for ( ; pM < pM_end ; pM++)
                 {
-
-                    // M can be jumbled; A and B cannot
 
                     //----------------------------------------------------------
                     // get M(i,j) for A(i,j) .* B (i,j)
@@ -692,40 +493,16 @@
                 //--------------------------------------------------------------
 
                 //      ------------------------------------------
-                //      C      <M> =        A       .*      B
+                //      C       <M>=        A       .*      B
                 //      ------------------------------------------
-                //      sparse  bitmap      sparse          sparse
-                //      sparse  bitmap      sparse          bitmap
-                //      sparse  bitmap      sparse          full  
-                //      sparse  bitmap      bitmap          sparse
-                //      sparse  bitmap      full            sparse
+                //      sparse  bitmap      sparse          sparse  (method: 01)
+                //      sparse  full        sparse          sparse  (method: 01)
 
                 //      ------------------------------------------
-                //      C      <M> =        A       .*      B
+                //      C       <!M>=       A       .*      B
                 //      ------------------------------------------
-                //      sparse  full        sparse          sparse
-                //      sparse  full        sparse          bitmap
-                //      sparse  full        sparse          full  
-                //      sparse  full        bitmap          sparse
-                //      sparse  full        full            sparse
-
-                //      ------------------------------------------
-                //      C      <!M> =       A       .*      B
-                //      ------------------------------------------
-                //      sparse  bitmap      sparse          sparse
-                //      sparse  bitmap      sparse          bitmap
-                //      sparse  bitmap      sparse          full  
-                //      sparse  bitmap      bitmap          sparse
-                //      sparse  bitmap      full            sparse
-
-                //      ------------------------------------------
-                //      C      <!M> =       A       .*      B
-                //      ------------------------------------------
-                //      sparse  full        sparse          sparse
-                //      sparse  full        sparse          bitmap
-                //      sparse  full        sparse          full  
-                //      sparse  full        bitmap          sparse
-                //      sparse  full        full            sparse
+                //      sparse  bitmap      sparse          sparse  (method: 01)
+                //      sparse  full        sparse          sparse  (method: 01)
 
                 // GB_GET_MIJ: get M(i,j) where M is bitmap or full
                 #undef  GB_GET_MIJ
@@ -734,181 +511,18 @@
                     bool mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ; \
                     if (Mask_comp) mij = !mij ;
 
-                // A or B are sparse/hyper, or both
-                ASSERT (A_is_sparse || A_is_hyper || B_is_sparse || B_is_hyper);
+                // both A and B are sparse/hyper
+                ASSERT (A_is_sparse || A_is_hyper) ;
+                ASSERT (B_is_sparse || B_is_hyper) ;
 
                 int64_t pM_start = j * vlen ;
 
-                if (A_is_bitmap)
+                if (ajnz > 32 * bjnz)
                 {
 
                     //----------------------------------------------------------
-                    // Method10: A(:,j) bitmap; B(:,j) sparse, M bitmap/full
+                    // A(:,j) much denser than B(:,j), M bitmap/full
                     //----------------------------------------------------------
-
-                    // TODO: B can be jumbled; then so is C
-
-                    ASSERT (B_is_sparse || B_is_hyper) ;
-                    for ( ; pB < pB_end ; pB++)
-                    {
-                        int64_t i = Bi [pB] ;
-                        GB_GET_MIJ (i) ;
-                        if (mij)
-                        { 
-                            // C (i,j) = A (i,j) .* B (i,j)
-                            int64_t pA = pA_start + i - iA_first ;
-                            if (!Ab [pA]) continue ;
-                            #if defined ( GB_PHASE_1_OF_2 )
-                            cjnz++ ;
-                            #else
-                            Ci [pC] = i ;
-                            GB_GETA (aij, Ax, pA) ;     
-                            GB_GETB (bij, Bx, pB) ;
-                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                            pC++ ;
-                            #endif
-                        }
-                    }
-
-                }
-                else if (B_is_bitmap)
-                {
-
-
-                    //----------------------------------------------------------
-                    // Method11: B(:,j) bitmap; A(:,j) sparse, M bitmap/full
-                    //----------------------------------------------------------
-
-                    // TODO: A can be jumbled; then so is C
-
-                    ASSERT (A_is_sparse || A_is_hyper) ;
-                    for ( ; pA < pA_end ; pA++)
-                    {
-                        int64_t i = Ai [pA] ;
-                        GB_GET_MIJ (i) ;
-                        if (mij)
-                        { 
-                            // C (i,j) = A (i,j) .* B (i,j)
-                            int64_t pB = pB_start + i - iB_first ;
-                            if (!Bb [pB]) continue ;
-                            #if defined ( GB_PHASE_1_OF_2 )
-                            cjnz++ ;
-                            #else
-                            Ci [pC] = i ;
-                            GB_GETA (aij, Ax, pA) ;     
-                            GB_GETB (bij, Bx, pB) ;
-                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                            pC++ ;
-                            #endif
-                        }
-                    }
-
-                }
-                else if (adense && bdense)
-                {
-
-
-                    //----------------------------------------------------------
-                    // Method12: A(:,j) and B(:,j) dense, M bitmap/full
-                    //----------------------------------------------------------
-
-                    // TODO: only do this if A and B are full, not just (:,j)
-                    // Then no matrix will be jumbled.
-
-                    ASSERT (ajnz == bjnz) ;
-                    ASSERT (iA_first == iB_first) ;
-                    ASSERT (iA_last  == iB_last ) ;
-
-                    for (int64_t p = 0 ; p < ajnz ; p++)
-                    {
-                        int64_t i = p + iA_first ;
-                        GB_GET_MIJ (i) ;
-                        if (mij)
-                        { 
-                            // C (i,j) = A (i,j) .* B (i,j)
-                            #if defined ( GB_PHASE_1_OF_2 )
-                            cjnz++ ;
-                            #else
-                            Ci [pC] = i ;
-                            GB_GETA (aij, Ax, pA + p) ;     // aij = Ax [pA+p]
-                            GB_GETB (bij, Bx, pB + p) ;
-                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                            pC++ ;
-                            #endif
-                        }
-                    }
-
-                }
-                else if (adense)
-                {
-
-
-                    //----------------------------------------------------------
-                    // Method13: A(:,j) dense, B(:,j) sparse, M bitmap/full
-                    //----------------------------------------------------------
-
-                    // TODO: only do this if A is full, not just A(:,j)
-                    // TODO: B can be jumbled; then so is C
-
-                    for ( ; pB < pB_end ; pB++)
-                    {
-                        int64_t i = Bi [pB] ;
-                        GB_GET_MIJ (i) ;
-                        if (mij)
-                        { 
-                            // C (i,j) = A (i,j) .* B (i,j)
-                            #if defined ( GB_PHASE_1_OF_2 )
-                            cjnz++ ;
-                            #else
-                            Ci [pC] = i ;
-                            GB_GETA (aij, Ax, pA + i - iA_first) ;
-                            GB_GETB (bij, Bx, pB) ;
-                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                            pC++ ;
-                            #endif
-                        }
-                    }
-
-                }
-                else if (bdense)
-                {
-
-
-                    //----------------------------------------------------------
-                    // Method14: A(:,j) sparse, B(:,j) dense, M bitmap/full
-                    //----------------------------------------------------------
-
-                    // TODO: only do this if B is full, not just B(:,j)
-                    // TODO: A can be jumbled; then so is C
-
-                    for ( ; pA < pA_end ; pA++)
-                    {
-                        int64_t i = Ai [pA] ;
-                        GB_GET_MIJ (i) ;
-                        if (mij)
-                        { 
-                            // C (i,j) = A (i,j) .* B (i,j)
-                            #if defined ( GB_PHASE_1_OF_2 )
-                            cjnz++ ;
-                            #else
-                            Ci [pC] = i ;
-                            GB_GETA (aij, Ax, pA) ;
-                            GB_GETB (bij, Bx, pB + i - iB_first) ;
-                            GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
-                            pC++ ;
-                            #endif
-                        }
-                    }
-
-                }
-                else if (ajnz > 32 * bjnz)
-                {
-
-                    //----------------------------------------------------------
-                    // Method15: A(:,j) much denser than B(:,j), M bitmap/full
-                    //----------------------------------------------------------
-
-                    // A and B cannot be jumbled
 
                     for ( ; pB < pB_end ; pB++)
                     {
@@ -946,10 +560,8 @@
                 {
 
                     //----------------------------------------------------------
-                    // Method16: B(:,j) much denser than A(:,j), M bitmap/full
+                    // B(:,j) much denser than A(:,j), M bitmap/full
                     //----------------------------------------------------------
-
-                    // A and B cannot be jumbled
 
                     for ( ; pA < pA_end ; pA++)
                     {
@@ -988,11 +600,10 @@
                 {
 
                     //----------------------------------------------------------
-                    // Method17: A(:,j) and B(:,j) about the same, M bitmap/full
+                    // A(:,j) and B(:,j) about the same, M bitmap/full
                     //----------------------------------------------------------
 
                     // linear-time scan of A(:,j) and B(:,j)
-                    // A and B cannot be jumbled
 
                     while (pA < pA_end && pB < pB_end)
                     {

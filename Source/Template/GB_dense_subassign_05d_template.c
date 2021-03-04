@@ -26,18 +26,22 @@
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
     const int64_t cvlen = C->vlen ;
 
+    const int64_t *GB_RESTRICT kfirst_Mslice = M_ek_slicing ;
+    const int64_t *GB_RESTRICT klast_Mslice  = M_ek_slicing + M_ntasks ;
+    const int64_t *GB_RESTRICT pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
+
     //--------------------------------------------------------------------------
     // C<M> = x
     //--------------------------------------------------------------------------
 
     int taskid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (taskid = 0 ; taskid < ntasks ; taskid++)
+    #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
+    for (taskid = 0 ; taskid < M_ntasks ; taskid++)
     {
 
         // if kfirst > klast then taskid does no work at all
-        int64_t kfirst = kfirst_slice [taskid] ;
-        int64_t klast  = klast_slice  [taskid] ;
+        int64_t kfirst = kfirst_Mslice [taskid] ;
+        int64_t klast  = klast_Mslice  [taskid] ;
 
         //----------------------------------------------------------------------
         // C<M(:,kfirst:klast)> = x
@@ -53,7 +57,7 @@
             int64_t j = GBH (Mh, k) ;
             int64_t pM_start, pM_end ;
             GB_get_pA (&pM_start, &pM_end, taskid, k,
-                kfirst, klast, pstart_slice, Mp, mvlen) ;
+                kfirst, klast, pstart_Mslice, Mp, mvlen) ;
 
             // pC points to the start of C(:,j) if C is dense
             int64_t pC = j * cvlen ;

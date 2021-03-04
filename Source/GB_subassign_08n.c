@@ -145,7 +145,7 @@ GrB_Info GB_subassign_08n
     // same index i, the entry A(i,j) is accumulated or inserted into C.
 
     // The algorithm is very much like the eWise multiplication of A.*M, so the
-    // parallel scheduling relies on GB_emult_phase0 and GB_ewise_slice.
+    // parallel scheduling relies on GB_emult_01_phase0 and GB_ewise_slice.
 
     //--------------------------------------------------------------------------
     // Parallel: slice the eWiseMult of Z=A.*M (Method 08n only)
@@ -164,11 +164,11 @@ GrB_Info GB_subassign_08n
     int64_t Znvec ;
     int64_t *GB_RESTRICT Zh_shallow = NULL ;
     GB_OK (GB_subassign_emult_slice (
-        &TaskList, &max_ntasks, &ntasks, &nthreads,
-        &Znvec, &Zh_shallow, &Z_to_A, &Z_to_M,
+        &TaskList, &TaskList_size, &ntasks, &nthreads,
+        &Znvec, &Zh_shallow, &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size,
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
         A, M, Context)) ;
-    GB_ALLOCATE_NPENDING ;
+    GB_ALLOCATE_NPENDING_WERK ;
 
     //--------------------------------------------------------------------------
     // phase 1: undelete zombies, update entries, and count pending tuples

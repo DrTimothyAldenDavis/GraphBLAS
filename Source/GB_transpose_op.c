@@ -105,12 +105,12 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             #define GB_unop_tran(opname,zname,aname) \
                 GB_unop_tran_ ## opname ## zname ## aname
 
-            #define GB_WORKER(opname,zname,ztype,aname,atype)       \
-            {                                                       \
-                info = GB_unop_tran (opname,zname,aname)            \
-                    (C, A, Workspaces, A_slice, nworkspaces, nthreads) ; \
-                if (info == GrB_SUCCESS) return ;                   \
-            }                                                       \
+            #define GB_WORKER(opname,zname,ztype,aname,atype)               \
+            {                                                               \
+                info = GB_unop_tran (opname,zname,aname)                    \
+                    (C, A, Workspaces, A_slice, nworkspaces, nthreads) ;    \
+                if (info == GrB_SUCCESS) return ;                           \
+            }                                                               \
             break ;
 
             //------------------------------------------------------------------
@@ -267,7 +267,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
                 #define GB_BINOP_WORKER(op,xname)                           \
                 {                                                           \
                     if (GB_bind2nd_tran (op, xname) (C, A, scalarx,         \
-                        Workspaces, A_slice, nworkspaces, nthreads)              \
+                        Workspaces, A_slice, nworkspaces, nthreads)         \
                         == GrB_SUCCESS) return ;                            \
                 }                                                           \
                 break ;

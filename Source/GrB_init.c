@@ -34,7 +34,6 @@ GrB_Info GrB_init           // start up GraphBLAS
         (mode,                          // blocking or non-blocking mode
         malloc, calloc, realloc, free,  // ANSI C memory management functions
         true,                           // memory functions are thread-safe
-        NULL,                           // no RMM pool used
         false,                          // do not use CUDA
         Context)) ;
 }

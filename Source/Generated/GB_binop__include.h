@@ -30,11 +30,7 @@ GrB_Info GB_Cdense_accumB__first_bool
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_bool
@@ -51,11 +47,7 @@ GrB_Info GB_AxD__first_bool
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_bool
@@ -87,10 +79,11 @@ GrB_Info GB_AaddB__first_bool
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_bool
+GrB_Info GB_AemultB_01__first_bool
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -101,6 +94,44 @@ GrB_Info GB_AemultB__first_bool
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_bool
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -178,11 +209,7 @@ GrB_Info GB_Cdense_accumB__first_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_int8
@@ -199,11 +226,7 @@ GrB_Info GB_AxD__first_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_int8
@@ -235,10 +258,11 @@ GrB_Info GB_AaddB__first_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_int8
+GrB_Info GB_AemultB_01__first_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -249,6 +273,44 @@ GrB_Info GB_AemultB__first_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -326,11 +388,7 @@ GrB_Info GB_Cdense_accumB__first_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_int16
@@ -347,11 +405,7 @@ GrB_Info GB_AxD__first_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_int16
@@ -383,10 +437,11 @@ GrB_Info GB_AaddB__first_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_int16
+GrB_Info GB_AemultB_01__first_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -397,6 +452,44 @@ GrB_Info GB_AemultB__first_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -474,11 +567,7 @@ GrB_Info GB_Cdense_accumB__first_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_int32
@@ -495,11 +584,7 @@ GrB_Info GB_AxD__first_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_int32
@@ -531,10 +616,11 @@ GrB_Info GB_AaddB__first_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_int32
+GrB_Info GB_AemultB_01__first_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -545,6 +631,44 @@ GrB_Info GB_AemultB__first_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -622,11 +746,7 @@ GrB_Info GB_Cdense_accumB__first_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_int64
@@ -643,11 +763,7 @@ GrB_Info GB_AxD__first_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_int64
@@ -679,10 +795,11 @@ GrB_Info GB_AaddB__first_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_int64
+GrB_Info GB_AemultB_01__first_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -693,6 +810,44 @@ GrB_Info GB_AemultB__first_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -770,11 +925,7 @@ GrB_Info GB_Cdense_accumB__first_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_uint8
@@ -791,11 +942,7 @@ GrB_Info GB_AxD__first_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_uint8
@@ -827,10 +974,11 @@ GrB_Info GB_AaddB__first_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_uint8
+GrB_Info GB_AemultB_01__first_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -841,6 +989,44 @@ GrB_Info GB_AemultB__first_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -918,11 +1104,7 @@ GrB_Info GB_Cdense_accumB__first_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_uint16
@@ -939,11 +1121,7 @@ GrB_Info GB_AxD__first_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_uint16
@@ -975,10 +1153,11 @@ GrB_Info GB_AaddB__first_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_uint16
+GrB_Info GB_AemultB_01__first_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -989,6 +1168,44 @@ GrB_Info GB_AemultB__first_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -1066,11 +1283,7 @@ GrB_Info GB_Cdense_accumB__first_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_uint32
@@ -1087,11 +1300,7 @@ GrB_Info GB_AxD__first_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_uint32
@@ -1123,10 +1332,11 @@ GrB_Info GB_AaddB__first_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_uint32
+GrB_Info GB_AemultB_01__first_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1137,6 +1347,44 @@ GrB_Info GB_AemultB__first_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -1214,11 +1462,7 @@ GrB_Info GB_Cdense_accumB__first_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_uint64
@@ -1235,11 +1479,7 @@ GrB_Info GB_AxD__first_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_uint64
@@ -1271,10 +1511,11 @@ GrB_Info GB_AaddB__first_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_uint64
+GrB_Info GB_AemultB_01__first_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1285,6 +1526,44 @@ GrB_Info GB_AemultB__first_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -1362,11 +1641,7 @@ GrB_Info GB_Cdense_accumB__first_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_fp32
@@ -1383,11 +1658,7 @@ GrB_Info GB_AxD__first_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_fp32
@@ -1419,10 +1690,11 @@ GrB_Info GB_AaddB__first_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_fp32
+GrB_Info GB_AemultB_01__first_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1433,6 +1705,44 @@ GrB_Info GB_AemultB__first_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -1510,11 +1820,7 @@ GrB_Info GB_Cdense_accumB__first_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_fp64
@@ -1531,11 +1837,7 @@ GrB_Info GB_AxD__first_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_fp64
@@ -1567,10 +1869,11 @@ GrB_Info GB_AaddB__first_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_fp64
+GrB_Info GB_AemultB_01__first_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1581,6 +1884,44 @@ GrB_Info GB_AemultB__first_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -1658,11 +1999,7 @@ GrB_Info GB_Cdense_accumB__first_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_fc32
@@ -1679,11 +2016,7 @@ GrB_Info GB_AxD__first_fc32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_fc32
@@ -1715,10 +2048,11 @@ GrB_Info GB_AaddB__first_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_fc32
+GrB_Info GB_AemultB_01__first_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1729,6 +2063,44 @@ GrB_Info GB_AemultB__first_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -1806,11 +2178,7 @@ GrB_Info GB_Cdense_accumB__first_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__first_fc64
@@ -1827,11 +2195,7 @@ GrB_Info GB_AxD__first_fc64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__first_fc64
@@ -1863,10 +2227,11 @@ GrB_Info GB_AaddB__first_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__first_fc64
+GrB_Info GB_AemultB_01__first_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1877,6 +2242,44 @@ GrB_Info GB_AemultB__first_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__first_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__first_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__first_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -1954,11 +2357,7 @@ GrB_Info GB_Cdense_accumB__second_bool
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_bool
@@ -1975,11 +2374,7 @@ GrB_Info GB_AxD__second_bool
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_bool
@@ -2011,10 +2406,11 @@ GrB_Info GB_AaddB__second_bool
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_bool
+GrB_Info GB_AemultB_01__second_bool
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2025,6 +2421,44 @@ GrB_Info GB_AemultB__second_bool
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_bool
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -2102,11 +2536,7 @@ GrB_Info GB_Cdense_accumB__second_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_int8
@@ -2123,11 +2553,7 @@ GrB_Info GB_AxD__second_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_int8
@@ -2159,10 +2585,11 @@ GrB_Info GB_AaddB__second_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_int8
+GrB_Info GB_AemultB_01__second_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2173,6 +2600,44 @@ GrB_Info GB_AemultB__second_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -2250,11 +2715,7 @@ GrB_Info GB_Cdense_accumB__second_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_int16
@@ -2271,11 +2732,7 @@ GrB_Info GB_AxD__second_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_int16
@@ -2307,10 +2764,11 @@ GrB_Info GB_AaddB__second_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_int16
+GrB_Info GB_AemultB_01__second_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2321,6 +2779,44 @@ GrB_Info GB_AemultB__second_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -2398,11 +2894,7 @@ GrB_Info GB_Cdense_accumB__second_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_int32
@@ -2419,11 +2911,7 @@ GrB_Info GB_AxD__second_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_int32
@@ -2455,10 +2943,11 @@ GrB_Info GB_AaddB__second_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_int32
+GrB_Info GB_AemultB_01__second_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2469,6 +2958,44 @@ GrB_Info GB_AemultB__second_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -2546,11 +3073,7 @@ GrB_Info GB_Cdense_accumB__second_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_int64
@@ -2567,11 +3090,7 @@ GrB_Info GB_AxD__second_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_int64
@@ -2603,10 +3122,11 @@ GrB_Info GB_AaddB__second_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_int64
+GrB_Info GB_AemultB_01__second_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2617,6 +3137,44 @@ GrB_Info GB_AemultB__second_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -2694,11 +3252,7 @@ GrB_Info GB_Cdense_accumB__second_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_uint8
@@ -2715,11 +3269,7 @@ GrB_Info GB_AxD__second_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_uint8
@@ -2751,10 +3301,11 @@ GrB_Info GB_AaddB__second_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_uint8
+GrB_Info GB_AemultB_01__second_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2765,6 +3316,44 @@ GrB_Info GB_AemultB__second_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -2842,11 +3431,7 @@ GrB_Info GB_Cdense_accumB__second_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_uint16
@@ -2863,11 +3448,7 @@ GrB_Info GB_AxD__second_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_uint16
@@ -2899,10 +3480,11 @@ GrB_Info GB_AaddB__second_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_uint16
+GrB_Info GB_AemultB_01__second_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -2913,6 +3495,44 @@ GrB_Info GB_AemultB__second_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -2990,11 +3610,7 @@ GrB_Info GB_Cdense_accumB__second_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_uint32
@@ -3011,11 +3627,7 @@ GrB_Info GB_AxD__second_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_uint32
@@ -3047,10 +3659,11 @@ GrB_Info GB_AaddB__second_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_uint32
+GrB_Info GB_AemultB_01__second_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3061,6 +3674,44 @@ GrB_Info GB_AemultB__second_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -3138,11 +3789,7 @@ GrB_Info GB_Cdense_accumB__second_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_uint64
@@ -3159,11 +3806,7 @@ GrB_Info GB_AxD__second_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_uint64
@@ -3195,10 +3838,11 @@ GrB_Info GB_AaddB__second_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_uint64
+GrB_Info GB_AemultB_01__second_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3209,6 +3853,44 @@ GrB_Info GB_AemultB__second_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -3286,11 +3968,7 @@ GrB_Info GB_Cdense_accumB__second_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_fp32
@@ -3307,11 +3985,7 @@ GrB_Info GB_AxD__second_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_fp32
@@ -3343,10 +4017,11 @@ GrB_Info GB_AaddB__second_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_fp32
+GrB_Info GB_AemultB_01__second_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3357,6 +4032,44 @@ GrB_Info GB_AemultB__second_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -3434,11 +4147,7 @@ GrB_Info GB_Cdense_accumB__second_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_fp64
@@ -3455,11 +4164,7 @@ GrB_Info GB_AxD__second_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_fp64
@@ -3491,10 +4196,11 @@ GrB_Info GB_AaddB__second_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_fp64
+GrB_Info GB_AemultB_01__second_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3505,6 +4211,44 @@ GrB_Info GB_AemultB__second_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -3582,11 +4326,7 @@ GrB_Info GB_Cdense_accumB__second_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_fc32
@@ -3603,11 +4343,7 @@ GrB_Info GB_AxD__second_fc32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_fc32
@@ -3639,10 +4375,11 @@ GrB_Info GB_AaddB__second_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_fc32
+GrB_Info GB_AemultB_01__second_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3653,6 +4390,44 @@ GrB_Info GB_AemultB__second_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -3730,11 +4505,7 @@ GrB_Info GB_Cdense_accumB__second_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__second_fc64
@@ -3751,11 +4522,7 @@ GrB_Info GB_AxD__second_fc64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__second_fc64
@@ -3787,10 +4554,11 @@ GrB_Info GB_AaddB__second_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__second_fc64
+GrB_Info GB_AemultB_01__second_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3801,6 +4569,44 @@ GrB_Info GB_AemultB__second_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__second_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__second_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__second_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -3878,11 +4684,7 @@ GrB_Info GB_Cdense_accumB__pair_bool
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_bool
@@ -3899,11 +4701,7 @@ GrB_Info GB_AxD__pair_bool
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_bool
@@ -3935,10 +4733,11 @@ GrB_Info GB_AaddB__pair_bool
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_bool
+GrB_Info GB_AemultB_01__pair_bool
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -3949,6 +4748,44 @@ GrB_Info GB_AemultB__pair_bool
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_bool
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -4026,11 +4863,7 @@ GrB_Info GB_Cdense_accumB__pair_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_int8
@@ -4047,11 +4880,7 @@ GrB_Info GB_AxD__pair_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_int8
@@ -4083,10 +4912,11 @@ GrB_Info GB_AaddB__pair_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_int8
+GrB_Info GB_AemultB_01__pair_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -4097,6 +4927,44 @@ GrB_Info GB_AemultB__pair_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -4174,11 +5042,7 @@ GrB_Info GB_Cdense_accumB__pair_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_int16
@@ -4195,11 +5059,7 @@ GrB_Info GB_AxD__pair_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_int16
@@ -4231,10 +5091,11 @@ GrB_Info GB_AaddB__pair_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_int16
+GrB_Info GB_AemultB_01__pair_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -4245,6 +5106,44 @@ GrB_Info GB_AemultB__pair_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -4322,11 +5221,7 @@ GrB_Info GB_Cdense_accumB__pair_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_int32
@@ -4343,11 +5238,7 @@ GrB_Info GB_AxD__pair_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_int32
@@ -4379,10 +5270,11 @@ GrB_Info GB_AaddB__pair_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_int32
+GrB_Info GB_AemultB_01__pair_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -4393,6 +5285,44 @@ GrB_Info GB_AemultB__pair_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -4470,11 +5400,7 @@ GrB_Info GB_Cdense_accumB__pair_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_int64
@@ -4491,11 +5417,7 @@ GrB_Info GB_AxD__pair_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_int64
@@ -4527,10 +5449,11 @@ GrB_Info GB_AaddB__pair_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_int64
+GrB_Info GB_AemultB_01__pair_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -4541,6 +5464,44 @@ GrB_Info GB_AemultB__pair_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -4618,11 +5579,7 @@ GrB_Info GB_Cdense_accumB__pair_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_uint8
@@ -4639,11 +5596,7 @@ GrB_Info GB_AxD__pair_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_uint8
@@ -4675,10 +5628,11 @@ GrB_Info GB_AaddB__pair_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_uint8
+GrB_Info GB_AemultB_01__pair_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -4689,6 +5643,44 @@ GrB_Info GB_AemultB__pair_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -4766,11 +5758,7 @@ GrB_Info GB_Cdense_accumB__pair_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_uint16
@@ -4787,11 +5775,7 @@ GrB_Info GB_AxD__pair_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_uint16
@@ -4823,10 +5807,11 @@ GrB_Info GB_AaddB__pair_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_uint16
+GrB_Info GB_AemultB_01__pair_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -4837,6 +5822,44 @@ GrB_Info GB_AemultB__pair_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -4914,11 +5937,7 @@ GrB_Info GB_Cdense_accumB__pair_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_uint32
@@ -4935,11 +5954,7 @@ GrB_Info GB_AxD__pair_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_uint32
@@ -4971,10 +5986,11 @@ GrB_Info GB_AaddB__pair_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_uint32
+GrB_Info GB_AemultB_01__pair_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -4985,6 +6001,44 @@ GrB_Info GB_AemultB__pair_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -5062,11 +6116,7 @@ GrB_Info GB_Cdense_accumB__pair_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_uint64
@@ -5083,11 +6133,7 @@ GrB_Info GB_AxD__pair_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_uint64
@@ -5119,10 +6165,11 @@ GrB_Info GB_AaddB__pair_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_uint64
+GrB_Info GB_AemultB_01__pair_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -5133,6 +6180,44 @@ GrB_Info GB_AemultB__pair_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -5210,11 +6295,7 @@ GrB_Info GB_Cdense_accumB__pair_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_fp32
@@ -5231,11 +6312,7 @@ GrB_Info GB_AxD__pair_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_fp32
@@ -5267,10 +6344,11 @@ GrB_Info GB_AaddB__pair_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_fp32
+GrB_Info GB_AemultB_01__pair_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -5281,6 +6359,44 @@ GrB_Info GB_AemultB__pair_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -5358,11 +6474,7 @@ GrB_Info GB_Cdense_accumB__pair_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_fp64
@@ -5379,11 +6491,7 @@ GrB_Info GB_AxD__pair_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_fp64
@@ -5415,10 +6523,11 @@ GrB_Info GB_AaddB__pair_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_fp64
+GrB_Info GB_AemultB_01__pair_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -5429,6 +6538,44 @@ GrB_Info GB_AemultB__pair_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -5506,11 +6653,7 @@ GrB_Info GB_Cdense_accumB__pair_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_fc32
@@ -5527,11 +6670,7 @@ GrB_Info GB_AxD__pair_fc32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_fc32
@@ -5563,10 +6702,11 @@ GrB_Info GB_AaddB__pair_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_fc32
+GrB_Info GB_AemultB_01__pair_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -5577,6 +6717,44 @@ GrB_Info GB_AemultB__pair_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -5654,11 +6832,7 @@ GrB_Info GB_Cdense_accumB__pair_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pair_fc64
@@ -5675,11 +6849,7 @@ GrB_Info GB_AxD__pair_fc64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__pair_fc64
@@ -5711,10 +6881,11 @@ GrB_Info GB_AaddB__pair_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pair_fc64
+GrB_Info GB_AemultB_01__pair_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -5725,6 +6896,44 @@ GrB_Info GB_AemultB__pair_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pair_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pair_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pair_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -5802,11 +7011,7 @@ GrB_Info GB_Cdense_accumB__min_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__min_int8
@@ -5823,11 +7028,7 @@ GrB_Info GB_AxD__min_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__min_int8
@@ -5859,10 +7060,11 @@ GrB_Info GB_AaddB__min_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__min_int8
+GrB_Info GB_AemultB_01__min_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -5873,6 +7075,44 @@ GrB_Info GB_AemultB__min_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__min_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__min_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__min_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -5950,11 +7190,7 @@ GrB_Info GB_Cdense_accumB__min_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__min_int16
@@ -5971,11 +7207,7 @@ GrB_Info GB_AxD__min_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__min_int16
@@ -6007,10 +7239,11 @@ GrB_Info GB_AaddB__min_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__min_int16
+GrB_Info GB_AemultB_01__min_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6021,6 +7254,44 @@ GrB_Info GB_AemultB__min_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__min_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__min_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__min_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -6098,11 +7369,7 @@ GrB_Info GB_Cdense_accumB__min_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__min_int32
@@ -6119,11 +7386,7 @@ GrB_Info GB_AxD__min_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__min_int32
@@ -6155,10 +7418,11 @@ GrB_Info GB_AaddB__min_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__min_int32
+GrB_Info GB_AemultB_01__min_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6169,6 +7433,44 @@ GrB_Info GB_AemultB__min_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__min_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__min_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__min_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -6246,11 +7548,7 @@ GrB_Info GB_Cdense_accumB__min_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__min_int64
@@ -6267,11 +7565,7 @@ GrB_Info GB_AxD__min_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__min_int64
@@ -6303,10 +7597,11 @@ GrB_Info GB_AaddB__min_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__min_int64
+GrB_Info GB_AemultB_01__min_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6317,6 +7612,44 @@ GrB_Info GB_AemultB__min_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__min_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__min_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__min_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -6394,11 +7727,7 @@ GrB_Info GB_Cdense_accumB__min_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__min_uint8
@@ -6415,11 +7744,7 @@ GrB_Info GB_AxD__min_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__min_uint8
@@ -6451,10 +7776,11 @@ GrB_Info GB_AaddB__min_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__min_uint8
+GrB_Info GB_AemultB_01__min_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6465,6 +7791,44 @@ GrB_Info GB_AemultB__min_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__min_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__min_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__min_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -6542,11 +7906,7 @@ GrB_Info GB_Cdense_accumB__min_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__min_uint16
@@ -6563,11 +7923,7 @@ GrB_Info GB_AxD__min_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__min_uint16
@@ -6599,10 +7955,11 @@ GrB_Info GB_AaddB__min_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__min_uint16
+GrB_Info GB_AemultB_01__min_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6613,6 +7970,44 @@ GrB_Info GB_AemultB__min_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__min_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__min_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__min_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -6690,11 +8085,7 @@ GrB_Info GB_Cdense_accumB__min_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__min_uint32
@@ -6711,11 +8102,7 @@ GrB_Info GB_AxD__min_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__min_uint32
@@ -6747,10 +8134,11 @@ GrB_Info GB_AaddB__min_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__min_uint32
+GrB_Info GB_AemultB_01__min_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6761,6 +8149,44 @@ GrB_Info GB_AemultB__min_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__min_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__min_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__min_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -6838,11 +8264,7 @@ GrB_Info GB_Cdense_accumB__min_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__min_uint64
@@ -6859,11 +8281,7 @@ GrB_Info GB_AxD__min_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__min_uint64
@@ -6895,10 +8313,11 @@ GrB_Info GB_AaddB__min_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__min_uint64
+GrB_Info GB_AemultB_01__min_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -6909,6 +8328,44 @@ GrB_Info GB_AemultB__min_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__min_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__min_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__min_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -6986,11 +8443,7 @@ GrB_Info GB_Cdense_accumB__min_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__min_fp32
@@ -7007,11 +8460,7 @@ GrB_Info GB_AxD__min_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__min_fp32
@@ -7043,10 +8492,11 @@ GrB_Info GB_AaddB__min_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__min_fp32
+GrB_Info GB_AemultB_01__min_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7057,6 +8507,44 @@ GrB_Info GB_AemultB__min_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__min_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__min_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__min_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -7134,11 +8622,7 @@ GrB_Info GB_Cdense_accumB__min_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__min_fp64
@@ -7155,11 +8639,7 @@ GrB_Info GB_AxD__min_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__min_fp64
@@ -7191,10 +8671,11 @@ GrB_Info GB_AaddB__min_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__min_fp64
+GrB_Info GB_AemultB_01__min_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7205,6 +8686,44 @@ GrB_Info GB_AemultB__min_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__min_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__min_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__min_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -7282,11 +8801,7 @@ GrB_Info GB_Cdense_accumB__max_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__max_int8
@@ -7303,11 +8818,7 @@ GrB_Info GB_AxD__max_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__max_int8
@@ -7339,10 +8850,11 @@ GrB_Info GB_AaddB__max_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__max_int8
+GrB_Info GB_AemultB_01__max_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7353,6 +8865,44 @@ GrB_Info GB_AemultB__max_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__max_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__max_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__max_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -7430,11 +8980,7 @@ GrB_Info GB_Cdense_accumB__max_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__max_int16
@@ -7451,11 +8997,7 @@ GrB_Info GB_AxD__max_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__max_int16
@@ -7487,10 +9029,11 @@ GrB_Info GB_AaddB__max_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__max_int16
+GrB_Info GB_AemultB_01__max_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7501,6 +9044,44 @@ GrB_Info GB_AemultB__max_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__max_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__max_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__max_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -7578,11 +9159,7 @@ GrB_Info GB_Cdense_accumB__max_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__max_int32
@@ -7599,11 +9176,7 @@ GrB_Info GB_AxD__max_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__max_int32
@@ -7635,10 +9208,11 @@ GrB_Info GB_AaddB__max_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__max_int32
+GrB_Info GB_AemultB_01__max_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7649,6 +9223,44 @@ GrB_Info GB_AemultB__max_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__max_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__max_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__max_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -7726,11 +9338,7 @@ GrB_Info GB_Cdense_accumB__max_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__max_int64
@@ -7747,11 +9355,7 @@ GrB_Info GB_AxD__max_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__max_int64
@@ -7783,10 +9387,11 @@ GrB_Info GB_AaddB__max_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__max_int64
+GrB_Info GB_AemultB_01__max_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7797,6 +9402,44 @@ GrB_Info GB_AemultB__max_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__max_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__max_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__max_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -7874,11 +9517,7 @@ GrB_Info GB_Cdense_accumB__max_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__max_uint8
@@ -7895,11 +9534,7 @@ GrB_Info GB_AxD__max_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__max_uint8
@@ -7931,10 +9566,11 @@ GrB_Info GB_AaddB__max_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__max_uint8
+GrB_Info GB_AemultB_01__max_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -7945,6 +9581,44 @@ GrB_Info GB_AemultB__max_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__max_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__max_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__max_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -8022,11 +9696,7 @@ GrB_Info GB_Cdense_accumB__max_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__max_uint16
@@ -8043,11 +9713,7 @@ GrB_Info GB_AxD__max_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__max_uint16
@@ -8079,10 +9745,11 @@ GrB_Info GB_AaddB__max_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__max_uint16
+GrB_Info GB_AemultB_01__max_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -8093,6 +9760,44 @@ GrB_Info GB_AemultB__max_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__max_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__max_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__max_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -8170,11 +9875,7 @@ GrB_Info GB_Cdense_accumB__max_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__max_uint32
@@ -8191,11 +9892,7 @@ GrB_Info GB_AxD__max_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__max_uint32
@@ -8227,10 +9924,11 @@ GrB_Info GB_AaddB__max_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__max_uint32
+GrB_Info GB_AemultB_01__max_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -8241,6 +9939,44 @@ GrB_Info GB_AemultB__max_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__max_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__max_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__max_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -8318,11 +10054,7 @@ GrB_Info GB_Cdense_accumB__max_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__max_uint64
@@ -8339,11 +10071,7 @@ GrB_Info GB_AxD__max_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__max_uint64
@@ -8375,10 +10103,11 @@ GrB_Info GB_AaddB__max_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__max_uint64
+GrB_Info GB_AemultB_01__max_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -8389,6 +10118,44 @@ GrB_Info GB_AemultB__max_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__max_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__max_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__max_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -8466,11 +10233,7 @@ GrB_Info GB_Cdense_accumB__max_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__max_fp32
@@ -8487,11 +10250,7 @@ GrB_Info GB_AxD__max_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__max_fp32
@@ -8523,10 +10282,11 @@ GrB_Info GB_AaddB__max_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__max_fp32
+GrB_Info GB_AemultB_01__max_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -8537,6 +10297,44 @@ GrB_Info GB_AemultB__max_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__max_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__max_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__max_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -8614,11 +10412,7 @@ GrB_Info GB_Cdense_accumB__max_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__max_fp64
@@ -8635,11 +10429,7 @@ GrB_Info GB_AxD__max_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__max_fp64
@@ -8671,10 +10461,11 @@ GrB_Info GB_AaddB__max_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__max_fp64
+GrB_Info GB_AemultB_01__max_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -8685,6 +10476,44 @@ GrB_Info GB_AemultB__max_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__max_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__max_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__max_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -8762,11 +10591,7 @@ GrB_Info GB_Cdense_accumB__plus_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_int8
@@ -8783,11 +10608,7 @@ GrB_Info GB_AxD__plus_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_int8
@@ -8819,10 +10640,11 @@ GrB_Info GB_AaddB__plus_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_int8
+GrB_Info GB_AemultB_01__plus_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -8833,6 +10655,44 @@ GrB_Info GB_AemultB__plus_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -8910,11 +10770,7 @@ GrB_Info GB_Cdense_accumB__plus_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_int16
@@ -8931,11 +10787,7 @@ GrB_Info GB_AxD__plus_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_int16
@@ -8967,10 +10819,11 @@ GrB_Info GB_AaddB__plus_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_int16
+GrB_Info GB_AemultB_01__plus_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -8981,6 +10834,44 @@ GrB_Info GB_AemultB__plus_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -9058,11 +10949,7 @@ GrB_Info GB_Cdense_accumB__plus_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_int32
@@ -9079,11 +10966,7 @@ GrB_Info GB_AxD__plus_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_int32
@@ -9115,10 +10998,11 @@ GrB_Info GB_AaddB__plus_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_int32
+GrB_Info GB_AemultB_01__plus_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -9129,6 +11013,44 @@ GrB_Info GB_AemultB__plus_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -9206,11 +11128,7 @@ GrB_Info GB_Cdense_accumB__plus_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_int64
@@ -9227,11 +11145,7 @@ GrB_Info GB_AxD__plus_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_int64
@@ -9263,10 +11177,11 @@ GrB_Info GB_AaddB__plus_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_int64
+GrB_Info GB_AemultB_01__plus_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -9277,6 +11192,44 @@ GrB_Info GB_AemultB__plus_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -9354,11 +11307,7 @@ GrB_Info GB_Cdense_accumB__plus_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_uint8
@@ -9375,11 +11324,7 @@ GrB_Info GB_AxD__plus_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_uint8
@@ -9411,10 +11356,11 @@ GrB_Info GB_AaddB__plus_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_uint8
+GrB_Info GB_AemultB_01__plus_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -9425,6 +11371,44 @@ GrB_Info GB_AemultB__plus_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -9502,11 +11486,7 @@ GrB_Info GB_Cdense_accumB__plus_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_uint16
@@ -9523,11 +11503,7 @@ GrB_Info GB_AxD__plus_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_uint16
@@ -9559,10 +11535,11 @@ GrB_Info GB_AaddB__plus_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_uint16
+GrB_Info GB_AemultB_01__plus_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -9573,6 +11550,44 @@ GrB_Info GB_AemultB__plus_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -9650,11 +11665,7 @@ GrB_Info GB_Cdense_accumB__plus_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_uint32
@@ -9671,11 +11682,7 @@ GrB_Info GB_AxD__plus_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_uint32
@@ -9707,10 +11714,11 @@ GrB_Info GB_AaddB__plus_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_uint32
+GrB_Info GB_AemultB_01__plus_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -9721,6 +11729,44 @@ GrB_Info GB_AemultB__plus_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -9798,11 +11844,7 @@ GrB_Info GB_Cdense_accumB__plus_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_uint64
@@ -9819,11 +11861,7 @@ GrB_Info GB_AxD__plus_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_uint64
@@ -9855,10 +11893,11 @@ GrB_Info GB_AaddB__plus_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_uint64
+GrB_Info GB_AemultB_01__plus_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -9869,6 +11908,44 @@ GrB_Info GB_AemultB__plus_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -9946,11 +12023,7 @@ GrB_Info GB_Cdense_accumB__plus_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_fp32
@@ -9967,11 +12040,7 @@ GrB_Info GB_AxD__plus_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_fp32
@@ -10003,10 +12072,11 @@ GrB_Info GB_AaddB__plus_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_fp32
+GrB_Info GB_AemultB_01__plus_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10017,6 +12087,44 @@ GrB_Info GB_AemultB__plus_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -10094,11 +12202,7 @@ GrB_Info GB_Cdense_accumB__plus_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_fp64
@@ -10115,11 +12219,7 @@ GrB_Info GB_AxD__plus_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_fp64
@@ -10151,10 +12251,11 @@ GrB_Info GB_AaddB__plus_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_fp64
+GrB_Info GB_AemultB_01__plus_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10165,6 +12266,44 @@ GrB_Info GB_AemultB__plus_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -10242,11 +12381,7 @@ GrB_Info GB_Cdense_accumB__plus_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_fc32
@@ -10263,11 +12398,7 @@ GrB_Info GB_AxD__plus_fc32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_fc32
@@ -10299,10 +12430,11 @@ GrB_Info GB_AaddB__plus_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_fc32
+GrB_Info GB_AemultB_01__plus_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10313,6 +12445,44 @@ GrB_Info GB_AemultB__plus_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -10390,11 +12560,7 @@ GrB_Info GB_Cdense_accumB__plus_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__plus_fc64
@@ -10411,11 +12577,7 @@ GrB_Info GB_AxD__plus_fc64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__plus_fc64
@@ -10447,10 +12609,11 @@ GrB_Info GB_AaddB__plus_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__plus_fc64
+GrB_Info GB_AemultB_01__plus_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10461,6 +12624,44 @@ GrB_Info GB_AemultB__plus_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__plus_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__plus_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__plus_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -10538,11 +12739,7 @@ GrB_Info GB_Cdense_accumB__minus_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_int8
@@ -10559,11 +12756,7 @@ GrB_Info GB_AxD__minus_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_int8
@@ -10595,10 +12788,11 @@ GrB_Info GB_AaddB__minus_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_int8
+GrB_Info GB_AemultB_01__minus_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10609,6 +12803,44 @@ GrB_Info GB_AemultB__minus_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -10686,11 +12918,7 @@ GrB_Info GB_Cdense_accumB__minus_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_int16
@@ -10707,11 +12935,7 @@ GrB_Info GB_AxD__minus_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_int16
@@ -10743,10 +12967,11 @@ GrB_Info GB_AaddB__minus_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_int16
+GrB_Info GB_AemultB_01__minus_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10757,6 +12982,44 @@ GrB_Info GB_AemultB__minus_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -10834,11 +13097,7 @@ GrB_Info GB_Cdense_accumB__minus_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_int32
@@ -10855,11 +13114,7 @@ GrB_Info GB_AxD__minus_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_int32
@@ -10891,10 +13146,11 @@ GrB_Info GB_AaddB__minus_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_int32
+GrB_Info GB_AemultB_01__minus_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -10905,6 +13161,44 @@ GrB_Info GB_AemultB__minus_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -10982,11 +13276,7 @@ GrB_Info GB_Cdense_accumB__minus_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_int64
@@ -11003,11 +13293,7 @@ GrB_Info GB_AxD__minus_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_int64
@@ -11039,10 +13325,11 @@ GrB_Info GB_AaddB__minus_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_int64
+GrB_Info GB_AemultB_01__minus_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11053,6 +13340,44 @@ GrB_Info GB_AemultB__minus_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -11130,11 +13455,7 @@ GrB_Info GB_Cdense_accumB__minus_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_uint8
@@ -11151,11 +13472,7 @@ GrB_Info GB_AxD__minus_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_uint8
@@ -11187,10 +13504,11 @@ GrB_Info GB_AaddB__minus_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_uint8
+GrB_Info GB_AemultB_01__minus_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11201,6 +13519,44 @@ GrB_Info GB_AemultB__minus_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -11278,11 +13634,7 @@ GrB_Info GB_Cdense_accumB__minus_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_uint16
@@ -11299,11 +13651,7 @@ GrB_Info GB_AxD__minus_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_uint16
@@ -11335,10 +13683,11 @@ GrB_Info GB_AaddB__minus_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_uint16
+GrB_Info GB_AemultB_01__minus_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11349,6 +13698,44 @@ GrB_Info GB_AemultB__minus_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -11426,11 +13813,7 @@ GrB_Info GB_Cdense_accumB__minus_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_uint32
@@ -11447,11 +13830,7 @@ GrB_Info GB_AxD__minus_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_uint32
@@ -11483,10 +13862,11 @@ GrB_Info GB_AaddB__minus_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_uint32
+GrB_Info GB_AemultB_01__minus_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11497,6 +13877,44 @@ GrB_Info GB_AemultB__minus_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -11574,11 +13992,7 @@ GrB_Info GB_Cdense_accumB__minus_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_uint64
@@ -11595,11 +14009,7 @@ GrB_Info GB_AxD__minus_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_uint64
@@ -11631,10 +14041,11 @@ GrB_Info GB_AaddB__minus_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_uint64
+GrB_Info GB_AemultB_01__minus_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11645,6 +14056,44 @@ GrB_Info GB_AemultB__minus_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -11722,11 +14171,7 @@ GrB_Info GB_Cdense_accumB__minus_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_fp32
@@ -11743,11 +14188,7 @@ GrB_Info GB_AxD__minus_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_fp32
@@ -11779,10 +14220,11 @@ GrB_Info GB_AaddB__minus_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_fp32
+GrB_Info GB_AemultB_01__minus_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11793,6 +14235,44 @@ GrB_Info GB_AemultB__minus_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -11870,11 +14350,7 @@ GrB_Info GB_Cdense_accumB__minus_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_fp64
@@ -11891,11 +14367,7 @@ GrB_Info GB_AxD__minus_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_fp64
@@ -11927,10 +14399,11 @@ GrB_Info GB_AaddB__minus_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_fp64
+GrB_Info GB_AemultB_01__minus_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -11941,6 +14414,44 @@ GrB_Info GB_AemultB__minus_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -12018,11 +14529,7 @@ GrB_Info GB_Cdense_accumB__minus_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_fc32
@@ -12039,11 +14546,7 @@ GrB_Info GB_AxD__minus_fc32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_fc32
@@ -12075,10 +14578,11 @@ GrB_Info GB_AaddB__minus_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_fc32
+GrB_Info GB_AemultB_01__minus_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -12089,6 +14593,44 @@ GrB_Info GB_AemultB__minus_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -12166,11 +14708,7 @@ GrB_Info GB_Cdense_accumB__minus_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__minus_fc64
@@ -12187,11 +14725,7 @@ GrB_Info GB_AxD__minus_fc64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__minus_fc64
@@ -12223,10 +14757,11 @@ GrB_Info GB_AaddB__minus_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__minus_fc64
+GrB_Info GB_AemultB_01__minus_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -12237,6 +14772,44 @@ GrB_Info GB_AemultB__minus_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__minus_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__minus_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__minus_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -12314,11 +14887,7 @@ GrB_Info GB_Cdense_accumB__rminus_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_int8
@@ -12335,11 +14904,7 @@ GrB_Info GB_AxD__rminus_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_int8
@@ -12371,10 +14936,11 @@ GrB_Info GB_AaddB__rminus_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_int8
+GrB_Info GB_AemultB_01__rminus_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -12385,6 +14951,44 @@ GrB_Info GB_AemultB__rminus_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -12462,11 +15066,7 @@ GrB_Info GB_Cdense_accumB__rminus_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_int16
@@ -12483,11 +15083,7 @@ GrB_Info GB_AxD__rminus_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_int16
@@ -12519,10 +15115,11 @@ GrB_Info GB_AaddB__rminus_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_int16
+GrB_Info GB_AemultB_01__rminus_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -12533,6 +15130,44 @@ GrB_Info GB_AemultB__rminus_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -12610,11 +15245,7 @@ GrB_Info GB_Cdense_accumB__rminus_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_int32
@@ -12631,11 +15262,7 @@ GrB_Info GB_AxD__rminus_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_int32
@@ -12667,10 +15294,11 @@ GrB_Info GB_AaddB__rminus_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_int32
+GrB_Info GB_AemultB_01__rminus_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -12681,6 +15309,44 @@ GrB_Info GB_AemultB__rminus_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -12758,11 +15424,7 @@ GrB_Info GB_Cdense_accumB__rminus_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_int64
@@ -12779,11 +15441,7 @@ GrB_Info GB_AxD__rminus_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_int64
@@ -12815,10 +15473,11 @@ GrB_Info GB_AaddB__rminus_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_int64
+GrB_Info GB_AemultB_01__rminus_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -12829,6 +15488,44 @@ GrB_Info GB_AemultB__rminus_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -12906,11 +15603,7 @@ GrB_Info GB_Cdense_accumB__rminus_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_uint8
@@ -12927,11 +15620,7 @@ GrB_Info GB_AxD__rminus_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_uint8
@@ -12963,10 +15652,11 @@ GrB_Info GB_AaddB__rminus_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_uint8
+GrB_Info GB_AemultB_01__rminus_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -12977,6 +15667,44 @@ GrB_Info GB_AemultB__rminus_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -13054,11 +15782,7 @@ GrB_Info GB_Cdense_accumB__rminus_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_uint16
@@ -13075,11 +15799,7 @@ GrB_Info GB_AxD__rminus_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_uint16
@@ -13111,10 +15831,11 @@ GrB_Info GB_AaddB__rminus_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_uint16
+GrB_Info GB_AemultB_01__rminus_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -13125,6 +15846,44 @@ GrB_Info GB_AemultB__rminus_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -13202,11 +15961,7 @@ GrB_Info GB_Cdense_accumB__rminus_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_uint32
@@ -13223,11 +15978,7 @@ GrB_Info GB_AxD__rminus_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_uint32
@@ -13259,10 +16010,11 @@ GrB_Info GB_AaddB__rminus_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_uint32
+GrB_Info GB_AemultB_01__rminus_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -13273,6 +16025,44 @@ GrB_Info GB_AemultB__rminus_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -13350,11 +16140,7 @@ GrB_Info GB_Cdense_accumB__rminus_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_uint64
@@ -13371,11 +16157,7 @@ GrB_Info GB_AxD__rminus_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_uint64
@@ -13407,10 +16189,11 @@ GrB_Info GB_AaddB__rminus_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_uint64
+GrB_Info GB_AemultB_01__rminus_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -13421,6 +16204,44 @@ GrB_Info GB_AemultB__rminus_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -13498,11 +16319,7 @@ GrB_Info GB_Cdense_accumB__rminus_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_fp32
@@ -13519,11 +16336,7 @@ GrB_Info GB_AxD__rminus_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_fp32
@@ -13555,10 +16368,11 @@ GrB_Info GB_AaddB__rminus_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_fp32
+GrB_Info GB_AemultB_01__rminus_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -13569,6 +16383,44 @@ GrB_Info GB_AemultB__rminus_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -13646,11 +16498,7 @@ GrB_Info GB_Cdense_accumB__rminus_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_fp64
@@ -13667,11 +16515,7 @@ GrB_Info GB_AxD__rminus_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_fp64
@@ -13703,10 +16547,11 @@ GrB_Info GB_AaddB__rminus_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_fp64
+GrB_Info GB_AemultB_01__rminus_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -13717,6 +16562,44 @@ GrB_Info GB_AemultB__rminus_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -13794,11 +16677,7 @@ GrB_Info GB_Cdense_accumB__rminus_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_fc32
@@ -13815,11 +16694,7 @@ GrB_Info GB_AxD__rminus_fc32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_fc32
@@ -13851,10 +16726,11 @@ GrB_Info GB_AaddB__rminus_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_fc32
+GrB_Info GB_AemultB_01__rminus_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -13865,6 +16741,44 @@ GrB_Info GB_AemultB__rminus_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -13942,11 +16856,7 @@ GrB_Info GB_Cdense_accumB__rminus_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rminus_fc64
@@ -13963,11 +16873,7 @@ GrB_Info GB_AxD__rminus_fc64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rminus_fc64
@@ -13999,10 +16905,11 @@ GrB_Info GB_AaddB__rminus_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rminus_fc64
+GrB_Info GB_AemultB_01__rminus_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -14013,6 +16920,44 @@ GrB_Info GB_AemultB__rminus_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rminus_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rminus_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rminus_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -14090,11 +17035,7 @@ GrB_Info GB_Cdense_accumB__times_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_int8
@@ -14111,11 +17052,7 @@ GrB_Info GB_AxD__times_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_int8
@@ -14147,10 +17084,11 @@ GrB_Info GB_AaddB__times_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_int8
+GrB_Info GB_AemultB_01__times_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -14161,6 +17099,44 @@ GrB_Info GB_AemultB__times_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -14238,11 +17214,7 @@ GrB_Info GB_Cdense_accumB__times_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_int16
@@ -14259,11 +17231,7 @@ GrB_Info GB_AxD__times_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_int16
@@ -14295,10 +17263,11 @@ GrB_Info GB_AaddB__times_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_int16
+GrB_Info GB_AemultB_01__times_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -14309,6 +17278,44 @@ GrB_Info GB_AemultB__times_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -14386,11 +17393,7 @@ GrB_Info GB_Cdense_accumB__times_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_int32
@@ -14407,11 +17410,7 @@ GrB_Info GB_AxD__times_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_int32
@@ -14443,10 +17442,11 @@ GrB_Info GB_AaddB__times_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_int32
+GrB_Info GB_AemultB_01__times_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -14457,6 +17457,44 @@ GrB_Info GB_AemultB__times_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -14534,11 +17572,7 @@ GrB_Info GB_Cdense_accumB__times_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_int64
@@ -14555,11 +17589,7 @@ GrB_Info GB_AxD__times_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_int64
@@ -14591,10 +17621,11 @@ GrB_Info GB_AaddB__times_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_int64
+GrB_Info GB_AemultB_01__times_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -14605,6 +17636,44 @@ GrB_Info GB_AemultB__times_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -14682,11 +17751,7 @@ GrB_Info GB_Cdense_accumB__times_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_uint8
@@ -14703,11 +17768,7 @@ GrB_Info GB_AxD__times_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_uint8
@@ -14739,10 +17800,11 @@ GrB_Info GB_AaddB__times_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_uint8
+GrB_Info GB_AemultB_01__times_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -14753,6 +17815,44 @@ GrB_Info GB_AemultB__times_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -14830,11 +17930,7 @@ GrB_Info GB_Cdense_accumB__times_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_uint16
@@ -14851,11 +17947,7 @@ GrB_Info GB_AxD__times_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_uint16
@@ -14887,10 +17979,11 @@ GrB_Info GB_AaddB__times_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_uint16
+GrB_Info GB_AemultB_01__times_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -14901,6 +17994,44 @@ GrB_Info GB_AemultB__times_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -14978,11 +18109,7 @@ GrB_Info GB_Cdense_accumB__times_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_uint32
@@ -14999,11 +18126,7 @@ GrB_Info GB_AxD__times_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_uint32
@@ -15035,10 +18158,11 @@ GrB_Info GB_AaddB__times_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_uint32
+GrB_Info GB_AemultB_01__times_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15049,6 +18173,44 @@ GrB_Info GB_AemultB__times_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -15126,11 +18288,7 @@ GrB_Info GB_Cdense_accumB__times_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_uint64
@@ -15147,11 +18305,7 @@ GrB_Info GB_AxD__times_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_uint64
@@ -15183,10 +18337,11 @@ GrB_Info GB_AaddB__times_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_uint64
+GrB_Info GB_AemultB_01__times_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15197,6 +18352,44 @@ GrB_Info GB_AemultB__times_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -15274,11 +18467,7 @@ GrB_Info GB_Cdense_accumB__times_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_fp32
@@ -15295,11 +18484,7 @@ GrB_Info GB_AxD__times_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_fp32
@@ -15331,10 +18516,11 @@ GrB_Info GB_AaddB__times_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_fp32
+GrB_Info GB_AemultB_01__times_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15345,6 +18531,44 @@ GrB_Info GB_AemultB__times_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -15422,11 +18646,7 @@ GrB_Info GB_Cdense_accumB__times_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_fp64
@@ -15443,11 +18663,7 @@ GrB_Info GB_AxD__times_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_fp64
@@ -15479,10 +18695,11 @@ GrB_Info GB_AaddB__times_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_fp64
+GrB_Info GB_AemultB_01__times_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15493,6 +18710,44 @@ GrB_Info GB_AemultB__times_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -15570,11 +18825,7 @@ GrB_Info GB_Cdense_accumB__times_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_fc32
@@ -15591,11 +18842,7 @@ GrB_Info GB_AxD__times_fc32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_fc32
@@ -15627,10 +18874,11 @@ GrB_Info GB_AaddB__times_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_fc32
+GrB_Info GB_AemultB_01__times_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15641,6 +18889,44 @@ GrB_Info GB_AemultB__times_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -15718,11 +19004,7 @@ GrB_Info GB_Cdense_accumB__times_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__times_fc64
@@ -15739,11 +19021,7 @@ GrB_Info GB_AxD__times_fc64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__times_fc64
@@ -15775,10 +19053,11 @@ GrB_Info GB_AaddB__times_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__times_fc64
+GrB_Info GB_AemultB_01__times_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15789,6 +19068,44 @@ GrB_Info GB_AemultB__times_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__times_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__times_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__times_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -15866,11 +19183,7 @@ GrB_Info GB_Cdense_accumB__div_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_int8
@@ -15887,11 +19200,7 @@ GrB_Info GB_AxD__div_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_int8
@@ -15923,10 +19232,11 @@ GrB_Info GB_AaddB__div_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_int8
+GrB_Info GB_AemultB_01__div_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -15937,6 +19247,44 @@ GrB_Info GB_AemultB__div_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -16014,11 +19362,7 @@ GrB_Info GB_Cdense_accumB__div_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_int16
@@ -16035,11 +19379,7 @@ GrB_Info GB_AxD__div_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_int16
@@ -16071,10 +19411,11 @@ GrB_Info GB_AaddB__div_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_int16
+GrB_Info GB_AemultB_01__div_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -16085,6 +19426,44 @@ GrB_Info GB_AemultB__div_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -16162,11 +19541,7 @@ GrB_Info GB_Cdense_accumB__div_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_int32
@@ -16183,11 +19558,7 @@ GrB_Info GB_AxD__div_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_int32
@@ -16219,10 +19590,11 @@ GrB_Info GB_AaddB__div_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_int32
+GrB_Info GB_AemultB_01__div_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -16233,6 +19605,44 @@ GrB_Info GB_AemultB__div_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -16310,11 +19720,7 @@ GrB_Info GB_Cdense_accumB__div_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_int64
@@ -16331,11 +19737,7 @@ GrB_Info GB_AxD__div_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_int64
@@ -16367,10 +19769,11 @@ GrB_Info GB_AaddB__div_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_int64
+GrB_Info GB_AemultB_01__div_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -16381,6 +19784,44 @@ GrB_Info GB_AemultB__div_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -16458,11 +19899,7 @@ GrB_Info GB_Cdense_accumB__div_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_uint8
@@ -16479,11 +19916,7 @@ GrB_Info GB_AxD__div_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_uint8
@@ -16515,10 +19948,11 @@ GrB_Info GB_AaddB__div_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_uint8
+GrB_Info GB_AemultB_01__div_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -16529,6 +19963,44 @@ GrB_Info GB_AemultB__div_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -16606,11 +20078,7 @@ GrB_Info GB_Cdense_accumB__div_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_uint16
@@ -16627,11 +20095,7 @@ GrB_Info GB_AxD__div_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_uint16
@@ -16663,10 +20127,11 @@ GrB_Info GB_AaddB__div_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_uint16
+GrB_Info GB_AemultB_01__div_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -16677,6 +20142,44 @@ GrB_Info GB_AemultB__div_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -16754,11 +20257,7 @@ GrB_Info GB_Cdense_accumB__div_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_uint32
@@ -16775,11 +20274,7 @@ GrB_Info GB_AxD__div_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_uint32
@@ -16811,10 +20306,11 @@ GrB_Info GB_AaddB__div_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_uint32
+GrB_Info GB_AemultB_01__div_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -16825,6 +20321,44 @@ GrB_Info GB_AemultB__div_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -16902,11 +20436,7 @@ GrB_Info GB_Cdense_accumB__div_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_uint64
@@ -16923,11 +20453,7 @@ GrB_Info GB_AxD__div_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_uint64
@@ -16959,10 +20485,11 @@ GrB_Info GB_AaddB__div_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_uint64
+GrB_Info GB_AemultB_01__div_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -16973,6 +20500,44 @@ GrB_Info GB_AemultB__div_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -17050,11 +20615,7 @@ GrB_Info GB_Cdense_accumB__div_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_fp32
@@ -17071,11 +20632,7 @@ GrB_Info GB_AxD__div_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_fp32
@@ -17107,10 +20664,11 @@ GrB_Info GB_AaddB__div_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_fp32
+GrB_Info GB_AemultB_01__div_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -17121,6 +20679,44 @@ GrB_Info GB_AemultB__div_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -17198,11 +20794,7 @@ GrB_Info GB_Cdense_accumB__div_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_fp64
@@ -17219,11 +20811,7 @@ GrB_Info GB_AxD__div_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_fp64
@@ -17255,10 +20843,11 @@ GrB_Info GB_AaddB__div_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_fp64
+GrB_Info GB_AemultB_01__div_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -17269,6 +20858,44 @@ GrB_Info GB_AemultB__div_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -17346,11 +20973,7 @@ GrB_Info GB_Cdense_accumB__div_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_fc32
@@ -17367,11 +20990,7 @@ GrB_Info GB_AxD__div_fc32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_fc32
@@ -17403,10 +21022,11 @@ GrB_Info GB_AaddB__div_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_fc32
+GrB_Info GB_AemultB_01__div_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -17417,6 +21037,44 @@ GrB_Info GB_AemultB__div_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -17494,11 +21152,7 @@ GrB_Info GB_Cdense_accumB__div_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__div_fc64
@@ -17515,11 +21169,7 @@ GrB_Info GB_AxD__div_fc64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__div_fc64
@@ -17551,10 +21201,11 @@ GrB_Info GB_AaddB__div_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__div_fc64
+GrB_Info GB_AemultB_01__div_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -17565,6 +21216,44 @@ GrB_Info GB_AemultB__div_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__div_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__div_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__div_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -17642,11 +21331,7 @@ GrB_Info GB_Cdense_accumB__rdiv_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_int8
@@ -17663,11 +21348,7 @@ GrB_Info GB_AxD__rdiv_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_int8
@@ -17699,10 +21380,11 @@ GrB_Info GB_AaddB__rdiv_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_int8
+GrB_Info GB_AemultB_01__rdiv_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -17713,6 +21395,44 @@ GrB_Info GB_AemultB__rdiv_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -17790,11 +21510,7 @@ GrB_Info GB_Cdense_accumB__rdiv_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_int16
@@ -17811,11 +21527,7 @@ GrB_Info GB_AxD__rdiv_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_int16
@@ -17847,10 +21559,11 @@ GrB_Info GB_AaddB__rdiv_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_int16
+GrB_Info GB_AemultB_01__rdiv_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -17861,6 +21574,44 @@ GrB_Info GB_AemultB__rdiv_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -17938,11 +21689,7 @@ GrB_Info GB_Cdense_accumB__rdiv_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_int32
@@ -17959,11 +21706,7 @@ GrB_Info GB_AxD__rdiv_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_int32
@@ -17995,10 +21738,11 @@ GrB_Info GB_AaddB__rdiv_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_int32
+GrB_Info GB_AemultB_01__rdiv_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18009,6 +21753,44 @@ GrB_Info GB_AemultB__rdiv_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -18086,11 +21868,7 @@ GrB_Info GB_Cdense_accumB__rdiv_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_int64
@@ -18107,11 +21885,7 @@ GrB_Info GB_AxD__rdiv_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_int64
@@ -18143,10 +21917,11 @@ GrB_Info GB_AaddB__rdiv_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_int64
+GrB_Info GB_AemultB_01__rdiv_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18157,6 +21932,44 @@ GrB_Info GB_AemultB__rdiv_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -18234,11 +22047,7 @@ GrB_Info GB_Cdense_accumB__rdiv_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_uint8
@@ -18255,11 +22064,7 @@ GrB_Info GB_AxD__rdiv_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_uint8
@@ -18291,10 +22096,11 @@ GrB_Info GB_AaddB__rdiv_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_uint8
+GrB_Info GB_AemultB_01__rdiv_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18305,6 +22111,44 @@ GrB_Info GB_AemultB__rdiv_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -18382,11 +22226,7 @@ GrB_Info GB_Cdense_accumB__rdiv_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_uint16
@@ -18403,11 +22243,7 @@ GrB_Info GB_AxD__rdiv_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_uint16
@@ -18439,10 +22275,11 @@ GrB_Info GB_AaddB__rdiv_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_uint16
+GrB_Info GB_AemultB_01__rdiv_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18453,6 +22290,44 @@ GrB_Info GB_AemultB__rdiv_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -18530,11 +22405,7 @@ GrB_Info GB_Cdense_accumB__rdiv_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_uint32
@@ -18551,11 +22422,7 @@ GrB_Info GB_AxD__rdiv_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_uint32
@@ -18587,10 +22454,11 @@ GrB_Info GB_AaddB__rdiv_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_uint32
+GrB_Info GB_AemultB_01__rdiv_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18601,6 +22469,44 @@ GrB_Info GB_AemultB__rdiv_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -18678,11 +22584,7 @@ GrB_Info GB_Cdense_accumB__rdiv_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_uint64
@@ -18699,11 +22601,7 @@ GrB_Info GB_AxD__rdiv_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_uint64
@@ -18735,10 +22633,11 @@ GrB_Info GB_AaddB__rdiv_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_uint64
+GrB_Info GB_AemultB_01__rdiv_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18749,6 +22648,44 @@ GrB_Info GB_AemultB__rdiv_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -18826,11 +22763,7 @@ GrB_Info GB_Cdense_accumB__rdiv_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_fp32
@@ -18847,11 +22780,7 @@ GrB_Info GB_AxD__rdiv_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_fp32
@@ -18883,10 +22812,11 @@ GrB_Info GB_AaddB__rdiv_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_fp32
+GrB_Info GB_AemultB_01__rdiv_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -18897,6 +22827,44 @@ GrB_Info GB_AemultB__rdiv_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -18974,11 +22942,7 @@ GrB_Info GB_Cdense_accumB__rdiv_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_fp64
@@ -18995,11 +22959,7 @@ GrB_Info GB_AxD__rdiv_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_fp64
@@ -19031,10 +22991,11 @@ GrB_Info GB_AaddB__rdiv_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_fp64
+GrB_Info GB_AemultB_01__rdiv_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19045,6 +23006,44 @@ GrB_Info GB_AemultB__rdiv_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -19122,11 +23121,7 @@ GrB_Info GB_Cdense_accumB__rdiv_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_fc32
@@ -19143,11 +23138,7 @@ GrB_Info GB_AxD__rdiv_fc32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_fc32
@@ -19179,10 +23170,11 @@ GrB_Info GB_AaddB__rdiv_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_fc32
+GrB_Info GB_AemultB_01__rdiv_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19193,6 +23185,44 @@ GrB_Info GB_AemultB__rdiv_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -19270,11 +23300,7 @@ GrB_Info GB_Cdense_accumB__rdiv_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__rdiv_fc64
@@ -19291,11 +23317,7 @@ GrB_Info GB_AxD__rdiv_fc64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__rdiv_fc64
@@ -19327,10 +23349,11 @@ GrB_Info GB_AaddB__rdiv_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__rdiv_fc64
+GrB_Info GB_AemultB_01__rdiv_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19341,6 +23364,44 @@ GrB_Info GB_AemultB__rdiv_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__rdiv_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__rdiv_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__rdiv_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -19418,11 +23479,7 @@ GrB_Info GB_Cdense_accumB__iseq_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_int8
@@ -19439,11 +23496,7 @@ GrB_Info GB_AxD__iseq_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__iseq_int8
@@ -19475,10 +23528,11 @@ GrB_Info GB_AaddB__iseq_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_int8
+GrB_Info GB_AemultB_01__iseq_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19489,6 +23543,44 @@ GrB_Info GB_AemultB__iseq_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -19566,11 +23658,7 @@ GrB_Info GB_Cdense_accumB__iseq_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_int16
@@ -19587,11 +23675,7 @@ GrB_Info GB_AxD__iseq_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__iseq_int16
@@ -19623,10 +23707,11 @@ GrB_Info GB_AaddB__iseq_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_int16
+GrB_Info GB_AemultB_01__iseq_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19637,6 +23722,44 @@ GrB_Info GB_AemultB__iseq_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -19714,11 +23837,7 @@ GrB_Info GB_Cdense_accumB__iseq_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_int32
@@ -19735,11 +23854,7 @@ GrB_Info GB_AxD__iseq_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__iseq_int32
@@ -19771,10 +23886,11 @@ GrB_Info GB_AaddB__iseq_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_int32
+GrB_Info GB_AemultB_01__iseq_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19785,6 +23901,44 @@ GrB_Info GB_AemultB__iseq_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -19862,11 +24016,7 @@ GrB_Info GB_Cdense_accumB__iseq_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_int64
@@ -19883,11 +24033,7 @@ GrB_Info GB_AxD__iseq_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__iseq_int64
@@ -19919,10 +24065,11 @@ GrB_Info GB_AaddB__iseq_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_int64
+GrB_Info GB_AemultB_01__iseq_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -19933,6 +24080,44 @@ GrB_Info GB_AemultB__iseq_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -20010,11 +24195,7 @@ GrB_Info GB_Cdense_accumB__iseq_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_uint8
@@ -20031,11 +24212,7 @@ GrB_Info GB_AxD__iseq_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__iseq_uint8
@@ -20067,10 +24244,11 @@ GrB_Info GB_AaddB__iseq_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_uint8
+GrB_Info GB_AemultB_01__iseq_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -20081,6 +24259,44 @@ GrB_Info GB_AemultB__iseq_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -20158,11 +24374,7 @@ GrB_Info GB_Cdense_accumB__iseq_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_uint16
@@ -20179,11 +24391,7 @@ GrB_Info GB_AxD__iseq_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__iseq_uint16
@@ -20215,10 +24423,11 @@ GrB_Info GB_AaddB__iseq_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_uint16
+GrB_Info GB_AemultB_01__iseq_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -20229,6 +24438,44 @@ GrB_Info GB_AemultB__iseq_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -20306,11 +24553,7 @@ GrB_Info GB_Cdense_accumB__iseq_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_uint32
@@ -20327,11 +24570,7 @@ GrB_Info GB_AxD__iseq_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__iseq_uint32
@@ -20363,10 +24602,11 @@ GrB_Info GB_AaddB__iseq_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_uint32
+GrB_Info GB_AemultB_01__iseq_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -20377,6 +24617,44 @@ GrB_Info GB_AemultB__iseq_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -20454,11 +24732,7 @@ GrB_Info GB_Cdense_accumB__iseq_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_uint64
@@ -20475,11 +24749,7 @@ GrB_Info GB_AxD__iseq_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__iseq_uint64
@@ -20511,10 +24781,11 @@ GrB_Info GB_AaddB__iseq_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_uint64
+GrB_Info GB_AemultB_01__iseq_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -20525,6 +24796,44 @@ GrB_Info GB_AemultB__iseq_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -20602,11 +24911,7 @@ GrB_Info GB_Cdense_accumB__iseq_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_fp32
@@ -20623,11 +24928,7 @@ GrB_Info GB_AxD__iseq_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__iseq_fp32
@@ -20659,10 +24960,11 @@ GrB_Info GB_AaddB__iseq_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_fp32
+GrB_Info GB_AemultB_01__iseq_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -20673,6 +24975,44 @@ GrB_Info GB_AemultB__iseq_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -20750,11 +25090,7 @@ GrB_Info GB_Cdense_accumB__iseq_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_fp64
@@ -20771,11 +25107,7 @@ GrB_Info GB_AxD__iseq_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__iseq_fp64
@@ -20807,10 +25139,11 @@ GrB_Info GB_AaddB__iseq_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_fp64
+GrB_Info GB_AemultB_01__iseq_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -20821,6 +25154,44 @@ GrB_Info GB_AemultB__iseq_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -20898,11 +25269,7 @@ GrB_Info GB_Cdense_accumB__iseq_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_fc32
@@ -20919,11 +25286,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -20955,10 +25318,11 @@ GrB_Info GB_AaddB__iseq_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_fc32
+GrB_Info GB_AemultB_01__iseq_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -20969,6 +25333,44 @@ GrB_Info GB_AemultB__iseq_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -21046,11 +25448,7 @@ GrB_Info GB_Cdense_accumB__iseq_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__iseq_fc64
@@ -21067,11 +25465,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -21103,10 +25497,11 @@ GrB_Info GB_AaddB__iseq_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__iseq_fc64
+GrB_Info GB_AemultB_01__iseq_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -21117,6 +25512,44 @@ GrB_Info GB_AemultB__iseq_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__iseq_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__iseq_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__iseq_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -21194,11 +25627,7 @@ GrB_Info GB_Cdense_accumB__isne_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_int8
@@ -21215,11 +25644,7 @@ GrB_Info GB_AxD__isne_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isne_int8
@@ -21251,10 +25676,11 @@ GrB_Info GB_AaddB__isne_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_int8
+GrB_Info GB_AemultB_01__isne_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -21265,6 +25691,44 @@ GrB_Info GB_AemultB__isne_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -21342,11 +25806,7 @@ GrB_Info GB_Cdense_accumB__isne_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_int16
@@ -21363,11 +25823,7 @@ GrB_Info GB_AxD__isne_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isne_int16
@@ -21399,10 +25855,11 @@ GrB_Info GB_AaddB__isne_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_int16
+GrB_Info GB_AemultB_01__isne_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -21413,6 +25870,44 @@ GrB_Info GB_AemultB__isne_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -21490,11 +25985,7 @@ GrB_Info GB_Cdense_accumB__isne_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_int32
@@ -21511,11 +26002,7 @@ GrB_Info GB_AxD__isne_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isne_int32
@@ -21547,10 +26034,11 @@ GrB_Info GB_AaddB__isne_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_int32
+GrB_Info GB_AemultB_01__isne_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -21561,6 +26049,44 @@ GrB_Info GB_AemultB__isne_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -21638,11 +26164,7 @@ GrB_Info GB_Cdense_accumB__isne_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_int64
@@ -21659,11 +26181,7 @@ GrB_Info GB_AxD__isne_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isne_int64
@@ -21695,10 +26213,11 @@ GrB_Info GB_AaddB__isne_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_int64
+GrB_Info GB_AemultB_01__isne_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -21709,6 +26228,44 @@ GrB_Info GB_AemultB__isne_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -21786,11 +26343,7 @@ GrB_Info GB_Cdense_accumB__isne_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_uint8
@@ -21807,11 +26360,7 @@ GrB_Info GB_AxD__isne_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isne_uint8
@@ -21843,10 +26392,11 @@ GrB_Info GB_AaddB__isne_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_uint8
+GrB_Info GB_AemultB_01__isne_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -21857,6 +26407,44 @@ GrB_Info GB_AemultB__isne_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -21934,11 +26522,7 @@ GrB_Info GB_Cdense_accumB__isne_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_uint16
@@ -21955,11 +26539,7 @@ GrB_Info GB_AxD__isne_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isne_uint16
@@ -21991,10 +26571,11 @@ GrB_Info GB_AaddB__isne_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_uint16
+GrB_Info GB_AemultB_01__isne_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -22005,6 +26586,44 @@ GrB_Info GB_AemultB__isne_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -22082,11 +26701,7 @@ GrB_Info GB_Cdense_accumB__isne_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_uint32
@@ -22103,11 +26718,7 @@ GrB_Info GB_AxD__isne_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isne_uint32
@@ -22139,10 +26750,11 @@ GrB_Info GB_AaddB__isne_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_uint32
+GrB_Info GB_AemultB_01__isne_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -22153,6 +26765,44 @@ GrB_Info GB_AemultB__isne_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -22230,11 +26880,7 @@ GrB_Info GB_Cdense_accumB__isne_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_uint64
@@ -22251,11 +26897,7 @@ GrB_Info GB_AxD__isne_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isne_uint64
@@ -22287,10 +26929,11 @@ GrB_Info GB_AaddB__isne_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_uint64
+GrB_Info GB_AemultB_01__isne_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -22301,6 +26944,44 @@ GrB_Info GB_AemultB__isne_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -22378,11 +27059,7 @@ GrB_Info GB_Cdense_accumB__isne_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_fp32
@@ -22399,11 +27076,7 @@ GrB_Info GB_AxD__isne_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isne_fp32
@@ -22435,10 +27108,11 @@ GrB_Info GB_AaddB__isne_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_fp32
+GrB_Info GB_AemultB_01__isne_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -22449,6 +27123,44 @@ GrB_Info GB_AemultB__isne_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -22526,11 +27238,7 @@ GrB_Info GB_Cdense_accumB__isne_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_fp64
@@ -22547,11 +27255,7 @@ GrB_Info GB_AxD__isne_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isne_fp64
@@ -22583,10 +27287,11 @@ GrB_Info GB_AaddB__isne_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_fp64
+GrB_Info GB_AemultB_01__isne_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -22597,6 +27302,44 @@ GrB_Info GB_AemultB__isne_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -22674,11 +27417,7 @@ GrB_Info GB_Cdense_accumB__isne_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_fc32
@@ -22695,11 +27434,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -22731,10 +27466,11 @@ GrB_Info GB_AaddB__isne_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_fc32
+GrB_Info GB_AemultB_01__isne_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -22745,6 +27481,44 @@ GrB_Info GB_AemultB__isne_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -22822,11 +27596,7 @@ GrB_Info GB_Cdense_accumB__isne_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isne_fc64
@@ -22843,11 +27613,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -22879,10 +27645,11 @@ GrB_Info GB_AaddB__isne_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isne_fc64
+GrB_Info GB_AemultB_01__isne_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -22893,6 +27660,44 @@ GrB_Info GB_AemultB__isne_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isne_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isne_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isne_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -22970,11 +27775,7 @@ GrB_Info GB_Cdense_accumB__isgt_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isgt_int8
@@ -22991,11 +27792,7 @@ GrB_Info GB_AxD__isgt_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isgt_int8
@@ -23027,10 +27824,11 @@ GrB_Info GB_AaddB__isgt_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isgt_int8
+GrB_Info GB_AemultB_01__isgt_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23041,6 +27839,44 @@ GrB_Info GB_AemultB__isgt_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isgt_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isgt_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isgt_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -23118,11 +27954,7 @@ GrB_Info GB_Cdense_accumB__isgt_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isgt_int16
@@ -23139,11 +27971,7 @@ GrB_Info GB_AxD__isgt_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isgt_int16
@@ -23175,10 +28003,11 @@ GrB_Info GB_AaddB__isgt_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isgt_int16
+GrB_Info GB_AemultB_01__isgt_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23189,6 +28018,44 @@ GrB_Info GB_AemultB__isgt_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isgt_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isgt_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isgt_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -23266,11 +28133,7 @@ GrB_Info GB_Cdense_accumB__isgt_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isgt_int32
@@ -23287,11 +28150,7 @@ GrB_Info GB_AxD__isgt_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isgt_int32
@@ -23323,10 +28182,11 @@ GrB_Info GB_AaddB__isgt_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isgt_int32
+GrB_Info GB_AemultB_01__isgt_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23337,6 +28197,44 @@ GrB_Info GB_AemultB__isgt_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isgt_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isgt_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isgt_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -23414,11 +28312,7 @@ GrB_Info GB_Cdense_accumB__isgt_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isgt_int64
@@ -23435,11 +28329,7 @@ GrB_Info GB_AxD__isgt_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isgt_int64
@@ -23471,10 +28361,11 @@ GrB_Info GB_AaddB__isgt_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isgt_int64
+GrB_Info GB_AemultB_01__isgt_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23485,6 +28376,44 @@ GrB_Info GB_AemultB__isgt_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isgt_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isgt_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isgt_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -23562,11 +28491,7 @@ GrB_Info GB_Cdense_accumB__isgt_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isgt_uint8
@@ -23583,11 +28508,7 @@ GrB_Info GB_AxD__isgt_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isgt_uint8
@@ -23619,10 +28540,11 @@ GrB_Info GB_AaddB__isgt_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isgt_uint8
+GrB_Info GB_AemultB_01__isgt_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23633,6 +28555,44 @@ GrB_Info GB_AemultB__isgt_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isgt_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isgt_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isgt_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -23710,11 +28670,7 @@ GrB_Info GB_Cdense_accumB__isgt_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isgt_uint16
@@ -23731,11 +28687,7 @@ GrB_Info GB_AxD__isgt_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isgt_uint16
@@ -23767,10 +28719,11 @@ GrB_Info GB_AaddB__isgt_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isgt_uint16
+GrB_Info GB_AemultB_01__isgt_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23781,6 +28734,44 @@ GrB_Info GB_AemultB__isgt_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isgt_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isgt_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isgt_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -23858,11 +28849,7 @@ GrB_Info GB_Cdense_accumB__isgt_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isgt_uint32
@@ -23879,11 +28866,7 @@ GrB_Info GB_AxD__isgt_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isgt_uint32
@@ -23915,10 +28898,11 @@ GrB_Info GB_AaddB__isgt_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isgt_uint32
+GrB_Info GB_AemultB_01__isgt_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -23929,6 +28913,44 @@ GrB_Info GB_AemultB__isgt_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isgt_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isgt_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isgt_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -24006,11 +29028,7 @@ GrB_Info GB_Cdense_accumB__isgt_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isgt_uint64
@@ -24027,11 +29045,7 @@ GrB_Info GB_AxD__isgt_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isgt_uint64
@@ -24063,10 +29077,11 @@ GrB_Info GB_AaddB__isgt_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isgt_uint64
+GrB_Info GB_AemultB_01__isgt_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -24077,6 +29092,44 @@ GrB_Info GB_AemultB__isgt_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isgt_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isgt_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isgt_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -24154,11 +29207,7 @@ GrB_Info GB_Cdense_accumB__isgt_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isgt_fp32
@@ -24175,11 +29224,7 @@ GrB_Info GB_AxD__isgt_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isgt_fp32
@@ -24211,10 +29256,11 @@ GrB_Info GB_AaddB__isgt_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isgt_fp32
+GrB_Info GB_AemultB_01__isgt_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -24225,6 +29271,44 @@ GrB_Info GB_AemultB__isgt_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isgt_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isgt_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isgt_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -24302,11 +29386,7 @@ GrB_Info GB_Cdense_accumB__isgt_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isgt_fp64
@@ -24323,11 +29403,7 @@ GrB_Info GB_AxD__isgt_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isgt_fp64
@@ -24359,10 +29435,11 @@ GrB_Info GB_AaddB__isgt_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isgt_fp64
+GrB_Info GB_AemultB_01__isgt_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -24373,6 +29450,44 @@ GrB_Info GB_AemultB__isgt_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isgt_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isgt_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isgt_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -24450,11 +29565,7 @@ GrB_Info GB_Cdense_accumB__islt_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__islt_int8
@@ -24471,11 +29582,7 @@ GrB_Info GB_AxD__islt_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__islt_int8
@@ -24507,10 +29614,11 @@ GrB_Info GB_AaddB__islt_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__islt_int8
+GrB_Info GB_AemultB_01__islt_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -24521,6 +29629,44 @@ GrB_Info GB_AemultB__islt_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__islt_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__islt_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__islt_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -24598,11 +29744,7 @@ GrB_Info GB_Cdense_accumB__islt_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__islt_int16
@@ -24619,11 +29761,7 @@ GrB_Info GB_AxD__islt_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__islt_int16
@@ -24655,10 +29793,11 @@ GrB_Info GB_AaddB__islt_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__islt_int16
+GrB_Info GB_AemultB_01__islt_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -24669,6 +29808,44 @@ GrB_Info GB_AemultB__islt_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__islt_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__islt_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__islt_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -24746,11 +29923,7 @@ GrB_Info GB_Cdense_accumB__islt_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__islt_int32
@@ -24767,11 +29940,7 @@ GrB_Info GB_AxD__islt_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__islt_int32
@@ -24803,10 +29972,11 @@ GrB_Info GB_AaddB__islt_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__islt_int32
+GrB_Info GB_AemultB_01__islt_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -24817,6 +29987,44 @@ GrB_Info GB_AemultB__islt_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__islt_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__islt_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__islt_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -24894,11 +30102,7 @@ GrB_Info GB_Cdense_accumB__islt_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__islt_int64
@@ -24915,11 +30119,7 @@ GrB_Info GB_AxD__islt_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__islt_int64
@@ -24951,10 +30151,11 @@ GrB_Info GB_AaddB__islt_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__islt_int64
+GrB_Info GB_AemultB_01__islt_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -24965,6 +30166,44 @@ GrB_Info GB_AemultB__islt_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__islt_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__islt_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__islt_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -25042,11 +30281,7 @@ GrB_Info GB_Cdense_accumB__islt_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__islt_uint8
@@ -25063,11 +30298,7 @@ GrB_Info GB_AxD__islt_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__islt_uint8
@@ -25099,10 +30330,11 @@ GrB_Info GB_AaddB__islt_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__islt_uint8
+GrB_Info GB_AemultB_01__islt_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -25113,6 +30345,44 @@ GrB_Info GB_AemultB__islt_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__islt_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__islt_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__islt_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -25190,11 +30460,7 @@ GrB_Info GB_Cdense_accumB__islt_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__islt_uint16
@@ -25211,11 +30477,7 @@ GrB_Info GB_AxD__islt_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__islt_uint16
@@ -25247,10 +30509,11 @@ GrB_Info GB_AaddB__islt_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__islt_uint16
+GrB_Info GB_AemultB_01__islt_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -25261,6 +30524,44 @@ GrB_Info GB_AemultB__islt_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__islt_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__islt_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__islt_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -25338,11 +30639,7 @@ GrB_Info GB_Cdense_accumB__islt_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__islt_uint32
@@ -25359,11 +30656,7 @@ GrB_Info GB_AxD__islt_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__islt_uint32
@@ -25395,10 +30688,11 @@ GrB_Info GB_AaddB__islt_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__islt_uint32
+GrB_Info GB_AemultB_01__islt_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -25409,6 +30703,44 @@ GrB_Info GB_AemultB__islt_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__islt_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__islt_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__islt_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -25486,11 +30818,7 @@ GrB_Info GB_Cdense_accumB__islt_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__islt_uint64
@@ -25507,11 +30835,7 @@ GrB_Info GB_AxD__islt_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__islt_uint64
@@ -25543,10 +30867,11 @@ GrB_Info GB_AaddB__islt_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__islt_uint64
+GrB_Info GB_AemultB_01__islt_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -25557,6 +30882,44 @@ GrB_Info GB_AemultB__islt_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__islt_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__islt_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__islt_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -25634,11 +30997,7 @@ GrB_Info GB_Cdense_accumB__islt_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__islt_fp32
@@ -25655,11 +31014,7 @@ GrB_Info GB_AxD__islt_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__islt_fp32
@@ -25691,10 +31046,11 @@ GrB_Info GB_AaddB__islt_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__islt_fp32
+GrB_Info GB_AemultB_01__islt_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -25705,6 +31061,44 @@ GrB_Info GB_AemultB__islt_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__islt_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__islt_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__islt_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -25782,11 +31176,7 @@ GrB_Info GB_Cdense_accumB__islt_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__islt_fp64
@@ -25803,11 +31193,7 @@ GrB_Info GB_AxD__islt_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__islt_fp64
@@ -25839,10 +31225,11 @@ GrB_Info GB_AaddB__islt_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__islt_fp64
+GrB_Info GB_AemultB_01__islt_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -25853,6 +31240,44 @@ GrB_Info GB_AemultB__islt_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__islt_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__islt_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__islt_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -25930,11 +31355,7 @@ GrB_Info GB_Cdense_accumB__isge_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isge_int8
@@ -25951,11 +31372,7 @@ GrB_Info GB_AxD__isge_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isge_int8
@@ -25987,10 +31404,11 @@ GrB_Info GB_AaddB__isge_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isge_int8
+GrB_Info GB_AemultB_01__isge_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26001,6 +31419,44 @@ GrB_Info GB_AemultB__isge_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isge_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isge_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isge_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -26078,11 +31534,7 @@ GrB_Info GB_Cdense_accumB__isge_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isge_int16
@@ -26099,11 +31551,7 @@ GrB_Info GB_AxD__isge_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isge_int16
@@ -26135,10 +31583,11 @@ GrB_Info GB_AaddB__isge_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isge_int16
+GrB_Info GB_AemultB_01__isge_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26149,6 +31598,44 @@ GrB_Info GB_AemultB__isge_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isge_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isge_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isge_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -26226,11 +31713,7 @@ GrB_Info GB_Cdense_accumB__isge_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isge_int32
@@ -26247,11 +31730,7 @@ GrB_Info GB_AxD__isge_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isge_int32
@@ -26283,10 +31762,11 @@ GrB_Info GB_AaddB__isge_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isge_int32
+GrB_Info GB_AemultB_01__isge_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26297,6 +31777,44 @@ GrB_Info GB_AemultB__isge_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isge_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isge_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isge_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -26374,11 +31892,7 @@ GrB_Info GB_Cdense_accumB__isge_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isge_int64
@@ -26395,11 +31909,7 @@ GrB_Info GB_AxD__isge_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isge_int64
@@ -26431,10 +31941,11 @@ GrB_Info GB_AaddB__isge_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isge_int64
+GrB_Info GB_AemultB_01__isge_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26445,6 +31956,44 @@ GrB_Info GB_AemultB__isge_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isge_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isge_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isge_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -26522,11 +32071,7 @@ GrB_Info GB_Cdense_accumB__isge_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isge_uint8
@@ -26543,11 +32088,7 @@ GrB_Info GB_AxD__isge_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isge_uint8
@@ -26579,10 +32120,11 @@ GrB_Info GB_AaddB__isge_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isge_uint8
+GrB_Info GB_AemultB_01__isge_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26593,6 +32135,44 @@ GrB_Info GB_AemultB__isge_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isge_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isge_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isge_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -26670,11 +32250,7 @@ GrB_Info GB_Cdense_accumB__isge_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isge_uint16
@@ -26691,11 +32267,7 @@ GrB_Info GB_AxD__isge_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isge_uint16
@@ -26727,10 +32299,11 @@ GrB_Info GB_AaddB__isge_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isge_uint16
+GrB_Info GB_AemultB_01__isge_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26741,6 +32314,44 @@ GrB_Info GB_AemultB__isge_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isge_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isge_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isge_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -26818,11 +32429,7 @@ GrB_Info GB_Cdense_accumB__isge_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isge_uint32
@@ -26839,11 +32446,7 @@ GrB_Info GB_AxD__isge_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isge_uint32
@@ -26875,10 +32478,11 @@ GrB_Info GB_AaddB__isge_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isge_uint32
+GrB_Info GB_AemultB_01__isge_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -26889,6 +32493,44 @@ GrB_Info GB_AemultB__isge_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isge_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isge_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isge_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -26966,11 +32608,7 @@ GrB_Info GB_Cdense_accumB__isge_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isge_uint64
@@ -26987,11 +32625,7 @@ GrB_Info GB_AxD__isge_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isge_uint64
@@ -27023,10 +32657,11 @@ GrB_Info GB_AaddB__isge_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isge_uint64
+GrB_Info GB_AemultB_01__isge_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27037,6 +32672,44 @@ GrB_Info GB_AemultB__isge_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isge_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isge_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isge_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -27114,11 +32787,7 @@ GrB_Info GB_Cdense_accumB__isge_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isge_fp32
@@ -27135,11 +32804,7 @@ GrB_Info GB_AxD__isge_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isge_fp32
@@ -27171,10 +32836,11 @@ GrB_Info GB_AaddB__isge_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isge_fp32
+GrB_Info GB_AemultB_01__isge_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27185,6 +32851,44 @@ GrB_Info GB_AemultB__isge_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isge_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isge_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isge_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -27262,11 +32966,7 @@ GrB_Info GB_Cdense_accumB__isge_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isge_fp64
@@ -27283,11 +32983,7 @@ GrB_Info GB_AxD__isge_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isge_fp64
@@ -27319,10 +33015,11 @@ GrB_Info GB_AaddB__isge_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isge_fp64
+GrB_Info GB_AemultB_01__isge_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27333,6 +33030,44 @@ GrB_Info GB_AemultB__isge_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isge_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isge_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isge_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -27410,11 +33145,7 @@ GrB_Info GB_Cdense_accumB__isle_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isle_int8
@@ -27431,11 +33162,7 @@ GrB_Info GB_AxD__isle_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isle_int8
@@ -27467,10 +33194,11 @@ GrB_Info GB_AaddB__isle_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isle_int8
+GrB_Info GB_AemultB_01__isle_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27481,6 +33209,44 @@ GrB_Info GB_AemultB__isle_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isle_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isle_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isle_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -27558,11 +33324,7 @@ GrB_Info GB_Cdense_accumB__isle_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isle_int16
@@ -27579,11 +33341,7 @@ GrB_Info GB_AxD__isle_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isle_int16
@@ -27615,10 +33373,11 @@ GrB_Info GB_AaddB__isle_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isle_int16
+GrB_Info GB_AemultB_01__isle_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27629,6 +33388,44 @@ GrB_Info GB_AemultB__isle_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isle_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isle_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isle_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -27706,11 +33503,7 @@ GrB_Info GB_Cdense_accumB__isle_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isle_int32
@@ -27727,11 +33520,7 @@ GrB_Info GB_AxD__isle_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isle_int32
@@ -27763,10 +33552,11 @@ GrB_Info GB_AaddB__isle_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isle_int32
+GrB_Info GB_AemultB_01__isle_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27777,6 +33567,44 @@ GrB_Info GB_AemultB__isle_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isle_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isle_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isle_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -27854,11 +33682,7 @@ GrB_Info GB_Cdense_accumB__isle_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isle_int64
@@ -27875,11 +33699,7 @@ GrB_Info GB_AxD__isle_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isle_int64
@@ -27911,10 +33731,11 @@ GrB_Info GB_AaddB__isle_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isle_int64
+GrB_Info GB_AemultB_01__isle_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -27925,6 +33746,44 @@ GrB_Info GB_AemultB__isle_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isle_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isle_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isle_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -28002,11 +33861,7 @@ GrB_Info GB_Cdense_accumB__isle_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isle_uint8
@@ -28023,11 +33878,7 @@ GrB_Info GB_AxD__isle_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isle_uint8
@@ -28059,10 +33910,11 @@ GrB_Info GB_AaddB__isle_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isle_uint8
+GrB_Info GB_AemultB_01__isle_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28073,6 +33925,44 @@ GrB_Info GB_AemultB__isle_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isle_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isle_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isle_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -28150,11 +34040,7 @@ GrB_Info GB_Cdense_accumB__isle_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isle_uint16
@@ -28171,11 +34057,7 @@ GrB_Info GB_AxD__isle_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isle_uint16
@@ -28207,10 +34089,11 @@ GrB_Info GB_AaddB__isle_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isle_uint16
+GrB_Info GB_AemultB_01__isle_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28221,6 +34104,44 @@ GrB_Info GB_AemultB__isle_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isle_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isle_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isle_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -28298,11 +34219,7 @@ GrB_Info GB_Cdense_accumB__isle_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isle_uint32
@@ -28319,11 +34236,7 @@ GrB_Info GB_AxD__isle_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isle_uint32
@@ -28355,10 +34268,11 @@ GrB_Info GB_AaddB__isle_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isle_uint32
+GrB_Info GB_AemultB_01__isle_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28369,6 +34283,44 @@ GrB_Info GB_AemultB__isle_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isle_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isle_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isle_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -28446,11 +34398,7 @@ GrB_Info GB_Cdense_accumB__isle_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isle_uint64
@@ -28467,11 +34415,7 @@ GrB_Info GB_AxD__isle_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isle_uint64
@@ -28503,10 +34447,11 @@ GrB_Info GB_AaddB__isle_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isle_uint64
+GrB_Info GB_AemultB_01__isle_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28517,6 +34462,44 @@ GrB_Info GB_AemultB__isle_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isle_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isle_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isle_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -28594,11 +34577,7 @@ GrB_Info GB_Cdense_accumB__isle_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isle_fp32
@@ -28615,11 +34594,7 @@ GrB_Info GB_AxD__isle_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isle_fp32
@@ -28651,10 +34626,11 @@ GrB_Info GB_AaddB__isle_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isle_fp32
+GrB_Info GB_AemultB_01__isle_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28665,6 +34641,44 @@ GrB_Info GB_AemultB__isle_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isle_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isle_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isle_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -28742,11 +34756,7 @@ GrB_Info GB_Cdense_accumB__isle_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__isle_fp64
@@ -28763,11 +34773,7 @@ GrB_Info GB_AxD__isle_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__isle_fp64
@@ -28799,10 +34805,11 @@ GrB_Info GB_AaddB__isle_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__isle_fp64
+GrB_Info GB_AemultB_01__isle_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28813,6 +34820,44 @@ GrB_Info GB_AemultB__isle_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__isle_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__isle_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__isle_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -28890,11 +34935,7 @@ GrB_Info GB_Cdense_accumB__eq_bool
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_bool
@@ -28911,11 +34952,7 @@ GrB_Info GB_AxD__eq_bool
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__eq_bool
@@ -28947,10 +34984,11 @@ GrB_Info GB_AaddB__eq_bool
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_bool
+GrB_Info GB_AemultB_01__eq_bool
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -28961,6 +34999,44 @@ GrB_Info GB_AemultB__eq_bool
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_bool
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -29038,11 +35114,7 @@ GrB_Info GB_Cdense_accumB__eq_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_int8
@@ -29059,11 +35131,7 @@ GrB_Info GB_AxD__eq_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__eq_int8
@@ -29095,10 +35163,11 @@ GrB_Info GB_AaddB__eq_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_int8
+GrB_Info GB_AemultB_01__eq_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29109,6 +35178,44 @@ GrB_Info GB_AemultB__eq_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -29186,11 +35293,7 @@ GrB_Info GB_Cdense_accumB__eq_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_int16
@@ -29207,11 +35310,7 @@ GrB_Info GB_AxD__eq_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__eq_int16
@@ -29243,10 +35342,11 @@ GrB_Info GB_AaddB__eq_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_int16
+GrB_Info GB_AemultB_01__eq_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29257,6 +35357,44 @@ GrB_Info GB_AemultB__eq_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -29334,11 +35472,7 @@ GrB_Info GB_Cdense_accumB__eq_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_int32
@@ -29355,11 +35489,7 @@ GrB_Info GB_AxD__eq_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__eq_int32
@@ -29391,10 +35521,11 @@ GrB_Info GB_AaddB__eq_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_int32
+GrB_Info GB_AemultB_01__eq_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29405,6 +35536,44 @@ GrB_Info GB_AemultB__eq_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -29482,11 +35651,7 @@ GrB_Info GB_Cdense_accumB__eq_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_int64
@@ -29503,11 +35668,7 @@ GrB_Info GB_AxD__eq_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__eq_int64
@@ -29539,10 +35700,11 @@ GrB_Info GB_AaddB__eq_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_int64
+GrB_Info GB_AemultB_01__eq_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29553,6 +35715,44 @@ GrB_Info GB_AemultB__eq_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -29630,11 +35830,7 @@ GrB_Info GB_Cdense_accumB__eq_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_uint8
@@ -29651,11 +35847,7 @@ GrB_Info GB_AxD__eq_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__eq_uint8
@@ -29687,10 +35879,11 @@ GrB_Info GB_AaddB__eq_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_uint8
+GrB_Info GB_AemultB_01__eq_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29701,6 +35894,44 @@ GrB_Info GB_AemultB__eq_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -29778,11 +36009,7 @@ GrB_Info GB_Cdense_accumB__eq_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_uint16
@@ -29799,11 +36026,7 @@ GrB_Info GB_AxD__eq_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__eq_uint16
@@ -29835,10 +36058,11 @@ GrB_Info GB_AaddB__eq_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_uint16
+GrB_Info GB_AemultB_01__eq_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29849,6 +36073,44 @@ GrB_Info GB_AemultB__eq_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -29926,11 +36188,7 @@ GrB_Info GB_Cdense_accumB__eq_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_uint32
@@ -29947,11 +36205,7 @@ GrB_Info GB_AxD__eq_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__eq_uint32
@@ -29983,10 +36237,11 @@ GrB_Info GB_AaddB__eq_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_uint32
+GrB_Info GB_AemultB_01__eq_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -29997,6 +36252,44 @@ GrB_Info GB_AemultB__eq_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -30074,11 +36367,7 @@ GrB_Info GB_Cdense_accumB__eq_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_uint64
@@ -30095,11 +36384,7 @@ GrB_Info GB_AxD__eq_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__eq_uint64
@@ -30131,10 +36416,11 @@ GrB_Info GB_AaddB__eq_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_uint64
+GrB_Info GB_AemultB_01__eq_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -30145,6 +36431,44 @@ GrB_Info GB_AemultB__eq_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -30222,11 +36546,7 @@ GrB_Info GB_Cdense_accumB__eq_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_fp32
@@ -30243,11 +36563,7 @@ GrB_Info GB_AxD__eq_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__eq_fp32
@@ -30279,10 +36595,11 @@ GrB_Info GB_AaddB__eq_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_fp32
+GrB_Info GB_AemultB_01__eq_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -30293,6 +36610,44 @@ GrB_Info GB_AemultB__eq_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -30370,11 +36725,7 @@ GrB_Info GB_Cdense_accumB__eq_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_fp64
@@ -30391,11 +36742,7 @@ GrB_Info GB_AxD__eq_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__eq_fp64
@@ -30427,10 +36774,11 @@ GrB_Info GB_AaddB__eq_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_fp64
+GrB_Info GB_AemultB_01__eq_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -30441,6 +36789,44 @@ GrB_Info GB_AemultB__eq_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -30518,11 +36904,7 @@ GrB_Info GB_Cdense_accumB__eq_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_fc32
@@ -30539,11 +36921,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -30575,10 +36953,11 @@ GrB_Info GB_AaddB__eq_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_fc32
+GrB_Info GB_AemultB_01__eq_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -30589,6 +36968,44 @@ GrB_Info GB_AemultB__eq_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -30666,11 +37083,7 @@ GrB_Info GB_Cdense_accumB__eq_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__eq_fc64
@@ -30687,11 +37100,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -30723,10 +37132,11 @@ GrB_Info GB_AaddB__eq_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__eq_fc64
+GrB_Info GB_AemultB_01__eq_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -30737,6 +37147,44 @@ GrB_Info GB_AemultB__eq_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__eq_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__eq_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__eq_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -30814,11 +37262,7 @@ GrB_Info GB_Cdense_accumB__ne_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_int8
@@ -30835,11 +37279,7 @@ GrB_Info GB_AxD__ne_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ne_int8
@@ -30871,10 +37311,11 @@ GrB_Info GB_AaddB__ne_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_int8
+GrB_Info GB_AemultB_01__ne_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -30885,6 +37326,44 @@ GrB_Info GB_AemultB__ne_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -30962,11 +37441,7 @@ GrB_Info GB_Cdense_accumB__ne_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_int16
@@ -30983,11 +37458,7 @@ GrB_Info GB_AxD__ne_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ne_int16
@@ -31019,10 +37490,11 @@ GrB_Info GB_AaddB__ne_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_int16
+GrB_Info GB_AemultB_01__ne_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31033,6 +37505,44 @@ GrB_Info GB_AemultB__ne_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -31110,11 +37620,7 @@ GrB_Info GB_Cdense_accumB__ne_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_int32
@@ -31131,11 +37637,7 @@ GrB_Info GB_AxD__ne_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ne_int32
@@ -31167,10 +37669,11 @@ GrB_Info GB_AaddB__ne_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_int32
+GrB_Info GB_AemultB_01__ne_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31181,6 +37684,44 @@ GrB_Info GB_AemultB__ne_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -31258,11 +37799,7 @@ GrB_Info GB_Cdense_accumB__ne_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_int64
@@ -31279,11 +37816,7 @@ GrB_Info GB_AxD__ne_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ne_int64
@@ -31315,10 +37848,11 @@ GrB_Info GB_AaddB__ne_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_int64
+GrB_Info GB_AemultB_01__ne_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31329,6 +37863,44 @@ GrB_Info GB_AemultB__ne_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -31406,11 +37978,7 @@ GrB_Info GB_Cdense_accumB__ne_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_uint8
@@ -31427,11 +37995,7 @@ GrB_Info GB_AxD__ne_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ne_uint8
@@ -31463,10 +38027,11 @@ GrB_Info GB_AaddB__ne_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_uint8
+GrB_Info GB_AemultB_01__ne_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31477,6 +38042,44 @@ GrB_Info GB_AemultB__ne_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -31554,11 +38157,7 @@ GrB_Info GB_Cdense_accumB__ne_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_uint16
@@ -31575,11 +38174,7 @@ GrB_Info GB_AxD__ne_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ne_uint16
@@ -31611,10 +38206,11 @@ GrB_Info GB_AaddB__ne_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_uint16
+GrB_Info GB_AemultB_01__ne_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31625,6 +38221,44 @@ GrB_Info GB_AemultB__ne_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -31702,11 +38336,7 @@ GrB_Info GB_Cdense_accumB__ne_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_uint32
@@ -31723,11 +38353,7 @@ GrB_Info GB_AxD__ne_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ne_uint32
@@ -31759,10 +38385,11 @@ GrB_Info GB_AaddB__ne_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_uint32
+GrB_Info GB_AemultB_01__ne_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31773,6 +38400,44 @@ GrB_Info GB_AemultB__ne_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -31850,11 +38515,7 @@ GrB_Info GB_Cdense_accumB__ne_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_uint64
@@ -31871,11 +38532,7 @@ GrB_Info GB_AxD__ne_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ne_uint64
@@ -31907,10 +38564,11 @@ GrB_Info GB_AaddB__ne_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_uint64
+GrB_Info GB_AemultB_01__ne_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -31921,6 +38579,44 @@ GrB_Info GB_AemultB__ne_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -31998,11 +38694,7 @@ GrB_Info GB_Cdense_accumB__ne_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_fp32
@@ -32019,11 +38711,7 @@ GrB_Info GB_AxD__ne_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ne_fp32
@@ -32055,10 +38743,11 @@ GrB_Info GB_AaddB__ne_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_fp32
+GrB_Info GB_AemultB_01__ne_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -32069,6 +38758,44 @@ GrB_Info GB_AemultB__ne_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -32146,11 +38873,7 @@ GrB_Info GB_Cdense_accumB__ne_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_fp64
@@ -32167,11 +38890,7 @@ GrB_Info GB_AxD__ne_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ne_fp64
@@ -32203,10 +38922,11 @@ GrB_Info GB_AaddB__ne_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_fp64
+GrB_Info GB_AemultB_01__ne_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -32217,6 +38937,44 @@ GrB_Info GB_AemultB__ne_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -32294,11 +39052,7 @@ GrB_Info GB_Cdense_accumB__ne_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_fc32
@@ -32315,11 +39069,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -32351,10 +39101,11 @@ GrB_Info GB_AaddB__ne_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_fc32
+GrB_Info GB_AemultB_01__ne_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -32365,6 +39116,44 @@ GrB_Info GB_AemultB__ne_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -32442,11 +39231,7 @@ GrB_Info GB_Cdense_accumB__ne_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ne_fc64
@@ -32463,11 +39248,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -32499,10 +39280,11 @@ GrB_Info GB_AaddB__ne_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ne_fc64
+GrB_Info GB_AemultB_01__ne_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -32513,6 +39295,44 @@ GrB_Info GB_AemultB__ne_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ne_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ne_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ne_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -32590,11 +39410,7 @@ GrB_Info GB_Cdense_accumB__gt_bool
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__gt_bool
@@ -32611,11 +39427,7 @@ GrB_Info GB_AxD__gt_bool
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__gt_bool
@@ -32647,10 +39459,11 @@ GrB_Info GB_AaddB__gt_bool
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__gt_bool
+GrB_Info GB_AemultB_01__gt_bool
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -32661,6 +39474,44 @@ GrB_Info GB_AemultB__gt_bool
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__gt_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__gt_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__gt_bool
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -32738,11 +39589,7 @@ GrB_Info GB_Cdense_accumB__gt_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__gt_int8
@@ -32759,11 +39606,7 @@ GrB_Info GB_AxD__gt_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__gt_int8
@@ -32795,10 +39638,11 @@ GrB_Info GB_AaddB__gt_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__gt_int8
+GrB_Info GB_AemultB_01__gt_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -32809,6 +39653,44 @@ GrB_Info GB_AemultB__gt_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__gt_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__gt_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__gt_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -32886,11 +39768,7 @@ GrB_Info GB_Cdense_accumB__gt_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__gt_int16
@@ -32907,11 +39785,7 @@ GrB_Info GB_AxD__gt_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__gt_int16
@@ -32943,10 +39817,11 @@ GrB_Info GB_AaddB__gt_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__gt_int16
+GrB_Info GB_AemultB_01__gt_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -32957,6 +39832,44 @@ GrB_Info GB_AemultB__gt_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__gt_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__gt_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__gt_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -33034,11 +39947,7 @@ GrB_Info GB_Cdense_accumB__gt_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__gt_int32
@@ -33055,11 +39964,7 @@ GrB_Info GB_AxD__gt_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__gt_int32
@@ -33091,10 +39996,11 @@ GrB_Info GB_AaddB__gt_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__gt_int32
+GrB_Info GB_AemultB_01__gt_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33105,6 +40011,44 @@ GrB_Info GB_AemultB__gt_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__gt_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__gt_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__gt_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -33182,11 +40126,7 @@ GrB_Info GB_Cdense_accumB__gt_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__gt_int64
@@ -33203,11 +40143,7 @@ GrB_Info GB_AxD__gt_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__gt_int64
@@ -33239,10 +40175,11 @@ GrB_Info GB_AaddB__gt_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__gt_int64
+GrB_Info GB_AemultB_01__gt_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33253,6 +40190,44 @@ GrB_Info GB_AemultB__gt_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__gt_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__gt_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__gt_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -33330,11 +40305,7 @@ GrB_Info GB_Cdense_accumB__gt_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__gt_uint8
@@ -33351,11 +40322,7 @@ GrB_Info GB_AxD__gt_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__gt_uint8
@@ -33387,10 +40354,11 @@ GrB_Info GB_AaddB__gt_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__gt_uint8
+GrB_Info GB_AemultB_01__gt_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33401,6 +40369,44 @@ GrB_Info GB_AemultB__gt_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__gt_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__gt_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__gt_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -33478,11 +40484,7 @@ GrB_Info GB_Cdense_accumB__gt_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__gt_uint16
@@ -33499,11 +40501,7 @@ GrB_Info GB_AxD__gt_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__gt_uint16
@@ -33535,10 +40533,11 @@ GrB_Info GB_AaddB__gt_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__gt_uint16
+GrB_Info GB_AemultB_01__gt_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33549,6 +40548,44 @@ GrB_Info GB_AemultB__gt_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__gt_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__gt_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__gt_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -33626,11 +40663,7 @@ GrB_Info GB_Cdense_accumB__gt_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__gt_uint32
@@ -33647,11 +40680,7 @@ GrB_Info GB_AxD__gt_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__gt_uint32
@@ -33683,10 +40712,11 @@ GrB_Info GB_AaddB__gt_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__gt_uint32
+GrB_Info GB_AemultB_01__gt_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33697,6 +40727,44 @@ GrB_Info GB_AemultB__gt_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__gt_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__gt_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__gt_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -33774,11 +40842,7 @@ GrB_Info GB_Cdense_accumB__gt_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__gt_uint64
@@ -33795,11 +40859,7 @@ GrB_Info GB_AxD__gt_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__gt_uint64
@@ -33831,10 +40891,11 @@ GrB_Info GB_AaddB__gt_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__gt_uint64
+GrB_Info GB_AemultB_01__gt_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33845,6 +40906,44 @@ GrB_Info GB_AemultB__gt_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__gt_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__gt_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__gt_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -33922,11 +41021,7 @@ GrB_Info GB_Cdense_accumB__gt_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__gt_fp32
@@ -33943,11 +41038,7 @@ GrB_Info GB_AxD__gt_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__gt_fp32
@@ -33979,10 +41070,11 @@ GrB_Info GB_AaddB__gt_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__gt_fp32
+GrB_Info GB_AemultB_01__gt_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -33993,6 +41085,44 @@ GrB_Info GB_AemultB__gt_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__gt_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__gt_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__gt_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -34070,11 +41200,7 @@ GrB_Info GB_Cdense_accumB__gt_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__gt_fp64
@@ -34091,11 +41217,7 @@ GrB_Info GB_AxD__gt_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__gt_fp64
@@ -34127,10 +41249,11 @@ GrB_Info GB_AaddB__gt_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__gt_fp64
+GrB_Info GB_AemultB_01__gt_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -34141,6 +41264,44 @@ GrB_Info GB_AemultB__gt_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__gt_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__gt_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__gt_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -34218,11 +41379,7 @@ GrB_Info GB_Cdense_accumB__lt_bool
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lt_bool
@@ -34239,11 +41396,7 @@ GrB_Info GB_AxD__lt_bool
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lt_bool
@@ -34275,10 +41428,11 @@ GrB_Info GB_AaddB__lt_bool
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lt_bool
+GrB_Info GB_AemultB_01__lt_bool
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -34289,6 +41443,44 @@ GrB_Info GB_AemultB__lt_bool
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lt_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lt_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lt_bool
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -34366,11 +41558,7 @@ GrB_Info GB_Cdense_accumB__lt_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lt_int8
@@ -34387,11 +41575,7 @@ GrB_Info GB_AxD__lt_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lt_int8
@@ -34423,10 +41607,11 @@ GrB_Info GB_AaddB__lt_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lt_int8
+GrB_Info GB_AemultB_01__lt_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -34437,6 +41622,44 @@ GrB_Info GB_AemultB__lt_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lt_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lt_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lt_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -34514,11 +41737,7 @@ GrB_Info GB_Cdense_accumB__lt_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lt_int16
@@ -34535,11 +41754,7 @@ GrB_Info GB_AxD__lt_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lt_int16
@@ -34571,10 +41786,11 @@ GrB_Info GB_AaddB__lt_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lt_int16
+GrB_Info GB_AemultB_01__lt_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -34585,6 +41801,44 @@ GrB_Info GB_AemultB__lt_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lt_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lt_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lt_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -34662,11 +41916,7 @@ GrB_Info GB_Cdense_accumB__lt_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lt_int32
@@ -34683,11 +41933,7 @@ GrB_Info GB_AxD__lt_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lt_int32
@@ -34719,10 +41965,11 @@ GrB_Info GB_AaddB__lt_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lt_int32
+GrB_Info GB_AemultB_01__lt_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -34733,6 +41980,44 @@ GrB_Info GB_AemultB__lt_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lt_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lt_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lt_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -34810,11 +42095,7 @@ GrB_Info GB_Cdense_accumB__lt_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lt_int64
@@ -34831,11 +42112,7 @@ GrB_Info GB_AxD__lt_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lt_int64
@@ -34867,10 +42144,11 @@ GrB_Info GB_AaddB__lt_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lt_int64
+GrB_Info GB_AemultB_01__lt_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -34881,6 +42159,44 @@ GrB_Info GB_AemultB__lt_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lt_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lt_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lt_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -34958,11 +42274,7 @@ GrB_Info GB_Cdense_accumB__lt_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lt_uint8
@@ -34979,11 +42291,7 @@ GrB_Info GB_AxD__lt_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lt_uint8
@@ -35015,10 +42323,11 @@ GrB_Info GB_AaddB__lt_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lt_uint8
+GrB_Info GB_AemultB_01__lt_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -35029,6 +42338,44 @@ GrB_Info GB_AemultB__lt_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lt_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lt_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lt_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -35106,11 +42453,7 @@ GrB_Info GB_Cdense_accumB__lt_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lt_uint16
@@ -35127,11 +42470,7 @@ GrB_Info GB_AxD__lt_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lt_uint16
@@ -35163,10 +42502,11 @@ GrB_Info GB_AaddB__lt_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lt_uint16
+GrB_Info GB_AemultB_01__lt_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -35177,6 +42517,44 @@ GrB_Info GB_AemultB__lt_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lt_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lt_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lt_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -35254,11 +42632,7 @@ GrB_Info GB_Cdense_accumB__lt_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lt_uint32
@@ -35275,11 +42649,7 @@ GrB_Info GB_AxD__lt_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lt_uint32
@@ -35311,10 +42681,11 @@ GrB_Info GB_AaddB__lt_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lt_uint32
+GrB_Info GB_AemultB_01__lt_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -35325,6 +42696,44 @@ GrB_Info GB_AemultB__lt_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lt_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lt_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lt_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -35402,11 +42811,7 @@ GrB_Info GB_Cdense_accumB__lt_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lt_uint64
@@ -35423,11 +42828,7 @@ GrB_Info GB_AxD__lt_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lt_uint64
@@ -35459,10 +42860,11 @@ GrB_Info GB_AaddB__lt_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lt_uint64
+GrB_Info GB_AemultB_01__lt_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -35473,6 +42875,44 @@ GrB_Info GB_AemultB__lt_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lt_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lt_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lt_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -35550,11 +42990,7 @@ GrB_Info GB_Cdense_accumB__lt_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lt_fp32
@@ -35571,11 +43007,7 @@ GrB_Info GB_AxD__lt_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lt_fp32
@@ -35607,10 +43039,11 @@ GrB_Info GB_AaddB__lt_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lt_fp32
+GrB_Info GB_AemultB_01__lt_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -35621,6 +43054,44 @@ GrB_Info GB_AemultB__lt_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lt_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lt_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lt_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -35698,11 +43169,7 @@ GrB_Info GB_Cdense_accumB__lt_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lt_fp64
@@ -35719,11 +43186,7 @@ GrB_Info GB_AxD__lt_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lt_fp64
@@ -35755,10 +43218,11 @@ GrB_Info GB_AaddB__lt_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lt_fp64
+GrB_Info GB_AemultB_01__lt_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -35769,6 +43233,44 @@ GrB_Info GB_AemultB__lt_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lt_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lt_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lt_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -35846,11 +43348,7 @@ GrB_Info GB_Cdense_accumB__ge_bool
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ge_bool
@@ -35867,11 +43365,7 @@ GrB_Info GB_AxD__ge_bool
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ge_bool
@@ -35903,10 +43397,11 @@ GrB_Info GB_AaddB__ge_bool
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ge_bool
+GrB_Info GB_AemultB_01__ge_bool
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -35917,6 +43412,44 @@ GrB_Info GB_AemultB__ge_bool
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ge_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ge_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ge_bool
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -35994,11 +43527,7 @@ GrB_Info GB_Cdense_accumB__ge_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ge_int8
@@ -36015,11 +43544,7 @@ GrB_Info GB_AxD__ge_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ge_int8
@@ -36051,10 +43576,11 @@ GrB_Info GB_AaddB__ge_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ge_int8
+GrB_Info GB_AemultB_01__ge_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36065,6 +43591,44 @@ GrB_Info GB_AemultB__ge_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ge_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ge_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ge_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -36142,11 +43706,7 @@ GrB_Info GB_Cdense_accumB__ge_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ge_int16
@@ -36163,11 +43723,7 @@ GrB_Info GB_AxD__ge_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ge_int16
@@ -36199,10 +43755,11 @@ GrB_Info GB_AaddB__ge_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ge_int16
+GrB_Info GB_AemultB_01__ge_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36213,6 +43770,44 @@ GrB_Info GB_AemultB__ge_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ge_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ge_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ge_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -36290,11 +43885,7 @@ GrB_Info GB_Cdense_accumB__ge_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ge_int32
@@ -36311,11 +43902,7 @@ GrB_Info GB_AxD__ge_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ge_int32
@@ -36347,10 +43934,11 @@ GrB_Info GB_AaddB__ge_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ge_int32
+GrB_Info GB_AemultB_01__ge_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36361,6 +43949,44 @@ GrB_Info GB_AemultB__ge_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ge_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ge_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ge_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -36438,11 +44064,7 @@ GrB_Info GB_Cdense_accumB__ge_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ge_int64
@@ -36459,11 +44081,7 @@ GrB_Info GB_AxD__ge_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ge_int64
@@ -36495,10 +44113,11 @@ GrB_Info GB_AaddB__ge_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ge_int64
+GrB_Info GB_AemultB_01__ge_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36509,6 +44128,44 @@ GrB_Info GB_AemultB__ge_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ge_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ge_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ge_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -36586,11 +44243,7 @@ GrB_Info GB_Cdense_accumB__ge_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ge_uint8
@@ -36607,11 +44260,7 @@ GrB_Info GB_AxD__ge_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ge_uint8
@@ -36643,10 +44292,11 @@ GrB_Info GB_AaddB__ge_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ge_uint8
+GrB_Info GB_AemultB_01__ge_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36657,6 +44307,44 @@ GrB_Info GB_AemultB__ge_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ge_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ge_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ge_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -36734,11 +44422,7 @@ GrB_Info GB_Cdense_accumB__ge_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ge_uint16
@@ -36755,11 +44439,7 @@ GrB_Info GB_AxD__ge_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ge_uint16
@@ -36791,10 +44471,11 @@ GrB_Info GB_AaddB__ge_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ge_uint16
+GrB_Info GB_AemultB_01__ge_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36805,6 +44486,44 @@ GrB_Info GB_AemultB__ge_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ge_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ge_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ge_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -36882,11 +44601,7 @@ GrB_Info GB_Cdense_accumB__ge_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ge_uint32
@@ -36903,11 +44618,7 @@ GrB_Info GB_AxD__ge_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ge_uint32
@@ -36939,10 +44650,11 @@ GrB_Info GB_AaddB__ge_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ge_uint32
+GrB_Info GB_AemultB_01__ge_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -36953,6 +44665,44 @@ GrB_Info GB_AemultB__ge_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ge_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ge_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ge_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -37030,11 +44780,7 @@ GrB_Info GB_Cdense_accumB__ge_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ge_uint64
@@ -37051,11 +44797,7 @@ GrB_Info GB_AxD__ge_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ge_uint64
@@ -37087,10 +44829,11 @@ GrB_Info GB_AaddB__ge_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ge_uint64
+GrB_Info GB_AemultB_01__ge_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37101,6 +44844,44 @@ GrB_Info GB_AemultB__ge_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ge_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ge_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ge_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -37178,11 +44959,7 @@ GrB_Info GB_Cdense_accumB__ge_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ge_fp32
@@ -37199,11 +44976,7 @@ GrB_Info GB_AxD__ge_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ge_fp32
@@ -37235,10 +45008,11 @@ GrB_Info GB_AaddB__ge_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ge_fp32
+GrB_Info GB_AemultB_01__ge_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37249,6 +45023,44 @@ GrB_Info GB_AemultB__ge_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ge_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ge_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ge_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -37326,11 +45138,7 @@ GrB_Info GB_Cdense_accumB__ge_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ge_fp64
@@ -37347,11 +45155,7 @@ GrB_Info GB_AxD__ge_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__ge_fp64
@@ -37383,10 +45187,11 @@ GrB_Info GB_AaddB__ge_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ge_fp64
+GrB_Info GB_AemultB_01__ge_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37397,6 +45202,44 @@ GrB_Info GB_AemultB__ge_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ge_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ge_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ge_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -37474,11 +45317,7 @@ GrB_Info GB_Cdense_accumB__le_bool
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__le_bool
@@ -37495,11 +45334,7 @@ GrB_Info GB_AxD__le_bool
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__le_bool
@@ -37531,10 +45366,11 @@ GrB_Info GB_AaddB__le_bool
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__le_bool
+GrB_Info GB_AemultB_01__le_bool
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37545,6 +45381,44 @@ GrB_Info GB_AemultB__le_bool
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__le_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__le_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__le_bool
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -37622,11 +45496,7 @@ GrB_Info GB_Cdense_accumB__le_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__le_int8
@@ -37643,11 +45513,7 @@ GrB_Info GB_AxD__le_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__le_int8
@@ -37679,10 +45545,11 @@ GrB_Info GB_AaddB__le_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__le_int8
+GrB_Info GB_AemultB_01__le_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37693,6 +45560,44 @@ GrB_Info GB_AemultB__le_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__le_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__le_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__le_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -37770,11 +45675,7 @@ GrB_Info GB_Cdense_accumB__le_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__le_int16
@@ -37791,11 +45692,7 @@ GrB_Info GB_AxD__le_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__le_int16
@@ -37827,10 +45724,11 @@ GrB_Info GB_AaddB__le_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__le_int16
+GrB_Info GB_AemultB_01__le_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37841,6 +45739,44 @@ GrB_Info GB_AemultB__le_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__le_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__le_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__le_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -37918,11 +45854,7 @@ GrB_Info GB_Cdense_accumB__le_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__le_int32
@@ -37939,11 +45871,7 @@ GrB_Info GB_AxD__le_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__le_int32
@@ -37975,10 +45903,11 @@ GrB_Info GB_AaddB__le_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__le_int32
+GrB_Info GB_AemultB_01__le_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -37989,6 +45918,44 @@ GrB_Info GB_AemultB__le_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__le_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__le_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__le_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -38066,11 +46033,7 @@ GrB_Info GB_Cdense_accumB__le_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__le_int64
@@ -38087,11 +46050,7 @@ GrB_Info GB_AxD__le_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__le_int64
@@ -38123,10 +46082,11 @@ GrB_Info GB_AaddB__le_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__le_int64
+GrB_Info GB_AemultB_01__le_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -38137,6 +46097,44 @@ GrB_Info GB_AemultB__le_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__le_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__le_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__le_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -38214,11 +46212,7 @@ GrB_Info GB_Cdense_accumB__le_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__le_uint8
@@ -38235,11 +46229,7 @@ GrB_Info GB_AxD__le_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__le_uint8
@@ -38271,10 +46261,11 @@ GrB_Info GB_AaddB__le_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__le_uint8
+GrB_Info GB_AemultB_01__le_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -38285,6 +46276,44 @@ GrB_Info GB_AemultB__le_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__le_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__le_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__le_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -38362,11 +46391,7 @@ GrB_Info GB_Cdense_accumB__le_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__le_uint16
@@ -38383,11 +46408,7 @@ GrB_Info GB_AxD__le_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__le_uint16
@@ -38419,10 +46440,11 @@ GrB_Info GB_AaddB__le_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__le_uint16
+GrB_Info GB_AemultB_01__le_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -38433,6 +46455,44 @@ GrB_Info GB_AemultB__le_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__le_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__le_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__le_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -38510,11 +46570,7 @@ GrB_Info GB_Cdense_accumB__le_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__le_uint32
@@ -38531,11 +46587,7 @@ GrB_Info GB_AxD__le_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__le_uint32
@@ -38567,10 +46619,11 @@ GrB_Info GB_AaddB__le_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__le_uint32
+GrB_Info GB_AemultB_01__le_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -38581,6 +46634,44 @@ GrB_Info GB_AemultB__le_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__le_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__le_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__le_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -38658,11 +46749,7 @@ GrB_Info GB_Cdense_accumB__le_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__le_uint64
@@ -38679,11 +46766,7 @@ GrB_Info GB_AxD__le_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__le_uint64
@@ -38715,10 +46798,11 @@ GrB_Info GB_AaddB__le_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__le_uint64
+GrB_Info GB_AemultB_01__le_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -38729,6 +46813,44 @@ GrB_Info GB_AemultB__le_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__le_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__le_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__le_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -38806,11 +46928,7 @@ GrB_Info GB_Cdense_accumB__le_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__le_fp32
@@ -38827,11 +46945,7 @@ GrB_Info GB_AxD__le_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__le_fp32
@@ -38863,10 +46977,11 @@ GrB_Info GB_AaddB__le_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__le_fp32
+GrB_Info GB_AemultB_01__le_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -38877,6 +46992,44 @@ GrB_Info GB_AemultB__le_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__le_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__le_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__le_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -38954,11 +47107,7 @@ GrB_Info GB_Cdense_accumB__le_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__le_fp64
@@ -38975,11 +47124,7 @@ GrB_Info GB_AxD__le_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__le_fp64
@@ -39011,10 +47156,11 @@ GrB_Info GB_AaddB__le_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__le_fp64
+GrB_Info GB_AemultB_01__le_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39025,6 +47171,44 @@ GrB_Info GB_AemultB__le_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__le_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__le_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__le_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -39102,11 +47286,7 @@ GrB_Info GB_Cdense_accumB__lor_bool
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lor_bool
@@ -39123,11 +47303,7 @@ GrB_Info GB_AxD__lor_bool
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lor_bool
@@ -39159,10 +47335,11 @@ GrB_Info GB_AaddB__lor_bool
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lor_bool
+GrB_Info GB_AemultB_01__lor_bool
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39173,6 +47350,44 @@ GrB_Info GB_AemultB__lor_bool
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lor_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lor_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lor_bool
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -39250,11 +47465,7 @@ GrB_Info GB_Cdense_accumB__lor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lor_int8
@@ -39271,11 +47482,7 @@ GrB_Info GB_AxD__lor_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lor_int8
@@ -39307,10 +47514,11 @@ GrB_Info GB_AaddB__lor_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lor_int8
+GrB_Info GB_AemultB_01__lor_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39321,6 +47529,44 @@ GrB_Info GB_AemultB__lor_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lor_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lor_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lor_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -39398,11 +47644,7 @@ GrB_Info GB_Cdense_accumB__lor_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lor_int16
@@ -39419,11 +47661,7 @@ GrB_Info GB_AxD__lor_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lor_int16
@@ -39455,10 +47693,11 @@ GrB_Info GB_AaddB__lor_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lor_int16
+GrB_Info GB_AemultB_01__lor_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39469,6 +47708,44 @@ GrB_Info GB_AemultB__lor_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lor_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lor_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lor_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -39546,11 +47823,7 @@ GrB_Info GB_Cdense_accumB__lor_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lor_int32
@@ -39567,11 +47840,7 @@ GrB_Info GB_AxD__lor_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lor_int32
@@ -39603,10 +47872,11 @@ GrB_Info GB_AaddB__lor_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lor_int32
+GrB_Info GB_AemultB_01__lor_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39617,6 +47887,44 @@ GrB_Info GB_AemultB__lor_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lor_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lor_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lor_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -39694,11 +48002,7 @@ GrB_Info GB_Cdense_accumB__lor_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lor_int64
@@ -39715,11 +48019,7 @@ GrB_Info GB_AxD__lor_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lor_int64
@@ -39751,10 +48051,11 @@ GrB_Info GB_AaddB__lor_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lor_int64
+GrB_Info GB_AemultB_01__lor_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39765,6 +48066,44 @@ GrB_Info GB_AemultB__lor_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lor_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lor_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lor_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -39842,11 +48181,7 @@ GrB_Info GB_Cdense_accumB__lor_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lor_uint8
@@ -39863,11 +48198,7 @@ GrB_Info GB_AxD__lor_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lor_uint8
@@ -39899,10 +48230,11 @@ GrB_Info GB_AaddB__lor_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lor_uint8
+GrB_Info GB_AemultB_01__lor_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -39913,6 +48245,44 @@ GrB_Info GB_AemultB__lor_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lor_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lor_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lor_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -39990,11 +48360,7 @@ GrB_Info GB_Cdense_accumB__lor_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lor_uint16
@@ -40011,11 +48377,7 @@ GrB_Info GB_AxD__lor_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lor_uint16
@@ -40047,10 +48409,11 @@ GrB_Info GB_AaddB__lor_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lor_uint16
+GrB_Info GB_AemultB_01__lor_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40061,6 +48424,44 @@ GrB_Info GB_AemultB__lor_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lor_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lor_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lor_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -40138,11 +48539,7 @@ GrB_Info GB_Cdense_accumB__lor_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lor_uint32
@@ -40159,11 +48556,7 @@ GrB_Info GB_AxD__lor_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lor_uint32
@@ -40195,10 +48588,11 @@ GrB_Info GB_AaddB__lor_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lor_uint32
+GrB_Info GB_AemultB_01__lor_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40209,6 +48603,44 @@ GrB_Info GB_AemultB__lor_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lor_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lor_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lor_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -40286,11 +48718,7 @@ GrB_Info GB_Cdense_accumB__lor_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lor_uint64
@@ -40307,11 +48735,7 @@ GrB_Info GB_AxD__lor_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lor_uint64
@@ -40343,10 +48767,11 @@ GrB_Info GB_AaddB__lor_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lor_uint64
+GrB_Info GB_AemultB_01__lor_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40357,6 +48782,44 @@ GrB_Info GB_AemultB__lor_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lor_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lor_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lor_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -40434,11 +48897,7 @@ GrB_Info GB_Cdense_accumB__lor_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lor_fp32
@@ -40455,11 +48914,7 @@ GrB_Info GB_AxD__lor_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lor_fp32
@@ -40491,10 +48946,11 @@ GrB_Info GB_AaddB__lor_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lor_fp32
+GrB_Info GB_AemultB_01__lor_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40505,6 +48961,44 @@ GrB_Info GB_AemultB__lor_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lor_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lor_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lor_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -40582,11 +49076,7 @@ GrB_Info GB_Cdense_accumB__lor_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lor_fp64
@@ -40603,11 +49093,7 @@ GrB_Info GB_AxD__lor_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lor_fp64
@@ -40639,10 +49125,11 @@ GrB_Info GB_AaddB__lor_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lor_fp64
+GrB_Info GB_AemultB_01__lor_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40653,6 +49140,44 @@ GrB_Info GB_AemultB__lor_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lor_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lor_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lor_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -40730,11 +49255,7 @@ GrB_Info GB_Cdense_accumB__land_bool
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__land_bool
@@ -40751,11 +49272,7 @@ GrB_Info GB_AxD__land_bool
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__land_bool
@@ -40787,10 +49304,11 @@ GrB_Info GB_AaddB__land_bool
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__land_bool
+GrB_Info GB_AemultB_01__land_bool
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40801,6 +49319,44 @@ GrB_Info GB_AemultB__land_bool
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__land_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__land_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__land_bool
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -40878,11 +49434,7 @@ GrB_Info GB_Cdense_accumB__land_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__land_int8
@@ -40899,11 +49451,7 @@ GrB_Info GB_AxD__land_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__land_int8
@@ -40935,10 +49483,11 @@ GrB_Info GB_AaddB__land_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__land_int8
+GrB_Info GB_AemultB_01__land_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -40949,6 +49498,44 @@ GrB_Info GB_AemultB__land_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__land_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__land_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__land_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -41026,11 +49613,7 @@ GrB_Info GB_Cdense_accumB__land_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__land_int16
@@ -41047,11 +49630,7 @@ GrB_Info GB_AxD__land_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__land_int16
@@ -41083,10 +49662,11 @@ GrB_Info GB_AaddB__land_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__land_int16
+GrB_Info GB_AemultB_01__land_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41097,6 +49677,44 @@ GrB_Info GB_AemultB__land_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__land_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__land_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__land_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -41174,11 +49792,7 @@ GrB_Info GB_Cdense_accumB__land_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__land_int32
@@ -41195,11 +49809,7 @@ GrB_Info GB_AxD__land_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__land_int32
@@ -41231,10 +49841,11 @@ GrB_Info GB_AaddB__land_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__land_int32
+GrB_Info GB_AemultB_01__land_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41245,6 +49856,44 @@ GrB_Info GB_AemultB__land_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__land_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__land_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__land_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -41322,11 +49971,7 @@ GrB_Info GB_Cdense_accumB__land_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__land_int64
@@ -41343,11 +49988,7 @@ GrB_Info GB_AxD__land_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__land_int64
@@ -41379,10 +50020,11 @@ GrB_Info GB_AaddB__land_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__land_int64
+GrB_Info GB_AemultB_01__land_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41393,6 +50035,44 @@ GrB_Info GB_AemultB__land_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__land_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__land_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__land_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -41470,11 +50150,7 @@ GrB_Info GB_Cdense_accumB__land_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__land_uint8
@@ -41491,11 +50167,7 @@ GrB_Info GB_AxD__land_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__land_uint8
@@ -41527,10 +50199,11 @@ GrB_Info GB_AaddB__land_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__land_uint8
+GrB_Info GB_AemultB_01__land_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41541,6 +50214,44 @@ GrB_Info GB_AemultB__land_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__land_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__land_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__land_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -41618,11 +50329,7 @@ GrB_Info GB_Cdense_accumB__land_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__land_uint16
@@ -41639,11 +50346,7 @@ GrB_Info GB_AxD__land_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__land_uint16
@@ -41675,10 +50378,11 @@ GrB_Info GB_AaddB__land_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__land_uint16
+GrB_Info GB_AemultB_01__land_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41689,6 +50393,44 @@ GrB_Info GB_AemultB__land_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__land_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__land_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__land_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -41766,11 +50508,7 @@ GrB_Info GB_Cdense_accumB__land_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__land_uint32
@@ -41787,11 +50525,7 @@ GrB_Info GB_AxD__land_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__land_uint32
@@ -41823,10 +50557,11 @@ GrB_Info GB_AaddB__land_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__land_uint32
+GrB_Info GB_AemultB_01__land_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41837,6 +50572,44 @@ GrB_Info GB_AemultB__land_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__land_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__land_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__land_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -41914,11 +50687,7 @@ GrB_Info GB_Cdense_accumB__land_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__land_uint64
@@ -41935,11 +50704,7 @@ GrB_Info GB_AxD__land_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__land_uint64
@@ -41971,10 +50736,11 @@ GrB_Info GB_AaddB__land_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__land_uint64
+GrB_Info GB_AemultB_01__land_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -41985,6 +50751,44 @@ GrB_Info GB_AemultB__land_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__land_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__land_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__land_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -42062,11 +50866,7 @@ GrB_Info GB_Cdense_accumB__land_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__land_fp32
@@ -42083,11 +50883,7 @@ GrB_Info GB_AxD__land_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__land_fp32
@@ -42119,10 +50915,11 @@ GrB_Info GB_AaddB__land_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__land_fp32
+GrB_Info GB_AemultB_01__land_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -42133,6 +50930,44 @@ GrB_Info GB_AemultB__land_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__land_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__land_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__land_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -42210,11 +51045,7 @@ GrB_Info GB_Cdense_accumB__land_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__land_fp64
@@ -42231,11 +51062,7 @@ GrB_Info GB_AxD__land_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__land_fp64
@@ -42267,10 +51094,11 @@ GrB_Info GB_AaddB__land_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__land_fp64
+GrB_Info GB_AemultB_01__land_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -42281,6 +51109,44 @@ GrB_Info GB_AemultB__land_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__land_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__land_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__land_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -42358,11 +51224,7 @@ GrB_Info GB_Cdense_accumB__lxor_bool
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lxor_bool
@@ -42379,11 +51241,7 @@ GrB_Info GB_AxD__lxor_bool
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lxor_bool
@@ -42415,10 +51273,11 @@ GrB_Info GB_AaddB__lxor_bool
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lxor_bool
+GrB_Info GB_AemultB_01__lxor_bool
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -42429,6 +51288,44 @@ GrB_Info GB_AemultB__lxor_bool
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lxor_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lxor_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lxor_bool
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -42506,11 +51403,7 @@ GrB_Info GB_Cdense_accumB__lxor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lxor_int8
@@ -42527,11 +51420,7 @@ GrB_Info GB_AxD__lxor_int8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lxor_int8
@@ -42563,10 +51452,11 @@ GrB_Info GB_AaddB__lxor_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lxor_int8
+GrB_Info GB_AemultB_01__lxor_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -42577,6 +51467,44 @@ GrB_Info GB_AemultB__lxor_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lxor_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lxor_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lxor_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -42654,11 +51582,7 @@ GrB_Info GB_Cdense_accumB__lxor_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lxor_int16
@@ -42675,11 +51599,7 @@ GrB_Info GB_AxD__lxor_int16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lxor_int16
@@ -42711,10 +51631,11 @@ GrB_Info GB_AaddB__lxor_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lxor_int16
+GrB_Info GB_AemultB_01__lxor_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -42725,6 +51646,44 @@ GrB_Info GB_AemultB__lxor_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lxor_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lxor_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lxor_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -42802,11 +51761,7 @@ GrB_Info GB_Cdense_accumB__lxor_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lxor_int32
@@ -42823,11 +51778,7 @@ GrB_Info GB_AxD__lxor_int32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lxor_int32
@@ -42859,10 +51810,11 @@ GrB_Info GB_AaddB__lxor_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lxor_int32
+GrB_Info GB_AemultB_01__lxor_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -42873,6 +51825,44 @@ GrB_Info GB_AemultB__lxor_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lxor_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lxor_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lxor_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -42950,11 +51940,7 @@ GrB_Info GB_Cdense_accumB__lxor_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lxor_int64
@@ -42971,11 +51957,7 @@ GrB_Info GB_AxD__lxor_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lxor_int64
@@ -43007,10 +51989,11 @@ GrB_Info GB_AaddB__lxor_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lxor_int64
+GrB_Info GB_AemultB_01__lxor_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43021,6 +52004,44 @@ GrB_Info GB_AemultB__lxor_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lxor_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lxor_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lxor_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -43098,11 +52119,7 @@ GrB_Info GB_Cdense_accumB__lxor_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lxor_uint8
@@ -43119,11 +52136,7 @@ GrB_Info GB_AxD__lxor_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lxor_uint8
@@ -43155,10 +52168,11 @@ GrB_Info GB_AaddB__lxor_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lxor_uint8
+GrB_Info GB_AemultB_01__lxor_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43169,6 +52183,44 @@ GrB_Info GB_AemultB__lxor_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lxor_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lxor_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lxor_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -43246,11 +52298,7 @@ GrB_Info GB_Cdense_accumB__lxor_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lxor_uint16
@@ -43267,11 +52315,7 @@ GrB_Info GB_AxD__lxor_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lxor_uint16
@@ -43303,10 +52347,11 @@ GrB_Info GB_AaddB__lxor_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lxor_uint16
+GrB_Info GB_AemultB_01__lxor_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43317,6 +52362,44 @@ GrB_Info GB_AemultB__lxor_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lxor_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lxor_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lxor_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -43394,11 +52477,7 @@ GrB_Info GB_Cdense_accumB__lxor_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lxor_uint32
@@ -43415,11 +52494,7 @@ GrB_Info GB_AxD__lxor_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lxor_uint32
@@ -43451,10 +52526,11 @@ GrB_Info GB_AaddB__lxor_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lxor_uint32
+GrB_Info GB_AemultB_01__lxor_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43465,6 +52541,44 @@ GrB_Info GB_AemultB__lxor_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lxor_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lxor_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lxor_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -43542,11 +52656,7 @@ GrB_Info GB_Cdense_accumB__lxor_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lxor_uint64
@@ -43563,11 +52673,7 @@ GrB_Info GB_AxD__lxor_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lxor_uint64
@@ -43599,10 +52705,11 @@ GrB_Info GB_AaddB__lxor_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lxor_uint64
+GrB_Info GB_AemultB_01__lxor_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43613,6 +52720,44 @@ GrB_Info GB_AemultB__lxor_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lxor_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lxor_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lxor_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -43690,11 +52835,7 @@ GrB_Info GB_Cdense_accumB__lxor_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lxor_fp32
@@ -43711,11 +52852,7 @@ GrB_Info GB_AxD__lxor_fp32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lxor_fp32
@@ -43747,10 +52884,11 @@ GrB_Info GB_AaddB__lxor_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lxor_fp32
+GrB_Info GB_AemultB_01__lxor_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43761,6 +52899,44 @@ GrB_Info GB_AemultB__lxor_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lxor_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lxor_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lxor_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -43838,11 +53014,7 @@ GrB_Info GB_Cdense_accumB__lxor_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__lxor_fp64
@@ -43859,11 +53031,7 @@ GrB_Info GB_AxD__lxor_fp64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__lxor_fp64
@@ -43895,10 +53063,11 @@ GrB_Info GB_AaddB__lxor_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__lxor_fp64
+GrB_Info GB_AemultB_01__lxor_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -43909,6 +53078,44 @@ GrB_Info GB_AemultB__lxor_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__lxor_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__lxor_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__lxor_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -43986,11 +53193,7 @@ GrB_Info GB_Cdense_accumB__atan2_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__atan2_fp32
@@ -44007,11 +53210,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -44043,10 +53242,11 @@ GrB_Info GB_AaddB__atan2_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__atan2_fp32
+GrB_Info GB_AemultB_01__atan2_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -44057,6 +53257,44 @@ GrB_Info GB_AemultB__atan2_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__atan2_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__atan2_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__atan2_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -44134,11 +53372,7 @@ GrB_Info GB_Cdense_accumB__atan2_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__atan2_fp64
@@ -44155,11 +53389,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -44191,10 +53421,11 @@ GrB_Info GB_AaddB__atan2_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__atan2_fp64
+GrB_Info GB_AemultB_01__atan2_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -44205,6 +53436,44 @@ GrB_Info GB_AemultB__atan2_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__atan2_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__atan2_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__atan2_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -44282,11 +53551,7 @@ GrB_Info GB_Cdense_accumB__hypot_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__hypot_fp32
@@ -44303,11 +53568,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -44339,10 +53600,11 @@ GrB_Info GB_AaddB__hypot_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__hypot_fp32
+GrB_Info GB_AemultB_01__hypot_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -44353,6 +53615,44 @@ GrB_Info GB_AemultB__hypot_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__hypot_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__hypot_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__hypot_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -44430,11 +53730,7 @@ GrB_Info GB_Cdense_accumB__hypot_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__hypot_fp64
@@ -44451,11 +53747,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -44487,10 +53779,11 @@ GrB_Info GB_AaddB__hypot_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__hypot_fp64
+GrB_Info GB_AemultB_01__hypot_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -44501,6 +53794,44 @@ GrB_Info GB_AemultB__hypot_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__hypot_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__hypot_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__hypot_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -44578,11 +53909,7 @@ GrB_Info GB_Cdense_accumB__fmod_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__fmod_fp32
@@ -44599,11 +53926,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -44635,10 +53958,11 @@ GrB_Info GB_AaddB__fmod_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__fmod_fp32
+GrB_Info GB_AemultB_01__fmod_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -44649,6 +53973,44 @@ GrB_Info GB_AemultB__fmod_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__fmod_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__fmod_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__fmod_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -44726,11 +54088,7 @@ GrB_Info GB_Cdense_accumB__fmod_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__fmod_fp64
@@ -44747,11 +54105,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -44783,10 +54137,11 @@ GrB_Info GB_AaddB__fmod_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__fmod_fp64
+GrB_Info GB_AemultB_01__fmod_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -44797,6 +54152,44 @@ GrB_Info GB_AemultB__fmod_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__fmod_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__fmod_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__fmod_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -44874,11 +54267,7 @@ GrB_Info GB_Cdense_accumB__remainder_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__remainder_fp32
@@ -44895,11 +54284,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -44931,10 +54316,11 @@ GrB_Info GB_AaddB__remainder_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__remainder_fp32
+GrB_Info GB_AemultB_01__remainder_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -44945,6 +54331,44 @@ GrB_Info GB_AemultB__remainder_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__remainder_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__remainder_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__remainder_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -45022,11 +54446,7 @@ GrB_Info GB_Cdense_accumB__remainder_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__remainder_fp64
@@ -45043,11 +54463,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -45079,10 +54495,11 @@ GrB_Info GB_AaddB__remainder_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__remainder_fp64
+GrB_Info GB_AemultB_01__remainder_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45093,6 +54510,44 @@ GrB_Info GB_AemultB__remainder_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__remainder_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__remainder_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__remainder_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -45170,11 +54625,7 @@ GrB_Info GB_Cdense_accumB__copysign_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__copysign_fp32
@@ -45191,11 +54642,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -45227,10 +54674,11 @@ GrB_Info GB_AaddB__copysign_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__copysign_fp32
+GrB_Info GB_AemultB_01__copysign_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45241,6 +54689,44 @@ GrB_Info GB_AemultB__copysign_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__copysign_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__copysign_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__copysign_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -45318,11 +54804,7 @@ GrB_Info GB_Cdense_accumB__copysign_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__copysign_fp64
@@ -45339,11 +54821,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -45375,10 +54853,11 @@ GrB_Info GB_AaddB__copysign_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__copysign_fp64
+GrB_Info GB_AemultB_01__copysign_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45389,6 +54868,44 @@ GrB_Info GB_AemultB__copysign_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__copysign_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__copysign_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__copysign_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -45466,11 +54983,7 @@ GrB_Info GB_Cdense_accumB__ldexp_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ldexp_fp32
@@ -45487,11 +55000,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -45523,10 +55032,11 @@ GrB_Info GB_AaddB__ldexp_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ldexp_fp32
+GrB_Info GB_AemultB_01__ldexp_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45537,6 +55047,44 @@ GrB_Info GB_AemultB__ldexp_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ldexp_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ldexp_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ldexp_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -45614,11 +55162,7 @@ GrB_Info GB_Cdense_accumB__ldexp_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__ldexp_fp64
@@ -45635,11 +55179,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -45671,10 +55211,11 @@ GrB_Info GB_AaddB__ldexp_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__ldexp_fp64
+GrB_Info GB_AemultB_01__ldexp_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45685,6 +55226,44 @@ GrB_Info GB_AemultB__ldexp_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__ldexp_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__ldexp_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__ldexp_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -45762,11 +55341,7 @@ GrB_Info GB_Cdense_accumB__cmplx_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__cmplx_fp32
@@ -45783,11 +55358,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -45819,10 +55390,11 @@ GrB_Info GB_AaddB__cmplx_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__cmplx_fp32
+GrB_Info GB_AemultB_01__cmplx_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45833,6 +55405,44 @@ GrB_Info GB_AemultB__cmplx_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__cmplx_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__cmplx_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__cmplx_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -45910,11 +55520,7 @@ GrB_Info GB_Cdense_accumB__cmplx_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__cmplx_fp64
@@ -45931,11 +55537,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -45967,10 +55569,11 @@ GrB_Info GB_AaddB__cmplx_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__cmplx_fp64
+GrB_Info GB_AemultB_01__cmplx_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -45981,6 +55584,44 @@ GrB_Info GB_AemultB__cmplx_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__cmplx_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__cmplx_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__cmplx_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -46058,11 +55699,7 @@ GrB_Info GB_Cdense_accumB__bor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bor_int8
@@ -46079,11 +55716,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -46115,10 +55748,11 @@ GrB_Info GB_AaddB__bor_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bor_int8
+GrB_Info GB_AemultB_01__bor_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -46129,6 +55763,44 @@ GrB_Info GB_AemultB__bor_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bor_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bor_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bor_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -46206,11 +55878,7 @@ GrB_Info GB_Cdense_accumB__bor_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bor_int16
@@ -46227,11 +55895,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -46263,10 +55927,11 @@ GrB_Info GB_AaddB__bor_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bor_int16
+GrB_Info GB_AemultB_01__bor_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -46277,6 +55942,44 @@ GrB_Info GB_AemultB__bor_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bor_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bor_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bor_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -46354,11 +56057,7 @@ GrB_Info GB_Cdense_accumB__bor_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bor_int32
@@ -46375,11 +56074,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -46411,10 +56106,11 @@ GrB_Info GB_AaddB__bor_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bor_int32
+GrB_Info GB_AemultB_01__bor_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -46425,6 +56121,44 @@ GrB_Info GB_AemultB__bor_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bor_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bor_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bor_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -46502,11 +56236,7 @@ GrB_Info GB_Cdense_accumB__bor_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bor_int64
@@ -46523,11 +56253,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -46559,10 +56285,11 @@ GrB_Info GB_AaddB__bor_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bor_int64
+GrB_Info GB_AemultB_01__bor_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -46573,6 +56300,44 @@ GrB_Info GB_AemultB__bor_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bor_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bor_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bor_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -46650,11 +56415,7 @@ GrB_Info GB_Cdense_accumB__bor_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bor_uint8
@@ -46671,11 +56432,7 @@ GrB_Info GB_AxD__bor_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bor_uint8
@@ -46707,10 +56464,11 @@ GrB_Info GB_AaddB__bor_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bor_uint8
+GrB_Info GB_AemultB_01__bor_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -46721,6 +56479,44 @@ GrB_Info GB_AemultB__bor_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bor_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bor_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bor_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -46798,11 +56594,7 @@ GrB_Info GB_Cdense_accumB__bor_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bor_uint16
@@ -46819,11 +56611,7 @@ GrB_Info GB_AxD__bor_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bor_uint16
@@ -46855,10 +56643,11 @@ GrB_Info GB_AaddB__bor_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bor_uint16
+GrB_Info GB_AemultB_01__bor_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -46869,6 +56658,44 @@ GrB_Info GB_AemultB__bor_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bor_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bor_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bor_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -46946,11 +56773,7 @@ GrB_Info GB_Cdense_accumB__bor_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bor_uint32
@@ -46967,11 +56790,7 @@ GrB_Info GB_AxD__bor_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bor_uint32
@@ -47003,10 +56822,11 @@ GrB_Info GB_AaddB__bor_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bor_uint32
+GrB_Info GB_AemultB_01__bor_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -47017,6 +56837,44 @@ GrB_Info GB_AemultB__bor_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bor_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bor_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bor_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -47094,11 +56952,7 @@ GrB_Info GB_Cdense_accumB__bor_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bor_uint64
@@ -47115,11 +56969,7 @@ GrB_Info GB_AxD__bor_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bor_uint64
@@ -47151,10 +57001,11 @@ GrB_Info GB_AaddB__bor_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bor_uint64
+GrB_Info GB_AemultB_01__bor_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -47165,6 +57016,44 @@ GrB_Info GB_AemultB__bor_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bor_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bor_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bor_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -47242,11 +57131,7 @@ GrB_Info GB_Cdense_accumB__band_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__band_int8
@@ -47263,11 +57148,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -47299,10 +57180,11 @@ GrB_Info GB_AaddB__band_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__band_int8
+GrB_Info GB_AemultB_01__band_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -47313,6 +57195,44 @@ GrB_Info GB_AemultB__band_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__band_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__band_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__band_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -47390,11 +57310,7 @@ GrB_Info GB_Cdense_accumB__band_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__band_int16
@@ -47411,11 +57327,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -47447,10 +57359,11 @@ GrB_Info GB_AaddB__band_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__band_int16
+GrB_Info GB_AemultB_01__band_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -47461,6 +57374,44 @@ GrB_Info GB_AemultB__band_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__band_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__band_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__band_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -47538,11 +57489,7 @@ GrB_Info GB_Cdense_accumB__band_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__band_int32
@@ -47559,11 +57506,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -47595,10 +57538,11 @@ GrB_Info GB_AaddB__band_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__band_int32
+GrB_Info GB_AemultB_01__band_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -47609,6 +57553,44 @@ GrB_Info GB_AemultB__band_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__band_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__band_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__band_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -47686,11 +57668,7 @@ GrB_Info GB_Cdense_accumB__band_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__band_int64
@@ -47707,11 +57685,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -47743,10 +57717,11 @@ GrB_Info GB_AaddB__band_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__band_int64
+GrB_Info GB_AemultB_01__band_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -47757,6 +57732,44 @@ GrB_Info GB_AemultB__band_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__band_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__band_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__band_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -47834,11 +57847,7 @@ GrB_Info GB_Cdense_accumB__band_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__band_uint8
@@ -47855,11 +57864,7 @@ GrB_Info GB_AxD__band_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__band_uint8
@@ -47891,10 +57896,11 @@ GrB_Info GB_AaddB__band_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__band_uint8
+GrB_Info GB_AemultB_01__band_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -47905,6 +57911,44 @@ GrB_Info GB_AemultB__band_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__band_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__band_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__band_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -47982,11 +58026,7 @@ GrB_Info GB_Cdense_accumB__band_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__band_uint16
@@ -48003,11 +58043,7 @@ GrB_Info GB_AxD__band_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__band_uint16
@@ -48039,10 +58075,11 @@ GrB_Info GB_AaddB__band_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__band_uint16
+GrB_Info GB_AemultB_01__band_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48053,6 +58090,44 @@ GrB_Info GB_AemultB__band_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__band_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__band_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__band_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -48130,11 +58205,7 @@ GrB_Info GB_Cdense_accumB__band_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__band_uint32
@@ -48151,11 +58222,7 @@ GrB_Info GB_AxD__band_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__band_uint32
@@ -48187,10 +58254,11 @@ GrB_Info GB_AaddB__band_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__band_uint32
+GrB_Info GB_AemultB_01__band_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48201,6 +58269,44 @@ GrB_Info GB_AemultB__band_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__band_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__band_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__band_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -48278,11 +58384,7 @@ GrB_Info GB_Cdense_accumB__band_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__band_uint64
@@ -48299,11 +58401,7 @@ GrB_Info GB_AxD__band_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__band_uint64
@@ -48335,10 +58433,11 @@ GrB_Info GB_AaddB__band_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__band_uint64
+GrB_Info GB_AemultB_01__band_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48349,6 +58448,44 @@ GrB_Info GB_AemultB__band_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__band_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__band_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__band_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -48426,11 +58563,7 @@ GrB_Info GB_Cdense_accumB__bxor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxor_int8
@@ -48447,11 +58580,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -48483,10 +58612,11 @@ GrB_Info GB_AaddB__bxor_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxor_int8
+GrB_Info GB_AemultB_01__bxor_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48497,6 +58627,44 @@ GrB_Info GB_AemultB__bxor_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxor_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxor_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxor_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -48574,11 +58742,7 @@ GrB_Info GB_Cdense_accumB__bxor_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxor_int16
@@ -48595,11 +58759,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -48631,10 +58791,11 @@ GrB_Info GB_AaddB__bxor_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxor_int16
+GrB_Info GB_AemultB_01__bxor_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48645,6 +58806,44 @@ GrB_Info GB_AemultB__bxor_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxor_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxor_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxor_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -48722,11 +58921,7 @@ GrB_Info GB_Cdense_accumB__bxor_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxor_int32
@@ -48743,11 +58938,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -48779,10 +58970,11 @@ GrB_Info GB_AaddB__bxor_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxor_int32
+GrB_Info GB_AemultB_01__bxor_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48793,6 +58985,44 @@ GrB_Info GB_AemultB__bxor_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxor_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxor_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxor_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -48870,11 +59100,7 @@ GrB_Info GB_Cdense_accumB__bxor_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxor_int64
@@ -48891,11 +59117,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -48927,10 +59149,11 @@ GrB_Info GB_AaddB__bxor_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxor_int64
+GrB_Info GB_AemultB_01__bxor_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -48941,6 +59164,44 @@ GrB_Info GB_AemultB__bxor_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxor_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxor_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxor_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -49018,11 +59279,7 @@ GrB_Info GB_Cdense_accumB__bxor_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxor_uint8
@@ -49039,11 +59296,7 @@ GrB_Info GB_AxD__bxor_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bxor_uint8
@@ -49075,10 +59328,11 @@ GrB_Info GB_AaddB__bxor_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxor_uint8
+GrB_Info GB_AemultB_01__bxor_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49089,6 +59343,44 @@ GrB_Info GB_AemultB__bxor_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxor_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxor_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxor_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -49166,11 +59458,7 @@ GrB_Info GB_Cdense_accumB__bxor_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxor_uint16
@@ -49187,11 +59475,7 @@ GrB_Info GB_AxD__bxor_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bxor_uint16
@@ -49223,10 +59507,11 @@ GrB_Info GB_AaddB__bxor_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxor_uint16
+GrB_Info GB_AemultB_01__bxor_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49237,6 +59522,44 @@ GrB_Info GB_AemultB__bxor_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxor_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxor_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxor_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -49314,11 +59637,7 @@ GrB_Info GB_Cdense_accumB__bxor_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxor_uint32
@@ -49335,11 +59654,7 @@ GrB_Info GB_AxD__bxor_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bxor_uint32
@@ -49371,10 +59686,11 @@ GrB_Info GB_AaddB__bxor_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxor_uint32
+GrB_Info GB_AemultB_01__bxor_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49385,6 +59701,44 @@ GrB_Info GB_AemultB__bxor_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxor_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxor_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxor_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -49462,11 +59816,7 @@ GrB_Info GB_Cdense_accumB__bxor_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxor_uint64
@@ -49483,11 +59833,7 @@ GrB_Info GB_AxD__bxor_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bxor_uint64
@@ -49519,10 +59865,11 @@ GrB_Info GB_AaddB__bxor_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxor_uint64
+GrB_Info GB_AemultB_01__bxor_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49533,6 +59880,44 @@ GrB_Info GB_AemultB__bxor_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxor_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxor_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxor_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -49610,11 +59995,7 @@ GrB_Info GB_Cdense_accumB__bxnor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxnor_int8
@@ -49631,11 +60012,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -49667,10 +60044,11 @@ GrB_Info GB_AaddB__bxnor_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxnor_int8
+GrB_Info GB_AemultB_01__bxnor_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49681,6 +60059,44 @@ GrB_Info GB_AemultB__bxnor_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxnor_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxnor_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxnor_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -49758,11 +60174,7 @@ GrB_Info GB_Cdense_accumB__bxnor_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxnor_int16
@@ -49779,11 +60191,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -49815,10 +60223,11 @@ GrB_Info GB_AaddB__bxnor_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxnor_int16
+GrB_Info GB_AemultB_01__bxnor_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49829,6 +60238,44 @@ GrB_Info GB_AemultB__bxnor_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxnor_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxnor_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxnor_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -49906,11 +60353,7 @@ GrB_Info GB_Cdense_accumB__bxnor_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxnor_int32
@@ -49927,11 +60370,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -49963,10 +60402,11 @@ GrB_Info GB_AaddB__bxnor_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxnor_int32
+GrB_Info GB_AemultB_01__bxnor_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -49977,6 +60417,44 @@ GrB_Info GB_AemultB__bxnor_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxnor_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxnor_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxnor_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -50054,11 +60532,7 @@ GrB_Info GB_Cdense_accumB__bxnor_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxnor_int64
@@ -50075,11 +60549,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -50111,10 +60581,11 @@ GrB_Info GB_AaddB__bxnor_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxnor_int64
+GrB_Info GB_AemultB_01__bxnor_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -50125,6 +60596,44 @@ GrB_Info GB_AemultB__bxnor_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxnor_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxnor_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxnor_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -50202,11 +60711,7 @@ GrB_Info GB_Cdense_accumB__bxnor_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxnor_uint8
@@ -50223,11 +60728,7 @@ GrB_Info GB_AxD__bxnor_uint8
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bxnor_uint8
@@ -50259,10 +60760,11 @@ GrB_Info GB_AaddB__bxnor_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxnor_uint8
+GrB_Info GB_AemultB_01__bxnor_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -50273,6 +60775,44 @@ GrB_Info GB_AemultB__bxnor_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxnor_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxnor_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxnor_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -50350,11 +60890,7 @@ GrB_Info GB_Cdense_accumB__bxnor_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxnor_uint16
@@ -50371,11 +60907,7 @@ GrB_Info GB_AxD__bxnor_uint16
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bxnor_uint16
@@ -50407,10 +60939,11 @@ GrB_Info GB_AaddB__bxnor_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxnor_uint16
+GrB_Info GB_AemultB_01__bxnor_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -50421,6 +60954,44 @@ GrB_Info GB_AemultB__bxnor_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxnor_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxnor_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxnor_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -50498,11 +61069,7 @@ GrB_Info GB_Cdense_accumB__bxnor_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxnor_uint32
@@ -50519,11 +61086,7 @@ GrB_Info GB_AxD__bxnor_uint32
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bxnor_uint32
@@ -50555,10 +61118,11 @@ GrB_Info GB_AaddB__bxnor_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxnor_uint32
+GrB_Info GB_AemultB_01__bxnor_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -50569,6 +61133,44 @@ GrB_Info GB_AemultB__bxnor_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxnor_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxnor_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxnor_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -50646,11 +61248,7 @@ GrB_Info GB_Cdense_accumB__bxnor_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bxnor_uint64
@@ -50667,11 +61265,7 @@ GrB_Info GB_AxD__bxnor_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info GB_DxB__bxnor_uint64
@@ -50703,10 +61297,11 @@ GrB_Info GB_AaddB__bxnor_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bxnor_uint64
+GrB_Info GB_AemultB_01__bxnor_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -50717,6 +61312,44 @@ GrB_Info GB_AemultB__bxnor_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bxnor_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bxnor_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bxnor_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -50794,11 +61427,7 @@ GrB_Info GB_Cdense_accumB__bget_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bget_int8
@@ -50815,11 +61444,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -50851,10 +61476,11 @@ GrB_Info GB_AaddB__bget_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bget_int8
+GrB_Info GB_AemultB_01__bget_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -50865,6 +61491,44 @@ GrB_Info GB_AemultB__bget_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bget_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bget_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bget_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -50942,11 +61606,7 @@ GrB_Info GB_Cdense_accumB__bget_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bget_int16
@@ -50963,11 +61623,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -50999,10 +61655,11 @@ GrB_Info GB_AaddB__bget_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bget_int16
+GrB_Info GB_AemultB_01__bget_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51013,6 +61670,44 @@ GrB_Info GB_AemultB__bget_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bget_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bget_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bget_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -51090,11 +61785,7 @@ GrB_Info GB_Cdense_accumB__bget_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bget_int32
@@ -51111,11 +61802,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -51147,10 +61834,11 @@ GrB_Info GB_AaddB__bget_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bget_int32
+GrB_Info GB_AemultB_01__bget_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51161,6 +61849,44 @@ GrB_Info GB_AemultB__bget_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bget_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bget_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bget_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -51238,11 +61964,7 @@ GrB_Info GB_Cdense_accumB__bget_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bget_int64
@@ -51259,11 +61981,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -51295,10 +62013,11 @@ GrB_Info GB_AaddB__bget_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bget_int64
+GrB_Info GB_AemultB_01__bget_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51309,6 +62028,44 @@ GrB_Info GB_AemultB__bget_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bget_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bget_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bget_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -51386,11 +62143,7 @@ GrB_Info GB_Cdense_accumB__bget_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bget_uint8
@@ -51407,11 +62160,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -51443,10 +62192,11 @@ GrB_Info GB_AaddB__bget_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bget_uint8
+GrB_Info GB_AemultB_01__bget_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51457,6 +62207,44 @@ GrB_Info GB_AemultB__bget_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bget_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bget_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bget_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -51534,11 +62322,7 @@ GrB_Info GB_Cdense_accumB__bget_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bget_uint16
@@ -51555,11 +62339,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -51591,10 +62371,11 @@ GrB_Info GB_AaddB__bget_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bget_uint16
+GrB_Info GB_AemultB_01__bget_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51605,6 +62386,44 @@ GrB_Info GB_AemultB__bget_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bget_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bget_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bget_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -51682,11 +62501,7 @@ GrB_Info GB_Cdense_accumB__bget_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bget_uint32
@@ -51703,11 +62518,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -51739,10 +62550,11 @@ GrB_Info GB_AaddB__bget_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bget_uint32
+GrB_Info GB_AemultB_01__bget_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51753,6 +62565,44 @@ GrB_Info GB_AemultB__bget_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bget_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bget_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bget_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -51830,11 +62680,7 @@ GrB_Info GB_Cdense_accumB__bget_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bget_uint64
@@ -51851,11 +62697,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -51887,10 +62729,11 @@ GrB_Info GB_AaddB__bget_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bget_uint64
+GrB_Info GB_AemultB_01__bget_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51901,6 +62744,44 @@ GrB_Info GB_AemultB__bget_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bget_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bget_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bget_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -51978,11 +62859,7 @@ GrB_Info GB_Cdense_accumB__bset_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bset_int8
@@ -51999,11 +62876,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -52035,10 +62908,11 @@ GrB_Info GB_AaddB__bset_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bset_int8
+GrB_Info GB_AemultB_01__bset_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52049,6 +62923,44 @@ GrB_Info GB_AemultB__bset_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bset_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bset_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bset_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -52126,11 +63038,7 @@ GrB_Info GB_Cdense_accumB__bset_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bset_int16
@@ -52147,11 +63055,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -52183,10 +63087,11 @@ GrB_Info GB_AaddB__bset_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bset_int16
+GrB_Info GB_AemultB_01__bset_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52197,6 +63102,44 @@ GrB_Info GB_AemultB__bset_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bset_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bset_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bset_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -52274,11 +63217,7 @@ GrB_Info GB_Cdense_accumB__bset_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bset_int32
@@ -52295,11 +63234,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -52331,10 +63266,11 @@ GrB_Info GB_AaddB__bset_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bset_int32
+GrB_Info GB_AemultB_01__bset_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52345,6 +63281,44 @@ GrB_Info GB_AemultB__bset_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bset_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bset_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bset_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -52422,11 +63396,7 @@ GrB_Info GB_Cdense_accumB__bset_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bset_int64
@@ -52443,11 +63413,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -52479,10 +63445,11 @@ GrB_Info GB_AaddB__bset_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bset_int64
+GrB_Info GB_AemultB_01__bset_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52493,6 +63460,44 @@ GrB_Info GB_AemultB__bset_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bset_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bset_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bset_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -52570,11 +63575,7 @@ GrB_Info GB_Cdense_accumB__bset_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bset_uint8
@@ -52591,11 +63592,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -52627,10 +63624,11 @@ GrB_Info GB_AaddB__bset_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bset_uint8
+GrB_Info GB_AemultB_01__bset_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52641,6 +63639,44 @@ GrB_Info GB_AemultB__bset_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bset_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bset_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bset_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -52718,11 +63754,7 @@ GrB_Info GB_Cdense_accumB__bset_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bset_uint16
@@ -52739,11 +63771,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -52775,10 +63803,11 @@ GrB_Info GB_AaddB__bset_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bset_uint16
+GrB_Info GB_AemultB_01__bset_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52789,6 +63818,44 @@ GrB_Info GB_AemultB__bset_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bset_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bset_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bset_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -52866,11 +63933,7 @@ GrB_Info GB_Cdense_accumB__bset_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bset_uint32
@@ -52887,11 +63950,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -52923,10 +63982,11 @@ GrB_Info GB_AaddB__bset_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bset_uint32
+GrB_Info GB_AemultB_01__bset_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -52937,6 +63997,44 @@ GrB_Info GB_AemultB__bset_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bset_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bset_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bset_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -53014,11 +64112,7 @@ GrB_Info GB_Cdense_accumB__bset_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bset_uint64
@@ -53035,11 +64129,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -53071,10 +64161,11 @@ GrB_Info GB_AaddB__bset_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bset_uint64
+GrB_Info GB_AemultB_01__bset_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53085,6 +64176,44 @@ GrB_Info GB_AemultB__bset_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bset_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bset_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bset_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -53162,11 +64291,7 @@ GrB_Info GB_Cdense_accumB__bclr_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bclr_int8
@@ -53183,11 +64308,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -53219,10 +64340,11 @@ GrB_Info GB_AaddB__bclr_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bclr_int8
+GrB_Info GB_AemultB_01__bclr_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53233,6 +64355,44 @@ GrB_Info GB_AemultB__bclr_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bclr_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bclr_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bclr_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -53310,11 +64470,7 @@ GrB_Info GB_Cdense_accumB__bclr_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bclr_int16
@@ -53331,11 +64487,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -53367,10 +64519,11 @@ GrB_Info GB_AaddB__bclr_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bclr_int16
+GrB_Info GB_AemultB_01__bclr_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53381,6 +64534,44 @@ GrB_Info GB_AemultB__bclr_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bclr_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bclr_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bclr_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -53458,11 +64649,7 @@ GrB_Info GB_Cdense_accumB__bclr_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bclr_int32
@@ -53479,11 +64666,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -53515,10 +64698,11 @@ GrB_Info GB_AaddB__bclr_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bclr_int32
+GrB_Info GB_AemultB_01__bclr_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53529,6 +64713,44 @@ GrB_Info GB_AemultB__bclr_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bclr_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bclr_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bclr_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -53606,11 +64828,7 @@ GrB_Info GB_Cdense_accumB__bclr_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bclr_int64
@@ -53627,11 +64845,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -53663,10 +64877,11 @@ GrB_Info GB_AaddB__bclr_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bclr_int64
+GrB_Info GB_AemultB_01__bclr_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53677,6 +64892,44 @@ GrB_Info GB_AemultB__bclr_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bclr_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bclr_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bclr_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -53754,11 +65007,7 @@ GrB_Info GB_Cdense_accumB__bclr_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bclr_uint8
@@ -53775,11 +65024,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -53811,10 +65056,11 @@ GrB_Info GB_AaddB__bclr_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bclr_uint8
+GrB_Info GB_AemultB_01__bclr_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53825,6 +65071,44 @@ GrB_Info GB_AemultB__bclr_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bclr_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bclr_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bclr_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -53902,11 +65186,7 @@ GrB_Info GB_Cdense_accumB__bclr_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bclr_uint16
@@ -53923,11 +65203,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -53959,10 +65235,11 @@ GrB_Info GB_AaddB__bclr_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bclr_uint16
+GrB_Info GB_AemultB_01__bclr_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -53973,6 +65250,44 @@ GrB_Info GB_AemultB__bclr_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bclr_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bclr_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bclr_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -54050,11 +65365,7 @@ GrB_Info GB_Cdense_accumB__bclr_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bclr_uint32
@@ -54071,11 +65382,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -54107,10 +65414,11 @@ GrB_Info GB_AaddB__bclr_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bclr_uint32
+GrB_Info GB_AemultB_01__bclr_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -54121,6 +65429,44 @@ GrB_Info GB_AemultB__bclr_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bclr_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bclr_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bclr_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -54198,11 +65544,7 @@ GrB_Info GB_Cdense_accumB__bclr_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bclr_uint64
@@ -54219,11 +65561,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -54255,10 +65593,11 @@ GrB_Info GB_AaddB__bclr_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bclr_uint64
+GrB_Info GB_AemultB_01__bclr_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -54269,6 +65608,44 @@ GrB_Info GB_AemultB__bclr_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bclr_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bclr_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bclr_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -54346,11 +65723,7 @@ GrB_Info GB_Cdense_accumB__bshift_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bshift_int8
@@ -54367,11 +65740,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -54403,10 +65772,11 @@ GrB_Info GB_AaddB__bshift_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bshift_int8
+GrB_Info GB_AemultB_01__bshift_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -54417,6 +65787,44 @@ GrB_Info GB_AemultB__bshift_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bshift_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bshift_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bshift_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -54494,11 +65902,7 @@ GrB_Info GB_Cdense_accumB__bshift_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bshift_int16
@@ -54515,11 +65919,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -54551,10 +65951,11 @@ GrB_Info GB_AaddB__bshift_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bshift_int16
+GrB_Info GB_AemultB_01__bshift_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -54565,6 +65966,44 @@ GrB_Info GB_AemultB__bshift_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bshift_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bshift_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bshift_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -54642,11 +66081,7 @@ GrB_Info GB_Cdense_accumB__bshift_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bshift_int32
@@ -54663,11 +66098,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -54699,10 +66130,11 @@ GrB_Info GB_AaddB__bshift_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bshift_int32
+GrB_Info GB_AemultB_01__bshift_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -54713,6 +66145,44 @@ GrB_Info GB_AemultB__bshift_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bshift_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bshift_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bshift_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -54790,11 +66260,7 @@ GrB_Info GB_Cdense_accumB__bshift_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bshift_int64
@@ -54811,11 +66277,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -54847,10 +66309,11 @@ GrB_Info GB_AaddB__bshift_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bshift_int64
+GrB_Info GB_AemultB_01__bshift_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -54861,6 +66324,44 @@ GrB_Info GB_AemultB__bshift_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bshift_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bshift_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bshift_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -54938,11 +66439,7 @@ GrB_Info GB_Cdense_accumB__bshift_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bshift_uint8
@@ -54959,11 +66456,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -54995,10 +66488,11 @@ GrB_Info GB_AaddB__bshift_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bshift_uint8
+GrB_Info GB_AemultB_01__bshift_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55009,6 +66503,44 @@ GrB_Info GB_AemultB__bshift_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bshift_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bshift_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bshift_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -55086,11 +66618,7 @@ GrB_Info GB_Cdense_accumB__bshift_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bshift_uint16
@@ -55107,11 +66635,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -55143,10 +66667,11 @@ GrB_Info GB_AaddB__bshift_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bshift_uint16
+GrB_Info GB_AemultB_01__bshift_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55157,6 +66682,44 @@ GrB_Info GB_AemultB__bshift_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bshift_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bshift_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bshift_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -55234,11 +66797,7 @@ GrB_Info GB_Cdense_accumB__bshift_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bshift_uint32
@@ -55255,11 +66814,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -55291,10 +66846,11 @@ GrB_Info GB_AaddB__bshift_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bshift_uint32
+GrB_Info GB_AemultB_01__bshift_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55305,6 +66861,44 @@ GrB_Info GB_AemultB__bshift_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bshift_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bshift_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bshift_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -55382,11 +66976,7 @@ GrB_Info GB_Cdense_accumB__bshift_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__bshift_uint64
@@ -55403,11 +66993,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -55439,10 +67025,11 @@ GrB_Info GB_AaddB__bshift_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__bshift_uint64
+GrB_Info GB_AemultB_01__bshift_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55453,6 +67040,44 @@ GrB_Info GB_AemultB__bshift_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__bshift_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__bshift_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__bshift_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -55530,11 +67155,7 @@ GrB_Info GB_Cdense_accumB__pow_int8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_int8
@@ -55551,11 +67172,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -55587,10 +67204,11 @@ GrB_Info GB_AaddB__pow_int8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_int8
+GrB_Info GB_AemultB_01__pow_int8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55601,6 +67219,44 @@ GrB_Info GB_AemultB__pow_int8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_int8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -55678,11 +67334,7 @@ GrB_Info GB_Cdense_accumB__pow_int16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_int16
@@ -55699,11 +67351,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -55735,10 +67383,11 @@ GrB_Info GB_AaddB__pow_int16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_int16
+GrB_Info GB_AemultB_01__pow_int16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55749,6 +67398,44 @@ GrB_Info GB_AemultB__pow_int16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_int16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -55826,11 +67513,7 @@ GrB_Info GB_Cdense_accumB__pow_int32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_int32
@@ -55847,11 +67530,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -55883,10 +67562,11 @@ GrB_Info GB_AaddB__pow_int32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_int32
+GrB_Info GB_AemultB_01__pow_int32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -55897,6 +67577,44 @@ GrB_Info GB_AemultB__pow_int32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_int32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -55974,11 +67692,7 @@ GrB_Info GB_Cdense_accumB__pow_int64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_int64
@@ -55995,11 +67709,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -56031,10 +67741,11 @@ GrB_Info GB_AaddB__pow_int64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_int64
+GrB_Info GB_AemultB_01__pow_int64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56045,6 +67756,44 @@ GrB_Info GB_AemultB__pow_int64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_int64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -56122,11 +67871,7 @@ GrB_Info GB_Cdense_accumB__pow_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_uint8
@@ -56143,11 +67888,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -56179,10 +67920,11 @@ GrB_Info GB_AaddB__pow_uint8
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_uint8
+GrB_Info GB_AemultB_01__pow_uint8
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56193,6 +67935,44 @@ GrB_Info GB_AemultB__pow_uint8
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_uint8
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -56270,11 +68050,7 @@ GrB_Info GB_Cdense_accumB__pow_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_uint16
@@ -56291,11 +68067,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -56327,10 +68099,11 @@ GrB_Info GB_AaddB__pow_uint16
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_uint16
+GrB_Info GB_AemultB_01__pow_uint16
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56341,6 +68114,44 @@ GrB_Info GB_AemultB__pow_uint16
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_uint16
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -56418,11 +68229,7 @@ GrB_Info GB_Cdense_accumB__pow_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_uint32
@@ -56439,11 +68246,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -56475,10 +68278,11 @@ GrB_Info GB_AaddB__pow_uint32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_uint32
+GrB_Info GB_AemultB_01__pow_uint32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56489,6 +68293,44 @@ GrB_Info GB_AemultB__pow_uint32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_uint32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -56566,11 +68408,7 @@ GrB_Info GB_Cdense_accumB__pow_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_uint64
@@ -56587,11 +68425,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -56623,10 +68457,11 @@ GrB_Info GB_AaddB__pow_uint64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_uint64
+GrB_Info GB_AemultB_01__pow_uint64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56637,6 +68472,44 @@ GrB_Info GB_AemultB__pow_uint64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_uint64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -56714,11 +68587,7 @@ GrB_Info GB_Cdense_accumB__pow_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_fp32
@@ -56735,11 +68604,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -56771,10 +68636,11 @@ GrB_Info GB_AaddB__pow_fp32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_fp32
+GrB_Info GB_AemultB_01__pow_fp32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56785,6 +68651,44 @@ GrB_Info GB_AemultB__pow_fp32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_fp32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -56862,11 +68766,7 @@ GrB_Info GB_Cdense_accumB__pow_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_fp64
@@ -56883,11 +68783,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -56919,10 +68815,11 @@ GrB_Info GB_AaddB__pow_fp64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_fp64
+GrB_Info GB_AemultB_01__pow_fp64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -56933,6 +68830,44 @@ GrB_Info GB_AemultB__pow_fp64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_fp64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -57010,11 +68945,7 @@ GrB_Info GB_Cdense_accumB__pow_fc32
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_fc32
@@ -57031,11 +68962,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -57067,10 +68994,11 @@ GrB_Info GB_AaddB__pow_fc32
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_fc32
+GrB_Info GB_AemultB_01__pow_fc32
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -57081,6 +69009,44 @@ GrB_Info GB_AemultB__pow_fc32
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_fc32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_fc32
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;
@@ -57158,11 +69124,7 @@ GrB_Info GB_Cdense_accumB__pow_fc64
 (
     GrB_Matrix C,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
 GrB_Info GB_Cdense_accumb__pow_fc64
@@ -57179,11 +69141,7 @@ GrB_Info (none)
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
 GrB_Info (node)
@@ -57215,10 +69173,11 @@ GrB_Info GB_AaddB__pow_fc64
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB__pow_fc64
+GrB_Info GB_AemultB_01__pow_fc64
 (
     GrB_Matrix C,
     const int C_sparsity,
+    const int ewise_method,
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -57229,6 +69188,44 @@ GrB_Info GB_AemultB__pow_fc64
     const int64_t *GB_RESTRICT C_to_B,
     const GB_task_struct *GB_RESTRICT TaskList,
     const int C_ntasks,
+    const int C_nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AemultB_02__pow_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool flipxy,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+GrB_Info GB_AemultB_03__pow_fc64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
+) ;
+
+GrB_Info GB_AemultB_bitmap__pow_fc64
+(
+    GrB_Matrix C,
+    const int ewise_method,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int C_nthreads,
     GB_Context Context
 ) ;

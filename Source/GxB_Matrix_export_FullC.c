@@ -56,7 +56,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     { 
         // A = A', done in-place, to put A in CSC format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose (NULL, NULL, true, *A,
+        GB_OK (GB_transpose (NULL, NULL, true, *A,      // in_place_A
             NULL, NULL, NULL, false, Context)) ;
         GB_MATRIX_WAIT (*A) ;
     }
@@ -76,7 +76,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     int sparsity ;
     bool is_csc ;
 
-    info = GB_export (A, type, nrows, ncols,
+    info = GB_export (A, type, nrows, ncols, false,
         NULL, NULL,     // Ap
         NULL, NULL,     // Ah
         NULL, NULL,     // Ab

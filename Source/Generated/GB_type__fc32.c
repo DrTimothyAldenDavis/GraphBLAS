@@ -58,11 +58,7 @@ GrB_Info GB_Cdense_05d__fc32
     const GrB_Matrix M,
     const bool Mask_struct,
     const GB_void *p_cwork,     // scalar of type C->type
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 )
 { 
     #if GB_DISABLE
@@ -83,11 +79,7 @@ GrB_Info GB_Cdense_06d__fc32
     GrB_Matrix C,
     const GrB_Matrix A,
     const bool Mask_struct,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     #if GB_DISABLE
@@ -108,11 +100,7 @@ GrB_Info GB_Cdense_25__fc32
     GrB_Matrix C,
     const GrB_Matrix M,
     const GrB_Matrix A,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 )
 { 
     #if GB_DISABLE
@@ -133,11 +121,7 @@ GrB_Info GB_convert_s2b__fc32
     GrB_Matrix A,
     GB_void *GB_RESTRICT Ax_new_void,
     int8_t  *GB_RESTRICT Ab,
-    const int64_t *GB_RESTRICT kfirst_slice,
-    const int64_t *GB_RESTRICT klast_slice,
-    const int64_t *GB_RESTRICT pstart_slice,
-    const int ntasks,
-    const int nthreads
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     #if GB_DISABLE

@@ -19,6 +19,9 @@
 
 GrB_Info GrB_finalize ( )
 { 
+
+RMM cleanup stuff here
+
     return (GrB_SUCCESS) ;
 }
 

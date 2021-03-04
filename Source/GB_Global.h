@@ -57,6 +57,7 @@ GB_PUBLIC void     GB_Global_abort_function (void) ;
                         (void * (* realloc_function) (void *, size_t)) ;
           void  *  GB_Global_realloc_function (void *p, size_t size) ;
           bool     GB_Global_have_realloc_function (void) ;
+          bool     GB_Global_have_calloc_function (void) ;
           void     GB_Global_free_function_set
                         (void (* free_function) (void *)) ;
           void     GB_Global_free_function (void *p) ;
@@ -113,9 +114,13 @@ GB_PUBLIC void     GB_Global_timing_set (int k, double t) ;
 GB_PUBLIC void     GB_Global_timing_add (int k, double t) ;
 GB_PUBLIC double   GB_Global_timing_get (int k) ;
 
-GB_PUBLIC void     GB_Global_rmm_pool_set (void *rmm_pool) ;
-GB_PUBLIC void    *GB_Global_rmm_pool_get (void) ;
+GB_PUBLIC int      GB_Global_memtable_n (void) ;
+GB_PUBLIC void     GB_Global_memtable_dump (void) ;
+GB_PUBLIC void     GB_Global_memtable_clear (void) ;
+GB_PUBLIC void     GB_Global_memtable_add (void *p, size_t size) ;
+GB_PUBLIC size_t   GB_Global_memtable_size (void *p) ;
+GB_PUBLIC void     GB_Global_memtable_remove (void *p) ;
+GB_PUBLIC bool     GB_Global_memtable_find (void *p) ;
 
-// #include "GB_Global_mkl_template.h"
 #endif
 

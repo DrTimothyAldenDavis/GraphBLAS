@@ -49,7 +49,9 @@ GrB_Info GB_ijsort
     int64_t *GB_RESTRICT p_ni,      // : size of I, output: # of indices in I2
     GrB_Index *GB_RESTRICT *p_I2,   // size ni2, where I2 [0..ni2-1]
                         // contains the sorted indices with duplicates removed.
+    size_t *I2_size_handle,
     GrB_Index *GB_RESTRICT *p_I2k,  // output array of size ni2
+    size_t *I2k_size_handle,
     GB_Context Context
 ) ;
 

@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// TODO:: allow user to query malloc, calloc, realloc, and free.
-// also "is malloc/etc thread-safe?"
-
 #include "GB.h"
 
 GrB_Info GxB_Global_Option_get      // gets the current global option
@@ -305,8 +302,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 (*gpu_chunk) = GB_Global_gpu_chunk_get ( ) ;
             }
             break ;
-
-        // #include "GxB_Global_Option_get_mkl_template.c"
 
         default : 
 

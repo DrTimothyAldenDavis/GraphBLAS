@@ -114,19 +114,19 @@
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        int64_t kk = TaskList [taskid].vector ;
-        int team_size = TaskList [taskid].team_size ;
-        int64_t hash_size = TaskList [taskid].hsize ;
+        int64_t kk = SaxpyTasks [taskid].vector ;
+        int team_size = SaxpyTasks [taskid].team_size ;
+        int64_t hash_size = SaxpyTasks [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
-        int64_t pB     = TaskList [taskid].start ;
-        int64_t pB_end = TaskList [taskid].end + 1 ;
+        int64_t pB     = SaxpyTasks [taskid].start ;
+        int64_t pB_end = SaxpyTasks [taskid].end + 1 ;
         int64_t pleft = 0, pright = anvec-1 ;
         int64_t j = GBH (Bh, kk) ;
 
         GB_GET_T_FOR_SECONDJ ;
 
         #if !GB_IS_ANY_PAIR_SEMIRING
-        GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) TaskList [taskid].Hx ;
+        GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) SaxpyTasks [taskid].Hx ;
         #endif
 
         #if GB_IS_PLUS_FC32_MONOID
@@ -161,7 +161,8 @@
 
             // Hf [i] == 3: locked.  Hx [i] cannot be accessed.
 
-            int8_t *GB_RESTRICT Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf;
+            int8_t *GB_RESTRICT
+                Hf = (int8_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
 
             if (M == NULL)
             {
@@ -450,7 +451,7 @@
             // h == (anything), f == 3: locked.
 
             int64_t *GB_RESTRICT
-                Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
+                Hf = (int64_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
             int64_t hash_bits = (hash_size-1) ;
 
             if (M == NULL || ignore_mask)
@@ -759,7 +760,7 @@
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
-    GB_AxB_saxpy3_cumsum (C, TaskList, nfine, chunk, nthreads) ;
+    GB_AxB_saxpy3_cumsum (C, SaxpyTasks, nfine, chunk, nthreads, Context) ;
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (10, ttt) ;
@@ -780,6 +781,8 @@
 
     int64_t  *GB_RESTRICT Ci = C->i ;
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
+
+    ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
 
     #if GB_IS_ANY_PAIR_SEMIRING
 
@@ -823,9 +826,9 @@
         //----------------------------------------------------------------------
 
         #if !GB_IS_ANY_PAIR_SEMIRING
-        GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) TaskList [taskid].Hx ;
+        GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) SaxpyTasks [taskid].Hx ;
         #endif
-        int64_t hash_size = TaskList [taskid].hsize ;
+        int64_t hash_size = SaxpyTasks [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
         bool task_C_jumbled = false ;
 
@@ -836,9 +839,9 @@
             // fine task: gather pattern and values
             //------------------------------------------------------------------
 
-            int64_t kk = TaskList [taskid].vector ;
-            int team_size = TaskList [taskid].team_size ;
-            int leader    = TaskList [taskid].leader ;
+            int64_t kk = SaxpyTasks [taskid].vector ;
+            int team_size = SaxpyTasks [taskid].team_size ;
+            int leader    = SaxpyTasks [taskid].leader ;
             int my_teamid = taskid - leader ;
             int64_t pC = Cp [kk] ;
 
@@ -851,7 +854,7 @@
 
                 // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
                 int8_t *GB_RESTRICT
-                    Hf = (int8_t *GB_RESTRICT) TaskList [taskid].Hf ;
+                    Hf = (int8_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
                 int64_t cjnz = Cp [kk+1] - pC ;
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
@@ -870,7 +873,7 @@
                 else
                 {
                     // C(:,j) is sparse
-                    pC += TaskList [taskid].my_cjnz ;
+                    pC += SaxpyTasks [taskid].my_cjnz ;
                     for (int64_t i = istart ; i < iend ; i++)
                     {
                         if (Hf [i] == 2)
@@ -893,10 +896,10 @@
                 // and the index i of the entry is (Hf [hash] >> 2) - 1.
 
                 int64_t *GB_RESTRICT
-                    Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
+                    Hf = (int64_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
                 int64_t mystart, myend ;
                 GB_PARTITION (mystart, myend, hash_size, my_teamid, team_size) ;
-                pC += TaskList [taskid].my_cjnz ;
+                pC += SaxpyTasks [taskid].my_cjnz ;
                 for (int64_t hash = mystart ; hash < myend ; hash++)
                 {
                     int64_t hf = Hf [hash] ;
@@ -920,9 +923,9 @@
             //------------------------------------------------------------------
 
             int64_t *GB_RESTRICT
-                Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
-            int64_t kfirst = TaskList [taskid].start ;
-            int64_t klast = TaskList [taskid].end ;
+                Hf = (int64_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
+            int64_t kfirst = SaxpyTasks [taskid].start ;
+            int64_t klast = SaxpyTasks [taskid].end ;
             int64_t nk = klast - kfirst + 1 ;
             int64_t mark = 2*nk + 1 ;
 
@@ -1151,7 +1154,7 @@
                 // phase5: coarse hash task
                 //--------------------------------------------------------------
 
-                int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
+                int64_t *GB_RESTRICT Hi = SaxpyTasks [taskid].Hi ;
                 int64_t hash_bits = (hash_size-1) ;
 
                 if (M == NULL || ignore_mask)

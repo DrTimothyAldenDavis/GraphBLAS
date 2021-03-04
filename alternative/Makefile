@@ -11,8 +11,7 @@
 #
 #   make -j8
 #
-# To install: do not just do 'sudo make install' since MKLROOT might be 
-# defined for the user but not for root.  Instead do:
+# To install:
 #
 #   make -j8
 #   sudo make install
@@ -46,21 +45,12 @@ VER3 = 1
 # sufficient.
 # CC = c++
 
-# Using the Intel MKL (don't try this if CC=c++, it will likely break):
-# from https://software.intel.com/content/www/us/en/develop/articles/intel-mkl-link-line-advisor.html
-# MKL_CFLAGS = -DMKL_ILP64 -m64 -I${MKLROOT}/include -DGB_HAS_CBLAS
-# MKL_LDFLAGS= -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
-
-# without the Intel MKL (default):
-  MKL_CFLAGS = 
-  MKL_LDFLAGS=
-
 SRC = ../Source/*.c ../Source/Generated/*.c
 INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h ../Source/Generator/*.h 
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
-LDFLAGS = -fopenmp -lm $(MKL_LDFLAGS)
-CFLAGS = -fopenmp -fexceptions -fPIC $(MKL_CFLAGS)
+LDFLAGS = -fopenmp -lm
+CFLAGS = -fopenmp -fexceptions -fPIC
 # pick the roptimization level:
   CFLAGS += -O3
 # CFLAGS += -g
@@ -109,7 +99,7 @@ libgraphblas.a: $(OBJ)
 	ar -rv $@ $^
 	- ranlib $@
 
-# Do "make" first, and then "sudo make install" (to set MKLROOT properly)
+# Do "make" first, and then "sudo make install"
 install: library
 	cp $(SO_NAME) /usr/local/lib
 	ln -sf /usr/local/lib/$(SO_NAME) /usr/local/lib/$(SO_NAME0)

@@ -159,8 +159,9 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     // T = A (I,J)
     //--------------------------------------------------------------------------
 
-    GrB_Matrix T ;
-    GB_OK (GB_subref (&T, T_is_csc, A, I, ni, J, nj, false, Context)) ;
+    struct GB_Matrix_opaque T_header ;
+    GrB_Matrix T = GB_clear_static_header (&T_header) ;
+    GB_OK (GB_subref (T, T_is_csc, A, I, ni, J, nj, false, Context)) ;
     ASSERT_MATRIX_OK (T, "T extracted", GB0) ;
     ASSERT (GB_JUMBLED_OK (T)) ;
 

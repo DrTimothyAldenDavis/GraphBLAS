@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_phase1: # of entries in C=A.*B or C<M or !M>=A.*B (C sparse/hyper)
+// GB_emult_01_phase1: # entries in C=A.*B or C<M or !M>=A.*B (C sparse/hyper)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,28 +7,30 @@
 
 //------------------------------------------------------------------------------
 
-// GB_emult_phase1 counts the number of entries in each vector of C, for
+// GB_emult_01_phase1 counts the number of entries in each vector of C, for
 // C=A.*B, C<M>=A.*B, or C<!M>=A.*B and then does a cumulative sum to find Cp.
-// GB_emult_phase1 is preceded by GB_emult_phase0, which finds the non-empty
-// vectors of C.  If the mask M is saprse, it is not complemented; only a
-// bitmap or full M is complemented.
+// GB_emult_01_phase1 is preceded by GB_emult_01_phase0, which finds the
+// non-empty vectors of C.  If the mask M is saprse, it is not complemented;
+// only a bitmap or full M is complemented.
 
 // C is sparse or hypersparse, as determined by GB_add_sparsity.  
 // M, A, and B can have any sparsity structure, but only a specific set of
-// cases will be used (see the list if Template/GB_sparse_emult_template.c).
+// cases will be used (see GB_emult_sparsity for details).
 
-// Cp is either freed by GB_emult_phase2, or transplanted into C.
+// Cp is either freed by GB_emult_01_phase2, or transplanted into C.
 
 #include "GB_emult.h"
 
-GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
+GrB_Info GB_emult_01_phase1                 // count nnz in each C(:,j)
 (
-    int64_t *GB_RESTRICT *Cp_handle,        // output of size Cnvec+1
+    // computed by phase1:
+    int64_t **Cp_handle,                    // output of size Cnvec+1
+    size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,                // # of non-empty vectors in C
     // tasks from phase1a:
     GB_task_struct *GB_RESTRICT TaskList,   // array of structs
-    const int C_ntasks,                       // # of tasks
-    const int C_nthreads,                     // # of threads to use
+    const int C_ntasks,                     // # of tasks
+    const int C_nthreads,                   // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *GB_RESTRICT Ch,          // Ch is NULL, or shallow pointer
@@ -50,6 +52,7 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     ASSERT (Cp_handle != NULL) ;
+    ASSERT (Cp_size_handle != NULL) ;
     ASSERT (Cnvec_nonempty != NULL) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase1", GB0) ;
@@ -69,12 +72,19 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
 
     ASSERT (A->vdim == B->vdim) ;
 
+    if (M == NULL)
+    {
+        ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+        ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
+    }
+
     //--------------------------------------------------------------------------
     // allocate the result
     //--------------------------------------------------------------------------
 
     (*Cp_handle) = NULL ;
-    int64_t *GB_RESTRICT Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t) ;
+    int64_t *GB_RESTRICT Cp = NULL ; size_t Cp_size = 0 ;
+    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t, &Cp_size, Context) ;
     if (Cp == NULL)
     { 
         // out of memory
@@ -86,19 +96,21 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     #define GB_PHASE_1_OF_2
-    #include "GB_emult_template.c"
+    #include "GB_emult_01_meta.c"
 
     //--------------------------------------------------------------------------
     // cumulative sum of Cp and fine tasks in TaskList
     //--------------------------------------------------------------------------
 
-    GB_task_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, C_ntasks, C_nthreads) ;
+    GB_task_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, C_ntasks, C_nthreads,
+        Context) ;
 
     //--------------------------------------------------------------------------
     // return the result
     //--------------------------------------------------------------------------
 
     (*Cp_handle) = Cp ;
+    (*Cp_size_handle) = Cp_size ;
     return (GrB_SUCCESS) ;
 }
 
