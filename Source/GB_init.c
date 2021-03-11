@@ -105,12 +105,13 @@ GrB_Info GB_init            // start up GraphBLAS
         #endif
     }
 
-    GB_Global_malloc_function_set  (malloc_function ) ;
-    GB_Global_calloc_function_set  (NULL /* HACK calloc_function */) ;
-    GB_Global_realloc_function_set (NULL /* HACK realloc_function */) ;
-    GB_Global_free_function_set    (free_function   ) ;
+    GB_Global_malloc_function_set  (malloc_function ) ; // cannot be NULL
+    GB_Global_calloc_function_set  (calloc_function ) ; // ok if NULL
+    GB_Global_realloc_function_set (realloc_function) ; // ok if NULL
+    GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
     GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
     GB_Global_memtable_clear ( ) ;
+    GB_Global_free_pool_init ( ) ;
 
     //--------------------------------------------------------------------------
     // max number of threads

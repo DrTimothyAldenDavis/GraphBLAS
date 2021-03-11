@@ -176,10 +176,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Mar 3, 2021"
-#define GxB_IMPLEMENTATION_MAJOR 4
+#define GxB_IMPLEMENTATION_DATE "Mar 11, 2021"
+#define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 0
-#define GxB_IMPLEMENTATION_SUB   4
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Sept 25, 2019"
 #define GxB_SPEC_MAJOR 1
 #define GxB_SPEC_MINOR 3
@@ -8087,12 +8087,12 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index **Ap,     // row "pointers", Ap_size >= nrows+1
-    GrB_Index **Aj,     // row indices, Aj_size >= nvals(A)
-    void **Ax,          // values, Ax_size >= nvals(A)
-    GrB_Index Ap_size,  // size of Ap
-    GrB_Index Aj_size,  // size of Aj
-    GrB_Index Ax_size,  // size of Ax
+    GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)* sizeof(int64_t)
+    GrB_Index **Aj,     // row indices, Aj_size >= nvals(A) * sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Aj_size,  // size of Aj in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8124,12 +8124,12 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index **Ap,     // column "pointers", Ap_size >= ncols+1
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)
-    void **Ax,          // values, Ax_size >= nvals(A)
-    GrB_Index Ap_size,  // size of Ap
-    GrB_Index Ai_size,  // size of Ai
-    GrB_Index Ax_size,  // size of Ax
+    GrB_Index **Ap,     // col "pointers", Ap_size >= (ncols+1)*sizeof(int64_t)
+    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Ai_size,  // size of Ai in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8161,14 +8161,14 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index **Ap,     // row "pointers", Ap_size >= nvec+1
-    GrB_Index **Ah,     // row indices, Ah_size >= nvec
-    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)
-    void **Ax,          // values, Ax_size >= nvals(A)
-    GrB_Index Ap_size,  // size of Ap
-    GrB_Index Ah_size,  // size of Ah
-    GrB_Index Aj_size,  // size of Aj
-    GrB_Index Ax_size,  // size of Ax
+    GrB_Index **Ap,     // row "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
+    GrB_Index **Ah,     // row indices, Ah_size >= nvec*sizeof(int64_t)
+    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Ah_size,  // size of Ah in bytes
+    GrB_Index Aj_size,  // size of Aj in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
     GrB_Index nvec,     // number of rows that appear in Ah
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
@@ -8208,14 +8208,14 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index **Ap,     // column "pointers", Ap_size >= nvec+1
-    GrB_Index **Ah,     // column indices, Ah_size >= nvec
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)
-    void **Ax,          // values, Ax_size >= nvals(A)
-    GrB_Index Ap_size,  // size of Ap
-    GrB_Index Ah_size,  // size of Ah
-    GrB_Index Ai_size,  // size of Ai
-    GrB_Index Ax_size,  // size of Ax
+    GrB_Index **Ap,     // col "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
+    GrB_Index **Ah,     // column indices, Ah_size >= nvec*sizeof(int64_t)
+    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A)*(type size)
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Ah_size,  // size of Ah in bytes
+    GrB_Index Ai_size,  // size of Ai in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
     GrB_Index nvec,     // number of columns that appear in Ah
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
@@ -8257,9 +8257,9 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
     int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
-    void **Ax,          // values, Ax_size >= nrows*ncols
-    GrB_Index Ab_size,  // size of Ab
-    GrB_Index Ax_size,  // size of Ax
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+    GrB_Index Ab_size,  // size of Ab in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8286,9 +8286,9 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
     int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
-    void **Ax,          // values, Ax_size >= nrows*ncols
-    GrB_Index Ab_size,  // size of Ab
-    GrB_Index Ax_size,  // size of Ax
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+    GrB_Index Ab_size,  // size of Ab in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8314,8 +8314,8 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    void **Ax,          // values, Ax_size >= nrows*ncols
-    GrB_Index Ax_size,  // size of Ax
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+    GrB_Index Ax_size,  // size of Ax in bytes
     const GrB_Descriptor desc
 ) ;
 
@@ -8337,8 +8337,8 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
-    void **Ax,          // values, Ax_size >= nrows*ncols
-    GrB_Index Ax_size,  // size of Ax
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+    GrB_Index Ax_size,  // size of Ax in bytes
     const GrB_Descriptor desc
 ) ;
 
@@ -8359,10 +8359,10 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     GrB_Vector *v,      // handle of vector to create
     GrB_Type type,      // type of vector to create
     GrB_Index n,        // vector length
-    GrB_Index **vi,     // indices, vi_size >= nvals(v)
-    void **vx,          // values, vx_size >= nvals(v)
-    GrB_Index vi_size,  // size of vi
-    GrB_Index vx_size,  // size of vx
+    GrB_Index **vi,     // indices, vi_size >= nvals(v) * sizeof(int64_t)
+    void **vx,          // values, vx_size >= nvals(v) * (type size)
+    GrB_Index vi_size,  // size of vi in bytes
+    GrB_Index vx_size,  // size of vx in bytes
     GrB_Index nvals,    // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted
     const GrB_Descriptor desc
@@ -8383,9 +8383,9 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     GrB_Type type,      // type of vector to create
     GrB_Index n,        // vector length
     int8_t **vb,        // bitmap, vb_size >= n
-    void **vx,          // values, vx_size >= n
-    GrB_Index vb_size,  // size of vb
-    GrB_Index vx_size,  // size of vx
+    void **vx,          // values, vx_size >= n * (type size)
+    GrB_Index vb_size,  // size of vb in bytes
+    GrB_Index vx_size,  // size of vx in bytes
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8403,8 +8403,8 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     GrB_Vector *v,      // handle of vector to create
     GrB_Type type,      // type of vector to create
     GrB_Index n,        // vector length
-    void **vx,          // values, vx_size >= nvals(v)
-    GrB_Index vx_size,  // size of vx
+    void **vx,          // values, vx_size >= nvals(v) * (type size)
+    GrB_Index vx_size,  // size of vx in bytes
     const GrB_Descriptor desc
 ) ;
 
@@ -8441,12 +8441,12 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index **Ap,     // row "pointers", Ap_size >= nrows+1
-    GrB_Index **Aj,     // row indices, Aj_size >= nvals(A)
-    void **Ax,          // values, Ax_size >= nvals(A)
-    GrB_Index *Ap_size, // size of Ap
-    GrB_Index *Aj_size, // size of Aj
-    GrB_Index *Ax_size, // size of Ax
+    GrB_Index **Ap,     // row "pointers"
+    GrB_Index **Aj,     // row indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Aj_size, // size of Aj in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8458,12 +8458,12 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index **Ap,     // column "pointers", Ap_size >= ncols+1
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)
-    void **Ax,          // values, Ax_size >= nvals(A)
-    GrB_Index *Ap_size, // size of Ap
-    GrB_Index *Ai_size, // size of Ai
-    GrB_Index *Ax_size, // size of Ax
+    GrB_Index **Ap,     // column "pointers"
+    GrB_Index **Ai,     // row indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Ai_size, // size of Ai in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
     bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8475,14 +8475,14 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index **Ap,     // row "pointers", Ap_size >= nvec+1
-    GrB_Index **Ah,     // row indices, Ah_size >= nvec
-    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)
-    void **Ax,          // values, Ax_size >= nvals(A)
-    GrB_Index *Ap_size, // size of Ap
-    GrB_Index *Ah_size, // size of Ah
-    GrB_Index *Aj_size, // size of Aj
-    GrB_Index *Ax_size, // size of Ax
+    GrB_Index **Ap,     // row "pointers"
+    GrB_Index **Ah,     // row indices
+    GrB_Index **Aj,     // column indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Ah_size, // size of Ah in bytes
+    GrB_Index *Aj_size, // size of Aj in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
     GrB_Index *nvec,    // number of rows that appear in Ah
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
@@ -8495,14 +8495,14 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index **Ap,     // column "pointers", Ap_size >= nvec+1
-    GrB_Index **Ah,     // column indices, Ah_size >= nvec
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)
-    void **Ax,          // values, Ax_size >= nvals(A)
-    GrB_Index *Ap_size, // size of Ap
-    GrB_Index *Ah_size, // size of Ah
-    GrB_Index *Ai_size, // size of Ai
-    GrB_Index *Ax_size, // size of Ax
+    GrB_Index **Ap,     // column "pointers"
+    GrB_Index **Ah,     // column indices
+    GrB_Index **Ai,     // row indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Ah_size, // size of Ah in bytes
+    GrB_Index *Ai_size, // size of Ai in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
     GrB_Index *nvec,    // number of columns that appear in Ah
     bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
@@ -8515,10 +8515,10 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
-    void **Ax,          // values, Ax_size >= nrows*ncols
-    GrB_Index *Ab_size, // size of Ab
-    GrB_Index *Ax_size, // size of Ax
+    int8_t **Ab,        // bitmap
+    void **Ax,          // values
+    GrB_Index *Ab_size, // size of Ab in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8530,10 +8530,10 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
-    void **Ax,          // values, Ax_size >= nrows*ncols
-    GrB_Index *Ab_size, // size of Ab
-    GrB_Index *Ax_size, // size of Ax
+    int8_t **Ab,        // bitmap
+    void **Ax,          // values
+    GrB_Index *Ab_size, // size of Ab in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8545,8 +8545,8 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    void **Ax,          // values, Ax_size >= nrows*ncols
-    GrB_Index *Ax_size, // size of Ax
+    void **Ax,          // values
+    GrB_Index *Ax_size, // size of Ax in bytes
     const GrB_Descriptor desc
 ) ;
 
@@ -8557,8 +8557,8 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
-    void **Ax,          // values, Ax_size >= nrows*ncols
-    GrB_Index *Ax_size, // size of Ax
+    void **Ax,          // values
+    GrB_Index *Ax_size, // size of Ax in bytes
     const GrB_Descriptor desc
 ) ;
 
@@ -8573,10 +8573,10 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
     GrB_Index *n,       // length of the vector
-    GrB_Index **vi,     // indices, vi_size >= nvals(v)
-    void **vx,          // values, vx_size >= nvals(v)
-    GrB_Index *vi_size, // size of vi
-    GrB_Index *vx_size, // size of vx
+    GrB_Index **vi,     // indices
+    void **vx,          // values
+    GrB_Index *vi_size, // size of vi in bytes
+    GrB_Index *vx_size, // size of vx in bytes
     GrB_Index *nvals,   // # of entries in vector
     bool *jumbled,      // if true, indices may be unsorted
     const GrB_Descriptor desc
@@ -8588,10 +8588,10 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
     GrB_Index *n,       // length of the vector
-    int8_t **vb,        // bitmap, vb_size >= n
-    void **vx,          // values, vx_size >= n
-    GrB_Index *vb_size, // size of vb
-    GrB_Index *vx_size, // size of vx
+    int8_t **vb,        // bitmap
+    void **vx,          // values
+    GrB_Index *vb_size, // size of vb in bytes
+    GrB_Index *vx_size, // size of vx in bytes
     GrB_Index *nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8602,8 +8602,8 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
     GrB_Index *n,       // length of the vector
-    void **vx,          // values, vx_size >= nvals(v)
-    GrB_Index *vx_size, // size of vx
+    void **vx,          // values
+    GrB_Index *vx_size, // size of vx in bytes
     const GrB_Descriptor desc
 ) ;
 

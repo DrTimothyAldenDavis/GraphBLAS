@@ -282,7 +282,7 @@
                     if (C_is_bitmap)
                     {
                         // C<A,struct>=A with C bitmap, A sparse
-                        GB_PRAGMA_SIMD_VECTORIZE
+                        GB_PRAGMA_SIMD_REDUCTION (+,task_cnvals)
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         { 
                             int64_t p = pC + GBI (Ai, pA, avlen) ;
@@ -309,7 +309,7 @@
                     if (C_is_bitmap)
                     {
                         // C<A,struct>=A with C bitmap, A sparse
-                        GB_PRAGMA_SIMD_VECTORIZE
+                        GB_PRAGMA_SIMD_REDUCTION (+,task_cnvals)
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {
                             if (GB_AX_MASK (Ax, pA, asize))

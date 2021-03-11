@@ -15,10 +15,10 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     GrB_Type type,      // type of vector to create
     GrB_Index n,        // vector length
 
-    int8_t **vb,        // bitmap, vb_size >= n
-    void **vx,          // values, vx_size 1, or >= n
-    GrB_Index vb_size,  // size of vb
-    GrB_Index vx_size,  // size of vx
+    int8_t **vb,        // bitmap
+    void **vx,          // values
+    GrB_Index vb_size,  // size of vb in bytes
+    GrB_Index vx_size,  // size of vx in bytes
 
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc

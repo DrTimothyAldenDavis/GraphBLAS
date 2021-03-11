@@ -369,7 +369,6 @@ GrB_Info GB_selector
         GB_FREE (&Ax, Ax_size) ;
         A->i = Ci ; Ci = NULL ; A->i_size = Ci_size ;
         A->x = Cx ; Cx = NULL ; A->x_size = Cx_size ;
-        ASSERT (A->x_size % A->type->size == 0) ;
         A->nzmax = cnz ;
         A->nvec_nonempty = C_nvec_nonempty ;
         A->jumbled = A_jumbled ;        // A remains jumbled (in-place select)
@@ -433,7 +432,6 @@ GrB_Info GB_selector
         C->h = Ch ; Ch = NULL ; C->h_size = Ch_size ;
         C->i = Ci ; Ci = NULL ; C->i_size = Ci_size ;
         C->x = Cx ; Cx = NULL ; C->x_size = Cx_size ;
-        ASSERT (C->x_size % C->type->size == 0) ;
         C->nzmax = cnz ;
         C->magic = GB_MAGIC ;
         C->nvec_nonempty = C_nvec_nonempty ;

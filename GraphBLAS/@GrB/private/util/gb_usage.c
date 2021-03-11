@@ -36,9 +36,15 @@ void gb_usage       // check usage and make sure GrB.init has been called
         // must use mexPrintf to print to MATLAB Command Window
         GB_printf_function = mexPrintf ;
 
-        OK (GxB_init (GrB_NONBLOCKING, mxMalloc, NULL, NULL, mxFree, false)) ;
-//      OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
-//          false)) ;
+        OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
+            false)) ;
+
+        // disable the memory pool
+        for (int k = 0 ; k < 64 ; k++)
+        {
+            // TODO:: add this as an option for GxB_set/get
+            GB_Global_free_pool_limit_set (k, 0) ;
+        }
 
         // MATLAB matrices are stored by column
         OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;

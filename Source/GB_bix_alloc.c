@@ -78,7 +78,6 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     { 
         A->x = GB_MALLOC (A->nzmax * A->type->size, GB_void, &(A->x_size)) ;
         ok = ok && (A->x != NULL) ;
-        ASSERT (GB_IMPLIES (ok, A->x_size % A->type->size == 0)) ;
     }
 
     if (!ok)

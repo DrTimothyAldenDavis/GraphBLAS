@@ -5673,10 +5673,14 @@ void mexFunction
     FREE_ALL ;
     nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d all freed\n", nmalloc) ;
+    int64_t nblocks = GB_Global_free_pool_nblocks_total ( ) ;
+    printf ("nblocks in free_pool %ld\n", nblocks) ;
     GrB_finalize ( ) ;
     nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d after finalize\n", nmalloc) ;
     CHECK (nmalloc == 0) ;
+    nblocks = GB_Global_free_pool_nblocks_total ( ) ;
+    CHECK (nblocks == 0) ;
 
     printf ("\ncheck errlog.txt for errors tested\n") ;
     printf ("All error-handling tests passed"

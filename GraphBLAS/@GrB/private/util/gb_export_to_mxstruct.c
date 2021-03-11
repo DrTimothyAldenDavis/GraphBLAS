@@ -224,7 +224,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     {
         // export the pointers
         mxArray *Ap_mx = mxCreateNumericMatrix (1, 0, mxINT64_CLASS, mxREAL) ;
-        mxSetN (Ap_mx, Ap_size) ;
+        mxSetN (Ap_mx, Ap_size / sizeof (int64_t)) ;
         void *p = mxGetInt64s (Ap_mx) ; gb_mxfree (&p) ;
         mxSetInt64s (Ap_mx, Ap) ;
         mxSetFieldByNumber (G, 0, 3, Ap_mx) ;
@@ -233,7 +233,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         mxArray *Ai_mx = mxCreateNumericMatrix (1, 0, mxINT64_CLASS, mxREAL) ;
         if (Ai_size > 0)
         { 
-            mxSetN (Ai_mx, Ai_size) ;
+            mxSetN (Ai_mx, Ai_size / sizeof (int64_t)) ;
             p = mxGetInt64s (Ai_mx) ; gb_mxfree (&p) ;
             mxSetInt64s (Ai_mx, Ai) ;
         }
@@ -244,8 +244,9 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     mxArray *Ax_mx = mxCreateNumericMatrix (1, 0, mxUINT8_CLASS, mxREAL) ;
     if (Ax_size > 0)
     { 
-        mxSetN (Ax_mx, Ax_size * type_size) ;
+        mxSetN (Ax_mx, Ax_size) ;
         void *p = mxGetUint8s (Ax_mx) ; gb_mxfree (&p) ;
+        // printf ("Set Ax %p size %lu\n", Ax, Ax_size) ;
         mxSetUint8s (Ax_mx, Ax) ;
     }
     mxSetFieldByNumber (G, 0, 2, Ax_mx) ;
@@ -254,13 +255,13 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     {
         // export the hyperlist
         mxArray *Ah_mx = mxCreateNumericMatrix (1, 0, mxINT64_CLASS, mxREAL) ;
-        if (Ah_size > nvec)
+        if (Ah_size > nvec * sizeof (int64_t))
         {
-            memset (Ah + nvec, 0, (Ah_size - nvec) * sizeof (int64_t)) ;
+            memset (Ah + nvec, 0, Ah_size - nvec * sizeof (int64_t)) ;
         }
         if (Ah_size > 0)
         { 
-            mxSetN (Ah_mx, Ah_size) ;
+            mxSetN (Ah_mx, Ah_size / sizeof (int64_t)) ;
             void *p = mxGetInt64s (Ah_mx) ; gb_mxfree (&p) ;
             mxSetInt64s (Ah_mx, Ah) ;
         }

@@ -9,12 +9,55 @@
 
 // A wrapper for malloc.  Space is not initialized.
 
-// The first two parameters are the same as the ANSI C11 calloc, except that
-// asking to allocate a block of zero size causes a block of size 1 to be
-// allocated instead.  This allows the return pointer p to be checked for the
-// out-of-memory condition, even when allocating an object of size zero.
-
 #include "GB.h"
+
+//------------------------------------------------------------------------------
+// GB_malloc_helper:  use malloc to allocate an uninitialized memory block
+//------------------------------------------------------------------------------
+
+static inline void *GB_malloc_helper
+(
+    // input/output
+    size_t *size,           // on input: # of bytes requested
+                            // on output: # of bytes actually allocated
+    bool malloc_tracking
+)
+{
+    void *p = NULL ;
+
+    // a malloc function is always available, unlike the optional calloc
+    {
+        // determine the next higher power of 2
+        (*size) = GB_IMAX (*size, 8) ;
+        int k = GB_CEIL_LOG2 (*size) ;
+
+        // if available, get the block from the pool
+        if (GB_Global_free_pool_limit_get (k) > 0)
+        {
+            // round up the size to the nearest power of two
+            (*size) = (1UL) << k ;
+            p = GB_Global_free_pool_get (k) ;
+        }
+
+        if (p == NULL)
+        {
+            // no block in the free_pool, so allocate it
+            p = GB_Global_malloc_function (*size) ;
+//          printf ("malloc %p %ld\n", p, *size) ;
+            if (p != NULL && malloc_tracking)
+            { 
+                // success
+                GB_Global_nmalloc_increment ( ) ;
+            }
+        }
+    }
+
+    return (p) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_malloc_memory
+//------------------------------------------------------------------------------
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void *GB_malloc_memory      // pointer to allocated block of memory
@@ -50,7 +93,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
     }
 
     //--------------------------------------------------------------------------
-    // allocate the space
+    // allocate the memory block
     //--------------------------------------------------------------------------
 
     if (GB_Global_malloc_tracking_get ( ))
@@ -74,14 +117,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
         }
         else
         { 
-            p = (void *) GB_Global_malloc_function (size) ;
-        }
-
-        // check if successful
-        if (p != NULL)
-        { 
-            // success
-            GB_Global_nmalloc_increment ( ) ;
+            p = GB_malloc_helper (&size, true) ;
         }
 
     }
@@ -92,7 +128,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
         // normal use, in production
         //----------------------------------------------------------------------
 
-        p = (void *) GB_Global_malloc_function (size) ;
+        p = GB_malloc_helper (&size, false) ;
     }
 
     //--------------------------------------------------------------------------

@@ -15,10 +15,10 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     GrB_Type type,      // type of vector to create
     GrB_Index n,        // vector length
 
-    GrB_Index **vi,     // indices, vi_size >= nvals(v)
-    void **vx,          // values, vx_size 1, or >= nvals(v)
-    GrB_Index vi_size,  // size of Ai
-    GrB_Index vx_size,  // size of Ax
+    GrB_Index **vi,     // indices
+    void **vx,          // values
+    GrB_Index vi_size,  // size of Ai in bytes
+    GrB_Index vx_size,  // size of Ax in bytes
 
     GrB_Index nvals,    // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted

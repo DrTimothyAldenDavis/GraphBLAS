@@ -140,7 +140,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         // export the content of T as a sparse CSC matrix
         //----------------------------------------------------------------------
 
-        GrB_Index Tp_size, Ti_size, Tx_size ;
+        GrB_Index Tp_size, Ti_size, Tx_size, type_size ;
         int64_t nonempty, *Tp, *Ti ;
         void *Tx ;
 
@@ -159,20 +159,25 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         if (type == GrB_BOOL)
         { 
             S = mxCreateSparseLogicalMatrix (0, 0, 1) ;
+            type_size = 1 ;
         }
         else if (type == GxB_FC64)
         { 
             S = mxCreateSparse (0, 0, 1, mxCOMPLEX) ;
+            type_size = 16 ;
         }
         else // type == GrB_FP64
         { 
             S = mxCreateSparse (0, 0, 1, mxREAL) ;
+            type_size = 8 ;
         }
 
         // set the size
         mxSetM (S, nrows) ;
         mxSetN (S, ncols) ;
-        mxSetNzmax (S, Ti_size) ;
+        int64_t nzmax = GB_IMIN (Ti_size / sizeof (int64_t),
+                                 Tx_size / type_size) ;
+        mxSetNzmax (S, nzmax) ;
 
         // set the column pointers
         void *p = mxGetJc (S) ; gb_mxfree (&p) ;

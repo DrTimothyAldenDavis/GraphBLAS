@@ -54,32 +54,49 @@ static inline int64_t GB_hash_table_size
     const GrB_Desc_Value AxB_method     // Default, Gustavson, or Hash
 )
 {
-    // hash_size = 2 * (smallest power of 2 >= flmax)
-    double hlog = log2 ((double) flmax) ;
-    int64_t hash_size = ((int64_t) 2) << ((int64_t) floor (hlog) + 1) ;
-    bool use_Gustavson ;
+    int64_t hash_size ;
 
-    if (AxB_method == GxB_AxB_GUSTAVSON)
-    { 
-        // always use Gustavson's method
-        use_Gustavson = true ;
-    }
-    else if (AxB_method == GxB_AxB_HASH)
-    { 
-        // always use Hash method, unless the hash_size >= cvlen
-        use_Gustavson = (hash_size >= cvlen) ;
+    if (AxB_method == GxB_AxB_GUSTAVSON || flmax >= cvlen/2)
+    {
+
+        //----------------------------------------------------------------------
+        // use Gustavson if selected explicitly or if flmax is large
+        //----------------------------------------------------------------------
+
+        hash_size = cvlen ;
+
     }
     else
-    { 
-        // default: auto selection:
-        // use Gustavson's method if hash_size is too big
-        use_Gustavson = (hash_size >= cvlen/12) ;
+    {
+
+        //----------------------------------------------------------------------
+        // flmax is small; consider hash vs Gustavson
+        //----------------------------------------------------------------------
+
+        // hash_size = 2 * (smallest power of 2 >= flmax)
+        hash_size = ((uint64_t) 2) << (GB_FLOOR_LOG2 (flmax) + 1) ;
+        bool use_Gustavson ;
+        if (AxB_method == GxB_AxB_HASH)
+        { 
+            // always use Hash method, unless the hash_size >= cvlen
+            use_Gustavson = (hash_size >= cvlen) ;
+        }
+        else
+        { 
+            // default: auto selection:
+            // use Gustavson's method if hash_size is too big
+            use_Gustavson = (hash_size >= cvlen/12) ;
+        }
+        if (use_Gustavson)
+        { 
+            hash_size = cvlen ;
+        }
     }
 
-    if (use_Gustavson)
-    { 
-        hash_size = cvlen ;
-    }
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
     return (hash_size) ;
 }
 

@@ -74,7 +74,7 @@
 {                               \
     if (A == C) A = NULL ;      \
     if (M == C) M = NULL ;      \
-    GrB_Matrix_free_(&C) ;       \
+    GrB_Matrix_free_(&C) ;      \
 }
 
 GrB_Matrix C = NULL ;

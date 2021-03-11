@@ -174,7 +174,6 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             }
             GB_memcpy (W, A->x, len, nthreads_max) ;
             A->x = (GB_void *) W ; A->x_size = W_size ;
-            ASSERT (A->x_size % A->type->size == 0) ;
             A->x_shallow = false ;
             W = NULL ;
         }

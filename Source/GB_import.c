@@ -21,30 +21,25 @@ GrB_Info GB_import      // import a matrix in any format
 
     // the 5 arrays:
     GrB_Index **Ap,     // pointers, for sparse and hypersparse formats.
-                        // Ap_size >= nvec+1 for hyper, Ap_size >= vdim+1 for
-                        // sparse.  Ignored for bitmap and full formats.
+                        // Ignored for bitmap and full formats.
                         // NULL for GxB_Vector_import_CSC.
-    GrB_Index Ap_size,  // size of Ap
+    GrB_Index Ap_size,  // size of Ap in bytes
 
-    GrB_Index **Ah,     // vector indices, Ah_size >= nvec for hyper.
+    GrB_Index **Ah,     // vector indices.
                         // Ignored for sparse, bitmap, and full formats.
-    GrB_Index Ah_size,  // size of Ah
+    GrB_Index Ah_size,  // size of Ah in bytes
 
-    int8_t **Ab,        // bitmap, for bitmap format only, Ab_size >= vlen*vdim.
+    int8_t **Ab,        // bitmap, for bitmap format only.
                         // Ignored for hyper, sparse, and full formats.  
-    GrB_Index Ab_size,  // size of Ab
+    GrB_Index Ab_size,  // size of Ab in bytes
 
-    GrB_Index **Ai,     // indices, size Ai_size >= nvals(A) for hyper and
+    GrB_Index **Ai,     // indices for hyper and
                         // sparse formats.  Ignored for bitmap and full.
-    GrB_Index Ai_size,  // size of Ai
+    GrB_Index Ai_size,  // size of Ai in bytes
 
-    void **Ax,          // values, Ax_size is either 0, 1, or >= nvals(A) for
-                        // hyper or sparse formats or >= vlen*vdim for bitmap
-                        // or full formats.  Ax_size may be zero only if a
-                        // sparse or hypersparse matrix has no entries, or if a
-                        // bitmap or full matrix has a vlen or vdim of zero.
+    void **Ax,          // values
                         // Ax and *Ax are ignored if Ax_size is zero.
-    GrB_Index Ax_size,  // size of Ax
+    GrB_Index Ax_size,  // size of Ax in bytes
 
     // additional information for specific formats:
     GrB_Index nvals,    // # of entries for bitmap format, or for a vector
@@ -101,23 +96,35 @@ GrB_Info GB_import      // import a matrix in any format
         case GxB_HYPERSPARSE : 
             // check Ap and get nvals
             if (nvec > vdim) return (GrB_INVALID_VALUE) ;
-            if (Ap_size < nvec+1) return (GrB_INVALID_VALUE) ;
+            if (Ap_size < (nvec+1) * sizeof (int64_t))
+            {
+                return (GrB_INVALID_VALUE) ;
+            }
             GB_RETURN_IF_NULL (Ap) ;
             GB_RETURN_IF_NULL (*Ap) ;
             nvals = (*Ap) [nvec] ;
             // check Ah
             GB_RETURN_IF_NULL (Ah) ;
             GB_RETURN_IF_NULL (*Ah) ;
-            if (Ah_size < nvec) return (GrB_INVALID_VALUE) ;
+            if (Ah_size < nvec * sizeof (int64_t))
+            {
+                return (GrB_INVALID_VALUE) ;
+            }
             // check Ai
             if (Ai_size > 0)
             {
                 GB_RETURN_IF_NULL (Ai) ;
                 GB_RETURN_IF_NULL (*Ai) ;
             }
-            if (Ai_size < nvals) return (GrB_INVALID_VALUE) ;
+            if (Ai_size < nvals * sizeof (int64_t))
+            {
+                return (GrB_INVALID_VALUE) ;
+            }
             // check Ax
-            if (Ax_size > 1 && Ax_size < nvals) return (GrB_INVALID_VALUE) ;
+            if (Ax_size > 0 && Ax_size < nvals * type->size)
+            {
+                return (GrB_INVALID_VALUE) ;
+            }
             break ;
 
         case GxB_SPARSE : 
@@ -127,7 +134,10 @@ GrB_Info GB_import      // import a matrix in any format
                 // GxB_Vector_import_CSC passes in Ap as a NULL, and nvals as
                 // the # of entries in the vector.  All other uses of GB_import
                 // pass in Ap for the sparse case
-                if (Ap_size < vdim+1) return (GrB_INVALID_VALUE) ;
+                if (Ap_size < (vdim+1) * sizeof (int64_t))
+                {
+                    return (GrB_INVALID_VALUE) ;
+                }
                 GB_RETURN_IF_NULL (Ap) ;
                 GB_RETURN_IF_NULL (*Ap) ;
                 nvals = (*Ap) [vdim] ;
@@ -138,9 +148,15 @@ GrB_Info GB_import      // import a matrix in any format
                 GB_RETURN_IF_NULL (Ai) ;
                 GB_RETURN_IF_NULL (*Ai) ;
             }
-            if (Ai_size < nvals) return (GrB_INVALID_VALUE) ;
+            if (Ai_size < nvals * sizeof (int64_t))
+            {
+                return (GrB_INVALID_VALUE) ;
+            }
             // check Ax
-            if (Ax_size > 1 && Ax_size < nvals) return (GrB_INVALID_VALUE) ;
+            if (Ax_size > 1 && Ax_size < nvals * type->size)
+            {
+                return (GrB_INVALID_VALUE) ;
+            }
             break ;
 
         case GxB_BITMAP : 
@@ -154,12 +170,18 @@ GrB_Info GB_import      // import a matrix in any format
             if (nvals > full_size) return (GrB_INVALID_VALUE) ;
             if (Ab_size < full_size) return (GrB_INVALID_VALUE) ;
             // check Ax
-            if (Ax_size > 1 && Ax_size < full_size) return (GrB_INVALID_VALUE) ;
+            if (Ax_size > 0 && Ax_size < full_size * type->size)
+            {
+                return (GrB_INVALID_VALUE) ;
+            }
             break ;
 
         case GxB_FULL : 
             // check Ax
-            if (Ax_size > 1 && Ax_size < full_size) return (GrB_INVALID_VALUE) ;
+            if (Ax_size > 0 && Ax_size < full_size * type->size)
+            {
+                return (GrB_INVALID_VALUE) ;
+            }
             break ;
 
         default: ;
@@ -194,7 +216,7 @@ GrB_Info GB_import      // import a matrix in any format
 
             // import A->h
             (*A)->h = (int64_t *) (*Ah) ; (*Ah) = NULL ;
-            (*A)->h_size = Ah_size * sizeof (int64_t) ;
+            (*A)->h_size = Ah_size ;
             #ifdef GB_DEBUG
             GB_Global_memtable_add ((*A)->h, (*A)->h_size) ;
             #endif
@@ -202,7 +224,8 @@ GrB_Info GB_import      // import a matrix in any format
         case GxB_SPARSE : 
             (*A)->jumbled = jumbled ;   // import jumbled status
             (*A)->nvec_nonempty = -1 ;  // not computed; delay until required
-            (*A)->nzmax = GB_IMIN (Ai_size, Ax_size) ;
+            (*A)->nzmax = GB_IMIN (Ai_size / sizeof (int64_t),
+                                   Ax_size / type->size) ;
 
             if (is_sparse_vector)
             {
@@ -213,7 +236,7 @@ GrB_Info GB_import      // import a matrix in any format
             { 
                 // import A->p, unless already created for a sparse CSC vector
                 (*A)->p = (int64_t *) (*Ap) ; (*Ap) = NULL ;
-                (*A)->p_size = Ap_size * sizeof (int64_t) ;
+                (*A)->p_size = Ap_size ;
                 #ifdef GB_DEBUG
                 GB_Global_memtable_add ((*A)->p, (*A)->p_size) ;
                 #endif
@@ -221,7 +244,7 @@ GrB_Info GB_import      // import a matrix in any format
 
             // import A->i
             (*A)->i = (int64_t *) (*Ai) ; (*Ai) = NULL ;
-            (*A)->i_size = Ai_size * sizeof (int64_t) ;
+            (*A)->i_size = Ai_size ;
             #ifdef GB_DEBUG
             GB_Global_memtable_add ((*A)->i, (*A)->i_size) ;
             #endif
@@ -229,7 +252,7 @@ GrB_Info GB_import      // import a matrix in any format
 
         case GxB_BITMAP : 
             (*A)->nvals = nvals ;
-            (*A)->nzmax = GB_IMIN (Ab_size, Ax_size) ;
+            (*A)->nzmax = GB_IMIN (Ab_size, Ax_size / type->size) ;
 
             // import A->b
             (*A)->b = (*Ab) ; (*Ab) = NULL ;
@@ -240,7 +263,7 @@ GrB_Info GB_import      // import a matrix in any format
             break ;
 
         case GxB_FULL : 
-            (*A)->nzmax = Ax_size ;
+            (*A)->nzmax = Ax_size / type->size ;
             break ;
 
         default: ;
@@ -250,8 +273,7 @@ GrB_Info GB_import      // import a matrix in any format
     { 
         // import A->x
         (*A)->x = (*Ax) ; (*Ax) = NULL ;
-        (*A)->x_size = Ax_size * type->size ;
-        ASSERT ((*A)->x_size % type->size == 0) ;
+        (*A)->x_size = Ax_size ;
         #ifdef GB_DEBUG
         GB_Global_memtable_add ((*A)->x, (*A)->x_size) ;
         #endif

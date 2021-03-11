@@ -18,8 +18,8 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
 
-    void **Ax,          // values, Ax_size 1, or >= nrows*ncols
-    GrB_Index *Ax_size, // size of Ax
+    void **Ax,          // values
+    GrB_Index *Ax_size, // size of Ax in bytes
 
     const GrB_Descriptor desc
 )

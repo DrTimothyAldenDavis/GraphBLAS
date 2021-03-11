@@ -18,12 +18,12 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
 
-    GrB_Index **Ap,     // row "pointers", Ap_size >= nrows+1
-    GrB_Index **Aj,     // row indices, Aj_size >= nvals(A)
-    void **Ax,          // values, Ax_size 1, or >= nvals(A)
-    GrB_Index *Ap_size, // size of Ap
-    GrB_Index *Aj_size, // size of Aj
-    GrB_Index *Ax_size, // size of Ax
+    GrB_Index **Ap,     // row "pointers"
+    GrB_Index **Aj,     // row indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Aj_size, // size of Aj in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
 
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc

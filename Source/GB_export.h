@@ -21,25 +21,29 @@ GrB_Info GB_import      // import a matrix in any format
 
     // the 5 arrays:
     GrB_Index **Ap,     // pointers, for sparse and hypersparse formats.
-                        // Ap_size >= nvec+1 for hyper, Ap_size >= vdim+1 for
-                        // sparse.  Ignored for bitmap and full formats.
-    GrB_Index Ap_size,  // size of Ap; ignored if Ap is ignored.
-    GrB_Index **Ah,     // vector indices, Ah_size >= nvec for hyper.
+                        // Ignored for bitmap and full formats.
+                        // NULL for GxB_Vector_import_CSC.
+    GrB_Index Ap_size,  // size of Ap in bytes
+
+    GrB_Index **Ah,     // vector indices.
                         // Ignored for sparse, bitmap, and full formats.
-    GrB_Index Ah_size,  // size of Ah; ignored if Ah is ignored.
-    int8_t **Ab,        // bitmap, for bitmap format only, Ab_size >= vlen*vdim.
+    GrB_Index Ah_size,  // size of Ah in bytes
+
+    int8_t **Ab,        // bitmap, for bitmap format only.
                         // Ignored for hyper, sparse, and full formats.  
-    GrB_Index Ab_size,  // size of Ab; ignored if Ab is ignored.
-    GrB_Index **Ai,     // indices, size Ai_size >= nvals(A) for hyper and
+    GrB_Index Ab_size,  // size of Ab in bytes
+
+    GrB_Index **Ai,     // indices for hyper and
                         // sparse formats.  Ignored for bitmap and full.
-    GrB_Index Ai_size,  // size of Ai; ignored if Ai is ignored.
-    void **Ax,          // values, Ax_size is either 1, or >= nvals(A) for
-                        // hyper or sparse formats.  Ax_size >= vlen*vdim for
-                        // bitmap or full formats.
-    GrB_Index Ax_size,  // size of Ax; never ignored.
+    GrB_Index Ai_size,  // size of Ai in bytes
+
+    void **Ax,          // values
+                        // Ax and *Ax are ignored if Ax_size is zero.
+    GrB_Index Ax_size,  // size of Ax in bytes
 
     // additional information for specific formats:
-    GrB_Index nvals,    // # of entries for bitmap format.
+    GrB_Index nvals,    // # of entries for bitmap format, or for a vector
+                        // in CSC format.
     bool jumbled,       // if true, sparse/hypersparse may be jumbled.
     GrB_Index nvec,     // size of Ah for hypersparse format.
 
@@ -58,20 +62,21 @@ GrB_Info GB_export      // export a matrix in any format
     bool is_sparse_vector,      // true if A is a sparse GrB_Vector
 
     // the 5 arrays:
-    GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse
-    GrB_Index *Ap_size, // size of Ap
+    GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse,
+                        // NULL if A is a sparse CSC GrB_Vector
+    GrB_Index *Ap_size, // size of Ap in bytes
 
     GrB_Index **Ah,     // vector indices, size nvec for hyper
-    GrB_Index *Ah_size, // size of Ah
+    GrB_Index *Ah_size, // size of Ah in bytes
 
     int8_t **Ab,        // bitmap, size nzmax
-    GrB_Index *Ab_size, // size of Ab
+    GrB_Index *Ab_size, // size of Ab in bytes
 
     GrB_Index **Ai,     // indices, size nzmax
-    GrB_Index *Ai_size, // size of Ai
+    GrB_Index *Ai_size, // size of Ai in bytes
 
     void **Ax,          // values, size nzmax
-    GrB_Index *Ax_size, // size of Ax (# of entries)
+    GrB_Index *Ax_size, // size of Ax in bytes
 
     // additional information for specific formats:
     GrB_Index *nvals,   // # of entries for bitmap format.

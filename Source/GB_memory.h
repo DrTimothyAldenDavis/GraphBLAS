@@ -49,7 +49,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void GB_free_memory
+void GB_free_memory         // free memory, bypassing the free_pool
 (
     // input/output
     void **p,               // pointer to allocated block of memory to free
@@ -57,7 +57,19 @@ void GB_free_memory
     size_t size_allocated   // # of bytes actually allocated
 ) ;
 
-#define GB_FREE(p,s) GB_free_memory (p,s)
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+void GB_dealloc_memory      // free memory, return to free_pool or free it
+(
+    // input/output
+    void **p,               // pointer to allocated block of memory to free
+    // input
+    size_t size_allocated   // # of bytes actually allocated
+) ;
+
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+void GB_free_pool_finalize (void) ;
+
+#define GB_FREE(p,s) GB_dealloc_memory (p,s)
 #define GB_CALLOC(n,type,s,Context) \
     (type *) GB_calloc_memory (n, sizeof (type), s, Context)
 #define GB_MALLOC(n,type,s) (type *) GB_malloc_memory (n, sizeof (type), s)

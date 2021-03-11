@@ -23,19 +23,19 @@ GrB_Info GB_export      // export a matrix in any format
     // the 5 arrays:
     GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse,
                         // NULL if A is a sparse CSC GrB_Vector
-    GrB_Index *Ap_size, // size of Ap, NULL if A is a sparse CSC GrB_Vector 
+    GrB_Index *Ap_size, // size of Ap in bytes
 
     GrB_Index **Ah,     // vector indices, size nvec for hyper
-    GrB_Index *Ah_size, // size of Ah
+    GrB_Index *Ah_size, // size of Ah in bytes
 
     int8_t **Ab,        // bitmap, size nzmax
-    GrB_Index *Ab_size, // size of Ab
+    GrB_Index *Ab_size, // size of Ab in bytes
 
     GrB_Index **Ai,     // indices, size nzmax
-    GrB_Index *Ai_size, // size of Ai
+    GrB_Index *Ai_size, // size of Ai in bytes
 
     void **Ax,          // values, size nzmax
-    GrB_Index *Ax_size, // size of Ax (# of entries)
+    GrB_Index *Ax_size, // size of Ax in bytes
 
     // additional information for specific formats:
     GrB_Index *nvals,   // # of entries for bitmap format.
@@ -109,9 +109,7 @@ GrB_Info GB_export      // export a matrix in any format
     GB_Global_memtable_remove ((*A)->x) ;
     #endif
     (*Ax) = (*A)->x ; (*A)->x = NULL ;
-    (*Ax_size) = (*A)->x_size / (*type)->size ;
-    ASSERT ((*A)->x_size % (*type)->size == 0) ;
-    ASSERT ((*Ax_size) * (*type)->size == (*A)->x_size) ;
+    (*Ax_size) = (*A)->x_size ;
 
     switch (s)
     {
@@ -123,8 +121,7 @@ GrB_Info GB_export      // export a matrix in any format
             GB_Global_memtable_remove ((*A)->h) ;
             #endif
             (*Ah) = (*A)->h ; (*A)->h = NULL ;
-            (*Ah_size) = (*A)->h_size / sizeof (int64_t) ;
-            ASSERT ((*Ah_size) * sizeof (int64_t) == (*A)->h_size) ;
+            (*Ah_size) = (*A)->h_size ;
 
         case GxB_SPARSE : 
             if (jumbled != NULL)
@@ -143,8 +140,7 @@ GrB_Info GB_export      // export a matrix in any format
                 GB_Global_memtable_remove ((*A)->p) ;
                 #endif
                 (*Ap) = (*A)->p ; (*A)->p = NULL ;
-                (*Ap_size) = (*A)->p_size / sizeof (int64_t) ;
-                ASSERT ((*Ap_size) * sizeof (int64_t) == (*A)->p_size) ;
+                (*Ap_size) = (*A)->p_size ;
             }
 
             // export A->i
@@ -152,8 +148,7 @@ GrB_Info GB_export      // export a matrix in any format
             GB_Global_memtable_remove ((*A)->i) ;
             #endif
             (*Ai) = (*A)->i ; (*A)->i = NULL ;
-            (*Ai_size) = (*A)->i_size / sizeof (int64_t) ;
-            ASSERT ((*Ai_size) * sizeof (int64_t) == (*A)->i_size) ;
+            (*Ai_size) = (*A)->i_size ;
             break ;
 
         case GxB_BITMAP : 

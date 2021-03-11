@@ -84,6 +84,7 @@ typedef GB_Context_struct *GB_Context ;
 #define GB_WHERE(C,where_string)                                    \
     if (!GB_Global_GrB_init_called_get ( ))                         \
     {                                                               \
+        printf ("where: %s %d\n", __FILE__, __LINE__) ; \
         return (GrB_PANIC) ; /* GrB_init not called */              \
     }                                                               \
     GB_CONTEXT (where_string)                                       \
@@ -99,6 +100,7 @@ typedef GB_Context_struct *GB_Context ;
 #define GB_WHERE1(where_string)                                     \
     if (!GB_Global_GrB_init_called_get ( ))                         \
     {                                                               \
+        printf ("where1: %s %d\n", __FILE__, __LINE__) ; \
         return (GrB_PANIC) ; /* GrB_init not called */              \
     }                                                               \
     GB_CONTEXT (where_string)

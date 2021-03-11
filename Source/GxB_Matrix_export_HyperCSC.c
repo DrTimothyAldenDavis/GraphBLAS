@@ -18,14 +18,14 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
 
-    GrB_Index **Ap,     // column "pointers", Ap_size >= nvec+1
-    GrB_Index **Ah,     // column indices, Ah_size >= nvec
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)
-    void **Ax,          // values, Ax_size 1, or >= nvals(A)
-    GrB_Index *Ap_size, // size of Ap
-    GrB_Index *Ah_size, // size of Ah
-    GrB_Index *Ai_size, // size of Ai
-    GrB_Index *Ax_size, // size of Ax
+    GrB_Index **Ap,     // column "pointers"
+    GrB_Index **Ah,     // column indices
+    GrB_Index **Ai,     // row indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Ah_size, // size of Ah in bytes
+    GrB_Index *Ai_size, // size of Ai in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
 
     GrB_Index *nvec,    // number of columns that appear in Ah
     bool *jumbled,      // if true, indices in each column may be unsorted

@@ -121,7 +121,6 @@
                     // both C(:,j) and B(:,j) are dense
                     //----------------------------------------------------------
 
-
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t pB = my_pB_start ; pB < my_pB_end ; pB++)
                     { 
