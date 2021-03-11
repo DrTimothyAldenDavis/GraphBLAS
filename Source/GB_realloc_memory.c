@@ -23,7 +23,7 @@
 // Usage:
 
 //      p = GB_realloc_memory (nitems_new, nitems_old, size_of_item, p,
-//              &size_allocated, &ok)
+//              &size_allocated, &ok, Context)
 
 //      if (ok)
 
