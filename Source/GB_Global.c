@@ -253,25 +253,27 @@ GB_Global_struct GB_Global =
         16483,  // size 2^5 = 32       (2^14 blocks * 2^5  = 512 KB total)
         16483,  // size 2^6 = 64       (2^14 blocks * 2^6  = 1 MB total)
         16483,  // size 2^7 = 128      (2^14 blocks * 2^7  = 2 MB total)
-        16483,  // size 2^8 = 256      (2^14 blocks * 2^8  = 4 MB total)
 
+        16483,  // size 2^8 = 256      (2^14 blocks * 2^8  = 4 MB total)
         8192,   // size 2^9 = 512      (2^13 blocks * 2^9  = 4 MB total)
         4096,   // size 2^10 = 1 KB    (2^12 blocks * 2^10 = 4 MB total)
         2048,   // size 2^11 = 2 KB    (2^11 blocks * 2^11 = 4 MB total)
+
         1024,   // size 2^12 = 4 KB    (2^10 blocks * 2^12 = 4 MB total)
         512,    // size 2^13 = 8 KB    (2^9  blocks * 2^13 = 4 MB total)
         256,    // size 2^14 = 16 KB   (2^8  blocks * 2^14 = 4 MB total)
         128,    // size 2^15 = 32 KB   (2^7  blocks * 2^15 = 4 MB total)
+
         64,     // size 2^16 = 64 KB   (2^6  blocks * 2^16 = 4 MB total)
         32,     // size 2^17 = 128 KB  (2^5  blocks * 2^17 = 4 MB total)
         16,     // size 2^18 = 256 KB  (2^4  blocks * 2^18 = 4 MB total)
         8,      // size 2^19 = 512 KB  (2^3  blocks * 2^19 = 4 MB total)
-        4,      // size 2^20 = 1 MB    (2^2  blocks * 2^20 = 4 MB total)
 
-        // maximum total size = about 56 MB
-        // by default, no blocks larger than 1 MB are kept in the free_pool
+        // maximum total size = about 52 MB
+        // by default, no blocks larger than 512 KB are kept in the free_pool
 
-        0,      // size 2^21 = 2 MB
+        0,      // size 2^20 = 1 MB
+        0,      // size 2^21
         0,      // size 2^22
         0,      // size 2^23
         0,      // size 2^24
@@ -322,7 +324,6 @@ GB_Global_struct GB_Global =
         0,      // size 2^61
         0,      // size 2^62
         0 },    // size 2^63 (4 exabytes!)
-#endif
 
 #if 0
     // default limits on the number of free blocks in each list:
@@ -1216,7 +1217,7 @@ void GB_Global_free_pool_init (void)
         {
             GB_Global.free_pool_limit [k] = n ;
         }
-        for (int k = 9 ; k <= 20 ; k++)
+        for (int k = 9 ; k <= 19 ; k++)
         {
             n = n/2 ;
             GB_Global.free_pool_limit [k] = n ;
