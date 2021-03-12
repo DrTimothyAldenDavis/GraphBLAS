@@ -20,9 +20,7 @@
 void GB_stringify_semiring     // build a semiring (name and code)
 (
     // output: (all of size at least GB_CUDA_STRLEN+1)
-    char *semiring_name,    // name of the semiring
     char *semiring_macros,  // List of types and macro defs
-//  char *mask_name,        // definition of mask data load     // TODO: FIXME
     // input:
     GrB_Semiring semiring,  // the semiring to stringify
     bool flipxy,            // multiplier is: mult(a,b) or mult(b,a)
@@ -44,7 +42,6 @@ void GB_stringify_semiring     // build a semiring (name and code)
         semiring, flipxy, ctype, mtype, atype, btype, Mask_struct, Mask_comp,
         C_sparsity, M_sparsity, A_sparsity, B_sparsity) ;
     GB_macrofy_semiring (semiring_macros, scode) ;
-    GB_semiring_name (semiring_name, scode) ;
 }
 
 //------------------------------------------------------------------------------
@@ -165,16 +162,8 @@ void GB_enumify_semiring   // enumerate a semiring
     // enumify the monoid
     //--------------------------------------------------------------------------
 
-    int add_ecode ;
-    GB_enumify_binop (&add_ecode, add_opcode, zcode, false) ;
-    ASSERT (add_ecode < 32) ;
-
-    int id_ecode ;
-    GB_enumify_identity (&id_ecode, add_opcode, zcode) ;
-
-    int term_ecode ;
-    bool is_term ;
-    GB_enumify_terminal (&is_term, &term_ecode, add_opcode, zcode) ;
+    int add_ecode, id_ecode, term_ecode ;
+    GB_enumify_monoid (&add_code, &id_ecode, &term_ecode, ) ;
 
     //--------------------------------------------------------------------------
     // enumify the types
@@ -211,7 +200,7 @@ void GB_enumify_semiring   // enumerate a semiring
     #define LSHIFT(x,k) (((uint64_t) x) << k)
 
     (*scode) =
-                                             // range        bits
+                                            // range        bits
                 // monoid
                 LSHIFT (add_ecode  , 55) |  // 0 to 22      5
                 LSHIFT (id_ecode   , 50) |  // 0 to 31      5
@@ -306,9 +295,7 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     //--------------------------------------------------------------------------
 
     char s [GB_CUDA_STRLEN+1] ;
-
     char mult_macro [GB_CUDA_STRLEN+1] ;
-//  GB_stringify_binop (mult_macro, "GB_MULT", mult_opcode, zcode, true) ;
     GB_charify_binop (&s, mult_ecode) ;
     GB_macrofy_binop (mult_macro, "GB_MULT", s, flipxy) ;
 
@@ -317,35 +304,11 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     //--------------------------------------------------------------------------
 
     char add_macro [GB_CUDA_STRLEN+1] ;
-//  GB_stringify_binop (add_macro, "GB_ADD", add_opcode, zcode, false) ;
-    GB_charify_binop (&s, add_ecode) ;
-    GB_macrofy_binop (add_macro, "GB_ADD", s) ;
-
     char identity_macro [GB_CUDA_STRLEN+1] ;
-//  GB_stringify_identity (identity_macro, add_opcode, zcode) ;
-    GB_charify_identity_or_terminal (&s, id_ecode) ;
-    GB_macrofy_identity (identity_macro, s) ;
-
     char terminal_expression_macro [GB_CUDA_STRLEN+1] ;
     char terminal_statement_macro  [GB_CUDA_STRLEN+1] ;
-
-//  GB_stringify_terminal (&is_term,
-//      terminal_expression_macro, terminal_statement_macro,
-//      "GB_TERMINAL_CONDITION", "GB_IF_TERMINAL_BREAK", add_opcode, zcode) ;
-
-    char texpr [GB_CUDA_STRLEN+1] ;
-    char tstmt [GB_CUDA_STRLEN+1] ;
-
-    // convert ecode and is_term to strings
-    GB_charify_identity_or_terminal (&s, ecode) ;
-    GB_charify_terminal_expression (texpr, s, is_term, ecode) ;
-    GB_charify_terminal_statement  (tstmt, s, is_term, ecode) ;
-
-    // convert strings to macros
-    GB_macrofy_terminal_expression (terminal_expression_macro,
-        "GB_TERMINAL_CONDITION", texpr) ;
-    GB_macrofy_terminal_statement (terminal_statement_macro,
-        "GB_IF_TERMINAL_BREAK", tstmt) ;
+    GB_macrofy_monoid (add_macro, identity_macro, terminal_expression_macro,
+        terminal_statement_macro, add_ecode, id_ecode, term_ecode) ;
 
     //--------------------------------------------------------------------------
     // macro to typecast the result back into C
@@ -390,21 +353,5 @@ void GB_macrofy_semiring   // construct all macros for a semiring
         terminal_expression_macro, terminal_statement_macro, ccast_macro,
         mask_macros, csparsity_macros, msparsity_macros, asparsity_macros,
         bsparsity_macros) ;
-}
-
-//------------------------------------------------------------------------------
-// GB_semiring_name: construct the name of a semiring
-//------------------------------------------------------------------------------
-
-void GB_semiring_name       // construct the name of a semiring
-(
-    // output:
-    char *semiring_name,    // name of the semiring
-    // input:
-    uint64_t scode
-)
-{
-
-    snprintf (semiring_name, GB_CUDA_STRLEN, "semiring_%0.16X", scode) ;
 }
 

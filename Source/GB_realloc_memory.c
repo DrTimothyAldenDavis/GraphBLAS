@@ -24,18 +24,17 @@
 
 //      p = GB_realloc_memory (nitems_new, nitems_old, size_of_item, p,
 //              &size_allocated, &ok, Context)
-
 //      if (ok)
-
+//      {
 //          p points to a block of at least nitems_new*size_of_item bytes and
 //          the first part, of size min(nitems_new,nitems_old)*size_of_item,
 //          has the same content as the old memory block if it was present.
-
+//      }
 //      else
-
+//      {
 //          p points to the old block, and size_allocated is left
 //          unchanged.  This case never occurs if nitems_new < nitems_old.
-
+//      }
 //      on output, size_allocated is set to the actual size of the block of
 //      memory
 
@@ -47,7 +46,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 (
     size_t nitems_new,      // new number of items in the object
     size_t nitems_old,      // old number of items in the object
-    size_t size_of_item,    // sizeof each item
+    size_t size_of_item,    // size of each item
     // input/output
     void *p,                // old object to reallocate
     size_t *size_allocated, // # of bytes actually allocated
@@ -58,31 +57,6 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (size_allocated != NULL) ;
-
-    size_t newsize, oldsize ;
-
-    // make sure at least one item is allocated
-    nitems_old = GB_IMAX (1, nitems_old) ;
-    nitems_new = GB_IMAX (1, nitems_new) ;
-
-    // make sure at least one byte is allocated
-    size_of_item = GB_IMAX (1, size_of_item) ;
-
-    (*ok) = GB_size_t_multiply (&newsize, nitems_new, size_of_item)
-         && GB_size_t_multiply (&oldsize, nitems_old, size_of_item) ;
-
-    if (!(*ok) || nitems_new > GxB_INDEX_MAX || size_of_item > GxB_INDEX_MAX)
-    { 
-        // overflow
-        (*ok) = false ;
-        return (NULL) ;
-    }
-
-    //--------------------------------------------------------------------------
     // malloc a new block if p is NULL on input
     //--------------------------------------------------------------------------
 
@@ -91,6 +65,28 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         p = GB_malloc_memory (nitems_new, size_of_item, size_allocated) ;
         (*ok) = (p != NULL) ;
         return (p) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // make sure at least one item is allocated
+    nitems_old = GB_IMAX (1, nitems_old) ;
+    nitems_new = GB_IMAX (1, nitems_new) ;
+
+    // make sure at least one byte is allocated
+    size_of_item = GB_IMAX (1, size_of_item) ;
+
+    size_t newsize, oldsize ;
+    (*ok) = GB_size_t_multiply (&newsize, nitems_new, size_of_item)
+         && GB_size_t_multiply (&oldsize, nitems_old, size_of_item) ;
+
+    if (!(*ok) || nitems_new > GxB_INDEX_MAX || size_of_item > GxB_INDEX_MAX)
+    { 
+        // overflow
+        (*ok) = false ;
+        return (NULL) ;
     }
 
     //--------------------------------------------------------------------------
@@ -120,7 +116,6 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     //--------------------------------------------------------------------------
 
     void *pnew = NULL ;
-
     size_t newsize_allocated = GB_IMAX (newsize, 8) ;
     int k = GB_CEIL_LOG2 (newsize_allocated) ;
     if (!GB_Global_have_realloc_function ( ) ||
@@ -136,6 +131,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         // done by GB_malloc_memory, which allocates a new block or gets it
         // from the free_pool if one exists of that size.
 
+        // allocate the new space
         pnew = GB_malloc_memory (nitems_new, size_of_item, &newsize_allocated) ;
         // copy over the data from the old block to the new block
         if (pnew != NULL)
@@ -165,8 +161,6 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         if (!pretend_to_fail)
         { 
             pnew = GB_Global_realloc_function (p, newsize_allocated) ;
-//          printf ("realloc %p to %p, size %lu to %lu\n",
-//              p, pnew, oldsize_allocated, newsize_allocated) ;
         }
     }
 
