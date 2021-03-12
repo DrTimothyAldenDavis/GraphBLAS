@@ -17,13 +17,13 @@
     GB_mx_put_global (true) ;           \
 }
 
-#define OK(method)                                          \
-{                                                           \
-    info = method ;                                         \
-    if (info != GrB_SUCCESS)                                \
-    {                                                       \
-        mexErrMsgTxt ("fail") ;                             \
-    }                                                       \
+#define OK(method)                      \
+{                                       \
+    info = method ;                     \
+    if (info != GrB_SUCCESS)            \
+    {                                   \
+        mexErrMsgTxt ("fail") ;         \
+    }                                   \
 }
 
 void mexFunction

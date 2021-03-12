@@ -16,10 +16,10 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
 
-    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
-    void **Ax,          // values, Ax_size 1, or >= nrows*ncols
-    GrB_Index Ab_size,  // size of Ab
-    GrB_Index Ax_size,  // size of Ax
+    int8_t **Ab,        // bitmap
+    void **Ax,          // values
+    GrB_Index Ab_size,  // size of Ab in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
 
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc

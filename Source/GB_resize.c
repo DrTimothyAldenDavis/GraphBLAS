@@ -177,7 +177,6 @@ GrB_Info GB_resize              // change the size of a matrix
             }
             GB_FREE (&Ax_old, A->x_size) ;
             A->x = Ax_new ; A->x_size = Ax_new_size ;
-            ASSERT (A->x_size % A->type->size == 0) ;
 
             //------------------------------------------------------------------
             // resize Ab if A is bitmap, and count the # of entries

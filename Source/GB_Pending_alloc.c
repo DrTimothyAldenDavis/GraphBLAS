@@ -67,10 +67,6 @@ bool GB_Pending_alloc       // create a list of pending tuples
         return (false) ;
     }
 
-    ASSERT (Pending->i_size % sizeof (int64_t) == 0) ;
-    ASSERT (Pending->j_size % sizeof (int64_t) == 0) ;
-    ASSERT (Pending->x_size % Pending->type->size == 0) ;
-
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------

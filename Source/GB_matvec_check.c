@@ -287,7 +287,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (A->p != NULL && !A->p_shallow)
     {
         nallocs++ ;
-        ok = ok && (A->p_size % sizeof (int64_t) == 0) ;
         #ifdef GB_DEBUG
         ok = ok && (A->p_size == GB_Global_memtable_size (A->p)) ;
         #endif
@@ -296,7 +295,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (A->h != NULL && !A->h_shallow)
     {
         nallocs++ ;
-        ok = ok && (A->h_size % sizeof (int64_t) == 0) ;
         #ifdef GB_DEBUG
         ok = ok && (A->h_size == GB_Global_memtable_size (A->h)) ;
         #endif
@@ -313,7 +311,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (A->i != NULL && !A->i_shallow)
     {
         nallocs++ ;
-        ok = ok && (A->i_size % sizeof (int64_t) == 0) ;
         #ifdef GB_DEBUG
         ok = ok && (A->i_size == GB_Global_memtable_size (A->i)) ;
         #endif
@@ -322,7 +319,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (A->x != NULL && !A->x_shallow)
     {
         nallocs++ ;
-        ok = ok && (A->x_size % A->type->size == 0) ;
         #ifdef GB_DEBUG
         ok = ok && (A->x_size == GB_Global_memtable_size (A->x)) ;
         #endif

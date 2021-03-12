@@ -185,6 +185,8 @@ GrB_Info GB_dense_subassign_06d
 
         // no vectorization
         #define GB_PRAGMA_SIMD_VECTORIZE ;
+        #undef  GB_PRAGMA_SIMD_REDUCTION
+        #define GB_PRAGMA_SIMD_REDUCTION(op,s) ;
 
         #include "GB_dense_subassign_06d_template.c"
     }

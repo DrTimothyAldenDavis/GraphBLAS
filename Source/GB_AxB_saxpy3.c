@@ -348,9 +348,19 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //      equal to mark.
 
     // add some padding to the end of each hash table, to avoid false
-    // sharing of cache lines between the hash tables.
-    size_t hx_pad = GB_ICEIL (64, csize) ;
-    size_t hi_pad = 64 / sizeof (int64_t) ;
+    // sharing of cache lines between the hash tables.  But only add the
+    // padding if there is more than one team.
+    size_t hx_pad = 0 ;
+    size_t hi_pad = 0 ;
+    for (int taskid = 1 ; taskid < ntasks ; taskid++)
+    {
+        if (taskid == SaxpyTasks [taskid].leader)
+        {
+            hx_pad = GB_ICEIL (64, csize) ;
+            hi_pad = 64 / sizeof (int64_t) ;
+            break ;
+        }
+    }
 
     size_t Hi_size_total = 0 ;
     size_t Hf_size_total = 0 ;
@@ -369,7 +379,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
-        // get the task type and is hash size
+        // get the task type and its hash size
         int64_t hash_size = SaxpyTasks [taskid].hsize ;
         int64_t k = SaxpyTasks [taskid].vector ;
         bool is_fine = (k >= 0) ;
@@ -411,27 +421,35 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             continue ;
         }
 
+        int64_t hi_size = GB_IMAX (hash_size, 8) ;
+        int64_t hx_size = hi_size ;
+        if (!GB_IS_POWER_OF_TWO (hi_size))
+        { 
+            hi_size += hi_pad ;
+            hx_size += hx_pad ;
+        }
         if (is_fine && use_Gustavson)
         { 
             // Hf is int8_t for the fine Gustavson tasks, but round up
             // to the nearest number of int64_t values.
-            Hf_size_total += GB_ICEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
+            int64_t hi_size2 = GB_IMAX (hi_size, 64) ;
+            Hf_size_total += GB_ICEIL (hi_size2, sizeof (int64_t)) ;
         }
         else
         { 
-            // all other methods use Hf as int64_t
-            Hf_size_total += (hash_size + hi_pad) ;
+            // Hf is int64_t for all other methods
+            Hf_size_total += hi_size ;
         }
         if (!is_fine && !use_Gustavson)
         { 
             // only coarse hash tasks need Hi
-            Hi_size_total += (hash_size + hi_pad) ;
+            Hi_size_total += hi_size ;
         }
         // all tasks use an Hx array of size hash_size
         if (!is_any_pair_semiring)
         { 
             // except that the ANY_PAIR semiring does not use Hx
-            Hx_size_total += (hash_size + hx_pad) ;
+            Hx_size_total += hx_size ;
         }
     }
 
@@ -496,25 +514,35 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         SaxpyTasks [taskid].Hf = (GB_void *) Hf_split ;
         SaxpyTasks [taskid].Hx = Hx_split ;
 
+        int64_t hi_size = GB_IMAX (hash_size, 8) ;
+        int64_t hx_size = hi_size ;
+        if (!GB_IS_POWER_OF_TWO (hi_size))
+        { 
+            hi_size += hi_pad ;
+            hx_size += hx_pad ;
+        }
         if (is_fine && use_Gustavson)
         { 
-            // Hf is int8_t for the fine Gustavson method
-            Hf_split += GB_ICEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
+            // Hf is int8_t for the fine Gustavson tasks, but round up
+            // to the nearest number of int64_t values.
+            int64_t hi_size2 = GB_IMAX (hi_size, 64) ;
+            Hf_split += GB_ICEIL (hi_size2, sizeof (int64_t)) ;
         }
         else
         { 
             // Hf is int64_t for all other methods
-            Hf_split += (hash_size + hi_pad) ;
+            Hf_split += hi_size ;
         }
         if (!is_fine && !use_Gustavson)
         { 
             // only coarse hash tasks need Hi
-            Hi_split += (hash_size + hi_pad) ;
+            Hi_split += hi_size ;
         }
         // all tasks use an Hx array of size hash_size
         if (!is_any_pair_semiring)
         { 
-            Hx_split += (hash_size + hx_pad) * csize ;
+            // except that the ANY_PAIR semiring does not use Hx
+            Hx_split += hx_size * csize ;
         }
     }
 

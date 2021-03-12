@@ -56,7 +56,6 @@ GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
     //--------------------------------------------------------------------------
 
     A->x = Ax_new ; A->x_size = Ax_new_size ;
-    ASSERT (A->x_size % A->type->size == 0) ;
     A->plen = -1 ;
     A->nvec = avdim ;
     A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;

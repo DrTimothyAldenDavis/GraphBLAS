@@ -36,6 +36,26 @@
 // calloc is NULL, it is not used, and malloc/memset are used instead.  If
 // realloc is NULL, it is not used, and malloc/memcpy/free are used instead.
 
+/*  C-API
+
+    GrB_init (mode) ;
+    GxB_init (mode, malloc, calloc, realloc, free, true) ;
+
+    // RMM-only
+    GxB_rmm_init (mode, rmmconfig ) 
+    GxB_rmm_init (mode, rmmconfig )     no GPU
+    GxB_rmm_init (mode, NULL     )      no GPU, RMM default
+
+    // CUDA+RMM
+    GxB_rmm_init (mode, gpuandrmmconfig ...)
+    GxB_rmm_init (mode, )              use GPUs, RMM default
+
+    GB_rmm.cpp
+    GB_rmm_malloc.cpp
+    GB_rmm_free.cpp
+
+*/
+
 #include "GB.h"
 
 //------------------------------------------------------------------------------
@@ -53,7 +73,11 @@ GrB_Info GB_init            // start up GraphBLAS
     void   (* free_function    ) (void *),          // required
     bool malloc_is_thread_safe,
 
-    bool caller_is_GxB_cuda_init,       // true for GxB_cuda_init only
+//  bool caller_is_GxB_cuda_init,       // true for GxB_cuda_init only
+
+    // RMM stuff, 3 pools, yada yada
+
+    // CUDA + RMM stuff
 
     GB_Context Context      // from GrB_init or GxB_init
 )
@@ -84,6 +108,8 @@ GrB_Info GB_init            // start up GraphBLAS
     // GrB_init passes in the ANSI C11 malloc/calloc/realloc/free
     // GxB_cuda_init passes in NULL pointers; they are now defined below.
 
+// do the RMM init here
+
     if (caller_is_GxB_cuda_init)
     {
         #if defined ( GBCUDA )
@@ -105,13 +131,12 @@ GrB_Info GB_init            // start up GraphBLAS
         #endif
     }
 
-    GB_Global_malloc_function_set  (malloc_function ) ; // cannot be NULL
-    GB_Global_calloc_function_set  (calloc_function ) ; // ok if NULL
-    GB_Global_realloc_function_set (realloc_function) ; // ok if NULL
-    GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
+    GB_Global_malloc_function_set  (malloc_function ) ;
+    GB_Global_calloc_function_set  (NULL /* HACK calloc_function */) ;
+    GB_Global_realloc_function_set (NULL /* HACK realloc_function */) ;
+    GB_Global_free_function_set    (free_function   ) ;
     GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
     GB_Global_memtable_clear ( ) ;
-    GB_Global_free_pool_init ( ) ;
 
     //--------------------------------------------------------------------------
     // max number of threads

@@ -188,7 +188,8 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
             if (dump)
             {
                 printf ("export hyper CSR: %g-by-%g, Ax_size %g, nvec %g:\n",
-                (double) nrows, (double) ncols, (double) Ax_size, (double) nvec) ;
+                    (double) nrows, (double) ncols, (double) Ax_size,
+                    (double) nvec) ;
                 OK (GxB_Type_fprint (type, "type", GxB_COMPLETE, stdout)) ;
                 GETVAL ;
 
@@ -226,7 +227,8 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
             if (dump)
             {
                 printf ("export hyper CSC: %g-by-%g, Ax_size %g, nvec %g:\n",
-                (double) nrows, (double) ncols, (double) Ax_size, (double) nvec) ;
+                    (double) nrows, (double) ncols, (double) Ax_size,
+                    (double) nvec) ;
                 OK (GxB_Type_fprint (type, "type", GxB_COMPLETE, stdout)) ;
                 GETVAL ;
 

@@ -9,13 +9,10 @@
 
 // A wrapper for free.  If p is NULL on input, it is not freed.
 
-// The memory is freed using the free() function pointer passed in to GrB_init,
-// which is typically the ANSI C free function.  The GrB free_pool is bypassed.
-
 #include "GB.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void GB_free_memory         // free memory, bypassing the free_pool
+void GB_free_memory
 (
     // input/output
     void **p,               // pointer to allocated block of memory to free
@@ -26,13 +23,24 @@ void GB_free_memory         // free memory, bypassing the free_pool
 
     if (p != NULL && (*p) != NULL)
     { 
+
         if (GB_Global_malloc_tracking_get ( ))
         {
+
+            //------------------------------------------------------------------
             // for memory usage testing only
+            //------------------------------------------------------------------
+
             GB_Global_nmalloc_decrement ( ) ;
         }
+
+        //----------------------------------------------------------------------
+        // free the memory
+        //----------------------------------------------------------------------
+
+        // TODO: RMM instead
+
         ASSERT (size_allocated == GB_Global_memtable_size (*p)) ;
-//      printf ("hard free %p size %ld\n", *p, size_allocated) ;
         GB_Global_free_function (*p) ;
         (*p) = NULL ;
     }

@@ -419,7 +419,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // no work to do.  Transposing does not change A->b or A->x
             T->b = Ab ; T->b_size = Ab_size ;
             T->x = Ax ; T->x_size = Ax_size ;
-            ASSERT (T->x_size % T->type->size == 0) ;
             T->nzmax = A->nzmax ;
             if (in_place)
             { 
@@ -590,7 +589,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             C->x_shallow = (in_place) ? Ax_shallow : true ;
             Ax = NULL ;  // do not free prior Ax
         }
-        ASSERT (C->x_size % C->type->size == 0) ;
 
         // each entry in A becomes a non-empty vector in C
         // C is a hypersparse 1-by-avlen matrix
@@ -752,7 +750,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             C->x_shallow = (in_place) ? Ax_shallow : true ;
             Ax = NULL ;  // do not free prior Ax
         }
-        ASSERT (C->x_size % C->type->size == 0) ;
 
         //----------------------------------------------------------------------
         // pattern of C

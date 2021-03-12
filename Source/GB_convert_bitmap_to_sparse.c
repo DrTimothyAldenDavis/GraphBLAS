@@ -76,7 +76,6 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     A->p = Ap ; A->p_size = Ap_size ; A->p_shallow = false ;
     A->i = Ai ; A->i_size = Ai_size ; A->i_shallow = false ;
     A->x = Ax ; A->x_size = Ax_size ; A->x_shallow = false ;
-    ASSERT (A->x_size % A->type->size == 0) ;
 
     A->nzmax = anzmax ;
     A->nvals = 0 ;              // only used when A is bitmap

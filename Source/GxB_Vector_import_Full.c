@@ -15,8 +15,8 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     GrB_Type type,      // type of vector to create
     GrB_Index n,        // vector length
 
-    void **vx,          // values, vx_size 1, or >= nvals(v)
-    GrB_Index vx_size,  // size of vx
+    void **vx,          // values
+    GrB_Index vx_size,  // size of vx in bytes
 
     const GrB_Descriptor desc
 )

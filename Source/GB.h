@@ -51,9 +51,10 @@
 #include "GB_context.h"
 #include "GB_memory.h"
 #include "GB_werk.h"
+#include "GB_log2.h"
 
 //------------------------------------------------------------------------------
-// internal definitions
+// more internal definitions
 //------------------------------------------------------------------------------
 
 int64_t GB_Pending_n        // return # of pending tuples in A

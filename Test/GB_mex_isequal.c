@@ -18,7 +18,6 @@
     GB_mx_put_global (true) ;           \
 }
 
-
 void mexFunction
 (
     int nargout,

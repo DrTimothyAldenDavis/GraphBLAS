@@ -116,8 +116,7 @@ void mexFunction
         }
         // TODO do not use X->vdim
         OK (GxB_Vector_import_CSC (&d, GrB_INT64, X->vdim, &list, &degree,
-            list_size / sizeof (int64_t), degree_size / sizeof (int64_t),
-            nvec, false, NULL)) ;
+            list_size, degree_size, nvec, false, NULL)) ;
 
     }
     else
@@ -157,8 +156,7 @@ void mexFunction
                     ERROR ("out of memory") ;
                 }
                 OK (GxB_Vector_import_CSC (&d, GrB_INT64, nrows, &list, &degree,
-                    list_size / sizeof(int64_t), degree_size / sizeof(int64_t),
-                    nvec, false, NULL)) ;
+                    list_size, degree_size, nvec, false, NULL)) ;
 
             }
             else
@@ -201,8 +199,7 @@ void mexFunction
                     ERROR ("out of memory") ;
                 }
                 OK (GxB_Vector_import_CSC (&d, GrB_INT64, ncols, &list, &degree,
-                    list_size / sizeof(int64_t), degree_size / sizeof(int64_t),
-                    nvec, false, NULL)) ;
+                    list_size, degree_size, nvec, false, NULL)) ;
 
             }
             else

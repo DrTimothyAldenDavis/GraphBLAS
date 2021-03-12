@@ -155,13 +155,13 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             IF (mxGetM (Ap_mx) != 1, ".p wrong size") ;
             Ap = mxGetInt64s (Ap_mx) ;
             IF (Ap == NULL, ".p wrong type") ;
-            Ap_size = mxGetN (Ap_mx) ;
+            Ap_size = mxGetN (Ap_mx) * sizeof (int64_t) ;
 
             // get Ai
             mxArray *Ai_mx = mxGetField (X, 0, "i") ;
             IF (Ai_mx == NULL, ".i missing") ;
             IF (mxGetM (Ai_mx) != 1, ".i wrong size") ;
-            Ai_size = mxGetN (Ai_mx) ;
+            Ai_size = mxGetN (Ai_mx) * sizeof (int64_t) ;
             Ai = (Ai_size == 0) ? NULL : mxGetInt64s (Ai_mx) ;
             IF (Ai == NULL && Ai_size > 0, ".i wrong type") ;
         }
@@ -170,7 +170,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         mxArray *Ax_mx = mxGetField (X, 0, "x") ;
         IF (Ax_mx == NULL, ".x missing") ;
         IF (mxGetM (Ax_mx) != 1, ".x wrong size") ;
-        Ax_size = mxGetN (Ax_mx) / type_size ;
+        Ax_size = mxGetN (Ax_mx) ;
         Ax = (Ax_size == 0) ? NULL : ((void *) mxGetUint8s (Ax_mx)) ;
         IF (Ax == NULL && Ax_size > 0, ".x wrong type") ;
 
@@ -181,7 +181,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             mxArray *Ah_mx = mxGetField (X, 0, "h") ;
             IF (Ah_mx == NULL, ".h missing") ;
             IF (mxGetM (Ah_mx) != 1, ".h wrong size") ;
-            Ah_size = mxGetN (Ah_mx) ;
+            Ah_size = mxGetN (Ah_mx) * sizeof (int64_t) ;
             Ah = (Ah_size == 0) ? NULL : ((int64_t *) mxGetInt64s (Ah_mx)) ;
             IF (Ah == NULL && Ah_size > 0, ".h wrong type") ;
         }
@@ -300,20 +300,24 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 
         // get the numeric data
         void *Xx = NULL ;
+        size_t type_size = 0 ;
         if (type == GrB_FP64)
         { 
             // MATLAB sparse or full double matrix
             Xx = mxGetDoubles (X) ;
+            type_size = sizeof (double) ;
         }
         else if (type == GxB_FC64)
         { 
             // MATLAB sparse or full double complex matrix
             Xx = mxGetComplexDoubles (X) ;
+            type_size = 2 * sizeof (double) ;
         }
         else if (type == GrB_BOOL)
         { 
             // MATLAB sparse or full logical matrix
             Xx = mxGetData (X) ;
+            type_size = sizeof (bool) ;
         }
         else if (X_is_sparse)
         {
@@ -324,51 +328,61 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         { 
             // full int8 matrix
             Xx = mxGetInt8s (X) ;
+            type_size = sizeof (int8_t) ;
         }
         else if (type == GrB_INT16)
         { 
             // full int16 matrix
             Xx = mxGetInt16s (X) ;
+            type_size = sizeof (int16_t) ;
         }
         else if (type == GrB_INT32)
         { 
             // full int32 matrix
             Xx = mxGetInt32s (X) ;
+            type_size = sizeof (int32_t) ;
         }
         else if (type == GrB_INT64)
         { 
             // full int64 matrix
             Xx = mxGetInt64s (X) ;
+            type_size = sizeof (int64_t) ;
         }
         else if (type == GrB_UINT8)
         { 
             // full uint8 matrix
             Xx = mxGetUint8s (X) ;
+            type_size = sizeof (uint8_t) ;
         }
         else if (type == GrB_UINT16)
         { 
             // full uint16 matrix
             Xx = mxGetUint16s (X) ;
+            type_size = sizeof (uint16_t) ;
         }
         else if (type == GrB_UINT32)
         { 
             // full uint32 matrix
             Xx = mxGetUint32s (X) ;
+            type_size = sizeof (uint32_t) ;
         }
         else if (type == GrB_UINT64)
         { 
             // full uint64 matrix
             Xx = mxGetUint64s (X) ;
+            type_size = sizeof (uint64_t) ;
         }
         else if (type == GrB_FP32)
         { 
             // full single matrix
             Xx = mxGetSingles (X) ;
+            type_size = sizeof (float) ;
         }
         else if (type == GxB_FC32)
         { 
             // full single complex matrix
             Xx = mxGetComplexSingles (X) ;
+            type_size = 2 * sizeof (float) ;
         }
         else
         {
@@ -379,14 +393,16 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         { 
             // import the matrix in CSC format.  This sets Xp, Xi, and Xx to
             // NULL, but it does not change the MATLAB matrix they came from.
-            OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols,
-                &Xp, &Xi, &Xx, ncols+1, nzmax, nzmax, false, NULL)) ;
+            OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, &Xp, &Xi, &Xx,
+                (ncols+1) * sizeof (int64_t),
+                nzmax * sizeof (int64_t),
+                nzmax * type_size, false, NULL)) ;
         }
         else
         { 
             // import a full matrix
             OK (GxB_Matrix_import_FullC (&A, type, nrows, ncols, &Xx,
-                nzmax, NULL)) ;
+                nzmax * type_size, NULL)) ;
         }
     }
 

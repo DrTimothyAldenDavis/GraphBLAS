@@ -9,15 +9,10 @@
 
 // A wrapper for calloc.  Space is set to zero.
 
-// The first two parameters are the same as the ANSI C11 calloc, except that
-// asking to allocate a block of zero size causes a block of size 1 to be
-// allocated instead.  This allows the return pointer p to be checked for the
-// out-of-memory condition, even when allocating an object of size zero.
-
 #include "GB.h"
 
 //------------------------------------------------------------------------------
-// GB_calloc_helper:  use calloc or malloc/memset to allocate space
+// GB_calloc_helper:  use calloc or malloc/memset to allocate initialized block
 //------------------------------------------------------------------------------
 
 static inline void *GB_calloc_helper
@@ -25,39 +20,60 @@ static inline void *GB_calloc_helper
     size_t nitems,          // number of items to allocate
     size_t size_of_item,    // sizeof each item
     // input/output
-    size_t *size_allocated, // on input: # of bytes requested
+    size_t *size,           // on input: # of bytes requested
                             // on output: # of bytes actually allocated
     bool malloc_tracking,
     GB_Context Context
 )
 {
-    void *p ;
+    bool do_memset = false ;
+    void *p = NULL ;
+
     if (GB_Global_have_calloc_function ( ))
     {
-        // use the calloc function provided when GraphBLAS was initialized 
-        p = (void *) GB_Global_calloc_function (nitems, size_of_item) ;
+        // determine the next higher power of 2
+        (*size) = GB_IMAX (*size, 8) ;
+        int k = GB_CEIL_LOG2 (*size) ;
+
+        // if available, get the block from the pool
+        if (GB_Global_free_pool_limit_get (k) > 0)
+        {
+            // round up the size to the nearest power of two
+            (*size) = (1UL) << k ;
+            p = GB_Global_free_pool_get (k) ;
+        }
+
+        // memset is required if the block came from the free_pool
+        do_memset = (p != NULL) ;
+
         if (p == NULL)
         {
-            // failed
-            (*size_allocated) = 0 ;
+            // no block in the free_pool, so allocate it
+            p = GB_Global_calloc_function (*size, 1) ;
+//          printf ("calloc %p %ld\n", p, *size) ;
+            if (p != NULL && malloc_tracking)
+            { 
+                // success
+                GB_Global_nmalloc_increment ( ) ;
+            }
         }
-        else
-        { 
-            // success
-            if (malloc_tracking) GB_Global_nmalloc_increment ( ) ;
-        }
+
     }
     else
     {
         // no calloc function provided: use malloc and memset instead
-        p = (void *) GB_malloc_memory (nitems, size_of_item, size_allocated) ;
-        if (p != NULL)
-        {
-            // clear the block of memory with a parallel memset
-            GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-            GB_memset (p, 0, *size_allocated, nthreads_max) ;
-        }
+        p = GB_malloc_memory (nitems, size_of_item, size) ;
+        // memset is required if the block came from malloc
+        do_memset = (p != NULL) ;
     }
+
+    if (do_memset)
+    {
+        // clear the block of memory with a parallel memset
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        GB_memset (p, 0, *size, nthreads_max) ;
+    }
+
     return (p) ;
 }
 
@@ -100,7 +116,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
     }
 
     //--------------------------------------------------------------------------
-    // allocate the space
+    // allocate the memory block
     //--------------------------------------------------------------------------
 
     if (GB_Global_malloc_tracking_get ( ))
@@ -124,8 +140,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         }
         else
         { 
-            p = (void *) GB_calloc_helper (nitems, size_of_item, &size, true,
-                Context) ;
+            p = GB_calloc_helper (nitems, size_of_item, &size, true, Context) ;
         }
 
     }
@@ -136,8 +151,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         // normal use, in production
         //----------------------------------------------------------------------
 
-        p = (void *) GB_calloc_helper (nitems, size_of_item, &size, false,
-            Context) ;
+        p = GB_calloc_helper (nitems, size_of_item, &size, false, Context) ;
     }
 
     //--------------------------------------------------------------------------

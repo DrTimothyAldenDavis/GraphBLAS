@@ -185,7 +185,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t *GB_RESTRICT I_work = (*I_work_handle) ;
     int64_t *GB_RESTRICT J_work = (*J_work_handle) ;
     int64_t *GB_RESTRICT K_work = NULL ; size_t K_work_size = 0 ;
-
     ASSERT (*J_work_size_handle == GB_Global_memtable_size (J_work)) ;
 
     //--------------------------------------------------------------------------
@@ -887,7 +886,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     if (ndupl == 0)
     {
         // shrink I_work from size ijslen to size T->nzmax
-        // TODO:: only realloc if the size is cut to 1/4 or less
         if (T->nzmax < ijslen)
         { 
             // this cannot fail since the size is shrinking.
@@ -1064,7 +1062,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // transposed tuples happen to be sorted (which is unlikely).
 
         T->x = S_work ; T->x_size = (*S_work_size_handle) ;
-        ASSERT (T->x_size % ttype->size == 0) ;
         S_work = NULL ;
         (*S_work_handle) = NULL ;
         (*S_work_size_handle) = 0 ;
@@ -1078,7 +1075,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
         //----------------------------------------------------------------------
 
         T->x = GB_MALLOC (T->nzmax * ttype->size, GB_void, &(T->x_size)) ;
-        ASSERT (T->x_size % ttype->size == 0) ;
         if (T->x == NULL)
         { 
             // out of memory

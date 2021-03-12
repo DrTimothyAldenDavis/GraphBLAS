@@ -57,7 +57,7 @@ GrB_Info GB_cuda_cumsum             // compute the cumulative sum of an array
     #endif
 
     // Cleanup
-    GB_free_memory(&d_temp_storage, &size) ; 
+    GB_dealloc_memory (&d_temp_storage, &size) ;
 
     return GrB_SUCCESS;
 }

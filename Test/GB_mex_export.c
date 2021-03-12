@@ -15,7 +15,7 @@
 // memtable.  If they are not exported, they are NULL, and are part of the
 // matrix, and in the global memtable.
 
-#define FREE_ALL                                                \
+#define FREE_WORK                                               \
 {                                                               \
     GrB_Matrix_free_(&C) ;                                      \
     REMOVE (Ap) ; if (Ap != NULL) mxFree (Ap) ; Ap = NULL ;     \
@@ -23,6 +23,11 @@
     REMOVE (Ai) ; if (Ai != NULL) mxFree (Ai) ; Ai = NULL ;     \
     REMOVE (Aj) ; if (Aj != NULL) mxFree (Aj) ; Aj = NULL ;     \
     REMOVE (Ax) ; if (Ax != NULL) mxFree (Ax) ; Ax = NULL ;     \
+}
+
+#define FREE_ALL                                                \
+{                                                               \
+    FREE_WORK ;                                                 \
     GB_mx_put_global (true) ;                                   \
 }
 
@@ -32,7 +37,7 @@
     if (info != GrB_SUCCESS)            \
     {                                   \
         if (dump) printf ("method fail %d: %d\n", __LINE__, info) ; \
-        FREE_ALL ;                      \
+        FREE_WORK ;                     \
         return (info) ;                 \
     }                                   \
 }

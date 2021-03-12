@@ -247,7 +247,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
         // allocate new C->x component
         C->x = GB_MALLOC (C->nzmax * C->type->size, GB_void, &(C->x_size)) ;
         ok = ok && (C->x != NULL) ;
-        ASSERT (GB_IMPLIES (ok, C->x_size % C->type->size == 0)) ;
     }
 
     if (!ok)
@@ -286,7 +285,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
         { 
             // OK to move pointers instead
             C->x = A->x ; C->x_size = A->x_size ;
-            ASSERT (C->x_size % C->type->size == 0) ;
             A->x = NULL ;
         }
     }

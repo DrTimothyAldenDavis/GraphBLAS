@@ -229,7 +229,6 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     Ab = NULL ;
 
     A->x = Ax_new ; A->x_size = Ax_new_size ;
-    ASSERT (A->x_size % A->type->size == 0) ;
     A->x_shallow = Ax_shallow ;
     Ax_new = NULL ;
 
