@@ -36,8 +36,11 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 // GB_AxB_saxpy_sparsity: determine the sparsity of C
 //------------------------------------------------------------------------------
 
-int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
+void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
 (
+    // output:
+    int *C_sparsity,                // sparsity structure of C
+    int *saxpy_method,              // saxpy method to use
     // input:
     const GrB_Matrix M,             // optional mask for C, unused if NULL
     const bool Mask_comp,           // if true, use !M
@@ -63,11 +66,45 @@ GrB_Info GB_AxB_saxpy_generic
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    const int saxpy_method,         // saxpy3, saxpy4, or bitmap method
+    // for saxpy3 only:
     GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks, // NULL if C is bitmap
     int ntasks,
     int nfine,
+    // for saxpy3 and saxpy4 only:
     int nthreads,
-    const int do_sort,              // if nonzero, try to sort in saxpy3
+    const int do_sort,              // if true, sort in saxpy3 and saxpy4
+    // for saxpy4 only:
+    int8_t  *GB_RESTRICT Wf,        // zero on input, zero on output
+    int64_t **Wi_handle,
+    size_t Wi_size,
+    GB_void *GB_RESTRICT Wx,
+    int64_t *GB_RESTRICT kfirst_Bslice,
+    int64_t *GB_RESTRICT klast_Bslice,
+    int64_t *GB_RESTRICT pstart_Bslice,
+    GB_Context Context
+) ;
+
+//------------------------------------------------------------------------------
+// saxpy methods
+//------------------------------------------------------------------------------
+
+#define GB_SAXPY_METHOD_3 3
+#define GB_SAXPY_METHOD_4 4
+#define GB_SAXPY_METHOD_BITMAP 5
+
+GrB_Info GB_AxB_saxpy4              // C=A*B using Gustavson + large workspace
+(
+    GrB_Matrix C,                   // output matrix (not done in-place)
+    const GrB_Matrix M,             // optional mask matrix
+    const bool Mask_comp,           // if true, use !M
+    const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_Matrix A,             // input matrix A
+    const GrB_Matrix B,             // input matrix B
+    const GrB_Semiring semiring,    // semiring that defines C=A*B
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    bool *mask_applied,             // if true, then mask was applied
+    const int do_sort,              // if nonzero, to sort in saxpy4
     GB_Context Context
 ) ;
 

@@ -21,6 +21,8 @@ void GB_dealloc_memory      // free memory, return to free_pool or free it
     // input/output
     void **p,               // pointer to allocated block of memory to free
     // input
+    bool unlimited,         // if true, ignore free_pool limits
+    int which_pool,         // 0: malloc pool, 1: calloc pool
     size_t size_allocated   // # of bytes actually allocated
 )
 {
@@ -37,9 +39,10 @@ void GB_dealloc_memory      // free memory, return to free_pool or free it
             //------------------------------------------------------------------
 
             int k = GB_CEIL_LOG2 (size_allocated) ;
-            if (GB_Global_free_pool_limit_get (k) > 0)
+            if (unlimited || GB_Global_free_pool_limit_get (k) > 0)
             {
-                returned_to_free_pool = GB_Global_free_pool_put (*p, k) ;
+                returned_to_free_pool = 
+                    GB_Global_free_pool_put (*p, k, which_pool, unlimited) ;
             }
         }
 

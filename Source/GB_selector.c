@@ -198,7 +198,7 @@ GrB_Info GB_selector
     GB_void *GB_RESTRICT Cx = NULL ; size_t Cx_size = 0 ;
     int64_t cnz = 0 ;
 
-    Cp = GB_CALLOC (anvec+1, int64_t, &Cp_size, Context) ;
+    Cp = GB_CALLOC (anvec+1, int64_t, &Cp_size) ;
     if (Cp == NULL)
     { 
         // out of memory

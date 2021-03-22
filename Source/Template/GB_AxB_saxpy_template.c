@@ -10,15 +10,34 @@
 // All 4 matrices have any format: hypersparse, sparse, bitmap, or full.
 
 {
-    if (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C))
-    { 
-        // C is sparse or hypersparse
-        #include "GB_AxB_saxpy3_template.c"
-    }
-    else
-    { 
-        // C is bitmap or full
-        #include "GB_bitmap_AxB_saxpy_template.c"
+    switch (saxpy_method)
+    {
+
+        case GB_SAXPY_METHOD_3 :
+        { 
+            // C is sparse or hypersparse, using minimal workspace.
+            ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
+            #include "GB_AxB_saxpy3_template.c"
+        }
+        break ;
+
+        case GB_SAXPY_METHOD_4 :
+        { 
+            // C is sparse or hypersparse, using large workspace
+            ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
+            ASSERT (GB_IS_SPARSE (A)) ;
+            ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
+            #include "GB_AxB_saxpy4_template.c"
+        }
+        break ;
+
+        case GB_SAXPY_METHOD_BITMAP :
+        { 
+            // C is bitmap or full
+            #include "GB_bitmap_AxB_saxpy_template.c"
+        }
+
+        default:;
     }
 }
 

@@ -15,17 +15,18 @@
 #include "GB_bracket.h"
 #include "GB_sort.h"
 #include "GB_atomics.h"
-#include "GB_AxB_saxpy3.h"
+#include "GB_AxB_saxpy.h"
 #include "GB_AxB__include.h"
 #include "GB_unused.h"
 #include "GB_bitmap_assign_methods.h"
+#include "GB_ek_slice_search.c"
 
 // The C=A*B semiring is defined by the following types and operators:
 
 // A'*B function (dot2):     GB_Adot2B__any_ge_uint8
 // A'*B function (dot3):     GB_Adot3B__any_ge_uint8
 // C+=A'*B function (dot4):  GB_Adot4B__any_ge_uint8
-// A*B function (saxpy3):    GB_Asaxpy3B__any_ge_uint8
+// A*B function (saxpy):     GB_AsaxpyB__any_ge_uint8
 
 // C type:   bool
 // A type:   uint8_t
@@ -245,6 +246,9 @@
     // Hx [i] = t
     #define GB_HX_WRITE(i,t) Hx [i] = t
 
+    // Hx [i] = identity
+    #define GB_HX_CLEAR(i) Hx [i] = GB_IDENTITY
+
     // Cx [p] = Hx [i]
     #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
 
@@ -355,23 +359,33 @@ GrB_Info GB_Adot4B__any_ge_uint8
 }
 
 //------------------------------------------------------------------------------
-// C=A*B, C<M>=A*B, C<!M>=A*B: saxpy3 method (Gustavson + Hash)
+// C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
 #include "GB_AxB_saxpy3_template.h"
 
-GrB_Info GB_Asaxpy3B__any_ge_uint8
+GrB_Info GB_AsaxpyB__any_ge_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
     const bool M_dense_in_place,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
+    const int saxpy_method,
+    // for saxpy3 method only:
     GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks,
-    int ntasks,
-    int nfine,
+    int ntasks, int nfine,
+    // for saxpy3 and saxpy4 methods only:
     int nthreads,
     const int do_sort,
+    // for saxpy4 method only:
+    int8_t  *GB_RESTRICT Wf,
+    int64_t **Wi_handle,
+    size_t Wi_size,
+    GB_void *GB_RESTRICT Wx,
+    int64_t *GB_RESTRICT kfirst_Bslice,
+    int64_t *GB_RESTRICT klast_Bslice,
+    int64_t *GB_RESTRICT pstart_Bslice,
     GB_Context Context
 )
 { 

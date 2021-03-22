@@ -17,7 +17,7 @@
 
 // to iterate across all entries in a bucket:
 #define GB_for_each_index_in_bucket(inew,i)     \
-    for (int64_t inew = Mark[i]-1 ; inew >= 0 ; inew = Inext [inew])
+    for (int64_t inew = Mark [i] - 1 ; inew >= 0 ; inew = Inext [inew])
 
 // copy values from A(:,kA) to C(:,kC): Cx [pC:pC+len-1] = ... (pA:pA+len-1).
 #if defined ( GB_SYMBOLIC )

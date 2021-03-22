@@ -19,12 +19,15 @@ void GB_free_pool_finalize (void)
     for (int k = 3 ; k < 64 ; k++)
     {
         size_t size = (1UL << k) ;
-        while (1)
+        for (int which_pool = 0 ; which_pool <= 1 ; which_pool++)
         {
-            // get a block from the kth free_pool and free it
-            void *p = GB_Global_free_pool_get (k) ;
-            if (p == NULL) break ;
-            GB_free_memory (&p, size) ;
+            while (1)
+            {
+                // get a block from the kth free_pool and free it
+                void *p = GB_Global_free_pool_get (k, which_pool) ;
+                if (p == NULL) break ;
+                GB_free_memory (&p, size) ;
+            }
         }
     }
 }

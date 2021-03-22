@@ -8,7 +8,7 @@ fprintf ('test186 --------------- C<!M>A*B for all sparsity formats\n') ;
 
 rng ('default') ;
 
-GrB.burble (1) ;
+% GrB.burble (1) ;
 
 load west0479 ;
 A.matrix = west0479 ;
@@ -80,7 +80,7 @@ for A_sparsity = [1 2 4 8]
 end
 
 fprintf ('\n') ;
-GrB.burble (0) ;
+% GrB.burble (0) ;
 fprintf ('maxerr: %g\n', maxerr) ;
 fprintf ('test186: all tests passed\n') ;
 

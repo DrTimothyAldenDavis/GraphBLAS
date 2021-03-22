@@ -17,11 +17,11 @@
 
 static inline void *GB_calloc_helper
 (
-    size_t nitems,          // number of items to allocate
-    size_t size_of_item,    // sizeof each item
-    // input/output
+    // input/output:
     size_t *size,           // on input: # of bytes requested
                             // on output: # of bytes actually allocated
+    // input:
+    bool unlimited,         // if true, ignore free_pool limits
     bool malloc_tracking,
     GB_Context Context
 )
@@ -29,42 +29,44 @@ static inline void *GB_calloc_helper
     bool do_memset = false ;
     void *p = NULL ;
 
-    if (GB_Global_have_calloc_function ( ))
+    // determine the next higher power of 2
+    (*size) = GB_IMAX (*size, 8) ;
+    int k = GB_CEIL_LOG2 (*size) ;
+
+    // if available, get the block from the pool
+    if (unlimited || GB_Global_free_pool_limit_get (k) > 0)
     {
-        // determine the next higher power of 2
-        (*size) = GB_IMAX (*size, 8) ;
-        int k = GB_CEIL_LOG2 (*size) ;
-
-        // if available, get the block from the pool
-        if (GB_Global_free_pool_limit_get (k) > 0)
-        {
-            // round up the size to the nearest power of two
-            (*size) = (1UL) << k ;
-            p = GB_Global_free_pool_get (k) ;
-        }
-
-        // memset is required if the block came from the free_pool
-        do_memset = (p != NULL) ;
-
+        // round up the size to the nearest power of two
+        (*size) = (1UL) << k ;
+        p = GB_Global_free_pool_get (k, 1) ;
         if (p == NULL)
         {
-            // no block in the free_pool, so allocate it
-            p = GB_Global_calloc_function (*size, 1) ;
-//          printf ("calloc %p %ld\n", p, *size) ;
-            if (p != NULL && malloc_tracking)
-            { 
-                // success
-                GB_Global_nmalloc_increment ( ) ;
-            }
+            // try again from the free_pool of uninitialized blocks
+            p = GB_Global_free_pool_get (k, 0) ;
+            // memset is required if the block is from the uninitialized pool
+            do_memset = (p != NULL) ;
         }
-
     }
-    else
+
+    if (p == NULL)
     {
-        // no calloc function provided: use malloc and memset instead
-        p = GB_malloc_memory (nitems, size_of_item, size) ;
-        // memset is required if the block came from malloc
-        do_memset = (p != NULL) ;
+        // no block in the free_pool, so allocate it
+        if (GB_Global_have_calloc_function ( ))
+        {
+            p = GB_Global_calloc_function (*size, 1) ;
+        }
+        else
+        {
+            p = GB_Global_malloc_function (*size) ;
+            // memset is required if the block comes from malloc
+            do_memset = (p != NULL) ;
+        }
+        if (p != NULL && malloc_tracking)
+        { 
+            // success
+            GB_Global_nmalloc_increment ( ) ;
+        }
+//      printf ("hard calloc %p %ld\n", p, *size) ;
     }
 
     if (do_memset)
@@ -86,6 +88,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
     size_t size_of_item,    // sizeof each item
+    bool unlimited,         // if true, ignore free_pool limits
     // output
     size_t *size_allocated, // # of bytes actually allocated
     GB_Context Context
@@ -140,7 +143,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         }
         else
         { 
-            p = GB_calloc_helper (nitems, size_of_item, &size, true, Context) ;
+            p = GB_calloc_helper (&size, unlimited, true, Context) ;
         }
 
     }
@@ -151,7 +154,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         // normal use, in production
         //----------------------------------------------------------------------
 
-        p = GB_calloc_helper (nitems, size_of_item, &size, false, Context) ;
+        p = GB_calloc_helper (&size, unlimited, false, Context) ;
     }
 
     //--------------------------------------------------------------------------

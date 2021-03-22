@@ -144,14 +144,10 @@ void GB_pslice                      // slice Ap
     { 
 
         //----------------------------------------------------------------------
-        // A is full or bitmap
+        // A is full or bitmap: slice 0:n uniformly
         //----------------------------------------------------------------------
 
         GB_eslice (Slice, n, ntasks) ;
-//      for (int taskid = 1 ; taskid < ntasks ; taskid++)
-//      { 
-//          Slice [taskid] = (int64_t) GB_PART (taskid, n, ntasks) ;
-//      }
 
     }
     else
@@ -165,11 +161,6 @@ void GB_pslice                      // slice Ap
         { 
             // matrix is empty, or a single thread is used
             memset ((void *) Slice, 0, ntasks * sizeof (int64_t)) ;
-//          for (int taskid = 1 ; taskid < ntasks ; taskid++)
-//          { 
-//              // slice sparse/hyper with 1 task, n == 0, or no work
-//              Slice [taskid] = 0 ;
-//          }
             Slice [ntasks] = n ;
         }
         else

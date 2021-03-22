@@ -17,39 +17,38 @@
 
 static inline void *GB_malloc_helper
 (
-    // input/output
+    // input/output:
     size_t *size,           // on input: # of bytes requested
                             // on output: # of bytes actually allocated
+    // input:
+    bool unlimited,         // if true, ignore free_pool limits
     bool malloc_tracking
 )
 {
     void *p = NULL ;
 
-    // a malloc function is always available, unlike the optional calloc
+    // determine the next higher power of 2
+    (*size) = GB_IMAX (*size, 8) ;
+    int k = GB_CEIL_LOG2 (*size) ;
+
+    // if available, get the block from the pool
+    if (unlimited || GB_Global_free_pool_limit_get (k) > 0)
     {
-        // determine the next higher power of 2
-        (*size) = GB_IMAX (*size, 8) ;
-        int k = GB_CEIL_LOG2 (*size) ;
+        // round up the size to the nearest power of two
+        (*size) = (1UL) << k ;
+        p = GB_Global_free_pool_get (k, 0) ;
+    }
 
-        // if available, get the block from the pool
-        if (GB_Global_free_pool_limit_get (k) > 0)
-        {
-            // round up the size to the nearest power of two
-            (*size) = (1UL) << k ;
-            p = GB_Global_free_pool_get (k) ;
+    if (p == NULL)
+    {
+        // no block in the free_pool, so allocate it
+        p = GB_Global_malloc_function (*size) ;
+        if (p != NULL && malloc_tracking)
+        { 
+            // success
+            GB_Global_nmalloc_increment ( ) ;
         }
-
-        if (p == NULL)
-        {
-            // no block in the free_pool, so allocate it
-            p = GB_Global_malloc_function (*size) ;
-//          printf ("malloc %p %ld\n", p, *size) ;
-            if (p != NULL && malloc_tracking)
-            { 
-                // success
-                GB_Global_nmalloc_increment ( ) ;
-            }
-        }
+//      printf ("hard malloc %p %ld\n", p, *size) ;
     }
 
     return (p) ;
@@ -64,6 +63,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
     size_t size_of_item,    // sizeof each item
+    bool unlimited,         // if true, ignore free_pool limits
     // output
     size_t *size_allocated  // # of bytes actually allocated
 )
@@ -117,7 +117,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
         }
         else
         { 
-            p = GB_malloc_helper (&size, true) ;
+            p = GB_malloc_helper (&size, unlimited, true) ;
         }
 
     }
@@ -128,7 +128,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
         // normal use, in production
         //----------------------------------------------------------------------
 
-        p = GB_malloc_helper (&size, false) ;
+        p = GB_malloc_helper (&size, unlimited, false) ;
     }
 
     //--------------------------------------------------------------------------

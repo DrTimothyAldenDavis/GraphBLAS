@@ -47,6 +47,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     size_t nitems_new,      // new number of items in the object
     size_t nitems_old,      // old number of items in the object
     size_t size_of_item,    // size of each item
+    bool unlimited,         // if true, ignore free_pool limits
     // input/output
     void *p,                // old object to reallocate
     size_t *size_allocated, // # of bytes actually allocated
@@ -62,7 +63,8 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 
     if (p == NULL)
     { 
-        p = GB_malloc_memory (nitems_new, size_of_item, size_allocated) ;
+        p = GB_malloc_memory (nitems_new, size_of_item, unlimited,
+            size_allocated) ;
         (*ok) = (p != NULL) ;
         return (p) ;
     }
@@ -118,7 +120,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     void *pnew = NULL ;
     size_t newsize_allocated = GB_IMAX (newsize, 8) ;
     int k = GB_CEIL_LOG2 (newsize_allocated) ;
-    if (!GB_Global_have_realloc_function ( ) ||
+    if (!GB_Global_have_realloc_function ( ) || unlimited ||
         (GB_Global_free_pool_limit_get (k) > 0))
     {
 
@@ -132,7 +134,8 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         // from the free_pool if one exists of that size.
 
         // allocate the new space
-        pnew = GB_malloc_memory (nitems_new, size_of_item, &newsize_allocated) ;
+        pnew = GB_malloc_memory (nitems_new, size_of_item, unlimited,
+            &newsize_allocated) ;
         // copy over the data from the old block to the new block
         if (pnew != NULL)
         { 
@@ -140,7 +143,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
             GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
             GB_memcpy (pnew, p, GB_IMIN (oldsize, newsize), nthreads_max) ;
             // free the old block (either hard free, or return to free_pool)
-            GB_dealloc_memory (&p, oldsize_allocated) ;
+            GB_dealloc_memory (&p, unlimited, 0, oldsize_allocated) ;
         }
     }
     else
@@ -160,6 +163,8 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         }
         if (!pretend_to_fail)
         { 
+//          printf ("hard realloc %p oldsize %ld newsize %ld\n",
+//              p, oldsize_allocated, newsize_allocated) ;
             pnew = GB_Global_realloc_function (p, newsize_allocated) ;
         }
     }

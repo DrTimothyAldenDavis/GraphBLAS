@@ -15,11 +15,6 @@
 // known values are used instead.  This is to allow the use of the hard-coded
 // functions for built-in monoids.
 
-// The identity value of built-in monoids is exploited in one special case in
-// Template/GB_AxB_saxpy3_template.c, but it is used via the #define
-// GB_IDENTITY value, not monoid->identity.  This #define is also used for
-// built-in monoids in Template/GB_reduce_to_scalar_template.c.
-
 // User-defined monoids may have a NULL terminal value, which denotes that the
 // monoid does not have a terminal value.
 

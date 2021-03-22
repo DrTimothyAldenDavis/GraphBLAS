@@ -56,6 +56,9 @@ void gb_usage       // check usage and make sure GrB.init has been called
         GB_Global_abort_function_set (gb_abort) ;
     }
 
+// HACK: FIXME
+GB_Global_hack_set (1) ;
+
     //--------------------------------------------------------------------------
     // check usage
     //--------------------------------------------------------------------------

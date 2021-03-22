@@ -33,6 +33,7 @@ void gbcov_put (void) ;
 #define GB_COV_PUT
 #endif
 
+#if 0
 #define GB_WRAPUP                                           \
 {                                                           \
     GB_COV_PUT ;                                            \
@@ -42,6 +43,16 @@ void gbcov_put (void) ;
         GB_Global_memtable_dump ( ) ;                       \
         GB_Global_free_pool_dump (3) ; \
         mexErrMsgIdAndTxt ("GrB:error", "memory leak") ;    \
+    }                                                       \
+}
+#endif
+
+#define GB_WRAPUP                                           \
+{                                                           \
+    GB_COV_PUT ;                                            \
+    if (GB_Global_memtable_n ( ) != 0)                      \
+    {                                                       \
+        GB_free_pool_finalize ( ) ; /* HACK */      \
     }                                                       \
 }
 

@@ -48,16 +48,6 @@ void GB_mx_put_global
         GB_Global_free_pool_limit_set (k, 0) ;
     }
 
-#if 0
-        // dump the memory pool
-        GB_Global_free_pool_dump (3) ;
-        for (int k = 0 ; k < 64 ; k++)
-        {
-            int64_t t = GB_Global_free_pool_limit_get (k) ;
-            if (t > 0) printf ("pool %2d: %ld\n", k, t) ;
-        }
-#endif
-
     //--------------------------------------------------------------------------
     // check nmemtable and nmalloc
     //--------------------------------------------------------------------------

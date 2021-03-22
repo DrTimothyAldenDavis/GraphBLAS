@@ -540,14 +540,15 @@ void mexFunction
 
     size_t nbytes ;
     GB_Global_malloc_tracking_set (false) ;
-    GB_void *p = GB_malloc_memory (4, sizeof (int64_t), &nbytes) ;
+    GB_void *p = GB_malloc_memory (4, sizeof (int64_t), false, &nbytes) ;
     CHECK (p != NULL) ;
     GB_FREE (&p, nbytes) ;
     CHECK (p == NULL) ;
-    p = GB_calloc_memory (4, sizeof (int64_t), &nbytes, NULL) ;
+    p = GB_calloc_memory (4, sizeof (int64_t), false, &nbytes, NULL) ;
     CHECK (p != NULL) ;
     bool ok = true ;
-    p = GB_realloc_memory (6, 4, sizeof (int64_t), p, &nbytes, &ok, NULL) ;
+    p = GB_realloc_memory (6, 4, sizeof (int64_t), false, p, &nbytes, &ok,
+        NULL) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
     GB_FREE (&p, nbytes) ;
@@ -567,6 +568,8 @@ void mexFunction
 
     GB_Global_hack_set (90123) ;
     CHECK (GB_Global_hack_get ( ) == 90123) ;
+    GB_Global_hack_set (0) ;
+    CHECK (GB_Global_hack_get ( ) == 0) ;
 
     GrB_Info expected = GrB_INVALID_VALUE ;
 

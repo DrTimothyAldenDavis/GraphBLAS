@@ -109,14 +109,16 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Asaxpy3B(add,mult,xname) \
-            GB_Asaxpy3B_ ## add ## mult ## xname
+        #define GB_AsaxpyB(add,mult,xname) GB_AsaxpyB_ ## add ## mult ## xname
 
         #define GB_AxB_WORKER(add,mult,xname)                               \
         {                                                                   \
-            info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,           \
-                Mask_struct, true, A, A_is_pattern,  B,                     \
-                B_is_pattern, NULL, 0, 0, 0, 0, Context) ;                  \
+            info = GB_AsaxpyB (add,mult,xname) (C, M, Mask_comp,            \
+                Mask_struct, true, A, A_is_pattern, B,                      \
+                B_is_pattern, GB_SAXPY_METHOD_BITMAP,                       \
+                NULL, 0, 0, 0, 0,                                           \
+                NULL, NULL, 0, NULL, NULL, NULL, NULL,                      \
+                Context) ;                                                  \
             done = (info != GrB_NO_VALUE) ;                                 \
         }                                                                   \
         break ;
@@ -144,7 +146,9 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     { 
         info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
             true, A, A_is_pattern, B, B_is_pattern, semiring,
-            flipxy, NULL, 0, 0, 0, 0, Context) ;
+            flipxy, GB_SAXPY_METHOD_BITMAP,
+            NULL, 0, 0, 0, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL,
+            Context) ;
     }
 
     if (info != GrB_SUCCESS)

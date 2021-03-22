@@ -327,7 +327,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             // FIXME: should this be added to memtable, or not???
             A->nzmax = GB_IMAX (anz, 1) ;
             A->x = (GB_void *) GB_malloc_memory (A->nzmax * atype_out->size,
-                sizeof (GB_void), &(A->x_size)) ;
+                sizeof (GB_void), false, &(A->x_size)) ;
             if (A->x == NULL)
             {
                 FREE_ALL ;
