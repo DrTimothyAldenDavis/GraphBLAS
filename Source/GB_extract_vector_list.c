@@ -60,7 +60,7 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
 
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int A_ntasks, A_nthreads ;
-    GB_SLICE_MATRIX (A, 2) ;
+    GB_SLICE_MATRIX (A, 2, chunk) ;
 
     //--------------------------------------------------------------------------
     // extract the vector index for each entry

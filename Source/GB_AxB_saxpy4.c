@@ -343,7 +343,7 @@ ttt = omp_get_wtime ( ) ;
     if (M_is_sparse_or_hyper)
     {
 
-        GB_SLICE_MATRIX (M, 1) ;
+        GB_SLICE_MATRIX (M, 1, chunk) ;
 
         switch (msize)
         {

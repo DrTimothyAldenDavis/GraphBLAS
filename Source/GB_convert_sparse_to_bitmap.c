@@ -155,7 +155,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         //----------------------------------------------------------------------
 
         int A_nthreads, A_ntasks ;
-        GB_SLICE_MATRIX (A, 8) ;
+        GB_SLICE_MATRIX (A, 8, chunk) ;
         bool done = false ;
 
         #ifndef GBCOMPACT

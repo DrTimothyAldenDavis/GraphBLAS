@@ -95,7 +95,7 @@ GrB_Info GB_dense_subassign_05d
     //--------------------------------------------------------------------------
 
     int M_ntasks, M_nthreads ;
-    GB_SLICE_MATRIX (M, 8) ;
+    GB_SLICE_MATRIX (M, 8, chunk) ;
 
     //--------------------------------------------------------------------------
     // C<M> = x for built-in types

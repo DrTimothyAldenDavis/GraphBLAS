@@ -497,7 +497,7 @@ ttt = omp_get_wtime ( ) ;
     // slice C for phase 4
     int C_nthreads, C_ntasks ;
     GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
-    GB_SLICE_MATRIX (C, 1) ;
+    GB_SLICE_MATRIX (C, 1, chunk) ;
 
     #if GB_IS_ANY_PAIR_SEMIRING
     { 

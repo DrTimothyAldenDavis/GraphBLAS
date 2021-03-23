@@ -217,7 +217,7 @@ GrB_Info GB_selector
 
     int A_ntasks, A_nthreads ;
     double work = 8*anvec + ((opcode == GB_DIAG_opcode) ? 0 : GB_NNZ_HELD (A)) ;
-    GB_SLICE_MATRIX_WORK (A, 8, work) ;
+    GB_SLICE_MATRIX_WORK (A, 8, chunk, work) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace for each task

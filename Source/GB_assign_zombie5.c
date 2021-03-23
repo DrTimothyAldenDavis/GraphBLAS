@@ -97,7 +97,7 @@ GrB_Info GB_assign_zombie5
 
     int C_ntasks, C_nthreads ;
     GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
-    GB_SLICE_MATRIX (C, 64) ;
+    GB_SLICE_MATRIX (C, 64, chunk) ;
 
     //--------------------------------------------------------------------------
     // each task creates its own zombies

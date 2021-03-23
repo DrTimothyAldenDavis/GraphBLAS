@@ -242,79 +242,121 @@
         const int64_t *GB_RESTRICT kfirst_Aslice = A_ek_slicing ;
         const int64_t *GB_RESTRICT klast_Aslice  = A_ek_slicing + A_ntasks ;
         const int64_t *GB_RESTRICT pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
-
         int taskid ;
-        #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1) \
-            reduction(+:cnvals)
-        for (taskid = 0 ; taskid < A_ntasks ; taskid++)
+
+        if (Mask_struct)
         {
-
-            // if kfirst > klast then taskid does no work at all
-            int64_t kfirst = kfirst_Aslice [taskid] ;
-            int64_t klast  = klast_Aslice  [taskid] ;
-            int64_t task_cnvals = 0 ;
-
-            //------------------------------------------------------------------
-            // C<A(:,kfirst:klast)> = A(:,kfirst:klast)
-            //------------------------------------------------------------------
-
-            for (int64_t k = kfirst ; k <= klast ; k++)
+            if (C_is_bitmap)
             {
 
                 //--------------------------------------------------------------
-                // find the part of A(:,k) to be operated on by this task
+                // C is bitmap, mask is structural
                 //--------------------------------------------------------------
 
-                int64_t j = GBH (Ah, k) ;
-                int64_t pA_start, pA_end ;
-                GB_get_pA (&pA_start, &pA_end, taskid, k,
-                    kfirst, klast, pstart_Aslice, Ap, avlen) ;
-
-                // pC points to the start of C(:,j) if C is dense or bitmap
-                int64_t pC = j * cvlen ;
-
-                //--------------------------------------------------------------
-                // C<A(:,j)> = A(:,j)
-                //--------------------------------------------------------------
-
-                if (Mask_struct)
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(dynamic,1) reduction(+:cnvals)
+                for (taskid = 0 ; taskid < A_ntasks ; taskid++)
                 {
-                    if (C_is_bitmap)
+                    // if kfirst > klast then taskid does no work at all
+                    int64_t kfirst = kfirst_Aslice [taskid] ;
+                    int64_t klast  = klast_Aslice  [taskid] ;
+                    int64_t task_cnvals = 0 ;
+                    // C<A(:,kfirst:klast)> = A(:,kfirst:klast)
+                    for (int64_t k = kfirst ; k <= klast ; k++)
                     {
-                        // C<A,struct>=A with C bitmap, A sparse
+                        // get A(:,j), the kth vector of A
+                        int64_t j = GBH (Ah, k) ;
+                        int64_t pA_start, pA_end ;
+                        GB_get_pA (&pA_start, &pA_end, taskid, k,
+                            kfirst, klast, pstart_Aslice, Ap, avlen) ;
+                        // pC is the start of C(:,j)
+                        int64_t pC = j * cvlen ;
+                        // C<A(:,j),struct>=A(:,j) with C bitmap, A sparse
                         GB_PRAGMA_SIMD_REDUCTION (+,task_cnvals)
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         { 
-                            int64_t p = pC + GBI (Ai, pA, avlen) ;
+                            int64_t p = pC + Ai [pA] ;
                             // Cx [p] = Ax [pA]
                             GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
                     }
-                    else
+                    cnvals += task_cnvals ;
+                }
+
+            }
+            else
+            {
+
+                //--------------------------------------------------------------
+                // C is full, mask is structural
+                //--------------------------------------------------------------
+
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(dynamic,1)
+                for (taskid = 0 ; taskid < A_ntasks ; taskid++)
+                {
+                    // if kfirst > klast then taskid does no work at all
+                    int64_t kfirst = kfirst_Aslice [taskid] ;
+                    int64_t klast  = klast_Aslice  [taskid] ;
+                    // C<A(:,kfirst:klast)> = A(:,kfirst:klast)
+                    for (int64_t k = kfirst ; k <= klast ; k++)
                     {
-                        // C<A,struct>=A with C full, A sparse
+                        // get A(:,j), the kth vector of A
+                        int64_t j = GBH (Ah, k) ;
+                        int64_t pA_start, pA_end ;
+                        GB_get_pA (&pA_start, &pA_end, taskid, k,
+                            kfirst, klast, pstart_Aslice, Ap, avlen) ;
+                        // pC is the start of C(:,j)
+                        int64_t pC = j * cvlen ;
+                        // C<A(:,j),struct>=A(:,j) with C full, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         { 
-                            int64_t p = pC + GBI (Ai, pA, avlen) ;
+                            int64_t p = pC + Ai [pA] ;
                             // Cx [p] = Ax [pA]
                             GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
                         }
                     }
                 }
-                else
+            }
+
+        }
+        else
+        {
+            if (C_is_bitmap)
+            {
+
+                //--------------------------------------------------------------
+                // C is bitmap, mask is valued
+                //--------------------------------------------------------------
+
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(dynamic,1) reduction(+:cnvals)
+                for (taskid = 0 ; taskid < A_ntasks ; taskid++)
                 {
-                    if (C_is_bitmap)
+                    // if kfirst > klast then taskid does no work at all
+                    int64_t kfirst = kfirst_Aslice [taskid] ;
+                    int64_t klast  = klast_Aslice  [taskid] ;
+                    int64_t task_cnvals = 0 ;
+                    // C<A(:,kfirst:klast)> = A(:,kfirst:klast)
+                    for (int64_t k = kfirst ; k <= klast ; k++)
                     {
-                        // C<A,struct>=A with C bitmap, A sparse
+                        // get A(:,j), the kth vector of A
+                        int64_t j = GBH (Ah, k) ;
+                        int64_t pA_start, pA_end ;
+                        GB_get_pA (&pA_start, &pA_end, taskid, k,
+                            kfirst, klast, pstart_Aslice, Ap, avlen) ;
+                        // pC is the start of C(:,j)
+                        int64_t pC = j * cvlen ;
+                        // C<A(:,j),struct>=A(:,j) with C bitmap, A sparse
                         GB_PRAGMA_SIMD_REDUCTION (+,task_cnvals)
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {
                             if (GB_AX_MASK (Ax, pA, asize))
                             { 
-                                int64_t p = pC + GBI (Ai, pA, avlen) ;
+                                int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
                                 GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
                                 task_cnvals += (Cb [p] == 0) ;
@@ -322,15 +364,41 @@
                             }
                         }
                     }
-                    else
+                    cnvals += task_cnvals ;
+                }
+
+            }
+            else
+            {
+
+                //--------------------------------------------------------------
+                // C is full, mask is valued
+                //--------------------------------------------------------------
+
+                #pragma omp parallel for num_threads(A_nthreads) \
+                    schedule(dynamic,1) reduction(+:cnvals)
+                for (taskid = 0 ; taskid < A_ntasks ; taskid++)
+                {
+                    // if kfirst > klast then taskid does no work at all
+                    int64_t kfirst = kfirst_Aslice [taskid] ;
+                    int64_t klast  = klast_Aslice  [taskid] ;
+                    // C<A(:,kfirst:klast)> = A(:,kfirst:klast)
+                    for (int64_t k = kfirst ; k <= klast ; k++)
                     {
-                        // C<A,struct>=A with C dense, A sparse
+                        // get A(:,j), the kth vector of A
+                        int64_t j = GBH (Ah, k) ;
+                        int64_t pA_start, pA_end ;
+                        GB_get_pA (&pA_start, &pA_end, taskid, k,
+                            kfirst, klast, pstart_Aslice, Ap, avlen) ;
+                        // pC is the start of C(:,j)
+                        int64_t pC = j * cvlen ;
+                        // C<A(:,j),struct>=A(:,j) with C dense, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                         {
                             if (GB_AX_MASK (Ax, pA, asize))
                             { 
-                                int64_t p = pC + GBI (Ai, pA, avlen) ;
+                                int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
                                 GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
                             }
@@ -338,7 +406,6 @@
                     }
                 }
             }
-            cnvals += task_cnvals ;
         }
     }
 
