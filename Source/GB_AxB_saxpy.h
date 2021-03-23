@@ -96,7 +96,7 @@ GrB_Info GB_AxB_saxpy_generic
 GrB_Info GB_AxB_saxpy4              // C=A*B using Gustavson + large workspace
 (
     GrB_Matrix C,                   // output matrix (not done in-place)
-    const GrB_Matrix M,             // optional mask matrix
+    const GrB_Matrix M_input,       // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix A

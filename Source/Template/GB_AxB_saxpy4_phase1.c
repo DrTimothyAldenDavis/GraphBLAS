@@ -8,9 +8,15 @@
 //------------------------------------------------------------------------------
 
 {
+
+    #ifdef GB_MTYPE
+    // M is bitmap/full, and not structural
+    const GB_MTYPE *GB_RESTRICT Mx = (const GB_MTYPE *) M->x ;
+    #endif
+
     if (nthreads == 1)
     {
-// printf ("saxpy4 phase1 , 1 thread\n") ;
+
         //----------------------------------------------------------------------
         // single-threaded case: symbolic and numeric
         //----------------------------------------------------------------------
@@ -37,8 +43,16 @@
             // log the start of C(:,j)
             int64_t pC_start = pC ;
             Cp [kk] = pC_start ;
-            // get M(:,j) where j = Bh [kk], if M is bitmap/full
-            GB_GET_MASK_j ;
+
+            // get M(:,j) if M is bitmap/full
+            #ifdef GB_M_IS_BITMAP_OR_FULL
+            #ifdef GB_MTYPE
+            const GB_MTYPE *GB_RESTRICT Mxj = Mx + j * cvlen ;
+            #endif
+            #ifdef GB_M_IS_BITMAP
+            const int8_t *GB_RESTRICT Mbj = Mb + j * cvlen ;
+            #endif
+            #endif
 
             // get H(:,j)
             int64_t pH = kk * cvlen ;
@@ -69,7 +83,9 @@
                     // get A(i,k)
                     int64_t i = Ai [pA] ;
                     // check M(i,j) if M is bitmap/full
-                    GB_CHECK_BITMAP_OR_FULL_MASK (i) ;
+                    #ifdef GB_M_IS_BITMAP_OR_FULL
+                    GB_CHECK_MASK (i) ;
+                    #endif
                     int8_t f = Hf [i] ;
                     if (GB_IS_NEW_ENTRY (f))
                     {
@@ -79,18 +95,16 @@
                         GB_HX_WRITE (i, t) ;    // Hx [i] = t 
                         Wi [pC++] = i ;         // add i to pattern of C(:,j)
                         Hf [i] = 2 ;            // flag C(i,j) as seen
-//                      printf ("new C(%ld,%ld)\n", i, j) ;
                     }
+                    #if !GB_IS_ANY_MONOID
                     else if (GB_IS_EXISTING_ENTRY (f))
                     {
                         // C(i,j) is an existing entry in C
                         // C(i,j) += A(i,k) * B(k,j)
-//                      printf ("existing C(%ld,%ld)\n", i, j) ;
-                        #if !GB_IS_ANY_MONOID
                         GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                         GB_HX_UPDATE (i, t) ;   // Hx [i] += t 
-                        #endif
                     }
+                    #endif
                 }
             }
 
@@ -115,7 +129,6 @@
         //----------------------------------------------------------------------
 
         Cp [bnvec] = pC ;
-//      printf ("cnz %ld\n", pC) ;
 
     }
     else
@@ -163,8 +176,16 @@
                 int64_t pB, pB_end ;
                 GB_get_pA (&pB, &pB_end, taskid, kk,
                     kfirst, klast, pstart_Bslice, Bp, bvlen) ;
-                // get M(:,j), if M is bitmap or full
-                GB_GET_MASK_j ;
+
+                // get M(:,j) if M is bitmap/full
+                #ifdef GB_M_IS_BITMAP_OR_FULL
+                #ifdef GB_MTYPE
+                const GB_MTYPE *GB_RESTRICT Mxj = Mx + j * cvlen ;
+                #endif
+                #ifdef GB_M_IS_BITMAP
+                const int8_t *GB_RESTRICT Mbj = Mb + j * cvlen ;
+                #endif
+                #endif
 
                 // get H(:,j)
                 int64_t pH = kk * cvlen ;
@@ -259,4 +280,7 @@
         }
     }
 }
+
+#undef GB_MTYPE
+#undef GB_CHECK_MASK
 

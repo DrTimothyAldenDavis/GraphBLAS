@@ -48,7 +48,7 @@ void GB_cumsum                      // cumulative sum of an array
 
     if (nthreads > 1)
     { 
-        nthreads = GB_IMIN (nthreads, n / 1024) ;
+        nthreads = GB_IMIN (nthreads, n / (64 * 1024)) ;
         nthreads = GB_IMAX (nthreads, 1) ;
     }
 

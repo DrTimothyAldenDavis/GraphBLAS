@@ -704,6 +704,7 @@ GrB_Info GB_compatible          // SUCCESS if all is OK, *_MISMATCH otherwise
     const GrB_Type ctype,       // the type of C (matrix or scalar)
     const GrB_Matrix C,         // the output matrix C; NULL if C is a scalar
     const GrB_Matrix M,         // optional mask, NULL if no mask
+    const bool Mask_struct,     // true if M is structural
     const GrB_BinaryOp accum,   // C<M> = accum(C,T) is computed
     const GrB_Type ttype,       // type of T
     GB_Context Context
@@ -712,6 +713,7 @@ GrB_Info GB_compatible          // SUCCESS if all is OK, *_MISMATCH otherwise
 GrB_Info GB_Mask_compatible     // check type and dimensions of mask
 (
     const GrB_Matrix M,         // mask to check
+    const bool Mask_struct,     // true if M is structural
     const GrB_Matrix C,         // C<M>= ...
     const GrB_Index nrows,      // size of output if C is NULL (see GB*assign)
     const GrB_Index ncols,
@@ -943,10 +945,11 @@ void GB_cast_array              // typecast an array
         return (info) ;                                                      \
     }
 
-// C<M>=Z ignores Z if an empty mask is complemented, so return from
-// the method without computing anything.  But do apply the mask.
-#define GB_RETURN_IF_QUICK_MASK(C, C_replace, M, Mask_comp)                 \
-    if (Mask_comp && M == NULL)                                             \
+// C<M>=Z ignores Z if an empty mask is complemented, or if M is full,
+// structural and complemented, so return from the method without computing
+// anything.  Clear C if replace option is true.
+#define GB_RETURN_IF_QUICK_MASK(C, C_replace, M, Mask_comp, Mask_struct)    \
+    if (Mask_comp && (M == NULL || (GB_IS_FULL (M) && Mask_struct)))        \
     {                                                                       \
         /* C<!NULL>=NULL since result does not depend on computing Z */     \
         return (C_replace ? GB_clear (C, Context) : GrB_SUCCESS) ;          \

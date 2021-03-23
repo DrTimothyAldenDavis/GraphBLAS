@@ -60,7 +60,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Type ztype = monoid->op->ztype ;
-    GB_OK (GB_compatible (C->type, C, M, accum, ztype, Context)) ;
+    GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, ztype, Context)) ;
 
     // T = reduce (T,A) must be compatible
     if (!GB_Type_compatible (A->type, ztype))
@@ -96,7 +96,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     }
 
     // quick return if an empty mask is complemented
-    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
+    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp, Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // create B as full vector but with B->x of NULL

@@ -122,7 +122,7 @@ typedef struct
     // timing: for code development only
     //--------------------------------------------------------------------------
 
-    double timing [20] ;
+    double timing [40] ;
 
     //--------------------------------------------------------------------------
     // for malloc debugging only
@@ -1089,7 +1089,7 @@ bool GB_Global_gpu_device_properties_get (int device)
 GB_PUBLIC
 void GB_Global_timing_clear_all (void)
 {
-    for (int k = 0 ; k < 20 ; k++)
+    for (int k = 0 ; k < 40 ; k++)
     {
         GB_Global.timing [k] = 0 ;
     }

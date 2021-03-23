@@ -64,7 +64,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     // check domains and dimensions for c = accum (c,s)
     GrB_Type ztype = reduce->op->ztype ;
-    GB_OK (GB_compatible (ctype, NULL, NULL, accum, ztype, Context)) ;
+    GB_OK (GB_compatible (ctype, NULL, NULL, false, accum, ztype, Context)) ;
 
     // s = reduce (s,A) must be compatible
     if (!GB_Type_compatible (A->type, ztype))

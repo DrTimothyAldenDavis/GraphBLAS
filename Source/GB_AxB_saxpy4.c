@@ -18,26 +18,6 @@
 #include "GB_AxB__include.h"
 #endif
 
-#if 0
-#define GB_FREE_WORK                                            \
-{                                                               \
-    GB_WERK_POP (M_ek_slicing, int64_t) ;                       \
-    GB_WERK_POP (B_ek_slicing, int64_t) ;                       \
-    /* Wf is returned to the calloc_pool */                     \
-    GB_FREE_WERK_UNLIMITED_FROM_CALLOC (&Wf, Wf_size) ;         \
-    if (Wi_will_transplant)                                     \
-    {                                                           \
-        GB_FREE (&Wi, Wi_size) ;                                \
-    }                                                           \
-    else                                                        \
-    {                                                           \
-        GB_FREE_WERK_UNLIMITED_FROM_MALLOC (&Wi, Wi_size) ;     \
-    }                                                           \
-    GB_FREE_WERK_UNLIMITED_FROM_MALLOC (&Wx, Wx_size) ;         \
-    GB_FREE_WERK_UNLIMITED_FROM_MALLOC (&Bflops, Bflops_size) ; \
-}
-#endif
-
 #define GB_FREE_WORK                                            \
 {                                                               \
     GB_WERK_POP (M_ek_slicing, int64_t) ;                       \
@@ -61,7 +41,7 @@
 GrB_Info GB_AxB_saxpy4              // C=A*B using Gustavson + large workspace
 (
     GrB_Matrix C,                   // output matrix (not done in-place)
-    const GrB_Matrix M,             // optional mask matrix
+    const GrB_Matrix M_input,       // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix A
@@ -87,10 +67,10 @@ double ttt = omp_get_wtime ( ) ;
 
     ASSERT (C != NULL && C->static_header) ;
 
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy4 A*B", GB0) ;
-    ASSERT (!GB_PENDING (M)) ;
-    ASSERT (GB_JUMBLED_OK (M)) ;
-    ASSERT (!GB_ZOMBIES (M)) ;
+    ASSERT_MATRIX_OK_OR_NULL (M_input, "M for saxpy4 A*B", GB0) ;
+    ASSERT (!GB_PENDING (M_input)) ;
+    ASSERT (GB_JUMBLED_OK (M_input)) ;
+    ASSERT (!GB_ZOMBIES (M_input)) ;
 
     ASSERT_MATRIX_OK (A, "A for saxpy4 A*B", GB0) ;
     ASSERT (!GB_PENDING (A)) ;
@@ -124,7 +104,6 @@ double ttt = omp_get_wtime ( ) ;
     int64_t *Wi = NULL ; size_t Wi_size = 0 ;
     int8_t  *Wf = NULL ; size_t Wf_size = 0 ;
     GB_void *Wx = NULL ; size_t Wx_size = 0 ;
-//  bool Wi_will_transplant = false ;
     int64_t *GB_RESTRICT Bflops = NULL ; size_t Bflops_size = 0 ;
 
     //--------------------------------------------------------------------------
@@ -152,7 +131,7 @@ double ttt = omp_get_wtime ( ) ;
     #endif
 
     //--------------------------------------------------------------------------
-    // get M, A, and B
+    // get A and B
     //--------------------------------------------------------------------------
 
     const int64_t *GB_RESTRICT Ap = A->p ;
@@ -167,29 +146,6 @@ double ttt = omp_get_wtime ( ) ;
     const int64_t bvlen = B->vlen ;
     const int B_sparsity = GB_sparsity (B) ;
 
-    const int64_t *GB_RESTRICT Mp = NULL ;
-    const int64_t *GB_RESTRICT Mh = NULL ;
-    const int8_t  *GB_RESTRICT Mb = NULL ;
-    const int64_t *GB_RESTRICT Mi = NULL ;
-    const GB_void *GB_RESTRICT Mx = NULL ;
-    size_t msize = 0 ;
-    int64_t mnvec = 0 ;
-    int64_t mvlen = 0 ;
-    const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
-    const bool M_is_bitmap = GB_IS_BITMAP (M) ;
-    const bool M_jumbled = GB_JUMBLED (M) ;
-    if (M != NULL)
-    { 
-        Mp = M->p ;
-        Mh = M->h ;
-        Mb = M->b ;
-        Mi = M->i ;
-        Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
-        msize = M->type->size ;
-        mnvec = M->nvec ;
-        mvlen = M->vlen ;
-    }
-
     //--------------------------------------------------------------------------
     // allocate C (just C->p and C->h, but not C->i or C->x)
     //--------------------------------------------------------------------------
@@ -203,10 +159,11 @@ double ttt = omp_get_wtime ( ) ;
     GB_OK (GB_new (&C, true, // sparse or hyper, static header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         B_sparsity, B->hyper_switch, cnvec, Context)) ;
+    bool C_and_B_are_hyper = (B_sparsity == GxB_HYPERSPARSE) ;
 
     int64_t *GB_RESTRICT Cp = C->p ;
     int64_t *GB_RESTRICT Ch = C->h ;
-    if (B_sparsity == GxB_HYPERSPARSE)
+    if (C_and_B_are_hyper)
     { 
         // B and C are both hypersparse
         GB_memcpy (Ch, Bh, cnvec * sizeof (int64_t), nthreads_max) ;
@@ -228,10 +185,8 @@ double ttt = omp_get_wtime ( ) ;
     }
     else
     {
-
-
         // determine # of threads to use for compute the flop count
-        int Bflops_nthreads = GB_nthreads (bnz, chunk, nthreads_max) ;
+        int B_nthreads = GB_nthreads (bnz/16, chunk, nthreads_max) ;
         Bflops = GB_MALLOC_WERK_UNLIMITED (bnz+1, int64_t, &Bflops_size) ;
         if (Bflops == NULL)
         {
@@ -240,19 +195,49 @@ double ttt = omp_get_wtime ( ) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
 
-        int64_t pB ;
-        #pragma omp parallel for num_threads(Bflops_nthreads) schedule(static)
-        for (pB = 0 ; pB < bnz ; pB++)
+ttt = omp_get_wtime ( ) ;
+
+        if (B_nthreads == 1)
         {
-            int64_t k = Bi [pB] ;
-            Bflops [pB] = (Ap [k+1] - Ap [k]) ;
+            int64_t pB ;
+            GB_PRAGMA_SIMD
+            for (pB = 0 ; pB < bnz ; pB++)
+            {
+                int64_t k = Bi [pB] ;
+                Bflops [pB] = (Ap [k+1] - Ap [k]) ;
+            }
+        }
+        else
+        {
+            int taskid ;
+            #pragma omp parallel for num_threads(B_nthreads) schedule(static)
+            for (int taskid = 0 ; taskid < B_nthreads ; taskid++)
+            {
+                int64_t pB_first, pB_last ;
+                GB_PARTITION (pB_first, pB_last, bnz, taskid, B_nthreads) ;
+                int64_t pB ;
+                GB_PRAGMA_SIMD
+                for (pB = pB_first ; pB < pB_last ; pB++)
+                {
+                    int64_t k = Bi [pB] ;
+                    Bflops [pB] = (Ap [k+1] - Ap [k]) ;
+                }
+            }
         }
 
-        // cumulative sum to determine flop count
-        GB_cumsum (Bflops, bnz, &total_flops, nthreads_max, Context) ;
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (0, ttt) ;
+ttt = omp_get_wtime ( ) ;
 
-        // determine # of threads to use for C=A*B and slice B according to flops
-        nthreads = GB_nthreads (total_flops, chunk, nthreads_max) ;
+        // cumulative sum to determine flop count
+        GB_cumsum (Bflops, bnz, &total_flops, B_nthreads, Context) ;
+
+ttt = omp_get_wtime ( ) - ttt ;
+GB_Global_timing_add (1, ttt) ;
+ttt = omp_get_wtime ( ) ;
+
+        // compute # of threads to use for C=A*B and slice B according to flops
+        nthreads = GB_nthreads (128*total_flops, chunk, nthreads_max) ;
         nthreads = GB_IMIN (nthreads, bnz) ;
         nthreads = GB_IMAX (nthreads, 1) ;
     }
@@ -270,29 +255,10 @@ double ttt = omp_get_wtime ( ) ;
     // free Bflops workspace
     GB_FREE_WERK_UNLIMITED_FROM_MALLOC (&Bflops, Bflops_size) ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-GB_Global_timing_add (1, ttt) ;
-ttt = omp_get_wtime ( ) ;
-
     // allocate Wf, Wi, and Wx workspace
     int64_t cnzmax = cvlen*cnvec ;
     cnzmax = GB_IMAX (cnzmax, 1) ;
     Wf = GB_CALLOC_WERK_UNLIMITED (cnzmax, int8_t, &Wf_size) ;
-
-#if 0
-    Wi_will_transplant = false ; // (nthreads == 1 || cnvec == 1) ;
-    if (Wi_will_transplant)
-    { 
-        // Wi will be transplanted into C as C->i
-        Wi = GB_MALLOC (cnzmax, int64_t, &Wi_size) ;
-    }
-    else
-    { 
-        // Wi is purely temporary workspace
-        Wi = GB_MALLOC_WERK_UNLIMITED (cnzmax, int64_t, &Wi_size) ;
-    }
-#endif
-
     Wi = GB_MALLOC_WERK_UNLIMITED (cnzmax, int64_t, &Wi_size) ;
     bool ok = (Wf != NULL && Wi != NULL) ;
     if (!is_any_pair_semiring)
@@ -327,70 +293,97 @@ ttt = omp_get_wtime ( ) ;
     // The mask is not exploited if it has too many entries
     // If M is bitmap/full, it will be used in-place
 
-    bool M_dense_in_place =
-        (M != NULL && (GB_IS_BITMAP (M) || GB_IS_FULL (M))) ;
-    bool M_is_sparse_or_hyper =
-        (M != NULL && (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M))) ;
+    bool M_is_sparse_or_hyper = false ;
 
     // determine if the mask should be applied
-    if (M == NULL)
+    if (M_input == NULL)
     {
         // no mask to apply
         apply_mask = false ;
     }
-    else if (M_is_sparse_or_hyper)
+    else if (GB_IS_SPARSE (M_input) || GB_IS_HYPERSPARSE (M_input))
     {
         // discard the mask if it has too many entries
-        apply_mask = GB_NNZ (M) < total_flops ;
+        apply_mask = GB_NNZ (M_input) < total_flops ;
+        M_is_sparse_or_hyper = apply_mask ;
     }
-    else if (M_dense_in_place)
+    else
     {
         // always apply M if it is bitmap or full
         apply_mask = true ;
     }
 
-    if (M_is_sparse_or_hyper && apply_mask)
+    GrB_Matrix M = (apply_mask) ? M_input : NULL ;
+    bool M_dense_in_place = (M != NULL &&
+        (GB_IS_BITMAP (M) || GB_IS_FULL (M))) ;
+
+    // if M is full and structural, GB_mxm has already handled it, by
+    // passing in M as NULL if not complemented, or by a quick return if
+    // complemented.
+    ASSERT (!(GB_IS_FULL (M) && Mask_struct)) ;
+
+    const int64_t *GB_RESTRICT Mp = NULL ;
+    const int64_t *GB_RESTRICT Mh = NULL ;
+    const int8_t  *GB_RESTRICT Mb = NULL ;
+    const int64_t *GB_RESTRICT Mi = NULL ;
+    size_t msize = 0 ;
+    int64_t mnvec = 0 ;
+    int64_t mvlen = 0 ;
+    if (M != NULL)
+    { 
+        Mp = M->p ;
+        Mh = M->h ;
+        Mb = M->b ;
+        Mi = M->i ;
+        msize = (Mask_struct) ? 0 : M->type->size ;
+        mnvec = M->nvec ;
+        mvlen = M->vlen ;
+    }
+
+    if (M_is_sparse_or_hyper)
     {
+
         GB_SLICE_MATRIX (M, 1) ;
-        // TODO: could specialize this, for each type of mask
-        int taskid ;
-        #pragma omp parallel for num_threads(M_nthreads) schedule(static)
-        for (taskid = 0 ; taskid < M_ntasks ; taskid++)
+
+        switch (msize)
         {
-            int64_t kfirst = kfirst_Mslice [taskid] ;
-            int64_t klast  = klast_Mslice  [taskid] ;
-            int64_t ck = 0 ;
-            for (int64_t kk = kfirst ; kk <= klast ; kk++)
-            {
-                // scatter M(:,j) into Wf
-                int64_t j = GBH (Mh, kk) ;
-                int64_t pM_start, pM_end ;
-                GB_get_pA (&pM_start, &pM_end, taskid, kk,
-                    kfirst, klast, pstart_Mslice, Mp, mvlen) ;
-                bool found ;
-                if (Ch == NULL)
-                {
-                    // C(:,j) is the jth vector in C
-                    ck = j ;
-                    found = true ;
-                }
-                else
-                {
-                    // look for j in Ch
-                    int64_t pright = cnvec ;
-                    GB_BINARY_SEARCH (j, Ch, ck, pright, found) ;
-                }
-                if (found)
-                {
-                    int8_t *GB_RESTRICT Hf = Wf + ck * cvlen ;
-                    GB_PRAGMA_SIMD
-                    for (int64_t pM = pM_start ; pM < pM_end ; pM++)
-                    {
-                        // Hf [i] = M (i,j)
-                        Hf [Mi [pM]] = GB_mcast (Mx, pM, msize) ;
-                    }
-                }
-            }
+
+            default:
+            case 0 :    // M is structural
+                #undef  GB_MTYPE
+                #define GB_MASK_ij(pM) 1
+                #include "GB_AxB_saxpy4_mask_template.c"
+                break ;
+
+            case 1 :    // M is bool, int8_t, or uint8_t
+                #define GB_MTYPE uint8_t
+                #define GB_MASK_ij(pM) (Mx [pM] != 0)
+                #include "GB_AxB_saxpy4_mask_template.c"
+                break ;
+
+            case 2 :    // M is int16 or uint16
+                #define GB_MTYPE uint16_t
+                #define GB_MASK_ij(pM) (Mx [pM] != 0)
+                #include "GB_AxB_saxpy4_mask_template.c"
+                break ;
+
+            case 4 :    // M is int32, uint32, or float
+                #define GB_MTYPE uint32_t
+                #define GB_MASK_ij(pM) (Mx [pM] != 0)
+                #include "GB_AxB_saxpy4_mask_template.c"
+                break ;
+
+            case 8 :    // M is int64, uint64, double, or complex float
+                #define GB_MTYPE uint64_t
+                #define GB_MASK_ij(pM) (Mx [pM] != 0)
+                #include "GB_AxB_saxpy4_mask_template.c"
+                break ;
+
+            case 16 :    // M is complex double
+                #define GB_MTYPE uint64_t
+                #define GB_MASK_ij(pM) (Mx [2*pM] != 0) || (Mx [2*pM+1] != 0)
+                #include "GB_AxB_saxpy4_mask_template.c"
+                break ;
         }
     }
 
@@ -414,7 +407,7 @@ ttt = omp_get_wtime ( ) ;
 
         #define GB_AxB_WORKER(add,mult,xname)                               \
         {                                                                   \
-            info = GB_AsaxpyB (add,mult,xname) (C, apply_mask ? M : NULL,   \
+            info = GB_AsaxpyB (add,mult,xname) (C, M,                       \
                 Mask_comp, Mask_struct, M_dense_in_place, A, A_is_pattern,  \
                 B, B_is_pattern, GB_SAXPY_METHOD_4,                         \
                 NULL, 0, 0, nthreads, do_sort,                              \
@@ -441,7 +434,7 @@ ttt = omp_get_wtime ( ) ;
 
     if (!done)
     { 
-        info = GB_AxB_saxpy_generic (C, apply_mask ? M : NULL, Mask_comp,
+        info = GB_AxB_saxpy_generic (C, M, Mask_comp,
             Mask_struct, M_dense_in_place, A, A_is_pattern, B, B_is_pattern,
             semiring, flipxy, GB_SAXPY_METHOD_4,
             NULL, 0, 0, nthreads, do_sort,
@@ -459,49 +452,14 @@ ttt = omp_get_wtime ( ) ;
 
     // this must be done even if saxpy4 fails
 
-    if (M_is_sparse_or_hyper && apply_mask)
+    if (M_is_sparse_or_hyper)
     {
         const int64_t *kfirst_Mslice = M_ek_slicing ;
         const int64_t *klast_Mslice  = M_ek_slicing + M_ntasks ;
         const int64_t *pstart_Mslice = M_ek_slicing + M_ntasks*2 ;
-        int taskid ;
-        #pragma omp parallel for num_threads(M_nthreads) schedule(static)
-        for (taskid = 0 ; taskid < M_ntasks ; taskid++)
-        {
-            int64_t kfirst = kfirst_Mslice [taskid] ;
-            int64_t klast  = klast_Mslice  [taskid] ;
-            int64_t ck = 0 ;
-            for (int64_t kk = kfirst ; kk <= klast ; kk++)
-            {
-                // scatter M(:,j) into Wf
-                int64_t j = GBH (Mh, kk) ;
-                int64_t pM_start, pM_end ;
-                GB_get_pA (&pM_start, &pM_end, taskid, kk,
-                    kfirst, klast, pstart_Mslice, Mp, mvlen) ;
-                bool found ;
-                if (Ch == NULL)
-                {
-                    // C(:,j) is the jth vector in C
-                    ck = j ;
-                    found = true ;
-                }
-                else
-                {
-                    // look for j in Ch
-                    int64_t pright = cnvec ;
-                    GB_BINARY_SEARCH (j, Ch, ck, pright, found) ;
-                }
-                if (found)
-                {
-                    int8_t *GB_RESTRICT Hf = Wf + ck * cvlen ;
-                    GB_PRAGMA_SIMD
-                    for (int64_t pM = pM_start ; pM < pM_end ; pM++)
-                    {
-                        Hf [Mi [pM]] = 0 ;
-                    }
-                }
-            }
-        }
+        #undef  GB_MTYPE
+        #define GB_MASK_ij(pM) 0
+        #include "GB_AxB_saxpy4_mask_template.c"
     }
 
     if (info != GrB_SUCCESS)

@@ -201,8 +201,7 @@ include_directories ( Source/Template Source Source/Generated Source/Generator I
 if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # The -g option is useful for the Intel VTune tool, but it should be
     # removed in production.  Comment this line out if not in use:
-    # TODO:: VTune
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
+    # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
     # cmake 2.8 workaround: gcc needs to be told to do ANSI C11.
     # cmake 3.0 doesn't have this problem.
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm -Wno-pragmas " )
@@ -256,7 +255,7 @@ if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}" )
 else ( )
     # TODO: hack
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE} -g")
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
 endif ( )
 
 set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_CUDA_FLAG}" )
