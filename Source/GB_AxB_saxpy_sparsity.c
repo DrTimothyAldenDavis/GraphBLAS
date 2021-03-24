@@ -50,6 +50,7 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
     bool M_is_hyper  = (M_sparsity == GxB_HYPERSPARSE) ;
     bool M_is_sparse = (M_sparsity == GxB_SPARSE) ;
 
+#if 0
     if (A_sparsity == GxB_SPARSE &&
        (B_sparsity == GxB_SPARSE || B_sparsity == GxB_HYPERSPARSE) &&
        (GB_Global_hack_get ( ) != 0) && (m*n < (anz + bnz)))
@@ -63,7 +64,9 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
         (*saxpy_method) = GB_SAXPY_METHOD_4 ;
 
     }
-    else if (M != NULL && !Mask_comp && (M_is_hyper || M_is_sparse))
+    else
+    #endif
+    if (M != NULL && !Mask_comp && (M_is_hyper || M_is_sparse))
     {
 
         //-----------------------------------------------------

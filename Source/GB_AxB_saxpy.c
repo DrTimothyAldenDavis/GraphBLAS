@@ -109,6 +109,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
                 A, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
                 Context)) ;
 
+#if 0
         case GB_SAXPY_METHOD_4 :
 
             //------------------------------------------------------------------
@@ -139,6 +140,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
             return (GB_AxB_saxpy4 (C, M, Mask_comp, Mask_struct,
                 A, B, semiring, flipxy, mask_applied, do_sort, Context)) ;
+#endif
 
         case GB_SAXPY_METHOD_BITMAP :
 

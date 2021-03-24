@@ -237,7 +237,7 @@ GB_Global_timing_add (1, ttt) ;
 ttt = omp_get_wtime ( ) ;
 
         // compute # of threads to use for C=A*B and slice B according to flops
-        nthreads = GB_nthreads (128*total_flops, chunk, nthreads_max) ;
+        nthreads = GB_nthreads (total_flops, chunk, nthreads_max) ;
         nthreads = GB_IMIN (nthreads, bnz) ;
         nthreads = GB_IMAX (nthreads, 1) ;
     }
