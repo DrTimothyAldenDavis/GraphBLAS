@@ -252,7 +252,6 @@ for k1 = k1_list % 1:length(mult_ops)
     % w = A*u with mask
     % mask = sprandn (m,1,0.2) ~= 0 ;
     mask = GB_random_mask (m,1,0.2) ;
-save gunk w mask accum semiring A u dnn identity
     w0 = GB_spec_mxv (w, mask, accum, semiring, A, u, dnn);
     w1 = GB_mex_mxv  (w, mask, accum, semiring, A, u, dnn);
     GB_spec_compare (w0, w1, identity) ;
