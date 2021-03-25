@@ -88,12 +88,15 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
+// HACK:
+#include "GB_dynamic.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
 
 #define GB_FREE_WORK                                \
 {                                                   \
+    /* HACK: */ if (B_input_static) GB_Matrix_free (&B) ; \
     GB_FREE_WERK (&SaxpyTasks, SaxpyTasks_size) ;   \
     GB_FREE_WERK (&Hi_all, Hi_all_size) ;           \
     GB_FREE_WERK (&Hf_all, Hf_all_size) ;           \
@@ -112,13 +115,19 @@
 
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
-    GrB_Matrix C,                   // output matrix (not done in-place)
+// HACK
+    GrB_Matrix C_static,            // output matrix (not done in-place)
+//  GrB_Matrix C,                   // output matrix (not done in-place)
     int C_sparsity,                 // construct C as sparse or hypersparse
     const GrB_Matrix M_input,       // optional mask matrix
     const bool Mask_comp_input,     // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix A
-    const GrB_Matrix B,             // input matrix B
+
+// HACK:
+//  const GrB_Matrix B,             // input matrix B
+    const GrB_Matrix B_input,       // input matrix B
+
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
@@ -128,6 +137,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 )
 {
 // double ttt = omp_get_wtime ( ) ;
+// HACK
+    GrB_Matrix C = NULL ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -138,10 +149,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GrB_Matrix M = M_input ;        // use the mask M, until deciding otherwise
     bool Mask_comp = Mask_comp_input ;
 
+// HACK
+GrB_Matrix B = NULL ;
+bool B_input_static = false ;
+
     (*mask_applied) = false ;
     bool apply_mask = false ;
 
-    ASSERT (C != NULL && C->static_header) ;
+// HACK:
+    ASSERT (C_static != NULL && C_static->static_header) ;
+//  ASSERT (C != NULL && C->static_header) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -153,13 +170,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
 
-    ASSERT_MATRIX_OK (B, "B for saxpy3 A*B", GB0) ;
-    ASSERT (!GB_PENDING (B)) ;
-    ASSERT (GB_JUMBLED_OK (B)) ;
-    ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT_MATRIX_OK (B_input, "B for saxpy3 A*B", GB0) ;
+    ASSERT (!GB_PENDING (B_input)) ;
+    ASSERT (GB_JUMBLED_OK (B_input)) ;
+    ASSERT (!GB_ZOMBIES (B_input)) ;
 
     ASSERT_SEMIRING_OK (semiring, "semiring for saxpy3 A*B", GB0) ;
-    ASSERT (A->vdim == B->vlen) ;
+    ASSERT (A->vdim == B_input->vlen) ;
 
     ASSERT (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE) ;
 
@@ -177,6 +194,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t *GB_RESTRICT Hf_all = NULL ; size_t Hf_all_size = 0 ;
     GB_void *GB_RESTRICT Hx_all = NULL ; size_t Hx_all_size = 0 ;
     GB_saxpy3task_struct *SaxpyTasks = NULL ; size_t SaxpyTasks_size = 0 ;
+
+// HACK
+GB_OK (GB_to_dynamic (&B, &B_input_static, B_input, Context)) ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -232,7 +252,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t cvdim = bvdim ;
     int64_t cnvec = bnvec ;
 
-    info = GB_new (&C, true, // sparse or hyper, static header
+    info = GB_new (&C,
+                    false,   // HACK, dynamic header
+                    // true, // sparse or hyper, static header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         C_sparsity, B->hyper_switch, cnvec, Context) ;
     if (info != GrB_SUCCESS)
@@ -657,6 +679,11 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (8, ttt) ;
+
+// HACK
+// transplant C into C_static, and free C
+GB_to_static (C_static, &C, Context) ;
+ASSERT (C == NULL) ;
 
     return (info) ;
 }

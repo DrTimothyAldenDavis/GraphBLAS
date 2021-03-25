@@ -49,6 +49,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
 
     GrB_Info info ;
 
+    // RMM note: header of MT and T on the stack
     struct GB_Matrix_opaque MT_header, T_header ;
     GrB_Matrix MT = GB_clear_static_header (&MT_header) ;
     GrB_Matrix T  = GB_clear_static_header (&T_header) ;
