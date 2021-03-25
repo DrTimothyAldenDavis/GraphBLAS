@@ -55,7 +55,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Info info ;
-    GB_OK (GB_compatible (C->type, C, M, accum, A->type, Context)) ;
+    GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, A->type, Context));
 
     GB_Type_code typecode = A->type->code ;
     GB_Select_Opcode opcode = op->opcode ;
@@ -198,7 +198,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     }
 
     // quick return if an empty mask is complemented
-    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
+    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp, Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples

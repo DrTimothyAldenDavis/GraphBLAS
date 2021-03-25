@@ -194,7 +194,7 @@ GrB.type (C2)
 % See 'help GrB.binopinfo' for a list of the binary operators, and
 % 'help GrB.monoidinfo' for the ones that can be used as the additive
 % monoid in a semiring.  'help GrB.unopinfo' lists the unary operators.
-% 'help GrB.semiringinfo' descripts the semirings.
+% 'help GrB.semiringinfo' describes the semirings.
 
 %% 
 help GrB.binopinfo

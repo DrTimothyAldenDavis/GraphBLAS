@@ -13,7 +13,7 @@
 // into chunks of identical sizes, and then finds the first and last vector
 // (k) for each chunk.
 
-// Task t does entries pstart_slice [t] to pstart_slice [t+1]-1 and
+// Task t does entries pstart_slice [t] to pstart_slice [t+1]-1 inclusive and
 // vectors kfirst_slice [t] to klast_slice [t].  The first and last vectors
 // may be shared with prior slices and subsequent slices.
 
@@ -23,7 +23,7 @@
 // A may be jumbled.
 
 #include "GB_ek_slice.h"
-#include "GB_search_for_vector_template.c"
+#include "GB_ek_slice_search.c"
 
 void GB_ek_slice            // slice a matrix
 (
@@ -101,6 +101,9 @@ void GB_ek_slice            // slice a matrix
     // FUTURE: this can be done in parallel if there are many tasks
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     { 
+        GB_ek_slice_search (taskid, ntasks, pstart_slice, Ap, anvec, avlen,
+            kfirst_slice, klast_slice) ;
+#if 0
 
         // The slice for task taskid contains entries pfirst:plast-1 of A.
         int64_t pfirst = pstart_slice [taskid] ;
@@ -119,9 +122,11 @@ void GB_ek_slice            // slice a matrix
         kfirst_slice [taskid] = kfirst ;
         klast_slice  [taskid] = klast ;
         ASSERT (0 <= kfirst && kfirst <= klast && klast < anvec) ;
+#endif
+
     }
 
-    kfirst_slice [0] = 0 ;
-    klast_slice  [ntasks-1] = anvec-1 ;
+    ASSERT (kfirst_slice [0] == 0) ;
+    ASSERT (klast_slice  [ntasks-1] == anvec-1) ;
 }
 

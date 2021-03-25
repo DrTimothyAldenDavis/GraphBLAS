@@ -32,7 +32,7 @@ void GB_free_memory         // free memory, bypassing the free_pool
             GB_Global_nmalloc_decrement ( ) ;
         }
         ASSERT (size_allocated == GB_Global_memtable_size (*p)) ;
-//      printf ("hard free %p size %ld\n", *p, size_allocated) ;
+//      printf ("hard free %p %ld\n", *p, size_allocated) ;
         GB_Global_free_function (*p) ;
         (*p) = NULL ;
     }

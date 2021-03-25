@@ -63,7 +63,7 @@ void GB_ek_slice_merge2     // merge final results for matrix C
 
     const int64_t *GB_RESTRICT kfirst_Aslice = A_ek_slicing ;
     const int64_t *GB_RESTRICT klast_Aslice  = A_ek_slicing + ntasks ;
-    const int64_t *GB_RESTRICT pstart_Aslice = A_ek_slicing + ntasks * 2 ;
+//  const int64_t *GB_RESTRICT pstart_Aslice = A_ek_slicing + ntasks * 2 ;
 
     int64_t kprior = -1 ;
     int64_t pC = 0 ;

@@ -567,6 +567,8 @@ void mexFunction
 
     GB_Global_hack_set (90123) ;
     CHECK (GB_Global_hack_get ( ) == 90123) ;
+    GB_Global_hack_set (0) ;
+    CHECK (GB_Global_hack_get ( ) == 0) ;
 
     GrB_Info expected = GrB_INVALID_VALUE ;
 

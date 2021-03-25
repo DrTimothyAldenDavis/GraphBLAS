@@ -13,6 +13,9 @@
 // A->p can come from any matrix: hypersparse, sparse, bitmap, or full.
 // For the latter two cases, A->p is NULL.
 
+#ifndef GB_SEARCH_FOR_VECTOR_H
+#define GB_SEARCH_FOR_VECTOR_H
+
 #ifdef GB_KERNEL
 __device__
 static inline int64_t GB_search_for_vector_device
@@ -80,4 +83,6 @@ static inline int64_t GB_search_for_vector // return vector k that contains p
 
     return (k) ;
 }
+
+#endif
 

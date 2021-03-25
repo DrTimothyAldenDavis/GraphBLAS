@@ -22,7 +22,7 @@
 
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int A_ntasks, A_nthreads ;
-    GB_SLICE_MATRIX (A, 32) ;
+    GB_SLICE_MATRIX (A, 32, chunk) ;
 
     //--------------------------------------------------------------------------
     // Cx = positional_op (A)

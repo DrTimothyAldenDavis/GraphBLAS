@@ -164,7 +164,7 @@ GrB_Info GB_mask                // C<M> = Z
     ASSERT (C_result->vdim == Z->vdim) ;
 
     // M must be compatible with C_result
-    ASSERT_OK (GB_Mask_compatible (M, C_result, 0, 0, Context)) ;
+    ASSERT_OK (GB_Mask_compatible (M, Mask_struct, C_result, 0, 0, Context)) ;
 
     GrB_Info info = GrB_SUCCESS ;
 

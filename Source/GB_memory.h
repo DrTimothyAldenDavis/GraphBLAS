@@ -69,15 +69,33 @@ void GB_dealloc_memory      // free memory, return to free_pool or free it
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_free_pool_finalize (void) ;
 
-#define GB_FREE(p,s) GB_dealloc_memory (p,s)
-#define GB_CALLOC(n,type,s,Context) \
-    (type *) GB_calloc_memory (n, sizeof (type), s, Context)
-#define GB_MALLOC(n,type,s) (type *) GB_malloc_memory (n, sizeof (type), s)
-#define GB_REALLOC(p,nnew,nold,type,s,ok,Context) \
-    p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), (void *)p, s, \
-        ok, Context)
+//------------------------------------------------------------------------------
+// malloc/calloc/realloc/free: for permanent contents of GrB objects
+//------------------------------------------------------------------------------
 
-#define GB_CALLOC_WERK(n,type,s,Context) GB_CALLOC(n,type,s,Context)
+#define GB_FREE(p,s) \
+    GB_dealloc_memory (p, s)
+
+#define GB_CALLOC(n,type,s) \
+    (type *) GB_calloc_memory (n, sizeof (type), s, Context)
+
+#define GB_MALLOC(n,type,s) \
+    (type *) GB_malloc_memory (n, sizeof (type), s)
+
+#define GB_REALLOC(p,nnew,nold,type,s,ok,Context) \
+    p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), \
+        (void *) p, s, ok, Context)
+
+//------------------------------------------------------------------------------
+// malloc/calloc/realloc/free: for workspace
+//------------------------------------------------------------------------------
+
+// These macros currently do the same thing as the 4 macros above, but that may
+// change in the future.  Even if they always do the same thing, it's useful to
+// tag the source code for the allocation of workspace differently from the
+// allocation of permament space for a GraphBLAS object, such as a GrB_Matrix.
+
+#define GB_CALLOC_WERK(n,type,s) GB_CALLOC(n,type,s)
 #define GB_MALLOC_WERK(n,type,s) GB_MALLOC(n,type,s)
 #define GB_REALLOC_WERK(p,nnew,nold,type,s,ok,Context) \
              GB_REALLOC(p,nnew,nold,type,s,ok,Context) 

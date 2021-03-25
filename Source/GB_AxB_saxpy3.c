@@ -88,7 +88,6 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
-#include "GB_is_nonzero.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
@@ -464,6 +463,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // allocate space for all hash tables
     //--------------------------------------------------------------------------
 
+    // TODO::: allocate Hi and Hx together as one block
     if (Hi_size_total > 0)
     { 
         Hi_all = GB_MALLOC_WERK (Hi_size_total, int64_t, &Hi_all_size) ;
@@ -471,7 +471,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     if (Hf_size_total > 0)
     { 
         // Hf must be calloc'd to initialize all entries as empty 
-        Hf_all = GB_CALLOC_WERK (Hf_size_total, int64_t, &Hf_all_size, Context);
+        Hf_all = GB_CALLOC_WERK (Hf_size_total, int64_t, &Hf_all_size) ;
     }
     if (Hx_size_total > 0)
     { 
@@ -595,14 +595,14 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Asaxpy3B(add,mult,xname) \
-            GB_Asaxpy3B_ ## add ## mult ## xname
+        #define GB_AsaxpyB(add,mult,xname) GB_AsaxpyB_ ## add ## mult ## xname
 
         #define GB_AxB_WORKER(add,mult,xname)                               \
         {                                                                   \
-            info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,           \
-                Mask_struct, M_dense_in_place, A, A_is_pattern,  B,         \
-                B_is_pattern, SaxpyTasks, ntasks, nfine, nthreads, do_sort, \
+            info = GB_AsaxpyB (add,mult,xname) (C, M, Mask_comp,            \
+                Mask_struct, M_dense_in_place, A, A_is_pattern, B,          \
+                B_is_pattern, GB_SAXPY_METHOD_3,                            \
+                SaxpyTasks, ntasks, nfine, nthreads, do_sort,               \
                 Context) ;                                                  \
             done = (info != GrB_NO_VALUE) ;                                 \
         }                                                                   \
@@ -619,15 +619,17 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     #endif
 
-    //==========================================================================
-    // C = A*B, via the generic saxpy method, with typecasting
-    //==========================================================================
+    //--------------------------------------------------------------------------
+    // generic saxpy3 method
+    //--------------------------------------------------------------------------
 
     if (!done)
     { 
         info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
             M_dense_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
-            flipxy, SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context) ;
+            flipxy, GB_SAXPY_METHOD_3,
+            SaxpyTasks, ntasks, nfine, nthreads, do_sort,
+            Context) ;
     }
 
     if (info != GrB_SUCCESS)
@@ -637,9 +639,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // prune empty vectors, free workspace, and return result
-    //==========================================================================
+    //--------------------------------------------------------------------------
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (7, ttt) ;

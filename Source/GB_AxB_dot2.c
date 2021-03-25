@@ -278,7 +278,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // input, in which case C->b will not be all zero.
 
         int M_ntasks, M_nthreads ;
-        GB_SLICE_MATRIX (M, 8) ;
+        GB_SLICE_MATRIX (M, 8, chunk) ;
 
         // Cb [pC] += 2 for each entry M(i,j) in the mask
         GB_bitmap_M_scatter (C,

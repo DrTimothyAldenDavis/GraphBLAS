@@ -18,9 +18,9 @@
 
 default: library
 
-VER1 = 4
+VER1 = 5
 VER2 = 0
-VER3 = 1
+VER3 = 0
 
 # pick your compiler:
   CC = gcc
@@ -51,7 +51,7 @@ SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
 LDFLAGS = -fopenmp -lm
 CFLAGS = -fopenmp -fexceptions -fPIC
-# pick the roptimization level:
+# pick the optimization level:
   CFLAGS += -O3
 # CFLAGS += -g
 ifneq ($(CC),c++)

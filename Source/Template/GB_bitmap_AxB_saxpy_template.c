@@ -121,7 +121,7 @@
         mnvec = M->nvec ;
         mvlen = M->vlen ;
 
-        GB_SLICE_MATRIX (M, 8) ;
+        GB_SLICE_MATRIX (M, 8, chunk) ;
 
         // if M is sparse or hypersparse, scatter it into the C bitmap
         if (M_is_sparse_or_hyper)

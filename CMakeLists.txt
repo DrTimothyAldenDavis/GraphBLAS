@@ -46,8 +46,8 @@
 # get the version
 #-------------------------------------------------------------------------------
 
-# cmake 3.18 or later is required for RMM
-cmake_minimum_required ( VERSION 3.18.0 )
+# cmake 3.13 is preferred.
+cmake_minimum_required ( VERSION 2.8.12 )
 
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 
@@ -59,7 +59,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Mar 11, 2021")
+set ( GraphBLAS_DATE "Mar 24, 2021")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -141,15 +141,6 @@ configure_file (
     "Config/README.md.in"
     "${PROJECT_SOURCE_DIR}/README.md"
 )
-
-#-------------------------------------------------------------------------------
-# determine if RMM is available
-#-------------------------------------------------------------------------------
-
-message ( STATUS "CMake module path: " ${CMAKE_MODULE_PATH} )
-set ( CMAKE_MODULE_PATH  "./rmm" )
-message ( STATUS "CMake module path: " ${CMAKE_MODULE_PATH} )
-find_package ( rmm )
 
 #-------------------------------------------------------------------------------
 # determine what user threading model to use
@@ -263,7 +254,8 @@ endif ( )
 if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}" )
 else ( )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}" )
+    # TODO: hack
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
 endif ( )
 
 set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_CUDA_FLAG}" )
@@ -369,11 +361,6 @@ if ( CMAKE_THREAD_LIBS_INIT )
     endif ( )
 endif ( )
 
-target_link_libraries ( graphblas PUBLIC rmm::rmm )
-if ( BUILD_GRB_STATIC_LIBRARY )
-    target_link_libraries ( graphblas_static PUBLIC rmm::rmm ) 
-endif ( )
-
 #-------------------------------------------------------------------------------
 # determine the default matrix format
 #-------------------------------------------------------------------------------
@@ -402,7 +389,6 @@ SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
     C_STANDARD_REQUIRED 11 )
 set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
 target_link_libraries ( graphblasdemo PUBLIC ${M_LIB} graphblas  ${GB_CUDA} )
-target_link_libraries ( graphblasdemo PUBLIC rmm::rmm )
 
 if ( BUILD_GRB_STATIC_LIBRARY )
     add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
@@ -410,8 +396,7 @@ if ( BUILD_GRB_STATIC_LIBRARY )
         VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
         C_STANDARD_REQUIRED 11 )
     set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
-    target_link_libraries ( graphblasdemo_static  PUBLIC graphblas_static  ${GB_CUDA} )
-    target_link_libraries ( graphblasdemo_static  PUBLIC rmm::rmm )
+    target_link_libraries ( graphblasdemo_static PUBLIC  graphblas_static  ${GB_CUDA} )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -442,18 +427,6 @@ target_link_libraries ( simple_demo   PUBLIC graphblasdemo ${GB_CUDA} )
 target_link_libraries ( wildtype_demo PUBLIC graphblas ${GB_CUDA} )
 target_link_libraries ( reduce_demo   PUBLIC graphblas ${GB_CUDA} )
 target_link_libraries ( import_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-
-target_link_libraries ( pagerank_demo PUBLIC rmm::rmm )
-target_link_libraries ( bfs_demo      PUBLIC rmm::rmm )
-target_link_libraries ( tri_demo      PUBLIC rmm::rmm )
-target_link_libraries ( openmp_demo   PUBLIC rmm::rmm )
-target_link_libraries ( mis_demo      PUBLIC rmm::rmm )
-target_link_libraries ( complex_demo  PUBLIC rmm::rmm )
-target_link_libraries ( kron_demo     PUBLIC rmm::rmm )
-target_link_libraries ( simple_demo   PUBLIC rmm::rmm )
-target_link_libraries ( wildtype_demo PUBLIC rmm::rmm )
-target_link_libraries ( reduce_demo   PUBLIC rmm::rmm )
-target_link_libraries ( import_demo   PUBLIC rmm::rmm )
 
 #-------------------------------------------------------------------------------
 # graphblas installation location

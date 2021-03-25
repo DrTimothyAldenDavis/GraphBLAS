@@ -94,7 +94,7 @@ GrB_Info GB_dense_subassign_25
 
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
     int M_nthreads, M_ntasks ;
-    GB_SLICE_MATRIX (M, 8) ;
+    GB_SLICE_MATRIX (M, 8, chunk) ;
 
     //--------------------------------------------------------------------------
     // allocate C and create its pattern

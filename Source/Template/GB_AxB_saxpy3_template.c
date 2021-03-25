@@ -971,11 +971,10 @@
                         int64_t cjnz = Cp [kk+1] - pC ;
                         if (cjnz == 0) continue ;   // nothing to do
                         GB_GET_B_j ;                // get B(:,j)
-                        #ifdef GB_IDENTITY
+                        #ifndef GB_GENERIC
                         if (cjnz == cvlen)          // C(:,j) is dense
                         { 
-                            // this requires the monoid identity.  It is not
-                            // defined for the generic saxpy3.
+                            // This is not used for the generic saxpy3.
                             GB_COMPUTE_DENSE_C_j ;  // C(:,j) = A*B(:,j)
                             continue ;
                         }
@@ -1068,11 +1067,10 @@
                         int64_t cjnz = Cp [kk+1] - pC ;
                         if (cjnz == 0) continue ;   // nothing to do
                         GB_GET_B_j ;                // get B(:,j)
-                        #ifdef GB_IDENTITY
+                        #ifndef GB_GENERIC
                         if (cjnz == cvlen)          // C(:,j) is dense
                         { 
-                            // this requires the monoid identity.  It is not
-                            // defined for the generic saxpy3.
+                            // This is not used for the generic saxpy3.
                             GB_COMPUTE_DENSE_C_j ;  // C(:,j) = A*B(:,j)
                             continue ;
                         }

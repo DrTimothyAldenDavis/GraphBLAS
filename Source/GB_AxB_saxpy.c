@@ -8,8 +8,6 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
-#include "GB_AxB_saxpy.h"
-#include "GB_AxB_saxpy3.h"
 #include "GB_bitmap_AxB_saxpy.h"
 
 //------------------------------------------------------------------------------
@@ -64,7 +62,9 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     // determine the sparsity of C
     //--------------------------------------------------------------------------
 
-    int C_sparsity = GB_AxB_saxpy_sparsity (M, Mask_comp, A, B, Context) ;
+    int C_sparsity, saxpy_method ;
+    GB_AxB_saxpy_sparsity (&C_sparsity, &saxpy_method,
+        M, Mask_comp, A, B, Context) ;
 
     if (M == NULL)
     {
@@ -89,28 +89,36 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     // select the method to use
     //--------------------------------------------------------------------------
 
-    if (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE)
+    switch (saxpy_method)
     { 
 
-        //----------------------------------------------------------------------
-        // C=A*B, C<M>=A*B or C<!M>=A*B: sparse Gustavson/Hash method
-        //----------------------------------------------------------------------
+        default:;
+        case GB_SAXPY_METHOD_3 :
 
-        // GB_AxB_saxpy3 assumes C and B have the same sparsity structure
-        return (GB_AxB_saxpy3 (C, C_sparsity, M, Mask_comp, Mask_struct,
-            A, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
-            Context)) ;
+            //------------------------------------------------------------------
+            // saxpy3: general-purpose Gustavson/Hash method
+            //------------------------------------------------------------------
 
-    }
-    else
-    { 
+            // This method allocates its own workspace, which very small if
+            // the Hash method is used.  The workspace for Gustavson's method
+            // is larger, but saxpy3 selects that method only if the total work
+            // is high enough so that the time to initialize the space.
+            // C is sparse or hypersparse.
 
-        //----------------------------------------------------------------------
-        // C=A*B, C<M>=A*B or C<!M>=A*B: bitmap/full, possibly in-place 
-        //----------------------------------------------------------------------
+            return (GB_AxB_saxpy3 (C, C_sparsity, M, Mask_comp, Mask_struct,
+                A, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
+                Context)) ;
 
-        return (GB_bitmap_AxB_saxpy (C, C_sparsity, M, Mask_comp,
-            Mask_struct, A, B, semiring, flipxy, mask_applied, Context)) ;
+        case GB_SAXPY_METHOD_BITMAP :
+
+            //------------------------------------------------------------------
+            // bitmap method: C is bitmap or full
+            //------------------------------------------------------------------
+
+            // C is bitmap or full
+
+            return (GB_bitmap_AxB_saxpy (C, C_sparsity, M, Mask_comp,
+                Mask_struct, A, B, semiring, flipxy, mask_applied, Context)) ;
     }
 }
 

@@ -97,12 +97,12 @@ GrB_Info GB_dense_subassign_06d
     { 
         // no need to construct tasks
         int64_t anz = GB_NNZ_HELD (A) ;
-        A_nthreads = GB_nthreads (anz + A->nvec, chunk, nthreads_max) ;
+        A_nthreads = GB_nthreads ((anz + A->nvec), 32*chunk, nthreads_max) ;
         A_ntasks = (A_nthreads == 1) ? 1 : (8 * A_nthreads) ;
     }
     else
     {
-        GB_SLICE_MATRIX (A, 8) ;
+        GB_SLICE_MATRIX (A, 8, 32*chunk) ;
     }
 
     //--------------------------------------------------------------------------

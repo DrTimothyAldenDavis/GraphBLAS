@@ -122,7 +122,7 @@ typedef struct
     // timing: for code development only
     //--------------------------------------------------------------------------
 
-    double timing [20] ;
+    double timing [40] ;
 
     //--------------------------------------------------------------------------
     // for malloc debugging only
@@ -140,8 +140,8 @@ typedef struct
     //--------------------------------------------------------------------------
 
     // free_pool [k] is a pointer to a link list of freed blocks, all of size
-    // exactly equal to 2^k.  The number of blocks in the kth pool is given
-    // by free_pool_nblocks [k], and the upper bound on this is given by
+    // exactly equal to 2^k.  The total number of blocks in the kth pool is
+    // given by free_pool_nblocks [k], and the upper bound on this is given by
     // free_pool_limit [k].  If any additional blocks of size 2^k above that
     // limit are freed by GB_dealloc_memory, they are not placed in the pool,
     // but actually freed instead.
@@ -209,7 +209,7 @@ GB_Global_struct GB_Global =
     .malloc_debug_count = 0,     // counter for testing memory handling
 
     // for testing and development only
-    .hack = 0,
+    .hack = 1,          // TODO
 
     // diagnostics
     .burble = false,
@@ -225,7 +225,7 @@ GB_Global_struct GB_Global =
     // for malloc debugging only
     .nmemtable = 0,     // memtable is empty
 
-    // all free_pool [0:63] lists start out empty
+    // all free_pool lists start out empty
     .free_pool = {
         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
@@ -324,92 +324,6 @@ GB_Global_struct GB_Global =
         0,      // size 2^61
         0,      // size 2^62
         0 },    // size 2^63 (4 exabytes!)
-
-#if 0
-    // default limits on the number of free blocks in each list:
-    .free_pool_limit = {
-        0,      // size 2^0 = 1 byte   none
-        0,      // size 2^1 = 2        none
-        0,      // size 2^2 = 4        none
-        65536,  // size 2^3 = 8        (2^16 blocks * 2^3  = 512 KB total)
-
-        65536,  // size 2^4 = 16 bytes (2^16 blocks * 2^4  = 1 MB total)
-        65536,  // size 2^5 = 32       (2^16 blocks * 2^5  = 2 MB total)
-        65536,  // size 2^6 = 64       (2^16 blocks * 2^6  = 4 MB total)
-        65536,  // size 2^7 = 128      (2^16 blocks * 2^7  = 8 MB total)
-
-        65536,  // size 2^8 = 256      (2^16 blocks * 2^8  = 16 MB total)
-        32768,  // size 2^9 = 512      (2^15 blocks * 2^9  = 16 MB total)
-        16384,  // size 2^10 = 1 KB    (2^14 blocks * 2^10 = 16 MB total)
-        8192,   // size 2^11 = 2 KB    (2^13 blocks * 2^11 = 16 MB total)
-
-        4096,   // size 2^12 = 4 KB    (2^12 blocks * 2^12 = 16 MB total)
-        2048,   // size 2^13 = 8 KB    (2^11 blocks * 2^13 = 16 MB total)
-        1024,   // size 2^14 = 16 KB   (2^10 blocks * 2^14 = 16 MB total)
-        512,    // size 2^15 = 32 KB   (2^9  blocks * 2^15 = 16 MB total)
-
-        256,    // size 2^16 = 64 KB   (2^8  blocks * 2^16 = 16 MB total)
-        128,    // size 2^17 = 128 KB  (2^7  blocks * 2^17 = 16 MB total)
-        64,     // size 2^18 = 256 KB  (2^6  blocks * 2^18 = 16 MB total)
-        32,     // size 2^19 = 512 KB  (2^5  blocks * 2^19 = 16 MB total)
-
-        16,     // size 2^20 = 1 MB    (2^4  blocks * 2^20 = 16 MB total)
-        8,      // size 2^21 = 2 MB    (2^3  blocks * 2^21 = 16 MB total)
-        4,      // size 2^22 = 4 MB    (2^2  blocks * 2^22 = 16 MB total)
-        2,      // size 2^23 = 8 MB    (2^1  blocks * 2^23 = 16 MB total)
-
-        1,      // size 2^24 = 16 MB   (2^0  blocks * 2^24 = 16 MB total)
-
-        // maximum total size = 288 MB
-        // by default, no blocks larger than 16 MB are kept in the free_pool
-        0,      // size 2^25
-        0,      // size 2^26
-        0,      // size 2^27
-        0,      // size 2^28
-        0,      // size 2^29
-
-        0,      // size 2^30 (1 GB)
-        0,      // size 2^31
-        0,      // size 2^32
-        0,      // size 2^33
-        0,      // size 2^34
-        0,      // size 2^35
-        0,      // size 2^36
-        0,      // size 2^37
-        0,      // size 2^38
-        0,      // size 2^39
-
-        // These larger sizes are of course unlikely to appear, but adding all
-        // 64 possibilities means that the free_pool does not need to check an
-        // upper bound.
-
-        0,      // size 2^40 (1 TB)
-        0,      // size 2^41
-        0,      // size 2^42
-        0,      // size 2^43
-        0,      // size 2^44
-        0,      // size 2^45
-        0,      // size 2^46
-        0,      // size 2^47
-        0,      // size 2^48
-        0,      // size 2^49
-
-        0,      // size 2^50 (1 PB)
-        0,      // size 2^51
-        0,      // size 2^52
-        0,      // size 2^53
-        0,      // size 2^54
-        0,      // size 2^55
-        0,      // size 2^56
-        0,      // size 2^57
-        0,      // size 2^58
-        0,      // size 2^59
-
-        0,      // size 2^60 (1 exabyte)
-        0,      // size 2^61
-        0,      // size 2^62
-        0 },    // size 2^63 (4 exabytes!)
-#endif
 
 } ;
 
@@ -785,7 +699,8 @@ void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
 
 bool GB_Global_have_calloc_function (void)
 { 
-    return (GB_Global.calloc_function != NULL) ;
+    return (false) ; // HACK
+    // return (GB_Global.calloc_function != NULL) ;
 }
 
 void * GB_Global_calloc_function (size_t count, size_t size)
@@ -1163,7 +1078,7 @@ bool GB_Global_gpu_device_properties_get (int device)
 GB_PUBLIC
 void GB_Global_timing_clear_all (void)
 {
-    for (int k = 0 ; k < 20 ; k++)
+    for (int k = 0 ; k < 40 ; k++)
     {
         GB_Global.timing [k] = 0 ;
     }
@@ -1225,13 +1140,25 @@ void GB_Global_free_pool_init (void)
     }
 }
 
+#ifdef GB_DEBUG
+// check if a block is valid
+static inline void GB_Global_free_pool_check (void *p, int k, char *where)
+{
+    // check the size of the block
+//  printf ("check %p\n", p) ;
+    ASSERT (k >= 3 && k < 64) ;
+    ASSERT (p != NULL) ;
+    size_t size = GB_Global_memtable_size (p) ;
+    ASSERT (size == (1UL) << k) ;
+}
+#endif
+
 // free_pool_get: get a block from the free_pool, or return NULL if none
 GB_PUBLIC
 void *GB_Global_free_pool_get (int k)
 {
     void *p = NULL ;
     ASSERT (k >= 3 && k < 64) ;
-//  printf ("get from pool %d:\n", k) ; GB_Global_free_pool_dump (3) ;
     #pragma omp critical(GB_free_pool)
     {
         p = GB_Global.free_pool [k] ;
@@ -1244,34 +1171,37 @@ void *GB_Global_free_pool_get (int k)
     }
     if (p != NULL)
     { 
-        GB_NEXT (p) = NULL ;
+        // clear the next pointer inside the block, since the block needs
+        // to be all zero
+//      printf ("got %p k %d\n", p, k) ;
+        #ifdef GB_DEBUG
+        GB_Global_free_pool_check (p, k, "get") ;
+        #endif
     }
-//  printf ("got from pool %d %p:\n", k, p) ; GB_Global_free_pool_dump (3) ;
     return (p) ;
 }
 
-// free_pool_put: put a block in the free_pool, or free it if the pool is full
+// free_pool_put: put a block in the free_pool, unless it is full
 GB_PUBLIC
 bool GB_Global_free_pool_put (void *p, int k)
 { 
-    ASSERT (GB_Global_memtable_size (p) == (1UL << k)) ;
-    ASSERT (k >= 3 && k < 64) ;
-//  printf ("put to pool %d %p:\n", k, p) ; GB_Global_free_pool_dump (3) ;
+    #ifdef GB_DEBUG
+    GB_Global_free_pool_check (p, k, "put") ;
+    #endif
     bool returned_to_pool = false ;
     #pragma omp critical(GB_free_pool)
     {
-        returned_to_pool = (GB_Global.free_pool_nblocks [k] <
-                            GB_Global.free_pool_limit [k]) ;
+        returned_to_pool =
+            (GB_Global.free_pool_nblocks [k] < GB_Global.free_pool_limit [k]) ;
         if (returned_to_pool)
         {
             // add the block to the head of the free_pool list
+//          printf ("put %p k %d\n", p, k) ;
             GB_Global.free_pool_nblocks [k]++ ;
             GB_NEXT (p) = GB_Global.free_pool [k] ;
             GB_Global.free_pool [k] = p ;
         }
     }
-//  printf ("did %d to pool %d:\n",
-//      returned_to_pool, k) ; GB_Global_free_pool_dump (3) ;
     return (returned_to_pool) ;
 }
 
@@ -1293,9 +1223,6 @@ void GB_Global_free_pool_dump (int pr)
                     k, nblocks, limit) ;
             }
             int64_t nblocks_actual = 0 ;
-            fail = fail || (nblocks > limit) ;
-            if (fail && pr > 0) printf ("fail: %ld limit %ld\n", nblocks,
-                limit) ;
             void *p = GB_Global.free_pool [k] ;
             for ( ; p != NULL && !fail ; p = GB_NEXT (p))
             {

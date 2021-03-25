@@ -198,7 +198,7 @@ GrB_Info GB_selector
     GB_void *GB_RESTRICT Cx = NULL ; size_t Cx_size = 0 ;
     int64_t cnz = 0 ;
 
-    Cp = GB_CALLOC (anvec+1, int64_t, &Cp_size, Context) ;
+    Cp = GB_CALLOC (anvec+1, int64_t, &Cp_size) ;
     if (Cp == NULL)
     { 
         // out of memory
@@ -217,7 +217,7 @@ GrB_Info GB_selector
 
     int A_ntasks, A_nthreads ;
     double work = 8*anvec + ((opcode == GB_DIAG_opcode) ? 0 : GB_NNZ_HELD (A)) ;
-    GB_SLICE_MATRIX_WORK (A, 8, work) ;
+    GB_SLICE_MATRIX_WORK (A, 8, chunk, work) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace for each task

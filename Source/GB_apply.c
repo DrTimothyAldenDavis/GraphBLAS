@@ -144,7 +144,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     }
 
     // check domains and dimensions for C<M> = accum (C,T)
-    GrB_Info info = GB_compatible (C->type, C, M, accum, T_type, Context) ;
+    GrB_Info info = GB_compatible (C->type, C, M, Mask_struct, accum, T_type,
+        Context) ;
     if (info != GrB_SUCCESS)
     { 
         return (info) ;
@@ -164,7 +165,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     }
 
     // quick return if an empty mask is complemented
-    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
+    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp, Mask_struct) ;
 
     // delete any lingering zombies and assemble any pending tuples
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;      // A can be jumbled

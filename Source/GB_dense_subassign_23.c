@@ -110,7 +110,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     else
     {
         // create tasks to compute over the matrix B
-        GB_SLICE_MATRIX (B, 32) ;
+        GB_SLICE_MATRIX (B, 32, chunk) ;
         ASSERT (B_ek_slicing != NULL) ;
     }
 

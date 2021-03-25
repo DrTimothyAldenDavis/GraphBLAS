@@ -88,7 +88,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         // calloc Ab so all bitmap entries are zero; no need to touch them.
         // This case occurs when setting the GxB_SPARSITY_CONTROL of a new
         // matrix to GxB_BITMAP, with no entries.
-        Ab = GB_CALLOC (anzmax, int8_t, &Ab_size, Context) ;
+        Ab = GB_CALLOC (anzmax, int8_t, &Ab_size) ;
     }
 
     if (Ab == NULL)
@@ -155,7 +155,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         //----------------------------------------------------------------------
 
         int A_nthreads, A_ntasks ;
-        GB_SLICE_MATRIX (A, 8) ;
+        GB_SLICE_MATRIX (A, 8, chunk) ;
         bool done = false ;
 
         #ifndef GBCOMPACT

@@ -50,7 +50,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Mark  = GB_CALLOC_WERK (avlen, int64_t, &Mark_size, Context) ;
+    Mark  = GB_CALLOC_WERK (avlen, int64_t, &Mark_size) ;
     Inext = GB_MALLOC_WERK (nI,    int64_t, &Inext_size) ;
     if (Inext == NULL || Mark == NULL)
     { 
@@ -97,7 +97,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     // GB_for_each_index_in_bucket (inew,i)) { ... }
 
     #define GB_for_each_index_in_bucket(inew,i) \
-        for (int64_t inew = Mark[i]-1 ; inew >= 0 ; inew = Inext [inew])
+        for (int64_t inew = Mark [i] - 1 ; inew >= 0 ; inew = Inext [inew])
 
     // If Mark [i] < 1, then the ith bucket is empty and i is not in I.
     // Otherise, the first index in bucket i is (Mark [i] - 1).

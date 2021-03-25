@@ -47,7 +47,7 @@ static inline void GB_ek_slice_ntasks
 // GB_SLICE_MATRIX: slice a single matrix using GB_ek_slice
 //------------------------------------------------------------------------------
 
-#define GB_SLICE_MATRIX_WORK(X,NTASKS_PER_THREAD,work)                        \
+#define GB_SLICE_MATRIX_WORK(X,NTASKS_PER_THREAD,chunk,work)                  \
     GB_ek_slice_ntasks (&(X ## _nthreads), &(X ## _ntasks), X,                \
         NTASKS_PER_THREAD, work, chunk, nthreads_max) ;                       \
     GB_WERK_PUSH (X ## _ek_slicing, 3*(X ## _ntasks)+1, int64_t) ;            \
@@ -62,7 +62,7 @@ static inline void GB_ek_slice_ntasks
     const int64_t *klast_  ## X ## slice = X ## _ek_slicing + X ## _ntasks ;  \
     const int64_t *pstart_ ## X ## slice = X ## _ek_slicing + X ## _ntasks*2 ;
 
-#define GB_SLICE_MATRIX(X,NTASKS_PER_THREAD)                                  \
+#define GB_SLICE_MATRIX(X,NTASKS_PER_THREAD,chunk)                            \
     GB_ek_slice_ntasks (&(X ## _nthreads), &(X ## _ntasks), X,                \
         NTASKS_PER_THREAD, GB_NNZ_HELD (X) + X->nvec, chunk, nthreads_max) ;  \
     GB_WERK_PUSH (X ## _ek_slicing, 3*(X ## _ntasks)+1, int64_t) ;            \

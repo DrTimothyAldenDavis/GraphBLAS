@@ -40,7 +40,6 @@ void gbcov_put (void) ;
     {                                                       \
         printf ("GrB memory leak!\n") ;                     \
         GB_Global_memtable_dump ( ) ;                       \
-        GB_Global_free_pool_dump (3) ; \
         mexErrMsgIdAndTxt ("GrB:error", "memory leak") ;    \
     }                                                       \
 }

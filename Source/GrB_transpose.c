@@ -50,7 +50,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
         A_transpose, xx1, xx2, xx7) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
-    GB_OK (GB_compatible (C->type, C, M, accum, A->type, Context)) ;
+    GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, A->type, Context));
 
     // check the dimensions
     int64_t tnrows = (!A_transpose) ? GB_NCOLS (A) : GB_NROWS (A) ;
@@ -66,7 +66,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     }
 
     // quick return if an empty mask is complemented
-    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
+    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp, Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // T = A or A', where T can have the type of C or the type of A

@@ -25,7 +25,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
 (
     GrB_Matrix C,                   // input/output matrix for results
     const bool C_replace,           // if true, clear C before writing to it
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_Matrix M_input,       // optional mask for C, unused if NULL
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
@@ -57,7 +57,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 
     ASSERT_MATRIX_OK (C, "C input for GB_mxm", GB0) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_mxm", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M_input, "M for GB_mxm", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_mxm", GB0) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for GB_mxm", GB0) ;
     ASSERT_MATRIX_OK (A, "A for GB_mxm", GB0) ;
@@ -65,7 +65,8 @@ GrB_Info GB_mxm                     // C<M> = A*B
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Type T_type = semiring->add->op->ztype ;
-    GB_OK (GB_compatible (C->type, C, M, accum, T_type, Context)) ;
+    GB_OK (GB_compatible (C->type, C, M_input, Mask_struct, accum, T_type,
+        Context)) ;
 
     // T=A*B via semiring: A and B must be compatible with semiring->multiply
     if (flipxy)
@@ -98,8 +99,19 @@ GrB_Info GB_mxm                     // C<M> = A*B
             bnrows, bncols, B_transpose ? " (transposed)" : "") ;
     }
 
+    GrB_Matrix M = M_input ;
+    if (Mask_struct && !Mask_comp && GB_IS_FULL (M))
+    { 
+        // ignore the mask if it is full, structural, and not complemented
+        M = NULL ;
+    }
+
     // quick return if an empty mask is complemented
-    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
+    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp, Mask_struct) ;
+
+    // if M is full and structural, it has been ignored (set to NULL if not
+    // complemented or quick-mask condition has returned if complemented)
+    ASSERT (!(Mask_struct && GB_IS_FULL (M))) ;
 
     //--------------------------------------------------------------------------
     // finish any pending work
@@ -129,10 +141,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // semiring->add->ztype if accum is not present.  To compute in-place,
     // C must also not be transposed, and it cannot be aliased with M, A, or B.
 
-// ttt = omp_get_wtime ( ) - ttt ;
-// GB_Global_timing_add (0, ttt) ;
-// ttt = omp_get_wtime ( ) ;
-
     bool mask_applied = false ;
     bool done_in_place = false ;
     bool M_transposed = false ;
@@ -140,16 +148,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
         Mask_comp, Mask_struct, accum, A, B, semiring, A_transpose,
         B_transpose, flipxy, &mask_applied, &done_in_place, AxB_method,
         do_sort, Context)) ;
-
-// ttt = omp_get_wtime ( ) - ttt ;
-// GB_Global_timing_add (1, ttt) ;
-// ttt = omp_get_wtime ( ) ;
-//  GBURBLE ("\n") ;
-//  for (int kk = 0 ; kk < 20 ; kk++)
-//  {
-//      double tttt = GB_Global_timing_get (kk) ;
-//      if (tttt > 0) GBURBLE ("phase %2d: %14.6f sec\n", kk, tttt) ;
-//  }
 
     if (done_in_place)
     { 

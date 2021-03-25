@@ -187,7 +187,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     int A_nthreads, A_ntasks ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    GB_SLICE_MATRIX (A, 8) ;
+    GB_SLICE_MATRIX (A, 8, chunk) ;
 
     //--------------------------------------------------------------------------
     // count entries in C

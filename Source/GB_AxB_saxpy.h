@@ -36,8 +36,11 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 // GB_AxB_saxpy_sparsity: determine the sparsity of C
 //------------------------------------------------------------------------------
 
-int GB_AxB_saxpy_sparsity           // return the sparsity structure for C
+void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
 (
+    // output:
+    int *C_sparsity,                // sparsity structure of C
+    int *saxpy_method,              // saxpy method to use
     // input:
     const GrB_Matrix M,             // optional mask for C, unused if NULL
     const bool Mask_comp,           // if true, use !M
@@ -63,13 +66,22 @@ GrB_Info GB_AxB_saxpy_generic
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    const int saxpy_method,         // saxpy3, or bitmap method
+    // for saxpy3 only:
     GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks, // NULL if C is bitmap
     int ntasks,
     int nfine,
     int nthreads,
-    const int do_sort,              // if nonzero, try to sort in saxpy3
+    const int do_sort,              // if true, sort in saxpy3
     GB_Context Context
 ) ;
+
+//------------------------------------------------------------------------------
+// saxpy methods
+//------------------------------------------------------------------------------
+
+#define GB_SAXPY_METHOD_3 3
+#define GB_SAXPY_METHOD_BITMAP 5
 
 #endif
 
