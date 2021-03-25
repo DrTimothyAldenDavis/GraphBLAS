@@ -33,7 +33,16 @@ void GB_free_memory         // free memory, bypassing the free_pool
         }
         ASSERT (size_allocated == GB_Global_memtable_size (*p)) ;
 //      printf ("hard free %p %ld\n", *p, size_allocated) ;
-        GB_Global_free_function (*p) ;
+
+//      if (GB_Global_I_have_RMM ( ))
+//      {
+//          rmmdealloc (*p, size_allocated) ;
+//      }
+//      else
+
+        {
+            GB_Global_free_function (*p) ;
+        }
         (*p) = NULL ;
     }
 }

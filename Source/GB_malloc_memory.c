@@ -41,7 +41,16 @@ static inline void *GB_malloc_helper
     if (p == NULL)
     {
         // no block in the free_pool, so allocate it
-        p = GB_Global_malloc_function (*size) ;
+
+//      if (GB_Global_I_have_RMM ( ))
+//      {
+//          *p = rmm_alloc (*size_allocated) ;
+//      }
+//      else
+        {
+            p = GB_Global_malloc_function (*size) ;
+        }
+
         if (p != NULL && malloc_tracking)
         { 
             // success

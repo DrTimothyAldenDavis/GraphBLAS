@@ -55,7 +55,7 @@ const std::vector<std::string> header_names ={};
 
 GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 (
-    GrB_Matrix C,                   // output matrix, static header
+    GrB_Matrix C_static,            // output matrix, static header
     const GrB_Matrix M,             // mask matrix
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix
@@ -71,7 +71,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (C != NULL && C->static_header) ;
+    ASSERT (C_static != NULL && C_static->static_header) ;
+    GrB_Matrix C = NULL ;
 
     ASSERT_MATRIX_OK (M, "M for dot3 cuda A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot3 cuda A'*B", GB0) ;
@@ -149,7 +150,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // TODO tell GB_CREATE where to put the data: CPU or GPU (via
     // cudaMemAdvise), but this works as-is.
     int sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-    info = GB_new_bix (&C, true, // sparse or hyper (from M), static header
+    info = GB_new_bix (&C, false, // sparse or hyper (from M), dynamic header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         sparsity, false, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork 
@@ -639,7 +640,15 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         cudaDeviceSynchronize();
     }
     GBURBLE ("(GPU phase3 done) ") ;
-    
+
+    // copy the dynamic header of C into the caller's static header, C_static
+    size_t header_size = C->header_size ;
+    memcpy (C_static, C, sizeof (struct GB_Matrix_opaque)) ;
+    C_static->header_size = 0 ;
+    C_static->static_header = true ;
+    GB_FREE (C, header_size) ;
+    // TODO: make this snippet of code a function, for CUDA
+
     std::string reduce_kernel_name = "reduceNonZombiesWarp";
     const char*  jit_template;
     #define red_blocksz 1024
@@ -661,8 +670,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                    .set_kernel_inst( reduce_kernel_name , { ctype->name })
                    .configure(red_grid, red_block) //if commented, use implicit 1D configure in launch
                    .launch(
-                            C->i,   // index vector, only sum up values >= 0
-                            C->x,   // input pointer to vector to reduce, with zombies
+                            C_static->i,   // index vector, only sum up values >= 0
+                            C_static->x,   // input pointer to vector to reduce, with zombies
                             block_sum,             // Block sums on return 
                             (unsigned int)cnz      // length of vector to reduce to scalar
 

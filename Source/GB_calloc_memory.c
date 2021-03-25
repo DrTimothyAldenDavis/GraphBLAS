@@ -51,7 +51,15 @@ static inline void *GB_calloc_helper
         }
         else
         {
-            p = GB_Global_malloc_function (*size) ;
+
+    //      if (GB_Global_I_have_RMM ( ))
+    //      {
+    //          *p = rmm_alloc (*size_allocated) ;
+    //      }
+    //      else
+            {
+                p = GB_Global_malloc_function (*size) ;
+            }
             // memset is required if the block comes from malloc
             do_memset = (p != NULL) ;
         }
