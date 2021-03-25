@@ -123,9 +123,8 @@ GB_PUBLIC void     GB_Global_memtable_remove (void *p) ;
 GB_PUBLIC bool     GB_Global_memtable_find (void *p) ;
 
 GB_PUBLIC void     GB_Global_free_pool_init (void) ;
-GB_PUBLIC void    *GB_Global_free_pool_get (int k, int which_pool) ;
-GB_PUBLIC bool     GB_Global_free_pool_put (void *p, int k, int which_pool,
-                        bool unlimited) ;
+GB_PUBLIC void    *GB_Global_free_pool_get (int k) ;
+GB_PUBLIC bool     GB_Global_free_pool_put (void *p, int k) ;
 GB_PUBLIC void     GB_Global_free_pool_dump (int pr) ;
 GB_PUBLIC int64_t  GB_Global_free_pool_limit_get (int k) ;
 GB_PUBLIC void     GB_Global_free_pool_limit_set (int k, int64_t nblocks) ;

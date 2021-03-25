@@ -43,7 +43,7 @@ void gb_usage       // check usage and make sure GrB.init has been called
         for (int k = 0 ; k < 64 ; k++)
         {
             // TODO:: add this as an option for GxB_set/get
-            GB_Global_free_pool_limit_set (k, 0) ;
+            GB_Global_free_pool_limit_set (k, 0) ;  // TODO:: use GxB_set
         }
 
         // MATLAB matrices are stored by column
@@ -55,9 +55,6 @@ void gb_usage       // check usage and make sure GrB.init has been called
         // for debug only
         GB_Global_abort_function_set (gb_abort) ;
     }
-
-// HACK: FIXME
-GB_Global_hack_set (1) ;
 
     //--------------------------------------------------------------------------
     // check usage

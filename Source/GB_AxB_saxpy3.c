@@ -603,7 +603,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                 Mask_struct, M_dense_in_place, A, A_is_pattern, B,          \
                 B_is_pattern, GB_SAXPY_METHOD_3,                            \
                 SaxpyTasks, ntasks, nfine, nthreads, do_sort,               \
-                NULL, NULL, 0, NULL, NULL, NULL, NULL,                      \
                 Context) ;                                                  \
             done = (info != GrB_NO_VALUE) ;                                 \
         }                                                                   \
@@ -630,7 +629,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             M_dense_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
             flipxy, GB_SAXPY_METHOD_3,
             SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-            NULL, NULL, 0, NULL, NULL, NULL, NULL,
             Context) ;
     }
 

@@ -109,39 +109,6 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
                 A, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
                 Context)) ;
 
-#if 0
-        case GB_SAXPY_METHOD_4 :
-
-            //------------------------------------------------------------------
-            // saxpy4: specialized Gustavson-based method with dense workspace
-            //------------------------------------------------------------------
-
-            // This method is never used by default, since it requires a large
-            // initialized workspace of size O(m*n) where C is m-by-n.  It
-            // returns its workspace to the free_pool, ignoring any free_pool
-            // limits, so the space can be reused for subsequent calls.  This
-            // assumption allows this method to be very fast when the work to
-            // do in any one call is small, but the method is used repeatedly.
-            // Creating this workspace for the first use in C=A*B is costly,
-            // but subsequent uses are very fast.
-
-            // The user application must explicitly ask for this method, since
-            // only there is it known if C=A*B will be used repeatedly for
-            // the case where A*B requires very little work, and m*n is small. 
-            // When the user application has finished this sequence of C=A*B,
-            // it can reclaim the workspace via GxB_Global_Option_set.
-
-            // TODO:: add descriptor to select saxpy4
-            // TODO:: add GxB_Global_Option_set to clear the free_pool.
-
-            // A must be sparse; it cannot be hypersparse, bitmap, or full.  B
-            // must be sparse or hypersparse, and C is constructed with the
-            // same sparsity as B.
-
-            return (GB_AxB_saxpy4 (C, M, Mask_comp, Mask_struct,
-                A, B, semiring, flipxy, mask_applied, do_sort, Context)) ;
-#endif
-
         case GB_SAXPY_METHOD_BITMAP :
 
             //------------------------------------------------------------------

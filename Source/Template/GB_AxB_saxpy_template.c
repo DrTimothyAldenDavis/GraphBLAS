@@ -21,16 +21,6 @@
         }
         break ;
 
-        case GB_SAXPY_METHOD_4 :
-        { 
-            // C is sparse or hypersparse, using large workspace
-            ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
-            ASSERT (GB_IS_SPARSE (A)) ;
-            ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
-            #include "GB_AxB_saxpy4_template.c"
-        }
-        break ;
-
         case GB_SAXPY_METHOD_BITMAP :
         { 
             // C is bitmap or full

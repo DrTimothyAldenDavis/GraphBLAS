@@ -50,22 +50,6 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
     bool M_is_hyper  = (M_sparsity == GxB_HYPERSPARSE) ;
     bool M_is_sparse = (M_sparsity == GxB_SPARSE) ;
 
-#if 0
-    if (A_sparsity == GxB_SPARSE &&
-       (B_sparsity == GxB_SPARSE || B_sparsity == GxB_HYPERSPARSE) &&
-       (GB_Global_hack_get ( ) != 0) && (m*n < (anz + bnz)))
-    {
-
-        //-----------------------------------------------------
-        // GB_AxB_saxpy4 will be used
-        //-----------------------------------------------------
-
-        (*C_sparsity) = B_sparsity ;
-        (*saxpy_method) = GB_SAXPY_METHOD_4 ;
-
-    }
-    else
-    #endif
     if (M != NULL && !Mask_comp && (M_is_hyper || M_is_sparse))
     {
 
@@ -251,10 +235,9 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
     if ((*C_sparsity) == GxB_HYPERSPARSE || (*C_sparsity) == GxB_SPARSE)
     {
         // If C is sparse or hypersparse, then it will be computed by
-        // GB_AxB_saxpy3 or GB_AxB_saxpy4.  For those methods, the sparsity of
-        // C must follow from B.  If B is hypersparse, C must also be
+        // GB_AxB_saxpy3.  For this method, if B is hypersparse, C must also be
         // hypersparse.  Otherwise C must be sparse.  This is a requirement of
-        // GB_AxB_saxpy3 and GB_AxB_saxpy4, and is also asserted there.
+        // GB_AxB_saxpy3, and is also asserted there.
         ASSERT ((*C_sparsity) ==
             (B_sparsity == GxB_HYPERSPARSE) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
     }

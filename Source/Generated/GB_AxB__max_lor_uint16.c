@@ -375,17 +375,8 @@ GrB_Info GB_AsaxpyB__max_lor_uint16
     // for saxpy3 method only:
     GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks,
     int ntasks, int nfine,
-    // for saxpy3 and saxpy4 methods only:
     int nthreads,
     const int do_sort,
-    // for saxpy4 method only:
-    int8_t  *GB_RESTRICT Wf,
-    int64_t **Wi_handle,
-    size_t Wi_size,
-    GB_void *GB_RESTRICT Wx,
-    int64_t *GB_RESTRICT kfirst_Bslice,
-    int64_t *GB_RESTRICT klast_Bslice,
-    int64_t *GB_RESTRICT pstart_Bslice,
     GB_Context Context
 )
 { 

@@ -21,7 +21,6 @@ static inline void *GB_calloc_helper
     size_t *size,           // on input: # of bytes requested
                             // on output: # of bytes actually allocated
     // input:
-    bool unlimited,         // if true, ignore free_pool limits
     bool malloc_tracking,
     GB_Context Context
 )
@@ -34,18 +33,13 @@ static inline void *GB_calloc_helper
     int k = GB_CEIL_LOG2 (*size) ;
 
     // if available, get the block from the pool
-    if (unlimited || GB_Global_free_pool_limit_get (k) > 0)
+    if (GB_Global_free_pool_limit_get (k) > 0)
     {
         // round up the size to the nearest power of two
         (*size) = (1UL) << k ;
-        p = GB_Global_free_pool_get (k, 1) ;
-        if (p == NULL)
-        {
-            // try again from the free_pool of uninitialized blocks
-            p = GB_Global_free_pool_get (k, 0) ;
-            // memset is required if the block is from the uninitialized pool
-            do_memset = (p != NULL) ;
-        }
+        p = GB_Global_free_pool_get (k) ;
+        // memset is required if the block comes from the free_pool
+        do_memset = (p != NULL) ;
     }
 
     if (p == NULL)
@@ -88,7 +82,6 @@ void *GB_calloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
     size_t size_of_item,    // sizeof each item
-    bool unlimited,         // if true, ignore free_pool limits
     // output
     size_t *size_allocated, // # of bytes actually allocated
     GB_Context Context
@@ -143,7 +136,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         }
         else
         { 
-            p = GB_calloc_helper (&size, unlimited, true, Context) ;
+            p = GB_calloc_helper (&size, true, Context) ;
         }
 
     }
@@ -154,7 +147,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         // normal use, in production
         //----------------------------------------------------------------------
 
-        p = GB_calloc_helper (&size, unlimited, false, Context) ;
+        p = GB_calloc_helper (&size, false, Context) ;
     }
 
     //--------------------------------------------------------------------------

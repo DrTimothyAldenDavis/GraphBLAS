@@ -15,21 +15,13 @@
 // does not handle the dot-product methods, which compute C=A'*B if A and B
 // are held by column, or equivalently A*B' if both are held by row.
 
-// This method uses GB_AxB_saxpy_template.c to implement three meta-methods,
+// This method uses GB_AxB_saxpy_template.c to implement two meta-methods,
 // each of which can contain further specialized methods (such as the fine/
 // coarse x Gustavson/Hash, mask/no-mask methods in saxpy3):
 
 // saxpy3: general purpose method, where C is sparse or hypersparse,
 //          via GB_AxB_saxpy3_template.c.  SaxpyTasks holds the (fine/coarse x
 //          Gustavson/Hash) tasks constructed by GB_AxB_saxpy3_slice*.
-
-// saxpy4: specialized method in GB_AxB_saxpy4_template.c, which requires
-//          O(m*n) calloc'd workspace if C is m-by-n (the Wf input), and O(m*n)
-//          uninitialized workspace (Wi and Wx).  The method returns this
-//          workspace to the free_pool so it can be used in subsequent calls to
-//          this method.  C is sparse or hypersparse, and A is sparse.  The
-//          tasks have been constructed by GB_AxB_saxpy4 and are defined by
-//          *_Bslice.
 
 // bitmap_saxpy: general purpose method, where C is bitmap or full, via
 //          GB_bitmap_AxB_saxpy_template.c.  The method constructs its own
@@ -63,22 +55,13 @@ GrB_Info GB_AxB_saxpy_generic
     bool B_is_pattern,
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    const int saxpy_method,         // saxpy3, saxpy4, or bitmap method
+    const int saxpy_method,         // saxpy3 or bitmap method
     // for saxpy3 only:
     GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks, // NULL if C is bitmap
     int ntasks,
     int nfine,
-    // for saxpy3 and saxpy4 only:
     int nthreads,
-    const int do_sort,              // if true, sort in saxpy3 and saxpy4
-    // for saxpy4 only:
-    int8_t  *GB_RESTRICT Wf,        // zero on input, zero on output
-    int64_t **Wi_handle,
-    size_t Wi_size,
-    GB_void *GB_RESTRICT Wx,
-    int64_t *GB_RESTRICT kfirst_Bslice,
-    int64_t *GB_RESTRICT klast_Bslice,
-    int64_t *GB_RESTRICT pstart_Bslice,
+    const int do_sort,              // if true, sort in saxpy3
     GB_Context Context
 )
 {

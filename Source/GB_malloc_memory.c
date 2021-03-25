@@ -21,7 +21,6 @@ static inline void *GB_malloc_helper
     size_t *size,           // on input: # of bytes requested
                             // on output: # of bytes actually allocated
     // input:
-    bool unlimited,         // if true, ignore free_pool limits
     bool malloc_tracking
 )
 {
@@ -32,11 +31,11 @@ static inline void *GB_malloc_helper
     int k = GB_CEIL_LOG2 (*size) ;
 
     // if available, get the block from the pool
-    if (unlimited || GB_Global_free_pool_limit_get (k) > 0)
+    if (GB_Global_free_pool_limit_get (k) > 0)
     {
         // round up the size to the nearest power of two
         (*size) = (1UL) << k ;
-        p = GB_Global_free_pool_get (k, 0) ;
+        p = GB_Global_free_pool_get (k) ;
     }
 
     if (p == NULL)
@@ -63,7 +62,6 @@ void *GB_malloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
     size_t size_of_item,    // sizeof each item
-    bool unlimited,         // if true, ignore free_pool limits
     // output
     size_t *size_allocated  // # of bytes actually allocated
 )
@@ -117,7 +115,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
         }
         else
         { 
-            p = GB_malloc_helper (&size, unlimited, true) ;
+            p = GB_malloc_helper (&size, true) ;
         }
 
     }
@@ -128,7 +126,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
         // normal use, in production
         //----------------------------------------------------------------------
 
-        p = GB_malloc_helper (&size, unlimited, false) ;
+        p = GB_malloc_helper (&size, false) ;
     }
 
     //--------------------------------------------------------------------------

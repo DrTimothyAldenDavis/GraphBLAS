@@ -19,7 +19,6 @@ void *GB_calloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
     size_t size_of_item,    // sizeof each item
-    bool unlimited,         // if true, ignore free_pool limits
     // output
     size_t *size_allocated, // # of bytes actually allocated
     GB_Context Context
@@ -30,7 +29,6 @@ void *GB_malloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
     size_t size_of_item,    // sizeof each item
-    bool unlimited,         // if true, ignore free_pool limits
     // output
     size_t *size_allocated  // # of bytes actually allocated
 ) ;
@@ -42,7 +40,6 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     size_t nitems_new,      // new number of items in the object
     size_t nitems_old,      // old number of items in the object
     size_t size_of_item,    // sizeof each item
-    bool unlimited,         // if true, ignore free_pool limits
     // input/output
     void *p,                // old object to reallocate
     // output
@@ -66,8 +63,6 @@ void GB_dealloc_memory      // free memory, return to free_pool or free it
     // input/output
     void **p,               // pointer to allocated block of memory to free
     // input
-    bool unlimited,         // if true, ignore free_pool limits
-    int which_pool,         // 0: malloc pool, 1: calloc pool
     size_t size_allocated   // # of bytes actually allocated
 ) ;
 
@@ -78,47 +73,33 @@ void GB_free_pool_finalize (void) ;
 // malloc/calloc/realloc/free: for permanent contents of GrB objects
 //------------------------------------------------------------------------------
 
-// The free_pool limits are followed, so the unlimited parameter is false.
-// Block are returned to the malloc pool (which_pool == 0)
-
 #define GB_FREE(p,s) \
-    GB_dealloc_memory (p, false, 0, s)
+    GB_dealloc_memory (p, s)
 
 #define GB_CALLOC(n,type,s) \
-    (type *) GB_calloc_memory (n, sizeof (type), false, s, Context)
+    (type *) GB_calloc_memory (n, sizeof (type), s, Context)
 
 #define GB_MALLOC(n,type,s) \
-    (type *) GB_malloc_memory (n, sizeof (type), false, s)
+    (type *) GB_malloc_memory (n, sizeof (type), s)
 
 #define GB_REALLOC(p,nnew,nold,type,s,ok,Context) \
-    p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), false, \
+    p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), \
         (void *) p, s, ok, Context)
 
 //------------------------------------------------------------------------------
-// malloc/calloc/realloc/free: for workspace, following free_pool limits
+// malloc/calloc/realloc/free: for workspace
 //------------------------------------------------------------------------------
+
+// These macros currently do the same thing as the 4 macros above, but that may
+// change in the future.  Even if they always do the same thing, it's useful to
+// tag the source code for the allocation of workspace differently from the
+// allocation of permament space for a GraphBLAS object, such as a GrB_Matrix.
 
 #define GB_CALLOC_WERK(n,type,s) GB_CALLOC(n,type,s)
 #define GB_MALLOC_WERK(n,type,s) GB_MALLOC(n,type,s)
 #define GB_REALLOC_WERK(p,nnew,nold,type,s,ok,Context) \
              GB_REALLOC(p,nnew,nold,type,s,ok,Context) 
 #define GB_FREE_WERK(p,s) GB_FREE(p,s)
-
-//------------------------------------------------------------------------------
-// malloc/calloc/realloc/free: for workspace, ignoring free_pool limits
-//------------------------------------------------------------------------------
-
-#define GB_FREE_WERK_UNLIMITED_FROM_CALLOC(p,s) \
-    GB_dealloc_memory (p, true, 1, s)
-
-#define GB_FREE_WERK_UNLIMITED_FROM_MALLOC(p,s) \
-    GB_dealloc_memory (p, true, 0, s)
-
-#define GB_CALLOC_WERK_UNLIMITED(n,type,s) \
-    (type *) GB_calloc_memory (n, sizeof (type), true, s, Context)
-
-#define GB_MALLOC_WERK_UNLIMITED(n,type,s) \
-    (type *) GB_malloc_memory (n, sizeof (type), true, s)
 
 #endif
 

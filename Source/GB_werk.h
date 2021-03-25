@@ -82,7 +82,7 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
     else
     { 
         // allocate the werkspace from malloc
-        return (GB_malloc_memory (nitems, size_of_item, false, size_allocated));
+        return (GB_malloc_memory (nitems, size_of_item, size_allocated)) ;
     }
 }
 
@@ -149,7 +149,7 @@ static inline void *GB_werk_pop     // free the top block of werkspace memory
     else
     { 
         // werkspace was allocated from malloc
-        GB_dealloc_memory (&p, false, 0, *size_allocated) ;
+        GB_dealloc_memory (&p, *size_allocated) ;
     }
     return (NULL) ;                 // return NULL to indicate p was freed
 }
