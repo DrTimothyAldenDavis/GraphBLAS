@@ -187,7 +187,7 @@ if (is_any)
 elseif (~isempty (terminal))
     % terminal monoids terminate when cij equals the terminal value
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
-    fprintf (f, 'define(`GB_terminal'', `if (cij == %s) break ;'')\n', ...
+    fprintf (f, 'define(`GB_terminal'', `if (cij == %s) { break ; }'')\n', ...
         terminal) ;
     fprintf (f, 'define(`GB_dot_simd_vectorize'', `;'')\n') ;
 else
@@ -376,25 +376,25 @@ fprintf (f, 'define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
 if (is_min)
     if (contains (ztype, 'int'))
         % min monoid for signed or unsigned integers
-        add2 = 'if ($1 > $2) $1 = $2' ;
+        add2 = 'if ($1 > $2) { $1 = $2 ; }' ;
     else
         % min monoid for float or double, with omitnan property
         if (t_is_nonnan)
-            add2 = 'if (!islessequal ($1, $2)) $1 = $2' ;
+            add2 = 'if (!islessequal ($1, $2)) { $1 = $2 ; }' ;
         else
-            add2 = 'if (!isnan ($2) && !islessequal ($1, $2)) $1 = $2' ;
+            add2 = 'if (!isnan ($2) && !islessequal ($1, $2)) { $1 = $2 ; }' ;
         end
     end
 elseif (is_max)
     if (contains (ztype, 'int'))
         % max monoid for signed or unsigned integers
-        add2 = 'if ($1 < $2) $1 = $2' ;
+        add2 = 'if ($1 < $2) { $1 = $2 ; }' ;
     else
         % max monoid for float or double, with omitnan property
         if (t_is_nonnan)
-            add2 = 'if (!isgreaterequal ($1, $2)) $1 = $2' ;
+            add2 = 'if (!isgreaterequal ($1, $2)) { $1 = $2 ; }' ;
         else
-            add2 = 'if (!isnan ($2) && !isgreaterequal ($1, $2)) $1 = $2' ;
+            add2 = 'if (!isnan ($2) && !isgreaterequal ($1, $2)) { $1 = $2 ; }';
         end
     end
 else
@@ -464,7 +464,7 @@ switch (addop)
         if (isequal (multop, 'pair'))
             s = ' ' ;
         else
-            s = sprintf ('if (exists && !cb) cx = %s', mult2) ;
+            s = sprintf ('if (exists && !cb) { cx = %s ; }', mult2) ;
         end
 
     % boolean monoids (except eq / lxnor)
@@ -490,18 +490,25 @@ switch (addop)
         if (contains (ztype, 'int'))
             % min for signed or unsigned integers
             if (t_is_simple)
-                s = sprintf ('if (exists && cx > %s) cx = %s', mult2, mult2) ;
+                s = sprintf ('if (exists && cx > %s) { cx = %s ; }', ...
+                    mult2, mult2) ;
             else
-                s = sprintf ('%s t = %s ; if (exists && cx > t) cx = t', ztype, mult2) ;
+                s = sprintf (...
+                    '%s t = %s ; if (exists && cx > t) { cx = t ; }', ...
+                    ztype, mult2) ;
             end
         else
             % min for float or double, with omitnan property
             if (t_is_simple)
-                s = sprintf ('if (exists && !isnan (%s) && !islessequal (cx, %s)) cx = %s', mult2, mult2, mult2) ;
+                s = sprintf ( ...
+                'if (exists && !isnan (%s) && !islessequal (cx, %s)) { cx = %s ; }', ...
+                mult2, mult2, mult2) ;
             elseif (t_is_nonnan)
-                s = sprintf ('%s t = %s ; if (exists && !islessequal (cx, t)) cx = t', ztype, mult2) ;
+                s = sprintf ('%s t = %s ; if (exists && !islessequal (cx, t)) { cx = t ; } ', ...
+                ztype, mult2) ;
             else
-                s = sprintf ('%s t = %s ; if (exists && !isnan (t) && !islessequal (cx, t)) cx = t', ztype, mult2) ;
+                s = sprintf ('%s t = %s ; if (exists && !isnan (t) && !islessequal (cx, t)) { cx = t ; }', ...
+                ztype, mult2) ;
             end
         end
         if (contains (ztype, 'uint'))
@@ -511,18 +518,26 @@ switch (addop)
         if (contains (ztype, 'int'))
             % max for signed or unsigned integers
             if (t_is_simple)
-                s = sprintf ('if (exists && cx < %s) cx = %s', mult2, mult2) ;
+                s = sprintf ('if (exists && cx < %s) { cx = %s ; }', ...
+                mult2, mult2) ;
             else
-                s = sprintf ('%s t = %s ; if (exists && cx < t) cx = t', ztype, mult2) ;
+                s = sprintf ('%s t = %s ; if (exists && cx < t) { cx = t ; }', ...
+                ztype, mult2) ;
             end
         else
             % max for float or double, with omitnan property
             if (t_is_simple)
-                s = sprintf ('if (exists && !isnan (%s) && !isgreaterequal (cx, %s)) cx = %s', mult2, mult2, mult2) ;
+                s = sprintf (...
+                'if (exists && !isnan (%s) && !isgreaterequal (cx, %s)) { cx = %s ; }', ...
+                mult2, mult2, mult2) ;
             elseif (t_is_nonnan)
-                s = sprintf ('%s t = %s ; if (exists && !isgreaterequal (cx, t)) cx = t', ztype, mult2) ;
+                s = sprintf (...
+                '%s t = %s ; if (exists && !isgreaterequal (cx, t)) { cx = t ; }', ...
+                ztype, mult2) ;
             else
-                s = sprintf ('%s t = %s ; if (exists && !isnan (t) && !isgreaterequal (cx, t)) cx = t', ztype, mult2) ;
+                s = sprintf (...
+                '%s t = %s ; if (exists && !isnan (t) && !isgreaterequal (cx, t)) { cx = t ; }', ...
+                ztype, mult2) ;
             end
         end
         if (contains (ztype, 'uint'))

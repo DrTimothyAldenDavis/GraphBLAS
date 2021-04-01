@@ -33,13 +33,13 @@
 // B type:   double
 
 // Multiply: z = fmin (aik, bkj)
-// Add:      if (!isnan (z) && !isgreaterequal (cij, z)) cij = z
+// Add:      if (!isnan (z) && !isgreaterequal (cij, z)) { cij = z ; }
 //           'any' monoid?  0
 //           atomic?        1
 //           OpenMP atomic? 0
 // MultAdd:  cij = fmax (cij, fmin (aik, bkj))
 // Identity: ((double) -INFINITY)
-// Terminal: if (cij == ((double) INFINITY)) break ;
+// Terminal: if (cij == ((double) INFINITY)) { break ; }
 
 #define GB_ATYPE \
     double
@@ -106,7 +106,7 @@
 
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
-    if (cij == ((double) INFINITY)) break ;
+    if (cij == ((double) INFINITY)) { break ; }
 
 // simd pragma for dot-product loop vectorization
 #define GB_PRAGMA_SIMD_DOT(cij) \
@@ -145,7 +145,7 @@
 
 // C(i,j) += t
 #define GB_CIJ_UPDATE(p,t) \
-    if (!isnan (t) && !isgreaterequal (Cx [p], t)) Cx [p] = t
+    if (!isnan (t) && !isgreaterequal (Cx [p], t)) { Cx [p] = t ; }
 
 // x + y
 #define GB_ADD_FUNCTION(x,y) \
@@ -254,11 +254,11 @@
 
     // Cx [p] += Hx [i]
     #define GB_CIJ_GATHER_UPDATE(p,i) \
-        if (!isnan (Hx [i]) && !isgreaterequal (Cx [p], Hx [i])) Cx [p] = Hx [i]
+        if (!isnan (Hx [i]) && !isgreaterequal (Cx [p], Hx [i])) { Cx [p] = Hx [i] ; }
 
     // Hx [i] += t
     #define GB_HX_UPDATE(i,t) \
-        if (!isnan (t) && !isgreaterequal (Hx [i], t)) Hx [i] = t
+        if (!isnan (t) && !isgreaterequal (Hx [i], t)) { Hx [i] = t ; }
 
     // memcpy (&(Cx [p]), &(Hx [i]), len)
     #define GB_CIJ_MEMCPY(p,i,len) \
@@ -278,7 +278,7 @@
 //      else
 //          cx += ax * bx
 #define GB_BITMAP_MULTADD(cb,cx,exists,ax,bx) \
-    double t = (fmin (ax, bx)) ; if (exists && !isnan (t) && !isgreaterequal (cx, t)) cx = t ; cb |= exists
+    double t = (fmin (ax, bx)) ; if (exists && !isnan (t) && !isgreaterequal (cx, t)) { cx = t ; } ; cb |= exists
 
 // define X for bitmap multiply-add
 #define GB_XINIT \

@@ -25,7 +25,7 @@
 
 // Reduce:   s *= aij
 // Identity: 1
-// Terminal: if (s == 0) break ;
+// Terminal: if (s == 0) { break ; }
 
 #define GB_ATYPE \
     uint32_t
@@ -101,7 +101,7 @@
         0
 
     #define GB_BREAK_IF_TERMINAL(s)                 \
-        if (s == 0) break ;
+        if (s == 0) { break ; }
 
 // panel size for built-in operators
 

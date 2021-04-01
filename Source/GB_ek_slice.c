@@ -103,27 +103,6 @@ void GB_ek_slice            // slice a matrix
     { 
         GB_ek_slice_search (taskid, ntasks, pstart_slice, Ap, anvec, avlen,
             kfirst_slice, klast_slice) ;
-#if 0
-
-        // The slice for task taskid contains entries pfirst:plast-1 of A.
-        int64_t pfirst = pstart_slice [taskid] ;
-        int64_t plast  = pstart_slice [taskid+1] - 1 ;
-
-        ASSERT (pfirst <= plast) ;
-
-        // find the first vector of the slice for task taskid: the
-        // vector that owns the entry Ai [pfirst] and Ax [pfirst].
-        int64_t kfirst = GB_search_for_vector (pfirst, Ap, 0, anvec, avlen) ;
-
-        // find the last vector of the slice for task taskid: the
-        // vector that owns the entry Ai [plast] and Ax [plast].
-        int64_t klast = GB_search_for_vector (plast, Ap, kfirst, anvec, avlen) ;
-
-        kfirst_slice [taskid] = kfirst ;
-        klast_slice  [taskid] = klast ;
-        ASSERT (0 <= kfirst && kfirst <= klast && klast < anvec) ;
-#endif
-
     }
 
     ASSERT (kfirst_slice [0] == 0) ;

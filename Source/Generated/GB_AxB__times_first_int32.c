@@ -39,7 +39,7 @@
 //           OpenMP atomic? 1
 // MultAdd:  cij *= aik
 // Identity: 1
-// Terminal: if (cij == 0) break ;
+// Terminal: if (cij == 0) { break ; }
 
 #define GB_ATYPE \
     int32_t
@@ -106,7 +106,7 @@
 
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
-    if (cij == 0) break ;
+    if (cij == 0) { break ; }
 
 // simd pragma for dot-product loop vectorization
 #define GB_PRAGMA_SIMD_DOT(cij) \

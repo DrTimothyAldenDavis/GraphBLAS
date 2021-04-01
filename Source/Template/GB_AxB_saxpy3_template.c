@@ -347,8 +347,6 @@
                 // 2 -> 3 : to lock, if i seen already
                 // 3 -> 2 : to unlock; now i has been seen
 
-                GB_GET_M_j ;                // get M(:,j)
-
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
                     GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
