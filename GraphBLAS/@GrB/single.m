@@ -21,7 +21,7 @@ if (contains (gbtype (G), 'complex'))
     ctype = 'single complex' ;
 else
     z = single (0) ;
-    ctype = 'single complex' ;
+    ctype = 'single' ;
 end
 
 C = gbfull (G, ctype, z, desc) ;                % export as a MATLAB full matrix

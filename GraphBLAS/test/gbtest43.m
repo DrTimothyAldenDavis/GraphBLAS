@@ -398,7 +398,7 @@ end
 assert (ok) ;
 
 try
-    v = [G v] ;
+    v = [G v] ;     % (concatenate with horzcat)
     ok = false ;
 catch expected_error
     expected_error
@@ -407,7 +407,7 @@ end
 assert (ok) ;
 
 try
-    v = [G ; v] ;
+    v = [G ; v] ;   % (concatenate with vertcat)
     ok = false ;
 catch expected_error
     expected_error

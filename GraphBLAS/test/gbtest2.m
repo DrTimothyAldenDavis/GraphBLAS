@@ -20,7 +20,7 @@ for k1 = 1:length(opnames)
             op = [op '.' optype{k2}] ; %#ok<*AGROW>
         end
 
-        fprintf ('\nop: [%s]\n', op) ;
+        fprintf ('\nop: (%s)\n', op) ;
         try
             if (k2 > 0)
                 GrB.binopinfo (op) ;

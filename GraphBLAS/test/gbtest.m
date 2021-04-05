@@ -136,6 +136,7 @@ gbtest98  % test row/col degree for hypersparse matrices
 gbtest99  % test performance of C=A'*B and C=A'
 gbtest100 % test GrB.ver and GrB.version
 gbtest101 % test loading of v3 GraphBLAS objects
+gbtest102 % test horzcat, vertcat, cat, cell2mat
 gbtest96  % test GrB.optype
 gbtest00  % test GrB.bfs and plot (graph (G))
 

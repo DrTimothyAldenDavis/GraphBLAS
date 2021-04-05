@@ -21,17 +21,18 @@
     // copy the tile A into C
     //--------------------------------------------------------------------------
 
-    switch (sparsity)
+    switch (GB_sparsity (A))
     {
 
         case GxB_FULL : // A is full
         {
+            int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
             int64_t pA ;
-            #pragma omp for num_threads(nthreads) schedule(static)
+            #pragma omp parallel for num_threads(A_nthreads) schedule(static)
             for (pA = 0 ; pA < anz ; pA++)
             {
-                int64_t i = pA % vlen ;
-                int64_t j = pA / vlen ;
+                int64_t i = pA % avlen ;
+                int64_t j = pA / avlen ;
                 int64_t iC = cistart + i ;
                 int64_t jC = cvstart + j ;
                 int64_t pC = iC + jC * cvlen ;
@@ -44,15 +45,16 @@
 
         case GxB_BITMAP : // A is bitmap
         {
+            int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
             const int8_t *GB_RESTRICT Ab = A->b ;
             int64_t pA ;
-            #pragma omp for num_threads(nthreads) schedule(static)
+            #pragma omp parallel for num_threads(A_nthreads) schedule(static)
             for (pA = 0 ; pA < anz ; pA++)
             {
-                if (Ab (pA))
+                if (Ab [pA])
                 {
-                    int64_t i = pA % vlen ;
-                    int64_t j = pA / vlen ;
+                    int64_t i = pA % avlen ;
+                    int64_t j = pA / avlen ;
                     int64_t iC = cistart + i ;
                     int64_t jC = cvstart + j ;
                     int64_t pC = iC + jC * cvlen ;
@@ -66,10 +68,17 @@
 
         default : // A is sparse or hypersparse
         {
+            int A_nthreads, A_ntasks ;
+            GB_SLICE_MATRIX (A, 1, chunk) ;
+//          printf ("nthreads %d ntasks %d\n", A_nthreads, A_ntasks) ;
+            const int64_t *GB_RESTRICT Ap = A->p ;
+            const int64_t *GB_RESTRICT Ah = A->h ;
+            const int64_t *GB_RESTRICT Ai = A->i ;
             int tid ;
             #pragma omp parallel for num_threads(A_nthreads) schedule(static)
             for (tid = 0 ; tid < A_ntasks ; tid++)
             {
+//              printf ("A_ek_slicing %p\n", A_ek_slicing) ;
                 int64_t kfirst = kfirst_Aslice [tid] ;
                 int64_t klast  = klast_Aslice  [tid] ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
@@ -90,8 +99,8 @@
                     }
                 }
             }
-            break ;
         }
+        break ;
     }
 }
 

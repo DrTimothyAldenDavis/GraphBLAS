@@ -17,11 +17,11 @@
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
 
     int64_t pA ;
-    #pragma omp for num_threads(nthreads) schedule(static)
+    #pragma omp parallel for num_threads(A_nthreads) schedule(static)
     for (pA = 0 ; pA < anz ; pA++)
     {
-        int64_t i = pA % vlen ;
-        int64_t j = pA / vlen ;
+        int64_t i = pA % avlen ;
+        int64_t j = pA / avlen ;
         int64_t iC = cistart + i ;
         int64_t jC = cvstart + j ;
         int64_t pC = iC + jC * cvlen ;

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// The tile A is hypersparse, sparse, or full, not bitmap.
+
 {
 
     //--------------------------------------------------------------------------
@@ -29,11 +31,14 @@
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
             int64_t j = GBH (Ah, k) ;
-            int64_t jC = cvstart + j ;
-            int64_t pC_start = W [jC] ;
+            int64_t pC_start = W [j] ;
+
+            //------------------------------------------------------------------
+            // find the part of the kth vector A(:,j) for this task
+            //------------------------------------------------------------------
+
             int64_t pA_start, pA_end ;
-//          GB_get_pA (&pA_start, &pA_end, tid, k,
-//              kfirst, klast, pstart_Aslice, Ap, avlen) ;
+            // as done by GB_get_pA, but also get p0 = Ap [k]
             int64_t p0 = GBP (Ap, k, avlen) ;
             int64_t p1 = GBP (Ap, k+1, avlen) ;
             if (k == kfirst)
@@ -54,6 +59,11 @@
                 pA_start = p0 ;
                 pA_end   = p1 ;
             }
+
+            //------------------------------------------------------------------
+            // append A(:,j) onto C(:,j)
+            //------------------------------------------------------------------
+
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
                 int64_t i = GBI (Ai, pA, avlen) ;
