@@ -159,7 +159,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
                         #define GB_CTYPE uint64_t
                         #undef  GB_COPY
                         #define GB_COPY(pC,pA)                      \
-                            Cx [2*pC  ] = Ax [2*pA  ] ;          \
+                            Cx [2*pC  ] = Ax [2*pA  ] ;             \
                             Cx [2*pC+1] = Ax [2*pA+1] ;
                         #include "GB_concat_bitmap_template.c"
                         break ;

@@ -699,8 +699,7 @@ void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
 
 bool GB_Global_have_calloc_function (void)
 { 
-    return (false) ; // HACK
-    // return (GB_Global.calloc_function != NULL) ;
+    return (GB_Global.calloc_function != NULL) ;
 }
 
 void * GB_Global_calloc_function (size_t count, size_t size)
