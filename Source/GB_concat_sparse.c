@@ -85,6 +85,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     // count entries in each vector of each tile
     //--------------------------------------------------------------------------
 
+// double ttt = omp_get_wtime ( ) ;
+
     for (int64_t outer = 0 ; outer < nouter ; outer++)
     {
         for (int64_t inner = 0 ; inner < ninner ; inner++)
@@ -182,6 +184,10 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
         }
     }
 
+// ttt = omp_get_wtime ( ) - ttt ;
+// printf ("phase1: %g sec\n", ttt) ;
+// ttt = omp_get_wtime ( ) ;
+
     //--------------------------------------------------------------------------
     // cumulative sum of entries in each tile
     //--------------------------------------------------------------------------
@@ -215,6 +221,10 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             Work [p] += pC ;
         }
     }
+
+// ttt = omp_get_wtime ( ) - ttt ;
+// printf ("phase2: %g sec\n", ttt) ;
+// ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // concatenate all matrices into C
@@ -280,12 +290,12 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             int64_t avlen = ciend - cistart ;
             ASSERT (avdim == A->vdim) ;
             ASSERT (avlen == A->vlen) ;
-            int64_t anz = GB_NNZ (A) ;
             int A_nthreads, A_ntasks ;
             const int64_t *restrict Ap = A->p ;
             const int64_t *restrict Ah = A->h ;
             const int64_t *restrict Ai = A->i ;
             GB_SLICE_MATRIX (A, 1, chunk) ;
+//             printf ("nthreads %d tasks %d\n", A_nthreads, A_ntasks) ;
 
             //------------------------------------------------------------------
             // copy the tile A into C
@@ -352,6 +362,9 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             GB_WERK_POP (A_ek_slicing, int64_t) ;
         }
     }
+
+// ttt = omp_get_wtime ( ) - ttt ;
+// printf ("phase3: %g sec\n", ttt) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

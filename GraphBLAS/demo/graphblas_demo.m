@@ -813,30 +813,19 @@ fprintf ('Results of GrB and MATLAB match perfectly.\n')
 % the equivalent built-in operators and functions in MATLAB.
 %
 % There are few notable exceptions; these will be addressed in the future.
-% Full matrices and vectors held as GraphBLAS objects can be slightly
-% slower than their MATLAB counterparts.  horzcat and vertcat, for [A B]
-% and [A;B] when either A or B are GraphBLAS matrices, are also slow, as
-% illustrated below in the next example.
-%
-% Other methods that will be faster in the future include bandwidth,
-% istriu, istril, isdiag, reshape, issymmetric, and ishermitian.
+% These include bandwidth, istriu, istril, isdiag, reshape, issymmetric,
+% and ishermitian, all of which should be faster in a future release.
 
 %%
-% Here is an example that illustrates the performance of C = [A B]
-clear
+% Here is an example that illustrates the performance of istril.
 A = sparse (rand (2000)) ;
-B = sparse (rand (2000)) ;
 tic
-C1 = [A B] ;
+c1 = istril (A) ;
 matlab_time = toc ;
-
 A = GrB (A) ;
-B = GrB (B) ;
 tic
-C2 = [A B] ;
+c2 = istril (A) ;
 gb_time = toc ;
-
-err = norm (C1-C2,1)
 fprintf ('\nMATLAB: %g sec, GraphBLAS: %g sec\n', ...
     matlab_time, gb_time) ;
 if (gb_time > matlab_time)

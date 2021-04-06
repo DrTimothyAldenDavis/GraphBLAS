@@ -89,6 +89,7 @@
                     int64_t pA_start, pA_end ;
                     GB_get_pA (&pA_start, &pA_end, tid, k,
                         kfirst, klast, pstart_Aslice, Ap, avlen) ;
+                    GB_PRAGMA_SIMD
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                     {
                         int64_t i = Ai [pA] ;

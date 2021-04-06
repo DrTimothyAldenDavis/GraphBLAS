@@ -64,6 +64,7 @@
             // append A(:,j) onto C(:,j)
             //------------------------------------------------------------------
 
+            GB_PRAGMA_SIMD
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
                 int64_t i = GBI (Ai, pA, avlen) ;
