@@ -68,6 +68,7 @@ logstat ;             % start the log.txt
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test188',t) ; % test concat
 logstat ('test187',t) ; % test dup/assign for all sparsity formats
 logstat ('test186',t) ; % test saxpy for all sparsity formats
 logstat ('test185',s) ; % test dot4, saxpy for all sparsity formats

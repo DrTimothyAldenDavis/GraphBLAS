@@ -31,7 +31,7 @@
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
             int64_t j = GBH (Ah, k) ;
-            int64_t pC_start = W [j] ;
+            const int64_t pC_start = W [j] ;
 
             //------------------------------------------------------------------
             // find the part of the kth vector A(:,j) for this task
@@ -39,8 +39,8 @@
 
             int64_t pA_start, pA_end ;
             // as done by GB_get_pA, but also get p0 = Ap [k]
-            int64_t p0 = GBP (Ap, k, avlen) ;
-            int64_t p1 = GBP (Ap, k+1, avlen) ;
+            const int64_t p0 = GBP (Ap, k, avlen) ;
+            const int64_t p1 = GBP (Ap, k+1, avlen) ;
             if (k == kfirst)
             { 
                 // First vector for task tid; may only be partially owned.
@@ -67,7 +67,7 @@
             GB_PRAGMA_SIMD
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
-                int64_t i = GBI (Ai, pA, avlen) ;
+                int64_t i = GBI (Ai, pA, avlen) ;       // i = Ai [pA]
                 int64_t pC = pC_start + pA - p0 ;
                 Ci [pC] = cistart + i ;
                 // Cx [pC] = Ax [pA] ;

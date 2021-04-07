@@ -28,8 +28,7 @@ for i = 1:m
         A_matrix = A.matrix ;
         if (~isequal (A.class, ctype))
             fprintf ('cast (%d,%d):\n', i, j) ;
-            A_matrix
-            A_matrix = GB_mex_cast (A_matrix, ctype)
+            A_matrix = GB_mex_cast (A_matrix, ctype) ;
         end
         Tiles_matrix  {i,j} = A_matrix ;
         Tiles_pattern {i,j} = A.pattern ;

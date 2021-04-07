@@ -56,9 +56,6 @@ void mexFunction
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
 
-    #define GET_DEEP_COPY ;
-    #define FREE_DEEP_COPY ;
-
     // get Tiles (shallow copy)
     const mxArray *mxTiles = pargin [0] ;
     if (!mxIsCell (mxTiles))
@@ -102,7 +99,9 @@ void mexFunction
     }
 
     // construct the empty C
-    OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
+    #define GET_DEEP_COPY   GrB_Matrix_new (&C, ctype, cnrows, cncols) ;
+    #define FREE_DEEP_COPY  GrB_Matrix_free_(&C) ;
+    GET_DEEP_COPY ;
 
     // get the format of C, default is by column
     int GET_SCALAR (2, int, fmt, GxB_BY_COL) ;
