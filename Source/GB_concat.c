@@ -62,14 +62,12 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     {
         GrB_Matrix A = GB_TILE (Tiles, i, 0) ;
         Tile_rows [i] = GB_NROWS (A) ;
-//      printf ("tile row %ld nrows %ld\n", i, Tile_rows [i]) ;
     }
 
     for (int64_t j = 0 ; j < n ; j++)
     {
         GrB_Matrix A = GB_TILE (Tiles, 0, j) ;
         Tile_cols [j] = GB_NCOLS (A) ;
-//      printf ("tile col %ld ncols %ld\n", j, Tile_cols [j]) ;
     }
 
     int64_t cnz = 0 ;
@@ -147,28 +145,24 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     if (C_is_full)
     {
         // construct C as full
-//      printf ("C is full:\n") ;
         GB_OK (GB_concat_full (C, Tiles, m, n, Tile_rows, Tile_cols, Context)) ;
     }
     else if (GB_convert_sparse_to_bitmap_test (C->bitmap_switch, cnz, cnrows,
         cncols))
     {
         // construct C as bitmap
-//      printf ("C is bitmap:\n") ;
         GB_OK (GB_concat_bitmap (C, cnz, Tiles, m, n, Tile_rows, Tile_cols,
             Context)) ;
     }
     else if (GB_convert_sparse_to_hyper_test (C->hyper_switch, k, C->vdim))
     {
         // construct C as hypersparse
-//      printf ("C is hypersparse:\n") ;
         GB_OK (GB_concat_hyper (C, cnz, Tiles, m, n, Tile_rows, Tile_cols,
             Context)) ;
     }
     else
     {
         // construct C as sparse
-//      printf ("C is sparse:\n") ;
         GB_OK (GB_concat_sparse (C, cnz, Tiles, m, n, Tile_rows, Tile_cols,
             Context)) ;
     }

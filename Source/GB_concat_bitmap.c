@@ -71,11 +71,6 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
             // get the tile A; transpose and typecast, if needed
             //------------------------------------------------------------------
 
-//          printf ("m %ld n %ld csc %d inner %ld outer %ld\n", m, n, csc,
-//              inner, outer) ;
-//          printf ("p %ld\n",
-//              csc ? (inner*n+outer) : (outer*n+inner)) ;
-
             A = csc ? GB_TILE (Tiles, inner, outer)
                     : GB_TILE (Tiles, outer, inner) ;
             if (csc != A->is_csc)

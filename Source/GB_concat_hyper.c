@@ -53,9 +53,15 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     bool static_header = C->static_header ;
     GB_phbix_free (C) ;
 
-    Wi = GB_MALLOC (cnz, int64_t, &Wi_size) ;
-    Wj = GB_MALLOC_WERK (cnz, int64_t, &Wj_size) ;
-    Wx = GB_MALLOC_WERK (cnz * csize, GB_void, &Wx_size) ;
+    Wi = GB_MALLOC (cnz, int64_t, &Wi_size) ;               // becomes C->i
+    Wj = GB_MALLOC_WERK (cnz, int64_t, &Wj_size) ;          // freed below
+    Wx = GB_MALLOC_WERK (cnz * csize, GB_void, &Wx_size) ;  // freed below
+    if (Wi == NULL || Wj == NULL || Wx == NULL)
+    {
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 

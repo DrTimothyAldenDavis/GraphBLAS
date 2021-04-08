@@ -80,6 +80,12 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     int64_t ninner = csc ? m : n ;
     Work = GB_CALLOC_WERK (ninner * cvdim, int64_t, &Work_size) ;
     S = GB_CALLOC_WERK (m * n, GrB_Matrix, &S_size) ;
+    if (S == NULL || Work == NULL)
+    {
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
 
     //--------------------------------------------------------------------------
     // count entries in each vector of each tile
@@ -184,10 +190,6 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
         }
     }
 
-// ttt = omp_get_wtime ( ) - ttt ;
-// printf ("phase1: %g sec\n", ttt) ;
-// ttt = omp_get_wtime ( ) ;
-
     //--------------------------------------------------------------------------
     // cumulative sum of entries in each tile
     //--------------------------------------------------------------------------
@@ -221,10 +223,6 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             Work [p] += pC ;
         }
     }
-
-// ttt = omp_get_wtime ( ) - ttt ;
-// printf ("phase2: %g sec\n", ttt) ;
-// ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // concatenate all matrices into C
@@ -295,7 +293,6 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             const int64_t *restrict Ah = A->h ;
             const int64_t *restrict Ai = A->i ;
             GB_SLICE_MATRIX (A, 1, chunk) ;
-//             printf ("nthreads %d tasks %d\n", A_nthreads, A_ntasks) ;
 
             //------------------------------------------------------------------
             // copy the tile A into C
@@ -362,9 +359,6 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             GB_WERK_POP (A_ek_slicing, int64_t) ;
         }
     }
-
-// ttt = omp_get_wtime ( ) - ttt ;
-// printf ("phase3: %g sec\n", ttt) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

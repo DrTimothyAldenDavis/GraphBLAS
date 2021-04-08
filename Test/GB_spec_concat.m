@@ -27,7 +27,7 @@ for i = 1:m
         A = GB_spec_matrix (Tiles {i,j}) ;
         A_matrix = A.matrix ;
         if (~isequal (A.class, ctype))
-            fprintf ('cast (%d,%d):\n', i, j) ;
+            % typecast the tile into ctype
             A_matrix = GB_mex_cast (A_matrix, ctype) ;
         end
         Tiles_matrix  {i,j} = A_matrix ;

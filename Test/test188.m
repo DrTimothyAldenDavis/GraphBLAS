@@ -32,7 +32,6 @@ for d = [0.01 0.2]
         for kc = 1:length (types)
             ctype = types {kc} ;
             for fmt = 0:1
-                fprintf ('atype %s ctype %s fmt %d\n', atype, ctype, fmt) ;
                 C1 = GB_mex_concat  (Tiles, ctype, fmt) ;
                 C2 = GB_spec_concat (Tiles, ctype) ;
                 GB_spec_compare (C1, C2) ;
