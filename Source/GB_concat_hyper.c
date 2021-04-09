@@ -27,7 +27,6 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     GB_Context Context
 )
 { 
-GB_GOTCHA ; // concat_hyper
 
     //--------------------------------------------------------------------------
     // allocate triplet workspace to construct C as hypersparse
@@ -59,7 +58,6 @@ GB_GOTCHA ; // concat_hyper
     Wx = GB_MALLOC_WERK (cnz * csize, GB_void, &Wx_size) ;  // freed below
     if (Wi == NULL || Wj == NULL || Wx == NULL)
     { 
-GB_GOTCHA ; // concat_hyper
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
@@ -95,7 +93,6 @@ GB_GOTCHA ; // concat_hyper
             int64_t cvstart, cistart ;
             if (csc)
             { 
-GB_GOTCHA ; // concat_hyper
                 // C is held by column
                 // Tiles is row-major and accessed in column order
                 cvstart = Tile_cols [outer] ;
@@ -122,13 +119,11 @@ GB_GOTCHA ; // concat_hyper
             // adjust the indices to reflect their new place in C
             //------------------------------------------------------------------
 
-            int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
+            int nth = GB_nthreads (anz, chunk, nthreads_max) ;
             if (cistart > 0 && cvstart > 0)
             { 
-GB_GOTCHA ; // concat_hyper
                 int64_t pA ;
-                #pragma omp parallel for num_threads(A_nthreads) \
-                    schedule(static)
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (pA = 0 ; pA < anz ; pA++)
                 {
                     Wi [pC + pA] += cistart ;
@@ -137,10 +132,8 @@ GB_GOTCHA ; // concat_hyper
             }
             else if (cistart > 0)
             { 
-GB_GOTCHA ; // concat_hyper
                 int64_t pA ;
-                #pragma omp parallel for num_threads(A_nthreads) \
-                    schedule(static)
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (pA = 0 ; pA < anz ; pA++)
                 {
                     Wi [pC + pA] += cistart ;
@@ -148,10 +141,8 @@ GB_GOTCHA ; // concat_hyper
             }
             else if (cvstart > 0)
             { 
-GB_GOTCHA ; // concat_hyper
                 int64_t pA ;
-                #pragma omp parallel for num_threads(A_nthreads) \
-                    schedule(static)
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (pA = 0 ; pA < anz ; pA++)
                 {
                     Wj [pC + pA] += cvstart ;

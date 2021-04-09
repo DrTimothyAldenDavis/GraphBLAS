@@ -71,7 +71,6 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         GB_WERK_PUSH (Count, ntasks+1, int64_t) ;
         if (Count == NULL)
         { 
-GB_GOTCHA ; // WERK_PUSH
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }

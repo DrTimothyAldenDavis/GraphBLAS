@@ -37,7 +37,7 @@
 
 #define GB_FREE_WORK                                                    \
 {                                                                       \
-    if (Workspaces != NULL)                                             \
+    if (Workspaces != NULL && Workspaces_size != NULL)                  \
     {                                                                   \
         for (int tid = 0 ; tid < nworkspaces ; tid++)                   \
         {                                                               \
@@ -134,7 +134,6 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_WERK_PUSH (Workspaces_size, nworkspaces, size_t) ;
     if (Workspaces == NULL || Workspaces_size == NULL)
     { 
-GB_GOTCHA ; // WERK_PUSH
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
@@ -163,7 +162,6 @@ GB_GOTCHA ; // WERK_PUSH
     GB_WERK_PUSH (A_slice, nthreads + 1, int64_t) ;
     if (A_slice == NULL)
     { 
-GB_GOTCHA ; // WERK_PUSH
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;

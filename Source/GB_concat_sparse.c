@@ -118,7 +118,6 @@ GB_GOTCHA ; // concat_sparse
                 }
                 else
                 { 
-GB_GOTCHA ; // concat_sparse
                     GB_TILE (S, outer, inner) = T ;
                 }
                 A = T ;
@@ -140,7 +139,6 @@ GB_GOTCHA ; // concat_sparse
                     // save T in array S
                     if (csc)
                     { 
-GB_GOTCHA ; // concat_sparse
                         GB_TILE (S, inner, outer) = T ;
                     }
                     else
@@ -273,7 +271,6 @@ GB_GOTCHA ; // concat_sparse
             }
             else
             { 
-GB_GOTCHA ; // concat_sparse
                 // C and A are held by row
                 // Tiles is row-major and accessed in row order
                 cvstart = Tile_rows [outer] ;

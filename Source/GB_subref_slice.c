@@ -257,7 +257,6 @@ GrB_Info GB_subref_slice
     GB_WERK_PUSH (Coarse, ntasks1 + 1, int64_t) ;
     if (Coarse == NULL)
     { 
-GB_GOTCHA ; // WERK_PUSH
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;

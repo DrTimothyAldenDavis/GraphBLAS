@@ -94,7 +94,7 @@ typedef struct
     // for testing and development
     //--------------------------------------------------------------------------
 
-    int64_t hack ;                  // ad hoc setting (for draft versions only)
+    int64_t hack [2] ;              // settings for testing/developement only
 
     //--------------------------------------------------------------------------
     // diagnostic output
@@ -209,7 +209,7 @@ GB_Global_struct GB_Global =
     .malloc_debug_count = 0,     // counter for testing memory handling
 
     // for testing and development only
-    .hack = 1,          // TODO
+    .hack = {0, 0},
 
     // diagnostics
     .burble = false,
@@ -896,19 +896,19 @@ bool GB_Global_malloc_debug_count_decrement (void)
 }
 
 //------------------------------------------------------------------------------
-// hack: for setting an internal value for development only
+// hack: for setting an internal flag for testing and development only
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-void GB_Global_hack_set (int64_t hack)
+void GB_Global_hack_set (int k, int64_t hack)
 { 
-    GB_Global.hack = hack ;
+    GB_Global.hack [k] = hack ;
 }
 
 GB_PUBLIC
-int64_t GB_Global_hack_get (void)
+int64_t GB_Global_hack_get (int k)
 { 
-    return (GB_Global.hack) ;
+    return (GB_Global.hack [k]) ;
 }
 
 //------------------------------------------------------------------------------

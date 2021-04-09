@@ -68,17 +68,31 @@ logstat ;             % start the log.txt
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
-logstat ('test188',t) ; % test concat
-logstat ('test187',t) ; % test dup/assign for all sparsity formats
-logstat ('test186',t) ; % test saxpy for all sparsity formats
-logstat ('test185',s) ; % test dot4, saxpy for all sparsity formats
-logstat ('test185',t) ; % test dot4, saxpy for all sparsity formats
-logstat ('test184',t) ; % test special cases for mxm, transpose, and build
+% disable the Werk stack for these tests:
+hack = GB_mex_hack ;
+for werk_stack_disable = [1 0]
+
+    hack (2) = werk_stack_disable ;
+    GB_mex_hack (hack) ;
+    logstat ('test188',t) ; % test concat
+    logstat ('test187',t) ; % test dup/assign for all sparsity formats
+    logstat ('test186',t) ; % test saxpy for all sparsity formats
+    logstat ('test185',s) ; % test dot4, saxpy for all sparsity formats
+    logstat ('test184',t) ; % test special cases for mxm, transpose, and build
+    logstat ('test181',s) ; % test transpose with explicit zeros in the mask
+    logstat ('test180',s) ; % test assign and subassign (single threaded)
+    logstat ('test180',t) ; % test assign and subassign (multi threaded)
+end
+
+% re-enable the Werk stack for most tests:
+hack = GB_mex_hack ;
+hack (2) = 0 ;
+GB_mex_hack (hack) ;
+
+GB_mex_hack ([0 1]) ;       % REMOVE THIS
+
 logstat ('test183',s) ; % test eWiseMult with hypersparse mask
 logstat ('test182',s) ; % test for internal wait
-logstat ('test181',s) ; % test transpose with explicit zeros in the mask
-logstat ('test180',s) ; % test assign and subassign (single threaded)
-logstat ('test180',t) ; % test assign and subassign (multi threaded)
 logstat ('test179',t) ; % test bitmap select
 
 logstat ('test165',t) ; % test C=A*B' where A is diagonal and B becomes bitmap

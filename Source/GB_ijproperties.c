@@ -205,7 +205,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         GB_WERK_PUSH (Work_imax, ntasks, int64_t) ;
         if (Work_imin == NULL || Work_imax == NULL)
         { 
-GB_GOTCHA ; // WERK_PUSH
             // out of memory
             GB_WERK_POP (Work_imax, int64_t) ;
             GB_WERK_POP (Work_imin, int64_t) ;

@@ -454,7 +454,6 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         GB_WERK_PUSH (Coarse_initial, ntasks_initial + 1, int64_t) ;
         if (Coarse_initial == NULL)
         { 
-GB_GOTCHA ; // WERK_PUSH out of memory
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;

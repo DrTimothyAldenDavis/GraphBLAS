@@ -14,7 +14,7 @@ rng ('default') ;
 n1 = 200 ;
 n2 = 400 ;
 
-for d = [0.01 0.2]
+for d = [1e-4 0.01 0.2 0.8 inf]
     for ka = 1:length (types)
         fprintf ('.') ;
         atype = types {ka} ;
@@ -23,18 +23,31 @@ for d = [0.01 0.2]
         A3 = GB_spec_random (n2, n1, d, 128, atype) ;
         A4 = GB_spec_random (n2, n2, d, 128, atype) ;
 
-        Tiles = cell (2,2) ;
-        Tiles {1,1} = A1 ;
-        Tiles {1,2} = A2 ;
-        Tiles {2,1} = A3 ;
-        Tiles {2,2} = A4 ;
+        for sparsity_control = [1 2 4 8]
+            A1.sparsity = sparsity_control ;
+            A2.sparsity = sparsity_control ;
+            A3.sparsity = sparsity_control ;
+            A4.sparsity = sparsity_control ;
+            for is_csc = [0 1]
+                A1.is_csc = is_csc ;
+                A2.is_csc = is_csc ;
+                A3.is_csc = is_csc ;
+                A4.is_csc = is_csc ;
 
-        for kc = 1:length (types)
-            ctype = types {kc} ;
-            for fmt = 0:1
-                C1 = GB_mex_concat  (Tiles, ctype, fmt) ;
-                C2 = GB_spec_concat (Tiles, ctype) ;
-                GB_spec_compare (C1, C2) ;
+                Tiles = cell (2,2) ;
+                Tiles {1,1} = A1 ;
+                Tiles {1,2} = A2 ;
+                Tiles {2,1} = A3 ;
+                Tiles {2,2} = A4 ;
+
+                for kc = 1:length (types)
+                    ctype = types {kc} ;
+                    for fmt = 0:1
+                        C1 = GB_mex_concat  (Tiles, ctype, fmt) ;
+                        C2 = GB_spec_concat (Tiles, ctype) ;
+                        GB_spec_compare (C1, C2) ;
+                    end
+                end
             end
         end
     end

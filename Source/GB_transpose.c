@@ -932,7 +932,6 @@ GB_GOTCHA ; // GB_new
             info = GB_extract_vector_list (iwork, A, Context) ;
             if (info != GrB_SUCCESS)
             { 
-GB_GOTCHA ; // extract_vector_list out of memory
                 // out of memory
                 GB_FREE (&iwork, iwork_size) ;
                 GB_FREE_C ;

@@ -175,7 +175,6 @@ GB_GOTCHA ; // kresult NULL, nthreads > 2
             GB_WERK_PUSH (wk, nthreads, int64_t) ;
             if (ws == NULL || wk == NULL)
             { 
-GB_GOTCHA ; // WERK_PUSH
                 // out of memory; use a single thread instead
                 GB_WERK_POP (wk, int64_t) ;
                 GB_WERK_POP (ws, int64_t) ;
