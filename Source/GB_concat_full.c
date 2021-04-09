@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #define GB_FREE_WORK        \
-    GB_Matrix_free (&T) ;
+    GB_phbix_free (T) ;
 
 #define GB_FREE_ALL         \
     GB_FREE_WORK ;          \

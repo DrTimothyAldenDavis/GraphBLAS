@@ -16,7 +16,6 @@ n2 = 400 ;
 
 for d = [1e-4 0.01 0.2 0.8 inf]
     for ka = 1:length (types)
-        fprintf ('.') ;
         atype = types {ka} ;
         A1 = GB_spec_random (n1, n1, d, 128, atype) ;
         A2 = GB_spec_random (n1, n2, d, 128, atype) ;
@@ -41,6 +40,7 @@ for d = [1e-4 0.01 0.2 0.8 inf]
                 Tiles {2,2} = A4 ;
 
                 for kc = 1:length (types)
+                    fprintf ('.') ;
                     ctype = types {kc} ;
                     for fmt = 0:1
                         C1 = GB_mex_concat  (Tiles, ctype, fmt) ;

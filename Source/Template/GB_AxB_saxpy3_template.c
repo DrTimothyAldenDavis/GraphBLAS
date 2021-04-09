@@ -781,6 +781,7 @@ GB_GOTCHA ; // M dense in place, M structural, not bitmap
     int64_t  *GB_RESTRICT Ci = C->i ;
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
 
+//  printf ("check Ci size %p %ld\n", C->i, C->i_size) ;
     ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
 
     #if GB_IS_ANY_PAIR_SEMIRING

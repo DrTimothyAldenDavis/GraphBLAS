@@ -16,7 +16,6 @@ void GB_free_pool_finalize (void)
     // free all memory pools
     //--------------------------------------------------------------------------
 
-    printf ("\nfinalize free pool:\n") ;
     for (int k = 3 ; k < 64 ; k++)
     {
         size_t size = (1UL << k) ;

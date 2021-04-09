@@ -24,10 +24,10 @@
 
 #define GB_FREE_ALL             \
 {                               \
-    GB_Matrix_free (&C) ;       \
-    GB_Matrix_free (&AT) ;      \
-    GB_Matrix_free (&BT) ;      \
-    GB_Matrix_free (&MT) ;      \
+    GB_phbix_free (C) ;         \
+    GB_phbix_free (AT) ;        \
+    GB_phbix_free (BT) ;        \
+    GB_phbix_free (MT) ;        \
 }
 
 #include "GB_mxm.h"
@@ -697,8 +697,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_Matrix_free (&AT) ;
-    GB_Matrix_free (&BT) ;
+    GB_phbix_free (AT) ;
+    GB_phbix_free (BT) ;
     // do not free MT; return it to the caller
     if (*M_transposed) ASSERT_MATRIX_OK (MT, "MT computed", GB0) ;
     return (GrB_SUCCESS) ;

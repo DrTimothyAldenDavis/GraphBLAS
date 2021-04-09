@@ -27,16 +27,9 @@ void GB_Matrix_free             // free a matrix
             // free all content of A
             size_t header_size = A->header_size ;
             GB_phbix_free (A) ;
-            // free the header of A
-            if (A->static_header)
+            if (!(A->static_header))
             { 
-                // A is static, not a pointer from malloc/calloc, so it cannot
-                // be freed.  Just mark it as not containing a valid matrix.
-                A->magic = GB_MAGIC2 ;
-            }
-            else
-            { 
-                // free the header of A itself
+                // free the header of A itself, unless it is static
                 A->magic = GB_FREED ;       // to help detect dangling pointers
                 GB_FREE (Ahandle, header_size) ;
                 (*Ahandle) = NULL ;

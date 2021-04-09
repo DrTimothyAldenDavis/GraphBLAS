@@ -21,7 +21,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL             \
 {                               \
-    GB_Matrix_free (&C) ;       \
+    GB_phbix_free (C) ;       \
 }
 
 void GB_ewise_generic       // generic ewise
@@ -61,6 +61,7 @@ void GB_ewise_generic       // generic ewise
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (C != NULL && C->static_header) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for ewise generic", GB0) ;
     ASSERT_MATRIX_OK (A, "A for ewise generic", GB0) ;
     ASSERT_MATRIX_OK (B, "B for ewise generic", GB0) ;

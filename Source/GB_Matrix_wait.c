@@ -42,9 +42,9 @@
 {                                       \
     GB_FREE (&W, W_size) ;              \
     GB_phbix_free (A) ;                 \
-    GB_Matrix_free (&T) ;               \
-    GB_Matrix_free (&S) ;               \
-    GB_Matrix_free (&A1) ;              \
+    GB_phbix_free (T) ;                 \
+    GB_phbix_free (S) ;                 \
+    GB_phbix_free (A1) ;                \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -489,8 +489,8 @@ GB_GOTCHA ; // x shallow
             ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
 
             // free A1 and T
-            GB_Matrix_free (&T) ;
-            GB_Matrix_free (&A1) ;
+            GB_phbix_free (T) ;
+            GB_phbix_free (A1) ;
 
             //------------------------------------------------------------------
             // replace T with S
@@ -546,7 +546,7 @@ GB_GOTCHA ; // x shallow
 
         ASSERT_MATRIX_OK (A, "A after GB_Matrix_wait:append", GB0) ;
 
-        GB_Matrix_free (&T) ;
+        GB_phbix_free (T) ;
 
         // conform A to its desired sparsity structure
         info = GB_conform (A, Context) ;
@@ -569,7 +569,7 @@ GB_GOTCHA ; // x shallow
 
         GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T, NULL,
             Context)) ;
-        GB_Matrix_free (&T) ;
+        GB_phbix_free (T) ;
         ASSERT_MATRIX_OK (S, "S after GB_Matrix_wait:add", GB0) ;
         info = GB_transplant_conform (A, A->type, &S, Context) ;
     }

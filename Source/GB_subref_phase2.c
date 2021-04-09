@@ -129,7 +129,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_Matrix_free (&C) ;
+        GB_phbix_free (C) ;
         return (info) ;
     }
 

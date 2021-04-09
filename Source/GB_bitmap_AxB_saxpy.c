@@ -12,7 +12,7 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_ALL GB_Matrix_free (&C) ;
+#define GB_FREE_ALL GB_phbix_free (C) ;
 
 //------------------------------------------------------------------------------
 // GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B

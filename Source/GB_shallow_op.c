@@ -44,8 +44,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (C != NULL) ;
-    ASSERT (C->static_header) ;
+    ASSERT (C != NULL && C->static_header) ;
     ASSERT_MATRIX_OK (A, "A for shallow_op", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
@@ -168,7 +167,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     if (C->x == NULL)
     { 
         // out of memory
-        GB_Matrix_free (&C) ;
+        GB_phbix_free (C) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -179,7 +178,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     { 
 GB_GOTCHA ; // apply_op out of memory
         // out of memory
-        GB_Matrix_free (&C) ;
+        GB_phbix_free (C) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 

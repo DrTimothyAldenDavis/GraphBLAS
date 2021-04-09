@@ -17,8 +17,8 @@
 
 #define GB_FREE_ALL         \
 {                           \
-    GB_Matrix_free (&MT) ;  \
-    GB_Matrix_free (&T) ;   \
+    GB_phbix_free (MT) ;  \
+    GB_phbix_free (T) ;   \
 }
 
 GrB_Info GB_mxm                     // C<M> = A*B
@@ -153,7 +153,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     if (done_in_place)
     { 
         // C has been computed in-place; no more work to do
-        GB_Matrix_free (&MT) ;
+        GB_phbix_free (MT) ;
         ASSERT_MATRIX_OK (C, "C from GB_mxm (in-place)", GB0) ;
         return (info) ;
     }
@@ -179,7 +179,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // needed.  If no typecasting is done then this takes no time at all
         // and is a pure transplant.  Also conform C to its desired
         // hypersparsity.
-        GB_Matrix_free (&MT) ;
+        GB_phbix_free (MT) ;
         if (GB_ZOMBIES (T) && T->type != C->type)
         { 
             // T = A*B can be constructed with zombies, using the dot3 method.
@@ -207,7 +207,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // GB_accum_mask also conforms C to its desired hypersparsity.
         info = GB_accum_mask (C, M, (M_transposed) ? MT : NULL, accum, &T,
             C_replace, Mask_comp, Mask_struct, Context) ;
-        GB_Matrix_free (&MT) ;
+        GB_phbix_free (MT) ;
         #ifdef GB_DEBUG
         if (info == GrB_SUCCESS)
         {

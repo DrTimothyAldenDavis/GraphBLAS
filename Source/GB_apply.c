@@ -295,7 +295,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     if (info != GrB_SUCCESS)
     { 
-        GB_Matrix_free (&T) ;
+        GB_phbix_free (T) ;
         return (info) ;
     }
 

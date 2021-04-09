@@ -20,10 +20,10 @@
 
 #define GB_FREE_ALL         \
 {                           \
-    GB_Matrix_free (&T) ;   \
-    GB_Matrix_free (&AT) ;  \
-    GB_Matrix_free (&BT) ;  \
-    GB_Matrix_free (&MT) ;  \
+    GB_phbix_free (T) ;   \
+    GB_phbix_free (AT) ;  \
+    GB_phbix_free (BT) ;  \
+    GB_phbix_free (MT) ;  \
 }
 
 GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
@@ -421,8 +421,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // free the transposed matrices
     //--------------------------------------------------------------------------
 
-    GB_Matrix_free (&AT) ;
-    GB_Matrix_free (&BT) ;
+    GB_phbix_free (AT) ;
+    GB_phbix_free (BT) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask
@@ -441,7 +441,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // needed.  If no typecasting is done then this takes no time at all
         // and is a pure transplant.  Also conform C to its desired
         // hypersparsity.
-        GB_Matrix_free (&MT) ;
+        GB_phbix_free (MT) ;
         GB_OK (GB_transplant_conform (C, C->type, &T, Context)) ;
         return (GB_block (C, Context)) ;
     }
@@ -451,7 +451,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // GB_accum_mask also conforms C to its desired hypersparsity
         info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
             Mask_struct, Context) ;
-        GB_Matrix_free (&MT) ;
+        GB_phbix_free (MT) ;
         return (info) ;
     }
 }

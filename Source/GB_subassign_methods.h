@@ -36,7 +36,7 @@
     GB_FREE_WERK (&Z_to_S, Z_to_S_size) ;       \
     GB_FREE_WERK (&Z_to_A, Z_to_A_size) ;       \
     GB_FREE_WERK (&Z_to_M, Z_to_M_size) ;       \
-    GB_Matrix_free (&S);                        \
+    GB_phbix_free (S);                        \
 }
 
 //------------------------------------------------------------------------------

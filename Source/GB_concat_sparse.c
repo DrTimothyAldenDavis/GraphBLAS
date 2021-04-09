@@ -113,7 +113,6 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 // save T in array S
                 if (csc)
                 { 
-GB_GOTCHA ; // concat_sparse
                     GB_TILE (S, inner, outer) = T ;
                 }
                 else

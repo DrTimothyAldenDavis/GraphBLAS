@@ -9,7 +9,7 @@
 
 #define GB_FREE_WORK                        \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
-    GB_Matrix_free (&T) ;
+    GB_phbix_free (T) ;
 
 #define GB_FREE_ALL         \
     GB_FREE_WORK ;          \

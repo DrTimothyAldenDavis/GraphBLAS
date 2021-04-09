@@ -18,8 +18,9 @@
 
 #define GB_FREE_ALL         \
 {                           \
-    GB_Matrix_free (&AT) ;  \
-    GB_Matrix_free (&BT) ;  \
+    GB_phbix_free (T) ;     \
+    GB_phbix_free (AT) ;    \
+    GB_phbix_free (BT) ;    \
 }
 
 GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))

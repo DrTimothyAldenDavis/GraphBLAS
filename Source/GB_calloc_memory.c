@@ -163,6 +163,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
     //--------------------------------------------------------------------------
 
     (*size_allocated) = (p == NULL) ? 0 : size ;
+//  if (p != NULL) printf ("calloc check size %ld of %p\n", size, p) ;
     ASSERT (GB_IMPLIES (p != NULL, size == GB_Global_memtable_size (p))) ;
     return (p) ;
 }

@@ -466,12 +466,11 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             sparsity, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
-GB_GOTCHA ; // GB_new
             // out of memory
             ASSERT (!in_place) ;            // cannot fail if in-place,
             ASSERT (!C_static_header) ;     // or if C has a static header
             GB_FREE_C ;
-            GB_Matrix_free (&T) ;
+            GB_phbix_free (T) ;
             return (info) ;
         }
 
@@ -954,7 +953,6 @@ GB_GOTCHA ; // GB_new
                 GxB_HYPERSPARSE, A_hyper_switch, 0, Context) ;
             if (info != GrB_SUCCESS)
             { 
-GB_GOTCHA ; // GB_new
                 // out of memory
                 ASSERT (!in_place) ;            // cannot fail if in-place,
                 ASSERT (!C_static_header) ;     // or if C has a static header
@@ -1185,7 +1183,7 @@ GB_GOTCHA ; // GB_new
                 ASSERT (!in_place) ;            // cannot fail if in-place,
                 ASSERT (!C_static_header) ;     // or if C has a static header
                 GB_FREE_C ;
-                GB_Matrix_free (&T) ;
+                GB_phbix_free (T) ;
                 return (info) ;
             }
 

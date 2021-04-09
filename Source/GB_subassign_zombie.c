@@ -21,7 +21,7 @@
 #include "GB_subassign_methods.h"
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_Matrix_free (&S) ;
+#define GB_FREE_ALL GB_phbix_free (S) ;
 
 GrB_Info GB_subassign_zombie
 (

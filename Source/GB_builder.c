@@ -189,6 +189,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t *GB_RESTRICT I_work = (*I_work_handle) ;
     int64_t *GB_RESTRICT J_work = (*J_work_handle) ;
     int64_t *GB_RESTRICT K_work = NULL ; size_t K_work_size = 0 ;
+    // printf ("check Jwork size %p %ld\n", J_work, *J_work_size_handle) ;
     ASSERT (*J_work_size_handle == GB_Global_memtable_size (J_work)) ;
 
     //--------------------------------------------------------------------------
@@ -913,7 +914,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->i == NULL)
         { 
             // out of memory
-            GB_Matrix_free (&T) ;
+            GB_phbix_free (T) ;
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
@@ -1084,7 +1085,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->x == NULL)
         { 
             // out of memory
-            GB_Matrix_free (&T) ;
+            GB_phbix_free (T) ;
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }

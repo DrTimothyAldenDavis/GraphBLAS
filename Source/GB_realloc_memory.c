@@ -95,6 +95,7 @@ GB_GOTCHA ; // realloc too big
     //--------------------------------------------------------------------------
 
     int64_t oldsize_allocated = (*size_allocated) ;
+//  printf ("realloc check size %ld of %p\n", oldsize_allocated, p) ;
     ASSERT (oldsize_allocated == GB_Global_memtable_size (p)) ;
 
     //--------------------------------------------------------------------------

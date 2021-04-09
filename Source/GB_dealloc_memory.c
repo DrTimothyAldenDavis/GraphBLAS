@@ -39,6 +39,7 @@ void GB_dealloc_memory      // free memory, return to free_pool or free it
             int k = GB_CEIL_LOG2 (size_allocated) ;
             if (GB_Global_free_pool_limit_get (k) > 0)
             {
+//              printf ("put to free pool %p %d\n", *p, k) ;
                 returned_to_free_pool = GB_Global_free_pool_put (*p, k) ;
             }
         }

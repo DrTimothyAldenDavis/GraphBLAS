@@ -32,10 +32,10 @@
 
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_Matrix_free (&C2) ;          \
-    GB_Matrix_free (&M2) ;          \
-    GB_Matrix_free (&A2) ;          \
-    GB_Matrix_free (&SubMask) ;     \
+    GB_phbix_free (C2) ;          \
+    GB_phbix_free (M2) ;          \
+    GB_phbix_free (A2) ;          \
+    GB_phbix_free (SubMask) ;     \
     GB_FREE_WERK (&I2, I2_size) ;   \
     GB_FREE_WERK (&J2, J2_size) ;   \
 }
@@ -265,7 +265,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                 scalar_expansion, scalar, atype, Context)) ;
 
-            GB_Matrix_free (&SubMask) ;
+            GB_phbix_free (SubMask) ;
         }
 
         //----------------------------------------------------------------------

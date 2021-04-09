@@ -11,7 +11,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_Matrix_free (&T) ;                   \
+    GB_phbix_free (T) ;                   \
 }
 
 #include "GB_select.h"
