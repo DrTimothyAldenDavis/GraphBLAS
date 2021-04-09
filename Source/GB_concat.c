@@ -151,14 +151,12 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     if (C_is_full)
     {
         // construct C as full
-        printf ("C full\n") ; GB_GOTCHA ;
         GB_OK (GB_concat_full (C, Tiles, m, n, Tile_rows, Tile_cols, Context)) ;
     }
     else if (GB_convert_sparse_to_bitmap_test (C->bitmap_switch, cnz, cnrows,
         cncols))
     {
         // construct C as bitmap
-        printf ("C bitmap\n") ; GB_GOTCHA ;
         GB_OK (GB_concat_bitmap (C, cnz, Tiles, m, n, Tile_rows, Tile_cols,
             Context)) ;
     }

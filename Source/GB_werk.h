@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_context.h: definitions for the internal context
+// GB_werk.h: definitions for werkspace management on the Werk stack
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -54,7 +54,7 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
     size_t size ;
     if (Context == NULL || nitems > GB_WERK_SIZE || size_of_item > GB_WERK_SIZE
 //      #ifdef GBTESTCOV
-        || (GB_Global_hack_get (1) != 0)    // werk stack disabled for testing
+        || (GB_Global_hack_get (1) != 0)    // Werk stack disabled for testing
 //      #endif
     )
     { 

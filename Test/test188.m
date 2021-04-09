@@ -11,10 +11,11 @@ types = types.all ;
 
 rng ('default') ;
 
-n1 = 200 ;
-n2 = 400 ;
+n1 = 20 ;
+n2 = 40 ;
 
 for d = [1e-4 0.01 0.2 0.8 inf]
+    fprintf ('\nd = %g\n', d) ;
     for ka = 1:length (types)
         atype = types {ka} ;
         A1 = GB_spec_random (n1, n1, d, 128, atype) ;
@@ -23,6 +24,7 @@ for d = [1e-4 0.01 0.2 0.8 inf]
         A4 = GB_spec_random (n2, n2, d, 128, atype) ;
 
         for sparsity_control = [1 2 4 8]
+            fprintf ('.') ;
             A1.sparsity = sparsity_control ;
             A2.sparsity = sparsity_control ;
             A3.sparsity = sparsity_control ;
@@ -40,7 +42,6 @@ for d = [1e-4 0.01 0.2 0.8 inf]
                 Tiles {2,2} = A4 ;
 
                 for kc = 1:length (types)
-                    fprintf ('.') ;
                     ctype = types {kc} ;
                     for fmt = 0:1
                         C1 = GB_mex_concat  (Tiles, ctype, fmt) ;

@@ -46,7 +46,6 @@ GB_GOTCHA ; // A is full
 
         case GxB_BITMAP : // A is bitmap
         {
-GB_GOTCHA ; // A is bitmap
             int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
             const int8_t *GB_RESTRICT Ab = A->b ;
             int64_t pA ;
@@ -70,10 +69,8 @@ GB_GOTCHA ; // A is bitmap
 
         default : // A is sparse or hypersparse
         {
-GB_GOTCHA ; // A is sparse or hypersparse
             int A_nthreads, A_ntasks ;
             GB_SLICE_MATRIX (A, 1, chunk) ;
-//          printf ("nthreads %d ntasks %d\n", A_nthreads, A_ntasks) ;
             const int64_t *GB_RESTRICT Ap = A->p ;
             const int64_t *GB_RESTRICT Ah = A->h ;
             const int64_t *GB_RESTRICT Ai = A->i ;
@@ -81,7 +78,6 @@ GB_GOTCHA ; // A is sparse or hypersparse
             #pragma omp parallel for num_threads(A_nthreads) schedule(static)
             for (tid = 0 ; tid < A_ntasks ; tid++)
             {
-//              printf ("A_ek_slicing %p\n", A_ek_slicing) ;
                 int64_t kfirst = kfirst_Aslice [tid] ;
                 int64_t klast  = klast_Aslice  [tid] ;
                 for (int64_t k = kfirst ; k <= klast ; k++)
