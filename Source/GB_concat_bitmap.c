@@ -29,6 +29,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
     GB_Context Context
 )
 { 
+GB_GOTCHA ; // concat_bitmap
 
     //--------------------------------------------------------------------------
     // allocate C as a bitmap matrix
@@ -47,7 +48,8 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
     size_t csize = ctype->size ;
     GB_Type_code ccode = ctype->code ;
     if (!GB_IS_BITMAP (C))
-    {
+    { 
+GB_GOTCHA ; // concat_bitmap
         GB_phbix_free (C) ;
         GB_OK (GB_bix_alloc (C, cvlen * cvdim, true, true, false, true,
             Context)) ;
@@ -74,7 +76,8 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
             A = csc ? GB_TILE (Tiles, inner, outer)
                     : GB_TILE (Tiles, outer, inner) ;
             if (csc != A->is_csc)
-            {
+            { 
+GB_GOTCHA ; // concat_bitmap
                 // T = (ctype) A', not in-place
                 GB_OK (GB_transpose (&T, ctype, csc, A,
                     NULL, NULL, NULL, false, Context)) ;
@@ -94,7 +97,8 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
 
             int64_t cvstart, cvend, cistart, ciend ;
             if (csc)
-            {
+            { 
+GB_GOTCHA ; // concat_bitmap
                 // C and A are held by column
                 // Tiles is row-major and accessed in column order
                 cvstart = Tile_cols [outer] ;
@@ -103,7 +107,8 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
                 ciend   = Tile_rows [inner+1] ;
             }
             else
-            {
+            { 
+GB_GOTCHA ; // concat_bitmap
                 // C and A are held by row
                 // Tiles is row-major and accessed in row order
                 cvstart = Tile_rows [outer] ;
@@ -130,27 +135,32 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
                     #define GB_COPY(pC,pA) Cx [pC] = Ax [pA]
 
                     case 1 : // uint8, int8, bool, or 1-byte user-defined
+GB_GOTCHA ; // concat_bitmap
                         #define GB_CTYPE uint8_t
                         #include "GB_concat_bitmap_template.c"
                         break ;
 
                     case 2 : // uint16, int16, or 2-byte user-defined
+GB_GOTCHA ; // concat_bitmap
                         #define GB_CTYPE uint16_t
                         #include "GB_concat_bitmap_template.c"
                         break ;
 
                     case 4 : // uint32, int32, float, or 4-byte user-defined
+GB_GOTCHA ; // concat_bitmap
                         #define GB_CTYPE uint32_t
                         #include "GB_concat_bitmap_template.c"
                         break ;
 
                     case 8 : // uint64, int64, double, float complex,
+GB_GOTCHA ; // concat_bitmap
                              // or 8-byte user defined
                         #define GB_CTYPE uint64_t
                         #include "GB_concat_bitmap_template.c"
                         break ;
 
                     case 16 : // double complex or 16-byte user-defined
+GB_GOTCHA ; // concat_bitmap
                         #define GB_CTYPE uint64_t
                         #undef  GB_COPY
                         #define GB_COPY(pC,pA)                      \
@@ -160,6 +170,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
                         break ;
 
                     default : // user-defined of a different size
+GB_GOTCHA ; // concat_bitmap
                         #define GB_CTYPE GB_void
                         #undef  GB_COPY
                         #define GB_COPY(pC,pA)                      \
@@ -169,7 +180,8 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
                 }
             }
             else
-            {
+            { 
+GB_GOTCHA ; // concat_bitmap
                 // with typecasting (not for user-defined types)
                 GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
                 size_t asize = A->type->size ;

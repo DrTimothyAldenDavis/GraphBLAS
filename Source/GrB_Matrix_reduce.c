@@ -141,136 +141,136 @@ GrB_Info GrB_Matrix_reduce_BinaryOp // DEPRECATED
         case GB_MIN_opcode:
             switch (zcode)
             {
-                case GB_INT8_code   : monoid = GrB_MIN_MONOID_INT8     ; break ;
-                case GB_INT16_code  : monoid = GrB_MIN_MONOID_INT16    ; break ;
-                case GB_INT32_code  : monoid = GrB_MIN_MONOID_INT32    ; break ;
-                case GB_INT64_code  : monoid = GrB_MIN_MONOID_INT64    ; break ;
-                case GB_UINT8_code  : monoid = GrB_MIN_MONOID_UINT8    ; break ;
-                case GB_UINT16_code : monoid = GrB_MIN_MONOID_UINT16   ; break ;
-                case GB_UINT32_code : monoid = GrB_MIN_MONOID_UINT32   ; break ;
-                case GB_UINT64_code : monoid = GrB_MIN_MONOID_UINT64   ; break ;
-                case GB_FP32_code   : monoid = GrB_MIN_MONOID_FP32     ; break ;
-                case GB_FP64_code   : monoid = GrB_MIN_MONOID_FP64     ; break ;
-                default: ;
+                case GB_INT8_code   :monoid = GrB_MIN_MONOID_INT8     ; break ;
+                case GB_INT16_code  :monoid = GrB_MIN_MONOID_INT16    ; break ;
+                case GB_INT32_code  :monoid = GrB_MIN_MONOID_INT32    ; break ;
+                case GB_INT64_code  :monoid = GrB_MIN_MONOID_INT64    ; break ;
+                case GB_UINT8_code  :monoid = GrB_MIN_MONOID_UINT8    ; break ;
+                case GB_UINT16_code :monoid = GrB_MIN_MONOID_UINT16   ; break ;
+                case GB_UINT32_code :monoid = GrB_MIN_MONOID_UINT32   ; break ;
+                case GB_UINT64_code :monoid = GrB_MIN_MONOID_UINT64   ; break ;
+                case GB_FP32_code   :monoid = GrB_MIN_MONOID_FP32     ; break ;
+                case GB_FP64_code   :monoid = GrB_MIN_MONOID_FP64     ; break ;
+                default:;
             }
             break ;
         case GB_MAX_opcode:
             switch (zcode)
             {
-                case GB_INT8_code   : monoid = GrB_MAX_MONOID_INT8     ; break ;
-                case GB_INT16_code  : monoid = GrB_MAX_MONOID_INT16    ; break ;
-                case GB_INT32_code  : monoid = GrB_MAX_MONOID_INT32    ; break ;
-                case GB_INT64_code  : monoid = GrB_MAX_MONOID_INT64    ; break ;
-                case GB_UINT8_code  : monoid = GrB_MAX_MONOID_UINT8    ; break ;
-                case GB_UINT16_code : monoid = GrB_MAX_MONOID_UINT16   ; break ;
-                case GB_UINT32_code : monoid = GrB_MAX_MONOID_UINT32   ; break ;
-                case GB_UINT64_code : monoid = GrB_MAX_MONOID_UINT64   ; break ;
-                case GB_FP32_code   : monoid = GrB_MAX_MONOID_FP32     ; break ;
-                case GB_FP64_code   : monoid = GrB_MAX_MONOID_FP64     ; break ;
-                default: ;
+                case GB_INT8_code   :monoid = GrB_MAX_MONOID_INT8     ; break ;
+                case GB_INT16_code  :monoid = GrB_MAX_MONOID_INT16    ; break ;
+                case GB_INT32_code  :monoid = GrB_MAX_MONOID_INT32    ; break ;
+                case GB_INT64_code  :monoid = GrB_MAX_MONOID_INT64    ; break ;
+                case GB_UINT8_code  :monoid = GrB_MAX_MONOID_UINT8    ; break ;
+                case GB_UINT16_code :monoid = GrB_MAX_MONOID_UINT16   ; break ;
+                case GB_UINT32_code :monoid = GrB_MAX_MONOID_UINT32   ; break ;
+                case GB_UINT64_code :monoid = GrB_MAX_MONOID_UINT64   ; break ;
+                case GB_FP32_code   :monoid = GrB_MAX_MONOID_FP32     ; break ;
+                case GB_FP64_code   :monoid = GrB_MAX_MONOID_FP64     ; break ;
+                default:;
             }
             break ;
         case GB_TIMES_opcode:
             switch (zcode)
             {
-                case GB_INT8_code   : monoid = GrB_TIMES_MONOID_INT8   ; break ;
-                case GB_INT16_code  : monoid = GrB_TIMES_MONOID_INT16  ; break ;
-                case GB_INT32_code  : monoid = GrB_TIMES_MONOID_INT32  ; break ;
-                case GB_INT64_code  : monoid = GrB_TIMES_MONOID_INT64  ; break ;
-                case GB_UINT8_code  : monoid = GrB_TIMES_MONOID_UINT8  ; break ;
-                case GB_UINT16_code : monoid = GrB_TIMES_MONOID_UINT16 ; break ;
-                case GB_UINT32_code : monoid = GrB_TIMES_MONOID_UINT32 ; break ;
-                case GB_UINT64_code : monoid = GrB_TIMES_MONOID_UINT64 ; break ;
-                case GB_FP32_code   : monoid = GrB_TIMES_MONOID_FP32   ; break ;
-                case GB_FP64_code   : monoid = GrB_TIMES_MONOID_FP64   ; break ;
-                case GB_FC32_code   : monoid = GxB_TIMES_FC32_MONOID   ; break ;
-                case GB_FC64_code   : monoid = GxB_TIMES_FC64_MONOID   ; break ;
-                default: ;
+                case GB_INT8_code   :monoid = GrB_TIMES_MONOID_INT8   ; break ;
+                case GB_INT16_code  :monoid = GrB_TIMES_MONOID_INT16  ; break ;
+                case GB_INT32_code  :monoid = GrB_TIMES_MONOID_INT32  ; break ;
+                case GB_INT64_code  :monoid = GrB_TIMES_MONOID_INT64  ; break ;
+                case GB_UINT8_code  :monoid = GrB_TIMES_MONOID_UINT8  ; break ;
+                case GB_UINT16_code :monoid = GrB_TIMES_MONOID_UINT16 ; break ;
+                case GB_UINT32_code :monoid = GrB_TIMES_MONOID_UINT32 ; break ;
+                case GB_UINT64_code :monoid = GrB_TIMES_MONOID_UINT64 ; break ;
+                case GB_FP32_code   :monoid = GrB_TIMES_MONOID_FP32   ; break ;
+                case GB_FP64_code   :monoid = GrB_TIMES_MONOID_FP64   ; break ;
+                case GB_FC32_code   :monoid = GxB_TIMES_FC32_MONOID   ; break ;
+                case GB_FC64_code   :monoid = GxB_TIMES_FC64_MONOID   ; break ;
+                default:;
             }
             break ;
         case GB_PLUS_opcode:
             switch (zcode)
             {
-                case GB_INT8_code   : monoid = GrB_PLUS_MONOID_INT8    ; break ;
-                case GB_INT16_code  : monoid = GrB_PLUS_MONOID_INT16   ; break ;
-                case GB_INT32_code  : monoid = GrB_PLUS_MONOID_INT32   ; break ;
-                case GB_INT64_code  : monoid = GrB_PLUS_MONOID_INT64   ; break ;
-                case GB_UINT8_code  : monoid = GrB_PLUS_MONOID_UINT8   ; break ;
-                case GB_UINT16_code : monoid = GrB_PLUS_MONOID_UINT16  ; break ;
-                case GB_UINT32_code : monoid = GrB_PLUS_MONOID_UINT32  ; break ;
-                case GB_UINT64_code : monoid = GrB_PLUS_MONOID_UINT64  ; break ;
-                case GB_FP32_code   : monoid = GrB_PLUS_MONOID_FP32    ; break ;
-                case GB_FP64_code   : monoid = GrB_PLUS_MONOID_FP64    ; break ;
-                case GB_FC32_code   : monoid = GxB_PLUS_FC32_MONOID    ; break ;
-                case GB_FC64_code   : monoid = GxB_PLUS_FC64_MONOID    ; break ;
-                default: ;
+                case GB_INT8_code   :monoid = GrB_PLUS_MONOID_INT8    ; break ;
+                case GB_INT16_code  :monoid = GrB_PLUS_MONOID_INT16   ; break ;
+                case GB_INT32_code  :monoid = GrB_PLUS_MONOID_INT32   ; break ;
+                case GB_INT64_code  :monoid = GrB_PLUS_MONOID_INT64   ; break ;
+                case GB_UINT8_code  :monoid = GrB_PLUS_MONOID_UINT8   ; break ;
+                case GB_UINT16_code :monoid = GrB_PLUS_MONOID_UINT16  ; break ;
+                case GB_UINT32_code :monoid = GrB_PLUS_MONOID_UINT32  ; break ;
+                case GB_UINT64_code :monoid = GrB_PLUS_MONOID_UINT64  ; break ;
+                case GB_FP32_code   :monoid = GrB_PLUS_MONOID_FP32    ; break ;
+                case GB_FP64_code   :monoid = GrB_PLUS_MONOID_FP64    ; break ;
+                case GB_FC32_code   :monoid = GxB_PLUS_FC32_MONOID    ; break ;
+                case GB_FC64_code   :monoid = GxB_PLUS_FC64_MONOID    ; break ;
+                default:;
             }
             break ;
         case GB_ANY_opcode:
             switch (zcode)
             {
-                case GB_BOOL_code   : monoid = GxB_ANY_BOOL_MONOID     ; break ;
-                case GB_INT8_code   : monoid = GxB_ANY_INT8_MONOID     ; break ;
-                case GB_INT16_code  : monoid = GxB_ANY_INT16_MONOID    ; break ;
-                case GB_INT32_code  : monoid = GxB_ANY_INT32_MONOID    ; break ;
-                case GB_INT64_code  : monoid = GxB_ANY_INT64_MONOID    ; break ;
-                case GB_UINT8_code  : monoid = GxB_ANY_UINT8_MONOID    ; break ;
-                case GB_UINT16_code : monoid = GxB_ANY_UINT16_MONOID   ; break ;
-                case GB_UINT32_code : monoid = GxB_ANY_UINT32_MONOID   ; break ;
-                case GB_UINT64_code : monoid = GxB_ANY_UINT64_MONOID   ; break ;
-                case GB_FP32_code   : monoid = GxB_ANY_FP32_MONOID     ; break ;
-                case GB_FP64_code   : monoid = GxB_ANY_FP64_MONOID     ; break ;
-                case GB_FC32_code   : monoid = GxB_ANY_FC32_MONOID     ; break ;
-                case GB_FC64_code   : monoid = GxB_ANY_FC64_MONOID     ; break ;
-                default: ;
+                case GB_BOOL_code   :monoid = GxB_ANY_BOOL_MONOID     ; break ;
+                case GB_INT8_code   :monoid = GxB_ANY_INT8_MONOID     ; break ;
+                case GB_INT16_code  :monoid = GxB_ANY_INT16_MONOID    ; break ;
+                case GB_INT32_code  :monoid = GxB_ANY_INT32_MONOID    ; break ;
+                case GB_INT64_code  :monoid = GxB_ANY_INT64_MONOID    ; break ;
+                case GB_UINT8_code  :monoid = GxB_ANY_UINT8_MONOID    ; break ;
+                case GB_UINT16_code :monoid = GxB_ANY_UINT16_MONOID   ; break ;
+                case GB_UINT32_code :monoid = GxB_ANY_UINT32_MONOID   ; break ;
+                case GB_UINT64_code :monoid = GxB_ANY_UINT64_MONOID   ; break ;
+                case GB_FP32_code   :monoid = GxB_ANY_FP32_MONOID     ; break ;
+                case GB_FP64_code   :monoid = GxB_ANY_FP64_MONOID     ; break ;
+                case GB_FC32_code   :monoid = GxB_ANY_FC32_MONOID     ; break ;
+                case GB_FC64_code   :monoid = GxB_ANY_FC64_MONOID     ; break ;
+                default:;
             }
             break ;
         #define B(x) if (zcode == GB_BOOL_code) monoid = x ; break ;
-        case GB_LOR_opcode   : B (GrB_LOR_MONOID_BOOL)   ;
-        case GB_LAND_opcode  : B (GrB_LAND_MONOID_BOOL)  ;
-        case GB_LXOR_opcode  : B (GrB_LXOR_MONOID_BOOL)  ;
-        case GB_EQ_opcode    : B (GrB_LXNOR_MONOID_BOOL) ;
+        case GB_LOR_opcode   :B (GrB_LOR_MONOID_BOOL)   ;
+        case GB_LAND_opcode  :B (GrB_LAND_MONOID_BOOL)  ;
+        case GB_LXOR_opcode  :B (GrB_LXOR_MONOID_BOOL)  ;
+        case GB_EQ_opcode    :B (GrB_LXNOR_MONOID_BOOL) ;
         case GB_BOR_opcode:
             switch (zcode)
             {
-                case GB_UINT8_code  : monoid = GxB_BOR_UINT8_MONOID    ; break ;
-                case GB_UINT16_code : monoid = GxB_BOR_UINT16_MONOID   ; break ;
-                case GB_UINT32_code : monoid = GxB_BOR_UINT32_MONOID   ; break ;
-                case GB_UINT64_code : monoid = GxB_BOR_UINT64_MONOID   ; break ;
-                default: ;
+                case GB_UINT8_code  :monoid = GxB_BOR_UINT8_MONOID    ; break ;
+                case GB_UINT16_code :monoid = GxB_BOR_UINT16_MONOID   ; break ;
+                case GB_UINT32_code :monoid = GxB_BOR_UINT32_MONOID   ; break ;
+                case GB_UINT64_code :monoid = GxB_BOR_UINT64_MONOID   ; break ;
+                default:;
             }
             break ;
         case GB_BAND_opcode:
             switch (zcode)
             {
-                case GB_UINT8_code  : monoid = GxB_BAND_UINT8_MONOID   ; break ;
-                case GB_UINT16_code : monoid = GxB_BAND_UINT16_MONOID  ; break ;
-                case GB_UINT32_code : monoid = GxB_BAND_UINT32_MONOID  ; break ;
-                case GB_UINT64_code : monoid = GxB_BAND_UINT64_MONOID  ; break ;
-                default: ;
+                case GB_UINT8_code  :monoid = GxB_BAND_UINT8_MONOID   ; break ;
+                case GB_UINT16_code :monoid = GxB_BAND_UINT16_MONOID  ; break ;
+                case GB_UINT32_code :monoid = GxB_BAND_UINT32_MONOID  ; break ;
+                case GB_UINT64_code :monoid = GxB_BAND_UINT64_MONOID  ; break ;
+                default:;
             }
             break ;
         case GB_BXOR_opcode:
             switch (zcode)
             {
-                case GB_UINT8_code  : monoid = GxB_BXOR_UINT8_MONOID   ; break ;
-                case GB_UINT16_code : monoid = GxB_BXOR_UINT16_MONOID  ; break ;
-                case GB_UINT32_code : monoid = GxB_BXOR_UINT32_MONOID  ; break ;
-                case GB_UINT64_code : monoid = GxB_BXOR_UINT64_MONOID  ; break ;
-                default: ;
+                case GB_UINT8_code  :monoid = GxB_BXOR_UINT8_MONOID   ; break ;
+                case GB_UINT16_code :monoid = GxB_BXOR_UINT16_MONOID  ; break ;
+                case GB_UINT32_code :monoid = GxB_BXOR_UINT32_MONOID  ; break ;
+                case GB_UINT64_code :monoid = GxB_BXOR_UINT64_MONOID  ; break ;
+                default:;
             }
             break ;
         case GB_BXNOR_opcode:
             switch (zcode)
             {
-                case GB_UINT8_code  : monoid = GxB_BXNOR_UINT8_MONOID  ; break ;
-                case GB_UINT16_code : monoid = GxB_BXNOR_UINT16_MONOID ; break ;
-                case GB_UINT32_code : monoid = GxB_BXNOR_UINT32_MONOID ; break ;
-                case GB_UINT64_code : monoid = GxB_BXNOR_UINT64_MONOID ; break ;
-                default: ;
+                case GB_UINT8_code  :monoid = GxB_BXNOR_UINT8_MONOID  ; break ;
+                case GB_UINT16_code :monoid = GxB_BXNOR_UINT16_MONOID ; break ;
+                case GB_UINT32_code :monoid = GxB_BXNOR_UINT32_MONOID ; break ;
+                case GB_UINT64_code :monoid = GxB_BXNOR_UINT64_MONOID ; break ;
+                default:;
             }
             break ;
-        default : 
+        default:
             GB_ERROR (GrB_DOMAIN_MISMATCH, "Invalid binary operator:"
                 " z=%s(x,y) has no equivalent monoid\n", op_in->name) ;
     }

@@ -133,6 +133,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     GB_WERK_PUSH (B_slice, nbslice + 1, int64_t) ;
     if (A_slice == NULL || B_slice == NULL)
     { 
+GB_GOTCHA ; // WERK_PUSH
         // out of memory
         GB_FREE_WORK ;
         return (GrB_OUT_OF_MEMORY) ;

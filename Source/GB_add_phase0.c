@@ -334,6 +334,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         GB_WERK_PUSH (Work, 3*(ntasks+1), int64_t) ;
         if (Work == NULL)
         { 
+GB_GOTCHA ; // WERK_PUSH
             // out of memory
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;

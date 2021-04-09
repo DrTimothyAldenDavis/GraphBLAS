@@ -81,7 +81,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     Work = GB_CALLOC_WERK (ninner * cvdim, int64_t, &Work_size) ;
     S = GB_CALLOC_WERK (m * n, GrB_Matrix, &S_size) ;
     if (S == NULL || Work == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
@@ -112,14 +112,15 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                     NULL, NULL, NULL, false, Context)) ;
                 // save T in array S
                 if (csc)
-                {
+                { 
+GB_GOTCHA ; // concat_sparse
                     GB_TILE (S, inner, outer) = T ;
                 }
                 else
-                {
+                { 
+GB_GOTCHA ; // concat_sparse
                     GB_TILE (S, outer, inner) = T ;
                 }
-
                 A = T ;
                 GB_MATRIX_WAIT (A) ;
             }
@@ -138,11 +139,13 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                     GB_OK (GB_dup2 (&T, A, true, NULL, Context)) ;
                     // save T in array S
                     if (csc)
-                    {
+                    { 
+GB_GOTCHA ; // concat_sparse
                         GB_TILE (S, inner, outer) = T ;
                     }
                     else
-                    {
+                    { 
+GB_GOTCHA ; // concat_sparse
                         GB_TILE (S, outer, inner) = T ;
                     }
                 }
@@ -163,7 +166,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             int64_t *restrict W = Work + inner * cvdim + cvstart ;
             int nth = GB_nthreads (anvec, chunk, nthreads_max) ;
             if (GB_IS_FULL (A))
-            {
+            { 
+GB_GOTCHA ; // concat_sparse
                 // A is full
                 int64_t j ;
                 #pragma omp parallel for num_threads(nth) schedule(static)
@@ -174,7 +178,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 }
             }
             else
-            {
+            { 
                 // A is sparse or hyper
                 int64_t k ;
                 int64_t *restrict Ah = A->h ;
@@ -201,7 +205,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     {
         int64_t s = 0 ;
         for (int64_t inner = 0 ; inner < ninner ; inner++)
-        {
+        { 
             int64_t p = inner * cvdim + k ;
             int64_t c = Work [p] ;
             Work [p] = s ;
@@ -218,7 +222,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     {
         int64_t pC = Cp [k] ;
         for (int64_t inner = 0 ; inner < ninner ; inner++)
-        {
+        { 
             int64_t p = inner * cvdim + k ;
             Work [p] += pC ;
         }
@@ -240,7 +244,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             A = csc ? GB_TILE (S, inner, outer)
                     : GB_TILE (S, outer, inner) ;
             if (A == NULL)
-            {
+            { 
                 A = csc ? GB_TILE (Tiles, inner, outer)
                         : GB_TILE (Tiles, outer, inner) ;
             }
@@ -259,7 +263,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 
             int64_t cvstart, cvend, cistart, ciend ;
             if (csc)
-            {
+            { 
                 // C and A are held by column
                 // Tiles is row-major and accessed in column order
                 cvstart = Tile_cols [outer] ;
@@ -268,7 +272,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 ciend   = Tile_rows [inner+1] ;
             }
             else
-            {
+            { 
+GB_GOTCHA ; // concat_sparse
                 // C and A are held by row
                 // Tiles is row-major and accessed in row order
                 cvstart = Tile_rows [outer] ;
@@ -336,6 +341,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                         break ;
 
                     default : // user-defined of a different size
+GB_GOTCHA ; // concat_sparse, user defined
                         #define GB_CTYPE GB_void
                         #undef  GB_COPY
                         #define GB_COPY(pC,pA)                   \
@@ -345,7 +351,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 }
             }
             else
-            {
+            { 
                 // with typecasting (not for user-defined types)
                 GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
                 size_t asize = A->type->size ;

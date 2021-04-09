@@ -106,6 +106,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
     if ((*C_sparsity) == GxB_BITMAP || (*C_sparsity) == GxB_FULL)
     { 
+GB_GOTCHA ;     // C bitmap or full
         // nothing to do in phase0 for C bitmap or full.  C can be full only
         // for C=A.*B where A and B are full.  C can be bitmap for C=A.*B,
         // C<M>=A.*B, or C<!M>=A.*B only if A, B, and M (if present) are all

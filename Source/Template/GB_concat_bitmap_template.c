@@ -26,6 +26,7 @@
 
         case GxB_FULL : // A is full
         {
+GB_GOTCHA ; // A is full
             int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
             int64_t pA ;
             #pragma omp parallel for num_threads(A_nthreads) schedule(static)
@@ -45,6 +46,7 @@
 
         case GxB_BITMAP : // A is bitmap
         {
+GB_GOTCHA ; // A is bitmap
             int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
             const int8_t *GB_RESTRICT Ab = A->b ;
             int64_t pA ;
@@ -68,6 +70,7 @@
 
         default : // A is sparse or hypersparse
         {
+GB_GOTCHA ; // A is sparse or hypersparse
             int A_nthreads, A_ntasks ;
             GB_SLICE_MATRIX (A, 1, chunk) ;
 //          printf ("nthreads %d ntasks %d\n", A_nthreads, A_ntasks) ;

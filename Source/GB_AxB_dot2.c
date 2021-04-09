@@ -239,6 +239,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GB_WERK_PUSH (B_slice, nbslice + 1, int64_t) ;
     if (A_slice == NULL || B_slice == NULL)
     { 
+GB_GOTCHA ; // WERK_PUSH
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;

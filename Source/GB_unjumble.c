@@ -70,6 +70,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     GB_WERK_PUSH (A_slice, ntasks + 1, int64_t) ;
     if (A_slice == NULL)
     { 
+GB_GOTCHA ; // WERK_PUSH
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }

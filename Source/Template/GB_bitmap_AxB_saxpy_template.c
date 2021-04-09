@@ -213,6 +213,7 @@
         GB_WERK_PUSH (B_slice, nbslice + 1, int64_t) ;
         if (B_slice == NULL)
         { 
+GB_GOTCHA ; // WERK_PUSH
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -400,6 +401,7 @@
             GB_WERK_PUSH (A_slice, nfine_tasks_per_vector + 1, int64_t) ;
             if (A_slice == NULL)
             { 
+GB_GOTCHA ; // WERK_PUSH
                 // out of memory
                 GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;

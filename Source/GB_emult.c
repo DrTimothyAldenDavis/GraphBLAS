@@ -326,7 +326,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // TODO: this will use 04 (M,B,A, flipxy=true)
             // M and B must not be jumbled.
 
-        default : ;
+        default:;
     }
 
     //--------------------------------------------------------------------------

@@ -329,6 +329,7 @@ GrB_Info GB_AemultB_02__bshift_uint32
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
+GB_GOTCHA ; // GB_AemultB_02__bshift_uint32: A sparse/hyper, B bitmap/full
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
@@ -375,6 +376,7 @@ GrB_Info GB_AemultB_03__bshift_uint32
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 )
 { 
+GB_GOTCHA ; // GB_AemultB_03__bshift_uint32: M sparse/hyper, A&B bitmap/full
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
@@ -401,6 +403,7 @@ GrB_Info GB_AemultB_bitmap__bshift_uint32
     GB_Context Context
 )
 { 
+GB_GOTCHA ; // GB_AemultB_bitmap__bshift_uint32: C bitmap
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else

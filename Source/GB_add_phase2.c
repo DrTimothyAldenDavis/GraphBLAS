@@ -241,6 +241,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         // arrays to the worker.
         if (info == GrB_OUT_OF_MEMORY)
         { 
+GB_GOTCHA ; // worker out of memory
             // out of memory
             GB_FREE_ALL ;
             return (info) ;

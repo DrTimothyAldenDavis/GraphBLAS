@@ -27,6 +27,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     GB_Context Context
 )
 { 
+GB_GOTCHA ; // concat_hyper
 
     //--------------------------------------------------------------------------
     // allocate triplet workspace to construct C as hypersparse
@@ -57,7 +58,8 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     Wj = GB_MALLOC_WERK (cnz, int64_t, &Wj_size) ;          // freed below
     Wx = GB_MALLOC_WERK (cnz * csize, GB_void, &Wx_size) ;  // freed below
     if (Wi == NULL || Wj == NULL || Wx == NULL)
-    {
+    { 
+GB_GOTCHA ; // concat_hyper
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
@@ -92,14 +94,16 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
 
             int64_t cvstart, cistart ;
             if (csc)
-            {
+            { 
+GB_GOTCHA ; // concat_hyper
                 // C is held by column
                 // Tiles is row-major and accessed in column order
                 cvstart = Tile_cols [outer] ;
                 cistart = Tile_rows [inner] ;
             }
             else
-            {
+            { 
+GB_GOTCHA ; // concat_hyper
                 // C is held by row
                 // Tiles is row-major and accessed in row order
                 cvstart = Tile_rows [outer] ;
@@ -121,6 +125,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
             int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
             if (cistart > 0 && cvstart > 0)
             { 
+GB_GOTCHA ; // concat_hyper
                 int64_t pA ;
                 #pragma omp parallel for num_threads(A_nthreads) \
                     schedule(static)
@@ -132,6 +137,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
             }
             else if (cistart > 0)
             { 
+GB_GOTCHA ; // concat_hyper
                 int64_t pA ;
                 #pragma omp parallel for num_threads(A_nthreads) \
                     schedule(static)
@@ -142,6 +148,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
             }
             else if (cvstart > 0)
             { 
+GB_GOTCHA ; // concat_hyper
                 int64_t pA ;
                 #pragma omp parallel for num_threads(A_nthreads) \
                     schedule(static)

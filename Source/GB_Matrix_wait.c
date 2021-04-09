@@ -120,6 +120,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         if (A->p_shallow)
         { 
+GB_GOTCHA ; // p shallow
             int64_t len = (A->plen + 1) * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
@@ -135,6 +136,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         if (A->h_shallow)
         { 
+GB_GOTCHA ; // h shallow
             int64_t len = A->nvec * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
@@ -150,6 +152,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         if (A->i_shallow)
         { 
+GB_GOTCHA ; // i shallow
             int64_t len = anz_orig * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
@@ -165,6 +168,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         if (A->x_shallow)
         { 
+GB_GOTCHA ; // x shallow
             int64_t len = anz_orig * asize ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)

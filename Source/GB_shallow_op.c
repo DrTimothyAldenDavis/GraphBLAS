@@ -177,6 +177,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         op2, scalar, binop_bind1st, A, Context) ;
     if (info != GrB_SUCCESS)
     { 
+GB_GOTCHA ; // apply_op out of memory
         // out of memory
         GB_Matrix_free (&C) ;
         return (GrB_OUT_OF_MEMORY) ;

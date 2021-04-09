@@ -37,6 +37,7 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
         case GxB_BITMAP_SWITCH : 
 
             {
+GB_GOTCHA ; // case GxB_BITMAP_SWITCH
                 va_start (ap, field) ;
                 double *bitmap_switch = va_arg (ap, double *) ;
                 va_end (ap) ;
