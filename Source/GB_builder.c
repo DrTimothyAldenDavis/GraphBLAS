@@ -189,7 +189,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t *GB_RESTRICT I_work = (*I_work_handle) ;
     int64_t *GB_RESTRICT J_work = (*J_work_handle) ;
     int64_t *GB_RESTRICT K_work = NULL ; size_t K_work_size = 0 ;
-    // printf ("check Jwork size %p %ld\n", J_work, *J_work_size_handle) ;
     ASSERT (*J_work_size_handle == GB_Global_memtable_size (J_work)) ;
 
     //--------------------------------------------------------------------------

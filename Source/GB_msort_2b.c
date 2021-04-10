@@ -310,7 +310,6 @@ GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 
     if (nthreads <= 1 || n <= GB_BASECASE)
     { 
-printf ("qsort2\n") ;
         // sequential quicksort
         GB_qsort_2 (A_0, A_1, n) ;
         return (GrB_SUCCESS) ;
