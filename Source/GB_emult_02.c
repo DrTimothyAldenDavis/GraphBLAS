@@ -207,7 +207,6 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
         GB_WERK_PUSH (Work, 3*A_ntasks, int64_t) ;
         if (Work == NULL)
         { 
-GB_GOTCHA ; // WERK_PUSH
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;

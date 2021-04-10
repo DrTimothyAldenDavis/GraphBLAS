@@ -88,12 +88,10 @@ void GB_cumsum                      // cumulative sum of an array
             GB_WERK_PUSH (ws, nthreads, int64_t) ;
             if (ws == NULL)
             { 
-GB_GOTCHA ; // WERK_PUSH
                 // out of memory; use a single thread instead
                 GB_cumsum (count, n, NULL, 1, NULL) ;
                 return ;
             }
-GB_GOTCHA ; // kresult NULL, nthreads > 2
 
             int tid ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)

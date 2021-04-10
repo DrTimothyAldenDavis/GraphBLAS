@@ -55,13 +55,16 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     ASSERT (GB_IS_FULL (C)) ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
+    int64_t nouter = csc ? n : m ;
+    int64_t ninner = csc ? m : n ;
+
     //--------------------------------------------------------------------------
     // concatenate all matrices into C
     //--------------------------------------------------------------------------
 
-    for (int64_t outer = 0 ; outer < (csc ? n : m) ; outer++)
+    for (int64_t outer = 0 ; outer < nouter ; outer++)
     {
-        for (int64_t inner = 0 ; inner < (csc ? m : n) ; inner++)
+        for (int64_t inner = 0 ; inner < ninner ; inner++)
         {
 
             //------------------------------------------------------------------
@@ -102,7 +105,6 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
             }
             else
             { 
-GB_GOTCHA ; // concat_full
                 // C and A are held by row
                 // Tiles is row-major and accessed in row order
                 cvstart = Tile_rows [outer] ;
@@ -122,56 +124,54 @@ GB_GOTCHA ; // concat_full
             // copy the tile A into C
             //------------------------------------------------------------------
 
-            if (ccode == acode)
-            {
-                // no typecasting needed
-                switch (csize)
+            bool done = false ;
+
+            #ifndef GBCOMPACT
+                if (ccode == acode)
                 {
-                    #define GB_COPY(pC,pA) Cx [pC] = Ax [pA]
+                    // no typecasting needed
+                    switch (csize)
+                    {
+                        #define GB_COPY(pC,pA) Cx [pC] = Ax [pA]
 
-                    case 1 : // uint8, int8, bool, or 1-byte user-defined
-                        #define GB_CTYPE uint8_t
-                        #include "GB_concat_full_template.c"
-                        break ;
+                        case 1 : // uint8, int8, bool, or 1-byte user-defined
+                            #define GB_CTYPE uint8_t
+                            #include "GB_concat_full_template.c"
+                            break ;
 
-                    case 2 : // uint16, int16, or 2-byte user-defined
-                        #define GB_CTYPE uint16_t
-                        #include "GB_concat_full_template.c"
-                        break ;
+                        case 2 : // uint16, int16, or 2-byte user-defined
+                            #define GB_CTYPE uint16_t
+                            #include "GB_concat_full_template.c"
+                            break ;
 
-                    case 4 : // uint32, int32, float, or 4-byte user-defined
-                        #define GB_CTYPE uint32_t
-                        #include "GB_concat_full_template.c"
-                        break ;
+                        case 4 : // uint32, int32, float, or 4-byte user-defined
+                            #define GB_CTYPE uint32_t
+                            #include "GB_concat_full_template.c"
+                            break ;
 
-                    case 8 : // uint64, int64, double, float complex,
-                             // or 8-byte user defined
-                        #define GB_CTYPE uint64_t
-                        #include "GB_concat_full_template.c"
-                        break ;
+                        case 8 : // uint64, int64, double, float complex,
+                                 // or 8-byte user defined
+                            #define GB_CTYPE uint64_t
+                            #include "GB_concat_full_template.c"
+                            break ;
 
-                    case 16 : // double complex or 16-byte user-defined
-                        #define GB_CTYPE uint64_t
-                        #undef  GB_COPY
-                        #define GB_COPY(pC,pA)                      \
-                            Cx [2*pC  ] = Ax [2*pA  ] ;          \
-                            Cx [2*pC+1] = Ax [2*pA+1] ;
-                        #include "GB_concat_full_template.c"
-                        break ;
+                        case 16 : // double complex or 16-byte user-defined
+                            #define GB_CTYPE uint64_t
+                            #undef  GB_COPY
+                            #define GB_COPY(pC,pA)                      \
+                                Cx [2*pC  ] = Ax [2*pA  ] ;             \
+                                Cx [2*pC+1] = Ax [2*pA+1] ;
+                            #include "GB_concat_full_template.c"
+                            break ;
 
-                    default : // user-defined of a different size
-GB_GOTCHA ; // concat_full
-                        #define GB_CTYPE GB_void
-                        #undef  GB_COPY
-                        #define GB_COPY(pC,pA)                      \
-                            memcpy (Cx + pC, Ax + pA, csize) ;
-                        #include "GB_concat_full_template.c"
-                        break ;
+                        default:;
+                    }
                 }
-            }
-            else
+            #endif
+
+            if (!done)
             { 
-                // with typecasting (not for user-defined types)
+                // with typecasting or user-defined types
                 GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
                 size_t asize = A->type->size ;
                 #define GB_CTYPE GB_void

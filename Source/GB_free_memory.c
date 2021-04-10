@@ -31,10 +31,8 @@ void GB_free_memory         // free memory, bypassing the free_pool
             // for memory usage testing only
             GB_Global_nmalloc_decrement ( ) ;
         }
-//      printf ("free   check size %ld of %p\n", size_allocated, *p) ;
         ASSERT (size_allocated == GB_Global_memtable_size (*p)) ;
 //      printf ("\nhard free %p %ld\n", *p, size_allocated) ;
-//      GB_Global_free_pool_dump (2) ;
 
 //      if (GB_Global_I_have_RMM ( ))
 //      {

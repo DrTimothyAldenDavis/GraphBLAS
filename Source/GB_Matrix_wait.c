@@ -112,15 +112,15 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     int64_t anz_orig = GB_NNZ (A) ;
     int64_t asize = A->type->size ;
 
-    // TODO: make this a separate function
+#if 0
+    // this code is currently unused
     if (GB_is_shallow (A))
     {
         // shallow matrices will never have any pending tuples
         ASSERT (npending == 0) ;
 
         if (A->p_shallow)
-        { 
-GB_GOTCHA ; // p shallow
+        {
             int64_t len = (A->plen + 1) * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
@@ -135,8 +135,7 @@ GB_GOTCHA ; // p shallow
         }
 
         if (A->h_shallow)
-        { 
-GB_GOTCHA ; // h shallow
+        {
             int64_t len = A->nvec * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
@@ -151,8 +150,7 @@ GB_GOTCHA ; // h shallow
         }
 
         if (A->i_shallow)
-        { 
-GB_GOTCHA ; // i shallow
+        {
             int64_t len = anz_orig * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
@@ -167,8 +165,7 @@ GB_GOTCHA ; // i shallow
         }
 
         if (A->x_shallow)
-        { 
-GB_GOTCHA ; // x shallow
+        {
             int64_t len = anz_orig * asize ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
@@ -181,9 +178,10 @@ GB_GOTCHA ; // x shallow
             A->x_shallow = false ;
             W = NULL ;
         }
-
-        ASSERT (!GB_is_shallow (A)) ;
     }
+#endif
+
+    ASSERT (!GB_is_shallow (A)) ;
 
     //--------------------------------------------------------------------------
     // check if A only needs to be unjumbled

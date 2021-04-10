@@ -277,6 +277,7 @@ GrB_Info GB_AaddB__gt_int8
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
     #include "GB_add_template.c"
+    GB_FREE_WORK ;
     return (GrB_SUCCESS) ;
     #endif
 }

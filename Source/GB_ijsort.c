@@ -111,7 +111,6 @@ GrB_Info GB_ijsort
     info = GB_msort_2b ((int64_t *) I1, (int64_t *) I1k, ni, nthreads) ;
     if (info != GrB_SUCCESS)
     { 
-GB_GOTCHA ; // msort_2b out of memory
         // out of memory
         GB_FREE_WORK ;
         return (GrB_OUT_OF_MEMORY) ;

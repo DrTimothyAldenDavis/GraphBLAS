@@ -28,6 +28,8 @@
         // Cx [pC] = Ax [pA] ;
         GB_COPY (pC, pA) ;
     }
+
+    done = true ;
 }
 
 #undef GB_CTYPE

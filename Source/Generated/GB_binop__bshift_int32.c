@@ -277,6 +277,7 @@ GrB_Info GB_AaddB__bshift_int32
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
     #include "GB_add_template.c"
+    GB_FREE_WORK ;
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -329,7 +330,6 @@ GrB_Info GB_AemultB_02__bshift_int32
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
-GB_GOTCHA ; // GB_AemultB_02__bshift_int32: A sparse/hyper, B bitmap/full
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else

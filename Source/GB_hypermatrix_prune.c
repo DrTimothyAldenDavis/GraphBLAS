@@ -40,7 +40,6 @@ GrB_Info GB_hypermatrix_prune
 
     if (A->nvec_nonempty < 0)
     { 
-GB_GOTCHA ; // nvec_nonempty < 0
         A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
     }
 

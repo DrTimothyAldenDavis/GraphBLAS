@@ -84,10 +84,9 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 
     if (!(*ok) || nitems_new > GxB_INDEX_MAX || size_of_item > GxB_INDEX_MAX)
     { 
-GB_GOTCHA ; // realloc too big
         // overflow
         (*ok) = false ;
-        return (NULL) ;
+        return (p) ;
     }
 
     //--------------------------------------------------------------------------
@@ -95,7 +94,6 @@ GB_GOTCHA ; // realloc too big
     //--------------------------------------------------------------------------
 
     int64_t oldsize_allocated = (*size_allocated) ;
-//  printf ("realloc check size %ld of %p\n", oldsize_allocated, p) ;
     ASSERT (oldsize_allocated == GB_Global_memtable_size (p)) ;
 
     //--------------------------------------------------------------------------
@@ -162,7 +160,6 @@ GB_GOTCHA ; // realloc too big
         }
         if (!pretend_to_fail)
         { 
-GB_GOTCHA ; // realloc
 //          printf ("hard realloc %p oldsize %ld newsize %ld\n",
 //              p, oldsize_allocated, newsize_allocated) ;
             pnew = GB_Global_realloc_function (p, newsize_allocated) ;

@@ -70,26 +70,30 @@ logstat ;             % start the log.txt
 
 % disable the Werk stack for these tests:
 hack = GB_mex_hack ;
-for werk_stack_disable = [1 0]
+hack (2) = 1 ;
+GB_mex_hack (hack) ;
 
-    hack (2) = werk_stack_disable ;
-    GB_mex_hack (hack) ;
-    logstat ('test188',t) ; % test concat
-    logstat ('test187',t) ; % test dup/assign for all sparsity formats
-    logstat ('test186',t) ; % test saxpy for all sparsity formats
-    logstat ('test185',s) ; % test dot4, saxpy for all sparsity formats
-    logstat ('test184',t) ; % test special cases for mxm, transpose, and build
-    logstat ('test181',s) ; % test transpose with explicit zeros in the mask
-    logstat ('test180',s) ; % test assign and subassign (single threaded)
-    logstat ('test180',t) ; % test assign and subassign (multi threaded)
-end
+logstat ('test188',t) ; % test concat
+logstat ('test187',t) ; % test dup/assign for all sparsity formats
+logstat ('test186',t) ; % test saxpy for all sparsity formats
+logstat ('test185',s) ; % test dot4, saxpy for all sparsity formats
+logstat ('test184',t) ; % test special cases for mxm, transpose, and build
+logstat ('test181',s) ; % test transpose with explicit zeros in the mask
+logstat ('test180',s) ; % test assign and subassign (single threaded)
+logstat ('test180',t) ; % test assign and subassign (multi threaded)
+logstat ('test150',t) ; % mxm with zombies and typecasting (dot3 and saxpy)
+logstat ('test14',t) ;  % GrB_reduce
+logstat ('test154',t) ; % apply with binop and scalar binding
+logstat ('test151b',t); % test bshift operator
 
 % re-enable the Werk stack for most tests:
-hack = GB_mex_hack ;
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
-GB_mex_hack ([0 1]) ;       % REMOVE THIS
+logstat ('test190',t) ; % test dense matrix for C<!M>=A*B
+logstat ('test189',t) ; % test large assign
+logstat ('test188',t) ; % test concat
+logstat ('test184',t) ; % test special cases for mxm, transpose, and build
 
 logstat ('test183',s) ; % test eWiseMult with hypersparse mask
 logstat ('test182',s) ; % test for internal wait
@@ -186,8 +190,10 @@ logstat ('test133',t) ; % test mask operations (GB_masker)
 logstat ('test72',t) ;  % several special cases
 logstat ('test80',t) ;  % test GrB_mxm on all semirings (different matrix)
 logstat ('test151',t) ; % test bitwise operators
+logstat ('test151b',t); % test bshift operator
 logstat ('test124',t) ; % GrB_extract, case 6
 logstat ('test23',t) ;  % quick test of GB_*_build
+
 logstat ('test175',t) ; % test142 updated
 logstat ('test160',t) ; % test A*B, parallel
 logstat ('test160',s) ; % test A*B, single threaded

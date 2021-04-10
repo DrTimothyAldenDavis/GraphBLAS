@@ -741,7 +741,6 @@ bool GB_Global_have_realloc_function (void)
 
 void * GB_Global_realloc_function (void *p, size_t size)
 { 
-GB_GOTCHA ; // realloc
     void *pnew = NULL ;
     if (GB_Global.malloc_is_thread_safe)
     {

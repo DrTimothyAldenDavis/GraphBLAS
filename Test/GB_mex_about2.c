@@ -362,9 +362,11 @@ void mexFunction
     bool ok = false ;
     int *p = GB_malloc_memory (4, sizeof (int), &nbytes) ;
     CHECK (p != NULL) ;
-    p = GB_realloc_memory (4, 4, sizeof (int), p, &nbytes, &ok, NULL) ;
+    p = GB_realloc_memory (1024*1024, 4, sizeof (int), p, &nbytes, &ok, NULL) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
+    p = GB_realloc_memory (4, 4, GxB_INDEX_MAX + 1, p, &nbytes, &ok, NULL) ;
+    CHECK (!ok) ;
     GB_free_memory (&p, nbytes) ;
 
     //--------------------------------------------------------------------------
@@ -389,6 +391,52 @@ void mexFunction
     info = GB_convert_to_full (X) ;
     if (info != GrB_OUT_OF_MEMORY) mexErrMsgTxt ("huge fail4") ;
     GrB_Matrix_free (&X) ;
+
+    //--------------------------------------------------------------------------
+    // hypermatrix prune
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&C, GrB_FP32, GxB_INDEX_MAX, GxB_INDEX_MAX)) ;
+    OK (GrB_Matrix_setElement_FP32 (C, (double) 3, 0, 0)) ;
+    OK (GrB_Matrix_wait (&C)) ;
+    OK (GxB_Matrix_fprint (C, "huge matrix", GxB_SHORT, NULL)) ;
+    C->nvec_nonempty = -1 ;
+    OK (GB_hypermatrix_prune (C, NULL)) ;
+    CHECK (C->nvec_nonempty == 1) ;
+    GrB_Matrix_free (&C) ;
+
+    //--------------------------------------------------------------------------
+    // vector option set/get
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Vector_new (&victor, GrB_FP32, 10)) ;
+    OK (GxB_Vector_Option_set (victor, GxB_BITMAP_SWITCH, (double) 4.5)) ;
+    double bitmap_switch = 8 ;
+    OK (GxB_Vector_Option_get (victor, GxB_BITMAP_SWITCH, &bitmap_switch)) ;
+    CHECK (bitmap_switch == 4.5) ;
+    GrB_Vector_free (&victor) ;
+
+    //--------------------------------------------------------------------------
+    // vector transpose
+    //--------------------------------------------------------------------------
+
+    #define FREE_ALL ;
+    #define GET_DEEP_COPY ;
+    #define FREE_DEEP_COPY ;
+    OK (GrB_Matrix_new (&C, GrB_FP32, 100, 1)) ;
+    OK (GrB_Matrix_setElement_FP32 (C, (double) 3, 0, 0)) ;
+    OK (GrB_Matrix_wait (&C)) ;
+    X = NULL ;
+    METHOD (GB_transpose (&X, NULL, true, C, NULL, NULL, NULL, false, NULL)) ;
+    OK (GxB_Matrix_fprint (X, "row", GxB_SHORT, NULL)) ;
+    GrB_Matrix Z = NULL ;
+    OK (GrB_Matrix_dup (&Z, X)) ;
+    GrB_Matrix_free (&C) ;
+    METHOD (GB_transpose (&C, NULL, true, Z, NULL, NULL, NULL, false, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "col", GxB_SHORT, NULL)) ;
+    GrB_Matrix_free (&Z) ;
+    GrB_Matrix_free (&X) ;
+    GrB_Matrix_free (&C) ;
 
     //--------------------------------------------------------------------------
     // wrapup

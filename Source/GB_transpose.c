@@ -512,7 +512,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GxB_HYPERSPARSE, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
-GB_GOTCHA ; // GB_new
             // out of memory
             ASSERT (!in_place) ;            // cannot fail if in-place,
             ASSERT (!C_static_header) ;     // or if C has a static header
@@ -647,7 +646,6 @@ GB_GOTCHA ; // GB_new
             GB_WERK_PUSH (Count, ntasks+1, int64_t) ;
             if (Count == NULL)
             { 
-GB_GOTCHA ; // WERK_PUSH
                 // out of memory
                 GB_FREE_C ;
                 return (GrB_OUT_OF_MEMORY) ;
@@ -666,7 +664,6 @@ GB_GOTCHA ; // WERK_PUSH
             GxB_SPARSE, A_hyper_switch, 0, Context) ;
         if (info != GrB_SUCCESS)
         { 
-GB_GOTCHA ; // GB_new
             // out of memory
             ASSERT (!in_place) ;            // cannot fail if in-place,
             ASSERT (!C_static_header) ;     // or if C has a static header
@@ -1214,7 +1211,6 @@ GB_GOTCHA ; // GB_new
             op2, scalar, binop_bind1st, C, Context) ;
         if (info != GrB_SUCCESS)
         { 
-GB_GOTCHA ; // apply_op out of memory
             // out of memory
             GB_FREE_C ;
             return (info) ;

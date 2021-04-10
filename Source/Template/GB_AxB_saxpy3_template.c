@@ -613,13 +613,8 @@
                     // M(:,j) is dense.  M is not scattered into Hf.
                     //----------------------------------------------------------
 
-                    if (Mask_struct && !M_is_bitmap)
-                    { 
-GB_GOTCHA ; // M dense in place, M structural, not bitmap
-                        // structural mask, complemented, and not bitmap.
-                        // No work to do.
-                        continue ;
-                    }
+                    // no work if M structural, complemented, and not bitmap
+                    if (Mask_struct && !M_is_bitmap) continue ;
 
                     #undef  GB_CHECK_MASK_ij
                     #define GB_CHECK_MASK_ij                        \
@@ -1296,13 +1291,8 @@ GB_GOTCHA ; // M dense in place, M structural, not bitmap
                         // M(:,j) is dense.  M is not scattered into Hf.
                         //------------------------------------------------------
 
-                        if (Mask_struct && !M_is_bitmap)
-                        { 
-GB_GOTCHA ; // M dense in place, M structural, not bitmap
-                            // structural mask, complemented, not bitmap.
-                            // No work to do; C is empty.
-                            continue ;
-                        }
+                        // no work if M structural, complemented, and not bitmap
+                        if (Mask_struct && !M_is_bitmap) continue ;
 
                         #undef  GB_CHECK_MASK_ij
                         #define GB_CHECK_MASK_ij                        \

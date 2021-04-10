@@ -65,14 +65,17 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
+    int64_t nouter = csc ? n : m ;
+    int64_t ninner = csc ? m : n ;
+
     //--------------------------------------------------------------------------
     // concatenate all matrices into the list of triplets
     //--------------------------------------------------------------------------
 
     int64_t pC = 0 ;
-    for (int64_t outer = 0 ; outer < (csc ? n : m) ; outer++)
+    for (int64_t outer = 0 ; outer < nouter ; outer++)
     {
-        for (int64_t inner = 0 ; inner < (csc ? m : n) ; inner++)
+        for (int64_t inner = 0 ; inner < ninner ; inner++)
         {
 
             //------------------------------------------------------------------
@@ -100,7 +103,6 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
             }
             else
             { 
-GB_GOTCHA ; // concat_hyper
                 // C is held by row
                 // Tiles is row-major and accessed in row order
                 cvstart = Tile_rows [outer] ;

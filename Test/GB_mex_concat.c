@@ -98,14 +98,15 @@ void mexFunction
         cncols += ancols ;
     }
 
-    // construct the empty C
-    #define GET_DEEP_COPY   GrB_Matrix_new (&C, ctype, cnrows, cncols) ;
-    #define FREE_DEEP_COPY  GrB_Matrix_free_(&C) ;
-    GET_DEEP_COPY ;
-
     // get the format of C, default is by column
     int GET_SCALAR (2, int, fmt, GxB_BY_COL) ;
-    OK (GxB_Matrix_Option_set_(C, GxB_FORMAT, fmt)) ;
+
+    // construct the empty C
+    #define GET_DEEP_COPY                               \
+        GrB_Matrix_new (&C, ctype, cnrows, cncols) ;    \
+        GxB_Matrix_Option_set_(C, GxB_FORMAT, fmt) ;
+    #define FREE_DEEP_COPY  GrB_Matrix_free_(&C) ;
+    GET_DEEP_COPY ;
 
     // C = concat (Tiles)
     METHOD (GxB_Matrix_concat (C, Tiles, m, n, NULL)) ;

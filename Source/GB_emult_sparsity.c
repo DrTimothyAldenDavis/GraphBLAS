@@ -286,7 +286,6 @@ int GB_emult_sparsity       // return the sparsity structure for C
             }
             else if (A_is_full && B_is_full)
             { 
-GB_GOTCHA ;     // C<!M>=A.*B with A and B full, M sparse/hyper
                 // C<!M>=A.*B with A and B full
                 C_sparsity = GxB_BITMAP ;
                 // (*ewise_method) = GB_EMULT_METHOD_ADD ;  this is possible
@@ -349,7 +348,6 @@ GB_GOTCHA ;     // C<!M>=A.*B with A and B full, M sparse/hyper
             }
             else if (A_is_full && B_is_full)
             { 
-GB_GOTCHA ;     // C<!M>=A.*B with A and B full, M bitmap/full
                 // C<!M>=A.*B with A and B full
                 C_sparsity = GxB_BITMAP ;
                 // (*ewise_method) = GB_EMULT_METHOD_ADD ; this is possible

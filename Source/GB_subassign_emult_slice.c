@@ -132,6 +132,9 @@ GrB_Info GB_subassign_emult_slice
         &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size, &Z_sparsity, NULL, A, M,
         Context)) ;
 
+    // Z is still sparse or hypersparse, not bitmap or full
+    ASSERT (Z_sparsity == GxB_SPARSE || Z_sparsity == GxB_HYPERSPARSE) ;
+
     GB_OK (GB_ewise_slice (
         &TaskList, &TaskList_size, &ntasks, &nthreads,
         Znvec, Zh_shallow, NULL, Z_to_A, Z_to_M, false,

@@ -367,6 +367,9 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // original input:
         (apply_mask) ? M : NULL, A, B, Context)) ;
 
+    // C is still sparse or hypersparse, not bitmap or full
+    ASSERT (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) ;
+
     //--------------------------------------------------------------------------
     // phase1: split C into tasks, and count entries in each vector of C
     //--------------------------------------------------------------------------

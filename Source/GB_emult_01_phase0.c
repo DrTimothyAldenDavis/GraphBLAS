@@ -104,16 +104,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     (*C_to_A_handle) = NULL ;
     (*C_to_B_handle) = NULL ;
 
-    if ((*C_sparsity) == GxB_BITMAP || (*C_sparsity) == GxB_FULL)
-    { 
-GB_GOTCHA ;     // C bitmap or full
-        // nothing to do in phase0 for C bitmap or full.  C can be full only
-        // for C=A.*B where A and B are full.  C can be bitmap for C=A.*B,
-        // C<M>=A.*B, or C<!M>=A.*B only if A, B, and M (if present) are all
-        // bitmap or full.
-        (*p_Cnvec) = A->vdim ;
-        return (GrB_SUCCESS) ;
-    }
+    ASSERT ((*C_sparsity) == GxB_SPARSE || (*C_sparsity) == GxB_HYPERSPARSE) ;
 
     const int64_t *GB_RESTRICT Ch = NULL ; size_t Ch_size = 0 ;
     int64_t *GB_RESTRICT C_to_M = NULL ; size_t C_to_M_size = 0 ;

@@ -412,7 +412,6 @@ void GB_AxB_saxpy3_symbolic
 
                         if (Mask_struct && !M_is_bitmap)
                         { 
-GB_GOTCHA ; // M dense in place, M structural, not bitmap
                             // structural mask, complemented, not bitmap.
                             // No work to do; C is empty.
                             for (int64_t kk = kfirst ; kk <= klast ; kk++)

@@ -26,7 +26,6 @@
 
         case GxB_FULL : // A is full
         {
-GB_GOTCHA ; // A is full
             int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
             int64_t pA ;
             #pragma omp parallel for num_threads(A_nthreads) schedule(static)
@@ -102,6 +101,8 @@ GB_GOTCHA ; // A is full
         }
         break ;
     }
+
+    done = true ;
 }
 
 #undef GB_CTYPE

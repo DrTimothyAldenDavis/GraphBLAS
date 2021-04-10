@@ -12,7 +12,7 @@ types = types.all ;
 rng ('default') ;
 
 n1 = 20 ;
-n2 = 40 ;
+n2 = 4 ;
 
 for d = [1e-4 0.01 0.2 0.8 inf]
     fprintf ('\nd = %g\n', d) ;
@@ -21,14 +21,22 @@ for d = [1e-4 0.01 0.2 0.8 inf]
         A1 = GB_spec_random (n1, n1, d, 128, atype) ;
         A2 = GB_spec_random (n1, n2, d, 128, atype) ;
         A3 = GB_spec_random (n2, n1, d, 128, atype) ;
-        A4 = GB_spec_random (n2, n2, d, 128, atype) ;
+        if (ka == 11)
+            A4 = GB_spec_random (n2, n2, inf, 128, atype) ;
+        else
+            A4 = GB_spec_random (n2, n2, d, 128, atype) ;
+        end
 
         for sparsity_control = [1 2 4 8]
             fprintf ('.') ;
             A1.sparsity = sparsity_control ;
             A2.sparsity = sparsity_control ;
             A3.sparsity = sparsity_control ;
-            A4.sparsity = sparsity_control ;
+            if (ka == 11)
+                A4.sparsity = 8 ;
+            else
+                A4.sparsity = sparsity_control ;
+            end
             for is_csc = [0 1]
                 A1.is_csc = is_csc ;
                 A2.is_csc = is_csc ;
