@@ -15,7 +15,6 @@ C = sprand (n, n, d) ;
 A = sprand (n, n, d) ;
 I = randperm (n) ;
 J = randperm (n) ;
-GrB.burble (1) ;
 nthreads_set (4, 1) ;
 % C (I,J) = A ;
 I0 = uint64 (I) - 1 ;
@@ -26,6 +25,5 @@ C2 = C ;
 C2 (I, J) = A ;
 
 assert (isequal (C1.matrix, C2)) ;
-GrB.burble (0) ;
 
 fprintf ('test189: all tests passed\n') ;

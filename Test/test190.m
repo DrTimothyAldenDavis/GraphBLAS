@@ -7,7 +7,6 @@ function test190
 fprintf ('test190 ----------- dense matrix for C<!M>=A*B\n') ;
 
 rng ('default') ;
-clear all
 n = 1000 ;
 M.matrix = eye (n) ;
 M.sparsity = 2 ;

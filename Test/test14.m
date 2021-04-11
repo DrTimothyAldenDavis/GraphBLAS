@@ -5,7 +5,6 @@ function test14
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\ntest14: reduce to column and scalar\n') ;
-GrB.burble (1) ;
 
 [~, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
 types = types.all ;

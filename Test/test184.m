@@ -6,7 +6,6 @@ function test184
 
 rng ('default') ;
 nthreads = nthreads_set ;
-GrB.burble (1) ;
 
 semiring.add = 'plus' ;
 semiring.multiply = 'times' ;
@@ -100,7 +99,6 @@ assert (norm (v1 - v2.matrix, 1) / norm (v1,1) < 1e-12)
 
 %----------------------------------------------------------------------
 
-GrB.burble (0) ;
 % restore # of threads
 nthreads_set (nthreads) ;
 
