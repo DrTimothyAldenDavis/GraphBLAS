@@ -417,7 +417,6 @@
 
 // GrB_reduce:
 #define GrB_Matrix_reduce_Monoid_(...)              GrB_reduce (__VA_ARGS__)
-#define GrB_Matrix_reduce_BinaryOp_(...)            GrB_reduce (__VA_ARGS__)
 #define GrB_Vector_reduce_BOOL_(...)                GrB_reduce (__VA_ARGS__)
 #define GrB_Vector_reduce_INT8_(...)                GrB_reduce (__VA_ARGS__)
 #define GrB_Vector_reduce_INT16_(...)               GrB_reduce (__VA_ARGS__)
@@ -873,7 +872,6 @@
 
 // GrB_reduce:
 #define GrB_Matrix_reduce_Monoid_(...)              GrB_Matrix_reduce_Monoid (__VA_ARGS__)
-#define GrB_Matrix_reduce_BinaryOp_(...)            GrB_Matrix_reduce_BinaryOp (__VA_ARGS__)
 #define GrB_Vector_reduce_BOOL_(...)                GrB_Vector_reduce_BOOL (__VA_ARGS__)
 #define GrB_Vector_reduce_INT8_(...)                GrB_Vector_reduce_INT8 (__VA_ARGS__)
 #define GrB_Vector_reduce_INT16_(...)               GrB_Vector_reduce_INT16 (__VA_ARGS__)

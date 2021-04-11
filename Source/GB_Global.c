@@ -94,7 +94,7 @@ typedef struct
     // for testing and development
     //--------------------------------------------------------------------------
 
-    int64_t hack ;                  // ad hoc setting (for draft versions only)
+    int64_t hack [2] ;              // settings for testing/developement only
 
     //--------------------------------------------------------------------------
     // diagnostic output
@@ -209,7 +209,7 @@ GB_Global_struct GB_Global =
     .malloc_debug_count = 0,     // counter for testing memory handling
 
     // for testing and development only
-    .hack = 1,          // TODO
+    .hack = {0, 0},
 
     // diagnostics
     .burble = false,
@@ -539,7 +539,7 @@ void GB_Global_memtable_add (void *p, size_t size)
     ASSERT ((p == NULL) == (size == 0)) ;
     if (p == NULL) return ;
     bool fail = false ;
-//  printf ("memtable add %p size %ld\n", p, size) ;
+    // printf ("memtable add %p size %ld\n", p, size) ;
     #pragma omp critical(GB_memtable)
     {
         int n = GB_Global.nmemtable  ;
@@ -566,7 +566,7 @@ void GB_Global_memtable_add (void *p, size_t size)
         }
     }
     ASSERT (!fail) ;
-//  GB_Global_memtable_dump ( ) ;
+    // GB_Global_memtable_dump ( ) ;
     #endif
 }
 
@@ -631,7 +631,7 @@ void GB_Global_memtable_remove (void *p)
     #ifdef GB_DEBUG
     if (p == NULL) return ;
     bool found = false ;
-//  printf ("memtable remove %p ", p) ;
+    // printf ("memtable remove %p ", p) ;
     #pragma omp critical(GB_memtable)
     {
         int n = GB_Global.nmemtable  ;
@@ -640,7 +640,7 @@ void GB_Global_memtable_remove (void *p)
             if (p == GB_Global.memtable_p [i])
             {
                 // found p in the table; remove it
-//              printf ("size %ld\n", GB_Global.memtable_s [i]) ;
+                // printf ("size %ld\n", GB_Global.memtable_s [i]) ;
                 GB_Global.memtable_p [i] = GB_Global.memtable_p [n-1] ;
                 GB_Global.memtable_s [i] = GB_Global.memtable_s [n-1] ;
                 GB_Global.nmemtable -- ;
@@ -655,7 +655,7 @@ void GB_Global_memtable_remove (void *p)
         GB_Global_memtable_dump ( ) ;
     }
     ASSERT (found) ;
-//  GB_Global_memtable_dump ( ) ;
+    // GB_Global_memtable_dump ( ) ;
     #endif
 }
 
@@ -699,8 +699,7 @@ void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
 
 bool GB_Global_have_calloc_function (void)
 { 
-    return (false) ; // HACK
-    // return (GB_Global.calloc_function != NULL) ;
+    return (GB_Global.calloc_function != NULL) ;
 }
 
 void * GB_Global_calloc_function (size_t count, size_t size)
@@ -896,19 +895,19 @@ bool GB_Global_malloc_debug_count_decrement (void)
 }
 
 //------------------------------------------------------------------------------
-// hack: for setting an internal value for development only
+// hack: for setting an internal flag for testing and development only
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-void GB_Global_hack_set (int64_t hack)
+void GB_Global_hack_set (int k, int64_t hack)
 { 
-    GB_Global.hack = hack ;
+    GB_Global.hack [k] = hack ;
 }
 
 GB_PUBLIC
-int64_t GB_Global_hack_get (void)
+int64_t GB_Global_hack_get (int k)
 { 
-    return (GB_Global.hack) ;
+    return (GB_Global.hack [k]) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1145,7 +1144,7 @@ void GB_Global_free_pool_init (void)
 static inline void GB_Global_free_pool_check (void *p, int k, char *where)
 {
     // check the size of the block
-//  printf ("check %p\n", p) ;
+    // printf ("check %p\n", p) ;
     ASSERT (k >= 3 && k < 64) ;
     ASSERT (p != NULL) ;
     size_t size = GB_Global_memtable_size (p) ;
@@ -1173,10 +1172,11 @@ void *GB_Global_free_pool_get (int k)
     { 
         // clear the next pointer inside the block, since the block needs
         // to be all zero
-//      printf ("got %p k %d\n", p, k) ;
+        // printf ("got %p k %d\n", p, k) ;
         #ifdef GB_DEBUG
         GB_Global_free_pool_check (p, k, "get") ;
         #endif
+        // GB_Global_free_pool_dump (2) ; printf ("\ndid get\n\n") ;
     }
     return (p) ;
 }
@@ -1196,12 +1196,13 @@ bool GB_Global_free_pool_put (void *p, int k)
         if (returned_to_pool)
         {
             // add the block to the head of the free_pool list
-//          printf ("put %p k %d\n", p, k) ;
+            // printf ("put %p k %d\n", p, k) ;
             GB_Global.free_pool_nblocks [k]++ ;
             GB_NEXT (p) = GB_Global.free_pool [k] ;
             GB_Global.free_pool [k] = p ;
         }
     }
+    // GB_Global_free_pool_dump (2) ; printf ("\ndid put\n\n") ;
     return (returned_to_pool) ;
 }
 
@@ -1226,11 +1227,13 @@ void GB_Global_free_pool_dump (int pr)
             void *p = GB_Global.free_pool [k] ;
             for ( ; p != NULL && !fail ; p = GB_NEXT (p))
             {
+                if (pr > 1) printf ("  %16p ", p) ;
                 size_t size = GB_Global_memtable_size (p) ;
-                if (pr > 1) printf ("  %16p size: %ld\n", p, size) ;
+                if (pr > 1) printf ("size: %ld\n", size) ;
                 nblocks_actual++ ;
                 fail = fail || (size != (1UL) << k) ;
                 if (fail && pr > 0) printf ("    fail\n") ;
+                fail = fail || (nblocks_actual > nblocks) ;
             }
             if (nblocks_actual != nblocks)
             {

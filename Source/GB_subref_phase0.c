@@ -229,7 +229,7 @@ GrB_Info GB_subref_phase0
         &I_unsorted, &I_has_dupl, &I_contig, &imin, &imax, Context) ;
     if (info != GrB_SUCCESS)
     { 
-        // I invalid
+        // I invalid or out of memory
         return (info) ;
     }
 
@@ -237,7 +237,7 @@ GrB_Info GB_subref_phase0
         &J_unsorted, &J_has_dupl, &J_contig, &jmin, &jmax, Context) ;
     if (info != GrB_SUCCESS)
     { 
-        // J invalid
+        // J invalid or out of memory
         return (info) ;
     }
 

@@ -48,7 +48,7 @@
 #define GB_FREE_ALL                 \
 {                                   \
     GB_FREE_WORK ;                  \
-    GB_Matrix_free (&C) ;           \
+    GB_phbix_free (C) ;             \
 }
 
 GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
@@ -88,6 +88,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (C != NULL && C->static_header) ;
     ASSERT_BINARYOP_OK_OR_NULL (op, "op for add phase2", GB0) ;
     ASSERT_MATRIX_OK (A, "A for add phase2", GB0) ;
     ASSERT_MATRIX_OK (B, "B for add phase2", GB0) ;
@@ -160,6 +161,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
+        GB_FREE_ALL ;
         GB_FREE (Cp_handle, Cp_size) ;
         GB_FREE (Ch_handle, Ch_size) ;
         return (info) ;

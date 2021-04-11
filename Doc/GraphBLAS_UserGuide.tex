@@ -107,8 +107,7 @@ Scott McMillan, Jos\'e Moreira, Carl Yang, and Benjamin Brock}
 Mathematics} by Jeremy Kepner \cite{Kepner2017}.  The GraphBLAS C API
 Specification is available at \url{http://graphblas.org}.  This version of
 SuiteSparse:GraphBLAS conforms to Version \input{GraphBLAS_API_version.tex} of
-{\em The GraphBLAS C API specification}, with three exceptions
-(\verb'GrB_wait', \verb'GrB_error', and \verb'GrB_Matrix_reduce_BinaryOp').
+{\em The GraphBLAS C API specification}.
 
 In this User Guide, aspects of the GraphBLAS specification that would be true
 for any GraphBLAS implementation are simply called ``GraphBLAS.'' Details
@@ -131,6 +130,22 @@ are extensions to the v1.3 GraphBLAS C API.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Version 5.0.0 (TODO::)
+
+    \begin{packed_itemize}
+    \item import/export: size of arrays now in bytes, not entries.  This change
+        is required for better internal memory management, and it is not
+        backward compatible with the \verb'GxB*import/export' functions in v4.0.
+    \item (22) bug fix: SIMD vectorization was missing
+        \verb'reduction(+,task_cnvals)' in
+        \verb'GB_dense_subassign_06d_template.c'.  Caught by Jeff Huang, Texas
+        A\&M, with his software package for race-condition detection. Good
+        catch!
+    \item \verb'GrB_Matrix_reduce_BinaryOp': officially deprecated and may be
+        fully removed in a future version.  Use a monoid instead, with
+        \verb'GrB_reduce' or \verb'GrB_Matrix_reduce_Monoid'.
+    \end{packed_itemize}
 
 \item Version 4.0.3 (Jan 19, 2021)
 
@@ -2916,6 +2931,10 @@ table below.  Most of these are the binary operators of predefined monoids,
 except that the bitwise monoids are predefined only for the unsigned integer
 types, not the signed integers.
 
+Recall that $T$ denotes any built-in type (including boolean, integer,
+floating point real, and complex), $R$ denotes any non-complex type, and
+$I$ denotes any integer type.
+
 \vspace{0.2in}
 \noindent
 {\footnotesize
@@ -2926,7 +2945,7 @@ operator              &                            & $z=f(x,y)$      &          
 \hline
 % numeric TxT->T
 \verb'GrB_PLUS_'$T$   & $T \times T \rightarrow T$ & $z = x+y$       & 0         & none \\
-\verb'GrB_TIMES_'$T$  & $T \times T \rightarrow T$ & $z = xy$        & 1         & 0 (not $F$) \\
+\verb'GrB_TIMES_'$T$  & $T \times T \rightarrow T$ & $z = xy$        & 1         & 0 or none (see note) \\
 \verb'GxB_ANY_'$T$    & $T \times T \rightarrow T$ & $z = x$ or $y$  & any       & any        \\
 \hline
 \verb'GrB_MIN_'$R$    & $R \times R \rightarrow R$ & $z = \min(x,y)$ & $+\infty$ & $-\infty$ \\
@@ -2965,6 +2984,7 @@ an annihilator.  See Section~\ref{monoid_terminal_new} for an example.
 
 The \verb'GxB_ANY_*' monoid can terminate as soon as it finds any value at all.
 
+{\bf NOTE:}
 The \verb'GrB_TIMES_FP*' operators do not have a terminal value of zero, since
 they comply with the IEEE 754 standard, and \verb'0*NaN' is not zero, but
 \verb'NaN'.  Technically, their terminal value is \verb'NaN', but this value is
@@ -10295,43 +10315,6 @@ the result \verb't (i)'.
 The final step is ${\bf w \langle m \rangle  = w \odot t}$, as described
 in Section~\ref{accummask}, except that all the
 terms are column vectors instead of matrices.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_Matrix\_reduce\_BinaryOp} reduce a matrix to a vector}
-%-------------------------------------------------------------------------------
-\label{reduce_to_vector_binop}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GrB_reduce                 // w<mask> = accum (w,reduce(A))
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_BinaryOp op,          // reduce op for t=reduce(A)
-    const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Descriptor desc       // descriptor for w, mask, and A
-) ;
-\end{verbatim} } \end{mdframed}
-
-\verb'GrB_Matrix_reduce_BinaryOp' is the same as
-\verb'GrB_Matrix_reduce_Monoid', except that a binary operator is specified
-instead.  In SuiteSparse:GraphBLAS v4, it can only be used with built-in binary
-operators that correspond to a known monoid.  Its use is discouraged in
-SuiteSparse:GraphBLAS.  Use \verb'GrB_Matrix_reduce_Monoid' instead, or
-equivalently, use \verb'GrB_reduce' with a \verb'GrB_Monoid' as the fourth
-input parameter.
-
-\begin{alert}
-{\bf SPEC:} 
-\verb'GrB_Matrix_reduce_BinaryOp' in the v1.3 GraphBLAS C API Specification can
-use any binary operator, including user-defined ones.  However, the efficient
-parallel implementation in SuiteSparse:GraphBLAS v4 requires the identity
-value, and so only binary operators that correspond to known monoids are
-supported.  Use \verb'GrB_Matrix_reduce_Monoid' instead.
-\end{alert}
 
 \newpage
 %-------------------------------------------------------------------------------

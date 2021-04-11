@@ -114,8 +114,8 @@
 #define GB_FREE_ALL                 \
 {                                   \
     GB_Matrix_free (Thandle) ;      \
-    GB_Matrix_free (&MT) ;          \
-    GB_Matrix_free (&Z) ;           \
+    GB_phbix_free (MT) ;          \
+    GB_phbix_free (Z) ;           \
 }
 
 //------------------------------------------------------------------------------
@@ -365,7 +365,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
         if (use_transplant)
         { 
- 
+
             //------------------------------------------------------------------
             // Z = (ctype) T
             //------------------------------------------------------------------

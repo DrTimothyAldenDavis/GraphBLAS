@@ -33,7 +33,7 @@
 
 #define GB_FREE_ALL             \
 {                               \
-    GB_Matrix_free (&C) ;       \
+    GB_phbix_free (C) ;       \
 }
 
 GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B

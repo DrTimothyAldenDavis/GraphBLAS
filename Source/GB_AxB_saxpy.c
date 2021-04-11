@@ -90,10 +90,10 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     //--------------------------------------------------------------------------
 
     switch (saxpy_method)
-    { 
+    {
 
         default:;
-        case GB_SAXPY_METHOD_3 :
+        case GB_SAXPY_METHOD_3 :            // C is sparse or hypersparse
 
             //------------------------------------------------------------------
             // saxpy3: general-purpose Gustavson/Hash method
@@ -109,7 +109,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
                 A, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
                 Context)) ;
 
-        case GB_SAXPY_METHOD_BITMAP :
+        case GB_SAXPY_METHOD_BITMAP :       // C is bitmap or full
 
             //------------------------------------------------------------------
             // bitmap method: C is bitmap or full

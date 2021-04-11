@@ -227,9 +227,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     int8_t  *GB_RESTRICT Ab = A->b ; size_t Ai_size = A->i_size ;
     GB_void *GB_RESTRICT Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
 
-    bool A_is_bitmap  = GB_IS_BITMAP (A) ;
-    bool A_is_packed  = GB_is_packed (A) ;
-    bool A_is_hyper   = GB_IS_HYPERSPARSE (A) ;
+    bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    bool A_is_packed = GB_is_packed (A) ;
+    bool A_is_hyper  = GB_IS_HYPERSPARSE (A) ;
 
     bool Ap_shallow = A->p_shallow ;
     bool Ah_shallow = A->h_shallow ;
@@ -470,7 +470,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (!in_place) ;            // cannot fail if in-place,
             ASSERT (!C_static_header) ;     // or if C has a static header
             GB_FREE_C ;
-            GB_Matrix_free (&T) ;
+            GB_phbix_free (T) ;
             return (info) ;
         }
 
@@ -1179,7 +1179,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 ASSERT (!in_place) ;            // cannot fail if in-place,
                 ASSERT (!C_static_header) ;     // or if C has a static header
                 GB_FREE_C ;
-                GB_Matrix_free (&T) ;
+                GB_phbix_free (T) ;
                 return (info) ;
             }
 

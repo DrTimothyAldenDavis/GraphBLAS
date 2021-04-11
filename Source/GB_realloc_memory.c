@@ -86,7 +86,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     { 
         // overflow
         (*ok) = false ;
-        return (NULL) ;
+        return (p) ;
     }
 
     //--------------------------------------------------------------------------

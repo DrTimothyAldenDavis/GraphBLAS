@@ -16,10 +16,16 @@
 #include "GB_transpose.h"
 #include "GB_accum_mask.h"
 
+#define GB_FREE_WORK        \
+{                           \
+    GB_phbix_free (AT) ;    \
+    GB_phbix_free (BT) ;    \
+}
+
 #define GB_FREE_ALL         \
 {                           \
-    GB_Matrix_free (&AT) ;  \
-    GB_Matrix_free (&BT) ;  \
+    GB_FREE_WORK ;          \
+    GB_phbix_free (T) ;     \
 }
 
 GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
@@ -164,9 +170,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
         A_transpose ? AT : A, A_is_pattern,
         B_transpose ? BT : B, B_is_pattern, Context)) ;
 
-    // free workspace
-    GB_FREE_ALL ;
-
+    GB_FREE_WORK ;
     ASSERT_MATRIX_OK (T, "T = kron(A,B)", GB0) ;
 
     //--------------------------------------------------------------------------

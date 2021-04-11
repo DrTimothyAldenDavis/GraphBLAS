@@ -3609,10 +3609,6 @@ void mexFunction
     o2 = GrB_PLUS_FP64 ;
     m2 = GxB_TIMES_FP64_MONOID ;
 
-    ERR1 (v0, GrB_Matrix_reduce_BinaryOp_(v0, NULL, NULL, op0, A0, d0)) ;    // reduce via op
-    ERR1 (v0, GrB_Matrix_reduce_BinaryOp_(v0, NULL, NULL, o2 , A0, d0)) ;
-    ERR1 (v,  GrB_Matrix_reduce_BinaryOp_(v , NULL, NULL, o2 , A0, d0)) ;
-
     ERR1 (v0, GrB_Matrix_reduce_Monoid_(v0, NULL, NULL, m0 , A0, d0)) ;    // reduce via monoid
     ERR1 (v0, GrB_Matrix_reduce_Monoid_(v0, NULL, NULL, m2 , A0, d0)) ;
     ERR1 (v,  GrB_Matrix_reduce_Monoid_(v , NULL, NULL, m2 , A0, d0)) ;
@@ -3624,13 +3620,6 @@ void mexFunction
     A0 = Agunk ;
     op0 = op2gunk ;
     d0 = dgunk ;
-
-    ERR1 (v0, GrB_Matrix_reduce_BinaryOp_(v0, v0  , op0 , op0, A0, d0)) ;    // reduce via op
-    ERR1 (v0, GrB_Matrix_reduce_BinaryOp_(v0, v0  , op0 , o2 , A0, d0)) ;
-    ERR1 (v,  GrB_Matrix_reduce_BinaryOp_(v , v0  , op0 , o2 , A0, d0)) ;
-    ERR1 (v,  GrB_Matrix_reduce_BinaryOp_(v , v   , op0 , o2 , A0, d0)) ;
-    ERR1 (v,  GrB_Matrix_reduce_BinaryOp_(v , v   , o2  , o2 , A0, d0)) ;
-    ERR1 (v,  GrB_Matrix_reduce_BinaryOp_(v , v   , o2  , o2 , A , d0)) ;
 
     ERR1 (v0, GrB_Matrix_reduce_Monoid_(v0, v0  , op0 , m0 , A0, d0)) ;    // reduce via monoid
     ERR1 (v0, GrB_Matrix_reduce_Monoid_(v0, v0  , op0 , m2 , A0, d0)) ;
@@ -3648,23 +3637,13 @@ void mexFunction
     expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
 
     o2 = Complex_plus ;
-    ERR1 (v,  GrB_Matrix_reduce_BinaryOp_(v, z   , NULL, GrB_PLUS_FP64, A, d0)) ;
-    ERR1 (z,  GrB_Matrix_reduce_BinaryOp_(z, NULL, NULL, GrB_PLUS_FP64, A, d0)) ;
-    ERR1 (v,  GrB_Matrix_reduce_BinaryOp_(v, NULL, o2  , GrB_PLUS_FP64, A, d0)) ;
-    ERR1 (v,  GrB_Matrix_reduce_BinaryOp_(v, NULL, NULL, GrB_PLUS_FP64, Z, d0)) ;
 
     ERR1 (v,  GrB_Matrix_reduce_Monoid_(v, z   , NULL, GxB_PLUS_FP64_MONOID, A, d0)) ;
     ERR1 (z,  GrB_Matrix_reduce_Monoid_(z, NULL, NULL, GxB_PLUS_FP64_MONOID, A, d0)) ;
     ERR1 (v,  GrB_Matrix_reduce_Monoid_(v, NULL, o2  , GxB_PLUS_FP64_MONOID, A, d0)) ;
     ERR1 (v,  GrB_Matrix_reduce_Monoid_(v, NULL, NULL, GxB_PLUS_FP64_MONOID, Z, d0)) ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
-    ERR1 (v,  GrB_Matrix_reduce_BinaryOp_(v, NULL, NULL, GrB_EQ_FP64  , A, d0)) ;
-
     expected = GrB_DIMENSION_MISMATCH ;
-
-    ERR1 (v,  GrB_Matrix_reduce_BinaryOp_(v, NULL, NULL, GrB_PLUS_FP64, A, dtn)) ;
-    ERR1 (v,  GrB_Matrix_reduce_BinaryOp_(v, NULL, NULL, GrB_PLUS_FP64, A, d0)) ;
 
     ERR1 (v,  GrB_Matrix_reduce_Monoid_(v, NULL, NULL, GxB_PLUS_FP64_MONOID, A, dtn)) ;
     ERR1 (v,  GrB_Matrix_reduce_Monoid_(v, NULL, NULL, GxB_PLUS_FP64_MONOID, A, d0)) ;

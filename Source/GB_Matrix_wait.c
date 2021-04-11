@@ -42,9 +42,9 @@
 {                                       \
     GB_FREE (&W, W_size) ;              \
     GB_phbix_free (A) ;                 \
-    GB_Matrix_free (&T) ;               \
-    GB_Matrix_free (&S) ;               \
-    GB_Matrix_free (&A1) ;              \
+    GB_phbix_free (T) ;                 \
+    GB_phbix_free (S) ;                 \
+    GB_phbix_free (A1) ;                \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -112,14 +112,15 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     int64_t anz_orig = GB_NNZ (A) ;
     int64_t asize = A->type->size ;
 
-    // TODO: make this a separate function
+#if 0
+    // this code is currently unused
     if (GB_is_shallow (A))
     {
         // shallow matrices will never have any pending tuples
         ASSERT (npending == 0) ;
 
         if (A->p_shallow)
-        { 
+        {
             int64_t len = (A->plen + 1) * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
@@ -134,7 +135,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         }
 
         if (A->h_shallow)
-        { 
+        {
             int64_t len = A->nvec * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
@@ -149,7 +150,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         }
 
         if (A->i_shallow)
-        { 
+        {
             int64_t len = anz_orig * sizeof (int64_t) ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
@@ -164,7 +165,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         }
 
         if (A->x_shallow)
-        { 
+        {
             int64_t len = anz_orig * asize ;
             W = GB_MALLOC (len, GB_void, &W_size) ;
             if (W == NULL)
@@ -177,9 +178,10 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             A->x_shallow = false ;
             W = NULL ;
         }
-
-        ASSERT (!GB_is_shallow (A)) ;
     }
+#endif
+
+    ASSERT (!GB_is_shallow (A)) ;
 
     //--------------------------------------------------------------------------
     // check if A only needs to be unjumbled
@@ -485,8 +487,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
 
             // free A1 and T
-            GB_Matrix_free (&T) ;
-            GB_Matrix_free (&A1) ;
+            GB_phbix_free (T) ;
+            GB_phbix_free (A1) ;
 
             //------------------------------------------------------------------
             // replace T with S
@@ -542,7 +544,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         ASSERT_MATRIX_OK (A, "A after GB_Matrix_wait:append", GB0) ;
 
-        GB_Matrix_free (&T) ;
+        GB_phbix_free (T) ;
 
         // conform A to its desired sparsity structure
         info = GB_conform (A, Context) ;
@@ -565,7 +567,7 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
 
         GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T, NULL,
             Context)) ;
-        GB_Matrix_free (&T) ;
+        GB_phbix_free (T) ;
         ASSERT_MATRIX_OK (S, "S after GB_Matrix_wait:add", GB0) ;
         info = GB_transplant_conform (A, A->type, &S, Context) ;
     }

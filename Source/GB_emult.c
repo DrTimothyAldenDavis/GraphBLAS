@@ -44,7 +44,7 @@
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORK ;              \
-    GB_Matrix_free (&C) ;       \
+    GB_phbix_free (C) ;       \
 }
 
 GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
@@ -326,7 +326,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             // TODO: this will use 04 (M,B,A, flipxy=true)
             // M and B must not be jumbled.
 
-        default : ;
+        default:;
     }
 
     //--------------------------------------------------------------------------
@@ -366,6 +366,9 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         &C_sparsity,
         // original input:
         (apply_mask) ? M : NULL, A, B, Context)) ;
+
+    // C is still sparse or hypersparse, not bitmap or full
+    ASSERT (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) ;
 
     //--------------------------------------------------------------------------
     // phase1: split C into tasks, and count entries in each vector of C

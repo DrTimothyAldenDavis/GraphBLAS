@@ -37,7 +37,7 @@
 #define GB_FREE_ALL                         \
 {                                           \
     GB_FREE_WORK ;                          \
-    GB_Matrix_free (&R) ;                   \
+    GB_phbix_free (R) ;                     \
 }
 
 GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
@@ -94,6 +94,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
     ASSERT (C->type == Z->type) ;
+
+    ASSERT (R != NULL && R->static_header) ;
 
     GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;

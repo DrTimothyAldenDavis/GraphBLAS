@@ -29,7 +29,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_Matrix_free (&M2) ;                  \
+    GB_phbix_free (M2) ;                  \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
     GB_WERK_POP (B_slice, int64_t) ;        \
     GB_WERK_POP (A_slice, int64_t) ;        \
@@ -381,7 +381,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         if (Cp == NULL || (B_is_hyper && Ch == NULL) || Ci == NULL)
         { 
             // out of memory
-            GB_Matrix_free (&C) ;
+            GB_phbix_free (C) ;
             GB_FREE (&Cp, Cp_size) ;
             GB_FREE (&Ch, Ch_size) ;
             GB_FREE (&Ci, Ci_size) ;

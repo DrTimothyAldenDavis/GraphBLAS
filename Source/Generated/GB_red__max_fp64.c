@@ -23,9 +23,9 @@
 // A type:   double
 // C type:   double
 
-// Reduce:   if ((aij > s) || (s != s)) s = aij
+// Reduce:   if ((aij > s) || (s != s)) { s = aij ; }
 // Identity: ((double) -INFINITY)
-// Terminal: if (s == ((double) INFINITY)) break ;
+// Terminal: if (s == ((double) INFINITY)) { break ; }
 
 #define GB_ATYPE \
     double
@@ -51,7 +51,7 @@
 
     // W [k] += (ztype) S [i], with typecast
     #define GB_ADD_CAST_ARRAY_TO_ARRAY(W,k,S,i)     \
-        if ((S [i] > W [k]) || (W [k] != W [k])) W [k] = S [i]
+        if ((S [i] > W [k]) || (W [k] != W [k])) { W [k] = S [i] ; }
 
     // W [k] = S [i], no typecast
     #define GB_COPY_ARRAY_TO_ARRAY(W,k,S,i)         \
@@ -59,7 +59,7 @@
 
     // W [k] += S [i], no typecast
     #define GB_ADD_ARRAY_TO_ARRAY(W,k,S,i)          \
-        if ((S [i] > W [k]) || (W [k] != W [k])) W [k] = S [i]
+        if ((S [i] > W [k]) || (W [k] != W [k])) { W [k] = S [i] ; }
 
 // Array to scalar
 
@@ -73,11 +73,11 @@
 
     // s += (ztype) Ax [p], with typecast
     #define GB_ADD_CAST_ARRAY_TO_SCALAR(s,Ax,p)     \
-        if ((Ax [p] > s) || (s != s)) s = Ax [p]
+        if ((Ax [p] > s) || (s != s)) { s = Ax [p] ; }
 
     // s += S [i], no typecast
     #define GB_ADD_ARRAY_TO_SCALAR(s,S,i)           \
-        if ((S [i] > s) || (s != s)) s = S [i]
+        if ((S [i] > s) || (s != s)) { s = S [i] ; }
 
 // Scalar to array
 
@@ -87,7 +87,7 @@
 
     // W [k] += s, no typecast
     #define GB_ADD_SCALAR_TO_ARRAY(W,k,s)           \
-        if ((s > W [k]) || (W [k] != W [k])) W [k] = s
+        if ((s > W [k]) || (W [k] != W [k])) { W [k] = s ; }
 
 // break the loop if terminal condition reached
 
@@ -101,7 +101,7 @@
         ((double) INFINITY)
 
     #define GB_BREAK_IF_TERMINAL(s)                 \
-        if (s == ((double) INFINITY)) break ;
+        if (s == ((double) INFINITY)) { break ; }
 
 // panel size for built-in operators
 

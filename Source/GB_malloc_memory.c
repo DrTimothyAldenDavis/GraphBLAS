@@ -144,6 +144,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
 
     (*size_allocated) = (p == NULL) ? 0 : size ;
     ASSERT (GB_IMPLIES (p != NULL, size == GB_Global_memtable_size (p))) ;
+//  GB_Global_free_pool_dump (2) ;
     return (p) ;
 }
 

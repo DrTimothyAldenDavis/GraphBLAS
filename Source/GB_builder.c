@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// CALLED BY: GB_build, GB_Matrix_wait, and GB_transpose
+// CALLED BY: GB_build, GB_Matrix_wait, GB_transpose, GB_concat_hyper
 // CALLS:     Generated/GB_red_build__* workers
 
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build
@@ -79,9 +79,14 @@
 // able to transplant S_work into T->x since the input will almost always be
 // unsorted.
 
-// For BITMAP case: this method always returns T as hypersparse, and has no
-// matrix inputs.   If the final C should become full or bitmap, that
-// conversion is done by GB_transplant_conform.
+// For GB_concat_hyper:  uses I_work, J_work, and S_work.  No duplicates
+// appear.  Tuples are not sorted on input.  I_work is transplanted into C->i.
+// J_work and S_work are freed on output.  S_work is not transplanted into
+// C->x.
+
+// This method always returns T as hypersparse, and has no matrix inputs.  If
+// the final C should become full or bitmap, that conversion is done by
+// GB_transplant_conform.
 
 #include "GB_build.h"
 #include "GB_sort.h"
@@ -109,7 +114,7 @@
 
 GrB_Info GB_builder                 // build a matrix from tuples
 (
-    GrB_Matrix T,                   // matrix T to build, with static header
+    GrB_Matrix T,                   // matrix to build, static or dynamic header
     const GrB_Type ttype,           // type of output matrix T
     const int64_t vlen,             // length of each vector of T
     const int64_t vdim,             // number of vectors in T
@@ -140,8 +145,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (T != NULL) ;            // T is a static header on input 
-    ASSERT (T->static_header) ;
+    ASSERT (T != NULL) ;            // T is a static or dynamic header on input 
     ASSERT (nvals >= 0) ;
     ASSERT (scode <= GB_UDT_code) ;
     ASSERT_TYPE_OK (ttype, "ttype for builder", GB0) ;
@@ -747,8 +751,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
 
     // allocate T; allocate T->p and T->h but do not initialize them.
-    // T is always hypersparse.
-    info = GB_new (&T, true, // always hyper, static header
+    // T is always hypersparse.  The header T always exists on input, as
+    // either a static or dynamic header.
+    bool static_header = T->static_header ;
+    info = GB_new (&T, static_header, // always hyper, static or dynamic header
         ttype, vlen, vdim, GB_Ap_malloc, is_csc,
         GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec, Context) ;
     if (info != GrB_SUCCESS)
@@ -907,7 +913,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->i == NULL)
         { 
             // out of memory
-            GB_Matrix_free (&T) ;
+            GB_phbix_free (T) ;
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
@@ -1078,7 +1084,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->x == NULL)
         { 
             // out of memory
-            GB_Matrix_free (&T) ;
+            GB_phbix_free (T) ;
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }

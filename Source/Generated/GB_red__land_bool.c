@@ -25,7 +25,7 @@
 
 // Reduce:   s = (s && aij)
 // Identity: true
-// Terminal: if (s == false) break ;
+// Terminal: if (s == false) { break ; }
 
 #define GB_ATYPE \
     bool
@@ -101,7 +101,7 @@
         false
 
     #define GB_BREAK_IF_TERMINAL(s)                 \
-        if (s == false) break ;
+        if (s == false) { break ; }
 
 // panel size for built-in operators
 

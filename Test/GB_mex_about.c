@@ -565,10 +565,13 @@ void mexFunction
     // other global settings
     //--------------------------------------------------------------------------
 
-    GB_Global_hack_set (90123) ;
-    CHECK (GB_Global_hack_get ( ) == 90123) ;
-    GB_Global_hack_set (0) ;
-    CHECK (GB_Global_hack_get ( ) == 0) ;
+    int64_t hack0 = GB_Global_hack_get (0) ;
+    int64_t hack1 = GB_Global_hack_get (1) ;
+
+    GB_Global_hack_set (0, 90123) ; CHECK (GB_Global_hack_get (0) == 90123) ;
+    GB_Global_hack_set (0, hack0) ; CHECK (GB_Global_hack_get (0) == hack0) ;
+    GB_Global_hack_set (1, 99123) ; CHECK (GB_Global_hack_get (1) == 99123) ;
+    GB_Global_hack_set (1, hack1) ; CHECK (GB_Global_hack_get (1) == hack1) ;
 
     GrB_Info expected = GrB_INVALID_VALUE ;
 

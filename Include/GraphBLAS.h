@@ -23,15 +23,12 @@
 // example GrB_free is a macro that uses _Generic to select the right method,
 // depending on the type of its argument.
 
-// This implementation (nearly) fully conforms to the GraphBLAS API
-// Specification (see the notes in the User Guide regarding GrB_wait,
-// GrB_error, and GrB_Matrix_reduce_BinaryOp).
-
-// It also includes functions and features that are extensions to the spec,
-// which are given names of the form GxB_* for functions, built-in objects, and
-// macros, so it is clear which are in the spec and which are extensions.
-// Extensions with the name GxB_* are user-accessible in SuiteSparse:GraphBLAS
-// but cannot be guaranteed to appear in all GraphBLAS implementations.
+// This implementation conforms to the GraphBLAS API Specification and also
+// includes functions and features that are extensions to the spec, which are
+// given names of the form GxB_* for functions, built-in objects, and macros,
+// so it is clear which are in the spec and which are extensions.  Extensions
+// with the name GxB_* are user-accessible in SuiteSparse:GraphBLAS but cannot
+// be guaranteed to appear in all GraphBLAS implementations.
 
 #ifndef GRAPHBLAS_H
 #define GRAPHBLAS_H
@@ -176,7 +173,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Mar 24, 2021"
+#define GxB_IMPLEMENTATION_DATE "Apr 11, 2021"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -342,6 +339,248 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
     unsigned int *version,      // returns GRB_VERSION
     unsigned int *subversion    // returns GRB_SUBVERSION
 ) ;
+
+//==============================================================================
+// GrB_Descriptor: the GraphBLAS descriptor
+//==============================================================================
+
+// The GrB_Descriptor is used to modify the behavior of GraphBLAS operations.
+//
+// GrB_OUTP: can be GxB_DEFAULT or GrB_REPLACE.  If GrB_REPLACE, then C is
+//       cleared after taking part in the accum operation but before the mask.
+//       In other words, C<Mask> = accum (C,T) is split into Z = accum(C,T) ;
+//       C=0 ; C<Mask> = Z.
+//
+// GrB_MASK: can be GxB_DEFAULT, GrB_COMP, GrB_STRUCTURE, or set to both
+//      GrB_COMP and GrB_STRUCTURE.  If GxB_DEFAULT, the mask is used
+//      normally, where Mask(i,j)=1 means C(i,j) can be modified by C<Mask>=Z,
+//      and Mask(i,j)=0 means it cannot be modified even if Z(i,j) is has been
+//      computed and differs from C(i,j).  If GrB_COMP, this is the same as
+//      taking the logical complement of the Mask.  If GrB_STRUCTURE is set,
+//      the value of the mask is not considered, just its pattern.  The
+//      GrB_COMP and GrB_STRUCTURE settings can be combined.
+//
+// GrB_INP0: can be GxB_DEFAULT or GrB_TRAN.  If GxB_DEFAULT, the first input
+//      is used as-is.  If GrB_TRAN, it is transposed.  Only matrices are
+//      transposed this way.  Vectors are never transposed via the
+//      GrB_Descriptor.
+//
+// GrB_INP1: the same as GrB_INP0 but for the second input
+//
+// GxB_NTHREADS: the maximum number of threads to use in the current method.
+//      If <= GxB_DEFAULT (which is zero), then the number of threads is
+//      determined automatically.  This is the default value.
+//
+// GxB_CHUNK: an integer parameter that determines the number of threads to use
+//      for a small problem.  If w is the work to be performed, and chunk is
+//      the value of this parameter, then the # of threads is limited to floor
+//      (w/chunk).  The default chunk is currently 64K, but this may change in
+//      the future.  If chunk is set to <= GxB_DEFAULT (that is, zero), the
+//      default is used.
+//
+// GxB_AxB_METHOD: this is a hint to SuiteSparse:GraphBLAS on which algorithm
+//      it should use to compute C=A*B, in GrB_mxm, GrB_mxv, and GrB_vxm.
+//      SuiteSparse:GraphBLAS has four different heuristics, and the default
+//      method (GxB_DEFAULT) selects between them automatically.  The complete
+//      rule is in the User Guide.  The brief discussion here assumes all
+//      matrices are stored by column.  All methods compute the same result,
+//      except that floating-point roundoff may differ when working on
+//      floating-point data types.
+//
+//      GxB_AxB_SAXPY:  C(:,j)=A*B(:,j) is computed using a mix of Gustavson
+//          and Hash methods.  Each task in the parallel computation makes its
+//          own decision between these two methods, via a heuristic.
+//
+//      GxB_AxB_GUSTAVSON:  This is the same as GxB_AxB_SAXPY, except that
+//          every task uses Gustavon's method, computing C(:,j)=A*B(:,j) via a
+//          gather/scatter workspace of size equal to the number of rows of A.
+//          Very good general-purpose method, but sometimes the workspace can
+//          be too large when many threads are used.
+//
+//      GxB_AxB_HASH: This is the same as GxB_AxB_SAXPY, except that every
+//          task uses the Hash method.  It is very good for hypersparse
+//          matrices and uses very little workspace, and so it scales well to
+//          many threads.
+//
+//      GxB_AxB_DOT: computes C(i,j) = A(:,i)'*B(:,j), for each entry C(i,j).
+//          A very specialized method that works well only if the mask is
+//          present, very sparse, and not complemented, or when C is a dense
+//          vector or matrix, or when C is small.
+//
+// GxB_SORT: GrB_mxm and other methods may return a matrix in a 'jumbled'
+//      state, with indices out of order.  The sort is left pending.  Some
+//      methods can tolerate jumbled matrices on input, so this can be faster.
+//      However, in some cases, it can be faster for GrB_mxm to sort its output
+//      as it is computed.  With GxB_SORT set to GxB_DEFAULT, the sort is left
+//      pending.  With GxB_SORT set to a nonzero value, GrB_mxm typically sorts
+//      the resulting matrix C (but not always; this is just a hint).  If
+//      GrB_init is called with GrB_BLOCKING mode, the sort will always be
+//      done, and this setting has no effect.
+
+// The following are enumerated values in both the GrB_Desc_Field and the
+// GxB_Option_Field for global options.  They are defined with the same integer
+// value for both enums, so the user can use them for both.
+#define GxB_NTHREADS 5
+#define GxB_CHUNK 7
+
+// GPU control (DRAFT: in progress, do not use)
+#define GxB_GPU_CONTROL 21
+#define GxB_GPU_CHUNK   22
+
+typedef enum
+{
+    GrB_OUTP = 0,   // descriptor for output of a method
+    GrB_MASK = 1,   // descriptor for the mask input of a method
+    GrB_INP0 = 2,   // descriptor for the first input of a method
+    GrB_INP1 = 3,   // descriptor for the second input of a method
+
+    GxB_DESCRIPTOR_NTHREADS = GxB_NTHREADS,     // max number of threads to use.
+                    // If <= GxB_DEFAULT, then GraphBLAS selects the number
+                    // of threads automatically.
+
+    GxB_DESCRIPTOR_CHUNK = GxB_CHUNK,   // chunk size for small problems.
+                    // If <= GxB_DEFAULT, then the default is used.
+
+    // GPU control (DRAFT: in progress, do not use)
+    GxB_DESCRIPTOR_GPU_CONTROL = GxB_GPU_CONTROL,
+    GxB_DESCRIPTOR_GPU_CHUNK   = GxB_GPU_CHUNK,
+
+    GxB_AxB_METHOD = 1000,  // descriptor for selecting C=A*B algorithm
+    GxB_SORT = 35           // control sort in GrB_mxm
+}
+GrB_Desc_Field ;
+
+typedef enum
+{
+    // for all GrB_Descriptor fields:
+    GxB_DEFAULT = 0,    // default behavior of the method
+
+    // for GrB_OUTP only:
+    GrB_REPLACE = 1,    // clear the output before assigning new values to it
+
+    // for GrB_MASK only:
+    GrB_COMP = 2,       // use the structural complement of the input
+    GrB_SCMP = 2,       // same as GrB_COMP (deprecated; use GrB_COMP instead)
+    GrB_STRUCTURE = 4,  // use the only pattern of the mask, not its values
+
+    // for GrB_INP0 and GrB_INP1 only:
+    GrB_TRAN = 3,       // use the transpose of the input
+
+    // for GxB_GPU_CONTROL only (DRAFT: in progress, do not use)
+    GxB_GPU_ALWAYS  = 2001,
+    GxB_GPU_NEVER   = 2002,
+
+    // for GxB_AxB_METHOD only:
+    GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
+    GxB_AxB_DOT       = 1003,   // dot product
+    GxB_AxB_HASH      = 1004,   // hash-based saxpy method
+    GxB_AxB_SAXPY     = 1005    // saxpy method (any kind)
+}
+GrB_Desc_Value ;
+
+typedef struct GB_Descriptor_opaque *GrB_Descriptor ;
+
+GB_PUBLIC
+GrB_Info GrB_Descriptor_new     // create a new descriptor
+(
+    GrB_Descriptor *descriptor  // handle of descriptor to create
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
+(
+    GrB_Descriptor desc,        // descriptor to modify
+    GrB_Desc_Field field,       // parameter to change
+    GrB_Desc_Value val          // value to change it to
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Descriptor_get     // get a parameter from a descriptor
+(
+    GrB_Desc_Value *val,        // value of the parameter
+    GrB_Descriptor desc,        // descriptor to query; NULL means defaults
+    GrB_Desc_Field field        // parameter to query
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Desc_set           // set a parameter in a descriptor
+(
+    GrB_Descriptor desc,        // descriptor to modify
+    GrB_Desc_Field field,       // parameter to change
+    ...                         // value to change it to
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Desc_get           // get a parameter from a descriptor
+(
+    GrB_Descriptor desc,        // descriptor to query; NULL means defaults
+    GrB_Desc_Field field,       // parameter to query
+    ...                         // value of the parameter
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Descriptor_free    // free a descriptor
+(
+    GrB_Descriptor *descriptor  // handle of descriptor to free
+) ;
+
+// Predefined descriptors and their values:
+
+GB_PUBLIC
+GrB_Descriptor     // OUTP         MASK           MASK       INP0      INP1
+                   //              structural     complement
+                   // ===========  ============== ========== ========  ========
+
+// GrB_NULL        // -            -              -          -         -
+GrB_DESC_T1      , // -            -              -          -         GrB_TRAN
+GrB_DESC_T0      , // -            -              -          GrB_TRAN  -
+GrB_DESC_T0T1    , // -            -              -          GrB_TRAN  GrB_TRAN
+
+GrB_DESC_C       , // -            -              GrB_COMP   -         -
+GrB_DESC_CT1     , // -            -              GrB_COMP   -         GrB_TRAN
+GrB_DESC_CT0     , // -            -              GrB_COMP   GrB_TRAN  -
+GrB_DESC_CT0T1   , // -            -              GrB_COMP   GrB_TRAN  GrB_TRAN
+
+GrB_DESC_S       , // -            GrB_STRUCTURE  -          -         -
+GrB_DESC_ST1     , // -            GrB_STRUCTURE  -          -         GrB_TRAN
+GrB_DESC_ST0     , // -            GrB_STRUCTURE  -          GrB_TRAN  -
+GrB_DESC_ST0T1   , // -            GrB_STRUCTURE  -          GrB_TRAN  GrB_TRAN
+
+GrB_DESC_SC      , // -            GrB_STRUCTURE  GrB_COMP   -         -
+GrB_DESC_SCT1    , // -            GrB_STRUCTURE  GrB_COMP   -         GrB_TRAN
+GrB_DESC_SCT0    , // -            GrB_STRUCTURE  GrB_COMP   GrB_TRAN  -
+GrB_DESC_SCT0T1  , // -            GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
+
+GrB_DESC_R       , // GrB_REPLACE  -              -          -         -
+GrB_DESC_RT1     , // GrB_REPLACE  -              -          -         GrB_TRAN
+GrB_DESC_RT0     , // GrB_REPLACE  -              -          GrB_TRAN  -
+GrB_DESC_RT0T1   , // GrB_REPLACE  -              -          GrB_TRAN  GrB_TRAN
+
+GrB_DESC_RC      , // GrB_REPLACE  -              GrB_COMP   -         -
+GrB_DESC_RCT1    , // GrB_REPLACE  -              GrB_COMP   -         GrB_TRAN
+GrB_DESC_RCT0    , // GrB_REPLACE  -              GrB_COMP   GrB_TRAN  -
+GrB_DESC_RCT0T1  , // GrB_REPLACE  -              GrB_COMP   GrB_TRAN  GrB_TRAN
+
+GrB_DESC_RS      , // GrB_REPLACE  GrB_STRUCTURE  -          -         -
+GrB_DESC_RST1    , // GrB_REPLACE  GrB_STRUCTURE  -          -         GrB_TRAN
+GrB_DESC_RST0    , // GrB_REPLACE  GrB_STRUCTURE  -          GrB_TRAN  -
+GrB_DESC_RST0T1  , // GrB_REPLACE  GrB_STRUCTURE  -          GrB_TRAN  GrB_TRAN
+
+GrB_DESC_RSC     , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   -         -
+GrB_DESC_RSCT1   , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   -         GrB_TRAN
+GrB_DESC_RSCT0   , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  -
+GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
+
+// GrB_NULL is the default descriptor, with all settings at their defaults:
+//
+//      OUTP: do not replace the output
+//      MASK: mask is valued and not complemented
+//      INP0: first input not transposed
+//      INP1: second input not transposed
+
+// Predefined descriptors may not be modified or freed.  Attempting to modify
+// them results in an error (GrB_INVALID_VALUE).  Attempts to free them are
+// silently ignored.
 
 //==============================================================================
 // GrB_Type: data types
@@ -3350,251 +3589,49 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
     _Generic ((X), GB_(*, GrB, Matrix_extractTuples)) (I, J, X, nvals, A)
 #endif
 
-//==============================================================================
-// GrB_Descriptor: the GraphBLAS descriptor
-//==============================================================================
-
-// The GrB_Descriptor is used to modify the behavior of GraphBLAS operations.
-//
-// GrB_OUTP: can be GxB_DEFAULT or GrB_REPLACE.  If GrB_REPLACE, then C is
-//       cleared after taking part in the accum operation but before the mask.
-//       In other words, C<Mask> = accum (C,T) is split into Z = accum(C,T) ;
-//       C=0 ; C<Mask> = Z.
-//
-// GrB_MASK: can be GxB_DEFAULT, GrB_COMP, GrB_STRUCTURE, or set to both
-//      GrB_COMP and GrB_STRUCTURE.  If GxB_DEFAULT, the mask is used
-//      normally, where Mask(i,j)=1 means C(i,j) can be modified by C<Mask>=Z,
-//      and Mask(i,j)=0 means it cannot be modified even if Z(i,j) is has been
-//      computed and differs from C(i,j).  If GrB_COMP, this is the same as
-//      taking the logical complement of the Mask.  If GrB_STRUCTURE is set,
-//      the value of the mask is not considered, just its pattern.  The
-//      GrB_COMP and GrB_STRUCTURE settings can be combined.
-//
-// GrB_INP0: can be GxB_DEFAULT or GrB_TRAN.  If GxB_DEFAULT, the first input
-//      is used as-is.  If GrB_TRAN, it is transposed.  Only matrices are
-//      transposed this way.  Vectors are never transposed via the
-//      GrB_Descriptor.
-//
-// GrB_INP1: the same as GrB_INP0 but for the second input
-//
-// GxB_NTHREADS: the maximum number of threads to use in the current method.
-//      If <= GxB_DEFAULT (which is zero), then the number of threads is
-//      determined automatically.  This is the default value.
-//
-// GxB_CHUNK: an integer parameter that determines the number of threads to use
-//      for a small problem.  If w is the work to be performed, and chunk is
-//      the value of this parameter, then the # of threads is limited to floor
-//      (w/chunk).  The default chunk is currently 64K, but this may change in
-//      the future.  If chunk is set to <= GxB_DEFAULT (that is, zero), the
-//      default is used.
-//
-// GxB_AxB_METHOD: this is a hint to SuiteSparse:GraphBLAS on which algorithm
-//      it should use to compute C=A*B, in GrB_mxm, GrB_mxv, and GrB_vxm.
-//      SuiteSparse:GraphBLAS has four different heuristics, and the default
-//      method (GxB_DEFAULT) selects between them automatically.  The complete
-//      rule is in the User Guide.  The brief discussion here assumes all
-//      matrices are stored by column.  All methods compute the same result,
-//      except that floating-point roundoff may differ when working on
-//      floating-point data types.
-//
-//      GxB_AxB_SAXPY:  C(:,j)=A*B(:,j) is computed using a mix of Gustavson
-//          and Hash methods.  Each task in the parallel computation makes its
-//          own decision between these two methods, via a heuristic.
-//
-//      GxB_AxB_GUSTAVSON:  This is the same as GxB_AxB_SAXPY, except that
-//          every task uses Gustavon's method, computing C(:,j)=A*B(:,j) via a
-//          gather/scatter workspace of size equal to the number of rows of A.
-//          Very good general-purpose method, but sometimes the workspace can
-//          be too large when many threads are used.
-//
-//      GxB_AxB_HASH: This is the same as GxB_AxB_SAXPY, except that every
-//          task uses the Hash method.  It is very good for hypersparse
-//          matrices and uses very little workspace, and so it scales well to
-//          many threads.
-//
-//      GxB_AxB_DOT: computes C(i,j) = A(:,i)'*B(:,j), for each entry C(i,j).
-//          A very specialized method that works well only if the mask is
-//          present, very sparse, and not complemented, or when C is a dense
-//          vector or matrix, or when C is small.
-//
-// GxB_SORT: GrB_mxm and other methods may return a matrix in a 'jumbled'
-//      state, with indices out of order.  The sort is left pending.  Some
-//      methods can tolerate jumbled matrices on input, so this can be faster.
-//      However, in some cases, it can be faster for GrB_mxm to sort its output
-//      as it is computed.  With GxB_SORT set to GxB_DEFAULT, the sort is left
-//      pending.  With GxB_SORT set to a nonzero value, GrB_mxm typically sorts
-//      the resulting matrix C (but not always; this is just a hint).  If
-//      GrB_init is called with GrB_BLOCKING mode, the sort will always be
-//      done, and this setting has no effect.
-
-// The following are enumerated values in both the GrB_Desc_Field and the
-// GxB_Option_Field for global options.  They are defined with the same integer
-// value for both enums, so the user can use them for both.
-#define GxB_NTHREADS 5
-#define GxB_CHUNK 7
-
-// GPU control (DRAFT: in progress, do not use)
-#define GxB_GPU_CONTROL 21
-#define GxB_GPU_CHUNK   22
-
-typedef enum
-{
-    GrB_OUTP = 0,   // descriptor for output of a method
-    GrB_MASK = 1,   // descriptor for the mask input of a method
-    GrB_INP0 = 2,   // descriptor for the first input of a method
-    GrB_INP1 = 3,   // descriptor for the second input of a method
-
-    GxB_DESCRIPTOR_NTHREADS = GxB_NTHREADS,     // max number of threads to use.
-                    // If <= GxB_DEFAULT, then GraphBLAS selects the number
-                    // of threads automatically.
-
-    GxB_DESCRIPTOR_CHUNK = GxB_CHUNK,   // chunk size for small problems.
-                    // If <= GxB_DEFAULT, then the default is used.
-
-    // GPU control (DRAFT: in progress, do not use)
-    GxB_DESCRIPTOR_GPU_CONTROL = GxB_GPU_CONTROL,
-    GxB_DESCRIPTOR_GPU_CHUNK   = GxB_GPU_CHUNK,
-
-    GxB_AxB_METHOD = 1000,  // descriptor for selecting C=A*B algorithm
-    GxB_SORT = 35           // control sort in GrB_mxm
-}
-GrB_Desc_Field ;
-
-typedef enum
-{
-    // for all GrB_Descriptor fields:
-    GxB_DEFAULT = 0,    // default behavior of the method
-
-    // for GrB_OUTP only:
-    GrB_REPLACE = 1,    // clear the output before assigning new values to it
-
-    // for GrB_MASK only:
-    GrB_COMP = 2,       // use the structural complement of the input
-    GrB_SCMP = 2,       // same as GrB_COMP (deprecated; use GrB_COMP instead)
-    GrB_STRUCTURE = 4,  // use the only pattern of the mask, not its values
-
-    // for GrB_INP0 and GrB_INP1 only:
-    GrB_TRAN = 3,       // use the transpose of the input
-
-    // for GxB_GPU_CONTROL only (DRAFT: in progress, do not use)
-    GxB_GPU_ALWAYS  = 2001,
-    GxB_GPU_NEVER   = 2002,
-
-    // for GxB_AxB_METHOD only:
-    GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
-    GxB_AxB_DOT       = 1003,   // dot product
-    GxB_AxB_HASH      = 1004,   // hash-based saxpy method
-    GxB_AxB_SAXPY     = 1005    // saxpy method (any kind)
-}
-GrB_Desc_Value ;
-
-typedef struct GB_Descriptor_opaque *GrB_Descriptor ;
-
-GB_PUBLIC
-GrB_Info GrB_Descriptor_new     // create a new descriptor
-(
-    GrB_Descriptor *descriptor  // handle of descriptor to create
-) ;
-
-GB_PUBLIC
-GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
-(
-    GrB_Descriptor desc,        // descriptor to modify
-    GrB_Desc_Field field,       // parameter to change
-    GrB_Desc_Value val          // value to change it to
-) ;
-
-GB_PUBLIC
-GrB_Info GxB_Descriptor_get     // get a parameter from a descriptor
-(
-    GrB_Desc_Value *val,        // value of the parameter
-    GrB_Descriptor desc,        // descriptor to query; NULL means defaults
-    GrB_Desc_Field field        // parameter to query
-) ;
-
-GB_PUBLIC
-GrB_Info GxB_Desc_set           // set a parameter in a descriptor
-(
-    GrB_Descriptor desc,        // descriptor to modify
-    GrB_Desc_Field field,       // parameter to change
-    ...                         // value to change it to
-) ;
-
-GB_PUBLIC
-GrB_Info GxB_Desc_get           // get a parameter from a descriptor
-(
-    GrB_Descriptor desc,        // descriptor to query; NULL means defaults
-    GrB_Desc_Field field,       // parameter to query
-    ...                         // value of the parameter
-) ;
-
-GB_PUBLIC
-GrB_Info GrB_Descriptor_free    // free a descriptor
-(
-    GrB_Descriptor *descriptor  // handle of descriptor to free
-) ;
-
-// Predefined descriptors and their values:
-
-GB_PUBLIC
-GrB_Descriptor     // OUTP         MASK           MASK       INP0      INP1
-                   //              structural     complement
-                   // ===========  ============== ========== ========  ========
-
-// GrB_NULL        // -            -              -          -         -
-GrB_DESC_T1      , // -            -              -          -         GrB_TRAN
-GrB_DESC_T0      , // -            -              -          GrB_TRAN  -
-GrB_DESC_T0T1    , // -            -              -          GrB_TRAN  GrB_TRAN
-
-GrB_DESC_C       , // -            -              GrB_COMP   -         -
-GrB_DESC_CT1     , // -            -              GrB_COMP   -         GrB_TRAN
-GrB_DESC_CT0     , // -            -              GrB_COMP   GrB_TRAN  -
-GrB_DESC_CT0T1   , // -            -              GrB_COMP   GrB_TRAN  GrB_TRAN
-
-GrB_DESC_S       , // -            GrB_STRUCTURE  -          -         -
-GrB_DESC_ST1     , // -            GrB_STRUCTURE  -          -         GrB_TRAN
-GrB_DESC_ST0     , // -            GrB_STRUCTURE  -          GrB_TRAN  -
-GrB_DESC_ST0T1   , // -            GrB_STRUCTURE  -          GrB_TRAN  GrB_TRAN
-
-GrB_DESC_SC      , // -            GrB_STRUCTURE  GrB_COMP   -         -
-GrB_DESC_SCT1    , // -            GrB_STRUCTURE  GrB_COMP   -         GrB_TRAN
-GrB_DESC_SCT0    , // -            GrB_STRUCTURE  GrB_COMP   GrB_TRAN  -
-GrB_DESC_SCT0T1  , // -            GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
-
-GrB_DESC_R       , // GrB_REPLACE  -              -          -         -
-GrB_DESC_RT1     , // GrB_REPLACE  -              -          -         GrB_TRAN
-GrB_DESC_RT0     , // GrB_REPLACE  -              -          GrB_TRAN  -
-GrB_DESC_RT0T1   , // GrB_REPLACE  -              -          GrB_TRAN  GrB_TRAN
-
-GrB_DESC_RC      , // GrB_REPLACE  -              GrB_COMP   -         -
-GrB_DESC_RCT1    , // GrB_REPLACE  -              GrB_COMP   -         GrB_TRAN
-GrB_DESC_RCT0    , // GrB_REPLACE  -              GrB_COMP   GrB_TRAN  -
-GrB_DESC_RCT0T1  , // GrB_REPLACE  -              GrB_COMP   GrB_TRAN  GrB_TRAN
-
-GrB_DESC_RS      , // GrB_REPLACE  GrB_STRUCTURE  -          -         -
-GrB_DESC_RST1    , // GrB_REPLACE  GrB_STRUCTURE  -          -         GrB_TRAN
-GrB_DESC_RST0    , // GrB_REPLACE  GrB_STRUCTURE  -          GrB_TRAN  -
-GrB_DESC_RST0T1  , // GrB_REPLACE  GrB_STRUCTURE  -          GrB_TRAN  GrB_TRAN
-
-GrB_DESC_RSC     , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   -         -
-GrB_DESC_RSCT1   , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   -         GrB_TRAN
-GrB_DESC_RSCT0   , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  -
-GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
-
-// GrB_NULL is the default descriptor, with all settings at their defaults:
-//
-//      OUTP: do not replace the output
-//      MASK: mask is valued and not complemented
-//      INP0: first input not transposed
-//      INP1: second input not transposed
-
-// Predefined descriptors may not be modified or freed.  Attempting to modify
-// them results in an error (GrB_INVALID_VALUE).  Attempts to free them are
-// silently ignored.
-
 //------------------------------------------------------------------------------
+// GxB_Matrix_concat
+//------------------------------------------------------------------------------
+
+// GxB_Matrix_concat concatenates an array of matrices (Tiles) into a single
+// GrB_Matrix C.
+
+// Tiles is an m-by-n dense array of matrices held in row-major format, where
+// Tiles [i*n+j] is the (i,j)th tile, and where m > 0 and n > 0 must hold.  Let
+// A{i,j} denote the (i,j)th tile.  The matrix C is constructed by
+// concatenating these tiles together, as:
+
+//  C = [ A{0,0}   A{0,1}   A{0,2}   ... A{0,n-1}
+//        A{1,0}   A{1,1}   A{1,2}   ... A{1,n-1}
+//        ...
+//        A{m-1,0} A{m-1,1} A{m-1,2} ... A{m-1,n-1} ]
+
+// On input, the matrix C must already exist.  Any existing entries in C are
+// discarded.  C must have dimensions nrows by ncols where nrows is the sum of
+// # of rows in the matrices A{i,0} for all i, and ncols is the sum of the # of
+// columns in the matrices A{0,j} for all j.  All matrices in any given tile
+// row i must have the same number of rows (that is, nrows(A{i,0}) must equal
+// nrows(A{i,j}) for all j), and all matrices in any given tile column j must
+// have the same number of columns (that is, ncols(A{0,j}) must equal
+// ncols(A{i,j}) for all i).
+
+// The type of C is unchanged, and all matrices A{i,j} are typecasted into the
+// type of C.  Any settings made to C by GxB_Matrix_Option_set (format by row
+// or by column, bitmap switch, hyper switch, and sparsity control) are
+// unchanged.
+
+GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n
+    const GrB_Index m,
+    const GrB_Index n,
+    const GrB_Descriptor desc       // unused, except threading control
+) ;
+
+//==============================================================================
 // SuiteSparse:GraphBLAS options
-//------------------------------------------------------------------------------
+//==============================================================================
 
 // The following options modify how SuiteSparse:GraphBLAS stores and operates
 // on its matrices.  The GxB_*Option* methods allow the user to suggest how the
@@ -6392,8 +6429,8 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
 
 // For GrB_Matrix_reduce_BinaryOp, the GrB_BinaryOp op must correspond to a
 // known built-in GrB_Monoid.  User-defined binary operators are not supported.
-// the use of GrB_Matrix_reduce_BinaryOp is discouraged; use GrB_reduce with a
-// monoid instead.
+// Use GrB_reduce with a monoid instead.  It is officially deprecated in
+// SuiteSparse:GraphBLAS v5.0 and may be removed entirely in a future release.
 
 GB_PUBLIC
 GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
@@ -6407,14 +6444,14 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_reduce_BinaryOp // w<mask> = accum (w,reduce(A))
+GrB_Info GrB_Matrix_reduce_BinaryOp // DEPRECATED, DO NOT USE.
 (
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_BinaryOp op,          // reduce operator for t=reduce(A)
-    const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Descriptor desc       // descriptor for w, mask, and A
+    GrB_Vector w,
+    const GrB_Vector mask,
+    const GrB_BinaryOp accum,
+    const GrB_BinaryOp op,          // use a monoid instead (see above)
+    const GrB_Matrix A,
+    const GrB_Descriptor desc
 ) ;
 
 //------------------------------------------------------------------------------
@@ -6718,7 +6755,6 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
 
 // reduce matrix to vector:
 // GrB_Matrix_reduce_Monoid   (w,mask,acc,mo,A,d) // w<mask> = acc (w,reduce(A))
-// GrB_Matrix_reduce_BinaryOp (w,mask,acc,op,A,d) // w<mask> = acc (w,reduce(A))
 // reduce matrix to scalar:
 // GrB_Vector_reduce_[SCALAR] (c,acc,monoid,u,d)  // c = acc (c,reduce(u))
 // GrB_Matrix_reduce_[SCALAR] (c,acc,monoid,A,d)  // c = acc (c,reduce(A))

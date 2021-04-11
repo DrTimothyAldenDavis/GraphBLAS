@@ -706,10 +706,9 @@ methods
 
     % methods in MATLAB/elmat not implemented here:
     %
-    %       accumarray blkdiag bsxfun cat circshift compan gallery
-    %       hadamard hankel hilb inf invhilb ipermute isequaln nan ndgrid
-    %       pascal permute repelem rot90 shiftdim toeplitz vander
-    %       wilkinson
+    %       accumarray blkdiag bsxfun circshift compan gallery hadamard
+    %       hankel hilb inf invhilb ipermute isequaln nan ndgrid pascal
+    %       permute repelem rot90 shiftdim toeplitz vander wilkinson
     %
     %       not needed: linspace logspace ind2sub sub2ind meshgrid pi
     %       freqspace flintmax intmax intmin squeeze realmin realmax i j
@@ -811,6 +810,7 @@ methods
     C = bitxor (A, B, assumedtype) ;
 
 %   C = cast (G, ...)       built-in works as-is
+    C = cat (dim, varargin) ;
     C = ceil (G) ;
     [p, varargout] = colamd (G, varargin) ;
     C = complex (A, B) ;
@@ -890,12 +890,14 @@ methods
     C = logical (G) ;
 
     C = max (A, B, option) ;
+    C = mat2cell (A) ;              % TODO::
     C = min (A, B, option) ;
 
     e = nnz (G) ;
     X = nonzeros (G) ;
     s = norm (G, kind) ;
     s = numel (G) ;
+    C = num2cell (A) ;              % TODO::
     e = nzmax (G) ;
 
     C = ones (varargin) ;
@@ -972,6 +974,7 @@ methods (Static)
     binopinfo (op, type) ;
     C = build (I, J, X, m, n, dup, type, desc) ;
     b = burble (b) ;
+    C = cell2mat (A) ;
     c = chunk (c) ;
     clear ;
     [C, I, J] = compact (A, id) ;

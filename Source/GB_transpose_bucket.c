@@ -37,7 +37,7 @@
 
 #define GB_FREE_WORK                                                    \
 {                                                                       \
-    if (Workspaces != NULL)                                             \
+    if (Workspaces != NULL && Workspaces_size != NULL)                  \
     {                                                                   \
         for (int tid = 0 ; tid < nworkspaces ; tid++)                   \
         {                                                               \
@@ -51,7 +51,7 @@
 
 #define GB_FREE_ALL                                                     \
 {                                                                       \
-    GB_Matrix_free (&C) ;                                               \
+    GB_phbix_free (C) ;                                               \
     GB_FREE_WORK ;                                                      \
 }
 

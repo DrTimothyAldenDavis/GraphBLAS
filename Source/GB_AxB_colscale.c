@@ -23,7 +23,7 @@
 #define GB_FREE_ALL                 \
 {                                   \
     GB_FREE_WORK ;                  \
-    GB_Matrix_free (&C) ;           \
+    GB_phbix_free (C) ;           \
 }
 
 GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D

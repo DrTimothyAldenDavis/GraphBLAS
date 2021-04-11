@@ -112,8 +112,8 @@
 #define GB_FREE_ALL                     \
 {                                       \
     GB_Matrix_free (Zhandle) ;          \
-    GB_Matrix_free (&C0) ;       \
-    GB_Matrix_free (&R) ;               \
+    GB_phbix_free (C0) ;       \
+    GB_phbix_free (R) ;               \
 }
 
 //------------------------------------------------------------------------------
@@ -326,7 +326,7 @@ GrB_Info GB_mask                // C<M> = Z
         //----------------------------------------------------------------------
 
         GB_Matrix_free (Zhandle) ;
-        GB_Matrix_free (&C0) ;
+        GB_phbix_free (C0) ;
 
         //----------------------------------------------------------------------
         // transplant the result, conform, and free R

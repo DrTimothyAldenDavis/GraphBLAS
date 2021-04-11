@@ -23,9 +23,9 @@
 // A type:   int64_t
 // C type:   int64_t
 
-// Reduce:   if (aij < s) s = aij
+// Reduce:   if (aij < s) { s = aij ; }
 // Identity: INT64_MAX
-// Terminal: if (s == INT64_MIN) break ;
+// Terminal: if (s == INT64_MIN) { break ; }
 
 #define GB_ATYPE \
     int64_t
@@ -51,7 +51,7 @@
 
     // W [k] += (ztype) S [i], with typecast
     #define GB_ADD_CAST_ARRAY_TO_ARRAY(W,k,S,i)     \
-        if (S [i] < W [k]) W [k] = S [i]
+        if (S [i] < W [k]) { W [k] = S [i] ; }
 
     // W [k] = S [i], no typecast
     #define GB_COPY_ARRAY_TO_ARRAY(W,k,S,i)         \
@@ -59,7 +59,7 @@
 
     // W [k] += S [i], no typecast
     #define GB_ADD_ARRAY_TO_ARRAY(W,k,S,i)          \
-        if (S [i] < W [k]) W [k] = S [i]
+        if (S [i] < W [k]) { W [k] = S [i] ; }
 
 // Array to scalar
 
@@ -73,11 +73,11 @@
 
     // s += (ztype) Ax [p], with typecast
     #define GB_ADD_CAST_ARRAY_TO_SCALAR(s,Ax,p)     \
-        if (Ax [p] < s) s = Ax [p]
+        if (Ax [p] < s) { s = Ax [p] ; }
 
     // s += S [i], no typecast
     #define GB_ADD_ARRAY_TO_SCALAR(s,S,i)           \
-        if (S [i] < s) s = S [i]
+        if (S [i] < s) { s = S [i] ; }
 
 // Scalar to array
 
@@ -87,7 +87,7 @@
 
     // W [k] += s, no typecast
     #define GB_ADD_SCALAR_TO_ARRAY(W,k,s)           \
-        if (s < W [k]) W [k] = s
+        if (s < W [k]) { W [k] = s ; }
 
 // break the loop if terminal condition reached
 
@@ -101,7 +101,7 @@
         INT64_MIN
 
     #define GB_BREAK_IF_TERMINAL(s)                 \
-        if (s == INT64_MIN) break ;
+        if (s == INT64_MIN) { break ; }
 
 // panel size for built-in operators
 

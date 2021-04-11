@@ -45,7 +45,7 @@ elseif (~isempty (terminal))
     fprintf (f, 'define(`GB_has_terminal'', `1'')\n') ;
     fprintf (f, 'define(`GB_terminal_value'', `%s'')\n', terminal) ;
     fprintf (f, 'define(`GB_is_terminal'', `(s == %s)'')\n', terminal) ;
-    fprintf (f, 'define(`GB_terminal'', `if (s == %s) break ;'')\n', terminal) ;
+    fprintf (f, 'define(`GB_terminal'', `if (s == %s) { break ; }'')\n', terminal) ;
 else
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_has_terminal'', `0'')\n') ;

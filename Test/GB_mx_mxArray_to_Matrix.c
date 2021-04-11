@@ -275,17 +275,20 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             return (NULL) ;
         }
 
+        A->p_size = 0 ;
+        A->i_size = 0 ;
+
         if (sparsity != GxB_FULL)
         {
-            A->p = Mp ; // FIXME: A->p_size = what ?? shallow
-            A->i = Mi ; // FIXME: A->i_size = what ?? shallow
+            A->p = Mp ;
+            A->i = Mi ;
             A->p_shallow = true ;
             A->i_shallow = true ;
         }
         else
         {
-            A->p = NULL ;   A->p_size = 0 ;
-            A->i = NULL ;   A->i_size = 0 ;
+            A->p = NULL ;
+            A->i = NULL ;
             A->p_shallow = false ;
             A->i_shallow = false ;
         }
@@ -317,14 +320,14 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // double, or double complex), and a deep copy is not requested.  Just
         // make a shallow copy.
         A->nzmax = anzmax ;
-        A->x = Mx ; A->x_size = 0 ;    // A->x_size = what?? shallow FIXME
+        A->x = Mx ;
+        A->x_size = 0 ;     // A->x is shallow
     }
     else
     {
         if (!deep_copy)
         {
             // allocate new space for the GraphBLAS values
-            // FIXME: should this be added to memtable, or not???
             A->nzmax = GB_IMAX (anz, 1) ;
             A->x = (GB_void *) GB_malloc_memory (A->nzmax * atype_out->size,
                 sizeof (GB_void), &(A->x_size)) ;

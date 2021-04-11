@@ -33,7 +33,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_Matrix_free (&C) ;                   \
+    GB_phbix_free (C) ;                   \
     GB_FREE_WORK ;                          \
 }
 

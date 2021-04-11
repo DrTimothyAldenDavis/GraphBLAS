@@ -81,8 +81,8 @@ GB_PUBLIC void     GB_Global_malloc_debug_count_set
                         (int64_t malloc_debug_count) ;
           bool     GB_Global_malloc_debug_count_decrement (void) ;
 
-GB_PUBLIC void     GB_Global_hack_set (int64_t hack) ;
-GB_PUBLIC int64_t  GB_Global_hack_get (void) ;
+GB_PUBLIC void     GB_Global_hack_set (int k, int64_t hack) ;
+GB_PUBLIC int64_t  GB_Global_hack_get (int k) ;
 
           void     GB_Global_burble_set (bool burble) ;
 GB_PUBLIC bool     GB_Global_burble_get (void) ;

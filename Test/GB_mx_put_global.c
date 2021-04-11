@@ -56,6 +56,7 @@ void GB_mx_put_global
     if (nmemtable != 0)
     {
         printf ("in GB_mx_put_global: GraphBLAS nmemtable %d!\n", nmemtable) ;
+        GB_Global_free_pool_dump (2) ;
         GB_Global_memtable_dump ( ) ;
         mexErrMsgTxt ("memory leak in test!") ;
     }
@@ -65,6 +66,8 @@ void GB_mx_put_global
     {
         printf ("in GB_mx_put_global: GraphBLAS nblocks "GBd" in free_pool!\n",
             nblocks) ;
+        GB_Global_free_pool_dump (2) ;
+        GB_Global_memtable_dump ( ) ;
         mexErrMsgTxt ("memory leak in test!") ;
     }
 
@@ -72,6 +75,8 @@ void GB_mx_put_global
     if (nmalloc != 0)
     {
         printf ("in GB_mx_put_global: GraphBLAS nmalloc "GBd"!\n", nmalloc) ;
+        GB_Global_free_pool_dump (2) ;
+        GB_Global_memtable_dump ( ) ;
         mexErrMsgTxt ("memory leak in test!") ;
     }
 

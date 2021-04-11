@@ -88,7 +88,8 @@ GrB_Info mis                    // compute a maximal independent set
 
     // compute the degree of each nodes
     GrB_Vector_new (&degrees, GrB_FP64, n) ;
-    GrB_Matrix_reduce_BinaryOp (degrees, NULL, NULL, GrB_PLUS_FP64, A, NULL) ;
+    GrB_Matrix_reduce_Monoid (degrees, NULL, NULL, GrB_PLUS_MONOID_FP64,
+        A, NULL) ;
 
     // singletons are not candidates; they are added to iset first instead
     // candidates[degree != 0] = 1

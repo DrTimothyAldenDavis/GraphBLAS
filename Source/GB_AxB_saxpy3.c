@@ -103,7 +103,7 @@
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORK ;              \
-    GB_Matrix_free (&C) ;       \
+    GB_phbix_free (C) ;       \
 }
 
 //------------------------------------------------------------------------------
@@ -112,7 +112,7 @@
 
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
-    GrB_Matrix C,                   // output matrix (not done in-place)
+    GrB_Matrix C,                   // outputi, static header, not in-place
     int C_sparsity,                 // construct C as sparse or hypersparse
     const GrB_Matrix M_input,       // optional mask matrix
     const bool Mask_comp_input,     // if true, use !M

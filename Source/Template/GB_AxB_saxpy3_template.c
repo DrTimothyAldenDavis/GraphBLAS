@@ -347,8 +347,6 @@
                 // 2 -> 3 : to lock, if i seen already
                 // 3 -> 2 : to unlock; now i has been seen
 
-                GB_GET_M_j ;                // get M(:,j)
-
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
                     GB_GET_B_kj_INDEX ;         // get index k of B(k,j)
@@ -615,12 +613,8 @@
                     // M(:,j) is dense.  M is not scattered into Hf.
                     //----------------------------------------------------------
 
-                    if (Mask_struct && !M_is_bitmap)
-                    { 
-                        // structural mask, complemented, and not bitmap.
-                        // No work to do.
-                        continue ;
-                    }
+                    // no work if M structural, complemented, and not bitmap
+                    if (Mask_struct && !M_is_bitmap) continue ;
 
                     #undef  GB_CHECK_MASK_ij
                     #define GB_CHECK_MASK_ij                        \
@@ -782,6 +776,7 @@
     int64_t  *GB_RESTRICT Ci = C->i ;
     GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
 
+//  printf ("check Ci size %p %ld\n", C->i, C->i_size) ;
     ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
 
     #if GB_IS_ANY_PAIR_SEMIRING
@@ -1296,12 +1291,8 @@
                         // M(:,j) is dense.  M is not scattered into Hf.
                         //------------------------------------------------------
 
-                        if (Mask_struct && !M_is_bitmap)
-                        { 
-                            // structural mask, complemented, not bitmap.
-                            // No work to do; C is empty.
-                            continue ;
-                        }
+                        // no work if M structural, complemented, and not bitmap
+                        if (Mask_struct && !M_is_bitmap) continue ;
 
                         #undef  GB_CHECK_MASK_ij
                         #define GB_CHECK_MASK_ij                        \

@@ -278,7 +278,7 @@
 //      else
 //          cx += ax * bx
 #define GB_BITMAP_MULTADD(cb,cx,exists,ax,bx) \
-    if (exists && !cb) cx = ((uint32_t) (((ax != 0) && (bx != 0)))) ; cb |= exists
+    if (exists && !cb) { cx = ((uint32_t) (((ax != 0) && (bx != 0)))) ; } ; cb |= exists
 
 // define X for bitmap multiply-add
 #define GB_XINIT \

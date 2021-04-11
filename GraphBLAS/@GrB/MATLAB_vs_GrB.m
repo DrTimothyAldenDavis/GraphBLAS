@@ -245,7 +245,7 @@
 % ------------------------------------------------
 %
 %     For C = [A1 A2] and [A1 ; A2], the type of C differs.
-%     GraphBLAS uses the rules given by 'help GrB.optype'
+%     GraphBLAS uses the rules given by 'help GrB.optype'.
 %
 % ------------------------------------------------
 %% Bitwise operators:

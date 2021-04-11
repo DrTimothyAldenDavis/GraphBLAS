@@ -26,14 +26,14 @@
 
 #define GB_FREE_WORK        \
 {                           \
-    GB_Matrix_free (&A2) ;  \
-    GB_Matrix_free (&B2) ;  \
+    GB_phbix_free (A2) ;  \
+    GB_phbix_free (B2) ;  \
 }
 
 #define GB_FREE_ALL         \
 {                           \
     GB_FREE_WORK ;          \
-    GB_Matrix_free (&C) ;   \
+    GB_phbix_free (C) ;   \
 }
 
 GrB_Info GB_kroner                  // C = kron (A,B)
