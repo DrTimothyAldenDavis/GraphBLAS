@@ -889,15 +889,15 @@ methods
     [F, E] = log2 (G) ;
     C = logical (G) ;
 
+    C = mat2cell (A, m, n) ;
     C = max (A, B, option) ;
-    C = mat2cell (A) ;              % TODO::
     C = min (A, B, option) ;
 
     e = nnz (G) ;
     X = nonzeros (G) ;
     s = norm (G, kind) ;
+    C = num2cell (A, dim) ;
     s = numel (G) ;
-    C = num2cell (A) ;              % TODO::
     e = nzmax (G) ;
 
     C = ones (varargin) ;

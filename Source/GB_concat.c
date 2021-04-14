@@ -97,10 +97,10 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
                 k += csc ? ncols : nrows ;
             }
             GrB_Type atype = A->type ;
+            #define offset (GB_Global_print_one_based_get ( ) ? 1 : 0)
             if (!GB_Type_compatible (ctype, atype))
             {
                 GB_FREE_ALL ;
-                int64_t offset = GB_Global_print_one_based_get ( ) ? 1 : 0 ;
                 GB_ERROR (GrB_DOMAIN_MISMATCH,
                     "Input matrix Tiles{%ld,%ld} of type [%s]\n"
                     "cannot be typecast to output of type [%s]\n",
@@ -110,7 +110,6 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
             if (tile_rows != nrows)
             {
                 GB_FREE_ALL ;
-                int64_t offset = GB_Global_print_one_based_get ( ) ? 1 : 0 ;
                 GB_ERROR (GrB_DIMENSION_MISMATCH,
                     "Input matrix Tiles{%ld,%ld} is %ld-by-%ld; its row\n"
                     "dimension must match all other matrices Tiles{%ld,:},"
@@ -121,7 +120,6 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
             if (tile_cols != ncols)
             {
                 GB_FREE_ALL ;
-                int64_t offset = GB_Global_print_one_based_get ( ) ? 1 : 0 ;
                 GB_ERROR (GrB_DIMENSION_MISMATCH,
                     "Input matrix Tiles{%ld,%ld} is %ld-by-%ld; its column\n"
                     "dimension must match all other matrices Tiles{:,%ld},"

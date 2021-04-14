@@ -3590,7 +3590,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 #endif
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_concat
+// GxB_Matrix_concat and GxB_Matrix_split
 //------------------------------------------------------------------------------
 
 // GxB_Matrix_concat concatenates an array of matrices (Tiles) into a single
@@ -3626,6 +3626,27 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n
     const GrB_Index m,
     const GrB_Index n,
+    const GrB_Descriptor desc       // unused, except threading control
+) ;
+
+// GxB_Matrix_split does the opposite of GxB_Matrix_concat.  It splits a single
+// input matrix A into a 2D array of tiles.  On input, the Tiles array must be
+// a non-NULL pointer to a previously allocated array of size at least m*n
+// where both m and n must be > 0.  The Tiles_nrows array has size m, and
+// Tiles_ncols has size n.  The (i,j)th tile has dimension
+// Tiles_nrows[i]-by-Tiles_ncols[j].  The sum of Tiles_nrows [0:m-1] must equal
+// the number of rows of A, and the sum of Tiles_ncols [0:n-1] must equal the
+// number of columns of A.  The type of each tile is the same as the type of A;
+// no typecasting is done.
+
+GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
+(
+    GrB_Matrix *Tiles,              // 2D row-major array of size m-by-n
+    const GrB_Index m,
+    const GrB_Index n,
+    const GrB_Index *Tile_nrows,    // array of size m
+    const GrB_Index *Tile_ncols,    // array of size n
+    const GrB_Matrix A,             // input matrix to split
     const GrB_Descriptor desc       // unused, except threading control
 ) ;
 
