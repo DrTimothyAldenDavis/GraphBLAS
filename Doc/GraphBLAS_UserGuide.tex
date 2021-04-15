@@ -317,6 +317,25 @@ Version 1.1 (Dec 2017) primarily improved the performance.
 Version 1.0 was released on Nov 25, 2017.
 \end{itemize}
 
+%-------------------------------------------------------------------------------
+\subsubsection{Regarding historical and deprecated functions and symbols}
+%-------------------------------------------------------------------------------
+
+When a \verb'GxB*' function or symbol is added to the C API Specification, the
+new \verb'GrB*' name should be used instead, if possible.  However, the old
+\verb'GxB*' name will be kept as long as possible for historical reasons.
+Historical functions and symbols will not always be documented here in the
+SuiteSparse:GraphBLAS User Guide, but they will be kept in \verb'GraphbBLAS.h'
+and kept in good working order in the library.  Historical functions and
+symbols would only be removed in the very unlikely case that they cause a
+serious conflict with future methods.
+
+The only method that has been fully deprecated and removed is the no-input
+\verb'GrB_wait' method, which was incompatible with the new 1-input
+\verb'GrB_wait'.  The \verb'GrB_Matrix_reduce_BinaryOp' function was modified
+in v4.0.1 and limited to built-in binary operators that correspond to known
+monoids.  The support of arbitary binary operators has been deprecated and
+removed in this version.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
