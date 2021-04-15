@@ -32,12 +32,10 @@
 
 // Regarding "historical" functions and symbols:  when a GxB* function or
 // symbol is added to the C API Specification, the new GrB* name should be used
-// instead.  The old GxB* name will be kept, perhaps indefinitely for
-// historical reasons.  A historical GxB* function or symbol will be kept here
-// as long as possible, documented here and in working order; it will just not
-// be mentioned in the user guide.  Historical functions and symbols would only
-// be removed in the rare case that the they cause a serious conflict with
-// future methods.
+// instead.  The old GxB* name will be kept for historical reasons, documented
+// here and in working order; it might no longer be mentioned in the user
+// guide.  Historical functions and symbols would only be removed in the rare
+// case that they cause a serious conflict with future methods.
 
 #ifndef GRAPHBLAS_H
 #define GRAPHBLAS_H
@@ -6470,7 +6468,10 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
 
 // GrB_Matrix_reduce_BinaryOp does the reduction with a GrB_BinaryOp op, which
 // must correspond to a known built-in GrB_Monoid.  User-defined binary
-// operators are not supported.  Use GrB_reduce with a monoid instead.
+// operators are not supported.  Use GrB_reduce with a monoid instead.  The
+// ability of GrB_Matrix_reduce_BinaryOp to compute a reduction of a matrix to
+// a vector using an arbitrary binary op has been deprecated and removed from
+// SuiteSparse:GraphBLAS.
 
 GB_PUBLIC
 GrB_Info GrB_Matrix_reduce_BinaryOp // historical in SuiteSparse:GraphBLAS
