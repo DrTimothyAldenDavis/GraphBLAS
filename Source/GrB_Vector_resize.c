@@ -34,7 +34,7 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
 }
 
 //------------------------------------------------------------------------------
-// GxB_Vector_resize: deprecated
+// GxB_Vector_resize: historical
 //------------------------------------------------------------------------------
 
 // This function now appears in the C API Specification as GrB_Vector_resize.

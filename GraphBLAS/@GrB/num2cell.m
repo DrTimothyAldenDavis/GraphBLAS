@@ -38,13 +38,13 @@ else
 
     if (nargin == 1)
         % split A into scalars
-        C = gbsplit (A, ones (m, 1, 'int64'), ones (n, 1, 'int64')) ;
+        C = gbsplit (A, ones (m, 1), ones (n, 1)) ;
     elseif (isequal (dim, 1))
         % split A into columns
-        C = gbsplit (A, m, ones (n, 1, 'int64')) ;
+        C = gbsplit (A, m, ones (n, 1)) ;
     elseif (isequal (dim, 2))
         % split A into rows
-        C = gbsplit (A, ones (m, 1, 'int64'), n) ;
+        C = gbsplit (A, ones (m, 1), n) ;
     else
         error ('unknown option') ;
     end

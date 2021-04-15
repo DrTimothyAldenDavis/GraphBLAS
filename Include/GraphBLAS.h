@@ -30,6 +30,15 @@
 // with the name GxB_* are user-accessible in SuiteSparse:GraphBLAS but cannot
 // be guaranteed to appear in all GraphBLAS implementations.
 
+// Regarding "historical" functions and symbols:  when a GxB* function or
+// symbol is added to the C API Specification, the new GrB* name should be used
+// instead.  The old GxB* name will be kept, perhaps indefinitely for
+// historical reasons.  A historical GxB* function or symbol will be kept here
+// as long as possible, documented here and in working order; it will just not
+// be mentioned in the user guide.  Historical functions and symbols would only
+// be removed in the rare case that the they cause a serious conflict with
+// future methods.
+
 #ifndef GRAPHBLAS_H
 #define GRAPHBLAS_H
 
@@ -460,7 +469,7 @@ typedef enum
 
     // for GrB_MASK only:
     GrB_COMP = 2,       // use the structural complement of the input
-    GrB_SCMP = 2,       // same as GrB_COMP (deprecated; use GrB_COMP instead)
+    GrB_SCMP = 2,       // same as GrB_COMP (historical; use GrB_COMP instead)
     GrB_STRUCTURE = 4,  // use the only pattern of the mask, not its values
 
     // for GrB_INP0 and GrB_INP1 only:
@@ -757,7 +766,7 @@ GB_PUBLIC GrB_UnaryOp
     // GxB_LNOT_BOOL; it just has a different name.
     GrB_LNOT ;
 
-// GxB_ABS is now in the v1.3 spec, the following names are deprecated:
+// GxB_ABS is now in the v1.3 spec, the following names are historical:
 GB_PUBLIC GrB_UnaryOp
 
     // z = abs(x)
@@ -3668,7 +3677,7 @@ GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
 //      GxB_Global_Option_set:  sets an option for all future matrices
 //      GxB_Global_Option_get:  queries current option for all future matrices
 
-#define GxB_HYPER 0     // (deprecated, use GxB_HYPER_SWITCH)
+#define GxB_HYPER 0     // (historical, use GxB_HYPER_SWITCH)
 
 typedef enum            // for global options or matrix options
 {
@@ -3717,7 +3726,7 @@ typedef enum            // for global options or matrix options
     //------------------------------------------------------------
 
     GxB_SPARSITY_STATUS = 33,       // hyper, sparse, bitmap or full (1,2,4,8)
-    GxB_IS_HYPER = 6,               // deprecated; use GxB_SPARSITY_STATUS
+    GxB_IS_HYPER = 6,               // historical; use GxB_SPARSITY_STATUS
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get/set only:
@@ -6448,11 +6457,6 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
 // columns instead of the rows.  This behavior is the transpose of the MATLAB
 // convention, where r=sum(A) produces a row vector and sums each column.
 
-// For GrB_Matrix_reduce_BinaryOp, the GrB_BinaryOp op must correspond to a
-// known built-in GrB_Monoid.  User-defined binary operators are not supported.
-// Use GrB_reduce with a monoid instead.  It is officially deprecated in
-// SuiteSparse:GraphBLAS v5.0 and may be removed entirely in a future release.
-
 GB_PUBLIC
 GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
 (
@@ -6464,8 +6468,12 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 ) ;
 
+// GrB_Matrix_reduce_BinaryOp does the reduction with a GrB_BinaryOp op, which
+// must correspond to a known built-in GrB_Monoid.  User-defined binary
+// operators are not supported.  Use GrB_reduce with a monoid instead.
+
 GB_PUBLIC
-GrB_Info GrB_Matrix_reduce_BinaryOp // DEPRECATED, DO NOT USE.
+GrB_Info GrB_Matrix_reduce_BinaryOp // historical in SuiteSparse:GraphBLAS
 (
     GrB_Vector w,
     const GrB_Vector mask,
@@ -6823,9 +6831,9 @@ GrB_Info GrB_transpose              // C<Mask> = accum (C, A')
 // GrB_kronecker:  Kronecker product
 //==============================================================================
 
-// GxB_kron is deprecated; use GrB_kronecker instead
+// GxB_kron is historical; use GrB_kronecker instead
 GB_PUBLIC
-GrB_Info GxB_kron                   // C<Mask> = accum(C,kron(A,B)) (deprecated)
+GrB_Info GxB_kron                   // C<Mask> = accum(C,kron(A,B)) (historical)
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6898,7 +6906,7 @@ GB_PUBLIC GrB_Monoid
     // 10 MIN monoids: (not for complex types)
     //--------------------------------------------------------------------------
 
-    // GxB_MIN monoids, deprecated, use GrB_MIN_MONOID_* instead:
+    // GxB_MIN monoids, historical, use GrB_MIN_MONOID_* instead:
     GxB_MIN_INT8_MONOID,        // identity: INT8_MAX     terminal: INT8_MIN
     GxB_MIN_INT16_MONOID,       // identity: INT16_MAX    terminal: INT16_MIN
     GxB_MIN_INT32_MONOID,       // identity: INT32_MAX    terminal: INT32_MIN
@@ -6926,7 +6934,7 @@ GB_PUBLIC GrB_Monoid
     // 10 MAX monoids:
     //--------------------------------------------------------------------------
 
-    // GxB_MAX monoids, deprecated, use GrB_MAX_MONOID_* instead:
+    // GxB_MAX monoids, historical, use GrB_MAX_MONOID_* instead:
     GxB_MAX_INT8_MONOID,        // identity: INT8_MIN     terminal: INT8_MAX
     GxB_MAX_INT16_MONOID,       // identity: INT16_MIN    terminal: INT16_MAX
     GxB_MAX_INT32_MONOID,       // identity: INT32_MIN    terminal: INT32_MAX
@@ -6954,7 +6962,7 @@ GB_PUBLIC GrB_Monoid
     // 12 PLUS monoids:
     //--------------------------------------------------------------------------
 
-    // GxB_PLUS monoids, deprecated, use GrB_PLUS_MONOID_* instead:
+    // GxB_PLUS monoids, historical, use GrB_PLUS_MONOID_* instead:
     GxB_PLUS_INT8_MONOID,       // identity: 0
     GxB_PLUS_INT16_MONOID,      // identity: 0
     GxB_PLUS_INT32_MONOID,      // identity: 0
@@ -6986,7 +6994,7 @@ GB_PUBLIC GrB_Monoid
     // 12 TIMES monoids: identity value is 1, int* and uint* are terminal
     //--------------------------------------------------------------------------
 
-    // GxB_TIMES monoids, deprecated, use GrB_TIMES_MONOID_* instead:
+    // GxB_TIMES monoids, historical, use GrB_TIMES_MONOID_* instead:
     GxB_TIMES_INT8_MONOID,      // identity: 1            terminal: 0
     GxB_TIMES_INT16_MONOID,     // identity: 1            terminal: 0
     GxB_TIMES_INT32_MONOID,     // identity: 1            terminal: 0
@@ -7036,7 +7044,7 @@ GB_PUBLIC GrB_Monoid
     // 4 Boolean monoids: (see also the GxB_ANY_BOOL_MONOID above)
     //--------------------------------------------------------------------------
 
-    // GxB boolean monoids, deprecated, use GrB instead:
+    // GxB boolean monoids, historical, use GrB instead:
     GxB_LOR_BOOL_MONOID,        // identity: false        terminal: true
     GxB_LAND_BOOL_MONOID,       // identity: true         terminal: false
     GxB_LXOR_BOOL_MONOID,       // identity: false
@@ -7657,7 +7665,7 @@ GB_PUBLIC GrB_Semiring
 
     // LOR_LAND, LAND_LOR, LXOR_LAND, LXNOR_LOR.
 
-// GxB* semirings corresponding to the equivalent GrB* semiring are deprecated.
+// GxB* semirings corresponding to the equivalent GrB* semiring are historical.
 
 GB_PUBLIC GrB_Semiring
 
@@ -7850,7 +7858,7 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
 
 // GxB_*_resize are identical to the GrB*resize methods above
 GB_PUBLIC
-GrB_Info GxB_Matrix_resize      // change the size of a matrix (deprecated)
+GrB_Info GxB_Matrix_resize      // change the size of a matrix (historical)
 (
     GrB_Matrix C,               // matrix to modify
     GrB_Index nrows_new,        // new number of rows in matrix
@@ -7858,7 +7866,7 @@ GrB_Info GxB_Matrix_resize      // change the size of a matrix (deprecated)
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Vector_resize      // change the size of a vector (deprecated)
+GrB_Info GxB_Vector_resize      // change the size of a vector (historical)
 (
     GrB_Vector w,               // vector to modify
     GrB_Index nrows_new         // new number of rows in vector
