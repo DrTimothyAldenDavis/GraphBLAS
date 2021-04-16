@@ -39,6 +39,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     ASSERT (A_is_hyper || A_sparsity == GxB_SPARSE) ;
     GrB_Matrix C = NULL ;
     GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
+    ASSERT_MATRIX_OK (A, "A sparse for split", GB0) ;
 
     int sparsity_control = A->sparsity ;
     float hyper_switch = A->hyper_switch ;
@@ -101,11 +102,17 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             // A is hypersparse: look for vector avend in the A->h hyper list.
             // The vectors to handle for this outer loop are in
             // Ah [akstart:akend-1].
-            int64_t akend = akstart ;
-            int64_t pright = anvec ;
+            akend = akstart ;
+            int64_t pright = anvec - 1 ;
             bool found ;
             GB_SPLIT_BINARY_SEARCH (avend, Ah, akend, pright, found) ;
-            ASSERT (Ah [akend-1] < avend) ;
+//          printf ("anvec %ld akstart: %ld akend: %ld avend %ld\n",
+//              anvec, akstart, akend, avend) ;
+            ASSERT (GB_IMPLIES (akstart <= akend-1, Ah [akend-1] < avend)) ;
+//          for (int64_t k = akstart ; k < akend ; k++)
+//          {
+//              printf ("   Ah [%ld] = %ld\n", k, Ah [k]) ;
+//          }
         }
         else
         {
@@ -116,6 +123,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
         // # of vectors in all tiles in this outer loop
         int64_t cnvec = akend - akstart ;
         int nth = GB_nthreads (cnvec, chunk, nthreads_max) ;
+// printf ("akend %ld\n", akend) ;
 
         //----------------------------------------------------------------------
         // create all tiles for vectors akstart:akend-1 in A
@@ -123,6 +131,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
         for (int64_t inner = 0 ; inner < ninner ; inner++)
         {
+// printf ("\ninner: %ld, cnvec %ld akstart %ld akend %ld\n",
+    // inner, cnvec, akstart, akend) ;
 
             //------------------------------------------------------------------
             // allocate C, C->p, and C->h for this tile
@@ -139,6 +149,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 hyper_switch, cnvec, Context)) ;
             C->sparsity = sparsity_control ;
             C->hyper_switch = hyper_switch ;
+            C->nvec = cnvec ;
             int64_t *restrict Cp = C->p ;
             int64_t *restrict Ch = C->h ;
 
@@ -149,12 +160,17 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             #pragma omp parallel for num_threads(nth) schedule(static)
             for (int64_t k = akstart ; k < akend ; k++)
             {
+                // printf ("look in kth vector of A: k = %ld\n", k) ;
                 int64_t pA = Wp [k] ;
                 int64_t pA_end = Ap [k+1] ;
                 int64_t aknz = pA_end - pA ;
+                // printf ("Wp [%ld] = %ld\n", k, Wp [k]) ;
+                // printf ("Ap [%ld+1] = %ld\n", k, Ap [k+1]) ;
+                // printf ("aknz %ld\n", aknz) ;
                 if (aknz == 0 || Ai [pA] >= aiend)
                 {
                     // this vector of C is empty
+                    // printf ("empty\n") ;
                 }
                 else if (aknz > 256)
                 {
@@ -193,10 +209,16 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 {
                     Ch [k-akstart] = Ah [k] - avstart ;
                 }
+                // printf ("cknz is %ld\n", Cp [k-akstart]) ;
             }
 
             GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth, Context) ;
             int64_t cnz = Cp [cnvec] ;
+
+            // for (int64_t k = 0 ; k <= cnvec ; k++)
+            // {
+                // printf ("Cp [%ld] = %ld\n", k, Cp [k]) ;
+            // }
 
             //------------------------------------------------------------------
             // allocate C->i and C->x for this tile
@@ -212,6 +234,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             int C_ntasks, C_nthreads ;
             GB_SLICE_MATRIX (C, 8, chunk) ;
+// printf ("C_ntasks %d C_nthreads %d\n", C_ntasks, C_nthreads) ;
+// printf ("C->nzmax %ld C->nvec %ld\n", C->nzmax, C->nvec) ;
 
             bool done = false ;
 

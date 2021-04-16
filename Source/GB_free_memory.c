@@ -43,6 +43,7 @@ void GB_free_memory         // free memory, bypassing the free_pool
         {
             GB_Global_free_function (*p) ;
         }
+//      GB_Global_free_pool_dump (2) ; GB_Global_memtable_dump ( ) ;
         (*p) = NULL ;
     }
 }

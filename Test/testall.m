@@ -73,6 +73,7 @@ hack = GB_mex_hack ;
 hack (2) = 1 ;
 GB_mex_hack (hack) ;
 
+logstat ('test191',t) ; % test split
 logstat ('test188',t) ; % test concat
 logstat ('test187',t) ; % test dup/assign for all sparsity formats
 logstat ('test186',t) ; % test saxpy for all sparsity formats

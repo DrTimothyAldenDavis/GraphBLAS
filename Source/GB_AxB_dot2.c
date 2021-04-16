@@ -376,7 +376,11 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         int64_t *GB_RESTRICT Ci = NULL ; size_t Ci_size = 0 ;
 
         Cp = GB_MALLOC (cvdim+1, int64_t, &Cp_size) ;
-        Ch = B_is_hyper ? GB_MALLOC (cvdim, int64_t, &Ch_size) : NULL ;
+        Ch = NULL ;
+        if (B_is_hyper)
+        { 
+            Ch = GB_MALLOC (cvdim, int64_t, &Ch_size) ;
+        }
         Ci = GB_MALLOC (cnz, int64_t, &Ci_size) ;
         if (Cp == NULL || (B_is_hyper && Ch == NULL) || Ci == NULL)
         { 

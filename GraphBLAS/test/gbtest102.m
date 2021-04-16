@@ -35,6 +35,11 @@ for n = 100:100:1000
         C2 = [B1 B2 ; B3 B4] ;  % using MATLAB horzcat and vercat
         assert (isequal (C1, C2)) ;
 
+        % test mat2cell
+        S1 = mat2cell (C1, [n n], [n n]) ;
+        S2 = mat2cell (C2, [n n], [n n]) ;
+        assert (isequal (S1, S2)) ;
+
         % test GrB.cell2mat
         S1 = cell (2,2) ;
         S1 {1,1} = A1 ;
