@@ -46,6 +46,8 @@
             }
         }
     }
+
+    done = true ;
 }
 
 #undef GB_CTYPE

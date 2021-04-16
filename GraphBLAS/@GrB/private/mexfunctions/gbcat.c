@@ -64,8 +64,6 @@ void mexFunction
             // get the Tiles {i,j} matrix.
             // Tiles is row-major but mxTiles is column-major
             Tiles [i*n+j] = gb_get_shallow (mxGetCell (mxTiles, i+j*m)) ;
-//          printf ("\n=== concat Tile(%ld,%ld) = \n", i, j) ;
-//          GxB_print (Tiles [i*n+j], 2) ;
         }
     }
 
@@ -112,8 +110,6 @@ void mexFunction
 
     fmt = gb_get_format (cnrows, cncols, NULL, NULL, fmt) ;
     GrB_Matrix C = gb_new (ctype, cnrows, cncols, fmt, sparsity) ;
-//  printf ("empty C matrix:\n") ;
-//  GxB_print (C, 2) ;
 
     //--------------------------------------------------------------------------
     // C = concatenate (Tiles)
