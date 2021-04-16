@@ -29,7 +29,10 @@ Version 4.0.1, Jan 4, 2021
     * GrB_wait(&object): polymorphic function added
     * GrB_*_nvals: no longer guarantees completion; use GrB_wait for that
     * GrB_error: now has two parameters: a string (char **) and an object
+        The no-input GrB_error(void) method has been deprecated and removed.
     * GrB_Matrix_reduce_BinaryOp: limited to certain built-in ops
+        Support for user-defined operators and binary ops that do not
+        correspond to built-in monoids has been deprecated and removed.
     * GrB_*_extractTuples: may return indices out of order
     * removed internal features: GBI iterator, slice and hyperslice matrices
     * bitmap/full matrices and vectors added: faster and lower memory usage

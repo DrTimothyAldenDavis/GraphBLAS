@@ -4083,6 +4083,11 @@ GB_PUBLIC GrB_Info GxB_Scalar_wait     (GxB_Scalar     *s       ) ;
 GB_PUBLIC GrB_Info GrB_Vector_wait     (GrB_Vector     *v       ) ;
 GB_PUBLIC GrB_Info GrB_Matrix_wait     (GrB_Matrix     *A       ) ;
 
+// Note that v1.0 of the GraphBLAS C API had a no-input GrB_wait ( ) method,
+// which is now deprecated and no longer supported, since it conflicts with the
+// single-input GrB_wait (&object) method below.  The no-input GrB_wait ( )
+// method has been removed, as of v4.0 of SuiteSparse:GraphBLAS.
+
 // GrB_wait (&object) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_wait(object)                         \
@@ -4122,6 +4127,11 @@ GB_PUBLIC GrB_Info GxB_Scalar_error     (const char **error, const GxB_Scalar   
 GB_PUBLIC GrB_Info GrB_Vector_error     (const char **error, const GrB_Vector     v) ;
 GB_PUBLIC GrB_Info GrB_Matrix_error     (const char **error, const GrB_Matrix     A) ;
 GB_PUBLIC GrB_Info GrB_Descriptor_error (const char **error, const GrB_Descriptor d) ;
+
+// Note that v1.0 of the GraphBLAS C API had a no-input GrB_error ( ) method,
+// which is now deprecated and no longer supported, since it conflicts with the
+// 2-input GrB_error method defined below.  The no-input GrB_error ( ) method
+// has been removed, as of v4.0 of SuiteSparse:GraphBLAS.
 
 // GrB_error (error,object) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L

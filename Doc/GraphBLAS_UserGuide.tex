@@ -330,12 +330,14 @@ and kept in good working order in the library.  Historical functions and
 symbols would only be removed in the very unlikely case that they cause a
 serious conflict with future methods.
 
-The only method that has been fully deprecated and removed is the no-input
-\verb'GrB_wait' method, which was incompatible with the new 1-input
-\verb'GrB_wait'.  The \verb'GrB_Matrix_reduce_BinaryOp' function was modified
-in v4.0.1 and limited to built-in binary operators that correspond to known
-monoids.  The support of arbitary binary operators has been deprecated and
-removed in this version.
+The only methods that have been fully deprecated and removed are the no-input
+\verb'GrB_wait' and \verb'GrB_error' methods, which are incompatible with the
+new 1-input \verb'GrB_wait' and 2-input \verb'GrB_error' methods defined in
+the latest version of the C API Specification.  The
+\verb'GrB_Matrix_reduce_BinaryOp' function was modified in v4.0.1 and limited
+to built-in binary operators that correspond to known monoids.  The support of
+arbitary binary operators has been deprecated and removed in this version of
+SuiteSparse:GraphBLAS.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2719,7 +2721,7 @@ the non-deterministic nature of intra-thread synchronization.
 NOTE: the API for the select function has changed in v4.0.1 of
 SuiteSparse:GraphBLAS.  The former function signature (in v3.3.3 and earlier)
 included the dimensions of the matrix.  These are not needed since they can be
-passed in as part of the thunk, if needed.
+pwereassed in as part of the \verb'thunk', if needed.
 \end{alert}
 
 A select operator is a scalar function of the form

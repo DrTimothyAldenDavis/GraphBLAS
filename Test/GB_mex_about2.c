@@ -331,13 +331,13 @@ void mexFunction
     // jumbled user-defined matrix
     //--------------------------------------------------------------------------
 
-    wild w ;
+    wild ww ;
     n = 3 ;
-    memset (w.gunk, 13, 16 * sizeof (int)) ;
+    memset (ww.gunk, 13, 16 * sizeof (int)) ;
     OK (GrB_Type_new (&Wild, sizeof (wild))) ;
     OK (GrB_Matrix_new (&C, Wild, n, n)) ;
     OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
-    OK (GrB_Matrix_assign_UDT (C, NULL, NULL, &w, GrB_ALL, n, GrB_ALL, n,
+    OK (GrB_Matrix_assign_UDT (C, NULL, NULL, &ww, GrB_ALL, n, GrB_ALL, n,
         NULL)) ;
     OK (GxB_Matrix_fprint (C, "wild matrix", GxB_SHORT, NULL)) ;
 
@@ -352,7 +352,6 @@ void mexFunction
     OK (GxB_Matrix_fprint (C, "wild matrix unjumbled", GxB_SHORT, NULL)) ;
 
     GrB_Matrix_free_(&C) ;
-    GrB_Type_free_(&Wild) ;
 
     //--------------------------------------------------------------------------
     // malloc/realloc wrappers
@@ -437,6 +436,87 @@ void mexFunction
     GrB_Matrix_free (&Z) ;
     GrB_Matrix_free (&X) ;
     GrB_Matrix_free (&C) ;
+
+    //--------------------------------------------------------------------------
+    // split/concat for user-defined types
+    //--------------------------------------------------------------------------
+
+    printf ("\n ======================== split/concat tests: ") ;
+    int sparsity [4] ;
+    sparsity [0] = GxB_HYPERSPARSE ;
+    sparsity [1] = GxB_SPARSE ;
+    sparsity [2] = GxB_BITMAP ;
+    sparsity [3] = GxB_FULL ;
+    GrB_Matrix Tiles [4] ;
+    memset (Tiles, 0, 4 * sizeof (GrB_Matrix)) ;
+    n = 20 ;
+    GrB_Index Tile_nrows [2] = { 5, 15 } ;
+    GrB_Index Tile_ncols [2] = { 12, 8 } ;
+
+    for (int k = 0 ; k <= 3 ; k++)
+    {
+        for (int k2 = 0 ; k2 <= 1 ; k2++)
+        {
+//          printf ("sparsity %d case %d\n", sparsity [k], k2) ;
+            printf (".") ;
+            OK (GrB_Matrix_new (&C, Wild, n, n)) ;
+            OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity [k])) ;
+            if (k2 == 0)
+            {
+                // C(:,:) = ww
+                OK (GrB_Matrix_assign_UDT (C, NULL, NULL, &ww, GrB_ALL,
+                    n, GrB_ALL, n, NULL)) ;
+            }
+            else
+            {
+                // C = diagonal matrix
+                for (int64_t kk = 0 ; kk < 20 ; kk++)
+                {
+                    OK (GrB_Matrix_setElement_UDT (C, &ww, kk, kk)) ;
+                }
+            }
+//          OK (GxB_print (C, 2)) ;
+            // split C into 4 matrices
+            OK (GxB_Matrix_split (Tiles, 2, 2, Tile_nrows, Tile_ncols, C,
+                NULL)) ;
+//          for (int kk = 0 ; kk < 4 ; kk++)
+//          {
+//              printf ("\nTile [%d]: ", kk) ;
+//              OK (GxB_print (Tiles [kk], 2)) ;
+//          }
+            // concatenate the 4 matrices back in X
+            OK (GrB_Matrix_new (&X, Wild, n, n)) ;
+            OK (GxB_Matrix_Option_set (X, GxB_SPARSITY_CONTROL, sparsity [k])) ;
+            OK (GxB_Matrix_concat (X, Tiles, 2, 2, NULL)) ;
+//          OK (GxB_print (C, 2)) ;
+
+            // ensure C and X are the same (just use a brute force method)
+            for (int64_t i = 0 ; i < n ; i++)
+            {
+                for (int64_t j = 0 ; j < n ; j++)
+                {
+                    wild wc, wx ;
+                    int infoc = GrB_Matrix_extractElement_UDT (&wc, C, i, j) ;
+                    int infox = GrB_Matrix_extractElement_UDT (&wx, X, i, j) ;
+                    CHECK (infoc == GrB_SUCCESS || infoc == GrB_NO_VALUE) ;
+                    CHECK (infoc == infox) ;
+                    if (infoc == GrB_SUCCESS)
+                    {
+                        for (int kk = 0 ; kk < 16 ; kk++)
+                        {
+                            CHECK (wc.gunk [kk] == wx.gunk [kk]) ;
+                        }
+                    }
+                }
+            }
+
+            GrB_Matrix_free (&X) ;
+            GrB_Matrix_free (&C) ;
+            for (int kk = 0 ; kk < 4 ; kk++) GrB_Matrix_free (&(Tiles [kk])) ;
+        }
+    }
+    GrB_Type_free_(&Wild) ;
+    printf (" passed.\n") ;
 
     //--------------------------------------------------------------------------
     // wrapup
