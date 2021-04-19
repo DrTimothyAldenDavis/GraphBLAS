@@ -223,7 +223,7 @@ GrB_Info GB_assign_prep
         }
     }
 
-    if (M != NULL)
+    if (M != NULL && !Mask_struct)
     {
         // M is typecast to boolean
         if (!GB_Type_compatible (M->type, GrB_BOOL))
@@ -945,8 +945,21 @@ GrB_Info GB_assign_prep
 
     // TODO: bitmap assign can handle C==M and C==A aliasing in some cases
 
-    // If C is aliased to A and/or M, a copy of C must be made.
+    // If C is aliased to A and/or M, a copy of C typically must be made.
     bool C_aliased = GB_aliased (C, A) || GB_aliased (C, M) ;
+
+    // However, if C == M is aliased, M is structural and not complemented, I
+    // and J are both ":", and scalar assignment is being done, then the alias
+    // of C and M can be exploited.  The assignment is C<C,s>=scalar or
+    // C<C,s>+=scalar, but for now, only C<C,s>=scalar is exploited.  C_replace
+    // is effectively false.
+    bool C_exploit_alias_with_M =
+        ((C == M)               // C is exactly aliased with M
+        && Mask_struct          // mask is structural
+        && !Mask_comp           // and not complemented
+        && whole_C_matrix       // C(:,:) is being assigned to
+        && (accum == NULL)      // no accum (accum can be handled in the future)
+        && scalar_expansion) ;  // C<C,s> = scalar assignment
 
     // GB_assign cannot tolerate any alias with the input mask,
     // if the C_replace phase will be performed.
@@ -956,7 +969,18 @@ GrB_Info GB_assign_prep
         C_aliased = C_aliased || GB_aliased (C, M_in) ;
     }
 
-    if (C_aliased)
+    if (C_exploit_alias_with_M)
+    { 
+        // C<C,s>=scalar, and C_replace can be ignored.
+        ASSERT (C_aliased) ;            // C is aliased with M, but this is OK
+        ASSERT (!GB_aliased (C, A)) ;   // A is not present so C != A
+        if (*C_replace)
+        { 
+            GBURBLE ("(C_replace ignored) ") ;
+            (*C_replace) = false ;
+        }
+    }
+    else if (C_aliased)
     {
         // C is aliased with M or A: make a copy of C to assign into
         C2 = GB_clear_static_header (C2_header_handle) ;

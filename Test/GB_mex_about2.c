@@ -331,7 +331,7 @@ void mexFunction
     // jumbled user-defined matrix
     //--------------------------------------------------------------------------
 
-    wild ww ;
+    wild ww, w2 ;
     n = 3 ;
     memset (ww.gunk, 13, 16 * sizeof (int)) ;
     OK (GrB_Type_new (&Wild, sizeof (wild))) ;
@@ -515,13 +515,67 @@ void mexFunction
             for (int kk = 0 ; kk < 4 ; kk++) GrB_Matrix_free (&(Tiles [kk])) ;
         }
     }
-    GrB_Type_free_(&Wild) ;
     printf (" passed.\n") ;
+
+    //--------------------------------------------------------------------------
+    // C<C,struct> = scalar
+    //--------------------------------------------------------------------------
+
+    printf ("\n\ntesting C<C,struct> = scalar for user-defined type:\n") ;
+    OK (GxB_Global_Option_set (GxB_BURBLE, true)) ;
+    OK (GrB_Matrix_new (&C, Wild, n, n)) ;
+    memset (ww.gunk,  0, 16 * sizeof (int)) ;
+    memset (w2.gunk,  1, 16 * sizeof (int)) ;
+    for (int64_t kk = 0 ; kk < 16 ; kk++)
+    {
+        w2.gunk [kk] = kk ;
+    }
+    for (int64_t kk = 0 ; kk < 20 ; kk++)
+    {
+        OK (GrB_Matrix_setElement_UDT (C, &ww, kk, kk)) ;
+    }
+    OK (GrB_Matrix_wait (&C)) ;
+//  OK (GxB_Matrix_fprint (C, "C<C,struct>=scalar input", 3, NULL)) ;
+    info = GrB_Matrix_assign_UDT (C, C, NULL, &w2, GrB_ALL, 20, GrB_ALL, 20,
+        GrB_DESC_S) ;
+//  char *err ;
+//  GrB_Matrix_error (&err, C) ;
+//  printf ("info %d %s\n", info, err) ;
+//  OK (GxB_Matrix_fprint (C, "C<C,struct>=scalar result", 3, NULL)) ;
+    wild w3 ;
+
+//  for (int64_t kk = 0 ; kk < 16 ; kk++)
+//  {
+//      printf ("w2.gunk [%d] = %d\n", kk, w2.gunk [kk]) ;
+//      CHECK (w3.gunk [kk] == 1) ;
+//  }
+
+//  for (int64_t kk = 0 ; kk < 16 ; kk++)
+//  {
+//      printf ("w3.gunk [%d] = %d\n", kk, w3.gunk [kk]) ;
+//      CHECK (w3.gunk [kk] == 1) ;
+//  }
+
+    for (int64_t kk = 0 ; kk < 20 ; kk++)
+    {
+        memset (w3.gunk,  9, 16 * sizeof (int)) ;
+        info = (GrB_Matrix_extractElement_UDT (&w3, C, kk, kk)) ;
+        // printf ("info %d\n", info) ;
+        CHECK (info == GrB_SUCCESS) ;
+        for (int64_t t = 0 ; t < 16 ; t++)
+        {
+    //      printf ("w3.gunk [%d] = %d\n", kk, w3.gunk [kk]) ;
+            CHECK (w3.gunk [t] == t) ;
+        }
+    }
+    GrB_Matrix_free (&C) ;
+    OK (GxB_Global_Option_set (GxB_BURBLE, false)) ;
 
     //--------------------------------------------------------------------------
     // wrapup
     //--------------------------------------------------------------------------
 
+    GrB_Type_free_(&Wild) ;
     GB_mx_put_global (true) ;   
     fclose (f) ;
     printf ("\nAll errors printed above were expected.\n") ;

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_05e: C(:,:)<M,struct> = scalar ; no S, C empty, M structural
+// GB_subassign_05f: C(:,:)<C,struct> = scalar ; no S, C anything, M structural
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,93 +7,76 @@
 
 //------------------------------------------------------------------------------
 
-// Method 05e: C(:,:)<M,struct> = scalar ; no S
-// compare with Methods 21, 25, and 05d
+// Method 05f: C(:,:)<C,struct> = scalar ; no S
+// compare with Method 05e
 
-// M:           present
+// M:           present and aliased with C
 // Mask_comp:   false
 // Mask_struct: true
-// C_replace:   false
+// C_replace:   false or effectively false
 // accum:       NULL
 // A:           scalar
 // S:           none
 
-// C and M can have any sparsity on input.  The content of C is replace with
-// the structure of M, and the values of C are all set to the scalar.  If M is
-// bitmap, only assignments where (Mb [pC] == 1) are needed, but it's faster to
-// just assign all entries.
+// C is aliased to M, and can have any sparsity on input, so M is not provided
+// here.  All values in C are replaced by the scalar.  C can have any sparsity
+// format (hyper/sparse/bitmap/full).  If C is bitmap, only assignments where
+// only assignments where (Cb [pC] == 1) are needed, but it's faster to just
+// assign the scalar to all entries in Cx.
 
 // TODO: when uniform-valued matrices are supported, this method will take
 // O(1) time.
+
+// TODO: this method can be merged with 05d
 
 #include "GB_subassign_methods.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL
 
-GrB_Info GB_subassign_05e
+GrB_Info GB_subassign_05f
 (
     GrB_Matrix C,
     // input:
-    const GrB_Matrix M,
     const void *scalar,
     const GrB_Type atype,
     GB_Context Context
 )
-{
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (!GB_aliased (C, M)) ;   // NO ALIAS of C==M
+{ 
 
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT_MATRIX_OK (C, "C for subassign method_05e", GB0) ;
-    ASSERT_MATRIX_OK (M, "M for subassign method_05e", GB0) ;
-    ASSERT (GB_NNZ (C) == 0) ;
+    ASSERT_MATRIX_OK (C, "C for subassign method_05f", GB0) ;
 
-    // M can be jumbled, in which case C is jumbled on output 
-    ASSERT (!GB_ZOMBIES (M)) ;
-    ASSERT (GB_JUMBLED_OK (M)) ;
-    ASSERT (!GB_PENDING (M)) ;
+    // C can be jumbled, in which case it remains so C on output 
+    ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (GB_JUMBLED_OK (C)) ;
+    ASSERT (!GB_PENDING (C)) ;
 
     const GB_Type_code ccode = C->type->code ;
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
 
-    int64_t mnz = GB_NNZ_HELD (M) ;
+    int64_t cnz = GB_NNZ_HELD (C) ;
 
     //--------------------------------------------------------------------------
-    // Method 05e: C(:,:)<M> = x ; C is empty, x is a scalar, M is structural
+    // Method 05f: C(:,:)<C,s> = x ; C anything, x is a scalar, structural mask
     //--------------------------------------------------------------------------
 
-    // Time: Optimal:  the method must iterate over all entries in M,
-    // and the time is O(nnz(M)).  This is also the size of C.
+    // Time: Optimal:  the method must iterate over all entries in C, and the
+    // time is O(nnz(C)).  When uniform-valued matrices are supported, this
+    // method will take O(1) time.
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (mnz, chunk, nthreads_max) ;
+    int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
 
-    //--------------------------------------------------------------------------
-    // allocate C and create its pattern
-    //--------------------------------------------------------------------------
-
-    // clear prior content and then create a copy of the pattern of M.  Keep
-    // the same type and CSR/CSC for C.  Allocate the values of C but do not
-    // initialize them.
-
-    bool C_is_csc = C->is_csc ;
-    GB_phbix_free (C) ;
-    GB_OK (GB_dup2 (&C, M, false, C->type, Context)) ;  // reuse old header
-    C->is_csc = C_is_csc ;
     int64_t pC ;
 
     //--------------------------------------------------------------------------
@@ -106,7 +89,7 @@ GrB_Info GB_subassign_05e
         ctype *GB_RESTRICT Cx = (ctype *) C->x ;                            \
         ctype x = (*(ctype *) cwork) ;                                      \
         GB_PRAGMA (omp parallel for num_threads(nthreads) schedule(static)) \
-        for (pC = 0 ; pC < mnz ; pC++)                                      \
+        for (pC = 0 ; pC < cnz ; pC++)                                      \
         {                                                                   \
             Cx [pC] = x ;                                                   \
         }                                                                   \
@@ -116,6 +99,8 @@ GrB_Info GB_subassign_05e
     //--------------------------------------------------------------------------
     // launch the switch factory
     //--------------------------------------------------------------------------
+
+    // TODO: use fewer cases (1, 2, 4, 8, 16 bytes, and uint's)
 
     switch (C->type->code)
     {
@@ -135,10 +120,10 @@ GrB_Info GB_subassign_05e
         default:
             {
                 // worker for all user-defined types
-                GB_BURBLE_N (mnz, "(generic C(:,:)<M,struct>=x assign) ") ;
+                GB_BURBLE_N (cnz, "(generic C(:,:)<C,struct>=x assign) ") ;
                 GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
-                for (pC = 0 ; pC < mnz ; pC++)
+                for (pC = 0 ; pC < cnz ; pC++)
                 { 
                     memcpy (Cx +((pC)*csize), cwork, csize) ;
                 }
@@ -147,12 +132,10 @@ GrB_Info GB_subassign_05e
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and return result
+    // return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;                  // TODO:: delete this; no workspace
-    C->jumbled = M->jumbled ;       // C is jumbled if M is jumbled
-    ASSERT_MATRIX_OK (C, "C output for subassign method_05e", GB0) ;
+    ASSERT_MATRIX_OK (C, "C output for subassign method_05f", GB0) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     return (GrB_SUCCESS) ;
 }
