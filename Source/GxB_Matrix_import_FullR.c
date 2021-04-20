@@ -18,6 +18,7 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
 
     void **Ax,          // values
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
 
     const GrB_Descriptor desc
 )
@@ -28,7 +29,7 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Matrix_import_FullR (&A, type, nrows, ncols, "
-        "&Ax, Ax_size, desc)") ;
+        "&Ax, Ax_size, is_uniform, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_FullR") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
@@ -43,7 +44,8 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
         NULL, 0,        // Ai
         Ax,   Ax_size,  // Ax
         0, false, 0,
-        GxB_FULL, false, Context) ;         // full by row
+        GxB_FULL, false,                    // full by row
+        is_uniform, Context) ;              // full by row
 
     GB_BURBLE_END ;
     return (info) ;

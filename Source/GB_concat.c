@@ -176,9 +176,9 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    ASSERT_MATRIX_OK (C, "C before conform for GxB_Matrix_concat", GB0) ;
+    ASSERT_MATRIX_OK (C, "C before conform for GB_concat", GB0) ;
     GB_OK (GB_conform (C, Context)) ;
-    ASSERT_MATRIX_OK (C, "C output for GxB_Matrix_concat", GB0) ;
+    ASSERT_MATRIX_OK (C, "C output for GB_concat", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

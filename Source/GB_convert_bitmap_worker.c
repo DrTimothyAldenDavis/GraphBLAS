@@ -9,6 +9,7 @@
 
 // TODO allow this function to do typecasting.  Create 169 different versions
 // for all 13x13 versions.  Use this as part of Method 24, C=A assignment.
+// Can also use typecasting for GB_Matrix_diag.
 
 #include "GB.h"
 #include "GB_partition.h"
@@ -16,10 +17,10 @@
 GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
 (
     // outputs:
-    int64_t *GB_RESTRICT Ap,        // vector pointers for CSC/CSR form
-    int64_t *GB_RESTRICT Ai,        // indices for CSC/CSR or triplet form
-    int64_t *GB_RESTRICT Aj,        // vector indices for triplet form
-    GB_void *GB_RESTRICT Ax_new,    // values for CSC/CSR or triplet form
+    int64_t *restrict Ap,           // vector pointers for CSC/CSR form
+    int64_t *restrict Ai,           // indices for CSC/CSR or triplet form
+    int64_t *restrict Aj,           // vector indices for triplet form
+    GB_void *restrict Ax_new,       // values for CSC/CSR or triplet form
     int64_t *anvec_nonempty,        // # of non-empty vectors
     // inputs: not modified
     const GrB_Matrix A,             // matrix to extract; not modified
@@ -34,7 +35,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     ASSERT (GB_IS_BITMAP (A)) ;
     ASSERT (Ap != NULL) ;           // must be provided on input, size avdim+1
 
-    int64_t *GB_RESTRICT W = NULL ; size_t W_size = 0 ;
+    int64_t *restrict W = NULL ; size_t W_size = 0 ;
     const int64_t avdim = A->vdim ;
     const int64_t avlen = A->vlen ;
     const size_t asize = A->type->size ;
@@ -43,7 +44,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     // count the entries in each vector
     //--------------------------------------------------------------------------
 
-    const int8_t *GB_RESTRICT Ab = A->b ;
+    const int8_t *restrict Ab = A->b ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (avlen*avdim, chunk, nthreads_max) ;
@@ -93,7 +94,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (taskid = 0 ; taskid < nthreads ; taskid++)
         {
-            int64_t *GB_RESTRICT Wtask = W + taskid * avdim ;
+            int64_t *restrict Wtask = W + taskid * avdim ;
             int64_t istart, iend ;
             GB_PARTITION (istart, iend, avlen, taskid, nthreads) ;
             for (int64_t j = 0 ; j < avdim ; j++)
@@ -120,7 +121,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
             int64_t ajnz = 0 ;
             for (int taskid = 0 ; taskid < nthreads ; taskid++)
             { 
-                int64_t *GB_RESTRICT Wtask = W + taskid * avdim ;
+                int64_t *restrict Wtask = W + taskid * avdim ;
                 int64_t c = Wtask [j] ;
                 Wtask [j] = ajnz ;
                 ajnz += c ;
@@ -144,7 +145,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
 
     // TODO: add type-specific versions for built-in types
 
-    const GB_void *GB_RESTRICT Ax = A->x ;
+    const GB_void *restrict Ax = A->x ;
 
     if (by_vector)
     {
@@ -191,7 +192,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (taskid = 0 ; taskid < nthreads ; taskid++)
         {
-            int64_t *GB_RESTRICT Wtask = W + taskid * avdim ;
+            int64_t *restrict Wtask = W + taskid * avdim ;
             int64_t istart, iend ;
             GB_PARTITION (istart, iend, avlen, taskid, nthreads) ;
             for (int64_t j = 0 ; j < avdim ; j++)

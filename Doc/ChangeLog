@@ -1,8 +1,12 @@
 Version 5.0.0,  TODO::
 
+    * diag: added methods to construct and extract diagonals
+    * concat/split: added methods to concatenate and split matrices
     * import/export: size of arrays now in bytes, not entries.  This change
         is required for better internal memory management, and it is not
         backward compatible with the GxB*import/export functions in v4.0.
+        A new parameter, is_uniform, has been added to all import/export
+        methods, which indicates that the matrix values are all the same.
     * (22) bug fix: SIMD vectorization was missing reduction(+,task_cnvals)
         in GB_dense_subassign_06d_template.c.  Caught by Jeff Huang, Texas A&M,
         with his software package for race-condition detection. Good catch!

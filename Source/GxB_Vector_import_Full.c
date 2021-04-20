@@ -17,6 +17,7 @@ GrB_Info GxB_Vector_import_Full // import a full vector
 
     void **vx,          // values
     GrB_Index vx_size,  // size of vx in bytes
+    bool is_uniform,    // if true, v has uniform values (TODO:::unsupported)
 
     const GrB_Descriptor desc
 )
@@ -27,7 +28,7 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Vector_import_Full (&v, type, n, "
-        "&vx, vx_size, desc)") ;
+        "&vx, vx_size, is_uniform, desc)") ;
     GB_BURBLE_START ("GxB_Vector_import_Full") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
@@ -42,7 +43,8 @@ GrB_Info GxB_Vector_import_Full // import a full vector
         NULL, 0,        // Ai
         vx,   vx_size,  // Ax
         0, false, 0,
-        GxB_FULL, true, Context) ;          // full by col
+        GxB_FULL, true,                     // full by col
+        is_uniform, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

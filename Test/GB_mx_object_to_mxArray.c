@@ -143,7 +143,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
 
     if (C_is_full)
     {
-        // C is full.  See gb_export_to_mxfull
+        // C is full.
         // allocate an empty dense matrix of the right type, then set content
 
         void *Cx = (void *) C->x ;

@@ -57,6 +57,7 @@ GrB_Index Ch_size = 0 ;
 GrB_Index Cb_size = 0 ;
 GrB_Index Ci_size = 0 ;
 GrB_Index Cx_size = 0 ;
+bool is_uniform = false ;
 
 int64_t ignore = -1 ;
 bool jumbled = false ;
@@ -245,10 +246,12 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols,
-                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, &jumbled, NULL)) ;
+                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, &is_uniform,
+                &jumbled, NULL)) ;
 
             OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols,
-                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, jumbled, NULL)) ;
+                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, is_uniform,
+                jumbled, NULL)) ;
 
             break ;
 
@@ -257,10 +260,12 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols,
-                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, &jumbled, NULL)) ;
+                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, &is_uniform,
+                &jumbled, NULL)) ;
 
             OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols,
-                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, jumbled, NULL)) ;
+                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, is_uniform,
+                jumbled, NULL)) ;
 
             break ;
 
@@ -269,11 +274,13 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols,
-                &Cp, &Ch, &Ci, &Cx, &Cp_size, &Ch_size, &Ci_size, &Cx_size,
+                &Cp, &Ch, &Ci, &Cx,
+                &Cp_size, &Ch_size, &Ci_size, &Cx_size, &is_uniform,
                 &nvec, &jumbled, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols,
-                &Cp, &Ch, &Ci, &Cx, Cp_size, Ch_size, Ci_size, Cx_size,
+                &Cp, &Ch, &Ci, &Cx,
+                Cp_size, Ch_size, Ci_size, Cx_size, is_uniform,
                 nvec, jumbled, NULL)) ;
 
             break ;
@@ -283,11 +290,13 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols,
-                &Cp, &Ch, &Ci, &Cx, &Cp_size, &Ch_size, &Ci_size, &Cx_size,
+                &Cp, &Ch, &Ci, &Cx,
+                &Cp_size, &Ch_size, &Ci_size, &Cx_size, &is_uniform,
                 &nvec, &jumbled, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols,
-                &Cp, &Ch, &Ci, &Cx, Cp_size, Ch_size, Ci_size, Cx_size,
+                &Cp, &Ch, &Ci, &Cx,
+                Cp_size, Ch_size, Ci_size, Cx_size, is_uniform,
                 nvec, jumbled, NULL)) ;
 
             break ;
@@ -297,10 +306,10 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_BitmapR (&C, &type, &nrows, &ncols,
-                &Cb, &Cx, &Cb_size, &Cx_size, &nvals, NULL)) ;
+                &Cb, &Cx, &Cb_size, &Cx_size, &is_uniform, &nvals, NULL)) ;
 
             OK (GxB_Matrix_import_BitmapR (&C, type, nrows, ncols,
-                &Cb, &Cx, Cb_size, Cx_size, nvals, NULL)) ;
+                &Cb, &Cx, Cb_size, Cx_size, is_uniform, nvals, NULL)) ;
 
             break ;
 
@@ -309,10 +318,10 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_BitmapC (&C, &type, &nrows, &ncols,
-                &Cb, &Cx, &Cb_size, &Cx_size, &nvals, NULL)) ;
+                &Cb, &Cx, &Cb_size, &Cx_size, &is_uniform, &nvals, NULL)) ;
 
             OK (GxB_Matrix_import_BitmapC (&C, type, nrows, ncols,
-                &Cb, &Cx, Cb_size, Cx_size, nvals, NULL)) ;
+                &Cb, &Cx, Cb_size, Cx_size, is_uniform, nvals, NULL)) ;
 
             break ;
 
@@ -321,10 +330,10 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_FullR (&C, &type, &nrows, &ncols,
-                &Cx, &Cx_size, NULL)) ;
+                &Cx, &Cx_size, &is_uniform, NULL)) ;
 
             OK (GxB_Matrix_import_FullR (&C, type, nrows, ncols,
-                &Cx, Cx_size, NULL)) ;
+                &Cx, Cx_size, is_uniform, NULL)) ;
 
             break ;
 
@@ -333,10 +342,10 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_FullC (&C, &type, &nrows, &ncols,
-                &Cx, &Cx_size, NULL)) ;
+                &Cx, &Cx_size, &is_uniform, NULL)) ;
 
             OK (GxB_Matrix_import_FullC (&C, type, nrows, ncols,
-                &Cx, Cx_size, NULL)) ;
+                &Cx, Cx_size, is_uniform, NULL)) ;
 
             break ;
 
@@ -345,10 +354,12 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols,
-                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, NULL, NULL)) ;
+                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, &is_uniform,
+                NULL, NULL)) ;
 
             OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols,
-                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, false, NULL)) ;
+                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, is_uniform,
+                false, NULL)) ;
 
             break ;
 
@@ -357,10 +368,12 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols,
-                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, NULL, NULL)) ;
+                &Cp, &Ci, &Cx, &Cp_size, &Ci_size, &Cx_size, &is_uniform,
+                NULL, NULL)) ;
 
             OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols,
-                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, false, NULL)) ;
+                &Cp, &Ci, &Cx, Cp_size, Ci_size, Cx_size, is_uniform,
+                false, NULL)) ;
 
             break ;
 
@@ -369,11 +382,13 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols,
-                &Cp, &Ch, &Ci, &Cx, &Cp_size, &Ch_size, &Ci_size, &Cx_size,
+                &Cp, &Ch, &Ci, &Cx,
+                &Cp_size, &Ch_size, &Ci_size, &Cx_size, &is_uniform,
                 &nvec, NULL, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols,
-                &Cp, &Ch, &Ci, &Cx, Cp_size, Ch_size, Ci_size, Cx_size,
+                &Cp, &Ch, &Ci, &Cx,
+                Cp_size, Ch_size, Ci_size, Cx_size, is_uniform,
                 nvec, false, NULL)) ;
 
             break ;
@@ -383,11 +398,13 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols,
-                &Cp, &Ch, &Ci, &Cx, &Cp_size, &Ch_size, &Ci_size, &Cx_size,
+                &Cp, &Ch, &Ci, &Cx,
+                &Cp_size, &Ch_size, &Ci_size, &Cx_size, &is_uniform,
                 &nvec, NULL, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols,
-                &Cp, &Ch, &Ci, &Cx, Cp_size, Ch_size, Ci_size, Cx_size,
+                &Cp, &Ch, &Ci, &Cx,
+                Cp_size, Ch_size, Ci_size, Cx_size, is_uniform,
                 nvec, false, NULL)) ;
 
             break ;
@@ -493,10 +510,12 @@ GrB_Info vector_export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Vector_export_CSC ((GrB_Vector *) &C, &type, &nrows,
-                &Ci, &Cx, &Ci_size, &Cx_size, &nvals, &jumbled, NULL)) ;
+                &Ci, &Cx, &Ci_size, &Cx_size, &is_uniform,
+                &nvals, &jumbled, NULL)) ;
 
             OK (GxB_Vector_import_CSC ((GrB_Vector *) &C, type, nrows,
-                &Ci, &Cx, Ci_size, Cx_size, nvals, jumbled, NULL)) ;
+                &Ci, &Cx, Ci_size, Cx_size, is_uniform,
+                nvals, jumbled, NULL)) ;
 
             break ;
 
@@ -523,10 +542,10 @@ GrB_Info vector_export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Vector_export_Bitmap ((GrB_Vector *) &C, &type, &nrows,
-                &Cb, &Cx, &Cb_size, &Cx_size, &nvals, NULL)) ;
+                &Cb, &Cx, &Cb_size, &Cx_size, &is_uniform, &nvals, NULL)) ;
 
             OK (GxB_Vector_import_Bitmap ((GrB_Vector *) &C, type, nrows,
-                &Cb, &Cx, Cb_size, Cx_size, nvals, NULL)) ;
+                &Cb, &Cx, Cb_size, Cx_size, is_uniform, nvals, NULL)) ;
 
             break ;
 
@@ -541,10 +560,10 @@ GrB_Info vector_export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Vector_export_Full ((GrB_Vector *) &C, &type, &nrows,
-                &Cx, &Cx_size, NULL)) ;
+                &Cx, &Cx_size, &is_uniform, NULL)) ;
 
             OK (GxB_Vector_import_Full ((GrB_Vector *) &C, type, nrows,
-                &Cx, Cx_size, NULL)) ;
+                &Cx, Cx_size, is_uniform, NULL)) ;
 
             break ;
 
@@ -559,10 +578,12 @@ GrB_Info vector_export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Vector_export_CSC ((GrB_Vector *) &C, &type, &nrows,
-                &Ci, &Cx, &Ci_size, &Cx_size, &nvals, NULL, NULL)) ;
+                &Ci, &Cx, &Ci_size, &Cx_size, &is_uniform,
+                &nvals, NULL, NULL)) ;
 
             OK (GxB_Vector_import_CSC ((GrB_Vector *) &C, type, nrows,
-                &Ci, &Cx, Ci_size, Cx_size, nvals, false, NULL)) ;
+                &Ci, &Cx, Ci_size, Cx_size, is_uniform,
+                nvals, false, NULL)) ;
 
             break ;
 

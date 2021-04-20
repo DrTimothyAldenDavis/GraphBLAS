@@ -16,8 +16,8 @@
 // error here, since the caller might be getting an optional input matrix, such
 // as Cin or the Mask.
 
-// FUTURE: it would be better to use the GxB* import/export functions,
-// instead of accessing the opaque content of the GrB_Matrix directly.
+// For v4, is_uniform is false, and the s component has length 9.
+// For v5, is_uniform may be true, and the s component has length 10.
 
 #include "gb_matlab.h"
 
@@ -61,18 +61,24 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         // construct a shallow GrB_Matrix copy from a MATLAB struct
         //----------------------------------------------------------------------
 
+        bool GraphBLASv4 = false ;
         bool GraphBLASv3 = false ;
-        mxArray *mx_type = NULL ;
 
         // get the type
-        mx_type = mxGetField (X, 0, "GraphBLASv4") ;
+        mxArray *mx_type = mxGetField (X, 0, "GraphBLASv5") ;
+        if (mx_type == NULL)
+        {
+            // check if it is a GraphBLASv4 struct
+            mx_type = mxGetField (X, 0, "GraphBLASv4") ;
+            GraphBLASv4 = true ;
+        }
         if (mx_type == NULL)
         {
             // check if it is a GraphBLASv3 struct
             mx_type = mxGetField (X, 0, "GraphBLAS") ;
-            CHECK_ERROR (mx_type == NULL, "not a GraphBLAS struct") ;
             GraphBLASv3 = true ;
         }
+        CHECK_ERROR (mx_type == NULL, "not a GraphBLAS struct") ;
 
         GrB_Type type = gb_mxstring_to_type (mx_type) ;
         size_t type_size ;
@@ -82,7 +88,19 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         mxArray *opaque = mxGetField (X, 0, "s") ;
         IF (opaque == NULL, ".s missing") ;
         IF (mxGetM (opaque) != 1, ".s wrong size") ;
-        IF (mxGetN (opaque) != (GraphBLASv3 ? 8 : 9), ".s wrong size") ;
+        size_t s_size = mxGetN (opaque) ;
+        if (GraphBLASv3)
+        {
+            IF (s_size != 8, ".s wrong size") ;
+        }
+        else if (GraphBLASv4)
+        {
+            IF (s_size != 9, ".s wrong size") ;
+        }
+        else
+        {
+            IF (s_size != 10, ".s wrong size") ;
+        }
         int64_t *s = mxGetInt64s (opaque) ;
         int64_t plen          = s [0] ;
         int64_t vlen          = s [1] ;
@@ -94,39 +112,51 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 
         int sparsity_status, sparsity_control ;
         int64_t nvals ;
+        bool is_uniform ;
         if (GraphBLASv3)
         {
             // GraphBLASv3 struct: sparse or hypersparse only
             sparsity_control = GxB_AUTO_SPARSITY ;
             nvals            = 0 ;
+            is_uniform       = false ;
         }
         else
         {
-            // GraphBLASv4 struct: sparse, hypersparse, bitmap, or full
+            // GraphBLASv4 or v5 struct: sparse, hypersparse, bitmap, or full
             sparsity_control = (int) (s [5]) ;
             nvals            = s [8] ;
+            if (GraphBLASv4)
+            {
+                // GraphBLASv4: is_uniform is always false
+                is_uniform = false ;
+            }
+            else
+            {
+                // GraphBLASv5: is_uniform is present as s [9]
+                is_uniform = (bool) s [9] ;
+            }
         }
 
         int nfields = mxGetNumberOfFields (X) ;
         switch (nfields)
         {
             case 3 :
-                // A is full, with 3 fields: GraphBLASv4, s, x
+                // A is full, with 3 fields: GraphBLAS*, s, x
                 sparsity_status = GxB_FULL ;
                 break ;
 
             case 5 :
-                // A is sparse, with 5 fields: GraphBLASv4, s, x, p, i
+                // A is sparse, with 5 fields: GraphBLAS*, s, x, p, i
                 sparsity_status = GxB_SPARSE ;
                 break ;
 
             case 6 :
-                // A is hypersparse, with 6 fields: GraphBLASv4, s, x, p, i, h
+                // A is hypersparse, with 6 fields: GraphBLAS*, s, x, p, i, h
                 sparsity_status = GxB_HYPERSPARSE ;
                 break ;
 
             case 4 :
-                // A is bitmap, with 4 fields: GraphBLASv4, s, x, b
+                // A is bitmap, with 4 fields: GraphBLAS*, s, x, b
                 sparsity_status = GxB_BITMAP ;
                 break ;
 
@@ -211,12 +241,12 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 if (by_col)
                 {
                     OK (GxB_Matrix_import_FullC (&A, type, nrows, ncols,
-                        &Ax, Ax_size, NULL)) ;
+                        &Ax, Ax_size, is_uniform, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_FullR (&A, type, nrows, ncols,
-                        &Ax, Ax_size, NULL)) ;
+                        &Ax, Ax_size, is_uniform, NULL)) ;
                 }
                 break ;
 
@@ -224,13 +254,13 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 if (by_col)
                 {
                     OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols,
-                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size,
+                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, is_uniform,
                         false, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_CSR (&A, type, nrows, ncols,
-                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size,
+                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, is_uniform,
                         false, NULL)) ;
                 }
                 break ;
@@ -239,13 +269,15 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 if (by_col)
                 {
                     OK (GxB_Matrix_import_HyperCSC (&A, type, nrows, ncols,
-                        &Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size,
+                        &Ap, &Ah, &Ai, &Ax,
+                        Ap_size, Ah_size, Ai_size, Ax_size, is_uniform,
                         nvec, false, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_HyperCSR (&A, type, nrows, ncols,
-                        &Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size,
+                        &Ap, &Ah, &Ai, &Ax,
+                        Ap_size, Ah_size, Ai_size, Ax_size, is_uniform,
                         nvec, false, NULL)) ;
                 }
                 break ;
@@ -254,12 +286,12 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 if (by_col)
                 {
                     OK (GxB_Matrix_import_BitmapC (&A, type, nrows, ncols,
-                        &Ab, &Ax, Ab_size, Ax_size, nvals, NULL)) ;
+                        &Ab, &Ax, Ab_size, Ax_size, is_uniform, nvals, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_BitmapR (&A, type, nrows, ncols,
-                        &Ab, &Ax, Ab_size, Ax_size, nvals, NULL)) ;
+                        &Ab, &Ax, Ab_size, Ax_size, is_uniform, nvals, NULL)) ;
                 }
                 break ;
 
@@ -396,13 +428,13 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, &Xp, &Xi, &Xx,
                 (ncols+1) * sizeof (int64_t),
                 nzmax * sizeof (int64_t),
-                nzmax * type_size, false, NULL)) ;
+                nzmax * type_size, false, false, NULL)) ;
         }
         else
         { 
             // import a full matrix
             OK (GxB_Matrix_import_FullC (&A, type, nrows, ncols, &Xx,
-                nzmax * type_size, NULL)) ;
+                nzmax * type_size, false, NULL)) ;
         }
     }
 

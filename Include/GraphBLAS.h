@@ -180,7 +180,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Apr 17, 2021"
+#define GxB_IMPLEMENTATION_DATE "Apr 19, 2021"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3654,6 +3654,60 @@ GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
     const GrB_Index *Tile_nrows,    // array of size m
     const GrB_Index *Tile_ncols,    // array of size n
     const GrB_Matrix A,             // input matrix to split
+    const GrB_Descriptor desc       // unused, except threading control
+) ;
+
+//------------------------------------------------------------------------------
+// GxB_Matrix_diag and GxB_Vector_diag
+//------------------------------------------------------------------------------
+
+// GxB_Matrix_diag constructs a matrix from a vector.  Let n be the length of
+// the v vector, from GrB_Vector_size (&n, v).  If k = 0, then C is an n-by-n
+// diagonal matrix with the entries from v along the main diagonal of C, with
+// C(i,i) = v(i).  If k is nonzero, C is square with dimension n+abs(k).  If k
+// is positive, it denotes diagonals above the main diagonal, with C(i,i+k) =
+// v(i).  If k is negative, it denotes diagonals below the main diagonal of C,
+// with C(i-k,i) = v(i).  This behavior is identical to the MATLAB statement
+// C = diag(v,k), where v is a vector, except that GxB_Matrix_diag can also
+// do typecasting.
+
+// C must already exist on input, of the correct size.  Any existing entries in
+// C are discarded.  The type of C is preserved, so that if the type of C and v
+// differ, the entries are typecasted into the type of C.  Any settings made to
+// C by GxB_Matrix_Option_set (format by row or by column, bitmap switch, hyper
+// switch, and sparsity control) are unchanged.
+
+GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
+(
+    GrB_Matrix C,                   // output matrix
+    const GrB_Vector v,             // input vector
+    int64_t k,
+    const GrB_Descriptor desc       // unused, except threading control
+) ;
+
+// GxB_Vector_diag extracts a vector v from an input matrix A, which may be
+// rectangular.  If k = 0, the main diagonal of A is extracted; k > 0 denotes
+// diagonals above the main diagonal of A, and k < 0 denotes diagonals below
+// the main diagonal of A.  Let A have dimension m-by-n.  If k is in the range
+// 0 to n-1, then v has length min(m,n-k).  If k is negative and in the range 
+// -1 to -m+1, then v has length min(m-k,n).  If k is outside these ranges,
+// v has length 0 (this is not an error).  This function computes the same
+// thing as the MATLAB statement v = diag(A,k) when A is a matrix, except that
+// GxB_Vector_diag can also do typecasting.
+
+// v must already exist on input, of the correct length; that is
+// GrB_Vector_size (&len,v) must return len = 0 if k >= n or k <= m, len =
+// min(m,n-k) if k is in the range 0 to n-1, and len = min(m-k,n) if k is in
+// the range -1 to -m+1.  Any existing entries in v are discarded.  The type of
+// v is preserved, so that if the type of A and v differ, the entries are
+// typecasted into the type of v.  Any settings made to v by
+// GxB_Vector_Option_set (bitmap switch and sparsity control) are unchanged.
+
+GrB_Info GxB_Vector_diag    // extract a vector from the diagonal of a matrix
+(
+    GrB_Vector v,                   // output vector
+    const GrB_Matrix A,             // input matrix
+    int64_t k,
     const GrB_Descriptor desc       // unused, except threading control
 ) ;
 
@@ -8169,6 +8223,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Aj_size,  // size of Aj in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8206,6 +8261,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Ai_size,  // size of Ai in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8245,6 +8301,7 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     GrB_Index Ah_size,  // size of Ah in bytes
     GrB_Index Aj_size,  // size of Aj in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     GrB_Index nvec,     // number of rows that appear in Ah
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
@@ -8292,6 +8349,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GrB_Index Ah_size,  // size of Ah in bytes
     GrB_Index Ai_size,  // size of Ai in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     GrB_Index nvec,     // number of columns that appear in Ah
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
@@ -8336,6 +8394,7 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
     GrB_Index Ab_size,  // size of Ab in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8365,6 +8424,7 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
     GrB_Index Ab_size,  // size of Ab in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8392,6 +8452,7 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     GrB_Index ncols,    // number of columns of the matrix
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 
@@ -8415,6 +8476,7 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
     GrB_Index ncols,    // number of columns of the matrix
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 
@@ -8439,6 +8501,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     void **vx,          // values, vx_size >= nvals(v) * (type size)
     GrB_Index vi_size,  // size of vi in bytes
     GrB_Index vx_size,  // size of vx in bytes
+    bool is_uniform,    // if true, v has uniform values (TODO:::unsupported)
     GrB_Index nvals,    // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted
     const GrB_Descriptor desc
@@ -8462,6 +8525,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     void **vx,          // values, vx_size >= n * (type size)
     GrB_Index vb_size,  // size of vb in bytes
     GrB_Index vx_size,  // size of vx in bytes
+    bool is_uniform,    // if true, v has uniform values (TODO:::unsupported)
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8481,6 +8545,7 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     GrB_Index n,        // vector length
     void **vx,          // values, vx_size >= nvals(v) * (type size)
     GrB_Index vx_size,  // size of vx in bytes
+    bool is_uniform,    // if true, v has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 
@@ -8523,6 +8588,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Aj_size, // size of Aj in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8540,6 +8606,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Ai_size, // size of Ai in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8559,6 +8626,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GrB_Index *Ah_size, // size of Ah in bytes
     GrB_Index *Aj_size, // size of Aj in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     GrB_Index *nvec,    // number of rows that appear in Ah
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
@@ -8579,6 +8647,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Index *Ah_size, // size of Ah in bytes
     GrB_Index *Ai_size, // size of Ai in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     GrB_Index *nvec,    // number of columns that appear in Ah
     bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
@@ -8595,6 +8664,7 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     void **Ax,          // values
     GrB_Index *Ab_size, // size of Ab in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8610,6 +8680,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     void **Ax,          // values
     GrB_Index *Ab_size, // size of Ab in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8623,6 +8694,7 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     GrB_Index *ncols,   // number of columns of the matrix
     void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 
@@ -8635,6 +8707,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     GrB_Index *ncols,   // number of columns of the matrix
     void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 
@@ -8653,6 +8726,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     void **vx,          // values
     GrB_Index *vi_size, // size of vi in bytes
     GrB_Index *vx_size, // size of vx in bytes
+    bool *is_uniform,   // if true, v has uniform values (TODO:::unsupported)
     GrB_Index *nvals,   // # of entries in vector
     bool *jumbled,      // if true, indices may be unsorted
     const GrB_Descriptor desc
@@ -8668,6 +8742,7 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     void **vx,          // values
     GrB_Index *vb_size, // size of vb in bytes
     GrB_Index *vx_size, // size of vx in bytes
+    bool *is_uniform,   // if true, v has uniform values (TODO:::unsupported)
     GrB_Index *nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8680,6 +8755,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     GrB_Index *n,       // length of the vector
     void **vx,          // values
     GrB_Index *vx_size, // size of vx in bytes
+    bool *is_uniform,   // if true, v has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 

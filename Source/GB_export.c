@@ -21,20 +21,19 @@ GrB_Info GB_export      // export a matrix in any format
     bool is_sparse_vector,      // true if A is a sparse GrB_Vector
 
     // the 5 arrays:
-    GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse,
-                        // NULL if A is a sparse CSC GrB_Vector
+    GrB_Index **Ap,     // pointers
     GrB_Index *Ap_size, // size of Ap in bytes
 
-    GrB_Index **Ah,     // vector indices, size nvec for hyper
+    GrB_Index **Ah,     // vector indices
     GrB_Index *Ah_size, // size of Ah in bytes
 
-    int8_t **Ab,        // bitmap, size nzmax
+    int8_t **Ab,        // bitmap
     GrB_Index *Ab_size, // size of Ab in bytes
 
-    GrB_Index **Ai,     // indices, size nzmax
+    GrB_Index **Ai,     // indices
     GrB_Index *Ai_size, // size of Ai in bytes
 
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
 
     // additional information for specific formats:
@@ -45,6 +44,9 @@ GrB_Info GB_export      // export a matrix in any format
     // information for all formats:
     int *sparsity,      // hypersparse, sparse, bitmap, or full
     bool *is_csc,       // if true then matrix is by-column, else by-row
+    bool *is_uniform,   // if true then A has uniform values and only one
+                        // entry is returned in Ax, regardless of nvals(A).
+                        // TODO::: uniform valued matrices not yet supported
     GB_Context Context
 )
 {
@@ -173,6 +175,10 @@ GrB_Info GB_export      // export a matrix in any format
     if (is_csc != NULL)
     { 
         (*is_csc) = (*A)->is_csc ;
+    }
+    if (is_uniform != NULL)
+    { 
+        (*is_uniform) = false ;     // TODO::: uniform-valued matrices
     }
 
     //--------------------------------------------------------------------------

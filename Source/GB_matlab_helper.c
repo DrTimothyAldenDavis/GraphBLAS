@@ -366,7 +366,7 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
 
     #ifdef GB_DEBUG
     // remove List and Degree from the debug memtable, since they will be
-    // imported as the degree vector d by GxB_Vector_import_CSC.
+    // imported as the degree GrB_Vector d
     GB_Global_memtable_remove (List) ;
     GB_Global_memtable_remove (Degree) ;
     #endif

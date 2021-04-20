@@ -374,12 +374,12 @@ void mexFunction
 
     GrB_Matrix X = NULL ;
     info = GxB_Matrix_import_FullC (&X, GrB_FP32, GxB_INDEX_MAX, GxB_INDEX_MAX,
-        NULL, UINT64_MAX, NULL) ;
+        NULL, UINT64_MAX, false, NULL) ;
     if (info != GrB_INVALID_VALUE || X != NULL) mexErrMsgTxt ("huge fail1") ;
 
     GrB_Index nhuge = (((GrB_Index) 2) << 50) ;
     info = GxB_Matrix_import_BitmapC (&X, GrB_FP32, nhuge, nhuge,
-        NULL, NULL, 0, 0, 0, NULL) ;
+        NULL, NULL, 0, 0, false, 0, NULL) ;
     if (info != GrB_INVALID_VALUE || X != NULL) mexErrMsgTxt ("huge fail5") ;
 
     // try to convert a huge sparse matrix to bitmap (this will fail too):

@@ -463,7 +463,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // allocate space for all hash tables
     //--------------------------------------------------------------------------
 
-    // TODO::: allocate Hi and Hx together as one block
     if (Hi_size_total > 0)
     { 
         Hi_all = GB_MALLOC_WERK (Hi_size_total, int64_t, &Hi_all_size) ;

@@ -21,24 +21,18 @@ GrB_Info GB_import      // import a matrix in any format
 
     // the 5 arrays:
     GrB_Index **Ap,     // pointers, for sparse and hypersparse formats.
-                        // Ignored for bitmap and full formats.
-                        // NULL for GxB_Vector_import_CSC.
     GrB_Index Ap_size,  // size of Ap in bytes
 
-    GrB_Index **Ah,     // vector indices.
-                        // Ignored for sparse, bitmap, and full formats.
+    GrB_Index **Ah,     // vector indices for hypersparse matrices
     GrB_Index Ah_size,  // size of Ah in bytes
 
     int8_t **Ab,        // bitmap, for bitmap format only.
-                        // Ignored for hyper, sparse, and full formats.  
     GrB_Index Ab_size,  // size of Ab in bytes
 
-    GrB_Index **Ai,     // indices for hyper and
-                        // sparse formats.  Ignored for bitmap and full.
+    GrB_Index **Ai,     // indices for hyper and sparse formats
     GrB_Index Ai_size,  // size of Ai in bytes
 
     void **Ax,          // values
-                        // Ax and *Ax are ignored if Ax_size is zero.
     GrB_Index Ax_size,  // size of Ax in bytes
 
     // additional information for specific formats:
@@ -50,6 +44,9 @@ GrB_Info GB_import      // import a matrix in any format
     // information for all formats:
     int sparsity,       // hypersparse, sparse, bitmap, or full
     bool is_csc,        // if true then matrix is by-column, else by-row
+    bool is_uniform,    // if true then A has uniform values and only one
+                        // entry is provided in Ax, regardless of nvals(A).
+                        // TODO::: uniform valued matrices not yet supported
     GB_Context Context
 ) ;
 
@@ -62,20 +59,19 @@ GrB_Info GB_export      // export a matrix in any format
     bool is_sparse_vector,      // true if A is a sparse GrB_Vector
 
     // the 5 arrays:
-    GrB_Index **Ap,     // pointers, size nvec+1 for hyper, vdim+1 for sparse,
-                        // NULL if A is a sparse CSC GrB_Vector
+    GrB_Index **Ap,     // pointers
     GrB_Index *Ap_size, // size of Ap in bytes
 
-    GrB_Index **Ah,     // vector indices, size nvec for hyper
+    GrB_Index **Ah,     // vector indices
     GrB_Index *Ah_size, // size of Ah in bytes
 
-    int8_t **Ab,        // bitmap, size nzmax
+    int8_t **Ab,        // bitmap
     GrB_Index *Ab_size, // size of Ab in bytes
 
-    GrB_Index **Ai,     // indices, size nzmax
+    GrB_Index **Ai,     // indices
     GrB_Index *Ai_size, // size of Ai in bytes
 
-    void **Ax,          // values, size nzmax
+    void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
 
     // additional information for specific formats:
@@ -86,6 +82,9 @@ GrB_Info GB_export      // export a matrix in any format
     // information for all formats:
     int *sparsity,      // hypersparse, sparse, bitmap, or full
     bool *is_csc,       // if true then matrix is by-column, else by-row
+    bool *is_uniform,   // if true then A has uniform values and only one
+                        // entry is returned in Ax, regardless of nvals(A).
+                        // TODO::: uniform valued matrices not yet supported
     GB_Context Context
 ) ;
 

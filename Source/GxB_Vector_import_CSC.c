@@ -19,6 +19,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     void **vx,          // values
     GrB_Index vi_size,  // size of Ai in bytes
     GrB_Index vx_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, v has uniform values (TODO:::unsupported)
 
     GrB_Index nvals,    // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted
@@ -31,7 +32,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Vector_import_CSC (&v, type, n, "
-        " &vi, &vx, vi_size, vx_size, nvals, jumbled, desc)") ;
+        "&vi, &vx, vi_size, vx_size, is_uniform, nvals, jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Vector_import_CSC") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
@@ -46,7 +47,8 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
         vi,   vi_size,  // Ai
         vx,   vx_size,  // Ax
         nvals, jumbled, 0,                  // jumbled or not
-        GxB_SPARSE, true, Context) ;        // sparse by col
+        GxB_SPARSE, true,                   // sparse by col
+        is_uniform, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

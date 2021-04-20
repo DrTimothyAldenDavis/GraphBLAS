@@ -24,6 +24,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Ai_size, // size of Ai in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
 
     bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
@@ -34,8 +35,9 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_export_CSC (&A, &type, &nrows, &ncols,"
-        "&Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, &jumbled, desc)") ;
+    GB_WHERE1 ("GxB_Matrix_export_CSC (&A, &type, &nrows, &ncols, "
+        "&Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, &is_uniform, "
+        "&jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_CSC") ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
@@ -95,7 +97,8 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
         Ai,   Ai_size,  // Ai
         Ax,   Ax_size,  // Ax
         NULL, jumbled, NULL,                // jumbled or not
-        &sparsity, &is_csc, Context) ;      // sparse by col
+        &sparsity, &is_csc,                 // sparse by col
+        is_uniform, Context) ;
 
     if (info == GrB_SUCCESS)
     {
