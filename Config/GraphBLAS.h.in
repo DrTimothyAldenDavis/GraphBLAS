@@ -3696,14 +3696,14 @@ GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
 // GxB_Vector_diag can also do typecasting.
 
 // v must already exist on input, of the correct length; that is
-// GrB_Vector_size (&len,v) must return len = 0 if k >= n or k <= m, len =
+// GrB_Vector_size (&len,v) must return len = 0 if k >= n or k <= -m, len =
 // min(m,n-k) if k is in the range 0 to n-1, and len = min(m+k,n) if k is in
 // the range -1 to -m+1.  Any existing entries in v are discarded.  The type of
 // v is preserved, so that if the type of A and v differ, the entries are
 // typecasted into the type of v.  Any settings made to v by
 // GxB_Vector_Option_set (bitmap switch and sparsity control) are unchanged.
 
-GrB_Info GxB_Vector_diag    // extract a vector from the diagonal of a matrix
+GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix, as a vector
 (
     GrB_Vector v,                   // output vector
     const GrB_Matrix A,             // input matrix

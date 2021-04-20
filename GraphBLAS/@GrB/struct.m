@@ -8,7 +8,7 @@ function S = struct (G)
 % contents of a @GrB object changes.  S can be converted back into a @GrB
 % object with G = GrB (S).
 %
-% See also load, save, properties, GrB.version, GrB.ver.
+% See also load, save, properties, GrB.version, GrB.ver, GrB.load, GrB.save.
 
 % Note for Octave users:  Octave cannot save or load a @GrB object G
 % to/from a file, but it should be able to save/load the struct S.  When S

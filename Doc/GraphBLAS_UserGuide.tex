@@ -134,7 +134,8 @@ are extensions to the v1.3 GraphBLAS C API.
 \item Version 5.0.0 (TODO::)
 
     \begin{packed_itemize}
-    \item \verb'diag': added methods to construct and extract diagonals
+    \item \verb'GxB_Matrix_diag': construct a diagonal matrix from a vector
+    \item \verb'GxB_Vector_diag': extract a diagonal from a matrix
     \item \verb'concat/split': methods to concatenate and split matrices.
     \item \verb'import/export':
         size of arrays now in bytes, not entries.  This change
@@ -3778,6 +3779,9 @@ and destroy a GraphBLAS sparse vector, \verb'GrB_Vector':
 \verb'GrB_Vector_removeElement'  & remove an entry from a vector \\
 \verb'GrB_Vector_extractTuples'  & get all entries from a vector \\
 \verb'GrB_Vector_resize'         & resize a vector \\
+% new in v5:------------
+\verb'GxB_Vector_diag'           & extract a diagonal from a matrix \\
+%-----------------------
 \verb'GrB_Vector_free'           & free a vector \\
 \hline
 \hline
@@ -4112,6 +4116,46 @@ decreases, entries that fall outside the resized vector are deleted.
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_diag:} extract a diagonal from a matrix}
+%-------------------------------------------------------------------------------
+\label{vector_diag}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix
+(
+    GrB_Vector v,                   // output vector
+    const GrB_Matrix A,             // input matrix
+    int64_t k,
+    const GrB_Descriptor desc       // unused, except threading control
+) ;
+\end{verbatim} } \end{mdframed}
+
+
+\verb'GxB_Vector_diag' extracts a vector \verb'v' from an input matrix
+\verb'A', which may be rectangular.  If \verb'k' = 0, the main diagonal of
+\verb'A' is extracted; \verb'k' $> 0$ denotes diagonals above the main diagonal
+of \verb'A', and \verb'k' $< 0$ denotes diagonals below the main diagonal of
+\verb'A'.  Let \verb'A' have dimension $m$-by-$n$.  If \verb'k' is in the range
+0 to $n-1$, then \verb'v' has length $\min(m,n-k)$.  If \verb'k' is negative
+and in the range -1 to $-m+1$, then \verb'v' has length $\min(m+k,n)$.  If
+\verb'k' is outside these ranges, \verb'v' has length 0 (this is not an error).
+This function computes the same thing as the MATLAB statement
+\verb'v=diag(A,k)' when \verb'A' is a matrix, except that
+\verb'GxB_Vector_diag' can also do typecasting.
+
+The vector \verb'v' must already exist on input, and
+\verb'GrB_Vector_size (&len,v)' must return \verb'len' = 0 if \verb'k' $\ge n$
+or \verb'k' $\le -m$, \verb'len' $=\min(m,n-k)$ if \verb'k' is in the range 0
+to $n-1$, and \verb'len' $=\min(m+k,n)$ if \verb'k' is in the range -1 to
+$-m+1$.  Any existing entries in \verb'v' are discarded.  The type of \verb'v'
+is preserved, so that if the type of \verb'A' and \verb'v' differ, the entries
+are typecasted into the type of \verb'v'.  Any settings made to \verb'v' by
+\verb'GxB_Vector_Option_set' (bitmap switch and sparsity control) are
+unchanged.
+
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_free:}          free a vector}
 %-------------------------------------------------------------------------------
 \label{vector_free}
@@ -4168,6 +4212,7 @@ and destroy a GraphBLAS sparse matrix, \verb'GrB_Matrix':
 % new in v5:------------
 \verb'GxB_Matrix_concat'        & concatenate many matrices into one matrix \\
 \verb'GxB_Matrix_split'         & split one matrix into many matrices \\
+\verb'GxB_Matrix_diag'          & construct a diagonal matrix from a vector \\
 %-----------------------
 \verb'GrB_Matrix_free'          & free a matrix \\
 \hline
@@ -4789,6 +4834,42 @@ The type of each tile is the same as the type of \verb'A'; no typecasting is
 done.
 
 \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_diag:} construct a diagonal matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_diag}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
+(
+    GrB_Matrix C,                   // output matrix
+    const GrB_Vector v,             // input vector
+    int64_t k,
+    const GrB_Descriptor desc       // unused, except threading control
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Matrix_diag' constructs a matrix from a vector.  Let $n$ be the
+length of the \verb'v' vector, from \verb'GrB_Vector_size (&n, v)'.  If
+\verb'k' = 0, then \verb'C' is an $n$-by-$n$ diagonal matrix with the entries
+from \verb'v' along the main diagonal of \verb'C', with \verb'C(i,i)=v(i)'.  If
+\verb'k' is nonzero, \verb'C' is square with dimension $n+|k|$.  If \verb'k' is
+positive, it denotes diagonals above the main diagonal, with
+\verb'C(i,i+k)=v(i)'.
+If \verb'k' is negative, it denotes diagonals below the main diagonal of
+\verb'C', with \verb'C(i-k,i)=v(i)'.  This behavior is identical to the MATLAB
+statement \verb'C=diag(v,k)', where \verb'v' is a vector, except that
+\verb'GxB_Matrix_diag' can also do typecasting.
+
+\verb'C' must already exist on input, of the correct size.  Any existing
+entries in \verb'C' are discarded.  The type of \verb'C' is preserved, so that
+if the type of \verb'C' and \verb'v' differ, the entries are typecasted into
+the type of \verb'C'  Any settings made to \verb'C' by
+\verb'GxB_Matrix_Option_set' (format by row or by column, bitmap switch, hyper
+switch, and sparsity control) are unchanged.
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_free:} free a matrix}
 %-------------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 Version 5.0.0,  TODO::
 
-    * diag: added methods to construct and extract diagonals
+    * GxB_Matrix_diag: construct a diagonal matrix from a vector
+    * GxB_Vector_diag: extract a diagonal from a matrix
     * concat/split: added methods to concatenate and split matrices
     * import/export: size of arrays now in bytes, not entries.  This change
         is required for better internal memory management, and it is not

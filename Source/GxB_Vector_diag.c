@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_diag: construct a diagonal matrix from a vector
+// GxB_Vector_diag: extract a diagonal (as a vector) from a matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -9,10 +9,10 @@
 
 #include "GB_diag.h"
 
-GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
+GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix, as a vector
 (
-    GrB_Matrix C,                   // output matrix
-    const GrB_Vector v,             // input vector
+    GrB_Vector v,                   // output vector
+    const GrB_Matrix A,             // input matrix
     int64_t k,
     const GrB_Descriptor desc       // unused, except threading control
 )
@@ -22,19 +22,19 @@ GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GxB_Matrix_diag (C, v, k, desc)") ;
-    GB_BURBLE_START ("GxB_Matrix_diag") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
+    GB_WHERE (v, "GxB_Vector_diag (v, A, k, desc)") ;
+    GB_BURBLE_START ("GxB_Vector_diag") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
-    // C = diag (v,k)
+    // v = diag (A,k)
     //--------------------------------------------------------------------------
 
-    info = GB_Matrix_diag (C, (GrB_Matrix) v, k, Context) ;
+    info = GB_Vector_diag ((GrB_Matrix) v, A, k, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

@@ -19,5 +19,13 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
     GB_Context Context
 ) ;
 
+GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
+(
+    GrB_Matrix V,                   // output vector (as an n-by-1 matrix)
+    const GrB_Matrix A,             // input matrix
+    int64_t k,
+    GB_Context Context
+) ;
+
 #endif
 

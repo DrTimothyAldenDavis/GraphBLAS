@@ -236,7 +236,7 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
     }
 
     //--------------------------------------------------------------------------
-    // finalize the matrix
+    // finalize the matrix C
     //--------------------------------------------------------------------------
 
     Cp [vnz] = vnz ;
@@ -245,7 +245,7 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
-    // conform C to its desired format and return result
+    // free workspace, conform C to its desired format, and return result
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmdiag: construct a diaogonal matrix from a vector
+// gbvdiag: extract a diaogonal of a matrix, as a vector
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -9,11 +9,11 @@
 
 // Usage:
 
-// C = gbmdiag (v, k, desc)
+// v = gbvdiag (A, k, desc)
 
 #include "gb_matlab.h"
 
-#define USAGE "usage: C = gbmdiag (v, k, desc)"
+#define USAGE "usage: v = gbvdiag (A, k, desc)"
 
 void mexFunction
 (
@@ -48,17 +48,9 @@ void mexFunction
     // get the inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL ;
-    GrB_Matrix V = gb_get_shallow (pargin [0]) ;
+    GrB_Matrix V = NULL ;
+    GrB_Matrix A = gb_get_shallow (pargin [0]) ;
     int64_t k = 0 ;
-
-    int64_t ncols ;
-    OK (GrB_Matrix_ncols (&ncols, V)) ;
-    CHECK_ERROR (ncols != 1, "v must be a column vector") ;
-
-    int s ;
-    OK (GxB_Matrix_Option_get (V, GxB_SPARSITY_STATUS, &s)) ;
-    CHECK_ERROR (s == GxB_HYPERSPARSE, "v cannot be hypersparse") ;
 
     if (nargin > 1)
     {
@@ -69,35 +61,51 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // construct C
+    // construct V
     //--------------------------------------------------------------------------
 
-    GrB_Type ctype = NULL ;
-    int64_t n ;
-    OK (GxB_Matrix_type (&ctype, V)) ;
-    OK (GrB_Matrix_nrows (&n, V)) ;
-    n += GB_IABS (k) ;
-    fmt = gb_get_format (n, n, NULL, NULL, fmt) ;
-    C = gb_new (ctype, n, n, fmt, 0) ;
+    GrB_Type vtype = NULL ;
+    int64_t n, nrows, ncols ;
+    OK (GxB_Matrix_type (&vtype, A)) ;
+    OK (GrB_Matrix_nrows (&nrows, A)) ;
+    OK (GrB_Matrix_ncols (&ncols, A)) ;
+
+    if (k >= ncols || k <= -nrows)
+    {
+        // output vector V must have zero length
+        n = 0 ;
+    }
+    else if (k >= 0)
+    {
+        // if k is in range 0 to n-1, V must have length min (m,n-k)
+        n = GB_IMIN (nrows, ncols - k) ;
+    }
+    else
+    {
+        // if k is in range -1 to -m+1, V must have length min (m+k,n)
+        n = GB_IMIN (nrows + k, ncols) ;
+    }
+
+    V = gb_new (vtype, n, 1, GxB_BY_COL, 0) ;
 
     //--------------------------------------------------------------------------
-    // compute C = diag (v, k)
+    // compute v = diag (A, k)
     //--------------------------------------------------------------------------
 
-    OK1 (C, GxB_Matrix_diag (C, (GrB_Vector) V, k, desc)) ;
+    OK1 (V, GxB_Vector_diag ((GrB_Vector) V, A, k, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_free (&V)) ;
+    OK (GrB_Matrix_free (&A)) ;
     OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------
-    // export the output matrix C back to MATLAB
+    // export the output matrix V back to MATLAB
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export (&C, kind) ;
+    pargout [0] = gb_export (&V, kind) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
     GB_WRAPUP ;
 }
