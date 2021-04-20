@@ -1,8 +1,8 @@
-function C = GB_spec_split (A, ms, ns)
-%GB_SPEC_SPLIT a MATLAB mimic of GxB_Matrix_split
+function V = GB_spec_vdiag (A, k, vtype)
+%GB_SPEC_VDIAG a MATLAB mimic of GxB_Vector_diag
 %
 % Usage:
-% C = GB_spec_split (A, ms, ns)
+% V = GB_spec_vdiag (A, k, vtype)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -12,23 +12,18 @@ function C = GB_spec_split (A, ms, ns)
 %-------------------------------------------------------------------------------
 
 A = GB_spec_matrix (A) ;
-atype = A.class ;
-
-%-------------------------------------------------------------------------------
-% C = split (A, ms, ns)
-%-------------------------------------------------------------------------------
-
-C_matrix  = mat2cell (A.matrix,  ms, ns) ;
-C_pattern = mat2cell (A.pattern, ms, ns) ;
-C = cell (length (ms), length (ns)) ;
-
-for i = 1:length(ms)
-    for j = 1:length(ns)
-        clear T
-        T.matrix  = C_matrix  {i,j} ;
-        T.pattern = C_pattern {i,j} ;
-        T.class   = atype ;
-        C {i,j} = T ;
-    end
+if (nargin < 2)
+    k = 0 ;
 end
+if (nargin < 3)
+    vtype = A.class ;
+end
+
+%-------------------------------------------------------------------------------
+% v = diag (A,k)
+%-------------------------------------------------------------------------------
+
+V.matrix  = diag (A.matrix, k) ;
+V.pattern = diag (A.pattern, k) ;
+V.class = vtype ;
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_diag: compute C=diag(A,k)
+// GB_mex_mdiag: compute C=diag(v,k)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,17 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// C = diag (A,k), where A and C are double
-// C is a matrix the same size as A, not a vector.
+// C = diag (v,k,ctype)
 
 #include "GB_mex.h"
 
-#define USAGE "C = GB_mex_diag (A,k)"
+#define USAGE "C = GB_mex_mdiag (v,k,ctype)"
 
 #define FREE_ALL                        \
 {                                       \
-    GxB_Scalar_free_(&Thunk) ;          \
-    GrB_Matrix_free_(&A) ;              \
+    GrB_Matrix_free_(&V) ;              \
     GrB_Matrix_free_(&C) ;              \
     GB_mx_put_global (true) ;           \
 }
@@ -33,11 +31,10 @@ void mexFunction
 {
 
     bool malloc_debug = GB_mx_get_global (true) ;
-    GrB_Matrix A = NULL, C = NULL ;
-    GxB_Scalar Thunk = NULL ;
+    GrB_Matrix V = NULL, C = NULL ;
 
     // check inputs
-    if (nargout > 1 || nargin < 1 || nargin > 2)
+    if (nargout > 1 || nargin < 1 || nargin > 3)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -45,40 +42,50 @@ void mexFunction
     #define GET_DEEP_COPY ;
     #define FREE_DEEP_COPY ;
 
-    // get A
-    A = GB_mx_mxArray_to_Matrix (pargin [0], "A", false, true) ;
-    if (A == NULL)
+    // get V
+    V = GB_mx_mxArray_to_Matrix (pargin [0], "V", false, true) ;
+    if (V == NULL)
     {
         FREE_ALL ;
-        mexErrMsgTxt ("failed") ;
+        mexErrMsgTxt ("V failed") ;
     }
 
-    int64_t k = 0 ;
+    if (!GB_VECTOR_OK (V))
+    {
+        FREE_ALL ;
+        mexErrMsgTxt ("V must be a column vector") ;
+    }
+
     // get k
+    int64_t k = 0 ;
     if (nargin > 1)
     {
         k = (int64_t) mxGetScalar (pargin [1]) ;
     }
 
+    // get the type
+    GrB_Type ctype ;
+    GxB_Matrix_type (&ctype, V) ;
+    ctype = GB_mx_string_to_Type (PARGIN (2), ctype) ;
+
     // construct C
-    METHOD (GrB_Matrix_new (&C, GrB_FP64, A->vlen, A->vdim)) ;
+    int64_t n ;
+    GrB_Matrix_nrows (&n, V) ;
+    n += GB_IABS (k) ;
 
     #undef GET_DEEP_COPY
     #undef FREE_DEEP_COPY
 
-    #define GET_DEEP_COPY  GrB_Matrix_new (&C, GrB_FP64, A->vlen, A->vdim) ;
+    #define GET_DEEP_COPY  GrB_Matrix_new (&C, ctype, n, n) ;
     #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;
 
-    GxB_Scalar_new (&Thunk, GrB_INT64) ;
-    GxB_Scalar_setElement_INT64_(Thunk, k) ;
-    GxB_Scalar_wait_(&Thunk) ;
+    GET_DEEP_COPY ;
 
-    // C = diag (A,k)
-    METHOD (GxB_Matrix_select_(C, NULL, NULL, GxB_DIAG, A, Thunk, NULL)) ;
+    // C = diag (v,k)
+    METHOD (GxB_Matrix_diag (C, (GrB_Vector) V, k, NULL)) ;
 
-    // return C to MATLAB as a regular MATLAB sparse matrix
-    pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C diag", false) ;
-
+    // return C to MATLAB as a struct
+    pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C=diag(v,k)", true) ;
     FREE_ALL ;
 }
 
