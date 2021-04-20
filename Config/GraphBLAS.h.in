@@ -3690,14 +3690,14 @@ GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
 // diagonals above the main diagonal of A, and k < 0 denotes diagonals below
 // the main diagonal of A.  Let A have dimension m-by-n.  If k is in the range
 // 0 to n-1, then v has length min(m,n-k).  If k is negative and in the range 
-// -1 to -m+1, then v has length min(m-k,n).  If k is outside these ranges,
+// -1 to -m+1, then v has length min(m+k,n).  If k is outside these ranges,
 // v has length 0 (this is not an error).  This function computes the same
 // thing as the MATLAB statement v = diag(A,k) when A is a matrix, except that
 // GxB_Vector_diag can also do typecasting.
 
 // v must already exist on input, of the correct length; that is
 // GrB_Vector_size (&len,v) must return len = 0 if k >= n or k <= m, len =
-// min(m,n-k) if k is in the range 0 to n-1, and len = min(m-k,n) if k is in
+// min(m,n-k) if k is in the range 0 to n-1, and len = min(m+k,n) if k is in
 // the range -1 to -m+1.  Any existing entries in v are discarded.  The type of
 // v is preserved, so that if the type of A and v differ, the entries are
 // typecasted into the type of v.  Any settings made to v by
