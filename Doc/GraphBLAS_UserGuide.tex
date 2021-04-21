@@ -327,14 +327,14 @@ Version 1.0 was released on Nov 25, 2017.
 \subsubsection{Regarding historical and deprecated functions and symbols}
 %-------------------------------------------------------------------------------
 
-When a \verb'GxB*' function or symbol is added to the C API Specification, the
-new \verb'GrB*' name should be used instead, if possible.  However, the old
-\verb'GxB*' name will be kept as long as possible for historical reasons.
-Historical functions and symbols will not always be documented here in the
-SuiteSparse:GraphBLAS User Guide, but they will be kept in \verb'GraphbBLAS.h'
-and kept in good working order in the library.  Historical functions and
-symbols would only be removed in the very unlikely case that they cause a
-serious conflict with future methods.
+When a \verb'GxB*' function or symbol is added to the C API Specification with
+a \verb'GrB*' name, the new \verb'GrB*' name should be used instead, if
+possible.  However, the old \verb'GxB*' name will be kept as long as possible
+for historical reasons.  Historical functions and symbols will not always be
+documented here in the SuiteSparse:GraphBLAS User Guide, but they will be kept
+in \verb'GraphbBLAS.h' and kept in good working order in the library.
+Historical functions and symbols would only be removed in the very unlikely
+case that they cause a serious conflict with future methods.
 
 The only methods that have been fully deprecated and removed are the no-input
 \verb'GrB_wait' and \verb'GrB_error' methods, which are incompatible with the
@@ -4866,7 +4866,7 @@ statement \verb'C=diag(v,k)', where \verb'v' is a vector, except that
 \verb'C' must already exist on input, of the correct size.  Any existing
 entries in \verb'C' are discarded.  The type of \verb'C' is preserved, so that
 if the type of \verb'C' and \verb'v' differ, the entries are typecasted into
-the type of \verb'C'  Any settings made to \verb'C' by
+the type of \verb'C'.  Any settings made to \verb'C' by
 \verb'GxB_Matrix_Option_set' (format by row or by column, bitmap switch, hyper
 switch, and sparsity control) are unchanged.
 
@@ -5473,7 +5473,7 @@ used
         {
             // get A(i,j)
             int64_t  j = Aj [p] ;           // column index
-            double aij = Ax [p] ;           // numerical value
+            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
 
@@ -5626,7 +5626,7 @@ be used
         {
             // get A(i,j)
             int64_t  i = Ai [p] ;           // row index
-            double aij = Ax [p] ;           // numerical value
+            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
 
@@ -5773,7 +5773,7 @@ order, and no duplicates can appear.  To iterate over this data structure
         {
             // get A(i,j)
             int64_t  j = Aj [p] ;           // column index
-            double aij = Ax [p] ;           // numerical value
+            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
 
@@ -5894,7 +5894,7 @@ assuming it has type \verb'GrB_FP64':
         {
             // get A(i,j)
             int64_t  i = Ai [p] ;           // row index
-            double aij = Ax [p] ;           // numerical value
+            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
 
@@ -6020,7 +6020,7 @@ used (assuming it has type \verb'GrB_FP64'):
             int64_t p = i*ncols + j ;
             if (Ab [p])
             {
-                double aij = Ax [p] ;           // numerical value
+                double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
             }
         }
     } \end{verbatim}}
@@ -6183,7 +6183,7 @@ used (assuming it has type \verb'GrB_FP64'):
         {
             // get A(i,j)
             int64_t p = i*ncols + j ;
-            double aij = Ax [p] ;           // numerical value
+            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
 
@@ -6257,7 +6257,7 @@ used (assuming it has type \verb'GrB_FP64'):
         {
             // get A(i,j)
             int64_t p = i + j*nrows ;
-            double aij = Ax [p] ;           // numerical value
+            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
 

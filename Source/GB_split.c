@@ -30,7 +30,7 @@ GrB_Info GB_split                   // split a matrix
     const GrB_Matrix A,             // input matrix
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -73,14 +73,14 @@ GrB_Info GB_split                   // split a matrix
     {
         GrB_Index tile_nrows = Tile_nrows [i] ;     // # of rows in Tile{i,:}
         if (tile_nrows < 0 || tile_nrows > nrows)
-        {
+        { 
             return (GrB_DIMENSION_MISMATCH) ;
         }
         Tile_rows [i] = s ;                         // cumulative sum
         s += tile_nrows ;
     }
     if (s != nrows)
-    {
+    { 
         return (GrB_DIMENSION_MISMATCH) ;
     }
     Tile_rows [m] = nrows ;
@@ -90,14 +90,14 @@ GrB_Info GB_split                   // split a matrix
     {
         GrB_Index tile_ncols = Tile_ncols [j] ;     // # of cols in Tile{:,j}
         if (tile_ncols < 0 || tile_ncols > ncols)
-        {
+        { 
             return (GrB_DIMENSION_MISMATCH) ;
         }
         Tile_cols [j] = s ;                         // cumulative sum
         s += tile_ncols ;
     }
     if (s != ncols)
-    {
+    { 
         return (GrB_DIMENSION_MISMATCH) ;
     }
     Tile_cols [n] = ncols ;
@@ -107,17 +107,17 @@ GrB_Info GB_split                   // split a matrix
     //--------------------------------------------------------------------------
 
     if (GB_is_dense (A))
-    {
+    { 
         // A is full
         GB_OK (GB_split_full (Tiles, m, n, Tile_rows, Tile_cols, A, Context)) ;
     }
     else if (GB_IS_BITMAP (A))
-    {
+    { 
         // A is bitmap
         GB_OK (GB_split_bitmap (Tiles, m, n, Tile_rows, Tile_cols, A, Context));
     }
     else
-    {
+    { 
         // A is sparse/hypersparse, each Tile has the same sparsity as A
         GB_OK (GB_split_sparse (Tiles, m, n, Tile_rows, Tile_cols, A, Context));
     }

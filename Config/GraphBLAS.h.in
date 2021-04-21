@@ -1313,7 +1313,7 @@ GB_PUBLIC GrB_UnaryOp
 //      z = ~(x && y)   1 1 1 0     (nand(x,y) function, not predefined)
 //      z = 1           1 1 1 1     PAIR
 //
-//      z = any(x,y)    . . . .     ANY (pick x or y arbitrarily)
+//      z = any(x,y)    0 . . 1     ANY (pick x or y arbitrarily)
 
 // Four more that have no _BOOL suffix are also redundant with the operators
 // of the form GxB_*_BOOL (GrB_LOR, GrB_LAND, GrB_LXOR, and GrB_LXNOR).

@@ -47,7 +47,6 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
 
     if (nrows != ncols || nrows != n)
     { 
-        GB_FREE_ALL ;
         GB_ERROR (GrB_DIMENSION_MISMATCH,
             "Input matrix is %ld-by-%ld but must be %ld-by-%ld\n",
             nrows, ncols, n, n) ;
@@ -55,7 +54,6 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
 
     if (!GB_Type_compatible (ctype, vtype))
     { 
-        GB_FREE_ALL ;
         GB_ERROR (GrB_DOMAIN_MISMATCH, "Input vector of type [%s] "
             "cannot be typecast to output of type [%s]\n",
             vtype->name, ctype->name) ;

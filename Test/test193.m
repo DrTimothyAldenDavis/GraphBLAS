@@ -25,9 +25,11 @@ for d = [1e-4 0.01 0.2 0.8 inf]
             for kc = 1:length (types)
                 ctype = types {kc} ;
                 for k = [-10 -2 0 3 30]
-                    C2 = GB_spec_mdiag (V, k, ctype) ;
-                    C1 = GB_mex_mdiag  (V, k, ctype) ;
-                    GB_spec_compare (C1, C2) ;
+                    for csc = 0:1
+                        C2 = GB_spec_mdiag (V, k, ctype) ;
+                        C1 = GB_mex_mdiag  (V, k, ctype, csc) ;
+                        GB_spec_compare (C1, C2) ;
+                    end
                 end
             end
         end

@@ -36,6 +36,7 @@ void mexFunction
     GrB_Vector victor = NULL ;
     GrB_Descriptor desc = NULL ;
     GrB_Type Wild = NULL ;
+    char *err ;
 
     //--------------------------------------------------------------------------
     // startup GraphBLAS
@@ -120,7 +121,7 @@ void mexFunction
     ERR (GxB_Matrix_select (C, NULL, NULL, GxB_LT_THUNK, A, scalar, NULL)) ;
     char *message = NULL ;
     OK (GrB_Matrix_error (&message, C)) ;
-    printf ("error expected: %s\n", message) ;
+    printf ("expected error: %s\n", message) ;
     GrB_Matrix_free_(&C) ;
     GxB_Scalar_free_(&scalar) ;
 
@@ -278,7 +279,7 @@ void mexFunction
     ERR (GxB_Matrix_apply_BinaryOp2nd (C, NULL, NULL, GrB_PLUS_INT32, A,
         scalar, NULL)) ;
     OK (GrB_Matrix_error (&message, C)) ;
-    printf ("error expected: %s\n", message) ;
+    printf ("expected error: %s\n", message) ;
     GrB_Matrix_free_(&A) ;
     GrB_Matrix_free_(&C) ;
     GxB_Scalar_free_(&scalar) ;
@@ -317,7 +318,7 @@ void mexFunction
     expected = GrB_DOMAIN_MISMATCH ;
     ERR (GrB_Matrix_build_INT32 (A, I, I, I, 0, GxB_FIRSTI_INT32)) ;
     OK (GrB_Matrix_error (&message, A)) ;
-    printf ("error expected: %s\n", message) ;
+    printf ("expected error: %s\n", message) ;
     GrB_Matrix_free_(&A) ;
 
     //--------------------------------------------------------------------------
@@ -457,8 +458,6 @@ void mexFunction
     {
         for (int k2 = 0 ; k2 <= 1 ; k2++)
         {
-//          printf ("sparsity %d case %d\n", sparsity [k], k2) ;
-            printf (".") ;
             OK (GrB_Matrix_new (&C, Wild, n, n)) ;
             OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity [k])) ;
             if (k2 == 0)
@@ -475,21 +474,13 @@ void mexFunction
                     OK (GrB_Matrix_setElement_UDT (C, &ww, kk, kk)) ;
                 }
             }
-//          OK (GxB_print (C, 2)) ;
             // split C into 4 matrices
             OK (GxB_Matrix_split (Tiles, 2, 2, Tile_nrows, Tile_ncols, C,
                 NULL)) ;
-//          for (int kk = 0 ; kk < 4 ; kk++)
-//          {
-//              printf ("\nTile [%d]: ", kk) ;
-//              OK (GxB_print (Tiles [kk], 2)) ;
-//          }
             // concatenate the 4 matrices back in X
             OK (GrB_Matrix_new (&X, Wild, n, n)) ;
             OK (GxB_Matrix_Option_set (X, GxB_SPARSITY_CONTROL, sparsity [k])) ;
             OK (GxB_Matrix_concat (X, Tiles, 2, 2, NULL)) ;
-//          OK (GxB_print (C, 2)) ;
-
             // ensure C and X are the same (just use a brute force method)
             for (int64_t i = 0 ; i < n ; i++)
             {
@@ -509,13 +500,70 @@ void mexFunction
                     }
                 }
             }
-
             GrB_Matrix_free (&X) ;
             GrB_Matrix_free (&C) ;
-            for (int kk = 0 ; kk < 4 ; kk++) GrB_Matrix_free (&(Tiles [kk])) ;
+
+            expected = GrB_DOMAIN_MISMATCH ;
+            OK (GrB_Matrix_new (&X, GrB_FP32, n, n)) ;
+            ERR (GxB_Matrix_concat (X, Tiles, 2, 2, NULL)) ;
+            OK (GrB_Matrix_error (&err, X)) ;
+            printf ("expected error: %s\n", err) ;
+            GrB_Matrix_free (&X) ;
+
+            expected = GrB_DIMENSION_MISMATCH ;
+            OK (GrB_Matrix_new (&X, Wild, 100, 100)) ;
+            ERR (GxB_Matrix_concat (X, Tiles, 2, 2, NULL)) ;
+            OK (GrB_Matrix_error (&err, X)) ;
+            printf ("expected error: %s\n", err) ;
+            GrB_Matrix_free (&X) ;
+
+            OK (GrB_Matrix_new (&X, Wild, n, n)) ;
+            GrB_Matrix_free (&(Tiles [3])) ;
+            OK (GrB_Matrix_new (&(Tiles [3]), Wild, 15, 100)) ;
+            ERR (GxB_Matrix_concat (X, Tiles, 2, 2, NULL)) ;
+            GxB_print (X, 3) ;
+            OK (GrB_Matrix_error (&err, X)) ;
+            printf ("expected error: %s\n", err) ;
+            GrB_Matrix_free (&(Tiles [3])) ;
+
+            OK (GrB_Matrix_new (&(Tiles [3]), Wild, 100, 8)) ;
+            ERR (GxB_Matrix_concat (X, Tiles, 2, 2, NULL)) ;
+            OK (GrB_Matrix_error (&err, X)) ;
+            printf ("expected error: %s\n", err) ;
+
+            for (int kk = 0 ; kk < 4 ; kk++)
+            {
+                GrB_Matrix_free (&(Tiles [kk])) ;
+            }
+
+            expected = GrB_NULL_POINTER ;
+            ERR (GxB_Matrix_concat (X, Tiles, 2, 2, NULL)) ;
+            GrB_Matrix_free (&X) ;
         }
     }
-    printf (" passed.\n") ;
+
+    //--------------------------------------------------------------------------
+    // split/concat error handling
+    //--------------------------------------------------------------------------
+
+    expected = GrB_INVALID_VALUE ;
+    OK (GrB_Matrix_new (&C, GrB_FP32, n, n)) ;
+    ERR (GxB_Matrix_split (Tiles, 0, 0, Tile_nrows, Tile_ncols, C, NULL)) ;
+    ERR (GxB_Matrix_concat (C, Tiles, 0, 0, NULL)) ;
+    GrB_Matrix_free (&C) ;
+
+    expected = GrB_DIMENSION_MISMATCH ;
+    OK (GrB_Matrix_new (&C, GrB_FP32, n, n)) ;
+    Tile_nrows [0] = -1 ;
+    ERR (GxB_Matrix_split (Tiles, 2, 2, Tile_nrows, Tile_ncols, C, NULL)) ;
+    Tile_nrows [0] = 1 ;
+    ERR (GxB_Matrix_split (Tiles, 2, 2, Tile_nrows, Tile_ncols, C, NULL)) ;
+    Tile_nrows [0] = 5 ;
+    Tile_ncols [0] = -1 ;
+    ERR (GxB_Matrix_split (Tiles, 2, 2, Tile_nrows, Tile_ncols, C, NULL)) ;
+    Tile_ncols [0] = 1 ;
+    ERR (GxB_Matrix_split (Tiles, 2, 2, Tile_nrows, Tile_ncols, C, NULL)) ;
+    GrB_Matrix_free (&C) ;
 
     //--------------------------------------------------------------------------
     // C<C,struct> = scalar
@@ -535,41 +583,56 @@ void mexFunction
         OK (GrB_Matrix_setElement_UDT (C, &ww, kk, kk)) ;
     }
     OK (GrB_Matrix_wait (&C)) ;
-//  OK (GxB_Matrix_fprint (C, "C<C,struct>=scalar input", 3, NULL)) ;
     info = GrB_Matrix_assign_UDT (C, C, NULL, &w2, GrB_ALL, 20, GrB_ALL, 20,
         GrB_DESC_S) ;
-//  char *err ;
-//  GrB_Matrix_error (&err, C) ;
-//  printf ("info %d %s\n", info, err) ;
-//  OK (GxB_Matrix_fprint (C, "C<C,struct>=scalar result", 3, NULL)) ;
     wild w3 ;
-
-//  for (int64_t kk = 0 ; kk < 16 ; kk++)
-//  {
-//      printf ("w2.gunk [%d] = %d\n", kk, w2.gunk [kk]) ;
-//      CHECK (w3.gunk [kk] == 1) ;
-//  }
-
-//  for (int64_t kk = 0 ; kk < 16 ; kk++)
-//  {
-//      printf ("w3.gunk [%d] = %d\n", kk, w3.gunk [kk]) ;
-//      CHECK (w3.gunk [kk] == 1) ;
-//  }
 
     for (int64_t kk = 0 ; kk < 20 ; kk++)
     {
         memset (w3.gunk,  9, 16 * sizeof (int)) ;
         info = (GrB_Matrix_extractElement_UDT (&w3, C, kk, kk)) ;
-        // printf ("info %d\n", info) ;
         CHECK (info == GrB_SUCCESS) ;
         for (int64_t t = 0 ; t < 16 ; t++)
         {
-    //      printf ("w3.gunk [%d] = %d\n", kk, w3.gunk [kk]) ;
             CHECK (w3.gunk [t] == t) ;
         }
     }
     GrB_Matrix_free (&C) ;
     OK (GxB_Global_Option_set (GxB_BURBLE, false)) ;
+
+    //--------------------------------------------------------------------------
+    // GxB_Matrix_diag and GxB_Vector_diag error handling
+    //--------------------------------------------------------------------------
+
+    expected = GrB_DIMENSION_MISMATCH ;
+
+    OK (GrB_Matrix_new (&C, GrB_FP32, 10, 20)) ;
+    OK (GrB_Vector_new (&victor, GrB_FP32, 10)) ;
+    ERR (GxB_Matrix_diag (C, victor, 0, NULL)) ;
+    OK (GrB_Matrix_error (&err, C)) ;
+    printf ("expected error: %s\n", err) ;
+    GrB_Matrix_free (&C) ;
+
+    OK (GrB_Matrix_new (&C, GrB_FP32, 5, 5)) ;
+    ERR (GxB_Matrix_diag (C, victor, 0, NULL)) ;
+    OK (GrB_Matrix_error (&err, C)) ;
+    printf ("expected error: %s\n", err) ;
+    ERR (GxB_Vector_diag (victor, C, 0, NULL)) ;
+    OK (GrB_Vector_error (&err, victor)) ;
+    printf ("expected error: %s\n", err) ;
+    GrB_Matrix_free (&C) ;
+
+    expected = GrB_DOMAIN_MISMATCH ;
+
+    OK (GrB_Matrix_new (&C, Wild, 10, 10)) ;
+    ERR (GxB_Matrix_diag (C, victor, 0, NULL)) ;
+    OK (GrB_Matrix_error (&err, C)) ;
+    printf ("expected error: %s\n", err) ;
+    ERR (GxB_Vector_diag (victor, C, 0, NULL)) ;
+    OK (GrB_Vector_error (&err, victor)) ;
+    printf ("expected error: %s\n", err) ;
+    GrB_Matrix_free (&C) ;
+    GrB_Vector_free (&victor) ;
 
     //--------------------------------------------------------------------------
     // wrapup

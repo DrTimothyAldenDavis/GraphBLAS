@@ -11,7 +11,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "C = GB_mex_mdiag (v,k,ctype)"
+#define USAGE "C = GB_mex_mdiag (v,k,ctype,csc)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -34,7 +34,7 @@ void mexFunction
     GrB_Matrix V = NULL, C = NULL ;
 
     // check inputs
-    if (nargout > 1 || nargin < 1 || nargin > 3)
+    if (nargout > 1 || nargin < 1 || nargin > 4)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -57,16 +57,15 @@ void mexFunction
     }
 
     // get k
-    int64_t k = 0 ;
-    if (nargin > 1)
-    {
-        k = (int64_t) mxGetScalar (pargin [1]) ;
-    }
+    int64_t GET_SCALAR (1, int64_t, k, 0) ;
 
     // get the type
     GrB_Type ctype ;
     GxB_Matrix_type (&ctype, V) ;
     ctype = GB_mx_string_to_Type (PARGIN (2), ctype) ;
+
+    // get fmt
+    int GET_SCALAR (3, int, fmt, GxB_BY_COL) ;
 
     // construct C
     int64_t n ;
@@ -76,7 +75,10 @@ void mexFunction
     #undef GET_DEEP_COPY
     #undef FREE_DEEP_COPY
 
-    #define GET_DEEP_COPY  GrB_Matrix_new (&C, ctype, n, n) ;
+    #define GET_DEEP_COPY                               \
+        GrB_Matrix_new (&C, ctype, n, n) ;              \
+        GxB_Matrix_Option_set (C, GxB_FORMAT, fmt) ;
+
     #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;
 
     GET_DEEP_COPY ;

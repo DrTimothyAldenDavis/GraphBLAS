@@ -144,12 +144,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     }
 
     // check domains and dimensions for C<M> = accum (C,T)
-    GrB_Info info = GB_compatible (C->type, C, M, Mask_struct, accum, T_type,
-        Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        return (info) ;
-    }
+    GrB_Info info ;
+    GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, T_type, Context)) ;
 
     // check the dimensions
     int64_t tnrows = (A_transpose) ? GB_NCOLS (A) : GB_NROWS (A) ;

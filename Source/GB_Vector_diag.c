@@ -63,14 +63,12 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 
     if (n != V->vlen)
     { 
-        GB_FREE_ALL ;
         GB_ERROR (GrB_DIMENSION_MISMATCH,
             "Input vector must have size %ld\n", n) ;
     }
 
     if (!GB_Type_compatible (atype, vtype))
     { 
-        GB_FREE_ALL ;
         GB_ERROR (GrB_DOMAIN_MISMATCH, "Input matrix of type [%s] "
             "cannot be typecast to output of type [%s]\n",
             atype->name, vtype->name) ;

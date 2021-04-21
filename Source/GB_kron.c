@@ -77,8 +77,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
         Context)) ;
 
     // T=op(A,B) via op operator, so A and B must be compatible with z=op(a,b)
-    GB_OK (GB_BinaryOp_compatible (op, NULL, A->type, B->type,
-        GB_ignore_code, Context)) ;
+    GB_OK (GB_BinaryOp_compatible (op, NULL, A->type, B->type, GB_ignore_code,
+        Context)) ;
 
     // delete any lingering zombies and assemble any pending tuples in A and B,
     // so that cnz = nnz(A) * nnz(B) can be computed.  Updates of C and M are

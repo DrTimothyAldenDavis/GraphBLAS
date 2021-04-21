@@ -17,7 +17,7 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
     const GrB_Index n,
     const GrB_Descriptor desc       // unused, except threading control
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -27,7 +27,7 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
     GB_BURBLE_START ("GxB_Matrix_concat") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     if (m <= 0 || n <= 0)
-    {
+    { 
         GB_ERROR (GrB_INVALID_VALUE, "m (%ld) and n (%ld) must be > 0", m, n) ;
     }
     GB_RETURN_IF_NULL (Tiles) ;

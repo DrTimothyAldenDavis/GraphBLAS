@@ -17,8 +17,8 @@
 
 #define GB_FREE_ALL         \
 {                           \
-    GB_phbix_free (MT) ;  \
-    GB_phbix_free (T) ;   \
+    GB_phbix_free (MT) ;    \
+    GB_phbix_free (T) ;     \
 }
 
 GrB_Info GB_mxm                     // C<M> = A*B

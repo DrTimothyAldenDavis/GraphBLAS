@@ -22,7 +22,7 @@ GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
     const GrB_Matrix A,             // input matrix to split
     const GrB_Descriptor desc       // unused, except threading control
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -33,7 +33,7 @@ GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
     GB_BURBLE_START ("GxB_Matrix_split") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     if (m <= 0 || n <= 0)
-    {
+    { 
         return (GrB_INVALID_VALUE) ;
     }
     GB_RETURN_IF_NULL (Tiles) ;
