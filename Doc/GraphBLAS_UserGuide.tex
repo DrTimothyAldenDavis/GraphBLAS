@@ -5358,7 +5358,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
     GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)*sizeof(int64_t)
-    GrB_Index **Aj,     // row indices, Aj_size >= nvals(A)*sizeof(int64_t)
+    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A) * (type size)
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Aj_size,  // size of Aj in bytes
@@ -5508,7 +5508,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)*sizeof(int64_t)
-    GrB_Index **Aj,     // row indices, Aj_size >= nvals(A)*sizeof(int64_t)
+    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A)*(type size)
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Aj_size, // size of Aj in bytes
