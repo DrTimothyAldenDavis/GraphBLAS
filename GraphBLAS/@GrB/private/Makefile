@@ -47,11 +47,11 @@ LINKEXPORTVER := -Wl,--version-script,"$(MWROOT)/extern/lib/glnxa64/c_exportsmex
 
 LINKLIBS := -Wl,-rpath-link,/usr/local/lib -L/usr/local/lib
 LINKLIBS += -Wl,-rpath-link,../../../build -L../../../build
-LINKLIBS += -Wl,--as-needed
+LINKLIBS += -Wl,--as-needed -lgraphblas
 LINKLIBS += -Wl,-rpath-link,$(MWROOT)/bin/glnxa64 -L"$(MWROOT)/bin/glnxa64"
 LINKLIBS += -Wl,-rpath-link,$(MWROOT)/extern/bin/glnxa64
 LINKLIBS += -L"$(MWROOT)/extern/bin/glnxa64"
-LINKLIBS += -lgraphblas -lmx -lmex -lmat -lm -lstdc++
+LINKLIBS += -lmx -lmex -lmat -lm -lstdc++
 
 CF := $(MATLABMEX) $(DEFINES) $(CFLAGS) $(COPTIMFLAGS) $(INCLUDE)
 LF := $(LD) $(LDFLAGS) $(LDTYPE) $(LINKEXPORTVER) 
