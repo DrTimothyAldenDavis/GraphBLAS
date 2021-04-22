@@ -36,7 +36,7 @@ GB_OP1 (GxB_, ONE, "one") ;
     // z=abs(x), z and x have the same type
     GB_OP1 (GrB_, ABS      , "abs"      ) ;
 
-    // GxB_ABS_* is now GrB_ABS_*, and GxB_ABS is deprecated
+    // GxB_ABS_* is now GrB_ABS_*, and GxB_ABS is historical
     GB_OP1_RENAME (GxB_, GrB_, ABS) ;
 
     // LNOT is only defined for real types, not complex

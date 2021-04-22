@@ -1,5 +1,5 @@
-function gbtest102
-%GBTEST102 test horzcat, vertcat, cat, cell2mat
+% function gbtest102
+%GBTEST102 test horzcat, vertcat, cat, cell2mat, mat2cell, num2cell
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -14,6 +14,26 @@ assert (isequal (C1, C2)) ;
 C1 = [A ; B] 
 C2 = [double(A) ; double(B)]
 assert (isequal (C1, C2)) ;
+
+S1 = num2cell (C1) ;
+S2 = num2cell (C2) ;
+assert (isequal (S1, S2)) ;
+
+S1 = num2cell (C1, 1) ;
+S2 = num2cell (C2, 1) ;
+assert (isequal (S1, S2)) ;
+
+S1 = num2cell (C1, 2) ;
+S2 = num2cell (C2, 2) ;
+assert (isequal (S1, S2)) ;
+
+S1 = num2cell (C1, [1 2]) ;
+S2 = num2cell (C2, [1 2]) ;
+assert (isequal (S1, S2)) ;
+
+S1 = num2cell (C1, [2 1]) ;
+S2 = num2cell (C2, [2 1]) ;
+assert (isequal (S1, S2)) ;
 
 for n = 100:100:1000
     fprintf ('.') ;
@@ -34,6 +54,11 @@ for n = 100:100:1000
         C1 = [A1 A2 ; A3 A4] ;  % using GrB horzcat and vertcat
         C2 = [B1 B2 ; B3 B4] ;  % using MATLAB horzcat and vercat
         assert (isequal (C1, C2)) ;
+
+        % test mat2cell
+        S1 = mat2cell (C1, [n n], [n n]) ;
+        S2 = mat2cell (C2, [n n], [n n]) ;
+        assert (isequal (S1, S2)) ;
 
         % test GrB.cell2mat
         S1 = cell (2,2) ;
@@ -103,6 +128,10 @@ for n1 = [10 100 1000]
                         C1 = GrB.cell2mat (S) ;
                         C2 = cell2mat (T) ;
                         assert (isequal (C1, C2)) ;
+
+                        S1 = mat2cell (C1, [m1 m2], [n1 n2 n3]) ;
+                        S2 = mat2cell (C2, [m1 m2], [n1 n2 n3]) ;
+                        assert (isequal (S1, S2)) ;
                     end
                 end
             end

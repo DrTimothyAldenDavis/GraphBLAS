@@ -99,13 +99,13 @@
 #define GB_J_WORK(t) (((t) < 0) ? -1 : ((J_work == NULL) ? 0 : J_work [t]))
 #define GB_K_WORK(t) (((t) < 0) ? -1 : ((K_work == NULL) ? t : K_work [t]))
 
-#define GB_FREE_WORK                        \
-{                                           \
-    GB_WERK_POP (Work, int64_t) ;           \
-    GB_FREE (I_work_handle, *I_work_size_handle) ; \
-    GB_FREE (J_work_handle, *J_work_size_handle) ; \
-    GB_FREE (S_work_handle, *S_work_size_handle) ; \
-    GB_FREE_WERK (&K_work, K_work_size) ;   \
+#define GB_FREE_WORK                                \
+{                                                   \
+    GB_WERK_POP (Work, int64_t) ;                   \
+    GB_FREE (I_work_handle, *I_work_size_handle) ;  \
+    GB_FREE (J_work_handle, *J_work_size_handle) ;  \
+    GB_FREE (S_work_handle, *S_work_size_handle) ;  \
+    GB_FREE_WERK (&K_work, K_work_size) ;           \
 }
 
 //------------------------------------------------------------------------------

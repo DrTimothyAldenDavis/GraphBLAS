@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// TODO:: if OP is ONE and uniform-valued matrices are exploited, then do
+// the values in O(1) time.
+
 {
 
     // Ax unused for some uses of this template

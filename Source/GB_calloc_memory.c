@@ -40,6 +40,7 @@ static inline void *GB_calloc_helper
         p = GB_Global_free_pool_get (k) ;
         // memset is required if the block comes from the free_pool
         do_memset = (p != NULL) ;
+//      if (p != NULL) printf ("calloc from pool: %p %ld\n", p, *size) ;
     }
 
     if (p == NULL)
@@ -70,6 +71,8 @@ static inline void *GB_calloc_helper
         }
 //      printf ("hard calloc %p %ld\n", p, *size) ;
     }
+
+//  GB_Global_free_pool_dump (2) ; GB_Global_memtable_dump ( ) ;
 
     if (do_memset)
     {

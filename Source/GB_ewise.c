@@ -20,10 +20,10 @@
 
 #define GB_FREE_ALL         \
 {                           \
-    GB_phbix_free (T) ;   \
-    GB_phbix_free (AT) ;  \
-    GB_phbix_free (BT) ;  \
-    GB_phbix_free (MT) ;  \
+    GB_phbix_free (T) ;     \
+    GB_phbix_free (AT) ;    \
+    GB_phbix_free (BT) ;    \
+    GB_phbix_free (MT) ;    \
 }
 
 GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B

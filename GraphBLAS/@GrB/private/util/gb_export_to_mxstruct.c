@@ -12,15 +12,21 @@
 // The input GrB_Matrix A must be deep.  The output is a MATLAB struct
 // holding the content of the GrB_Matrix.
 
+// The GraphBLASv4 and v5 structs are identical, except that s has size 9
+// in v4 and size 10 in v5.  The added s [9] entry is true if the matrix is
+// uniform valued.  If the matrix is uniform-valued, the x array is only
+// large enough to hold a single entry.
+
 #include "gb_matlab.h"
 
 // for hypersparse, sparse, or full matrices
 static const char *MatrixFields [6] =
 {
-    "GraphBLASv4",      // 0: "logical", "int8", ... "double",
+    "GraphBLASv5",      // 0: "logical", "int8", ... "double",
                         //    "single complex", or "double complex"
     "s",                // 1: all scalar info goes here
-    "x",                // 2: array of uint8, size (sizeof(type) * nzmax)
+    "x",                // 2: array of uint8, size (sizeof(type)*nzmax), or
+                        //    just sizeof(type) if the matrix is uniform-valued
     "p",                // 3: array of int64_t, size plen+1
     "i",                // 4: array of int64_t, size nzmax
     "h"                 // 5: array of int64_t, size plen if hypersparse
@@ -29,10 +35,11 @@ static const char *MatrixFields [6] =
 // for bitmap matrices only
 static const char *Bitmap_MatrixFields [4] =
 {
-    "GraphBLASv4",      // 0: "logical", "int8", ... "double",
+    "GraphBLASv5",      // 0: "logical", "int8", ... "double",
                         //    "single complex", or "double complex"
     "s",                // 1: all scalar info goes here
-    "x",                // 2: array of uint8, size (sizeof(type) * nzmax)
+    "x",                // 2: array of uint8, size (sizeof(type)*nzmax), or
+                        //    just sizeof(type) if the matrix is uniform-valued
     "b"                 // 3: array of int8_t, size nzmax, for bitmap only
 } ;
 
@@ -101,6 +108,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     int64_t Ap_size = 0, Ah_size = 0, Ab_size = 0, Ai_size = 0, Ax_size = 0 ;
     int64_t nvals = 0, nvec = 0 ;
     bool by_col = (fmt == GxB_BY_COL) ;
+    bool is_uniform = false ;
 
     // TODO write GxB_Matrix_export which exports the matrix as-is
 
@@ -110,12 +118,12 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             if (by_col)
             {
                 OK (GxB_Matrix_export_FullC (&A, &type, &nrows, &ncols,
-                    &Ax, &Ax_size, NULL)) ;
+                    &Ax, &Ax_size, &is_uniform, NULL)) ;
             }
             else
             {
                 OK (GxB_Matrix_export_FullR (&A, &type, &nrows, &ncols,
-                    &Ax, &Ax_size, NULL)) ;
+                    &Ax, &Ax_size, &is_uniform, NULL)) ;
             }
             break ;
 
@@ -123,12 +131,14 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             if (by_col)
             {
                 OK (GxB_Matrix_export_CSC (&A, &type, &nrows, &ncols,
-                    &Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, NULL, NULL)) ;
+                    &Ap, &Ai, &Ax,
+                    &Ap_size, &Ai_size, &Ax_size, &is_uniform, NULL, NULL)) ;
             }
             else
             {
                 OK (GxB_Matrix_export_CSR (&A, &type, &nrows, &ncols,
-                    &Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, NULL, NULL)) ;
+                    &Ap, &Ai, &Ax,
+                    &Ap_size, &Ai_size, &Ax_size, &is_uniform, NULL, NULL)) ;
             }
             break ;
 
@@ -136,13 +146,15 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             if (by_col)
             {
                 OK (GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols,
-                    &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+                    &Ap, &Ah, &Ai, &Ax,
+                    &Ap_size, &Ah_size, &Ai_size, &Ax_size, &is_uniform,
                     &nvec, NULL, NULL)) ;
             }
             else
             {
                 OK (GxB_Matrix_export_HyperCSR (&A, &type, &nrows, &ncols,
-                    &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+                    &Ap, &Ah, &Ai, &Ax,
+                    &Ap_size, &Ah_size, &Ai_size, &Ax_size, &is_uniform,
                     &nvec, NULL, NULL)) ;
             }
             break ;
@@ -151,12 +163,12 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             if (by_col)
             {
                 OK (GxB_Matrix_export_BitmapC (&A, &type, &nrows, &ncols,
-                    &Ab, &Ax, &Ab_size, &Ax_size, &nvals, NULL)) ;
+                    &Ab, &Ax, &Ab_size, &Ax_size, &is_uniform, &nvals, NULL)) ;
             }
             else
             {
                 OK (GxB_Matrix_export_BitmapR (&A, &type, &nrows, &ncols,
-                    &Ab, &Ax, &Ab_size, &Ax_size, &nvals, NULL)) ;
+                    &Ab, &Ax, &Ab_size, &Ax_size, &is_uniform, &nvals, NULL)) ;
             }
             break ;
 
@@ -173,22 +185,22 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     switch (sparsity_status)
     {
         case GxB_FULL :
-            // A is full, with 3 fields: GraphBLASv4, s, x
+            // A is full, with 3 fields: GraphBLAS*, s, x
             G = mxCreateStructMatrix (1, 1, 3, MatrixFields) ;
             break ;
 
         case GxB_SPARSE :
-            // A is sparse, with 5 fields: GraphBLASv4, s, x, p, i
+            // A is sparse, with 5 fields: GraphBLAS*, s, x, p, i
             G = mxCreateStructMatrix (1, 1, 5, MatrixFields) ;
             break ;
 
         case GxB_HYPERSPARSE :
-            // A is hypersparse, with 6 fields: GraphBLASv4, s, x, p, i, h
+            // A is hypersparse, with 6 fields: GraphBLAS*, s, x, p, i, h
             G = mxCreateStructMatrix (1, 1, 6, MatrixFields) ;
             break ;
 
         case GxB_BITMAP :
-            // A is bitmap, with 4 fields: GraphBLASv4, s, x, b
+            // A is bitmap, with 4 fields: GraphBLAS*, s, x, b
             G = mxCreateStructMatrix (1, 1, 4, Bitmap_MatrixFields) ;
             break ;
 
@@ -203,7 +215,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     mxSetFieldByNumber (G, 0, 0, gb_type_to_mxstring (type)) ;
 
     // export the scalar content
-    mxArray *opaque = mxCreateNumericMatrix (1, 9, mxINT64_CLASS, mxREAL) ;
+    mxArray *opaque = mxCreateNumericMatrix (1, 10, mxINT64_CLASS, mxREAL) ;
     int64_t *s = mxGetInt64s (opaque) ;
     s [0] = plen ;
     s [1] = (by_col) ? nrows : ncols ;  // was A->vlen ;
@@ -214,6 +226,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     s [6] = (int64_t) by_col ;
     s [7] = nzmax ;
     s [8] = nvals ;
+    s [9] = (int64_t) is_uniform ;      // new in GraphBLASv5
     mxSetFieldByNumber (G, 0, 1, opaque) ;
 
     // These components do not need to be exported: Pending, nzombies,

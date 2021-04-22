@@ -19,6 +19,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     void **vx,          // values
     GrB_Index vb_size,  // size of vb in bytes
     GrB_Index vx_size,  // size of vx in bytes
+    bool is_uniform,    // if true, v has uniform values (TODO:::unsupported)
 
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
@@ -30,7 +31,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Vector_import_Bitmap (&v, type, n, "
-        " &vb, &vx, vb_size, vx_size, nvals, desc)") ;
+        "&vb, &vx, vb_size, vx_size, is_uniform, nvals, desc)") ;
     GB_BURBLE_START ("GxB_Vector_import_Bitmap") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
@@ -45,7 +46,8 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
         NULL, 0,        // Ai
         vx,   vx_size,  // Ax
         nvals, false, 0,                    // nvals for bitmap
-        GxB_BITMAP, true, Context) ;        // bitmap by col
+        GxB_BITMAP, true,                   // bitmap by col
+        is_uniform, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

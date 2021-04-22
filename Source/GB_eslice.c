@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_eslice: uniform partition of e items to each task 
+// GB_eslice: equal partition of e items to each task 
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.

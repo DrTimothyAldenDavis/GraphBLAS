@@ -145,8 +145,9 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         void *Tx ;
 
         // pass jumbled as NULL to indicate the matrix must be sorted
+        // pass is_uniform as NULL to indicate it cannot be uniform valued
         OK (GxB_Matrix_export_CSC (&T, &type, &nrows, &ncols,
-            &Tp, &Ti, &Tx, &Tp_size, &Ti_size, &Tx_size, NULL, NULL)) ;
+            &Tp, &Ti, &Tx, &Tp_size, &Ti_size, &Tx_size, NULL, NULL, NULL)) ;
 
         CHECK_ERROR (Ti_size == 0, "internal error 8") ;
         CHECK_ERROR (Tp == NULL || Ti == NULL || Tx == NULL,

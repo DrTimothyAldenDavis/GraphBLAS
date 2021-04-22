@@ -73,18 +73,47 @@ void GB_free_pool_finalize (void) ;
 // malloc/calloc/realloc/free: for permanent contents of GrB objects
 //------------------------------------------------------------------------------
 
-#define GB_FREE(p,s) \
-    GB_dealloc_memory (p, s)
+#if 0
 
-#define GB_CALLOC(n,type,s) \
-    (type *) GB_calloc_memory (n, sizeof (type), s, Context)
+    #define GB_FREE(p,s) \
+    { \
+        printf ("dealloc (%s, line %d): %p size %lu\n", \
+            __FILE__, __LINE__, p, s) ; \
+        GB_dealloc_memory (p, s) ; \
+    }
 
-#define GB_MALLOC(n,type,s) \
-    (type *) GB_malloc_memory (n, sizeof (type), s)
+    #define GB_CALLOC(n,type,s) \
+        (type *) GB_calloc_memory (n, sizeof (type), s, Context) ; \
+        ; printf ("calloc  (%s, line %d): size %lu\n", \
+            __FILE__, __LINE__, *(s)) ; \
 
-#define GB_REALLOC(p,nnew,nold,type,s,ok,Context) \
-    p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), \
-        (void *) p, s, ok, Context)
+    #define GB_MALLOC(n,type,s) \
+        (type *) GB_malloc_memory (n, sizeof (type), s) ; \
+        ; printf ("malloc  (%s, line %d): size %lu\n", \
+            __FILE__, __LINE__, *(s)) ; \
+
+    #define GB_REALLOC(p,nnew,nold,type,s,ok,Context) \
+        p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), \
+            (void *) p, s, ok, Context) ; \
+        ; printf ("realloc (%s, line %d): size %lu\n", \
+            __FILE__, __LINE__, *(s)) ; \
+
+#else
+
+    #define GB_FREE(p,s) \
+        GB_dealloc_memory (p, s)
+
+    #define GB_CALLOC(n,type,s) \
+        (type *) GB_calloc_memory (n, sizeof (type), s, Context)
+
+    #define GB_MALLOC(n,type,s) \
+        (type *) GB_malloc_memory (n, sizeof (type), s)
+
+    #define GB_REALLOC(p,nnew,nold,type,s,ok,Context) \
+        p = (type *) GB_realloc_memory (nnew, nold, sizeof (type), \
+            (void *) p, s, ok, Context)
+
+#endif
 
 //------------------------------------------------------------------------------
 // malloc/calloc/realloc/free: for workspace

@@ -614,11 +614,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                     #else
                     if (A->is_csc)
                     {
-                        GBPR ("    (" GBd "," GBd ") ", i + offset, j + offset);
+                        GBPR ("    (" GBd "," GBd ") ", i+offset, j+offset) ;
                     }
                     else
                     {
-                        GBPR ("    (" GBd "," GBd ") ", j + offset, i + offset);
+                        GBPR ("    (" GBd "," GBd ") ", j+offset, i+offset) ;
                     }
                     #endif
                 }
@@ -631,7 +631,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             int64_t col = A->is_csc ? j : i ;
             if (i < 0 || i >= A->vlen)
             { 
-                GBPR0 ("  index (" GBd "," GBd ") out of range\n", row, col) ;
+                GBPR0 ("  index (" GBd "," GBd ") out of range\n",
+                    row+offset, col+offset) ;
                 return (GrB_INVALID_OBJECT) ;
             }
 
@@ -657,7 +658,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             if (A->jumbled ? (i == ilast) : (i <= ilast))
             { 
                 // indices unsorted, or duplicates present
-                GBPR0 (" index (" GBd "," GBd ") invalid\n", row, col) ;
+                GBPR0 (" index (" GBd "," GBd ") invalid\n",
+                    row+offset, col+offset) ;
                 return (GrB_INDEX_OUT_OF_BOUNDS) ;
             }
 
@@ -809,9 +811,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     //--------------------------------------------------------------------------
 
     // A->nvec_nonempty == -1 denotes that the value has not been computed.
-    // This is valid, and can occur for matrices imported with
-    // GxB_Matrix_import*, and in other cases when its computation is postponed
-    // or not needed.  If not -1, however, the value must be correct.
+    // This is valid, and can occur for imported matrices and in other cases
+    // when its computation is postponed or not needed.  If not -1, however,
+    // the value must be correct.
 
     int64_t actual_nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
 

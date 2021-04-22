@@ -144,7 +144,7 @@ void GB_pslice                      // slice Ap
     { 
 
         //----------------------------------------------------------------------
-        // A is full or bitmap: slice 0:n uniformly
+        // A is full or bitmap: slice 0:n equally for all tasks
         //----------------------------------------------------------------------
 
         GB_eslice (Slice, n, ntasks) ;

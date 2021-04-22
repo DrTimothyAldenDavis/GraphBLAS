@@ -105,7 +105,7 @@
 %  gbtest00  - test GrB.bfs and plot (graph (G))
 %  gbtest100 - test GrB.ver and GrB.version
 %  gbtest101 - test loading of v3 GraphBLAS objects
-%  gbtest102 - test horzcat, vertcat, cat, cell2mat
+%  gbtest102 - test horzcat, vertcat, cat, cell2mat, mat2cell, num2cell
 %
 % Utilities and other tests:
 %

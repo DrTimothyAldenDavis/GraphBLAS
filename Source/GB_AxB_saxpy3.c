@@ -463,7 +463,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // allocate space for all hash tables
     //--------------------------------------------------------------------------
 
-    // TODO::: allocate Hi and Hx together as one block
     if (Hi_size_total > 0)
     { 
         Hi_all = GB_MALLOC_WERK (Hi_size_total, int64_t, &Hi_all_size) ;
@@ -491,9 +490,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // split the space into separate hash tables
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Hi_split = Hi_all ;
-    int64_t *GB_RESTRICT Hf_split = Hf_all ;
-    GB_void *GB_RESTRICT Hx_split = Hx_all ;
+    int64_t *GB_RESTRICT Hi_part = Hi_all ;
+    int64_t *GB_RESTRICT Hf_part = Hf_all ;
+    GB_void *GB_RESTRICT Hx_part = Hx_all ;
 
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
@@ -510,9 +509,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         bool is_fine = (k >= 0) ;
         bool use_Gustavson = (hash_size == cvlen) ;
 
-        SaxpyTasks [taskid].Hi = Hi_split ;
-        SaxpyTasks [taskid].Hf = (GB_void *) Hf_split ;
-        SaxpyTasks [taskid].Hx = Hx_split ;
+        SaxpyTasks [taskid].Hi = Hi_part ;
+        SaxpyTasks [taskid].Hf = (GB_void *) Hf_part ;
+        SaxpyTasks [taskid].Hx = Hx_part ;
 
         int64_t hi_size = GB_IMAX (hash_size, 8) ;
         int64_t hx_size = hi_size ;
@@ -526,23 +525,23 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             // Hf is int8_t for the fine Gustavson tasks, but round up
             // to the nearest number of int64_t values.
             int64_t hi_size2 = GB_IMAX (hi_size, 64) ;
-            Hf_split += GB_ICEIL (hi_size2, sizeof (int64_t)) ;
+            Hf_part += GB_ICEIL (hi_size2, sizeof (int64_t)) ;
         }
         else
         { 
             // Hf is int64_t for all other methods
-            Hf_split += hi_size ;
+            Hf_part += hi_size ;
         }
         if (!is_fine && !use_Gustavson)
         { 
             // only coarse hash tasks need Hi
-            Hi_split += hi_size ;
+            Hi_part += hi_size ;
         }
         // all tasks use an Hx array of size hash_size
         if (!is_any_pair_semiring)
         { 
             // except that the ANY_PAIR semiring does not use Hx
-            Hx_split += hx_size * csize ;
+            Hx_part += hx_size * csize ;
         }
     }
 

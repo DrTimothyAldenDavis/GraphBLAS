@@ -26,6 +26,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Index *Ah_size, // size of Ah in bytes
     GrB_Index *Ai_size, // size of Ai in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
 
     GrB_Index *nvec,    // number of columns that appear in Ah
     bool *jumbled,      // if true, indices in each column may be unsorted
@@ -39,7 +40,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
 
     GB_WHERE1 ("GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols, "
         "&Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size, "
-        "&nvec, &jumbled, desc)") ;
+        "&is_uniform, &nvec, &jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_HyperCSC") ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
@@ -98,7 +99,8 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
         Ai,   Ai_size,  // Ai
         Ax,   Ax_size,  // Ax
         NULL, jumbled, nvec,                // jumbled or not
-        &sparsity, &is_csc, Context) ;      // hypersparse by col
+        &sparsity, &is_csc,                 // hypersparse by col
+        is_uniform, Context) ;
 
     if (info == GrB_SUCCESS)
     {

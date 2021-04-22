@@ -9,9 +9,9 @@
 
 // C<M> = accum (C, select(A,Thunk)) or select(A,Thunk)').
 
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_phbix_free (T) ;                   \
+#define GB_FREE_ALL     \
+{                       \
+    GB_phbix_free (T) ; \
 }
 
 #include "GB_select.h"

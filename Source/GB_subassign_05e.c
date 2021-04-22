@@ -23,6 +23,9 @@
 // bitmap, only assignments where (Mb [pC] == 1) are needed, but it's faster to
 // just assign all entries.
 
+// TODO: when uniform-valued matrices are supported, this method will take
+// O(1) time.
+
 #include "GB_subassign_methods.h"
 
 #undef  GB_FREE_ALL
@@ -147,7 +150,7 @@ GrB_Info GB_subassign_05e
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_WORK ;                  // TODO:: delete this; no workspace
     C->jumbled = M->jumbled ;       // C is jumbled if M is jumbled
     ASSERT_MATRIX_OK (C, "C output for subassign method_05e", GB0) ;
     ASSERT (GB_JUMBLED_OK (C)) ;

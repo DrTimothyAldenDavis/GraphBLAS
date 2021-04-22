@@ -30,6 +30,13 @@
 // with the name GxB_* are user-accessible in SuiteSparse:GraphBLAS but cannot
 // be guaranteed to appear in all GraphBLAS implementations.
 
+// Regarding "historical" functions and symbols:  when a GxB* function or
+// symbol is added to the C API Specification, the new GrB* name should be used
+// instead.  The old GxB* name will be kept for historical reasons, documented
+// here and in working order; it might no longer be mentioned in the user
+// guide.  Historical functions and symbols would only be removed in the rare
+// case that they cause a serious conflict with future methods.
+
 #ifndef GRAPHBLAS_H
 #define GRAPHBLAS_H
 
@@ -173,7 +180,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Apr 11, 2021"
+#define GxB_IMPLEMENTATION_DATE "Apr 21, 2021"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -460,7 +467,7 @@ typedef enum
 
     // for GrB_MASK only:
     GrB_COMP = 2,       // use the structural complement of the input
-    GrB_SCMP = 2,       // same as GrB_COMP (deprecated; use GrB_COMP instead)
+    GrB_SCMP = 2,       // same as GrB_COMP (historical; use GrB_COMP instead)
     GrB_STRUCTURE = 4,  // use the only pattern of the mask, not its values
 
     // for GrB_INP0 and GrB_INP1 only:
@@ -757,7 +764,7 @@ GB_PUBLIC GrB_UnaryOp
     // GxB_LNOT_BOOL; it just has a different name.
     GrB_LNOT ;
 
-// GxB_ABS is now in the v1.3 spec, the following names are deprecated:
+// GxB_ABS is now in the v1.3 spec, the following names are historical:
 GB_PUBLIC GrB_UnaryOp
 
     // z = abs(x)
@@ -1306,7 +1313,7 @@ GB_PUBLIC GrB_UnaryOp
 //      z = ~(x && y)   1 1 1 0     (nand(x,y) function, not predefined)
 //      z = 1           1 1 1 1     PAIR
 //
-//      z = any(x,y)    . . . .     ANY (pick x or y arbitrarily)
+//      z = any(x,y)    0 . . 1     ANY (pick x or y arbitrarily)
 
 // Four more that have no _BOOL suffix are also redundant with the operators
 // of the form GxB_*_BOOL (GrB_LOR, GrB_LAND, GrB_LXOR, and GrB_LXNOR).
@@ -3590,7 +3597,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 #endif
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_concat
+// GxB_Matrix_concat and GxB_Matrix_split
 //------------------------------------------------------------------------------
 
 // GxB_Matrix_concat concatenates an array of matrices (Tiles) into a single
@@ -3629,6 +3636,81 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
     const GrB_Descriptor desc       // unused, except threading control
 ) ;
 
+// GxB_Matrix_split does the opposite of GxB_Matrix_concat.  It splits a single
+// input matrix A into a 2D array of tiles.  On input, the Tiles array must be
+// a non-NULL pointer to a previously allocated array of size at least m*n
+// where both m and n must be > 0.  The Tiles_nrows array has size m, and
+// Tiles_ncols has size n.  The (i,j)th tile has dimension
+// Tiles_nrows[i]-by-Tiles_ncols[j].  The sum of Tiles_nrows [0:m-1] must equal
+// the number of rows of A, and the sum of Tiles_ncols [0:n-1] must equal the
+// number of columns of A.  The type of each tile is the same as the type of A;
+// no typecasting is done.
+
+GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
+(
+    GrB_Matrix *Tiles,              // 2D row-major array of size m-by-n
+    const GrB_Index m,
+    const GrB_Index n,
+    const GrB_Index *Tile_nrows,    // array of size m
+    const GrB_Index *Tile_ncols,    // array of size n
+    const GrB_Matrix A,             // input matrix to split
+    const GrB_Descriptor desc       // unused, except threading control
+) ;
+
+//------------------------------------------------------------------------------
+// GxB_Matrix_diag and GxB_Vector_diag
+//------------------------------------------------------------------------------
+
+// GxB_Matrix_diag constructs a matrix from a vector.  Let n be the length of
+// the v vector, from GrB_Vector_size (&n, v).  If k = 0, then C is an n-by-n
+// diagonal matrix with the entries from v along the main diagonal of C, with
+// C(i,i) = v(i).  If k is nonzero, C is square with dimension n+abs(k).  If k
+// is positive, it denotes diagonals above the main diagonal, with C(i,i+k) =
+// v(i).  If k is negative, it denotes diagonals below the main diagonal of C,
+// with C(i-k,i) = v(i).  This behavior is identical to the MATLAB statement
+// C = diag(v,k), where v is a vector, except that GxB_Matrix_diag can also
+// do typecasting.
+
+// C must already exist on input, of the correct size.  Any existing entries in
+// C are discarded.  The type of C is preserved, so that if the type of C and v
+// differ, the entries are typecasted into the type of C.  Any settings made to
+// C by GxB_Matrix_Option_set (format by row or by column, bitmap switch, hyper
+// switch, and sparsity control) are unchanged.
+
+GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
+(
+    GrB_Matrix C,                   // output matrix
+    const GrB_Vector v,             // input vector
+    int64_t k,
+    const GrB_Descriptor desc       // unused, except threading control
+) ;
+
+// GxB_Vector_diag extracts a vector v from an input matrix A, which may be
+// rectangular.  If k = 0, the main diagonal of A is extracted; k > 0 denotes
+// diagonals above the main diagonal of A, and k < 0 denotes diagonals below
+// the main diagonal of A.  Let A have dimension m-by-n.  If k is in the range
+// 0 to n-1, then v has length min(m,n-k).  If k is negative and in the range 
+// -1 to -m+1, then v has length min(m+k,n).  If k is outside these ranges,
+// v has length 0 (this is not an error).  This function computes the same
+// thing as the MATLAB statement v = diag(A,k) when A is a matrix, except that
+// GxB_Vector_diag can also do typecasting.
+
+// v must already exist on input, of the correct length; that is
+// GrB_Vector_size (&len,v) must return len = 0 if k >= n or k <= -m, len =
+// min(m,n-k) if k is in the range 0 to n-1, and len = min(m+k,n) if k is in
+// the range -1 to -m+1.  Any existing entries in v are discarded.  The type of
+// v is preserved, so that if the type of A and v differ, the entries are
+// typecasted into the type of v.  Any settings made to v by
+// GxB_Vector_Option_set (bitmap switch and sparsity control) are unchanged.
+
+GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix, as a vector
+(
+    GrB_Vector v,                   // output vector
+    const GrB_Matrix A,             // input matrix
+    int64_t k,
+    const GrB_Descriptor desc       // unused, except threading control
+) ;
+
 //==============================================================================
 // SuiteSparse:GraphBLAS options
 //==============================================================================
@@ -3647,7 +3729,7 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
 //      GxB_Global_Option_set:  sets an option for all future matrices
 //      GxB_Global_Option_get:  queries current option for all future matrices
 
-#define GxB_HYPER 0     // (deprecated, use GxB_HYPER_SWITCH)
+#define GxB_HYPER 0     // (historical, use GxB_HYPER_SWITCH)
 
 typedef enum            // for global options or matrix options
 {
@@ -3696,7 +3778,7 @@ typedef enum            // for global options or matrix options
     //------------------------------------------------------------
 
     GxB_SPARSITY_STATUS = 33,       // hyper, sparse, bitmap or full (1,2,4,8)
-    GxB_IS_HYPER = 6,               // deprecated; use GxB_SPARSITY_STATUS
+    GxB_IS_HYPER = 6,               // historical; use GxB_SPARSITY_STATUS
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get/set only:
@@ -4055,6 +4137,11 @@ GB_PUBLIC GrB_Info GxB_Scalar_wait     (GxB_Scalar     *s       ) ;
 GB_PUBLIC GrB_Info GrB_Vector_wait     (GrB_Vector     *v       ) ;
 GB_PUBLIC GrB_Info GrB_Matrix_wait     (GrB_Matrix     *A       ) ;
 
+// Note that v1.0 of the GraphBLAS C API had a no-input GrB_wait ( ) method,
+// which is now deprecated and no longer supported, since it conflicts with the
+// single-input GrB_wait (&object) method below.  The no-input GrB_wait ( )
+// method has been removed, as of v4.0 of SuiteSparse:GraphBLAS.
+
 // GrB_wait (&object) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_wait(object)                         \
@@ -4094,6 +4181,11 @@ GB_PUBLIC GrB_Info GxB_Scalar_error     (const char **error, const GxB_Scalar   
 GB_PUBLIC GrB_Info GrB_Vector_error     (const char **error, const GrB_Vector     v) ;
 GB_PUBLIC GrB_Info GrB_Matrix_error     (const char **error, const GrB_Matrix     A) ;
 GB_PUBLIC GrB_Info GrB_Descriptor_error (const char **error, const GrB_Descriptor d) ;
+
+// Note that v1.0 of the GraphBLAS C API had a no-input GrB_error ( ) method,
+// which is now deprecated and no longer supported, since it conflicts with the
+// 2-input GrB_error method defined below.  The no-input GrB_error ( ) method
+// has been removed, as of v4.0 of SuiteSparse:GraphBLAS.
 
 // GrB_error (error,object) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L
@@ -6427,11 +6519,6 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
 // columns instead of the rows.  This behavior is the transpose of the MATLAB
 // convention, where r=sum(A) produces a row vector and sums each column.
 
-// For GrB_Matrix_reduce_BinaryOp, the GrB_BinaryOp op must correspond to a
-// known built-in GrB_Monoid.  User-defined binary operators are not supported.
-// Use GrB_reduce with a monoid instead.  It is officially deprecated in
-// SuiteSparse:GraphBLAS v5.0 and may be removed entirely in a future release.
-
 GB_PUBLIC
 GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
 (
@@ -6443,8 +6530,15 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 ) ;
 
+// GrB_Matrix_reduce_BinaryOp does the reduction with a GrB_BinaryOp op, which
+// must correspond to a known built-in GrB_Monoid.  User-defined binary
+// operators are not supported.  Use GrB_reduce with a monoid instead.  The
+// ability of GrB_Matrix_reduce_BinaryOp to compute a reduction of a matrix to
+// a vector using an arbitrary binary op has been deprecated and removed from
+// SuiteSparse:GraphBLAS.
+
 GB_PUBLIC
-GrB_Info GrB_Matrix_reduce_BinaryOp // DEPRECATED, DO NOT USE.
+GrB_Info GrB_Matrix_reduce_BinaryOp // historical in SuiteSparse:GraphBLAS
 (
     GrB_Vector w,
     const GrB_Vector mask,
@@ -6802,9 +6896,9 @@ GrB_Info GrB_transpose              // C<Mask> = accum (C, A')
 // GrB_kronecker:  Kronecker product
 //==============================================================================
 
-// GxB_kron is deprecated; use GrB_kronecker instead
+// GxB_kron is historical; use GrB_kronecker instead
 GB_PUBLIC
-GrB_Info GxB_kron                   // C<Mask> = accum(C,kron(A,B)) (deprecated)
+GrB_Info GxB_kron                   // C<Mask> = accum(C,kron(A,B)) (historical)
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6877,7 +6971,7 @@ GB_PUBLIC GrB_Monoid
     // 10 MIN monoids: (not for complex types)
     //--------------------------------------------------------------------------
 
-    // GxB_MIN monoids, deprecated, use GrB_MIN_MONOID_* instead:
+    // GxB_MIN monoids, historical, use GrB_MIN_MONOID_* instead:
     GxB_MIN_INT8_MONOID,        // identity: INT8_MAX     terminal: INT8_MIN
     GxB_MIN_INT16_MONOID,       // identity: INT16_MAX    terminal: INT16_MIN
     GxB_MIN_INT32_MONOID,       // identity: INT32_MAX    terminal: INT32_MIN
@@ -6905,7 +6999,7 @@ GB_PUBLIC GrB_Monoid
     // 10 MAX monoids:
     //--------------------------------------------------------------------------
 
-    // GxB_MAX monoids, deprecated, use GrB_MAX_MONOID_* instead:
+    // GxB_MAX monoids, historical, use GrB_MAX_MONOID_* instead:
     GxB_MAX_INT8_MONOID,        // identity: INT8_MIN     terminal: INT8_MAX
     GxB_MAX_INT16_MONOID,       // identity: INT16_MIN    terminal: INT16_MAX
     GxB_MAX_INT32_MONOID,       // identity: INT32_MIN    terminal: INT32_MAX
@@ -6933,7 +7027,7 @@ GB_PUBLIC GrB_Monoid
     // 12 PLUS monoids:
     //--------------------------------------------------------------------------
 
-    // GxB_PLUS monoids, deprecated, use GrB_PLUS_MONOID_* instead:
+    // GxB_PLUS monoids, historical, use GrB_PLUS_MONOID_* instead:
     GxB_PLUS_INT8_MONOID,       // identity: 0
     GxB_PLUS_INT16_MONOID,      // identity: 0
     GxB_PLUS_INT32_MONOID,      // identity: 0
@@ -6965,7 +7059,7 @@ GB_PUBLIC GrB_Monoid
     // 12 TIMES monoids: identity value is 1, int* and uint* are terminal
     //--------------------------------------------------------------------------
 
-    // GxB_TIMES monoids, deprecated, use GrB_TIMES_MONOID_* instead:
+    // GxB_TIMES monoids, historical, use GrB_TIMES_MONOID_* instead:
     GxB_TIMES_INT8_MONOID,      // identity: 1            terminal: 0
     GxB_TIMES_INT16_MONOID,     // identity: 1            terminal: 0
     GxB_TIMES_INT32_MONOID,     // identity: 1            terminal: 0
@@ -7015,7 +7109,7 @@ GB_PUBLIC GrB_Monoid
     // 4 Boolean monoids: (see also the GxB_ANY_BOOL_MONOID above)
     //--------------------------------------------------------------------------
 
-    // GxB boolean monoids, deprecated, use GrB instead:
+    // GxB boolean monoids, historical, use GrB instead:
     GxB_LOR_BOOL_MONOID,        // identity: false        terminal: true
     GxB_LAND_BOOL_MONOID,       // identity: true         terminal: false
     GxB_LXOR_BOOL_MONOID,       // identity: false
@@ -7636,7 +7730,7 @@ GB_PUBLIC GrB_Semiring
 
     // LOR_LAND, LAND_LOR, LXOR_LAND, LXNOR_LOR.
 
-// GxB* semirings corresponding to the equivalent GrB* semiring are deprecated.
+// GxB* semirings corresponding to the equivalent GrB* semiring are historical.
 
 GB_PUBLIC GrB_Semiring
 
@@ -7829,7 +7923,7 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
 
 // GxB_*_resize are identical to the GrB*resize methods above
 GB_PUBLIC
-GrB_Info GxB_Matrix_resize      // change the size of a matrix (deprecated)
+GrB_Info GxB_Matrix_resize      // change the size of a matrix (historical)
 (
     GrB_Matrix C,               // matrix to modify
     GrB_Index nrows_new,        // new number of rows in matrix
@@ -7837,7 +7931,7 @@ GrB_Info GxB_Matrix_resize      // change the size of a matrix (deprecated)
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Vector_resize      // change the size of a vector (deprecated)
+GrB_Info GxB_Vector_resize      // change the size of a vector (historical)
 (
     GrB_Vector w,               // vector to modify
     GrB_Index nrows_new         // new number of rows in vector
@@ -8129,6 +8223,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Aj_size,  // size of Aj in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8166,6 +8261,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Ai_size,  // size of Ai in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8205,6 +8301,7 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     GrB_Index Ah_size,  // size of Ah in bytes
     GrB_Index Aj_size,  // size of Aj in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     GrB_Index nvec,     // number of rows that appear in Ah
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
@@ -8252,6 +8349,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GrB_Index Ah_size,  // size of Ah in bytes
     GrB_Index Ai_size,  // size of Ai in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     GrB_Index nvec,     // number of columns that appear in Ah
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
@@ -8296,6 +8394,7 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
     GrB_Index Ab_size,  // size of Ab in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8325,6 +8424,7 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
     GrB_Index Ab_size,  // size of Ab in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8352,6 +8452,7 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     GrB_Index ncols,    // number of columns of the matrix
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 
@@ -8375,6 +8476,7 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
     GrB_Index ncols,    // number of columns of the matrix
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 
@@ -8399,6 +8501,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     void **vx,          // values, vx_size >= nvals(v) * (type size)
     GrB_Index vi_size,  // size of vi in bytes
     GrB_Index vx_size,  // size of vx in bytes
+    bool is_uniform,    // if true, v has uniform values (TODO:::unsupported)
     GrB_Index nvals,    // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted
     const GrB_Descriptor desc
@@ -8422,6 +8525,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     void **vx,          // values, vx_size >= n * (type size)
     GrB_Index vb_size,  // size of vb in bytes
     GrB_Index vx_size,  // size of vx in bytes
+    bool is_uniform,    // if true, v has uniform values (TODO:::unsupported)
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8441,6 +8545,7 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     GrB_Index n,        // vector length
     void **vx,          // values, vx_size >= nvals(v) * (type size)
     GrB_Index vx_size,  // size of vx in bytes
+    bool is_uniform,    // if true, v has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 
@@ -8483,6 +8588,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Aj_size, // size of Aj in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8500,6 +8606,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Ai_size, // size of Ai in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8519,6 +8626,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GrB_Index *Ah_size, // size of Ah in bytes
     GrB_Index *Aj_size, // size of Aj in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     GrB_Index *nvec,    // number of rows that appear in Ah
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
@@ -8539,6 +8647,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Index *Ah_size, // size of Ah in bytes
     GrB_Index *Ai_size, // size of Ai in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     GrB_Index *nvec,    // number of columns that appear in Ah
     bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
@@ -8555,6 +8664,7 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     void **Ax,          // values
     GrB_Index *Ab_size, // size of Ab in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8570,6 +8680,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     void **Ax,          // values
     GrB_Index *Ab_size, // size of Ab in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8583,6 +8694,7 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     GrB_Index *ncols,   // number of columns of the matrix
     void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 
@@ -8595,6 +8707,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     GrB_Index *ncols,   // number of columns of the matrix
     void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
+    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 
@@ -8613,6 +8726,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     void **vx,          // values
     GrB_Index *vi_size, // size of vi in bytes
     GrB_Index *vx_size, // size of vx in bytes
+    bool *is_uniform,   // if true, v has uniform values (TODO:::unsupported)
     GrB_Index *nvals,   // # of entries in vector
     bool *jumbled,      // if true, indices may be unsorted
     const GrB_Descriptor desc
@@ -8628,6 +8742,7 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     void **vx,          // values
     GrB_Index *vb_size, // size of vb in bytes
     GrB_Index *vx_size, // size of vx in bytes
+    bool *is_uniform,   // if true, v has uniform values (TODO:::unsupported)
     GrB_Index *nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8640,6 +8755,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     GrB_Index *n,       // length of the vector
     void **vx,          // values
     GrB_Index *vx_size, // size of vx in bytes
+    bool *is_uniform,   // if true, v has uniform values (TODO:::unsupported)
     const GrB_Descriptor desc
 ) ;
 

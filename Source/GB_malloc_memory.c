@@ -36,6 +36,7 @@ static inline void *GB_malloc_helper
         // round up the size to the nearest power of two
         (*size) = (1UL) << k ;
         p = GB_Global_free_pool_get (k) ;
+//      if (p != NULL) printf ("malloc from pool: %p %ld\n", p, *size) ;
     }
 
     if (p == NULL)
@@ -58,6 +59,7 @@ static inline void *GB_malloc_helper
         }
 //      printf ("hard malloc %p %ld\n", p, *size) ;
     }
+//  GB_Global_free_pool_dump (2) ; GB_Global_memtable_dump ( ) ;
 
     return (p) ;
 }

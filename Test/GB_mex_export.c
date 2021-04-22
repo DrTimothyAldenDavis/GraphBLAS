@@ -54,6 +54,7 @@ GrB_Index nvals = 0 ;
 GrB_Index nvec = 0 ;
 GrB_Index Ai_size = 0 ;
 GrB_Index Ax_size = 0 ;
+bool is_uniform = false ;
 GrB_Index Ap_size = 0 ;
 GrB_Index Aj_size = 0 ;
 GrB_Index Ah_size = 0 ;
@@ -86,7 +87,8 @@ GrB_Info import_export ( )
     if (GB_VECTOR_OK (C))
     {
         OK (GxB_Vector_export_CSC ((GrB_Vector *) (&C), &type, &nrows,
-            &Ai, &Ax, &Ai_size, &Ax_size, &nvals, &jumbled, desc)) ;
+            &Ai, &Ax, &Ai_size, &Ax_size, &is_uniform,
+            &nvals, &jumbled, desc)) ;
 
         OK (GxB_Type_size (&asize, type)) ;
 
@@ -100,13 +102,13 @@ GrB_Info import_export ( )
             for (int64_t p = 0 ; p < nvals ; p++)
             {
                 printf ("  row %llu value ", Ai [p]) ;
-                GB_code_check (code, Ax + p*asize, 5, stdout) ;
+                GB_code_check (code, Ax + (is_uniform ? 0:p)*asize, 5, stdout) ;
                 printf ("\n") ;
             }
         }
 
         OK (GxB_Vector_import_CSC ((GrB_Vector *) (&C), type, nrows,
-            &Ai, &Ax, Ai_size, Ax_size, nvals, jumbled, desc)) ;
+            &Ai, &Ax, Ai_size, Ax_size, is_uniform, nvals, jumbled, desc)) ;
 
         return (GrB_SUCCESS) ;
     }
@@ -123,7 +125,7 @@ GrB_Info import_export ( )
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols,
-                    &Ap, &Aj, &Ax, &Ap_size, &Aj_size, &Ax_size,
+                    &Ap, &Aj, &Ax, &Ap_size, &Aj_size, &Ax_size, &is_uniform,
                     &jumbled, desc)) ;
 
             OK (GxB_Type_size (&asize, type)) ;
@@ -142,14 +144,16 @@ GrB_Info import_export ( )
                     for (int64_t p = Ap [i] ; p < Ap [i+1] ; p++)
                     {
                         printf ("  col %llu value ", Aj [p]) ;
-                        GB_code_check (code, Ax + p*asize, 5, stdout) ;
+                        GB_code_check (code, Ax + (is_uniform ? 0:p)*asize,
+                            5, stdout) ;
                         printf ("\n") ;
                     }
                 }
             }
 
             OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols,
-                &Ap, &Aj, &Ax, Ap_size, Aj_size, Ax_size, jumbled, desc)) ;
+                &Ap, &Aj, &Ax, Ap_size, Aj_size, Ax_size, is_uniform,
+                jumbled, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;
@@ -160,7 +164,7 @@ GrB_Info import_export ( )
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols,
-                    &Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size,
+                    &Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, &is_uniform,
                     &jumbled, desc)) ;
 
             nvec = ncols ;
@@ -179,14 +183,16 @@ GrB_Info import_export ( )
                     for (int64_t p = Ap [j] ; p < Ap [j+1] ; p++)
                     {
                         printf ("  row %llu value ", Ai [p]) ;
-                        GB_code_check (code, Ax + p*asize, 5, stdout) ;
+                        GB_code_check (code, Ax + (is_uniform ? 0:p)*asize,
+                            5, stdout) ;
                         printf ("\n") ;
                     }
                 }
             }
 
             OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols,
-                &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, jumbled, desc)) ;
+                &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, is_uniform,
+                jumbled, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
                 dump ? GxB_COMPLETE : GxB_SILENT, stdout)) ;
@@ -197,7 +203,8 @@ GrB_Info import_export ( )
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols,
-                &Ap, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size,
+                &Ap, &Ah, &Aj, &Ax,
+                &Ap_size, &Ah_size, &Aj_size, &Ax_size, &is_uniform,
                 &nvec, &jumbled, desc)) ;
 
             OK (GxB_Type_size (&asize, type)) ;
@@ -216,14 +223,16 @@ GrB_Info import_export ( )
                     for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
                     {
                         printf ("  col %llu value ", Aj [p]) ;
-                        GB_code_check (code, Ax + p*asize, 5, stdout) ;
+                        GB_code_check (code, Ax + (is_uniform ? 0:p)*asize,
+                            5, stdout) ;
                         printf ("\n") ;
                     }
                 }
             }
 
             OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols,
-                &Ap, &Ah, &Aj, &Ax, Ap_size, Ah_size, Aj_size, Ax_size,
+                &Ap, &Ah, &Aj, &Ax,
+                Ap_size, Ah_size, Aj_size, Ax_size, is_uniform,
                 nvec, jumbled, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
@@ -235,7 +244,8 @@ GrB_Info import_export ( )
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols,
-                &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
+                &Ap, &Ah, &Ai, &Ax,
+                &Ap_size, &Ah_size, &Ai_size, &Ax_size, &is_uniform,
                 &nvec, &jumbled, desc)) ;
 
             OK (GxB_Type_size (&asize, type)) ;
@@ -254,14 +264,16 @@ GrB_Info import_export ( )
                     for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
                     {
                         printf ("  row %llu value ", Ai [p]) ;
-                        GB_code_check (code, Ax + p*asize, 5, stdout) ;
+                        GB_code_check (code, Ax + (is_uniform ? 0:p)*asize,
+                            5, stdout) ;
                         printf ("\n") ;
                     }
                 }
             }
 
             OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols,
-                &Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size,
+                &Ap, &Ah, &Ai, &Ax,
+                Ap_size, Ah_size, Ai_size, Ax_size, is_uniform,
                 nvec, jumbled, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",

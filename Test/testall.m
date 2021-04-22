@@ -73,6 +73,8 @@ hack = GB_mex_hack ;
 hack (2) = 1 ;
 GB_mex_hack (hack) ;
 
+logstat ('test192',t) ; % test C<C,struct>=scalar
+logstat ('test191',t) ; % test split
 logstat ('test188',t) ; % test concat
 logstat ('test187',t) ; % test dup/assign for all sparsity formats
 logstat ('test186',t) ; % test saxpy for all sparsity formats
@@ -91,6 +93,8 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test194',t) ; % test GxB_Vector_diag
+logstat ('test193',t) ; % test GxB_Matrix_diag
 logstat ('test190',t) ; % test dense matrix for C<!M>=A*B
 logstat ('test189',t) ; % test large assign
 
@@ -179,7 +183,7 @@ logstat ('test84',t) ;  % GrB_assign (row and column with C in CSR/CSC format)
 logstat ('test130',t) ; % GrB_apply, hypersparse cases
 logstat ('test19b',t) ; % GrB_assign, many pending operators
 logstat ('test19b',s);  % GrB_assign, many pending operators
-logstat ('test101',t) ; % GrB_*_import and export
+logstat ('test101',t) ; % import and export
 logstat ('test133',t) ; % test mask operations (GB_masker)
 logstat ('test72',t) ;  % several special cases
 logstat ('test80',t) ;  % test GrB_mxm on all semirings (different matrix)

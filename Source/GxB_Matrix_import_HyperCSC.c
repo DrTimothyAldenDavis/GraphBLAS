@@ -24,6 +24,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GrB_Index Ah_size,  // size of Ah in bytes
     GrB_Index Ai_size,  // size of Ai in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
+    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
 
     GrB_Index nvec,     // number of columns that appear in Ah
     bool jumbled,       // if true, indices in each column may be unsorted
@@ -36,7 +37,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Matrix_import_HyperCSC (&A, type, nrows, ncols, "
-        "&Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size, "
+        "&Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size, is_uniform, "
         "nvec, jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_HyperCSC") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
@@ -52,7 +53,8 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
         Ai,   Ai_size,  // Ai
         Ax,   Ax_size,  // Ax
         0, jumbled, nvec,                   // jumbled or not
-        GxB_HYPERSPARSE, true, Context) ;   // hypersparse by col
+        GxB_HYPERSPARSE, true,              // hypersparse by col
+        is_uniform, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

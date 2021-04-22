@@ -191,7 +191,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // Sets the vector pointers to zero, which defines all vectors as empty
         A->magic = GB_MAGIC ;
         A->p = GB_CALLOC (A->plen+1, int64_t, &(A->p_size)) ;
-        // printf ("check Ap size %p %ld\n", A->p, A->p_size) ;
         ASSERT (A->p_size == GB_Global_memtable_size (A->p)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
@@ -210,7 +209,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // check A->nzmax == 0 since A->p [A->nvec] might be undefined.
         A->magic = GB_MAGIC2 ;
         A->p = GB_MALLOC (A->plen+1, int64_t, &(A->p_size)) ;
-        // printf ("check Ap size %p %ld\n", A->p, A->p_size) ;
         ASSERT (A->p_size == GB_Global_memtable_size (A->p)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)

@@ -108,7 +108,8 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     int64_t *R_to_M = NULL ; size_t R_to_M_size = 0 ;
     int64_t *R_to_C = NULL ; size_t R_to_C_size = 0 ;
     int64_t *R_to_Z = NULL ; size_t R_to_Z_size = 0 ;
-    int R_ntasks = 0, TaskList_size = 0, R_nthreads ;
+    int R_ntasks = 0, R_nthreads ;
+    size_t TaskList_size = 0 ;
     GB_task_struct *TaskList = NULL ;
 
     //--------------------------------------------------------------------------

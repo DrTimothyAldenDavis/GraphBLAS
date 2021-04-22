@@ -43,21 +43,22 @@ void mexFunction
 
     if (class == mxSTRUCT_CLASS)
     {
-        mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
-        if (mx_type != NULL)
+        // get the content of a GraphBLASv5 struct
+        mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv5") ;
+        if (mx_type == NULL)
         { 
-            // X is a GraphBLASv4 G.opaque struct; get its type
-            c = mxDuplicateArray (mx_type) ;
+            // check if it is a GraphBLASv4 struct
+            mx_type = mxGetField (pargin [0], 0, "GraphBLASv4") ;
         }
-        else
-        {
+        if (mx_type == NULL)
+        { 
             // check if it is a GraphBLASv3 struct
             mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
-            if (mx_type != NULL)
-            {
-                // X is a GraphBLASv3 G.opaque struct; get its type
-                c = mxDuplicateArray (mx_type) ;
-            }
+        }
+        if (mx_type != NULL)
+        {
+            // the matrix is a GraphBLAS v3, v4, or v5 struct; get its type
+            c = mxDuplicateArray (mx_type) ;
         }
     }
 

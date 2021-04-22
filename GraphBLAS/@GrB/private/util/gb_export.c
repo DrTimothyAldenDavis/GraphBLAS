@@ -84,12 +84,12 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
 
         CHECK_ERROR (GB_is_shallow (*C_handle), "internal error 717")
 
-        // export as a full matrix, held by column
+        // export as a full matrix, held by column, not uniform-valued
         void *Cx = NULL ;
         GrB_Type ctype = NULL ;
         GrB_Index Cx_size ;
         OK (GxB_Matrix_export_FullC (C_handle, &ctype, &nrows, &ncols,
-            &Cx, &Cx_size, NULL)) ;
+            &Cx, &Cx_size, NULL, NULL)) ;
 
         return (gb_export_to_mxfull (&Cx, nrows, ncols, ctype)) ;
 
