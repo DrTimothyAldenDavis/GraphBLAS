@@ -36,6 +36,25 @@
 // calloc is NULL, it is not used, and malloc/memset are used instead.  If
 // realloc is NULL, it is not used, and malloc/memcpy/free are used instead.
 
+/*  C-API options
+
+    GrB_init (mode) ;
+    GxB_init (mode, malloc, calloc, realloc, free, true) ;
+
+    // RMM-only
+    GxB_rmm_init (mode, rmmconfig ) 
+    GxB_rmm_init (mode, rmmconfig )     no GPU
+    GxB_rmm_init (mode, NULL     )      no GPU, RMM default
+
+    // CUDA+RMM
+    GxB_rmm_init (mode, gpuandrmmconfig ...)
+    GxB_rmm_init (mode, )              use GPUs, RMM default
+
+    GB_rmm.cpp
+    GB_rmm_malloc.cpp
+    GB_rmm_free.cpp
+*/
+
 #include "GB.h"
 
 //------------------------------------------------------------------------------
@@ -53,7 +72,12 @@ GrB_Info GB_init            // start up GraphBLAS
     void   (* free_function    ) (void *),          // required
     bool malloc_is_thread_safe,
 
+    // TODO: delete this:
     bool caller_is_GxB_cuda_init,       // true for GxB_cuda_init only
+
+    // RMM stuff, 3 pools, yada yada
+
+    // CUDA + RMM stuff
 
     GB_Context Context      // from GrB_init or GxB_init
 )
@@ -80,6 +104,8 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
     // establish malloc/calloc/realloc/free
     //--------------------------------------------------------------------------
+
+// do the RMM init here
 
     // GrB_init passes in the ANSI C11 malloc/calloc/realloc/free
     // GxB_cuda_init passes in NULL pointers; they are now defined below.

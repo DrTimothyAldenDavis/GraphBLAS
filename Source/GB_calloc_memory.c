@@ -53,11 +53,11 @@ static inline void *GB_calloc_helper
         else
         {
 
-    //      if (GB_Global_I_have_RMM ( ))
-    //      {
-    //          *p = rmm_alloc (*size_allocated) ;
-    //      }
-    //      else
+            if (GB_Global_rmm_get ( ))
+            {
+                p = GB_rmm_alloc (size) ;
+            }
+            else
             {
                 p = GB_Global_malloc_function (*size) ;
             }

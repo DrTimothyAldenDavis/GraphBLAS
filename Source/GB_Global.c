@@ -150,8 +150,18 @@ typedef struct
     int64_t free_pool_nblocks [64] ;
     int64_t free_pool_limit [64] ;
 
+    //--------------------------------------------------------------------------
+    // RMM settings
+    //--------------------------------------------------------------------------
+
+    bool rmm_in_use ;
+
 }
 GB_Global_struct ;
+
+//------------------------------------------------------------------------------
+// declare and initialize all global variables
+//------------------------------------------------------------------------------
 
 GB_PUBLIC GB_Global_struct GB_Global ;
 
@@ -324,6 +334,11 @@ GB_Global_struct GB_Global =
         0,      // size 2^61
         0,      // size 2^62
         0 },    // size 2^63 (4 exabytes!)
+
+    // RMM settings
+    rmm_in_use = false,
+
+    // other RMM stuff here ...
 
 } ;
 
@@ -1288,5 +1303,21 @@ int64_t GB_Global_free_pool_nblocks_total (void)
         }
     }
     return (nblocks) ;
+}
+
+//------------------------------------------------------------------------------
+// RMM control
+//------------------------------------------------------------------------------
+
+GB_PUBLIC
+void GB_Global_rmm_set (bool use_rmm)
+{ 
+    GB_Global.rmm_in_use = use_rmm ;
+}
+
+GB_PUBLIC
+int64_t GB_Global_rmm_get (void)
+{ 
+    return (GB_Global.rmm_in_use) ;
 }
 
