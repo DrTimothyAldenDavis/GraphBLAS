@@ -62,6 +62,11 @@ CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated -
 SO_OPTS = $(LDFLAGS)
 CFLAGS += -Wno-pragmas
 
+# To compile the libgraphblas_renamed library, change all occurences of
+# libgraphblas to libgraphblas_renamed, below, and uncomment these 2 lines:
+# CFLAGS += -DGBRENAME=1
+# CPPFLAGS += -I../GraphBLAS/rename
+
 UNAME := $(shell uname)
 ifeq ($(UNAME),Darwin)
     # Mac

@@ -19,8 +19,7 @@ semiring.multiply = 'times' ;
 semiring.add = 'plus' ;
 semiring.class = 'double' ;
 
-GrB.burble (1) ;
-C1 = GB_mex_mxm  (C, M, [ ], semiring, A, B, desc) ;
+C1 = GB_mex_mxm (C, M, [ ], semiring, A, B, desc) ;
 
 assert (nnz (C1.matrix) == 0) ;
 
