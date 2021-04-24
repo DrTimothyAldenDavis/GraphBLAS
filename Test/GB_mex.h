@@ -13,7 +13,6 @@
 #ifndef GB_MEXH
 #define GB_MEXH
 
-// #include "GB.h"
 #include "GB_mxm.h"
 #include "GB_Pending.h"
 #include "GB_add.h"

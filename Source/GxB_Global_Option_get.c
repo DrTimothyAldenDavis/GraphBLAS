@@ -277,6 +277,28 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
+        case GxB_PRINTF : 
+
+            {
+                va_start (ap, field) ;
+                void **printf_func = va_arg (ap, void **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (printf_func) ;
+                (*printf_func) = (void *) GB_Global_printf_get ( ) ;
+            }
+            break ;
+
+        case GxB_FLUSH : 
+
+            {
+                va_start (ap, field) ;
+                void **flush_func = va_arg (ap, void **) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (flush_func) ;
+                (*flush_func) = (void *) GB_Global_flush_get ( ) ;
+            }
+            break ;
+
         //----------------------------------------------------------------------
         // CUDA (DRAFT: in progress, do not use)
         //----------------------------------------------------------------------

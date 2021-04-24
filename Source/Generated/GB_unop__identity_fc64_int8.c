@@ -17,8 +17,8 @@
 
 // C=unop(A) is defined by the following types and operators:
 
-// op(A)  function:  GB_unop_apply__identity_fc64_int8
-// op(A') function:  GB_unop_tran__identity_fc64_int8
+// op(A)  function:  GB (_unop_apply__identity_fc64_int8)
+// op(A') function:  GB (_unop_tran__identity_fc64_int8)
 
 // C type:   GxB_FC64_t
 // A type:   int8_t
@@ -67,7 +67,7 @@
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB_unop_apply__identity_fc64_int8
+GrB_Info GB (_unop_apply__identity_fc64_int8)
 (
     GxB_FC64_t *Cx,       // Cx and Ax may be aliased
     const int8_t *Ax,
@@ -80,6 +80,10 @@ GrB_Info GB_unop_apply__identity_fc64_int8
     return (GrB_NO_VALUE) ;
     #else
     int64_t p ;
+
+    // TODO: if OP is ONE and uniform-valued matrices are exploited, then
+    // do this in O(1) time
+
     if (Ab == NULL)
     { 
         #if ( GB_OP_IS_IDENTITY_WITH_NO_TYPECAST )
@@ -114,7 +118,7 @@ GrB_Info GB_unop_apply__identity_fc64_int8
 // C = op (cast (A')): transpose, typecast, and apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB_unop_tran__identity_fc64_int8
+GrB_Info GB (_unop_tran__identity_fc64_int8)
 (
     GrB_Matrix C,
     const GrB_Matrix A,

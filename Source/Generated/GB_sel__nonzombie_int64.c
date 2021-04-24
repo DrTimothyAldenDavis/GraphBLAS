@@ -15,8 +15,11 @@
 
 // The selection is defined by the following types and operators:
 
-// phase1: GB_sel_phase1__(none)
-// phase2: GB_sel_phase2__nonzombie_int64
+// functions:
+// phase1: GB (_sel_phase1__(none))
+// phase2: GB (_sel_phase2__nonzombie_int64)
+// bitmap: GB (_sel_bitmap__(none))
+
 // A type: int64_t
 
 // kind
@@ -38,12 +41,12 @@
     Cx [pC] = Ax [pA]
 
 //------------------------------------------------------------------------------
-// GB_sel_phase1__(none)
+// GB_sel_phase1
 //------------------------------------------------------------------------------
 
 #if 0
 
-void GB_sel_phase1__(none)
+void GB (_sel_phase1__(none))
 (
     int64_t *GB_RESTRICT Zp,
     int64_t *GB_RESTRICT Cp,
@@ -64,10 +67,10 @@ void GB_sel_phase1__(none)
 #endif
 
 //------------------------------------------------------------------------------
-// GB_sel_phase2__nonzombie_int64
+// GB_sel_phase2
 //------------------------------------------------------------------------------
 
-void GB_sel_phase2__nonzombie_int64
+void GB (_sel_phase2__nonzombie_int64)
 (
     int64_t *GB_RESTRICT Ci,
     int64_t *GB_RESTRICT Cx,
@@ -87,12 +90,12 @@ void GB_sel_phase2__nonzombie_int64
 }
 
 //------------------------------------------------------------------------------
-// GB_sel_bitmap__(none)
+// GB_sel_bitmap
 //------------------------------------------------------------------------------
 
 #if 0
 
-void GB_sel_bitmap__(none)
+void GB (_sel_bitmap__(none))
 (
     int8_t *Cb,
     int64_t *GB_RESTRICT Cx,

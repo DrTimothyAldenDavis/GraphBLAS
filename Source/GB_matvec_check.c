@@ -478,7 +478,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     GBPR0 ("  ") ;
     if (name != NULL && strlen (name) > 0)
     { 
-        GBPR0 ("%s, ", GB_NAME) ;
+        GBPR0 ("%s, ", ((name != NULL) ? name : "")) ;
     }
 
     // # of entries cannot be computed until all the tests above are OK

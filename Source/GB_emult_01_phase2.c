@@ -184,7 +184,7 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_AemultB_01(mult,xname) GB_AemultB_01_ ## mult ## xname
+        #define GB_AemultB_01(mult,xname) GB (_AemultB_01_ ## mult ## xname)
 
         #define GB_BINOP_WORKER(mult,xname)                                 \
         {                                                                   \

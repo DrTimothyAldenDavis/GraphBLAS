@@ -134,6 +134,7 @@ are extensions to the v1.3 GraphBLAS C API.
 \item Version 5.0.0 (TODO::)
 
     \begin{packed_itemize}
+    \item \verb'GxB_PRINTF' and \verb'GxB_FLUSH' global options added.
     \item \verb'GxB_Matrix_diag': construct a diagonal matrix from a vector
     \item \verb'GxB_Vector_diag': extract a diagonal from a matrix
     \item \verb'concat/split': methods to concatenate and split matrices.
@@ -6956,6 +6957,8 @@ field                       & value         & description \\
 \verb'GxB_GLOBAL_CHUNK'     & \verb'double' & chunk size \\
 \verb'GxB_CHUNK'            & \verb'double' & chunk size \\
 \verb'GxB_BURBLE'           & \verb'int'    & diagnostic output \\
+\verb'GxB_PRINTF'           & see below     & diagnostic output \\
+\verb'GxB_FLUSH'            & see below     & diagnostic output \\
 \end{tabular}
 }
 
@@ -7029,6 +7032,8 @@ field                       & value         & description \\
 \verb'GxB_GLOBAL_CHUNK'     & \verb'double' & chunk size \\
 \verb'GxB_CHUNK'            & \verb'double' & chunk size \\
 \verb'GxB_BURBLE'           & \verb'int'    & diagnostic output \\
+\verb'GxB_PRINTF'           & see below     & diagnostic output \\
+\verb'GxB_FLUSH'            & see below     & diagnostic output \\
 \hline
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
 \verb'GxB_LIBRARY_NAME'         & \verb'char *' & name of library \\
@@ -7392,6 +7397,8 @@ typedef enum
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS, // max number of threads to use
     GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems
     GxB_BURBLE = 99,                    // diagnositic output
+    GxB_PRINTF = 101,               // printf function for diagnostic output
+    GxB_FLUSH = 102,                // flush function for diagnostic output
 
     // for matrix/vector get only:
     GxB_SPARSITY_STATUS = 33,   // query the sparsity of a matrix or vector
@@ -7531,7 +7538,8 @@ except full:
     GxB_set (A, GxB_SPARSITY_CONTROL, ~GxB_FULL) ; \end{verbatim}}
 
 %-------------------------------------------------------------------------------
-\subsection{{\sf GxB\_BURBLE}: diagnostic output}
+\subsection{{\sf GxB\_BURBLE}, {\sf GxB\_PRINTF}, {\sf GxB\_FLUSH}:
+diagnostic output}
 %-------------------------------------------------------------------------------
 
 \verb'GxB_set (GxB_BURBLE, ...)' controls the burble setting.  It can also be
@@ -7555,6 +7563,21 @@ spent finishing a matrix or vector.  This may be the result of an inefficient
 use of the \verb'setElement' and \verb'assign' methods.  If this occurs you
 might try changing the sparsity format of a vector or matrix to
 \verb'GxB_BITMAP', assuming there's enough space for it.
+
+\verb'GxB_set (GxB_PRINTF, printf)' allows the user application to change the
+function used to print diagnostic output.  This also controls the output of the
+\verb'GxB_*print' functions.  By default this parameter is \verb'NULL', in
+which case the ANSI C11 \verb'printf' function is used.  The parameter is a
+function pointer with the same signature as the ANSI C11 \verb'printf'
+function.
+
+After each call to the \verb'printf' function, an optional
+\verb'flush' function is called, which is \verb'NULL' by default.  If
+\verb'NULL', the function is not used.  This can be changed with
+\verb'GxB_set (GxB_FLUSH, flush)'.  The \verb'flush' function takes no
+arguments, and returns an \verb'int' which is 0 if successful, or any nonzero
+value on failure (the same output as the ANSI C11 \verb'fflush' function,
+except that \verb'flush' has no inputs).
 
 %-------------------------------------------------------------------------------
 \subsection{Other global options}
@@ -7599,8 +7622,10 @@ The \verb'field' parameter can be
 \verb'GxB_BITMAP_SWITCH',
 \verb'GxB_FORMAT',
 \verb'GxB_NTHREADS',
-\verb'GxB_CHUNK', or
-\verb'GxB_BURBLE'.
+\verb'GxB_CHUNK',
+\verb'GxB_BURBLE',
+\verb'GxB_PRINTF', or
+\verb'GxB_FLUSH'.
 
 For example, the following usage sets the global hypersparsity ratio to 0.2,
 the format of future matrices to \verb'GxB_BY_COL', the maximum number
@@ -7614,6 +7639,7 @@ No existing matrices are changed.
     GxB_set (GxB_NTHREADS, 4) ;
     GxB_set (GxB_CHUNK, (double) 10000) ;
     GxB_set (GxB_BURBLE, true) ;
+    GxB_set (GxB_PRINTF, mexPrintf) ;
 \end{verbatim} }
 
 %===============================================================================
@@ -7716,6 +7742,8 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_NTHREADS'             & default number of threads \\
         \verb'GxB_CHUNK'                & default chunk size \\
         \verb'GxB_BURBLE'       & burble setting \\
+        \verb'GxB_PRINTF'       & printf function \\
+        \verb'GxB_FLUSH'       & flush function \\
         \hline
         \verb'GxB_LIBRARY_NAME'         & the string
                                         \verb'"SuiteSparse:GraphBLAS"' \\
@@ -7896,7 +7924,13 @@ To set/get the global options:
     GxB_get (GxB_CHUNK, double *chunk) ;
 
     GxB_set (GxB_BURBLE, bool burble) ;
-    GxB_get (GxB_BURBLE, bool *burble) ; \end{verbatim} }
+    GxB_get (GxB_BURBLE, bool *burble) ;
+
+    GxB_set (GxB_PRINTF, void *printf_function) ;
+    GxB_get (GxB_PRINTF, void **printf_function) ;
+
+    GxB_set (GxB_FLUSH, void *flush_function) ;
+    GxB_get (GxB_FLUSH, void **flush_function) ; \end{verbatim} }
 
 \noindent
 To get global options that can be queried but not modified:

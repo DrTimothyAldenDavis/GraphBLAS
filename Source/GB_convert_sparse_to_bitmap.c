@@ -164,7 +164,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
             // define the worker for the switch factory
             //------------------------------------------------------------------
 
-            #define GB_convert_s2b_(cname) GB_convert_s2b_ ## cname
+            #define GB_convert_s2b_(cname) GB (_convert_s2b_ ## cname)
             #define GB_WORKER(cname)                                        \
             {                                                               \
                 info = GB_convert_s2b_(cname) (A, Ax_new, Ab,               \

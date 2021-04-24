@@ -150,7 +150,7 @@ GrB_Info GrB_Matrix_kronecker_Semiring  // C<M> = accum (C, kron(A,B))
 }
 
 //------------------------------------------------------------------------------
-// GxB_kron: Kronecker product (historical: pre-GrB version)
+// GxB_kron: Kronecker product (historical)
 //------------------------------------------------------------------------------
 
 // GrB_kronecker is now a built-in operation; use that one instead.

@@ -1,6 +1,0 @@
-
-// BC:
-
-        // TODO (in SuiteSparse:GraphBLAS, not LAGraph): constructing S will be
-        // faster with uniform-valued matrices, once they are added to
-        // SuiteSparse:GraphBLAS.

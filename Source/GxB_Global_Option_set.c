@@ -121,6 +121,26 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             }
             break ;
 
+        case GxB_PRINTF : 
+
+            { 
+                va_start (ap, field) ;
+                void *printf_func = va_arg (ap, void *) ;
+                va_end (ap) ;
+                GB_Global_printf_set ((GB_printf_function_t) printf_func) ;
+            }
+            break ;
+
+        case GxB_FLUSH : 
+
+            { 
+                va_start (ap, field) ;
+                void *flush_func = va_arg (ap, void *) ;
+                va_end (ap) ;
+                GB_Global_flush_set ((GB_flush_function_t) flush_func) ;
+            }
+            break ;
+
         //----------------------------------------------------------------------
         // CUDA (DRAFT: in progress, do not use)
         //----------------------------------------------------------------------

@@ -111,10 +111,10 @@ end
 name = sprintf ('%s_%s_%s', addop, multop, fname) ;
 
 % function names
-fprintf (f, 'define(`GB_Adot2B'', `GB_Adot2B__%s'')\n', name) ;
-fprintf (f, 'define(`GB_Adot3B'', `GB_Adot3B__%s'')\n', name) ;
-fprintf (f, 'define(`GB_Adot4B'', `GB_Adot4B__%s'')\n', name) ;
-fprintf (f, 'define(`GB_AsaxpyB'', `GB_AsaxpyB__%s'')\n', name) ;
+fprintf (f, 'define(`_Adot2B'', `_Adot2B__%s'')\n', name) ;
+fprintf (f, 'define(`_Adot3B'', `_Adot3B__%s'')\n', name) ;
+fprintf (f, 'define(`_Adot4B'', `_Adot4B__%s'')\n', name) ;
+fprintf (f, 'define(`_AsaxpyB'', `_AsaxpyB__%s'')\n', name) ;
 
 % type of C, A, and B
 fprintf (f, 'define(`GB_ctype'', `%s'')\n', ztype) ;

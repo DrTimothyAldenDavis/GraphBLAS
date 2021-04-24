@@ -23,7 +23,7 @@ GrB_Info GB_Semiring_check          // check a GraphBLAS semiring
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBPR0 ("\n    GraphBLAS Semiring: %s ", GB_NAME) ;
+    GBPR0 ("\n    GraphBLAS Semiring: %s ", ((name != NULL) ? name : "")) ;
 
     if (semiring == NULL)
     { 

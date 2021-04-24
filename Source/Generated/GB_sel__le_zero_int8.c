@@ -15,8 +15,11 @@
 
 // The selection is defined by the following types and operators:
 
-// phase1: GB_sel_phase1__le_zero_int8
-// phase2: GB_sel_phase2__le_zero_int8
+// functions:
+// phase1: GB (_sel_phase1__le_zero_int8)
+// phase2: GB (_sel_phase2__le_zero_int8)
+// bitmap: GB (_sel_bitmap__le_zero_int8)
+
 // A type: int8_t
 
 // kind
@@ -38,12 +41,12 @@
     Cx [pC] = Ax [pA]
 
 //------------------------------------------------------------------------------
-// GB_sel_phase1__le_zero_int8
+// GB_sel_phase1
 //------------------------------------------------------------------------------
 
 
 
-void GB_sel_phase1__le_zero_int8
+void GB (_sel_phase1__le_zero_int8)
 (
     int64_t *GB_RESTRICT Zp,
     int64_t *GB_RESTRICT Cp,
@@ -64,10 +67,10 @@ void GB_sel_phase1__le_zero_int8
 
 
 //------------------------------------------------------------------------------
-// GB_sel_phase2__le_zero_int8
+// GB_sel_phase2
 //------------------------------------------------------------------------------
 
-void GB_sel_phase2__le_zero_int8
+void GB (_sel_phase2__le_zero_int8)
 (
     int64_t *GB_RESTRICT Ci,
     int8_t *GB_RESTRICT Cx,
@@ -87,12 +90,12 @@ void GB_sel_phase2__le_zero_int8
 }
 
 //------------------------------------------------------------------------------
-// GB_sel_bitmap__le_zero_int8
+// GB_sel_bitmap
 //------------------------------------------------------------------------------
 
 
 
-void GB_sel_bitmap__le_zero_int8
+void GB (_sel_bitmap__le_zero_int8)
 (
     int8_t *Cb,
     int8_t *GB_RESTRICT Cx,

@@ -439,7 +439,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_AemultB_02(mult,xname) GB_AemultB_02_ ## mult ## xname
+        #define GB_AemultB_02(mult,xname) GB (_AemultB_02_ ## mult ## xname)
 
         #define GB_BINOP_WORKER(mult,xname)                             \
         {                                                               \

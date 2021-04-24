@@ -75,7 +75,7 @@ GrB_Info GB_bitmap_selector
     //--------------------------------------------------------------------------
 
     #define GB_BITMAP_SELECTOR
-    #define GB_selbit(opname,aname) GB_sel_bitmap_ ## opname ## aname
+    #define GB_selbit(opname,aname) GB (_sel_bitmap_ ## opname ## aname)
     #define GB_SEL_WORKER(opname,aname,atype)                           \
     {                                                                   \
         GB_selbit (opname, aname) (C->b, C->x, &cnvals, A, flipij,      \

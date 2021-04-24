@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 if_is_monoid
 
-GrB_Info GB_red_scalar
+GrB_Info GB (_red_scalar)
 (
     GB_atype *result,
     const GrB_Matrix A,
@@ -13,7 +13,7 @@ GrB_Info GB_red_scalar
 
 endif_is_monoid
 
-GrB_Info GB_red_build
+GrB_Info GB (_red_build)
 (
     GB_atype *GB_RESTRICT Tx,
     int64_t  *GB_RESTRICT Ti,

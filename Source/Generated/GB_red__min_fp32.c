@@ -17,8 +17,8 @@
 
 // The reduction is defined by the following types and operators:
 
-// Assemble tuples:    GB_red_build__min_fp32
-// Reduce to scalar:   GB_red_scalar__min_fp32
+// Assemble tuples:    GB (_red_build__min_fp32)
+// Reduce to scalar:   GB (_red_scalar__min_fp32)
 
 // A type:   float
 // C type:   float
@@ -123,7 +123,7 @@
 
 
 
-GrB_Info GB_red_scalar__min_fp32
+GrB_Info GB (_red_scalar__min_fp32)
 (
     float *result,
     const GrB_Matrix A,
@@ -157,7 +157,7 @@ GrB_Info GB_red_scalar__min_fp32
 // build matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_red_build__min_fp32
+GrB_Info GB (_red_build__min_fp32)
 (
     float *GB_RESTRICT Tx,
     int64_t  *GB_RESTRICT Ti,

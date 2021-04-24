@@ -101,6 +101,8 @@ typedef struct
     //--------------------------------------------------------------------------
 
     bool burble ;                   // controls GBURBLE output
+    GB_printf_function_t printf_func ;  // pointer to printf
+    GB_flush_function_t flush_func ;   // pointer to flush
 
     //--------------------------------------------------------------------------
     // for MATLAB interface only
@@ -213,6 +215,8 @@ GB_Global_struct GB_Global =
 
     // diagnostics
     .burble = false,
+    .printf_func = NULL,
+    .flush_func = NULL,
 
     // for MATLAB interface only
     .print_one_based = false,   // if true, print 1-based indices
@@ -923,6 +927,30 @@ GB_PUBLIC
 bool GB_Global_burble_get (void)
 { 
     return (GB_Global.burble) ;
+}
+
+GB_PUBLIC
+GB_printf_function_t GB_Global_printf_get ( )
+{
+    return (GB_Global.printf_func) ;
+}
+
+GB_PUBLIC
+GB_flush_function_t GB_Global_flush_get ( )
+{
+    return (GB_Global.flush_func) ;
+}
+
+GB_PUBLIC
+void GB_Global_printf_set (GB_printf_function_t pr_func)
+{
+    GB_Global.printf_func = pr_func ;
+}
+
+GB_PUBLIC
+void GB_Global_flush_set (GB_flush_function_t fl_func)
+{
+    GB_Global.flush_func = fl_func ;
 }
 
 //------------------------------------------------------------------------------

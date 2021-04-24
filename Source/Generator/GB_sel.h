@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 if_phase1
-void GB_sel_phase1
+void GB (_sel_phase1)
 (
     int64_t *GB_RESTRICT Zp,
     int64_t *GB_RESTRICT Cp,
@@ -15,7 +15,7 @@ void GB_sel_phase1
 ) ;
 endif_phase1
 
-void GB_sel_phase2
+void GB (_sel_phase2)
 (
     int64_t *GB_RESTRICT Ci,
     GB_atype *GB_RESTRICT Cx,
@@ -31,7 +31,7 @@ void GB_sel_phase2
 ) ;
 
 if_bitmap
-void GB_sel_bitmap
+void GB (_sel_bitmap)
 (
     int8_t *Cb,
     GB_atype *GB_RESTRICT Cx,

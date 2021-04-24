@@ -17,8 +17,8 @@
 
 // The reduction is defined by the following types and operators:
 
-// Assemble tuples:    GB_red_build__times_int32
-// Reduce to scalar:   GB_red_scalar__times_int32
+// Assemble tuples:    GB (_red_build__times_int32)
+// Reduce to scalar:   GB (_red_scalar__times_int32)
 
 // A type:   int32_t
 // C type:   int32_t
@@ -123,7 +123,7 @@
 
 
 
-GrB_Info GB_red_scalar__times_int32
+GrB_Info GB (_red_scalar__times_int32)
 (
     int32_t *result,
     const GrB_Matrix A,
@@ -157,7 +157,7 @@ GrB_Info GB_red_scalar__times_int32
 // build matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_red_build__times_int32
+GrB_Info GB (_red_build__times_int32)
 (
     int32_t *GB_RESTRICT Tx,
     int64_t  *GB_RESTRICT Ti,

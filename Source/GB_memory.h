@@ -70,7 +70,7 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_free_pool_finalize (void) ;
 
 //------------------------------------------------------------------------------
-// malloc/calloc/realloc/free: for permanent contents of GrB objects
+// malloc/calloc/realloc/free: for permanent contents of GraphBLAS objects
 //------------------------------------------------------------------------------
 
 #if 0

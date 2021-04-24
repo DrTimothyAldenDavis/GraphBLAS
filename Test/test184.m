@@ -60,8 +60,8 @@ C1 = A*B ;
 Cin = sparse (m, n) ;
 
 C2 = GB_mex_mxm (Cin, [ ], [ ], semiring, A, B, [ ]) ;
-
-assert (norm (C1 - C2.matrix, 1) < 1e-12)
+err = norm (C1 - C2.matrix, 1) ;
+assert (err < 1e-10)
 
 %----------------------------------------------------------------------
 

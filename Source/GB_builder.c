@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // CALLED BY: GB_build, GB_Matrix_wait, GB_transpose, GB_concat_hyper
-// CALLS:     Generated/GB_red_build__* workers
+// CALLS:     Generated/GB__red_build__* workers
 
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build
 // or GrB_Vector_build, by GB_Matrix_wait to build a matrix T from the list of
@@ -1152,7 +1152,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
                 #define GB_INCLUDE_SECOND_OPERATOR
 
-                #define GB_red(opname,aname) GB_red_build_ ## opname ## aname
+                #define GB_red(opname,aname) \
+                    GB (_red_build_ ## opname ## aname)
 
                 #define GB_RED_WORKER(opname,aname,atype)                   \
                 {                                                           \

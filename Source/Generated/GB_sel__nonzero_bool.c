@@ -15,8 +15,11 @@
 
 // The selection is defined by the following types and operators:
 
-// phase1: GB_sel_phase1__nonzero_bool
-// phase2: GB_sel_phase2__nonzero_bool
+// functions:
+// phase1: GB (_sel_phase1__nonzero_bool)
+// phase2: GB (_sel_phase2__nonzero_bool)
+// bitmap: GB (_sel_bitmap__nonzero_bool)
+
 // A type: bool
 
 // kind
@@ -38,12 +41,12 @@
     Cx [pC] = true
 
 //------------------------------------------------------------------------------
-// GB_sel_phase1__nonzero_bool
+// GB_sel_phase1
 //------------------------------------------------------------------------------
 
 
 
-void GB_sel_phase1__nonzero_bool
+void GB (_sel_phase1__nonzero_bool)
 (
     int64_t *GB_RESTRICT Zp,
     int64_t *GB_RESTRICT Cp,
@@ -64,10 +67,10 @@ void GB_sel_phase1__nonzero_bool
 
 
 //------------------------------------------------------------------------------
-// GB_sel_phase2__nonzero_bool
+// GB_sel_phase2
 //------------------------------------------------------------------------------
 
-void GB_sel_phase2__nonzero_bool
+void GB (_sel_phase2__nonzero_bool)
 (
     int64_t *GB_RESTRICT Ci,
     bool *GB_RESTRICT Cx,
@@ -87,12 +90,12 @@ void GB_sel_phase2__nonzero_bool
 }
 
 //------------------------------------------------------------------------------
-// GB_sel_bitmap__nonzero_bool
+// GB_sel_bitmap
 //------------------------------------------------------------------------------
 
 
 
-void GB_sel_bitmap__nonzero_bool
+void GB (_sel_bitmap__nonzero_bool)
 (
     int8_t *Cb,
     bool *GB_RESTRICT Cx,

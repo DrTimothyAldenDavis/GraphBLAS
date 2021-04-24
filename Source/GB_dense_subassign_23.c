@@ -127,7 +127,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
         //----------------------------------------------------------------------
 
         #define GB_Cdense_accumB(accum,xname) \
-            GB_Cdense_accumB_ ## accum ## xname
+            GB (_Cdense_accumB_ ## accum ## xname)
 
         #define GB_BINOP_WORKER(accum,xname)                    \
         {                                                       \

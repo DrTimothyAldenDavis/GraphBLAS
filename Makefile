@@ -60,8 +60,7 @@ distclean:
 	rm -rf build/* Demo/*.out Demo/complex_demo_out*.m Tcov/log.txt
 	rm -rf Config/*.tmp Source/control.m4
 	rm -rf Doc/html/* Doc/*.tmp
-	( cd GraphBLAS/test/tcov ; $(MAKE) distclean )
-	( cd GraphBLAS/@GrB/private ; $(MAKE) distclean )
+	( cd GraphBLAS ; $(MAKE) distclean )
 	( cd Test ; $(MAKE) distclean )
 	( cd Tcov ; $(MAKE) distclean )
 	( cd Doc  ; $(MAKE) distclean )

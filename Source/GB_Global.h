@@ -130,5 +130,14 @@ GB_PUBLIC int64_t  GB_Global_free_pool_limit_get (int k) ;
 GB_PUBLIC void     GB_Global_free_pool_limit_set (int k, int64_t nblocks) ;
 GB_PUBLIC int64_t  GB_Global_free_pool_nblocks_total (void) ;
 
+typedef int (* GB_flush_function_t) (void) ;
+typedef int (* GB_printf_function_t) (const char *restrict format, ...) ;
+
+GB_PUBLIC GB_printf_function_t GB_Global_printf_get (void) ;
+GB_PUBLIC void     GB_Global_printf_set (GB_printf_function_t p) ;
+
+GB_PUBLIC GB_flush_function_t GB_Global_flush_get (void) ;
+GB_PUBLIC void     GB_Global_flush_set (GB_flush_function_t p) ;
+
 #endif
 

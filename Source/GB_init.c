@@ -158,6 +158,8 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     GB_Global_burble_set (false) ;
+    GB_Global_printf_set (NULL) ;
+    GB_Global_flush_set (NULL) ;
 
     //--------------------------------------------------------------------------
     // development use only

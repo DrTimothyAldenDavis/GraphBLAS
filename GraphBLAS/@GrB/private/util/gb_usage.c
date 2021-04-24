@@ -26,18 +26,19 @@ void gb_usage       // check usage and make sure GrB.init has been called
     // make sure GrB.init has been called
     //--------------------------------------------------------------------------
 
-    if (!GB_Global_GrB_init_called_get ( ))
+    if (!GB_Global_GrB_init_called_get ( )) // TODO::: add this as GxB_get
     {
 
         //----------------------------------------------------------------------
         // initialize GraphBLAS
         //----------------------------------------------------------------------
 
-        // must use mexPrintf to print to MATLAB Command Window
-        GB_printf_function = mexPrintf ;
-
         OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
             false)) ;
+
+        // must use mexPrintf to print to MATLAB Command Window
+        OK (GxB_Global_Option_set (GxB_PRINTF, mexPrintf)) ;
+        OK (GxB_Global_Option_set (GxB_FLUSH, gb_flush)) ;
 
         // disable the memory pool
         for (int k = 0 ; k < 64 ; k++)
@@ -50,10 +51,10 @@ void gb_usage       // check usage and make sure GrB.init has been called
         OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
 
         // print 1-based indices
-        GB_Global_print_one_based_set (true) ;
+        GB_Global_print_one_based_set (true) ;      // TODO:: add to GxB_set/get
 
         // for debug only
-        GB_Global_abort_function_set (gb_abort) ;
+        GB_Global_abort_function_set (gb_abort) ;   // TODO:: add as GxB_set/get
     }
 
     //--------------------------------------------------------------------------

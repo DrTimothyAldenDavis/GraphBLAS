@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 if_is_binop_subset
-void GB_Cdense_ewise3_accum
+void GB (_Cdense_ewise3_accum)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -9,7 +9,7 @@ void GB_Cdense_ewise3_accum
 ) ;
 endif_is_binop_subset
 
-GrB_Info GB_Cdense_ewise3_noaccum
+GrB_Info GB (_Cdense_ewise3_noaccum)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -17,14 +17,14 @@ GrB_Info GB_Cdense_ewise3_noaccum
     const int nthreads
 ) ;
 
-GrB_Info GB_Cdense_accumB
+GrB_Info GB (_Cdense_accumB)
 (
     GrB_Matrix C,
     const GrB_Matrix B,
     const int64_t *B_ek_slicing, const int B_ntasks, const int B_nthreads
 ) ;
 
-GrB_Info GB_Cdense_accumb
+GrB_Info GB (_Cdense_accumb)
 (
     GrB_Matrix C,
     const GB_void *p_bwork,
@@ -33,7 +33,7 @@ GrB_Info GB_Cdense_accumb
 
 if_binop_is_semiring_multiplier
 
-GrB_Info GB_AxD
+GrB_Info GB (_AxD)
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
@@ -41,7 +41,7 @@ GrB_Info GB_AxD
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
-GrB_Info GB_DxB
+GrB_Info GB (_DxB)
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
@@ -51,7 +51,7 @@ GrB_Info GB_DxB
 
 endif_binop_is_semiring_multiplier
 
-GrB_Info GB_AaddB
+GrB_Info GB (_AaddB)
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -70,7 +70,7 @@ GrB_Info GB_AaddB
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB_01
+GrB_Info GB (_AemultB_01)
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -89,7 +89,7 @@ GrB_Info GB_AemultB_01
     GB_Context Context
 ) ;
 
-GrB_Info GB_AemultB_02
+GrB_Info GB (_AemultB_02)
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -102,7 +102,7 @@ GrB_Info GB_AemultB_02
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
-GrB_Info GB_AemultB_03
+GrB_Info GB (_AemultB_03)
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -113,7 +113,7 @@ GrB_Info GB_AemultB_03
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
 
-GrB_Info GB_AemultB_bitmap
+GrB_Info GB (_AemultB_bitmap)
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -128,7 +128,7 @@ GrB_Info GB_AemultB_bitmap
 ) ;
 
 if_binop_bind1st_is_enabled
-GrB_Info GB_bind1st
+GrB_Info GB (_bind1st)
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -140,7 +140,7 @@ GrB_Info GB_bind1st
 endif_binop_bind1st_is_enabled
 
 if_binop_bind2nd_is_enabled
-GrB_Info GB_bind2nd
+GrB_Info GB (_bind2nd)
 (
     GB_void *Cx_output,
     const GB_void *Ax_input,
@@ -152,7 +152,7 @@ GrB_Info GB_bind2nd
 endif_binop_bind2nd_is_enabled
 
 if_binop_bind1st_is_enabled
-GrB_Info GB_bind1st_tran
+GrB_Info GB (_bind1st_tran)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -165,7 +165,7 @@ GrB_Info GB_bind1st_tran
 endif_binop_bind1st_is_enabled
 
 if_binop_bind2nd_is_enabled
-GrB_Info GB_bind2nd_tran
+GrB_Info GB (_bind2nd_tran)
 (
     GrB_Matrix C,
     const GrB_Matrix A,

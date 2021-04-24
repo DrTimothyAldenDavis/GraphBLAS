@@ -3724,7 +3724,8 @@ void mexFunction
     CHECK (T == NULL) ;
     // test the function instead of the macro:
     #undef GrB_Type_new
-    OK (GrB_Type_new (&T, sizeof (int))) ;
+    #undef GrM_Type_new
+    OK (GRB (Type_new) (&T, sizeof (int))) ;
 
     Context->where = "GB_Type_check" ;
     OK (GB_Type_check (T, "T ok (via function)", G3, ff)) ;
@@ -3764,7 +3765,8 @@ void mexFunction
     CHECK (op1b == NULL) ;
     // test the function instead of the macro:
     #undef GrB_UnaryOp_new
-    OK (GrB_UnaryOp_new (&op1b, f1, GrB_FP64, GrB_UINT32)) ;
+    #undef GrM_UnaryOp_new
+    OK (GRB (UnaryOp_new) (&op1b, f1, GrB_FP64, GrB_UINT32)) ;
     CHECK (op1b != NULL) ;
     OK (GrB_UnaryOp_wait_(&op1b)) ;
 
@@ -3811,7 +3813,8 @@ void mexFunction
     CHECK (op2b == NULL) ;
     // test the function instead of the macro:
     #undef GrB_BinaryOp_new
-    OK (GrB_BinaryOp_new (&op2b, f2, GrB_INT32, GrB_UINT8, GrB_INT16)) ;
+    #undef GrM_BinaryOp_new
+    OK (GRB (BinaryOp_new) (&op2b, f2, GrB_INT32, GrB_UINT8, GrB_INT16)) ;
     CHECK (op2b != NULL) ;
 
     Context->where = "GB_BinaryOp_check" ;
@@ -3861,7 +3864,8 @@ void mexFunction
     CHECK (selectop == NULL) ;
     // test the function instead of the macro:
     #undef GxB_SelectOp_new
-    OK (GxB_SelectOp_new (&selectop, fselect, GrB_FP64, GrB_FP64)) ;
+    #undef GxM_SelectOp_new
+    OK (GXB (SelectOp_new) (&selectop, fselect, GrB_FP64, GrB_FP64)) ;
     CHECK (selectop != NULL) ;
 
     Context->where = "GB_SelectOp_check" ;
@@ -4491,9 +4495,6 @@ void mexFunction
 
     CHECK (A != NULL) ;
     CHECK (A->is_csc) ;
-
-    // #undef FREE_DEEP_COPY
-    // #undef GET_DEEP_COPY
 
     OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
 

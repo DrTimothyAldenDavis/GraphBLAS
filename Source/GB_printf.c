@@ -9,9 +9,6 @@
 
 #include "GB.h"
 
-int (* GB_printf_function ) (const char *format, ...) = NULL ;
-int (* GB_flush_function  ) ( void ) = NULL ;
-
 #if GB_BURBLE
 
 void GB_burble_assign

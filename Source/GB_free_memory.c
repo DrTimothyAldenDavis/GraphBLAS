@@ -10,7 +10,7 @@
 // A wrapper for free.  If p is NULL on input, it is not freed.
 
 // The memory is freed using the free() function pointer passed in to GrB_init,
-// which is typically the ANSI C free function.  The GrB free_pool is bypassed.
+// which is typically the ANSI C free function.  The free_pool is bypassed.
 
 #include "GB.h"
 

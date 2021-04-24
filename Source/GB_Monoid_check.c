@@ -23,7 +23,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBPR0 ("\n    GraphBLAS Monoid: %s ", GB_NAME) ;
+    GBPR0 ("\n    GraphBLAS Monoid: %s ", ((name != NULL) ? name : "")) ;
 
     if (monoid == NULL)
     { 

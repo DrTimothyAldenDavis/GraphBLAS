@@ -103,7 +103,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             //------------------------------------------------------------------
 
             #define GB_unop_tran(opname,zname,aname) \
-                GB_unop_tran_ ## opname ## zname ## aname
+                GB (_unop_tran_ ## opname ## zname ## aname)
 
             #define GB_WORKER(opname,zname,ztype,aname,atype)               \
             {                                                               \
@@ -225,7 +225,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
                 //--------------------------------------------------------------
 
                 #define GB_bind1st_tran(op,xname) \
-                    GB_bind1st_tran_ ## op ## xname
+                    GB (_bind1st_tran_ ## op ## xname)
 
                 #define GB_BINOP_WORKER(op,xname)                           \
                 {                                                           \
@@ -262,7 +262,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
                 //--------------------------------------------------------------
 
                 #define GB_bind2nd_tran(op,xname) \
-                    GB_bind2nd_tran_ ## op ## xname
+                    GB (_bind2nd_tran_ ## op ## xname)
                 #undef  GB_BINOP_WORKER
                 #define GB_BINOP_WORKER(op,xname)                           \
                 {                                                           \

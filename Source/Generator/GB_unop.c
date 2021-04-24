@@ -17,8 +17,8 @@
 
 // C=unop(A) is defined by the following types and operators:
 
-// op(A)  function:  GB_unop_apply
-// op(A') function:  GB_unop_tran
+// op(A)  function:  GB (_unop_apply)
+// op(A') function:  GB (_unop_tran)
 
 // C type:   GB_ctype
 // A type:   GB_atype
@@ -67,7 +67,7 @@
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB_unop_apply
+GrB_Info GB (_unop_apply)
 (
     GB_ctype *Cx,       // Cx and Ax may be aliased
     const GB_atype *Ax,
@@ -118,7 +118,7 @@ GrB_Info GB_unop_apply
 // C = op (cast (A')): transpose, typecast, and apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB_unop_tran
+GrB_Info GB (_unop_tran)
 (
     GrB_Matrix C,
     const GrB_Matrix A,

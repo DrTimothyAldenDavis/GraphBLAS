@@ -264,11 +264,11 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_AemultB_03(mult,xname) GB_AemultB_03_ ## mult ## xname
+        #define GB_AemultB_03(mult,xname) GB (_AemultB_03_ ## mult ## xname)
 
         #define GB_BINOP_WORKER(mult,xname)                                 \
         {                                                                   \
-            info = GB_AemultB_03(mult,xname) (C, M, Mask_struct, A, B,     \
+            info = GB_AemultB_03(mult,xname) (C, M, Mask_struct, A, B,      \
                 Cp_kfirst, M_ek_slicing, M_ntasks, M_nthreads) ;            \
             done = (info != GrB_NO_VALUE) ;                                 \
         }                                                                   \

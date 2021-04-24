@@ -17,6 +17,8 @@
 // Instead, it selects GB_bitmap_assign, which then just calls this method
 // via GB_bitmap_assign_noM_noaccum_whole.
 
+// TODO::: create a uniform-valued matrix C instead
+
 #include "GB_dense.h"
 #include "GB_select.h"
 #include "GB_Pending.h"
@@ -123,6 +125,8 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
         //----------------------------------------------------------------------
         // define the worker for the switch factory
         //----------------------------------------------------------------------
+
+        // TODO use type-punning to reduce # of case to 1, 2, 4, 8, 16 bytes
 
         int64_t pC ;
         int nthreads = GB_nthreads (cnzmax, chunk, nthreads_max) ;

@@ -825,7 +825,7 @@
 // semirings with the boolean EQ monoid (also called XNOR)
 //------------------------------------------------------------
 
-// The only builtin GrB* semiring that uses the EQ (LXNOR) monoid
+// The only builtin GrB_* semiring that uses the EQ (LXNOR) monoid
 // is LXNOR_LOR_BOOL == EQ_LOR_BOOL.
 
 // #define GxB_NO_EQ_EQ_BOOL            1
@@ -912,7 +912,7 @@
 // semirings with the boolean LAND monoid
 //------------------------------------------------------------
 
-// The only builtin GrB* semiring that uses the LAND monoid is LAND_LOR_BOOL
+// The only builtin GrB_* semiring that uses the LAND monoid is LAND_LOR_BOOL
 
 // #define GxB_NO_LAND_EQ_BOOL          1
 // #define GxB_NO_LAND_LAND_BOOL        1
@@ -999,7 +999,7 @@
 // semirings with the boolean LOR monoid
 //------------------------------------------------------------
 
-// The only builtin GrB* semiring that uses the LOR monoid is LOR_LAND_BOOL
+// The only builtin GrB_* semiring that uses the LOR monoid is LOR_LAND_BOOL
 
 // #define GxB_NO_LOR_EQ_BOOL           1
 // builtin GrB_LOR_LAND_SEMIRING_BOOL == GxB_LOR_LAND_BOOL:
@@ -1085,7 +1085,7 @@
 // semirings with the boolean LXOR monoid (also called NE)
 //------------------------------------------------------------
 
-// The only builtin GrB* semiring that uses the LXOR monoid is LXOR_LAND_BOOL
+// The only builtin GrB_* semiring that uses the LXOR monoid is LXOR_LAND_BOOL
 
 // #define GxB_NO_LXOR_EQ_BOOL          1
 // builtin: GrB_LXOR_LAND_SEMIRING_BOOL == GxB_LXOR_LAND_BOOL:
@@ -1172,9 +1172,9 @@
 // semirings with the MAX monoid
 //------------------------------------------------------------
 
-// MAX_PLUS, MAX_TIMES, MAX_FIRST, MAX_SECOND, and MAX_MIN are GrB* builtins.
+// MAX_PLUS, MAX_TIMES, MAX_FIRST, MAX_SECOND, and MAX_MIN are GrB_* builtins.
 
-// builtin GrB*:
+// builtin GrB_*:
 // #define GxB_NO_MAX_MIN_FP32          1
 // #define GxB_NO_MAX_MIN_FP64          1
 // #define GxB_NO_MAX_MIN_INT16         1
@@ -1186,7 +1186,7 @@
 // #define GxB_NO_MAX_MIN_UINT64        1
 // #define GxB_NO_MAX_MIN_UINT8         1
 
-// builtin GrB*:
+// builtin GrB_*:
 // #define GxB_NO_MAX_PLUS_FP32         1
 // #define GxB_NO_MAX_PLUS_FP64         1
 // #define GxB_NO_MAX_PLUS_INT16        1
@@ -1198,7 +1198,7 @@
 // #define GxB_NO_MAX_PLUS_UINT64       1
 // #define GxB_NO_MAX_PLUS_UINT8        1
 
-// builtin GrB*:
+// builtin GrB_*:
 // #define GxB_NO_MAX_TIMES_FP32        1
 // #define GxB_NO_MAX_TIMES_FP64        1
 // #define GxB_NO_MAX_TIMES_INT16       1
@@ -1210,7 +1210,7 @@
 // #define GxB_NO_MAX_TIMES_UINT64      1
 // #define GxB_NO_MAX_TIMES_UINT8       1
 
-// builtin GrB*: also needed by GrB_reduce to vector
+// builtin GrB_*: also needed by GrB_reduce to vector
 // #define GxB_NO_MAX_FIRST_FP32        1
 // #define GxB_NO_MAX_FIRST_FP64        1
 // #define GxB_NO_MAX_FIRST_INT16       1
@@ -1222,7 +1222,7 @@
 // #define GxB_NO_MAX_FIRST_UINT64      1
 // #define GxB_NO_MAX_FIRST_UINT8       1
 
-// builtin GrB*: also needed by GrB_reduce to vector
+// builtin GrB_*: also needed by GrB_reduce to vector
 // #define GxB_NO_MAX_SECOND_FP32       1
 // #define GxB_NO_MAX_SECOND_FP64       1
 // #define GxB_NO_MAX_SECOND_INT16      1
@@ -1403,9 +1403,9 @@
 // semirings with the MIN monoid
 //------------------------------------------------------------
 
-// MIN_PLUS, MIN_TIMES, MIN_FIRST, MIN_SECOND, and MIN_MAX are GrB* builtins.
+// MIN_PLUS, MIN_TIMES, MIN_FIRST, MIN_SECOND, and MIN_MAX are GrB_* builtins.
 
-// builtin GrB*:
+// builtin GrB_*:
 // #define GxB_NO_MIN_MAX_FP32          1
 // #define GxB_NO_MIN_MAX_FP64          1
 // #define GxB_NO_MIN_MAX_INT16         1
@@ -1417,7 +1417,7 @@
 // #define GxB_NO_MIN_MAX_UINT64        1
 // #define GxB_NO_MIN_MAX_UINT8         1
 
-// builtin GrB*:
+// builtin GrB_*:
 // #define GxB_NO_MIN_PLUS_FP32         1
 // #define GxB_NO_MIN_PLUS_FP64         1
 // #define GxB_NO_MIN_PLUS_INT16        1
@@ -1429,7 +1429,7 @@
 // #define GxB_NO_MIN_PLUS_UINT64       1
 // #define GxB_NO_MIN_PLUS_UINT8        1
 
-// builtin GrB*:
+// builtin GrB_*:
 // #define GxB_NO_MIN_TIMES_FP32        1
 // #define GxB_NO_MIN_TIMES_FP64        1
 // #define GxB_NO_MIN_TIMES_INT16       1
@@ -1441,7 +1441,7 @@
 // #define GxB_NO_MIN_TIMES_UINT64      1
 // #define GxB_NO_MIN_TIMES_UINT8       1
 
-// builtin GrB*: also needed by GrB_reduce to vector
+// builtin GrB_*: also needed by GrB_reduce to vector
 // #define GxB_NO_MIN_FIRST_FP32        1
 // #define GxB_NO_MIN_FIRST_FP64        1
 // #define GxB_NO_MIN_FIRST_INT16       1
@@ -1453,7 +1453,7 @@
 // #define GxB_NO_MIN_FIRST_UINT64      1
 // #define GxB_NO_MIN_FIRST_UINT8       1
 
-// builtin GrB*: also needed by GrB_reduce to vector
+// builtin GrB_*: also needed by GrB_reduce to vector
 // #define GxB_NO_MIN_SECOND_FP32       1
 // #define GxB_NO_MIN_SECOND_FP64       1
 // #define GxB_NO_MIN_SECOND_INT16      1
@@ -1634,9 +1634,9 @@
 // semirings with the PLUS monoid
 //------------------------------------------------------------
 
-// PLUS_TIMES and PLUS_MIN are GrB* builtin (not for FC23 or FC64).
+// PLUS_TIMES and PLUS_MIN are GrB_* builtin (not for FC23 or FC64).
 
-// not GrB*, used in LAGraph: triangle count and BFS
+// not GrB_*, used in LAGraph: triangle count and BFS
 // #define GxB_NO_PLUS_PAIR_FP32        1
 // #define GxB_NO_PLUS_PAIR_FP64        1
 // #define GxB_NO_PLUS_PAIR_INT16       1
@@ -1648,7 +1648,7 @@
 // #define GxB_NO_PLUS_PAIR_UINT64      1
 // #define GxB_NO_PLUS_PAIR_UINT8       1
 
-// builtin GrB*:
+// builtin GrB_*:
 // #define GxB_NO_PLUS_MIN_FP32         1
 // #define GxB_NO_PLUS_MIN_FP64         1
 // #define GxB_NO_PLUS_MIN_INT16        1
@@ -1671,7 +1671,7 @@
 // #define GxB_NO_PLUS_MAX_UINT64       1
 // #define GxB_NO_PLUS_MAX_UINT8        1
 
-// not GrB*, used in LAGraph: sparse deep neural network
+// not GrB_*, used in LAGraph: sparse deep neural network
 // #define GxB_NO_PLUS_PLUS_FP32        1
 // #define GxB_NO_PLUS_PLUS_FP64        1
 // #define GxB_NO_PLUS_PLUS_INT16       1
@@ -1683,7 +1683,7 @@
 // #define GxB_NO_PLUS_PLUS_UINT64      1
 // #define GxB_NO_PLUS_PLUS_UINT8       1
 
-// builtin GrB*: the classical semiring of linear algebra
+// builtin GrB_*: the classical semiring of linear algebra
 // #define GxB_NO_PLUS_TIMES_FP32       1
 // #define GxB_NO_PLUS_TIMES_FP64       1
 // #define GxB_NO_PLUS_TIMES_INT16      1
@@ -1695,7 +1695,7 @@
 // #define GxB_NO_PLUS_TIMES_UINT64     1
 // #define GxB_NO_PLUS_TIMES_UINT8      1
 
-// not GrB*, used in LAGraph: pagerank and Betweeness-Centrality
+// not GrB_*, used in LAGraph: pagerank and Betweeness-Centrality
 // also needed by GrB_reduce to vector
 // #define GxB_NO_PLUS_FIRST_FP32       1
 // #define GxB_NO_PLUS_FIRST_FP64       1
@@ -1708,7 +1708,7 @@
 // #define GxB_NO_PLUS_FIRST_UINT64     1
 // #define GxB_NO_PLUS_FIRST_UINT8      1
 
-// not GrB*, used in LAGraph: Betweeness-Centrality and PageRank
+// not GrB_*, used in LAGraph: Betweeness-Centrality and PageRank
 // also needed by GrB_reduce to vector
 // #define GxB_NO_PLUS_SECOND_FP32      1
 // #define GxB_NO_PLUS_SECOND_FP64      1
@@ -1879,7 +1879,7 @@
 // semirings with the TIMES monoid
 //------------------------------------------------------------
 
-// No builtin GrB* semirings use the TIMES monoid, and none are used
+// No builtin GrB_* semirings use the TIMES monoid, and none are used
 // in LAGraph 0.1 yet.
 
 // #define GxB_NO_TIMES_MIN_FP32        1
@@ -2172,7 +2172,7 @@
 // semirings with the ANY monoid
 //----------------------------------------
 
-// None of these are GrB*, since the ANY monoid is a GxB* extension.
+// None of these are GrB_*, since the ANY monoid is a GxB* extension.
 // However, semirings based on the ANY monoid are common: BFS in particular
 // uses ANY_FIRST, ANY_SECOND, and ANY_PAIR.
 
@@ -2202,7 +2202,7 @@
 // #define GxB_NO_ANY_SECOND_UINT64     1
 // #define GxB_NO_ANY_SECOND_UINT8      1
 
-// Not GrB*, but used in BFS and others.  The only purely symbolic semiring.
+// Not GrB_*, but used in BFS and others.  The only purely symbolic semiring.
 // #define GxB_NO_ANY_PAIR_BOOL         1
 // #define GxB_NO_ANY_PAIR_FP32         1
 // #define GxB_NO_ANY_PAIR_FP64         1
@@ -2564,7 +2564,7 @@
 // semirings with positional multiplicative operators:
 //----------------------------------------
 
-// No builtin GrB* semirings use positional multiplicative operators.
+// No builtin GrB_* semirings use positional multiplicative operators.
 // BFS_parent uses ANY_SECONDI.  1-based semirings are important for 1-based
 // framewarks such as MATLAB.  In a semiring, the multiplicative operator
 // SECONDI is the same as FIRSTJ.

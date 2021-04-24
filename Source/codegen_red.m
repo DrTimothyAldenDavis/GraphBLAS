@@ -140,7 +140,7 @@ fprintf ('\nany    ') ;
 codegen_red_method ('any' , 'zarg = (yarg)'        , 'bool','false') ;
 
 %-------------------------------------------------------------------------------
-% FIRST and SECOND (not monoids; used for GB_red_build__[first,second]_[type])
+% FIRST and SECOND (not monoids; used for GB_red_build__first,second_type)
 %-------------------------------------------------------------------------------
 
 % FIRST: 13 ops:    name      op           type        identity terminal panel
