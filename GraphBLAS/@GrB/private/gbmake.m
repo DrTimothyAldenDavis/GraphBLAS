@@ -30,7 +30,7 @@ else
     if verLessThan ('matlab', '9.4')
         error ('MATLAB 9.4 (R2018a) or later is required') ;
     end
-    % MATLAB 9.8 (R2021a) and following include a built-in GraphBLAS library
+    % MATLAB 9.10 (R2021a) and following include a built-in GraphBLAS library
     % that conflicts with this version, so rename this version.
     need_rename = ~verLessThan ('matlab', '9.10') ;
 end
