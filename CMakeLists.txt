@@ -59,7 +59,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Apr 21, 2021")
+set ( GraphBLAS_DATE "Apr 26, 2021 (BETA1)")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -101,24 +101,8 @@ else ( )
     message ( STATUS "Building dynamic GraphBLAS library only" )
 endif ( )
 
-# select "false" to disable the burble.  It is now enabled by default.
-  set ( GB_BURBLE true )
-# set ( GB_BURBLE false )
-
-if ( GB_BURBLE )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_BURBLE=1 " )
-else ( )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_BURBLE=0 " )
-endif ( )
-
 if ( GBCOMPACT )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCOMPACT=1 " )
-endif ( )
-
-set ( GB_AVX2 false )
-
-if ( GB_AVX2 )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -mavx2 -DGB_AVX2 " )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -147,7 +131,6 @@ configure_file (
 #-------------------------------------------------------------------------------
 
 include ( FindOpenMP  )
-include ( FindThreads )
 
 # enable_language ( CUDA )
 # for nvcc, add -DGBCUDA
@@ -172,31 +155,31 @@ endif ( )
 # find the BLAS
 #-------------------------------------------------------------------------------
 
-if ( CMAKE_VERSION VERSION_GREATER "3.13" )
-    # Look for the parallel 64-bit MKL BLAS by default
-    set ( BLA_VENDOR OpenBLAS )
-    include ( FindBLAS )
-    if ( ${BLAS_FOUND} )
-        message ( STATUS "CBLAS : found" )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -lopenblas " )
-    else ( )
-        message ( STATUS "CBLAS : not found" )
-        # FUTURE: enable other BLAS flavors here
-        # set ( BLA_VENDOR ... )
-        # include ( FindBLAS )
-    endif ( )
-endif ( )
+#   if ( CMAKE_VERSION VERSION_GREATER "3.13" )
+#       # Look for the parallel 64-bit MKL BLAS by default
+#       set ( BLA_VENDOR OpenBLAS )
+#       include ( FindBLAS )
+#       if ( ${BLAS_FOUND} )
+#           message ( STATUS "CBLAS : found" )
+#           set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -lopenblas " )
+#       else ( )
+#           message ( STATUS "CBLAS : not found" )
+#           # FUTURE: enable other BLAS flavors here
+#           # set ( BLA_VENDOR ... )
+#           # include ( FindBLAS )
+#       endif ( )
+#   endif ( )
 
-if ( ${BLAS_FOUND} )
-    # BLAS_LINKER_FLAGS: uncached list of required linker flags
-    # (excluding -l and -L).
-    message ( STATUS "CBLAS:                     found" )
-    message ( STATUS "CBLAS linker flags:        " ${BLAS_LINKER_FLAGS} )
-    # BLAS_LIBRARIES: list of libraries to link against (may be empty)
-    message ( STATUS "CBLAS libraries:    " ${BLAS_LIBRARIES} )
-else ( )
-    message ( STATUS "CBLAS:                     not found" )
-endif ( )
+#   if ( ${BLAS_FOUND} )
+#       # BLAS_LINKER_FLAGS: uncached list of required linker flags
+#       # (excluding -l and -L).
+#       message ( STATUS "CBLAS:                     found" )
+#       message ( STATUS "CBLAS linker flags:        " ${BLAS_LINKER_FLAGS} )
+#       # BLAS_LIBRARIES: list of libraries to link against (may be empty)
+#       message ( STATUS "CBLAS libraries:    " ${BLAS_LIBRARIES} )
+#   else ( )
+#       message ( STATUS "CBLAS:                     not found" )
+#   endif ( )
 
 #-------------------------------------------------------------------------------
 # report status
@@ -284,7 +267,6 @@ endif ( )
 if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}" )
 else ( )
-    # TODO: hack
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
 endif ( )
 
@@ -395,12 +377,12 @@ endif ( )
 # add the BLAS
 #-------------------------------------------------------------------------------
 
-if ( BLAS_FOUND )
-    # use the dense CBLAS
-    message ( STATUS "Using dense CBLAS for faster dense matrix/vector operations" )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAS_CBLAS " )
-    target_link_libraries ( graphblas PUBLIC ${BLAS_LIBRARIES} )
-endif ( )
+# if ( BLAS_FOUND )
+#     # use the dense CBLAS
+#     message ( STATUS "Using dense CBLAS for faster dense matrix/vector operations" )
+#     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAS_CBLAS " )
+#     target_link_libraries ( graphblas PUBLIC ${BLAS_LIBRARIES} )
+# endif ( )
 
 #-------------------------------------------------------------------------------
 # determine the default matrix format

@@ -193,7 +193,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         //----------------------------------------------------------------------
 
         #define GB_AemultB_bitmap(mult,xname) \
-            GB_AemultB_bitmap_ ## mult ## xname
+            GB (_AemultB_bitmap_ ## mult ## xname)
 
         #define GB_BINOP_WORKER(mult,xname)                                 \
         {                                                                   \

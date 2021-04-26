@@ -42,11 +42,10 @@ void GB_mx_put_global
     GrB_finalize ( ) ;
 
     // disable the memory pool, in case a @GrB method is called next
-    for (int k = 0 ; k < 64 ; k++)
-    {
-        // TODO:: add this as an option for GxB_set/get
-        GB_Global_free_pool_limit_set (k, 0) ;
-    }
+    int64_t free_pool_limit [64] =
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } ;
+    GxB_Global_Option_set (GxB_MEMORY_POOL, free_pool_limit) ;
 
     //--------------------------------------------------------------------------
     // check nmemtable and nmalloc

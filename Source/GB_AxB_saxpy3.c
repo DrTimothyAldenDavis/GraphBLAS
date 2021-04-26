@@ -594,7 +594,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_AsaxpyB(add,mult,xname) GB_AsaxpyB_ ## add ## mult ## xname
+        #define GB_AsaxpyB(add,mult,xname) \
+            GB (_AsaxpyB_ ## add ## mult ## xname)
 
         #define GB_AxB_WORKER(add,mult,xname)                               \
         {                                                                   \

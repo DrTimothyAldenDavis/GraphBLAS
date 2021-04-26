@@ -21,21 +21,21 @@
 
 // C=binop(A,B) is defined by the following types and operators:
 
-// A+B function (eWiseAdd):         GB_AaddB
-// A.*B function (eWiseMult):       GB_AemultB
-// A.*B function (eWiseMult):       GB_AemultB_02
-// A.*B function (eWiseMult):       GB_AemultB_03
-// A.*B function (eWiseMult):       GB_AemultB_bitmap
-// A*D function (colscale):         GB_AxD
-// D*A function (rowscale):         GB_DxB
-// C+=B function (dense accum):     GB_Cdense_accumB
-// C+=b function (dense accum):     GB_Cdense_accumb
-// C+=A+B function (dense ewise3):  GB_Cdense_ewise3_accum
-// C=A+B function (dense ewise3):   GB_Cdense_ewise3_noaccum
-// C=scalar+B                       GB_bind1st
-// C=scalar+B'                      GB_bind1st_tran
-// C=A+scalar                       GB_bind2nd
-// C=A'+scalar                      GB_bind2nd_tran
+// A+B function (eWiseAdd):         GB (_AaddB)
+// A.*B function (eWiseMult):       GB (_AemultB)
+// A.*B function (eWiseMult):       GB (_AemultB_02)
+// A.*B function (eWiseMult):       GB (_AemultB_03)
+// A.*B function (eWiseMult):       GB (_AemultB_bitmap)
+// A*D function (colscale):         GB (_AxD)
+// D*A function (rowscale):         GB (_DxB)
+// C+=B function (dense accum):     GB (_Cdense_accumB)
+// C+=b function (dense accum):     GB (_Cdense_accumb)
+// C+=A+B function (dense ewise3):  GB (_Cdense_ewise3_accum)
+// C=A+B function (dense ewise3):   GB (_Cdense_ewise3_noaccum)
+// C=scalar+B                       GB (_bind1st)
+// C=scalar+B'                      GB (_bind1st_tran)
+// C=A+scalar                       GB (_bind2nd)
+// C=A'+scalar                      GB (_bind2nd_tran)
 
 // C type:   GB_ctype
 // A type:   GB_atype
@@ -115,7 +115,7 @@ if_is_binop_subset
 
 // The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
 
-void GB_Cdense_ewise3_accum
+void GB (_Cdense_ewise3_accum)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -132,7 +132,7 @@ endif_is_binop_subset
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_ewise3_noaccum
+GrB_Info GB (_Cdense_ewise3_noaccum)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -152,7 +152,7 @@ GrB_Info GB_Cdense_ewise3_noaccum
 // C += B, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumB
+GrB_Info GB (_Cdense_accumB)
 (
     GrB_Matrix C,
     const GrB_Matrix B,
@@ -175,7 +175,7 @@ GrB_Info GB_Cdense_accumB
 // C += b, accumulate a scalar into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumb
+GrB_Info GB (_Cdense_accumb)
 (
     GrB_Matrix C,
     const GB_void *p_bwork,
@@ -203,7 +203,7 @@ GrB_Info GB_Cdense_accumb
 
 if_binop_is_semiring_multiplier
 
-GrB_Info GB_AxD
+GrB_Info GB (_AxD)
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
@@ -228,7 +228,7 @@ endif_binop_is_semiring_multiplier
 
 if_binop_is_semiring_multiplier
 
-GrB_Info GB_DxB
+GrB_Info GB (_DxB)
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
@@ -251,7 +251,7 @@ endif_binop_is_semiring_multiplier
 // eWiseAdd: C = A+B or C<M> = A+B
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AaddB
+GrB_Info GB (_AaddB)
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -286,7 +286,7 @@ GrB_Info GB_AaddB
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_01
+GrB_Info GB (_AemultB_01)
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -317,7 +317,7 @@ GrB_Info GB_AemultB_01
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_02
+GrB_Info GB (_AemultB_02)
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -365,7 +365,7 @@ GrB_Info GB_AemultB_02
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_03
+GrB_Info GB (_AemultB_03)
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -388,7 +388,7 @@ GrB_Info GB_AemultB_03
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_bitmap
+GrB_Info GB (_AemultB_bitmap)
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -416,7 +416,7 @@ GrB_Info GB_AemultB_bitmap
 
 if_binop_bind1st_is_enabled
 
-GrB_Info GB_bind1st
+GrB_Info GB (_bind1st)
 (
     GB_void *Cx_output,         // Cx and Bx may be aliased
     const GB_void *x_input,
@@ -452,7 +452,7 @@ endif_binop_bind1st_is_enabled
 
 if_binop_bind2nd_is_enabled
 
-GrB_Info GB_bind2nd
+GrB_Info GB (_bind2nd)
 (
     GB_void *Cx_output,         // Cx and Ax may be aliased
     const GB_void *Ax_input,
@@ -496,7 +496,7 @@ if_binop_bind1st_is_enabled
     GB_binaryop(Cx [pC], x, aij, 0, 0) ;        \
 }
 
-GrB_Info GB_bind1st_tran
+GrB_Info GB (_bind1st_tran)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -540,7 +540,7 @@ if_binop_bind2nd_is_enabled
     GB_binaryop(Cx [pC], aij, y, 0, 0) ;        \
 }
 
-GrB_Info GB_bind2nd_tran
+GrB_Info GB (_bind2nd_tran)
 (
     GrB_Matrix C,
     const GrB_Matrix A,

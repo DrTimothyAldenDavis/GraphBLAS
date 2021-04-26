@@ -17,8 +17,8 @@
 
 // The reduction is defined by the following types and operators:
 
-// Assemble tuples:    GB_red_build__any_bool
-// Reduce to scalar:   GB_red_scalar__any_bool
+// Assemble tuples:    GB (_red_build__any_bool)
+// Reduce to scalar:   GB (_red_scalar__any_bool)
 
 // A type:   bool
 // C type:   bool
@@ -123,7 +123,7 @@
 
 
 
-GrB_Info GB_red_scalar__any_bool
+GrB_Info GB (_red_scalar__any_bool)
 (
     bool *result,
     const GrB_Matrix A,
@@ -157,7 +157,7 @@ GrB_Info GB_red_scalar__any_bool
 // build matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_red_build__any_bool
+GrB_Info GB (_red_build__any_bool)
 (
     bool *GB_RESTRICT Tx,
     int64_t  *GB_RESTRICT Ti,

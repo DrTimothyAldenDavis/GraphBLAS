@@ -16,24 +16,24 @@ assert (~isequal (binop, 'any')) ;
 name = sprintf ('%s_%s', binop, fname) ;
 
 % function names
-fprintf (f, 'define(`GB_AaddB'', `GB_AaddB__%s'')\n', name) ;
-fprintf (f, 'define(`GB_AemultB_01'', `GB_AemultB_01__%s'')\n', name) ;
-fprintf (f, 'define(`GB_AemultB_02'', `GB_AemultB_02__%s'')\n', name) ;
-fprintf (f, 'define(`GB_AemultB_03'', `GB_AemultB_03__%s'')\n', name) ;
-fprintf (f, 'define(`GB_AemultB_bitmap'', `GB_AemultB_bitmap__%s'')\n', name) ;
-fprintf (f, 'define(`GB_Cdense_accumB'', `GB_Cdense_accumB__%s'')\n', name) ;
-fprintf (f, 'define(`GB_Cdense_accumb'', `GB_Cdense_accumb__%s'')\n', name) ;
-fprintf (f, 'define(`GB_Cdense_ewise3_noaccum'', `GB_Cdense_ewise3_noaccum__%s'')\n', name) ;
+fprintf (f, 'define(`_AaddB'', `_AaddB__%s'')\n', name) ;
+fprintf (f, 'define(`_AemultB_01'', `_AemultB_01__%s'')\n', name) ;
+fprintf (f, 'define(`_AemultB_02'', `_AemultB_02__%s'')\n', name) ;
+fprintf (f, 'define(`_AemultB_03'', `_AemultB_03__%s'')\n', name) ;
+fprintf (f, 'define(`_AemultB_bitmap'', `_AemultB_bitmap__%s'')\n', name) ;
+fprintf (f, 'define(`_Cdense_accumB'', `_Cdense_accumB__%s'')\n', name) ;
+fprintf (f, 'define(`_Cdense_accumb'', `_Cdense_accumb__%s'')\n', name) ;
+fprintf (f, 'define(`_Cdense_ewise3_noaccum'', `_Cdense_ewise3_noaccum__%s'')\n', name) ;
 
 % subset of operators for GB_dense_ewise3_accum
 switch (binop)
     case { 'min', 'max', 'plus', 'minus', 'rminus', 'times', 'div', 'rdiv' }
         % these operators are used in ewise3_accum
-        fprintf (f, 'define(`GB_Cdense_ewise3_accum'', `GB_Cdense_ewise3_accum__%s'')\n', name) ;
+        fprintf (f, 'define(`_Cdense_ewise3_accum'', `_Cdense_ewise3_accum__%s'')\n', name) ;
         fprintf (f, 'define(`if_is_binop_subset'', `'')\n') ;
         fprintf (f, 'define(`endif_is_binop_subset'', `'')\n') ;
     otherwise
-        fprintf (f, 'define(`GB_Cdense_ewise3_accum'', `(none)'')\n') ;
+        fprintf (f, 'define(`_Cdense_ewise3_accum'', `(none)'')\n') ;
         fprintf (f, 'define(`if_is_binop_subset'', `#if 0'')\n') ;
         fprintf (f, 'define(`endif_is_binop_subset'', `#endif'')\n') ;
 end
@@ -56,13 +56,13 @@ switch (binop)
         binop_is_semiring_multiplier = false ;
 end
 if (binop_is_semiring_multiplier)
-    fprintf (f, 'define(`GB_AxD'', `GB_AxD__%s'')\n', name) ;
-    fprintf (f, 'define(`GB_DxB'', `GB_DxB__%s'')\n', name) ;
+    fprintf (f, 'define(`_AxD'', `_AxD__%s'')\n', name) ;
+    fprintf (f, 'define(`_DxB'', `_DxB__%s'')\n', name) ;
     fprintf (f, 'define(`if_binop_is_semiring_multiplier'', `'')\n') ;
     fprintf (f, 'define(`endif_binop_is_semiring_multiplier'', `'')\n') ;
 else
-    fprintf (f, 'define(`GB_AxD'', `(none)'')\n') ;
-    fprintf (f, 'define(`GB_DxB'', `(node)'')\n') ;
+    fprintf (f, 'define(`_AxD'', `(none)'')\n') ;
+    fprintf (f, 'define(`_DxB'', `(node)'')\n') ;
     fprintf (f, 'define(`if_binop_is_semiring_multiplier'', `#if 0'')\n') ;
     fprintf (f, 'define(`endif_binop_is_semiring_multiplier'', `#endif'')\n') ;
 end
@@ -71,26 +71,26 @@ end
 switch (binop)
     case { 'first', 'any', 'pair' }
         % no bind2nd for these operators
-        fprintf (f, 'define(`GB_bind2nd'', `(none)'')\n', name) ;
-        fprintf (f, 'define(`GB_bind2nd_tran'', `(none)'')\n', name) ;
+        fprintf (f, 'define(`_bind2nd'', `(none)'')\n', name) ;
+        fprintf (f, 'define(`_bind2nd_tran'', `(none)'')\n', name) ;
         fprintf (f, 'define(`if_binop_bind2nd_is_enabled'', `#if 0'')\n') ;
         fprintf (f, 'define(`endif_binop_bind2nd_is_enabled'', `#endif'')\n') ;
     otherwise
-        fprintf (f, 'define(`GB_bind2nd'', `GB_bind2nd__%s'')\n', name) ;
-        fprintf (f, 'define(`GB_bind2nd_tran'', `GB_bind2nd_tran__%s'')\n', name) ;
+        fprintf (f, 'define(`_bind2nd'', `_bind2nd__%s'')\n', name) ;
+        fprintf (f, 'define(`_bind2nd_tran'', `_bind2nd_tran__%s'')\n', name) ;
         fprintf (f, 'define(`if_binop_bind2nd_is_enabled'', `'')\n') ;
         fprintf (f, 'define(`endif_binop_bind2nd_is_enabled'', `'')\n') ;
 end
 switch (binop)
     case { 'second', 'any', 'pair' }
         % no bind1st for these operators
-        fprintf (f, 'define(`GB_bind1st'', `(none)'')\n', name) ;
-        fprintf (f, 'define(`GB_bind1st_tran'', `(none)'')\n', name) ;
+        fprintf (f, 'define(`_bind1st'', `(none)'')\n', name) ;
+        fprintf (f, 'define(`_bind1st_tran'', `(none)'')\n', name) ;
         fprintf (f, 'define(`if_binop_bind1st_is_enabled'', `#if 0'')\n') ;
         fprintf (f, 'define(`endif_binop_bind1st_is_enabled'', `#endif'')\n') ;
     otherwise
-        fprintf (f, 'define(`GB_bind1st'', `GB_bind1st__%s'')\n', name) ;
-        fprintf (f, 'define(`GB_bind1st_tran'', `GB_bind1st_tran__%s'')\n', name) ;
+        fprintf (f, 'define(`_bind1st'', `_bind1st__%s'')\n', name) ;
+        fprintf (f, 'define(`_bind1st_tran'', `_bind1st_tran__%s'')\n', name) ;
         fprintf (f, 'define(`if_binop_bind1st_is_enabled'', `'')\n') ;
         fprintf (f, 'define(`endif_binop_bind1st_is_enabled'', `'')\n') ;
 end

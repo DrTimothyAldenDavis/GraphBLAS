@@ -17,8 +17,8 @@
 
 // The reduction is defined by the following types and operators:
 
-// Assemble tuples:    GB_red_build__min_int16
-// Reduce to scalar:   GB_red_scalar__min_int16
+// Assemble tuples:    GB (_red_build__min_int16)
+// Reduce to scalar:   GB (_red_scalar__min_int16)
 
 // A type:   int16_t
 // C type:   int16_t
@@ -123,7 +123,7 @@
 
 
 
-GrB_Info GB_red_scalar__min_int16
+GrB_Info GB (_red_scalar__min_int16)
 (
     int16_t *result,
     const GrB_Matrix A,
@@ -157,7 +157,7 @@ GrB_Info GB_red_scalar__min_int16
 // build matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_red_build__min_int16
+GrB_Info GB (_red_build__min_int16)
 (
     int16_t *GB_RESTRICT Tx,
     int64_t  *GB_RESTRICT Ti,

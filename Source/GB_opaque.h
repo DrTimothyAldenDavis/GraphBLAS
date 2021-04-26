@@ -10,6 +10,8 @@
 #ifndef GB_OPAQUE_H
 #define GB_OPAQUE_H
 
+#define GB_OPAQUE(x) GB (GB_EVAL2 (_opaque__, x))
+
 //------------------------------------------------------------------------------
 // GB_void: like void, but valid for pointer arithmetic
 //------------------------------------------------------------------------------

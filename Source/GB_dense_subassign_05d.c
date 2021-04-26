@@ -109,7 +109,7 @@ GrB_Info GB_dense_subassign_05d
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Cdense_05d(cname) GB_Cdense_05d_ ## cname
+        #define GB_Cdense_05d(cname) GB (_Cdense_05d_ ## cname)
 
         #define GB_WORKER(cname)                                              \
         {                                                                     \

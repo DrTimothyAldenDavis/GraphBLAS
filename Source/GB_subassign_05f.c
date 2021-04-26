@@ -24,7 +24,7 @@
 // only assignments where (Cb [pC] == 1) are needed, but it's faster to just
 // assign the scalar to all entries in Cx.
 
-// TODO: when uniform-valued matrices are supported, this method will take
+// TODO::: when uniform-valued matrices are supported, this method will take
 // O(1) time.
 
 // TODO: this method can be merged with 05d

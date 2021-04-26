@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-GrB_Info GB_unop_apply
+GrB_Info GB (_unop_apply)
 (
     GB_ctype *Cx,
     const GB_atype *Ax,
@@ -8,7 +8,7 @@ GrB_Info GB_unop_apply
     int nthreads
 ) ;
 
-GrB_Info GB_unop_tran
+GrB_Info GB (_unop_tran)
 (
     GrB_Matrix C,
     const GrB_Matrix A,

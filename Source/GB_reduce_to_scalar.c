@@ -170,7 +170,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                 // define the worker for the switch factory
                 //--------------------------------------------------------------
 
-                #define GB_red(opname,aname) GB_red_scalar_ ## opname ## aname
+                #define GB_red(opname,aname) \
+                    GB (_red_scalar_ ## opname ## aname)
 
                 #define GB_RED_WORKER(opname,aname,atype)                   \
                 {                                                           \

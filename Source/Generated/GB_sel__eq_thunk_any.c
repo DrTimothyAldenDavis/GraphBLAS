@@ -15,8 +15,11 @@
 
 // The selection is defined by the following types and operators:
 
-// phase1: GB_sel_phase1__eq_thunk_any
-// phase2: GB_sel_phase2__eq_thunk_any
+// functions:
+// phase1: GB (_sel_phase1__eq_thunk_any)
+// phase2: GB (_sel_phase2__eq_thunk_any)
+// bitmap: GB (_sel_bitmap__eq_thunk_any)
+
 // A type: GB_void
 
 // kind
@@ -38,12 +41,12 @@
     memcpy (Cx +((pC)*asize), xthunk, asize)
 
 //------------------------------------------------------------------------------
-// GB_sel_phase1__eq_thunk_any
+// GB_sel_phase1
 //------------------------------------------------------------------------------
 
 
 
-void GB_sel_phase1__eq_thunk_any
+void GB (_sel_phase1__eq_thunk_any)
 (
     int64_t *GB_RESTRICT Zp,
     int64_t *GB_RESTRICT Cp,
@@ -64,10 +67,10 @@ void GB_sel_phase1__eq_thunk_any
 
 
 //------------------------------------------------------------------------------
-// GB_sel_phase2__eq_thunk_any
+// GB_sel_phase2
 //------------------------------------------------------------------------------
 
-void GB_sel_phase2__eq_thunk_any
+void GB (_sel_phase2__eq_thunk_any)
 (
     int64_t *GB_RESTRICT Ci,
     GB_void *GB_RESTRICT Cx,
@@ -87,12 +90,12 @@ void GB_sel_phase2__eq_thunk_any
 }
 
 //------------------------------------------------------------------------------
-// GB_sel_bitmap__eq_thunk_any
+// GB_sel_bitmap
 //------------------------------------------------------------------------------
 
 
 
-void GB_sel_bitmap__eq_thunk_any
+void GB (_sel_bitmap__eq_thunk_any)
 (
     int8_t *Cb,
     GB_void *GB_RESTRICT Cx,

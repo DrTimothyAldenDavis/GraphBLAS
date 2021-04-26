@@ -17,8 +17,8 @@
 
 // C=unop(A) is defined by the following types and operators:
 
-// op(A)  function:  GB_unop_apply__identity_int32_bool
-// op(A') function:  GB_unop_tran__identity_int32_bool
+// op(A)  function:  GB (_unop_apply__identity_int32_bool)
+// op(A') function:  GB (_unop_tran__identity_int32_bool)
 
 // C type:   int32_t
 // A type:   bool
@@ -67,7 +67,7 @@
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB_unop_apply__identity_int32_bool
+GrB_Info GB (_unop_apply__identity_int32_bool)
 (
     int32_t *Cx,       // Cx and Ax may be aliased
     const bool *Ax,
@@ -80,6 +80,10 @@ GrB_Info GB_unop_apply__identity_int32_bool
     return (GrB_NO_VALUE) ;
     #else
     int64_t p ;
+
+    // TODO: if OP is ONE and uniform-valued matrices are exploited, then
+    // do this in O(1) time
+
     if (Ab == NULL)
     { 
         #if ( GB_OP_IS_IDENTITY_WITH_NO_TYPECAST )
@@ -114,7 +118,7 @@ GrB_Info GB_unop_apply__identity_int32_bool
 // C = op (cast (A')): transpose, typecast, and apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB_unop_tran__identity_int32_bool
+GrB_Info GB (_unop_tran__identity_int32_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,

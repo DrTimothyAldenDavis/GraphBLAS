@@ -21,21 +21,21 @@
 
 // C=binop(A,B) is defined by the following types and operators:
 
-// A+B function (eWiseAdd):         GB_AaddB__first_fc64
-// A.*B function (eWiseMult):       GB_AemultB
-// A.*B function (eWiseMult):       GB_AemultB_02__first_fc64
-// A.*B function (eWiseMult):       GB_AemultB_03__first_fc64
-// A.*B function (eWiseMult):       GB_AemultB_bitmap__first_fc64
-// A*D function (colscale):         GB_AxD__first_fc64
-// D*A function (rowscale):         GB_DxB__first_fc64
-// C+=B function (dense accum):     GB_Cdense_accumB__first_fc64
-// C+=b function (dense accum):     GB_Cdense_accumb__first_fc64
-// C+=A+B function (dense ewise3):  (none)
-// C=A+B function (dense ewise3):   GB_Cdense_ewise3_noaccum__first_fc64
-// C=scalar+B                       GB_bind1st__first_fc64
-// C=scalar+B'                      GB_bind1st_tran__first_fc64
-// C=A+scalar                       (none)
-// C=A'+scalar                      (none)
+// A+B function (eWiseAdd):         GB (_AaddB__first_fc64)
+// A.*B function (eWiseMult):       GB (_AemultB)
+// A.*B function (eWiseMult):       GB (_AemultB_02__first_fc64)
+// A.*B function (eWiseMult):       GB (_AemultB_03__first_fc64)
+// A.*B function (eWiseMult):       GB (_AemultB_bitmap__first_fc64)
+// A*D function (colscale):         GB (_AxD__first_fc64)
+// D*A function (rowscale):         GB (_DxB__first_fc64)
+// C+=B function (dense accum):     GB (_Cdense_accumB__first_fc64)
+// C+=b function (dense accum):     GB (_Cdense_accumb__first_fc64)
+// C+=A+B function (dense ewise3):  GB ((none))
+// C=A+B function (dense ewise3):   GB (_Cdense_ewise3_noaccum__first_fc64)
+// C=scalar+B                       GB (_bind1st__first_fc64)
+// C=scalar+B'                      GB (_bind1st_tran__first_fc64)
+// C=A+scalar                       GB ((none))
+// C=A'+scalar                      GB ((none))
 
 // C type:   GxB_FC64_t
 // A type:   GxB_FC64_t
@@ -115,7 +115,7 @@
 
 // The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
 
-void (none)
+void GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -132,7 +132,7 @@ void (none)
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_ewise3_noaccum__first_fc64
+GrB_Info GB (_Cdense_ewise3_noaccum__first_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -152,7 +152,7 @@ GrB_Info GB_Cdense_ewise3_noaccum__first_fc64
 // C += B, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumB__first_fc64
+GrB_Info GB (_Cdense_accumB__first_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix B,
@@ -175,7 +175,7 @@ GrB_Info GB_Cdense_accumB__first_fc64
 // C += b, accumulate a scalar into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumb__first_fc64
+GrB_Info GB (_Cdense_accumb__first_fc64)
 (
     GrB_Matrix C,
     const GB_void *p_bwork,
@@ -203,7 +203,7 @@ GrB_Info GB_Cdense_accumb__first_fc64
 
 
 
-GrB_Info GB_AxD__first_fc64
+GrB_Info GB (_AxD__first_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
@@ -228,7 +228,7 @@ GrB_Info GB_AxD__first_fc64
 
 
 
-GrB_Info GB_DxB__first_fc64
+GrB_Info GB (_DxB__first_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
@@ -251,7 +251,7 @@ GrB_Info GB_DxB__first_fc64
 // eWiseAdd: C = A+B or C<M> = A+B
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AaddB__first_fc64
+GrB_Info GB (_AaddB__first_fc64)
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -286,7 +286,7 @@ GrB_Info GB_AaddB__first_fc64
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_01__first_fc64
+GrB_Info GB (_AemultB_01__first_fc64)
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -317,7 +317,7 @@ GrB_Info GB_AemultB_01__first_fc64
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_02__first_fc64
+GrB_Info GB (_AemultB_02__first_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -365,7 +365,7 @@ GrB_Info GB_AemultB_02__first_fc64
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_03__first_fc64
+GrB_Info GB (_AemultB_03__first_fc64)
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -388,7 +388,7 @@ GrB_Info GB_AemultB_03__first_fc64
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_bitmap__first_fc64
+GrB_Info GB (_AemultB_bitmap__first_fc64)
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -416,7 +416,7 @@ GrB_Info GB_AemultB_bitmap__first_fc64
 
 
 
-GrB_Info GB_bind1st__first_fc64
+GrB_Info GB (_bind1st__first_fc64)
 (
     GB_void *Cx_output,         // Cx and Bx may be aliased
     const GB_void *x_input,
@@ -452,7 +452,7 @@ GrB_Info GB_bind1st__first_fc64
 
 #if 0
 
-GrB_Info (none)
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,         // Cx and Ax may be aliased
     const GB_void *Ax_input,
@@ -496,7 +496,7 @@ GrB_Info (none)
     Cx [pC] = x ;        \
 }
 
-GrB_Info GB_bind1st_tran__first_fc64
+GrB_Info GB (_bind1st_tran__first_fc64)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -540,7 +540,7 @@ GrB_Info GB_bind1st_tran__first_fc64
     Cx [pC] = aij ;        \
 }
 
-GrB_Info (none)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,

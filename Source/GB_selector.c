@@ -33,7 +33,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_phbix_free (C) ;                   \
+    GB_phbix_free (C) ;                     \
     GB_FREE_WORK ;                          \
 }
 
@@ -260,7 +260,7 @@ GrB_Info GB_selector
 
     // define the worker for the switch factory
     #define GB_SELECT_PHASE1
-    #define GB_sel1(opname,aname) GB_sel_phase1_ ## opname ## aname
+    #define GB_sel1(opname,aname) GB (_sel_phase1_ ## opname ## aname)
     #define GB_SEL_WORKER(opname,aname,atype)               \
     {                                                       \
         GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast,     \
@@ -312,7 +312,7 @@ GrB_Info GB_selector
 
     // define the worker for the switch factory
     #define GB_SELECT_PHASE2
-    #define GB_sel2(opname,aname) GB_sel_phase2_ ## opname ## aname
+    #define GB_sel2(opname,aname) GB (_sel_phase2_ ## opname ## aname)
     #define GB_SEL_WORKER(opname,aname,atype)           \
     {                                                   \
         GB_sel2 (opname, aname) (Ci, (atype *) Cx,      \

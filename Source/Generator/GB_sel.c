@@ -15,8 +15,11 @@
 
 // The selection is defined by the following types and operators:
 
-// phase1: GB_sel_phase1
-// phase2: GB_sel_phase2
+// functions:
+// phase1: GB (_sel_phase1)
+// phase2: GB (_sel_phase2)
+// bitmap: GB (_sel_bitmap)
+
 // A type: GB_atype
 
 // kind
@@ -43,7 +46,7 @@ GB_kind
 
 if_phase1
 
-void GB_sel_phase1
+void GB (_sel_phase1)
 (
     int64_t *GB_RESTRICT Zp,
     int64_t *GB_RESTRICT Cp,
@@ -67,7 +70,7 @@ endif_phase1
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
-void GB_sel_phase2
+void GB (_sel_phase2)
 (
     int64_t *GB_RESTRICT Ci,
     GB_atype *GB_RESTRICT Cx,
@@ -92,7 +95,7 @@ void GB_sel_phase2
 
 if_bitmap
 
-void GB_sel_bitmap
+void GB (_sel_bitmap)
 (
     int8_t *Cb,
     GB_atype *GB_RESTRICT Cx,

@@ -23,10 +23,10 @@
 
 // The C=A*B semiring is defined by the following types and operators:
 
-// A'*B function (dot2):     GB_Adot2B__max_div_int32
-// A'*B function (dot3):     GB_Adot3B__max_div_int32
-// C+=A'*B function (dot4):  GB_Adot4B__max_div_int32
-// A*B function (saxpy):     GB_AsaxpyB__max_div_int32
+// A'*B function (dot2):     GB (_Adot2B__max_div_int32)
+// A'*B function (dot3):     GB (_Adot3B__max_div_int32)
+// C+=A'*B function (dot4):  GB (_Adot4B__max_div_int32)
+// A*B function (saxpy):     GB (_AsaxpyB__max_div_int32)
 
 // C type:   int32_t
 // A type:   int32_t
@@ -296,7 +296,7 @@
 // C=A'*B, C<M>=A'*B, or C<!M>=A'*B: dot product method where C is bitmap
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Adot2B__max_div_int32
+GrB_Info GB (_Adot2B__max_div_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
@@ -317,7 +317,7 @@ GrB_Info GB_Adot2B__max_div_int32
 // C<M>=A'*B: masked dot product method (phase 2) where C is sparse or hyper
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Adot3B__max_div_int32
+GrB_Info GB (_Adot3B__max_div_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_struct,
@@ -340,7 +340,7 @@ GrB_Info GB_Adot3B__max_div_int32
 // C+=A'*B: dense dot product
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Adot4B__max_div_int32
+GrB_Info GB (_Adot4B__max_div_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
@@ -364,7 +364,7 @@ GrB_Info GB_Adot4B__max_div_int32
 
 #include "GB_AxB_saxpy3_template.h"
 
-GrB_Info GB_AsaxpyB__max_div_int32
+GrB_Info GB (_AsaxpyB__max_div_int32)
 (
     GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,

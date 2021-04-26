@@ -17,9 +17,11 @@
 
 // The operation is defined by the following types and operators:
 
-// C<M>=x (C is dense): GB_Cdense_05d__int16
-// C<A>=A (C is dense): GB_Cdense_06d__int16
-// C<M>=A (C is empty, A dense): GB_Cdense_25__int16
+// functions:
+// C<M>=x (C is dense):          GB (_Cdense_05d__int16)
+// C<A>=A (C is dense):          GB (_Cdense_06d__int16)
+// C<M>=A (C is empty, A dense): GB (_Cdense_25__int16)
+// convert sparse to bitmap:     GB (_convert_s2b__int16)
 
 // C type:   int16_t
 
@@ -52,7 +54,7 @@
 // C<M>=x, when C is dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_05d__int16
+GrB_Info GB (_Cdense_05d__int16)
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -74,7 +76,7 @@ GrB_Info GB_Cdense_05d__int16
 // C<A>=A, when C is dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_06d__int16
+GrB_Info GB (_Cdense_06d__int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -95,7 +97,7 @@ GrB_Info GB_Cdense_06d__int16
 // C<M>=A, when C is empty and A is dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_25__int16
+GrB_Info GB (_Cdense_25__int16)
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -116,7 +118,7 @@ GrB_Info GB_Cdense_25__int16
 // convert sparse to bitmap
 //------------------------------------------------------------------------------
 
-GrB_Info GB_convert_s2b__int16
+GrB_Info GB (_convert_s2b__int16)
 (
     GrB_Matrix A,
     GB_void *GB_RESTRICT Ax_new_void,

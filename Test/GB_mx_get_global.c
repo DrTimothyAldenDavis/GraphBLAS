@@ -71,7 +71,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
     GB_Global_malloc_tracking_set (true) ;
     GxB_Global_Option_set_(GxB_FORMAT, GxB_BY_COL) ;
     GxB_Global_Option_set_(GxB_BURBLE, burble) ;        // restore the burble
-    GB_printf_function = mexPrintf ;
+    GxB_Global_Option_set_(GxB_PRINTF, mexPrintf) ;
 
     //--------------------------------------------------------------------------
     // get nthreads

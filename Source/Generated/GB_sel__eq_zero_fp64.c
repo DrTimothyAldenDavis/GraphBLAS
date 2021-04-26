@@ -15,8 +15,11 @@
 
 // The selection is defined by the following types and operators:
 
-// phase1: GB_sel_phase1__eq_zero_fp64
-// phase2: GB_sel_phase2__eq_zero_fp64
+// functions:
+// phase1: GB (_sel_phase1__eq_zero_fp64)
+// phase2: GB (_sel_phase2__eq_zero_fp64)
+// bitmap: GB (_sel_bitmap__eq_zero_fp64)
+
 // A type: double
 
 // kind
@@ -38,12 +41,12 @@
     /* assignment skipped, Cx already all zero */
 
 //------------------------------------------------------------------------------
-// GB_sel_phase1__eq_zero_fp64
+// GB_sel_phase1
 //------------------------------------------------------------------------------
 
 
 
-void GB_sel_phase1__eq_zero_fp64
+void GB (_sel_phase1__eq_zero_fp64)
 (
     int64_t *GB_RESTRICT Zp,
     int64_t *GB_RESTRICT Cp,
@@ -64,10 +67,10 @@ void GB_sel_phase1__eq_zero_fp64
 
 
 //------------------------------------------------------------------------------
-// GB_sel_phase2__eq_zero_fp64
+// GB_sel_phase2
 //------------------------------------------------------------------------------
 
-void GB_sel_phase2__eq_zero_fp64
+void GB (_sel_phase2__eq_zero_fp64)
 (
     int64_t *GB_RESTRICT Ci,
     double *GB_RESTRICT Cx,
@@ -87,12 +90,12 @@ void GB_sel_phase2__eq_zero_fp64
 }
 
 //------------------------------------------------------------------------------
-// GB_sel_bitmap__eq_zero_fp64
+// GB_sel_bitmap
 //------------------------------------------------------------------------------
 
 
 
-void GB_sel_bitmap__eq_zero_fp64
+void GB (_sel_bitmap__eq_zero_fp64)
 (
     int8_t *Cb,
     double *GB_RESTRICT Cx,

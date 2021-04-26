@@ -16,12 +16,12 @@
 // elegant mathematics of sparse matrix operations on a semiring.
 
 // This GraphBLAS.h file contains GraphBLAS definitions for user applications
-// to #include.  Functions and variables with the prefix GB_ need to be defined
-// in this file and are thus technically visible to the user, but they must not
-// be accessed in user code.  They are here only so that the ANSI C11 _Generic
-// feature can be used in the user-accessible polymorphic functions.  For
-// example GrB_free is a macro that uses _Generic to select the right method,
-// depending on the type of its argument.
+// to #include.  A few functions and variables with the prefix GB_ need to be
+// defined in this file and are thus technically visible to the user, but they
+// must not be accessed in user code.  They are here only so that the ANSI C11
+// _Generic feature can be used in the user-accessible polymorphic functions.
+// For example GrB_free is a macro that uses _Generic to select the right
+// method, depending on the type of its argument.
 
 // This implementation conforms to the GraphBLAS API Specification and also
 // includes functions and features that are extensions to the spec, which are
@@ -30,12 +30,12 @@
 // with the name GxB_* are user-accessible in SuiteSparse:GraphBLAS but cannot
 // be guaranteed to appear in all GraphBLAS implementations.
 
-// Regarding "historical" functions and symbols:  when a GxB* function or
-// symbol is added to the C API Specification, the new GrB* name should be used
-// instead.  The old GxB* name will be kept for historical reasons, documented
-// here and in working order; it might no longer be mentioned in the user
-// guide.  Historical functions and symbols would only be removed in the rare
-// case that they cause a serious conflict with future methods.
+// Regarding "historical" functions and symbols:  when a GxB_* function or
+// symbol is added to the C API Specification, the new GrB_* name should be
+// used instead.  The old GxB_* name will be kept for historical reasons,
+// documented here and in working order; it might no longer be mentioned in the
+// user guide.  Historical functions and symbols would only be removed in the
+// rare case that they cause a serious conflict with future methods.
 
 #ifndef GRAPHBLAS_H
 #define GRAPHBLAS_H
@@ -55,6 +55,30 @@
 #include <limits.h>
 #include <math.h>
 #include <stdarg.h>
+
+//==============================================================================
+// renaming for use in MATLAB
+//==============================================================================
+
+#define GB_CAT2(x,y) x ## y
+#define GB_EVAL2(x,y) GB_CAT2 (x,y)
+
+#ifdef GBRENAME
+    // All symbols must be renamed for the MATLAB interface when using MATLAB
+    // R2021a and following, since those versions of MATLAB include an earlier
+    // version of SuiteSparse:GraphBLAS.
+    #define GB(x)   GB_EVAL2 (GM_, x)
+    #define GRB(x)  GB_EVAL2 (GrM_, x)
+    #define GXB(x)  GB_EVAL2 (GxM_, x)
+    #define GrB GrM
+    #define GxB GxM
+    #include "GB_rename.h"
+#else
+    // Use the standard GraphBLAS prefix.
+    #define GB(x)   GB_EVAL2 (GB_, x)
+    #define GRB(x)  GB_EVAL2 (GrB_, x)
+    #define GXB(x)  GB_EVAL2 (GxB_, x)
+#endif
 
 //==============================================================================
 // compiler variations
@@ -180,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Apr 21, 2021"
+#define GxB_IMPLEMENTATION_DATE "Apr 26, 2021 (BETA1)"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -612,39 +636,42 @@ GB_PUBLIC GrB_Type
     GxB_FC64   ;        // in C: double complex     in MATLAB: double complex
 
 //------------------------------------------------------------------------------
-// GB_ helper macro for polymorphic functions: do not use outside this file
+// helper macros for polymorphic functions
 //------------------------------------------------------------------------------
 
+#define GB_CAT(w,x,y,z) w ## x ## y ## z
+#define GB_CONCAT(w,x,y,z) GB_CAT (w, x, y, z)
+
 #if GxB_STDC_VERSION >= 201112L
-#define GB_(p,prefix,func)                                      \
-        const bool       p : prefix ## _ ## func ## _BOOL   ,   \
-              bool       p : prefix ## _ ## func ## _BOOL   ,   \
-        const int8_t     p : prefix ## _ ## func ## _INT8   ,   \
-              int8_t     p : prefix ## _ ## func ## _INT8   ,   \
-        const int16_t    p : prefix ## _ ## func ## _INT16  ,   \
-              int16_t    p : prefix ## _ ## func ## _INT16  ,   \
-        const int32_t    p : prefix ## _ ## func ## _INT32  ,   \
-              int32_t    p : prefix ## _ ## func ## _INT32  ,   \
-        const int64_t    p : prefix ## _ ## func ## _INT64  ,   \
-              int64_t    p : prefix ## _ ## func ## _INT64  ,   \
-        const uint8_t    p : prefix ## _ ## func ## _UINT8  ,   \
-              uint8_t    p : prefix ## _ ## func ## _UINT8  ,   \
-        const uint16_t   p : prefix ## _ ## func ## _UINT16 ,   \
-              uint16_t   p : prefix ## _ ## func ## _UINT16 ,   \
-        const uint32_t   p : prefix ## _ ## func ## _UINT32 ,   \
-              uint32_t   p : prefix ## _ ## func ## _UINT32 ,   \
-        const uint64_t   p : prefix ## _ ## func ## _UINT64 ,   \
-              uint64_t   p : prefix ## _ ## func ## _UINT64 ,   \
-        const float      p : prefix ## _ ## func ## _FP32   ,   \
-              float      p : prefix ## _ ## func ## _FP32   ,   \
-        const double     p : prefix ## _ ## func ## _FP64   ,   \
-              double     p : prefix ## _ ## func ## _FP64   ,   \
-        const GxB_FC32_t p : GxB    ## _ ## func ## _FC32   ,   \
-              GxB_FC32_t p : GxB    ## _ ## func ## _FC32   ,   \
-        const GxB_FC64_t p : GxB    ## _ ## func ## _FC64   ,   \
-              GxB_FC64_t p : GxB    ## _ ## func ## _FC64   ,   \
-        const void       * : prefix ## _ ## func ## _UDT    ,   \
-              void       * : prefix ## _ ## func ## _UDT
+#define GB_CASES(p,prefix,func)                                         \
+        const bool       p : GB_CONCAT ( prefix, _, func, _BOOL   ),    \
+              bool       p : GB_CONCAT ( prefix, _, func, _BOOL   ),    \
+        const int8_t     p : GB_CONCAT ( prefix, _, func, _INT8   ),    \
+              int8_t     p : GB_CONCAT ( prefix, _, func, _INT8   ),    \
+        const int16_t    p : GB_CONCAT ( prefix, _, func, _INT16  ),    \
+              int16_t    p : GB_CONCAT ( prefix, _, func, _INT16  ),    \
+        const int32_t    p : GB_CONCAT ( prefix, _, func, _INT32  ),    \
+              int32_t    p : GB_CONCAT ( prefix, _, func, _INT32  ),    \
+        const int64_t    p : GB_CONCAT ( prefix, _, func, _INT64  ),    \
+              int64_t    p : GB_CONCAT ( prefix, _, func, _INT64  ),    \
+        const uint8_t    p : GB_CONCAT ( prefix, _, func, _UINT8  ),    \
+              uint8_t    p : GB_CONCAT ( prefix, _, func, _UINT8  ),    \
+        const uint16_t   p : GB_CONCAT ( prefix, _, func, _UINT16 ),    \
+              uint16_t   p : GB_CONCAT ( prefix, _, func, _UINT16 ),    \
+        const uint32_t   p : GB_CONCAT ( prefix, _, func, _UINT32 ),    \
+              uint32_t   p : GB_CONCAT ( prefix, _, func, _UINT32 ),    \
+        const uint64_t   p : GB_CONCAT ( prefix, _, func, _UINT64 ),    \
+              uint64_t   p : GB_CONCAT ( prefix, _, func, _UINT64 ),    \
+        const float      p : GB_CONCAT ( prefix, _, func, _FP32   ),    \
+              float      p : GB_CONCAT ( prefix, _, func, _FP32   ),    \
+        const double     p : GB_CONCAT ( prefix, _, func, _FP64   ),    \
+              double     p : GB_CONCAT ( prefix, _, func, _FP64   ),    \
+        const GxB_FC32_t p : GB_CONCAT ( GxB   , _, func, _FC32   ),    \
+              GxB_FC32_t p : GB_CONCAT ( GxB   , _, func, _FC32   ),    \
+        const GxB_FC64_t p : GB_CONCAT ( GxB   , _, func, _FC64   ),    \
+              GxB_FC64_t p : GB_CONCAT ( GxB   , _, func, _FC64   ),    \
+        const void       * : GB_CONCAT ( prefix, _, func, _UDT    ),    \
+              void       * : GB_CONCAT ( prefix, _, func, _UDT    )
 #endif
 
 //------------------------------------------------------------------------------
@@ -656,15 +683,11 @@ GB_PUBLIC GrB_Type
 // of the type to be saved as a string, for subsequent error reporting by
 // GrB_error.
 
-// If SuiteSparse:GraphBLAS is compiled with -DNMACRO then the macro versions
-// of GrB_Type_new, GrB_UnaryOp_new, GrB_BinaryOp_new, and GxB_SelectOp_new
-// are not made available.  The function versions are always used instead.
-// #define NMACRO
-
 #undef GrB_Type_new
+#undef GrM_Type_new
 
 GB_PUBLIC
-GrB_Info GrB_Type_new           // create a new GraphBLAS type
+GrB_Info GRB (Type_new)         // create a new GraphBLAS type
 (
     GrB_Type *type,             // handle of user type to create
     size_t sizeof_ctype         // size = sizeof (ctype) of the C type
@@ -677,10 +700,10 @@ GrB_Info GrB_Type_new           // create a new GraphBLAS type
 
 // GrB_Type_new as a user-callable macro, which allows the name of the ctype
 // to be added to the new type.
-#ifndef NMACRO
 #define GrB_Type_new(utype, sizeof_ctype) \
     GB_Type_new (utype, sizeof_ctype, GB_STR(sizeof_ctype))
-#endif
+#define GrM_Type_new(utype, sizeof_ctype) \
+    GM_Type_new (utype, sizeof_ctype, GB_STR(sizeof_ctype))
 
 GB_PUBLIC
 GrB_Info GB_Type_new            // not user-callable; use GrB_Type_new instead
@@ -896,9 +919,10 @@ GB_PUBLIC GrB_UnaryOp
 typedef void (*GxB_unary_function)  (void *, const void *) ;
 
 #undef GrB_UnaryOp_new
+#undef GrM_UnaryOp_new
 
 GB_PUBLIC
-GrB_Info GrB_UnaryOp_new            // create a new user-defined unary operator
+GrB_Info GRB (UnaryOp_new)           // create a new user-defined unary operator
 (
     GrB_UnaryOp *unaryop,           // handle for the new unary operator
     GxB_unary_function function,    // pointer to the unary function
@@ -906,9 +930,8 @@ GrB_Info GrB_UnaryOp_new            // create a new user-defined unary operator
     GrB_Type xtype                  // type of input x
 ) ;
 
-#ifndef NMACRO
 #define GrB_UnaryOp_new(op,f,z,x) GB_UnaryOp_new (op,f,z,x, GB_STR(f))
-#endif
+#define GrM_UnaryOp_new(op,f,z,x) GM_UnaryOp_new (op,f,z,x, GB_STR(f))
 
 GB_PUBLIC
 GrB_Info GB_UnaryOp_new             // not user-callable; use GrB_UnaryOp_new
@@ -1333,9 +1356,10 @@ GB_PUBLIC GrB_UnaryOp
 typedef void (*GxB_binary_function) (void *, const void *, const void *) ;
 
 #undef GrB_BinaryOp_new
+#undef GrM_BinaryOp_new
 
 GB_PUBLIC
-GrB_Info GrB_BinaryOp_new
+GrB_Info GRB (BinaryOp_new)
 (
     GrB_BinaryOp *binaryop,         // handle for the new binary operator
     GxB_binary_function function,   // pointer to the binary function
@@ -1344,9 +1368,8 @@ GrB_Info GrB_BinaryOp_new
     GrB_Type ytype                  // type of input y
 ) ;
 
-#ifndef NMACRO
 #define GrB_BinaryOp_new(op,f,z,x,y) GB_BinaryOp_new (op,f,z,x,y, GB_STR(f))
-#endif
+#define GrM_BinaryOp_new(op,f,z,x,y) GM_BinaryOp_new (op,f,z,x,y, GB_STR(f))
 
 GB_PUBLIC
 GrB_Info GB_BinaryOp_new            // not user-callable; use GrB_BinaryOp_new
@@ -1482,9 +1505,10 @@ typedef bool (*GxB_select_function)      // return true if A(i,j) is kept
 ) ;
 
 #undef GxB_SelectOp_new
+#undef GxM_SelectOp_new
 
 GB_PUBLIC
-GrB_Info GxB_SelectOp_new       // create a new user-defined select operator
+GrB_Info GXB (SelectOp_new)     // create a new user-defined select operator
 (
     GxB_SelectOp *selectop,     // handle for the new select operator
     GxB_select_function function,// pointer to the select function
@@ -1492,9 +1516,8 @@ GrB_Info GxB_SelectOp_new       // create a new user-defined select operator
     GrB_Type ttype              // type of thunk, or NULL if not used
 ) ;
 
-#ifndef NMACRO
 #define GxB_SelectOp_new(op,f,x,t) GB_SelectOp_new (op,f,x,t, GB_STR(f))
-#endif
+#define GxM_SelectOp_new(op,f,x,t) GM_SelectOp_new (op,f,x,t, GB_STR(f))
 
 GB_PUBLIC
 GrB_Info GB_SelectOp_new        // not user-callable; use GxB_SelectOp_new
@@ -1664,7 +1687,7 @@ GrB_Info GrB_Monoid_new             // create a monoid
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Monoid_new(monoid,op,identity) \
-    _Generic ((identity), GB_(, GrB, Monoid_new)) (monoid, op, identity) ;
+    _Generic ((identity), GB_CASES (, GrB, Monoid_new)) (monoid, op, identity) ;
 #endif
 
 // GxB_Monoid_terminal_new is identical to GrB_Monoid_new, except that a
@@ -1814,8 +1837,8 @@ GrB_Info GxB_Monoid_terminal_new             // create a monoid
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_Monoid_terminal_new(monoid,op,identity,terminal)    \
-    _Generic ((identity), GB_(, GxB, Monoid_terminal_new))      \
+#define GxB_Monoid_terminal_new(monoid,op,identity,terminal)        \
+    _Generic ((identity), GB_CASES (, GxB, Monoid_terminal_new))     \
     (monoid, op, identity, terminal) ;
 #endif
 
@@ -2052,7 +2075,7 @@ GrB_Info GxB_Scalar_setElement          // s = x
 
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_Scalar_setElement(s,x)  \
-    _Generic ((x), GB_(, GxB, Scalar_setElement)) (s, x)
+    _Generic ((x), GB_CASES (, GxB, Scalar_setElement)) (s, x)
 #endif
 
 //------------------------------------------------------------------------------
@@ -2176,7 +2199,7 @@ GrB_Info GxB_Scalar_extractElement  // x = s
 
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_Scalar_extractElement(x,s)  \
-    _Generic ((x), GB_(*, GxB, Scalar_extractElement)) (x, s)
+    _Generic ((x), GB_CASES (*, GxB, Scalar_extractElement)) (x, s)
 #endif
 
 //==============================================================================
@@ -2401,8 +2424,8 @@ GrB_Info GrB_Vector_build           // build a vector from (I,X) tuples
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_build(w,I,X,nvals,dup)           \
-    _Generic ((X), GB_(*, GrB, Vector_build))       \
+#define GrB_Vector_build(w,I,X,nvals,dup)               \
+    _Generic ((X), GB_CASES (*, GrB, Vector_build))     \
     (w, I, ((const void *) (X)), nvals, dup)
 #endif
 
@@ -2542,7 +2565,7 @@ GrB_Info GrB_Vector_setElement          // w(i) = x
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_setElement(w,x,i)    \
-    _Generic ((x), GB_(, GrB, Vector_setElement)) (w, x, i)
+    _Generic ((x), GB_CASES (, GrB, Vector_setElement)) (w, x, i)
 #endif
 
 //------------------------------------------------------------------------------
@@ -2681,7 +2704,7 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_extractElement(x,v,i)    \
-    _Generic ((x), GB_(*, GrB, Vector_extractElement)) (x, v, i)
+    _Generic ((x), GB_CASES (*, GrB, Vector_extractElement)) (x, v, i)
 #endif
 
 //------------------------------------------------------------------------------
@@ -2850,7 +2873,7 @@ GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_extractTuples(I,X,nvals,v)   \
-    _Generic ((X), GB_(*, GrB, Vector_extractTuples)) (I, X, nvals, v)
+    _Generic ((X), GB_CASES (*, GrB, Vector_extractTuples)) (I, X, nvals, v)
 #endif
 
 //==============================================================================
@@ -3098,8 +3121,8 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_build(C,I,J,X,nvals,dup)         \
-    _Generic ((X), GB_(*, GrB, Matrix_build))       \
+#define GrB_Matrix_build(C,I,J,X,nvals,dup)             \
+    _Generic ((X), GB_CASES (*, GrB, Matrix_build))     \
     (C, I, J, ((const void *) (X)), nvals, dup)
 #endif
 
@@ -3254,7 +3277,7 @@ GrB_Info GrB_Matrix_setElement          // C (i,j) = x
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_setElement(C,x,i,j)                      \
-    _Generic ((x), GB_(, GrB, Matrix_setElement)) (C, x, i, j)
+    _Generic ((x), GB_CASES (, GrB, Matrix_setElement)) (C, x, i, j)
 #endif
 
 //------------------------------------------------------------------------------
@@ -3408,7 +3431,7 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_extractElement(x,A,i,j)  \
-    _Generic ((x), GB_(*, GrB, Matrix_extractElement)) (x, A, i, j)
+    _Generic ((x), GB_CASES (*, GrB, Matrix_extractElement)) (x, A, i, j)
 #endif
 
 //------------------------------------------------------------------------------
@@ -3593,7 +3616,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_extractTuples(I,J,X,nvals,A) \
-    _Generic ((X), GB_(*, GrB, Matrix_extractTuples)) (I, J, X, nvals, A)
+    _Generic ((X), GB_CASES (*, GrB, Matrix_extractTuples)) (I, J, X, nvals, A)
 #endif
 
 //------------------------------------------------------------------------------
@@ -3772,6 +3795,9 @@ typedef enum            // for global options or matrix options
                         // If <= GxB_DEFAULT, then the default is used.
 
     GxB_BURBLE = 99,    // diagnostic output (bool *)
+    GxB_PRINTF = 101,   // printf function diagnostic output
+    GxB_FLUSH = 102,    // flush function diagnostic output
+    GxB_MEMORY_POOL = 103,  // memory pool control
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get only:
@@ -3986,6 +4012,17 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //
 //      GxB_set (GxB_BURBLE, bool burble) ;
 //      GxB_get (GxB_BURBLE, bool *burble) ;
+//
+//      GxB_set (GxB_PRINTF, void *printf_function) ;
+//      GxB_get (GxB_PRINTF, void **printf_function) ;
+//
+//      GxB_set (GxB_FLUSH, void *flush_function) ;
+//      GxB_get (GxB_FLUSH, void **flush_function) ;
+//
+//      int64_t free_pool_limit [64] ;
+//      GxB_set (GxB_MEMORY_POOL, free_pool_limit) ;
+//      GxB_set (GxB_MEMORY_POOL, NULL) ;     // set defaults
+//      GxB_get (GxB_MEMORY_POOL, free_pool_limit) ;
 
 // To get global options that can be queried but not modified:
 //
@@ -5096,14 +5133,14 @@ GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
             _Generic                                               \
             (                                                      \
                 (arg4),                                            \
-                GB_(, GxB, Vector_subassign) ,                     \
+                GB_CASES (, GxB, Vector_subassign) ,               \
                 default : GxB_Vector_subassign                     \
             ),                                                     \
         default :                                                  \
             _Generic                                               \
             (                                                      \
                 (arg4),                                            \
-                GB_(, GxB, Matrix_subassign) ,                     \
+                GB_CASES (, GxB, Matrix_subassign) ,               \
                 const GrB_Vector :                                 \
                     _Generic                                       \
                     (                                              \
@@ -5588,14 +5625,14 @@ GrB_Info GrB_Matrix_assign_UDT      // C<Mask>(I,J) = accum (C(I,J),x)
             _Generic                                            \
             (                                                   \
                 (arg4),                                         \
-                GB_(, GrB, Vector_assign) ,                     \
+                GB_CASES (, GrB, Vector_assign) ,               \
                 default : GrB_Vector_assign                     \
             ),                                                  \
         default :                                               \
             _Generic                                            \
             (                                                   \
                 (arg4),                                         \
-                GB_(, GrB, Matrix_assign) ,                     \
+                GB_CASES (, GrB, Matrix_assign) ,               \
                 const GrB_Vector :                              \
                     _Generic                                    \
                     (                                           \
@@ -6423,14 +6460,14 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UDT       // C<M>=accum(C,op(x,A))
     _Generic                                                                \
     (                                                                       \
         (x),                                                                \
-        GxB_Scalar: GxB_ ## kind ## _apply_BinaryOp1st  ,                   \
-              GB_(, GrB,    kind ## _apply_BinaryOp1st) ,                   \
+        GxB_Scalar: GB_CONCAT ( GxB, _, kind, _apply_BinaryOp1st )  ,       \
+        GB_CASES (, GrB, GB_CONCAT ( kind, _apply_BinaryOp1st,, )) ,        \
         default :                                                           \
             _Generic                                                        \
             (                                                               \
                 (y),                                                        \
-                default : GxB_ ## kind ## _apply_BinaryOp2nd  ,             \
-                    GB_(, GrB,    kind ## _apply_BinaryOp2nd)               \
+                default : GB_CONCAT ( GxB, _, kind, _apply_BinaryOp2nd )  , \
+                GB_CASES (, GrB, GB_CONCAT ( kind , _apply_BinaryOp2nd,, )) \
             )                                                               \
     )
 
@@ -6858,8 +6895,8 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
     _Generic                                                        \
     (                                                               \
         (c),                                                        \
-          GB_(*, GrB,    kind ## _reduce),                          \
-        default: GrB_ ## kind ## _reduce_UDT                        \
+        GB_CASES (*, GrB, GB_CONCAT ( kind, _reduce,, )),           \
+        default: GB_CONCAT ( GrB, _, kind, _reduce_UDT )            \
     )
 
 #define GrB_reduce(arg1,arg2,arg3,arg4,...)                         \
@@ -7109,7 +7146,7 @@ GB_PUBLIC GrB_Monoid
     // 4 Boolean monoids: (see also the GxB_ANY_BOOL_MONOID above)
     //--------------------------------------------------------------------------
 
-    // GxB boolean monoids, historical, use GrB instead:
+    // GxB_* boolean monoids, historical, use GrB_* instead:
     GxB_LOR_BOOL_MONOID,        // identity: false        terminal: true
     GxB_LAND_BOOL_MONOID,       // identity: true         terminal: false
     GxB_LXOR_BOOL_MONOID,       // identity: false
@@ -7715,12 +7752,12 @@ GB_PUBLIC GrB_Semiring
 //------------------------------------------------------------------------------
 
 // The v1.3 C API for GraphBLAS adds the following 124 predefined semirings,
-// with GrB* names.  They are identical to 124 GxB* semirings defined above,
+// with GrB_* names.  They are identical to 124 GxB_* semirings defined above,
 // with the same name, except that GrB_LXNOR_LOR_SEMIRING_BOOL is identical to
 // GxB_EQ_LOR_BOOL (since GrB_EQ_BOOL == GrB_LXNOR).  The old names are listed
-// below alongside each new name; the new GrB* names are preferred.
+// below alongside each new name; the new GrB_* names are preferred.
 
-// 12 kinds of GrB* semirings are available for all 10 real, non-boolean types:
+// 12 kinds of GrB_* semirings are available for all 10 real non-boolean types:
 
     // PLUS_TIMES, PLUS_MIN,
     // MIN_PLUS, MIN_TIMES, MIN_FIRST, MIN_SECOND, MIN_MAX,
@@ -7730,7 +7767,8 @@ GB_PUBLIC GrB_Semiring
 
     // LOR_LAND, LAND_LOR, LXOR_LAND, LXNOR_LOR.
 
-// GxB* semirings corresponding to the equivalent GrB* semiring are historical.
+// GxB_* semirings corresponding to the equivalent GrB_* semiring are
+// historical.
 
 GB_PUBLIC GrB_Semiring
 
@@ -7921,7 +7959,7 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
     GrB_Index nrows_new         // new number of rows in vector
 ) ;
 
-// GxB_*_resize are identical to the GrB*resize methods above
+// GxB_*_resize are identical to the GrB_*resize methods above
 GB_PUBLIC
 GrB_Info GxB_Matrix_resize      // change the size of a matrix (historical)
 (

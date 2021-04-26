@@ -56,7 +56,7 @@ void GB_cast_array              // typecast an array
         //----------------------------------------------------------------------
 
         #define GB_unop_apply(zname,xname)                          \
-            GB_unop_apply__identity ## zname ## xname
+            GB (_unop_apply__identity ## zname ## xname)
 
         #define GB_WORKER(ignore1,zname,ztype,xname,xtype)          \
         {                                                           \

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-GrB_Info GB_Adot2B
+GrB_Info GB (_Adot2B)
 (
     GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
@@ -8,7 +8,7 @@ GrB_Info GB_Adot2B
     int nthreads, int naslice, int nbslice
 ) ;
 
-GrB_Info GB_Adot3B
+GrB_Info GB (_Adot3B)
 (
     GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_struct,
@@ -19,7 +19,7 @@ GrB_Info GB_Adot3B
     const int nthreads
 ) ;
 
-GrB_Info GB_AsaxpyB
+GrB_Info GB (_AsaxpyB)
 (
     GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
@@ -35,7 +35,7 @@ GrB_Info GB_AsaxpyB
     GB_Context Context
 ) ;
 
-GrB_Info GB_Adot4B
+GrB_Info GB (_Adot4B)
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,

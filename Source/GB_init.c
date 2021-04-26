@@ -36,7 +36,7 @@
 // calloc is NULL, it is not used, and malloc/memset are used instead.  If
 // realloc is NULL, it is not used, and malloc/memcpy/free are used instead.
 
-/*  C-API options
+/*  TODO: C-API options
 
     GrB_init (mode) ;
     GxB_init (mode, malloc, calloc, realloc, free, true) ;
@@ -75,9 +75,9 @@ GrB_Info GB_init            // start up GraphBLAS
     // TODO: delete this:
     bool caller_is_GxB_cuda_init,       // true for GxB_cuda_init only
 
-    // RMM stuff, 3 pools, yada yada
+    // TODO: RMM stuff, 3 pools, yada yada
 
-    // CUDA + RMM stuff
+    // TODO: CUDA + RMM stuff
 
     GB_Context Context      // from GrB_init or GxB_init
 )
@@ -105,7 +105,7 @@ GrB_Info GB_init            // start up GraphBLAS
     // establish malloc/calloc/realloc/free
     //--------------------------------------------------------------------------
 
-// do the RMM init here
+    // TODO: do the RMM init here
 
     // GrB_init passes in the ANSI C11 malloc/calloc/realloc/free
     // GxB_cuda_init passes in NULL pointers; they are now defined below.
@@ -137,7 +137,7 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
     GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
     GB_Global_memtable_clear ( ) ;
-    GB_Global_free_pool_init ( ) ;
+    GB_Global_free_pool_init (true) ;
 
     //--------------------------------------------------------------------------
     // max number of threads
@@ -184,6 +184,8 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     GB_Global_burble_set (false) ;
+    GB_Global_printf_set (NULL) ;
+    GB_Global_flush_set (NULL) ;
 
     //--------------------------------------------------------------------------
     // development use only

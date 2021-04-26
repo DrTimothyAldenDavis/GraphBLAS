@@ -101,6 +101,8 @@ typedef struct
     //--------------------------------------------------------------------------
 
     bool burble ;                   // controls GBURBLE output
+    GB_printf_function_t printf_func ;  // pointer to printf
+    GB_flush_function_t flush_func ;   // pointer to flush
 
     //--------------------------------------------------------------------------
     // for MATLAB interface only
@@ -158,10 +160,6 @@ typedef struct
 
 }
 GB_Global_struct ;
-
-//------------------------------------------------------------------------------
-// declare and initialize all global variables
-//------------------------------------------------------------------------------
 
 GB_PUBLIC GB_Global_struct GB_Global ;
 
@@ -223,6 +221,8 @@ GB_Global_struct GB_Global =
 
     // diagnostics
     .burble = false,
+    .printf_func = NULL,
+    .flush_func = NULL,
 
     // for MATLAB interface only
     .print_one_based = false,   // if true, print 1-based indices
@@ -338,7 +338,7 @@ GB_Global_struct GB_Global =
     // RMM settings
     rmm_in_use = false,
 
-    // other RMM stuff here ...
+    // TODO: other RMM stuff here ...
 
 } ;
 
@@ -940,6 +940,30 @@ bool GB_Global_burble_get (void)
     return (GB_Global.burble) ;
 }
 
+GB_PUBLIC
+GB_printf_function_t GB_Global_printf_get ( )
+{
+    return (GB_Global.printf_func) ;
+}
+
+GB_PUBLIC
+GB_flush_function_t GB_Global_flush_get ( )
+{
+    return (GB_Global.flush_func) ;
+}
+
+GB_PUBLIC
+void GB_Global_printf_set (GB_printf_function_t pr_func)
+{
+    GB_Global.printf_func = pr_func ;
+}
+
+GB_PUBLIC
+void GB_Global_flush_set (GB_flush_function_t fl_func)
+{
+    GB_Global.flush_func = fl_func ;
+}
+
 //------------------------------------------------------------------------------
 // for MATLAB interface only
 //------------------------------------------------------------------------------
@@ -1132,14 +1156,23 @@ double GB_Global_timing_get (int k)
 
 // free_pool_init: initialize the free_pool
 GB_PUBLIC
-void GB_Global_free_pool_init (void)
+void GB_Global_free_pool_init (bool clear)
 { 
     #pragma omp critical(GB_free_pool)
     {
+        if (clear)
+        {
+            // clear the free pool
+            for (int k = 0 ; k < 64 ; k++)
+            {
+                GB_Global.free_pool [k] = NULL ;
+                GB_Global.free_pool_nblocks [k] = 0 ;
+            }
+        }
+        // set the default free_pool_limit
         for (int k = 0 ; k < 64 ; k++)
         {
-            GB_Global.free_pool [k] = NULL ;
-            GB_Global.free_pool_nblocks [k] = 0 ;
+            GB_Global.free_pool_limit [k] = 0 ;
         }
         int64_t n = 16384 ;
         for (int k = 3 ; k <= 8 ; k++)

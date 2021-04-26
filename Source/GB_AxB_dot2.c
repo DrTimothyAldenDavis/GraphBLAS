@@ -305,7 +305,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_Adot2B(add,mult,xname) GB_Adot2B_ ## add ## mult ## xname
+        #define GB_Adot2B(add,mult,xname) GB (_Adot2B_ ## add ## mult ## xname)
 
         #define GB_AxB_WORKER(add,mult,xname)                                \
         {                                                                    \

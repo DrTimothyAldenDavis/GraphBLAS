@@ -21,21 +21,21 @@
 
 // C=binop(A,B) is defined by the following types and operators:
 
-// A+B function (eWiseAdd):         GB_AaddB__lor_bool
-// A.*B function (eWiseMult):       GB_AemultB
-// A.*B function (eWiseMult):       GB_AemultB_02__lor_bool
-// A.*B function (eWiseMult):       GB_AemultB_03__lor_bool
-// A.*B function (eWiseMult):       GB_AemultB_bitmap__lor_bool
-// A*D function (colscale):         GB_AxD__lor_bool
-// D*A function (rowscale):         GB_DxB__lor_bool
-// C+=B function (dense accum):     GB_Cdense_accumB__lor_bool
-// C+=b function (dense accum):     GB_Cdense_accumb__lor_bool
-// C+=A+B function (dense ewise3):  (none)
-// C=A+B function (dense ewise3):   GB_Cdense_ewise3_noaccum__lor_bool
-// C=scalar+B                       GB_bind1st__lor_bool
-// C=scalar+B'                      GB_bind1st_tran__lor_bool
-// C=A+scalar                       GB_bind2nd__lor_bool
-// C=A'+scalar                      GB_bind2nd_tran__lor_bool
+// A+B function (eWiseAdd):         GB (_AaddB__lor_bool)
+// A.*B function (eWiseMult):       GB (_AemultB)
+// A.*B function (eWiseMult):       GB (_AemultB_02__lor_bool)
+// A.*B function (eWiseMult):       GB (_AemultB_03__lor_bool)
+// A.*B function (eWiseMult):       GB (_AemultB_bitmap__lor_bool)
+// A*D function (colscale):         GB (_AxD__lor_bool)
+// D*A function (rowscale):         GB (_DxB__lor_bool)
+// C+=B function (dense accum):     GB (_Cdense_accumB__lor_bool)
+// C+=b function (dense accum):     GB (_Cdense_accumb__lor_bool)
+// C+=A+B function (dense ewise3):  GB ((none))
+// C=A+B function (dense ewise3):   GB (_Cdense_ewise3_noaccum__lor_bool)
+// C=scalar+B                       GB (_bind1st__lor_bool)
+// C=scalar+B'                      GB (_bind1st_tran__lor_bool)
+// C=A+scalar                       GB (_bind2nd__lor_bool)
+// C=A'+scalar                      GB (_bind2nd_tran__lor_bool)
 
 // C type:   bool
 // A type:   bool
@@ -115,7 +115,7 @@
 
 // The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
 
-void (none)
+void GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -132,7 +132,7 @@ void (none)
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_ewise3_noaccum__lor_bool
+GrB_Info GB (_Cdense_ewise3_noaccum__lor_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -152,7 +152,7 @@ GrB_Info GB_Cdense_ewise3_noaccum__lor_bool
 // C += B, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumB__lor_bool
+GrB_Info GB (_Cdense_accumB__lor_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix B,
@@ -175,7 +175,7 @@ GrB_Info GB_Cdense_accumB__lor_bool
 // C += b, accumulate a scalar into a dense matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_Cdense_accumb__lor_bool
+GrB_Info GB (_Cdense_accumb__lor_bool)
 (
     GrB_Matrix C,
     const GB_void *p_bwork,
@@ -203,7 +203,7 @@ GrB_Info GB_Cdense_accumb__lor_bool
 
 
 
-GrB_Info GB_AxD__lor_bool
+GrB_Info GB (_AxD__lor_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
@@ -228,7 +228,7 @@ GrB_Info GB_AxD__lor_bool
 
 
 
-GrB_Info GB_DxB__lor_bool
+GrB_Info GB (_DxB__lor_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
@@ -251,7 +251,7 @@ GrB_Info GB_DxB__lor_bool
 // eWiseAdd: C = A+B or C<M> = A+B
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AaddB__lor_bool
+GrB_Info GB (_AaddB__lor_bool)
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -286,7 +286,7 @@ GrB_Info GB_AaddB__lor_bool
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_01__lor_bool
+GrB_Info GB (_AemultB_01__lor_bool)
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -317,7 +317,7 @@ GrB_Info GB_AemultB_01__lor_bool
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_02__lor_bool
+GrB_Info GB (_AemultB_02__lor_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -365,7 +365,7 @@ GrB_Info GB_AemultB_02__lor_bool
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_03__lor_bool
+GrB_Info GB (_AemultB_03__lor_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -388,7 +388,7 @@ GrB_Info GB_AemultB_03__lor_bool
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AemultB_bitmap__lor_bool
+GrB_Info GB (_AemultB_bitmap__lor_bool)
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -416,7 +416,7 @@ GrB_Info GB_AemultB_bitmap__lor_bool
 
 
 
-GrB_Info GB_bind1st__lor_bool
+GrB_Info GB (_bind1st__lor_bool)
 (
     GB_void *Cx_output,         // Cx and Bx may be aliased
     const GB_void *x_input,
@@ -452,7 +452,7 @@ GrB_Info GB_bind1st__lor_bool
 
 
 
-GrB_Info GB_bind2nd__lor_bool
+GrB_Info GB (_bind2nd__lor_bool)
 (
     GB_void *Cx_output,         // Cx and Ax may be aliased
     const GB_void *Ax_input,
@@ -496,7 +496,7 @@ GrB_Info GB_bind2nd__lor_bool
     Cx [pC] = (x || aij) ;        \
 }
 
-GrB_Info GB_bind1st_tran__lor_bool
+GrB_Info GB (_bind1st_tran__lor_bool)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -540,7 +540,7 @@ GrB_Info GB_bind1st_tran__lor_bool
     Cx [pC] = (aij || y) ;        \
 }
 
-GrB_Info GB_bind2nd_tran__lor_bool
+GrB_Info GB (_bind2nd_tran__lor_bool)
 (
     GrB_Matrix C,
     const GrB_Matrix A,

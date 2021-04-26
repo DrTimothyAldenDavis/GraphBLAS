@@ -203,7 +203,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
             //------------------------------------------------------------------
 
             #define GB_unop_apply(op,zname,aname) \
-                GB_unop_apply_ ## op ## zname ## aname
+                GB (_unop_apply_ ## op ## zname ## aname)
 
             #define GB_WORKER(op,zname,ztype,aname,atype)               \
             {                                                           \
@@ -320,7 +320,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
                     // define the worker for the switch factory
                     //----------------------------------------------------------
 
-                    #define GB_bind1st(op,xname) GB_bind1st_ ## op ## xname
+                    #define GB_bind1st(op,xname) GB (_bind1st_ ## op ## xname)
 
                     #define GB_BINOP_WORKER(op,xname)                        \
                     {                                                        \
@@ -355,7 +355,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
                     // define the worker for the switch factory
                     //----------------------------------------------------------
 
-                    #define GB_bind2nd(op,xname) GB_bind2nd_ ## op ## xname
+                    #define GB_bind2nd(op,xname) GB (_bind2nd_ ## op ## xname)
                     #undef  GB_BINOP_WORKER
                     #define GB_BINOP_WORKER(op,xname)                        \
                     {                                                        \

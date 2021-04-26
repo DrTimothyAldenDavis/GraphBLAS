@@ -197,7 +197,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_DxB(mult,xname) GB_DxB_ ## mult ## xname
+        #define GB_DxB(mult,xname) GB (_DxB_ ## mult ## xname)
 
         #define GB_BINOP_WORKER(mult,xname)                                  \
         {                                                                    \
