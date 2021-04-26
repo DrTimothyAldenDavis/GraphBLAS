@@ -108,6 +108,31 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             break ;
 
         //----------------------------------------------------------------------
+        // memory pool control
+        //----------------------------------------------------------------------
+
+        case GxB_MEMORY_POOL : 
+
+            {
+                va_start (ap, field) ;
+                int64_t *free_pool_limit = va_arg (ap, int64_t *) ;
+                va_end (ap) ;
+                if (free_pool_limit == NULL)
+                { 
+                    // set all limits to their default
+                    GB_Global_free_pool_init (false) ;
+                }
+                else
+                { 
+                    for (int k = 3 ; k < 64 ; k++)
+                    {
+                        GB_Global_free_pool_limit_set (k, free_pool_limit [k]) ;
+                    }
+                }
+            }
+            break ;
+
+        //----------------------------------------------------------------------
         // diagnostics
         //----------------------------------------------------------------------
 

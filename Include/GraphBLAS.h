@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Apr 24, 2021 (BETA1)"
+#define GxB_IMPLEMENTATION_DATE "Apr 26, 2021 (BETA1)"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3797,6 +3797,7 @@ typedef enum            // for global options or matrix options
     GxB_BURBLE = 99,    // diagnostic output (bool *)
     GxB_PRINTF = 101,   // printf function diagnostic output
     GxB_FLUSH = 102,    // flush function diagnostic output
+    GxB_MEMORY_POOL = 103,  // memory pool control
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get only:
@@ -4017,6 +4018,11 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //
 //      GxB_set (GxB_FLUSH, void *flush_function) ;
 //      GxB_get (GxB_FLUSH, void **flush_function) ;
+//
+//      int64_t free_pool_limit [64] ;
+//      GxB_set (GxB_MEMORY_POOL, free_pool_limit) ;
+//      GxB_set (GxB_MEMORY_POOL, NULL) ;     // set defaults
+//      GxB_get (GxB_MEMORY_POOL, free_pool_limit) ;
 
 // To get global options that can be queried but not modified:
 //

@@ -131,9 +131,10 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 5.0.0, (April FIXME, 2021)
+\item Version 5.0.0 (April 24, 2021)
 
     \begin{packed_itemize}
+    \item memory pool added for faster allocation/free of small blocks
     \item \verb'@GrB' MATLAB interface ported to MATLAB R2021a.
     \item \verb'GxB_PRINTF' and \verb'GxB_FLUSH' global options added.
     \item \verb'GxB_Matrix_diag': construct a diagonal matrix from a vector
@@ -4796,7 +4797,7 @@ On input, the matrix \verb'C' must already exist.  Any existing entries in
 matrices $A_{i,0}$ for all $i$, and \verb'ncols' is the sum of the number of
 columns in the matrices $A_{0,j}$ for all $j$.  All matrices in any given tile
 row $i$ must have the same number of rows (that is, and all matrices in any
-given tile column $j$ must have the same number of columns.
+given tile column $j$ must have the same number of columns).
 
 The type of \verb'C' is unchanged, and all matrices $A_{i,j}$ are typecasted
 into the type of \verb'C'.  Any settings made to \verb'C' by
@@ -6960,6 +6961,7 @@ field                       & value         & description \\
 \verb'GxB_BURBLE'           & \verb'int'    & diagnostic output \\
 \verb'GxB_PRINTF'           & see below     & diagnostic output \\
 \verb'GxB_FLUSH'            & see below     & diagnostic output \\
+\verb'GxB_MEMORY_POOL'      & \verb'int64_t [64]' & memory pool control \\
 \end{tabular}
 }
 
@@ -7035,6 +7037,7 @@ field                       & value         & description \\
 \verb'GxB_BURBLE'           & \verb'int'    & diagnostic output \\
 \verb'GxB_PRINTF'           & see below     & diagnostic output \\
 \verb'GxB_FLUSH'            & see below     & diagnostic output \\
+\verb'GxB_MEMORY_POOL'      & \verb'int64_t [64]' & memory pool control \\
 \hline
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
 \verb'GxB_LIBRARY_NAME'         & \verb'char *' & name of library \\
@@ -7630,8 +7633,10 @@ The \verb'field' parameter can be
 \verb'GxB_NTHREADS',
 \verb'GxB_CHUNK',
 \verb'GxB_BURBLE',
-\verb'GxB_PRINTF', or
-\verb'GxB_FLUSH'.
+\verb'GxB_PRINTF',
+\verb'GxB_FLUSH',
+or
+\verb'GxB_MEMORY_POOL'.
 
 For example, the following usage sets the global hypersparsity ratio to 0.2,
 the format of future matrices to \verb'GxB_BY_COL', the maximum number
@@ -7647,6 +7652,14 @@ No existing matrices are changed.
     GxB_set (GxB_BURBLE, true) ;
     GxB_set (GxB_PRINTF, mexPrintf) ;
 \end{verbatim} }
+
+The memory pool parameter sets an upper bound on the number of freed blocks of
+memory that SuiteSparse:GraphBLAS keeps in its internal memory pool for future
+allocations.   \verb'free_pool_limit'  is an \verb'int64_t' array of size 64,
+and \verb'free_pool_limit [k]' is the upper bound on the number of blocks
+of size $2^k$ that are kept in the pool.  Passing in a \verb'NULL' pointer
+sets the defaults.  Passing in an array of size 64 whose entries are all zero
+disables the memory pool entirely.
 
 %===============================================================================
 \subsection{{\sf GxB\_Matrix\_Option\_set:} set a matrix option}
@@ -7749,7 +7762,8 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_CHUNK'                & default chunk size \\
         \verb'GxB_BURBLE'       & burble setting \\
         \verb'GxB_PRINTF'       & printf function \\
-        \verb'GxB_FLUSH'       & flush function \\
+        \verb'GxB_FLUSH'        & flush function \\
+        \verb'GxB_MEMORY_POOL'  & memory pool control \\
         \hline
         \verb'GxB_LIBRARY_NAME'         & the string
                                         \verb'"SuiteSparse:GraphBLAS"' \\
@@ -7815,6 +7829,11 @@ For example:
     double chunk ;
     GxB_get (GxB_CHUNK, &chunk) ;
     printf ("chunk size: %g\n", chunk) ;
+
+    int64_t free_pool_limit [64] ;
+    GxB_get (GxB_MEMORY_POOL, free_pool_limit) ;
+    for (int k = 0 ; k < 64 ; k++)
+        printf ("pool %d: limit %ld\n", free_pool_limit [k]) ;
 
     char *name ;
     int ver [3] ;
@@ -7936,7 +7955,12 @@ To set/get the global options:
     GxB_get (GxB_PRINTF, void **printf_function) ;
 
     GxB_set (GxB_FLUSH, void *flush_function) ;
-    GxB_get (GxB_FLUSH, void **flush_function) ; \end{verbatim} }
+    GxB_get (GxB_FLUSH, void **flush_function) ;
+
+    int64_t free_pool_limit [64] ;
+    GxB_set (GxB_MEMORY_POOL, free_pool_limit) ;
+    GxB_set (GxB_MEMORY_POOL, NULL) ;     // set defaults
+    GxB_get (GxB_MEMORY_POOL, free_pool_limit) ; \end{verbatim} }
 
 \noindent
 To get global options that can be queried but not modified:

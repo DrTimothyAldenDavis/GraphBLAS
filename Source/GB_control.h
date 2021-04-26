@@ -2226,17 +2226,18 @@
    #define GxB_NO_ANY_DIV_UINT64        1
    #define GxB_NO_ANY_DIV_UINT8         1
 
-   #define GxB_NO_ANY_EQ_BOOL           1
-   #define GxB_NO_ANY_EQ_FP32           1
-   #define GxB_NO_ANY_EQ_FP64           1
-   #define GxB_NO_ANY_EQ_INT16          1
-   #define GxB_NO_ANY_EQ_INT32          1
-   #define GxB_NO_ANY_EQ_INT64          1
-   #define GxB_NO_ANY_EQ_INT8           1
-   #define GxB_NO_ANY_EQ_UINT16         1
-   #define GxB_NO_ANY_EQ_UINT32         1
-   #define GxB_NO_ANY_EQ_UINT64         1
-   #define GxB_NO_ANY_EQ_UINT8          1
+// These are enabled for v5, to facilitate argmin and argmax computations
+// #define GxB_NO_ANY_EQ_BOOL           1
+// #define GxB_NO_ANY_EQ_FP32           1
+// #define GxB_NO_ANY_EQ_FP64           1
+// #define GxB_NO_ANY_EQ_INT16          1
+// #define GxB_NO_ANY_EQ_INT32          1
+// #define GxB_NO_ANY_EQ_INT64          1
+// #define GxB_NO_ANY_EQ_INT8           1
+// #define GxB_NO_ANY_EQ_UINT16         1
+// #define GxB_NO_ANY_EQ_UINT32         1
+// #define GxB_NO_ANY_EQ_UINT64         1
+// #define GxB_NO_ANY_EQ_UINT8          1
 
    #define GxB_NO_ANY_GE_BOOL           1
    #define GxB_NO_ANY_GE_FP32           1

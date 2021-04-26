@@ -119,6 +119,24 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
+        // memory pool control
+        //----------------------------------------------------------------------
+
+        case GxB_MEMORY_POOL : 
+
+            {
+                va_start (ap, field) ;
+                int64_t *free_pool_limit = va_arg (ap, int64_t *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (free_pool_limit) ;
+                for (int k = 0 ; k < 64 ; k++)
+                { 
+                    free_pool_limit [k] = GB_Global_free_pool_limit_get (k) ;
+                }
+            }
+            break ;
+
+        //----------------------------------------------------------------------
         // SuiteSparse:GraphBLAS version, date, license, etc
         //----------------------------------------------------------------------
 

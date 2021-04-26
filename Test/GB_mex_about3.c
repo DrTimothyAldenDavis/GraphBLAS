@@ -87,6 +87,46 @@ void mexFunction
     OK (GxB_Global_Option_set (GxB_BURBLE, false)) ;
 
     //--------------------------------------------------------------------------
+    // test GxB_set/get for free_pool_limit
+    //--------------------------------------------------------------------------
+
+    int64_t free_pool_limit [64] ;
+    OK (GxB_Global_Option_set (GxB_MEMORY_POOL, NULL)) ;
+    OK (GxB_Global_Option_get (GxB_MEMORY_POOL, free_pool_limit)) ;
+    printf ("\ndefault memory pool limits:\n") ;
+    for (int k = 0 ; k < 64 ; k++)
+    {
+        if (free_pool_limit [k] > 0)
+        {
+            printf ("pool %2d: limit %ld\n", k, free_pool_limit [k]) ;
+        }
+    }
+    for (int k = 0 ; k < 64 ; k++)
+    {
+        free_pool_limit [k] = k ;
+    }
+    OK (GxB_Global_Option_set (GxB_MEMORY_POOL, free_pool_limit)) ;
+    OK (GxB_Global_Option_get (GxB_MEMORY_POOL, free_pool_limit)) ;
+    for (int k = 0 ; k < 3 ; k++)
+    {
+        CHECK (free_pool_limit [k] == 0) ;
+    }
+    for (int k = 3 ; k < 64 ; k++)
+    {
+        CHECK (free_pool_limit [k] == k) ;
+    }
+    for (int k = 0 ; k < 64 ; k++)
+    {
+        free_pool_limit [k] = 0 ;
+    }
+    OK (GxB_Global_Option_set (GxB_MEMORY_POOL, free_pool_limit)) ;
+    OK (GxB_Global_Option_get (GxB_MEMORY_POOL, free_pool_limit)) ;
+    for (int k = 0 ; k < 64 ; k++)
+    {
+        CHECK (free_pool_limit [k] == 0) ;
+    }
+
+    //--------------------------------------------------------------------------
     // wrapup
     //--------------------------------------------------------------------------
 

@@ -111,7 +111,7 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
     GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
     GB_Global_memtable_clear ( ) ;
-    GB_Global_free_pool_init ( ) ;
+    GB_Global_free_pool_init (true) ;
 
     //--------------------------------------------------------------------------
     // max number of threads

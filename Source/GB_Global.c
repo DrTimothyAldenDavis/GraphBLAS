@@ -1145,14 +1145,23 @@ double GB_Global_timing_get (int k)
 
 // free_pool_init: initialize the free_pool
 GB_PUBLIC
-void GB_Global_free_pool_init (void)
+void GB_Global_free_pool_init (bool clear)
 { 
     #pragma omp critical(GB_free_pool)
     {
+        if (clear)
+        {
+            // clear the free pool
+            for (int k = 0 ; k < 64 ; k++)
+            {
+                GB_Global.free_pool [k] = NULL ;
+                GB_Global.free_pool_nblocks [k] = 0 ;
+            }
+        }
+        // set the default free_pool_limit
         for (int k = 0 ; k < 64 ; k++)
         {
-            GB_Global.free_pool [k] = NULL ;
-            GB_Global.free_pool_nblocks [k] = 0 ;
+            GB_Global.free_pool_limit [k] = 0 ;
         }
         int64_t n = 16384 ;
         for (int k = 3 ; k <= 8 ; k++)
