@@ -18,25 +18,29 @@
 #include "GB_AxB__include.h"
 #endif
 
-#define GB_FREE_WORK                            \
-{                                               \
-    GB_FREE_WERK (&TaskList, TaskList_size) ;   \
+#define GB_FREE_WORK                                    \
+{                                                       \
+    GB_undo_dynamic_header (&C, C_output, Context) ;    \
+    GB_undo_dynamic_header (&M, M_input, Context) ;     \
+    GB_undo_dynamic_header (&A, A_input, Context) ;     \
+    GB_undo_dynamic_header (&B, B_input, Context) ;     \
+    GB_FREE_WERK (&TaskList, TaskList_size) ;           \
 }
 
 #define GB_FREE_ALL                             \
 {                                               \
     GB_FREE_WORK ;                              \
-    GB_phbix_free (C) ;                       \
+    GB_phbix_free (C_output) ;                  \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 (
-    GrB_Matrix C,                   // output matrix, static header
-    const GrB_Matrix M,             // mask matrix
+    GrB_Matrix C_output,            // output matrix, static header
+    const GrB_Matrix M_input,       // mask matrix (static or dynamic)
     const bool Mask_struct,         // if true, use the only structure of M
-    const GrB_Matrix A,             // input matrix
-    const GrB_Matrix B,             // input matrix
+    const GrB_Matrix A_input,       // input matrix (static or dynamic)
+    const GrB_Matrix B_input,       // input matrix (static or dynamic)
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Context Context
@@ -48,7 +52,12 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (C != NULL && C->static_header) ;
+    GrB_Matrix A = NULL, B = NULL, M = NULL, C = NULL ;
+    ASSERT (C_output != NULL && C_output->static_header) ;
+    GB_OK (GB_do_dynamic_header (&M, M_input, Context)) ;
+    GB_OK (GB_do_dynamic_header (&A, A_input, Context)) ;
+    GB_OK (GB_do_dynamic_header (&B, B_input, Context)) ;
+
     ASSERT_MATRIX_OK (M, "M for dot3 A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot3 A'*B", GB0) ;
     ASSERT_MATRIX_OK (B, "B for dot3 A'*B", GB0) ;
@@ -159,7 +168,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int C_sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
 
     // C is sparse or hypersparse, not full or bitmap
-    info = GB_new_bix (&C, true, // sparse or hyper (from M), static header
+    info = GB_new_bix (&C, false, // sparse or hyper (from M), dynamic header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         C_sparsity, true, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
@@ -290,15 +299,20 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and return result
+    // finalize result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
     C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled
     ASSERT_MATRIX_OK (C, "dot3: C<M> = A'*B output", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (!GB_PENDING (C)) ;
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    GB_FREE_WORK ;
     return (GrB_SUCCESS) ;
 }
 

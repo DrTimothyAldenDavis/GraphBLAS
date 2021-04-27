@@ -57,6 +57,9 @@ end
 % double precision and with GraphBLAS in single precision.  You would
 % naturally expect GraphBLAS to be faster. 
 %
+% CAVEAT:  MATLAB R2021a uses SuiteSparse:GraphBLAS v3.3.3 for C=A*B,
+% so on that version, we're comparing 2 versions by the same author.
+%
 % Please wait ...
 
 n = 1e5 ;

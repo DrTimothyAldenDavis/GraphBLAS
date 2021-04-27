@@ -9,22 +9,21 @@
 
 #include "GB.h"
 
-GrB_Info GB_to_dynamic
+GrB_Info GB_do_dynamic_header
 (
     // output
-    GrB_Matrix *Ahandle,        // output matrix A with dynamic header
-    bool *A_input_is_static,    // if true, A_input has a static header
+    GrB_Matrix *A_dynamic,      // copy of A but with dynamic header
     // input
-    GrB_Matrix A_input,         // input matrix with static or dynamic header
+    GrB_Matrix A,               // input with static or dynamic header
     GB_Context Context
 ) ;
 
-void GB_to_static
+void GB_undo_dynamic_header
 (
-    // output
-    GrB_Matrix A_static,        // output matrix with static header
     // input
-    GrB_Matrix *Ahandle,        // input matrix with dynamic header
+    GrB_Matrix *A_dynamic,      // input matrix with dynamic header
+    // output
+    GrB_Matrix A,               // output matrix with static or dynamic header
     GB_Context Context
 ) ;
 

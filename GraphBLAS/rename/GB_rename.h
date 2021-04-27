@@ -3433,8 +3433,8 @@
 #define GB_subref_phase2 GM_subref_phase2
 #define GB_subref_slice GM_subref_slice
 #define GB_task_cumsum GM_task_cumsum
-#define GB_to_dynamic GM_to_dynamic
-#define GB_to_static GM_to_static
+#define GB_do_dynamic_header GM_do_dynamic_header
+#define GB_undo_dynamic_header GM_undo_dynamic_header
 #define GB_transplant GM_transplant
 #define GB_transplant_conform GM_transplant_conform
 #define GB_transpose GM_transpose

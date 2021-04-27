@@ -4805,7 +4805,7 @@ into the type of \verb'C'.  Any settings made to \verb'C' by
 switch, and sparsity control) are unchanged.
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_split:} split matrices   }
+\subsubsection{{\sf GxB\_Matrix\_split:} split a matrix   }
 %-------------------------------------------------------------------------------
 \label{matrix_split}
 
@@ -7335,13 +7335,13 @@ format, hypersparsity format, and \verb'hyper_switch' from \verb'A'.
 \label{bitmap_switch}
 %-------------------------------------------------------------------------------
 
-By default, SuiteSparse:GraphBLAS switches between bitmap and
-sparse/hypersparse formats automatically.  Let $d = |{\bf A}|/mn$ for an
-$m$-by-$n$ matrix $\bf A$ with $|{\bf A}|$ entries.  If the matrix is currently
-in sparse or hypersparse format, and is modified so that $d$ exceeds a given
-threshold, it is converted into bitmap format.  The default threshold is
-controlled by the \verb'GxB_BITMAP_SWITCH' setting, which can be set globally,
-or for a particular matrix or vector.
+By default, SuiteSparse:GraphBLAS switches between all four formats
+(hypersparse, sparse, bitmap, and full) automatically.  Let $d = |{\bf A}|/mn$
+for an $m$-by-$n$ matrix $\bf A$ with $|{\bf A}|$ entries.  If the matrix is
+currently in sparse or hypersparse format, and is modified so that $d$ exceeds
+a given threshold, it is converted into bitmap format.  The default threshold
+is controlled by the \verb'GxB_BITMAP_SWITCH' setting, which can be set
+globally, or for a particular matrix or vector.
 
 The default value of the switch to bitmap format depends on $\min(m,n)$, for a
 matrix of size $m$-by-$n$.  For the global setting, the bitmap switch is a
@@ -7542,8 +7542,7 @@ except full:
     GxB_set (A, GxB_SPARSITY_CONTROL, ~GxB_FULL) ; \end{verbatim}}
 
 %-------------------------------------------------------------------------------
-\subsection{{\sf GxB\_BURBLE}, {\sf GxB\_PRINTF}, {\sf GxB\_FLUSH}:
-diagnostic output}
+\subsection{{\sf GxB\_BURBLE}, {\sf GxB\_PRINTF}, {\sf GxB\_FLUSH}: diagnostics}
 %-------------------------------------------------------------------------------
 
 \verb'GxB_set (GxB_BURBLE, ...)' controls the burble setting.  It can also be
@@ -7932,31 +7931,23 @@ To set/get the global options:
     GxB_set (GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER) ;
     GxB_set (GxB_HYPER_SWITCH, GxB_NEVER_HYPER) ;
     GxB_get (GxB_HYPER_SWITCH, double *h) ;
-
     double b [GxB_NBITMAP_SWITCH] ;
     GxB_set (GxB_BITMAP_SWITCH, b) ;
     GxB_set (GxB_BITMAP_SWITCH, NULL) ;     // set defaults
     GxB_get (GxB_BITMAP_SWITCH, b) ;
-
     GxB_set (GxB_FORMAT, GxB_BY_ROW) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
     GxB_get (GxB_FORMAT, GxB_Format_Value *s) ;
-
     GxB_set (GxB_NTHREADS, int nthreads_max) ;
     GxB_get (GxB_NTHREADS, int *nthreads_max) ;
-
     GxB_set (GxB_CHUNK, double chunk) ;
     GxB_get (GxB_CHUNK, double *chunk) ;
-
     GxB_set (GxB_BURBLE, bool burble) ;
     GxB_get (GxB_BURBLE, bool *burble) ;
-
     GxB_set (GxB_PRINTF, void *printf_function) ;
     GxB_get (GxB_PRINTF, void **printf_function) ;
-
     GxB_set (GxB_FLUSH, void *flush_function) ;
     GxB_get (GxB_FLUSH, void **flush_function) ;
-
     int64_t free_pool_limit [64] ;
     GxB_set (GxB_MEMORY_POOL, free_pool_limit) ;
     GxB_set (GxB_MEMORY_POOL, NULL) ;     // set defaults
@@ -7990,18 +7981,14 @@ To set/get a matrix option or status
     GxB_set (GrB_Matrix A, GxB_HYPER_SWITCH, GxB_ALWAYS_HYPER) ;
     GxB_set (GrB_Matrix A, GxB_HYPER_SWITCH, GxB_NEVER_HYPER) ;
     GxB_get (GrB_Matrix A, GxB_HYPER_SWITCH, double *h) ;
-
     GxB_set (GrB_Matrix A, GxB_BITMAP_SWITCH, double b) ;
     GxB_get (GrB_Matrix A, GxB_BITMAP_SWITCH, double *b) ;
-
     GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_ROW) ;
     GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_COL) ;
     GxB_get (GrB_Matrix A, GxB_FORMAT, GxB_Format_Value *s) ;
-
     GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, GxB_AUTO_SPARSITY) ;
     GxB_set (GrB_Matrix A, GxB_SPARSITY_CONTROL, scontrol) ;
     GxB_get (GrB_Matrix A, GxB_SPARSITY_CONTROL, int *scontrol) ;
-
     GxB_get (GrB_Matrix A, GxB_SPARSITY_STATUS, int *sparsity) ; \end{verbatim} }
 
 \noindent
@@ -8011,15 +7998,12 @@ To set/get a vector option or status:
     \begin{verbatim}
     GxB_set (GrB_Vector v, GxB_BITMAP_SWITCH, double b) ;
     GxB_get (GrB_Vector v, GxB_BITMAP_SWITCH, double *b) ;
-
     GxB_set (GrB_Vector v, GxB_FORMAT, GxB_BY_ROW) ;
     GxB_set (GrB_Vector v, GxB_FORMAT, GxB_BY_COL) ;
     GxB_get (GrB_Vector v, GxB_FORMAT, GxB_Format_Value *s) ;
-
     GxB_set (GrB_Vector v, GxB_SPARSITY_CONTROL, GxB_AUTO_SPARSITY) ;
     GxB_set (GrB_Vector v, GxB_SPARSITY_CONTROL, scontrol) ;
     GxB_get (GrB_Vector v, GxB_SPARSITY_CONTROL, int *scontrol) ;
-
     GxB_get (GrB_Vector v, GxB_SPARSITY_STATUS, int *sparsity) ; \end{verbatim} }
 
 \noindent
@@ -8030,34 +8014,27 @@ To set/get a descriptor field:
     GxB_set (GrB_Descriptor d, GrB_OUTP, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_OUTP, GrB_REPLACE) ;
     GxB_get (GrB_Descriptor d, GrB_OUTP, GrB_Desc_Value *v) ;
-
     GxB_set (GrB_Descriptor d, GrB_MASK, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_MASK, GrB_COMP) ;
     GxB_set (GrB_Descriptor d, GrB_MASK, GrB_STRUCTURE) ;
     GxB_set (GrB_Descriptor d, GrB_MASK, GrB_COMP+GrB_STRUCTURE) ;
     GxB_get (GrB_Descriptor d, GrB_MASK, GrB_Desc_Value *v) ;
-
     GxB_set (GrB_Descriptor d, GrB_INP0, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_INP0, GrB_TRAN) ;
     GxB_get (GrB_Descriptor d, GrB_INP0, GrB_Desc_Value *v) ;
-
     GxB_set (GrB_Descriptor d, GrB_INP1, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_INP1, GrB_TRAN) ;
     GxB_get (GrB_Descriptor d, GrB_INP1, GrB_Desc_Value *v) ;
-
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HASH) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_SAXPY) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_DOT) ;
     GxB_get (GrB_Descriptor d, GrB_AxB_METHOD, GrB_Desc_Value *v) ;
-
     GxB_set (GrB_Descriptor d, GxB_NTHREADS, int nthreads) ;
     GxB_get (GrB_Descriptor d, GxB_NTHREADS, int *nthreads) ;
-
     GxB_set (GrB_Descriptor d, GxB_CHUNK, double chunk) ;
     GxB_get (GrB_Descriptor d, GxB_CHUNK, double *chunk) ;
-    
     GxB_set (GrB_Descriptor d, GxB_SORT, sort) ;
     GxB_get (GrB_Descriptor d, GxB_SORT, int *sort) ; \end{verbatim} }
 
