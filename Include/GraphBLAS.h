@@ -7826,7 +7826,7 @@ GB_PUBLIC GrB_Semiring
     GrB_MIN_TIMES_SEMIRING_UINT32,      // GxB_MIN_TIMES_UINT32
     GrB_MIN_TIMES_SEMIRING_UINT64,      // GxB_MIN_TIMES_UINT64
     GrB_MIN_TIMES_SEMIRING_FP32,        // GxB_MIN_TIMES_FP32  
-    GrB_MIN_TIMES_SEMIRING_FP64,        // GxB_MIN_PLUS_FP64  
+    GrB_MIN_TIMES_SEMIRING_FP64,        // GxB_MIN_TIMES_FP64  
 
     // MIN_FIRST semirings for all 10 real, non-boolean types:
     GrB_MIN_FIRST_SEMIRING_INT8,        // GxB_MIN_FIRST_INT8
@@ -8256,7 +8256,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
     GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)* sizeof(int64_t)
-    GrB_Index **Aj,     // row indices, Aj_size >= nvals(A) * sizeof(int64_t)
+    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A) * sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A) * (type size)
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Aj_size,  // size of Aj in bytes
@@ -8621,7 +8621,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
     GrB_Index **Ap,     // row "pointers"
-    GrB_Index **Aj,     // row indices
+    GrB_Index **Aj,     // column indices
     void **Ax,          // values
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Aj_size, // size of Aj in bytes

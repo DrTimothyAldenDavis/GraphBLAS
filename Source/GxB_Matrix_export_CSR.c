@@ -19,7 +19,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Index *ncols,   // number of columns of the matrix
 
     GrB_Index **Ap,     // row "pointers"
-    GrB_Index **Aj,     // row indices
+    GrB_Index **Aj,     // column indices
     void **Ax,          // values
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Aj_size, // size of Aj in bytes
