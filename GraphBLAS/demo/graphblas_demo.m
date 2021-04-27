@@ -91,7 +91,7 @@ whos G G2 X X2
 %% Faster matrix operations
 % But even with standard double precision sparse matrices, GraphBLAS is
 % typically faster than the built-in MATLAB methods.  Here's a fair
-% comparison:
+% comparison (caveat: these both use GraphBLAS in MATLAB R2021a):
 
 G = GrB (X) ;
 tic
