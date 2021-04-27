@@ -57,6 +57,9 @@ end
 % double precision and with GraphBLAS in single precision.  You would
 % naturally expect GraphBLAS to be faster. 
 %
+% CAVEAT:  MATLAB R2021a uses SuiteSparse:GraphBLAS v3.3.3 for C=A*B,
+% so on that version, we're comparing 2 versions by the same author.
+%
 % Please wait ...
 
 n = 1e5 ;
@@ -88,7 +91,7 @@ whos G G2 X X2
 %% Faster matrix operations
 % But even with standard double precision sparse matrices, GraphBLAS is
 % typically faster than the built-in MATLAB methods.  Here's a fair
-% comparison:
+% comparison (caveat: these both use GraphBLAS in MATLAB R2021a):
 
 G = GrB (X) ;
 tic
