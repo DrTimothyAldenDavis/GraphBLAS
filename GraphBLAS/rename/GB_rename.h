@@ -3212,8 +3212,8 @@
 #define GB_Global_bitmap_switch_set GM_Global_bitmap_switch_set
 #define GB_Global_burble_get GM_Global_burble_get
 #define GB_Global_burble_set GM_Global_burble_set
-#define GB_Global_calloc_function GM_Global_calloc_function
-#define GB_Global_calloc_function_set GM_Global_calloc_function_set
+// #define GB_Global_calloc_function GM_Global_calloc_function
+// #define GB_Global_calloc_function_set GM_Global_calloc_function_set
 #define GB_Global_chunk_get GM_Global_chunk_get
 #define GB_Global_chunk_set GM_Global_chunk_set
 #define GB_Global_flush_get GM_Global_flush_get
@@ -3244,7 +3244,7 @@
 #define GB_Global_GrB_init_called_set GM_Global_GrM_init_called_set
 #define GB_Global_hack_get GM_Global_hack_get
 #define GB_Global_hack_set GM_Global_hack_set
-#define GB_Global_have_calloc_function GM_Global_have_calloc_function
+// #define GB_Global_have_calloc_function GM_Global_have_calloc_function
 #define GB_Global_have_realloc_function GM_Global_have_realloc_function
 #define GB_Global_hyper_switch_get GM_Global_hyper_switch_get
 #define GB_Global_hyper_switch_set GM_Global_hyper_switch_set

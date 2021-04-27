@@ -50,14 +50,15 @@ GB_PUBLIC void     GB_Global_abort_function (void) ;
           void     GB_Global_malloc_function_set
                         (void * (* malloc_function) (size_t)) ;
           void  *  GB_Global_malloc_function (size_t size) ;
-          void     GB_Global_calloc_function_set
-                        (void * (* calloc_function) (size_t, size_t)) ;
-          void  *  GB_Global_calloc_function (size_t count, size_t size) ;
+// calloc: no longer used
+//        void     GB_Global_calloc_function_set
+//                      (void * (* calloc_function) (size_t, size_t)) ;
+//        void  *  GB_Global_calloc_function (size_t count, size_t size) ;
           void     GB_Global_realloc_function_set
                         (void * (* realloc_function) (void *, size_t)) ;
           void  *  GB_Global_realloc_function (void *p, size_t size) ;
           bool     GB_Global_have_realloc_function (void) ;
-          bool     GB_Global_have_calloc_function (void) ;
+//        bool     GB_Global_have_calloc_function (void) ;
           void     GB_Global_free_function_set
                         (void (* free_function) (void *)) ;
           void     GB_Global_free_function (void *p) ;

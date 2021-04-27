@@ -1337,6 +1337,10 @@ the user application control over this is particularly important when using the
 Section~\ref{import_export}, since they require the user application and
 GraphBLAS to use the same memory manager.
 
+\verb'user_calloc_function' and \verb'user_realloc_function' are optional, and
+may be \verb'NULL'.  If \verb'NULL', then the \verb'user_malloc_function' is
+relied on instead, for all memory allocations.
+
 These
 functions can only be set once, when GraphBLAS starts.   Either \verb'GrB_init'
 or \verb'GxB_init' must be called before any other GraphBLAS operation, but

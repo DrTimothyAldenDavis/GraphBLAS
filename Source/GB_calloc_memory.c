@@ -29,6 +29,7 @@ static inline void *GB_calloc_helper
     void *p = NULL ;
 
     // determine the next higher power of 2
+    size_t size_requested = (*size) ;
     (*size) = GB_IMAX (*size, 8) ;
     int k = GB_CEIL_LOG2 (*size) ;
 
@@ -46,11 +47,11 @@ static inline void *GB_calloc_helper
     if (p == NULL)
     {
         // no block in the free_pool, so allocate it
-        if (GB_Global_have_calloc_function ( ))
-        {
-            p = GB_Global_calloc_function (*size, 1) ;
-        }
-        else
+//      if (GB_Global_have_calloc_function ( ))
+//      {
+//          p = GB_Global_calloc_function (*size, 1) ;
+//      }
+//      else
         {
 
 //          if (GB_Global_rmm_get ( ))
@@ -78,7 +79,7 @@ static inline void *GB_calloc_helper
     {
         // clear the block of memory with a parallel memset
         GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-        GB_memset (p, 0, *size, nthreads_max) ;
+        GB_memset (p, 0, size_requested, nthreads_max) ;
     }
 
     return (p) ;

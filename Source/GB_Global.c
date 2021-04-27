@@ -58,7 +58,7 @@ typedef struct
     // They default to the ANSI C11 functions, but can be defined by GxB_init.
 
     void * (* malloc_function  ) (size_t)         ;     // required
-    void * (* calloc_function  ) (size_t, size_t) ;     // may be NULL
+//  void * (* calloc_function  ) (size_t, size_t) ;     // no longer used
     void * (* realloc_function ) (void *, size_t) ;     // may be NULL
     void   (* free_function    ) (void *)         ;     // required
     bool malloc_is_thread_safe ;   // default is true
@@ -199,7 +199,7 @@ GB_Global_struct GB_Global =
 
     // malloc/calloc/realloc/free functions: default to ANSI C11 functions
     .malloc_function  = malloc,
-    .calloc_function  = calloc,
+//  .calloc_function  = NULL,   // no longer used
     .realloc_function = realloc,
     .free_function    = free,
     .malloc_is_thread_safe = true,
@@ -693,38 +693,38 @@ void * GB_Global_malloc_function (size_t size)
 }
 
 //------------------------------------------------------------------------------
-// calloc_function
+// calloc_function: no longer used
 //------------------------------------------------------------------------------
 
-void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
-{ 
-    GB_Global.calloc_function = calloc_function ;
-}
+//  void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
+//  { 
+//      GB_Global.calloc_function = calloc_function ;
+//  }
 
-bool GB_Global_have_calloc_function (void)
-{ 
-    return (GB_Global.calloc_function != NULL) ;
-}
+//  bool GB_Global_have_calloc_function (void)
+//  { 
+//      return (GB_Global.calloc_function != NULL) ;
+//  }
 
-void * GB_Global_calloc_function (size_t count, size_t size)
-{ 
-    void *p = NULL ;
-    if (GB_Global.malloc_is_thread_safe)
-    {
-        p = GB_Global.calloc_function (count, size) ;
-    }
-    else
-    {
-        #pragma omp critical(GB_malloc_protection)
-        {
-            p = GB_Global.calloc_function (count, size) ;
-        }
-    }
-    #ifdef GB_DEBUG
-    GB_Global_memtable_add (p, count * size) ;
-    #endif
-    return (p) ;
-}
+//  void * GB_Global_calloc_function (size_t count, size_t size)
+//  { 
+//      void *p = NULL ;
+//      if (GB_Global.malloc_is_thread_safe)
+//      {
+//          p = GB_Global.calloc_function (count, size) ;
+//      }
+//      else
+//      {
+//          #pragma omp critical(GB_malloc_protection)
+//          {
+//              p = GB_Global.calloc_function (count, size) ;
+//          }
+//      }
+//      #ifdef GB_DEBUG
+//      GB_Global_memtable_add (p, count * size) ;
+//      #endif
+//      return (p) ;
+//  }
 
 //------------------------------------------------------------------------------
 // realloc_function
