@@ -65,9 +65,11 @@ end
 n = 1e5 ;
 X = spdiags (rand (n, 201), -100:100, n, n) ;
 G = GrB (X, 'single') ;
+G2 = G^2 ;  % warmup
 tic
 G2 = G^2 ;
 gb_time = toc ;
+X2 = X^2 ;  % warmup
 tic
 X2 = X^2 ;
 matlab_time = toc ;
@@ -94,6 +96,7 @@ whos G G2 X X2
 % comparison (caveat: these both use GraphBLAS in MATLAB R2021a):
 
 G = GrB (X) ;
+G2 = G^2 ;  % warmup
 tic
 G2 = G^2 ;
 gb_time = toc ;
