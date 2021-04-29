@@ -43,11 +43,12 @@ static inline void *GB_malloc_helper
     {
         // no block in the free_pool, so allocate it
 
-//          if (GB_Global_rmm_get ( ))
-//          {
-//              p = GB_rmm_alloc (size) ;
-//          }
-//          else
+            void *rmm_resource = GB_Global_rmm_get ( ) ;
+            if (rmm_resource != NULL)
+            {
+                p = GB_rmm_alloc (rmm_resource, size) ;
+            }
+            else
             {
                 p = GB_Global_malloc_function (*size) ;
             }

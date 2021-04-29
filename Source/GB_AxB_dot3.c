@@ -21,7 +21,6 @@
 
 #define GB_FREE_WORK                                    \
 {                                                       \
-    GB_undo_dynamic_header (&C, C_output, Context) ;    \
     GB_undo_dynamic_header (&M, M_input, Context) ;     \
     GB_undo_dynamic_header (&A, A_input, Context) ;     \
     GB_undo_dynamic_header (&B, B_input, Context) ;     \
@@ -31,7 +30,7 @@
 #define GB_FREE_ALL                             \
 {                                               \
     GB_FREE_WORK ;                              \
-    GB_phbix_free (C_output) ;                  \
+    GB_Matrix_free (&C) ;                       \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
@@ -313,6 +312,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
+    GB_undo_dynamic_header (&C, C_output, Context) ;
     return (GrB_SUCCESS) ;
 }
 

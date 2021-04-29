@@ -156,7 +156,7 @@ typedef struct
     // RMM settings
     //--------------------------------------------------------------------------
 
-    bool rmm_in_use ;
+    void *rmm_resource ;
 
 }
 GB_Global_struct ;
@@ -337,8 +337,7 @@ GB_Global_struct GB_Global =
 
     // RMM settings
     .rmm_in_use = false,
-
-    // TODO: other RMM stuff here ...
+    .rmm_resource = NULL,
 
 } ;
 
@@ -1343,14 +1342,14 @@ int64_t GB_Global_free_pool_nblocks_total (void)
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-void GB_Global_rmm_set (bool use_rmm)
+void GB_Global_rmm_set (void *user_rmm_resource)
 { 
-    GB_Global.rmm_in_use = use_rmm ;
+    GB_Global.rmm_resource = user_rmm_resource ;
 }
 
 GB_PUBLIC
-int64_t GB_Global_rmm_get (void)
+void *GB_Global_rmm_get (void)
 { 
-    return (GB_Global.rmm_in_use) ;
+    return (GB_Global.rmm_resource) ;
 }
 

@@ -38,21 +38,19 @@
 
 /*  TODO: C-API options
 
+    // no GPU:
     GrB_init (mode) ;
     GxB_init (mode, malloc, calloc, realloc, free, true) ;
 
-    // RMM-only
-    GxB_rmm_init (mode, rmmconfig ) 
-    GxB_rmm_init (mode, rmmconfig )     no GPU
-    GxB_rmm_init (mode, NULL     )      no GPU, RMM default
+    // use RMM, optionally also use CUDA if it is enabled in the rmm_resource:
+    GxB_RMM_init (mode, rmm_resource)
+    ...
+    // gpu control:
+    GxB_set ( pick your gpu(s) )            // global
+    GxB_set (desc, pick your gpu(s) )       // matrix
+    GxB_set (A, pick your gpu(s) )          // descriptor
 
-    // CUDA+RMM
-    GxB_rmm_init (mode, gpuandrmmconfig ...)
-    GxB_rmm_init (mode, )              use GPUs, RMM default
-
-    GB_rmm.cpp
-    GB_rmm_malloc.cpp
-    GB_rmm_free.cpp
+    GrB_finalize ( ) ;
 */
 
 #include "GB.h"

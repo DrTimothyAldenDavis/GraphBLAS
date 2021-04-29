@@ -16,7 +16,8 @@
 void GB_undo_dynamic_header
 (
     // input
-    GrB_Matrix *A_dynamic,      // input matrix with dynamic header
+    GrB_Matrix *A_dynamic,      // input matrix with dynamic header,
+                                // NULL on output
     // output
     GrB_Matrix A,               // output matrix with static or dynamic header
     GB_Context Context
@@ -39,6 +40,7 @@ void GB_undo_dynamic_header
     { 
         // nothing to do
         ASSERT ((*A_dynamic) == A) ;
+        (*A_dynamic) = NULL ;
         return ;
     }
 
@@ -56,6 +58,7 @@ void GB_undo_dynamic_header
     // A now has a static header
     //--------------------------------------------------------------------------
 
+    ASSERT ((*A_dynamic) == NULL) ;
     ASSERT (A->static_header) ;
 }
 
