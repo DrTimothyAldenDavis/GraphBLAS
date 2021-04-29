@@ -336,7 +336,7 @@ GB_Global_struct GB_Global =
         0 },    // size 2^63 (4 exabytes!)
 
     // RMM settings
-    rmm_in_use = false,
+    .rmm_in_use = false,
 
     // TODO: other RMM stuff here ...
 

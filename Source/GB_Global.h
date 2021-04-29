@@ -139,5 +139,8 @@ GB_PUBLIC void     GB_Global_printf_set (GB_printf_function_t p) ;
 GB_PUBLIC GB_flush_function_t GB_Global_flush_get (void) ;
 GB_PUBLIC void     GB_Global_flush_set (GB_flush_function_t p) ;
 
+GB_PUBLIC void GB_Global_rmm_set (bool use_rmm) ;
+GB_PUBLIC int64_t GB_Global_rmm_get (void) ;
+
 #endif
 

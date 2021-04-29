@@ -13,6 +13,7 @@
 // structure.
 
 #include "GB_mxm.h"
+#include "GB_dynamic.h"
 #include "GB_binop.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
@@ -53,6 +54,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     GrB_Info info ;
     GrB_Matrix A = NULL, B = NULL, M = NULL, C = NULL ;
+    int ntasks, nthreads ;
+    GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
     ASSERT (C_output != NULL && C_output->static_header) ;
     GB_OK (GB_do_dynamic_header (&M, M_input, Context)) ;
     GB_OK (GB_do_dynamic_header (&A, A_input, Context)) ;
@@ -76,9 +79,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     ASSERT (!GB_IS_FULL (M)) ;
 
     ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
-
-    int ntasks, nthreads ;
-    GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
 
     GBURBLE ("(%s%s%s%s=%s'*%s) ",
         GB_sparsity_char_matrix (M),    // C has the same sparsity as M
