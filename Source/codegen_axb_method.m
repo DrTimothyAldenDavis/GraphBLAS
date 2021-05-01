@@ -114,7 +114,13 @@ name = sprintf ('%s_%s_%s', addop, multop, fname) ;
 fprintf (f, 'define(`_Adot2B'', `_Adot2B__%s'')\n', name) ;
 fprintf (f, 'define(`_Adot3B'', `_Adot3B__%s'')\n', name) ;
 fprintf (f, 'define(`_Adot4B'', `_Adot4B__%s'')\n', name) ;
-fprintf (f, 'define(`_AsaxpyB'', `_AsaxpyB__%s'')\n', name) ;
+fprintf (f, 'define(`_Asaxpy3B'', `_Asaxpy3B__%s'')\n', name) ;
+fprintf (f, 'define(`_Asaxpy3B_M'', `_Asaxpy3B_M__%s'')\n', name) ;
+fprintf (f, 'define(`_Asaxpy3B_noM'', `_Asaxpy3B_noM__%s'')\n', name) ;
+fprintf (f, 'define(`_Asaxpy3B_notM'', `_Asaxpy3B_notM__%s'')\n', name) ;
+fprintf (f, 'define(`_AsaxbitB'', `_AsaxbitB__%s'')\n', name) ;
+fprintf (f, 'define(`GB_AxB_defs'', `GB_AxB_defs__%s'')\n', name) ;
+fprintf (f, 'define(`GB_AxB_defs_include'', `#include "GB_AxB_defs__%s.h"'')\n', name) ;
 
 % type of C, A, and B
 fprintf (f, 'define(`GB_ctype'', `%s'')\n', ztype) ;
@@ -172,11 +178,11 @@ else
 end
 
 % for the conventional semirings in MATLAB, which get extra optimization
-if (isequal (addop, 'plus') && isequal (multop, 'times') && ztype_is_float)
-    fprintf (f, 'define(`GB_is_performance_critical_semiring'', `1'')\n') ;
-else
-    fprintf (f, 'define(`GB_is_performance_critical_semiring'', `0'')\n') ;
-end
+% if (isequal (addop, 'plus') && isequal (multop, 'times') && ztype_is_float)
+%     fprintf (f, 'define(`GB_is_performance_critical_semiring'', `1'')\n') ;
+% else
+%     fprintf (f, 'define(`GB_is_performance_critical_semiring'', `0'')\n') ;
+% end
 
 
 if (is_any)
@@ -653,14 +659,21 @@ disable = [disable (sprintf (' || GxB_NO_%s_%s_%s', ...
 fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 fclose (f) ;
 
-nprune = 52 ;
+nprune = 57 ;
 
-% construct the *.c file
-cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +%d > Generated/GB_AxB__%s.c', ...
-nprune, name) ;
+% construct the *.c and *.h files for the semiring
+fmt = 'cat control.m4 Generator/%s.%s | m4 | tail -n +%d > Generated/%s__%s.%s' ;
+base = { 'GB_Adot2B', 'GB_Adot3B', 'GB_Adot4B', 'GB_AsaxbitB', ...
+    'GB_Asaxpy3B', 'GB_Asaxpy3B_noM', 'GB_Asaxpy3B_M', 'GB_Asaxpy3B_notM',  ...
+    'GB_AxB_defs' } ;
+suffix = { 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'h' } ;
+
+for k = 1:length (base)
+    cmd = sprintf (fmt, base {k}, suffix {k}, nprune, base {k}, name, suffix {k}) ;
+    system (cmd) ;
+end
+
 fprintf ('.') ;
-system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...

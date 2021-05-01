@@ -154,9 +154,6 @@
 
 // To renable the fast versions of these semirings, simply comment out the
 // specific "#define GxB_NO..." statements below, and recompile this library.
-// To renable all of them, uncomment the following line and the last #endif:
-
-// #if 0
 
 //------------------------------------------------------------------------------
 // uncomment any of these lines to disable the types
@@ -2634,6 +2631,4 @@
 // #define GxB_NO_TIMES_SECONDJ_INT64   1
 // #define GxB_NO_TIMES_SECONDJ1_INT32  1
 // #define GxB_NO_TIMES_SECONDJ1_INT64  1
-
-// #endif
 

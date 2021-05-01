@@ -178,8 +178,8 @@
 
         ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
         double work = ((double) avlen) * ((double) bnz) ;
-        nthreads = GB_nthreads (work, chunk, nthreads_max) ;
-        int naslice, nbslice ;
+        int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
+        int naslice, nbslice, ntasks ;
 
         if (nthreads == 1 || bnvec == 0)
         { 
@@ -342,8 +342,8 @@
 
         ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
         double work = ((double) anz) * (double) bvdim ;
-        nthreads = GB_nthreads (work, chunk, nthreads_max) ;
-        int nfine_tasks_per_vector = 0 ;
+        int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
+        int nfine_tasks_per_vector = 0, ntasks ;
         bool use_coarse_tasks, use_atomics = false ;
 
         if (nthreads == 1 || bvdim == 0)
@@ -531,7 +531,7 @@
         #define GB_KTILE_SIZE 8
 
         double work = ((double) avlen) * ((double) bvlen) * ((double) bvdim) ;
-        nthreads = GB_nthreads (work, chunk, nthreads_max) ;
+        int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
         int64_t nI_tasks = (bvdim == 0) ? 1 : (1 + (bvdim-1) / GB_TILE_SIZE) ;
         int64_t nJ_tasks = (avlen == 0) ? 1 : (1 + (avlen-1) / GB_TILE_SIZE) ;
         int64_t ntasks = nI_tasks * nJ_tasks ;

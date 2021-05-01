@@ -109,18 +109,15 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_AsaxpyB(add,mult,xname)  \
-            GB (_AsaxpyB_ ## add ## mult ## xname)
+        #define GB_AsaxbitB(add,mult,xname)  \
+            GB (_AsaxbitB_ ## add ## mult ## xname)
 
-        #define GB_AxB_WORKER(add,mult,xname)                               \
-        {                                                                   \
-            info = GB_AsaxpyB (add,mult,xname) (C, M, Mask_comp,            \
-                Mask_struct, true, A, A_is_pattern, B,                      \
-                B_is_pattern, GB_SAXPY_METHOD_BITMAP,                       \
-                NULL, 0, 0, 0, 0,                                           \
-                Context) ;                                                  \
-            done = (info != GrB_NO_VALUE) ;                                 \
-        }                                                                   \
+        #define GB_AxB_WORKER(add,mult,xname)                                  \
+        {                                                                      \
+            info = GB_AsaxbitB (add,mult,xname) (C, M, Mask_comp, Mask_struct, \
+                A, A_is_pattern, B, B_is_pattern, Context) ;                   \
+            done = (info != GrB_NO_VALUE) ;                                    \
+        }                                                                      \
         break ;
 
         //----------------------------------------------------------------------

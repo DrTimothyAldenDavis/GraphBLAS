@@ -122,6 +122,13 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (B) ;
 
+    // ignore the mask if all entries present, structural, and not complemented;
+    // repeating the test after finishing pending work (M may remain jumbled)
+    if (Mask_struct && !Mask_comp && GB_is_dense (M))
+    { 
+        M = NULL ;
+    }
+
     //--------------------------------------------------------------------------
     // T = A*B, A'*B, A*B', or A'*B', also using the mask if present
     //--------------------------------------------------------------------------
@@ -142,6 +149,11 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // semiring->add->ztype if accum is not present.  To compute in-place,
     // C must also not be transposed, and it cannot be aliased with M, A, or B.
 
+for (int k = 0 ; k < 40 ; k++)  // HACK
+{
+    GB_Global_timing_clear (k) ;
+}
+
     bool mask_applied = false ;
     bool done_in_place = false ;
     bool M_transposed = false ;
@@ -149,6 +161,12 @@ GrB_Info GB_mxm                     // C<M> = A*B
         Mask_comp, Mask_struct, accum, A, B, semiring, A_transpose,
         B_transpose, flipxy, &mask_applied, &done_in_place, AxB_method,
         do_sort, Context)) ;
+
+for (int k = 0 ; k < 40 ; k++)
+{
+    double ttt = GB_Global_timing_get (k) ;
+    if (ttt > 0) printf ("v5 %2d: %12.6f\n", k, ttt) ; // HACK
+}
 
     if (done_in_place)
     { 

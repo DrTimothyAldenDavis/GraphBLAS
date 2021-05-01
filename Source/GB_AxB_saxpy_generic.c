@@ -27,10 +27,6 @@
 //          GB_bitmap_AxB_saxpy_template.c.  The method constructs its own
 //          tasks in workspace defined and freed in that template.
 
-// The GB_AsaxpyB method in Generated/GB_AxB__(monoid)_(mult)_(type) uses the
-// same GB_AxB_saxpy_template.c to implement these methods for each generated
-// semiring.
-
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"

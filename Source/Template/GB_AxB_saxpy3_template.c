@@ -30,16 +30,16 @@
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Cp = C->p ;
-    // const int64_t *GB_RESTRICT Ch = C->h ;
+    int64_t *restrict Cp = C->p ;
+    // const int64_t *restrict Ch = C->h ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
 
-    const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
-    const int8_t  *GB_RESTRICT Bb = B->b ;
-    const int64_t *GB_RESTRICT Bi = B->i ;
-    const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
+    const int8_t  *restrict Bb = B->b ;
+    const int64_t *restrict Bi = B->i ;
+    const GB_BTYPE *restrict Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const int64_t bvlen = B->vlen ;
     const bool B_jumbled = B->jumbled ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
@@ -47,56 +47,33 @@
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
-    const int8_t  *GB_RESTRICT Ab = A->b ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int8_t  *restrict Ab = A->b ;
+    const int64_t *restrict Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
     const bool A_jumbled = A->jumbled ;
     const bool A_ok_for_binary_search = 
         ((A_is_sparse || A_is_hyper) && !A_jumbled) ;
 
-    const int64_t *GB_RESTRICT Mp = NULL ;
-    const int64_t *GB_RESTRICT Mh = NULL ;
-    const int8_t  *GB_RESTRICT Mb = NULL ;
-    const int64_t *GB_RESTRICT Mi = NULL ;
-    const GB_void *GB_RESTRICT Mx = NULL ;
-    size_t msize = 0 ;
-    int64_t mnvec = 0 ;
-    int64_t mvlen = 0 ;
+    #if ( !GB_NO_MASK )
+    const int64_t *restrict Mp = M->p ;
+    const int64_t *restrict Mh = M->h ;
+    const int8_t  *restrict Mb = M->b ;
+    const int64_t *restrict Mi = M->i ;
+    const GB_void *restrict Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool M_jumbled = GB_JUMBLED (M) ;
-    if (M != NULL)
-    { 
-        Mp = M->p ;
-        Mh = M->h ;
-        Mb = M->b ;
-        Mi = M->i ;
-        Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
-        msize = M->type->size ;
-        mnvec = M->nvec ;
-        mvlen = M->vlen ;
-    }
-
-    // 3 cases:
-    //      M not present and Mask_comp false: compute C=A*B
-    //      M present     and Mask_comp false: compute C<M>=A*B
-    //      M present     and Mask_comp true : compute C<!M>=A*B
-    // If M is NULL on input, then Mask_comp is also false on input.
-
-    const bool mask_is_M = (M != NULL && !Mask_comp) ;
-
-    // ignore the mask if present, not complemented, dense and
-    // used in place, structural, and not bitmap.  In this case,
-    // all entries in M are true, so M can be ignored.
-    const bool ignore_mask = mask_is_M && M_dense_in_place &&
-        Mask_struct && !M_is_bitmap ;
+    size_t msize = M->type->size ;
+    int64_t mnvec = M->nvec ;
+    int64_t mvlen = M->vlen ;
+    #endif
 
     //==========================================================================
     // phase2: numeric work for fine tasks
@@ -126,15 +103,15 @@
         GB_GET_T_FOR_SECONDJ ;
 
         #if !GB_IS_ANY_PAIR_SEMIRING
-        GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) SaxpyTasks [taskid].Hx ;
+        GB_CTYPE *restrict Hx = (GB_CTYPE *) SaxpyTasks [taskid].Hx ;
         #endif
 
         #if GB_IS_PLUS_FC32_MONOID
-        float  *GB_RESTRICT Hx_real = (float *) Hx ;
-        float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+        float  *restrict Hx_real = (float *) Hx ;
+        float  *restrict Hx_imag = Hx_real + 1 ;
         #elif GB_IS_PLUS_FC64_MONOID
-        double *GB_RESTRICT Hx_real = (double *) Hx ;
-        double *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+        double *restrict Hx_real = (double *) Hx ;
+        double *restrict Hx_imag = Hx_real + 1 ;
         #endif
 
         if (use_Gustavson)
@@ -161,10 +138,10 @@
 
             // Hf [i] == 3: locked.  Hx [i] cannot be accessed.
 
-            int8_t *GB_RESTRICT
-                Hf = (int8_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
+            int8_t *restrict
+                Hf = (int8_t *restrict) SaxpyTasks [taskid].Hf ;
 
-            if (M == NULL)
+            #if ( GB_NO_MASK )
             {
 
                 //--------------------------------------------------------------
@@ -246,7 +223,7 @@
                 }
                 
             }
-            else if (mask_is_M)
+            #elif ( !GB_MASK_COMP )
             {
 
                 //--------------------------------------------------------------
@@ -332,7 +309,7 @@
                 }
 
             }
-            else
+            #else
             {
 
                 //--------------------------------------------------------------
@@ -415,6 +392,7 @@
                     }
                 }
             }
+            #endif
 
         }
         else
@@ -448,11 +426,10 @@
 
             // h == (anything), f == 3: locked.
 
-            int64_t *GB_RESTRICT
-                Hf = (int64_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
+            int64_t *restrict Hf = (int64_t *restrict) SaxpyTasks [taskid].Hf ;
             int64_t hash_bits = (hash_size-1) ;
 
-            if (M == NULL || ignore_mask)
+            #if ( GB_NO_MASK )
             { 
 
                 //--------------------------------------------------------------
@@ -464,7 +441,7 @@
                 #include "GB_AxB_saxpy3_fineHash_phase2.c"
 
             }
-            else if (mask_is_M)
+            #elif ( !GB_MASK_COMP )
             {
 
                 //--------------------------------------------------------------
@@ -518,6 +495,7 @@
                                         (Mjx [2*i+1] != 0)) ;           \
                                 if (!mij) continue ;
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                            #undef  GB_CHECK_MASK_ij
                             break ;
                     }
                     // the task is finished: go to the next task
@@ -598,7 +576,7 @@
                 }
 
             }
-            else
+            #else
             {
 
                 //--------------------------------------------------------------
@@ -654,6 +632,7 @@
                                         (Mjx [2*i+1] != 0)) ;           \
                                 if (mij) continue ;
                             #include "GB_AxB_saxpy3_fineHash_phase2.c"
+                            #undef  GB_CHECK_MASK_ij
                             break ;
                     }
                     // the task is finished: go to the next task
@@ -743,6 +722,7 @@
                     }
                 }
             }
+            #endif
         }
     }
 
@@ -773,8 +753,8 @@
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    int64_t  *GB_RESTRICT Ci = C->i ;
-    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
+    int64_t  *restrict Ci = C->i ;
+    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
 
 //  printf ("check Ci size %p %ld\n", C->i, C->i_size) ;
     ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
@@ -821,7 +801,7 @@
         //----------------------------------------------------------------------
 
         #if !GB_IS_ANY_PAIR_SEMIRING
-        GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) SaxpyTasks [taskid].Hx ;
+        GB_CTYPE *restrict Hx = (GB_CTYPE *) SaxpyTasks [taskid].Hx ;
         #endif
         int64_t hash_size = SaxpyTasks [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
@@ -848,8 +828,8 @@
                 //--------------------------------------------------------------
 
                 // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
-                int8_t *GB_RESTRICT
-                    Hf = (int8_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
+                int8_t *restrict
+                    Hf = (int8_t *restrict) SaxpyTasks [taskid].Hf ;
                 int64_t cjnz = Cp [kk+1] - pC ;
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
@@ -890,8 +870,8 @@
                 // (Hf [hash] & 3) == 2 if C(i,j) is an entry in C(:,j),
                 // and the index i of the entry is (Hf [hash] >> 2) - 1.
 
-                int64_t *GB_RESTRICT
-                    Hf = (int64_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
+                int64_t *restrict
+                    Hf = (int64_t *restrict) SaxpyTasks [taskid].Hf ;
                 int64_t mystart, myend ;
                 GB_PARTITION (mystart, myend, hash_size, my_teamid, team_size) ;
                 pC += SaxpyTasks [taskid].my_cjnz ;
@@ -917,8 +897,8 @@
             // numeric coarse task: compute C(:,kfirst:klast)
             //------------------------------------------------------------------
 
-            int64_t *GB_RESTRICT
-                Hf = (int64_t *GB_RESTRICT) SaxpyTasks [taskid].Hf ;
+            int64_t *restrict
+                Hf = (int64_t *restrict) SaxpyTasks [taskid].Hf ;
             int64_t kfirst = SaxpyTasks [taskid].start ;
             int64_t klast = SaxpyTasks [taskid].end ;
             int64_t nk = klast - kfirst + 1 ;
@@ -931,23 +911,17 @@
                 // phase5: coarse Gustavson task
                 //--------------------------------------------------------------
 
-                if (M == NULL)
+                #if ( GB_NO_MASK )
                 {
 
                     //----------------------------------------------------------
                     // phase5: coarse Gustavson task, C=A*B
                     //----------------------------------------------------------
 
-                    #if GB_IS_PERFORMANCE_CRITICAL_SEMIRING
-                    #define GB_SAXPY_COARSE_GUSTAVSON_NOMASK_PHASE5
-                    #include "GB_meta16_factory.c"
-                    #undef  GB_SAXPY_COARSE_GUSTAVSON_NOMASK_PHASE5
-                    #else
                     #include "GB_AxB_saxpy3_coarseGus_noM_phase5.c"
-                    #endif
 
                 }
-                else if (mask_is_M)
+                #elif ( !GB_MASK_COMP )
                 {
 
                     //----------------------------------------------------------
@@ -1044,7 +1018,7 @@
                     }
 
                 }
-                else
+                #else
                 {
 
                     //----------------------------------------------------------
@@ -1138,6 +1112,7 @@
                         }
                     }
                 }
+                #endif
 
             }
             else
@@ -1147,10 +1122,10 @@
                 // phase5: coarse hash task
                 //--------------------------------------------------------------
 
-                int64_t *GB_RESTRICT Hi = SaxpyTasks [taskid].Hi ;
+                int64_t *restrict Hi = SaxpyTasks [taskid].Hi ;
                 int64_t hash_bits = (hash_size-1) ;
 
-                if (M == NULL || ignore_mask)
+                #if ( GB_NO_MASK )
                 { 
 
                     //----------------------------------------------------------
@@ -1162,7 +1137,7 @@
                     #include "GB_AxB_saxpy3_coarseHash_phase5.c"
 
                 }
-                else if (mask_is_M)
+                #elif ( !GB_MASK_COMP )
                 {
 
                     //----------------------------------------------------------
@@ -1173,6 +1148,7 @@
                     { 
 
                         ASSERT (!Mask_struct || M_is_bitmap) ;
+                        #undef  GB_CHECK_MASK_ij
                         #define GB_CHECK_MASK_ij                        \
                             bool mij =                                  \
                                 (M_is_bitmap ? Mjb [i] : 1) &&          \
@@ -1210,6 +1186,7 @@
                                             (Mjx [2*i+1] != 0)) ;           \
                                     if (!mij) continue ;
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                                #undef  GB_CHECK_MASK_ij
                                 break ;
                         }
                     }
@@ -1277,7 +1254,7 @@
                     }
 
                 }
-                else
+                #else
                 {
 
                     //----------------------------------------------------------
@@ -1332,6 +1309,7 @@
                                             (Mjx [2*i+1] != 0)) ;           \
                                     if (mij) continue ;
                                 #include "GB_AxB_saxpy3_coarseHash_phase5.c"
+                                #undef  GB_CHECK_MASK_ij
                                 break ;
                         }
                     }
@@ -1399,6 +1377,7 @@
                     }
                     }
                 }
+                #endif
             }
         }
         C_jumbled = C_jumbled || task_C_jumbled ;
@@ -1417,4 +1396,7 @@
 
 #undef Cx
 #undef Hx
+
+#undef GB_NO_MASK
+#undef GB_MASK_COMP
 

@@ -59,7 +59,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Apr 27, 2021 (BETA2)")
+set ( GraphBLAS_DATE "May 1, 2021 (BETA2)")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   1 )
@@ -194,7 +194,6 @@ else ( )
 endif ( )
 
 message ( STATUS "CMAKE compiler ID:         " ${CMAKE_C_COMPILER_ID} )
-message ( STATUS "CMAKE thread library:      " ${CMAKE_THREAD_LIBS_INIT} )
 message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 
 #-------------------------------------------------------------------------------
@@ -363,13 +362,6 @@ if ( CMAKE_CUDA )
     target_link_libraries ( graphblas PUBLIC ${GB_CUDA} )
     if ( BUILD_GRB_STATIC_LIBRARY )
         target_link_libraries ( graphblas_static PUBLIC ${GB_CUDA} )
-    endif ( )
-endif ( )
-
-if ( CMAKE_THREAD_LIBS_INIT )
-    target_link_libraries ( graphblas PUBLIC ${CMAKE_THREAD_LIBS_INIT} )
-    if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static PUBLIC ${CMAKE_THREAD_LIBS_INIT} )
     endif ( )
 endif ( )
 

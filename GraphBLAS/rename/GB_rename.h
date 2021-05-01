@@ -3040,7 +3040,47 @@
 #define GB_AxB_saxpy3_flopcount GM_AxB_saxpy3_flopcount
 #define GB_AxB_saxpy3_slice_balanced GM_AxB_saxpy3_slice_balanced
 #define GB_AxB_saxpy3_slice_quick GM_AxB_saxpy3_slice_quick
+#define GB_AxB_saxpy3_sym_bh GM_AxB_saxpy3_sym_bh
 #define GB_AxB_saxpy3_symbolic GM_AxB_saxpy3_symbolic
+#define GB_AxB_saxpy3_sym_bs GM_AxB_saxpy3_sym_bs
+#define GB_AxB_saxpy3_sym_fh GM_AxB_saxpy3_sym_fh
+#define GB_AxB_saxpy3_sym_fs GM_AxB_saxpy3_sym_fs
+#define GB_AxB_saxpy3_sym_hb GM_AxB_saxpy3_sym_hb
+#define GB_AxB_saxpy3_sym_hf GM_AxB_saxpy3_sym_hf
+#define GB_AxB_saxpy3_sym_hh GM_AxB_saxpy3_sym_hh
+#define GB_AxB_saxpy3_sym_hs GM_AxB_saxpy3_sym_hs
+#define GB_AxB_saxpy3_sym_mbb GM_AxB_saxpy3_sym_mbb
+#define GB_AxB_saxpy3_sym_mbf GM_AxB_saxpy3_sym_mbf
+#define GB_AxB_saxpy3_sym_mbh GM_AxB_saxpy3_sym_mbh
+#define GB_AxB_saxpy3_sym_mbs GM_AxB_saxpy3_sym_mbs
+#define GB_AxB_saxpy3_sym_mfb GM_AxB_saxpy3_sym_mfb
+#define GB_AxB_saxpy3_sym_mff GM_AxB_saxpy3_sym_mff
+#define GB_AxB_saxpy3_sym_mfh GM_AxB_saxpy3_sym_mfh
+#define GB_AxB_saxpy3_sym_mfs GM_AxB_saxpy3_sym_mfs
+#define GB_AxB_saxpy3_sym_mhb GM_AxB_saxpy3_sym_mhb
+#define GB_AxB_saxpy3_sym_mhf GM_AxB_saxpy3_sym_mhf
+#define GB_AxB_saxpy3_sym_mhh GM_AxB_saxpy3_sym_mhh
+#define GB_AxB_saxpy3_sym_mhs GM_AxB_saxpy3_sym_mhs
+#define GB_AxB_saxpy3_sym_msb GM_AxB_saxpy3_sym_msb
+#define GB_AxB_saxpy3_sym_msf GM_AxB_saxpy3_sym_msf
+#define GB_AxB_saxpy3_sym_msh GM_AxB_saxpy3_sym_msh
+#define GB_AxB_saxpy3_sym_mss GM_AxB_saxpy3_sym_mss
+#define GB_AxB_saxpy3_sym_nbh GM_AxB_saxpy3_sym_nbh
+#define GB_AxB_saxpy3_sym_nbs GM_AxB_saxpy3_sym_nbs
+#define GB_AxB_saxpy3_sym_nfh GM_AxB_saxpy3_sym_nfh
+#define GB_AxB_saxpy3_sym_nfs GM_AxB_saxpy3_sym_nfs
+#define GB_AxB_saxpy3_sym_nhb GM_AxB_saxpy3_sym_nhb
+#define GB_AxB_saxpy3_sym_nhf GM_AxB_saxpy3_sym_nhf
+#define GB_AxB_saxpy3_sym_nhh GM_AxB_saxpy3_sym_nhh
+#define GB_AxB_saxpy3_sym_nhs GM_AxB_saxpy3_sym_nhs
+#define GB_AxB_saxpy3_sym_nsb GM_AxB_saxpy3_sym_nsb
+#define GB_AxB_saxpy3_sym_nsf GM_AxB_saxpy3_sym_nsf
+#define GB_AxB_saxpy3_sym_nsh GM_AxB_saxpy3_sym_nsh
+#define GB_AxB_saxpy3_sym_nss GM_AxB_saxpy3_sym_nss
+#define GB_AxB_saxpy3_sym_sb GM_AxB_saxpy3_sym_sb
+#define GB_AxB_saxpy3_sym_sf GM_AxB_saxpy3_sym_sf
+#define GB_AxB_saxpy3_sym_sh GM_AxB_saxpy3_sym_sh
+#define GB_AxB_saxpy3_sym_ss GM_AxB_saxpy3_sym_ss
 #define GB_AxB_saxpy_generic GM_AxB_saxpy_generic
 #define GB_AxB_saxpy_sparsity GM_AxB_saxpy_sparsity
 #define GB_AxB_semiring_builtin GM_AxB_semiring_builtin
@@ -3212,8 +3252,6 @@
 #define GB_Global_bitmap_switch_set GM_Global_bitmap_switch_set
 #define GB_Global_burble_get GM_Global_burble_get
 #define GB_Global_burble_set GM_Global_burble_set
-// #define GB_Global_calloc_function GM_Global_calloc_function
-// #define GB_Global_calloc_function_set GM_Global_calloc_function_set
 #define GB_Global_chunk_get GM_Global_chunk_get
 #define GB_Global_chunk_set GM_Global_chunk_set
 #define GB_Global_flush_get GM_Global_flush_get
@@ -3244,7 +3282,6 @@
 #define GB_Global_GrB_init_called_set GM_Global_GrM_init_called_set
 #define GB_Global_hack_get GM_Global_hack_get
 #define GB_Global_hack_set GM_Global_hack_set
-// #define GB_Global_have_calloc_function GM_Global_have_calloc_function
 #define GB_Global_have_realloc_function GM_Global_have_realloc_function
 #define GB_Global_hyper_switch_get GM_Global_hyper_switch_get
 #define GB_Global_hyper_switch_set GM_Global_hyper_switch_set
@@ -3433,8 +3470,6 @@
 #define GB_subref_phase2 GM_subref_phase2
 #define GB_subref_slice GM_subref_slice
 #define GB_task_cumsum GM_task_cumsum
-#define GB_to_dynamic GM_to_dynamic
-#define GB_to_static GM_to_static
 #define GB_transplant GM_transplant
 #define GB_transplant_conform GM_transplant_conform
 #define GB_transpose GM_transpose
