@@ -23,7 +23,8 @@
     GrB_Info GB (_Asaxpy3B_M__eq_ne_int16)
     (
         GrB_Matrix C,   // C<M>=A*B, C sparse or hypersparse
-        const GrB_Matrix M, const bool Mask_struct, const bool M_dense_in_place,
+        const GrB_Matrix M, const bool Mask_struct,
+        const bool M_packed_in_place,
         const GrB_Matrix A, bool A_is_pattern,
         const GrB_Matrix B, bool B_is_pattern,
         GB_saxpy3task_struct *restrict SaxpyTasks,

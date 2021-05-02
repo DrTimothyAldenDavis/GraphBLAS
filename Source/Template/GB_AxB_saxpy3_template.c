@@ -213,7 +213,7 @@
                 //--------------------------------------------------------------
 
                 GB_GET_M_j ;                // get M(:,j)
-                if (M_dense_in_place)
+                if (M_packed_in_place)
                 { 
                     // M(:,j) is packed, and thus not scattered into Hf
                     if (M_is_bitmap && Mask_struct)
@@ -251,7 +251,7 @@
                 //--------------------------------------------------------------
 
                 GB_GET_M_j ;                // get M(:,j)
-                if (M_dense_in_place)
+                if (M_packed_in_place)
                 { 
                     // M(:,j) is packed, and thus not scattered into Hf
                     if (M_is_bitmap && Mask_struct)
@@ -516,7 +516,7 @@
                     // phase5: coarse hash task, C<M>=A*B
                     //----------------------------------------------------------
 
-                    if (M_dense_in_place)
+                    if (M_packed_in_place)
                     { 
                         // M is packed, and thus not scattered into Hf
                         if (M_is_bitmap && Mask_struct)
@@ -552,7 +552,7 @@
                     //----------------------------------------------------------
                     // phase5: coarse hash task, C<!M>=A*B
                     //---------------------------------------------------------- 
-                    if (M_dense_in_place)
+                    if (M_packed_in_place)
                     { 
                         // M is packed, and thus not scattered into Hf
                         if (M_is_bitmap && Mask_struct)

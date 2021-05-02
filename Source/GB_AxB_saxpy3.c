@@ -267,7 +267,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //==========================================================================
 
     int nthreads, ntasks, nfine ;
-    bool M_dense_in_place = false ;
+    bool M_packed_in_place = false ;
 
     if (nthreads_max == 1 && M == NULL && (AxB_method != GxB_AxB_HASH) &&
         GB_IMIN (GB_NNZ (A), GB_NNZ (B)) > cvlen)
@@ -288,7 +288,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // the general case.  This may select a single task for a single thread
         // anyway, but this decision would be based on the analysis.
         GB_OK (GB_AxB_saxpy3_slice_balanced (C, M, Mask_comp, A, B, AxB_method,
-            &SaxpyTasks, &SaxpyTasks_size, &apply_mask, &M_dense_in_place,
+            &SaxpyTasks, &SaxpyTasks_size, &apply_mask, &M_packed_in_place,
             &ntasks, &nfine, &nthreads, Context)) ;
     }
 
@@ -573,7 +573,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 // GB_Global_timing_add (5, ttt) ;
 // ttt = omp_get_wtime ( ) ;
 
-    GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_dense_in_place,
+    GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_packed_in_place,
         A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
 
 // the above phase takes 1.6 seconds for 64 trials of the web graph.
@@ -600,7 +600,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #define GB_AxB_WORKER(add,mult,xname)                                  \
         {                                                                      \
             info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp, Mask_struct, \
-                M_dense_in_place, A, A_is_pattern, B, B_is_pattern,            \
+                M_packed_in_place, A, A_is_pattern, B, B_is_pattern,           \
                 SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context) ;       \
             done = (info != GrB_NO_VALUE) ;                                    \
         }                                                                      \
@@ -624,7 +624,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     if (!done)
     { 
         info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
-            M_dense_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
+            M_packed_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
             flipxy, GB_SAXPY_METHOD_3,
             SaxpyTasks, ntasks, nfine, nthreads, do_sort,
             Context) ;

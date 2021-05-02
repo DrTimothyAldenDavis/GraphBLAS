@@ -20,7 +20,7 @@ GrB_Info GB (_Asaxpy3B__lxor_eq_int32)
 (
     GrB_Matrix C,   // C<any M>=A*B, C sparse or hypersparse
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
-    const bool M_dense_in_place,
+    const bool M_packed_in_place,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     GB_saxpy3task_struct *restrict SaxpyTasks,
@@ -43,7 +43,7 @@ GrB_Info GB (_Asaxpy3B__lxor_eq_int32)
     {
         // C<M> = A*B
         return (GB (_Asaxpy3B_M__lxor_eq_int32) (C,
-            M, Mask_struct, M_dense_in_place,
+            M, Mask_struct, M_packed_in_place,
             A, A_is_pattern, B, B_is_pattern,
             SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context)) ;
     }
@@ -51,7 +51,7 @@ GrB_Info GB (_Asaxpy3B__lxor_eq_int32)
     {
         // C<!M> = A*B
         return (GB (_Asaxpy3B_notM__lxor_eq_int32) (C,
-            M, Mask_struct, M_dense_in_place,
+            M, Mask_struct, M_packed_in_place,
             A, A_is_pattern, B, B_is_pattern,
             SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context)) ;
     }
