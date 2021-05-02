@@ -285,7 +285,6 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                         // M(:,j) is dense.  M is not scattered into Hf.
                         //------------------------------------------------------
 
-                        ASSERT (!Mask_struct || M_is_bitmap) ;
                         #undef  GB_CHECK_MASK_ij
                         #define GB_CHECK_MASK_ij                        \
                             bool mij =                                  \
@@ -360,17 +359,6 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                         //------------------------------------------------------
                         // M(:,j) is dense.  M is not scattered into Hf.
                         //------------------------------------------------------
-
-                        if (Mask_struct && !M_is_bitmap)
-                        { 
-                            // structural mask, complemented, not bitmap.
-                            // No work to do; C is empty.
-                            for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                            {
-                                Cp [kk] = 0 ;
-                            }
-                            continue ;
-                        }
 
                         #undef  GB_CHECK_MASK_ij
                         #define GB_CHECK_MASK_ij                        \

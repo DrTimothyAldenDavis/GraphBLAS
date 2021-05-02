@@ -30,7 +30,7 @@
         const int do_sort,
         GB_Context Context
     )
-    { 
+    {
         if (GB_IS_SPARSE (A) && GB_IS_SPARSE (B))
         {
             // both A and B are sparse

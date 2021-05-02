@@ -346,6 +346,7 @@
 // Any disabled binary operators will still work just fine, but operations
 // using them will be slower.
 
+// also needed by GrB_reduce to vector
 // #define GxB_NO_FIRST_INT8    1
 // #define GxB_NO_FIRST_INT16   1
 // #define GxB_NO_FIRST_INT32   1
@@ -360,6 +361,7 @@
 // #define GxB_NO_FIRST_FC64    1
 // #define GxB_NO_FIRST_BOOL    1
 
+// also needed by GrB_reduce to vector
 // #define GxB_NO_SECOND_INT8   1
 // #define GxB_NO_SECOND_INT16  1
 // #define GxB_NO_SECOND_INT32  1
@@ -830,6 +832,7 @@
 // builtin: GrB_LXNOR_LOR_SEMIRING_BOOL == GxB_EQ_LOR_BOOL:
 // #define GxB_NO_EQ_LOR_BOOL           1
 // #define GxB_NO_EQ_LXOR_BOOL          1
+// FIRST and SECOND are needed by GrB_reduce to vector:
 // #define GxB_NO_EQ_FIRST_BOOL         1
 // #define GxB_NO_EQ_SECOND_BOOL        1
 
@@ -916,6 +919,7 @@
 // builtin: GrB_LAND_LOR_SEMIRING_BOOL == GxB_LAND_LOR_BOOL:
 // #define GxB_NO_LAND_LOR_BOOL         1
 // #define GxB_NO_LAND_LXOR_BOOL        1
+// FIRST and SECOND are needed by GrB_reduce to vector:
 // #define GxB_NO_LAND_FIRST_BOOL       1
 // #define GxB_NO_LAND_SECOND_BOOL      1
 
@@ -1003,6 +1007,7 @@
 // #define GxB_NO_LOR_LAND_BOOL         1
 // #define GxB_NO_LOR_LOR_BOOL          1
 // #define GxB_NO_LOR_LXOR_BOOL         1
+// FIRST and SECOND are needed by GrB_reduce to vector:
 // #define GxB_NO_LOR_FIRST_BOOL        1
 // #define GxB_NO_LOR_SECOND_BOOL       1
 
@@ -1089,6 +1094,7 @@
 // #define GxB_NO_LXOR_LAND_BOOL        1
 // #define GxB_NO_LXOR_LOR_BOOL         1
 // #define GxB_NO_LXOR_LXOR_BOOL        1
+// FIRST and SECOND are needed by GrB_reduce to vector:
 // #define GxB_NO_LXOR_FIRST_BOOL       1
 // #define GxB_NO_LXOR_SECOND_BOOL      1
 // #define GxB_NO_LXOR_PAIR_BOOL        1
@@ -1877,7 +1883,8 @@
 //------------------------------------------------------------
 
 // No builtin GrB_* semirings use the TIMES monoid, and none are used
-// in LAGraph 0.1 yet.
+// in LAGraph 0.1 yet.  TIMES_FIRST and TIMES_SECOND are needed by
+// GrB_reduce to vector.
 
 // #define GxB_NO_TIMES_MIN_FP32        1
 // #define GxB_NO_TIMES_MIN_FP64        1
@@ -2109,59 +2116,85 @@
 
 // #define GxB_NO_PLUS_PLUS_FC32        1
 // #define GxB_NO_PLUS_PLUS_FC64        1
+
 // #define GxB_NO_PLUS_TIMES_FC32       1
 // #define GxB_NO_PLUS_TIMES_FC64       1
+
+// needed by GrB_reduce to vector
 // #define GxB_NO_PLUS_FIRST_FC32       1
 // #define GxB_NO_PLUS_FIRST_FC64       1
+
+// needed by GrB_reduce to vector
 // #define GxB_NO_PLUS_SECOND_FC32      1
 // #define GxB_NO_PLUS_SECOND_FC64      1
+
 // #define GxB_NO_PLUS_PAIR_FC32        1
 // #define GxB_NO_PLUS_PAIR_FC64        1
 
    #define GxB_NO_PLUS_MINUS_FC32       1
    #define GxB_NO_PLUS_MINUS_FC64       1
+
    #define GxB_NO_PLUS_DIV_FC32         1
    #define GxB_NO_PLUS_DIV_FC64         1
+
    #define GxB_NO_PLUS_RDIV_FC32        1
    #define GxB_NO_PLUS_RDIV_FC64        1
+
    #define GxB_NO_PLUS_RMINUS_FC32      1
    #define GxB_NO_PLUS_RMINUS_FC64      1
 
 // #define GxB_NO_TIMES_PLUS_FC32       1
 // #define GxB_NO_TIMES_PLUS_FC64       1
+
 // #define GxB_NO_TIMES_TIMES_FC32      1
 // #define GxB_NO_TIMES_TIMES_FC64      1
+
+// needed by GrB_reduce to vector:
 // #define GxB_NO_TIMES_FIRST_FC32      1
 // #define GxB_NO_TIMES_FIRST_FC64      1
+
+// needed by GrB_reduce to vector
 // #define GxB_NO_TIMES_SECOND_FC32     1
 // #define GxB_NO_TIMES_SECOND_FC64     1
 
    #define GxB_NO_TIMES_MINUS_FC32      1
    #define GxB_NO_TIMES_MINUS_FC64      1
+
    #define GxB_NO_TIMES_DIV_FC32        1
    #define GxB_NO_TIMES_DIV_FC64        1
+
    #define GxB_NO_TIMES_RDIV_FC32       1
    #define GxB_NO_TIMES_RDIV_FC64       1
+
    #define GxB_NO_TIMES_RMINUS_FC32     1
    #define GxB_NO_TIMES_RMINUS_FC64     1
 
+// needed by GrB_reduce to vector
 // #define GxB_NO_ANY_FIRST_FC32        1
 // #define GxB_NO_ANY_FIRST_FC64        1
+
+// needed by GrB_reduce to vector
 // #define GxB_NO_ANY_SECOND_FC32       1
 // #define GxB_NO_ANY_SECOND_FC64       1
+
 // #define GxB_NO_ANY_PAIR_FC32         1
 // #define GxB_NO_ANY_PAIR_FC64         1
 
    #define GxB_NO_ANY_PLUS_FC32         1
    #define GxB_NO_ANY_PLUS_FC64         1
+
    #define GxB_NO_ANY_TIMES_FC32        1
    #define GxB_NO_ANY_TIMES_FC64        1
+
    #define GxB_NO_ANY_MINUS_FC32        1
    #define GxB_NO_ANY_MINUS_FC64        1
+
    #define GxB_NO_ANY_DIV_FC32          1
    #define GxB_NO_ANY_DIV_FC64          1
+
    #define GxB_NO_ANY_RDIV_FC32         1
    #define GxB_NO_ANY_RDIV_FC64         1
+
    #define GxB_NO_ANY_RMINUS_FC32       1
    #define GxB_NO_ANY_RMINUS_FC64       1
 
@@ -2173,7 +2206,7 @@
 // However, semirings based on the ANY monoid are common: BFS in particular
 // uses ANY_FIRST, ANY_SECOND, and ANY_PAIR.
 
-// used in LAGraph: BFS, also needed by GrB_reduce to vector
+// used in LAGraph: BFS, and GrB_reduce to vector
 // #define GxB_NO_ANY_FIRST_BOOL        1
 // #define GxB_NO_ANY_FIRST_FP32        1
 // #define GxB_NO_ANY_FIRST_FP64        1
@@ -2186,7 +2219,7 @@
 // #define GxB_NO_ANY_FIRST_UINT64      1
 // #define GxB_NO_ANY_FIRST_UINT8       1
 
-// used in LAGraph: BFS
+// used in LAGraph: BFS, and GrB_reduce to vector
 // #define GxB_NO_ANY_SECOND_BOOL       1
 // #define GxB_NO_ANY_SECOND_FP32       1
 // #define GxB_NO_ANY_SECOND_FP64       1
@@ -2223,18 +2256,19 @@
    #define GxB_NO_ANY_DIV_UINT64        1
    #define GxB_NO_ANY_DIV_UINT8         1
 
-// These are enabled for v5, to facilitate argmin and argmax computations
-// #define GxB_NO_ANY_EQ_BOOL           1
-// #define GxB_NO_ANY_EQ_FP32           1
-// #define GxB_NO_ANY_EQ_FP64           1
-// #define GxB_NO_ANY_EQ_INT16          1
-// #define GxB_NO_ANY_EQ_INT32          1
-// #define GxB_NO_ANY_EQ_INT64          1
-// #define GxB_NO_ANY_EQ_INT8           1
-// #define GxB_NO_ANY_EQ_UINT16         1
-// #define GxB_NO_ANY_EQ_UINT32         1
-// #define GxB_NO_ANY_EQ_UINT64         1
-// #define GxB_NO_ANY_EQ_UINT8          1
+   // argmin and argmax use these semirings, but only for row/col scale,
+   // which is controlled by the same as a binop, not a semiring.
+   #define GxB_NO_ANY_EQ_BOOL           1
+   #define GxB_NO_ANY_EQ_FP32           1
+   #define GxB_NO_ANY_EQ_FP64           1
+   #define GxB_NO_ANY_EQ_INT16          1
+   #define GxB_NO_ANY_EQ_INT32          1
+   #define GxB_NO_ANY_EQ_INT64          1
+   #define GxB_NO_ANY_EQ_INT8           1
+   #define GxB_NO_ANY_EQ_UINT16         1
+   #define GxB_NO_ANY_EQ_UINT32         1
+   #define GxB_NO_ANY_EQ_UINT64         1
+   #define GxB_NO_ANY_EQ_UINT8          1
 
    #define GxB_NO_ANY_GE_BOOL           1
    #define GxB_NO_ANY_GE_FP32           1
