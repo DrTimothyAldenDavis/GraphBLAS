@@ -100,34 +100,24 @@ GrB_Info GB_mxm                     // C<M> = A*B
             bnrows, bncols, B_transpose ? " (transposed)" : "") ;
     }
 
+    //--------------------------------------------------------------------------
+    // finish any pending work
+    //--------------------------------------------------------------------------
+
     GrB_Matrix M = M_input ;
-    if (Mask_struct && !Mask_comp && GB_IS_FULL (M))
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
+
+    // ignore the mask if all entries present, structural, and not complemented
+    if (Mask_struct && !Mask_comp && GB_is_dense (M))
     { 
-        // ignore the mask if it is full, structural, and not complemented
         M = NULL ;
     }
 
     // quick return if an empty mask is complemented
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp, Mask_struct) ;
 
-    // if M is full and structural, it has been ignored (set to NULL if not
-    // complemented or quick-mask condition has returned if complemented)
-    ASSERT (!(Mask_struct && GB_IS_FULL (M))) ;
-
-    //--------------------------------------------------------------------------
-    // finish any pending work
-    //--------------------------------------------------------------------------
-
-    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (B) ;
-
-    // ignore the mask if all entries present, structural, and not complemented;
-    // repeating the test after finishing pending work (M may remain jumbled)
-    if (Mask_struct && !Mask_comp && GB_is_dense (M))
-    { 
-        M = NULL ;
-    }
 
     //--------------------------------------------------------------------------
     // T = A*B, A'*B, A*B', or A'*B', also using the mask if present

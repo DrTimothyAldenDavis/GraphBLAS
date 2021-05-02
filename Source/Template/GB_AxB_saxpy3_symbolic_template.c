@@ -234,33 +234,18 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
 
                 #if ( GB_NO_MASK )
                 { 
-
-                    //----------------------------------------------------------
                     // phase1: coarse Gustavson task, C=A*B
-                    //----------------------------------------------------------
-
                     #include "GB_AxB_saxpy3_coarseGus_noM_phase1.c"
-
                 }
                 #elif ( !GB_MASK_COMP )
                 { 
-
-                    //----------------------------------------------------------
                     // phase1: coarse Gustavson task, C<M>=A*B
-                    //----------------------------------------------------------
-
                     #include "GB_AxB_saxpy3_coarseGus_M_phase1.c"
-
                 }
                 #else
                 { 
-
-                    //----------------------------------------------------------
                     // phase1: coarse Gustavson task, C<!M>=A*B
-                    //----------------------------------------------------------
-
                     #include "GB_AxB_saxpy3_coarseGus_notM_phase1.c"
-
                 }
                 #endif
 
