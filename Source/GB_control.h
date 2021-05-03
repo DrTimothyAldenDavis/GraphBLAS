@@ -97,8 +97,9 @@
 //  (6) boolean semirings with non-boolean inputs removed
 //      (EQ_LT_FP32 for example), and boolean inputs with comparators
 //      (GE, GT, LE, LT)
+//  (7) positional semirings with PLUS and TIMES monoid removed.
 
-// With the above semirings removed, the remaining 453 semirings are:
+// With the above semirings removed, the remaining 412 semirings are:
 
 //  25 boolean semirings
 //
@@ -111,7 +112,7 @@
 //              note: EQ_BOOL and LXNOR are the same operator, and
 //                    NE_BOOL and LXOR  are the same operator.
 //
-//  120 semirings with MIN/MAX monoids (12 kinds, 10 real types each):
+//  100 semirings with MIN/MAX monoids (10 kinds, 10 real types each):
 //
 //      monoid  multiply ops
 //      MAX:    MIN, PLUS, TIMES, FIRST, SECOND
@@ -130,7 +131,7 @@
 //      PLUS:   PLUS, TIMES, FIRST, SECOND, PAIR
 //      TIMES:  PLUS, TIMES, FIRST, SECOND
 //
-//  36 semirings with the ANY monoid:
+//  39 semirings with the ANY monoid:
 //
 //      ANY:    FIRST, SECOND, PAIR (with bool, 10 real types, 2 complex types)
 //
@@ -138,9 +139,9 @@
 //
 //      (BOR, BAND, BXOR, BXNOR) x (BOR, BAND, BXOR, BXNOR)
 //
-//  60 positional semirings:
+//  36 positional semirings:
 //
-//      monoids: (MIN, MAX, ANY, PLUS, TIMES) x
+//      monoids: (MIN, MAX, ANY) x
 //      mult:    (FIRSTI, FIRSTI1, FIRSTJ, FIRSTJ1, SECONDJ, SECONDJ1) x
 //      types:   (int32, int64)
 //
@@ -1211,7 +1212,7 @@
 
 // MAX_PLUS, MAX_TIMES, MAX_FIRST, MAX_SECOND, and MAX_MIN are GrB_* builtins.
 
-//  60 semirings with MAX monoids (6 kinds, 10 real types each):
+//  50 semirings with MAX monoids (5 kinds, 10 real types each):
 //
 //      monoid  multiply ops
 //      MAX:    MIN, PLUS, TIMES, FIRST, SECOND
@@ -1451,7 +1452,7 @@
 
 // MIN_PLUS, MIN_TIMES, MIN_FIRST, MIN_SECOND, and MIN_MAX are GrB_* builtins.
 
-//  60 semirings with MIN monoids (6 kinds, 10 real types each):
+//  50 semirings with MIN monoids (6 kinds, 10 real types each):
 //
 //      monoid  multiply ops
 //      MIN:    MAX, PLUS, TIMES, FIRST, SECOND
@@ -2253,7 +2254,7 @@
 // However, semirings based on the ANY monoid are common: BFS in particular
 // uses ANY_FIRST, ANY_SECOND, and ANY_PAIR.
 
-//  36 semirings enabled with the ANY monoid:
+//  39 semirings enabled with the ANY monoid:
 //
 //      ANY:   FIRST, SECOND, PAIR (with bool, 10 real types, 2 complex types)
 
@@ -2682,9 +2683,9 @@
 // framewarks such as MATLAB.  In a semiring, the multiplicative operator
 // SECONDI is the same as FIRSTJ.
 
-//  60 positional semirings, all enabled below:
+//  36 positional semirings:
 //
-//      monoids: (MIN, MAX, ANY, PLUS, TIMES) x
+//      monoids: (MIN, MAX, ANY) x
 //      mult:    (FIRSTI, FIRSTI1, FIRSTJ, FIRSTJ1, SECONDJ, SECONDJ1) x
 //      types:   (int32, int64)
 
@@ -2727,29 +2728,29 @@
 // #define GxB_NO_ANY_SECONDJ1_INT32    1
 // #define GxB_NO_ANY_SECONDJ1_INT64    1
 
-// #define GxB_NO_PLUS_FIRSTI_INT32     1
-// #define GxB_NO_PLUS_FIRSTI_INT64     1
-// #define GxB_NO_PLUS_FIRSTI1_INT32    1
-// #define GxB_NO_PLUS_FIRSTI1_INT64    1
-// #define GxB_NO_PLUS_FIRSTJ_INT32     1
-// #define GxB_NO_PLUS_FIRSTJ_INT64     1
-// #define GxB_NO_PLUS_FIRSTJ1_INT32    1
-// #define GxB_NO_PLUS_FIRSTJ1_INT64    1
-// #define GxB_NO_PLUS_SECONDJ_INT32    1
-// #define GxB_NO_PLUS_SECONDJ_INT64    1
-// #define GxB_NO_PLUS_SECONDJ1_INT32   1
-// #define GxB_NO_PLUS_SECONDJ1_INT64   1
+   #define GxB_NO_PLUS_FIRSTI_INT32     1
+   #define GxB_NO_PLUS_FIRSTI_INT64     1
+   #define GxB_NO_PLUS_FIRSTI1_INT32    1
+   #define GxB_NO_PLUS_FIRSTI1_INT64    1
+   #define GxB_NO_PLUS_FIRSTJ_INT32     1
+   #define GxB_NO_PLUS_FIRSTJ_INT64     1
+   #define GxB_NO_PLUS_FIRSTJ1_INT32    1
+   #define GxB_NO_PLUS_FIRSTJ1_INT64    1
+   #define GxB_NO_PLUS_SECONDJ_INT32    1
+   #define GxB_NO_PLUS_SECONDJ_INT64    1
+   #define GxB_NO_PLUS_SECONDJ1_INT32   1
+   #define GxB_NO_PLUS_SECONDJ1_INT64   1
 
-// #define GxB_NO_TIMES_FIRSTI_INT32    1
-// #define GxB_NO_TIMES_FIRSTI_INT64    1
-// #define GxB_NO_TIMES_FIRSTI1_INT32   1
-// #define GxB_NO_TIMES_FIRSTI1_INT64   1
-// #define GxB_NO_TIMES_FIRSTJ_INT32    1
-// #define GxB_NO_TIMES_FIRSTJ_INT64    1
-// #define GxB_NO_TIMES_FIRSTJ1_INT32   1
-// #define GxB_NO_TIMES_FIRSTJ1_INT64   1
-// #define GxB_NO_TIMES_SECONDJ_INT32   1
-// #define GxB_NO_TIMES_SECONDJ_INT64   1
-// #define GxB_NO_TIMES_SECONDJ1_INT32  1
-// #define GxB_NO_TIMES_SECONDJ1_INT64  1
+   #define GxB_NO_TIMES_FIRSTI_INT32    1
+   #define GxB_NO_TIMES_FIRSTI_INT64    1
+   #define GxB_NO_TIMES_FIRSTI1_INT32   1
+   #define GxB_NO_TIMES_FIRSTI1_INT64   1
+   #define GxB_NO_TIMES_FIRSTJ_INT32    1
+   #define GxB_NO_TIMES_FIRSTJ_INT64    1
+   #define GxB_NO_TIMES_FIRSTJ1_INT32   1
+   #define GxB_NO_TIMES_FIRSTJ1_INT64   1
+   #define GxB_NO_TIMES_SECONDJ_INT32   1
+   #define GxB_NO_TIMES_SECONDJ_INT64   1
+   #define GxB_NO_TIMES_SECONDJ1_INT32  1
+   #define GxB_NO_TIMES_SECONDJ1_INT64  1
 
