@@ -98,14 +98,14 @@
 //      (EQ_LT_FP32 for example), and boolean inputs with comparators
 //      (GE, GT, LE, LT)
 
-// With the above semirings removed, the remaining 474 semirings are:
+// With the above semirings removed, the remaining 453 semirings are:
 
-//  28 boolean semirings:
+//  25 boolean semirings
 //
 //      monoid  multiply ops
-//      EQ:     EQ (=LXNOR), LAND, LOR, LXOR (=NE), FIRST, SECOND, PAIR.
-//      LAND:   EQ (=LXNOR), LAND, LOR, LXOR (=NE), FIRST, SECOND, PAIR.
-//      LOR:    EQ (=LXNOR), LAND, LOR, LXOR (=NE), FIRST, SECOND, PAIR.
+//      EQ:     EQ (=LXNOR), LAND, LOR, LXOR (=NE), FIRST, SECOND
+//      LAND:   EQ (=LXNOR), LAND, LOR, LXOR (=NE), FIRST, SECOND
+//      LOR:    EQ (=LXNOR), LAND, LOR, LXOR (=NE), FIRST, SECOND
 //      LXOR:   EQ (=LXNOR), LAND, LOR, LXOR (=NE), FIRST, SECOND, PAIR.
 //
 //              note: EQ_BOOL and LXNOR are the same operator, and
@@ -114,24 +114,25 @@
 //  120 semirings with MIN/MAX monoids (12 kinds, 10 real types each):
 //
 //      monoid  multiply ops
-//      MAX:    MIN, PLUS, TIMES, FIRST, SECOND, PAIR
-//      MIN:    MAX, PLUS, TIMES, FIRST, SECOND, PAIR
+//      MAX:    MIN, PLUS, TIMES, FIRST, SECOND
+//      MIN:    MAX, PLUS, TIMES, FIRST, SECOND
 //
-//  140 semirings with PLUS monoids (14 kinds, 10 real types each):
+//  70 semirings with PLUS monoids (10 real types each):
+//  60 semirings with TIMES monoids (10 real types each):
 //
 //      monoid  multiply ops
 //      PLUS:   MIN, MAX, PLUS, TIMES, FIRST, SECOND, PAIR
-//      TIMES:  MIN, MAX, PLUS, TIMES, FIRST, SECOND, PAIR
+//      TIMES:  MIN, MAX, PLUS, TIMES, FIRST, SECOND
 //
-//  26 semirings for 2 complex types:
+//  18 semirings for 2 complex types (PLUS and TIMES monoids only):
 //
 //      monoid  multiply ops
-//      PLUS:  PLUS, TIMES, FIRST, SECOND, PAIR
-//      TIMES: PLUS, TIMES, FIRST, SECOND, PAIR
+//      PLUS:   PLUS, TIMES, FIRST, SECOND, PAIR
+//      TIMES:  PLUS, TIMES, FIRST, SECOND
 //
 //  36 semirings with the ANY monoid:
 //
-//      ANY:   FIRST, SECOND, PAIR (with bool, 10 real types, 2 complex types)
+//      ANY:    FIRST, SECOND, PAIR (with bool, 10 real types, 2 complex types)
 //
 //  64 bitwise semirings: for 4 unsigned integer types:
 //
@@ -143,10 +144,11 @@
 //      mult:    (FIRSTI, FIRSTI1, FIRSTJ, FIRSTJ1, SECONDJ, SECONDJ1) x
 //      types:   (int32, int64)
 //
-//  note: the above list includes the following identical semirings:
+//  note:
 //      EQ_PAIR_BOOL, XNOR_PAIR_BOOL, LAND_PAIR_BOOL, LOR_PAIR_BOOL, are all
 //      the same as ANY_PAIR_BOOL.  For the other types, MAX_PAIR, MIN_PAIR,
-//      and TIMES_PAIR are the same as ANY_PAIR.
+//      and TIMES_PAIR are the same as ANY_PAIR.  These are excluded from the
+//      list above, but are just as fast as ANY_PAIR.
 
 // These changes have no effect on the performance of binary operations such
 // as eWiseAdd, eWiseMult, or the unary GrB_apply to GrB_reduce.  They only
@@ -514,6 +516,8 @@
 // #define GxB_NO_ISEQ_UINT64   1
 // #define GxB_NO_ISEQ_FP32     1
 // #define GxB_NO_ISEQ_FP64     1
+// #define GxB_NO_ISEQ_FC32     1
+// #define GxB_NO_ISEQ_FC64     1
 
 // #define GxB_NO_ISNE_INT8     1
 // #define GxB_NO_ISNE_INT16    1
@@ -525,6 +529,8 @@
 // #define GxB_NO_ISNE_UINT64   1
 // #define GxB_NO_ISNE_FP32     1
 // #define GxB_NO_ISNE_FP64     1
+// #define GxB_NO_ISNE_FC32     1
+// #define GxB_NO_ISNE_FC64     1
 
 // #define GxB_NO_ISGT_INT8     1
 // #define GxB_NO_ISGT_INT16    1
@@ -581,6 +587,8 @@
 // #define GxB_NO_EQ_FP32       1
 // #define GxB_NO_EQ_FP64       1
 // #define GxB_NO_EQ_BOOL       1
+// #define GxB_NO_EQ_FC32       1
+// #define GxB_NO_EQ_FC64       1
 
 // #define GxB_NO_NE_INT8       1
 // #define GxB_NO_NE_INT16      1
@@ -592,6 +600,8 @@
 // #define GxB_NO_NE_UINT64     1
 // #define GxB_NO_NE_FP32       1
 // #define GxB_NO_NE_FP64       1
+// #define GxB_NO_NE_FC32       1
+// #define GxB_NO_NE_FC64       1
 
 // #define GxB_NO_GT_INT8       1
 // #define GxB_NO_GT_INT16      1
@@ -827,6 +837,8 @@
 // The only builtin GrB_* semiring that uses the EQ (LXNOR) monoid
 // is LXNOR_LOR_BOOL == EQ_LOR_BOOL.
 
+// 6 semirings with the EQ monoid
+
 // #define GxB_NO_EQ_EQ_BOOL            1
 // #define GxB_NO_EQ_LAND_BOOL          1
 // builtin: GrB_LXNOR_LOR_SEMIRING_BOOL == GxB_EQ_LOR_BOOL:
@@ -846,6 +858,8 @@
    #define GxB_NO_EQ_EQ_UINT32          1
    #define GxB_NO_EQ_EQ_UINT64          1
    #define GxB_NO_EQ_EQ_UINT8           1
+   #define GxB_NO_EQ_EQ_FC32            1
+   #define GxB_NO_EQ_EQ_FC64            1
 
    #define GxB_NO_EQ_ANY_BOOL           1
 
@@ -907,12 +921,16 @@
    #define GxB_NO_EQ_NE_UINT32          1
    #define GxB_NO_EQ_NE_UINT64          1
    #define GxB_NO_EQ_NE_UINT8           1
+   #define GxB_NO_EQ_NE_FC32            1
+   #define GxB_NO_EQ_NE_FC64            1
 
 //------------------------------------------------------------
 // semirings with the boolean LAND monoid
 //------------------------------------------------------------
 
 // The only builtin GrB_* semiring that uses the LAND monoid is LAND_LOR_BOOL
+
+// 6 semirings with the LAND monoid
 
 // #define GxB_NO_LAND_EQ_BOOL          1
 // #define GxB_NO_LAND_LAND_BOOL        1
@@ -933,6 +951,8 @@
    #define GxB_NO_LAND_EQ_UINT32        1
    #define GxB_NO_LAND_EQ_UINT64        1
    #define GxB_NO_LAND_EQ_UINT8         1
+   #define GxB_NO_LAND_EQ_FC32          1
+   #define GxB_NO_LAND_EQ_FC64          1
 
    #define GxB_NO_LAND_ANY_BOOL         1
 
@@ -995,12 +1015,16 @@
    #define GxB_NO_LAND_NE_UINT32        1
    #define GxB_NO_LAND_NE_UINT64        1
    #define GxB_NO_LAND_NE_UINT8         1
+   #define GxB_NO_LAND_NE_FC32          1
+   #define GxB_NO_LAND_NE_FC64          1
 
 //------------------------------------------------------------
 // semirings with the boolean LOR monoid
 //------------------------------------------------------------
 
 // The only builtin GrB_* semiring that uses the LOR monoid is LOR_LAND_BOOL
+
+// 6 semirings with the LOR monoid
 
 // #define GxB_NO_LOR_EQ_BOOL           1
 // builtin GrB_LOR_LAND_SEMIRING_BOOL == GxB_LOR_LAND_BOOL:
@@ -1021,6 +1045,8 @@
    #define GxB_NO_LOR_EQ_UINT32         1
    #define GxB_NO_LOR_EQ_UINT64         1
    #define GxB_NO_LOR_EQ_UINT8          1
+   #define GxB_NO_LOR_EQ_FC32           1
+   #define GxB_NO_LOR_EQ_FC64           1
 
    #define GxB_NO_LOR_ANY_BOOL          1
 
@@ -1082,12 +1108,16 @@
    #define GxB_NO_LOR_NE_UINT32         1
    #define GxB_NO_LOR_NE_UINT64         1
    #define GxB_NO_LOR_NE_UINT8          1
+   #define GxB_NO_LOR_NE_FC32           1
+   #define GxB_NO_LOR_NE_FC64           1
 
 //------------------------------------------------------------
 // semirings with the boolean LXOR monoid (also called NE)
 //------------------------------------------------------------
 
 // The only builtin GrB_* semiring that uses the LXOR monoid is LXOR_LAND_BOOL
+
+// 7 semirings with the LXOR monoid (PAIR is unique to this monoid)
 
 // #define GxB_NO_LXOR_EQ_BOOL          1
 // builtin: GrB_LXOR_LAND_SEMIRING_BOOL == GxB_LXOR_LAND_BOOL:
@@ -1109,6 +1139,8 @@
    #define GxB_NO_LXOR_EQ_UINT32        1
    #define GxB_NO_LXOR_EQ_UINT64        1
    #define GxB_NO_LXOR_EQ_UINT8         1
+   #define GxB_NO_LXOR_EQ_FC32          1
+   #define GxB_NO_LXOR_EQ_FC64          1
 
    #define GxB_NO_LXOR_ANY_BOOL         1
 
@@ -1170,12 +1202,19 @@
    #define GxB_NO_LXOR_NE_UINT32        1
    #define GxB_NO_LXOR_NE_UINT64        1
    #define GxB_NO_LXOR_NE_UINT8         1
+   #define GxB_NO_LXOR_NE_FC32          1
+   #define GxB_NO_LXOR_NE_FC64          1
 
 //------------------------------------------------------------
 // semirings with the MAX monoid
 //------------------------------------------------------------
 
 // MAX_PLUS, MAX_TIMES, MAX_FIRST, MAX_SECOND, and MAX_MIN are GrB_* builtins.
+
+//  60 semirings with MAX monoids (6 kinds, 10 real types each):
+//
+//      monoid  multiply ops
+//      MAX:    MIN, PLUS, TIMES, FIRST, SECOND
 
 // builtin GrB_*:
 // #define GxB_NO_MAX_MIN_FP32          1
@@ -1269,6 +1308,8 @@
    #define GxB_NO_MAX_ISEQ_UINT32       1
    #define GxB_NO_MAX_ISEQ_UINT64       1
    #define GxB_NO_MAX_ISEQ_UINT8        1
+   #define GxB_NO_MAX_ISEQ_FC32         1
+   #define GxB_NO_MAX_ISEQ_FC64         1
 
    #define GxB_NO_MAX_ISGE_FP32         1
    #define GxB_NO_MAX_ISGE_FP64         1
@@ -1324,6 +1365,8 @@
    #define GxB_NO_MAX_ISNE_UINT32       1
    #define GxB_NO_MAX_ISNE_UINT64       1
    #define GxB_NO_MAX_ISNE_UINT8        1
+   #define GxB_NO_MAX_ISNE_FC32         1
+   #define GxB_NO_MAX_ISNE_FC64         1
 
    #define GxB_NO_MAX_LAND_FP32         1
    #define GxB_NO_MAX_LAND_FP64         1
@@ -1407,6 +1450,11 @@
 //------------------------------------------------------------
 
 // MIN_PLUS, MIN_TIMES, MIN_FIRST, MIN_SECOND, and MIN_MAX are GrB_* builtins.
+
+//  60 semirings with MIN monoids (6 kinds, 10 real types each):
+//
+//      monoid  multiply ops
+//      MIN:    MAX, PLUS, TIMES, FIRST, SECOND
 
 // builtin GrB_*:
 // #define GxB_NO_MIN_MAX_FP32          1
@@ -1500,6 +1548,8 @@
    #define GxB_NO_MIN_ISEQ_UINT32       1
    #define GxB_NO_MIN_ISEQ_UINT64       1
    #define GxB_NO_MIN_ISEQ_UINT8        1
+   #define GxB_NO_MIN_ISEQ_FC32         1
+   #define GxB_NO_MIN_ISEQ_FC64         1
 
    #define GxB_NO_MIN_ISGE_FP32         1
    #define GxB_NO_MIN_ISGE_FP64         1
@@ -1555,6 +1605,8 @@
    #define GxB_NO_MIN_ISNE_UINT32       1
    #define GxB_NO_MIN_ISNE_UINT64       1
    #define GxB_NO_MIN_ISNE_UINT8        1
+   #define GxB_NO_MIN_ISNE_FC32         1
+   #define GxB_NO_MIN_ISNE_FC64         1
 
    #define GxB_NO_MIN_LAND_FP32         1
    #define GxB_NO_MIN_LAND_FP64         1
@@ -1638,6 +1690,11 @@
 //------------------------------------------------------------
 
 // PLUS_TIMES and PLUS_MIN are GrB_* builtin (not for FC23 or FC64).
+
+//  70 semirings with PLUS monoids (10 real types each):
+//
+//      monoid  multiply ops
+//      PLUS:  MIN, MAX, PLUS, TIMES, FIRST, SECOND, PAIR
 
 // not GrB_*, used in LAGraph: triangle count and BFS
 // #define GxB_NO_PLUS_PAIR_FP32        1
@@ -1756,6 +1813,8 @@
    #define GxB_NO_PLUS_ISEQ_UINT32      1
    #define GxB_NO_PLUS_ISEQ_UINT64      1
    #define GxB_NO_PLUS_ISEQ_UINT8       1
+   #define GxB_NO_PLUS_ISEQ_FC32        1
+   #define GxB_NO_PLUS_ISEQ_FC64        1
 
    #define GxB_NO_PLUS_ISGE_FP32        1
    #define GxB_NO_PLUS_ISGE_FP64        1
@@ -1811,6 +1870,8 @@
    #define GxB_NO_PLUS_ISNE_UINT32      1
    #define GxB_NO_PLUS_ISNE_UINT64      1
    #define GxB_NO_PLUS_ISNE_UINT8       1
+   #define GxB_NO_PLUS_ISNE_FC32        1
+   #define GxB_NO_PLUS_ISNE_FC64        1
 
    #define GxB_NO_PLUS_LAND_FP32        1
    #define GxB_NO_PLUS_LAND_FP64        1
@@ -1885,6 +1946,11 @@
 // No builtin GrB_* semirings use the TIMES monoid, and none are used
 // in LAGraph 0.1 yet.  TIMES_FIRST and TIMES_SECOND are needed by
 // GrB_reduce to vector.
+
+//  60 semirings with TIMES monoids (10 real types each):
+//
+//      monoid  multiply ops
+//      TIMES:  MIN, MAX, PLUS, TIMES, FIRST, SECOND
 
 // #define GxB_NO_TIMES_MIN_FP32        1
 // #define GxB_NO_TIMES_MIN_FP64        1
@@ -1986,6 +2052,8 @@
    #define GxB_NO_TIMES_ISEQ_UINT32     1
    #define GxB_NO_TIMES_ISEQ_UINT64     1
    #define GxB_NO_TIMES_ISEQ_UINT8      1
+   #define GxB_NO_TIMES_ISEQ_FC32       1
+   #define GxB_NO_TIMES_ISEQ_FC64       1
 
    #define GxB_NO_TIMES_ISGE_FP32       1
    #define GxB_NO_TIMES_ISGE_FP64       1
@@ -2041,6 +2109,8 @@
    #define GxB_NO_TIMES_ISNE_UINT32     1
    #define GxB_NO_TIMES_ISNE_UINT64     1
    #define GxB_NO_TIMES_ISNE_UINT8      1
+   #define GxB_NO_TIMES_ISNE_FC32       1
+   #define GxB_NO_TIMES_ISNE_FC64       1
 
    #define GxB_NO_TIMES_LAND_FP32       1
    #define GxB_NO_TIMES_LAND_FP64       1
@@ -2109,10 +2179,16 @@
    #define GxB_NO_TIMES_RMINUS_UINT8    1
 
 //----------------------------------------
-// 52 unique complex semirings:
+// complex semirings:
 //----------------------------------------
 
 // _FIRST and _SECOND are needed by GrB_reduce to vector
+
+//  18 semirings for 2 complex types (PLUS and TIMES monoids only):
+//
+//      monoid  multiply ops
+//      PLUS:  PLUS, TIMES, FIRST, SECOND, PAIR
+//      TIMES: PLUS, TIMES, FIRST, SECOND
 
 // #define GxB_NO_PLUS_PLUS_FC32        1
 // #define GxB_NO_PLUS_PLUS_FC64        1
@@ -2169,35 +2245,6 @@
    #define GxB_NO_TIMES_RMINUS_FC32     1
    #define GxB_NO_TIMES_RMINUS_FC64     1
 
-// needed by GrB_reduce to vector
-// #define GxB_NO_ANY_FIRST_FC32        1
-// #define GxB_NO_ANY_FIRST_FC64        1
-
-// needed by GrB_reduce to vector
-// #define GxB_NO_ANY_SECOND_FC32       1
-// #define GxB_NO_ANY_SECOND_FC64       1
-
-// #define GxB_NO_ANY_PAIR_FC32         1
-// #define GxB_NO_ANY_PAIR_FC64         1
-
-   #define GxB_NO_ANY_PLUS_FC32         1
-   #define GxB_NO_ANY_PLUS_FC64         1
-
-   #define GxB_NO_ANY_TIMES_FC32        1
-   #define GxB_NO_ANY_TIMES_FC64        1
-
-   #define GxB_NO_ANY_MINUS_FC32        1
-   #define GxB_NO_ANY_MINUS_FC64        1
-
-   #define GxB_NO_ANY_DIV_FC32          1
-   #define GxB_NO_ANY_DIV_FC64          1
-
-   #define GxB_NO_ANY_RDIV_FC32         1
-   #define GxB_NO_ANY_RDIV_FC64         1
-
-   #define GxB_NO_ANY_RMINUS_FC32       1
-   #define GxB_NO_ANY_RMINUS_FC64       1
-
 //----------------------------------------
 // semirings with the ANY monoid
 //----------------------------------------
@@ -2205,6 +2252,10 @@
 // None of these are GrB_*, since the ANY monoid is a GxB* extension.
 // However, semirings based on the ANY monoid are common: BFS in particular
 // uses ANY_FIRST, ANY_SECOND, and ANY_PAIR.
+
+//  36 semirings enabled with the ANY monoid:
+//
+//      ANY:   FIRST, SECOND, PAIR (with bool, 10 real types, 2 complex types)
 
 // used in LAGraph: BFS, and GrB_reduce to vector
 // #define GxB_NO_ANY_FIRST_BOOL        1
@@ -2218,6 +2269,8 @@
 // #define GxB_NO_ANY_FIRST_UINT32      1
 // #define GxB_NO_ANY_FIRST_UINT64      1
 // #define GxB_NO_ANY_FIRST_UINT8       1
+// #define GxB_NO_ANY_FIRST_FC32        1
+// #define GxB_NO_ANY_FIRST_FC64        1
 
 // used in LAGraph: BFS, and GrB_reduce to vector
 // #define GxB_NO_ANY_SECOND_BOOL       1
@@ -2231,6 +2284,8 @@
 // #define GxB_NO_ANY_SECOND_UINT32     1
 // #define GxB_NO_ANY_SECOND_UINT64     1
 // #define GxB_NO_ANY_SECOND_UINT8      1
+// #define GxB_NO_ANY_SECOND_FC32       1
+// #define GxB_NO_ANY_SECOND_FC64       1
 
 // Not GrB_*, but used in BFS and others.  The only purely symbolic semiring.
 // #define GxB_NO_ANY_PAIR_BOOL         1
@@ -2244,6 +2299,8 @@
 // #define GxB_NO_ANY_PAIR_UINT32       1
 // #define GxB_NO_ANY_PAIR_UINT64       1
 // #define GxB_NO_ANY_PAIR_UINT8        1
+// #define GxB_NO_ANY_PAIR_FC32         1
+// #define GxB_NO_ANY_PAIR_FC64         1
 
    #define GxB_NO_ANY_DIV_FP32          1
    #define GxB_NO_ANY_DIV_FP64          1
@@ -2255,6 +2312,8 @@
    #define GxB_NO_ANY_DIV_UINT32        1
    #define GxB_NO_ANY_DIV_UINT64        1
    #define GxB_NO_ANY_DIV_UINT8         1
+   #define GxB_NO_ANY_DIV_FC32          1
+   #define GxB_NO_ANY_DIV_FC64          1
 
    // argmin and argmax use these semirings, but only for row/col scale,
    // which is controlled by the same as a binop, not a semiring.
@@ -2269,6 +2328,8 @@
    #define GxB_NO_ANY_EQ_UINT32         1
    #define GxB_NO_ANY_EQ_UINT64         1
    #define GxB_NO_ANY_EQ_UINT8          1
+   #define GxB_NO_ANY_EQ_FC32           1
+   #define GxB_NO_ANY_EQ_FC64           1
 
    #define GxB_NO_ANY_GE_BOOL           1
    #define GxB_NO_ANY_GE_FP32           1
@@ -2304,6 +2365,8 @@
    #define GxB_NO_ANY_ISEQ_UINT32       1
    #define GxB_NO_ANY_ISEQ_UINT64       1
    #define GxB_NO_ANY_ISEQ_UINT8        1
+   #define GxB_NO_ANY_ISEQ_FC32         1
+   #define GxB_NO_ANY_ISEQ_FC64         1
 
    #define GxB_NO_ANY_ISGE_FP32         1
    #define GxB_NO_ANY_ISGE_FP64         1
@@ -2359,6 +2422,8 @@
    #define GxB_NO_ANY_ISNE_UINT32       1
    #define GxB_NO_ANY_ISNE_UINT64       1
    #define GxB_NO_ANY_ISNE_UINT8        1
+   #define GxB_NO_ANY_ISNE_FC32         1
+   #define GxB_NO_ANY_ISNE_FC64         1
 
    #define GxB_NO_ANY_LAND_BOOL         1
    #define GxB_NO_ANY_LAND_FP32         1
@@ -2452,6 +2517,8 @@
    #define GxB_NO_ANY_MINUS_UINT32      1
    #define GxB_NO_ANY_MINUS_UINT64      1
    #define GxB_NO_ANY_MINUS_UINT8       1
+   #define GxB_NO_ANY_MINUS_FC32        1
+   #define GxB_NO_ANY_MINUS_FC64        1
 
    #define GxB_NO_ANY_NE_FP32           1
    #define GxB_NO_ANY_NE_FP64           1
@@ -2463,6 +2530,8 @@
    #define GxB_NO_ANY_NE_UINT32         1
    #define GxB_NO_ANY_NE_UINT64         1
    #define GxB_NO_ANY_NE_UINT8          1
+   #define GxB_NO_ANY_NE_FC32           1
+   #define GxB_NO_ANY_NE_FC64           1
 
    #define GxB_NO_ANY_PLUS_FP32         1
    #define GxB_NO_ANY_PLUS_FP64         1
@@ -2474,6 +2543,8 @@
    #define GxB_NO_ANY_PLUS_UINT32       1
    #define GxB_NO_ANY_PLUS_UINT64       1
    #define GxB_NO_ANY_PLUS_UINT8        1
+   #define GxB_NO_ANY_PLUS_FC32         1
+   #define GxB_NO_ANY_PLUS_FC64         1
 
    #define GxB_NO_ANY_RDIV_FP32         1
    #define GxB_NO_ANY_RDIV_FP64         1
@@ -2485,6 +2556,8 @@
    #define GxB_NO_ANY_RDIV_UINT32       1
    #define GxB_NO_ANY_RDIV_UINT64       1
    #define GxB_NO_ANY_RDIV_UINT8        1
+   #define GxB_NO_ANY_RDIV_FC32         1
+   #define GxB_NO_ANY_RDIV_FC64         1
 
    #define GxB_NO_ANY_RMINUS_FP32       1
    #define GxB_NO_ANY_RMINUS_FP64       1
@@ -2496,6 +2569,8 @@
    #define GxB_NO_ANY_RMINUS_UINT32     1
    #define GxB_NO_ANY_RMINUS_UINT64     1
    #define GxB_NO_ANY_RMINUS_UINT8      1
+   #define GxB_NO_ANY_RMINUS_FC32       1
+   #define GxB_NO_ANY_RMINUS_FC64       1
 
    #define GxB_NO_ANY_TIMES_FP32        1
    #define GxB_NO_ANY_TIMES_FP64        1
@@ -2507,10 +2582,16 @@
    #define GxB_NO_ANY_TIMES_UINT32      1
    #define GxB_NO_ANY_TIMES_UINT64      1
    #define GxB_NO_ANY_TIMES_UINT8       1
+   #define GxB_NO_ANY_TIMES_FC32        1
+   #define GxB_NO_ANY_TIMES_FC64        1
 
 //----------------------------------------
 // bitwise semirings:
 //----------------------------------------
+
+//  64 bitwise semirings: for 4 unsigned integer types, all enabled below:
+//
+//      (BOR, BAND, BXOR, BXNOR) x (BOR, BAND, BXOR, BXNOR)
 
 // #define GxB_NO_BOR_BOR_UINT8         1
 // #define GxB_NO_BOR_BOR_UINT16        1
@@ -2600,6 +2681,12 @@
 // BFS_parent uses ANY_SECONDI.  1-based semirings are important for 1-based
 // framewarks such as MATLAB.  In a semiring, the multiplicative operator
 // SECONDI is the same as FIRSTJ.
+
+//  60 positional semirings, all enabled below:
+//
+//      monoids: (MIN, MAX, ANY, PLUS, TIMES) x
+//      mult:    (FIRSTI, FIRSTI1, FIRSTJ, FIRSTJ1, SECONDJ, SECONDJ1) x
+//      types:   (int32, int64)
 
 // #define GxB_NO_MIN_FIRSTI_INT32      1
 // #define GxB_NO_MIN_FIRSTI_INT64      1
