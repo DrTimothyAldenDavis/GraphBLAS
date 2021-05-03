@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// If the mask is present but must be discarded, this function returns
+// GrB_NO_VALUE, to indicate that the analysis was terminated early.
+
 #include "GB_AxB_saxpy3.h"
 
 // control parameters for generating parallel tasks
@@ -369,12 +372,9 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         // not be applied, so that it will be applied later in GB_mxm.
 
         (*apply_mask) = false ;
-
-        // redo the flop count analysis, without the mask
-        GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, NULL, false, A, B,
-            Context)) ;
-        total_flops = Bflops [bnvec] ;
         GBURBLE ("(discard mask) ") ;
+        GB_FREE_ALL ;
+        return (GrB_NO_VALUE) ;
 
     }
     else

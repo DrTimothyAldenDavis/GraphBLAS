@@ -16,6 +16,9 @@
 // If B is hypersparse, C must also be hypersparse.
 // Otherwise, C must be sparse.
 
+// If both A and B are bitmap/full for C=A*B or C<!M>=A*B, then saxpy3 is
+// not used.  C is selected as bitmap instead.
+
 #include "GB_AxB_saxpy3.h"
 
 void GB_AxB_saxpy3_symbolic
@@ -125,6 +128,7 @@ void GB_AxB_saxpy3_symbolic
         }
         else if (A_is_bitmap)
         {
+            // C=A*B where A is bitmap; B must be sparse/hyper
             if (B_is_sparse)
             { 
                 // A is bitmap and B is sparse
@@ -141,6 +145,7 @@ void GB_AxB_saxpy3_symbolic
         }
         else
         {
+            // C=A*B where A is full; B must be sparse/hyper
             if (B_is_sparse)
             { 
                 // A is full and B is sparse
@@ -181,7 +186,6 @@ void GB_AxB_saxpy3_symbolic
             else if (B_is_bitmap)
             { 
                 // A is sparse and B is bitmap
-GB_GOTCHA
                 GB_AxB_saxpy3_sym_msb (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
             }
@@ -196,7 +200,6 @@ GB_GOTCHA
         {
             if (B_is_sparse)
             { 
-GB_GOTCHA
                 // A is hyper and B is sparse
                 GB_AxB_saxpy3_sym_mhs (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
@@ -204,13 +207,11 @@ GB_GOTCHA
             else if (B_is_hyper)
             { 
                 // both A and B are hyper
-GB_GOTCHA
                 GB_AxB_saxpy3_sym_mhh (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
             }
             else if (B_is_bitmap)
             { 
-GB_GOTCHA
                 // A is hyper and B is bitmap
                 GB_AxB_saxpy3_sym_mhb (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
@@ -226,14 +227,12 @@ GB_GOTCHA
         {
             if (B_is_sparse)
             { 
-GB_GOTCHA
                 // A is bitmap and B is sparse
                 GB_AxB_saxpy3_sym_mbs (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
             }
             else if (B_is_hyper)
             { 
-GB_GOTCHA
                 // A is bitmap and B is hyper
                 GB_AxB_saxpy3_sym_mbh (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
@@ -261,14 +260,12 @@ GB_GOTCHA
             }
             else if (B_is_hyper)
             { 
-GB_GOTCHA
                 // A is full and B is hyper
                 GB_AxB_saxpy3_sym_mfh (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
             }
             else if (B_is_bitmap)
             { 
-GB_GOTCHA
                 // A is full and B is bitmap
                 GB_AxB_saxpy3_sym_mfb (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
@@ -311,7 +308,6 @@ GB_GOTCHA
             }
             else
             { 
-GB_GOTCHA
                 // A is sparse and B is full
                 GB_AxB_saxpy3_sym_nsf (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
@@ -333,14 +329,12 @@ GB_GOTCHA
             }
             else if (B_is_bitmap)
             { 
-GB_GOTCHA
                 // A is hyper and B is bitmap
                 GB_AxB_saxpy3_sym_nhb (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
             }
             else
             { 
-GB_GOTCHA
                 // A is hyper and B is full
                 GB_AxB_saxpy3_sym_nhf (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
@@ -348,9 +342,9 @@ GB_GOTCHA
         }
         else if (A_is_bitmap)
         {
+            // C<!M>=A*B where A is bitmap; B must be sparse/hyper
             if (B_is_sparse)
             { 
-GB_GOTCHA
                 // A is bitmap and B is sparse
                 GB_AxB_saxpy3_sym_nbs (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
@@ -365,16 +359,15 @@ GB_GOTCHA
         }
         else
         {
+            // C<!M>=A*B where A is full; B must be sparse/hyper
             if (B_is_sparse)
             { 
-GB_GOTCHA
                 // A is full and B is sparse
                 GB_AxB_saxpy3_sym_nfs (C, M, Mask_struct, M_packed_in_place,
                     A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
             }
             else
             { 
-GB_GOTCHA
                 // A is full and B is hyper
                 ASSERT (B_is_hyper) ;
                 GB_AxB_saxpy3_sym_nfh (C, M, Mask_struct, M_packed_in_place,

@@ -218,7 +218,6 @@
                     // M(:,j) is packed, and thus not scattered into Hf
                     if (M_is_bitmap && Mask_struct)
                     { 
-GB_GOTCHA
                         // M is bitmap and structural
                         const int8_t *restrict Mjb = Mb + pM_start ;
                         #undef  GB_CHECK_MASK_ij
@@ -257,7 +256,6 @@ GB_GOTCHA
                     // M(:,j) is packed, and thus not scattered into Hf
                     if (M_is_bitmap && Mask_struct)
                     { 
-GB_GOTCHA
                         // M is bitmap and structural
                         const int8_t *restrict Mjb = Mb + pM_start ;
                         #undef  GB_CHECK_MASK_ij

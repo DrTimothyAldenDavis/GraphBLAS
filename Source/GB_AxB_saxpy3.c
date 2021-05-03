@@ -103,7 +103,7 @@
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORK ;              \
-    GB_phbix_free (C) ;       \
+    GB_phbix_free (C) ;         \
 }
 
 //------------------------------------------------------------------------------
@@ -112,7 +112,7 @@
 
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
-    GrB_Matrix C,                   // outputi, static header, not in-place
+    GrB_Matrix C,                   // output, static header, not in-place
     int C_sparsity,                 // construct C as sparse or hypersparse
     const GrB_Matrix M_input,       // optional mask matrix
     const bool Mask_comp_input,     // if true, use !M
@@ -277,33 +277,49 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // the Hash method is not explicitly selected.  In this case, use a
         // single Gustavson task only (fine task if B has one vector, coarse
         // otherwise).  In this case, the flop count analysis is not needed.
-        GB_OK (GB_AxB_saxpy3_slice_quick (C, A, B,
-            &SaxpyTasks, &SaxpyTasks_size, &ntasks, &nfine, &nthreads,
-            Context)) ;
         GBURBLE ("(single-threaded Gustavson) ") ;
+        info = GB_AxB_saxpy3_slice_quick (C, A, B,
+            &SaxpyTasks, &SaxpyTasks_size, &ntasks, &nfine, &nthreads,
+            Context) ;
     }
     else
     { 
         // Do the flopcount analysis and create a set of well-balanced tasks in
         // the general case.  This may select a single task for a single thread
         // anyway, but this decision would be based on the analysis.
-        GB_OK (GB_AxB_saxpy3_slice_balanced (C, M, Mask_comp, A, B, AxB_method,
+        info = GB_AxB_saxpy3_slice_balanced (C, M, Mask_comp, A, B, AxB_method,
             &SaxpyTasks, &SaxpyTasks_size, &apply_mask, &M_packed_in_place,
-            &ntasks, &nfine, &nthreads, Context)) ;
-    }
-
-    if (do_sort) GBURBLE ("sort ") ;
-
-    if (!apply_mask)
-    {
-        // disable the mask, if present
-        M = NULL ;
-        Mask_comp = false ;
+            &ntasks, &nfine, &nthreads, Context) ;
     }
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (4, ttt) ;
 // ttt = omp_get_wtime ( ) ;
+
+    if (info == GrB_NO_VALUE)
+    { 
+        // The mask is present but has been discarded; need to discard the
+        // analysis so far and redo it without the mask.  This may result in
+        // GB_bitmap_AxB_saxpy being called instead of GB_AxB_saxpy3.
+        ASSERT (M != NULL && !apply_mask) ;
+        GB_FREE_ALL ;
+        return (GrB_NO_VALUE) ;
+    }
+    else if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        GB_FREE_ALL ;
+        return (info) ;
+    }
+
+    if (!apply_mask)
+    { 
+        // disable the mask, if present.
+        M = NULL ;
+        Mask_comp = false ;
+    }
+
+    if (do_sort) GBURBLE ("sort ") ;
 
     //--------------------------------------------------------------------------
     // allocate the hash tables

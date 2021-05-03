@@ -93,6 +93,7 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test195',t) ; % test all variants of saxpy3
 logstat ('test194',t) ; % test GxB_Vector_diag
 logstat ('test193',t) ; % test GxB_Matrix_diag
 logstat ('test190',t) ; % test dense matrix for C<!M>=A*B
