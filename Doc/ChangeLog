@@ -1,6 +1,8 @@
 Version 5.0.1, May 3, 2021
 
     * memory pool added for faster memory allocation
+    * calloc no longer used: using malloc+memset(0) instead
+    * realloc option: if not available, uses malloc+memcpy+free
     * @GrB MATLAB interface ported to MATLAB R2021a.
     * GxB_Matrix_diag: construct a diagonal matrix from a vector
     * GxB_Vector_diag: extract a diagonal from a matrix

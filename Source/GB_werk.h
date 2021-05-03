@@ -80,7 +80,7 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
     { 
         // allocate the werkspace from the Werk stack
         GB_void *p = Context->Werk + Context->pwerk ;
-        Context->pwerk += size ;
+        Context->pwerk += (int) size ;
         (*size_allocated) = size ;
         return ((void *) p) ;
     }
