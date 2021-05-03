@@ -127,8 +127,8 @@ GrB_Info GB (_red_scalar__any_bool)
 (
     bool *result,
     const GrB_Matrix A,
-    GB_void *GB_RESTRICT W_space,
-    bool *GB_RESTRICT F,
+    GB_void *restrict W_space,
+    bool *restrict F,
     int ntasks,
     int nthreads
 )
@@ -137,7 +137,7 @@ GrB_Info GB (_red_scalar__any_bool)
     return (GrB_NO_VALUE) ;
     #else
     bool s = (*result) ;
-    bool *GB_RESTRICT W = (bool *) W_space ;
+    bool *restrict W = (bool *) W_space ;
     if (A->nzombies > 0 || GB_IS_BITMAP (A))
     {
         #include "GB_reduce_to_scalar_template.c"
@@ -159,15 +159,15 @@ GrB_Info GB (_red_scalar__any_bool)
 
 GrB_Info GB (_red_build__any_bool)
 (
-    bool *GB_RESTRICT Tx,
-    int64_t  *GB_RESTRICT Ti,
-    const bool *GB_RESTRICT S,
+    bool *restrict Tx,
+    int64_t  *restrict Ti,
+    const bool *restrict S,
     int64_t nvals,
     int64_t ndupl,
-    const int64_t *GB_RESTRICT I_work,
-    const int64_t *GB_RESTRICT K_work,
-    const int64_t *GB_RESTRICT tstart_slice,
-    const int64_t *GB_RESTRICT tnz_slice,
+    const int64_t *restrict I_work,
+    const int64_t *restrict K_work,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 )
 { 

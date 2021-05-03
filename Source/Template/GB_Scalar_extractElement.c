@@ -69,7 +69,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     { 
         // copy the value from S into x, no typecasting, for built-in
         // types only.
-        GB_XTYPE *GB_RESTRICT Sx = ((GB_XTYPE *) (S->x)) ;
+        GB_XTYPE *restrict Sx = ((GB_XTYPE *) (S->x)) ;
         (*x) = Sx [0] ;
     }
     else

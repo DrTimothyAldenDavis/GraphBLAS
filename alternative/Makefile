@@ -20,7 +20,7 @@ default: library
 
 VER1 = 5
 VER2 = 0
-VER3 = 0
+VER3 = 1
 
 # pick your compiler:
   CC = gcc
@@ -30,20 +30,7 @@ VER3 = 0
 # CC = gcc-8
 # note that -mp1 is essential for icc, for proper Inf and NaN behavior:
 # CC = icc -mp1
-
-# A C++ compiler works but is not recommended for use in production,
-# particularly if SuiteSparse:GraphBLAS is used as -lgraphblas.
-# SuiteSparse:GraphBLAS is written in C, not C++.  However, it compiles just
-# fine with a C++ compiler, since it is written so that it uses the
-# intersection of the two languages.  This is helpful for two cases: (1)
-# SuiteSparse:GraphBLAS does a lot of typecasting, and C++ is very strict with
-# this.  Using C++ allows for an extra-careful 'lint' checking.  (2) The end-
-# user may wish to construct a pure C++ application, and embed a C++-compiled
-# GraphBLAS inside.  CMake cannot be used to compile a *.c code with a C++
-# compiler (it complains), and thus this option is only available in this
-# alternative/Makefile.  The GCC C++ 5.4 compiler fails; version 7.5 is
-# sufficient.
-# CC = c++
+  CC = c++
 
 SRC = ../Source/*.c ../Source/Generated/*.c
 INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h ../Source/Generator/*.h 

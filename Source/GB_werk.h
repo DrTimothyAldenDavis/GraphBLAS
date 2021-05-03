@@ -97,7 +97,7 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
 
 // declare a werkspace X of a given type
 #define GB_WERK_DECLARE(X,type)                     \
-    type *GB_RESTRICT X = NULL ;                    \
+    type *restrict X = NULL ;                    \
     bool X ## _on_stack = false ;                   \
     size_t X ## _nitems = 0, X ## _size_allocated = 0 ;
 

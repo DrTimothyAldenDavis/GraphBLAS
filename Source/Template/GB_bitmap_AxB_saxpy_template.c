@@ -30,10 +30,10 @@
     // declare workspace
     //--------------------------------------------------------------------------
 
-    int8_t  *GB_RESTRICT Wf  = NULL ; size_t Wf_size = 0 ;
-    GB_void *GB_RESTRICT Wax = NULL ; size_t Wax_size = 0 ;
-    GB_void *GB_RESTRICT Wbx = NULL ; size_t Wbx_size = 0 ;
-    GB_void *GB_RESTRICT Wcx = NULL ; size_t Wcx_size = 0 ;
+    int8_t  *restrict Wf  = NULL ; size_t Wf_size = 0 ;
+    GB_void *restrict Wax = NULL ; size_t Wax_size = 0 ;
+    GB_void *restrict Wbx = NULL ; size_t Wbx_size = 0 ;
+    GB_void *restrict Wcx = NULL ; size_t Wcx_size = 0 ;
     GB_WERK_DECLARE (GH_slice, int64_t) ;
     GB_WERK_DECLARE (A_slice, int64_t) ;
     GB_WERK_DECLARE (B_slice, int64_t) ;
@@ -50,19 +50,19 @@
     //--------------------------------------------------------------------------
 
     ASSERT (GB_IS_BITMAP (C)) ;                 // C is always bitmap
-    int8_t *GB_RESTRICT Cb = C->b ;
-    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
+    int8_t *restrict Cb = C->b ;
+    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
     const int64_t cvlen = C->vlen ;
     ASSERT (C->vlen == A->vlen) ;
     ASSERT (C->vdim == B->vdim) ;
     ASSERT (A->vdim == B->vlen) ;
     int64_t cnvals = C->nvals ;
 
-    const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
-    const int8_t  *GB_RESTRICT Bb = B->b ;
-    const int64_t *GB_RESTRICT Bi = B->i ;
-    const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
+    const int8_t  *restrict Bb = B->b ;
+    const int64_t *restrict Bi = B->i ;
+    const GB_BTYPE *restrict Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnvec = B->nvec ;
@@ -75,11 +75,11 @@
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
-    const int8_t  *GB_RESTRICT Ab = A->b ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
-    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int8_t  *restrict Ab = A->b ;
+    const int64_t *restrict Ai = A->i ;
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
@@ -92,11 +92,11 @@
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse_or_hyper = A_is_sparse || A_is_hyper ;
 
-    const int64_t *GB_RESTRICT Mp = NULL ;
-    const int64_t *GB_RESTRICT Mh = NULL ;
-    const int8_t  *GB_RESTRICT Mb = NULL ;
-    const int64_t *GB_RESTRICT Mi = NULL ;
-    const GB_void *GB_RESTRICT Mx = NULL ;
+    const int64_t *restrict Mp = NULL ;
+    const int64_t *restrict Mh = NULL ;
+    const int8_t  *restrict Mb = NULL ;
+    const int64_t *restrict Mi = NULL ;
+    const GB_void *restrict Mx = NULL ;
     size_t msize = 0 ;
     int64_t mnvec = 0 ;
     int64_t mvlen = 0 ;

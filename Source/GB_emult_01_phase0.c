@@ -41,13 +41,13 @@
 GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
-    const int64_t *GB_RESTRICT *Ch_handle,  // Ch is M->h, A->h, B->h, or NULL
+    const int64_t *restrict *Ch_handle,  // Ch is M->h, A->h, B->h, or NULL
     size_t *Ch_size_handle,
-    int64_t *GB_RESTRICT *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
+    int64_t *restrict *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
     size_t *C_to_M_size_handle,
-    int64_t *GB_RESTRICT *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
+    int64_t *restrict *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
     size_t *C_to_A_size_handle,
-    int64_t *GB_RESTRICT *C_to_B_handle,    // C_to_B: size Cnvec, or NULL
+    int64_t *restrict *C_to_B_handle,    // C_to_B: size Cnvec, or NULL
     size_t *C_to_B_size_handle,
     int *C_sparsity,            // sparsity structure of C
     // original input:
@@ -106,10 +106,10 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
     ASSERT ((*C_sparsity) == GxB_SPARSE || (*C_sparsity) == GxB_HYPERSPARSE) ;
 
-    const int64_t *GB_RESTRICT Ch = NULL ; size_t Ch_size = 0 ;
-    int64_t *GB_RESTRICT C_to_M = NULL ; size_t C_to_M_size = 0 ;
-    int64_t *GB_RESTRICT C_to_A = NULL ; size_t C_to_A_size = 0 ;
-    int64_t *GB_RESTRICT C_to_B = NULL ; size_t C_to_B_size = 0 ;
+    const int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;
+    int64_t *restrict C_to_M = NULL ; size_t C_to_M_size = 0 ;
+    int64_t *restrict C_to_A = NULL ; size_t C_to_A_size = 0 ;
+    int64_t *restrict C_to_B = NULL ; size_t C_to_B_size = 0 ;
 
     //--------------------------------------------------------------------------
     // get content of M, A, and B
@@ -119,15 +119,15 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
     int64_t Anvec = A->nvec ;
     int64_t vlen  = A->vlen ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *restrict Ah = A->h ;
     bool A_is_hyper = (Ah != NULL) ;
 
     int64_t Bnvec = B->nvec ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
+    const int64_t *restrict Bh = B->h ;
     bool B_is_hyper = (Bh != NULL) ;
 
     int64_t Mnvec = 0 ;
-    const int64_t *GB_RESTRICT Mh = NULL ;
+    const int64_t *restrict Mh = NULL ;
     bool M_is_hyper = false ;
 
     if (M != NULL)
@@ -412,7 +412,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         // compute C_to_M
         ASSERT (Ch != NULL) ;
 
-        const int64_t *GB_RESTRICT Mp = M->p ;
+        const int64_t *restrict Mp = M->p ;
 
         int64_t k ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -442,7 +442,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
         // compute C_to_A
         ASSERT (Ch != NULL) ;
-        const int64_t *GB_RESTRICT Ap = A->p ;
+        const int64_t *restrict Ap = A->p ;
 
         int64_t k ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -473,7 +473,7 @@ GrB_Info GB_emult_01_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
         // compute C_to_B
         ASSERT (Ch != NULL) ;
-        const int64_t *GB_RESTRICT Bp = B->p ;
+        const int64_t *restrict Bp = B->p ;
 
         int64_t k ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)

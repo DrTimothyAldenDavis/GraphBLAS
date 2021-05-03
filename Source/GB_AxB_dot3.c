@@ -118,10 +118,10 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // get M, A, and B
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Mp = M->p ;
-    const int64_t *GB_RESTRICT Mh = M->h ;
-    const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+    const int64_t *restrict Mp = M->p ;
+    const int64_t *restrict Mh = M->h ;
+    const int64_t *restrict Mi = M->i ;
+    const GB_void *restrict Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const int64_t mvlen = M->vlen ;
     const int64_t mvdim = M->vdim ;
@@ -130,16 +130,16 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
     const int64_t vlen = A->vlen ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
 
-    const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
     const int64_t bnvec = B->nvec ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
@@ -171,9 +171,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         return (info) ;
     }
 
-    int64_t *GB_RESTRICT Cp = C->p ;
-    int64_t *GB_RESTRICT Ch = C->h ;
-    int64_t *GB_RESTRICT Cwork = C->i ;    // use C->i as workspace
+    int64_t *restrict Cp = C->p ;
+    int64_t *restrict Ch = C->h ;
+    int64_t *restrict Cwork = C->i ;    // use C->i as workspace
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use

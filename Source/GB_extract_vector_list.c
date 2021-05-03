@@ -23,7 +23,7 @@
 GrB_Info GB_extract_vector_list     // extract vector list from a matrix
 (
     // output:
-    int64_t *GB_RESTRICT J,         // size nnz(A) or more
+    int64_t *restrict J,         // size nnz(A) or more
     // input:
     const GrB_Matrix A,
     GB_Context Context
@@ -44,8 +44,8 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
     // get A
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
     const int64_t avlen = A->vlen ;
 
     //--------------------------------------------------------------------------

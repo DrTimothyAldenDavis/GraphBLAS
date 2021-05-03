@@ -89,27 +89,27 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     //--------------------------------------------------------------------------
 
     GB_WERK_DECLARE (Work, int64_t) ;
-    int64_t *GB_RESTRICT Wfirst = NULL ;
-    int64_t *GB_RESTRICT Wlast = NULL ;
-    int64_t *GB_RESTRICT Cp_kfirst = NULL ;
+    int64_t *restrict Wfirst = NULL ;
+    int64_t *restrict Wlast = NULL ;
+    int64_t *restrict Cp_kfirst = NULL ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
     // get M, A, and B
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Mp = M->p ;
-    const int64_t *GB_RESTRICT Mh = M->h ;
-    const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = (Mask_struct) ? NULL : M->x ;
+    const int64_t *restrict Mp = M->p ;
+    const int64_t *restrict Mh = M->h ;
+    const int64_t *restrict Mi = M->i ;
+    const GB_void *restrict Mx = (Mask_struct) ? NULL : (GB_void *) M->x ;
     const int64_t vlen = M->vlen ;
     const int64_t vdim = M->vdim ;
     const int64_t nvec = M->nvec ;
     const int64_t mnz = GB_NNZ (M) ;
     const size_t  msize = M->type->size ;
 
-    const int8_t *GB_RESTRICT Ab = A->b ;
-    const int8_t *GB_RESTRICT Bb = B->b ;
+    const int8_t *restrict Ab = A->b ;
+    const int8_t *restrict Bb = B->b ;
 
     //--------------------------------------------------------------------------
     // allocate C->p and C->h
@@ -118,7 +118,7 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     GB_OK (GB_new (&C, true,  // sparse or hyper (same as M), static header
         ctype, vlen, vdim, GB_Ap_calloc, C_is_csc,
         C_sparsity, M->hyper_switch, nvec, Context)) ;
-    int64_t *GB_RESTRICT Cp = C->p ;
+    int64_t *restrict Cp = C->p ;
 
     //--------------------------------------------------------------------------
     // slice the mask matrix M

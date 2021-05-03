@@ -72,11 +72,11 @@ GrB_Info GB_selector
     // declare workspace
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Zp = NULL ; size_t Zp_size = 0 ;
+    int64_t *restrict Zp = NULL ; size_t Zp_size = 0 ;
     GB_WERK_DECLARE (Work, int64_t) ;
-    int64_t *GB_RESTRICT Wfirst = NULL ;
-    int64_t *GB_RESTRICT Wlast = NULL ;
-    int64_t *GB_RESTRICT Cp_kfirst = NULL ;
+    int64_t *restrict Wfirst = NULL ;
+    int64_t *restrict Wlast = NULL ;
+    int64_t *restrict Cp_kfirst = NULL ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
@@ -96,7 +96,7 @@ GrB_Info GB_selector
 
     GB_void athunk [GB_VLA(asize)] ;
     memset (athunk, 0, asize) ;
-    GB_void *GB_RESTRICT xthunk = athunk ;
+    GB_void *restrict xthunk = athunk ;
 
     if (Thunk != NULL && GB_NNZ (Thunk) > 0)
     {
@@ -108,7 +108,7 @@ GrB_Info GB_selector
         { 
             // ithunk = (int64_t) Thunk (0)
             size_t tsize = Thunk->type->size ;
-            GB_cast_array ((GB_void *GB_RESTRICT) &ithunk, GB_INT64_code,
+            GB_cast_array ((GB_void *restrict) &ithunk, GB_INT64_code,
                 xthunk, tcode, NULL, tsize, 1, 1) ;
             // athunk = (atype) Thunk (0)
             GB_cast_array (athunk, typecode, xthunk, tcode, NULL, tsize, 1, 1) ;
@@ -179,10 +179,10 @@ GrB_Info GB_selector
     // the case when A is bitmap is always handled above by GB_bitmap_selector
     ASSERT (!GB_IS_BITMAP (A)) ;
 
-    int64_t *GB_RESTRICT Ap = A->p ; size_t Ap_size = A->p_size ;
-    int64_t *GB_RESTRICT Ah = A->h ;
-    int64_t *GB_RESTRICT Ai = A->i ; size_t Ai_size = A->i_size ;
-    GB_void *GB_RESTRICT Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
+    int64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ;
+    int64_t *restrict Ah = A->h ;
+    int64_t *restrict Ai = A->i ; size_t Ai_size = A->i_size ;
+    GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
     int64_t anvec = A->nvec ;
@@ -192,10 +192,10 @@ GrB_Info GB_selector
     // allocate the new vector pointers of C
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Cp = NULL ; size_t Cp_size = 0 ;
-    int64_t *GB_RESTRICT Ch = NULL ; size_t Ch_size = 0 ;
-    int64_t *GB_RESTRICT Ci = NULL ; size_t Ci_size = 0 ;
-    GB_void *GB_RESTRICT Cx = NULL ; size_t Cx_size = 0 ;
+    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
+    int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;
+    int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
+    GB_void *restrict Cx = NULL ; size_t Cx_size = 0 ;
     int64_t cnz = 0 ;
 
     Cp = GB_CALLOC (anvec+1, int64_t, &Cp_size) ;

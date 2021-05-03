@@ -37,8 +37,8 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
 
     GrB_Info info ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    int8_t  *GB_RESTRICT Ab     = NULL ; size_t Ab_size = 0 ;
-    GB_void *GB_RESTRICT Ax_new = NULL ; size_t Ax_new_size = 0 ;
+    int8_t  *restrict Ab     = NULL ; size_t Ab_size = 0 ;
+    GB_void *restrict Ax_new = NULL ; size_t Ax_new_size = 0 ;
 
     ASSERT_MATRIX_OK (A, "A converting sparse/hypersparse to bitmap", GB0) ;
     ASSERT (!GB_IS_FULL (A)) ;
@@ -71,7 +71,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     const int64_t avlen = A->vlen ;
     const int64_t anvec = A->nvec ;
     int64_t anzmax ;
-    if (!GB_Index_multiply (&anzmax, avdim, avlen))
+    if (!GB_Index_multiply ((GrB_Index *) &anzmax, avdim, avlen))
     { 
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
@@ -107,7 +107,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     if (in_place)
     { 
         // keep the existing A->x
-        Ax_new = A->x ;
+        Ax_new = (GB_void *) A->x ;
         Ax_shallow = A->x_shallow ;
         Ax_new_size = A->x_size ;
     }

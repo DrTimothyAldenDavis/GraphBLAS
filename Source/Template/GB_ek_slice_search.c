@@ -20,13 +20,13 @@ static inline void GB_ek_slice_search
     // input:
     int taskid,
     int ntasks,
-    const int64_t *GB_RESTRICT pstart_slice,    // size ntasks+1
-    const int64_t *GB_RESTRICT Ap,              // size anvec
+    const int64_t *restrict pstart_slice,    // size ntasks+1
+    const int64_t *restrict Ap,              // size anvec
     int64_t anvec,                              // # of vectors in A
     int64_t avlen,                              // vector length of A
     // output:
-    int64_t *GB_RESTRICT kfirst_slice,          // size ntasks
-    int64_t *GB_RESTRICT klast_slice            // size ntasks
+    int64_t *restrict kfirst_slice,          // size ntasks
+    int64_t *restrict klast_slice            // size ntasks
 )
 {
     int64_t pfirst = pstart_slice [taskid] ;

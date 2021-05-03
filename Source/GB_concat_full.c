@@ -22,8 +22,8 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
     const GrB_Index m,
     const GrB_Index n,
-    const int64_t *GB_RESTRICT Tile_rows,  // size m+1
-    const int64_t *GB_RESTRICT Tile_cols,  // size n+1
+    const int64_t *restrict Tile_rows,  // size m+1
+    const int64_t *restrict Tile_cols,  // size n+1
     GB_Context Context
 )
 { 

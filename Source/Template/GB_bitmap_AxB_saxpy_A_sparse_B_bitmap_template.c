@@ -31,8 +31,8 @@
             return (GrB_OUT_OF_MEMORY) ;
         }
 
-        int64_t *GB_RESTRICT G_slice = GH_slice ;
-        int64_t *GB_RESTRICT H_slice = GH_slice + ntasks ;
+        int64_t *restrict G_slice = GH_slice ;
+        int64_t *restrict H_slice = GH_slice + ntasks ;
 
         int64_t gwork = 0 ;
         int64_t hwork = 0 ;
@@ -94,20 +94,20 @@
             //------------------------------------------------------------------
 
             // Gb and Gx workspace to load the panel of B
-            int8_t   *GB_RESTRICT Gb = Wf + G_slice [tid] * bvlenb ;
-            GB_BTYPE *GB_RESTRICT Gx = (GB_BTYPE *)
+            int8_t   *restrict Gb = Wf + G_slice [tid] * bvlenb ;
+            GB_BTYPE *restrict Gx = (GB_BTYPE *)
                 (Wbx + G_slice [tid] * bvlenx) ;
 
             // Hf and Hx workspace to compute the panel of C
-            int8_t   *GB_RESTRICT Hf = Wf + (H_slice [tid] * cvlen) + gfspace ;
-            GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *)
+            int8_t   *restrict Hf = Wf + (H_slice [tid] * cvlen) + gfspace ;
+            GB_CTYPE *restrict Hx = (GB_CTYPE *)
                 (Wcx +  H_slice [tid] * cvlenx) ;
             #if GB_IS_PLUS_FC32_MONOID
-            float  *GB_RESTRICT Hx_real = (float *) Hx ;
-            float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+            float  *restrict Hx_real = (float *) Hx ;
+            float  *restrict Hx_imag = Hx_real + 1 ;
             #elif GB_IS_PLUS_FC64_MONOID
-            double *GB_RESTRICT Hx_real = (double *) Hx ;
-            double *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+            double *restrict Hx_real = (double *) Hx ;
+            double *restrict Hx_imag = Hx_real + 1 ;
             #endif
 
             //------------------------------------------------------------------
@@ -161,7 +161,7 @@
                     if (np == 1)
                     {
                         // no need to load a single vector of B
-                        GB_void *GB_RESTRICT Bx = B->x ;
+                        GB_void *restrict Bx = (GB_void *) (B->x) ;
                         Gx = (GB_BTYPE *) (Bx + (j1 * bvlen) * GB_BSIZE) ;
                     }
                     else
@@ -410,14 +410,14 @@
             int64_t task_cnvals = 0 ;
 
             // for Hx Gustavason workspace: use C(:,j) in-place:
-            GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *)
+            GB_CTYPE *restrict Hx = (GB_CTYPE *)
                 (((GB_void *) Cx) + (pC_start * GB_CSIZE)) ;
             #if GB_IS_PLUS_FC32_MONOID || GB_IS_ANY_FC32_MONOID
-            float  *GB_RESTRICT Hx_real = (float *) Hx ;
-            float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+            float  *restrict Hx_real = (float *) Hx ;
+            float  *restrict Hx_imag = Hx_real + 1 ;
             #elif GB_IS_PLUS_FC64_MONOID || GB_IS_ANY_FC64_MONOID
-            double *GB_RESTRICT Hx_real = (double *) Hx ;
-            double *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+            double *restrict Hx_real = (double *) Hx ;
+            double *restrict Hx_imag = Hx_real + 1 ;
             #endif
 
             //------------------------------------------------------------------
@@ -652,15 +652,15 @@
             int64_t task_cnvals = 0 ;
 
             // for Hf and Hx Gustavason workspace: use W(:,tid):
-            int8_t   *GB_RESTRICT Hf = Wf + pW_start ;
-            GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) 
+            int8_t   *restrict Hf = Wf + pW_start ;
+            GB_CTYPE *restrict Hx = (GB_CTYPE *) 
                 (Wcx + (pW_start * cxsize)) ;
             #if GB_IS_PLUS_FC32_MONOID
-            float  *GB_RESTRICT Hx_real = (float *) Hx ;
-            float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+            float  *restrict Hx_real = (float *) Hx ;
+            float  *restrict Hx_imag = Hx_real + 1 ;
             #elif GB_IS_PLUS_FC64_MONOID
-            double *GB_RESTRICT Hx_real = (double *) Hx ;
-            double *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+            double *restrict Hx_real = (double *) Hx ;
+            double *restrict Hx_imag = Hx_real + 1 ;
             #endif
 
             //------------------------------------------------------------------
@@ -778,13 +778,13 @@
             int64_t task_cnvals = 0 ;
 
             // Hx = (typecasted) Wcx workspace, use Wf as-is
-            GB_CTYPE *GB_RESTRICT Hx = ((GB_CTYPE *) Wcx) ;
+            GB_CTYPE *restrict Hx = ((GB_CTYPE *) Wcx) ;
             #if GB_IS_PLUS_FC32_MONOID
-            float  *GB_RESTRICT Hx_real = (float *) Hx ;
-            float  *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+            float  *restrict Hx_real = (float *) Hx ;
+            float  *restrict Hx_imag = Hx_real + 1 ;
             #elif GB_IS_PLUS_FC64_MONOID
-            double *GB_RESTRICT Hx_real = (double *) Hx ;
-            double *GB_RESTRICT Hx_imag = Hx_real + 1 ;
+            double *restrict Hx_real = (double *) Hx ;
+            double *restrict Hx_imag = Hx_real + 1 ;
             #endif
 
             //------------------------------------------------------------------

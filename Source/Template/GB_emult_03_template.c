@@ -16,26 +16,26 @@
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
-    const int8_t *GB_RESTRICT Ab = A->b ;
-    const int8_t *GB_RESTRICT Bb = B->b ;
+    const int8_t *restrict Ab = A->b ;
+    const int8_t *restrict Bb = B->b ;
 
-    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
-    const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) B->x ;
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
 
-    const int64_t *GB_RESTRICT Mp = M->p ;
-    const int64_t *GB_RESTRICT Mh = M->h ;
-    const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = (GB_void *) ((Mask_struct) ? NULL : M->x) ;
+    const int64_t *restrict Mp = M->p ;
+    const int64_t *restrict Mh = M->h ;
+    const int64_t *restrict Mi = M->i ;
+    const GB_void *restrict Mx = (GB_void *) ((Mask_struct) ? NULL : M->x) ;
     const int64_t vlen = M->vlen ;
     const size_t  msize = M->type->size ;
 
-    const int64_t  *GB_RESTRICT Cp = C->p ;
-          int64_t  *GB_RESTRICT Ci = C->i ;
-          GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
+    const int64_t  *restrict Cp = C->p ;
+          int64_t  *restrict Ci = C->i ;
+          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
 
-    const int64_t *GB_RESTRICT kfirst_Mslice = M_ek_slicing ;
-    const int64_t *GB_RESTRICT klast_Mslice  = M_ek_slicing + M_ntasks ;
-    const int64_t *GB_RESTRICT pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
+    const int64_t *restrict kfirst_Mslice = M_ek_slicing ;
+    const int64_t *restrict klast_Mslice  = M_ek_slicing + M_ntasks ;
+    const int64_t *restrict pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // C<M>=A.*B where M is sparse/hyper, A and B are bitmap/full

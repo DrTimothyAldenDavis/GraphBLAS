@@ -34,8 +34,8 @@ GrB_Info GB_resize              // change the size of a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_void *GB_RESTRICT Ax_new = NULL ; size_t Ax_new_size = 0 ;
-    int8_t  *GB_RESTRICT Ab_new = NULL ; size_t Ab_new_size = 0 ;
+    GB_void *restrict Ax_new = NULL ; size_t Ax_new_size = 0 ;
+    int8_t  *restrict Ab_new = NULL ; size_t Ab_new_size = 0 ;
     ASSERT_MATRIX_OK (A, "A to resize", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -151,7 +151,7 @@ GrB_Info GB_resize              // change the size of a matrix
             // resize Ax
             //------------------------------------------------------------------
         
-            GB_void *GB_RESTRICT Ax_old = A->x ;
+            GB_void *restrict Ax_old = (GB_void *) A->x ;
 
             int64_t j ;
             if (vdim_new <= 4*nthreads)
@@ -184,7 +184,7 @@ GrB_Info GB_resize              // change the size of a matrix
 
             if (A_is_bitmap)
             { 
-                int8_t *GB_RESTRICT Ab_old = A->b ;
+                int8_t *restrict Ab_old = A->b ;
                 int64_t pnew ;
                 int64_t anvals = 0 ;
                 #pragma omp parallel for num_threads(nthreads) \
@@ -229,8 +229,8 @@ GrB_Info GB_resize              // change the size of a matrix
         ASSERT (GB_IS_HYPERSPARSE (A)) ;
 
         // resize the number of sparse vectors
-        int64_t *GB_RESTRICT Ah = A->h ;
-        int64_t *GB_RESTRICT Ap = A->p ;
+        int64_t *restrict Ah = A->h ;
+        int64_t *restrict Ap = A->p ;
         A->vdim = vdim_new ;
 
         if (vdim_new < A->plen)

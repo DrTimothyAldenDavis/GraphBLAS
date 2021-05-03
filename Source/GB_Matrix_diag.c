@@ -136,7 +136,8 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
         //----------------------------------------------------------------------
 
         // C->x = (ctype) V->x
-        GB_cast_array (C->x, ccode, V->x, vcode, NULL, vsize, vnz, nthreads) ;
+        GB_cast_array ((GB_void *) C->x, ccode, (GB_void *) V->x, vcode, NULL,
+            vsize, vnz, nthreads) ;
 
         // construct Cp and Ci
         int64_t p ;
@@ -159,7 +160,8 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
         // not hypersparse, and then Ch need not be created.
 
         // C->x = (ctype) V->x
-        GB_cast_array (C->x, ccode, V->x, vcode, NULL, vsize, vnz, nthreads) ;
+        GB_cast_array ((GB_void *) C->x, ccode, (GB_void *) V->x, vcode, NULL,
+            vsize, vnz, nthreads) ;
 
         // construct Cp, Ch, and Ci
         int64_t p ;
@@ -180,7 +182,8 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
         //----------------------------------------------------------------------
 
         // C->x = (ctype) V->x
-        GB_cast_array (C->x, ccode, V->x, vcode, NULL, vsize, vnz, nthreads) ;
+        GB_cast_array ((GB_void *) C->x, ccode, (GB_void *) V->x, vcode, NULL,
+            vsize, vnz, nthreads) ;
 
         int64_t *restrict Vi = V->i ;
 
@@ -220,7 +223,8 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
             Context)) ;
 
         // C->x = (ctype) Tx
-        GB_cast_array (C->x, ccode, Tx, vcode, NULL, vsize, vnz, nthreads) ;
+        GB_cast_array ((GB_void *) C->x, ccode, Tx, vcode, NULL,
+            vsize, vnz, nthreads) ;
 
         // construct Cp, Ch, and Ci
         int64_t p ;

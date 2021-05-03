@@ -410,10 +410,10 @@ GrB_Info GB_ewise_slice
     int *p_nthreads,                // # of threads for eWise operation
     // input:
     const int64_t Cnvec,            // # of vectors of C
-    const int64_t *GB_RESTRICT Ch,     // vectors of C, if hypersparse
-    const int64_t *GB_RESTRICT C_to_M, // mapping of C to M
-    const int64_t *GB_RESTRICT C_to_A, // mapping of C to A
-    const int64_t *GB_RESTRICT C_to_B, // mapping of C to B
+    const int64_t *restrict Ch,     // vectors of C, if hypersparse
+    const int64_t *restrict C_to_M, // mapping of C to M
+    const int64_t *restrict C_to_A, // mapping of C to A
+    const int64_t *restrict C_to_B, // mapping of C to B
     bool Ch_is_Mh,                  // if true, then Ch == Mh; GB_add only
     const GrB_Matrix M,             // mask matrix to slice (optional)
     const GrB_Matrix A,             // matrix to slice
@@ -432,13 +432,13 @@ void GB_slice_vector
     // input:
     const int64_t pM_start,         // M(:,kM) starts at pM_start in Mi,Mx
     const int64_t pM_end,           // M(:,kM) ends at pM_end-1 in Mi,Mx
-    const int64_t *GB_RESTRICT Mi,     // indices of M (or NULL)
+    const int64_t *restrict Mi,     // indices of M (or NULL)
     const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
     const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
-    const int64_t *GB_RESTRICT Ai,     // indices of A
+    const int64_t *restrict Ai,     // indices of A
     const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
     const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
-    const int64_t *GB_RESTRICT Bi,     // indices of B
+    const int64_t *restrict Bi,     // indices of B
     const int64_t vlen,             // A->vlen and B->vlen
     const double target_work        // target work
 ) ;
@@ -448,7 +448,7 @@ void GB_task_cumsum
     int64_t *Cp,                        // size Cnvec+1
     const int64_t Cnvec,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
-    GB_task_struct *GB_RESTRICT TaskList,  // array of structs
+    GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads
     GB_Context Context
@@ -515,8 +515,8 @@ GrB_Type GB_code_type           // return the GrB_Type corresponding to the code
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_pslice                      // slice Ap
 (
-    int64_t *GB_RESTRICT Slice,     // size ntasks+1
-    const int64_t *GB_RESTRICT Ap,  // array size n+1 (NULL if full or bitmap)
+    int64_t *restrict Slice,     // size ntasks+1
+    const int64_t *restrict Ap,  // array size n+1 (NULL if full or bitmap)
     const int64_t n,
     const int ntasks,               // # of tasks
     const bool perfectly_balanced
@@ -534,9 +534,9 @@ void GB_eslice
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_cumsum                      // cumulative sum of an array
 (
-    int64_t *GB_RESTRICT count,     // size n+1, input/output
+    int64_t *restrict count,     // size n+1, input/output
     const int64_t n,
-    int64_t *GB_RESTRICT kresult,   // return k, if needed by the caller
+    int64_t *restrict kresult,   // return k, if needed by the caller
     int nthreads,
     GB_Context Context
 ) ;
@@ -589,7 +589,7 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
 GB_PUBLIC   // accessed by the MATLAB interface only
 bool GB_Index_multiply      // true if ok, false if overflow
 (
-    GrB_Index *GB_RESTRICT c,  // c = a*b, or zero if overflow occurs
+    GrB_Index *restrict c,  // c = a*b, or zero if overflow occurs
     const int64_t a,
     const int64_t b
 ) ;
@@ -605,7 +605,7 @@ bool GB_size_t_multiply     // true if ok, false if overflow
 GrB_Info GB_extract_vector_list     // extract vector list from a matrix
 (
     // output:
-    int64_t *GB_RESTRICT J,         // size nnz(A) or more
+    int64_t *restrict J,         // size nnz(A) or more
     // input:
     const GrB_Matrix A,
     GB_Context Context
@@ -698,8 +698,8 @@ GrB_Info GB_conform_hyper       // conform a matrix to sparse/hypersparse
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:
-    int64_t *GB_RESTRICT *p_Ap, size_t *p_Ap_size,      // size nvec+1
-    int64_t *GB_RESTRICT *p_Ah, size_t *p_Ah_size,      // size nvec
+    int64_t *restrict *p_Ap, size_t *p_Ap_size,      // size nvec+1
+    int64_t *restrict *p_Ah, size_t *p_Ah_size,      // size nvec
     int64_t *p_nvec,                // # of vectors, all nonempty
     // input, not modified
     const int64_t *Ap_old,          // size nvec_old+1
@@ -721,7 +721,7 @@ void GB_cast_array              // typecast an array
     const GB_Type_code code1,   // type code for Cx
     GB_void *Ax,                // input array
     const GB_Type_code code2,   // type code for Ax
-    const int8_t *GB_RESTRICT Ab,   // bitmap for Ax
+    const int8_t *restrict Ab,   // bitmap for Ax
     const size_t user_size,     // size of Ax and Cx if user-defined
     const int64_t anz,          // number of entries in Cx and Ax
     const int nthreads          // number of threads to use

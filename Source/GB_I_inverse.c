@@ -25,9 +25,9 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     int64_t nI,                 // length of I
     int64_t avlen,              // length of the vectors of A
     // outputs:
-    int64_t *GB_RESTRICT *p_Mark,  // head pointers for buckets, size avlen
+    int64_t *restrict *p_Mark,  // head pointers for buckets, size avlen
     size_t *p_Mark_size,
-    int64_t *GB_RESTRICT *p_Inext, // next pointers for buckets, size nI
+    int64_t *restrict *p_Inext, // next pointers for buckets, size nI
     size_t *p_Inext_size,
     int64_t *p_ndupl,           // number of duplicate entries in I
     GB_Context Context

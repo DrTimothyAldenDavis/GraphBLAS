@@ -77,7 +77,7 @@ GrB_Info GB_AxB_dot3_one_slice
     // get M
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Mp = M->p ;
+    const int64_t *restrict Mp = M->p ;
     const int64_t mnz = GB_NNZ_HELD (M) ;
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
@@ -89,7 +89,7 @@ GrB_Info GB_AxB_dot3_one_slice
     GB_WERK_DECLARE (Coarse, int64_t) ;
     int ntasks1 = 0 ;
     int nthreads = GB_nthreads (mnz, chunk, nthreads_max) ;
-    GB_task_struct *GB_RESTRICT TaskList = NULL ; size_t TaskList_size = 0 ;
+    GB_task_struct *restrict TaskList = NULL ; size_t TaskList_size = 0 ;
     int max_ntasks = 0 ;
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (GB_NTASKS_PER_THREAD * nthreads) ;

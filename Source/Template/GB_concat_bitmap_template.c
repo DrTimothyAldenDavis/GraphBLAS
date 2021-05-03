@@ -13,9 +13,9 @@
     // get C and the tile A
     //--------------------------------------------------------------------------
 
-    const GB_CTYPE *GB_RESTRICT Ax = (GB_CTYPE *) A->x ;
-    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
-    int8_t *GB_RESTRICT Cb = C->b ;
+    const GB_CTYPE *restrict Ax = (GB_CTYPE *) A->x ;
+    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    int8_t *restrict Cb = C->b ;
 
     //--------------------------------------------------------------------------
     // copy the tile A into C
@@ -46,7 +46,7 @@
         case GxB_BITMAP : // A is bitmap
         {
             int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-            const int8_t *GB_RESTRICT Ab = A->b ;
+            const int8_t *restrict Ab = A->b ;
             int64_t pA ;
             #pragma omp parallel for num_threads(A_nthreads) schedule(static)
             for (pA = 0 ; pA < anz ; pA++)
@@ -70,9 +70,9 @@
         {
             int A_nthreads, A_ntasks ;
             GB_SLICE_MATRIX (A, 1, chunk) ;
-            const int64_t *GB_RESTRICT Ap = A->p ;
-            const int64_t *GB_RESTRICT Ah = A->h ;
-            const int64_t *GB_RESTRICT Ai = A->i ;
+            const int64_t *restrict Ap = A->p ;
+            const int64_t *restrict Ah = A->h ;
+            const int64_t *restrict Ai = A->i ;
             int tid ;
             #pragma omp parallel for num_threads(A_nthreads) schedule(static)
             for (tid = 0 ; tid < A_ntasks ; tid++)

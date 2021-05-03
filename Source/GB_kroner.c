@@ -97,20 +97,20 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // get inputs
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
-    const GB_void *GB_RESTRICT Ax = A_is_pattern ? NULL : ((GB_void *) A->x) ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ;
+    const GB_void *restrict Ax = A_is_pattern ? NULL : ((GB_void *) A->x) ;
     const int64_t asize = A->type->size ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
     int64_t anvec = A->nvec ;
     int64_t anz = GB_NNZ (A) ;
 
-    const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
-    const int64_t *GB_RESTRICT Bi = B->i ;
-    const GB_void *GB_RESTRICT Bx = B_is_pattern ? NULL : ((GB_void *) B->x) ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
+    const int64_t *restrict Bi = B->i ;
+    const GB_void *restrict Bx = B_is_pattern ? NULL : ((GB_void *) B->x) ;
     const int64_t bsize = B->type->size ;
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
@@ -155,12 +155,12 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // get C and the operator
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Cp = C->p ;
-    int64_t *GB_RESTRICT Ch = C->h ;
-    int64_t *GB_RESTRICT Ci = C->i ;
-    GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
-    int64_t *GB_RESTRICT Cx_int64 = NULL ;
-    int32_t *GB_RESTRICT Cx_int32 = NULL ;
+    int64_t *restrict Cp = C->p ;
+    int64_t *restrict Ch = C->h ;
+    int64_t *restrict Ci = C->i ;
+    GB_void *restrict Cx = (GB_void *) C->x ;
+    int64_t *restrict Cx_int64 = NULL ;
+    int32_t *restrict Cx_int32 = NULL ;
     const int64_t csize = C->type->size ;
 
     GxB_binary_function fmult = op->function ;

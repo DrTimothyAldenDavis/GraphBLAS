@@ -52,8 +52,8 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     // get A
     //--------------------------------------------------------------------------
 
-    const int8_t  *GB_RESTRICT Ab = A->b ;
-    const GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
+    const int8_t  *restrict Ab = A->b ;
+    const GB_void *restrict Ax = (GB_void *) A->x ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
     const size_t asize = A->type->size ;
@@ -108,7 +108,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     // get C
     //--------------------------------------------------------------------------
 
-    int8_t *GB_RESTRICT Cb = C->b ;
+    int8_t *restrict Cb = C->b ;
 
     // In GB_bitmap_assign_IxJ_template, vlen is the vector length of the
     // submatrix C(I,J), but here the template is used to access A(I,J), and so
@@ -144,7 +144,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         {
             // C=A(I,J) symbolic with A and C bitmap
             ASSERT (GB_DEAD_CODE) ;
-            int64_t *GB_RESTRICT Cx = (int64_t *) C->x ;
+            int64_t *restrict Cx = (int64_t *) C->x ;
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pA,pC)                                      \
             {                                                               \
@@ -159,7 +159,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 #endif
         { 
             // C=A(I,J) numeric with A and C bitmap
-            GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
+            GB_void *restrict Cx = (GB_void *) C->x ;
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pA,pC)                                      \
             {                                                               \
@@ -187,7 +187,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         if (symbolic)
         { 
             // C=A(I,J) symbolic with A and C full (from GB_subassign_symbolic)
-            int64_t *GB_RESTRICT Cx = (int64_t *) C->x ;
+            int64_t *restrict Cx = (int64_t *) C->x ;
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pA,pC)                                      \
             {                                                               \
@@ -198,7 +198,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         else
         { 
             // C=A(I,J) numeric with A and C full
-            GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
+            GB_void *restrict Cx = (GB_void *) C->x ;
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pA,pC)                                      \
             {                                                               \

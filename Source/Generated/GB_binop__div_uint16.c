@@ -214,7 +214,7 @@ GrB_Info GB (_AxD__div_uint16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    uint16_t *GB_RESTRICT Cx = (uint16_t *) C->x ;
+    uint16_t *restrict Cx = (uint16_t *) C->x ;
     #include "GB_AxB_colscale_meta.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -239,7 +239,7 @@ GrB_Info GB (_DxB__div_uint16)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    uint16_t *GB_RESTRICT Cx = (uint16_t *) C->x ;
+    uint16_t *restrict Cx = (uint16_t *) C->x ;
     #include "GB_AxB_rowscale_meta.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -261,10 +261,10 @@ GrB_Info GB (_AaddB__div_uint16)
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool Ch_is_Mh,
-    const int64_t *GB_RESTRICT C_to_M,
-    const int64_t *GB_RESTRICT C_to_A,
-    const int64_t *GB_RESTRICT C_to_B,
-    const GB_task_struct *GB_RESTRICT TaskList,
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+    const GB_task_struct *restrict TaskList,
     const int C_ntasks,
     const int C_nthreads,
     GB_Context Context
@@ -296,10 +296,10 @@ GrB_Info GB (_AemultB_01__div_uint16)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT C_to_M,
-    const int64_t *GB_RESTRICT C_to_A,
-    const int64_t *GB_RESTRICT C_to_B,
-    const GB_task_struct *GB_RESTRICT TaskList,
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+    const GB_task_struct *restrict TaskList,
     const int C_ntasks,
     const int C_nthreads,
     GB_Context Context
@@ -326,7 +326,7 @@ GrB_Info GB (_AemultB_02__div_uint16)
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool flipxy,
-    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
@@ -372,7 +372,7 @@ GrB_Info GB (_AemultB_03__div_uint16)
     const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *GB_RESTRICT Cp_kfirst,
+    const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 )
 { 
@@ -421,7 +421,7 @@ GrB_Info GB (_bind1st__div_uint16)
     GB_void *Cx_output,         // Cx and Bx may be aliased
     const GB_void *x_input,
     const GB_void *Bx_input,
-    const int8_t *GB_RESTRICT Bb,
+    const int8_t *restrict Bb,
     int64_t anz,
     int nthreads
 )
@@ -457,7 +457,7 @@ GrB_Info GB (_bind2nd__div_uint16)
     GB_void *Cx_output,         // Cx and Ax may be aliased
     const GB_void *Ax_input,
     const GB_void *y_input,
-    const int8_t *GB_RESTRICT Ab,
+    const int8_t *restrict Ab,
     int64_t anz,
     int nthreads
 )
@@ -501,8 +501,8 @@ GrB_Info GB (_bind1st_tran__div_uint16)
     GrB_Matrix C,
     const GB_void *x_input,
     const GrB_Matrix A,
-    int64_t *GB_RESTRICT *Workspaces,
-    const int64_t *GB_RESTRICT A_slice,
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
 )
@@ -545,8 +545,8 @@ GrB_Info GB (_bind2nd_tran__div_uint16)
     GrB_Matrix C,
     const GrB_Matrix A,
     const GB_void *y_input,
-    int64_t *GB_RESTRICT *Workspaces,
-    const int64_t *GB_RESTRICT A_slice,
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
 )

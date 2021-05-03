@@ -17,8 +17,8 @@
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:
-    int64_t *GB_RESTRICT *p_Ap, size_t *p_Ap_size,      // size nvec+1
-    int64_t *GB_RESTRICT *p_Ah, size_t *p_Ah_size,      // size nvec
+    int64_t *restrict *p_Ap, size_t *p_Ap_size,      // size nvec+1
+    int64_t *restrict *p_Ah, size_t *p_Ah_size,      // size nvec
     int64_t *p_nvec,                // # of vectors, all nonempty
     // input, not modified
     const int64_t *Ap_old,          // size nvec_old+1
@@ -42,9 +42,9 @@ GrB_Info GB_hyper_prune
     (*p_Ah) = NULL ;    (*p_Ah_size) = 0 ;
     (*p_nvec) = -1 ;
 
-    int64_t *GB_RESTRICT W  = NULL ; size_t W_size  = 0 ;
-    int64_t *GB_RESTRICT Ap = NULL ; size_t Ap_size = 0 ;
-    int64_t *GB_RESTRICT Ah = NULL ; size_t Ah_size = 0 ;
+    int64_t *restrict W  = NULL ; size_t W_size  = 0 ;
+    int64_t *restrict Ap = NULL ; size_t Ap_size = 0 ;
+    int64_t *restrict Ah = NULL ; size_t Ah_size = 0 ;
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use

@@ -55,10 +55,10 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     // or not this function handles the semiring as hard-coded.  Now return for
     // cases this function does not handle.
 
-    (*mult_opcode) = 0 ;
-    (*xcode) = 0 ;
-    (*ycode) = 0 ;
-    (*zcode) = 0 ;
+    (*mult_opcode) = GB_NOP_opcode ;
+    (*xcode) = GB_ignore_code ;
+    (*ycode) = GB_ignore_code ;
+    (*zcode) = GB_ignore_code ;
 
     //--------------------------------------------------------------------------
     // check the monoid

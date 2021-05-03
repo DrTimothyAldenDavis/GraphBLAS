@@ -24,7 +24,7 @@ static inline int64_t GB_search_for_vector // return vector k that contains p
 #endif
 (
     const int64_t p,                // search for vector k that contains p
-    const int64_t *GB_RESTRICT Ap,  // vector pointers to search
+    const int64_t *restrict Ap,  // vector pointers to search
     int64_t kleft,                  // left-most k to search
     int64_t anvec,                  // Ap is of size anvec+1
     int64_t avlen                   // A->vlen

@@ -53,14 +53,14 @@ GrB_Info GB_subref_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads for subref operation
     bool *p_post_sort,              // true if a final post-sort is needed
-    int64_t *GB_RESTRICT *p_Mark,      // for I inverse, if needed; size avlen
+    int64_t *restrict *p_Mark,      // for I inverse, if needed; size avlen
     size_t *p_Mark_size,
-    int64_t *GB_RESTRICT *p_Inext,     // for I inverse, if needed; size nI
+    int64_t *restrict *p_Inext,     // for I inverse, if needed; size nI
     size_t *p_Inext_size,
     int64_t *p_nduplicates,         // # of duplicates, if I inverse computed
     // from phase0:
-    const int64_t *GB_RESTRICT Ap_start,   // location of A(imin:imax,kA)
-    const int64_t *GB_RESTRICT Ap_end,
+    const int64_t *restrict Ap_start,   // location of A(imin:imax,kA)
+    const int64_t *restrict Ap_end,
     const int64_t Cnvec,            // # of vectors of C
     const bool need_qsort,          // true if C must be sorted
     const int Ikind,                // GB_ALL, GB_RANGE, GB_STRIDE or GB_LIST
@@ -95,10 +95,10 @@ GrB_Info GB_subref_slice
     (*p_Mark    ) = NULL ;
     (*p_Inext   ) = NULL ;
 
-    int64_t *GB_RESTRICT Mark  = NULL ; size_t Mark_size = 0 ;
-    int64_t *GB_RESTRICT Inext = NULL ; size_t Inext_size = 0 ;
+    int64_t *restrict Mark  = NULL ; size_t Mark_size = 0 ;
+    int64_t *restrict Inext = NULL ; size_t Inext_size = 0 ;
 
-    int64_t *GB_RESTRICT Cwork = NULL ; size_t Cwork_size = 0 ;
+    int64_t *restrict Cwork = NULL ; size_t Cwork_size = 0 ;
     GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
     int ntasks1 = 0 ;
 
@@ -122,7 +122,7 @@ GrB_Info GB_subref_slice
     // When the mask is present, it is often fastest to break the work up
     // into tasks, even when nthreads_max is 1.
 
-    GB_task_struct *GB_RESTRICT TaskList = NULL ; size_t TaskList_size = 0 ;
+    GB_task_struct *restrict TaskList = NULL ; size_t TaskList_size = 0 ;
     int max_ntasks = 0 ;
     int ntasks0 = (nthreads_max == 1) ? 1 : (32 * nthreads_max) ;
     GB_REALLOC_TASK_WERK (TaskList, ntasks0, max_ntasks) ;

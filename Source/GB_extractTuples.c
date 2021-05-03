@@ -41,8 +41,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_void *GB_RESTRICT X_bitmap = NULL ; size_t X_bitmap_size = 0 ;
-    int64_t *GB_RESTRICT Ap       = NULL ; size_t Ap_size = 0 ;
+    GB_void *restrict X_bitmap = NULL ; size_t X_bitmap_size = 0 ;
+    int64_t *restrict Ap       = NULL ; size_t Ap_size = 0 ;
 
     ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
     ASSERT (p_nvals != NULL) ;
@@ -135,8 +135,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // TODO: pass xcode to GB_convert_bitmap_worker and let it do the
         // typecasting.  This works for now, however.
 
-        GB_OK (GB_convert_bitmap_worker (Ap, I, J,
-            need_typecast ? X_bitmap : X, NULL, A, Context)) ;
+        GB_OK (GB_convert_bitmap_worker (Ap, (int64_t *) I, (int64_t *) J,
+            (GB_void *) (need_typecast ? X_bitmap : X), NULL, A, Context)) ;
 
         //----------------------------------------------------------------------
         // typecast the result if needed

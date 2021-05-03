@@ -48,14 +48,14 @@
 
 void GB (_sel_phase1__gt_zero_fp64)
 (
-    int64_t *GB_RESTRICT Zp,
-    int64_t *GB_RESTRICT Cp,
-    int64_t *GB_RESTRICT Wfirst,
-    int64_t *GB_RESTRICT Wlast,
+    int64_t *restrict Zp,
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
     const GrB_Matrix A,
     const bool flipij,
     const int64_t ithunk,
-    const double *GB_RESTRICT xthunk,
+    const double *restrict xthunk,
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
@@ -72,15 +72,15 @@ void GB (_sel_phase1__gt_zero_fp64)
 
 void GB (_sel_phase2__gt_zero_fp64)
 (
-    int64_t *GB_RESTRICT Ci,
-    double *GB_RESTRICT Cx,
-    const int64_t *GB_RESTRICT Zp,
-    const int64_t *GB_RESTRICT Cp,
-    const int64_t *GB_RESTRICT Cp_kfirst,
+    int64_t *restrict Ci,
+    double *restrict Cx,
+    const int64_t *restrict Zp,
+    const int64_t *restrict Cp,
+    const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,
     const int64_t ithunk,
-    const double *GB_RESTRICT xthunk,
+    const double *restrict xthunk,
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
@@ -98,12 +98,12 @@ void GB (_sel_phase2__gt_zero_fp64)
 void GB (_sel_bitmap__gt_zero_fp64)
 (
     int8_t *Cb,
-    double *GB_RESTRICT Cx,
+    double *restrict Cx,
     int64_t *cnvals_handle,
     GrB_Matrix A,
     const bool flipij,
     const int64_t ithunk,
-    const double *GB_RESTRICT xthunk,
+    const double *restrict xthunk,
     const GxB_select_function user_select,
     const int nthreads
 )

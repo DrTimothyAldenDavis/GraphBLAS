@@ -35,7 +35,7 @@
     size_t aki_size = flipxy ? ysize : xsize ;
     size_t bkj_size = flipxy ? xsize : ysize ;
 
-    GB_void *GB_RESTRICT terminal = (GB_void *) add->terminal ;
+    GB_void *restrict terminal = (GB_void *) add->terminal ;
 
     GB_cast_function cast_A, cast_B ;
     if (flipxy)

@@ -28,8 +28,8 @@ GrB_Info GB (_Cdense_25)
 GrB_Info GB (_convert_s2b)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 

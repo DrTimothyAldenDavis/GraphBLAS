@@ -121,15 +121,15 @@ GrB_Info GB (_Cdense_25__uint32)
 GrB_Info GB (_convert_s2b__uint32)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    uint32_t *GB_RESTRICT Ax_new = (uint32_t *) Ax_new_void ;
+    uint32_t *restrict Ax_new = (uint32_t *) Ax_new_void ;
     #include "GB_convert_sparse_to_bitmap_template.c"
     return (GrB_SUCCESS) ;
     #endif

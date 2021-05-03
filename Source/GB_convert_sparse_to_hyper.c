@@ -63,7 +63,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 
         ASSERT (A->nvec == A->plen && A->plen == n) ;
 
-        const int64_t *GB_RESTRICT Ap_old = A->p ;
+        const int64_t *restrict Ap_old = A->p ;
         size_t Ap_old_size = A->p_size ;
         bool Ap_old_shallow = A->p_shallow ;
 
@@ -100,8 +100,8 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         // allocate the new A->p and A->h
         //----------------------------------------------------------------------
 
-        int64_t *GB_RESTRICT Ap_new = NULL ; size_t Ap_new_size = 0 ;
-        int64_t *GB_RESTRICT Ah_new = NULL ; size_t Ah_new_size = 0 ;
+        int64_t *restrict Ap_new = NULL ; size_t Ap_new_size = 0 ;
+        int64_t *restrict Ah_new = NULL ; size_t Ah_new_size = 0 ;
         Ap_new = GB_MALLOC (nvec_nonempty+1, int64_t, &Ap_new_size) ;
         Ah_new = GB_MALLOC (nvec_nonempty  , int64_t, &Ah_new_size) ;
         if (Ap_new == NULL || Ah_new == NULL)

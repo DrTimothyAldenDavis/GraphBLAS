@@ -28,11 +28,9 @@
     #define GB_HAS_VLA  0
     #if defined ( __cplusplus )
         // C++ does not have the restrict keyword
-        #define GB_RESTRICT
         #define restrict
     #else
         // C uses __restrict
-        #define GB_RESTRICT __restrict
         #define restrict __restrict
     #endif
 
@@ -41,7 +39,6 @@
     #define GB_MICROSOFT 0
     #define GB_HAS_VLA  1
     // C++ does not have the restrict keyword
-    #define GB_RESTRICT
     #define restrict
 
 #elif GxB_STDC_VERSION >= 199901L
@@ -49,14 +46,12 @@
     // ANSI C99 and later have the restrict keyword and variable-length arrays.
     #define GB_MICROSOFT 0
     #define GB_HAS_VLA  1
-    #define GB_RESTRICT restrict
 
 #else
 
     // ANSI C95 and earlier have neither
     #define GB_MICROSOFT 0
     #define GB_HAS_VLA  0
-    #define GB_RESTRICT
     #define restrict
 
 #endif

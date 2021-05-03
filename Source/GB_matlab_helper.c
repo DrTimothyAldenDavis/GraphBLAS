@@ -43,8 +43,8 @@
 
 void GB_matlab_helper1              // convert zero-based indices to one-based
 (
-    double *GB_RESTRICT I_double,   // output array
-    const GrB_Index *GB_RESTRICT I, // input array
+    double *restrict I_double,   // output array
+    const GrB_Index *restrict I, // input array
     int64_t nvals                   // size of input and output arrays
 )
 {
@@ -65,7 +65,7 @@ void GB_matlab_helper1              // convert zero-based indices to one-based
 
 void GB_matlab_helper1i             // convert zero-based indices to one-based
 (
-    int64_t *GB_RESTRICT I,         // input/output array
+    int64_t *restrict I,         // input/output array
     int64_t nvals                   // size of input/output array
 )
 {
@@ -86,8 +86,8 @@ void GB_matlab_helper1i             // convert zero-based indices to one-based
 
 bool GB_matlab_helper3              // return true if OK, false on error
 (
-    int64_t *GB_RESTRICT List,      // size len, output array
-    const double *GB_RESTRICT List_double, // size len, input array
+    int64_t *restrict List,      // size len, output array
+    const double *restrict List_double, // size len, input array
     int64_t len,
     int64_t *List_max               // also compute the max entry in the list
 )
@@ -144,8 +144,8 @@ bool GB_matlab_helper3              // return true if OK, false on error
 
 bool GB_matlab_helper3i             // return true if OK, false on error
 (
-    int64_t *GB_RESTRICT List,      // size len, output array
-    const int64_t *GB_RESTRICT List_int64, // size len, input array
+    int64_t *restrict List,      // size len, output array
+    const int64_t *restrict List_int64, // size len, input array
     int64_t len,
     int64_t *List_max               // also compute the max entry in the list
 )
@@ -190,7 +190,7 @@ bool GB_matlab_helper3i             // return true if OK, false on error
 
 bool GB_matlab_helper4              // return true if OK, false on error
 (
-    const GrB_Index *GB_RESTRICT I, // array of size len
+    const GrB_Index *restrict I, // array of size len
     const int64_t len,
     GrB_Index *List_max             // find max (I) + 1
 )
@@ -235,12 +235,12 @@ bool GB_matlab_helper4              // return true if OK, false on error
 
 void GB_matlab_helper5              // construct pattern of S
 (
-    GrB_Index *GB_RESTRICT Si,         // array of size anz
-    GrB_Index *GB_RESTRICT Sj,         // array of size anz
-    const GrB_Index *GB_RESTRICT Mi,   // array of size mnz, M->i, may be NULL
-    const GrB_Index *GB_RESTRICT Mj,   // array of size mnz,
+    GrB_Index *restrict Si,         // array of size anz
+    GrB_Index *restrict Sj,         // array of size anz
+    const GrB_Index *restrict Mi,   // array of size mnz, M->i, may be NULL
+    const GrB_Index *restrict Mj,   // array of size mnz,
     const int64_t mvlen,               // M->vlen
-    GrB_Index *GB_RESTRICT Ai,         // array of size anz, A->i, may be NULL
+    GrB_Index *restrict Ai,         // array of size anz, A->i, may be NULL
     const int64_t avlen,               // M->vlen
     const GrB_Index anz
 )
@@ -267,7 +267,7 @@ void GB_matlab_helper5              // construct pattern of S
 
 void GB_matlab_helper6              // set Gbool to all true
 (
-    bool *GB_RESTRICT Gbool,        // array of size gnvals
+    bool *restrict Gbool,        // array of size gnvals
     const GrB_Index gnvals
 )
 {
@@ -288,7 +288,7 @@ void GB_matlab_helper6              // set Gbool to all true
 
 void GB_matlab_helper7              // Kx = uint64 (0:mnz-1)
 (
-    uint64_t *GB_RESTRICT Kx,       // array of size mnz
+    uint64_t *restrict Kx,       // array of size mnz
     const GrB_Index mnz
 )
 {

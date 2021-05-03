@@ -120,8 +120,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     bool A_is_hyper = GB_IS_HYPERSPARSE (A_in) ;
     bool B_is_hyper = GB_IS_HYPERSPARSE (B_in) ;
     bool A_or_B_hyper = A_is_hyper || B_is_hyper ;
-    GrB_Index *GB_RESTRICT Ah = A_in->h ;
-    GrB_Index *GB_RESTRICT Bh = B_in->h ;
+    GrB_Index *restrict Ah = (GrB_Index *) A_in->h ;
+    GrB_Index *restrict Bh = (GrB_Index *) B_in->h ;
     struct GB_Matrix_opaque A_header, B_header ;
     GrB_Matrix A = (A_is_hyper) ? GB_hyper_pack (&A_header, A_in) : A_in ;
     GrB_Matrix B = (B_is_hyper) ? GB_hyper_pack (&B_header, B_in) : B_in ;
@@ -371,9 +371,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // allocate the sparse/hypersparse structure of the final C
         //----------------------------------------------------------------------
 
-        int64_t *GB_RESTRICT Cp = NULL ; size_t Cp_size = 0 ;
-        int64_t *GB_RESTRICT Ch = NULL ; size_t Ch_size = 0 ;
-        int64_t *GB_RESTRICT Ci = NULL ; size_t Ci_size = 0 ;
+        int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
+        int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;
+        int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
 
         Cp = GB_MALLOC (cvdim+1, int64_t, &Cp_size) ;
         Ch = NULL ;
@@ -422,7 +422,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // C(i,j) becomes a zombie if not present in the bitmap
         nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
 
-        int8_t *GB_RESTRICT Cb = C->b ;
+        int8_t *restrict Cb = C->b ;
         if (A_is_hyper)
         { 
             ASSERT (cvlen == A_in->nvec) ;

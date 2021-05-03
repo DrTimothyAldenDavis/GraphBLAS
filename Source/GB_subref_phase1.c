@@ -21,15 +21,15 @@ GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
     size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     // tasks from phase0b:
-    GB_task_struct *GB_RESTRICT TaskList,  // array of structs
+    GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads to use
     const int64_t *Mark,                // for I inverse buckets, size A->vlen
     const int64_t *Inext,               // for I inverse buckets, size nI
     const int64_t nduplicates,          // # of duplicates, if I inverted
     // analysis from phase0:
-    const int64_t *GB_RESTRICT Ap_start,
-    const int64_t *GB_RESTRICT Ap_end,
+    const int64_t *restrict Ap_start,
+    const int64_t *restrict Ap_end,
     const int64_t Cnvec,
     const bool need_qsort,
     const int Ikind,
@@ -58,7 +58,7 @@ GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
 
     (*Cp_handle) = NULL ;
     (*Cp_size_handle) = 0 ;
-    int64_t *GB_RESTRICT Cp = NULL ; size_t Cp_size = 0 ;
+    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
     Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t, &Cp_size) ;
     if (Cp == NULL)
     { 

@@ -98,9 +98,9 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
         }
 
         // get A and C
-        const int64_t *GB_RESTRICT Ah = A->h ;
-        const int64_t *GB_RESTRICT Ap = A->p ;
-        const int64_t *GB_RESTRICT Ai = A->i ;
+        const int64_t *restrict Ah = A->h ;
+        const int64_t *restrict Ap = A->p ;
+        const int64_t *restrict Ai = A->i ;
         int64_t anvec = A->nvec ;
         int64_t avlen = A->vlen ;
         int64_t avdim = A->vdim ;
@@ -123,7 +123,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
 
         if (is64)
         {
-            int64_t *GB_RESTRICT Cx_int = (int64_t *) Cx ;
+            int64_t *restrict Cx_int = (int64_t *) Cx ;
             switch (opcode)
             {
                 case GB_POSITIONI_opcode  : // z = position_i(A(i,j)) == i
@@ -149,7 +149,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
         }
         else
         {
-            int32_t *GB_RESTRICT Cx_int = (int32_t *) Cx ;
+            int32_t *restrict Cx_int = (int32_t *) Cx ;
             switch (opcode)
             {
                 case GB_POSITIONI_opcode  : // z = position_i(A(i,j)) == i

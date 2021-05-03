@@ -62,16 +62,16 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     size_t Cp_size,
     const int64_t Cnvec_nonempty,   // # of non-empty vectors in C
     // tasks from phase1a:
-    const GB_task_struct *GB_RESTRICT TaskList,    // array of structs
+    const GB_task_struct *restrict TaskList,    // array of structs
     const int C_ntasks,         // # of tasks
     const int C_nthreads,       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     int64_t **Ch_handle,
     size_t Ch_size,
-    const int64_t *GB_RESTRICT C_to_M,
-    const int64_t *GB_RESTRICT C_to_A,
-    const int64_t *GB_RESTRICT C_to_B,
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h
     const int C_sparsity,
     // original input:
@@ -105,8 +105,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
-    int64_t *GB_RESTRICT Cp = (*Cp_handle) ;
-    int64_t *GB_RESTRICT Ch = (*Ch_handle) ;
+    int64_t *restrict Cp = (*Cp_handle) ;
+    int64_t *restrict Ch = (*Ch_handle) ;
 
     //--------------------------------------------------------------------------
     // get the opcode

@@ -173,9 +173,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // define workspace
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Hi_all = NULL ; size_t Hi_all_size = 0 ;
-    int64_t *GB_RESTRICT Hf_all = NULL ; size_t Hf_all_size = 0 ;
-    GB_void *GB_RESTRICT Hx_all = NULL ; size_t Hx_all_size = 0 ;
+    int64_t *restrict Hi_all = NULL ; size_t Hi_all_size = 0 ;
+    int64_t *restrict Hf_all = NULL ; size_t Hf_all_size = 0 ;
+    GB_void *restrict Hx_all = NULL ; size_t Hx_all_size = 0 ;
     GB_saxpy3task_struct *SaxpyTasks = NULL ; size_t SaxpyTasks_size = 0 ;
 
     //--------------------------------------------------------------------------
@@ -206,16 +206,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // get A, and B
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
     const int64_t avlen = A->vlen ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
 
-    const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
-    const int8_t  *GB_RESTRICT Bb = B->b ;
-    const int64_t *GB_RESTRICT Bi = B->i ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
+    const int8_t  *restrict Bb = B->b ;
+    const int64_t *restrict Bi = B->i ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnz = GB_NNZ_HELD (B) ;
     const int64_t bnvec = B->nvec ;
@@ -242,8 +242,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         return (info) ;
     }
 
-    int64_t *GB_RESTRICT Cp = C->p ;
-    int64_t *GB_RESTRICT Ch = C->h ;
+    int64_t *restrict Cp = C->p ;
+    int64_t *restrict Ch = C->h ;
     if (B_is_hyper)
     { 
         // B and C are both hypersparse
@@ -506,9 +506,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // split the space into separate hash tables
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Hi_part = Hi_all ;
-    int64_t *GB_RESTRICT Hf_part = Hf_all ;
-    GB_void *GB_RESTRICT Hx_part = Hx_all ;
+    int64_t *restrict Hi_part = Hi_all ;
+    int64_t *restrict Hf_part = Hf_all ;
+    GB_void *restrict Hx_part = Hx_all ;
 
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {

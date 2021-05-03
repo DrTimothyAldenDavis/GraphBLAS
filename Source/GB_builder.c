@@ -129,9 +129,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
     bool known_no_duplicates,       // true if tuples known to not have dupl
     int64_t ijslen,                 // size of I_work and J_work arrays
     const bool is_matrix,           // true if T a GrB_Matrix, false if vector
-    const int64_t *GB_RESTRICT I_input,// original indices, size nvals
-    const int64_t *GB_RESTRICT J_input,// original indices, size nvals
-    const GB_void *GB_RESTRICT S_input,// array of values of tuples, size nvals
+    const int64_t *restrict I_input,// original indices, size nvals
+    const int64_t *restrict J_input,// original indices, size nvals
+    const GB_void *restrict S_input,// array of values of tuples, size nvals
     const int64_t nvals,            // number of tuples, and size of K_work
     const GrB_BinaryOp dup,         // binary function to assemble duplicates,
                                     // if NULL use the SECOND operator to
@@ -162,9 +162,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // get S
     //--------------------------------------------------------------------------
 
-    GB_void *GB_RESTRICT S_work = (*S_work_handle) ;
+    GB_void *restrict S_work = (*S_work_handle) ;
 
-    const GB_void *GB_RESTRICT S = (S_work == NULL) ? S_input : S_work ;
+    const GB_void *restrict S = (S_work == NULL) ? S_input : S_work ;
     size_t tsize = ttype->size ;
     size_t ssize = GB_code_size (scode, tsize) ;
     ASSERT (GB_IMPLIES (nvals > 0, S != NULL)) ;
@@ -186,9 +186,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // (J_work_handle is always non-NULL however).
 
     GrB_Info info ;
-    int64_t *GB_RESTRICT I_work = (*I_work_handle) ;
-    int64_t *GB_RESTRICT J_work = (*J_work_handle) ;
-    int64_t *GB_RESTRICT K_work = NULL ; size_t K_work_size = 0 ;
+    int64_t *restrict I_work = (*I_work_handle) ;
+    int64_t *restrict J_work = (*J_work_handle) ;
+    int64_t *restrict K_work = NULL ; size_t K_work_size = 0 ;
     ASSERT (*J_work_size_handle == GB_Global_memtable_size (J_work)) ;
 
     //--------------------------------------------------------------------------
@@ -212,11 +212,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     }
 
     memset (Work, 0, Work_nitems * sizeof (int64_t)) ;
-    int64_t *GB_RESTRICT tstart_slice = Work ;                  // nthreads+1
-    int64_t *GB_RESTRICT tnvec_slice  = Work +   (nthreads+1) ; // nthreads+1
-    int64_t *GB_RESTRICT tnz_slice    = Work + 2*(nthreads+1) ; // nthreads+1
-    int64_t *GB_RESTRICT kbad         = Work + 3*(nthreads+1) ; // nthreads
-    int64_t *GB_RESTRICT ilast_slice  = Work + 4*(nthreads+1) ; // nthreads
+    int64_t *restrict tstart_slice = Work ;                  // nthreads+1
+    int64_t *restrict tnvec_slice  = Work +   (nthreads+1) ; // nthreads+1
+    int64_t *restrict tnz_slice    = Work + 2*(nthreads+1) ; // nthreads+1
+    int64_t *restrict kbad         = Work + 3*(nthreads+1) ; // nthreads
+    int64_t *restrict ilast_slice  = Work + 4*(nthreads+1) ; // nthreads
 
     //--------------------------------------------------------------------------
     // partition the tuples for the threads
@@ -777,8 +777,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     // Step 4 scans the J_work indices and constructs T->h and T->p.
 
-    int64_t *GB_RESTRICT Th = T->h ;
-    int64_t *GB_RESTRICT Tp = T->p ;
+    int64_t *restrict Th = T->h ;
+    int64_t *restrict Tp = T->p ;
 
     if (vdim <= 1)
     {
@@ -919,7 +919,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         }
     }
 
-    int64_t *GB_RESTRICT Ti = T->i ;
+    int64_t *restrict Ti = T->i ;
 
     //==========================================================================
     // numerical phase of the build: assemble any duplicates
@@ -1089,7 +1089,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             return (GrB_OUT_OF_MEMORY) ;
         }
 
-        GB_void *GB_RESTRICT Tx = (GB_void *) T->x ;
+        GB_void *restrict Tx = (GB_void *) T->x ;
 
         ASSERT (GB_IMPLIES (nvals > 0, S != NULL)) ;
 

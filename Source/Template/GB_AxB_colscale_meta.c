@@ -29,15 +29,15 @@
     // get C, A, and D
     //--------------------------------------------------------------------------
 
-    const int64_t  *GB_RESTRICT Ap = A->p ;
-    const int64_t  *GB_RESTRICT Ah = A->h ;
-    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
-    const GB_BTYPE *GB_RESTRICT Dx = (GB_BTYPE *) (D_is_pattern ? NULL : D->x) ;
+    const int64_t  *restrict Ap = A->p ;
+    const int64_t  *restrict Ah = A->h ;
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
+    const GB_BTYPE *restrict Dx = (GB_BTYPE *) (D_is_pattern ? NULL : D->x) ;
     const int64_t avlen = A->vlen ;
 
-    const int64_t *GB_RESTRICT kfirst_Aslice = A_ek_slicing ;
-    const int64_t *GB_RESTRICT klast_Aslice  = A_ek_slicing + A_ntasks ;
-    const int64_t *GB_RESTRICT pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
+    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
+    const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
+    const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // C=A*D

@@ -39,8 +39,8 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     int64_t anz = avdim * avlen ;
     ASSERT (GB_Index_multiply (&anz, avdim, avlen) == true) ;
 
-    int64_t *GB_RESTRICT Ap = NULL ; size_t Ap_size = 0 ;
-    int64_t *GB_RESTRICT Ai = NULL ; size_t Ai_size = 0 ;
+    int64_t *restrict Ap = NULL ; size_t Ap_size = 0 ;
+    int64_t *restrict Ai = NULL ; size_t Ai_size = 0 ;
 
     Ap = GB_MALLOC (avdim+1, int64_t, &Ap_size) ;
     Ai = GB_MALLOC (anz, int64_t, &Ai_size) ;

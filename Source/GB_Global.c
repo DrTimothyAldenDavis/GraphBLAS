@@ -111,16 +111,6 @@ typedef struct
     bool print_one_based ;          // if true, print 1-based indices
 
     //--------------------------------------------------------------------------
-    // CUDA (DRAFT: in progress)
-    //--------------------------------------------------------------------------
-
-    int gpu_count ;                 // # of GPUs in the system
-    GrB_Desc_Value gpu_control ;    // always, never, or default
-    double gpu_chunk ;              // min problem size for using a GPU
-    // properties of each GPU:
-    GB_cuda_device gpu_properties [GB_CUDA_MAX_GPUS] ;
-
-    //--------------------------------------------------------------------------
     // timing: for code development only
     //--------------------------------------------------------------------------
 
@@ -148,9 +138,19 @@ typedef struct
     // limit are freed by GB_dealloc_memory, they are not placed in the pool,
     // but actually freed instead.
 
-    GB_void *free_pool [64] ;
+    void *free_pool [64] ;
     int64_t free_pool_nblocks [64] ;
     int64_t free_pool_limit [64] ;
+
+    //--------------------------------------------------------------------------
+    // CUDA (DRAFT: in progress)
+    //--------------------------------------------------------------------------
+
+    int gpu_count ;                 // # of GPUs in the system
+    GrB_Desc_Value gpu_control ;    // always, never, or default
+    double gpu_chunk ;              // min problem size for using a GPU
+    // properties of each GPU:
+    GB_cuda_device gpu_properties [GB_CUDA_MAX_GPUS] ;
 
 }
 GB_Global_struct ;
@@ -181,7 +181,6 @@ GB_Global_struct GB_Global =
     #define GB_BITSWITCH_gt_than_64 ((float) 0.40)
 
     // default format
-    .hyper_switch = GB_HYPER_SWITCH_DEFAULT,
     .bitmap_switch = {
         GB_BITSWITCH_1,
         GB_BITSWITCH_2,
@@ -191,6 +190,7 @@ GB_Global_struct GB_Global =
         GB_BITSWITCH_17_to_32,
         GB_BITSWITCH_33_to_64,
         GB_BITSWITCH_gt_than_64 },
+    .hyper_switch = GB_HYPER_SWITCH_DEFAULT,
 
     .is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW),    // default is GxB_BY_ROW
 
@@ -221,10 +221,8 @@ GB_Global_struct GB_Global =
     // for MATLAB interface only
     .print_one_based = false,   // if true, print 1-based indices
 
-    // CUDA environment (DRAFT: in progress)
-    .gpu_count = 0,                     // # of GPUs in the system
-    .gpu_control = GxB_DEFAULT,         // always, never, or default
-    .gpu_chunk = GB_GPU_CHUNK_DEFAULT,  // min problem size for using a GPU
+    .timing = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 
     // for malloc debugging only
     .nmemtable = 0,     // memtable is empty
@@ -328,6 +326,11 @@ GB_Global_struct GB_Global =
         0,      // size 2^61
         0,      // size 2^62
         0 },    // size 2^63 (4 exabytes!)
+
+    // CUDA environment (DRAFT: in progress)
+    .gpu_count = 0,                     // # of GPUs in the system
+    .gpu_control = GxB_DEFAULT,         // always, never, or default
+    .gpu_chunk = GB_GPU_CHUNK_DEFAULT,  // min problem size for using a GPU
 
 } ;
 

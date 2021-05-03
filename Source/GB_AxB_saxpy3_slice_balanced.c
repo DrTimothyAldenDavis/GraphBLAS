@@ -244,7 +244,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     // define result and workspace
     //--------------------------------------------------------------------------
 
-    GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks = NULL ;
+    GB_saxpy3task_struct *restrict SaxpyTasks = NULL ;
     size_t SaxpyTasks_size = 0 ;
 
     GB_WERK_DECLARE (Coarse_initial, int64_t) ; // initial coarse tasks
@@ -256,16 +256,16 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     // get A, and B
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
     const int64_t avlen = A->vlen ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
 
-    const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
-    const int8_t  *GB_RESTRICT Bb = B->b ;
-    const int64_t *GB_RESTRICT Bi = B->i ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
+    const int8_t  *restrict Bb = B->b ;
+    const int64_t *restrict Bi = B->i ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnz = GB_NNZ_HELD (B) ;
     const int64_t bnvec = B->nvec ;
@@ -280,7 +280,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     //--------------------------------------------------------------------------
 
     int64_t Mwork = 0 ;
-    int64_t *GB_RESTRICT Bflops = C->p ;    // use C->p as workspace for Bflops
+    int64_t *restrict Bflops = C->p ;    // use C->p as workspace for Bflops
     GB_OK (GB_AxB_saxpy3_flopcount (&Mwork, Bflops, M, Mask_comp, A, B,
         Context)) ;
     int64_t total_flops = Bflops [bnvec] ;

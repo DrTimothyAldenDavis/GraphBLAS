@@ -68,7 +68,7 @@ GrB_Info GB_AxB_saxpy_generic
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const int saxpy_method,         // saxpy3, or bitmap method
     // for saxpy3 only:
-    GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
     int ntasks,
     int nfine,
     int nthreads,

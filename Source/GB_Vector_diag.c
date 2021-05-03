@@ -162,7 +162,8 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_cast_array (V->x, vcode, T->x, acode, NULL, asize, vnz, nthreads) ;
+        GB_cast_array ((GB_void *) V->x, vcode, (GB_void *) T->x, acode,
+            NULL, asize, vnz, nthreads) ;
     }
 
     //--------------------------------------------------------------------------

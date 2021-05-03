@@ -13,8 +13,8 @@
     // get C and the tile A
     //--------------------------------------------------------------------------
 
-    const GB_CTYPE *GB_RESTRICT Ax = (GB_CTYPE *) A->x ;
-    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
+    const GB_CTYPE *restrict Ax = (GB_CTYPE *) A->x ;
+    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
 
     int64_t pA ;
     #pragma omp parallel for num_threads(A_nthreads) schedule(static)

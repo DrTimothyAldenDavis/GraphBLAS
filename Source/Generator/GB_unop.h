@@ -3,7 +3,7 @@ GrB_Info GB (_unop_apply)
 (
     GB_ctype *Cx,
     const GB_atype *Ax,
-    const int8_t *GB_RESTRICT Ab,
+    const int8_t *restrict Ab,
     int64_t anz,
     int nthreads
 ) ;
@@ -12,8 +12,8 @@ GrB_Info GB (_unop_tran)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
-    int64_t *GB_RESTRICT *Workspaces,
-    const int64_t *GB_RESTRICT A_slice,
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
 ) ;

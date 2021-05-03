@@ -145,7 +145,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
 
     // TODO: add type-specific versions for built-in types
 
-    const GB_void *restrict Ax = A->x ;
+    const GB_void *restrict Ax = (GB_void *) (A->x) ;
 
     if (by_vector)
     {

@@ -40,10 +40,10 @@ GrB_Info GB_subassign_emult_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
-    const int64_t *GB_RESTRICT *Zh_handle,  // Zh_shallow is A->h, M->h, or NULL
-    int64_t *GB_RESTRICT *Z_to_A_handle,    // Z_to_A: size Znvec, or NULL
+    const int64_t *restrict *Zh_handle,  // Zh_shallow is A->h, M->h, or NULL
+    int64_t *restrict *Z_to_A_handle,    // Z_to_A: size Znvec, or NULL
     size_t *Z_to_A_size_handle,
-    int64_t *GB_RESTRICT *Z_to_M_handle,    // Z_to_M: size Znvec, or NULL
+    int64_t *restrict *Z_to_M_handle,    // Z_to_M: size Znvec, or NULL
     size_t *Z_to_M_size_handle,
     // input:
     const GrB_Matrix C,             // output matrix C
@@ -100,22 +100,22 @@ GrB_Info GB_subassign_emult_slice
     // get inputs
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Ci = C->i ;
+    int64_t *restrict Ci = C->i ;
     int64_t nzombies = C->nzombies ;
     const int64_t Cnvec = C->nvec ;
     const int64_t Cvlen = C->vlen ;
-    const int64_t *GB_RESTRICT Ch = C->h ;
-    const int64_t *GB_RESTRICT Cp = C->p ;
+    const int64_t *restrict Ch = C->h ;
+    const int64_t *restrict Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
 
-    const int64_t *GB_RESTRICT Mp = M->p ;
-    const int64_t *GB_RESTRICT Mh = M->h ;
-    const int64_t *GB_RESTRICT Mi = M->i ;
+    const int64_t *restrict Mp = M->p ;
+    const int64_t *restrict Mh = M->h ;
+    const int64_t *restrict Mi = M->i ;
     const int64_t Mvlen = M->vlen ;
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ;
     const int64_t Avlen = A->vlen ;
 
     //--------------------------------------------------------------------------
@@ -126,7 +126,7 @@ GrB_Info GB_subassign_emult_slice
     // function takes the place of B in GB_emult.
 
     int64_t Znvec ;
-    int64_t *GB_RESTRICT Zh_shallow = NULL ;
+    const int64_t *restrict Zh_shallow = NULL ;
     int Z_sparsity = GxB_SPARSE ;
     GB_OK (GB_emult_01_phase0 (&Znvec, &Zh_shallow, &Zh_size, NULL, NULL,
         &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size, &Z_sparsity, NULL, A, M,

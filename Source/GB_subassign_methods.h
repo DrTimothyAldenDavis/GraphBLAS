@@ -48,11 +48,11 @@
     int taskid, ntasks = 0, nthreads ;                                      \
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;            \
     GB_WERK_DECLARE (Npending, int64_t) ;                                   \
-    int64_t *GB_RESTRICT Zh     = NULL ; size_t Zh_size = 0 ;               \
-    int64_t *GB_RESTRICT Z_to_X = NULL ; size_t Z_to_X_size = 0 ;           \
-    int64_t *GB_RESTRICT Z_to_S = NULL ; size_t Z_to_S_size = 0 ;           \
-    int64_t *GB_RESTRICT Z_to_A = NULL ; size_t Z_to_A_size = 0 ;           \
-    int64_t *GB_RESTRICT Z_to_M = NULL ; size_t Z_to_M_size = 0 ;           \
+    int64_t *restrict Zh     = NULL ; size_t Zh_size = 0 ;               \
+    int64_t *restrict Z_to_X = NULL ; size_t Z_to_X_size = 0 ;           \
+    int64_t *restrict Z_to_S = NULL ; size_t Z_to_S_size = 0 ;           \
+    int64_t *restrict Z_to_A = NULL ; size_t Z_to_A_size = 0 ;           \
+    int64_t *restrict Z_to_M = NULL ; size_t Z_to_M_size = 0 ;           \
     struct GB_Matrix_opaque S_header ;                                      \
     GrB_Matrix S = GB_clear_static_header (&S_header) ;
 
@@ -65,8 +65,8 @@
 #define GB_GET_C                                                            \
     ASSERT_MATRIX_OK (C, "C for subassign kernel", GB0) ;                   \
     ASSERT (!GB_IS_BITMAP (C)) ;                                            \
-    int64_t *GB_RESTRICT Ci = C->i ;                                        \
-    GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;                            \
+    int64_t *restrict Ci = C->i ;                                        \
+    GB_void *restrict Cx = (GB_void *) C->x ;                            \
     const size_t csize = C->type->size ;                                    \
     const GB_Type_code ccode = C->type->code ;                              \
     const int64_t cvdim = C->vdim ;                                         \
@@ -157,10 +157,10 @@
 
 #define GB_GET_S                                                            \
     ASSERT_MATRIX_OK (S, "S extraction", GB0) ;                             \
-    const int64_t *GB_RESTRICT Sp = S->p ;                                  \
-    const int64_t *GB_RESTRICT Sh = S->h ;                                  \
-    const int64_t *GB_RESTRICT Si = S->i ;                                  \
-    const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;                      \
+    const int64_t *restrict Sp = S->p ;                                  \
+    const int64_t *restrict Sh = S->h ;                                  \
+    const int64_t *restrict Si = S->i ;                                  \
+    const int64_t *restrict Sx = (int64_t *) S->x ;                      \
     const int64_t Svlen = S->vlen ;                                         \
     const int64_t Snvec = S->nvec ;                                         \
     const bool S_is_hyper = GB_IS_HYPERSPARSE (S) ;
@@ -1625,10 +1625,10 @@ GrB_Info GB_subassign_emult_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
-    const int64_t *GB_RESTRICT *Zh_handle,  // Zh_shallow is A->h, M->h, or NULL
-    int64_t *GB_RESTRICT *Z_to_A_handle,    // Z_to_A: size Znvec, or NULL
+    const int64_t *restrict *Zh_handle,  // Zh_shallow is A->h, M->h, or NULL
+    int64_t *restrict *Z_to_A_handle,    // Z_to_A: size Znvec, or NULL
     size_t *Z_to_A_size_handle,
-    int64_t *GB_RESTRICT *Z_to_M_handle,    // Z_to_M: size Znvec, or NULL
+    int64_t *restrict *Z_to_M_handle,    // Z_to_M: size Znvec, or NULL
     size_t *Z_to_M_size_handle,
     // input:
     const GrB_Matrix C,             // output matrix C
@@ -1849,9 +1849,9 @@ GrB_Info GB_subassign_emult_slice
         return (GrB_OUT_OF_MEMORY) ;                                        \
     }                                                                       \
     GB_Pending Pending = C->Pending ;                                       \
-    int64_t *GB_RESTRICT Pending_i = Pending->i ;                           \
-    int64_t *GB_RESTRICT Pending_j = Pending->j ;                           \
-    GB_void *GB_RESTRICT Pending_x = Pending->x ;                           \
+    int64_t *restrict Pending_i = Pending->i ;                           \
+    int64_t *restrict Pending_j = Pending->j ;                           \
+    GB_void *restrict Pending_x = Pending->x ;                           \
     int64_t npending_orig = Pending->n ;                                    \
     bool pending_sorted = Pending->sorted ;
 

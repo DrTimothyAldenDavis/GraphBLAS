@@ -28,7 +28,7 @@
 void GB_ek_slice            // slice a matrix
 (
     // output:
-    int64_t *GB_RESTRICT A_ek_slicing,  // size 3*ntasks+1
+    int64_t *restrict A_ek_slicing,  // size 3*ntasks+1
     // input:
     GrB_Matrix A,                       // matrix to slice
     int ntasks                          // # of tasks
@@ -60,9 +60,9 @@ void GB_ek_slice            // slice a matrix
     // kfirst_slice and klast_slice are size ntasks.
     // pstart_slice is size ntasks+1
 
-    int64_t *GB_RESTRICT kfirst_slice = A_ek_slicing ;
-    int64_t *GB_RESTRICT klast_slice  = A_ek_slicing + ntasks ;
-    int64_t *GB_RESTRICT pstart_slice = A_ek_slicing + ntasks * 2 ;
+    int64_t *restrict kfirst_slice = A_ek_slicing ;
+    int64_t *restrict klast_slice  = A_ek_slicing + ntasks ;
+    int64_t *restrict pstart_slice = A_ek_slicing + ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // quick return for empty matrices

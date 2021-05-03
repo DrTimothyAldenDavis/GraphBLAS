@@ -148,28 +148,29 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     //--------------------------------------------------------------------------
 
     GB_WERK_DECLARE (Work, int64_t) ;
-    int64_t *GB_RESTRICT Wfirst    = NULL ;
-    int64_t *GB_RESTRICT Wlast     = NULL ;
-    int64_t *GB_RESTRICT Cp_kfirst = NULL ;
+    int64_t *restrict Wfirst    = NULL ;
+    int64_t *restrict Wlast     = NULL ;
+    int64_t *restrict Cp_kfirst = NULL ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
     // get M, A, and B
     //--------------------------------------------------------------------------
 
-    const int8_t  *GB_RESTRICT Mb = (M == NULL) ? NULL : M->b ;
-    const GB_void *GB_RESTRICT Mx = (M == NULL || Mask_struct) ? NULL : M->x ;
+    const int8_t  *restrict Mb = (M == NULL) ? NULL : M->b ;
+    const GB_void *restrict Mx = (M == NULL || Mask_struct) ? NULL :
+        (const GB_void *) M->x ;
     const size_t msize = (M == NULL) ? 0 : M->type->size ;
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ;
     const int64_t vlen = A->vlen ;
     const int64_t vdim = A->vdim ;
     const int64_t nvec = A->nvec ;
     const int64_t anz = GB_NNZ (A) ;
 
-    const int8_t *GB_RESTRICT Bb = B->b ;
+    const int8_t *restrict Bb = B->b ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
 
     //--------------------------------------------------------------------------
@@ -179,7 +180,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     GB_OK (GB_new (&C, true, // sparse or hyper (same as A), static header
         ctype, vlen, vdim, GB_Ap_calloc, C_is_csc,
         C_sparsity, A->hyper_switch, nvec, Context)) ;
-    int64_t *GB_RESTRICT Cp = C->p ;
+    int64_t *restrict Cp = C->p ;
 
     //--------------------------------------------------------------------------
     // slice the input matrix A

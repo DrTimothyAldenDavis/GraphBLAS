@@ -35,8 +35,8 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     GrB_Matrix C,                       // output matrix
     const GrB_Matrix A,                 // input matrix
     // for sparse case:
-    int64_t *GB_RESTRICT *Workspaces,   // Workspaces, size nworkspaces
-    const int64_t *GB_RESTRICT A_slice, // how A is sliced, size nthreads+1
+    int64_t *restrict *Workspaces,   // Workspaces, size nworkspaces
+    const int64_t *restrict A_slice, // how A is sliced, size nthreads+1
     int nworkspaces,                    // # of workspaces to use
     // for all cases:
     int nthreads                        // # of threads to use

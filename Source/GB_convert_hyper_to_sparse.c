@@ -62,7 +62,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         // allocate the new Ap array, of size n+1
         //----------------------------------------------------------------------
 
-        int64_t *GB_RESTRICT Ap_new = NULL ; size_t Ap_new_size = 0 ;
+        int64_t *restrict Ap_new = NULL ; size_t Ap_new_size = 0 ;
         Ap_new = GB_MALLOC (n+1, int64_t, &Ap_new_size) ;
         if (Ap_new == NULL)
         { 
@@ -80,8 +80,8 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         //----------------------------------------------------------------------
 
         int64_t nvec = A->nvec ;                // # of vectors in Ah_old
-        int64_t *GB_RESTRICT Ap_old = A->p ;    // size nvec+1
-        int64_t *GB_RESTRICT Ah_old = A->h ;    // size nvec
+        int64_t *restrict Ap_old = A->p ;    // size nvec+1
+        int64_t *restrict Ah_old = A->h ;    // size nvec
         int64_t nvec_nonempty = 0 ;             // recompute A->nvec_nonempty
         int64_t anz = GB_NNZ (A) ;
 

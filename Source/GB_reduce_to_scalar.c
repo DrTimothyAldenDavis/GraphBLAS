@@ -143,7 +143,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         //----------------------------------------------------------------------
 
         // get terminal value, if any
-        GB_void *GB_RESTRICT terminal = (GB_void *) reduce->terminal ;
+        GB_void *restrict terminal = (GB_void *) reduce->terminal ;
 
         if (anz == 0)
         { 
