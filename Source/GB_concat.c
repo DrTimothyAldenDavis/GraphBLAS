@@ -102,7 +102,7 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
             { 
                 GB_FREE_WORK ;
                 GB_ERROR (GrB_DOMAIN_MISMATCH,
-                    "Input matrix Tiles{%ld,%ld} of type [%s]\n"
+                    "Input matrix Tiles{" GBd "," GBd "} of type [%s]\n"
                     "cannot be typecast to output of type [%s]\n",
                     i+offset, j+offset, atype->name, ctype->name) ;
             }
@@ -111,9 +111,9 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
             { 
                 GB_FREE_WORK ;
                 GB_ERROR (GrB_DIMENSION_MISMATCH,
-                    "Input matrix Tiles{%ld,%ld} is %ld-by-%ld; its row\n"
-                    "dimension must match all other matrices Tiles{%ld,:},"
-                    " which is %ld\n", i+offset, j+offset, nrows, ncols,
+                    "Input matrix Tiles{" GBd "," GBd "} is " GBd "-by-" GBd "; "
+                    "its row\ndimension must match all other matrices Tiles{" GBd
+                    ",:}, which is " GBd "\n", i+offset, j+offset, nrows, ncols,
                     i+offset, tile_rows) ;
             }
             int64_t tile_cols = Tile_cols [j] ;
@@ -121,9 +121,9 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
             { 
                 GB_FREE_WORK ;
                 GB_ERROR (GrB_DIMENSION_MISMATCH,
-                    "Input matrix Tiles{%ld,%ld} is %ld-by-%ld; its column\n"
-                    "dimension must match all other matrices Tiles{:,%ld},"
-                    " which is %ld\n", i+offset, j+offset, nrows, ncols,
+                    "Input matrix Tiles{" GBd "," GBd "} is " GBd "-by-" GBd "; "
+                    "its column dimension must match all other matrices Tiles{:,"
+                    GBd "}, which is " GBd "\n", i+offset, j+offset, nrows, ncols,
                     j+offset, tile_cols) ;
             }
         }
@@ -138,7 +138,7 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     { 
         GB_FREE_WORK ;
         GB_ERROR (GrB_DIMENSION_MISMATCH,
-            "C is %ld-by-%ld but Tiles{:,:} is %ld-by-%ld\n",
+            "C is " GBd "-by-" GBd " but Tiles{:,:} is " GBd "-by-" GBd "\n",
             GB_NROWS (C), GB_NCOLS (C), cnrows, cncols) ;
     }
 

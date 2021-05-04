@@ -21,8 +21,8 @@
 #define GB_FLOOR_LOG2(k) ((uint64_t) ((k) < 2) ? 0 : (GB_64 - GB_CLZLL (k) - 1))
 #else
 #define GB_CLZLL(k)   not defined, using log2 instead
-#define GB_CEIL_LOG2(k)  ((uint64_t) (ceil  (log2 ((double) k)))
-#define GB_FLOOR_LOG2(k) ((uint64_t) (floor (log2 ((double) k)))
+#define GB_CEIL_LOG2(k)  ((uint64_t) (ceil  (log2 ((double) k))))
+#define GB_FLOOR_LOG2(k) ((uint64_t) (floor (log2 ((double) k))))
 #endif
 
 // GB_IS_POWER_OF_TWO(k) is true if the unsigned integer k is an exact power of

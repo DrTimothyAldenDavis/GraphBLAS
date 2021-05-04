@@ -37,7 +37,7 @@ static inline void *GB_calloc_helper
     if (GB_Global_free_pool_limit_get (k) > 0)
     {
         // round up the size to the nearest power of two
-        (*size) = (1UL) << k ;
+        (*size) = ((size_t) 1) << k ;
         p = GB_Global_free_pool_get (k) ;
         // memset is required if the block comes from the free_pool
         do_memset = (p != NULL) ;

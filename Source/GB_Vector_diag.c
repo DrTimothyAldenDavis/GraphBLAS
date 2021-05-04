@@ -64,7 +64,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     if (n != V->vlen)
     { 
         GB_ERROR (GrB_DIMENSION_MISMATCH,
-            "Input vector must have size %ld\n", n) ;
+            "Input vector must have size " GBd "\n", n) ;
     }
 
     if (!GB_Type_compatible (atype, vtype))

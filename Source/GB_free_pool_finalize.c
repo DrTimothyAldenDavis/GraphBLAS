@@ -18,7 +18,7 @@ void GB_free_pool_finalize (void)
 
     for (int k = 3 ; k < 64 ; k++)
     {
-        size_t size = (1UL << k) ;
+        size_t size = (((size_t) 1) << k) ;
         while (1)
         {
             // get a block from the kth free_pool and free it

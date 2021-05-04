@@ -48,8 +48,8 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
     if (nrows != ncols || nrows != n)
     { 
         GB_ERROR (GrB_DIMENSION_MISMATCH,
-            "Input matrix is %ld-by-%ld but must be %ld-by-%ld\n",
-            nrows, ncols, n, n) ;
+            "Input matrix is " GBd "-by-" GBd " but must be "
+            GBd "-by-" GBd "\n", nrows, ncols, n, n) ;
     }
 
     if (!GB_Type_compatible (ctype, vtype))
