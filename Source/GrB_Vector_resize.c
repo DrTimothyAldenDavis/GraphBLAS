@@ -38,7 +38,8 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
 //------------------------------------------------------------------------------
 
 // This function now appears in the C API Specification as GrB_Vector_resize.
-// The new name is preferred.
+// The new name is preferred.  The old name will be kept for historical
+// compatibility.
 
 GrB_Info GxB_Vector_resize      // change the size of a vector
 (
