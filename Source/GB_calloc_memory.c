@@ -54,14 +54,16 @@ static inline void *GB_calloc_helper
 //      else
         {
 
-//          if (GB_Global_rmm_get ( ))
-//          {
-//              p = GB_rmm_alloc (size) ;
-//          }
-//          else
+            void *rmm_resource = GB_Global_rmm_get ( ) ;
+            if (rmm_resource != NULL)
+            {
+                p = GB_rmm_alloc (rmm_resource, size) ;
+            }
+            else
             {
                 p = GB_Global_malloc_function (*size) ;
             }
+
             // memset is required if the block comes from malloc
             do_memset = (p != NULL) ;
         }
