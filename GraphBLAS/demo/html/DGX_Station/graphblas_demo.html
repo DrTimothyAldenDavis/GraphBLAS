@@ -164,9 +164,9 @@ fprintf (<span class="string">'Speedup of GraphBLAS over MATLAB: %g\n'</span>, <
     matlab_time / gb_time) ;
 fprintf (<span class="string">'\n# of threads used by GraphBLAS: %d\n'</span>, GrB.threads) ;
 </pre><pre class="codeoutput">
-GraphBLAS time: 0.607092 sec (in single)
-MATLAB time:    9.67381 sec (in double)
-Speedup of GraphBLAS over MATLAB: 15.9347
+GraphBLAS time: 0.632995 sec (in single)
+MATLAB time:    9.65518 sec (in double)
+Speedup of GraphBLAS over MATLAB: 15.2532
 
 # of threads used by GraphBLAS: 20
 </pre><h2 id="4">Mixing MATLAB and GraphBLAS matrices</h2><p>The error in the last computation is about eps('single') since GraphBLAS did its computation in single precision, while MATLAB used double precision.  MATLAB and GraphBLAS matrices can be easily combined, as in X2-G2.  The sparse single precision matrices take less memory space.</p><pre class="codeinput">err = norm (X2 - G2, 1) / norm (X2,1)
@@ -197,9 +197,9 @@ fprintf (<span class="string">'\n# of threads used by GraphBLAS: %d\n'</span>, G
 </pre><pre class="codeoutput">err =
      0
 
-GraphBLAS time: 0.567535 sec (in double)
-MATLAB time:    9.67381 sec (in double)
-Speedup of GraphBLAS over MATLAB: 17.0453
+GraphBLAS time: 0.567853 sec (in double)
+MATLAB time:    9.65518 sec (in double)
+Speedup of GraphBLAS over MATLAB: 17.003
 
 # of threads used by GraphBLAS: 20
 </pre><h2 id="6">A wide range of semirings</h2><p>MATLAB can only compute C=A*B using the standard '+.*.double' and '+.*.complex' semirings.  A semiring is defined in terms of a string, 'add.mult.type', where 'add' is a monoid that takes the place of the additive operator, 'mult' is the multiplicative operator, and 'type' is the data type for the two inputs to the mult operator.</p><p>In the standard semiring, C=A*B is defined as:</p><pre class="language-matlab">C(i,j) = sum (A(i,:).' .* B(:,j))
@@ -1289,9 +1289,9 @@ fprintf (<span class="string">'Speedup of GraphBLAS over MATLAB: %g\n'</span>, <
 fprintf (<span class="string">'\n# of threads used by GraphBLAS: %d\n'</span>, GrB.threads) ;
 </pre><pre class="codeoutput">
 nodes reached: 100000 of 100000
-GraphBLAS time: 0.149211 sec
-MATLAB time:    0.770682 sec
-Speedup of GraphBLAS over MATLAB: 5.16505
+GraphBLAS time: 0.150944 sec
+MATLAB time:    0.761339 sec
+Speedup of GraphBLAS over MATLAB: 5.04385
 
 # of threads used by GraphBLAS: 20
 </pre><h2 id="51">Example graph algorithm: Luby's method in GraphBLAS</h2><p>The GrB.mis function is variant of Luby's randomized algorithm [Luby 1985].  It is a parallel method for finding an maximal independent set of nodes, where no two nodes are adjacent.  See the GraphBLAS/@GrB/mis.m function for details.  The graph must be symmetric with a zero-free diagonal, so A is symmetrized first and any diagonal entries are removed.</p><pre class="codeinput">A = GrB (A) ;
@@ -1315,7 +1315,7 @@ notp = find (s == 0) ;
 S = A (notp, p) ;
 deg = GrB.vreduce (<span class="string">'+.int64'</span>, S) ;
 assert (logical (all (deg &gt; 0)))
-</pre><pre class="codeoutput">Elapsed time is 0.453551 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.448473 seconds.
 # nodes in the graph: 100000
 # edges: : 9.9899e+06
 size of maximal independent set found: 2811
@@ -1347,13 +1347,13 @@ fprintf (<span class="string">'setup time: %g sec\n'</span>, t) ;
 # neurons:  4096
 # features: 30000
 # of threads used: 20
-construct problem time: 2.87055 sec
-setup time: 0.189367 sec
+construct problem time: 2.89299 sec
+setup time: 0.192323 sec
 </pre><h2 id="53">Solving the sparse deep neural network problem with GraphbLAS</h2><p>Please wait ...</p><pre class="codeinput">tic
 Y1 = GrB.dnn (W_gb, bias_gb, Y0_gb) ;
 gb_time = toc ;
 fprintf (<span class="string">'total time in GraphBLAS: %g sec\n'</span>, gb_time) ;
-</pre><pre class="codeoutput">total time in GraphBLAS: 4.11902 sec
+</pre><pre class="codeoutput">total time in GraphBLAS: 3.10621 sec
 </pre><h2 id="54">Solving the sparse deep neural network problem with MATLAB</h2><p>Please wait ...</p><pre class="codeinput">tic
 Y2 = dnn_matlab (W, bias, Y0) ;
 matlab_time = toc ;
@@ -1363,8 +1363,8 @@ fprintf (<span class="string">'Speedup of GraphBLAS over MATLAB: %g\n'</span>, <
 fprintf (<span class="string">'\n# of threads used by GraphBLAS: %d\n'</span>, GrB.threads) ;
 
 err = norm (Y1-Y2,1)
-</pre><pre class="codeoutput">total time in MATLAB:    127.544 sec
-Speedup of GraphBLAS over MATLAB: 30.9647
+</pre><pre class="codeoutput">total time in MATLAB:    124.918 sec
+Speedup of GraphBLAS over MATLAB: 40.2156
 
 # of threads used by GraphBLAS: 20
 err =
@@ -1510,14 +1510,14 @@ fprintf (<span class="string">'nnz(C): %g, nnz(M): %g, nnz(A): %g\n'</span>, <sp
 fprintf (<span class="string">'\nsetup time:     %g sec\n'</span>, t_setup) ;
 </pre><pre class="codeoutput">nnz(C): 1.5226e+06, nnz(M): 761163, nnz(A): 1.52245e+06
 
-setup time:     0.510314 sec
+setup time:     0.527434 sec
 </pre><h2 id="64">First method in GraphBLAS, with GrB.assign</h2><p>Including the time to convert C1 from a GraphBLAS matrix to a MATLAB sparse matrix:</p><pre class="codeinput">tic
 C1 = GrB.assign (C, M, A) ;
 C1 = double (C1) ;
 gb_time = toc ;
 fprintf (<span class="string">'\nGraphBLAS time: %g sec for GrB.assign\n'</span>, gb_time) ;
 </pre><pre class="codeoutput">
-GraphBLAS time: 0.024337 sec for GrB.assign
+GraphBLAS time: 0.021834 sec for GrB.assign
 </pre><h2 id="65">Second method in GraphBLAS, with C(M)=A(M)</h2><p>now using overloaded operators, also include the time to convert back to a MATLAB sparse matrix, for good measure:</p><pre class="codeinput">A2 = GrB (A) ;
 C2 = GrB (C) ;
 tic
@@ -1526,7 +1526,7 @@ C2 = double (C2) ;
 gb_time2 = toc ;
 fprintf (<span class="string">'\nGraphBLAS time: %g sec for C(M)=A(M)\n'</span>, gb_time2) ;
 </pre><pre class="codeoutput">
-GraphBLAS time: 0.158175 sec for C(M)=A(M)
+GraphBLAS time: 0.166878 sec for C(M)=A(M)
 </pre><h2 id="66">Now with MATLAB matrices, with C(M)=A(M)</h2><p>Please wait, this will take about 10 minutes or so ...</p><pre class="codeinput">tic
 C (M) = A (M) ;
 matlab_time = toc ;
@@ -1544,11 +1544,11 @@ assert (isequal (C1, C))
 assert (isequal (C2, C))
 fprintf (<span class="string">'Results of GrB and MATLAB match perfectly.\n'</span>)
 </pre><pre class="codeoutput">
-GraphBLAS time: 0.024337 sec (GrB.assign)
-GraphBLAS time: 0.158175 sec (overloading)
-MATLAB time:    1109.41 sec
-Speedup of GraphBLAS (overloading) over MATLAB: 7013.84
-Speedup of GraphBLAS (GrB.assign)  over MATLAB: 45585.5
+GraphBLAS time: 0.021834 sec (GrB.assign)
+GraphBLAS time: 0.166878 sec (overloading)
+MATLAB time:    1121.19 sec
+Speedup of GraphBLAS (overloading) over MATLAB: 6718.62
+Speedup of GraphBLAS (GrB.assign)  over MATLAB: 51350.6
 
 # of threads used by GraphBLAS: 20
 Results of GrB and MATLAB match perfectly.
@@ -1567,8 +1567,8 @@ fprintf (<span class="string">'\nMATLAB: %g sec, GraphBLAS: %g sec\n'</span>, <s
         gb_time / matlab_time) ;
 <span class="keyword">end</span>
 </pre><pre class="codeoutput">
-MATLAB: 0.000475 sec, GraphBLAS: 0.011564 sec
-GraphBLAS is slower by a factor of 24.3453
+MATLAB: 0.000233 sec, GraphBLAS: 0.007708 sec
+GraphBLAS is slower by a factor of 33.0815
 </pre><p>(4) Linear indexing:</p><p>If A is an m-by-n 2D MATLAB matrix, with n &gt; 1, A(:) is a column vector of length m*n.  The index operation A(i) accesses the ith entry in the vector A(:).  This is called linear indexing in MATLAB.  It is not yet available for GraphBLAS matrices in this MATLAB interface to GraphBLAS, but will be added in the future.</p><p>(5) Implicit singleton dimension expansion</p><p>In MATLAB C=A+B where A is m-by-n and B is a 1-by-n row vector implicitly expands B to a matrix, computing C(i,j)=A(i,j)+B(j).  This implicit expansion is not yet suported in GraphBLAS with C=A+B. However, it can be done with C = GrB.mxm ('+.+', A, diag(GrB(B))). That's a nice example of the power of semirings, but it's not immediately obvious, and not as clear a syntax as C=A+B.  The GraphBLAS/@GrB/dnn.m function uses this 'plus.plus' semiring to apply the bias to each neuron.</p><pre class="codeinput">A = magic (3)
 B = 1000:1000:3000
 C1 = A + B
@@ -1614,8 +1614,8 @@ tic
     [m, n] = size (G) ;
 <span class="keyword">end</span>
 toc
-</pre><pre class="codeoutput">Elapsed time is 0.063687 seconds.
-Elapsed time is 0.986734 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.065428 seconds.
+Elapsed time is 0.973282 seconds.
 </pre><h2 id="74">GraphBLAS operations</h2><p>In addition to the overloaded operators (such as C=A*B) and overloaded functions (such as L=tril(A)), GraphBLAS also has methods of the form GrB.method.  Most of them take an optional input matrix Cin, which is the initial value of the matrix C for the expression below, an optional mask matrix M, and an optional accumulator operator.</p><pre class="language-matlab">in <span class="string">GrB</span> <span class="string">syntax:</span>  <span class="string">C&lt;#M</span>,replace&gt; = accum (C, A*B)
 </pre><pre class="language-matlab">in <span class="string">@GrB</span> <span class="string">MATLAB:</span> <span class="string">C</span> <span class="string">=</span> <span class="string">GrB.mxm</span> <span class="string">(Cin, M, accum, semiring, A, B, desc)</span> ;
 </pre><p>In the above expression, #M is either empty (no mask), M (with a mask matrix) or ~M (with a complemented mask matrix), as determined by the descriptor (desc).  'replace' can be used to clear C after it is used in accum(C,T) but before it is assigned with C&lt;...&gt; = Z, where Z=accum(C,T).  The matrix T is the result of some operation, such as T=A*B for GrB.mxm, or T=op(A,B) for GrB.eadd.</p><p>For a complete list of GraphBLAS overloaded operators and methods, type:</p><pre class="language-matlab">help <span class="string">GrB</span>
