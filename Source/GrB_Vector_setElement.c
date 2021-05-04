@@ -13,7 +13,7 @@
 #include "GB.h"
 
 #define GB_SET(prefix,type,T,ampersand)                                     \
-GrB_Info GB_EVAL3 (prefix, Vector_setElement_, T)    /* w(row) = x */       \
+GrB_Info GB_EVAL3 (prefix, _Vector_setElement_, T)    /* w(row) = x */      \
 (                                                                           \
     GrB_Vector w,                       /* vector to modify           */    \
     type x,                             /* scalar to assign to w(row) */    \
@@ -27,18 +27,18 @@ GrB_Info GB_EVAL3 (prefix, Vector_setElement_, T)    /* w(row) = x */       \
         GB_ ## T ## _code, Context)) ;                                      \
 }
 
-GB_SET (GRB (), bool      , BOOL   , &)
-GB_SET (GRB (), int8_t    , INT8   , &)
-GB_SET (GRB (), int16_t   , INT16  , &)
-GB_SET (GRB (), int32_t   , INT32  , &)
-GB_SET (GRB (), int64_t   , INT64  , &)
-GB_SET (GRB (), uint8_t   , UINT8  , &)
-GB_SET (GRB (), uint16_t  , UINT16 , &)
-GB_SET (GRB (), uint32_t  , UINT32 , &)
-GB_SET (GRB (), uint64_t  , UINT64 , &)
-GB_SET (GRB (), float     , FP32   , &)
-GB_SET (GRB (), double    , FP64   , &)
-GB_SET (GXB (), GxB_FC32_t, FC32   , &)
-GB_SET (GXB (), GxB_FC64_t, FC64   , &)
-GB_SET (GRB (), void *    , UDT    ,  )
+GB_SET (GrB, bool      , BOOL   , &)
+GB_SET (GrB, int8_t    , INT8   , &)
+GB_SET (GrB, int16_t   , INT16  , &)
+GB_SET (GrB, int32_t   , INT32  , &)
+GB_SET (GrB, int64_t   , INT64  , &)
+GB_SET (GrB, uint8_t   , UINT8  , &)
+GB_SET (GrB, uint16_t  , UINT16 , &)
+GB_SET (GrB, uint32_t  , UINT32 , &)
+GB_SET (GrB, uint64_t  , UINT64 , &)
+GB_SET (GrB, float     , FP32   , &)
+GB_SET (GrB, double    , FP64   , &)
+GB_SET (GxB, GxB_FC32_t, FC32   , &)
+GB_SET (GxB, GxB_FC64_t, FC64   , &)
+GB_SET (GrB, void *    , UDT    ,  )
 
