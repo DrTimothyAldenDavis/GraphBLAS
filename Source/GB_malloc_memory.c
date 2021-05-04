@@ -10,6 +10,7 @@
 // A wrapper for malloc.  Space is not initialized.
 
 #include "GB.h"
+#include "GB_rmm.h"
 
 //------------------------------------------------------------------------------
 // GB_malloc_helper:  use malloc to allocate an uninitialized memory block

@@ -10,6 +10,7 @@
 // A wrapper for calloc.  Space is set to zero.
 
 #include "GB.h"
+#include "GB_rmm.h"
 
 //------------------------------------------------------------------------------
 // GB_calloc_helper:  use calloc or malloc/memset to allocate initialized block

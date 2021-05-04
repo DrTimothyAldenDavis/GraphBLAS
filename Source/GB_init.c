@@ -104,6 +104,7 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     // TODO: do the RMM init here
+    GB_Global_rmm_set ((void *) 1) ; // FIXME placeholder
 
     // GrB_init passes in the ANSI C11 malloc/calloc/realloc/free
     // GxB_cuda_init passes in NULL pointers; they are now defined below.
