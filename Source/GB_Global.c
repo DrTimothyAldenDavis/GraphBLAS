@@ -1188,7 +1188,7 @@ static inline void GB_Global_free_pool_check (void *p, int k, char *where)
     ASSERT (k >= 3 && k < 64) ;
     ASSERT (p != NULL) ;
     size_t size = GB_Global_memtable_size (p) ;
-    ASSERT (size == (1UL) << k) ;
+    ASSERT (size == ((size_t) 1) << k) ;
 }
 #endif
 
@@ -1271,7 +1271,7 @@ void GB_Global_free_pool_dump (int pr)
                 size_t size = GB_Global_memtable_size (p) ;
                 if (pr > 1) printf ("size: %ld\n", size) ;
                 nblocks_actual++ ;
-                fail = fail || (size != (1UL) << k) ;
+                fail = fail || (size != ((size_t) 1) << k) ;
                 if (fail && pr > 0) printf ("    fail\n") ;
                 fail = fail || (nblocks_actual > nblocks) ;
             }
