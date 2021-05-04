@@ -22,8 +22,8 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
     const GrB_Index m,
     const GrB_Index n,
-    const int64_t *GB_RESTRICT Tile_rows,  // size m+1
-    const int64_t *GB_RESTRICT Tile_cols,  // size n+1
+    const int64_t *restrict Tile_rows,  // size m+1
+    const int64_t *restrict Tile_cols,  // size n+1
     GB_Context Context
 )
 { 
@@ -35,9 +35,9 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     GrB_Info info ;
     GrB_Matrix A = NULL ;
 
-    int64_t *restrict Wi = NULL ; int64_t Wi_size = 0 ;
-    int64_t *restrict Wj = NULL ; int64_t Wj_size = 0 ;
-    GB_void *restrict Wx = NULL ; int64_t Wx_size = 0 ;
+    int64_t *restrict Wi = NULL ; size_t Wi_size = 0 ;
+    int64_t *restrict Wj = NULL ; size_t Wj_size = 0 ;
+    GB_void *restrict Wx = NULL ; size_t Wx_size = 0 ;
 
     GrB_Type ctype = C->type ;
     int64_t cvlen = C->vlen ;
@@ -114,7 +114,9 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
             //------------------------------------------------------------------
 
             int64_t anz = GB_NNZ (A) ;
-            GB_OK (GB_extractTuples ((csc ? Wi : Wj) + pC, (csc ? Wj : Wi) + pC,
+            GB_OK (GB_extractTuples (
+                (GrB_Index *) ((csc ? Wi : Wj) + pC),
+                (GrB_Index *) ((csc ? Wj : Wi) + pC),
                 Wx + pC * csize, (GrB_Index *) (&anz), ccode, A, Context)) ;
 
             //------------------------------------------------------------------
@@ -174,7 +176,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
         &Wi_size,
         (int64_t **) &Wj,       // Wj, free on output
         &Wj_size,
-        (int64_t **) &Wx,       // Wx, free on output
+        (GB_void **) &Wx,       // Wx, free on output
         &Wx_size,
         false,                  // tuples need to be sorted
         true,                   // no duplicates

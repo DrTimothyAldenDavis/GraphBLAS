@@ -117,7 +117,7 @@ GrB_Info GB_cuda_red__plus_int64
     int64_t *result,
     int64_t *Ax,
     int64_t anz,
-    int64_t *GB_RESTRICT W,      // array of size ntasks
+    int64_t *restrict W,      // array of size ntasks
     int64_t worksize,
     int ntasks,
     int nthreads,

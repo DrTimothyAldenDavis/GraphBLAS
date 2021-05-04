@@ -52,7 +52,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
     int64_t *Ah = A->h ;
     int64_t *Ai = A->i ;
     int8_t  *Ab = A->b ;
-    GB_void *Ax = A->x ;
+    GB_void *Ax = (GB_void *) A->x ;
     int64_t anvec = A->nvec ;
     int64_t anvals = A->nvals ;
     int64_t anvec_nonempty = A->nvec_nonempty ;

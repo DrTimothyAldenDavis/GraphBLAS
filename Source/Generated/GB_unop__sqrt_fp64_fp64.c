@@ -71,7 +71,7 @@ GrB_Info GB (_unop_apply__sqrt_fp64_fp64)
 (
     double *Cx,       // Cx and Ax may be aliased
     const double *Ax,
-    const int8_t *GB_RESTRICT Ab,   // A->b if A is bitmap
+    const int8_t *restrict Ab,   // A->b if A is bitmap
     int64_t anz,
     int nthreads
 )
@@ -122,8 +122,8 @@ GrB_Info GB (_unop_tran__sqrt_fp64_fp64)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
-    int64_t *GB_RESTRICT *Workspaces,
-    const int64_t *GB_RESTRICT A_slice,
+    int64_t *restrict *Workspaces,
+    const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
 )

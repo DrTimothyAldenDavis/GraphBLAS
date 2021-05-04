@@ -37,13 +37,13 @@ void GB_ek_slice_merge2     // merge final results for matrix C
 (
     // output
     int64_t *C_nvec_nonempty,           // # of non-empty vectors in C
-    int64_t *GB_RESTRICT Cp_kfirst,     // size ntasks
+    int64_t *restrict Cp_kfirst,     // size ntasks
     // input/output
-    int64_t *GB_RESTRICT Cp,            // size cnvec+1
+    int64_t *restrict Cp,            // size cnvec+1
     // input
     const int64_t cnvec,
-    const int64_t *GB_RESTRICT Wfirst,          // size ntasks
-    const int64_t *GB_RESTRICT Wlast,           // size ntasks
+    const int64_t *restrict Wfirst,          // size ntasks
+    const int64_t *restrict Wlast,           // size ntasks
     const int64_t *A_ek_slicing,        // size 3*ntasks+1
     const int ntasks,                   // # of tasks used to construct C
     const int nthreads,                 // # of threads to use
@@ -61,9 +61,9 @@ void GB_ek_slice_merge2     // merge final results for matrix C
     // determine the slice boundaries in the new C matrix
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT kfirst_Aslice = A_ek_slicing ;
-    const int64_t *GB_RESTRICT klast_Aslice  = A_ek_slicing + ntasks ;
-//  const int64_t *GB_RESTRICT pstart_Aslice = A_ek_slicing + ntasks * 2 ;
+    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
+    const int64_t *restrict klast_Aslice  = A_ek_slicing + ntasks ;
+//  const int64_t *restrict pstart_Aslice = A_ek_slicing + ntasks * 2 ;
 
     int64_t kprior = -1 ;
     int64_t pC = 0 ;

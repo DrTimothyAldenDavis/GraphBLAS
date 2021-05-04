@@ -44,7 +44,7 @@ static inline bool GB_removeElement
         // C is bitmap
         //----------------------------------------------------------------------
 
-        int8_t *GB_RESTRICT Cb = C->b ;
+        int8_t *restrict Cb = C->b ;
         int64_t p = i + j * cvlen ;
         int8_t cb = Cb [p] ;
         if (cb != 0)
@@ -64,15 +64,15 @@ static inline bool GB_removeElement
         // C is sparse or hypersparse
         //----------------------------------------------------------------------
 
-        const int64_t *GB_RESTRICT Cp = C->p ;
-        const int64_t *GB_RESTRICT Ci = C->i ;
+        const int64_t *restrict Cp = C->p ;
+        const int64_t *restrict Ci = C->i ;
         bool found ;
         int64_t k ;
 
         if (GB_IS_HYPERSPARSE (C))
         {
             // binary search in C->h for vector j
-            const int64_t *GB_RESTRICT Ch = C->h ;
+            const int64_t *restrict Ch = C->h ;
             // find vector j as the kth vector in C
             // look for vector j in hyperlist C->h [0 ... C->nvec-1]
             int64_t pleft = 0 ;

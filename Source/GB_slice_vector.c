@@ -54,13 +54,13 @@ void GB_slice_vector
     // input:
     const int64_t pM_start,         // M(:,kM) starts at pM_start in Mi,Mx
     const int64_t pM_end,           // M(:,kM) ends at pM_end-1 in Mi,Mx
-    const int64_t *GB_RESTRICT Mi,  // indices of M (or NULL)
+    const int64_t *restrict Mi,  // indices of M (or NULL)
     const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
     const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
-    const int64_t *GB_RESTRICT Ai,  // indices of A (or NULL)
+    const int64_t *restrict Ai,  // indices of A (or NULL)
     const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
     const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
-    const int64_t *GB_RESTRICT Bi,  // indices of B (or NULL)
+    const int64_t *restrict Bi,  // indices of B (or NULL)
     const int64_t vlen,             // A->vlen and B->vlen
     const double target_work        // target work
 )

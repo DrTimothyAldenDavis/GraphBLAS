@@ -122,7 +122,7 @@ GrB_Info GB_export      // export a matrix in any format
             #ifdef GB_DEBUG
             GB_Global_memtable_remove ((*A)->h) ;
             #endif
-            (*Ah) = (*A)->h ; (*A)->h = NULL ;
+            (*Ah) = (GrB_Index *) ((*A)->h) ; (*A)->h = NULL ;
             (*Ah_size) = (*A)->h_size ;
 
         case GxB_SPARSE : 
@@ -141,7 +141,7 @@ GrB_Info GB_export      // export a matrix in any format
                 #ifdef GB_DEBUG
                 GB_Global_memtable_remove ((*A)->p) ;
                 #endif
-                (*Ap) = (*A)->p ; (*A)->p = NULL ;
+                (*Ap) = (GrB_Index *) ((*A)->p) ; (*A)->p = NULL ;
                 (*Ap_size) = (*A)->p_size ;
             }
 
@@ -149,7 +149,7 @@ GrB_Info GB_export      // export a matrix in any format
             #ifdef GB_DEBUG
             GB_Global_memtable_remove ((*A)->i) ;
             #endif
-            (*Ai) = (*A)->i ; (*A)->i = NULL ;
+            (*Ai) = (GrB_Index *) ((*A)->i) ; (*A)->i = NULL ;
             (*Ai_size) = (*A)->i_size ;
             break ;
 

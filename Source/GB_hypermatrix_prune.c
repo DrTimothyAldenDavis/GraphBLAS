@@ -50,8 +50,8 @@ GrB_Info GB_hypermatrix_prune
     if (A->nvec_nonempty < A->nvec)     // A->nvec_nonempty used here
     {
         // create new Ap_new and Ah_new arrays, with no empty vectors
-        int64_t *GB_RESTRICT Ap_new = NULL ; size_t Ap_new_size = 0 ;
-        int64_t *GB_RESTRICT Ah_new = NULL ; size_t Ah_new_size = 0 ;
+        int64_t *restrict Ap_new = NULL ; size_t Ap_new_size = 0 ;
+        int64_t *restrict Ah_new = NULL ; size_t Ah_new_size = 0 ;
         int64_t nvec_new ;
         GrB_Info info = GB_hyper_prune (&Ap_new, &Ap_new_size,
             &Ah_new, &Ah_new_size, &nvec_new, A->p, A->h, A->nvec, Context) ;

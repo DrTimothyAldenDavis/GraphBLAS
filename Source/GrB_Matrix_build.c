@@ -10,7 +10,7 @@
 #include "GB_build.h"
 
 #define GB_MATRIX_BUILD(prefix,type,T)                                        \
-GrB_Info GB_EVAL3 (prefix, Matrix_build_, T) /* build a matrix from tuples */ \
+GrB_Info GB_EVAL3 (prefix, _Matrix_build_, T) /* build a matrix from tuples */\
 (                                                                             \
     GrB_Matrix C,                   /* matrix to build                    */  \
     const GrB_Index *I,             /* array of row indices of tuples     */  \
@@ -29,18 +29,18 @@ GrB_Info GB_EVAL3 (prefix, Matrix_build_, T) /* build a matrix from tuples */ \
     return (info) ;                                                           \
 }
 
-GB_MATRIX_BUILD (GRB (), bool      , BOOL   )
-GB_MATRIX_BUILD (GRB (), int8_t    , INT8   )
-GB_MATRIX_BUILD (GRB (), uint8_t   , UINT8  )
-GB_MATRIX_BUILD (GRB (), int16_t   , INT16  )
-GB_MATRIX_BUILD (GRB (), uint16_t  , UINT16 )
-GB_MATRIX_BUILD (GRB (), int32_t   , INT32  )
-GB_MATRIX_BUILD (GRB (), uint32_t  , UINT32 )
-GB_MATRIX_BUILD (GRB (), int64_t   , INT64  )
-GB_MATRIX_BUILD (GRB (), uint64_t  , UINT64 )
-GB_MATRIX_BUILD (GRB (), float     , FP32   )
-GB_MATRIX_BUILD (GRB (), double    , FP64   )
-GB_MATRIX_BUILD (GXB (), GxB_FC32_t, FC32   )
-GB_MATRIX_BUILD (GXB (), GxB_FC64_t, FC64   )
-GB_MATRIX_BUILD (GRB (), void      , UDT    )
+GB_MATRIX_BUILD (GrB, bool      , BOOL   )
+GB_MATRIX_BUILD (GrB, int8_t    , INT8   )
+GB_MATRIX_BUILD (GrB, uint8_t   , UINT8  )
+GB_MATRIX_BUILD (GrB, int16_t   , INT16  )
+GB_MATRIX_BUILD (GrB, uint16_t  , UINT16 )
+GB_MATRIX_BUILD (GrB, int32_t   , INT32  )
+GB_MATRIX_BUILD (GrB, uint32_t  , UINT32 )
+GB_MATRIX_BUILD (GrB, int64_t   , INT64  )
+GB_MATRIX_BUILD (GrB, uint64_t  , UINT64 )
+GB_MATRIX_BUILD (GrB, float     , FP32   )
+GB_MATRIX_BUILD (GrB, double    , FP64   )
+GB_MATRIX_BUILD (GxB, GxB_FC32_t, FC32   )
+GB_MATRIX_BUILD (GxB, GxB_FC64_t, FC64   )
+GB_MATRIX_BUILD (GrB, void      , UDT    )
 

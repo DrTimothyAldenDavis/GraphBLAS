@@ -59,7 +59,7 @@ GrB_Info GB_AxB_saxpy_generic
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
-    const bool M_dense_in_place,    // ignored if C is bitmap
+    const bool M_packed_in_place,   // ignored if C is bitmap
     const GrB_Matrix A,
     bool A_is_pattern,
     const GrB_Matrix B,
@@ -68,7 +68,7 @@ GrB_Info GB_AxB_saxpy_generic
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const int saxpy_method,         // saxpy3, or bitmap method
     // for saxpy3 only:
-    GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
     int ntasks,
     int nfine,
     int nthreads,

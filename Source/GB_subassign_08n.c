@@ -124,12 +124,12 @@ GrB_Info GB_subassign_08n
     GB_GET_C ;      // C must not be bitmap
     int64_t zorig = C->nzombies ;
     const int64_t Cnvec = C->nvec ;
-    const int64_t *GB_RESTRICT Ch = C->h ;
-    const int64_t *GB_RESTRICT Cp = C->p ;
+    const int64_t *restrict Ch = C->h ;
+    const int64_t *restrict Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
     GB_GET_MASK ;
     GB_GET_A ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *restrict Ah = A->h ;
     GB_GET_ACCUM ;
 
     //--------------------------------------------------------------------------
@@ -162,7 +162,7 @@ GrB_Info GB_subassign_08n
     // in any combination.
 
     int64_t Znvec ;
-    int64_t *GB_RESTRICT Zh_shallow = NULL ;
+    const int64_t *restrict Zh_shallow = NULL ;
     GB_OK (GB_subassign_emult_slice (
         &TaskList, &TaskList_size, &ntasks, &nthreads,
         &Znvec, &Zh_shallow, &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size,

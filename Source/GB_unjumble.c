@@ -41,8 +41,8 @@ GrB_Info GB_unjumble        // unjumble a matrix
 
     const int64_t anvec = A->nvec ;
     const int64_t anz = GB_NNZ (A) ;
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t *restrict Ap = A->p ;
+    int64_t *restrict Ai = A->i ;
     const size_t asize = A->type->size ;
 
     GB_void   *Ax   = (GB_void *) A->x ;

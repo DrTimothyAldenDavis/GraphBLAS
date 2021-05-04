@@ -42,7 +42,7 @@ static inline bool GB_removeElement
         // V is bitmap
         //----------------------------------------------------------------------
 
-        int8_t *GB_RESTRICT Vb = V->b ;
+        int8_t *restrict Vb = V->b ;
         int8_t vb = Vb [i] ;
         if (vb != 0)
         { 
@@ -61,8 +61,8 @@ static inline bool GB_removeElement
         // V is sparse
         //----------------------------------------------------------------------
 
-        const int64_t *GB_RESTRICT Vp = V->p ;
-        const int64_t *GB_RESTRICT Vi = V->i ;
+        const int64_t *restrict Vp = V->p ;
+        const int64_t *restrict Vi = V->i ;
         bool found ;
 
         // look in V(:)

@@ -123,7 +123,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     bool op_is_user_defined = (opcode >= GB_USER_SELECT_opcode) ;
 
     int64_t nz_thunk = 0 ;
-    GB_void *GB_RESTRICT xthunk_in = NULL ;
+    GB_void *restrict xthunk_in = NULL ;
 
     if (Thunk_in != NULL)
     {

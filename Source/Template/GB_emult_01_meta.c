@@ -28,30 +28,30 @@
     // get A, B, M, and C
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
-    const int8_t  *GB_RESTRICT Ab = A->b ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int8_t  *restrict Ab = A->b ;
+    const int64_t *restrict Ai = A->i ;
     const int64_t vlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_full = GB_as_if_full (A) ;
 
-    const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
-    const int8_t  *GB_RESTRICT Bb = B->b ;
-    const int64_t *GB_RESTRICT Bi = B->i ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
+    const int8_t  *restrict Bb = B->b ;
+    const int64_t *restrict Bi = B->i ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_full = GB_as_if_full (B) ;
 
-    const int64_t *GB_RESTRICT Mp = NULL ;
-    const int64_t *GB_RESTRICT Mh = NULL ;
-    const int8_t  *GB_RESTRICT Mb = NULL ;
-    const int64_t *GB_RESTRICT Mi = NULL ;
-    const GB_void *GB_RESTRICT Mx = NULL ;
+    const int64_t *restrict Mp = NULL ;
+    const int64_t *restrict Mh = NULL ;
+    const int8_t  *restrict Mb = NULL ;
+    const int64_t *restrict Mi = NULL ;
+    const GB_void *restrict Mx = NULL ;
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
@@ -69,12 +69,12 @@
     }
 
     #if defined ( GB_PHASE_2_OF_2 )
-    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
-    const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) B->x ;
-    const int64_t  *GB_RESTRICT Cp = C->p ;
-    const int64_t  *GB_RESTRICT Ch = C->h ;
-          int64_t  *GB_RESTRICT Ci = C->i ;
-          GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    const int64_t  *restrict Cp = C->p ;
+    const int64_t  *restrict Ch = C->h ;
+          int64_t  *restrict Ci = C->i ;
+          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
     #endif
 
     //--------------------------------------------------------------------------

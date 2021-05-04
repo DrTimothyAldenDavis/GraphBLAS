@@ -155,7 +155,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             pright = pC_end - 1 ;
 
             // Time taken for this step is at most O(log(nnz(C(:,j))).
-            const int64_t *GB_RESTRICT Ci = C->i ;
+            const int64_t *restrict Ci = C->i ;
             GB_BINARY_SEARCH_ZOMBIE (i, Ci, pleft, pright, found, C->nzombies,
                 is_zombie) ;
         }

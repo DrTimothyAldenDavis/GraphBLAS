@@ -25,16 +25,16 @@ static inline void GB_find_Ap_start_end
 (
     // input, not modified
     const int64_t kA,
-    const int64_t *GB_RESTRICT Ap,
-    const int64_t *GB_RESTRICT Ai,
+    const int64_t *restrict Ap,
+    const int64_t *restrict Ai,
     const int64_t avlen,
     const int64_t imin,
     const int64_t imax,
     const int64_t kC,
     const int64_t nzombies,
     // output: Ap_start [kC] and Ap_end [kC]:
-    int64_t *GB_RESTRICT Ap_start,
-    int64_t *GB_RESTRICT Ap_end
+    int64_t *restrict Ap_start,
+    int64_t *restrict Ap_end
 )
 {
 
@@ -148,11 +148,11 @@ static inline void GB_find_Ap_start_end
 GrB_Info GB_subref_phase0
 (
     // output
-    int64_t *GB_RESTRICT *p_Ch,         // Ch = C->h hyperlist, or NULL standard
+    int64_t *restrict *p_Ch,         // Ch = C->h hyperlist, or NULL standard
     size_t *p_Ch_size,
-    int64_t *GB_RESTRICT *p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
+    int64_t *restrict *p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
     size_t *p_Ap_start_size,
-    int64_t *GB_RESTRICT *p_Ap_end,     // ... and ends at Ap_end [kC] - 1
+    int64_t *restrict *p_Ap_end,     // ... and ends at Ap_end [kC] - 1
     size_t *p_Ap_end_size,
     int64_t *p_Cnvec,       // # of vectors in C
     bool *p_need_qsort,     // true if C must be sorted
@@ -204,9 +204,9 @@ GrB_Info GB_subref_phase0
     // get A
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Ap = A->p ;   // Ap (but not A->p) may be trimmed
-    int64_t *GB_RESTRICT Ah = A->h ;   // Ah (but not A->h) may be trimmed
-    int64_t *GB_RESTRICT Ai = A->i ;
+    int64_t *restrict Ap = A->p ;   // Ap (but not A->p) may be trimmed
+    int64_t *restrict Ah = A->h ;   // Ah (but not A->h) may be trimmed
+    int64_t *restrict Ai = A->i ;
     int64_t anvec = A->nvec ;       // may be trimmed
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
@@ -336,9 +336,9 @@ GrB_Info GB_subref_phase0
     // if C(:,jC) is the (kC)th vector of C.  If NULL, then C is standard, and
     // jC == kC.  jC is in the range 0 to nJ-1.
 
-    int64_t *GB_RESTRICT Ch       = NULL ; size_t Ch_size = 0 ;
-    int64_t *GB_RESTRICT Ap_start = NULL ; size_t Ap_start_size = 0 ;
-    int64_t *GB_RESTRICT Ap_end   = NULL ; size_t Ap_end_size = 0 ;
+    int64_t *restrict Ch       = NULL ; size_t Ch_size = 0 ;
+    int64_t *restrict Ap_start = NULL ; size_t Ap_start_size = 0 ;
+    int64_t *restrict Ap_end   = NULL ; size_t Ap_end_size = 0 ;
     int64_t Cnvec = 0 ;
 
     int64_t jbegin = Jcolon [GxB_BEGIN] ;

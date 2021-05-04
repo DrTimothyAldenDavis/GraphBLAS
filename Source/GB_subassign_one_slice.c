@@ -95,17 +95,17 @@ GrB_Info GB_subassign_one_slice
     // get M and C
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Mp = M->p ;
-    const int64_t *GB_RESTRICT Mh = M->h ;
-//  const int8_t  *GB_RESTRICT Mb = M->b ;
-    const int64_t *GB_RESTRICT Mi = M->i ;
+    const int64_t *restrict Mp = M->p ;
+    const int64_t *restrict Mh = M->h ;
+//  const int8_t  *restrict Mb = M->b ;
+    const int64_t *restrict Mi = M->i ;
     const int64_t mnz = GB_NNZ_HELD (M) ;
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
 
-    const int64_t *GB_RESTRICT Cp = C->p ;
-    const int64_t *GB_RESTRICT Ch = C->h ;
-    const int64_t *GB_RESTRICT Ci = C->i ;
+    const int64_t *restrict Cp = C->p ;
+    const int64_t *restrict Ch = C->h ;
+    const int64_t *restrict Ci = C->i ;
     const bool C_is_hyper = (Ch != NULL) ;
     const int64_t nzombies = C->nzombies ;
     const int64_t Cnvec = C->nvec ;
@@ -118,7 +118,7 @@ GrB_Info GB_subassign_one_slice
     GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
     int ntasks1 = 0 ;
     int nthreads = GB_nthreads (mnz, chunk, nthreads_max) ;
-    GB_task_struct *GB_RESTRICT TaskList = NULL ; size_t TaskList_size = 0 ;
+    GB_task_struct *restrict TaskList = NULL ; size_t TaskList_size = 0 ;
     int max_ntasks = 0 ;
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;

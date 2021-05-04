@@ -27,10 +27,6 @@
 //          GB_bitmap_AxB_saxpy_template.c.  The method constructs its own
 //          tasks in workspace defined and freed in that template.
 
-// The GB_AsaxpyB method in Generated/GB_AxB__(monoid)_(mult)_(type) uses the
-// same GB_AxB_saxpy_template.c to implement these methods for each generated
-// semiring.
-
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
@@ -48,7 +44,7 @@ GrB_Info GB_AxB_saxpy_generic
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
-    const bool M_dense_in_place,    // ignored if C is bitmap
+    const bool M_packed_in_place,   // ignored if C is bitmap
     const GrB_Matrix A,
     bool A_is_pattern,
     const GrB_Matrix B,
@@ -57,7 +53,7 @@ GrB_Info GB_AxB_saxpy_generic
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const int saxpy_method,         // saxpy3 or bitmap method
     // for saxpy3 only:
-    GB_saxpy3task_struct *GB_RESTRICT SaxpyTasks, // NULL if C is bitmap
+    GB_saxpy3task_struct *restrict SaxpyTasks, // NULL if C is bitmap
     int ntasks,
     int nfine,
     int nthreads,
@@ -72,7 +68,7 @@ GrB_Info GB_AxB_saxpy_generic
 
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_Monoid add = semiring->add ;
-    GB_void *identity = add->identity ;
+    GB_void *identity = (GB_void *) add->identity ;
     ASSERT (mult->ztype == add->op->ztype) ;
     ASSERT (mult->ztype == C->type) ;
 

@@ -53,12 +53,13 @@ end
 
 %% Sparse single-precision matrices
 % Matrix operations in GraphBLAS are typically as fast, or faster than
-% MATLAB.  Here's an unfair comparison: computing X^2 with MATLAB in
+% MATLAB.  Here's an unfair comparison: computing X*X with MATLAB in
 % double precision and with GraphBLAS in single precision.  You would
 % naturally expect GraphBLAS to be faster. 
 %
 % CAVEAT:  MATLAB R2021a uses SuiteSparse:GraphBLAS v3.3.3 for C=A*B,
-% so on that version, we're comparing 2 versions by the same author.
+% so on that version of MATLAB, we're comparing 2 versions of GraphBLAS
+% by the same author.
 %
 % Please wait ...
 
@@ -66,10 +67,10 @@ n = 1e5 ;
 X = spdiags (rand (n, 201), -100:100, n, n) ;
 G = GrB (X, 'single') ;
 tic
-G2 = G^2 ;
+G2 = G*G ;
 gb_time = toc ;
 tic
-X2 = X^2 ;
+X2 = X*X ;
 matlab_time = toc ;
 fprintf ('\nGraphBLAS time: %g sec (in single)\n', gb_time) ;
 fprintf ('MATLAB time:    %g sec (in double)\n', matlab_time) ;
@@ -95,7 +96,7 @@ whos G G2 X X2
 
 G = GrB (X) ;
 tic
-G2 = G^2 ;
+G2 = G*G ;
 gb_time = toc ;
 err = norm (X2 - G2, 1) / norm (X2,1)
 fprintf ('\nGraphBLAS time: %g sec (in double)\n', gb_time) ;

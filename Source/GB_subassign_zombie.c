@@ -61,8 +61,8 @@ GrB_Info GB_subassign_zombie
     // get inputs
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;
-    int64_t *GB_RESTRICT Ci = C->i ;
+    const int64_t *restrict Sx = (int64_t *) S->x ;
+    int64_t *restrict Ci = C->i ;
 
     //--------------------------------------------------------------------------
     // Method 00: C(I,J)<!,repl> = empty ; using S

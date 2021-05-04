@@ -34,7 +34,7 @@ static inline void *GB_malloc_helper
     if (GB_Global_free_pool_limit_get (k) > 0)
     {
         // round up the size to the nearest power of two
-        (*size) = (1UL) << k ;
+        (*size) = ((size_t) 1) << k ;
         p = GB_Global_free_pool_get (k) ;
 //      if (p != NULL) printf ("malloc from pool: %p %ld\n", p, *size) ;
     }

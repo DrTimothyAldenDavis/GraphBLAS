@@ -103,7 +103,7 @@
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORK ;              \
-    GB_phbix_free (C) ;       \
+    GB_phbix_free (C) ;         \
 }
 
 //------------------------------------------------------------------------------
@@ -112,7 +112,7 @@
 
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
-    GrB_Matrix C,                   // outputi, static header, not in-place
+    GrB_Matrix C,                   // output, static header, not in-place
     int C_sparsity,                 // construct C as sparse or hypersparse
     const GrB_Matrix M_input,       // optional mask matrix
     const bool Mask_comp_input,     // if true, use !M
@@ -173,9 +173,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // define workspace
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Hi_all = NULL ; size_t Hi_all_size = 0 ;
-    int64_t *GB_RESTRICT Hf_all = NULL ; size_t Hf_all_size = 0 ;
-    GB_void *GB_RESTRICT Hx_all = NULL ; size_t Hx_all_size = 0 ;
+    int64_t *restrict Hi_all = NULL ; size_t Hi_all_size = 0 ;
+    int64_t *restrict Hf_all = NULL ; size_t Hf_all_size = 0 ;
+    GB_void *restrict Hx_all = NULL ; size_t Hx_all_size = 0 ;
     GB_saxpy3task_struct *SaxpyTasks = NULL ; size_t SaxpyTasks_size = 0 ;
 
     //--------------------------------------------------------------------------
@@ -206,16 +206,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // get A, and B
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
     const int64_t avlen = A->vlen ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
 
-    const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
-    const int8_t  *GB_RESTRICT Bb = B->b ;
-    const int64_t *GB_RESTRICT Bi = B->i ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
+    const int8_t  *restrict Bb = B->b ;
+    const int64_t *restrict Bi = B->i ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnz = GB_NNZ_HELD (B) ;
     const int64_t bnvec = B->nvec ;
@@ -242,8 +242,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         return (info) ;
     }
 
-    int64_t *GB_RESTRICT Cp = C->p ;
-    int64_t *GB_RESTRICT Ch = C->h ;
+    int64_t *restrict Cp = C->p ;
+    int64_t *restrict Ch = C->h ;
     if (B_is_hyper)
     { 
         // B and C are both hypersparse
@@ -267,7 +267,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //==========================================================================
 
     int nthreads, ntasks, nfine ;
-    bool M_dense_in_place = false ;
+    bool M_packed_in_place = false ;
 
     if (nthreads_max == 1 && M == NULL && (AxB_method != GxB_AxB_HASH) &&
         GB_IMIN (GB_NNZ (A), GB_NNZ (B)) > cvlen)
@@ -277,33 +277,49 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // the Hash method is not explicitly selected.  In this case, use a
         // single Gustavson task only (fine task if B has one vector, coarse
         // otherwise).  In this case, the flop count analysis is not needed.
-        GB_OK (GB_AxB_saxpy3_slice_quick (C, A, B,
-            &SaxpyTasks, &SaxpyTasks_size, &ntasks, &nfine, &nthreads,
-            Context)) ;
         GBURBLE ("(single-threaded Gustavson) ") ;
+        info = GB_AxB_saxpy3_slice_quick (C, A, B,
+            &SaxpyTasks, &SaxpyTasks_size, &ntasks, &nfine, &nthreads,
+            Context) ;
     }
     else
     { 
         // Do the flopcount analysis and create a set of well-balanced tasks in
         // the general case.  This may select a single task for a single thread
         // anyway, but this decision would be based on the analysis.
-        GB_OK (GB_AxB_saxpy3_slice_balanced (C, M, Mask_comp, A, B, AxB_method,
-            &SaxpyTasks, &SaxpyTasks_size, &apply_mask, &M_dense_in_place,
-            &ntasks, &nfine, &nthreads, Context)) ;
-    }
-
-    if (do_sort) GBURBLE ("sort ") ;
-
-    if (!apply_mask)
-    {
-        // disable the mask, if present
-        M = NULL ;
-        Mask_comp = false ;
+        info = GB_AxB_saxpy3_slice_balanced (C, M, Mask_comp, A, B, AxB_method,
+            &SaxpyTasks, &SaxpyTasks_size, &apply_mask, &M_packed_in_place,
+            &ntasks, &nfine, &nthreads, Context) ;
     }
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (4, ttt) ;
 // ttt = omp_get_wtime ( ) ;
+
+    if (info == GrB_NO_VALUE)
+    { 
+        // The mask is present but has been discarded; need to discard the
+        // analysis so far and redo it without the mask.  This may result in
+        // GB_bitmap_AxB_saxpy being called instead of GB_AxB_saxpy3.
+        ASSERT (M != NULL && !apply_mask) ;
+        GB_FREE_ALL ;
+        return (GrB_NO_VALUE) ;
+    }
+    else if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        GB_FREE_ALL ;
+        return (info) ;
+    }
+
+    if (!apply_mask)
+    { 
+        // disable the mask, if present.
+        M = NULL ;
+        Mask_comp = false ;
+    }
+
+    if (do_sort) GBURBLE ("sort ") ;
 
     //--------------------------------------------------------------------------
     // allocate the hash tables
@@ -490,9 +506,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // split the space into separate hash tables
     //--------------------------------------------------------------------------
 
-    int64_t *GB_RESTRICT Hi_part = Hi_all ;
-    int64_t *GB_RESTRICT Hf_part = Hf_all ;
-    GB_void *GB_RESTRICT Hx_part = Hx_all ;
+    int64_t *restrict Hi_part = Hi_all ;
+    int64_t *restrict Hf_part = Hf_all ;
+    GB_void *restrict Hx_part = Hx_all ;
 
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
@@ -573,7 +589,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 // GB_Global_timing_add (5, ttt) ;
 // ttt = omp_get_wtime ( ) ;
 
-    GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_dense_in_place,
+    GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_packed_in_place,
         A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
 
 // the above phase takes 1.6 seconds for 64 trials of the web graph.
@@ -594,18 +610,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // define the worker for the switch factory
         //----------------------------------------------------------------------
 
-        #define GB_AsaxpyB(add,mult,xname) \
-            GB (_AsaxpyB_ ## add ## mult ## xname)
+        #define GB_Asaxpy3B(add,mult,xname) \
+            GB (_Asaxpy3B_ ## add ## mult ## xname)
 
-        #define GB_AxB_WORKER(add,mult,xname)                               \
-        {                                                                   \
-            info = GB_AsaxpyB (add,mult,xname) (C, M, Mask_comp,            \
-                Mask_struct, M_dense_in_place, A, A_is_pattern, B,          \
-                B_is_pattern, GB_SAXPY_METHOD_3,                            \
-                SaxpyTasks, ntasks, nfine, nthreads, do_sort,               \
-                Context) ;                                                  \
-            done = (info != GrB_NO_VALUE) ;                                 \
-        }                                                                   \
+        #define GB_AxB_WORKER(add,mult,xname)                                  \
+        {                                                                      \
+            info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp, Mask_struct, \
+                M_packed_in_place, A, A_is_pattern, B, B_is_pattern,           \
+                SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context) ;       \
+            done = (info != GrB_NO_VALUE) ;                                    \
+        }                                                                      \
         break ;
 
         //----------------------------------------------------------------------
@@ -626,7 +640,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     if (!done)
     { 
         info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
-            M_dense_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
+            M_packed_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
             flipxy, GB_SAXPY_METHOD_3,
             SaxpyTasks, ntasks, nfine, nthreads, do_sort,
             Context) ;

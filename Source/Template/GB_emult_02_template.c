@@ -18,28 +18,28 @@
     // get A, B, and C
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
-    const int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ;
     const int64_t vlen = A->vlen ;
 
-    const int8_t  *GB_RESTRICT Bb = B->b ;
+    const int8_t  *restrict Bb = B->b ;
 
-    const int64_t *GB_RESTRICT kfirst_Aslice = A_ek_slicing ;
-    const int64_t *GB_RESTRICT klast_Aslice  = A_ek_slicing + A_ntasks ;
-    const int64_t *GB_RESTRICT pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
+    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
+    const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
+    const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
 
     #if GB_FLIPPED
-    const GB_BTYPE *GB_RESTRICT Ax = (GB_BTYPE *) A->x ;
-    const GB_ATYPE *GB_RESTRICT Bx = (GB_ATYPE *) B->x ;
+    const GB_BTYPE *restrict Ax = (GB_BTYPE *) A->x ;
+    const GB_ATYPE *restrict Bx = (GB_ATYPE *) B->x ;
     #else
-    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
-    const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) B->x ;
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
     #endif
 
-    const int64_t  *GB_RESTRICT Cp = C->p ;
-          int64_t  *GB_RESTRICT Ci = C->i ;
-          GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
+    const int64_t  *restrict Cp = C->p ;
+          int64_t  *restrict Ci = C->i ;
+          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
 
     //--------------------------------------------------------------------------
     // C=A.*B or C<#M>=A.*B
@@ -138,8 +138,8 @@
         // C<#M>=A.*B where A is sparse/hyper, M and B are bitmap/full
         //----------------------------------------------------------------------
 
-        const int8_t  *GB_RESTRICT Mb = M->b ;
-        const GB_void *GB_RESTRICT Mx = (Mask_struct) ? NULL : M->x ;
+        const int8_t  *restrict Mb = M->b ;
+        const GB_void *restrict Mx = (Mask_struct) ? NULL : ((GB_void *) M->x) ;
         const size_t msize = M->type->size ;
 
         int tid ;

@@ -203,7 +203,7 @@ GrB_Info GxB_Matrix_apply_BinaryOp2nd           // C<M>=accum(C,op(A,y))
 //------------------------------------------------------------------------------
 
 #define GB_BIND1ST(prefix,type,T,ampersand,stype)                           \
-GrB_Info GB_EVAL3 (prefix, Matrix_apply_BinaryOp1st_, T)                    \
+GrB_Info GB_EVAL3 (prefix, _Matrix_apply_BinaryOp1st_, T)                   \
 (                                                                           \
     GrB_Matrix C,                   /* input/output matrix for results */   \
     const GrB_Matrix M,             /* optional mask for C*/                \
@@ -221,27 +221,27 @@ GrB_Info GB_EVAL3 (prefix, Matrix_apply_BinaryOp1st_, T)                    \
     return (GB_1st (C, M, accum, op, scalar, A, desc, Context)) ;           \
 }
 
-GB_BIND1ST (GRB (), bool      , BOOL   , &, GrB_BOOL  )
-GB_BIND1ST (GRB (), int8_t    , INT8   , &, GrB_INT8  )
-GB_BIND1ST (GRB (), int16_t   , INT16  , &, GrB_INT16 )
-GB_BIND1ST (GRB (), int32_t   , INT32  , &, GrB_INT32 )
-GB_BIND1ST (GRB (), int64_t   , INT64  , &, GrB_INT64 )
-GB_BIND1ST (GRB (), uint8_t   , UINT8  , &, GrB_UINT8 )
-GB_BIND1ST (GRB (), uint16_t  , UINT16 , &, GrB_UINT16)
-GB_BIND1ST (GRB (), uint32_t  , UINT32 , &, GrB_UINT32)
-GB_BIND1ST (GRB (), uint64_t  , UINT64 , &, GrB_UINT64)
-GB_BIND1ST (GRB (), float     , FP32   , &, GrB_FP32  )
-GB_BIND1ST (GRB (), double    , FP64   , &, GrB_FP64  )
-GB_BIND1ST (GXB (), GxB_FC32_t, FC32   , &, GxB_FC32  )
-GB_BIND1ST (GXB (), GxB_FC64_t, FC64   , &, GxB_FC64  )
-GB_BIND1ST (GRB (), void *    , UDT    ,  , op->xtype )
+GB_BIND1ST (GrB, bool      , BOOL   , &, GrB_BOOL  )
+GB_BIND1ST (GrB, int8_t    , INT8   , &, GrB_INT8  )
+GB_BIND1ST (GrB, int16_t   , INT16  , &, GrB_INT16 )
+GB_BIND1ST (GrB, int32_t   , INT32  , &, GrB_INT32 )
+GB_BIND1ST (GrB, int64_t   , INT64  , &, GrB_INT64 )
+GB_BIND1ST (GrB, uint8_t   , UINT8  , &, GrB_UINT8 )
+GB_BIND1ST (GrB, uint16_t  , UINT16 , &, GrB_UINT16)
+GB_BIND1ST (GrB, uint32_t  , UINT32 , &, GrB_UINT32)
+GB_BIND1ST (GrB, uint64_t  , UINT64 , &, GrB_UINT64)
+GB_BIND1ST (GrB, float     , FP32   , &, GrB_FP32  )
+GB_BIND1ST (GrB, double    , FP64   , &, GrB_FP64  )
+GB_BIND1ST (GxB, GxB_FC32_t, FC32   , &, GxB_FC32  )
+GB_BIND1ST (GxB, GxB_FC64_t, FC64   , &, GxB_FC64  )
+GB_BIND1ST (GrB, void *    , UDT    ,  , op->xtype )
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_apply_BinaryOp2nd_TYPE: apply a binary operator: op(A,y)
 //------------------------------------------------------------------------------
 
 #define GB_BIND2ND(prefix,type,T,ampersand,stype)                           \
-GrB_Info GB_EVAL3 (prefix, Matrix_apply_BinaryOp2nd_, T)                    \
+GrB_Info GB_EVAL3 (prefix, _Matrix_apply_BinaryOp2nd_, T)                   \
 (                                                                           \
     GrB_Matrix C,                   /* input/output matrix for results */   \
     const GrB_Matrix M,             /* optional mask for C*/                \
@@ -259,18 +259,18 @@ GrB_Info GB_EVAL3 (prefix, Matrix_apply_BinaryOp2nd_, T)                    \
     return (GB_2nd (C, M, accum, op, A, scalar, desc, Context)) ;           \
 }
 
-GB_BIND2ND (GRB (), bool      , BOOL   , &, GrB_BOOL  )
-GB_BIND2ND (GRB (), int8_t    , INT8   , &, GrB_INT8  )
-GB_BIND2ND (GRB (), int16_t   , INT16  , &, GrB_INT16 )
-GB_BIND2ND (GRB (), int32_t   , INT32  , &, GrB_INT32 )
-GB_BIND2ND (GRB (), int64_t   , INT64  , &, GrB_INT64 )
-GB_BIND2ND (GRB (), uint8_t   , UINT8  , &, GrB_UINT8 )
-GB_BIND2ND (GRB (), uint16_t  , UINT16 , &, GrB_UINT16)
-GB_BIND2ND (GRB (), uint32_t  , UINT32 , &, GrB_UINT32)
-GB_BIND2ND (GRB (), uint64_t  , UINT64 , &, GrB_UINT64)
-GB_BIND2ND (GRB (), float     , FP32   , &, GrB_FP32  )
-GB_BIND2ND (GRB (), double    , FP64   , &, GrB_FP64  )
-GB_BIND2ND (GXB (), GxB_FC32_t, FC32   , &, GxB_FC32  )
-GB_BIND2ND (GXB (), GxB_FC64_t, FC64   , &, GxB_FC64  )
-GB_BIND2ND (GRB (), void *    , UDT    ,  , op->ytype )
+GB_BIND2ND (GrB, bool      , BOOL   , &, GrB_BOOL  )
+GB_BIND2ND (GrB, int8_t    , INT8   , &, GrB_INT8  )
+GB_BIND2ND (GrB, int16_t   , INT16  , &, GrB_INT16 )
+GB_BIND2ND (GrB, int32_t   , INT32  , &, GrB_INT32 )
+GB_BIND2ND (GrB, int64_t   , INT64  , &, GrB_INT64 )
+GB_BIND2ND (GrB, uint8_t   , UINT8  , &, GrB_UINT8 )
+GB_BIND2ND (GrB, uint16_t  , UINT16 , &, GrB_UINT16)
+GB_BIND2ND (GrB, uint32_t  , UINT32 , &, GrB_UINT32)
+GB_BIND2ND (GrB, uint64_t  , UINT64 , &, GrB_UINT64)
+GB_BIND2ND (GrB, float     , FP32   , &, GrB_FP32  )
+GB_BIND2ND (GrB, double    , FP64   , &, GrB_FP64  )
+GB_BIND2ND (GxB, GxB_FC32_t, FC32   , &, GxB_FC32  )
+GB_BIND2ND (GxB, GxB_FC64_t, FC64   , &, GxB_FC64  )
+GB_BIND2ND (GrB, void *    , UDT    ,  , op->ytype )
 

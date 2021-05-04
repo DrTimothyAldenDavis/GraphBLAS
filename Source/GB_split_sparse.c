@@ -157,8 +157,9 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             // determine the boundaries of this tile
             //------------------------------------------------------------------
 
+            int64_t k ;
             #pragma omp parallel for num_threads(nth) schedule(static)
-            for (int64_t k = akstart ; k < akend ; k++)
+            for (k = akstart ; k < akend ; k++)
             {
                 // printf ("look in kth vector of A: k = %ld\n", k) ;
                 int64_t pA = Wp [k] ;
@@ -303,8 +304,9 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             if (inner < ninner - 1)
             {
+                int64_t k ;
                 #pragma omp parallel for num_threads(nth) schedule(static)
-                for (int64_t k = akstart ; k < akend ; k++)
+                for (k = akstart ; k < akend ; k++)
                 {
                     int64_t ck = k - akstart ;
                     int64_t cknz = Cp [ck+1] - Cp [ck] ;

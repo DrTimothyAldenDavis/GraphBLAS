@@ -18,24 +18,24 @@
     //--------------------------------------------------------------------------
 
     ASSERT (GB_sparsity (M) == GB_sparsity (C)) ;
-    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
-    int64_t *GB_RESTRICT Ci = C->i ;
+    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    int64_t *restrict Ci = C->i ;
 
     ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
-    const int64_t *GB_RESTRICT Mp = M->p ;
-    const int64_t *GB_RESTRICT Mh = M->h ;
-    const int64_t *GB_RESTRICT Mi = M->i ;
+    const int64_t *restrict Mp = M->p ;
+    const int64_t *restrict Mh = M->h ;
+    const int64_t *restrict Mi = M->i ;
     const int64_t mvlen = M->vlen ;
 
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
-    const int8_t   *GB_RESTRICT Ab = A->b ;
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const int8_t   *restrict Ab = A->b ;
     const int64_t avlen = A->vlen ;
 
-    const int64_t *GB_RESTRICT kfirst_Mslice = M_ek_slicing ;
-    const int64_t *GB_RESTRICT klast_Mslice  = M_ek_slicing + M_ntasks ;
-    const int64_t *GB_RESTRICT pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
+    const int64_t *restrict kfirst_Mslice = M_ek_slicing ;
+    const int64_t *restrict klast_Mslice  = M_ek_slicing + M_ntasks ;
+    const int64_t *restrict pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // C<M> = A

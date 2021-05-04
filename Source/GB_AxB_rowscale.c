@@ -141,7 +141,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
                 default:  ;
             }
         }
-        GB_OK (GB_apply_op (C->x, op1,      // positional unary op only
+        GB_OK (GB_apply_op ((GB_void *) (C->x), op1,    // positional unary op
             NULL, NULL, false, B, Context)) ;
         ASSERT_MATRIX_OK (C, "rowscale positional: C = D*B output", GB0) ;
         return (GrB_SUCCESS) ;
@@ -252,7 +252,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         size_t dii_size = flipxy ? ysize : xsize ;
         size_t bij_size = flipxy ? xsize : ysize ;
 
-        GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
+        GB_void *restrict Cx = (GB_void *) C->x ;
 
         GB_cast_function cast_D, cast_B ;
         if (flipxy)

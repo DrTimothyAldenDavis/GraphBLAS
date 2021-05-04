@@ -24,8 +24,8 @@
 
 static void GB_pslice_worker
 (
-    int64_t *GB_RESTRICT Slice,     // size ntasks+1
-    const int64_t *GB_RESTRICT Ap,  // array size n+1
+    int64_t *restrict Slice,     // size ntasks+1
+    const int64_t *restrict Ap,  // array size n+1
     int tlo,                        // assign to Slice [(tlo+1):(thi-1)]
     int thi                     
 )
@@ -116,8 +116,8 @@ static void GB_pslice_worker
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_pslice                      // slice Ap
 (
-    int64_t *GB_RESTRICT Slice,     // size ntasks+1
-    const int64_t *GB_RESTRICT Ap,  // array size n+1 (NULL if full or bitmap)
+    int64_t *restrict Slice,     // size ntasks+1
+    const int64_t *restrict Ap,  // array size n+1 (NULL if full or bitmap)
     const int64_t n,
     const int ntasks,               // # of tasks
     const bool perfectly_balanced

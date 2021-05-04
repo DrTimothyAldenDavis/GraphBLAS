@@ -21,7 +21,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     size_t Cp_size,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // from phase0b:
-    const GB_task_struct *GB_RESTRICT TaskList,    // array of structs
+    const GB_task_struct *restrict TaskList,    // array of structs
     const int ntasks,                           // # of tasks
     const int nthreads,                         // # of threads to use
     const bool post_sort,               // true if post-sort needed
@@ -31,8 +31,8 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     // from phase0:
     int64_t **Ch_handle,
     size_t Ch_size,
-    const int64_t *GB_RESTRICT Ap_start,
-    const int64_t *GB_RESTRICT Ap_end,
+    const int64_t *restrict Ap_start,
+    const int64_t *restrict Ap_end,
     const int64_t Cnvec,
     const bool need_qsort,
     const int Ikind,
@@ -55,8 +55,8 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     ASSERT (C != NULL && C->static_header) ;
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
-    const int64_t *GB_RESTRICT Ch = (*Ch_handle) ;
-    const int64_t *GB_RESTRICT Cp = (*Cp_handle) ;
+    const int64_t *restrict Ch = (*Ch_handle) ;
+    const int64_t *restrict Cp = (*Cp_handle) ;
     ASSERT (Cp != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase2", GB0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;    // GB_bitmap_subref is used instead

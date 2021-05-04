@@ -22,7 +22,7 @@
 #include "GB_binop.h"
 
 #define GB_MATRIX_TO_SCALAR(prefix,type,T)                                     \
-GrB_Info GB_EVAL3 (prefix, Matrix_reduce_, T) /* c = accum (c, reduce (A))  */ \
+GrB_Info GB_EVAL3 (prefix, _Matrix_reduce_, T) /* c = accum (c, reduce (A)) */ \
 (                                                                              \
     type *c,                        /* result scalar                        */ \
     const GrB_BinaryOp accum,       /* optional accum for c=accum(c,t)      */ \
@@ -34,25 +34,25 @@ GrB_Info GB_EVAL3 (prefix, Matrix_reduce_, T) /* c = accum (c, reduce (A))  */ \
     GB_WHERE1 ("GrB_Matrix_reduce_" GB_STR(T) " (&c, accum, monoid, A, desc)");\
     GB_BURBLE_START ("GrB_reduce") ;                                           \
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                          \
-    GrB_Info info = GB_reduce_to_scalar (c, GB_EVAL2 (prefix, T), accum,       \
+    GrB_Info info = GB_reduce_to_scalar (c, GB_EVAL3 (prefix, _, T), accum,    \
         monoid, A, Context) ;                                                  \
     GB_BURBLE_END ;                                                            \
     return (info) ;                                                            \
 }
 
-GB_MATRIX_TO_SCALAR (GRB (), bool      , BOOL   )
-GB_MATRIX_TO_SCALAR (GRB (), int8_t    , INT8   )
-GB_MATRIX_TO_SCALAR (GRB (), int16_t   , INT16  )
-GB_MATRIX_TO_SCALAR (GRB (), int32_t   , INT32  )
-GB_MATRIX_TO_SCALAR (GRB (), int64_t   , INT64  )
-GB_MATRIX_TO_SCALAR (GRB (), uint8_t   , UINT8  )
-GB_MATRIX_TO_SCALAR (GRB (), uint16_t  , UINT16 )
-GB_MATRIX_TO_SCALAR (GRB (), uint32_t  , UINT32 )
-GB_MATRIX_TO_SCALAR (GRB (), uint64_t  , UINT64 )
-GB_MATRIX_TO_SCALAR (GRB (), float     , FP32   )
-GB_MATRIX_TO_SCALAR (GRB (), double    , FP64   )
-GB_MATRIX_TO_SCALAR (GXB (), GxB_FC32_t, FC32   )
-GB_MATRIX_TO_SCALAR (GXB (), GxB_FC64_t, FC64   )
+GB_MATRIX_TO_SCALAR (GrB, bool      , BOOL   )
+GB_MATRIX_TO_SCALAR (GrB, int8_t    , INT8   )
+GB_MATRIX_TO_SCALAR (GrB, int16_t   , INT16  )
+GB_MATRIX_TO_SCALAR (GrB, int32_t   , INT32  )
+GB_MATRIX_TO_SCALAR (GrB, int64_t   , INT64  )
+GB_MATRIX_TO_SCALAR (GrB, uint8_t   , UINT8  )
+GB_MATRIX_TO_SCALAR (GrB, uint16_t  , UINT16 )
+GB_MATRIX_TO_SCALAR (GrB, uint32_t  , UINT32 )
+GB_MATRIX_TO_SCALAR (GrB, uint64_t  , UINT64 )
+GB_MATRIX_TO_SCALAR (GrB, float     , FP32   )
+GB_MATRIX_TO_SCALAR (GrB, double    , FP64   )
+GB_MATRIX_TO_SCALAR (GxB, GxB_FC32_t, FC32   )
+GB_MATRIX_TO_SCALAR (GxB, GxB_FC64_t, FC64   )
 
 GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
 (

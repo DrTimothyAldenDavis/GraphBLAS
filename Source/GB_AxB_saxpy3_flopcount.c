@@ -129,8 +129,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
     //--------------------------------------------------------------------------
 
     bool mask_is_M = (M != NULL && !Mask_comp) ;
-    const int64_t *GB_RESTRICT Mp = NULL ;
-    const int64_t *GB_RESTRICT Mh = NULL ;
+    const int64_t *restrict Mp = NULL ;
+    const int64_t *restrict Mh = NULL ;
     int64_t mnvec = 0 ;
     int64_t mvlen = 0 ;
     bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
@@ -148,16 +148,16 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // get A and B: any sparsity structure
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
 
-    const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
-    const int8_t  *GB_RESTRICT Bb = B->b ;
-    const int64_t *GB_RESTRICT Bi = B->i ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
+    const int8_t  *restrict Bb = B->b ;
+    const int64_t *restrict Bi = B->i ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse_or_hyper = B_is_hyper || GB_IS_SPARSE (B) ;
@@ -170,8 +170,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
     GB_WERK_DECLARE (Work, int64_t) ;
     GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
-    int64_t *GB_RESTRICT Wfirst = NULL ;
-    int64_t *GB_RESTRICT Wlast  = NULL ;
+    int64_t *restrict Wfirst = NULL ;
+    int64_t *restrict Wlast  = NULL ;
 
     //--------------------------------------------------------------------------
     // construct the parallel tasks

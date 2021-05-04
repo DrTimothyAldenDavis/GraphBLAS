@@ -131,7 +131,7 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 5.0.0 (April 24, 2021)
+\item Version 5.0.1 (May 3, 2021)
 
     \begin{packed_itemize}
     \item memory pool added for faster allocation/free of small blocks
@@ -1336,6 +1336,10 @@ the user application control over this is particularly important when using the
 \verb'GxB_*import' and \verb'GxB_*export' functions described in
 Section~\ref{import_export}, since they require the user application and
 GraphBLAS to use the same memory manager.
+
+\verb'user_calloc_function' and \verb'user_realloc_function' are optional, and
+may be \verb'NULL'.  If \verb'NULL', then the \verb'user_malloc_function' is
+relied on instead, for all memory allocations.
 
 These
 functions can only be set once, when GraphBLAS starts.   Either \verb'GrB_init'
@@ -6263,6 +6267,12 @@ used (assuming it has type \verb'GrB_FP64'):
             double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
+
+Note that the \verb'is_uniform' feature is not yet implemented.  Once it is
+added to SuiteSparse:GraphBLAS, a full matrix with uniform values will take
+only $O(1)$ time and memory to create and hold in memory.  Some operations
+need not traverse over all entries of the matrix, and these operations will
+be very fast with full matrices with uniform values.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -12403,12 +12413,12 @@ both \verb'A' and \verb'B' are sparse (see the Release Notes of MATLAB R2021a,
 which discusses the performance gained in MATLAB by using GraphBLAS).
 
 That's great news for the impact of GraphBLAS on MATLAB itself, and the domain
-of high performance computing in general, but it causes a minor when using this
-MATLAB interface for GraphBLAS.  The two use different versions of the same
-library, and a segfault arises if the MATLAB interface for v5.x tries to link
-with the older GraphBLAS v3.3.3 library.  Likewise, the built-in \verb'C=A*B'
-causes a segfault if it tries to use the newer GraphBLAS v4.x or v5.x
-libraries.
+of high performance computing in general, but it causes a linking problem when
+using this MATLAB interface for GraphBLAS.  The two use different versions of
+the same library, and a segfault arises if the MATLAB interface for v5.x tries
+to link with the older GraphBLAS v3.3.3 library.  Likewise, the built-in
+\verb'C=A*B' causes a segfault if it tries to use the newer GraphBLAS v4.x or
+v5.x libraries.
 
 To resolve this issue, a second GraphBLAS library must be compiled,
 \verb'libgraphblas_renamed', where the internal symbols are all renamed so they
@@ -12420,7 +12430,7 @@ MATLAB interface.  That folder contains a \verb'CMakeLists.txt' file to
 compile the \verb'libgraphblas_renamed' library.  See the instructions
 for how to compile the C library \verb'libgraphblas', and repeat them but
 using the folder \newline
-\verb'SuiteSparse/GraphBLAS/GraphBLAS/build' instead of in \newline
+\verb'SuiteSparse/GraphBLAS/GraphBLAS/build' instead of \newline
 \verb'SuiteSparse/GraphBLAS/build'.
 
 This will compile the renamed SuiteSparse:GraphBLAS dynamic library

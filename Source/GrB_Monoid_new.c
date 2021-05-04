@@ -14,7 +14,7 @@
 #include "GB.h"
 
 #define GB_MONOID_NEW(prefix,type,T)                                        \
-GrB_Info GB_EVAL3 (prefix, Monoid_new_, T) /* create a new monoid */        \
+GrB_Info GB_EVAL3 (prefix, _Monoid_new_, T) /* create a new monoid */       \
 (                                                                           \
     GrB_Monoid *monoid,             /* handle of monoid to create    */     \
     GrB_BinaryOp op,                /* binary operator of the monoid */     \
@@ -27,19 +27,19 @@ GrB_Info GB_EVAL3 (prefix, Monoid_new_, T) /* create a new monoid */        \
         Context)) ;                                                         \
 }
 
-GB_MONOID_NEW (GRB (), bool      , BOOL   )
-GB_MONOID_NEW (GRB (), int8_t    , INT8   )
-GB_MONOID_NEW (GRB (), uint8_t   , UINT8  )
-GB_MONOID_NEW (GRB (), int16_t   , INT16  )
-GB_MONOID_NEW (GRB (), uint16_t  , UINT16 )
-GB_MONOID_NEW (GRB (), int32_t   , INT32  )
-GB_MONOID_NEW (GRB (), uint32_t  , UINT32 )
-GB_MONOID_NEW (GRB (), int64_t   , INT64  )
-GB_MONOID_NEW (GRB (), uint64_t  , UINT64 )
-GB_MONOID_NEW (GRB (), float     , FP32   )
-GB_MONOID_NEW (GRB (), double    , FP64   )
-GB_MONOID_NEW (GXB (), GxB_FC32_t, FC32   )
-GB_MONOID_NEW (GXB (), GxB_FC64_t, FC64   )
+GB_MONOID_NEW (GrB, bool      , BOOL   )
+GB_MONOID_NEW (GrB, int8_t    , INT8   )
+GB_MONOID_NEW (GrB, uint8_t   , UINT8  )
+GB_MONOID_NEW (GrB, int16_t   , INT16  )
+GB_MONOID_NEW (GrB, uint16_t  , UINT16 )
+GB_MONOID_NEW (GrB, int32_t   , INT32  )
+GB_MONOID_NEW (GrB, uint32_t  , UINT32 )
+GB_MONOID_NEW (GrB, int64_t   , INT64  )
+GB_MONOID_NEW (GrB, uint64_t  , UINT64 )
+GB_MONOID_NEW (GrB, float     , FP32   )
+GB_MONOID_NEW (GrB, double    , FP64   )
+GB_MONOID_NEW (GxB, GxB_FC32_t, FC32   )
+GB_MONOID_NEW (GxB, GxB_FC64_t, FC64   )
 
 GrB_Info GrB_Monoid_new_UDT         // create a monoid with a user-defined type
 (

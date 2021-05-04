@@ -85,8 +85,8 @@ GrB_Info GB_AxB_dot3_slice
     // get C
     //--------------------------------------------------------------------------
 
-    const int64_t *GB_RESTRICT Cp = C->p ;
-    int64_t *GB_RESTRICT Cwork = C->i ;
+    const int64_t *restrict Cp = C->p ;
+    int64_t *restrict Cwork = C->i ;
     const int64_t cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnz = GB_NNZ_HELD (C) ;
@@ -108,7 +108,7 @@ GrB_Info GB_AxB_dot3_slice
     GB_WERK_DECLARE (Coarse, int64_t) ;
     int ntasks1 = 0 ;
     nthreads = GB_nthreads (total_work, chunk, nthreads_max) ;
-    GB_task_struct *GB_RESTRICT TaskList = NULL ; size_t TaskList_size = 0 ;
+    GB_task_struct *restrict TaskList = NULL ; size_t TaskList_size = 0 ;
     int max_ntasks = 0 ;
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;

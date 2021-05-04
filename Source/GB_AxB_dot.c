@@ -124,8 +124,6 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
         #if defined ( GBCUDA )
 
-        // TODO: RMM needs to copy to/from static/dynamic header
-
 // [ replace this with:
 // if (GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring, flipxy, Context)
 

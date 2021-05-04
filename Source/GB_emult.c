@@ -82,9 +82,9 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
-    int64_t *GB_RESTRICT C_to_M = NULL ; size_t C_to_M_size = 0 ;
-    int64_t *GB_RESTRICT C_to_A = NULL ; size_t C_to_A_size = 0 ;
-    int64_t *GB_RESTRICT C_to_B = NULL ; size_t C_to_B_size = 0 ;
+    int64_t *restrict C_to_M = NULL ; size_t C_to_M_size = 0 ;
+    int64_t *restrict C_to_A = NULL ; size_t C_to_A_size = 0 ;
+    int64_t *restrict C_to_B = NULL ; size_t C_to_B_size = 0 ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
@@ -351,7 +351,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     int64_t Cnvec, Cnvec_nonempty ;
     int64_t *Cp = NULL ; size_t Cp_size = 0 ;
-    int64_t *Ch = NULL ; size_t Ch_size = 0 ;
+    const int64_t *Ch = NULL ; size_t Ch_size = 0 ;
     int C_ntasks = 0, C_nthreads ;
 
     //--------------------------------------------------------------------------

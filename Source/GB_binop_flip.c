@@ -111,7 +111,7 @@ GB_Opcode GB_binop_flip     // flipped opcode, or -1 on error
         default:
             // not a valid binary opcode
             (*handled) = false ;
-            return (-1) ;
+            return (GB_BAD_opcode) ;
     }
 }
 

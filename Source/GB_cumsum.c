@@ -23,9 +23,9 @@
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_cumsum                      // cumulative sum of an array
 (
-    int64_t *GB_RESTRICT count,     // size n+1, input/output
+    int64_t *restrict count,     // size n+1, input/output
     const int64_t n,
-    int64_t *GB_RESTRICT kresult,   // return k, if needed by the caller
+    int64_t *restrict kresult,   // return k, if needed by the caller
     int nthreads,
     GB_Context Context
 )

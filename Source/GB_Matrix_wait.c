@@ -361,10 +361,10 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
     int64_t kA = 0 ;
     int64_t jlast ;
 
-    int64_t *GB_RESTRICT Ap = A->p ;
-    int64_t *GB_RESTRICT Ah = A->h ;
-    int64_t *GB_RESTRICT Ai = A->i ;
-    GB_void *GB_RESTRICT Ax = (GB_void *) A->x ;
+    int64_t *restrict Ap = A->p ;
+    int64_t *restrict Ah = A->h ;
+    int64_t *restrict Ai = A->i ;
+    GB_void *restrict Ax = (GB_void *) A->x ;
 
     int64_t anvec = A->nvec ;
 
@@ -451,8 +451,8 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
             A1->nzmax = anz1 ;
 
             // fill the column A1->h and A1->p with A->h and A->p, shifted
-            int64_t *GB_RESTRICT A1p = A1->p ;
-            int64_t *GB_RESTRICT A1h = A1->h ;
+            int64_t *restrict A1p = A1->p ;
+            int64_t *restrict A1h = A1->h ;
             int64_t a1nvec = 0 ;
             for (int64_t k = kA ; k < anvec ; k++)
             {
@@ -512,10 +512,10 @@ GrB_Info GB_Matrix_wait         // finish all pending computations
         // append T to the end of A0
         //----------------------------------------------------------------------
 
-        const int64_t *GB_RESTRICT Tp = T->p ;
-        const int64_t *GB_RESTRICT Th = T->h ;
-        const int64_t *GB_RESTRICT Ti = T->i ;
-        const GB_void *GB_RESTRICT Tx = (GB_void *) T->x ;
+        const int64_t *restrict Tp = T->p ;
+        const int64_t *restrict Th = T->h ;
+        const int64_t *restrict Ti = T->i ;
+        const GB_void *restrict Tx = (GB_void *) T->x ;
         int64_t tnvec = T->nvec ;
 
         anz = anz0 ;

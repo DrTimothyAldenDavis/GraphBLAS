@@ -53,8 +53,8 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
 
     size_t size ;
     if (Context == NULL || nitems > GB_WERK_SIZE || size_of_item > GB_WERK_SIZE
-        #ifdef GBTESTCOV
-        // Werk stack can disabled for test coverage
+        #ifdef GBCOVER
+        // Werk stack can be disabled for test coverage
         || (GB_Global_hack_get (1) != 0)
         #endif
     )
@@ -80,7 +80,7 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
     { 
         // allocate the werkspace from the Werk stack
         GB_void *p = Context->Werk + Context->pwerk ;
-        Context->pwerk += size ;
+        Context->pwerk += (int) size ;
         (*size_allocated) = size ;
         return ((void *) p) ;
     }
@@ -97,7 +97,7 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
 
 // declare a werkspace X of a given type
 #define GB_WERK_DECLARE(X,type)                     \
-    type *GB_RESTRICT X = NULL ;                    \
+    type *restrict X = NULL ;                    \
     bool X ## _on_stack = false ;                   \
     size_t X ## _nitems = 0, X ## _size_allocated = 0 ;
 

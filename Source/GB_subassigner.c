@@ -114,7 +114,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         GB_MATRIX_WAIT_IF_JUMBLED (C) ;
     }
 
-    GBURBLE ("(pending: "GBd") ", GB_Pending_n (C)) ;
+    GBURBLE ("(pending: " GBd ") ", GB_Pending_n (C)) ;
 
     //==========================================================================
     // submatrix assignment C(I,J)<M> = accum (C(I,J),A): meta-algorithm

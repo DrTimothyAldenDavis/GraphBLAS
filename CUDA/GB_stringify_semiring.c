@@ -10,8 +10,6 @@
 // Construct a string defining all macros for semiring, and its name.
 // User-defined types are not handled.
 
-// TODO: add accum
-
 #include "GB.h"
 #include "GB_stringify.h"
 

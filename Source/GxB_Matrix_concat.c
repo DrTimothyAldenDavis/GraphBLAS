@@ -28,7 +28,8 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     if (m <= 0 || n <= 0)
     { 
-        GB_ERROR (GrB_INVALID_VALUE, "m (%ld) and n (%ld) must be > 0", m, n) ;
+        GB_ERROR (GrB_INVALID_VALUE, "m (" GBd ") and n (" GBd ") must be > 0",
+            m, n) ;
     }
     GB_RETURN_IF_NULL (Tiles) ;
 

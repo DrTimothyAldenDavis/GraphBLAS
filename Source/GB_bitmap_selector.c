@@ -20,7 +20,7 @@ GrB_Info GB_bitmap_selector
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
     const int64_t ithunk,       // (int64_t) Thunk, if Thunk is NULL
-    const GB_void *GB_RESTRICT xthunk,
+    const GB_void *restrict xthunk,
     GB_Context Context
 )
 {
@@ -78,8 +78,8 @@ GrB_Info GB_bitmap_selector
     #define GB_selbit(opname,aname) GB (_sel_bitmap_ ## opname ## aname)
     #define GB_SEL_WORKER(opname,aname,atype)                           \
     {                                                                   \
-        GB_selbit (opname, aname) (C->b, C->x, &cnvals, A, flipij,      \
-            ithunk, (atype *) xthunk, user_select, nthreads) ;          \
+        GB_selbit (opname, aname) (C->b, (atype *) C->x, &cnvals, A,    \
+            flipij, ithunk, (atype *) xthunk, user_select, nthreads) ;  \
     }                                                                   \
     break ;
     #include "GB_select_factory.c"

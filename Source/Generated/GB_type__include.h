@@ -37,8 +37,8 @@ GrB_Info GB (_Cdense_25__bool)
 GrB_Info GB (_convert_s2b__bool)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -72,8 +72,8 @@ GrB_Info GB (_Cdense_25__int8)
 GrB_Info GB (_convert_s2b__int8)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -107,8 +107,8 @@ GrB_Info GB (_Cdense_25__int16)
 GrB_Info GB (_convert_s2b__int16)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -142,8 +142,8 @@ GrB_Info GB (_Cdense_25__int32)
 GrB_Info GB (_convert_s2b__int32)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -177,8 +177,8 @@ GrB_Info GB (_Cdense_25__int64)
 GrB_Info GB (_convert_s2b__int64)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -212,8 +212,8 @@ GrB_Info GB (_Cdense_25__uint8)
 GrB_Info GB (_convert_s2b__uint8)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -247,8 +247,8 @@ GrB_Info GB (_Cdense_25__uint16)
 GrB_Info GB (_convert_s2b__uint16)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -282,8 +282,8 @@ GrB_Info GB (_Cdense_25__uint32)
 GrB_Info GB (_convert_s2b__uint32)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -317,8 +317,8 @@ GrB_Info GB (_Cdense_25__uint64)
 GrB_Info GB (_convert_s2b__uint64)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -352,8 +352,8 @@ GrB_Info GB (_Cdense_25__fp32)
 GrB_Info GB (_convert_s2b__fp32)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -387,8 +387,8 @@ GrB_Info GB (_Cdense_25__fp64)
 GrB_Info GB (_convert_s2b__fp64)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -422,8 +422,8 @@ GrB_Info GB (_Cdense_25__fc32)
 GrB_Info GB (_convert_s2b__fc32)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
@@ -457,8 +457,8 @@ GrB_Info GB (_Cdense_25__fc64)
 GrB_Info GB (_convert_s2b__fc64)
 (
     GrB_Matrix A,
-    GB_void *GB_RESTRICT Ax_new_void,
-    int8_t  *GB_RESTRICT Ab,
+    GB_void *restrict Ax_new_void,
+    int8_t  *restrict Ab,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 

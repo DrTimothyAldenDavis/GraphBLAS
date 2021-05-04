@@ -134,7 +134,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
         // worker for built-in types
         #define GB_WORKER(ctype)                                               \
         {                                                                      \
-            ctype *GB_RESTRICT Cx = (ctype *) C->x ;                           \
+            ctype *restrict Cx = (ctype *) C->x ;                           \
             ctype x = (*(ctype *) cwork) ;                                     \
             GB_PRAGMA (omp parallel for num_threads(nthreads) schedule(static))\
             for (pC = 0 ; pC < cnzmax ; pC++)                                  \
@@ -167,7 +167,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x, scalar to matrix assignment
                 {
                     // worker for all user-defined types
                     GB_BURBLE_N (cnzmax, "(generic C(:,:)=x assign) ") ;
-                    GB_void *GB_RESTRICT Cx = (GB_void *) C->x ;
+                    GB_void *restrict Cx = (GB_void *) C->x ;
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(static)
                     for (pC = 0 ; pC < cnzmax ; pC++)

@@ -124,7 +124,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
         GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, Context)) ;
 
-    int64_t *GB_RESTRICT Cp = C->p ;
+    int64_t *restrict Cp = C->p ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -181,9 +181,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
         // compute the row counts of A.  No need to scan the A->p pointers
         ASSERT (nworkspaces == 1) ;
-        int64_t *GB_RESTRICT workspace = Workspaces [0] ;
+        int64_t *restrict workspace = Workspaces [0] ;
         memset (workspace, 0, (vlen + 1) * sizeof (int64_t)) ;
-        const int64_t *GB_RESTRICT Ai = A->i ;
+        const int64_t *restrict Ai = A->i ;
         for (int64_t p = 0 ; p < anz ; p++)
         { 
             int64_t i = Ai [p] ;
@@ -210,9 +210,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         // is jumbled.
 
         // compute the row counts of A.  No need to scan the A->p pointers
-        int64_t *GB_RESTRICT workspace = Workspaces [0] ;
+        int64_t *restrict workspace = Workspaces [0] ;
         GB_memset (workspace, 0, (vlen + 1) * sizeof (int64_t), nth) ;
-        const int64_t *GB_RESTRICT Ai = A->i ;
+        const int64_t *restrict Ai = A->i ;
         int64_t p ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
@@ -244,16 +244,16 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         // to be unjumbled later.
 
         ASSERT (nworkspaces == nthreads) ;
-        const int64_t *GB_RESTRICT Ap = A->p ;
-        const int64_t *GB_RESTRICT Ah = A->h ;
-        const int64_t *GB_RESTRICT Ai = A->i ;
+        const int64_t *restrict Ap = A->p ;
+        const int64_t *restrict Ah = A->h ;
+        const int64_t *restrict Ai = A->i ;
 
         int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (tid = 0 ; tid < nthreads ; tid++)
         {
             // get the row counts for this slice, of size A->vlen
-            int64_t *GB_RESTRICT workspace = Workspaces [tid] ;
+            int64_t *restrict workspace = Workspaces [tid] ;
             memset (workspace, 0, (vlen + 1) * sizeof (int64_t)) ;
             for (int64_t k = A_slice [tid] ; k < A_slice [tid+1] ; k++)
             {
@@ -278,7 +278,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
             int64_t s = 0 ;
             for (int tid = 0 ; tid < nthreads ; tid++)
             { 
-                int64_t *GB_RESTRICT workspace = Workspaces [tid] ;
+                int64_t *restrict workspace = Workspaces [tid] ;
                 int64_t c = workspace [i] ;
                 workspace [i] = s ;
                 s += c ;
@@ -295,11 +295,11 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         for (i = 0 ; i < vlen ; i++)
         {
             int64_t s = Cp [i] ;
-            int64_t *GB_RESTRICT workspace = Workspaces [0] ;
+            int64_t *restrict workspace = Workspaces [0] ;
             workspace [i] = s ;
             for (int tid = 1 ; tid < nthreads ; tid++)
             { 
-                int64_t *GB_RESTRICT workspace = Workspaces [tid] ;
+                int64_t *restrict workspace = Workspaces [tid] ;
                 workspace [i] += s ;
             }
         }

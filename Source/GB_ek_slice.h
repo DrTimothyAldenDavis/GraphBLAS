@@ -93,7 +93,7 @@ static inline void GB_ek_slice_ntasks
 void GB_ek_slice            // slice a matrix
 (
     // output:
-    int64_t *GB_RESTRICT A_ek_slicing,  // size 3*ntasks+1
+    int64_t *restrict A_ek_slicing,  // size 3*ntasks+1
     // input:
     GrB_Matrix A,                       // matrix to slice
     int ntasks                          // # of tasks
@@ -102,10 +102,10 @@ void GB_ek_slice            // slice a matrix
 void GB_ek_slice_merge1     // merge column counts for the matrix C
 (
     // input/output:
-    int64_t *GB_RESTRICT Cp,                    // column counts
+    int64_t *restrict Cp,                    // column counts
     // input:
-    const int64_t *GB_RESTRICT Wfirst,          // size ntasks
-    const int64_t *GB_RESTRICT Wlast,           // size ntasks
+    const int64_t *restrict Wfirst,          // size ntasks
+    const int64_t *restrict Wlast,           // size ntasks
     const int64_t *ek_slicing,                  // size 3*ntasks+1
     const int ntasks                            // # of tasks
 ) ;
@@ -114,13 +114,13 @@ void GB_ek_slice_merge2     // merge final results for matrix C
 (
     // output
     int64_t *C_nvec_nonempty,           // # of non-empty vectors in C
-    int64_t *GB_RESTRICT Cp_kfirst,     // size ntasks
+    int64_t *restrict Cp_kfirst,     // size ntasks
     // input/output
-    int64_t *GB_RESTRICT Cp,            // size cnvec+1
+    int64_t *restrict Cp,            // size cnvec+1
     // input
     const int64_t cnvec,
-    const int64_t *GB_RESTRICT Wfirst,          // size ntasks
-    const int64_t *GB_RESTRICT Wlast,           // size ntasks
+    const int64_t *restrict Wfirst,          // size ntasks
+    const int64_t *restrict Wlast,           // size ntasks
     const int64_t *ek_slicing,                  // size 3*ntasks+1
     const int ntasks,                   // # of tasks used to construct C
     const int nthreads,                 // # of threads to use
@@ -144,11 +144,11 @@ static inline void GB_get_pA_and_pC
     int64_t k,          // current vector
     int64_t kfirst,     // first vector for this slice
     int64_t klast,      // last vector for this slice
-    const int64_t *GB_RESTRICT pstart_slice,   // start of each slice in A
-    const int64_t *GB_RESTRICT Cp_kfirst,      // start of each slice in C
-    const int64_t *GB_RESTRICT Cp,             // vector pointers for C
+    const int64_t *restrict pstart_slice,   // start of each slice in A
+    const int64_t *restrict Cp_kfirst,      // start of each slice in C
+    const int64_t *restrict Cp,             // vector pointers for C
     int64_t cvlen,                             // C->vlen
-    const int64_t *GB_RESTRICT Ap,             // vector pointers for A
+    const int64_t *restrict Ap,             // vector pointers for A
     int64_t avlen                              // A->vlen
 )
 {
@@ -195,8 +195,8 @@ static inline void GB_get_pA
     int64_t k,          // current vector
     int64_t kfirst,     // first vector for this slice
     int64_t klast,      // last vector for this slice
-    const int64_t *GB_RESTRICT pstart_slice,   // start of each slice in A
-    const int64_t *GB_RESTRICT Ap,             // vector pointers for A
+    const int64_t *restrict pstart_slice,   // start of each slice in A
+    const int64_t *restrict Ap,             // vector pointers for A
     int64_t avlen                              // A->vlen
 )
 {

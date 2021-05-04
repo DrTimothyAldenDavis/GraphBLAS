@@ -101,7 +101,7 @@ void GB_free_pool_finalize (void) ;
 #else
 
     #define GB_FREE(p,s) \
-        GB_dealloc_memory (p, s)
+        GB_dealloc_memory ((void **) p, s)
 
     #define GB_CALLOC(n,type,s) \
         (type *) GB_calloc_memory (n, sizeof (type), s, Context)

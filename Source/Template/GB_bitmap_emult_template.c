@@ -15,17 +15,17 @@
     // get C, A, and B
     //--------------------------------------------------------------------------
 
-    const int8_t  *GB_RESTRICT Ab = A->b ;
-    const int8_t  *GB_RESTRICT Bb = B->b ;
+    const int8_t  *restrict Ab = A->b ;
+    const int8_t  *restrict Bb = B->b ;
     const int64_t vlen = A->vlen ;
 
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A) || GB_as_if_full (A)) ;
     ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (A) || GB_as_if_full (B)) ;
 
-    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
-    const GB_BTYPE *GB_RESTRICT Bx = (GB_BTYPE *) B->x ;
-          int8_t   *GB_RESTRICT Cb = C->b ;
-          GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+          int8_t   *restrict Cb = C->b ;
+          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
     const int64_t cnz = GB_NNZ_HELD (C) ;
 
     //--------------------------------------------------------------------------
@@ -177,9 +177,8 @@
 
         ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
 
-        const int8_t  *GB_RESTRICT Mb = M->b ;
-        const GB_void *GB_RESTRICT Mx = 
-            (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+        const int8_t  *restrict Mb = M->b ;
+        const GB_void *restrict Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         size_t msize = M->type->size ;
 
         #undef  GB_GET_MIJ     

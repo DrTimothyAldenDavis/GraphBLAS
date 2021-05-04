@@ -221,11 +221,11 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     int64_t anzmax = A->nzmax ;
 
     // if in-place, these must be freed when done, whether successful or not
-    int64_t *GB_RESTRICT Ap = A->p ; size_t Ap_size = A->p_size ;
-    int64_t *GB_RESTRICT Ah = A->h ; size_t Ah_size = A->h_size ;
-    int64_t *GB_RESTRICT Ai = A->i ; size_t Ab_size = A->b_size ;
-    int8_t  *GB_RESTRICT Ab = A->b ; size_t Ai_size = A->i_size ;
-    GB_void *GB_RESTRICT Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
+    int64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ;
+    int64_t *restrict Ah = A->h ; size_t Ah_size = A->h_size ;
+    int64_t *restrict Ai = A->i ; size_t Ab_size = A->b_size ;
+    int8_t  *restrict Ab = A->b ; size_t Ai_size = A->i_size ;
+    GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
 
     bool A_is_bitmap = GB_IS_BITMAP (A) ;
     bool A_is_packed = GB_is_packed (A) ;
@@ -529,9 +529,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         }
 
         // allocate new space for the values and pattern
-        int64_t *GB_RESTRICT Cp = NULL ; size_t Cp_size = 0 ;
-        int64_t *GB_RESTRICT Ci = NULL ; size_t Ci_size = 0 ;
-        GB_void *GB_RESTRICT Cx = NULL ; size_t Cx_size = 0 ;
+        int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
+        int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
+        GB_void *restrict Cx = NULL ; size_t Cx_size = 0 ;
         bool ok = true ;
         Cp = GB_MALLOC (anz+1, int64_t, &Cp_size) ;
         Ci = GB_MALLOC (anz  , int64_t, &Ci_size) ;
@@ -682,9 +682,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         }
 
         // allocate new space for the values and pattern
-        int64_t *GB_RESTRICT Cp = NULL ; size_t Cp_size = 0 ;
-        int64_t *GB_RESTRICT Ci = NULL ; size_t Ci_size = 0 ;
-        GB_void *GB_RESTRICT Cx = NULL ; size_t Cx_size = 0 ;
+        int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
+        int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
+        GB_void *restrict Cx = NULL ; size_t Cx_size = 0 ;
         bool ok = true ;
         Cp = GB_MALLOC (2, int64_t, &Cp_size) ;
         ok = ok && (Cp != NULL) ;
@@ -1207,7 +1207,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         op1 = save_op1 ;
         op2 = save_op2 ;
         // Cx = op (C)
-        info = GB_apply_op (C->x, op1,  // positional unary/binary op only
+        info = GB_apply_op ((GB_void *) C->x, op1,  // positional op only
             op2, scalar, binop_bind1st, C, Context) ;
         if (info != GrB_SUCCESS)
         { 

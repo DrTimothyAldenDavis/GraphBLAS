@@ -15,20 +15,20 @@
 
     ASSERT (GB_JUMBLED_OK (M)) ;
 
-    const int64_t *GB_RESTRICT Mp = M->p ;
-    const int8_t  *GB_RESTRICT Mb = M->b ;
-    const int64_t *GB_RESTRICT Mh = M->h ;
-    const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
+    const int64_t *restrict Mp = M->p ;
+    const int8_t  *restrict Mb = M->b ;
+    const int64_t *restrict Mh = M->h ;
+    const int64_t *restrict Mi = M->i ;
+    const GB_void *restrict Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const size_t mvlen = M->vlen ;
 
-    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
+    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
     const int64_t cvlen = C->vlen ;
 
-    const int64_t *GB_RESTRICT kfirst_Mslice = M_ek_slicing ;
-    const int64_t *GB_RESTRICT klast_Mslice  = M_ek_slicing + M_ntasks ;
-    const int64_t *GB_RESTRICT pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
+    const int64_t *restrict kfirst_Mslice = M_ek_slicing ;
+    const int64_t *restrict klast_Mslice  = M_ek_slicing + M_ntasks ;
+    const int64_t *restrict pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // C<M> = x

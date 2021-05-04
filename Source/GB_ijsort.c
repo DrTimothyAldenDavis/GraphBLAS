@@ -26,12 +26,12 @@
 
 GrB_Info GB_ijsort
 (
-    const GrB_Index *GB_RESTRICT I, // size ni, where ni > 1 always holds
-    int64_t *GB_RESTRICT p_ni,      // : size of I, output: # of indices in I2
-    GrB_Index *GB_RESTRICT *p_I2,   // size ni2, where I2 [0..ni2-1]
+    const GrB_Index *restrict I, // size ni, where ni > 1 always holds
+    int64_t *restrict p_ni,      // : size of I, output: # of indices in I2
+    GrB_Index *restrict *p_I2,   // size ni2, where I2 [0..ni2-1]
                         // contains the sorted indices with duplicates removed.
     size_t *I2_size_handle,
-    GrB_Index *GB_RESTRICT *p_I2k,  // output array of size ni2
+    GrB_Index *restrict *p_I2k,  // output array of size ni2
     size_t *I2k_size_handle,
     GB_Context Context
 )
@@ -52,8 +52,8 @@ GrB_Info GB_ijsort
     //--------------------------------------------------------------------------
 
     GrB_Index *Work = NULL ; size_t Work_size = 0 ;
-    GrB_Index *GB_RESTRICT I2  = NULL ; size_t I2_size = 0 ;
-    GrB_Index *GB_RESTRICT I2k = NULL ; size_t I2k_size = 0 ;
+    GrB_Index *restrict I2  = NULL ; size_t I2_size = 0 ;
+    GrB_Index *restrict I2k = NULL ; size_t I2k_size = 0 ;
     int64_t ni = *p_ni ;
     ASSERT (ni > 1) ;
     int ntasks = 0 ;
@@ -84,9 +84,9 @@ GrB_Info GB_ijsort
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    GrB_Index *GB_RESTRICT I1  = Work ;                         // size ni
-    GrB_Index *GB_RESTRICT I1k = Work + ni ;                    // size ni
-    int64_t *GB_RESTRICT Count = (int64_t *) (Work + 2*ni) ;    // size ntasks+1
+    GrB_Index *restrict I1  = Work ;                         // size ni
+    GrB_Index *restrict I1k = Work + ni ;                    // size ni
+    int64_t *restrict Count = (int64_t *) (Work + 2*ni) ;    // size ntasks+1
 
     //--------------------------------------------------------------------------
     // copy I into I1 and construct I1k

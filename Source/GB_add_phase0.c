@@ -70,10 +70,10 @@
 static inline bool GB_allocate_result
 (
     int64_t Cnvec,
-    int64_t *GB_RESTRICT *Ch_handle,        size_t *Ch_size_handle,
-    int64_t *GB_RESTRICT *C_to_M_handle,    size_t *C_to_M_size_handle,
-    int64_t *GB_RESTRICT *C_to_A_handle,    size_t *C_to_A_size_handle,
-    int64_t *GB_RESTRICT *C_to_B_handle,    size_t *C_to_B_size_handle
+    int64_t *restrict *Ch_handle,        size_t *Ch_size_handle,
+    int64_t *restrict *C_to_M_handle,    size_t *C_to_M_size_handle,
+    int64_t *restrict *C_to_A_handle,    size_t *C_to_A_size_handle,
+    int64_t *restrict *C_to_B_handle,    size_t *C_to_B_size_handle
 )
 {
     bool ok = true ;
@@ -128,13 +128,13 @@ static inline bool GB_allocate_result
 GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
-    int64_t *GB_RESTRICT *Ch_handle,        // Ch: size Cnvec, or NULL
+    int64_t *restrict *Ch_handle,        // Ch: size Cnvec, or NULL
     size_t *Ch_size_handle,                 // size of Ch in bytes
-    int64_t *GB_RESTRICT *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
+    int64_t *restrict *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
     size_t *C_to_M_size_handle,             // size of C_to_M in bytes
-    int64_t *GB_RESTRICT *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
+    int64_t *restrict *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
     size_t *C_to_A_size_handle,             // size of C_to_A in bytes
-    int64_t *GB_RESTRICT *C_to_B_handle,    // C_to_B: of size Cnvec, or NULL
+    int64_t *restrict *C_to_B_handle,    // C_to_B: of size Cnvec, or NULL
     size_t *C_to_B_size_handle,             // size of C_to_A in bytes
     bool *p_Ch_is_Mh,           // if true, then Ch == Mh
     int *C_sparsity,            // sparsity structure of C
@@ -200,10 +200,10 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         return (GrB_SUCCESS) ;
     }
 
-    int64_t *GB_RESTRICT Ch     = NULL ; size_t Ch_size = 0 ;
-    int64_t *GB_RESTRICT C_to_M = NULL ; size_t C_to_M_size = 0 ;
-    int64_t *GB_RESTRICT C_to_A = NULL ; size_t C_to_A_size = 0 ;
-    int64_t *GB_RESTRICT C_to_B = NULL ; size_t C_to_B_size = 0 ;
+    int64_t *restrict Ch     = NULL ; size_t Ch_size = 0 ;
+    int64_t *restrict C_to_M = NULL ; size_t C_to_M_size = 0 ;
+    int64_t *restrict C_to_A = NULL ; size_t C_to_A_size = 0 ;
+    int64_t *restrict C_to_B = NULL ; size_t C_to_B_size = 0 ;
 
     GB_WERK_DECLARE (Work, int64_t) ;
     int ntasks = 0 ;
@@ -224,19 +224,19 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     int64_t n = A->vdim ;
     int64_t Anvec = A->nvec ;
     int64_t vlen = A->vlen ;
-    const int64_t *GB_RESTRICT Ap = A->p ;
-    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
     bool A_is_hyper = (Ah != NULL) ;
     #define GB_Ah(k) (A_is_hyper ? Ah [k] : (k))
 
     int64_t Bnvec = B->nvec ;
-    const int64_t *GB_RESTRICT Bp = B->p ;
-    const int64_t *GB_RESTRICT Bh = B->h ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
     bool B_is_hyper = (Bh != NULL) ;
 
     int64_t Mnvec = 0 ;
-    const int64_t *GB_RESTRICT Mp = NULL ;
-    const int64_t *GB_RESTRICT Mh = NULL ;
+    const int64_t *restrict Mp = NULL ;
+    const int64_t *restrict Mh = NULL ;
     bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     if (M != NULL)
     { 
@@ -338,9 +338,9 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             GB_FREE_WORK ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        int64_t *GB_RESTRICT kA_start = Work ;
-        int64_t *GB_RESTRICT kB_start = Work + (ntasks+1) ;
-        int64_t *GB_RESTRICT kC_start = Work + (ntasks+1)*2 ;
+        int64_t *restrict kA_start = Work ;
+        int64_t *restrict kB_start = Work + (ntasks+1) ;
+        int64_t *restrict kC_start = Work + (ntasks+1)*2 ;
 
         kA_start [0] = (Anvec == 0) ? -1 : 0 ;
         kB_start [0] = (Bnvec == 0) ? -1 : 0 ;

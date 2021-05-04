@@ -17,18 +17,18 @@
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    const int64_t  *GB_RESTRICT Ap = A->p ;
-    const int64_t  *GB_RESTRICT Ah = A->h ;
-    const int64_t  *GB_RESTRICT Ai = A->i ;
-    const int8_t   *GB_RESTRICT Ab = A->b ;
-    const GB_ATYPE *GB_RESTRICT Ax = (GB_ATYPE *) A->x ;
+    const int64_t  *restrict Ap = A->p ;
+    const int64_t  *restrict Ah = A->h ;
+    const int64_t  *restrict Ai = A->i ;
+    const int8_t   *restrict Ab = A->b ;
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
     const int64_t avlen = A->vlen ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_dense = GB_as_if_full (A) ;
     const int64_t anz = GB_NNZ_HELD (A) ;
 
-    GB_CTYPE *GB_RESTRICT Cx = (GB_CTYPE *) C->x ;
-    int8_t   *GB_RESTRICT Cb = C->b ;
+    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    int8_t   *restrict Cb = C->b ;
     const int64_t cvlen = C->vlen ;
     const bool C_is_bitmap = GB_IS_BITMAP (C) ;
 
@@ -239,9 +239,9 @@
         // A is hypersparse or sparse; C is dense or a bitmap
         //----------------------------------------------------------------------
 
-        const int64_t *GB_RESTRICT kfirst_Aslice = A_ek_slicing ;
-        const int64_t *GB_RESTRICT klast_Aslice  = A_ek_slicing + A_ntasks ;
-        const int64_t *GB_RESTRICT pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
+        const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
+        const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
+        const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
         int taskid ;
 
         if (Mask_struct)

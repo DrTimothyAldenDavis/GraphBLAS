@@ -100,25 +100,19 @@ GrB_Info GB_mxm                     // C<M> = A*B
             bnrows, bncols, B_transpose ? " (transposed)" : "") ;
     }
 
+    //--------------------------------------------------------------------------
+    // finish any pending work and check for C<!NULL> mask
+    //--------------------------------------------------------------------------
+
     GrB_Matrix M = M_input ;
-    if (Mask_struct && !Mask_comp && GB_IS_FULL (M))
+    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
+    if (Mask_struct && GB_is_dense (M))
     { 
-        // ignore the mask if it is full, structural, and not complemented
+        // ignore the mask if all entries present and not complemented
         M = NULL ;
     }
-
-    // quick return if an empty mask is complemented
+    // quick return if a NULL mask is complemented
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp, Mask_struct) ;
-
-    // if M is full and structural, it has been ignored (set to NULL if not
-    // complemented or quick-mask condition has returned if complemented)
-    ASSERT (!(Mask_struct && GB_IS_FULL (M))) ;
-
-    //--------------------------------------------------------------------------
-    // finish any pending work
-    //--------------------------------------------------------------------------
-
-    GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (B) ;
 

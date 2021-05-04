@@ -99,10 +99,10 @@ GrB_Info GB_subassign_symbolic
     GB_ijlength (J, nj, C->vdim, &nJ, &Jkind, Jcolon) ;
 
     // get S
-    const int64_t *GB_RESTRICT Sp = S->p ;
-    const int64_t *GB_RESTRICT Sh = S->h ;
-    const int64_t *GB_RESTRICT Si = S->i ;
-    const int64_t *GB_RESTRICT Sx = (int64_t *) S->x ;
+    const int64_t *restrict Sp = S->p ;
+    const int64_t *restrict Sh = S->h ;
+    const int64_t *restrict Si = S->i ;
+    const int64_t *restrict Sx = (int64_t *) S->x ;
     // for each vector of S
     for (int64_t k = 0 ; k < S->nvec ; k++)
     {
