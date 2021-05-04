@@ -103,15 +103,16 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<M> = accum (w,reduce(A))
 }
 
 //------------------------------------------------------------------------------
-// GrB_Matrix_reduce_BinaryOp (historical)
+// GrB_Matrix_reduce_BinaryOp (DEPRECATED)
 //------------------------------------------------------------------------------
 
-// This function is historical in SuiteSparse:GraphBLAS v5.0.  In this library
-// implementation, the binary operator must correspond to a built-in monoid.
-// User-defined binary ops are not supported for use in this function.  Use a
-// monoid instead, with GrB_reduce or GrB_Matrix_reduce_Monoid, above.
+// This function is DEPRECATED in SuiteSparse:GraphBLAS v5.0.  In v5, the
+// binary operator must correspond to a built-in monoid.  User-defined binary
+// ops are not supported for use in this function.  Use a monoid instead, with
+// GrB_reduce or GrB_Matrix_reduce_Monoid, above.  This function will be
+// removed entirely in SuiteSparse:GraphBLAS v6.0.0.
 
-GrB_Info GrB_Matrix_reduce_BinaryOp // historical
+GrB_Info GrB_Matrix_reduce_BinaryOp // DEPRECATED
 (
     GrB_Vector w,
     const GrB_Vector M,
@@ -121,8 +122,9 @@ GrB_Info GrB_Matrix_reduce_BinaryOp // historical
     const GrB_Descriptor desc
 )
 {
-    GB_WHERE (w, "GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)") ;
-    GB_BURBLE_START ("GrB_reduce_reduce_BinaryOp (historical) ") ;
+    GB_WHERE (w, "GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)"
+        " (DEPRECATED)") ;
+    GB_BURBLE_START ("GrB_reduce_reduce_BinaryOp (DEPRECATED) ") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op_in) ;
     if (op_in->xtype != op_in->ztype || op_in->ytype != op_in->ztype)
     {

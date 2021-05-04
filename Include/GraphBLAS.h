@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "May 3, 2021"
+#define GxB_IMPLEMENTATION_DATE "May 4, 2021"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   1
@@ -6572,10 +6572,11 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
 // operators are not supported.  Use GrB_reduce with a monoid instead.  The
 // ability of GrB_Matrix_reduce_BinaryOp to compute a reduction of a matrix to
 // a vector using an arbitrary binary op has been deprecated and removed from
-// SuiteSparse:GraphBLAS.
+// SuiteSparse:GraphBLAS.  The function itself will be removed entirely in
+// v6.0.0 of SuiteSparse:GraphBLAS.
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_reduce_BinaryOp // historical in SuiteSparse:GraphBLAS
+GrB_Info GrB_Matrix_reduce_BinaryOp // DEPRECATED in SuiteSparse:GraphBLAS
 (
     GrB_Vector w,
     const GrB_Vector mask,

@@ -151,8 +151,8 @@ are extensions to the v1.3 GraphBLAS C API.
         \verb'GB_dense_subassign_06d_template.c'.  Caught by Jeff Huang, Texas
         A\&M, with his software package for race-condition detection. Good
         catch!
-    \item \verb'GrB_Matrix_reduce_BinaryOp': tagged as historical.
-        Use a monoid instead, with
+    \item \verb'GrB_Matrix_reduce_BinaryOp': tagged as deprecated,
+        and to be removed entirely in v6.0.0.  Use a monoid instead, with
         \verb'GrB_reduce' or \verb'GrB_Matrix_reduce_Monoid'.
     \end{packed_itemize}
 
@@ -342,11 +342,13 @@ case that they cause a serious conflict with future methods.
 The only methods that have been fully deprecated and removed are the no-input
 \verb'GrB_wait' and \verb'GrB_error' methods, which are incompatible with the
 new 1-input \verb'GrB_wait' and 2-input \verb'GrB_error' methods defined in
-the latest version of the C API Specification.  The
-\verb'GrB_Matrix_reduce_BinaryOp' function was modified in v4.0.1 and limited
-to built-in binary operators that correspond to known monoids.  The support of
-arbitary binary operators has been deprecated and removed in this version of
-SuiteSparse:GraphBLAS.
+the latest version of the C API Specification, and the
+\verb'GrB_Matrix_reduce_BinaryOp' function.
+
+The \verb'GrB_Matrix_reduce_BinaryOp' function was modified in v4.0.1 and
+limited to built-in binary operators that correspond to known monoids.  The
+function itself will be removed entirely in SuiteSparse:GraphBLAS v6.0.0.
+Reduction in parallel is very difficult without a monoid. 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

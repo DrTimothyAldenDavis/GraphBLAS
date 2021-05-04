@@ -35,7 +35,9 @@ GXB_OP1 (ONE, "one") ;
     // z=abs(x), z and x have the same type
     GRB_OP1 (ABS      , "abs"      ) ;
 
-    // GxB_ABS_* is now GrB_ABS_*, and GxB_ABS_* is historical
+    // GxB_ABS_* is now GrB_ABS_*, and GxB_ABS_* is historical.
+    // The new name is preferred.  The old name will be kept for historical
+    // compatibility.
     GXB_OP1_RENAME (ABS) ;
 
     // LNOT is only defined for real types, not complex
