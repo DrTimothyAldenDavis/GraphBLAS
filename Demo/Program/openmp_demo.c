@@ -62,7 +62,7 @@ int worker (GrB_Matrix *Ahandle, int id)
     {
         // critical section
         printf ("\n----------------- worker %d intentional error:\n", id) ;
-        char *s ;
+        const char *s ;
         GrB_Matrix_error (&s, A) ;
         printf ("%s\n", s) ;
     }
