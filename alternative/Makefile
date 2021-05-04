@@ -30,7 +30,7 @@ VER3 = 1
 # CC = gcc-8
 # note that -mp1 is essential for icc, for proper Inf and NaN behavior:
 # CC = icc -mp1
-  CC = c++
+# CC = c++
 
 SRC = ../Source/*.c ../Source/Generated/*.c
 INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h ../Source/Generator/*.h 
