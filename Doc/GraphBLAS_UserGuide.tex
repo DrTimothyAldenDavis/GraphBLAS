@@ -131,9 +131,20 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 5.0.3 (May 6, 2021)
+
+    \begin{packed_itemize}
+    \item (24) bug fix: new functions in v5.0.2 not declared as \verb'extern'
+        in \verb'GraphBLAS.h'.
+    \end{packed_itemize}
+
 \item Version 5.0.2 (May 5, 2021)
 
     \begin{packed_itemize}
+    \item (23) bug fix: \verb'GrB_Matrix_apply_BinaryOp1st' and \verb'2nd'
+        were using the
+        wrong descriptors for \verb'GrB_INP0' and \verb'GrB_INP1'.
+        Caught by Erik Welch, Anaconda.
     \item memory pool added for faster allocation/free of small blocks
     \item \verb'@GrB' MATLAB interface ported to MATLAB R2021a.
     \item \verb'GxB_PRINTF' and \verb'GxB_FLUSH' global options added.
@@ -149,8 +160,7 @@ are extensions to the v1.3 GraphBLAS C API.
     \item (22) bug fix: SIMD vectorization was missing
         \verb'reduction(+,task_cnvals)' in
         \verb'GB_dense_subassign_06d_template.c'.  Caught by Jeff Huang, Texas
-        A\&M, with his software package for race-condition detection. Good
-        catch!
+        A\&M, with his software package for race-condition detection.
     \item \verb'GrB_Matrix_reduce_BinaryOp': removed.  Use a monoid instead,
         with \verb'GrB_reduce' or \verb'GrB_Matrix_reduce_Monoid'.
     \end{packed_itemize}
