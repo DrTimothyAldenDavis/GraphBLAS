@@ -1,5 +1,7 @@
 Version 5.0.1, May 4, 2021
 
+    * (23) bug fix: GrB_Matrix_apply_BinaryOp1st and 2nd were using the
+        wrong descriptors for GrB_INP0 and GrB_INP1.
     * memory pool added for faster memory allocation
     * calloc no longer used: using malloc+memset(0) instead
     * realloc option: if not available, uses malloc+memcpy+free

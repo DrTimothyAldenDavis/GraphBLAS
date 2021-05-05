@@ -10331,7 +10331,7 @@ GrB_Info GrB_apply                  // C<M>=accum(C,op(x,A))
 $z=f(x,y)$ to a matrix, where a scalar $x$ is bound to the first input of the
 operator.  It is otherwise identical to \verb'GrB_Matrix_apply'.  With no
 suffix, \verb'GxB_Matrix_apply_BinaryOp1st' takes as input a \verb'GxB_Scalar'. 
-To transpose the input matrix, use the \verb'GrB_INP0' descriptor setting.
+To transpose the input matrix, use the \verb'GrB_INP1' descriptor setting.
 
 %===============================================================================
 \subsubsection{{\sf GrB\_Matrix\_apply\_BinaryOp2nd:} apply a binary operator to a matrix; 2nd scalar binding}
@@ -10357,7 +10357,7 @@ GrB_Info GrB_apply                  // C<M>=accum(C,op(A,y))
 $z=f(x,y)$ to a matrix, where a scalar $x$ is bound to the second input of the
 operator.  It is otherwise identical to \verb'GrB_Matrix_apply'.  With no
 suffix, \verb'GxB_Matrix_apply_BinaryOp2nd' takes as input a \verb'GxB_Scalar'. 
-To transpose the input matrix, use the \verb'GrB_INP1' descriptor setting.
+To transpose the input matrix, use the \verb'GrB_INP0' descriptor setting.
 
 \newpage
 %===============================================================================
