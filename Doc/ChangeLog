@@ -1,3 +1,7 @@
+Version 5.0.3, May 6, 2021
+
+    * (24) bug fix: GB_PUBLIC added to the new functions in GraphBLAS.h
+
 Version 5.0.2, May 5, 2021
 
     * GrB_Matrix_reduce_BinaryOp: removed.  Use a monoid instead, with
