@@ -16,6 +16,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: nvals = gbnvals (X)"
+
 void mexFunction
 (
     int nargout,
@@ -29,15 +31,25 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 1, "usage: nvals = gbnvals (X)") ;
+    gb_usage (nargin == 1 && nargout <= 1, USAGE) ;
+
+    //--------------------------------------------------------------------------
+    // get a shallow copy of the matrix
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
 
     //--------------------------------------------------------------------------
     // get the # of entries in the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
     GrB_Index nvals ;
     OK (GrB_Matrix_nvals (&nvals, X)) ;
+
+    //--------------------------------------------------------------------------
+    // free the shallow copy and return the result
+    //--------------------------------------------------------------------------
+
     pargout [0] = mxCreateDoubleScalar ((double) nvals) ;
     OK (GrB_Matrix_free (&X)) ;
     GB_WRAPUP ;

@@ -30,6 +30,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: A = GrB.build (I, J, X, m, n, dup, type, desc)"
+
 void mexFunction
 (
     int nargout,
@@ -43,8 +45,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 3 && nargin <= 8 && nargout <= 2,
-        "usage: A = GrB.build (I, J, X, m, n, dup, type, desc)") ;
+    gb_usage (nargin >= 3 && nargin <= 8 && nargout <= 2, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the descriptor

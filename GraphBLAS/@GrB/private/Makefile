@@ -9,6 +9,8 @@
 
 # This is just here for 'make clean', to remove compiled codes.
 
+default: mexfuncs
+
 clean:
 	- $(RM) -rf *.o *.mex*
 

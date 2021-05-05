@@ -11,6 +11,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: v = gbver"
+
 static const char *vfields [3] = { "Name", "Version", "Date" } ;
 
 void mexFunction
@@ -26,7 +28,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 0 && nargout <= 1, "usage: v = gbver") ;
+    gb_usage (nargin == 0 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the version and date information and return it as a MATLAB struct

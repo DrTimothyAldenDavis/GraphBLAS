@@ -49,10 +49,10 @@ for k = 1:length (types)
     for k2 = 1:length (types)
         type2 = types {k} ;
         G3 = full (G, type2, id) ;
-        G5 = full (G, type2, GrB (id)) ;
+        H5 = full (G, type2, GrB (id)) ;
         G4 = GrB (G2, type2) ;
         assert (gbtest_eq (G3, G4)) ;
-        assert (gbtest_eq (G3, G5)) ;
+        assert (gbtest_eq (G3, H5)) ;
         assert (gbtest_eq (double (G3), double (G4))) ;
         assert (gbtest_eq (single (G3), single (G4))) ;
         assert (gbtest_eq (uint16 (G3), uint16 (G4))) ;

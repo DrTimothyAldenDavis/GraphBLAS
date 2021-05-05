@@ -15,6 +15,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: s = GrB.isequal (A, B)"
+
 void mexFunction
 (
     int nargout,
@@ -28,7 +30,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 2 && nargout <= 1, "usage: s = GrB.isequal (A, B)") ;
+    gb_usage (nargin == 2 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the arguments
@@ -42,6 +44,13 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = mxCreateLogicalScalar (gb_is_equal (A, B)) ;
+
+    //--------------------------------------------------------------------------
+    // free shallow copies
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_free (&A)) ;
+    OK (GrB_Matrix_free (&B)) ;
     GB_WRAPUP ;
 }
 

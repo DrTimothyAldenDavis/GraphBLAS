@@ -13,6 +13,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: GrB.selectopinfo (selectop)"
+
 void mexFunction
 (
     int nargout,
@@ -26,8 +28,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout == 0,
-        "usage: GrB.selectopinfo (selectop)") ;
+    gb_usage (nargin == 1 && nargout == 0, USAGE) ;
 
     //--------------------------------------------------------------------------
     // construct the GraphBLAS selectop and print it

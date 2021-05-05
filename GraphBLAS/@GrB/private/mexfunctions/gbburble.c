@@ -14,6 +14,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: b = GrB.burble ; or GrB.burble (b)"
+
 void mexFunction
 (
     int nargout,
@@ -27,8 +29,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout <= 1,
-        "usage: b = GrB.burble ; or GrB.burble (b)") ;
+    gb_usage (nargin <= 1 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // set the burble, if requested
@@ -54,9 +55,6 @@ void mexFunction
             ERROR ("input must be a scalar") ;
         }
         OK (GxB_Global_Option_set (GxB_BURBLE, b)) ;
-
-        // if burble enabled, flush mexPrintf output to MATLAB Command Window
-        GB_flush_function = b ? gb_flush : NULL ;
     }
 
     //--------------------------------------------------------------------------

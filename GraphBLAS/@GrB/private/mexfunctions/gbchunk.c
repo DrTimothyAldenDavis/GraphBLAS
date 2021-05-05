@@ -14,6 +14,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: c = GrB.chunk ; or GrB.chunk (c)"
+
 void mexFunction
 (
     int nargout,
@@ -27,8 +29,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout <= 1,
-        "usage: c = GrB.chunk ; or GrB.chunk (c)") ;
+    gb_usage (nargin <= 1 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // set the chunk, if requested
