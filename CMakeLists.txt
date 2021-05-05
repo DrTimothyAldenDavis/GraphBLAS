@@ -5,42 +5,7 @@
 # SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-# CMakeLists.txt: instructions for cmake to build GraphBLAS.
-# An ANSI C11 compiler is required.
-#
-# To compile the GraphBLAS library and demo programs:
-#
-#   make
-#
-# To compile just the library
-#
-#   make library
-#
-# If that fails for any reason, make sure your compiler supports ANSI C11.  You
-# could try changing your compiler, for example:
-#
-#   cd build
-#   CC=icc cmake ..
-#   cd ..
-#   make
-#
-# Or, with other compilers:
-#
-#   CC=xlc cmake ..
-#   CC=gcc cmake ..
-#
-# To run the demos:
-#
-#   cd ../Demo
-#   ./demo
-#
-# To install GraphBLAS in /usr/local/lib and /usr/local/include:
-#
-#   sudo make install
-#
-# To remove all compiled files and libraries (except installed ones):
-#
-#   make distclean
+# See the User Guide for details on how to compile SuiteSparse:GraphBLAS.
 
 #-------------------------------------------------------------------------------
 # get the version
@@ -59,10 +24,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "May 4, 2021")
+set ( GraphBLAS_DATE "May 5, 2021")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 0 )
-set ( GraphBLAS_VERSION_SUB   1 )
+set ( GraphBLAS_VERSION_SUB   2 )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "Sept 25, 2019" )
