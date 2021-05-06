@@ -22,11 +22,6 @@
     #elif defined ( GB_DOT2 )
     #include "GB_AxB_dot2_template.c"
 
-    // saxpy3 symbolic (coarse Gustavson and hash tasks)
-
-    #elif defined ( GB_SAXPY_COARSE_HASH_NOTM_PHASE1 )
-    #include "GB_AxB_saxpy3_coarseHash_notM_phase1.c"
-
     #else
     #error "method undefined"
     #endif
