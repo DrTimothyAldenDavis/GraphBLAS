@@ -22,7 +22,7 @@ library:
 all:
 	( cd build ; cmake $(CMAKE_OPTIONS) -DDEMO=1 .. ; $(MAKE) --jobs=$(JOBS) )
 
-# just run the demos: assumes the library is already compiled
+# just run the demos
 run: all
 	( cd Demo ; ./demo )
 
@@ -34,7 +34,7 @@ remake:
 cmake:
 	( cd build ; cmake $(CMAKE_OPTIONS) .. ; )
 
-# build both the static and dynamic libraries do not run the demo
+# build both the static and dynamic libraries; do not run the demo
 static:
 	( cd build ; cmake $(CMAKE_OPTIONS) -DBUILD_GRB_STATIC_LIBRARY=1 .. ; $(MAKE) --jobs=$(JOBS) )
 
