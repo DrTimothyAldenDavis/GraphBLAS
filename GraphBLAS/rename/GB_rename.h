@@ -305,7 +305,6 @@
 #define GrB_Matrix_new GrM_Matrix_new
 #define GrB_Matrix_nrows GrM_Matrix_nrows
 #define GrB_Matrix_nvals GrM_Matrix_nvals
-#define GrB_Matrix_reduce_BinaryOp GrM_Matrix_reduce_BinaryOp
 #define GrB_Matrix_reduce_BOOL GrM_Matrix_reduce_BOOL
 #define GrB_Matrix_reduce_FP32 GrM_Matrix_reduce_FP32
 #define GrB_Matrix_reduce_FP64 GrM_Matrix_reduce_FP64

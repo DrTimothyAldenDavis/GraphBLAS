@@ -204,10 +204,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "May 4, 2021"
+#define GxB_IMPLEMENTATION_DATE "May 6, 2021"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 0
-#define GxB_IMPLEMENTATION_SUB   1
+#define GxB_IMPLEMENTATION_SUB   3
 #define GxB_SPEC_DATE "Sept 25, 2019"
 #define GxB_SPEC_MAJOR 1
 #define GxB_SPEC_MINOR 3
@@ -3650,6 +3650,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 // or by column, bitmap switch, hyper switch, and sparsity control) are
 // unchanged.
 
+GB_PUBLIC
 GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -3669,6 +3670,7 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
 // number of columns of A.  The type of each tile is the same as the type of A;
 // no typecasting is done.
 
+GB_PUBLIC
 GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
 (
     GrB_Matrix *Tiles,              // 2D row-major array of size m-by-n
@@ -3700,6 +3702,7 @@ GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
 // C by GxB_Matrix_Option_set (format by row or by column, bitmap switch, hyper
 // switch, and sparsity control) are unchanged.
 
+GB_PUBLIC
 GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
 (
     GrB_Matrix C,                   // output matrix
@@ -3726,6 +3729,7 @@ GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
 // typecasted into the type of v.  Any settings made to v by
 // GxB_Vector_Option_set (bitmap switch and sparsity control) are unchanged.
 
+GB_PUBLIC
 GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix, as a vector
 (
     GrB_Vector v,                   // output vector
@@ -6567,25 +6571,6 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 ) ;
 
-// GrB_Matrix_reduce_BinaryOp does the reduction with a GrB_BinaryOp op, which
-// must correspond to a known built-in GrB_Monoid.  User-defined binary
-// operators are not supported.  Use GrB_reduce with a monoid instead.  The
-// ability of GrB_Matrix_reduce_BinaryOp to compute a reduction of a matrix to
-// a vector using an arbitrary binary op has been deprecated and removed from
-// SuiteSparse:GraphBLAS.  The function itself will be removed entirely in
-// v6.0.0 of SuiteSparse:GraphBLAS.
-
-GB_PUBLIC
-GrB_Info GrB_Matrix_reduce_BinaryOp // DEPRECATED in SuiteSparse:GraphBLAS
-(
-    GrB_Vector w,
-    const GrB_Vector mask,
-    const GrB_BinaryOp accum,
-    const GrB_BinaryOp op,          // use a monoid instead (see above)
-    const GrB_Matrix A,
-    const GrB_Descriptor desc
-) ;
-
 //------------------------------------------------------------------------------
 // reduce a vector to a scalar
 //------------------------------------------------------------------------------
@@ -6909,9 +6894,7 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
         const GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
               GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
         const GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
-              GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
-        const GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp ,           \
-              GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp             \
+              GrB_Monoid   : GrB_Matrix_reduce_Monoid               \
     )                                                               \
     (arg1, arg2, arg3, arg4, __VA_ARGS__)
 #endif

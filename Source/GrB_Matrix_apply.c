@@ -40,6 +40,7 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_transpose, xx1, xx2, xx7) ;
+//  printf ("unop  A_transpose (GrB_INP0): %d\n", A_transpose) ;
 
     //--------------------------------------------------------------------------
     // apply the operator and optionally transpose
@@ -85,9 +86,10 @@ static inline GrB_Info GB_1st       // C<M>=accum(C,op(x,A))
     GB_RETURN_IF_NULL_OR_FAULTY (x) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
-    // get the descriptor
+    // get the descriptor, using GrB_INP1 to transpose the matrix
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        A_transpose, xx1, xx2, xx7) ;
+        xx1, A_transpose, xx2, xx7) ;
+//  printf ("bind1 A_transpose (GrB_INP1): %d\n", A_transpose) ;
 
     //--------------------------------------------------------------------------
     // apply the operator and optionally transpose
@@ -135,9 +137,10 @@ static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (y) ;
 
-    // get the descriptor
+    // get the descriptor, using GrB_INP0 to transpose the matrix
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        xx1, A_transpose, xx2, xx7) ;
+        A_transpose, xx1, xx2, xx7) ;
+//  printf ("bind2 A_transpose (GrB_INP0): %d\n", A_transpose) ;
 
     //--------------------------------------------------------------------------
     // apply the operator and optionally transpose

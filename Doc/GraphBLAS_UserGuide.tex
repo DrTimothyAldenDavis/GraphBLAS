@@ -131,9 +131,20 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 5.0.1 (May 3, 2021)
+\item Version 5.0.3 (May 6, 2021)
 
     \begin{packed_itemize}
+    \item (24) bug fix: new functions in v5.0.2 not declared as \verb'extern'
+        in \verb'GraphBLAS.h'.
+    \end{packed_itemize}
+
+\item Version 5.0.2 (May 5, 2021)
+
+    \begin{packed_itemize}
+    \item (23) bug fix: \verb'GrB_Matrix_apply_BinaryOp1st' and \verb'2nd'
+        were using the
+        wrong descriptors for \verb'GrB_INP0' and \verb'GrB_INP1'.
+        Caught by Erik Welch, Anaconda.
     \item memory pool added for faster allocation/free of small blocks
     \item \verb'@GrB' MATLAB interface ported to MATLAB R2021a.
     \item \verb'GxB_PRINTF' and \verb'GxB_FLUSH' global options added.
@@ -149,11 +160,9 @@ are extensions to the v1.3 GraphBLAS C API.
     \item (22) bug fix: SIMD vectorization was missing
         \verb'reduction(+,task_cnvals)' in
         \verb'GB_dense_subassign_06d_template.c'.  Caught by Jeff Huang, Texas
-        A\&M, with his software package for race-condition detection. Good
-        catch!
-    \item \verb'GrB_Matrix_reduce_BinaryOp': tagged as deprecated,
-        and to be removed entirely in v6.0.0.  Use a monoid instead, with
-        \verb'GrB_reduce' or \verb'GrB_Matrix_reduce_Monoid'.
+        A\&M, with his software package for race-condition detection.
+    \item \verb'GrB_Matrix_reduce_BinaryOp': removed.  Use a monoid instead,
+        with \verb'GrB_reduce' or \verb'GrB_Matrix_reduce_Monoid'.
     \end{packed_itemize}
 
 \item Version 4.0.3 (Jan 19, 2021)
@@ -343,12 +352,7 @@ The only methods that have been fully deprecated and removed are the no-input
 \verb'GrB_wait' and \verb'GrB_error' methods, which are incompatible with the
 new 1-input \verb'GrB_wait' and 2-input \verb'GrB_error' methods defined in
 the latest version of the C API Specification, and the
-\verb'GrB_Matrix_reduce_BinaryOp' function.
-
-The \verb'GrB_Matrix_reduce_BinaryOp' function was modified in v4.0.1 and
-limited to built-in binary operators that correspond to known monoids.  The
-function itself will be removed entirely in SuiteSparse:GraphBLAS v6.0.0.
-Reduction in parallel is very difficult without a monoid. 
+\verb'GrB_Matrix_reduce_BinaryOp' function, which has been removed.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10331,7 +10335,7 @@ GrB_Info GrB_apply                  // C<M>=accum(C,op(x,A))
 $z=f(x,y)$ to a matrix, where a scalar $x$ is bound to the first input of the
 operator.  It is otherwise identical to \verb'GrB_Matrix_apply'.  With no
 suffix, \verb'GxB_Matrix_apply_BinaryOp1st' takes as input a \verb'GxB_Scalar'. 
-To transpose the input matrix, use the \verb'GrB_INP0' descriptor setting.
+To transpose the input matrix, use the \verb'GrB_INP1' descriptor setting.
 
 %===============================================================================
 \subsubsection{{\sf GrB\_Matrix\_apply\_BinaryOp2nd:} apply a binary operator to a matrix; 2nd scalar binding}
@@ -10357,7 +10361,7 @@ GrB_Info GrB_apply                  // C<M>=accum(C,op(A,y))
 $z=f(x,y)$ to a matrix, where a scalar $x$ is bound to the second input of the
 operator.  It is otherwise identical to \verb'GrB_Matrix_apply'.  With no
 suffix, \verb'GxB_Matrix_apply_BinaryOp2nd' takes as input a \verb'GxB_Scalar'. 
-To transpose the input matrix, use the \verb'GrB_INP1' descriptor setting.
+To transpose the input matrix, use the \verb'GrB_INP0' descriptor setting.
 
 \newpage
 %===============================================================================
