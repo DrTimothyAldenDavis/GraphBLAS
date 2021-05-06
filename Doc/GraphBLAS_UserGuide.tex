@@ -12189,7 +12189,7 @@ SuiteSparse:GraphBLAS v3.2.0 and later is recommended.  Atomics are slower in
 icc as compared to gcc.
 \end{alert}
 
-To compile SuiteSparse:GraphBLAS and the demo programs, simply type \verb'make'
+To compile SuiteSparse:GraphBLAS, simply type \verb'make'
 in the main GraphBLAS folder, which compiles the library.  This will be a
 single-threaded compilation, which will take a long time.  To compile in 
 parallel (40 threads for example), use:
@@ -12204,8 +12204,8 @@ To use a non-default compiler with 4 threads:
     \begin{verbatim}
     make CC=icc CXX=icc JOBS=4 \end{verbatim} }
 
-After compiling the library, you can run the demos by typing \verb'./demo'
-in the Demo folder.
+After compiling the library, you can compile the demos with
+\verb'make all' and then \verb'make run'.
 
 If \verb'cmake' or \verb'make' fail, it might be that your default compiler
 does not support ANSI C11.  Try another compiler.  For example, try one of

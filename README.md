@@ -24,8 +24,7 @@ https://github.com/GraphBLAS/GraphBLAS-Pointers
 for additional resources on GraphBLAS.
 
 
-QUICK START: To compile, run several demos, and install, do these commands in
-this directory:
+QUICK START: To compile and install, do these commands in this directory:
 
     make
     sudo make install
@@ -45,9 +44,9 @@ To remove all compiled files:
 
     make clean
 
-To compile the library without running the demos or installing it:
+To compile the demos:
 
-    make library
+    make all
 
 See the GraphBLAS/ subfolder for the MATLAB interface, which contains a
 README.md file with further details.

@@ -14,12 +14,16 @@ JOBS ?= 8
 
 default: library
 
-# just build the dynamic library; do not run the demo
+# just build the dynamic library, not the demos
 library:
 	( cd build ; cmake $(CMAKE_OPTIONS) .. ; $(MAKE) --jobs=$(JOBS) )
 
+# build the dynamic library and the demos
+all:
+	( cd build ; cmake $(CMAKE_OPTIONS) -DDEMO=1 .. ; $(MAKE) --jobs=$(JOBS) )
+
 # just run the demos: assumes the library is already compiled
-run:
+run: all
 	( cd Demo ; ./demo )
 
 # just do 'make' in build; do not rerun the cmake script
