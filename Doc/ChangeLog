@@ -1,5 +1,6 @@
 Version 5.0.3, May 6, 2021
 
+    * demos: no longer built by default
     * (24) bug fix: GB_PUBLIC added to the new functions in GraphBLAS.h
 
 Version 5.0.2, May 5, 2021
