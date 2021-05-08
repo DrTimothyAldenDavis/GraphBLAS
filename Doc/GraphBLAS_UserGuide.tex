@@ -136,6 +136,8 @@ are extensions to the v1.3 GraphBLAS C API.
     \begin{packed_itemize}
     \item (24) bug fix: new functions in v5.0.2 not declared as \verb'extern'
         in \verb'GraphBLAS.h'.
+    \item \verb'GrB_Matrix_reduce_BinaryOp' reinstated from v4.0.3;
+        same limit on built-in ops that correspond to known monoids.
     \end{packed_itemize}
 
 \item Version 5.0.2 (May 5, 2021)
@@ -352,7 +354,8 @@ The only methods that have been fully deprecated and removed are the no-input
 \verb'GrB_wait' and \verb'GrB_error' methods, which are incompatible with the
 new 1-input \verb'GrB_wait' and 2-input \verb'GrB_error' methods defined in
 the latest version of the C API Specification, and the
-\verb'GrB_Matrix_reduce_BinaryOp' function, which has been removed.
+\verb'GrB_Matrix_reduce_BinaryOp' function, which is limited to binary
+operators that correspond to built-in monoids.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10598,6 +10601,10 @@ the result \verb't (i)'.
 The final step is ${\bf w \langle m \rangle  = w \odot t}$, as described
 in Section~\ref{accummask}, except that all the
 terms are column vectors instead of matrices.
+
+\verb'GrB_reduce' can also be passed a \verb'GrB_BinaryOp' in place of the
+monoid parameter, but the binary operator must correspond to a known
+built-in monoid.
 
 \newpage
 %-------------------------------------------------------------------------------

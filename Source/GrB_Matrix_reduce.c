@@ -102,3 +102,49 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<M> = accum (w,reduce(A))
     return (info) ;
 }
 
+//------------------------------------------------------------------------------
+// GrB_Matrix_reduce_BinaryOp: reduce a matrix to a vector via a binary op
+//------------------------------------------------------------------------------
+
+// Only binary ops that correspond to a known monoid are supported.
+
+GrB_Info GrB_Matrix_reduce_BinaryOp
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector M,             // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_BinaryOp op,          // reduce operator for t=reduce(A)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Descriptor desc       // descriptor for w, M, and A
+)
+{ 
+    GB_WHERE (w, "GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)") ;
+    GB_BURBLE_START ("GrB_reduce") ;
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+
+    //--------------------------------------------------------------------------
+    // convert the binary op to its corresponding monoid
+    //--------------------------------------------------------------------------
+
+    GrB_Monoid monoid = GB_binop_to_monoid (op) ;
+    if (monoid == NULL)
+    { 
+        GB_ERROR (GrB_DOMAIN_MISMATCH, "Invalid binary operator:"
+            " z=%s(x,y) has no equivalent monoid\n", op->name) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // w<M> = reduce (A) via the monoid
+    //--------------------------------------------------------------------------
+
+    GrB_Info info = GB_reduce_to_vector ((GrB_Matrix) w, (GrB_Matrix) M,
+        accum, monoid, A, desc, Context) ;
+    GB_BURBLE_END ;
+    return (info) ;
+}
+

@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "May 6, 2021"
+#define GxB_IMPLEMENTATION_DATE "May 7, 2021"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   3
@@ -6560,6 +6560,17 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
 // columns instead of the rows.  This behavior is the transpose of the MATLAB
 // convention, where r=sum(A) produces a row vector and sums each column.
 
+// For GrB_Matrix_reduce_BinaryOp, the GrB_BinaryOp op must correspond to a
+// known built-in monoid:
+//
+//      operator                data-types (all built-in)
+//      ----------------------  ---------------------------
+//      MIN, MAX                INT*, UINT*, FP*
+//      TIMES, PLUS             INT*, UINT*, FP*, FC*
+//      ANY                     INT*, UINT*, FP*, FC*, BOOL
+//      LOR, LAND, LXOR, EQ     BOOL
+//      BOR, BAND, BXOR, BXNOR  UINT*
+
 GB_PUBLIC
 GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
 (
@@ -6567,6 +6578,17 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
     const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_Monoid monoid,        // reduce operator for t=reduce(A)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Descriptor desc       // descriptor for w, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_reduce_BinaryOp // w<mask> = accum (w,reduce(A))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_BinaryOp op,          // reduce operator for t=reduce(A)
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 ) ;
@@ -6872,6 +6894,7 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
 
 // reduce matrix to vector:
 // GrB_Matrix_reduce_Monoid   (w,mask,acc,mo,A,d) // w<mask> = acc (w,reduce(A))
+// GrB_Matrix_reduce_BinaryOp (w,mask,acc,op,A,d) // w<mask> = acc (w,reduce(A))
 // reduce matrix to scalar:
 // GrB_Vector_reduce_[SCALAR] (c,acc,monoid,u,d)  // c = acc (c,reduce(u))
 // GrB_Matrix_reduce_[SCALAR] (c,acc,monoid,A,d)  // c = acc (c,reduce(A))
@@ -6894,7 +6917,9 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
         const GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
               GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
         const GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
-              GrB_Monoid   : GrB_Matrix_reduce_Monoid               \
+              GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
+        const GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp ,           \
+              GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp             \
     )                                                               \
     (arg1, arg2, arg3, arg4, __VA_ARGS__)
 #endif
