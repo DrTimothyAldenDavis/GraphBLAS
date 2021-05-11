@@ -28,7 +28,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "May 7, 2021")
+set ( GraphBLAS_DATE "May 11, 2021")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   3 )
