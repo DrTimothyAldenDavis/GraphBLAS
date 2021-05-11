@@ -322,6 +322,23 @@ void mexFunction
     GrB_Matrix_free_(&A) ;
 
     //--------------------------------------------------------------------------
+    // reduce with positional op
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
+    OK (GrB_Vector_new (&victor, GrB_INT32, n)) ;
+    OK (GxB_Vector_Option_get_(victor, GxB_BITMAP_SWITCH, &bswitch)) ;
+    printf ("vector bitmap switch: %g\n\n", bswitch) ;
+
+    expected = GrB_DOMAIN_MISMATCH ;
+    ERR (GrB_Matrix_reduce_BinaryOp (victor, NULL, NULL, GxB_FIRSTI_INT32,
+        A, NULL)) ;
+    OK (GrB_Matrix_error (&message, victor)) ;
+    printf ("error expected: %s\n", message) ;
+    GrB_Matrix_free_(&A) ;
+    GrB_Vector_free_(&victor) ;
+
+    //--------------------------------------------------------------------------
     // GrB_init
     //--------------------------------------------------------------------------
 
