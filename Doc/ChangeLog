@@ -1,9 +1,12 @@
-Version 5.0.3, May 7, 2021
+Version 5.0.3, May 12, 2021
 
     * demos: no longer built by default
     * (24) bug fix: GB_PUBLIC added to the new functions in GraphBLAS.h
     * GrB_Matrix_reduce_BinaryOp: reinstated from v4.0.3;
         same limit on built-in ops that correspond to known monoids.
+    * Source/GB_control.h: more semirings disabled by default to reduce
+        compile time and binary library size.  The semirings still work, but
+        are not as fast since they now use the generic methods.
 
 Version 5.0.2, May 5, 2021
 
