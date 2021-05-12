@@ -372,9 +372,8 @@ However, including them here is not essential and the additional information on
 the page might detract from a clearer view of the essential features of the
 GraphBLAS functions.
 
-This User Guide also assumes the reader is familiar with the MATLAB language,
-created by Cleve
-Moler.  MATLAB supports only the conventional plus-times semiring on sparse
+This User Guide also assumes the reader is familiar with MATLAB.
+MATLAB supports only the conventional plus-times semiring on sparse
 double and complex matrices, but a MATLAB-like notation easily extends to the
 arbitrary semirings used in GraphBLAS.  The matrix multiplication in the
 example in the Introduction can be written in MATLAB notation as \verb'C=A*B',
@@ -780,9 +779,7 @@ A set of MATLAB functions that precisely compute the ${\bf C \langle M \rangle
 provided in SuiteSparse:GraphBLAS as \verb'GB_spec_accum.m', which computes
 ${\bf Z=C\odot T}$, and \verb'GB_spec_mask.m', which computes ${\bf C \langle M
 \rangle = Z}$.  SuiteSparse:GraphBLAS includes a complete list of
-\verb'GB_spec_*' functions that illustrate every GraphBLAS operation;
-these are discussed in the \verb'GraphBLAS_Test.pdf' document in
-the \verb'GraphBLAS/Test' folder.
+\verb'GB_spec_*' functions that illustrate every GraphBLAS operation.
 
 The methods in Figure~\ref{fig_accummask} rely heavily on MATLAB's logical
 matrix indexing.  For those unfamiliar with logical indexing in MATLAB, here is
@@ -12637,16 +12634,6 @@ Anaconda's python interface.
 I would like to thank John Gilbert (UC Santa Barbara) for our many discussions
 on GraphBLAS, and for our decades-long conversation and collaboration on sparse
 matrix computations, and sparse matrices in MATLAB in particular.
-
-I would like to thank Cleve Moler, Penny Anderson, Pat Quillen, and Bobby Cheng
-(MathWorks) for our many discussions on MATLAB, and for creating MATLAB in the
-first place.  I would like to thank Lucas Jarman, MathWorks, for his help in
-porting GraphBLAS to Microsoft Windows.  Without MATLAB, SuiteSparse:GraphBLAS
-would have been impossible to implement and test.  I've also appreciated the
-opportunity to contribute so much code to MATLAB over the years: AMD, COLAMD,
-UMFPACK, CHOLMOD, SuiteSparseQR, dmperm (in CSparse), etree,
-sparse-times-sparse matrix multiply, and probably more (I've lost count!).
-Most of these appear in \verb'x=A\b' when \verb'A' is sparse.
 
 I would like to thank S\'ebastien Villemot (Debian Developer,
 \url{http://sebastien.villemot.name}) for helping me with various build issues
