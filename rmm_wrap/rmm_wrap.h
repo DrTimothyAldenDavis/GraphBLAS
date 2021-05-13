@@ -15,6 +15,7 @@
 struct RMM_Handle;
 
 void rmm_create_handle( RMM_Handle *);
+void rmm_destroy_handle( RMM_Handle *);
 
 void rmm_initialize( RMM_Handle *handle, size_t init_pool_size, size_t max_pool_size) ;
 
