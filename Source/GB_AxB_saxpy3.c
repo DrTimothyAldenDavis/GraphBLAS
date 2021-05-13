@@ -88,6 +88,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
+#include "GB_control.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
@@ -194,12 +195,106 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         B_is_pattern, semiring, flipxy, &mult_opcode, &add_opcode, &xcode,
         &ycode, &zcode) ;
 
+    //--------------------------------------------------------------------------
+    // determine if this is an enabled built-in ANY_PAIR semiring
+    //--------------------------------------------------------------------------
+
     #ifdef GBCOMPACT
+    // no semiring is built-in; all use GB_AxB_saxpy_generic
     bool is_any_pair_semiring = false ;
     #else
     bool is_any_pair_semiring = builtin_semiring
         && (add_opcode == GB_ANY_opcode)
         && (mult_opcode == GB_PAIR_opcode) ;
+    if (is_any_pair_semiring)
+    {
+        // check if the ANY_PAIR_[type] semiring is disabled
+        switch (xcode)
+        {
+
+            case GB_BOOL_code   : 
+                #if GxB_NO_ANY_PAIR_BOOL
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_INT8_code   : 
+                #if GxB_NO_ANY_PAIR_INT8
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_INT16_code  : 
+                #if GxB_NO_ANY_PAIR_INT16
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_INT32_code  : 
+                #if GxB_NO_ANY_PAIR_INT32
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_INT64_code  : 
+                #if GxB_NO_ANY_PAIR_INT64
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_UINT8_code  : 
+                #if GxB_NO_ANY_PAIR_UINT8
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_UINT16_code : 
+                #if GxB_NO_ANY_PAIR_UINT16
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_UINT32_code : 
+                #if GxB_NO_ANY_PAIR_UINT32
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_UINT64_code : 
+                #if GxB_NO_ANY_PAIR_UINT64
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_FP32_code   : 
+                #if GxB_NO_ANY_PAIR_FP32
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_FP64_code   : 
+                #if GxB_NO_ANY_PAIR_FP64
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_FC32_code   : 
+                // this is now disabled by default
+                #if GxB_NO_ANY_PAIR_FC32
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            case GB_FC64_code   : 
+                // this is now disabled by default
+                #if GxB_NO_ANY_PAIR_FC64
+                is_any_pair_semiring = false ;
+                #endif
+                break ;
+
+            default: ;
+        }
+    }
     #endif
 
     //--------------------------------------------------------------------------
@@ -639,6 +734,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (!done)
     { 
+        ASSERT (!is_any_pair_semiring) ;
         info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
             M_packed_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
             flipxy, GB_SAXPY_METHOD_3,

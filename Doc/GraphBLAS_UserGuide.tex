@@ -979,11 +979,10 @@ Some features for MATLAB sparse matrices are not yet available for
 GraphBLAS matrices.  Some of these may be added in future releases.
 
 \begin{packed_itemize}
-    \item Saving a GrB matrix object from MATLAB can be done, but the
-        resulting \verb'*.mat' file must be read in by the same version
-        of GraphBLAS.  To save an object in an upward compatible manner,
-        extract a struct as \verb'S=struct(G)', then save \verb'S'.
-        After loading \verb'S', do \verb'G=GrB(S)' to restore the object.
+    \item If you save a GrB matrix object from MATLAB using one version
+        of SuiteSparse:GraphBLAS, you can load it back in in that version or in
+        a later version.  You cannot go backwards, and save in v5.x and load in
+        v4.x, for example.
     \item \verb'GrB' matrices with dimension larger than \verb'2^53' do not
         display properly in the MATLAB \verb'whos' command.  MATLAB gets this
         information from \verb'size(A)', which returns a correct result, but
@@ -1313,7 +1312,7 @@ API Specification supported by the library.
 This version of SuiteSparse:GraphBLAS supports
 \input{GraphBLAS_API_version.tex}
 of the C API Specification, with the exception of changes to \verb'GrB_wait',
-\verb'GrB_error'. and \verb'GrB_Matrix_reduce_BinaryOp'.
+\verb'GrB_error', and \verb'GrB_Matrix_reduce_BinaryOp'.
 \end{alert}
 
 %===============================================================================
@@ -4985,7 +4984,7 @@ GraphBLAS (\verb'bool', \verb'int*_t', \verb'uint*_t', \verb'float',
 with the user-defined type.  No typecasting is done on import or export.
 
 \begin{alert}
-{\bf FUTURE:}
+% {\bf FUTURE:}
 For the import methods, the numerical array must be large enough to hold all
 the entries, but in a future release of SuiteSparse: GraphBLAS, it may be
 specified as an array of length one.  This will indicate that all entries in
@@ -5000,7 +4999,7 @@ If \verb'is_uniform' is true, then all entries present in the matrix or vector
 have the same value, and the \verb'Ax' array (for matrices) or \verb'vx' array
 (for vectors) only need to be large enough to hold a single value.
 
-Currently, uniformed-values are not yet supported in this release of
+Currently, uniform-valued matrices are not yet supported in this release of
 SuiteSparse:GraphBLAS.  On export, \verb'is_uniform' will always be false.
 On import, an error is returned if \verb'is_uniform' is true on input.
 This feature will be added later, but the \verb'is_uniform' parameter is
@@ -10602,7 +10601,8 @@ terms are column vectors instead of matrices.
 
 \verb'GrB_reduce' can also be passed a \verb'GrB_BinaryOp' in place of the
 monoid parameter, but the binary operator must correspond to a known
-built-in monoid.
+built-in monoid.  This provides a limited implementation of
+\verb'GrB_Matrix_reduce_BinaryOp'.
 
 \newpage
 %-------------------------------------------------------------------------------
