@@ -24,10 +24,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "May 5, 2021")
+set ( GraphBLAS_DATE "May 12, 2021")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 0 )
-set ( GraphBLAS_VERSION_SUB   2 )
+set ( GraphBLAS_VERSION_SUB   3 )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "Sept 25, 2019" )
@@ -63,7 +63,7 @@ endif ( )
 if ( BUILD_GRB_STATIC_LIBRARY )
     message ( STATUS "Building all GraphBLAS libraries (static and dynamic)" )
 else ( )
-    message ( STATUS "Building dynamic GraphBLAS library only" )
+    message ( STATUS "Building dynamic GraphBLAS library" )
 endif ( )
 
 if ( GBCOMPACT )
@@ -357,56 +357,70 @@ endif ( )
 message ( STATUS "CMAKE C flags: " ${CMAKE_C_FLAGS} )
 
 #-------------------------------------------------------------------------------
-# Demo library
+# Demo library and programs
 #-------------------------------------------------------------------------------
 
-file ( GLOB DEMO_SOURCES "Demo/Source/*.c" )
-add_library ( graphblasdemo SHARED ${DEMO_SOURCES} )
+if ( DEMO )
 
-SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
-    VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
-    SOVERSION ${GraphBLAS_VERSION_MAJOR}
-    C_STANDARD_REQUIRED 11 )
-set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
-target_link_libraries ( graphblasdemo PUBLIC ${M_LIB} graphblas  ${GB_CUDA} )
+    #---------------------------------------------------------------------------
+    # demo library
+    #---------------------------------------------------------------------------
 
-if ( BUILD_GRB_STATIC_LIBRARY )
-    add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
-    SET_TARGET_PROPERTIES ( graphblasdemo_static PROPERTIES
+    message ( STATUS "Also compiling the demos in GraphBLAS/Demo" )
+
+    file ( GLOB DEMO_SOURCES "Demo/Source/*.c" )
+    add_library ( graphblasdemo SHARED ${DEMO_SOURCES} )
+
+    SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
         VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
+        SOVERSION ${GraphBLAS_VERSION_MAJOR}
         C_STANDARD_REQUIRED 11 )
-    set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
-    target_link_libraries ( graphblasdemo_static PUBLIC  graphblas_static  ${GB_CUDA} )
+    set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
+    target_link_libraries ( graphblasdemo PUBLIC ${M_LIB} graphblas  ${GB_CUDA} )
+
+    if ( BUILD_GRB_STATIC_LIBRARY )
+        add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
+        SET_TARGET_PROPERTIES ( graphblasdemo_static PROPERTIES
+            VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
+            C_STANDARD_REQUIRED 11 )
+        set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
+        target_link_libraries ( graphblasdemo_static PUBLIC  graphblas_static  ${GB_CUDA} )
+    endif ( )
+
+    #---------------------------------------------------------------------------
+    # Demo programs
+    #---------------------------------------------------------------------------
+
+    add_executable ( pagerank_demo "Demo/Program/pagerank_demo.c" )
+    add_executable ( bfs_demo      "Demo/Program/bfs_demo.c" )
+    add_executable ( tri_demo      "Demo/Program/tri_demo.c" )
+    add_executable ( openmp_demo   "Demo/Program/openmp_demo.c" )
+    add_executable ( mis_demo      "Demo/Program/mis_demo.c" )
+    add_executable ( complex_demo  "Demo/Program/complex_demo.c" )
+    add_executable ( kron_demo     "Demo/Program/kron_demo.c" )
+    add_executable ( simple_demo   "Demo/Program/simple_demo.c" )
+    add_executable ( wildtype_demo "Demo/Program/wildtype_demo.c" )
+    add_executable ( reduce_demo   "Demo/Program/reduce_demo.c" )
+    add_executable ( import_demo   "Demo/Program/import_demo.c" )
+
+    # Libraries required for Demo programs
+    target_link_libraries ( pagerank_demo PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+    target_link_libraries ( bfs_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+    target_link_libraries ( tri_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+    target_link_libraries ( openmp_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+    target_link_libraries ( mis_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+    target_link_libraries ( complex_demo  PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+    target_link_libraries ( kron_demo     PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+    target_link_libraries ( simple_demo   PUBLIC graphblasdemo ${GB_CUDA} )
+    target_link_libraries ( wildtype_demo PUBLIC graphblas ${GB_CUDA} )
+    target_link_libraries ( reduce_demo   PUBLIC graphblas ${GB_CUDA} )
+    target_link_libraries ( import_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+
+else ( )
+
+    message ( STATUS "Skipping the demos in GraphBLAS/Demo" )
+
 endif ( )
-
-#-------------------------------------------------------------------------------
-# Demo programs
-#-------------------------------------------------------------------------------
-
-add_executable ( pagerank_demo "Demo/Program/pagerank_demo.c" )
-add_executable ( bfs_demo      "Demo/Program/bfs_demo.c" )
-add_executable ( tri_demo      "Demo/Program/tri_demo.c" )
-add_executable ( openmp_demo   "Demo/Program/openmp_demo.c" )
-add_executable ( mis_demo      "Demo/Program/mis_demo.c" )
-add_executable ( complex_demo  "Demo/Program/complex_demo.c" )
-add_executable ( kron_demo     "Demo/Program/kron_demo.c" )
-add_executable ( simple_demo   "Demo/Program/simple_demo.c" )
-add_executable ( wildtype_demo "Demo/Program/wildtype_demo.c" )
-add_executable ( reduce_demo   "Demo/Program/reduce_demo.c" )
-add_executable ( import_demo   "Demo/Program/import_demo.c" )
-
-# Libraries required for Demo programs
-target_link_libraries ( pagerank_demo PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( bfs_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( tri_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( openmp_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( mis_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( complex_demo  PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( kron_demo     PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-target_link_libraries ( simple_demo   PUBLIC graphblasdemo ${GB_CUDA} )
-target_link_libraries ( wildtype_demo PUBLIC graphblas ${GB_CUDA} )
-target_link_libraries ( reduce_demo   PUBLIC graphblas ${GB_CUDA} )
-target_link_libraries ( import_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} )
 
 #-------------------------------------------------------------------------------
 # graphblas installation location

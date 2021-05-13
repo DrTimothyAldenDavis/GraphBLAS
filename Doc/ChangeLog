@@ -1,9 +1,20 @@
+Version 5.0.3, May 12, 2021
+
+    * demos: no longer built by default
+    * (24) bug fix: GB_PUBLIC added to the new functions in GraphBLAS.h
+    * GrB_Matrix_reduce_BinaryOp: reinstated from v4.0.3;
+        same limit on built-in ops that correspond to known monoids.
+    * Source/GB_control.h: more semirings disabled by default to reduce
+        compile time and binary library size.  The semirings still work, but
+        are not as fast since they now use the generic methods.
+
 Version 5.0.2, May 5, 2021
 
     * GrB_Matrix_reduce_BinaryOp: removed.  Use a monoid instead, with
         GrB_reduce or GrB_Matrix_reduce_Monoid.
     * (23) bug fix: GrB_Matrix_apply_BinaryOp1st and 2nd were using the
-        wrong descriptors for GrB_INP0 and GrB_INP1.
+        wrong descriptors for GrB_INP0 and GrB_INP1. Caught by Erik Welch,
+        Anaconda.
     * memory pool added for faster memory allocation
     * calloc no longer used: using malloc+memset(0) instead
     * realloc option: if not available, uses malloc+memcpy+free
@@ -16,7 +27,7 @@ Version 5.0.2, May 5, 2021
         methods, which indicates that the matrix values are all the same.
     * (22) bug fix: SIMD vectorization was missing reduction(+,task_cnvals)
         in GB_dense_subassign_06d_template.c.  Caught by Jeff Huang, Texas A&M,
-        with his software package for race-condition detection. Good catch!
+        with his software package for race-condition detection.
 
 Version 4.0.3, Jan 19, 2021
 

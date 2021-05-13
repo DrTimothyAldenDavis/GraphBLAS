@@ -3650,6 +3650,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 // or by column, bitmap switch, hyper switch, and sparsity control) are
 // unchanged.
 
+GB_PUBLIC
 GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -3669,6 +3670,7 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
 // number of columns of A.  The type of each tile is the same as the type of A;
 // no typecasting is done.
 
+GB_PUBLIC
 GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
 (
     GrB_Matrix *Tiles,              // 2D row-major array of size m-by-n
@@ -3700,6 +3702,7 @@ GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
 // C by GxB_Matrix_Option_set (format by row or by column, bitmap switch, hyper
 // switch, and sparsity control) are unchanged.
 
+GB_PUBLIC
 GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
 (
     GrB_Matrix C,                   // output matrix
@@ -3726,6 +3729,7 @@ GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
 // typecasted into the type of v.  Any settings made to v by
 // GxB_Vector_Option_set (bitmap switch and sparsity control) are unchanged.
 
+GB_PUBLIC
 GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix, as a vector
 (
     GrB_Vector v,                   // output vector
@@ -6556,6 +6560,17 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
 // columns instead of the rows.  This behavior is the transpose of the MATLAB
 // convention, where r=sum(A) produces a row vector and sums each column.
 
+// For GrB_Matrix_reduce_BinaryOp, the GrB_BinaryOp op must correspond to a
+// known built-in monoid:
+//
+//      operator                data-types (all built-in)
+//      ----------------------  ---------------------------
+//      MIN, MAX                INT*, UINT*, FP*
+//      TIMES, PLUS             INT*, UINT*, FP*, FC*
+//      ANY                     INT*, UINT*, FP*, FC*, BOOL
+//      LOR, LAND, LXOR, EQ     BOOL
+//      BOR, BAND, BXOR, BXNOR  UINT*
+
 GB_PUBLIC
 GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
 (
@@ -6563,6 +6578,17 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<mask> = accum (w,reduce(A))
     const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_Monoid monoid,        // reduce operator for t=reduce(A)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Descriptor desc       // descriptor for w, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_reduce_BinaryOp // w<mask> = accum (w,reduce(A))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_BinaryOp op,          // reduce operator for t=reduce(A)
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 ) ;
@@ -6868,6 +6894,7 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
 
 // reduce matrix to vector:
 // GrB_Matrix_reduce_Monoid   (w,mask,acc,mo,A,d) // w<mask> = acc (w,reduce(A))
+// GrB_Matrix_reduce_BinaryOp (w,mask,acc,op,A,d) // w<mask> = acc (w,reduce(A))
 // reduce matrix to scalar:
 // GrB_Vector_reduce_[SCALAR] (c,acc,monoid,u,d)  // c = acc (c,reduce(u))
 // GrB_Matrix_reduce_[SCALAR] (c,acc,monoid,A,d)  // c = acc (c,reduce(A))
@@ -6890,7 +6917,9 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
         const GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
               GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
         const GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
-              GrB_Monoid   : GrB_Matrix_reduce_Monoid               \
+              GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
+        const GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp ,           \
+              GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp             \
     )                                                               \
     (arg1, arg2, arg3, arg4, __VA_ARGS__)
 #endif

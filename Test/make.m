@@ -223,7 +223,7 @@ for k = 1:length (mexfunctions)
 end
 
 % compile GB_spones_mex
-mex -O -R2018a GB_spones_mex.c
+mex -g -R2018a GB_spones_mex.c
 
 % load the library
 if (ispc)

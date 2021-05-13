@@ -60,5 +60,10 @@ void GB_binop_new
     const GB_Opcode opcode          // opcode for the function
 ) ;
 
+GrB_Monoid *GB_binop_to_monoid      // return the corresponding monoid, or NULL
+(
+    const GrB_BinaryOp op_in        // binary op to convert
+) ;
+
 #endif
 

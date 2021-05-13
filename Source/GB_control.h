@@ -98,8 +98,9 @@
 //      (EQ_LT_FP32 for example), and boolean inputs with comparators
 //      (GE, GT, LE, LT)
 //  (7) positional semirings with PLUS and TIMES monoid removed.
+//  (8) some complex semirings removed.
 
-// With the above semirings removed, the remaining 412 semirings are:
+// With the above semirings removed, the remaining 398 semirings are:
 
 //  25 boolean semirings
 //
@@ -125,15 +126,15 @@
 //      PLUS:   MIN, MAX, PLUS, TIMES, FIRST, SECOND, PAIR
 //      TIMES:  MIN, MAX, PLUS, TIMES, FIRST, SECOND
 //
-//  18 semirings for 2 complex types (PLUS and TIMES monoids only):
+//  10 semirings for 2 complex types (PLUS and TIMES monoids only):
 //
 //      monoid  multiply ops
-//      PLUS:   PLUS, TIMES, FIRST, SECOND, PAIR
-//      TIMES:  PLUS, TIMES, FIRST, SECOND
+//      PLUS:  TIMES, FIRST, SECOND
+//      TIMES: FIRST, SECOND
 //
-//  39 semirings with the ANY monoid:
+//  33 semirings enabled with the ANY monoid:
 //
-//      ANY:    FIRST, SECOND, PAIR (with bool, 10 real types, 2 complex types)
+//      ANY:   FIRST, SECOND, PAIR (with bool, 10 real types)
 //
 //  64 bitwise semirings: for 4 unsigned integer types:
 //
@@ -2185,28 +2186,29 @@
 
 // _FIRST and _SECOND are needed by GrB_reduce to vector
 
-//  18 semirings for 2 complex types (PLUS and TIMES monoids only):
+//  10 semirings for 2 complex types (PLUS and TIMES monoids only):
 //
 //      monoid  multiply ops
-//      PLUS:  PLUS, TIMES, FIRST, SECOND, PAIR
-//      TIMES: PLUS, TIMES, FIRST, SECOND
+//      PLUS:  TIMES, FIRST, SECOND
+//      TIMES: FIRST, SECOND
 
-// #define GxB_NO_PLUS_PLUS_FC32        1
-// #define GxB_NO_PLUS_PLUS_FC64        1
+   #define GxB_NO_PLUS_PLUS_FC32        1
+   #define GxB_NO_PLUS_PLUS_FC64        1
 
+// the conventional semiring, used by C=A*B for built-in MATLAB matrices
 // #define GxB_NO_PLUS_TIMES_FC32       1
 // #define GxB_NO_PLUS_TIMES_FC64       1
 
-// needed by GrB_reduce to vector
+// needed by GrB_reduce to vector, or s = sum (A) in MATLAB interface
 // #define GxB_NO_PLUS_FIRST_FC32       1
 // #define GxB_NO_PLUS_FIRST_FC64       1
 
-// needed by GrB_reduce to vector
+// needed by GrB_reduce to vector, or s = sum (A) in MATLAB interface
 // #define GxB_NO_PLUS_SECOND_FC32      1
 // #define GxB_NO_PLUS_SECOND_FC64      1
 
-// #define GxB_NO_PLUS_PAIR_FC32        1
-// #define GxB_NO_PLUS_PAIR_FC64        1
+   #define GxB_NO_PLUS_PAIR_FC32        1
+   #define GxB_NO_PLUS_PAIR_FC64        1
 
    #define GxB_NO_PLUS_MINUS_FC32       1
    #define GxB_NO_PLUS_MINUS_FC64       1
@@ -2220,17 +2222,17 @@
    #define GxB_NO_PLUS_RMINUS_FC32      1
    #define GxB_NO_PLUS_RMINUS_FC64      1
 
-// #define GxB_NO_TIMES_PLUS_FC32       1
-// #define GxB_NO_TIMES_PLUS_FC64       1
+   #define GxB_NO_TIMES_PLUS_FC32       1
+   #define GxB_NO_TIMES_PLUS_FC64       1
 
-// #define GxB_NO_TIMES_TIMES_FC32      1
-// #define GxB_NO_TIMES_TIMES_FC64      1
+   #define GxB_NO_TIMES_TIMES_FC32      1
+   #define GxB_NO_TIMES_TIMES_FC64      1
 
-// needed by GrB_reduce to vector:
+// needed by GrB_reduce to vector, or s = prod (A) in MATLAB interface
 // #define GxB_NO_TIMES_FIRST_FC32      1
 // #define GxB_NO_TIMES_FIRST_FC64      1
 
-// needed by GrB_reduce to vector
+// needed by GrB_reduce to vecto, or s = prod (A) in MATLAB interface
 // #define GxB_NO_TIMES_SECOND_FC32     1
 // #define GxB_NO_TIMES_SECOND_FC64     1
 
@@ -2254,9 +2256,9 @@
 // However, semirings based on the ANY monoid are common: BFS in particular
 // uses ANY_FIRST, ANY_SECOND, and ANY_PAIR.
 
-//  39 semirings enabled with the ANY monoid:
+//  33 semirings enabled with the ANY monoid:
 //
-//      ANY:   FIRST, SECOND, PAIR (with bool, 10 real types, 2 complex types)
+//      ANY:   FIRST, SECOND, PAIR (with bool, 10 real types)
 
 // used in LAGraph: BFS, and GrB_reduce to vector
 // #define GxB_NO_ANY_FIRST_BOOL        1
@@ -2270,8 +2272,8 @@
 // #define GxB_NO_ANY_FIRST_UINT32      1
 // #define GxB_NO_ANY_FIRST_UINT64      1
 // #define GxB_NO_ANY_FIRST_UINT8       1
-// #define GxB_NO_ANY_FIRST_FC32        1
-// #define GxB_NO_ANY_FIRST_FC64        1
+   #define GxB_NO_ANY_FIRST_FC32        1
+   #define GxB_NO_ANY_FIRST_FC64        1
 
 // used in LAGraph: BFS, and GrB_reduce to vector
 // #define GxB_NO_ANY_SECOND_BOOL       1
@@ -2285,8 +2287,8 @@
 // #define GxB_NO_ANY_SECOND_UINT32     1
 // #define GxB_NO_ANY_SECOND_UINT64     1
 // #define GxB_NO_ANY_SECOND_UINT8      1
-// #define GxB_NO_ANY_SECOND_FC32       1
-// #define GxB_NO_ANY_SECOND_FC64       1
+   #define GxB_NO_ANY_SECOND_FC32       1
+   #define GxB_NO_ANY_SECOND_FC64       1
 
 // Not GrB_*, but used in BFS and others.  The only purely symbolic semiring.
 // #define GxB_NO_ANY_PAIR_BOOL         1
@@ -2300,8 +2302,8 @@
 // #define GxB_NO_ANY_PAIR_UINT32       1
 // #define GxB_NO_ANY_PAIR_UINT64       1
 // #define GxB_NO_ANY_PAIR_UINT8        1
-// #define GxB_NO_ANY_PAIR_FC32         1
-// #define GxB_NO_ANY_PAIR_FC64         1
+   #define GxB_NO_ANY_PAIR_FC32         1
+   #define GxB_NO_ANY_PAIR_FC64         1
 
    #define GxB_NO_ANY_DIV_FP32          1
    #define GxB_NO_ANY_DIV_FP64          1

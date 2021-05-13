@@ -131,9 +131,23 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 5.0.3 (May 12, 2021)
+
+    \begin{packed_itemize}
+    \item demos are no longer built by default
+    \item (24) bug fix: new functions in v5.0.2 not declared as \verb'extern'
+        in \verb'GraphBLAS.h'.
+    \item \verb'GrB_Matrix_reduce_BinaryOp' reinstated from v4.0.3;
+        same limit on built-in ops that correspond to known monoids.
+    \end{packed_itemize}
+
 \item Version 5.0.2 (May 5, 2021)
 
     \begin{packed_itemize}
+    \item (23) bug fix: \verb'GrB_Matrix_apply_BinaryOp1st' and \verb'2nd'
+        were using the
+        wrong descriptors for \verb'GrB_INP0' and \verb'GrB_INP1'.
+        Caught by Erik Welch, Anaconda.
     \item memory pool added for faster allocation/free of small blocks
     \item \verb'@GrB' MATLAB interface ported to MATLAB R2021a.
     \item \verb'GxB_PRINTF' and \verb'GxB_FLUSH' global options added.
@@ -149,8 +163,7 @@ are extensions to the v1.3 GraphBLAS C API.
     \item (22) bug fix: SIMD vectorization was missing
         \verb'reduction(+,task_cnvals)' in
         \verb'GB_dense_subassign_06d_template.c'.  Caught by Jeff Huang, Texas
-        A\&M, with his software package for race-condition detection. Good
-        catch!
+        A\&M, with his software package for race-condition detection.
     \item \verb'GrB_Matrix_reduce_BinaryOp': removed.  Use a monoid instead,
         with \verb'GrB_reduce' or \verb'GrB_Matrix_reduce_Monoid'.
     \end{packed_itemize}
@@ -342,7 +355,8 @@ The only methods that have been fully deprecated and removed are the no-input
 \verb'GrB_wait' and \verb'GrB_error' methods, which are incompatible with the
 new 1-input \verb'GrB_wait' and 2-input \verb'GrB_error' methods defined in
 the latest version of the C API Specification, and the
-\verb'GrB_Matrix_reduce_BinaryOp' function, which has been removed.
+\verb'GrB_Matrix_reduce_BinaryOp' function, which is limited to binary
+operators that correspond to built-in monoids.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -359,9 +373,8 @@ However, including them here is not essential and the additional information on
 the page might detract from a clearer view of the essential features of the
 GraphBLAS functions.
 
-This User Guide also assumes the reader is familiar with the MATLAB language,
-created by Cleve
-Moler.  MATLAB supports only the conventional plus-times semiring on sparse
+This User Guide also assumes the reader is familiar with MATLAB.
+MATLAB supports only the conventional plus-times semiring on sparse
 double and complex matrices, but a MATLAB-like notation easily extends to the
 arbitrary semirings used in GraphBLAS.  The matrix multiplication in the
 example in the Introduction can be written in MATLAB notation as \verb'C=A*B',
@@ -767,9 +780,7 @@ A set of MATLAB functions that precisely compute the ${\bf C \langle M \rangle
 provided in SuiteSparse:GraphBLAS as \verb'GB_spec_accum.m', which computes
 ${\bf Z=C\odot T}$, and \verb'GB_spec_mask.m', which computes ${\bf C \langle M
 \rangle = Z}$.  SuiteSparse:GraphBLAS includes a complete list of
-\verb'GB_spec_*' functions that illustrate every GraphBLAS operation;
-these are discussed in the \verb'GraphBLAS_Test.pdf' document in
-the \verb'GraphBLAS/Test' folder.
+\verb'GB_spec_*' functions that illustrate every GraphBLAS operation.
 
 The methods in Figure~\ref{fig_accummask} rely heavily on MATLAB's logical
 matrix indexing.  For those unfamiliar with logical indexing in MATLAB, here is
@@ -968,11 +979,10 @@ Some features for MATLAB sparse matrices are not yet available for
 GraphBLAS matrices.  Some of these may be added in future releases.
 
 \begin{packed_itemize}
-    \item Saving a GrB matrix object from MATLAB can be done, but the
-        resulting \verb'*.mat' file must be read in by the same version
-        of GraphBLAS.  To save an object in an upward compatible manner,
-        extract a struct as \verb'S=struct(G)', then save \verb'S'.
-        After loading \verb'S', do \verb'G=GrB(S)' to restore the object.
+    \item If you save a GrB matrix object from MATLAB using one version
+        of SuiteSparse:GraphBLAS, you can load it back in in that version or in
+        a later version.  You cannot go backwards, and save in v5.x and load in
+        v4.x, for example.
     \item \verb'GrB' matrices with dimension larger than \verb'2^53' do not
         display properly in the MATLAB \verb'whos' command.  MATLAB gets this
         information from \verb'size(A)', which returns a correct result, but
@@ -1302,7 +1312,7 @@ API Specification supported by the library.
 This version of SuiteSparse:GraphBLAS supports
 \input{GraphBLAS_API_version.tex}
 of the C API Specification, with the exception of changes to \verb'GrB_wait',
-\verb'GrB_error'. and \verb'GrB_Matrix_reduce_BinaryOp'.
+\verb'GrB_error', and \verb'GrB_Matrix_reduce_BinaryOp'.
 \end{alert}
 
 %===============================================================================
@@ -4974,7 +4984,7 @@ GraphBLAS (\verb'bool', \verb'int*_t', \verb'uint*_t', \verb'float',
 with the user-defined type.  No typecasting is done on import or export.
 
 \begin{alert}
-{\bf FUTURE:}
+% {\bf FUTURE:}
 For the import methods, the numerical array must be large enough to hold all
 the entries, but in a future release of SuiteSparse: GraphBLAS, it may be
 specified as an array of length one.  This will indicate that all entries in
@@ -4989,7 +4999,7 @@ If \verb'is_uniform' is true, then all entries present in the matrix or vector
 have the same value, and the \verb'Ax' array (for matrices) or \verb'vx' array
 (for vectors) only need to be large enough to hold a single value.
 
-Currently, uniformed-values are not yet supported in this release of
+Currently, uniform-valued matrices are not yet supported in this release of
 SuiteSparse:GraphBLAS.  On export, \verb'is_uniform' will always be false.
 On import, an error is returned if \verb'is_uniform' is true on input.
 This feature will be added later, but the \verb'is_uniform' parameter is
@@ -10589,6 +10599,11 @@ The final step is ${\bf w \langle m \rangle  = w \odot t}$, as described
 in Section~\ref{accummask}, except that all the
 terms are column vectors instead of matrices.
 
+\verb'GrB_reduce' can also be passed a \verb'GrB_BinaryOp' in place of the
+monoid parameter, but the binary operator must correspond to a known
+built-in monoid.  This provides a limited implementation of
+\verb'GrB_Matrix_reduce_BinaryOp'.
+
 \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_reduce\_$<$type$>$:} reduce a vector to a scalar}
@@ -12179,7 +12194,7 @@ SuiteSparse:GraphBLAS v3.2.0 and later is recommended.  Atomics are slower in
 icc as compared to gcc.
 \end{alert}
 
-To compile SuiteSparse:GraphBLAS and the demo programs, simply type \verb'make'
+To compile SuiteSparse:GraphBLAS, simply type \verb'make'
 in the main GraphBLAS folder, which compiles the library.  This will be a
 single-threaded compilation, which will take a long time.  To compile in 
 parallel (40 threads for example), use:
@@ -12194,8 +12209,8 @@ To use a non-default compiler with 4 threads:
     \begin{verbatim}
     make CC=icc CXX=icc JOBS=4 \end{verbatim} }
 
-After compiling the library, you can run the demos by typing \verb'./demo'
-in the Demo folder.
+After compiling the library, you can compile the demos with
+\verb'make all' and then \verb'make run'.
 
 If \verb'cmake' or \verb'make' fail, it might be that your default compiler
 does not support ANSI C11.  Try another compiler.  For example, try one of
@@ -12620,16 +12635,6 @@ Anaconda's python interface.
 I would like to thank John Gilbert (UC Santa Barbara) for our many discussions
 on GraphBLAS, and for our decades-long conversation and collaboration on sparse
 matrix computations, and sparse matrices in MATLAB in particular.
-
-I would like to thank Cleve Moler, Penny Anderson, Pat Quillen, and Bobby Cheng
-(MathWorks) for our many discussions on MATLAB, and for creating MATLAB in the
-first place.  I would like to thank Lucas Jarman, MathWorks, for his help in
-porting GraphBLAS to Microsoft Windows.  Without MATLAB, SuiteSparse:GraphBLAS
-would have been impossible to implement and test.  I've also appreciated the
-opportunity to contribute so much code to MATLAB over the years: AMD, COLAMD,
-UMFPACK, CHOLMOD, SuiteSparseQR, dmperm (in CSparse), etree,
-sparse-times-sparse matrix multiply, and probably more (I've lost count!).
-Most of these appear in \verb'x=A\b' when \verb'A' is sparse.
 
 I would like to thank S\'ebastien Villemot (Debian Developer,
 \url{http://sebastien.villemot.name}) for helping me with various build issues

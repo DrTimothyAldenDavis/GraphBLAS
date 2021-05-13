@@ -305,6 +305,7 @@
 #define GrB_Matrix_new GrM_Matrix_new
 #define GrB_Matrix_nrows GrM_Matrix_nrows
 #define GrB_Matrix_nvals GrM_Matrix_nvals
+#define GrB_Matrix_reduce_BinaryOp GrM_Matrix_reduce_BinaryOp
 #define GrB_Matrix_reduce_BOOL GrM_Matrix_reduce_BOOL
 #define GrB_Matrix_reduce_FP32 GrM_Matrix_reduce_FP32
 #define GrB_Matrix_reduce_FP64 GrM_Matrix_reduce_FP64
@@ -3089,6 +3090,7 @@
 #define GB_binop_builtin GM_binop_builtin
 #define GB_binop_flip GM_binop_flip
 #define GB_binop_new GM_binop_new
+#define GB_binop_to_monoid GM_binop_to_monoid
 #define GB_bitmap_assign GM_bitmap_assign
 #define GB_bitmap_assign_fullM_accum GM_bitmap_assign_fullM_accum
 #define GB_bitmap_assign_fullM_accum_whole GM_bitmap_assign_fullM_accum_whole
