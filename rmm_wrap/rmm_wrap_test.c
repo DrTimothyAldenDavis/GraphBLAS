@@ -13,9 +13,9 @@ int main()
     printf("RMM initialized!\n");
 
     void *p;
-    size_t buff_size = (1<<13)*256;
-    p = rmm_allocate(rmmH, buff_size );
-    rmm_deallocate(rmmH, p, buff_size);
+    size_t buff_size = (1<<13)*252;
+    p = rmm_allocate( &buff_size );
+    rmm_deallocate( p, buff_size);
 
     rmm_destroy_handle(rmmH);
 

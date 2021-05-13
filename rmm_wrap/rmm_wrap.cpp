@@ -10,7 +10,7 @@ inline auto make_and_set_pool(size_t initial_size, size_t maximum_size)
 { 
 	auto resource = rmm::mr::make_owning_wrapper<rmm::mr::pool_memory_resource>
 			        ( make_managed(), initial_size, maximum_size );
-	//rmm::mr::set_current_device_resource( resource.get());
+	rmm::mr::set_current_device_resource( resource.get());
 	return resource;
 }
 
@@ -36,19 +36,24 @@ void rmm_initialize(RMM_Handle *handle, size_t init_pool_size, size_t max_pool_s
 {
     // Construct a resource that uses a coalescing best-fit pool allocator
     handle->resource =  make_and_set_pool( init_pool_size, max_pool_size) ;
-    //handle->rmm = rmm::mr::get_current_device_resource();
 }
 
 
-void *rmm_allocate( RMM_Handle *handle , size_t size)
+void *rmm_allocate( size_t *size)
 {
-    printf("rmm_alloc %ld bytes\n",size);
-    return handle->resource.get()->allocate( size );
+    if (*size % 256 > 0)
+    {
+        *size = *size + (*size%256);
+    }
+    printf("rmm_alloc %ld bytes\n",*size);
+    rmm::mr::device_memory_resource *mr=  rmm::mr::get_current_device_resource();
+    return mr->allocate( *size );
 }
 
-void rmm_deallocate( RMM_Handle* handle, void *p, size_t size)
+void rmm_deallocate( void *p, size_t size)
 {
     printf("dealloc %ld bytes\n", size); 
-    handle->resource.get()->deallocate( p, size );
+    rmm::mr::device_memory_resource *mr=  rmm::mr::get_current_device_resource();
+    mr->deallocate( p, size );
 }
 
