@@ -62,9 +62,11 @@ Demo:           a set of demos on how to use GraphBLAS
 
 Doc:            SuiteSparse:GraphBLAS User Guide and license
 
-GraphBLAS:      the MATLAB interface.  This folder is called 'GraphBLAS' so
-                that typing 'help graphblas' or 'doc graphblas' in the MATLAB
-                Command Window can locate the Contents.m file.
+GraphBLAS:      the @GrB MATLAB interface, including its test suite and demos.
+                This folder is called 'GraphBLAS' so that typing 'help
+                graphblas' or 'doc graphblas' in the MATLAB Command Window can
+                locate the Contents.m file.  Note that this folder and all its
+                contents are under the GNU GPLv3 (or later), not Apache-2.0.
 
 Include:        user-accessible include file, GraphBLAS.h
 

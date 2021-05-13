@@ -265,7 +265,7 @@
 % See also GrB, sparse.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
-% SPDX-License-Identifier: Apache-2.0
+% SPDX-License-Identifier: GPL-3.0-or-later
 
 help GrB.MATLAB_vs_GrB ;
 

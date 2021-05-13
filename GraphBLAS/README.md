@@ -1,7 +1,10 @@
 # GraphBLAS/GraphBLAS: MATLAB interface for SuiteSparse:GraphBLAS
 
 SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
-SPDX-License-Identifier: Apache-2.0
+The @GrB MATLAB interface (including its test suite and demos) is under the GNU
+GPLv3 (or later) license.
+SPDX-License-Identifier: GPL-3.0-or-later
+You may not use the @GrB MATLAB interface under the Apache-2.0 license.
 
 The GrB class provides an easy-to-use MATLAB interface to SuiteSparse:GraphBLAS.
 

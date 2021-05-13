@@ -4,7 +4,7 @@ SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 
 SPDX-License-Identifier: Apache-2.0
 
-VERSION 5.0.3, May 12, 2021
+VERSION 5.0.4, May 13, 2021
 
 SuiteSparse:GraphBLAS is a complete implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -62,9 +62,11 @@ Demo:           a set of demos on how to use GraphBLAS
 
 Doc:            SuiteSparse:GraphBLAS User Guide and license
 
-GraphBLAS:      the MATLAB interface.  This folder is called 'GraphBLAS' so
-                that typing 'help graphblas' or 'doc graphblas' in the MATLAB
-                Command Window can locate the Contents.m file.
+GraphBLAS:      the @GrB MATLAB interface, including its test suite and demos.
+                This folder is called 'GraphBLAS' so that typing 'help
+                graphblas' or 'doc graphblas' in the MATLAB Command Window can
+                locate the Contents.m file.  Note that this folder and all its
+                contents are under the GNU GPLv3 (or later), not Apache-2.0.
 
 Include:        user-accessible include file, GraphBLAS.h
 

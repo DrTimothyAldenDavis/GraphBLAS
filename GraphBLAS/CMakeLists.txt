@@ -3,7 +3,8 @@
 #-------------------------------------------------------------------------------
 
 # SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
-# SPDX-License-Identifier: Apache-2.0
+# The @GrB MATLAB interface is under the GNU GPLv3 (or later) license.
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # CMakeLists.txt: instructions for cmake to build GraphBLAS for use in MATLAB.
 # This method is required for MATLAB R2021a and following, since that
@@ -28,10 +29,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "May 12, 2021")
+set ( GraphBLAS_DATE "May 13, 2021")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 0 )
-set ( GraphBLAS_VERSION_SUB   3 )
+set ( GraphBLAS_VERSION_SUB   4 )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "Sept 25, 2019" )
