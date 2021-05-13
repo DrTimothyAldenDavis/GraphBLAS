@@ -31,7 +31,7 @@ GrB_Monoid *GB_binop_to_monoid      // return the corresponding monoid, or NULL
     // convert the binary op_in to its corresponding monoid
     //--------------------------------------------------------------------------
 
-    ASSERT_BINARYOP_OK (op, "binary op to convert to monoid", GB0) ;
+    ASSERT_BINARYOP_OK (op_in, "binary op to convert to monoid", GB0) ;
     GrB_BinaryOp op = GB_boolean_rename_op (op_in) ;
     GB_Type_code zcode = op->ztype->code ;
     GB_Opcode opcode = op->opcode ;

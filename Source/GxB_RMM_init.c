@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_cuda_init: initialize GraphBLAS for use with CUDA
+// GxB_RMM_init: initialize GraphBLAS for use with RMM
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,19 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// DRAFT: in progress
-
-// GrB_init, GxB_init, or GxB_cuda_init must called before any other GraphBLAS
+// GrB_init, GxB_init, or GxB_RMM_init must called before any other GraphBLAS
 // operation.  GrB_finalize must be called as the last GraphBLAS operation.
-
-// If CUDA was not available when GraphBLAS was compiled, then this function
-// acks just like GrB_init.
 
 #include "GB.h"
 
-GrB_Info GxB_cuda_init      // start up GraphBLAS for use with CUDA
+GrB_Info GxB_RMM_init       // start up GraphBLAS for use with RMM
 (
-    GrB_Mode mode           // blocking or non-blocking mode
+    GrB_Mode mode,          // blocking or non-blocking mode
+    // RMM allocate/deallocate memory management functions
+    void * (* rmm_allocate_function   ) (size_t *),
+    void   (* rmm_deallocate_function ) (void *p, size_t size)
 )
 {
 
@@ -27,17 +25,20 @@ GrB_Info GxB_cuda_init      // start up GraphBLAS for use with CUDA
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CONTEXT ("GxB_cuda_init (mode)") ;
+    GB_CONTEXT ("GxB_RMM_init (mode, rmm_allocate_function, "
+        "rmm_deallocate_function)") ;
+    GB_RETURN_IF_NULL (rmm_allocate_function) ;
+    GB_RETURN_IF_NULL (rmm_deallocate_function) ;
 
     //--------------------------------------------------------------------------
     // initialize GraphBLAS
     //--------------------------------------------------------------------------
 
     return (GB_init
-        (mode,                          // blocking or non-blocking mode
-        NULL, NULL, NULL, NULL,         // use GxB_cuda_* memory managment
-        true,                           // memory functions are thread-safe
-        true,                           // use CUDA
+        (mode,                      // blocking or non-blocking mode
+        NULL, NULL, NULL, true,     // do not use ANSI C11 functions
+        rmm_allocate_function,      // use RMM
+        rmm_deallocate_function,
         Context)) ;
 }
 

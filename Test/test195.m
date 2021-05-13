@@ -31,8 +31,6 @@ for asparsity = [1 2 4 8]
                         M.matrix = spones (M.matrix) ;
                         C0 = sparse (n, n) ;
 
-%       save gunk A B M C0 desc semiring desc_s dnot dnot_s n da db dm
-
                         % C = A*B
                         C0 = A.matrix * B.matrix ;
                         C1 = GB_spec_mxm (C0, [ ], [ ], semiring, A, B, desc) ;

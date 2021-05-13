@@ -7,48 +7,47 @@
 
 //------------------------------------------------------------------------------
 
-// GrB_init, GxB_init, or GxB_cuda_init must called before any other GraphBLAS
+// GrB_init, GxB_init, or GxB_RMM_init must called before any other GraphBLAS
 // operation; all three rely on this internal function.  If GraphBLAS is used
 // by multiple user threads, only one can call GrB_init, GxB_init or
-// GxB_cuda_init.
+// GxB_RMM_init.
 
 // Result are undefined if multiple user threads simultaneously
-// call GrB_init, GxB_init, or GxB_cuda_init.
+// call GrB_init, GxB_init, or GxB_RMM_init.
 
 // Per the spec, GrB_finalize must be called as the last GraphBLAS operation.
 // Not even GrB_Matrix_free can be safely called after GrB_finalize.  In the
-// current version of SuiteSparse:GraphBLAS, GrB_finalize does nothing, but in
-// future versions it may do critical work such as freeing a memory pool.
+// current version of SuiteSparse:GraphBLAS, GrB_finalize frees the internal
+// memory pool.
 
-// GrB_init, GxB_init, or GxB_cuda_init define the mode that GraphBLAS will
+// GrB_init, GxB_init, or GxB_RMM_init define the mode that GraphBLAS will
 // use:  blocking or non-blocking.  With blocking mode, all operations finish
 // before returning to the user application.  With non-blocking mode,
 // operations can be left pending, and are computed only when needed.
 
 // GxB_init is the same as GrB_init except that it also defines the
-// malloc/calloc/realloc/free functions to use.
-
-// GxB_cuda_init is the same as GrB_init, except that it passes in
-// caller_is_GxB_cuda_init as true to this function.  GxB_init and GrB_init
-// both pass this flag in as false.
-
-// The calloc and realloc function pointers are optional and can be NULL.  If
-// calloc is NULL, it is not used, and malloc/memset are used instead.  If
+// malloc/realloc/free functions to use.  The GPU(s) cannot be used if GrB_init
+// and GxB_init.  The realloc function pointer is optional and can be NULL.  If
 // realloc is NULL, it is not used, and malloc/memcpy/free are used instead.
+
+// GxB_RMM_init is the same as GrB_init except that it also defines the RMM
+// allocate/deallocate functions to use, which are required to use the GPU(s). 
 
 /*  TODO: C-API options
 
-    // no GPU:
+    // no GPU, use ANSI C11 malloc/realloc/free
     GrB_init (mode) ;
+
+    // no GPU, use ANSI C11-compatible malloc/realloc/free
     GxB_init (mode, malloc, calloc, realloc, free, true) ;
 
-    // use RMM, optionally also use CUDA if it is enabled in the rmm_resource:
-    GxB_RMM_init (mode, rmm_resource)
-    ...
+    // use RMM, and optionally the GPU(s)
+    GxB_RMM_init (mode, rmm_allocate, rmm_deallocate) ;
+
     // gpu control:
     GxB_set ( pick your gpu(s) )            // global
-    GxB_set (desc, pick your gpu(s) )       // matrix
-    GxB_set (A, pick your gpu(s) )          // descriptor
+    GxB_set (A, pick your gpu(s) )          // matrix
+    GxB_set (desc, pick your gpu(s) )       // descriptor
 
     GrB_finalize ( ) ;
 */
@@ -63,21 +62,17 @@ GrB_Info GB_init            // start up GraphBLAS
 (
     const GrB_Mode mode,    // blocking or non-blocking mode
 
-    // pointers to memory management functions.
+    // pointers to ANSI C11-compatible memory management functions
     void * (* malloc_function  ) (size_t),          // required
-    void * (* calloc_function  ) (size_t, size_t),  // ignored, no longer used
     void * (* realloc_function ) (void *, size_t),  // optional, can be NULL
     void   (* free_function    ) (void *),          // required
     bool malloc_is_thread_safe,
 
-    // TODO: delete this:
-    bool caller_is_GxB_cuda_init,       // true for GxB_cuda_init only
+    // RMM allocate/deallocate memory management functions
+    void * (* rmm_allocate_function   ) (size_t *),
+    void   (* rmm_deallocate_function ) (void *p, size_t size),
 
-    // TODO: RMM stuff, 3 pools, yada yada
-
-    // TODO: CUDA + RMM stuff
-
-    GB_Context Context      // from GrB_init or GxB_init
+    GB_Context Context      // from GrB_init, GxB_init, or GxB_RMM_init
 )
 {
 
@@ -100,40 +95,31 @@ GrB_Info GB_init            // start up GraphBLAS
     }
 
     //--------------------------------------------------------------------------
-    // establish malloc/calloc/realloc/free
+    // establish malloc/realloc/free
     //--------------------------------------------------------------------------
 
-    // TODO: do the RMM init here
-    GB_Global_rmm_set ((void *) 1) ; // FIXME placeholder
+    // GrB_init passes in the ANSI C11 malloc/realloc/free
 
-    // GrB_init passes in the ANSI C11 malloc/calloc/realloc/free
-    // GxB_cuda_init passes in NULL pointers; they are now defined below.
-
-    if (caller_is_GxB_cuda_init)
+    if (rmm_allocate_function != NULL)
     {
-        #if defined ( GBCUDA )
-        // CUDA is available at compile time, and requested at run time via
-        // GxB_cuda_init.  Use CUDA unified memory management functions.
-        // No calloc or realloc functions are needed.
-        malloc_function = GxB_cuda_malloc ;
-//      calloc_function = NULL ;
-        realloc_function = NULL ;
-        free_function = GxB_cuda_free ;
-        #else
-        // CUDA not available at compile time.  Use ANSI C memory managment
-        // functions instead, even though the caller is GxB_cuda_init.
-        // No GPUs will be used.
-        malloc_function = malloc ;
-//      calloc_function = calloc ;
-        realloc_function = realloc ;
-        free_function = free ;
-        #endif
+        // use the provided RMM resource
+        GB_Global_rmm_allocate_function_set (rmm_allocate_function) ;
+        GB_Global_rmm_deallocate_function_set (rmm_deallocate_function) ;
+        // there is no ANSI C11-compatible malloc/realloc/free to use
+        GB_Global_malloc_function_set  (NULL) ;
+        GB_Global_realloc_function_set (NULL) ;
+        GB_Global_free_function_set    (NULL) ;
+    }
+    else
+    {
+        // use an ANSI C11-compatible malloc/realloc/free
+        GB_Global_rmm_allocate_function_set (NULL) ;
+        GB_Global_rmm_deallocate_function_set (NULL) ;
+        GB_Global_malloc_function_set  (malloc_function ) ; // cannot be NULL
+        GB_Global_realloc_function_set (realloc_function) ; // ok if NULL
+        GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
     }
 
-    GB_Global_malloc_function_set  (malloc_function ) ; // cannot be NULL
-//  GB_Global_calloc_function_set  (calloc_function ) ; // no longer used
-    GB_Global_realloc_function_set (realloc_function) ; // ok if NULL
-    GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
     GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
     GB_Global_memtable_clear ( ) ;
     GB_Global_free_pool_init (true) ;
@@ -196,13 +182,13 @@ GrB_Info GB_init            // start up GraphBLAS
     // CUDA initializations
     //--------------------------------------------------------------------------
 
-    // If CUDA exists (#define GBCUDA) and if the caller is GxB_cuda_init, then
+    // If CUDA exists (#define GBCUDA) and if the caller is GxB_RMM_init, then
     // query the system for the # of GPUs available, their memory sizes, SM
     // counts, and other capabilities.  Unified Memory support is assumed.
     // Then warmup each GPU.
 
     #if defined ( GBCUDA )
-    if (caller_is_GxB_cuda_init)
+    if (rmm_allocate_function != NULL)
     {
         // query the system for the # of GPUs
         // TODO for GPU: make this a function in the CUDA folder

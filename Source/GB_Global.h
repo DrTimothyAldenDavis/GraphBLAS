@@ -14,6 +14,8 @@
 #ifndef GB_GLOBAL_H
 #define GB_GLOBAL_H
 
+struct RMM_Handle ;
+
 GB_PUBLIC void     GB_Global_mode_set (GrB_Mode mode) ;
           GrB_Mode GB_Global_mode_get (void) ;
 
@@ -49,19 +51,12 @@ GB_PUBLIC void     GB_Global_abort_function (void) ;
 
           void     GB_Global_malloc_function_set
                         (void * (* malloc_function) (size_t)) ;
-          void  *  GB_Global_malloc_function (size_t size) ;
-// calloc: no longer used
-//        void     GB_Global_calloc_function_set
-//                      (void * (* calloc_function) (size_t, size_t)) ;
-//        void  *  GB_Global_calloc_function (size_t count, size_t size) ;
           void     GB_Global_realloc_function_set
                         (void * (* realloc_function) (void *, size_t)) ;
           void  *  GB_Global_realloc_function (void *p, size_t size) ;
           bool     GB_Global_have_realloc_function (void) ;
-//        bool     GB_Global_have_calloc_function (void) ;
           void     GB_Global_free_function_set
                         (void (* free_function) (void *)) ;
-          void     GB_Global_free_function (void *p) ;
 
 GB_PUBLIC void     GB_Global_malloc_is_thread_safe_set
                         (bool malloc_is_thread_safe) ;
@@ -140,8 +135,13 @@ GB_PUBLIC void     GB_Global_printf_set (GB_printf_function_t p) ;
 GB_PUBLIC GB_flush_function_t GB_Global_flush_get (void) ;
 GB_PUBLIC void     GB_Global_flush_set (GB_flush_function_t p) ;
 
-GB_PUBLIC void GB_Global_rmm_set (void *user_rmm_resource) ;
-GB_PUBLIC void *GB_Global_rmm_get (void) ;
+GB_PUBLIC void     GB_Global_rmm_allocate_function_set
+                        (void * (* rmm_allocate_function  ) (size_t *)) ;
+GB_PUBLIC void     GB_Global_rmm_deallocate_function_set
+                        (void * (* rmm_deallocate_function) (void *, size_t)) ; 
+
+GB_PUBLIC void *   GB_Global_allocate_function (size_t *size) ;
+GB_PUBLIC void     GB_Global_deallocate_function (void *p, size_t size) ;
 
 #endif
 

@@ -106,12 +106,6 @@ bool GB_cuda_get_device_properties
     GB_cuda_device *prop
 ) ;
 
-// There is no GB_cuda_realloc function, since CUDA does not have a
-// realloc function.
-void *GB_cuda_malloc (size_t size) ;           // standard malloc signature
-void  GB_cuda_free (void *p) ;                 // standard free signature
-void *GB_cuda_calloc (size_t n, size_t size) ; // standard calloc signature
-
 GrB_Info GB_cuda_red__plus_int64
 (
     int64_t *result,

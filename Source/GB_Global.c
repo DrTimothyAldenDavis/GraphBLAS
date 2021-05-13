@@ -10,7 +10,7 @@
 // All Global storage is declared, initialized, and accessed here.  The
 // contents of the GB_Global struct are only accessible to functions in this
 // file.  Global storage is used to keep track of the GraphBLAS mode (blocking
-// or non-blocking), for pointers to malloc/calloc/realloc/free functions,
+// or non-blocking), for pointers to malloc/realloc/free functions,
 // global matrix options, and other settings.
 
 #include "GB_atomics.h"
@@ -51,14 +51,13 @@ typedef struct
     void (* abort_function ) (void) ;
 
     //--------------------------------------------------------------------------
-    // malloc/calloc/realloc/free: memory management functions
+    // malloc/realloc/free: memory management functions
     //--------------------------------------------------------------------------
 
-    // All threads must use the same malloc/calloc/realloc/free functions.
+    // All threads must use the same malloc/realloc/free functions.
     // They default to the ANSI C11 functions, but can be defined by GxB_init.
 
     void * (* malloc_function  ) (size_t)         ;     // required
-//  void * (* calloc_function  ) (size_t, size_t) ;     // no longer used
     void * (* realloc_function ) (void *, size_t) ;     // may be NULL
     void   (* free_function    ) (void *)         ;     // required
     bool malloc_is_thread_safe ;   // default is true
@@ -73,7 +72,7 @@ typedef struct
 
     // nmalloc:  To aid in searching for memory leaks, GraphBLAS keeps track of
     // the number of blocks of allocated that have not yet been freed.  The
-    // count starts at zero.  GB_malloc_memory and GB_calloc_memory increment
+    // count starts at zero.  GB_malloc_memory increments
     // this count, and free (of a non-NULL pointer) decrements it.  realloc
     // increments the count it if is allocating a new block, but it does this
     // by calling GB_malloc_memory.
@@ -143,10 +142,11 @@ typedef struct
     int64_t free_pool_limit [64] ;
 
     //--------------------------------------------------------------------------
-    // RMM settings
+    // RMM allocate/deallocate functions
     //--------------------------------------------------------------------------
 
-    void *rmm_resource ;
+    void * (* rmm_allocate_function  ) (size_t *) ;
+    void   (* rmm_deallocate_function) (void *p, size_t) ;
 
     //--------------------------------------------------------------------------
     // CUDA (DRAFT: in progress)
@@ -203,9 +203,8 @@ GB_Global_struct GB_Global =
     // abort function for debugging only
     .abort_function   = abort,
 
-    // malloc/calloc/realloc/free functions: default to ANSI C11 functions
+    // malloc/realloc/free functions: default to ANSI C11 functions
     .malloc_function  = malloc,
-//  .calloc_function  = NULL,   // no longer used
     .realloc_function = realloc,
     .free_function    = free,
     .malloc_is_thread_safe = true,
@@ -337,6 +336,10 @@ GB_Global_struct GB_Global =
     .gpu_count = 0,                     // # of GPUs in the system
     .gpu_control = GxB_DEFAULT,         // always, never, or default
     .gpu_chunk = GB_GPU_CHUNK_DEFAULT,  // min problem size for using a GPU
+
+    // RMM memory management functions
+    .rmm_allocate_function = NULL,
+    .rmm_deallocate_function = NULL,
 
 } ;
 
@@ -681,60 +684,6 @@ void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
     GB_Global.malloc_function = malloc_function ;
 }
 
-void * GB_Global_malloc_function (size_t size)
-{ 
-    void *p = NULL ;
-    if (GB_Global.malloc_is_thread_safe)
-    {
-        p = GB_Global.malloc_function (size) ;
-    }
-    else
-    {
-        #pragma omp critical(GB_malloc_protection)
-        {
-            p = GB_Global.malloc_function (size) ;
-        }
-    }
-    #ifdef GB_DEBUG
-    GB_Global_memtable_add (p, size) ;
-    #endif
-    return (p) ;
-}
-
-//------------------------------------------------------------------------------
-// calloc_function: no longer used
-//------------------------------------------------------------------------------
-
-//  void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
-//  { 
-//      GB_Global.calloc_function = calloc_function ;
-//  }
-
-//  bool GB_Global_have_calloc_function (void)
-//  { 
-//      return (GB_Global.calloc_function != NULL) ;
-//  }
-
-//  void * GB_Global_calloc_function (size_t count, size_t size)
-//  { 
-//      void *p = NULL ;
-//      if (GB_Global.malloc_is_thread_safe)
-//      {
-//          p = GB_Global.calloc_function (count, size) ;
-//      }
-//      else
-//      {
-//          #pragma omp critical(GB_malloc_protection)
-//          {
-//              p = GB_Global.calloc_function (count, size) ;
-//          }
-//      }
-//      #ifdef GB_DEBUG
-//      GB_Global_memtable_add (p, count * size) ;
-//      #endif
-//      return (p) ;
-//  }
-
 //------------------------------------------------------------------------------
 // realloc_function
 //------------------------------------------------------------------------------
@@ -757,10 +706,12 @@ void * GB_Global_realloc_function (void *p, size_t size)
     void *pnew = NULL ;
     if (GB_Global.malloc_is_thread_safe)
     {
+        // use a thread-safe ANSI C11-compatible realloc function
         pnew = GB_Global.realloc_function (p, size) ;
     }
     else
     {
+        // use a non-thread-safe ANSI C11-compatible realloc function
         #pragma omp critical(GB_malloc_protection)
         {
             pnew = GB_Global.realloc_function (p, size) ;
@@ -783,24 +734,6 @@ void * GB_Global_realloc_function (void *p, size_t size)
 void GB_Global_free_function_set (void (* free_function) (void *))
 { 
     GB_Global.free_function = free_function ;
-}
-
-void GB_Global_free_function (void *p)
-{ 
-    if (GB_Global.malloc_is_thread_safe)
-    {
-        GB_Global.free_function (p) ;
-    }
-    else
-    {
-        #pragma omp critical(GB_malloc_protection)
-        {
-            GB_Global.free_function (p) ;
-        }
-    }
-    #ifdef GB_DEBUG
-    GB_Global_memtable_remove (p) ;
-    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -1337,18 +1270,78 @@ int64_t GB_Global_free_pool_nblocks_total (void)
 }
 
 //------------------------------------------------------------------------------
-// RMM control
+// RMM memory allocator
 //------------------------------------------------------------------------------
 
-GB_PUBLIC
-void GB_Global_rmm_set (void *user_rmm_resource)
+void GB_Global_rmm_allocate_function_set
+(
+    void * (* rmm_allocate_function) (size_t *)
+)
 { 
-    GB_Global.rmm_resource = user_rmm_resource ;
+    GB_Global.rmm_allocate_function = rmm_allocate_function ;
 }
 
-GB_PUBLIC
-void *GB_Global_rmm_get (void)
+void GB_Global_rmm_deallocate_function_set
+(
+    void * (* rmm_deallocate_function) (void *, size_t)
+)
 { 
-    return (GB_Global.rmm_resource) ;
+    GB_Global.rmm_deallocate_function = rmm_deallocate_function ;
+}
+
+//------------------------------------------------------------------------------
+// generic memory allocator: ANSI C11 malloc/free or RMM allocate/deallocate
+//------------------------------------------------------------------------------
+
+void *GB_Global_allocate_function (size_t *size)
+{
+    void *p = NULL ;
+    if (GB_Global.rmm_allocate_function != NULL)
+    {
+        // use the RMM resource to allocate memory
+        p = GB_Global.rmm_allocate_function (size) ;
+    }
+    else if (GB_Global.malloc_is_thread_safe)
+    {
+        // use a thread-safe ANSI C11-compatible malloc() to allocate memory
+        p = GB_Global.malloc_function (*size) ;
+    }
+    else
+    {
+        // use a non-thread-safe ANSI C11-compatible malloc() to allocate memory
+        #pragma omp critical(GB_malloc_protection)
+        {
+            p = GB_Global.malloc_function (*size) ;
+        }
+    }
+    #ifdef GB_DEBUG
+    GB_Global_memtable_add (p, size) ;
+    #endif
+    return (p) ;
+}
+
+void GB_Global_deallocate_function (void *p, size_t size)
+{ 
+    if (GB_Global.rmm_deallocate_function != NULL)
+    {
+        // use the RMM resource to deallocate memory
+        GB_Global.rmm_deallocate_function (p, size) ;
+    }
+    if (GB_Global.malloc_is_thread_safe)
+    {
+        // use a thread-safe ANSI C11-compatible free() to deallocate memory
+        GB_Global.free_function (p) ;
+    }
+    else
+    {
+        // use a non-thread-safe ANSI C11-compatible free() to deallocate memory
+        #pragma omp critical(GB_malloc_protection)
+        {
+            GB_Global.free_function (p) ;
+        }
+    }
+    #ifdef GB_DEBUG
+    GB_Global_memtable_remove (p) ;
+    #endif
 }
 

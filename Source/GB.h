@@ -125,16 +125,17 @@ GrB_Info GB_init            // start up GraphBLAS
 (
     const GrB_Mode mode,    // blocking or non-blocking mode
 
-    // pointers to memory management functions
-    void * (* malloc_function  ) (size_t),
-    void * (* calloc_function  ) (size_t, size_t),
-    void * (* realloc_function ) (void *, size_t),
-    void   (* free_function    ) (void *),
+    // pointers to ANSI C11-compatible memory management functions
+    void * (* malloc_function  ) (size_t),          // required
+    void * (* realloc_function ) (void *, size_t),  // optional, can be NULL
+    void   (* free_function    ) (void *),          // required
     bool malloc_is_thread_safe,
 
-    bool caller_is_GxB_cuda_init,       // true for GxB_cuda_init only
+    // RMM allocate/deallocate memory management functions
+    void * (* rmm_allocate_function   ) (size_t *),
+    void   (* rmm_deallocate_function ) (void *p, size_t size),
 
-    GB_Context Context      // from GrB_init or GxB_init
+    GB_Context Context      // from GrB_init, GxB_init, or GxB_RMM_init
 ) ;
 
 typedef enum                    // input parameter to GB_new and GB_new_bix

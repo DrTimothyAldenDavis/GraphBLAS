@@ -40,13 +40,10 @@
 //
 // To use CUDA, do not use this function.  Instead use the following:
 //
-//      GxB_cuda_init (mode) ;
+//      GxB_RMM_init (mode, rmm_allocate, rmm_deallocate) ;
 //
-//      // All GraphBLAS objects are allocated with GxB_cuda_malloc, and
-//      // GxB_cuda_free.  This function can still be used if CUDA is not
-//      // available at compile-time; in this case, it acts just like GrB_init
-//      // (mode).  The memory allocators GxB_cuda_malloc, etc., just call the
-//      // ANSI C malloc/free functions.
+//      // All GraphBLAS objects are allocated with the Rapids Memory
+//      // Manager (RMM).
 //
 // To use user-provided malloc and free functions, but not calloc/realloc:
 //
@@ -86,11 +83,10 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     return (GB_init
         (mode,                          // blocking or non-blocking mode
         user_malloc_function,           // user-defined malloc, required
-        NULL,                           // user-defined calloc, ignored
         user_realloc_function,          // user-defined realloc, may be NULL
         user_free_function,             // user-defined free, required
         user_malloc_is_thread_safe,     // true if all functions are thread-safe
-        false,                          // do not use CUDA
+        NULL, NULL,                     // do not use RMM
         Context)) ;
 }
 

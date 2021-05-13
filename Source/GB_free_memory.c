@@ -13,7 +13,6 @@
 // which is typically the ANSI C free function.  The free_pool is bypassed.
 
 #include "GB.h"
-#include "GB_rmm.h"
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 void GB_free_memory         // free memory, bypassing the free_pool
@@ -35,15 +34,8 @@ void GB_free_memory         // free memory, bypassing the free_pool
         ASSERT (size_allocated == GB_Global_memtable_size (*p)) ;
 //      printf ("\nhard free %p %ld\n", *p, size_allocated) ;
 
-        void *rmm_resource = GB_Global_rmm_get ( ) ;
-        if (rmm_resource != NULL)
-        {
-            GB_rmm_dealloc (rmm_resource, *p, size_allocated) ;
-        }
-        else
-        {
-            GB_Global_free_function (*p) ;
-        }
+        GB_Global_deallocate_function (*p, size_allocated) ;
+
 //      GB_Global_free_pool_dump (2) ; GB_Global_memtable_dump ( ) ;
         (*p) = NULL ;
     }

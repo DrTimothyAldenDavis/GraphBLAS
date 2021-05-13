@@ -10,7 +10,6 @@
 // A wrapper for malloc.  Space is not initialized.
 
 #include "GB.h"
-#include "GB_rmm.h"
 
 //------------------------------------------------------------------------------
 // GB_malloc_helper:  use malloc to allocate an uninitialized memory block
@@ -43,17 +42,7 @@ static inline void *GB_malloc_helper
     if (p == NULL)
     {
         // no block in the free_pool, so allocate it
-
-            void *rmm_resource = GB_Global_rmm_get ( ) ;
-            if (rmm_resource != NULL)
-            {
-                p = GB_rmm_alloc (rmm_resource, size) ;
-            }
-            else
-            {
-                p = GB_Global_malloc_function (*size) ;
-            }
-
+        p = GB_Global_allocate_function (size) ;
         if (p != NULL && malloc_tracking)
         { 
             // success

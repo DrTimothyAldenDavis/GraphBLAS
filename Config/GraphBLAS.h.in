@@ -319,6 +319,12 @@ GrB_Info ;
 
 // The extension GxB_init does the work of GrB_init, but it also defines the
 // memory management functions that SuiteSparse:GraphBLAS will use internally.
+// GrB_init relies on the standard ANSI C11 malloc/realloc/free.
+// GxB_init allows for those methods to be redefined, but they must be
+// compatible with the ANSI C11 interfaces to malloc/realloc/free.
+
+// GxB_RMM_init uses an NVIDIA Rapids Memory Manager resource instead of
+// malloc/realloc/free.
 
 typedef enum
 {
@@ -328,7 +334,7 @@ typedef enum
 GrB_Mode ;
 
 GB_PUBLIC
-GrB_Info GrB_init           // start up GraphBLAS
+GrB_Info GrB_init           // start up GraphBLAS with ANSI C11 malloc/.../free
 (
     GrB_Mode mode           // blocking or non-blocking mode
 ) ;
@@ -337,19 +343,22 @@ GB_PUBLIC
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
     GrB_Mode mode,          // blocking or non-blocking mode
-    // pointers to memory management functions
-    void * (* user_malloc_function  ) (size_t),
-    void * (* user_calloc_function  ) (size_t, size_t),
-    void * (* user_realloc_function ) (void *, size_t),
-    void   (* user_free_function    ) (void *),
-    bool user_malloc_is_thread_safe     // ADDED in V3.0: thread_safe arg
+    // pointers to ANSI C11-compatible memory management functions
+    void * (* user_malloc_function  ) (size_t),         // must not be NULL
+    void * (* user_calloc_function  ) (size_t, size_t), // no longer used
+    void * (* user_realloc_function ) (void *, size_t), // may be NULL
+    void   (* user_free_function    ) (void *),         // must not be NULL
+    bool user_malloc_is_thread_safe // true if malloc/.../free are thread-safe
 ) ;
 
-// GxB_cuda_init (DRAFT: in progress; do not rely on this function)
+// GxB_RMM_init is a DRAFT: do not use it yet.
 GB_PUBLIC
-GrB_Info GxB_cuda_init      // start up GraphBLAS for use with CUDA
+GrB_Info GxB_RMM_init       // start up GraphBLAS for use with RMM
 (
-    GrB_Mode mode           // blocking or non-blocking mode
+    GrB_Mode mode,          // blocking or non-blocking mode
+    // RMM allocate/deallocate memory management functions
+    void * (* rmm_allocate_function   ) (size_t *),
+    void   (* rmm_deallocate_function ) (void *p, size_t size)
 ) ;
 
 GB_PUBLIC
@@ -8809,30 +8818,6 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
 // If the export is not successful, the GxB_Matrix_export_* functions do not
 // modify A, the GxB_Vector_export does not modify v, and the user arrays are
 // returned as NULL.
-
-//==============================================================================
-// CUDA memory management (DRAFT: in progress, do not use)
-//==============================================================================
-
-// These functions are made available to the user application, since the
-// GxB_import/export functions require the user application and the GraphBLAS
-// library to rely on the same malloc/calloc/realloc/free functions.  If
-// GraphBLAS is using CUDA Unified Memory Management and GxB_cuda_init is used
-// to initialize GraphBLAS, then all of its memory allocations rely on these
-// functions.
-
-// If GraphBLAS is compiled with CUDA enabled, these functions map to
-// cudaMallocManaged and cudaFree.  Otherwise, they map to the ANSI C malloc,
-// calloc, and free functions.
-
-// Note that there is no cudaReallocManaged function, and in this case
-// GraphBLAS makes do without it.  As a result, the user application cannot use
-// realloc either, for memory blocks passed to/from GraphBLAS via
-// import/export.
-
-void *GxB_cuda_malloc (size_t size) ;           // standard malloc signature
-void *GxB_cuda_calloc (size_t n, size_t size) ; // standard calloc signature
-void  GxB_cuda_free (void *p) ;                 // standard free signature
 
 #endif
 
