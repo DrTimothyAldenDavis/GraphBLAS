@@ -1,5 +1,12 @@
+Version 5.0.4, May 13, 2021
+
+    * @GrB MATLAB interface: changed license from Apache-2.0
+        to GNU GPLv3 or later.
+
 Version 5.0.3, May 12, 2021
 
+    * (25) bug fix: disabling ANY_PAIR semirings in Source/GB_control.h would
+        cause a segfault if those disabled semirings were used.
     * demos: no longer built by default
     * (24) bug fix: GB_PUBLIC added to the new functions in GraphBLAS.h
     * GrB_Matrix_reduce_BinaryOp: reinstated from v4.0.3;
