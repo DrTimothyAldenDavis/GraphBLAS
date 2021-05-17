@@ -1,6 +1,6 @@
 
 //#includePath += "../rmm/include/rmm"
-#include <rmm_wrap.h>
+#include <rmm_wrap.hpp>
 
 inline auto make_cuda() { return std::make_shared<rmm::mr::cuda_memory_resource>(); }
 
