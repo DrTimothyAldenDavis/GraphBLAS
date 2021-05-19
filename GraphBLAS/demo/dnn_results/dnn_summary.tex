@@ -34,7 +34,7 @@ for i=1:length(W)
 end
 \end{verbatim}}
 
-For comparison, here is the MATLAB reference implmentation at \newline
+Below is the MATLAB reference implmentation at \newline
 \url{http://graphchallenge.org}.  It is about 60x to 70x slower than the two
 methods using GraphBLAS.  Applying the bias is more complex than the GraphBLAS
 code:
@@ -248,7 +248,7 @@ Prob & MATLAB         & LAGraph        & M/L         &   MATLAB      & LAGraph  
 \end{tabular}
 }
 
-\section{Comparison}
+\section{Comparing MATLAB and LAGraph}
 
 \subsection{v3.1.0, August 2019}
 
@@ -270,7 +270,7 @@ masked assignment method used in \verb'dnn_gb.m'.  However, each function was
 written using the most natural approach available, and since the MATLAB
 interface does not allow for user-defined operators, it was most natural to
 write the max32 threshold as masked assigment.  In that sense, this is a
-fair comparison between MATLAB+GraphBLAS and LAGRAPH+GraphBLAS.
+fair way to compare MATLAB+GraphBLAS and LAGRAPH+GraphBLAS.
 
 \subsection{v3.2.0, Feb 2020}
 

@@ -22,7 +22,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     void **Ax,          // values
     GrB_Index *Ab_size, // size of Ab in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
+    bool *iso,          // if true, A is iso-valued
 
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
@@ -34,7 +34,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Matrix_export_BitmapC (&A, &type, &nrows, &ncols, "
-        "&Ab, &Ax, &Ab_size, &Ax_size, &is_uniform, &nvals, desc)") ;
+        "&Ab, &Ax, &Ab_size, &Ax_size, &iso, &nvals, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_BitmapC") ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
@@ -76,7 +76,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
         Ax,   Ax_size,  // Ax
         nvals, NULL, NULL,                  // nvals for bitmap
         &sparsity, &is_csc,                 // bitmap by col
-        is_uniform, Context) ;
+        iso, Context) ;
 
     if (info == GrB_SUCCESS)
     {

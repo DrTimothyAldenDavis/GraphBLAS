@@ -29,7 +29,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_phbix_free (M2) ;                  \
+    GB_phbix_free (M2) ;                    \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
     GB_WERK_POP (B_slice, int64_t) ;        \
     GB_WERK_POP (A_slice, int64_t) ;        \

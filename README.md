@@ -4,7 +4,7 @@ SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 
 SPDX-License-Identifier: Apache-2.0
 
-VERSION 5.0.5, May 17, 2021
+VERSION 5.1.0, May 18, 2021
 
 SuiteSparse:GraphBLAS is a complete implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -105,7 +105,7 @@ by user code.  They are for internal use in GraphBLAS only.
 
 I have tested this package extensively on multicore single-socket systems, but
 have not yet optimized it for multi-socket systems with a NUMA architecture.
-That will be done in a future release.  If you publish benchmark comparisons
+That will be done in a future release.  If you publish benchmarks
 with this package, please state the SuiteSparse:GraphBLAS version, and a caveat
 if appropriate.  If you see significant performance issues when going from a
 single-socket to multi-socket system, I would like to hear from you so I can

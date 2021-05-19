@@ -247,7 +247,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     if (typecode == GB_BOOL_code && op_is_thunk_comparator && nz_thunk > 0)
     { 
         // bthunk = (bool) Thunk_in
-        GB_cast_array ((GB_void *) (&bthunk), GB_BOOL_code, xthunk_in,
+        GB_cast_array ((GB_void *) (&bthunk), GB_BOOL_code,
+            xthunk_in, false,
             Thunk_in->type->code, NULL, Thunk_in->type->size, 1, 1) ;
     }
 
@@ -276,7 +277,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         if (nz_thunk > 0)
         { 
             // ithunk = (int64_t) (Thunk_in (0)) ;
-            GB_cast_array ((GB_void *) &ithunk, GB_INT64_code, xthunk_in,
+            GB_cast_array ((GB_void *) &ithunk, GB_INT64_code,
+                xthunk_in, false,
                 Thunk_in->type->code, NULL, Thunk_in->type->size, 1, 1) ;
         }
 

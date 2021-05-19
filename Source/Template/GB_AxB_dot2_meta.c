@@ -63,6 +63,7 @@
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
+    const bool B_iso = B->iso ;
     ASSERT (!GB_IS_HYPERSPARSE (B)) ;
     #define B_is_hyper false
 
@@ -72,6 +73,7 @@
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
+    const bool A_iso = A->iso ;
     ASSERT (!GB_IS_HYPERSPARSE (A)) ;
     #define A_is_hyper false
 

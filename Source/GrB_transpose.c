@@ -11,13 +11,14 @@
 
 #include "GB_transpose.h"
 #include "GB_accum_mask.h"
+#include "GB_get_mask.h"
 
 #define GB_FREE_ALL ;
 
 GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Descriptor desc       // descriptor for C, M, and A
@@ -36,18 +37,21 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     GB_WHERE (C, "GrB_transpose (C, M, accum, A, desc)") ;
     GB_BURBLE_START ("GrB_transpose") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M) ;
+    GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     ASSERT_MATRIX_OK (C, "C input for GrB_transpose", GB0) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for GrB_transpose", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M_in, "M for GrB_transpose", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GrB_transpose", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for GrB_transpose", GB0) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_transpose, xx1, xx2, xx7) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, A->type, Context));

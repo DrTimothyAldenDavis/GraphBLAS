@@ -175,7 +175,7 @@
                                 // G(i,jj) = B(i,j), and change storage order
                                 int64_t pG = i*np + jj ;
                                 int64_t pB = i + j * bvlen ;
-                                GB_LOADB (Gx, pG, Bx, pB) ;
+                                GB_LOADB (Gx, pG, Bx, pB, B_iso) ;
                             }
                         }
                     }
@@ -205,7 +205,7 @@
                         // t = A(i,k) * G (k,jj)
                         GB_CIJ_DECLARE (t) ;
                         #define GB_MULT_A_ik_G_kjj(jj)                      \
-                            GB_GETB (gkj, Gx, pG+jj) ;                      \
+                            GB_GETB (gkj, Gx, pG+jj, false) ;               \
                             GB_MULT (t, aik, gkj, i, k, j1 + jj) ;
                     #endif
 
@@ -233,7 +233,7 @@
                     #undef  GB_LOAD_A_ij
                     #define GB_LOAD_A_ij                                    \
                         int64_t i = Ai [pA] ;                               \
-                        GB_GETA (aik, Ax, pA) ;                             \
+                        GB_GETA (aik, Ax, pA, A_iso) ;                      \
                         int64_t pH = i * np ;
 
                     //----------------------------------------------------------

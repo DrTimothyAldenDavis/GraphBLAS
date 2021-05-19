@@ -68,7 +68,7 @@ void idiv (uint64_t *z, const uint64_t *x)
 }
 
 //------------------------------------------------------------------------------
-// comparison function for qsort
+// comparator for qsort
 //------------------------------------------------------------------------------
 
 int icompar (const void *x, const void *y)

@@ -286,14 +286,14 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         //----------------------------------------------------------------------
 
         // aij = A(i,j), located in Ax [pA]
-        #define GB_GETA(aij,Ax,pA)                                          \
+        #define GB_GETA(aij,Ax,pA,A_iso)                                    \
             GB_void aij [GB_VLA(aij_size)] ;                                \
-            if (!A_is_pattern) cast_A (aij, Ax +((pA)*asize), asize) ;
+            if (!A_is_pattern) cast_A (aij, Ax +(A_iso ? 0:(pA)*asize), asize) ;
 
         // dji = D(j,j), located in Dx [j]
-        #define GB_GETB(djj,Dx,j)                                           \
+        #define GB_GETB(djj,Dx,j,D_iso)                                     \
             GB_void djj [GB_VLA(djj_size)] ;                                \
-            if (!D_is_pattern) cast_D (djj, Dx +((j)*dsize), dsize) ;
+            if (!D_is_pattern) cast_D (djj, Dx +(D_iso ? 0:(j)*dsize), dsize) ;
 
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)

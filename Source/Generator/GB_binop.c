@@ -64,24 +64,24 @@
     GB_ctype_is_btype
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA)  \
-    GB_geta(aij,Ax,pA)
+#define GB_GETA(aij,Ax,pA,A_iso)  \
+    GB_geta(aij,Ax,pA,A_iso)
 
 // bij = Bx [pB]
-#define GB_GETB(bij,Bx,pB)  \
-    GB_getb(bij,Bx,pB)
+#define GB_GETB(bij,Bx,pB,B_iso)  \
+    GB_getb(bij,Bx,pB,B_iso)
 
 // declare scalar of the same type as C
 #define GB_CTYPE_SCALAR(t)  \
     GB_ctype t
 
 // cij = Ax [pA]
-#define GB_COPY_A_TO_C(cij,Ax,pA) \
-    GB_copy_a_to_c(cij,Ax,pA)
+#define GB_COPY_A_TO_C(cij,Ax,pA,A_iso) \
+    GB_copy_a_to_c(cij,Ax,pA,A_iso)
 
 // cij = Bx [pB]
-#define GB_COPY_B_TO_C(cij,Bx,pB) \
-    GB_copy_b_to_c(cij,Bx,pB)
+#define GB_COPY_B_TO_C(cij,Bx,pB,B_iso) \
+    GB_copy_b_to_c(cij,Bx,pB,B_iso)
 
 #define GB_CX(p) Cx [p]
 
@@ -421,6 +421,7 @@ GrB_Info GB (_bind1st)
     GB_void *Cx_output,         // Cx and Bx may be aliased
     const GB_void *x_input,
     const GB_void *Bx_input,
+    const bool B_iso,
     const int8_t *restrict Bb,
     int64_t anz,
     int nthreads
@@ -437,7 +438,7 @@ GrB_Info GB (_bind1st)
     for (p = 0 ; p < anz ; p++)
     {
         if (!GBB (Bb, p)) continue ;
-        GB_getb(bij, Bx, p) ;
+        GB_getb(bij, Bx, p, B_iso) ;
         GB_binaryop(Cx [p], x, bij, 0, 0) ;
     }
     return (GrB_SUCCESS) ;
@@ -456,6 +457,7 @@ GrB_Info GB (_bind2nd)
 (
     GB_void *Cx_output,         // Cx and Ax may be aliased
     const GB_void *Ax_input,
+    const bool A_iso,
     const GB_void *y_input,
     const int8_t *restrict Ab,
     int64_t anz,
@@ -473,7 +475,7 @@ GrB_Info GB (_bind2nd)
     for (p = 0 ; p < anz ; p++)
     {
         if (!GBB (Ab, p)) continue ;
-        GB_geta(aij, Ax, p) ;
+        GB_geta(aij, Ax, p, A_iso) ;
         GB_binaryop(Cx [p], aij, y, 0, 0) ;
     }
     return (GrB_SUCCESS) ;
@@ -490,9 +492,9 @@ if_binop_bind1st_is_enabled
 
 // cij = op (x, aij), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)                       \
+#define GB_CAST_OP(pC,pA,A_iso)                 \
 {                                               \
-    GB_getb(aij, Ax, pA) ;                      \
+    GB_getb(aij, Ax, pA, A_iso) ;               \
     GB_binaryop(Cx [pC], x, aij, 0, 0) ;        \
 }
 
@@ -534,9 +536,9 @@ if_binop_bind2nd_is_enabled
 
 // cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)                       \
+#define GB_CAST_OP(pC,pA,A_iso)                 \
 {                                               \
-    GB_geta(aij, Ax, pA) ;                      \
+    GB_geta(aij, Ax, pA, A_iso) ;               \
     GB_binaryop(Cx [pC], aij, y, 0, 0) ;        \
 }
 

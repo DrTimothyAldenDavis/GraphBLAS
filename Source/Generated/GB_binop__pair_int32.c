@@ -64,11 +64,11 @@
     1
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA)  \
+#define GB_GETA(aij,Ax,pA,A_iso)  \
     ;
 
 // bij = Bx [pB]
-#define GB_GETB(bij,Bx,pB)  \
+#define GB_GETB(bij,Bx,pB,B_iso)  \
     ;
 
 // declare scalar of the same type as C
@@ -76,11 +76,11 @@
     int32_t t
 
 // cij = Ax [pA]
-#define GB_COPY_A_TO_C(cij,Ax,pA) \
+#define GB_COPY_A_TO_C(cij,Ax,pA,A_iso) \
     cij = Ax [pA]
 
 // cij = Bx [pB]
-#define GB_COPY_B_TO_C(cij,Bx,pB) \
+#define GB_COPY_B_TO_C(cij,Bx,pB,B_iso) \
     cij = Bx [pB]
 
 #define GB_CX(p) Cx [p]
@@ -421,6 +421,7 @@ GrB_Info GB ((none))
     GB_void *Cx_output,         // Cx and Bx may be aliased
     const GB_void *x_input,
     const GB_void *Bx_input,
+    const bool B_iso,
     const int8_t *restrict Bb,
     int64_t anz,
     int nthreads
@@ -456,6 +457,7 @@ GrB_Info GB ((none))
 (
     GB_void *Cx_output,         // Cx and Ax may be aliased
     const GB_void *Ax_input,
+    const bool A_iso,
     const GB_void *y_input,
     const int8_t *restrict Ab,
     int64_t anz,
@@ -490,9 +492,9 @@ GrB_Info GB ((none))
 
 // cij = op (x, aij), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)                       \
+#define GB_CAST_OP(pC,pA,A_iso)                 \
 {                                               \
-    ; ;                      \
+    ; ;               \
     Cx [pC] = 1 ;        \
 }
 
@@ -534,9 +536,9 @@ GrB_Info GB ((none))
 
 // cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)                       \
+#define GB_CAST_OP(pC,pA,A_iso)                 \
 {                                               \
-    ; ;                      \
+    ; ;               \
     Cx [pC] = 1 ;        \
 }
 

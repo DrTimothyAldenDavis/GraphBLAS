@@ -26,7 +26,7 @@
 #define GB_FREE_ALL                             \
 {                                               \
     GB_FREE_WORK ;                              \
-    GB_phbix_free (C) ;                       \
+    GB_phbix_free (C) ;                         \
 }
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only

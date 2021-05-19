@@ -1,5 +1,5 @@
 function test70 (f)
-%TEST70 performance comparison of triangle counting methods
+%TEST70 compare performance of triangle counting methods
 %
 % This test saves its results in test70_results.mat, so it
 % can be restarted.  Results already obtained will be skipped.

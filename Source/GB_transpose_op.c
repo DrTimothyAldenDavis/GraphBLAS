@@ -142,11 +142,11 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         ASSERT (C->type == op->ztype) ;
 
         // Cx [pC] = op (cast (Ax [pA]))
-        #define GB_CAST_OP(pC,pA)                                       \
+        #define GB_CAST_OP(pC,pA,A_iso)                                 \
         {                                                               \
             /* xwork = (xtype) Ax [pA] */                               \
             GB_void xwork [GB_VLA(xsize)] ;                             \
-            cast_A_to_X (xwork, Ax +((pA)*asize), asize) ;              \
+            cast_A_to_X (xwork, Ax +((A_iso) ? 0:(pA)*asize), asize) ;  \
             /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
             fop (Cx +((pC)*zsize), xwork) ;                             \
         }
@@ -297,11 +297,11 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             GB_cast_function cast_A_to_Y = GB_cast_factory (ycode, acode) ;
             // Cx [pC] = op (cast (scalar), cast (Ax [pA]))
             #undef  GB_CAST_OP
-            #define GB_CAST_OP(pC,pA)                                       \
+            #define GB_CAST_OP(pC,pA,A_iso)                                 \
             {                                                               \
                 /* ywork = (ytype) Ax [pA] */                               \
                 GB_void ywork [GB_VLA(ysize)] ;                             \
-                cast_A_to_Y (ywork, Ax +((pA)*asize), asize) ;              \
+                cast_A_to_Y (ywork, Ax +((A_iso) ? 0:(pA)*asize), asize) ;  \
                 /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
                 fop (Cx +((pC)*zsize), scalarx, ywork) ;                    \
             }
@@ -313,11 +313,11 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
             // Cx [pC] = op (cast (Ax [pA]), cast (scalar))
             #undef  GB_CAST_OP
-            #define GB_CAST_OP(pC,pA)                                       \
+            #define GB_CAST_OP(pC,pA,A_iso)                                 \
             {                                                               \
                 /* xwork = (xtype) Ax [pA] */                               \
                 GB_void xwork [GB_VLA(xsize)] ;                             \
-                cast_A_to_X (xwork, Ax +((pA)*asize), asize) ;              \
+                cast_A_to_X (xwork, Ax +((A_iso) ? 0:(pA)*asize), asize) ;  \
                 /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
                 fop (Cx +(pC*zsize), xwork, scalarx) ;                      \
             }

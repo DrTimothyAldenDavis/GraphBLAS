@@ -18,6 +18,8 @@
 // Template/GB_positional_op_ijp can return GrB_OUT_OF_MEMORY.
 // Otherwise, this function only returns GrB_SUCCESS.
 
+// TODO: if A->iso true then so is C
+
 #include "GB_apply.h"
 #include "GB_binop.h"
 #include "GB_ek_slice.h"
@@ -62,6 +64,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     // C is aliased to C.
 
     GB_void *Ax = (GB_void *) A->x ;        // A->x has type A->type
+    const bool A_iso = A->iso ;
     const int8_t  *Ab = A->b ;              // only if A is bitmap
     const GrB_Type Atype = A->type ;        // type of A->x
     const int64_t anz = GB_NNZ_HELD (A) ;   // size of A->x and Cx
@@ -208,7 +211,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
             #define GB_WORKER(op,zname,ztype,aname,atype)               \
             {                                                           \
                 if (GB_unop_apply (op,zname,aname) ((ztype *) Cx,       \
-                    (const atype *) Ax, Ab, anz, nthreads)              \
+                    (const atype *) Ax, A_iso, Ab, anz, nthreads)       \
                     == GrB_SUCCESS) return (GrB_SUCCESS) ;              \
             }                                                           \
             break ;
@@ -241,7 +244,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
             if (!GBB (Ab, p)) continue ;
             // xwork = (xtype) Ax [p]
             GB_void xwork [GB_VLA(xsize)] ;
-            cast_A_to_X (xwork, Ax +(p*asize), asize) ;
+            cast_A_to_X (xwork, Ax +(A_iso ? 0:p*asize), asize) ;
             // Cx [p] = fop (xwork)
             fop (Cx +(p*zsize), xwork) ;
         }
@@ -324,8 +327,9 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
 
                     #define GB_BINOP_WORKER(op,xname)                        \
                     {                                                        \
-                        if (GB_bind1st (op, xname) (Cx, scalarx, Ax, Ab, anz,\
-                            nthreads) == GrB_SUCCESS) return (GrB_SUCCESS) ; \
+                        if (GB_bind1st (op, xname) (Cx, scalarx, Ax, A_iso,  \
+                            Ab, anz, nthreads) == GrB_SUCCESS)               \
+                            return (GrB_SUCCESS) ;                           \
                     }                                                        \
                     break ;
 
@@ -359,8 +363,9 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
                     #undef  GB_BINOP_WORKER
                     #define GB_BINOP_WORKER(op,xname)                        \
                     {                                                        \
-                        if (GB_bind2nd (op, xname) (Cx, Ax, scalarx, Ab, anz,\
-                            nthreads) == GrB_SUCCESS) return (GrB_SUCCESS) ; \
+                        if (GB_bind2nd (op, xname) (Cx, Ax, A_iso, scalarx,  \
+                            Ab, anz, nthreads) == GrB_SUCCESS)               \
+                            return (GrB_SUCCESS) ;                           \
                     }                                                        \
                     break ;
 
@@ -395,7 +400,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
                 if (!GBB (Ab, p)) continue ;
                 // ywork = (ytype) Ax [p]
                 GB_void ywork [GB_VLA(ysize)] ;
-                cast_A_to_Y (ywork, Ax +(p*asize), asize) ;
+                cast_A_to_Y (ywork, Ax +(A_iso ? 0:p*asize), asize) ;
                 // Cx [p] = fop (xwork, ywork)
                 fop (Cx +(p*zsize), scalarx, ywork) ;
             }
@@ -411,7 +416,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
                 if (!GBB (Ab, p)) continue ;
                 // xwork = (xtype) Ax [p]
                 GB_void xwork [GB_VLA(xsize)] ;
-                cast_A_to_X (xwork, Ax +(p*asize), asize) ;
+                cast_A_to_X (xwork, Ax +(A_iso ? 0:p*asize), asize) ;
                 // Cx [p] = fop (xwork, ywork)
                 fop (Cx +(p*zsize), xwork, scalarx) ;
             }

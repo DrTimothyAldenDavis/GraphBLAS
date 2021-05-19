@@ -180,7 +180,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 
         // typecast or copy the scalar into C
         GB_cast_array (((GB_void *) C->x) +(pleft*csize), ccode,
-            (GB_void *) scalar, scalar_code, NULL, csize, 1, 1) ;
+            (GB_void *) scalar, false, scalar_code, NULL, csize, 1, 1) ;
 
         if (is_zombie)
         { 

@@ -54,21 +54,21 @@
                     if (Ab [p] && Bb [p])
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
-                        GB_GETA (aij, Ax, p) ;
-                        GB_GETB (bij, Bx, p) ;
+                        GB_GETA (aij, Ax, p, A_iso) ;
+                        GB_GETB (bij, Bx, p, B_iso) ;
                         GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                         c = 1 ;
                     }
                     else if (Bb [p])
                     { 
                         // C (i,j) = B (i,j)
-                        GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                        GB_COPY_B_TO_C (GB_CX (p), Bx, p, B_iso) ;
                         c = 1 ;
                     }
                     else if (Ab [p])
                     { 
                         // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                        GB_COPY_A_TO_C (GB_CX (p), Ax, p, A_iso) ;
                         c = 1 ;
                     }
                     Cb [p] = c ;
@@ -91,7 +91,7 @@
             { 
                 // C (i,j) = A (i,j)
                 int8_t a = Ab [p] ;
-                if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p, A_iso) ;
                 Cb [p] = a ;
             }
             cnvals = A->nvals ;
@@ -121,14 +121,14 @@
                         if (Cb [p])
                         { 
                             // C (i,j) = A (i,j) + B (i,j)
-                            GB_GETA (aij, Ax, p) ;
-                            GB_GETB (bij, Bx, pB) ;
+                            GB_GETA (aij, Ax, p , A_iso) ;
+                            GB_GETB (bij, Bx, pB, B_iso) ;
                             GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                         }
                         else
                         { 
                             // C (i,j) = B (i,j)
-                            GB_COPY_B_TO_C (GB_CX (p), Bx, pB) ;
+                            GB_COPY_B_TO_C (GB_CX (p), Bx, pB, B_iso) ;
                             Cb [p] = 1 ;
                             task_cnvals++ ;
                         }
@@ -151,7 +151,7 @@
             { 
                 // C (i,j) = B (i,j)
                 int8_t b = Bb [p] ;
-                if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p, B_iso) ;
                 Cb [p] = b ;
             }
             cnvals = B->nvals ;
@@ -181,14 +181,14 @@
                         if (Cb [p])
                         { 
                             // C (i,j) = A (i,j) + B (i,j)
-                            GB_GETA (aij, Ax, pA) ;
-                            GB_GETB (bij, Bx, p) ;
+                            GB_GETA (aij, Ax, pA, A_iso) ;
+                            GB_GETB (bij, Bx, p , B_iso) ;
                             GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                         }
                         else
                         { 
                             // C (i,j) = A (i,j)
-                            GB_COPY_A_TO_C (GB_CX (p), Ax, pA) ;
+                            GB_COPY_A_TO_C (GB_CX (p), Ax, pA, A_iso) ;
                             Cb [p] = 1 ;
                             task_cnvals++ ;
                         }
@@ -295,21 +295,21 @@
                         if (a && b)
                         { 
                             // C (i,j) = A (i,j) + B (i,j)
-                            GB_GETA (aij, Ax, p) ;
-                            GB_GETB (bij, Bx, p) ;
+                            GB_GETA (aij, Ax, p, A_iso) ;
+                            GB_GETB (bij, Bx, p, B_iso) ;
                             GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                             c = 1 ;
                         }
                         else if (b)
                         { 
                             // C (i,j) = B (i,j)
-                            GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                            GB_COPY_B_TO_C (GB_CX (p), Bx, p, B_iso) ;
                             c = 1 ;
                         }
                         else if (a)
                         { 
                             // C (i,j) = A (i,j)
-                            GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                            GB_COPY_A_TO_C (GB_CX (p), Ax, p, A_iso) ;
                             c = 1 ;
                         }
                         Cb [p] = c ;
@@ -346,7 +346,7 @@
                     { 
                         // C (i,j) = A (i,j)
                         int8_t a = GBB (Ab, p) ;
-                        if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                        if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p, A_iso) ;
                         Cb [p] = a ;
                         task_cnvals += a ;
                     }
@@ -380,14 +380,14 @@
                         if (c == 1)
                         { 
                             // C (i,j) = A (i,j) + B (i,j)
-                            GB_GETA (aij, Ax, p) ;
-                            GB_GETB (bij, Bx, pB) ;
+                            GB_GETA (aij, Ax, p , A_iso) ;
+                            GB_GETB (bij, Bx, pB, B_iso) ;
                             GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                         }
                         else if (c == 0)
                         { 
                             // C (i,j) = B (i,j)
-                            GB_COPY_B_TO_C (GB_CX (p), Bx, pB) ;
+                            GB_COPY_B_TO_C (GB_CX (p), Bx, pB, B_iso) ;
                             Cb [p] = 1 ;
                             task_cnvals++ ;
                         }
@@ -417,7 +417,7 @@
                     { 
                         // C (i,j) = B (i,j)
                         int8_t b = GBB (Bb, p) ;
-                        if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                        if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p, B_iso) ;
                         Cb [p] = b ;
                         task_cnvals += b ;
                     }
@@ -451,14 +451,14 @@
                         if (c == 1)
                         { 
                             // C (i,j) = A (i,j) + B (i,j)
-                            GB_GETA (aij, Ax, pA) ;
-                            GB_GETB (bij, Bx, p) ;
+                            GB_GETA (aij, Ax, pA, A_iso) ;
+                            GB_GETB (bij, Bx, p , B_iso) ;
                             GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                         }
                         else if (c == 0)
                         { 
                             // C (i,j) = A (i,j)
-                            GB_COPY_A_TO_C (GB_CX (p), Ax, pA) ;
+                            GB_COPY_A_TO_C (GB_CX (p), Ax, pA, A_iso) ;
                             Cb [p] = 1 ;
                             task_cnvals++ ;
                         }
@@ -601,21 +601,21 @@
                         if (a && b)
                         { 
                             // C (i,j) = A (i,j) + B (i,j)
-                            GB_GETA (aij, Ax, p) ;
-                            GB_GETB (bij, Bx, p) ;
+                            GB_GETA (aij, Ax, p, A_iso) ;
+                            GB_GETB (bij, Bx, p, B_iso) ;
                             GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                             c = 1 ;
                         }
                         else if (b)
                         { 
                             // C (i,j) = B (i,j)
-                            GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                            GB_COPY_B_TO_C (GB_CX (p), Bx, p, B_iso) ;
                             c = 1 ;
                         }
                         else if (a)
                         { 
                             // C (i,j) = A (i,j)
-                            GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                            GB_COPY_A_TO_C (GB_CX (p), Ax, p, A_iso) ;
                             c = 1 ;
                         }
                         Cb [p] = c ;
@@ -652,7 +652,7 @@
                     { 
                         // C (i,j) = A (i,j)
                         int8_t a = GBB (Ab, p) ;
-                        if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                        if (a) GB_COPY_A_TO_C (GB_CX (p), Ax, p, A_iso) ;
                         Cb [p] = a ;
                         task_cnvals += a ;
                     }
@@ -693,14 +693,14 @@
                             if (c == 1)
                             { 
                                 // C (i,j) = A (i,j) + B (i,j)
-                                GB_GETA (aij, Ax, p) ;
-                                GB_GETB (bij, Bx, pB) ;
+                                GB_GETA (aij, Ax, p , A_iso) ;
+                                GB_GETB (bij, Bx, pB, B_iso) ;
                                 GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                             }
                             else
                             { 
                                 // C (i,j) = B (i,j)
-                                GB_COPY_B_TO_C (GB_CX (p), Bx, pB) ;
+                                GB_COPY_B_TO_C (GB_CX (p), Bx, pB, B_iso) ;
                                 Cb [p] = 1 ;
                                 task_cnvals++ ;
                             }
@@ -732,7 +732,7 @@
                     { 
                         // C (i,j) = B (i,j)
                         int8_t b = GBB (Bb, p) ;
-                        if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                        if (b) GB_COPY_B_TO_C (GB_CX (p), Bx, p, B_iso) ;
                         Cb [p] = b ;
                         task_cnvals += b ;
                     }
@@ -773,14 +773,14 @@
                             if (c == 1)
                             { 
                                 // C (i,j) = A (i,j) + B (i,j)
-                                GB_GETA (aij, Ax, pA) ;
-                                GB_GETB (bij, Bx, p) ;
+                                GB_GETA (aij, Ax, pA, A_iso) ;
+                                GB_GETB (bij, Bx, p , B_iso) ;
                                 GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                             }
                             else
                             { 
                                 // C (i,j) = A (i,j)
-                                GB_COPY_A_TO_C (GB_CX (p), Ax, pA) ;
+                                GB_COPY_A_TO_C (GB_CX (p), Ax, pA, A_iso) ;
                                 Cb [p] = 1 ;
                                 task_cnvals++ ;
                             }

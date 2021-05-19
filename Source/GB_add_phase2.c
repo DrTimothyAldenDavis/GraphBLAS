@@ -321,27 +321,27 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         }
 
         // C(i,j) = (ctype) A(i,j), located in Ax [pA]
-        #define GB_COPY_A_TO_C(cij,Ax,pA)                                   \
-            cast_A_to_C (cij, Ax +((pA)*asize), asize) ;
+        #define GB_COPY_A_TO_C(cij,Ax,pA,A_iso)                             \
+            cast_A_to_C (cij, Ax +((A_iso) ? 0: (pA)*asize), asize) ;
 
         // C(i,j) = (ctype) B(i,j), located in Bx [pB]
-        #define GB_COPY_B_TO_C(cij,Bx,pB)                                   \
-            cast_B_to_C (cij, Bx +((pB)*bsize), bsize) ;
+        #define GB_COPY_B_TO_C(cij,Bx,pB,B_iso)                             \
+            cast_B_to_C (cij, Bx +((B_iso) ? 0: (pB)*bsize), bsize) ;
 
         // aij = (xtype) A(i,j), located in Ax [pA]
-        #define GB_GETA(aij,Ax,pA)                                          \
+        #define GB_GETA(aij,Ax,pA,A_iso)                                    \
             GB_void aij [GB_VLA(xsize)] ;                                   \
             if (cast_A_to_X != NULL)                                        \
             {                                                               \
-                cast_A_to_X (aij, Ax +((pA)*asize), asize) ;                \
+                cast_A_to_X (aij, Ax +((A_iso) ? 0:(pA)*asize), asize) ;    \
             }
 
         // bij = (ytype) B(i,j), located in Bx [pB]
-        #define GB_GETB(bij,Bx,pB)                                          \
+        #define GB_GETB(bij,Bx,pB,B_iso)                                    \
             GB_void bij [GB_VLA(ysize)] ;                                   \
             if (cast_B_to_Y != NULL)                                        \
             {                                                               \
-                cast_B_to_Y (bij, Bx +((pB)*bsize), bsize) ;                \
+                cast_B_to_Y (bij, Bx +((B_iso) ? 0:(pB)*bsize), bsize) ;    \
             }
 
         // address of Cx [p]

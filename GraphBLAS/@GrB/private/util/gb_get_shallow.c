@@ -16,8 +16,8 @@
 // error here, since the caller might be getting an optional input matrix, such
 // as Cin or the Mask.
 
-// For v4, is_uniform is false, and the s component has length 9.
-// For v5, is_uniform may be true, and the s component has length 10.
+// For v4, iso is false, and the s component has length 9.
+// For v5, iso may be true, and the s component has length 10.
 
 #include "gb_matlab.h"
 
@@ -112,13 +112,13 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 
         int sparsity_status, sparsity_control ;
         int64_t nvals ;
-        bool is_uniform ;
+        bool iso ;
         if (GraphBLASv3)
         {
             // GraphBLASv3 struct: sparse or hypersparse only
             sparsity_control = GxB_AUTO_SPARSITY ;
             nvals            = 0 ;
-            is_uniform       = false ;
+            iso              = false ;
         }
         else
         {
@@ -127,13 +127,13 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             nvals            = s [8] ;
             if (GraphBLASv4)
             {
-                // GraphBLASv4: is_uniform is always false
-                is_uniform = false ;
+                // GraphBLASv4: iso is always false
+                iso = false ;
             }
             else
             {
-                // GraphBLASv5: is_uniform is present as s [9]
-                is_uniform = (bool) s [9] ;
+                // GraphBLASv5: iso is present as s [9]
+                iso = (bool) s [9] ;
             }
         }
 
@@ -241,12 +241,12 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 if (by_col)
                 {
                     OK (GxB_Matrix_import_FullC (&A, type, nrows, ncols,
-                        &Ax, Ax_size, is_uniform, NULL)) ;
+                        &Ax, Ax_size, iso, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_FullR (&A, type, nrows, ncols,
-                        &Ax, Ax_size, is_uniform, NULL)) ;
+                        &Ax, Ax_size, iso, NULL)) ;
                 }
                 break ;
 
@@ -254,13 +254,13 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 if (by_col)
                 {
                     OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols,
-                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, is_uniform,
+                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, iso,
                         false, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_CSR (&A, type, nrows, ncols,
-                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, is_uniform,
+                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, iso,
                         false, NULL)) ;
                 }
                 break ;
@@ -270,14 +270,14 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 {
                     OK (GxB_Matrix_import_HyperCSC (&A, type, nrows, ncols,
                         &Ap, &Ah, &Ai, &Ax,
-                        Ap_size, Ah_size, Ai_size, Ax_size, is_uniform,
+                        Ap_size, Ah_size, Ai_size, Ax_size, iso,
                         nvec, false, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_HyperCSR (&A, type, nrows, ncols,
                         &Ap, &Ah, &Ai, &Ax,
-                        Ap_size, Ah_size, Ai_size, Ax_size, is_uniform,
+                        Ap_size, Ah_size, Ai_size, Ax_size, iso,
                         nvec, false, NULL)) ;
                 }
                 break ;
@@ -286,12 +286,12 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 if (by_col)
                 {
                     OK (GxB_Matrix_import_BitmapC (&A, type, nrows, ncols,
-                        &Ab, &Ax, Ab_size, Ax_size, is_uniform, nvals, NULL)) ;
+                        &Ab, &Ax, Ab_size, Ax_size, iso, nvals, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_BitmapR (&A, type, nrows, ncols,
-                        &Ab, &Ax, Ab_size, Ax_size, is_uniform, nvals, NULL)) ;
+                        &Ab, &Ax, Ab_size, Ax_size, iso, nvals, NULL)) ;
                 }
                 break ;
 

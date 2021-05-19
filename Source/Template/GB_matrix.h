@@ -283,8 +283,8 @@ size_t x_size ;         // exact size of A->x in bytes, zero if A->x is NULL
 // easy to update: a conventional list of tuples, held inside the matrix
 // itself.  A list of tuples is easy to update but hard to work with in most
 // operations, so whenever another GraphBLAS method or operation needs to
-// access the matrix, the matrix is "flattened" by applying all the pending
-// tuples.
+// access the matrix, the matrix is finalized by applying all the pending
+// updates.
 
 // When a new entry is added that does not exist in the matrix, it is added to
 // this list of pending tuples.  Only when the matrix is needed in another
@@ -449,12 +449,36 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
                         // matrices are never jumbled.
 
 //------------------------------------------------------------------------------
+// iso-valued matrices
+//------------------------------------------------------------------------------
+
+// Entries that are present in a GraphBLAS matrix, vector, or scalar always
+// have a value, and thus the C API of GraphBLAS does not have a structure-only
+// data type, where the matrix, vector, or scalar consists only of its pattern,
+// with no values assign to the entries in the matrix.  Such an object might be
+// useful for representing unweighted graphs, but it would result in a
+// mathematical mismatch with all other objects.  Operations between valued
+// matrices and structure-only matrices would not be defined.
+
+// Instead, the common practice is to assign all entries present in the matrix
+// to be equal to a single value, typically 1 or true.  SuiteSparse:GraphBLAS
+// exploits this typical practice by allowing for iso-valued matrices, where
+// all entries present have the same value, held as A->x [0].  The sparsity
+// structure is kept, so in an iso-valued matrix, A(i,j) is either equal to
+// A->x [0], or not present in the sparsity pattern of A.
+
+// If A is full, A->x is the only component present, and thus a full iso-valued
+// matrix takes only O(1) memory, regardless of its dimension.
+
+bool iso ;              // true if all entries have the same value
+
+//------------------------------------------------------------------------------
 // iterating through a matrix
 //------------------------------------------------------------------------------
 
 // The matrix can be held in 8 formats: (hypersparse, sparse, bitmap, full) x
-// (CSR, CSC).  The comments below assume A is in CSC format but the code works
-// for both CSR and CSC.
+// (CSR, CSC).  Each of these can also be iso-valued.  The comments below
+// assume A is in CSC format but the code works for both CSR and CSC.
 
 #ifdef for_comments_only    // only so vim will add color to the code below:
 
@@ -463,6 +487,7 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
 #define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
 #define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
 #define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
+#define GBX(Ax,p,A_iso) (Ax [(A_iso) ? 0 : (p)])
 
     // A->vdim: the vector dimension of A (ncols(A))
     // A->nvec: # of vectors that appear in A.  For the hypersparse case,
@@ -481,7 +506,8 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
             int64_t pA_end   = (k+1) * vlen ;
             for (p = pA_start ; p < pA_end ; p++)
             {
-                // A(i,j) has row i = (p % vlen), value aij = Ax [p]
+                // A(i,j) has row i = (p % vlen)
+                // value aij = GBX (Ax, p, A->iso)
             }
         }
 
@@ -499,7 +525,8 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
             {
                 if (Ab [p] != 0)
                 {
-                    // A(i,j) has row i = (p % vlen), value aij = Ax [p]
+                    // A(i,j) has row i = (p % vlen)
+                    // value aij = GBX (Ax, p, A->iso)
                 }
                 else
                 {
@@ -517,7 +544,8 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
             // operate on column A(:,j)
             for (p = Ap [k] ; p < Ap [k+1] ; p++)
             {
-                // A(i,j) has row i = Ai [p], value aij = Ax [p]
+                // A(i,j) has row i = Ai [p]
+                // value aij = GBX (Ax, p, A->iso)
             }
         }
 
@@ -530,7 +558,8 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
             // operate on column A(:,j)
             for (p = Ap [k] ; p < Ap [k+1] ; p++)
             {
-                // A(i,j) has row i = Ai [p], value aij = Ax [p]
+                // A(i,j) has row i = Ai [p]
+                // value aij = GBX (Ax, p, A->iso)
             }
         }
 
@@ -546,10 +575,11 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
             int64_t pA_end   = GBP (Ap, k+1, vlen) ;
             for (p = pA_start ; p < pA_end ; p++)
             {
-                // A(i,j) has row index i, value aij = Ax [p]
+                // A(i,j) has row index i
+                // value aij = GBX (Ax, p, A->iso)
                 if (!GBB (Ab, p)) continue ;
                 int64_t i = GBI (Ai, p, vlen) ;
-                double aij = Ax [p] ;
+                double aij = GBX (Ax, p, A->iso) ;
             }
         }
 

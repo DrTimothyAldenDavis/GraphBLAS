@@ -46,6 +46,7 @@
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
+    const bool B_iso = B->iso ;
 
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
@@ -60,6 +61,7 @@
     const bool A_jumbled = A->jumbled ;
     const bool A_ok_for_binary_search = 
         ((A_is_sparse || A_is_hyper) && !A_jumbled) ;
+    const bool A_iso = A->iso ;
 
     #if ( !GB_NO_MASK )
     const int64_t *restrict Mp = M->p ;

@@ -41,7 +41,7 @@
 
 #define GB_SCATTER_M_j_TYPE(mask_t,pMstart,pMend,mark)                  \
 {                                                                       \
-    const mask_t *restrict Mxx = (mask_t *) Mx ;                     \
+    const mask_t *restrict Mxx = (mask_t *) Mx ;                        \
     if (M_is_bitmap)                                                    \
     {                                                                   \
         /* M is bitmap */                                               \
@@ -189,7 +189,7 @@ break ;
 #else
 
     #define GB_GET_B_kj \
-        GB_GETB (bkj, Bx, pB)       /* bkj = Bx [pB] */
+        GB_GETB (bkj, Bx, pB, B_iso)       /* bkj = Bx [pB] */
 
 #endif
 
@@ -233,7 +233,7 @@ break ;
 
     // typical semiring
     #define GB_MULT_A_ik_B_kj                                       \
-        GB_GETA (aik, Ax, pA) ;         /* aik = Ax [pA] ;  */      \
+        GB_GETA (aik, Ax, pA, A_iso) ;  /* aik = Ax [pA] ;  */      \
         GB_CIJ_DECLARE (t) ;            /* ctype t ;        */      \
         GB_MULT (t, aik, bkj, i, k, j)  /* t = aik * bkj ;  */
 
@@ -402,8 +402,8 @@ break ;
         // The update is skipped entirely if t is NaN.  Otherwise, if t is not
         // NaN, xold is checked.  If xold is NaN, islessequal (xold, t) is
         // always false, so the non-NaN t must be always be assigned to Hx [i].
-        // If both terms are not NaN, then islessequal (xold,t) is just the
-        // comparison xold <= t.  If that is true, there is no work to do and
+        // If both terms are not NaN, then islessequal (xold,t) is just
+        // xold <= t.  If that is true, there is no work to do and
         // the loop breaks.  Otherwise, t is smaller than xold and so it must
         // be assigned to Hx [i].
         #define GB_ATOMIC_UPDATE_HX(i,t)                            \

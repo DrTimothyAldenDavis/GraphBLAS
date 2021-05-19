@@ -112,7 +112,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
 
                 // copy or typecast the values
                 int nthreads = GB_nthreads (cnzmax, chunk, nthreads_max) ;
-                GB_cast_array (Cx, C->type->code, (GB_void *) Ax,
+                GB_cast_array (Cx, C->type->code, (GB_void *) Ax, A->iso,
                     A->type->code, Ab, A->type->size, cnzmax, nthreads) ;
 
                 if (GB_IS_BITMAP (A))

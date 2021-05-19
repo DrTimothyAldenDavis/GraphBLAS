@@ -22,7 +22,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Aj_size,  // size of Aj in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
+    bool iso,           // if true, A is iso-valued
 
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
@@ -34,7 +34,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Matrix_import_CSR (&A, type, nrows, ncols, "
-        "&Ap, &Aj, &Ax, Ap_size, Aj_size, Ax_size, is_uniform, "
+        "&Ap, &Aj, &Ax, Ap_size, Aj_size, Ax_size, iso, "
         "jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_CSR") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
@@ -50,8 +50,8 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
         Aj,   Aj_size,  // Ai
         Ax,   Ax_size,  // Ax
         0, jumbled, 0,                      // jumbled or not
-        GxB_SPARSE, false,
-        is_uniform, Context) ;              // sparse by row
+        GxB_SPARSE, false,                  // sparse by row
+        iso, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

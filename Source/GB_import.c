@@ -44,9 +44,8 @@ GrB_Info GB_import      // import a matrix in any format
     // information for all formats:
     int sparsity,       // hypersparse, sparse, bitmap, or full
     bool is_csc,        // if true then matrix is by-column, else by-row
-    bool is_uniform,    // if true then A has uniform values and only one
+    bool iso,           // if true then A is iso-valued and only one
                         // entry is provided in Ax, regardless of nvals(A).
-                        // TODO::: uniform valued matrices not yet supported
     GB_Context Context
 )
 {
@@ -67,7 +66,7 @@ GrB_Info GB_import      // import a matrix in any format
         return (GrB_INVALID_VALUE) ;
     }
 
-    if (is_uniform)
+    if (iso)
     {
         return (GrB_INVALID_VALUE) ;    // TODO::: not yet supported
     }

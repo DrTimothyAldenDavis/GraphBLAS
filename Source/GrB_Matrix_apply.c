@@ -9,6 +9,7 @@
 
 #include "GB_apply.h"
 #include "GB_scalar.h"
+#include "GB_get_mask.h"
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_apply: apply a unary operator to a matrix
@@ -19,7 +20,7 @@
 GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_UnaryOp op,           // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
@@ -34,13 +35,15 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
     GB_WHERE (C, "GrB_Matrix_apply (C, M, accum, op, A, desc)") ;
     GB_BURBLE_START ("GrB_apply") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M) ;
+    GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_transpose, xx1, xx2, xx7) ;
-//  printf ("unop  A_transpose (GrB_INP0): %d\n", A_transpose) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // apply the operator and optionally transpose
@@ -66,7 +69,7 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
 static inline GrB_Info GB_1st       // C<M>=accum(C,op(x,A))
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp op,          // operator to apply to the entries
     const GxB_Scalar x,             // first input:  scalar x
@@ -82,14 +85,16 @@ static inline GrB_Info GB_1st       // C<M>=accum(C,op(x,A))
 
     GB_BURBLE_START ("GrB_apply") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M) ;
+    GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (x) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     // get the descriptor, using GrB_INP1 to transpose the matrix
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         xx1, A_transpose, xx2, xx7) ;
-//  printf ("bind1 A_transpose (GrB_INP1): %d\n", A_transpose) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // apply the operator and optionally transpose
@@ -117,7 +122,7 @@ static inline GrB_Info GB_1st       // C<M>=accum(C,op(x,A))
 static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp op,          // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
@@ -133,14 +138,16 @@ static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
 
     GB_BURBLE_START ("GrB_apply") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M) ;
+    GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (y) ;
 
     // get the descriptor, using GrB_INP0 to transpose the matrix
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_transpose, xx1, xx2, xx7) ;
-//  printf ("bind2 A_transpose (GrB_INP0): %d\n", A_transpose) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // apply the operator and optionally transpose

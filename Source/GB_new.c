@@ -168,6 +168,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->nzombies = 0 ;
     A->jumbled = false ;
     A->Pending = NULL ;
+    A->iso = false ;
 
     //--------------------------------------------------------------------------
     // Allocate A->p and A->h if requested

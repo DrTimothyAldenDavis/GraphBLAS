@@ -24,6 +24,8 @@
 
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    const bool A_iso = A->iso ;
+    const bool B_iso = B->iso ;
           int8_t   *restrict Cb = C->b ;
           GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
     const int64_t cnz = GB_NNZ_HELD (C) ;
@@ -62,8 +64,8 @@
                 if (GBB (Ab, p) && GBB (Bb,p))
                 { 
                     // C (i,j) = A (i,j) + B (i,j)
-                    GB_GETA (aij, Ax, p) ;
-                    GB_GETB (bij, Bx, p) ;
+                    GB_GETA (aij, Ax, p, A_iso) ;
+                    GB_GETB (bij, Bx, p, B_iso) ;
                     GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                     Cb [p] = 1 ;
                     task_cnvals++ ;
@@ -123,8 +125,8 @@
                     if (GBB (Ab, p) && GBB (Bb, p))
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
-                        GB_GETA (aij, Ax, p) ;
-                        GB_GETB (bij, Bx, p) ;
+                        GB_GETA (aij, Ax, p, A_iso) ;
+                        GB_GETB (bij, Bx, p, B_iso) ;
                         GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                         Cb [p] = 1 ;
                         task_cnvals++ ;
@@ -202,8 +204,8 @@
                     if (GBB (Ab, p) && GBB (Bb, p))
                     {
                         // C (i,j) = A (i,j) + B (i,j)
-                        GB_GETA (aij, Ax, p) ;
-                        GB_GETB (bij, Bx, p) ;
+                        GB_GETA (aij, Ax, p, A_iso) ;
+                        GB_GETB (bij, Bx, p, B_iso) ;
                         GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                         Cb [p] = 1 ;
                         task_cnvals++ ;

@@ -348,7 +348,7 @@ if (is_second || is_pair || is_positional)
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_a_is_pattern'', `0'')\n') ;
-    fprintf (f, 'define(`GB_geta'', `%s $1 = $2 [$3]'')\n', xytype) ;
+    fprintf (f, 'define(`GB_geta'', `%s $1 = GBX ($2, $3, $4)'')\n', xytype) ;
 end
 
 % to get an entry from B
@@ -359,8 +359,8 @@ if (is_first || is_pair || is_positional)
     fprintf (f, 'define(`GB_loadb'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_b_is_pattern'', `0'')\n') ;
-    fprintf (f, 'define(`GB_getb'', `%s $1 = $2 [$3]'')\n', xytype) ;
-    fprintf (f, 'define(`GB_loadb'', `$1 [$2] = $3 [$4]'')\n', xytype) ;
+    fprintf (f, 'define(`GB_getb'', `%s $1 = GBX ($2, $3, $4)'')\n', xytype) ;
+    fprintf (f, 'define(`GB_loadb'', `$1 [$2] = GBX ($3, $4, $5)'')\n') ;
 end
 
 % type-specific IDIV

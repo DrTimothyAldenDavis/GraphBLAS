@@ -23,7 +23,7 @@
 //  144:  initialize with incompatible pointer
 //  181:  format
 //  869:  unused parameters
-//  1572: floating point comparisons
+//  1572: floating point compares
 //  1599: shadow
 //  2259: typecasting may lose bits
 //  2282: unrecognized pragma
@@ -37,7 +37,7 @@
 //  58:   sign compare
 //  167:  incompatible pointer
 //  177:  declared but unused
-//  186:  useless comparison
+//  186:  useless compares
 //  188:  mixing enum types
 //  593:  set but not used
 //  981:  unspecified order

@@ -17,7 +17,7 @@
 // Instead, it selects GB_bitmap_assign, which then just calls this method
 // via GB_bitmap_assign_noM_noaccum_whole.
 
-// TODO::: create a uniform-valued matrix C instead
+// TODO::: create a iso-valued matrix C instead
 
 #include "GB_dense.h"
 #include "GB_select.h"

@@ -469,7 +469,7 @@ static inline GrB_Matrix GB_clear_static_header // clear a static header
 #define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
 #define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
 #define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
-// #define GBX(...)     TODO: constant-valued matrices
+#define GBX(Ax,p,A_iso) (Ax [(A_iso) ? 0 : (p)])
 
 #endif
 

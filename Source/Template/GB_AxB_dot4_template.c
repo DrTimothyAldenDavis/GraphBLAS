@@ -151,8 +151,8 @@
                         { 
                             GB_DOT_TERMINAL (cij) ;         // break if terminal
                             // cij += A(k,i) * B(k,j)
-                            GB_GETA (aki, Ax, pA+k) ;       // aki = A(k,i)
-                            GB_GETB (bkj, Bx, pB+k) ;       // bkj = B(k,j)
+                            GB_GETA (aki, Ax, pA+k, A_iso) ; // aki = A(k,i)
+                            GB_GETB (bkj, Bx, pB+k, B_iso) ; // bkj = B(k,j)
                             // cij += aki * bkj
                             GB_MULTADD (cij, aki, bkj, i, k, j) ;
                         }
@@ -219,8 +219,8 @@
                             GB_DOT_TERMINAL (cij) ;   // break if terminal
                             int64_t k = Bi [p] ;
                             // cij += A(k,i) * B(k,j)
-                            GB_GETA (aki, Ax, pA+k) ;     // aki = A(k,i)
-                            GB_GETB (bkj, Bx, p   ) ;     // bkj = B(k,j)
+                            GB_GETA (aki, Ax, pA+k, A_iso) ; // aki = A(k,i)
+                            GB_GETB (bkj, Bx, p   , B_iso) ; // bkj = B(k,j)
                             GB_MULTADD (cij, aki, bkj, i, k, j) ;
                         }
                     }
@@ -320,8 +320,8 @@
                             GB_DOT_TERMINAL (cij) ;         // break if terminal
                             int64_t k = Ai [p] ;
                             // cij += A(k,i) * B(k,j)
-                            GB_GETA (aki, Ax, p   ) ;       // aki = A(k,i)
-                            GB_GETB (bkj, Bx, pB+k) ;       // bkj = B(k,j)
+                            GB_GETA (aki, Ax, p   , A_iso) ; // aki = A(k,i)
+                            GB_GETB (bkj, Bx, pB+k, B_iso) ; // bkj = B(k,j)
                             GB_MULTADD (cij, aki, bkj, i, k, j) ;
                         }
                     }

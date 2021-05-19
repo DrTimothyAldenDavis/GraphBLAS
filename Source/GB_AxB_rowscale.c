@@ -277,14 +277,14 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         //----------------------------------------------------------------------
 
         // dii = D(i,i), located in Dx [i]
-        #define GB_GETA(dii,Dx,i)                                           \
+        #define GB_GETA(dii,Dx,i,D_iso)                                     \
             GB_void dii [GB_VLA(dii_size)] ;                                \
-            if (!D_is_pattern) cast_D (dii, Dx +((i)*dsize), dsize) ;
+            if (!D_is_pattern) cast_D (dii, Dx +(D_iso ? 0:(i)*dsize), dsize) ;
 
         // bij = B(i,j), located in Bx [pB]
-        #define GB_GETB(bij,Bx,pB)                                          \
+        #define GB_GETB(bij,Bx,pB,B_iso)                                    \
             GB_void bij [GB_VLA(bij_size)] ;                                \
-            if (!B_is_pattern) cast_B (bij, Bx +((pB)*bsize), bsize) ;
+            if (!B_is_pattern) cast_B (bij, Bx +(B_iso ? 0:(pB)*bsize), bsize) ;
 
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)

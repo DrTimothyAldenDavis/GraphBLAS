@@ -84,7 +84,7 @@
 %     GraphBLAS uses the 'omitnan' behavior, which is the default in
 %     MATLAB.
 %
-%     Likewise, logical comparisons (< <= > >=) are not well-defined
+%     Likewise, logical comparators (< <= > >=) are not well-defined
 %     mathematically for complex types.  MATLAB defines them, but
 %     GraphBLAS does not.  GraphBLAS can only compare for equality (==)
 %     and inequality (~=) with complex types.

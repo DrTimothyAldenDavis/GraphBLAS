@@ -64,20 +64,20 @@
     0
 
 // aik = Ax [pA]
-#define GB_GETA(aik,Ax,pA) \
-    bool aik = Ax [pA]
+#define GB_GETA(aik,Ax,pA,A_iso) \
+    bool aik = GBX (Ax, pA, A_iso)
 
 // bkj = Bx [pB]
-#define GB_GETB(bkj,Bx,pB) \
-    bool bkj = Bx [pB]
+#define GB_GETB(bkj,Bx,pB,B_iso) \
+    bool bkj = GBX (Bx, pB, B_iso)
 
 // Gx [pG] = Ax [pA]
-#define GB_LOADA(Gx,pG,Ax,pA) \
-    Gx [pG] = Ax [pA]
+#define GB_LOADA(Gx,pG,Ax,pA,A_iso) \
+    Gx [pG] = GBX (Ax, pA, A_iso)
 
 // Gx [pG] = Bx [pB]
-#define GB_LOADB(Gx,pG,Bx,pB) \
-    Gx [pG] = Bx [pB]
+#define GB_LOADB(Gx,pG,Bx,pB,B_iso) \
+    Gx [pG] = GBX (Bx, pB, B_iso)
 
 #define GB_CX(p) Cx [p]
 

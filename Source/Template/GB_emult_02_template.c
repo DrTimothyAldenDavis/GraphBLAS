@@ -36,6 +36,8 @@
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
     #endif
+    const bool A_iso = A->iso ;
+    const bool B_iso = B->iso ;
 
     const int64_t  *restrict Cp = C->p ;
           int64_t  *restrict Ci = C->i ;
@@ -79,8 +81,8 @@
                         if (!Bb [pB]) continue ;
                         // C (i,j) = A (i,j) .* B (i,j)
                         Ci [pC] = i ;
-                        GB_GETA (aij, Ax, pA) ;     
-                        GB_GETB (bij, Bx, pB) ;
+                        GB_GETA (aij, Ax, pA, A_iso) ;     
+                        GB_GETB (bij, Bx, pB, B_iso) ;
                         #if GB_FLIPPED
                         GB_BINOP (GB_CX (pC), bij, aij, i, j) ;
                         #else
@@ -118,8 +120,8 @@
                         int64_t i = Ai [pA] ;
                         int64_t pB = pB_start + i ;
                         // Ci [pA] = i ; already defined
-                        GB_GETA (aij, Ax, pA) ;
-                        GB_GETB (bij, Bx, pB) ;
+                        GB_GETA (aij, Ax, pA, A_iso) ;
+                        GB_GETB (bij, Bx, pB, B_iso) ;
                         #if GB_FLIPPED
                         GB_BINOP (GB_CX (pA), bij, aij, i, j) ;
                         #else
@@ -165,8 +167,8 @@
                     if (!mij) continue ;
                     // C (i,j) = A (i,j) .* B (i,j)
                     Ci [pC] = i ;
-                    GB_GETA (aij, Ax, pA) ;     
-                    GB_GETB (bij, Bx, pB) ;
+                    GB_GETA (aij, Ax, pA, A_iso) ;     
+                    GB_GETB (bij, Bx, pB, B_iso) ;
                     #if GB_FLIPPED
                     GB_BINOP (GB_CX (pC), bij, aij, i, j) ;
                     #else

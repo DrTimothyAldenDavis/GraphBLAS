@@ -139,6 +139,12 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 5.1.0 (TODO)  % FIXME
+
+    \begin{packed_itemize}
+    \item iso-valued matrices added
+    \end{packed_itemize}
+
 \item Version 5.0.5 (May 17, 2021)
 
     \begin{packed_itemize}
@@ -2259,9 +2265,9 @@ built-in types, but two of those types are SuiteSparse extensions
 (\verb'GxB_FC32' and \verb'GxB_FC64').  For those types, the operator name
 always starts with \verb'GxB', not \verb'GrB').
 
-The six \verb'GxB_IS*' comparison operators and the \verb'GxB_*' logical
+The six \verb'GxB_IS*' comparators and the \verb'GxB_*' logical
 operators all return a result one for true and zero for false, in the same
-domain $T$ or $R$ as their inputs.  These six comparison operators are useful
+domain $T$ or $R$ as their inputs.  These six comparators are useful
 as ``multiply'' operators for creating semirings with non-Boolean monoids.
 
 \vspace{0.2in}
@@ -2285,7 +2291,7 @@ GraphBLAS name        & types (domains)            & $z=f(x,y)$      & descripti
 \verb'GxB_RDIV_'$T$   & $T \times T \rightarrow T$ & $z = y/x$       & reverse division \\
 \verb'GxB_POW_'$T$    & $T \times T \rightarrow T$ & $z = x^y$       & power \\
 \hline
-% TxT->T comparison
+% TxT->T comparators
 \verb'GxB_ISEQ_'$T$   & $T \times T \rightarrow T$ & $z = (x == y)$  & equal \\
 \verb'GxB_ISNE_'$T$   & $T \times T \rightarrow T$ & $z = (x \ne y)$ & not equal \\
 \hline
@@ -2298,8 +2304,8 @@ and thus $z = f(x,y) = x^y$ is undefined if $x$ is negative and $y$ is not an
 integer.  To compute a complex result, use \verb'GxB_POW_FC32' or
 \verb'GxB_POW_FC64'.
 
-Operators that require the domain to be ordered (\verb'MIN', \verb'MAX', and
-relative comparisons less-than, greater-than, and so on) are not defined for
+Operators that require the domain to be ordered (\verb'MIN', \verb'MAX',
+less-than, greater-than, and so on) are not defined for
 complex types.  These are listed in the following table:
 
 \vspace{0.2in}
@@ -2314,7 +2320,7 @@ GraphBLAS name        & types (domains)            & $z=f(x,y)$      & descripti
 \verb'GrB_MIN_'$R$    & $R \times R \rightarrow R$ & $z = \min(x,y)$ & minimum \\
 \verb'GrB_MAX_'$R$    & $R \times R \rightarrow R$ & $z = \max(x,y)$ & maximum \\
 \hline
-% RxR->R comparison
+% RxR->R comparators
 \verb'GxB_ISGT_'$R$   & $R \times R \rightarrow R$ & $z = (x >   y)$ & greater than \\
 \verb'GxB_ISLT_'$R$   & $R \times R \rightarrow R$ & $z = (x <   y)$ & less than  \\
 \verb'GxB_ISGE_'$R$   & $R \times R \rightarrow R$ & $z = (x \ge y)$ & greater than or equal \\
@@ -2329,27 +2335,27 @@ GraphBLAS name        & types (domains)            & $z=f(x,y)$      & descripti
 }
 \vspace{0.2in}
 
-Another set of six kinds of built-in comparison operators have the form $T
+Another set of six kinds of built-in comparators have the form $T
 \times T \rightarrow $\verb'bool'.  Note that when $T$ is \verb'bool', the six
 operators give the same results as the six \verb'GxB_IS*_BOOL' operators in the
-table above.  These six comparison operators are useful as ``multiply''
+table above.  These six comparators are useful as ``multiply''
 operators for creating semirings with Boolean monoids.
 
 \vspace{0.2in}
 {\footnotesize
 \begin{tabular}{|llll|}
 \hline
-\multicolumn{4}{|c|}{Binary comparison operators for all 13 types} \\
+\multicolumn{4}{|c|}{Binary comparators for all 13 types} \\
 \hline
 GraphBLAS name        & types (domains)            & $z=f(x,y)$      & description \\
 \hline
-% 6 TxT -> bool comparison
+% 6 TxT -> bool comparators
 \verb'GrB_EQ_'$T$     & $T \times T \rightarrow $\verb'bool' & $z = (x == y)$  & equal \\
 \verb'GrB_NE_'$T$     & $T \times T \rightarrow $\verb'bool' & $z = (x \ne y)$ & not equal \\
 \hline
 \multicolumn{4}{ }{\mbox{ }} \\
 \hline
-\multicolumn{4}{|c|}{Binary comparison operators for non-complex types} \\
+\multicolumn{4}{|c|}{Binary comparators for non-complex types} \\
 \hline
 GraphBLAS name        & types (domains)            & $z=f(x,y)$      & description \\
 \hline
@@ -2441,15 +2447,15 @@ GraphBLAS name        & types (domains)            & $z=f(x,y)$      & descripti
 }
 \vspace{0.2in}
 
-There are two sets of built-in comparison operators in SuiteSparse:Graph\-BLAS,
+There are two sets of built-in comparators in SuiteSparse:Graph\-BLAS,
 but they are not redundant.  They are identical except for the type (domain) of
 their output, $z$.  The \verb'GrB_EQ_'$T$ and related operators compare their
 inputs of type $T$ and produce a Boolean result of true or false.  The
-\verb'GxB_ISEQ_'$T$ and related operators do the same comparison and produce a
+\verb'GxB_ISEQ_'$T$ and related operators compute the same thing and produce a
 result with same type $T$ as their input operands, returning one for true or
-zero for false.  The \verb'IS*' comparison operators are useful when combining
-comparisons with other non-Boolean operators.  For example, a \verb'PLUS-ISEQ'
-semiring counts how many terms of the comparison are true.  With this semiring,
+zero for false.  The \verb'IS*' comparators are useful when combining
+comparators with other non-Boolean operators.  For example, a \verb'PLUS-ISEQ'
+semiring counts how many terms are true.  With this semiring,
 matrix multiplication ${\bf C=AB}$ for two weighted undirected graphs ${\bf A}$
 and ${\bf B}$ computes $c_{ij}$ as the number of edges node $i$ and $j$ have in
 common that have identical edge weights.  Since the output type of the
@@ -2796,7 +2802,7 @@ bool f                      // returns true if A(i,j) is kept
 ) ; \end{verbatim}}
 
 Operators can be used on any type, including user-defined types, except that
-the comparisons \verb'GT', \verb'GE', \verb'LT', and \verb'LE' can only be used
+the comparators \verb'GT', \verb'GE', \verb'LT', and \verb'LE' can only be used
 with built-in types.  User-defined select operators can also be created.
 
 \vspace{0.2in}
@@ -3408,7 +3414,7 @@ use is preferred, for portability to other GraphBLAS implementations.
     \item 10 non-Boolean types, $T$
     \end{itemize}
 
-\item 300 semirings with a comparison operator $T \times T \rightarrow$
+\item 300 semirings with a comparator $T \times T \rightarrow$
     \verb'bool', where $T$ is non-Boolean and real, from the complete cross product of:
 
     \vspace{-0.05in}
@@ -5014,7 +5020,7 @@ GraphBLAS (\verb'bool', \verb'int*_t', \verb'uint*_t', \verb'float',
 with the user-defined type.  No typecasting is done on import or export.
 
 \begin{alert}
-% {\bf FUTURE:}
+{\bf FIXME:} FIXME
 For the import methods, the numerical array must be large enough to hold all
 the entries, but in a future release of SuiteSparse: GraphBLAS, it may be
 specified as an array of length one.  This will indicate that all entries in
@@ -5023,16 +5029,16 @@ the matrix or vector being constructed have the same uniform value, given by
 future release of SuiteSparse:GraphBLAS may return arrays of size large
 enough only to hold a single entry.  Even though there may be many more entries
 than that in the matrix or vector.  This will be indicated, on both import
-and export, with the \verb'is_uniform' boolean flag.
+and export, with the \verb'iso' boolean flag.
 
-If \verb'is_uniform' is true, then all entries present in the matrix or vector
+If \verb'iso' is true, then all entries present in the matrix or vector
 have the same value, and the \verb'Ax' array (for matrices) or \verb'vx' array
 (for vectors) only need to be large enough to hold a single value.
 
 Currently, uniform-valued matrices are not yet supported in this release of
-SuiteSparse:GraphBLAS.  On export, \verb'is_uniform' will always be false.
-On import, an error is returned if \verb'is_uniform' is true on input.
-This feature will be added later, but the \verb'is_uniform' parameter is
+SuiteSparse:GraphBLAS.  On export, \verb'iso' will always be false.
+On import, an error is returned if \verb'iso' is true on input.
+This feature will be added later, but the \verb'iso' parameter is
 added now, so that the API does not need to change once this feature is
 implemented.
 \end{alert}
@@ -5139,9 +5145,10 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     GrB_Index n,        // vector length
     GrB_Index **vi,     // indices, vi_size >= nvals(v)*sizeof(int64_t)
     void **vx,          // values, vx_size >= nvals(v)*(type size)
+                        // or vx_size >= (type size), if iso is true
     GrB_Index vi_size,  // size of vi in bytes
     GrB_Index vx_size,  // size of vx in bytes
-    bool is_uniform,    // if true, v has uniform values (not yet supported)
+    bool iso,           // if true, v is iso-valued
     GrB_Index nvals,    // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted
     const GrB_Descriptor desc
@@ -5184,9 +5191,10 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     GrB_Index *n,       // length of the vector
     GrB_Index **vi,     // indices, vi_size >= nvals(v)*sizeof(int64_t)
     void **vx,          // values, vx_size >= nvals(v)*(type size)
+                        // or vx_size >= (type size), if iso is true
     GrB_Index *vi_size, // size of vi in bytes
     GrB_Index *vx_size, // size of vx in bytes
-    bool *is_uniform,   // if true, v has uniform values (not yet supported)
+    bool *iso,          // if true, v is iso-valued
     GrB_Index *nvals,   // # of entries in vector
     bool *jumbled,      // if true, indices may be unsorted
     const GrB_Descriptor desc
@@ -5230,9 +5238,10 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     GrB_Index n,        // vector length
     int8_t **vb,        // bitmap, vb_size >= n
     void **vx,          // values, vx_size >= n * (type size)
+                        // or vx_size >= (type size), if iso is true
     GrB_Index vb_size,  // size of vb in bytes
     GrB_Index vx_size,  // size of vx in bytes
-    bool is_uniform,    // if true, v has uniform values (not yet supported)
+    bool iso,           // if true, v is iso-valued
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -5280,9 +5289,10 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     GrB_Index *n,       // length of the vector
     int8_t **vb,        // bitmap, vb_size >= n
     void **vx,          // values, vx_size >= n * (type size)
+                        // or vx_size >= (type size), if iso is true
     GrB_Index *vb_size, // size of vb in bytes
     GrB_Index *vx_size, // size of vx in bytes
-    bool *is_uniform,   // if true, v has uniform values (not yet supported)
+    bool *iso,          // if true, v is iso-valued
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -5323,8 +5333,9 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     GrB_Type type,      // type of vector to create
     GrB_Index n,        // vector length
     void **vx,          // values, vx_size >= nvals(v) * (type size)
+                        // or vx_size >= (type size), if iso is true
     GrB_Index vx_size,  // size of vx in bytes
-    bool is_uniform,    // if true, v has uniform values (not yet supported)
+    bool iso,           // if true, v is iso-valued
     const GrB_Descriptor desc
 ) ;
 \end{verbatim}
@@ -5360,8 +5371,9 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     GrB_Type *type,     // type of vector exported
     GrB_Index *n,       // length of the vector
     void **vx,          // values, vx_size >= nvals(v) * (type size)
+                        // or vx_size >= (type size), if iso is true
     GrB_Index *vx_size, // size of vx in bytes
-    bool *is_uniform,   // if true, v has uniform values (not yet supported)
+    bool *iso,          // if true, v is iso-valued
     const GrB_Descriptor desc
 ) ;
 \end{verbatim}
@@ -5403,10 +5415,11 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)*sizeof(int64_t)
     GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Aj_size,  // size of Aj in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool is_uniform,    // if true, A has uniform values (not yet supported)
+    bool iso,           // if true, A is iso-valued
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -5516,7 +5529,7 @@ used
         {
             // get A(i,j)
             int64_t  j = Aj [p] ;           // column index
-            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
+            double aij = Ax [iso ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
 
@@ -5553,10 +5566,11 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)*sizeof(int64_t)
     GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A)*(type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Aj_size, // size of Aj in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *is_uniform,   // if true, A has uniform values (not yet supported)
+    bool *iso,          // if true, A is iso-valued
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -5609,10 +5623,11 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GrB_Index **Ap,     // col "pointers", Ap_size >= (ncols+1)*sizeof(int64_t)
     GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Ai_size,  // size of Ai in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool is_uniform,    // if true, A has uniform values (not yet supported)
+    bool iso,           // if true, A is iso-valued
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -5668,8 +5683,8 @@ be used
         for (int64_t p = Ap [j] ; p < Ap [j+1] ; p++)
         {
             // get A(i,j)
-            int64_t  i = Ai [p] ;           // row index
-            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
+            int64_t  i = Ai [p] ;             // row index
+            double aij = Ax [iso ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
 
@@ -5698,10 +5713,11 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GrB_Index **Ap,     // column "pointers", Ap_size >= ncols+1
     GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A)*(type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Ai_size, // size of Ai in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *is_uniform,   // if true, A has uniform values (not yet supported)
+    bool *iso,          // if true, A is iso-valued
     bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -5744,11 +5760,12 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     GrB_Index **Ah,     // row indices, Ah_size >= (nvec)*sizeof(int64_t)
     GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Ah_size,  // size of Ah in bytes
     GrB_Index Aj_size,  // size of Aj in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool is_uniform,    // if true, A has uniform values (not yet supported)
+    bool iso,           // if true, A is iso-valued
     GrB_Index nvec,     // number of rows that appear in Ah
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
@@ -5815,8 +5832,8 @@ order, and no duplicates can appear.  To iterate over this data structure
         for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
         {
             // get A(i,j)
-            int64_t  j = Aj [p] ;           // column index
-            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
+            int64_t  j = Aj [p] ;             // column index
+            double aij = Ax [iso ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
 
@@ -5858,11 +5875,12 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GrB_Index **Ah,     // row indices, Ah_size >= nvec*sizeof(int64_t)
     GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A)*(type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Ah_size, // size of Ah in bytes
     GrB_Index *Aj_size, // size of Aj in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *is_uniform,   // if true, A has uniform values (not yet supported)
+    bool *iso,          // if true, A is iso-valued
     GrB_Index *nvec,    // number of rows that appear in Ah
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
@@ -5906,11 +5924,12 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GrB_Index **Ah,     // column indices, Ah_size >= nvec*sizeof(int64_t)
     GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A)*(type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Ah_size,  // size of Ah in bytes
     GrB_Index Ai_size,  // size of Ai in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool is_uniform,    // if true, A has uniform values (not yet supported)
+    bool iso,           // if true, A is iso-valued
     GrB_Index nvec,     // number of columns that appear in Ah
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
@@ -5936,8 +5955,8 @@ assuming it has type \verb'GrB_FP64':
         for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
         {
             // get A(i,j)
-            int64_t  i = Ai [p] ;           // row index
-            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
+            int64_t  i = Ai [p] ;             // row index
+            double aij = Ax [iso ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
 
@@ -5959,12 +5978,13 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Index **Ap,     // column "pointers", Ap_size >= nvec+1
     GrB_Index **Ah,     // column indices, Ah_size >= nvec
     GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)
-    void **Ax,          // values, Ax_size >= nvals(A)
+    void **Ax,          // values, Ax_size >= nvals(A)*(type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index *Ap_size, // size of Ap
     GrB_Index *Ah_size, // size of Ah
     GrB_Index *Ai_size, // size of Ai
     GrB_Index *Ax_size, // size of Ax
-    bool *is_uniform,   // if true, A has uniform values (not yet supported)
+    bool *iso,          // if true, A is iso-valued
     GrB_Index *nvec,    // number of columns that appear in Ah
     bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
@@ -6006,9 +6026,10 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     GrB_Index ncols,    // number of columns of the matrix
     int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index Ab_size,  // size of Ab in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool is_uniform,    // if true, A has uniform values (not yet supported)
+    bool iso,           // if true, A is iso-valued
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -6063,7 +6084,7 @@ used (assuming it has type \verb'GrB_FP64'):
             int64_t p = i*ncols + j ;
             if (Ab [p])
             {
-                double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
+                double aij = Ax [iso ? 0 : p] ;   // numerical value
             }
         }
     } \end{verbatim}}
@@ -6100,9 +6121,10 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     GrB_Index *ncols,   // number of columns of the matrix
     int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index *Ab_size, // size of Ab in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *is_uniform,   // if true, A has uniform values (not yet supported)
+    bool *iso,          // if true, A is iso-valued
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -6143,9 +6165,10 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     GrB_Index ncols,    // number of columns of the matrix
     int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index Ab_size,  // size of Ab in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool is_uniform,    // if true, A has uniform values (not yet supported)
+    bool iso,           // if true, A is iso-valued
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -6173,9 +6196,10 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     GrB_Index *ncols,   // number of columns of the matrix
     int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index *Ab_size, // size of Ab in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *is_uniform,   // if true, A has uniform values (not yet supported)
+    bool *iso,          // if true, A is iso-valued
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -6203,8 +6227,9 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool is_uniform,    // if true, A has uniform values (not yet supported)
+    bool iso,           // if true, A is iso-valued
     const GrB_Descriptor desc
 ) ;
 \end{verbatim}
@@ -6215,7 +6240,9 @@ format.  The \verb'FullR' format is identical to \verb'BitmapR', except that
 all entries are present.  The value of $A(i,j)$ is \verb'Ax[i*ncols+j]'.
 
 To iterate over the rows and entries of this matrix, the following code can be
-used (assuming it has type \verb'GrB_FP64'):
+used (assuming it has type \verb'GrB_FP64').
+Note that if \verb'A' is both full and iso-valued, it takes $O(1)$ memory,
+regardless of \verb'nrows' and \verb'ncols'.
 
     {\footnotesize
     \begin{verbatim}
@@ -6226,7 +6253,7 @@ used (assuming it has type \verb'GrB_FP64'):
         {
             // get A(i,j)
             int64_t p = i*ncols + j ;
-            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
+            double aij = Ax [iso ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
 
@@ -6246,8 +6273,9 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *is_uniform,   // if true, A has uniform values (not yet supported)
+    bool *iso,          // if true, A is iso-valued
     const GrB_Descriptor desc
 ) ;
 \end{verbatim}
@@ -6277,8 +6305,9 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool is_uniform,    // if true, A has uniform values (not yet supported)
+    bool iso,           // if true, A is iso-valued
     const GrB_Descriptor desc
 ) ;
 \end{verbatim}
@@ -6289,7 +6318,9 @@ format.  The \verb'FullC' format is identical to \verb'BitmapC', except that
 all entries are present.  The value of $A(i,j)$ is \verb'Ax[i+j*nrows]'.
 
 To iterate over the rows and entries of this matrix, the following code can be
-used (assuming it has type \verb'GrB_FP64'):
+used (assuming it has type \verb'GrB_FP64').
+Note that if \verb'A' is both full and iso-valued, it takes $O(1)$ memory,
+regardless of \verb'nrows' and \verb'ncols'.
 
     {\footnotesize
     \begin{verbatim}
@@ -6300,15 +6331,9 @@ used (assuming it has type \verb'GrB_FP64'):
         {
             // get A(i,j)
             int64_t p = i + j*nrows ;
-            double aij = Ax [is_uniform ? 0 : p] ;   // numerical value
+            double aij = Ax [iso ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
-
-Note that the \verb'is_uniform' feature is not yet implemented.  Once it is
-added to SuiteSparse:GraphBLAS, a full matrix with uniform values will take
-only $O(1)$ time and memory to create and hold in memory.  Some operations
-need not traverse over all entries of the matrix, and these operations will
-be very fast with full matrices with uniform values.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -6326,8 +6351,9 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *is_uniform,   // if true, A has uniform values (not yet supported)
+    bool *iso,          // if true, A is iso-valued
     const GrB_Descriptor desc
 ) ;
 \end{verbatim}
@@ -9341,7 +9367,7 @@ methods can be used in their generic form with the single name
 \verb'GrB_assign'.  These methods are very similar to their
 \verb'GxB_subassign' counterparts in Section~\ref{subassign}.  They differ
 primarily in the size of the \verb'Mask', and how the \verb'GrB_REPLACE' option
-works.  Refer to Section~\ref{compare_assign} for a complete comparison of
+works.  Section~\ref{compare_assign} compares
 \verb'GxB_subassign' and \verb'GrB_assign'.
 
 See Section~\ref{colon} for a description of
@@ -10527,7 +10553,7 @@ The comparators \verb'GxB_GT_*' \verb'GxB_GE_*' \verb'GxB_LT_*', and
 \verb'GxB_LE_*' only work for built-in types.  All other built-in select
 operators can be used for any type, both built-in and any user-defined type.
 
-{\bf NOTE:} For floating-point values, comparisons with \verb'NaN' always return
+{\bf NOTE:} For floating-point values, compares with \verb'NaN' always return
 false.  The built-in select operators should not be used with a scalar
 \verb'thunk' that is equal to \verb'NaN'.  For this case, create a user-defined
 select operator that performs the test with the ANSI C \verb'isnan' function
@@ -11643,7 +11669,7 @@ of those new members from the set of candidates.
 The resulting method is very efficient.  For the \verb'Freescale2' matrix, the
 algorithm finds an independent set of size 1.6 million in 1.7 seconds (on the
 same MacBook Pro referred to in Section~\ref{bfs}, using a single core), taking
-four iterations of the \verb'while' loop.  For comparison, removing its
+four iterations of the \verb'while' loop.  Removing its
 diagonal entries (required for the algorithm to work) takes 0.3 seconds in
 GraphBLAS (see Section~\ref{transpose}), and simply transposing the matrix
 takes 0.24 seconds in both MATLAB and GraphBLAS.
@@ -11908,9 +11934,9 @@ the \verb'read_matrix' function described here, and also much faster than
 The \verb'read_matrix' function in the \verb'Demo' reads in a triplet matrix
 from a file, one line per entry, and then uses \verb'GrB_Matrix_build' to
 create the matrix.  It creates a second copy with \verb'GrB_Matrix_setElement',
-just to test that method and compare the run times.  A comparison of
-\verb'build' versus \verb'setElement' has already been discussed in
-Section~\ref{random}.
+just to test that method and compare the run times.
+Section~\ref{random} has already compared
+\verb'build' versus \verb'setElement'.
 
 The function can return the matrix as-is, which may be rectangular or
 unsymmetric.  If an input parameter is set to make the matrix symmetric,
@@ -12633,7 +12659,7 @@ GraphBLAS folder.
 
 I have tested this package extensively on multicore single-socket systems, but
 have not yet optimized it for multi-socket systems with a NUMA architecture.
-That will be done in a future release.  If you publish benchmark comparisons
+That will be done in a future release.  If you publish benchmarks
 with this package, please state the SuiteSparse:GraphBLAS version, and a caveat
 if appropriate.  If you see significant performance issues when going from a
 single-socket to multi-socket system, I would like to hear from you so I can

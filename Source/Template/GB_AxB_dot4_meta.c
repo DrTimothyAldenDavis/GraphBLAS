@@ -22,8 +22,8 @@
         cij_updated = true ;                                        \
         GB_GETC (cij, pC) ;                 /* cij = Cx [pC] */     \
     }                                                               \
-    GB_GETA (aki, Ax, pA) ;                 /* aki = A(k,i) */      \
-    GB_GETB (bkj, Bx, pB) ;                 /* bkj = B(k,j) */      \
+    GB_GETA (aki, Ax, pA, A_iso) ;          /* aki = A(k,i) */      \
+    GB_GETB (bkj, Bx, pB, B_iso) ;          /* bkj = B(k,j) */      \
     GB_MULTADD (cij, aki, bkj, i, k, j) ;   /* cij += aki * bkj */  \
     GB_DOT_TERMINAL (cij) ;         /* break if cij == terminal */  \
 }
@@ -63,6 +63,7 @@
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
+    const bool B_iso = B->iso ;
 
     const int64_t  *restrict Ap = A->p ;
     const int8_t   *restrict Ab = A->b ;
@@ -73,6 +74,7 @@
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
+    const bool A_iso = A->iso ;
 
     int ntasks = naslice * nbslice ;
 

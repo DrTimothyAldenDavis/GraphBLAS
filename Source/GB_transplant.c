@@ -290,11 +290,12 @@ GrB_Info GB_transplant          // transplant one matrix into another
     }
     else
     {
+        // FIXME: if A is iso, so is C
         // types differ, must typecast from A to C.
         GB_void *restrict Cx = (GB_void *) C->x ;
         GB_void *restrict Ax = (GB_void *) A->x ;
         GB_cast_array (Cx, C->type->code,
-            Ax, A->type->code, A->b, A->type->size, anz, nthreads) ;
+            Ax, A->iso, A->type->code, A->b, A->type->size, anz, nthreads) ;
         if (!A->x_shallow)
         { 
             GB_FREE (&(A->x), A->x_size) ;

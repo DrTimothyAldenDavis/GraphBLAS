@@ -394,7 +394,7 @@ GrB_Info Complex_init (bool builtin_complex)
     OK (GrB_BinaryOp_new (&Complex_max    , B complex_max    , C, C, C)) ;
 
     //--------------------------------------------------------------------------
-    // create the Complex binary comparison operators, CxC -> C
+    // create the Complex binary comparators, CxC -> C
     //--------------------------------------------------------------------------
 
     if (builtin_complex)

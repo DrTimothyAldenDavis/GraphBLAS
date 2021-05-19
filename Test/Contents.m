@@ -296,9 +296,9 @@
 %   ../Demo/MATLAB/check_adj      - ensure A is a valid adjacency matrix
 %   ../Demo/MATLAB/edges_to_adj   - create an adjacency matrix from an edge incidence matrix
 %   ../Demo/MATLAB/tri_matlab     - run tricount tests in MATLAB
-%   test70                        - performance comparison of triangle counting methods
+%   test70                        - compare performance of triangle counting methods
 %   test70_plot                   - plot the results from test70
-%   test71                        - performance comparison of triangle counting methods
+%   test71                        - compare performance of triangle counting methods
 %   test71_plot                   - plot the results from test71
 %   test71_table                  - print the table for triangle counting results
 

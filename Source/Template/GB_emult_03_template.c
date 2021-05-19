@@ -21,6 +21,8 @@
 
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    const bool A_iso = A->iso ;
+    const bool B_iso = B->iso ;
 
     const int64_t *restrict Mp = M->p ;
     const int64_t *restrict Mh = M->h ;
@@ -65,8 +67,8 @@
                     int64_t p = pstart + i ;
                     // C (i,j) = A (i,j) .* B (i,j)
                     Ci [pC] = i ;
-                    GB_GETA (aij, Ax, p) ;
-                    GB_GETB (bij, Bx, p) ;
+                    GB_GETA (aij, Ax, p, A_iso) ;
+                    GB_GETB (bij, Bx, p, B_iso) ;
                     GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                     pC++ ;
                 }

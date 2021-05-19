@@ -23,7 +23,7 @@
 // bitmap, only assignments where (Mb [pC] == 1) are needed, but it's faster to
 // just assign all entries.
 
-// TODO::: when uniform-valued matrices are supported, this method will take
+// TODO::: when iso-valued matrices are supported, this method will take
 // O(1) time.
 
 #include "GB_subassign_methods.h"

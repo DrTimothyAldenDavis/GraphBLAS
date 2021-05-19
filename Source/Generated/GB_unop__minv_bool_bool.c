@@ -32,7 +32,7 @@
     bool
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA) \
+#define GB_GETA(aij,Ax,pA,A_iso) \
     ;
 
 #define GB_CX(p) Cx [p]
@@ -46,10 +46,10 @@
     ; ;
 
 // cij = op (aij)
-#define GB_CAST_OP(pC,pA)           \
+#define GB_CAST_OP(pC,pA,A_iso)     \
 {                                   \
     /* aij = Ax [pA] */             \
-    ; ;          \
+    ; ;   \
     /* Cx [pC] = op (cast (aij)) */ \
     ; ;               \
     Cx [pC] = true ;        \
@@ -71,6 +71,7 @@ GrB_Info GB (_unop_apply__minv_bool_bool)
 (
     bool *Cx,       // Cx and Ax may be aliased
     const bool *Ax,
+    const bool A_iso,
     const int8_t *restrict Ab,   // A->b if A is bitmap
     int64_t anz,
     int nthreads
@@ -81,8 +82,8 @@ GrB_Info GB (_unop_apply__minv_bool_bool)
     #else
     int64_t p ;
 
-    // TODO: if OP is ONE and uniform-valued matrices are exploited, then
-    // do this in O(1) time
+    // TODO: if OP is ONE and iso-valued matrices are exploited, then
+    // do this in O(1) time.  Or, if C is also iso-valued, do in O(1) time.
 
     if (Ab == NULL)
     { 

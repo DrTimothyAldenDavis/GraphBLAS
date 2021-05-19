@@ -34,6 +34,8 @@
     const int64_t  *restrict Bi = B->i ;
     const int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ;
     const int64_t bvlen = B->vlen ;
+    const bool D_iso = D->iso ;
+    const bool B_iso = B->iso ;
 
     //--------------------------------------------------------------------------
     // C=D*B
@@ -52,8 +54,8 @@
         for (int64_t p = pstart ; p < pend ; p++)
         { 
             int64_t i = GBI (Bi, p, bvlen) ;        // get row index of B(i,j)
-            GB_GETA (dii, Dx, i) ;                  // dii = D(i,i)
-            GB_GETB (bij, Bx, p) ;                  // bij = B(i,j)
+            GB_GETA (dii, Dx, i, D_iso) ;           // dii = D(i,i)
+            GB_GETB (bij, Bx, p, B_iso) ;           // bij = B(i,j)
             GB_BINOP (GB_CX (p), dii, bij, 0, 0) ;  // C(i,j) = dii*bij
         }
     }

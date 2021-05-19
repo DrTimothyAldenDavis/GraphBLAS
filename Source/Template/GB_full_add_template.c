@@ -37,8 +37,8 @@
         for (p = 0 ; p < cnz ; p++)
         { 
             // C (i,j) = A (i,j) + B (i,j)
-            GB_GETA (aij, Ax, p) ;
-            GB_GETB (bij, Bx, p) ;
+            GB_GETA (aij, Ax, p, A_iso) ;
+            GB_GETB (bij, Bx, p, B_iso) ;
             GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
         }
 
@@ -63,14 +63,14 @@
                 if (Bb [p])
                 { 
                     // C (i,j) = A (i,j) + B (i,j)
-                    GB_GETA (aij, Ax, p) ;
-                    GB_GETB (bij, Bx, p) ;
+                    GB_GETA (aij, Ax, p, A_iso) ;
+                    GB_GETB (bij, Bx, p, B_iso) ;
                     GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                 }
                 else
                 { 
                     // C (i,j) = A (i,j)
-                    GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                    GB_COPY_A_TO_C (GB_CX (p), Ax, p, A_iso) ;
                 }
             }
 
@@ -86,7 +86,7 @@
             for (p = 0 ; p < cnz ; p++)
             {
                 // C (i,j) = A (i,j)
-                GB_COPY_A_TO_C (GB_CX (p), Ax, p) ;
+                GB_COPY_A_TO_C (GB_CX (p), Ax, p, A_iso) ;
             }
 
             GB_SLICE_MATRIX (B, 8, chunk) ;
@@ -110,8 +110,8 @@
                         // C (i,j) = A (i,j) + B (i,j)
                         int64_t i = Bi [pB] ;
                         int64_t p = pC_start + i ;
-                        GB_GETA (aij, Ax, p) ;
-                        GB_GETB (bij, Bx, pB) ;
+                        GB_GETA (aij, Ax, p , A_iso) ;
+                        GB_GETB (bij, Bx, pB, B_iso) ;
                         GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                     }
                 }
@@ -139,14 +139,14 @@
                 if (Ab [p])
                 { 
                     // C (i,j) = A (i,j) + B (i,j)
-                    GB_GETA (aij, Ax, p) ;
-                    GB_GETB (bij, Bx, p) ;
+                    GB_GETA (aij, Ax, p, A_iso) ;
+                    GB_GETB (bij, Bx, p, B_iso) ;
                     GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
                 }
                 else
                 { 
                     // C (i,j) = B (i,j)
-                    GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                    GB_COPY_B_TO_C (GB_CX (p), Bx, p, B_iso) ;
                 }
             }
 
@@ -162,7 +162,7 @@
             for (p = 0 ; p < cnz ; p++)
             {
                 // C (i,j) = B (i,j)
-                GB_COPY_B_TO_C (GB_CX (p), Bx, p) ;
+                GB_COPY_B_TO_C (GB_CX (p), Bx, p, B_iso) ;
             }
 
             GB_SLICE_MATRIX (A, 8, chunk) ;
@@ -186,8 +186,8 @@
                         // C (i,j) = A (i,j) + B (i,j)
                         int64_t i = Ai [pA] ;
                         int64_t p = pC_start + i ;
-                        GB_GETA (aij, Ax, pA) ;
-                        GB_GETB (bij, Bx, p) ;
+                        GB_GETA (aij, Ax, pA, A_iso) ;
+                        GB_GETB (bij, Bx, p , B_iso) ;
                         GB_BINOP (GB_CX (p), aij, bij, i, j) ;
                     }
                 }

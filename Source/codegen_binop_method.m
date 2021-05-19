@@ -149,7 +149,7 @@ if (isequal (binop, 'second') || isequal (binop, 'pair'))
     % the value of A is ignored
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
-    fprintf (f, 'define(`GB_geta'', `%s $1 = $2 [$3]'')\n', xtype) ;
+    fprintf (f, 'define(`GB_geta'', `%s $1 = GBX ($2, $3, $4)'')\n', xtype) ;
 end
 
 % to get an entry from B
@@ -157,7 +157,7 @@ if (isequal (binop, 'first') || isequal (binop, 'pair'))
     % the value of B is ignored
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
 else
-    fprintf (f, 'define(`GB_getb'', `%s $1 = $2 [$3]'')\n', ytype) ;
+    fprintf (f, 'define(`GB_getb'', `%s $1 = GBX ($2, $3, $4)'')\n', ytype) ;
 end
 
 % to copy an entry from A to C

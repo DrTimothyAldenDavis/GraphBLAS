@@ -29,7 +29,7 @@
 //         LOR, LAND, LXOR
 //      10 non-Boolean types, T
 
-// 300 semirings with a comparison operator TxT -> bool, where T is
+// 300 semirings with a comparator TxT -> bool, where T is
 // non-Boolean, from the complete cross product of:
 
 //      5 Boolean add monoids: (LAND, LOR, LXOR, EQ, ANY)

@@ -202,7 +202,7 @@ void pagerank_diff
 }
 
 //------------------------------------------------------------------------------
-// comparison function for qsort
+// comparator for qsort
 //------------------------------------------------------------------------------
 
 int pagerank_compar (const void *x, const void *y)

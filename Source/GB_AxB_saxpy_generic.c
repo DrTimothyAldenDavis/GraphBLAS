@@ -177,17 +177,17 @@ GrB_Info GB_AxB_saxpy_generic
         ASSERT (A_is_pattern) ;
         ASSERT (B_is_pattern) ;
 
-        // aik = A(i,k), located in Ax [pA], value not used
-        #define GB_GETA(aik,Ax,pA) ;
+        // aik = A(i,k), located in Ax [A_iso ? 0:pA], value not used
+        #define GB_GETA(aik,Ax,pA,A_iso) ;
 
-        // bkj = B(k,j), located in Bx [pB], value not used
-        #define GB_GETB(bkj,Bx,pB) ;
+        // bkj = B(k,j), located in Bx [B_iso ? 0:pB], value not used
+        #define GB_GETB(bkj,Bx,pB,B_iso) ;
 
-        // Gx [pG] = A(i,k), located in Ax [pA], value not used
-        #define GB_LOADA(Gx,pG,Ax,pA) ;
+        // Gx [pG] = A(i,k), located in Ax [A_iso ? 0:pA], value not used
+        #define GB_LOADA(Gx,pG,Ax,pA,A_iso) ;
 
-        // Gx [pG] = B(k,j), located in Bx [pB], value not used
-        #define GB_LOADB(Gx,pG,Bx,pB) ;
+        // Gx [pG] = B(k,j), located in Bx [B_iso ? 0:pB], value not used
+        #define GB_LOADB(Gx,pG,Bx,pB,B_iso) ;
 
         // define t for each task
         #define GB_CIJ_DECLARE(t) GB_CTYPE t
@@ -298,27 +298,27 @@ GrB_Info GB_AxB_saxpy_generic
 
         GB_BURBLE_MATRIX (C, "(generic C=A*B) ") ;
 
-        // aik = A(i,k), located in Ax [pA]
+        // aik = A(i,k), located in Ax [A_iso ? 0:pA]
         #undef  GB_GETA
-        #define GB_GETA(aik,Ax,pA)                                          \
+        #define GB_GETA(aik,Ax,pA,A_iso)                                    \
             GB_void aik [GB_VLA(aik_size)] ;                                \
-            if (!A_is_pattern) cast_A (aik, Ax +((pA)*asize), asize)
+            if (!A_is_pattern) cast_A (aik, Ax +((A_iso) ? 0:(pA)*asize), asize)
 
-        // bkj = B(k,j), located in Bx [pB]
+        // bkj = B(k,j), located in Bx [B_iso ? 0:pB]
         #undef  GB_GETB
-        #define GB_GETB(bkj,Bx,pB)                                          \
+        #define GB_GETB(bkj,Bx,pB,B_iso)                                    \
             GB_void bkj [GB_VLA(bkj_size)] ;                                \
-            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize)
+            if (!B_is_pattern) cast_B (bkj, Bx +((B_iso) ? 0:(pB)*bsize), bsize)
 
-        // Gx [pG] = A(i,k), located in Ax [pA], no typecasting
+        // Gx [pG] = A(i,k), located in Ax [A_iso ? 0:pA], no typecasting
         #undef  GB_LOADA
-        #define GB_LOADA(Gx,pG,Ax,pA)                                       \
-            memcpy (Gx + ((pG)*asize), Ax +((pA)*asize), asize)
+        #define GB_LOADA(Gx,pG,Ax,pA,A_iso)                                 \
+            memcpy (Gx + ((pG)*asize), Ax +((A_iso) ? 0:(pA)*asize), asize)
 
-        // Gx [pG] = B(k,j), located in Bx [pB], no typecasting
+        // Gx [pG] = B(k,j), located in Bx [B_iso ? 0:pB], no typecasting
         #undef  GB_LOADB
-        #define GB_LOADB(Gx,pG,Bx,pB)                                       \
-            memcpy (Gx + ((pG)*bsize), Bx +((pB)*bsize), bsize)
+        #define GB_LOADB(Gx,pG,Bx,pB,B_iso)                                 \
+            memcpy (Gx + ((pG)*bsize), Bx +((B_iso) ? 0:(pB)*bsize), bsize)
 
         // define t for each task
         #undef  GB_CIJ_DECLARE

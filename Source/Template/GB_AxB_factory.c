@@ -18,7 +18,7 @@
 //          is TxT->T (as is the monoid).
 
 //      GB_AxB_compare_factory: handles all semirings where the multiply
-//          operator is TxT -> bool (for the comparison operators, LT, GT,
+//          operator is TxT -> bool (for the comparators, LT, GT,
 //          etc), and where the monoid is bool x bool -> bool.
 
 //      GB_AxB_bitwise_factory: handles all semirings for bitwise operators.

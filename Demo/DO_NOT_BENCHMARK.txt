@@ -1,0 +1,8 @@
+
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+>>> DO NOT BENCHMARK ANY OF THESE PROGRAMS <<<
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    These methods are simple ones, meant for illustration only.
+    Use LAGraph for benchmarking and use in production.
+

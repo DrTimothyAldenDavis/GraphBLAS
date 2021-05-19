@@ -19,11 +19,12 @@
 
 #include "GB_assign.h"
 #include "GB_bitmap_assign.h"
+#include "GB_get_mask.h"
 
 GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // mask for C(Rows,Cols), unused if NULL
+    const GrB_Matrix M_in,          // mask for C(Rows,Cols), unused if NULL
     const GrB_BinaryOp accum,       // accum for Z=accum(C(Rows,Cols),T)
     const void *scalar,             // scalar to assign to C(Rows,Cols)
     const GB_Type_code scalar_code, // type code of scalar to assign
@@ -40,14 +41,15 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
     // check inputs
     //--------------------------------------------------------------------------
 
-    // C may be aliased with M
-
     GB_RETURN_IF_NULL (scalar) ;
     ASSERT (scalar_code <= GB_UDT_code) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         xx1, xx2, xx3, xx7) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // C<M>(Rows,Cols) = accum (C(Rows,Cols), scalar)

@@ -5,6 +5,13 @@ This is the GraphBLAS/Demo folder.  It contains a set of simple demo programs
 that illustrate the use of GraphBLAS.  To compile and run the demos, see
 ../README.txt.
 
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+>>> DO NOT BENCHMARK ANY OF THESE PROGRAMS <<<
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    These methods are simple ones, meant for illustration only.
+    Use LAGraph for benchmarking and use in production.
+
 --------------------------------------------------------------------------------
 Files in this folder:
 

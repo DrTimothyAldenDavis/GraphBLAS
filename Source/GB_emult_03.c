@@ -39,7 +39,7 @@
 #define GB_FREE_ALL                         \
 {                                           \
     GB_FREE_WORK ;                          \
-    GB_phbix_free (C) ;                   \
+    GB_phbix_free (C) ;                     \
 }
 
 GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full

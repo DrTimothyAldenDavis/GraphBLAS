@@ -20,7 +20,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
 
     void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *is_uniform,   // if true, A has uniform values (TODO:::unsupported)
+    bool *iso,          // if true, A is iso-valued
 
     const GrB_Descriptor desc
 )
@@ -31,7 +31,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Matrix_export_FullC (&A, &type, &nrows, &ncols, "
-        "&Ax, &Ax_size, &is_uniform, desc)") ;
+        "&Ax, &Ax_size, &iso, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_export_FullC") ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
@@ -85,7 +85,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
         Ax,   Ax_size,  // Ax
         NULL, NULL, NULL,
         &sparsity, &is_csc,                 // full by col
-        is_uniform, Context) ;
+        iso, Context) ;
 
     if (info == GrB_SUCCESS)
     {

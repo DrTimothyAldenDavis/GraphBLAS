@@ -133,6 +133,7 @@ GrB_Info GB (_bind1st)
     GB_void *Cx_output,
     const GB_void *x_input,
     const GB_void *Bx_input,
+    const bool B_iso,
     const int8_t *restrict Ab,
     int64_t anz,
     int nthreads
@@ -144,6 +145,7 @@ GrB_Info GB (_bind2nd)
 (
     GB_void *Cx_output,
     const GB_void *Ax_input,
+    const bool A_iso,
     const GB_void *y_input,
     const int8_t *restrict Ab,
     int64_t anz,

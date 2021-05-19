@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// TODO:: if OP is ONE and uniform-valued matrices are exploited, then do
+// TODO:: if OP is ONE and iso-valued matrices are exploited, then do
 // the values in O(1) time.
 
 {
@@ -21,6 +21,7 @@
 
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
     GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    const bool A_iso = A->iso ;
 
     //--------------------------------------------------------------------------
     // C = op (cast (A'))
@@ -67,7 +68,7 @@
                     // find the position of the entry A(j,i) 
                     // pA = j + i * avlen
                     // Cx [pC] = op (Ax [pA])
-                    GB_CAST_OP (pC, ((pC / avdim) + (pC % avdim) * avlen)) ;
+                    GB_CAST_OP (pC, ((pC/avdim) + (pC%avdim) * avlen), A_iso) ;
                 }
             }
             else
@@ -86,7 +87,7 @@
                     if (cij_exists)
                     { 
                         // Cx [pC] = op (Ax [pA])
-                        GB_CAST_OP (pC, pA) ;
+                        GB_CAST_OP (pC, pA, A_iso) ;
                     }
                 }
             }
@@ -127,7 +128,7 @@
                     int64_t pC = workspace [i]++ ;
                     Ci [pC] = j ;
                     // Cx [pC] = op (Ax [pA])
-                    GB_CAST_OP (pC, pA) ;
+                    GB_CAST_OP (pC, pA, A_iso) ;
                 }
             }
 
@@ -159,7 +160,7 @@
                         GB_ATOMIC_CAPTURE_INC64 (pC, workspace [i]) ;
                         Ci [pC] = j ;
                         // Cx [pC] = op (Ax [pA])
-                        GB_CAST_OP (pC, pA) ;
+                        GB_CAST_OP (pC, pA, A_iso) ;
                     }
                 }
             }
@@ -190,7 +191,7 @@
                         int64_t pC = workspace [i]++ ;
                         Ci [pC] = j ;
                         // Cx [pC] = op (Ax [pA])
-                        GB_CAST_OP (pC, pA) ;
+                        GB_CAST_OP (pC, pA, A_iso) ;
                     }
                 }
             }

@@ -64,23 +64,23 @@
     1
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA)  \
-    uint16_t aij = Ax [pA]
+#define GB_GETA(aij,Ax,pA,A_iso)  \
+    uint16_t aij = GBX (Ax, pA, A_iso)
 
 // bij = Bx [pB]
-#define GB_GETB(bij,Bx,pB)  \
-    uint16_t bij = Bx [pB]
+#define GB_GETB(bij,Bx,pB,B_iso)  \
+    uint16_t bij = GBX (Bx, pB, B_iso)
 
 // declare scalar of the same type as C
 #define GB_CTYPE_SCALAR(t)  \
     uint16_t t
 
 // cij = Ax [pA]
-#define GB_COPY_A_TO_C(cij,Ax,pA) \
+#define GB_COPY_A_TO_C(cij,Ax,pA,A_iso) \
     cij = Ax [pA]
 
 // cij = Bx [pB]
-#define GB_COPY_B_TO_C(cij,Bx,pB) \
+#define GB_COPY_B_TO_C(cij,Bx,pB,B_iso) \
     cij = Bx [pB]
 
 #define GB_CX(p) Cx [p]
@@ -421,6 +421,7 @@ GrB_Info GB (_bind1st__bxnor_uint16)
     GB_void *Cx_output,         // Cx and Bx may be aliased
     const GB_void *x_input,
     const GB_void *Bx_input,
+    const bool B_iso,
     const int8_t *restrict Bb,
     int64_t anz,
     int nthreads
@@ -437,7 +438,7 @@ GrB_Info GB (_bind1st__bxnor_uint16)
     for (p = 0 ; p < anz ; p++)
     {
         if (!GBB (Bb, p)) continue ;
-        uint16_t bij = Bx [p] ;
+        uint16_t bij = GBX (Bx, p, B_iso) ;
         Cx [p] = ~((x) ^ (bij)) ;
     }
     return (GrB_SUCCESS) ;
@@ -456,6 +457,7 @@ GrB_Info GB (_bind2nd__bxnor_uint16)
 (
     GB_void *Cx_output,         // Cx and Ax may be aliased
     const GB_void *Ax_input,
+    const bool A_iso,
     const GB_void *y_input,
     const int8_t *restrict Ab,
     int64_t anz,
@@ -473,7 +475,7 @@ GrB_Info GB (_bind2nd__bxnor_uint16)
     for (p = 0 ; p < anz ; p++)
     {
         if (!GBB (Ab, p)) continue ;
-        uint16_t aij = Ax [p] ;
+        uint16_t aij = GBX (Ax, p, A_iso) ;
         Cx [p] = ~((aij) ^ (y)) ;
     }
     return (GrB_SUCCESS) ;
@@ -490,9 +492,9 @@ GrB_Info GB (_bind2nd__bxnor_uint16)
 
 // cij = op (x, aij), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)                       \
+#define GB_CAST_OP(pC,pA,A_iso)                 \
 {                                               \
-    uint16_t aij = Ax [pA] ;                      \
+    uint16_t aij = GBX (Ax, pA, A_iso) ;               \
     Cx [pC] = ~((x) ^ (aij)) ;        \
 }
 
@@ -534,9 +536,9 @@ GrB_Info GB (_bind1st_tran__bxnor_uint16)
 
 // cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA)                       \
+#define GB_CAST_OP(pC,pA,A_iso)                 \
 {                                               \
-    uint16_t aij = Ax [pA] ;                      \
+    uint16_t aij = GBX (Ax, pA, A_iso) ;               \
     Cx [pC] = ~((aij) ^ (y)) ;        \
 }
 

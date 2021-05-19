@@ -13,13 +13,14 @@
 #include "GB_reduce.h"
 #include "GB_binop.h"
 #include "GB_mxm.h"
+#include "GB_get_mask.h"
 
 #define GB_FREE_ALL ;
 
 GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 (
     GrB_Matrix C,                   // input/output for results, size n-by-1
-    const GrB_Matrix M,             // optional M for C, unused if NULL
+    const GrB_Matrix M_in,          // optional M for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(C,T)
     const GrB_Monoid monoid,        // reduce monoid for T=reduce(A)
     const GrB_Matrix A,             // first input:  matrix A
@@ -37,26 +38,27 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     // C may be aliased with M and/or A
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M) ;
+    GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_FAULTY (desc) ;
 
     ASSERT_MATRIX_OK (C, "C input for reduce-to-vector", GB0) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for reduce-to-vector", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M_in, "M_in for reduce-to-vector", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for reduce-to-vector", GB0) ;
     ASSERT_MONOID_OK (monoid, "monoid for reduce-to-vector", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for reduce-to-vector", GB0) ;
     ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for reduce-to-vector", GB0) ;
+    ASSERT (GB_VECTOR_OK (C)) ;
+    ASSERT (GB_IMPLIES (M_in != NULL, GB_VECTOR_OK (M_in))) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_transpose, xx1, xx2, do_sort) ;
 
-    // C and M are n-by-1 GrB_Vector objects, typecasted to GrB_Matrix
-    ASSERT (GB_VECTOR_OK (C)) ;
-    ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;
+    // get the mask
+    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Type ztype = monoid->op->ztype ;

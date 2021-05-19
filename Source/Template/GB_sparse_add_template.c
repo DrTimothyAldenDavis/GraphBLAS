@@ -325,8 +325,8 @@
                         Ci [pC + p] = i ;
                         ASSERT (Ai [pA + p] == i) ;
                         ASSERT (Bi [pB + p] == i) ;
-                        GB_GETA (aij, Ax, pA + p) ;
-                        GB_GETB (bij, Bx, pB + p) ;
+                        GB_GETA (aij, Ax, pA + p, A_iso) ;
+                        GB_GETB (bij, Bx, pB + p, B_iso) ;
                         GB_BINOP (GB_CX (pC + p), aij, bij, i, j) ;
                     }
                     #endif
@@ -350,7 +350,7 @@
                         int64_t i = p + iA_first ;
                         Ci [pC + p] = i ;
                         ASSERT (Ai [pA + p] == i) ;
-                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
+                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p, A_iso) ;
                     }
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
@@ -359,8 +359,8 @@
                         int64_t i = Bi [pB + p] ;
                         int64_t ii = i - iA_first ;
                         ASSERT (Ai [pA + ii] == i) ;
-                        GB_GETA (aij, Ax, pA + ii) ;
-                        GB_GETB (bij, Bx, pB + p) ;
+                        GB_GETA (aij, Ax, pA + ii, A_iso) ;
+                        GB_GETB (bij, Bx, pB + p, B_iso) ;
                         GB_BINOP (GB_CX (pC + ii), aij, bij, i, j) ;
                     }
                     #endif
@@ -384,7 +384,7 @@
                         int64_t i = p + iB_first ;
                         Ci [pC + p] = i ;
                         ASSERT (Bi [pB + p] == i) ;
-                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
+                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p, B_iso) ;
                     }
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
@@ -393,8 +393,8 @@
                         int64_t i = Ai [pA + p] ;
                         int64_t ii = i - iB_first ;
                         ASSERT (Bi [pB + ii] == i) ;
-                        GB_GETA (aij, Ax, pA + p) ;
-                        GB_GETB (bij, Bx, pB + ii) ;
+                        GB_GETA (aij, Ax, pA + p, A_iso) ;
+                        GB_GETB (bij, Bx, pB + ii, B_iso) ;
                         GB_BINOP (GB_CX (pC + ii), aij, bij, i, j) ;
                     }
                     #endif
@@ -416,7 +416,7 @@
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
                         // C (i,j) = B (i,j)
-                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
+                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p, B_iso) ;
                     }
                     #endif
 
@@ -437,7 +437,7 @@
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
+                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p, A_iso) ;
                     }
                     #endif
 
@@ -458,7 +458,7 @@
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
+                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p, A_iso) ;
                     }
                     pC += ajnz ;
                     memcpy (Ci + pC, Bi + pB, bjnz * sizeof (int64_t)) ;
@@ -466,7 +466,7 @@
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
                         // C (i,j) = B (i,j)
-                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
+                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p, B_iso) ;
                     }
                     #endif
 
@@ -487,7 +487,7 @@
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
                         // C (i,j) = B (i,j)
-                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
+                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p, B_iso) ;
                     }
                     pC += bjnz ;
                     memcpy (Ci + pC, Ai + pA, ajnz * sizeof (int64_t)) ;
@@ -495,7 +495,7 @@
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
+                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p, A_iso) ;
                     }
                     #endif
 
@@ -562,7 +562,7 @@
                             // C (iA,j) = A (iA,j)
                             #if defined ( GB_PHASE_2_OF_2 )
                             Ci [pC] = iA ;
-                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
+                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
                             #endif
                             pA++ ;
                         }
@@ -571,7 +571,7 @@
                             // C (iB,j) = B (iB,j)
                             #if defined ( GB_PHASE_2_OF_2 )
                             Ci [pC] = iB ;
-                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
+                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
                             #endif
                             pB++ ;
                         }
@@ -580,8 +580,8 @@
                             // C (i,j) = A (i,j) + B (i,j)
                             #if defined ( GB_PHASE_2_OF_2 )
                             Ci [pC] = iB ;
-                            GB_GETA (aij, Ax, pA) ;
-                            GB_GETB (bij, Bx, pB) ;
+                            GB_GETA (aij, Ax, pA, A_iso) ;
+                            GB_GETB (bij, Bx, pB, B_iso) ;
                             GB_BINOP (GB_CX (pC), aij, bij, iB, j) ;
                             #endif
                             pA++ ;
@@ -608,13 +608,13 @@
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
                         // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
+                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p, A_iso) ;
                     }
                     memcpy (Ci + pC, Bi + pB, bjnz * sizeof (int64_t)) ;
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
                         // C (i,j) = B (i,j)
-                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
+                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p, B_iso) ;
                     }
                     ASSERT (pC + ajnz + bjnz == pC_end) ;
                     #endif
@@ -676,8 +676,8 @@
                         ASSERT (GB_mcast (Mx, pM, msize)) ;
                         ASSERT (GBI (Ai, pA_offset + i, vlen) == i) ;
                         ASSERT (GBI (Bi, pM, vlen) == i) ;
-                        GB_GETA (aij, Ax, pA_offset + i) ;
-                        GB_GETB (bij, Bx, pM) ;
+                        GB_GETA (aij, Ax, pA_offset + i, A_iso) ;
+                        GB_GETB (bij, Bx, pM, B_iso) ;
                         GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                     }
 
@@ -698,8 +698,8 @@
                         ASSERT (GB_mcast (Mx, pM, msize)) ;
                         ASSERT (GBI (Ai, pM, vlen) == i) ;
                         ASSERT (GBI (Bi, pB_offset + i, vlen) == i) ;
-                        GB_GETA (aij, Ax, pM) ;
-                        GB_GETB (bij, Bx, pB_offset + i) ;
+                        GB_GETA (aij, Ax, pM, A_iso) ;
+                        GB_GETB (bij, Bx, pB_offset + i, B_iso) ;
                         GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                     }
 
@@ -717,9 +717,9 @@
                         int64_t pM = p + pM_start ;
                         int64_t pC = p + pC_start ;
                         #if GB_OP_IS_SECOND
-                        GB_GETB (t, Bx, pM) ;
+                        GB_GETB (t, Bx, pM, B_iso) ;
                         #else
-                        GB_GETA (t, Ax, pM) ;
+                        GB_GETA (t, Ax, pM, A_iso) ;
                         #endif
                         GB_BINOP (GB_CX (pC), t, t, Mi [pM], j) ;
                     }
@@ -837,8 +837,8 @@
                         cjnz++ ;
                         #else
                         Ci [pC] = i ;
-                        GB_GETA (aij, Ax, pA) ;
-                        GB_GETB (bij, Bx, pB) ;
+                        GB_GETA (aij, Ax, pA, A_iso) ;
+                        GB_GETB (bij, Bx, pB, B_iso) ;
                         GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                         pC++ ;
                         #endif
@@ -850,7 +850,7 @@
                         cjnz++ ;
                         #else
                         Ci [pC] = i ;
-                        GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
+                        GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
                         pC++ ;
                         #endif
                     }
@@ -861,7 +861,7 @@
                         cjnz++ ;
                         #else
                         Ci [pC] = i ;
-                        GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
+                        GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
                         pC++ ;
                         #endif
                     }
@@ -935,8 +935,8 @@
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
-                            GB_GETA (aij, Ax, pA + p) ;
-                            GB_GETB (bij, Bx, pB + p) ;
+                            GB_GETA (aij, Ax, pA + p, A_iso) ;
+                            GB_GETB (bij, Bx, pB + p, B_iso) ;
                             GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                             pC++ ;
                             #endif
@@ -962,7 +962,7 @@
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
-                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
+                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
                             pC++ ;
                             #endif
                         }
@@ -987,7 +987,7 @@
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
-                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
+                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
                             pC++ ;
                             #endif
                         }
@@ -1012,7 +1012,7 @@
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
-                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
+                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
                             pC++ ;
                             #endif
                         }
@@ -1029,7 +1029,7 @@
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
-                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
+                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
                             pC++ ;
                             #endif
                         }
@@ -1054,7 +1054,7 @@
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
-                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
+                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
                             pC++ ;
                             #endif
                         }
@@ -1071,7 +1071,7 @@
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
-                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
+                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
                             pC++ ;
                             #endif
                         }
@@ -1099,7 +1099,7 @@
                                 cjnz++ ;
                                 #else
                                 Ci [pC] = iA ;
-                                GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
+                                GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
                                 pC++ ;
                                 #endif
                             }
@@ -1115,7 +1115,7 @@
                                 cjnz++ ;
                                 #else
                                 Ci [pC] = iB ;
-                                GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
+                                GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
                                 pC++ ;
                                 #endif
                             }
@@ -1131,8 +1131,8 @@
                                 cjnz++ ;
                                 #else
                                 Ci [pC] = iB ;
-                                GB_GETA (aij, Ax, pA) ;
-                                GB_GETB (bij, Bx, pB) ;
+                                GB_GETA (aij, Ax, pA, A_iso) ;
+                                GB_GETB (bij, Bx, pB, B_iso) ;
                                 GB_BINOP (GB_CX (pC), aij, bij, iB, j) ;
                                 pC++ ;
                                 #endif
@@ -1157,7 +1157,7 @@
                             cjnz++ ;
                             #else
                             Ci [pC] = iA ;
-                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
+                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
                             pC++ ;
                             #endif
                         }
@@ -1174,7 +1174,7 @@
                             cjnz++ ;
                             #else
                             Ci [pC] = iB ;
-                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
+                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
                             pC++ ;
                             #endif
                         }

@@ -66,6 +66,7 @@
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnvec = B->nvec ;
+    const bool B_iso = B->iso ;
 
     const bool B_jumbled = B->jumbled ;
     const int64_t bnz = GB_NNZ_HELD (B) ;
@@ -83,6 +84,7 @@
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
+    const bool A_iso = A->iso ;
 
     const bool A_jumbled = A->jumbled ;
     const int64_t anz = GB_NNZ_HELD (A) ;

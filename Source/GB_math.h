@@ -76,7 +76,7 @@
 #define GB_FC32_minv(x) GB_FC32_div (GxB_CMPLXF (1,0), x)
 #define GB_FC64_minv(x) GB_FC64_div (GxB_CMPLX (1,0), x)
 
-// complex comparisons
+// complex comparators
 #define GB_FC32_eq(x,y) ((crealf(x) == crealf(y)) && (cimagf(x) == cimagf(y)))
 #define GB_FC64_eq(x,y) ((creal (x) == creal (y)) && (cimag (x) == cimag (y)))
 
@@ -100,16 +100,16 @@
 //------------------------------------------------------------------------------
 
 // For floating-point computations, SuiteSparse:GraphBLAS relies on the IEEE
-// 754 standard for the basic operations (+ - / *).  Comparison operators also
-// work as they should; any comparison with NaN is always false, even
+// 754 standard for the basic operations (+ - / *).  Comparator also
+// work as they should; any compare with NaN is always false, even
 // eq(NaN,NaN) is false.  This follows the IEEE 754 standard.
 
-// For integer MIN and MAX, SuiteSparse:GraphBLAS relies on one comparison:
+// For integer MIN and MAX, SuiteSparse:GraphBLAS relies on one compator:
 
 // z = min(x,y) = (x < y) ? x : y
 // z = max(x,y) = (x > y) ? x : y
 
-// However, this is not suitable for floating-point x and y.  Comparisons with
+// However, this is not suitable for floating-point x and y.  Compares with
 // NaN always return false, so if either x or y are NaN, then z = y, for both
 // min(x,y) and max(x,y).  In MATLAB, min(3,NaN), min(NaN,3), max(3,NaN), and
 // max(NaN,3) are all 3, which is another interpretation.  The MATLAB min and
@@ -122,7 +122,7 @@
 // The ANSI C11 fmin, fminf, fmax, and fmaxf functions have the 'omitnan'
 // behavior.  These are used in SuiteSparse:GraphBLAS v2.3.0 and later.
 
-// Below is a complete comparison of MATLAB and GraphBLAS.  Both tables are the
+// The table below compares MATLAB and GraphBLAS.  Both tables are the
 // results for both min and max (they return the same results in these cases):
 
 //   x    y  MATLAB    MATLAB   (x<y)?x:y   SuiteSparse:    SuiteSparse:    ANSI

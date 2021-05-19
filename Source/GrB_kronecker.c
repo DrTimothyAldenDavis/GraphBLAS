@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_kron.h"
+#include "GB_get_mask.h"
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_kronecker_BinaryOp: Kronecker product with binary operator
@@ -16,7 +17,7 @@
 GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp op,          // defines '*' for T=kron(A,B)
     const GrB_Matrix A,             // first input:  matrix A
@@ -36,6 +37,9 @@ GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_tran, B_tran, xx, xx7) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // C = kron(A,B)
@@ -62,7 +66,7 @@ GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
 GrB_Info GrB_Matrix_kronecker_Monoid  // C<M> = accum (C, kron(A,B))
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Monoid monoid,        // defines '*' for T=kron(A,B)
     const GrB_Matrix A,             // first input:  matrix A
@@ -83,6 +87,9 @@ GrB_Info GrB_Matrix_kronecker_Monoid  // C<M> = accum (C, kron(A,B))
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_tran, B_tran, xx, xx7) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // C = kron(A,B)
@@ -109,7 +116,7 @@ GrB_Info GrB_Matrix_kronecker_Monoid  // C<M> = accum (C, kron(A,B))
 GrB_Info GrB_Matrix_kronecker_Semiring  // C<M> = accum (C, kron(A,B))
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Semiring semiring,    // defines '*' for T=kron(A,B)
     const GrB_Matrix A,             // first input:  matrix A
@@ -130,6 +137,9 @@ GrB_Info GrB_Matrix_kronecker_Semiring  // C<M> = accum (C, kron(A,B))
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_tran, B_tran, xx, xx7) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // C = kron(A,B)

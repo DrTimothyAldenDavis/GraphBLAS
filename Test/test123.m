@@ -49,7 +49,7 @@ for seed = 1:3
     end
 end
 
-fprintf ('amd run time, for comparison:\n') ;
+fprintf ('amd run time:\n') ;
 tic
 p = amd (A) ;
 toc

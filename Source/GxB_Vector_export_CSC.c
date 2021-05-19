@@ -21,7 +21,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     void **vx,          // values
     GrB_Index *vi_size, // size of Ai in bytes
     GrB_Index *vx_size, // size of Ax in bytes
-    bool *is_uniform,   // if true, v has uniform values (TODO:::unsupported)
+    bool *iso,          // if true, A is iso-valued
 
     GrB_Index *nvals,   // # of entries in vector
     bool *jumbled,      // if true, indices may be unsorted
@@ -34,7 +34,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Vector_export_CSC (&v, &type, &n, "
-        "&vi, &vx, &vi_size, &vx_size, &is_uniform, &nvals, &jumbled, desc)") ;
+        "&vi, &vx, &vi_size, &vx_size, &iso, &nvals, &jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Vector_export_CSC") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
     GB_RETURN_IF_NULL (v) ;
@@ -85,7 +85,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
         vx,   vx_size,  // Ax
         nvals, jumbled, NULL,               // jumbled or not
         &sparsity, &is_csc,                 // sparse by col
-        is_uniform, Context) ;
+        iso, Context) ;
 
     if (info == GrB_SUCCESS)
     { 

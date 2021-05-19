@@ -12,6 +12,8 @@
 // A and C can be jumbled.  D cannot, but it is a diagonal matrix so it is
 // never jumbled.
 
+// TODO: rename this GB_AxB_colscale_template.c, also rowscale
+
 {
 
     //--------------------------------------------------------------------------
@@ -34,6 +36,8 @@
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
     const GB_BTYPE *restrict Dx = (GB_BTYPE *) (D_is_pattern ? NULL : D->x) ;
     const int64_t avlen = A->vlen ;
+    const bool A_iso = A->iso ;
+    const bool D_iso = D->iso ;
 
     const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
@@ -72,11 +76,11 @@
             // C(:,j) = A(:,j)*D(j,j)
             //------------------------------------------------------------------
 
-            GB_GETB (djj, Dx, j) ;                  // djj = D (j,j)
+            GB_GETB (djj, Dx, j, D_iso) ;           // djj = D (j,j)
             GB_PRAGMA_SIMD_VECTORIZE
             for (int64_t p = pA_start ; p < pA_end ; p++)
             { 
-                GB_GETA (aij, Ax, p) ;                  // aij = A(i,j)
+                GB_GETA (aij, Ax, p, A_iso) ;           // aij = A(i,j)
                 GB_BINOP (GB_CX (p), aij, djj, 0, 0) ;  // C(i,j) = aij * djj
             }
         }

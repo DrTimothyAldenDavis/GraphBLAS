@@ -57,7 +57,7 @@ void fscale (double *z, const double *x) { (*z) = c * (*x) ; }
 void fdiv   (double *z, const double *x) { (*z) = (*x) / s ; }
 
 //------------------------------------------------------------------------------
-// comparison function for qsort
+// comparator for qsort
 //------------------------------------------------------------------------------
 
 int compar (const void *x, const void *y)

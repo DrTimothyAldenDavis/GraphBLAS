@@ -82,11 +82,11 @@
             ASSERT (handled) ;      // all positional ops can be flipped
         }
 
-        // aki = A(i,k), located in Ax [pA], value not used
-        #define GB_GETA(aki,Ax,pA) ;
+        // aki = A(i,k), located in Ax [A_iso?0:pA], value not used
+        #define GB_GETA(aki,Ax,pA,A_iso) ;
 
-        // bkj = B(k,j), located in Bx [pB], value not used
-        #define GB_GETB(bkj,Bx,pB) ;
+        // bkj = B(k,j), located in Bx [B_iso?0:pB], value not used
+        #define GB_GETB(bkj,Bx,pB,B_iso) ;
 
         // define cij for each task
         #define GB_CIJ_DECLARE(cij) GB_CTYPE cij
@@ -231,15 +231,15 @@
 
         // aki = A(k,i), located in Ax [pA]
         #undef  GB_GETA
-        #define GB_GETA(aki,Ax,pA)                                      \
+        #define GB_GETA(aki,Ax,pA,A_iso)                                \
             GB_void aki [GB_VLA(aki_size)] ;                            \
-            if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize)
+            if (!A_is_pattern) cast_A (aki, Ax +((A_iso) ? 0:(pA)*asize), asize)
 
         // bkj = B(k,j), located in Bx [pB]
         #undef  GB_GETB
-        #define GB_GETB(bkj,Bx,pB)                                      \
+        #define GB_GETB(bkj,Bx,pB,B_iso)                                \
             GB_void bkj [GB_VLA(bkj_size)] ;                            \
-            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize)
+            if (!B_is_pattern) cast_B (bkj, Bx +((B_iso) ? 0:(pB)*bsize), bsize)
 
         // define cij for each task
         #undef  GB_CIJ_DECLARE

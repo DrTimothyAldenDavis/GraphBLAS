@@ -21,7 +21,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL             \
 {                               \
-    GB_phbix_free (C) ;       \
+    GB_phbix_free (C) ;         \
 }
 
 void GB_ewise_generic       // generic ewise
@@ -114,19 +114,19 @@ void GB_ewise_generic       // generic ewise
         GB_cast_factory (ccode, op->ztype->code) ;
 
     // aij = (xtype) A(i,j), located in Ax [pA]
-    #define GB_GETA(aij,Ax,pA)                                          \
+    #define GB_GETA(aij,Ax,pA,A_iso)                                    \
         GB_void aij [GB_VLA(xsize)] ;                                   \
         if (cast_A_to_X != NULL)                                        \
         {                                                               \
-            cast_A_to_X (aij, Ax +((pA)*asize), asize) ;                \
+            cast_A_to_X (aij, Ax +((A_iso) ? 0:(pA)*asize), asize) ;    \
         }
 
     // bij = (ytype) B(i,j), located in Bx [pB]
-    #define GB_GETB(bij,Bx,pB)                                          \
+    #define GB_GETB(bij,Bx,pB,B_iso)                                    \
         GB_void bij [GB_VLA(ysize)] ;                                   \
         if (cast_B_to_Y != NULL)                                        \
         {                                                               \
-            cast_B_to_Y (bij, Bx +((pB)*bsize), bsize) ;                \
+            cast_B_to_Y (bij, Bx +((B_iso) ? 0:(pB)*bsize), bsize) ;    \
         }
 
     // address of Cx [p]

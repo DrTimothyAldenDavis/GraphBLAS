@@ -1,5 +1,5 @@
 function test71(f)
-%TEST71 performance comparison of triangle counting methods
+%TEST71 compare performance of triangle counting methods
 % Considers MATLAB:Sandia, GraphBLAS:Sandia, and GraphBLAS:Sandia2 only.
 %
 % Requires ssget and SuiteSparse/MATLAB_Tools/SSMULT.

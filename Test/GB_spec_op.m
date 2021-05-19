@@ -129,7 +129,7 @@ switch opname
             z = GB_mex_op (op, x, y) ;
         end
 
-    % 6 binary comparison operators (result is ztype)
+    % 6 binary comparators (result is ztype)
     case 'iseq'
         z = GB_mex_cast (x == y, ztype) ;
     case 'isne'
@@ -143,7 +143,7 @@ switch opname
     case 'isle'
         z = GB_mex_cast (x <= y, ztype) ;
 
-    % 6 binary comparison operators (result is boolean)
+    % 6 binary comparators (result is boolean)
     case 'eq'
         z = (x == y) ;
     case 'ne'

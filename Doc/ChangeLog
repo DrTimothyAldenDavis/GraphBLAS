@@ -1,3 +1,7 @@
+Version 5.10.0, FIXME
+
+    * iso-valued matrices and vectors added
+
 Version 5.0.5, May 17, 2021
 
     * (26) performance bug fix:  reduce-to-vector where A is hypersparse CSR

@@ -64,19 +64,19 @@
     0
 
 // aik = Ax [pA]
-#define GB_GETA(aik,Ax,pA) \
-    uint16_t aik = Ax [pA]
+#define GB_GETA(aik,Ax,pA,A_iso) \
+    uint16_t aik = GBX (Ax, pA, A_iso)
 
 // bkj = Bx [pB]
-#define GB_GETB(bkj,Bx,pB) \
+#define GB_GETB(bkj,Bx,pB,B_iso) \
     ;
 
 // Gx [pG] = Ax [pA]
-#define GB_LOADA(Gx,pG,Ax,pA) \
-    Gx [pG] = Ax [pA]
+#define GB_LOADA(Gx,pG,Ax,pA,A_iso) \
+    Gx [pG] = GBX (Ax, pA, A_iso)
 
 // Gx [pG] = Bx [pB]
-#define GB_LOADB(Gx,pG,Bx,pB) \
+#define GB_LOADB(Gx,pG,Bx,pB,B_iso) \
     ;
 
 #define GB_CX(p) Cx [p]

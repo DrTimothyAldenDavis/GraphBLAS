@@ -9,11 +9,12 @@
 
 #include "GB_assign.h"
 #include "GB_bitmap_assign.h"
+#include "GB_get_mask.h"
 
 GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M,             // mask for C, unused if NULL
+    const GrB_Matrix M_in,          // mask for C, unused if NULL
     const GrB_BinaryOp accum,       // accum for Z=accum(C(Rows,Cols),T)
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Index *Rows,          // row indices
@@ -33,12 +34,15 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
     GB_BURBLE_START ("GrB_assign") ;
 
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M) ;
+    GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_transpose, xx1, xx2, xx7) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // C<M>(Rows,Cols) = accum (C(Rows,Cols), A) and variations

@@ -24,7 +24,7 @@
 // only assignments where (Cb [pC] == 1) are needed, but it's faster to just
 // assign the scalar to all entries in Cx.
 
-// TODO::: when uniform-valued matrices are supported, this method will take
+// TODO::: when iso-valued matrices are supported, this method will take
 // O(1) time.
 
 // TODO: this method can be merged with 05d
@@ -67,7 +67,7 @@ GrB_Info GB_subassign_05f
     //--------------------------------------------------------------------------
 
     // Time: Optimal:  the method must iterate over all entries in C, and the
-    // time is O(nnz(C)).  When uniform-valued matrices are supported, this
+    // time is O(nnz(C)).  When iso-valued matrices are supported, this
     // method will take O(1) time.
 
     //--------------------------------------------------------------------------

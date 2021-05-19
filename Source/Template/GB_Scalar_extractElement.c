@@ -77,7 +77,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     { 
         // typecast the value from S into x
         GB_cast_array ((GB_void *) x, GB_XCODE,
-            ((GB_void *) S->x), scode, NULL, S->type->size, 1, 1) ;
+            ((GB_void *) S->x), false, scode, NULL, S->type->size, 1, 1) ;
     }
     return (GrB_SUCCESS) ;
 }

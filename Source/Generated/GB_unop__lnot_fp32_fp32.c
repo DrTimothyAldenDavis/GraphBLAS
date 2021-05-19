@@ -32,8 +32,8 @@
     float
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA) \
-    float aij = Ax [pA]
+#define GB_GETA(aij,Ax,pA,A_iso) \
+    float aij = GBX (Ax, pA, A_iso)
 
 #define GB_CX(p) Cx [p]
 
@@ -46,10 +46,10 @@
     float z = aij ;
 
 // cij = op (aij)
-#define GB_CAST_OP(pC,pA)           \
+#define GB_CAST_OP(pC,pA,A_iso)     \
 {                                   \
     /* aij = Ax [pA] */             \
-    float aij = Ax [pA] ;          \
+    float aij = GBX (Ax, pA, A_iso) ;   \
     /* Cx [pC] = op (cast (aij)) */ \
     float z = aij ;               \
     Cx [pC] = !(z != 0) ;        \
@@ -71,6 +71,7 @@ GrB_Info GB (_unop_apply__lnot_fp32_fp32)
 (
     float *Cx,       // Cx and Ax may be aliased
     const float *Ax,
+    const bool A_iso,
     const int8_t *restrict Ab,   // A->b if A is bitmap
     int64_t anz,
     int nthreads
@@ -81,8 +82,8 @@ GrB_Info GB (_unop_apply__lnot_fp32_fp32)
     #else
     int64_t p ;
 
-    // TODO: if OP is ONE and uniform-valued matrices are exploited, then
-    // do this in O(1) time
+    // TODO: if OP is ONE and iso-valued matrices are exploited, then
+    // do this in O(1) time.  Or, if C is also iso-valued, do in O(1) time.
 
     if (Ab == NULL)
     { 
@@ -92,7 +93,7 @@ GrB_Info GB (_unop_apply__lnot_fp32_fp32)
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < anz ; p++)
             {
-                float aij = Ax [p] ;
+                float aij = GBX (Ax, p, A_iso) ;
                 float z = aij ;
                 Cx [p] = !(z != 0) ;
             }
@@ -105,7 +106,7 @@ GrB_Info GB (_unop_apply__lnot_fp32_fp32)
         for (p = 0 ; p < anz ; p++)
         {
             if (!Ab [p]) continue ;
-            float aij = Ax [p] ;
+            float aij = GBX (Ax, p, A_iso) ;
             float z = aij ;
             Cx [p] = !(z != 0) ;
         }

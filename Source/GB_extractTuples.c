@@ -145,7 +145,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         if (need_typecast)
         { 
             // typecast the values from X_bitmap into X
-            GB_cast_array ((GB_void *) X, xcode, X_bitmap,
+            GB_cast_array ((GB_void *) X, xcode, X_bitmap, false,
                 acode, NULL, asize, anz, nthreads) ;
         }
 
@@ -196,7 +196,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         if (X != NULL)
         { 
             // typecast or copy the values from A into X
-            GB_cast_array ((GB_void *) X, xcode, (GB_void *) A->x,
+            GB_cast_array ((GB_void *) X, xcode, (GB_void *) A->x, A->iso,
                 acode, NULL, asize, anz, nthreads) ;
         }
     }

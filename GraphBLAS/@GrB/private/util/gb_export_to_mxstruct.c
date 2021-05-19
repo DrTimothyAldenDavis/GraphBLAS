@@ -108,7 +108,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     int64_t Ap_size = 0, Ah_size = 0, Ab_size = 0, Ai_size = 0, Ax_size = 0 ;
     int64_t nvals = 0, nvec = 0 ;
     bool by_col = (fmt == GxB_BY_COL) ;
-    bool is_uniform = false ;
+    bool iso = false ;
 
     // TODO write GxB_Matrix_export which exports the matrix as-is
 
@@ -118,12 +118,12 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             if (by_col)
             {
                 OK (GxB_Matrix_export_FullC (&A, &type, &nrows, &ncols,
-                    &Ax, &Ax_size, &is_uniform, NULL)) ;
+                    &Ax, &Ax_size, &iso, NULL)) ;
             }
             else
             {
                 OK (GxB_Matrix_export_FullR (&A, &type, &nrows, &ncols,
-                    &Ax, &Ax_size, &is_uniform, NULL)) ;
+                    &Ax, &Ax_size, &iso, NULL)) ;
             }
             break ;
 
@@ -132,13 +132,13 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             {
                 OK (GxB_Matrix_export_CSC (&A, &type, &nrows, &ncols,
                     &Ap, &Ai, &Ax,
-                    &Ap_size, &Ai_size, &Ax_size, &is_uniform, NULL, NULL)) ;
+                    &Ap_size, &Ai_size, &Ax_size, &iso, NULL, NULL)) ;
             }
             else
             {
                 OK (GxB_Matrix_export_CSR (&A, &type, &nrows, &ncols,
                     &Ap, &Ai, &Ax,
-                    &Ap_size, &Ai_size, &Ax_size, &is_uniform, NULL, NULL)) ;
+                    &Ap_size, &Ai_size, &Ax_size, &iso, NULL, NULL)) ;
             }
             break ;
 
@@ -147,14 +147,14 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             {
                 OK (GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols,
                     &Ap, &Ah, &Ai, &Ax,
-                    &Ap_size, &Ah_size, &Ai_size, &Ax_size, &is_uniform,
+                    &Ap_size, &Ah_size, &Ai_size, &Ax_size, &iso,
                     &nvec, NULL, NULL)) ;
             }
             else
             {
                 OK (GxB_Matrix_export_HyperCSR (&A, &type, &nrows, &ncols,
                     &Ap, &Ah, &Ai, &Ax,
-                    &Ap_size, &Ah_size, &Ai_size, &Ax_size, &is_uniform,
+                    &Ap_size, &Ah_size, &Ai_size, &Ax_size, &iso,
                     &nvec, NULL, NULL)) ;
             }
             break ;
@@ -163,12 +163,12 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             if (by_col)
             {
                 OK (GxB_Matrix_export_BitmapC (&A, &type, &nrows, &ncols,
-                    &Ab, &Ax, &Ab_size, &Ax_size, &is_uniform, &nvals, NULL)) ;
+                    &Ab, &Ax, &Ab_size, &Ax_size, &iso, &nvals, NULL)) ;
             }
             else
             {
                 OK (GxB_Matrix_export_BitmapR (&A, &type, &nrows, &ncols,
-                    &Ab, &Ax, &Ab_size, &Ax_size, &is_uniform, &nvals, NULL)) ;
+                    &Ab, &Ax, &Ab_size, &Ax_size, &iso, &nvals, NULL)) ;
             }
             break ;
 
@@ -226,7 +226,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     s [6] = (int64_t) by_col ;
     s [7] = nzmax ;
     s [8] = nvals ;
-    s [9] = (int64_t) is_uniform ;      // new in GraphBLASv5
+    s [9] = (int64_t) iso ;             // new in GraphBLASv5
     mxSetFieldByNumber (G, 0, 1, opaque) ;
 
     // These components do not need to be exported: Pending, nzombies,

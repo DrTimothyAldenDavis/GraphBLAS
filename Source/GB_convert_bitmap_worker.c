@@ -11,6 +11,8 @@
 // for all 13x13 versions.  Use this as part of Method 24, C=A assignment.
 // Can also use typecasting for GB_Matrix_diag.
 
+// TODO: if A->iso, then create Ax_new as iso too
+
 #include "GB.h"
 #include "GB_partition.h"
 
@@ -146,6 +148,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     // TODO: add type-specific versions for built-in types
 
     const GB_void *restrict Ax = (GB_void *) (A->x) ;
+    const bool A_iso = A->iso ;
 
     if (by_vector)
     {
@@ -172,7 +175,8 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
                     if (Ax_new != NULL)
                     { 
                         // Ax_new [pnew] = Ax [p])
-                        memcpy (Ax_new +(pnew)*asize, Ax +(p)*asize, asize) ;
+                        memcpy (Ax_new +(pnew)*asize,
+                            Ax +(A_iso ? 0:(p)*asize), asize) ;
                     }
                     pnew++ ;
                 }
@@ -212,7 +216,8 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
                         if (Ax_new != NULL)
                         { 
                             // Ax_new [pnew] = Ax [p] ;
-                            memcpy (Ax_new +(pnew)*asize, Ax +(p)*asize, asize);
+                            memcpy (Ax_new +(pnew)*asize,
+                                Ax +(A_iso ? 0:(p)*asize), asize) ;
                         }
                         pnew++ ;
                     }

@@ -24,11 +24,11 @@
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
-// #define GB_DEBUG
+#define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1
-// #define GBCOMPACT 1
+#define GBCOMPACT 1
 
 //------------------------------------------------------------------------------
 // notes on future work
@@ -48,7 +48,7 @@
 //      or GrB_vxv dot product, with PLUS_ABSDIFF semiring
 //
 // For BC:
-//  FUTURE: BC: constructing S will be faster with uniform-valued matrices,
+//  FUTURE: BC: constructing S will be faster with iso-valued matrices,
 //  once they are added to SuiteSparse:GraphBLAS.
 
 #endif

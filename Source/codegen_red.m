@@ -25,8 +25,8 @@ fclose (f) ;
 %-------------------------------------------------------------------------------
 
 % Note that the min and max monoids are written to obtain the correct
-% NaN behavior for float and double.  Comparisons with NaN are always false.
-% zarg is the accumulator.  If zarg is not NaN and the comparison is false,
+% NaN behavior for float and double.  Compares with NaN are always false.
+% zarg is the accumulator.  If zarg is not NaN and the compare is false,
 % zarg is not modified and the value of yarg is properly ignored.  Thus if zarg
 % is not NaN but yarg is NaN, then yarg is ignored.  If zarg is NaN, the
 % condition becomes true and zarg is replaced with yarg.

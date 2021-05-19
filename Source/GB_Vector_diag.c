@@ -139,6 +139,8 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     // transplant or typecast the values from T to V
     //--------------------------------------------------------------------------
 
+    // FIXME: if T is iso then so is V
+
     GB_Type_code vcode = vtype->code ;
     GB_Type_code acode = atype->code ;
     if (vcode == acode)
@@ -162,7 +164,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_cast_array ((GB_void *) V->x, vcode, (GB_void *) T->x, acode,
+        GB_cast_array ((GB_void *) V->x, vcode, (GB_void *) T->x, T->iso, acode,
             NULL, asize, vnz, nthreads) ;
     }
 

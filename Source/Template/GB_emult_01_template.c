@@ -297,8 +297,8 @@
                             #else
                             ASSERT (pC < pC_end) ;
                             Ci [pC] = i ;
-                            GB_GETA (aij, Ax, pA) ;
-                            GB_GETB (bij, Bx, pB) ;
+                            GB_GETA (aij, Ax, pA, A_iso) ;
+                            GB_GETB (bij, Bx, pB, B_iso) ;
                             GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                             pC++ ;
                             #endif
@@ -331,8 +331,8 @@
                             #else
                             ASSERT (pC < pC_end) ;
                             Ci [pC] = i ;
-                            GB_GETA (aij, Ax, pA) ;
-                            GB_GETB (bij, Bx, pB) ;
+                            GB_GETA (aij, Ax, pA, A_iso) ;
+                            GB_GETB (bij, Bx, pB, B_iso) ;
                             GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                             pC++ ;
                             #endif
@@ -375,8 +375,8 @@
                             #else
                             ASSERT (pC < pC_end) ;
                             Ci [pC] = iB ;
-                            GB_GETA (aij, Ax, pA) ;
-                            GB_GETB (bij, Bx, pB) ;
+                            GB_GETA (aij, Ax, pA, A_iso) ;
+                            GB_GETB (bij, Bx, pB, B_iso) ;
                             GB_BINOP (GB_CX (pC), aij, bij, iB, j) ;
                             pC++ ;
                             #endif
@@ -473,8 +473,8 @@
                     cjnz++ ;
                     #else
                     Ci [pC] = i ;
-                    GB_GETA (aij, Ax, pA) ;
-                    GB_GETB (bij, Bx, pB) ;
+                    GB_GETA (aij, Ax, pA, A_iso) ;
+                    GB_GETB (bij, Bx, pB, B_iso) ;
                     GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                     pC++ ;
                     #endif
@@ -542,8 +542,8 @@
                                 #else
                                 ASSERT (pC < pC_end) ;
                                 Ci [pC] = i ;
-                                GB_GETA (aij, Ax, pA) ;
-                                GB_GETB (bij, Bx, pB) ;
+                                GB_GETA (aij, Ax, pA, A_iso) ;
+                                GB_GETB (bij, Bx, pB, B_iso) ;
                                 GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                                 pC++ ;
                                 #endif
@@ -582,8 +582,8 @@
                                 #else
                                 ASSERT (pC < pC_end) ;
                                 Ci [pC] = i ;
-                                GB_GETA (aij, Ax, pA) ;
-                                GB_GETB (bij, Bx, pB) ;
+                                GB_GETA (aij, Ax, pA, A_iso) ;
+                                GB_GETB (bij, Bx, pB, B_iso) ;
                                 GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
                                 pC++ ;
                                 #endif
@@ -632,8 +632,8 @@
                                 #else
                                 ASSERT (pC < pC_end) ;
                                 Ci [pC] = i ;
-                                GB_GETA (aij, Ax, pA) ;
-                                GB_GETB (bij, Bx, pB) ;
+                                GB_GETA (aij, Ax, pA, A_iso) ;
+                                GB_GETB (bij, Bx, pB, B_iso) ;
                                 GB_BINOP (GB_CX (pC), aij, bij, iB, j) ;
                                 pC++ ;
                                 #endif

@@ -154,7 +154,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
             // copy the value from A into x, no typecasting, for built-in
             // types only.
             GB_XTYPE *restrict Ax = ((GB_XTYPE *) (A->x)) ;
-            (*x) = Ax [pleft] ;
+            (*x) = Ax [A->iso ? 0:pleft] ;
         }
         else
         #endif
@@ -162,7 +162,8 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
             // typecast the value from A into x
             size_t asize = A->type->size ;
             GB_cast_array ((GB_void *) x, GB_XCODE,
-                ((GB_void *) A->x) +(pleft*asize), acode, NULL, asize, 1, 1) ;
+                ((GB_void *) A->x) +(A->iso ? 0:pleft*asize), false,
+                acode, NULL, asize, 1, 1) ;
         }
         return (GrB_SUCCESS) ;
     }

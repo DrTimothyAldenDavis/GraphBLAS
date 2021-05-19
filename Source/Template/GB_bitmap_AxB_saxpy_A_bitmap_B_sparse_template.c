@@ -144,6 +144,8 @@
                 // load A for this panel
                 //--------------------------------------------------------------
 
+// FIXME: if A iso, only load a single entry into Gx, and use Gx as iso
+
                 #if ( GB_A_IS_BITMAP )
                 {
 
@@ -166,7 +168,7 @@
                                 if (gb)
                                 { 
                                     // Gx (ii,k) = Ax (istart+ii,k)
-                                    GB_LOADA (Gx, pG, Ax, pA) ;
+                                    GB_LOADA (Gx, pG, Ax, pA, A_iso) ;
                                 }
                                 #if GB_HAS_BITMAP_MULTADD
                                 else
@@ -210,7 +212,7 @@
                                 // Gx (ii,k) = Ax (istart+ii,k)
                                 const int64_t pG = ii + k*np ;
                                 const int64_t pA = istart + ii + k*avlen ;
-                                GB_LOADA (Gx, pG, Ax, pA) ;
+                                GB_LOADA (Gx, pG, Ax, pA, A_iso) ;
                             }
                         }
                     }
@@ -298,7 +300,7 @@
                 #else
                     // t = G(ii,k) * B(k,j)
                     #define GB_MULT_G_iik_B_kj(ii)                          \
-                        GB_GETA (giik, Gx, pG + ii) ;                       \
+                        GB_GETA (giik, Gx, pG + ii, false) ;                \
                         GB_CIJ_DECLARE (t) ;                                \
                         GB_MULT (t, giik, bkj, istart + ii, k, j)
                 #endif

@@ -852,7 +852,7 @@ GB_BINOP_STRUCT (POW, GB_XTYPE) ;
 #endif
 
 //------------------------------------------------------------------------------
-// 6 binary comparison functions z=f(x,y), where x,y,z have the same type
+// 6 binary comparators z=f(x,y), where x,y,z have the same type
 //------------------------------------------------------------------------------
 
 // iseq and isne: all 13 types, including complex types.

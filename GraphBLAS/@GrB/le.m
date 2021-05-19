@@ -1,6 +1,6 @@
 function C = le (A, B)
 %A <= B less than or equal to.
-% C = (A <= B) is an element-by-element comparison of A and B.  One or
+% C = (A <= B) compares A and B element-by-element.  One or
 % both may be scalars.  Otherwise, A and B must have the same size.
 %
 % See also GrB/lt, GrB/gt, GrB/ge, GrB/ne, GrB/eq.
