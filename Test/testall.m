@@ -328,8 +328,6 @@ logstat ('test66',t) ;     %      % quick test for GrB_Matrix_reduce
 logstat ('test67',t) ;     %      % quick test for GrB_apply
 logstat ('test68',t) ;
 
-logstat ('test70',t) ;     %      % performance of triangle counting methods
-logstat ('test71',t) ;     %      % performance of triangle counting methods
 logstat ('test73',t) ;     %      % performance of C = A*B, with mask
 logstat ('test75',t) ;     %      % test GrB_mxm A'*B on all semirings
 logstat ('test78',t) ;     %    1 % quick test of hypersparse subref

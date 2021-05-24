@@ -191,7 +191,6 @@ GrB.type (C2)
 % That gives you a lot of tools to create all kinds of interesting
 % graph algorithms.  For example:
 %
-%   GrB.bfs    % breadth-first search
 %   GrB.dnn    % sparse deep neural network (http://graphchallenge.org)
 %   GrB.mis    % maximal independent set
 %
@@ -501,35 +500,6 @@ C1 = C * 40
 C2 = G * uint8 (40)
 S = double (C1 < 255) ;
 assert (isequal (double (C1).*S, double (C2).*S))
-
-%% An example graph algorithm: breadth-first search
-% The breadth-first search of a graph finds all nodes reachable from the
-% source node, and their level, v.  v=GrB.bfs(A,s) or v=bfs_matlab(A,s)
-% compute the same thing, but GrB.bfs uses GraphBLAS matrices and
-% operations, while bfs_matlab uses pure MATLAB operations.  v is defined
-% as v(s) = 1 for the source node, v(i) = 2 for nodes adjacent to the
-% source, and so on.
-
-clear
-rng ('default') ;
-n = 1e5 ;
-A = logical (sprandn (n, n, 1e-3)) ;
-
-tic
-v1 = GrB.bfs (A, 1) ;
-gb_time = toc ;
-
-tic
-v2 = bfs_matlab (A, 1) ;
-matlab_time = toc ;
-
-assert (isequal (double (v1'), v2))
-fprintf ('\nnodes reached: %d of %d\n', nnz (v2), n) ;
-fprintf ('GraphBLAS time: %g sec\n', gb_time) ;
-fprintf ('MATLAB time:    %g sec\n', matlab_time) ;
-fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
-    matlab_time / gb_time) ;
-fprintf ('\n# of threads used by GraphBLAS: %d\n', GrB.threads) ;
 
 %% Example graph algorithm: Luby's method in GraphBLAS
 % The GrB.mis function is variant of Luby's randomized algorithm [Luby

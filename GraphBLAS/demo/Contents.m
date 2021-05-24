@@ -1,6 +1,5 @@
 % SuiteSparse/GraphBLAS/GraphBLAS/demo: demos for GraphBLAS MATLAB interface
 %
-%   bfs_matlab  - breadth-first-search in MATLAB
 %   dnn_matlab  - Sparse deep neural network in pure MATLAB
 %   gbdemo      - run the graphblas_demo.m
 %   gbdemo2     - Extreme performance differences: GraphBLAS vs MATLAB.

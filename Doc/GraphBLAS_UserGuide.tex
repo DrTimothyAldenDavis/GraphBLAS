@@ -106,7 +106,7 @@ application to create new types and operators without needing to recompile the
 GraphBLAS library.
 
 For more details on SuiteSparse:GraphBLAS, and its use in LAGraph, see
-\cite{Davis18,Davis18b,DavisAznavehKolodziej19,Davis20,Mattson19}.
+\cite{Davis19,Davis18b,DavisAznavehKolodziej19,Davis20,Mattson19}.
 
 A full and precise definition of the GraphBLAS specification is provided in
 {\em The GraphBLAS C API Specification} by {Ayd\i n Bulu\c{c}, Timothy Mattson,
@@ -138,6 +138,14 @@ are extensions to the v1.3 GraphBLAS C API.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Version 5.0.6 (May 24, 2021)
+
+    \begin{packed_itemize}
+    \item BFS and triangle counting demos removed from GraphBLAS/Demo:
+        see LAGraph for these algorithms.  Eventually, all of GraphBLAS/Demo
+        will be deleted, once LAGraph includes all the methods included there.
+    \end{packed_itemize}
 
 \item Version 5.0.5 (May 17, 2021)
 
@@ -7260,14 +7268,6 @@ Likewise, if \verb'u' is a very sparse column vector and \verb'A' is stored by
 column, then \verb"w=u'*A" (via \verb'GrB_vxm') is slower than \verb'w=A*u'
 (via \verb'GrB_mxv').  The opposite is true if the matrix is stored by row.
 
-An example of this can be found in Section B.1 of Version 1.2 of the GraphBLAS
-API Specification, where the breadth-first search \verb'BFS' uses
-\verb'GrB_vxm' to compute \verb"q'=q'*A".  This method is not fast if the
-matrix \verb'A' is stored by column.  The \verb'bfs5' and \verb'bfs6' examples
-in the \verb'Demo/' folder of SuiteSparse:GraphBLAS use \verb'GrB_vxm',
-which is fast since the matrices are assumed to be stored in their
-default format, by row.
-
 SuiteSparse:GraphBLAS stores its sparse matrices by row, by default.  In
 Versions 2.1 and earlier, the matrices were stored by column, by default.
 However, it can also be instructed to store any selected matrices, or all
@@ -8325,10 +8325,10 @@ table below.  SuiteSparse:GraphBLAS extensions (\verb'GxB_subassign',
 \verb'GrB_mxv'       & matrix-vector multiply  & ${\bf w \langle m \rangle = w \odot Au}$ \\
 \hline
 \verb'GrB_eWiseMult' & element-wise,           & ${\bf C \langle M \rangle = C \odot (A \otimes B)}$ \\
-                     & set union               & ${\bf w \langle m \rangle = w \odot (u \otimes v)}$ \\
+                     & set intersection        & ${\bf w \langle m \rangle = w \odot (u \otimes v)}$ \\
 \hline
 \verb'GrB_eWiseAdd'  & element-wise,           & ${\bf C \langle M \rangle = C \odot (A \oplus  B)}$ \\
-                     & set intersection        & ${\bf w \langle m \rangle = w \odot (u \oplus  v)}$ \\
+                     & set union               & ${\bf w \langle m \rangle = w \odot (u \oplus  v)}$ \\
 \hline
 \verb'GrB_extract'   & extract submatrix       & ${\bf C \langle M \rangle = C \odot A(I,J)}$ \\
                      &                         & ${\bf w \langle m \rangle = w \odot u(i)}$ \\
@@ -8498,12 +8498,6 @@ Using the non-default \verb'GrB_TRAN' descriptor for \verb'A' makes the
 descriptor (with the operands reversed in the multiplier, as well).  The
 reverse is true as well; \verb'GrB_mxv' with \verb'GrB_TRAN' is the same as
 \verb'GrB_vxm' with a default descriptor.
-
-The breadth-first search presented in Section~\ref{bfs} of this User Guide uses
-\verb'GrB_vxm' instead of \verb'GrB_mxv', since the default format in
-SuiteSparse:GraphBLAS is \verb'GxB_BY_ROW'.  This corresponds to ``push'' step
-of a direction-optimized BFS.  If the matrix is stored by column, then use
-\verb'GrB_mxv' for the ``push'' instead.
 
 \newpage
 %===============================================================================
@@ -11266,13 +11260,11 @@ Several examples of how to use GraphBLAS are listed below.  They all
 appear in the \verb'Demo' folder of SuiteSparse:GraphBLAS.
 
 \begin{enumerate}
-\item performing a breadth-first search,
-\item finding a maximal independent set,
-\item creating a random matrix,
-\item creating a finite-element matrix,
-\item reading a matrix from a file, and
-\item complex numbers as a user-defined type.
-\item triangle counting
+\item finding a maximal independent set
+\item creating a random matrix
+\item creating a finite-element matrix
+\item reading a matrix from a file
+\item complex numbers as a user-defined type
 \item PageRank
 \item matrix import/export
 \end{enumerate}
@@ -11305,203 +11297,6 @@ tests in \verb'LAGraph/Test'.
 
 Many of these algorithms are described in \cite{Davis20}.
 
-\vspace{0.1in}
-{\small
-\begin{tabular}{ll}
-\hline
-\hline
-Algorithms & description \\
-\hline
-\hline
-\verb'LAGraph_bfs_parent2'  & a direction-optimized BFS
-                                \cite{Beamer:2012:DOB,Yang:2018:IPE}, \\
-                            & typically 2x faster than \verb'bfs5m' \\
-\verb'LAGraph_bfs_simple'   & a simple BFS (about the same as \verb'bfs5m') \\
-\verb'LAGraph_bc_batch'     & batched betweenness-centrality \\
-\verb'LAGraph_bc'           & betweenness-centrality \\
-\verb'LAGraph_cdlp'         & community detection via label propagation \\
-\verb'LAGraph_cc'           & connected components \\
-\verb'LAGraph_BF_*'         & three variants of Bellman-Ford \\
-\verb'LAGraph_allktruss'    & construct all $k$-trusses \\
-\verb'LAGraph_dnn'          & sparse deep neural network \cite{DavisAznavehKolodziej19} \\
-\verb'LAGraph_ktruss'       & construct a $k$-trusses \\
-\verb'LAGraph_lcc'          & local clustering coefficient \\
-\verb'LAGraph_pagerank'     & PageRank \\
-\verb'LAGraph_pagerank2'    & PageRank variant \\
-\verb'LAGraph_tricount'     & triangle counting \\
-\end{tabular}}
-
-\vspace{0.1in}
-{\small
-\begin{tabular}{ll}
-\hline
-\hline
-Utilities & description \\
-\hline
-\hline
-\verb'LAGraph_Vector_isall'     & tests 2 vectors with a binary operator \\
-\verb'LAGraph_Vector_isequal'   & tests if 2 vectors are equal \\
-\verb'LAGraph_Vector_to_dense'  & converts a vector to dense \\
-\verb'LAGraph_alloc_global'     & types, operators, monoids, and semirings \\
-\verb'LAGraph_finalize'         & ends LAGraph \\
-\verb'LAGraph_free'             & wrapper for \verb'free' \\
-\verb'LAGraph_free_global'      & frees objects created by \verb'_alloc_global'\\
-\verb'LAGraph_get_nthreads'     & get \# of threads used \\
-\verb'LAGraph_grread'           & read a binary matrix in Galois format \\
-\verb'LAGraph_init'             & starts LAGraph \\
-\verb'LAGraph_isall'            & tests 2 matrices with a binary operator \\
-\verb'LAGraph_isequal'          & tests if 2 matrices are equal \\
-\verb'LAGraph_ispattern'        & tests if all entries in a matrix are 1 \\
-\verb'LAGraph_malloc'           & wrapper for \verb'malloc' \\
-\verb'LAGraph_mmread'           & read a Matrix Market file \\
-\verb'LAGraph_mmwrite'          & write a Matrix Market file \\
-\verb'LAGraph_pattern'          & extracts the pattern of a matrix \\
-\verb'LAGraph_prune_diag'       & diagonal entries from a matrix \\
-\verb'LAGraph_rand'             & simple random number generator \\
-\verb'LAGraph_rand64'           & \verb'int64_t' random number generator \\
-\verb'LAGraph_random'           & random matrix generator \\
-\verb'LAGraph_randx'            & \verb'double' random number generator \\
-\verb'LAGraph_set_nthreads'     & set \# of threads to use \\
-\verb'LAGraph_tic'              & start a timer \\
-\verb'LAGraph_toc'              & end a timer \\
-\verb'LAGraph_tsvread'          & read a TSV file \\
-\verb'LAGraph_xinit'            & starts LAGraph, with different malloc \\
-\verb'LAgraph_1_to_n'           & construct the vector \verb'1:n' \\
-\verb'GB_*sort*'                & sorting for \verb'LAGraph_cdlp' \\
-% \verb'LAGraph_internal.h'
-\end{tabular}}
-
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsection{Breadth-first search}
-%-------------------------------------------------------------------------------
-\label{bfs}
-
-The \verb'bfs' examples in the \verb'Demo' folder provide several examples of
-how to compute a breadth-first search (BFS) in GraphBLAS.  Additional BFS
-examples are in LAGraph, shown below.  The \verb'LAGraph_bfs_simple' function
-starts at a given source node \verb's' of an undirected graph with \verb'n'
-nodes.  The graph is represented as an \verb'n'-by-\verb'n' matrix, \verb'A',
-where \verb'A(i,j)' is the edge $(i,j)$.  The matrix \verb'A' can have any type
-(even a user-defined type), since the \verb'PAIR' operator does not access its
-values.  No typecasting will be done.
-
-The vector \verb'v' of size \verb'n' holds the level of each node in the BFS,
-where \verb'v(i)=0' if the node has not yet been seen.  This particular value
-makes \verb'v' useful for another role.  It can be used as a Boolean mask,
-since \verb'0' is \verb'false' and nonzero is \verb'true'.  Initially the
-entire \verb'v' vector is zero.  It is initialized as a dense vector, with all
-entries present, to improve performance (otherwise, it will slowly grow,
-incrementally, and this will take a lot of time if the number of BFS levels is
-high).
-
-The vector \verb'q' is the set of nodes just discovered at the current level,
-where \verb'q(i)=true' if node \verb'i' is in the current level.  It starts out
-with just a single entry set to true, \verb'q(s)', the starting node.
-
-Each iteration of the BFS consists of three calls to GraphBLAS.  The first one
-uses \verb'q' as a mask.  It modifies all positions in \verb'v' where \verb'q'
-has an entry, setting them all to the current \verb'level'.
-
-        {\footnotesize
-        \begin{verbatim}
-        // v<q> = level, using vector assign with q as the mask
-        GrB_assign (v, q, NULL, level, GrB_ALL, n, GrB_DESC_S) ; \end{verbatim}}
-
-The next call to GraphBLAS is the heart of the algorithm:
-
-        {\footnotesize
-        \begin{verbatim}
-        // q<!v> = q ||.&& A ; finds all the unvisited
-        // successors from current q, using !v as the mask
-        GrB_vxm (q, v, NULL, GxB_ANY_PAIR_BOOL, q, A, GrB_DESC_RC) ; \end{verbatim}}
-
-The vector \verb'q' is all the set of nodes at the current level.  Suppose
-\verb'q(j)' is true, and it has a neighbor \verb'i'.  Then \verb'A(i,j)=1', and
-the dot product of \verb'A(i,:)*q' using the \verb'ANY_PAIR' semiring will use
-the \verb'PAIR' multiplier on these two terms, \verb'f (A(i,j), q(j))', resulting
-in a value \verb'1'.  The \verb'ANY' monoid will ``sum'' up all the results
-in this single row \verb'i'; note that the \verb'OR' monoid would compute the
-same thing.  If the result is a column vector \verb't=A*q',
-then this \verb't(i)' will be true.  The vector \verb't' will be true for
-any node adjacent to any node in the set \verb'q'.
-
-Some of these neighbors of the nodes in \verb'q' have already been visited by
-the BFS, either in the current level or in a prior level.  These results must
-be discarded; what is desired is the set of all nodes \verb'i' for which
-\verb't(i)' is true, and yet \verb'v(i)' is still zero.
-
-Enter the mask.  The vector \verb'v' is complemented for use a mask, via the
-\verb'desc' descriptor.  This means that wherever the vector is true, that
-position in the result is protected and will not be modified by the assignment.
-Only where \verb'v' is false will the result be modified.  This is exactly the
-desired result, since these represent newly seen nodes for the next level of
-the BFS.  A node \verb'k' already visited will have a nonzero \verb'v(k)', and
-thus \verb'q(k)' will not be modified by the assignment.
-
-The result \verb't' is written back into the vector \verb'q', through the mask,
-but to do this correctly, another descriptor parameter is used:
-\verb'GrB_REPLACE'.  The vector \verb'q' was used to compute \verb't=A*q', and
-after using it to compute \verb't', the entire \verb'q' vector needs to be
-cleared.  Only new nodes are desired, for the next level.  This is exactly what
-the \verb'REPLACE' option does.
-
-As a result, the vector \verb'q' now contains the set of nodes at the new
-level of the BFS.  It contains all those nodes (and only those nodes)
-that are neighbors of the prior set and that have not already been seen in
-any prior level.
-
-A single call to \verb'GrB_Vector_nvals' finds how many entries are in the
-current level.  If this is zero, the BFS can terminate.
-
-\newpage
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-#include "LAGraph_internal.h"
-#define LAGRAPH_FREE_ALL { GrB_free (&v) ; GrB_free (&q) ; }
-
-GrB_Info LAGraph_bfs_simple     // push-only BFS
-(
-    GrB_Vector *v_output,   // v(i) is the BFS level of node i in the graph
-    GrB_Matrix A,           // input graph, treated as if boolean in semiring
-    GrB_Index source        // starting node of the BFS
-)
-{
-    GrB_Info info ;
-    GrB_Vector q = NULL ;           // nodes visited at each level
-    GrB_Vector v = NULL ;           // result vector
-    if (v_output == NULL) LAGRAPH_ERROR ("argument missing", GrB_NULL_POINTER) ;
-    GrB_Index n, nvals ;
-    GrB_Matrix_nrows (&n, A) ;
-    // create an empty vector v, and make it dense
-    GrB_Vector_new (&v, (n > INT32_MAX) ? GrB_INT64 : GrB_INT32, n) ;
-    GrB_assign (v, NULL, NULL, 0, GrB_ALL, n, NULL) ;
-    // create a boolean vector q, and set q(source) to true
-    GrB_Vector_new (&q, GrB_BOOL, n) ;
-    GrB_Vector_setElement (q, true, source) ;
-    // BFS traversal and label the nodes
-    for (int64_t level = 1 ; level <= n ; level++)
-    {
-        // v<q> = level
-        GrB_assign (v, q, NULL, level, GrB_ALL, n, GrB_DESC_S) ;
-        // break if q is empty
-        GrB_Vector_nvals (&nvals, q) ;
-        if (nvals == 0) break ;
-        // q'<!v> = q'*A
-        GrB_vxm (q, v, NULL, GxB_ANY_PAIR_BOOL, q, A, GrB_DESC_RC) ;
-    }
-    // free workspace and return result
-    (*v_output) = v ;       // return result
-    v = NULL ;              // set to NULL so LAGRAPH_FREE_ALL doesn't free it
-    LAGRAPH_FREE_ALL ;      // free all workspace (except for result v)
-    return (GrB_SUCCESS) ;
-}
-\end{verbatim}}
-\end{mdframed}
-
-\newpage
 %-------------------------------------------------------------------------------
 \subsection{Maximal independent set}
 %-------------------------------------------------------------------------------
@@ -11550,53 +11345,6 @@ candidate set:
         // compute the max probability of all neighbors
         GrB_vxm (neighbor_max, candidates, NULL, maxFirst, prob, A, r_desc) ; \end{verbatim}}
 
-\newpage
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    // compute the degree of each node
-    GrB_reduce (degrees, NULL, NULL, GrB_PLUS_FP64, A, NULL) ;
-
-    // singletons are not candidates; they are added to iset first instead
-    // candidates[degree != 0] = 1
-    GrB_assign (candidates, degrees, NULL, true, GrB_ALL, n, NULL);
-
-    // add all singletons to iset
-    // iset[degree == 0] = 1
-    GrB_assign (iset, degrees, NULL, true, GrB_ALL, n, sr_desc) ;
-
-    // Iterate while there are candidates to check.
-    GrB_Index nvals ;
-    GrB_Vector_nvals (&nvals, candidates) ;
-
-    while (nvals > 0)
-    {
-        // sparsify the random number seeds (just keep it for each candidate)
-        GrB_assign (Seed, candidates, NULL, Seed, GrB_ALL, n, r_desc) ;
-        // compute a random probability scaled by inverse of degree
-        prand_xget (X, Seed) ;  // two calls to GrB_apply
-        GrB_eWiseMult (prob, candidates, NULL, set_random, degrees, X, r_desc) ;
-        // compute the max probability of all neighbors
-        GrB_vxm (neighbor_max, candidates, NULL, maxFirst, prob, A, r_desc) ;
-        // select node if its probability is > than all its active neighbors
-        GrB_eWiseAdd (new_members, NULL,NULL, GrB_GT_FP64, prob, neighbor_max,0);
-        // add new members to independent set.
-        GrB_eWiseAdd (iset, NULL, NULL, GrB_LOR, iset, new_members, NULL) ;
-        // remove new members from set of candidates c = c & !new
-        GrB_apply (candidates, new_members, NULL, GrB_IDENTITY_BOOL,
-            candidates, sr_desc) ;
-        GrB_Vector_nvals (&nvals, candidates) ;
-        if (nvals == 0) { break ; }                  // early exit condition
-        // Neighbors of new members can also be removed from candidates
-        GrB_vxm (new_neighbors, candidates, NULL, Boolean,
-            new_members, A, NULL) ;
-        GrB_apply (candidates, new_neighbors, NULL, GrB_IDENTITY_BOOL,
-            candidates, sr_desc) ;
-        GrB_Vector_nvals (&nvals, candidates) ;
-    }
-\end{verbatim}}
-\end{mdframed}
-
 \verb'A' is a symmetric Boolean matrix and \verb'prob' is a sparse real vector
 (of type \verb'FP32'), where \verb'prob(i)' is nonzero only if node \verb'i' is
 a candidate.  The \verb'prob' vector is computed from a random vector computed
@@ -11640,13 +11388,46 @@ The second matrix-vector multiplication is more straight-forward.  Once the set
 of new members in the independent is found, it is used to remove all neighbors
 of those new members from the set of candidates.
 
-The resulting method is very efficient.  For the \verb'Freescale2' matrix, the
-algorithm finds an independent set of size 1.6 million in 1.7 seconds (on the
-same MacBook Pro referred to in Section~\ref{bfs}, using a single core), taking
-four iterations of the \verb'while' loop.  For comparison, removing its
-diagonal entries (required for the algorithm to work) takes 0.3 seconds in
-GraphBLAS (see Section~\ref{transpose}), and simply transposing the matrix
-takes 0.24 seconds in both MATLAB and GraphBLAS.
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    // compute the degree of each node
+    GrB_reduce (degrees, NULL, NULL, GrB_PLUS_FP64, A, NULL) ;
+    // singletons are not candidates; they are added to iset first instead
+    // candidates[degree != 0] = 1
+    GrB_assign (candidates, degrees, NULL, true, GrB_ALL, n, NULL);
+    // add all singletons to iset
+    // iset[degree == 0] = 1
+    GrB_assign (iset, degrees, NULL, true, GrB_ALL, n, sr_desc) ;
+    // Iterate while there are candidates to check.
+    GrB_Index nvals ;
+    GrB_Vector_nvals (&nvals, candidates) ;
+    while (nvals > 0)
+    {
+        // sparsify the random number seeds (just keep it for each candidate)
+        GrB_assign (Seed, candidates, NULL, Seed, GrB_ALL, n, r_desc) ;
+        // compute a random probability scaled by inverse of degree
+        prand_xget (X, Seed) ;  // two calls to GrB_apply
+        GrB_eWiseMult (prob, candidates, NULL, set_random, degrees, X, r_desc) ;
+        // compute the max probability of all neighbors
+        GrB_vxm (neighbor_max, candidates, NULL, maxFirst, prob, A, r_desc) ;
+        // select node if its probability is > than all its active neighbors
+        GrB_eWiseAdd (new_members, NULL,NULL, GrB_GT_FP64, prob, neighbor_max,0);
+        // add new members to independent set.
+        GrB_eWiseAdd (iset, NULL, NULL, GrB_LOR, iset, new_members, NULL) ;
+        // remove new members from set of candidates c = c & !new
+        GrB_apply (candidates, new_members, NULL, GrB_IDENTITY_BOOL,
+            candidates, sr_desc) ;
+        GrB_Vector_nvals (&nvals, candidates) ;
+        if (nvals == 0) { break ; }                  // early exit condition
+        // Neighbors of new members can also be removed from candidates
+        GrB_vxm (new_neighbors, candidates, NULL, Boolean,
+            new_members, A, NULL) ;
+        GrB_apply (candidates, new_neighbors, NULL, GrB_IDENTITY_BOOL,
+            candidates, sr_desc) ;
+        GrB_Vector_nvals (&nvals, candidates) ;
+    } \end{verbatim}}
+\end{mdframed}
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -12040,73 +11821,6 @@ compute a fixed number of iterations.  The third example is more extensive
 user-defined types, operators, monoids, and semirings.  It creates a semiring
 for the entire PageRank computation.  It terminates if the 2-norm of the change
 in the rank vector \verb'r' is below a threshold.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsection{Triangle counting}
-%-------------------------------------------------------------------------------
-\label{triangle}
-
-A triangle in an undirected graph is a clique of size three:  three nodes $i$,
-$j$, and $k$ that are all pairwise connected.  There are many ways of counting
-the number of triangles in a graph.  Let \verb'A' be a symmetric matrix with
-values 0 and 1, and no diagonal entries; this matrix is the adjacency matrix of
-the graph.  Let \verb'E' be the edge incidence matrix with exactly two 1's per
-column.  A column of \verb'E' with entries in rows \verb'i' and \verb'j'
-represents the edge $(i,j)$ in the graph, \verb'A(i,j)=1' where \verb'i<j'.
-Let \verb'L' and \verb'U' be the strictly lower and upper triangular parts of
-\verb'A', respectively.
-
-The methods are listed in the table below.  Most of them use a form of masked
-matrix-matrix multiplication.  The methods are implemented in MATLAB in the
-\verb'tricount.m' file, and in GraphBLAS in the \verb'tricount.c' file, both in
-the \verb'GraphBLAS/Demo' folder.  Refer to the comments in those two files for
-details and derivations on how these methods work.
-
-When the matrix is stored by row, and a mask is present and not complemented,
-\verb'GrB_INP1' is \verb'GrB_TRAN', and \verb'GrB_INP0' is \verb'GxB_DEFAULT',
-the SuiteSparse:GraphBLAS implementation of \verb'GrB_mxm' always uses a
-dot-product formulation.  Thus, the ${\bf C \langle L \rangle} = {\bf L}{\bf
-U}^{\sf T}$ method uses dot products.  This provides a mechanism for the
-end-user to select a masked dot product matrix multiplication method in
-SuiteSparse:GraphBLAS, which is occasionally faster than the outer product
-method.  The MATLAB form assumes the matrices are stored by column
-(the only option in MATLAB).
-
-Each method is followed by a reduction to a scalar, via \verb'GrB_reduce' in
-GraphBLAS or by \verb'nnz' or \verb'sum(sum(...))' in MATLAB.
-
-\vspace{0.05in}
-\noindent
-{\footnotesize
-\begin{tabular}{lll}
-\hline
-method and     & in MATLAB & in GraphBLAS \\
-citation    & & \\
-\hline
-minitri \cite{WolfBerryStark15} & \verb"nnz(A*E==2)/3"
-    & ${\bf C}={\bf AE}$, then \verb'GrB_apply' \\
-Burkhardt \cite{Burkhardt16} & \verb"sum(sum((A^2).*A))/6"
-    & ${\bf C \langle A \rangle} = {\bf A}^2$ \\
-Cohen \cite{AzadBulucGilbert15,Cohen09} & \verb"sum(sum((L*U).*A))/2"
-    & ${\bf C \langle A \rangle} = {\bf LU}$ \\
-Sandia \cite{WolfDeveciBerryHammondRajamanickam17} & \verb"sum(sum((U*U).*U))"
-    & ${\bf C \langle L \rangle} = {\bf LL}$ (outer product) \\
-SandiaDot & \verb"sum(sum((U'*L).*L))"
-    & ${\bf C \langle U \rangle} = {\bf L}{\bf U}^{\sf T}$ (dot product) \\
-Sandia2  & \verb"sum(sum((L*L).*L))"
-    & ${\bf C \langle U \rangle} = {\bf UU}$ (outer product) \\
-\hline
-\end{tabular}
-}
-\vspace{0.05in}
-
-In general, the Sandia methods are the fastest of the 6 methods when
-implemented in GraphBLAS.  For full details on the triangle counting and
-$k$-truss algorithms, and performance results, see \cite{Davis18b}, a copy of
-which appears in the \verb'SuiteSparse/GraphBLAS/Doc' folder.  The code appears
-in \verb'Extras'.  That paper uses an earlier version of SuiteSparse:GraphBLAS
-in which all matrices are stored by column.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -12591,6 +12305,15 @@ After \verb'make' in the top-level directory to compile the library, type
 The \verb'./demo' command is a script that runs the demos with various input
 matrices in the \verb'Demo/Matrix' folder.  The output of the demos will be
 compared with expected output files in \verb'Demo/Output'.
+
+\begin{alert}
+DO NOT publish benchmarks of these demos, and do not link against the
+demo library in any user application.  These codes are sometimes slow,
+and are meant as simple illustrations only, not for performance.  The fastest
+methods are in LAGraph, not in SuiteSparse/GraphBLAS/Demo.  Benchmark LAGraph
+instead.  Eventually, all GraphBLAS/Demos methods will be removed, and LAGraph
+will serve all uses: for illustration, benchmarking, and production uses.
+\end{alert}
 
 %----------------------------------------
 \subsection{Installing SuiteSparse:GraphBLAS}

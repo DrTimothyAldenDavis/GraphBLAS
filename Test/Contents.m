@@ -283,24 +283,8 @@
 %   grb_clear_coverage - clear current statement coverage
 %   grb_get_coverage   - return current statement coverage
 
-%   bfs_book         - run BFS on a small graph
-%   bfs_matlab       - a simple breadth-first-search in MATLAB
-%   bfs_test         - compares bfs_matlab and GB_mex_bfs
 %   flopcount        - cumulative sum of flop counts for A*B, C<M>=A*B, C<!M>=A*B
 %   floptest         - compare flopcount with GB_mex_mxm_flops
-
-% Triangle counting:
-
-%   ../Demo/MATLAB/tricount       - count the number of triangles in an undirected unweighted graph
-%   ../Demo/MATLAB/adj_to_edges   - create an edge incidence matrix from an adjacency matrix
-%   ../Demo/MATLAB/check_adj      - ensure A is a valid adjacency matrix
-%   ../Demo/MATLAB/edges_to_adj   - create an adjacency matrix from an edge incidence matrix
-%   ../Demo/MATLAB/tri_matlab     - run tricount tests in MATLAB
-%   test70                        - performance comparison of triangle counting methods
-%   test70_plot                   - plot the results from test70
-%   test71                        - performance comparison of triangle counting methods
-%   test71_plot                   - plot the results from test71
-%   test71_table                  - print the table for triangle counting results
 
 % Other demos
 
