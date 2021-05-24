@@ -66,7 +66,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>GraphBLAS: graph algorithms in the language of linear algebra</h1><!--introduction--><p>GraphBLAS is a library for creating graph algorithms based on sparse linear algebraic operations over semirings.  Visit <a href="http://graphblas.org">http://graphblas.org</a> for more details and resources.  See also the SuiteSparse:GraphBLAS User Guide in this package.</p><p><a href="http://faculty.cse.tamu.edu/davis">http://faculty.cse.tamu.edu/davis</a></p><p>SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved. SPDX-License-Identifier: GPL-3.0-or-later</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">GraphBLAS: faster and more general sparse matrices for MATLAB</a></li><li><a href="#2">Sparse integer matrices</a></li><li><a href="#3">Sparse single-precision matrices</a></li><li><a href="#4">Mixing MATLAB and GraphBLAS matrices</a></li><li><a href="#5">Faster matrix operations</a></li><li><a href="#6">A wide range of semirings</a></li><li><a href="#8">The max.plus tropical semiring</a></li><li><a href="#9">A boolean semiring</a></li><li><a href="#13">GraphBLAS operators, monoids, and semirings</a></li><li><a href="#18">Element-wise operations</a></li><li><a href="#20">Subtracting two matrices</a></li><li><a href="#22">Element-wise 'multiplication'</a></li><li><a href="#24">Overloaded operators</a></li><li><a href="#27">Overloaded functions</a></li><li><a href="#29">Zeros are handled differently</a></li><li><a href="#31">Displaying contents of a GraphBLAS matrix</a></li><li><a href="#36">Storing a matrix by row or by column</a></li><li><a href="#40">Hypersparse, sparse, bitmap, and full matrices</a></li><li><a href="#43">numel uses vpa if the matrix is really huge</a></li><li><a href="#45">The mask and accumulator</a></li><li><a href="#47">The descriptor</a></li><li><a href="#48">Integer arithmetic is different in GraphBLAS</a></li><li><a href="#50">An example graph algorithm: breadth-first search</a></li><li><a href="#51">Example graph algorithm: Luby's method in GraphBLAS</a></li><li><a href="#52">Sparse deep neural network</a></li><li><a href="#53">Solving the sparse deep neural network problem with GraphbLAS</a></li><li><a href="#54">Solving the sparse deep neural network problem with MATLAB</a></li><li><a href="#55">For objects, GraphBLAS has better colon notation than MATLAB</a></li><li><a href="#58">Iterative solvers work as-is</a></li><li><a href="#59">... even in single precision</a></li><li><a href="#62">Extreme performance differences between GraphBLAS and MATLAB.</a></li><li><a href="#63">Sparse logical indexing is much, much faster in GraphBLAS</a></li><li><a href="#64">First method in GraphBLAS, with GrB.assign</a></li><li><a href="#65">Second method in GraphBLAS, with C(M)=A(M)</a></li><li><a href="#66">Now with MATLAB matrices, with C(M)=A(M)</a></li><li><a href="#67">Limitations and their future solutions</a></li><li><a href="#74">GraphBLAS operations</a></li></ul></div><h2 id="1">GraphBLAS: faster and more general sparse matrices for MATLAB</h2><p>GraphBLAS is not only useful for creating graph algorithms; it also supports a wide range of sparse matrix data types and operations. MATLAB can compute C=A*B with just two semirings: 'plus.times.double' and 'plus.times.complex' for complex matrices.  GraphBLAS has 2,518 built-in semirings, such as 'max.plus' (<a href="https://en.wikipedia.org/wiki/Tropical_semiring">https://en.wikipedia.org/wiki/Tropical_semiring</a>).  These semirings can be used to construct a wide variety of graph algorithms, based on operations on sparse adjacency matrices.</p><p>MATLAB and GraphBLAS both provide sparse matrices of type double, logical, and double complex.  GraphBLAS adds sparse matrices of type: single, int8, int16, int32, int64, uint8, uint16, uint32, uint64, and single complex (with MATLAB matrices, these types can only be held in full matrices).</p><pre class="codeinput"><span class="comment">% reset to the default number of threads</span>
+  </style></head><body><div class="content"><h1>GraphBLAS: graph algorithms in the language of linear algebra</h1><!--introduction--><p>GraphBLAS is a library for creating graph algorithms based on sparse linear algebraic operations over semirings.  Visit <a href="http://graphblas.org">http://graphblas.org</a> for more details and resources.  See also the SuiteSparse:GraphBLAS User Guide in this package.</p><p><a href="http://faculty.cse.tamu.edu/davis">http://faculty.cse.tamu.edu/davis</a></p><p>SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved. SPDX-License-Identifier: GPL-3.0-or-later</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">GraphBLAS: faster and more general sparse matrices for MATLAB</a></li><li><a href="#2">Sparse integer matrices</a></li><li><a href="#3">Sparse single-precision matrices</a></li><li><a href="#4">Mixing MATLAB and GraphBLAS matrices</a></li><li><a href="#5">Faster matrix operations</a></li><li><a href="#6">A wide range of semirings</a></li><li><a href="#8">The max.plus tropical semiring</a></li><li><a href="#9">A boolean semiring</a></li><li><a href="#13">GraphBLAS operators, monoids, and semirings</a></li><li><a href="#18">Element-wise operations</a></li><li><a href="#20">Subtracting two matrices</a></li><li><a href="#22">Element-wise 'multiplication'</a></li><li><a href="#24">Overloaded operators</a></li><li><a href="#27">Overloaded functions</a></li><li><a href="#29">Zeros are handled differently</a></li><li><a href="#31">Displaying contents of a GraphBLAS matrix</a></li><li><a href="#36">Storing a matrix by row or by column</a></li><li><a href="#40">Hypersparse, sparse, bitmap, and full matrices</a></li><li><a href="#43">numel uses vpa if the matrix is really huge</a></li><li><a href="#45">The mask and accumulator</a></li><li><a href="#47">The descriptor</a></li><li><a href="#48">Integer arithmetic is different in GraphBLAS</a></li>
+  <li><a href="#51">Example graph algorithm: Luby's method in GraphBLAS</a></li><li><a href="#52">Sparse deep neural network</a></li><li><a href="#53">Solving the sparse deep neural network problem with GraphbLAS</a></li><li><a href="#54">Solving the sparse deep neural network problem with MATLAB</a></li><li><a href="#55">For objects, GraphBLAS has better colon notation than MATLAB</a></li><li><a href="#58">Iterative solvers work as-is</a></li><li><a href="#59">... even in single precision</a></li><li><a href="#62">Extreme performance differences between GraphBLAS and MATLAB.</a></li><li><a href="#63">Sparse logical indexing is much, much faster in GraphBLAS</a></li><li><a href="#64">First method in GraphBLAS, with GrB.assign</a></li><li><a href="#65">Second method in GraphBLAS, with C(M)=A(M)</a></li><li><a href="#66">Now with MATLAB matrices, with C(M)=A(M)</a></li><li><a href="#67">Limitations and their future solutions</a></li><li><a href="#74">GraphBLAS operations</a></li></ul></div><h2 id="1">GraphBLAS: faster and more general sparse matrices for MATLAB</h2><p>GraphBLAS is not only useful for creating graph algorithms; it also supports a wide range of sparse matrix data types and operations. MATLAB can compute C=A*B with just two semirings: 'plus.times.double' and 'plus.times.complex' for complex matrices.  GraphBLAS has 2,518 built-in semirings, such as 'max.plus' (<a href="https://en.wikipedia.org/wiki/Tropical_semiring">https://en.wikipedia.org/wiki/Tropical_semiring</a>).  These semirings can be used to construct a wide variety of graph algorithms, based on operations on sparse adjacency matrices.</p><p>MATLAB and GraphBLAS both provide sparse matrices of type double, logical, and double complex.  GraphBLAS adds sparse matrices of type: single, int8, int16, int32, int64, uint8, uint16, uint32, uint64, and single complex (with MATLAB matrices, these types can only be held in full matrices).</p><pre class="codeinput"><span class="comment">% reset to the default number of threads</span>
 clear <span class="string">all</span>
 maxNumCompThreads (<span class="string">'automatic'</span>) ;
 GrB.clear ;
@@ -1266,33 +1267,6 @@ C2 =
     (2,3)   24
     (3,3)   80
 
-</pre><h2 id="50">An example graph algorithm: breadth-first search</h2><p>The breadth-first search of a graph finds all nodes reachable from the source node, and their level, v.  v=GrB.bfs(A,s) or v=bfs_matlab(A,s) compute the same thing, but GrB.bfs uses GraphBLAS matrices and operations, while bfs_matlab uses pure MATLAB operations.  v is defined as v(s) = 1 for the source node, v(i) = 2 for nodes adjacent to the source, and so on.</p><pre class="codeinput">clear
-rng (<span class="string">'default'</span>) ;
-n = 1e5 ;
-A = logical (sprandn (n, n, 1e-3)) ;
-
-tic
-v1 = GrB.bfs (A, 1) ;
-gb_time = toc ;
-
-tic
-v2 = bfs_matlab (A, 1) ;
-matlab_time = toc ;
-
-assert (isequal (double (v1'), v2))
-fprintf (<span class="string">'\nnodes reached: %d of %d\n'</span>, nnz (v2), n) ;
-fprintf (<span class="string">'GraphBLAS time: %g sec\n'</span>, gb_time) ;
-fprintf (<span class="string">'MATLAB time:    %g sec\n'</span>, matlab_time) ;
-fprintf (<span class="string">'Speedup of GraphBLAS over MATLAB: %g\n'</span>, <span class="keyword">...</span>
-    matlab_time / gb_time) ;
-fprintf (<span class="string">'\n# of threads used by GraphBLAS: %d\n'</span>, GrB.threads) ;
-</pre><pre class="codeoutput">
-nodes reached: 100000 of 100000
-GraphBLAS time: 0.402623 sec
-MATLAB time:    0.818391 sec
-Speedup of GraphBLAS over MATLAB: 2.03265
-
-# of threads used by GraphBLAS: 8
 </pre><h2 id="51">Example graph algorithm: Luby's method in GraphBLAS</h2><p>The GrB.mis function is variant of Luby's randomized algorithm [Luby 1985].  It is a parallel method for finding an maximal independent set of nodes, where no two nodes are adjacent.  See the GraphBLAS/@GrB/mis.m function for details.  The graph must be symmetric with a zero-free diagonal, so A is symmetrized first and any diagonal entries are removed.</p><pre class="codeinput">A = GrB (A) ;
 A = GrB.offdiag (A|A') ;
 
@@ -2127,35 +2101,6 @@ C1 = C * 40
 C2 = G * uint8 (40)
 S = double (C1 < 255) ;
 assert (isequal (double (C1).*S, double (C2).*S))
-
-%% An example graph algorithm: breadth-first search
-% The breadth-first search of a graph finds all nodes reachable from the
-% source node, and their level, v.  v=GrB.bfs(A,s) or v=bfs_matlab(A,s)
-% compute the same thing, but GrB.bfs uses GraphBLAS matrices and
-% operations, while bfs_matlab uses pure MATLAB operations.  v is defined
-% as v(s) = 1 for the source node, v(i) = 2 for nodes adjacent to the
-% source, and so on.
-
-clear
-rng ('default') ;
-n = 1e5 ;
-A = logical (sprandn (n, n, 1e-3)) ;
-
-tic
-v1 = GrB.bfs (A, 1) ;
-gb_time = toc ;
-
-tic
-v2 = bfs_matlab (A, 1) ;
-matlab_time = toc ;
-
-assert (isequal (double (v1'), v2))
-fprintf ('\nnodes reached: %d of %d\n', nnz (v2), n) ;
-fprintf ('GraphBLAS time: %g sec\n', gb_time) ;
-fprintf ('MATLAB time:    %g sec\n', matlab_time) ;
-fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
-    matlab_time / gb_time) ;
-fprintf ('\n# of threads used by GraphBLAS: %d\n', GrB.threads) ;
 
 %% Example graph algorithm: Luby's method in GraphBLAS
 % The GrB.mis function is variant of Luby's randomized algorithm [Luby
