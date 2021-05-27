@@ -145,8 +145,8 @@ typedef struct
     // RMM allocate/deallocate functions
     //--------------------------------------------------------------------------
 
-    void * (* rmm_allocate_function  ) (size_t *) ;
-    void   (* rmm_deallocate_function) (void *p, size_t) ;
+    void * (* pmr_allocate_function  ) (size_t *) ;
+    void   (* pmr_deallocate_function) (void *p, size_t) ;
 
     //--------------------------------------------------------------------------
     // CUDA (DRAFT: in progress)
@@ -338,8 +338,8 @@ GB_Global_struct GB_Global =
     .gpu_chunk = GB_GPU_CHUNK_DEFAULT,  // min problem size for using a GPU
 
     // RMM memory management functions
-    .rmm_allocate_function = NULL,
-    .rmm_deallocate_function = NULL,
+    .pmr_allocate_function = NULL,
+    .pmr_deallocate_function = NULL,
 
 } ;
 
@@ -1273,20 +1273,20 @@ int64_t GB_Global_free_pool_nblocks_total (void)
 // RMM memory allocator
 //------------------------------------------------------------------------------
 
-void GB_Global_rmm_allocate_function_set
+void GB_Global_pmr_allocate_function_set
 (
-    void * (* rmm_allocate_function) (size_t *)
+    void * (* pmr_allocate_function) (size_t *)
 )
 { 
-    GB_Global.rmm_allocate_function = rmm_allocate_function ;
+    GB_Global.pmr_allocate_function = pmr_allocate_function ;
 }
 
-void GB_Global_rmm_deallocate_function_set
+void GB_Global_pmr_deallocate_function_set
 (
-    void * (* rmm_deallocate_function) (void *, size_t)
+    void * (* pmr_deallocate_function) (void *, size_t)
 )
 { 
-    GB_Global.rmm_deallocate_function = rmm_deallocate_function ;
+    GB_Global.pmr_deallocate_function = pmr_deallocate_function ;
 }
 
 //------------------------------------------------------------------------------
@@ -1296,10 +1296,10 @@ void GB_Global_rmm_deallocate_function_set
 void *GB_Global_allocate_function (size_t *size)
 {
     void *p = NULL ;
-    if (GB_Global.rmm_allocate_function != NULL)
+    if (GB_Global.pmr_allocate_function != NULL)
     {
         // use the RMM resource to allocate memory
-        p = GB_Global.rmm_allocate_function (size) ;
+        p = GB_Global.pmr_allocate_function (size) ;
     }
     else if (GB_Global.malloc_is_thread_safe)
     {
@@ -1322,10 +1322,10 @@ void *GB_Global_allocate_function (size_t *size)
 
 void GB_Global_deallocate_function (void *p, size_t size)
 { 
-    if (GB_Global.rmm_deallocate_function != NULL)
+    if (GB_Global.pmr_deallocate_function != NULL)
     {
         // use the RMM resource to deallocate memory
-        GB_Global.rmm_deallocate_function (p, size) ;
+        GB_Global.pmr_deallocate_function (p, size) ;
     }
     if (GB_Global.malloc_is_thread_safe)
     {

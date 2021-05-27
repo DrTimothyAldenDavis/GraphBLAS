@@ -7,20 +7,20 @@
 
 //------------------------------------------------------------------------------
 
-// GrB_init, GxB_init, or GxB_RMM_init must called before any other GraphBLAS
+// GrB_init, GxB_init, or GxB_pmr_init must called before any other GraphBLAS
 // operation; all three rely on this internal function.  If GraphBLAS is used
 // by multiple user threads, only one can call GrB_init, GxB_init or
-// GxB_RMM_init.
+// GxB_pmr_init.
 
 // Result are undefined if multiple user threads simultaneously
-// call GrB_init, GxB_init, or GxB_RMM_init.
+// call GrB_init, GxB_init, or GxB_pmr_init.
 
 // Per the spec, GrB_finalize must be called as the last GraphBLAS operation.
 // Not even GrB_Matrix_free can be safely called after GrB_finalize.  In the
 // current version of SuiteSparse:GraphBLAS, GrB_finalize frees the internal
 // memory pool.
 
-// GrB_init, GxB_init, or GxB_RMM_init define the mode that GraphBLAS will
+// GrB_init, GxB_init, or GxB_pmr_init define the mode that GraphBLAS will
 // use:  blocking or non-blocking.  With blocking mode, all operations finish
 // before returning to the user application.  With non-blocking mode,
 // operations can be left pending, and are computed only when needed.
@@ -30,10 +30,11 @@
 // and GxB_init.  The realloc function pointer is optional and can be NULL.  If
 // realloc is NULL, it is not used, and malloc/memcpy/free are used instead.
 
-// GxB_RMM_init is the same as GrB_init except that it also defines the RMM
-// allocate/deallocate functions to use, which are required to use the GPU(s). 
+// GxB_pmr_init is the same as GrB_init except that it also defines the
+// PMR-compatible allocate/deallocate functions to use, which are required to
+// use the GPU(s). 
 
-/*  TODO: C-API options
+/* Examples:
 
     // no GPU, use ANSI C11 malloc/realloc/free
     GrB_init (mode) ;
@@ -41,8 +42,11 @@
     // no GPU, use ANSI C11-compatible malloc/realloc/free
     GxB_init (mode, malloc, calloc, realloc, free, true) ;
 
+    // use PMR, on the host only (no GPU)
+    GxB_pmr_init (mode, pmr_allocate, pmr_deallocate) ;
+
     // use RMM, and optionally the GPU(s)
-    GxB_RMM_init (mode, rmm_allocate, rmm_deallocate) ;
+    GxB_pmr_init (mode, rmm_allocate, rmm_deallocate) ;
 
     // gpu control:
     GxB_set ( pick your gpu(s) )            // global
@@ -68,11 +72,11 @@ GrB_Info GB_init            // start up GraphBLAS
     void   (* free_function    ) (void *),          // required
     bool malloc_is_thread_safe,
 
-    // RMM allocate/deallocate memory management functions
-    void * (* rmm_allocate_function   ) (size_t *),
-    void   (* rmm_deallocate_function ) (void *p, size_t size),
+    // pmr allocate/deallocate memory management functions
+    void * (* pmr_allocate_function   ) (size_t *),
+    void   (* pmr_deallocate_function ) (void *p, size_t size),
 
-    GB_Context Context      // from GrB_init, GxB_init, or GxB_RMM_init
+    GB_Context Context      // from GrB_init, GxB_init, or GxB_pmr_init
 )
 {
 
@@ -100,11 +104,11 @@ GrB_Info GB_init            // start up GraphBLAS
 
     // GrB_init passes in the ANSI C11 malloc/realloc/free
 
-    if (rmm_allocate_function != NULL)
+    if (pmr_allocate_function != NULL)
     {
-        // use the provided RMM resource
-        GB_Global_rmm_allocate_function_set (rmm_allocate_function) ;
-        GB_Global_rmm_deallocate_function_set (rmm_deallocate_function) ;
+        // use the provided pmr resource
+        GB_Global_pmr_allocate_function_set (pmr_allocate_function) ;
+        GB_Global_pmr_deallocate_function_set (pmr_deallocate_function) ;
         // there is no ANSI C11-compatible malloc/realloc/free to use
         GB_Global_malloc_function_set  (NULL) ;
         GB_Global_realloc_function_set (NULL) ;
@@ -113,8 +117,8 @@ GrB_Info GB_init            // start up GraphBLAS
     else
     {
         // use an ANSI C11-compatible malloc/realloc/free
-        GB_Global_rmm_allocate_function_set (NULL) ;
-        GB_Global_rmm_deallocate_function_set (NULL) ;
+        GB_Global_pmr_allocate_function_set (NULL) ;
+        GB_Global_pmr_deallocate_function_set (NULL) ;
         GB_Global_malloc_function_set  (malloc_function ) ; // cannot be NULL
         GB_Global_realloc_function_set (realloc_function) ; // ok if NULL
         GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
@@ -182,14 +186,16 @@ GrB_Info GB_init            // start up GraphBLAS
     // CUDA initializations
     //--------------------------------------------------------------------------
 
-    // If CUDA exists (#define GBCUDA) and if the caller is GxB_RMM_init, then
+    // If CUDA exists (#define GBCUDA) and if the caller is GxB_pmr_init, then
     // query the system for the # of GPUs available, their memory sizes, SM
-    // counts, and other capabilities.  Unified Memory support is assumed.
-    // Then warmup each GPU.
+    // counts, and other capabilities.  Unified Memory support via RMM is
+    // assumed.  Then warmup each GPU.
 
     #if defined ( GBCUDA )
-    if (rmm_allocate_function != NULL)
+    if (pmr_allocate_function != NULL)
     {
+        // TODO: this does not have to be here
+
         // query the system for the # of GPUs
         // TODO for GPU: make this a function in the CUDA folder
         GB_Global_gpu_control_set (GxB_DEFAULT) ;
