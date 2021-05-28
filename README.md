@@ -79,7 +79,8 @@ GraphBLAS:      the @GrB MATLAB/Octave interface, including its test suite and
                 Window can locate the Contents.m file.  Note that this folder
                 and all its contents are under the GNU GPLv3 (or later), not
                 Apache-2.0.  All other components of GraphBLAS (in particular,
-                all code in libgraphblas.so) are licensed as Apache-2.0.
+                all code in libgraphblas.so, and the entire CUDA folder) are
+                licensed as Apache-2.0.
 
 Include:        user-accessible include file, GraphBLAS.h
 
@@ -100,6 +101,11 @@ build:          build directory for CMake, initially empty
 
 alternative:    an alternative to CMake; edit the alternative/Makefile and do
                 "make" or "make run" in the 'alternative' directory.
+
+CUDA:           GPU interface, a work in progress.  This is being developed in
+                collaboration with Joe Eaton and others at NVIDIA, with
+                support from NVIDIA.  It appears in this release but the CUDA
+                folder is a draft that isn't ready to use yet.
 
 --------------------------------------------------------------------------------
 
@@ -175,7 +181,6 @@ To support the development of GraphBLAS, contact the author (davis@tamu.edu) or
 the Texas A&M Foundation (True Brown, tbrown@txamfoundation.com; or Kevin
 McGinnis, kmcginnis@txamfoundation.com) for details.
 
-SuiteSparse:GraphBLAS, is copyrighted by its sole author, Timothy A. Davis, (c)
-2017-2021, All Rights Reserved.  davis@tamu.edu.  Contact me if you need a
-non-GNU license.
+SuiteSparse:GraphBLAS, is copyrighted by Timothy A. Davis, (c) 2017-2021, All
+Rights Reserved.  davis@tamu.edu.  Contact me if you need a non-GNU license.
 
