@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_subassign_05d: C(:,:)<M> = scalar where C is dense
+// GB_dense_subassign_05d: C(:,:)<M> = scalar where C is as-if-full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -64,18 +64,23 @@ GrB_Info GB_dense_subassign_05d
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
-    ASSERT (GB_is_dense (C)) ;
+    ASSERT (GB_as_if_full (C)) ;
 
     ASSERT_MATRIX_OK (M, "M for subassign method_05d", GB0) ;
     ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_PENDING (M)) ;
 
+    GB_ENSURE_FULL (C) ;    // convert C to full, if sparsity control allows it
+    if (C->iso)
+    { 
+        // work has already been done by GB_assign_prep
+        return (GrB_SUCCESS) ;
+    }
+
     const GB_Type_code ccode = C->type->code ;
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
-
-    GB_ENSURE_FULL (C) ;        // convert C to full
 
     //--------------------------------------------------------------------------
     // Method 05d: C(:,:)<M> = scalar ; no S; C is dense

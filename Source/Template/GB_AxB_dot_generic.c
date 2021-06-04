@@ -16,6 +16,8 @@
     // get operators, functions, workspace, contents of A, B, C
     //--------------------------------------------------------------------------
 
+    ASSERT (!C->iso) ;
+
     GxB_binary_function fmult = mult->function ;    // NULL if positional
     GxB_binary_function fadd  = add->op->function ;
     GB_Opcode opcode = mult->opcode ;
@@ -82,10 +84,10 @@
             ASSERT (handled) ;      // all positional ops can be flipped
         }
 
-        // aki = A(i,k), located in Ax [A_iso?0:pA], value not used
+        // aki = A(i,k), located in Ax [A_iso?0:pA], but value not used
         #define GB_GETA(aki,Ax,pA,A_iso) ;
 
-        // bkj = B(k,j), located in Bx [B_iso?0:pB], value not used
+        // bkj = B(k,j), located in Bx [B_iso?0:pB], but value not used
         #define GB_GETB(bkj,Bx,pB,B_iso) ;
 
         // define cij for each task
@@ -229,13 +231,13 @@
         // generic semirings with standard multiply operators
         //----------------------------------------------------------------------
 
-        // aki = A(k,i), located in Ax [pA]
+        // aki = A(i,k), located in Ax [A_iso?0:pA]
         #undef  GB_GETA
         #define GB_GETA(aki,Ax,pA,A_iso)                                \
             GB_void aki [GB_VLA(aki_size)] ;                            \
             if (!A_is_pattern) cast_A (aki, Ax +((A_iso) ? 0:(pA)*asize), asize)
 
-        // bkj = B(k,j), located in Bx [pB]
+        // bkj = B(k,j), located in Bx [B_iso?0:pB]
         #undef  GB_GETB
         #define GB_GETB(bkj,Bx,pB,B_iso)                                \
             GB_void bkj [GB_VLA(bkj_size)] ;                            \

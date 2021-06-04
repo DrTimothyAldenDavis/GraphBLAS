@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_coarseHash_phase5:
+// GB_AxB_saxpy3_coarseHash_phase5: C=A*B for coarse hash method, phase 5
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.

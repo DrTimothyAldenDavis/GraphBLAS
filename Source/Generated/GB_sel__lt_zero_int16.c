@@ -22,6 +22,9 @@
 
 // A type: int16_t
 
+#define GB_ISO_SELECT \
+    0
+
 // kind
 #define GB_ENTRY_SELECTOR
 

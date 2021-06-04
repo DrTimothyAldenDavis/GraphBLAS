@@ -115,4 +115,16 @@ int GB_add_sparsity         // return the sparsity structure for C
     const GrB_Matrix B      // input B matrix
 ) ;
 
+bool GB_iso_add             // c = op(a,b), return true if C is iso
+(
+    // output
+    GB_void *restrict c,    // output scalar of iso array
+    // input
+    GrB_Type ctype,         // type of c
+    GrB_Matrix A,           // input matrix
+    GrB_Matrix B,           // input matrix
+    GrB_BinaryOp op         // binary operator, if present
+) ;
+
 #endif
+

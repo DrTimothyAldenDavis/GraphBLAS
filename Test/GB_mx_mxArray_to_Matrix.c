@@ -319,17 +319,15 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // the MATLAB matrix and GraphBLAS matrix have the same type; (logical,
         // double, or double complex), and a deep copy is not requested.  Just
         // make a shallow copy.
-        A->nzmax = anzmax ;
         A->x = Mx ;
-        A->x_size = 0 ;     // A->x is shallow
+        A->x_size = anzmax * atype_out->size ;
     }
     else
     {
         if (!deep_copy)
         {
             // allocate new space for the GraphBLAS values
-            A->nzmax = GB_IMAX (anz, 1) ;
-            A->x = (GB_void *) GB_malloc_memory (A->nzmax * atype_out->size,
+            A->x = (GB_void *) GB_malloc_memory (anz * atype_out->size,
                 sizeof (GB_void), &(A->x_size)) ;
             if (A->x == NULL)
             {

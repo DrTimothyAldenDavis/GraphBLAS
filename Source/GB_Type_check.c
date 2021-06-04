@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_Type_check: print a built-in type
+// GB_Type_check: check and print a built-in or user-defined type
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.

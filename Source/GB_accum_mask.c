@@ -114,8 +114,8 @@
 #define GB_FREE_ALL                 \
 {                                   \
     GB_Matrix_free (Thandle) ;      \
-    GB_phbix_free (MT) ;          \
-    GB_phbix_free (Z) ;           \
+    GB_phbix_free (MT) ;            \
+    GB_phbix_free (Z) ;             \
 }
 
 //------------------------------------------------------------------------------
@@ -254,9 +254,9 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // decide on the method
     //--------------------------------------------------------------------------
 
-    int64_t cnz = GB_NNZ (C) ;          // includes live entries and zombies
+    int64_t cnz = GB_nnz (C) ;              // includes live entries and zombies
     int64_t cnpending = GB_Pending_n (C) ;  // # pending tuples in C
-    int64_t tnz = GB_NNZ (T) ;
+    int64_t tnz = GB_nnz (T) ;
 
     // Use subassign for the accum/mask step if either M or accum is present
     // (or both), and if the update is small compared to the size of C.
@@ -321,7 +321,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     // use_subassign has been reconsidered and the pending work on C may now
     // be finished, which changes cnz and cnpending.  Recompute use_transplant.
-    cnz = GB_NNZ (C) ;              // includes live entries and zombies
+    cnz = GB_nnz (C) ;              // includes live entries and zombies
     cnpending = GB_Pending_n (C) ;  // # pending tuples in C
     use_transplant = (!use_subassign)
         && (accum == NULL || (cnz + cnpending) == 0) ;

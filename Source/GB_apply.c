@@ -167,7 +167,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;      // A can be jumbled
     GB_MATRIX_WAIT (scalar) ;
 
-    if (op2 != NULL && GB_NNZ (scalar) != 1)
+    if (op2 != NULL && GB_nnz ((GrB_Matrix ) scalar) != 1)
     { 
         // the scalar entry must be present
         GB_ERROR (GrB_INVALID_VALUE, "%s", "Scalar must contain an entry") ;
@@ -179,9 +179,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     if (op2 != NULL)
     { 
-        // first(A,x), second(y,A), and any(...) become identity(A)
-        if ((opcode == GB_ANY_opcode) ||
-            (opcode == GB_FIRST_opcode  && !binop_bind1st) ||
+        // first(A,x) and second(y,A) become identity(A)
+        if ((opcode == GB_FIRST_opcode  && !binop_bind1st) ||
             (opcode == GB_SECOND_opcode &&  binop_bind1st))
         { 
             switch (op2->xtype->code)
@@ -262,8 +261,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
             op1, op2, scalar, binop_bind1st, Context) ;
         ASSERT (GB_JUMBLED_OK (T)) ;
         // A positional op is applied to C after the transpose is computed,
-        // using the T_is_csc format.  The ijflip is handled
-        // above.
+        // using the T_is_csc format.  The ijflip is handled above.
     }
     else if (M == NULL && accum == NULL && (C == A) && C->type == T_type)
     {
@@ -275,9 +273,17 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         if (opcode != GB_IDENTITY_opcode)
         { 
             // the output Cx is aliased with C->x in GB_apply_op.
-            GB_void *Cx = (GB_void *) C->x ;
-            info = GB_apply_op (Cx, op1, op2,   // op1 != identity
-                scalar, binop_bind1st, C, Context) ;
+            GB_iso_code
+                C_code_iso = GB_iso_unop_code (C, op1, op2, binop_bind1st) ;
+            info = GB_apply_op ((GB_void *) C->x, C->type, C_code_iso,
+                op1, op2, scalar, binop_bind1st, C, Context) ;
+            if (info == GrB_SUCCESS && C_code_iso != GB_NON_ISO)
+            { 
+                // compact the iso values of C
+                ASSERT (C->iso) ;
+                // set C->iso = true    OK
+                info = GB_convert_any_to_iso (C, NULL, true, Context) ;
+            }
         }
         return (info) ;
     }

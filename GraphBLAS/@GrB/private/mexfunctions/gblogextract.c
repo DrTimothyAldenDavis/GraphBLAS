@@ -168,11 +168,12 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     G->type = GrB_BOOL ;
-    if (G->nzmax > 0)
+    if (GB_nnz_max (G) > 0)
     { 
         // Add a new G->x to G
-        G->x = mxMalloc (G->nzmax * sizeof (bool)) ;
-        G->x_size = (G->nzmax * sizeof (bool)) ;
+        int64_t gnz = GB_nnz (G) ;
+        G->x = mxMalloc (gnz * sizeof (bool)) ;
+        G->x_size = (gnz * sizeof (bool)) ;
         GB_Global_memtable_add (G->x, G->x_size) ;
         bool *Gbool = G->x ;
         GB_matlab_helper6 (Gbool, gnvals) ;
@@ -251,7 +252,6 @@ void mexFunction
     V->x_shallow = false ;
     GB_Global_memtable_add (V->x, V->x_size) ;  // this was the old G->x
 
-    V->nzmax = T->nzmax ;
     int64_t *Vp = V->p ;
     Vp [0] = 0 ;
     Vp [1] = tnvals ;

@@ -117,7 +117,7 @@ GrB_Info assign ( )
         OK (GrB_Row_assign_(C, (GrB_Vector) Mask, accum, (GrB_Vector) A,
             I [0], J, nj, desc)) ;
     }
-    else if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_NNZ (A) == 1)
+    else if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_nnz (A) == 1)
     {
         // scalar expansion to matrix or vector
         GB_void *Ax = A->x ;

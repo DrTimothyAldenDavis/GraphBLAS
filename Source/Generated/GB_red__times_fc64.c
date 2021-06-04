@@ -53,23 +53,11 @@
     #define GB_ADD_CAST_ARRAY_TO_ARRAY(W,k,S,i)     \
         W [k] = GB_FC64_mul (W [k], S [i])
 
-    // W [k] = S [i], no typecast
-    #define GB_COPY_ARRAY_TO_ARRAY(W,k,S,i)         \
-        W [k] = S [i]
-
-    // W [k] += S [i], no typecast
-    #define GB_ADD_ARRAY_TO_ARRAY(W,k,S,i)          \
-        W [k] = GB_FC64_mul (W [k], S [i])
+    // W [k] += Ax [p], no typecast
+    #define GB_ADD_ARRAY_TO_ARRAY(W,k,Ax,p)         \
+        W [k] = GB_FC64_mul (W [k], Ax [p])  
 
 // Array to scalar
-
-    // s = (ztype) Ax [p], with typecast
-    #define GB_CAST_ARRAY_TO_SCALAR(s,Ax,p)         \
-        s = Ax [p]
-
-    // s = W [k], no typecast
-    #define GB_COPY_ARRAY_TO_SCALAR(s,W,k)          \
-        s = W [k]
 
     // s += (ztype) Ax [p], with typecast
     #define GB_ADD_CAST_ARRAY_TO_SCALAR(s,Ax,p)     \
@@ -85,10 +73,6 @@
     #define GB_COPY_SCALAR_TO_ARRAY(W,k,s)          \
         W [k] = s
 
-    // W [k] += s, no typecast
-    #define GB_ADD_SCALAR_TO_ARRAY(W,k,s)           \
-        W [k] = GB_FC64_mul (W [k], s)
-
 // break the loop if terminal condition reached
 
     #define GB_HAS_TERMINAL                         \
@@ -99,9 +83,6 @@
 
     #define GB_TERMINAL_VALUE                       \
         (none)
-
-    #define GB_BREAK_IF_TERMINAL(s)                 \
-        ;
 
 // panel size for built-in operators
 
@@ -118,9 +99,8 @@
     (GxB_NO_TIMES || GxB_NO_FC64 || GxB_NO_TIMES_FC64)
 
 //------------------------------------------------------------------------------
-// reduce to a scalar, for monoids only
+// reduce to a non-iso matrix to scalar, for monoids only
 //------------------------------------------------------------------------------
-
 
 
 GrB_Info GB (_red_scalar__times_fc64)
@@ -152,9 +132,8 @@ GrB_Info GB (_red_scalar__times_fc64)
 }
 
 
-
 //------------------------------------------------------------------------------
-// build matrix
+// build a non-iso matrix
 //------------------------------------------------------------------------------
 
 GrB_Info GB (_red_build__times_fc64)

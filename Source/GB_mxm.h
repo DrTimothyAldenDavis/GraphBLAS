@@ -116,11 +116,13 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 (
     GrB_Matrix C,                   // output matrix, static header
-    const GrB_Matrix M,             // mask matrix for C<!M>=A'*B
+    const bool C_iso,               // true if C is iso
+    const GB_void *cscalar,         // iso value of C
+    const GrB_Matrix M_in,          // mask matrix for C<!M>=A'*B, may be NULL
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
-    const GrB_Matrix A,             // input matrix
-    const GrB_Matrix B,             // input matrix
+    const GrB_Matrix A_in,          // input matrix
+    const GrB_Matrix B_in,          // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Context Context
@@ -136,7 +138,9 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 (
     GrB_Matrix C,                   // output matrix, static header
-    const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
+    const bool C_iso,               // true if C is iso
+    const GB_void *cscalar,         // iso value of C
+    const GrB_Matrix M,             // mask matrix
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix B,             // input matrix
@@ -203,7 +207,9 @@ static inline bool GB_AxB_dot4_control
     const bool Mask_comp
 )
 {
-    return (C_in != NULL && M == NULL && !Mask_comp && !GB_IS_BITMAP (C_in)) ;
+    return (C_in != NULL && 
+        !C_in->iso              // TODO::: allow C_in to be iso
+        && M == NULL && !Mask_comp && !GB_IS_BITMAP (C_in)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -234,6 +240,21 @@ bool GB_AxB_dot2_control  // true: use dot2, false: use saxpy
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
+) ;
+
+//------------------------------------------------------------------------------
+// GB_iso_AxB: determine if C=A*B results in an iso matrix C
+//------------------------------------------------------------------------------
+
+bool GB_iso_AxB             // C = A*B, return true if C is iso
+(
+    // output
+    GB_void *restrict c,    // output scalar of iso array
+    // input
+    GrB_Matrix A,           // input matrix
+    GrB_Matrix B,           // input matrix
+    uint64_t n,             // inner dimension of the matrix multiply
+    GrB_Semiring semiring   // semiring
 ) ;
 
 #endif

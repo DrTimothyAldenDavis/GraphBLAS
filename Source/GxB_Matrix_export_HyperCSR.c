@@ -26,7 +26,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GrB_Index *Ah_size, // size of Ah in bytes
     GrB_Index *Aj_size, // size of Aj in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso-valued
+    bool *iso,          // if true, A is iso
 
     GrB_Index *nvec,    // number of rows that appear in Ah
     bool *jumbled,      // if true, indices in each row may be unsorted

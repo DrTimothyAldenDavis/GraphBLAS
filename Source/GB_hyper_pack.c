@@ -10,7 +10,7 @@
 // The header of C itself is assumed to be statically allocated.  On input C
 // must exist but the content of the C header is uninitialized.  No memory is
 // allocated to construct C as the hyperpacked version of A.  C is purely
-// shallow.
+// shallow.  If A is iso then so is C.
 
 #include "GB.h"
 #include "GB_convert.h"

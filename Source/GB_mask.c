@@ -269,12 +269,11 @@ GrB_Info GB_mask                // C<M> = Z
                 // created, which is what C_result would look like if cleared.
                 // C_result is left unchanged since changing it would change M.
                 // The C0 matrix is created as hypersparse.
-                int sparsity = GxB_HYPERSPARSE ;  
-                GB_OK (
-                GB_new_bix (&C0, true, // sparse or hyper, static header
+                // set C0->iso = false  OK
+                GB_OK (GB_new_bix (&C0, true, // sparse or hyper, static header
                     C_result->type, vlen, vdim, GB_Ap_calloc, R_is_csc,
-                    sparsity, true, C_result->hyper_switch, 0, 0, true,
-                    Context)) ;
+                    GxB_HYPERSPARSE, true, C_result->hyper_switch, 0, 0,
+                    true, false, Context)) ;
                 C = C0 ;
                 ASSERT (C->static_header) ;
             }
@@ -282,10 +281,10 @@ GrB_Info GB_mask                // C<M> = Z
             { 
                 // Clear all entries from C_result, and ensure C is hypersparse
                 // by temporarily changing the sparsity control
-                int save = C_result->sparsity ;         // save control
-                C_result->sparsity = GxB_HYPERSPARSE ;
+                int save = C_result->sparsity_control ;     // save control
+                C_result->sparsity_control = GxB_HYPERSPARSE ;
                 GB_OK (GB_clear (C_result, Context)) ;
-                C_result->sparsity = save ;             // restore control
+                C_result->sparsity_control = save ;         // restore control
                 C = C_result ;  // C must have a dynamic header
                 ASSERT (!C->static_header) ;
             }

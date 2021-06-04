@@ -40,10 +40,10 @@ GrB_Info GB_unjumble        // unjumble a matrix
     //--------------------------------------------------------------------------
 
     const int64_t anvec = A->nvec ;
-    const int64_t anz = GB_NNZ (A) ;
+    const int64_t anz = GB_nnz (A) ;
     const int64_t *restrict Ap = A->p ;
     int64_t *restrict Ai = A->i ;
-    const size_t asize = A->type->size ;
+    const size_t asize = (A->iso) ? 0 : A->type->size ;
 
     GB_void   *Ax   = (GB_void *) A->x ;
     uint8_t   *Ax1  = (uint8_t *) A->x ;
@@ -81,6 +81,13 @@ GrB_Info GB_unjumble        // unjumble a matrix
 
     switch (asize)
     {
+        case 0 :
+            // iso matrices of any type; only sort the pattern
+            #define GB_QSORT \
+                GB_qsort_1 (Ai+pA_start, aknz) ;
+            #include "GB_unjumbled_template.c"
+            break ;
+
         case 1 : 
             // GrB_BOOL, GrB_UINT8, GrB_INT8, and user defined types of size 1
             #define GB_QSORT \

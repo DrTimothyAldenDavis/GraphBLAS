@@ -17,6 +17,8 @@
 // C must be sparse or hypersparse.
 // M can have any sparsity structure: hypersparse, sparse, bitmap, or full
 
+// C->iso is not affected.
+
 #include "GB_assign.h"
 #include "GB_assign_zombie.h"
 #include "GB_subassign_methods.h"

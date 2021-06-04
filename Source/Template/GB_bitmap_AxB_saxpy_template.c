@@ -51,7 +51,6 @@
 
     ASSERT (GB_IS_BITMAP (C)) ;                 // C is always bitmap
     int8_t *restrict Cb = C->b ;
-    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
     const int64_t cvlen = C->vlen ;
     ASSERT (C->vlen == A->vlen) ;
     ASSERT (C->vdim == B->vdim) ;
@@ -62,14 +61,13 @@
     const int64_t *restrict Bh = B->h ;
     const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
+    const bool B_iso = B->iso ;
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnvec = B->nvec ;
-    const bool B_iso = B->iso ;
 
     const bool B_jumbled = B->jumbled ;
-    const int64_t bnz = GB_NNZ_HELD (B) ;
+    const int64_t bnz = GB_nnz_held (B) ;
 
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
@@ -80,14 +78,13 @@
     const int64_t *restrict Ah = A->h ;
     const int8_t  *restrict Ab = A->b ;
     const int64_t *restrict Ai = A->i ;
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
+    const bool A_iso = A->iso ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
-    const bool A_iso = A->iso ;
 
     const bool A_jumbled = A->jumbled ;
-    const int64_t anz = GB_NNZ_HELD (A) ;
+    const int64_t anz = GB_nnz_held (A) ;
 
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
@@ -140,6 +137,12 @@
             //  Cb (i,j) = 3:   cij present, mij 1
         }
     }
+
+    #if ( !GB_IS_ANY_PAIR_SEMIRING )
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
+    const GB_BTYPE *restrict Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
+          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    #endif
 
     //--------------------------------------------------------------------------
     // select the method

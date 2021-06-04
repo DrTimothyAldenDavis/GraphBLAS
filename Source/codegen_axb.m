@@ -26,6 +26,22 @@ fclose (f) ;
 
 % codegen_axb_template (multop, bmult, imult, fmult, dmult, fcmult, dcmult)
 
+codegen_axb_template ('pair',           ...
+    '1',                                ... % bool
+    '1',                                ... % int, uint
+    '1',                                ... % float
+    '1',                                ... % double
+    'GxB_CMPLXF(1,0)',                  ... % GxB_FC32_t
+    'GxB_CMPLX(1,0)') ;                 ... % GxB_FC64_t
+
+codegen_axb_template ('times',        ...
+    [ ],                                ... % bool
+    '(xarg * yarg)',                    ... % int, uint
+    '(xarg * yarg)',                    ... % float
+    '(xarg * yarg)',                    ... % double
+    'GB_FC32_mul (xarg, yarg)',         ... % GxB_FC32_t
+    'GB_FC64_mul (xarg, yarg)') ;       ... % GxB_FC64_t
+
 codegen_axb_template ('first',          ...
     'xarg',                             ... % bool
     'xarg',                             ... % int, uint
@@ -41,14 +57,6 @@ codegen_axb_template ('second',         ...
     'yarg',                             ... % double
     'yarg',                             ... % GxB_FC32_t
     'yarg') ;                           ... % GxB_FC64_t
-
-codegen_axb_template ('pair',           ...
-    '1',                                ... % bool
-    '1',                                ... % int, uint
-    '1',                                ... % float
-    '1',                                ... % double
-    'GxB_CMPLXF(1,0)',                  ... % GxB_FC32_t
-    'GxB_CMPLX(1,0)') ;                 ... % GxB_FC64_t
 
 codegen_axb_template ('min',            ...
     [ ],                                ... % bool
@@ -90,14 +98,6 @@ codegen_axb_template ('rminus',         ...
     'GB_FC32_minus (yarg, xarg)',       ... % GxB_FC32_t
     'GB_FC64_minus (yarg, xarg)') ;     ... % GxB_FC64_t
 
-codegen_axb_template ('times',        ...
-    [ ],                                ... % bool
-    '(xarg * yarg)',                    ... % int, uint
-    '(xarg * yarg)',                    ... % float
-    '(xarg * yarg)',                    ... % double
-    'GB_FC32_mul (xarg, yarg)',         ... % GxB_FC32_t
-    'GB_FC64_mul (xarg, yarg)') ;       ... % GxB_FC64_t
-
 codegen_axb_template ('div',          ...
     [ ],                                ... % bool
     'GB_IDIV (xarg, yarg)',             ... % int, uint
@@ -113,57 +113,6 @@ codegen_axb_template ('rdiv',         ...
     '(yarg / xarg)',                    ... % double
     'GB_FC32_div (yarg, xarg)',         ... % GxB_FC32_t
     'GB_FC64_div (yarg, xarg)') ;       ... % GxB_FC64_t
-
-% in v5.0.1, the *is* semirings are deleted from Source/Generated/
-%{
-codegen_axb_template ('iseq',           ...
-    [ ],                                ... % bool
-    '(xarg == yarg)',                   ... % int, uint
-    '(xarg == yarg)',                   ... % float
-    '(xarg == yarg)',                   ... % double
-    [ ],                                ... % GxB_FC32_t
-    [ ]) ;                              ... % GxB_FC64_t
-
-codegen_axb_template ('isne',           ...
-    [ ],                                ... % bool
-    '(xarg != yarg)',                   ... % int, uint
-    '(xarg != yarg)',                   ... % float
-    '(xarg != yarg)',                   ... % double
-    [ ],                                ... % GxB_FC32_t
-    [ ]) ;                              ... % GxB_FC64_t
-
-codegen_axb_template ('isgt',           ...
-    [ ],                                ... % bool
-    '(xarg > yarg)',                    ... % int, uint
-    '(xarg > yarg)',                    ... % float
-    '(xarg > yarg)',                    ... % double
-    [ ],                                ... % GxB_FC32_t
-    [ ]) ;                              ... % GxB_FC64_t
-
-codegen_axb_template ('islt',           ...
-    [ ],                                ... % bool
-    '(xarg < yarg)',                    ... % int, uint
-    '(xarg < yarg)',                    ... % float
-    '(xarg < yarg)',                    ... % double
-    [ ],                                ... % GxB_FC32_t
-    [ ]) ;                              ... % GxB_FC64_t
-
-codegen_axb_template ('isge',           ...
-    [ ],                                ... % bool
-    '(xarg >= yarg)',                   ... % int, uint
-    '(xarg >= yarg)',                   ... % float
-    '(xarg >= yarg)',                   ... % double
-    [ ],                                ... % GxB_FC32_t
-    [ ]) ;                              ... % GxB_FC64_t
-
-codegen_axb_template ('isle',           ...
-    [ ],                                ... % bool
-    '(xarg <= yarg)',                   ... % int, uint
-    '(xarg <= yarg)',                   ... % float
-    '(xarg <= yarg)',                   ... % double
-    [ ],                                ... % GxB_FC32_t
-    [ ]) ;                              ... % GxB_FC64_t
-%}
 
 codegen_axb_compare_template ('eq',     ...
     '(xarg == yarg)',                   ... % bool

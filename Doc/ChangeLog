@@ -1,6 +1,11 @@
-Version 5.10.0, FIXME
+Version 5.1.0, (DATE HERE), 2021
 
-    * iso-valued matrices and vectors added
+    * iso matrices and vectors added
+
+Version 5.0.6, May 24, 2021
+
+    * bfs and triangle counting demos: removed.  See LAGraph for these
+        algorithms.
 
 Version 5.0.5, May 17, 2021
 

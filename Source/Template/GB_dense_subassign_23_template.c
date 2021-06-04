@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// All entries in C+=B are computed entirely in parallel, using the same kind of
-// parallelism as Template/GB_AxB_colscale.c.
-
 #include "GB_unused.h"
 
 {
@@ -18,10 +15,12 @@
     // get C and B
     //--------------------------------------------------------------------------
 
+    ASSERT (!C->iso) ;
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    const bool B_iso = B->iso ;
     GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
     ASSERT (GB_is_dense (C)) ;
-    const int64_t cnz = GB_NNZ_HELD (C) ;
+    const int64_t cnz = GB_nnz_held (C) ;
 
     if (GB_IS_BITMAP (B))
     {
@@ -36,7 +35,7 @@
         for (p = 0 ; p < cnz ; p++)
         { 
             if (!Bb [p]) continue ;
-            GB_GETB (bij, Bx, p) ;                  // bij = B(i,j)
+            GB_GETB (bij, Bx, p, B_iso) ;                 // bij = B(i,j)
             GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;  // C(i,j) += bij
         }
 
@@ -53,7 +52,7 @@
         #pragma omp parallel for num_threads(B_nthreads) schedule(static)
         for (p = 0 ; p < cnz ; p++)
         { 
-            GB_GETB (bij, Bx, p) ;                  // bij = B(i,j)
+            GB_GETB (bij, Bx, p, B_iso) ;                 // bij = B(i,j)
             GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;  // C(i,j) += bij
         }
 
@@ -126,8 +125,7 @@
                     { 
                         int64_t i = pB - pB_start ;
                         int64_t p = pC + i ;
-                        // bij = B(i,j)
-                        GB_GETB (bij, Bx, pB) ;
+                        GB_GETB (bij, Bx, pB, B_iso) ;          // bij = B(i,j)
                         // C(i,j) += bij
                         GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
                     }
@@ -145,7 +143,7 @@
                     { 
                         int64_t i = Bi [pB] ;
                         int64_t p = pC + i ;
-                        GB_GETB (bij, Bx, pB) ;                 // bij = B(i,j)
+                        GB_GETB (bij, Bx, pB, B_iso) ;          // bij = B(i,j)
                         // C(i,j) += bij
                         GB_BINOP (GB_CX (p), GB_CX (p), bij, 0, 0) ;
                     }

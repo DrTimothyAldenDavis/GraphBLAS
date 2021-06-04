@@ -19,6 +19,9 @@
     //      full    .           full            bitmap
     //      full    .           full            full  
 
+// If C is iso and full, this phase has nothing to do.
+
+#ifndef GB_ISO_ADD
 {
 
     int64_t p ;
@@ -195,4 +198,5 @@
         }
     }
 }
+#endif
 

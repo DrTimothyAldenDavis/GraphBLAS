@@ -17,7 +17,6 @@
 
 #if defined ( GB_META16 )
 
-    // this method appears in the GB_meta16_factory
     #if ( GB_B_IS_HYPER || GB_A_IS_HYPER )
 
         // A or B are hyper

@@ -67,13 +67,13 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     ASSERT (B->vlen == C->vlen) ;
     ASSERT (B->vdim == C->vdim) ;
 
-    GB_ENSURE_FULL (C) ;        // convert C to full
+    GB_ENSURE_FULL (C) ;    // convert C to full, if sparsity control allows it
 
     //--------------------------------------------------------------------------
     // get the operator
     //--------------------------------------------------------------------------
 
-    if (accum->opcode == GB_FIRST_opcode)
+    if (accum->opcode == GB_FIRST_opcode || C->iso)
     { 
         // nothing to do
         return (GrB_SUCCESS) ;
@@ -102,7 +102,7 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
         // C is dense and B is either dense or bitmap
         GBURBLE ("(Z packed) ") ;
         int64_t bnvec = B->nvec ;
-        int64_t bnz = GB_NNZ_HELD (B) ;
+        int64_t bnz = GB_nnz_held (B) ;
         B_nthreads = GB_nthreads (bnz + bnvec, chunk, nthreads_max) ;
         B_ntasks = 0 ;   // unused
         ASSERT (B_ek_slicing == NULL) ;
@@ -182,9 +182,9 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
 
         // bij = B(i,j), located in Bx [pB].  Note that GB_GETB is used,
         // since B appears as the 2nd input to z = fadd (x,y)
-        #define GB_GETB(bij,Bx,pB)                                          \
+        #define GB_GETB(bij,Bx,pB,B_iso)                                    \
             GB_void bij [GB_VLA(ysize)] ;                                   \
-            cast_B_to_Y (bij, Bx +((pB)*bsize), bsize)
+            cast_B_to_Y (bij, Bx +(B_iso ? 0:(pB)*bsize), bsize)
 
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)

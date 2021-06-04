@@ -83,7 +83,7 @@ GrB_Info assign ( )
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum", GB0) ;
     ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc", GB0) ;
 
-    if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_NNZ (A) == 1)
+    if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_nnz (A) == 1)
     {
         // scalar expansion to matrix or vector
         GB_void *Ax = A->x ;

@@ -9,6 +9,7 @@
 
 // If this file is in the Generated/ folder, do not edit it (auto-generated).
 
+#if 1
 #include "GB_AxB_defs__lor_ne_int64.h"
 #ifndef GBCOMPACT
 
@@ -34,5 +35,6 @@ GrB_Info GB (_Adot4B__lor_ne_int64)
     #endif
 }
 
+#endif
 #endif
 

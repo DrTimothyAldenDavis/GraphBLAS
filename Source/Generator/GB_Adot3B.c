@@ -10,7 +10,7 @@
 // If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 GB_AxB_defs_include
-#ifndef GBCOMPACT
+ifndef_compact
 
 //------------------------------------------------------------------------------
 // C<M>=A'*B: masked dot product method (phase 2) where C is sparse or hyper
@@ -27,7 +27,7 @@ GrB_Info GB (_Adot3B)
     const int nthreads
 )
 { 
-    #if GB_DISABLE
+    if_disabled
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_AxB_dot3_meta.c"

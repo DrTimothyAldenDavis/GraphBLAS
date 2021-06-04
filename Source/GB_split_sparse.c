@@ -41,7 +41,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
     ASSERT_MATRIX_OK (A, "A sparse for split", GB0) ;
 
-    int sparsity_control = A->sparsity ;
+    int sparsity_control = A->sparsity_control ;
     float hyper_switch = A->hyper_switch ;
     bool csc = A->is_csc ;
     GrB_Type atype = A->type ;
@@ -61,6 +61,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
+    const bool A_iso = A->iso ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -106,13 +107,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             int64_t pright = anvec - 1 ;
             bool found ;
             GB_SPLIT_BINARY_SEARCH (avend, Ah, akend, pright, found) ;
-//          printf ("anvec %ld akstart: %ld akend: %ld avend %ld\n",
-//              anvec, akstart, akend, avend) ;
             ASSERT (GB_IMPLIES (akstart <= akend-1, Ah [akend-1] < avend)) ;
-//          for (int64_t k = akstart ; k < akend ; k++)
-//          {
-//              printf ("   Ah [%ld] = %ld\n", k, Ah [k]) ;
-//          }
         }
         else
         {
@@ -123,7 +118,6 @@ GrB_Info GB_split_sparse            // split a sparse matrix
         // # of vectors in all tiles in this outer loop
         int64_t cnvec = akend - akstart ;
         int nth = GB_nthreads (cnvec, chunk, nthreads_max) ;
-// printf ("akend %ld\n", akend) ;
 
         //----------------------------------------------------------------------
         // create all tiles for vectors akstart:akend-1 in A
@@ -131,8 +125,6 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
         for (int64_t inner = 0 ; inner < ninner ; inner++)
         {
-// printf ("\ninner: %ld, cnvec %ld akstart %ld akend %ld\n",
-    // inner, cnvec, akstart, akend) ;
 
             //------------------------------------------------------------------
             // allocate C, C->p, and C->h for this tile
@@ -147,7 +139,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             GB_OK (GB_new (&C, false,      // new header
                 atype, cvlen, cvdim, GB_Ap_malloc, csc, A_sparsity,
                 hyper_switch, cnvec, Context)) ;
-            C->sparsity = sparsity_control ;
+            C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             C->nvec = cnvec ;
             int64_t *restrict Cp = C->p ;
@@ -161,17 +153,12 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             #pragma omp parallel for num_threads(nth) schedule(static)
             for (k = akstart ; k < akend ; k++)
             {
-                // printf ("look in kth vector of A: k = %ld\n", k) ;
                 int64_t pA = Wp [k] ;
                 int64_t pA_end = Ap [k+1] ;
                 int64_t aknz = pA_end - pA ;
-                // printf ("Wp [%ld] = %ld\n", k, Wp [k]) ;
-                // printf ("Ap [%ld+1] = %ld\n", k, Ap [k+1]) ;
-                // printf ("aknz %ld\n", aknz) ;
                 if (aknz == 0 || Ai [pA] >= aiend)
                 {
                     // this vector of C is empty
-                    // printf ("empty\n") ;
                 }
                 else if (aknz > 256)
                 {
@@ -210,24 +197,19 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 {
                     Ch [k-akstart] = Ah [k] - avstart ;
                 }
-                // printf ("cknz is %ld\n", Cp [k-akstart]) ;
             }
 
             GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth, Context) ;
             int64_t cnz = Cp [cnvec] ;
 
-            // for (int64_t k = 0 ; k <= cnvec ; k++)
-            // {
-                // printf ("Cp [%ld] = %ld\n", k, Cp [k]) ;
-            // }
-
             //------------------------------------------------------------------
             // allocate C->i and C->x for this tile
             //------------------------------------------------------------------
 
-            GB_OK (GB_bix_alloc (C, cnz, false, false, true, true, Context)) ;
+            // set C->iso = A_iso       OK
+            GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, A_iso,
+                Context)) ;
             int64_t *restrict Ci = C->i ;
-            // memset (Ci, 255, cnz * sizeof (int64_t)) ;
 
             //------------------------------------------------------------------
             // copy the tile from A into C
@@ -235,17 +217,35 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             int C_ntasks, C_nthreads ;
             GB_SLICE_MATRIX (C, 8, chunk) ;
-// printf ("C_ntasks %d C_nthreads %d\n", C_ntasks, C_nthreads) ;
-// printf ("C->nzmax %ld C->nvec %ld\n", C->nzmax, C->nvec) ;
 
             bool done = false ;
 
-            #ifndef GBCOMPACT
+            if (A_iso)
             {
+
+                //--------------------------------------------------------------
+                // split an iso matrix A into an iso tile C
+                //--------------------------------------------------------------
+
+                // A is iso and so is C; copy the iso entry
+                memcpy (C->x, A->x, asize) ;
+                #define GB_ISO_SPLIT
+                #define GB_COPY(pC,pA) ;
+                #include "GB_split_sparse_template.c"
+
+            }
+            else
+            {
+
+                //--------------------------------------------------------------
+                // split a non-iso matrix A into an non-iso tile C
+                //--------------------------------------------------------------
+
+                #ifndef GBCOMPACT
                 // no typecasting needed
                 switch (asize)
                 {
-                    #define GB_COPY(pC,pA) Cx [pC] = Ax [pA]
+                    #define GB_COPY(pC,pA) Cx [pC] = Ax [pA] ;
 
                     case 1 : // uint8, int8, bool, or 1-byte user-defined
                         #define GB_CTYPE uint8_t
@@ -271,24 +271,24 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                     case 16 : // double complex or 16-byte user-defined
                         #define GB_CTYPE uint64_t
                         #undef  GB_COPY
-                        #define GB_COPY(pC,pA)                      \
-                            Cx [2*pC  ] = Ax [2*pA  ] ;             \
+                        #define GB_COPY(pC,pA)                  \
+                            Cx [2*pC  ] = Ax [2*pA  ] ;         \
                             Cx [2*pC+1] = Ax [2*pA+1] ;
                         #include "GB_split_sparse_template.c"
                         break ;
 
                     default:;
                 }
+                #endif
             }
-            #endif
 
             if (!done)
             { 
                 // user-defined types
                 #define GB_CTYPE GB_void
                 #undef  GB_COPY
-                #define GB_COPY(pC,pA)  \
-                    memcpy (Cx + (pC)*asize, Ax + (pA)*asize, asize) ;
+                #define GB_COPY(pC,pA)                          \
+                    memcpy (Cx + (pC)*asize, Ax +(pA)*asize, asize) ;
                 #include "GB_split_sparse_template.c"
             }
 

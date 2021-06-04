@@ -23,7 +23,7 @@
 // A type:   GB_atype
 // C type:   GB_ctype
 
-// Reduce:   GB_REDUCE_OP(s, aij)
+// Reduce:   GB_reduce_op(s, aij)
 // Identity: GB_identity
 // Terminal: GB_terminal
 
@@ -51,43 +51,27 @@
 
     // W [k] += (ztype) S [i], with typecast
     #define GB_ADD_CAST_ARRAY_TO_ARRAY(W,k,S,i)     \
-        GB_REDUCE_OP(W [k], S [i])
+        GB_reduce_op(W [k], S [i])
 
-    // W [k] = S [i], no typecast
-    #define GB_COPY_ARRAY_TO_ARRAY(W,k,S,i)         \
-        W [k] = S [i]
-
-    // W [k] += S [i], no typecast
-    #define GB_ADD_ARRAY_TO_ARRAY(W,k,S,i)          \
-        GB_REDUCE_OP(W [k], S [i])
+    // W [k] += Ax [p], no typecast
+    #define GB_ADD_ARRAY_TO_ARRAY(W,k,Ax,p)         \
+        GB_reduce_op(W [k], Ax [p])  
 
 // Array to scalar
 
-    // s = (ztype) Ax [p], with typecast
-    #define GB_CAST_ARRAY_TO_SCALAR(s,Ax,p)         \
-        s = Ax [p]
-
-    // s = W [k], no typecast
-    #define GB_COPY_ARRAY_TO_SCALAR(s,W,k)          \
-        s = W [k]
-
     // s += (ztype) Ax [p], with typecast
     #define GB_ADD_CAST_ARRAY_TO_SCALAR(s,Ax,p)     \
-        GB_REDUCE_OP(s, Ax [p])
+        GB_reduce_op(s, Ax [p])
 
     // s += S [i], no typecast
     #define GB_ADD_ARRAY_TO_SCALAR(s,S,i)           \
-        GB_REDUCE_OP(s, S [i])
+        GB_reduce_op(s, S [i])
 
 // Scalar to array
 
     // W [k] = s, no typecast
     #define GB_COPY_SCALAR_TO_ARRAY(W,k,s)          \
         W [k] = s
-
-    // W [k] += s, no typecast
-    #define GB_ADD_SCALAR_TO_ARRAY(W,k,s)           \
-        GB_REDUCE_OP(W [k], s)
 
 // break the loop if terminal condition reached
 
@@ -99,9 +83,6 @@
 
     #define GB_TERMINAL_VALUE                       \
         GB_terminal_value
-
-    #define GB_BREAK_IF_TERMINAL(s)                 \
-        GB_terminal
 
 // panel size for built-in operators
 
@@ -118,11 +99,10 @@
     GB_disable
 
 //------------------------------------------------------------------------------
-// reduce to a scalar, for monoids only
+// reduce to a non-iso matrix to scalar, for monoids only
 //------------------------------------------------------------------------------
 
 if_is_monoid
-
 GrB_Info GB (_red_scalar)
 (
     GB_atype *result,
@@ -150,11 +130,10 @@ GrB_Info GB (_red_scalar)
     return (GrB_SUCCESS) ;
     #endif
 }
-
 endif_is_monoid
 
 //------------------------------------------------------------------------------
-// build matrix
+// build a non-iso matrix
 //------------------------------------------------------------------------------
 
 GrB_Info GB (_red_build)

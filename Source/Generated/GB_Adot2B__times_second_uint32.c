@@ -34,3 +34,4 @@ GrB_Info GB (_Adot2B__times_second_uint32)
 }
 
 #endif
+

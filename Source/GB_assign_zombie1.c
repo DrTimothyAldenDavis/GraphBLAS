@@ -11,6 +11,8 @@
 // complemented mask requires all entries in the C(:,j) vector to be deleted.
 // C must be sparse or hypersparse.
 
+// C->iso is not affected.
+
 #include "GB_assign.h"
 #include "GB_assign_zombie.h"
 

@@ -13,7 +13,7 @@
 // not shallow.  If the input matrix is already non-hypersparse, nothing is
 // changed (and in that case A->p remains shallow on output if shallow on
 // input). The A->x and A->i content is not changed; it remains in whatever
-// shallow/non-shallow state that it had on input).
+// shallow/non-shallow/iso property that it had on input).
 
 // If an out-of-memory condition occurs, all content of the matrix is cleared.
 
@@ -83,7 +83,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         int64_t *restrict Ap_old = A->p ;    // size nvec+1
         int64_t *restrict Ah_old = A->h ;    // size nvec
         int64_t nvec_nonempty = 0 ;             // recompute A->nvec_nonempty
-        int64_t anz = GB_NNZ (A) ;
+        int64_t anz = GB_nnz (A) ;
 
         //----------------------------------------------------------------------
         // construct the new vector pointers
@@ -210,7 +210,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         A->p_shallow = false ;
         A->h_shallow = false ;
         A->magic = GB_MAGIC ;
-        ASSERT (anz == GB_NNZ (A)) ;
+        ASSERT (anz == GB_nnz (A)) ;
 
         //----------------------------------------------------------------------
         // A is now sparse

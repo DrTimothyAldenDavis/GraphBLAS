@@ -49,14 +49,14 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
     //--------------------------------------------------------------------------
 
     info = GB_assign (
-        C,          C_replace,      // C matrix and its descriptor
-        M, Mask_comp, Mask_struct,  // mask matrix and its descriptor
-        false,                      // do not transpose the mask
-        accum,                      // for accum (C(Rows,Cols),A)
-        A,          A_transpose,    // A and its descriptor (T=A or A')
-        Rows, nRows,                // row indices
-        Cols, nCols,                // column indices
-        false, NULL, GB_ignore_code,// no scalar expansion
+        C, C_replace,                   // C matrix and its descriptor
+        M, Mask_comp, Mask_struct,      // mask matrix and its descriptor
+        false,                          // do not transpose the mask
+        accum,                          // for accum (C(Rows,Cols),A)
+        A, A_transpose,                 // A and its descriptor (T=A or A')
+        Rows, nRows,                    // row indices
+        Cols, nCols,                    // column indices
+        false, NULL, GB_ignore_code,    // no scalar expansion
         GB_ASSIGN,
         Context) ;
 

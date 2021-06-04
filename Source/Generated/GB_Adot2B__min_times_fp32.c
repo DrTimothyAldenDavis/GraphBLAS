@@ -34,3 +34,4 @@ GrB_Info GB (_Adot2B__min_times_fp32)
 }
 
 #endif
+

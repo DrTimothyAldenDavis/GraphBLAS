@@ -26,8 +26,8 @@
 // A.*B function (eWiseMult):       GB (_AemultB_02__pair_int8)
 // A.*B function (eWiseMult):       GB (_AemultB_03__pair_int8)
 // A.*B function (eWiseMult):       GB (_AemultB_bitmap__pair_int8)
-// A*D function (colscale):         GB (_AxD__pair_int8)
-// D*A function (rowscale):         GB (_DxB__pair_int8)
+// A*D function (colscale):         GB ((none))
+// D*A function (rowscale):         GB ((node))
 // C+=B function (dense accum):     GB (_Cdense_accumB__pair_int8)
 // C+=b function (dense accum):     GB (_Cdense_accumb__pair_int8)
 // C+=A+B function (dense ewise3):  GB ((none))
@@ -201,9 +201,9 @@ GrB_Info GB (_Cdense_accumb__pair_int8)
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
+#if 0
 
-
-GrB_Info GB (_AxD__pair_int8)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
@@ -220,15 +220,15 @@ GrB_Info GB (_AxD__pair_int8)
     #endif
 }
 
-
+#endif
 
 //------------------------------------------------------------------------------
 // C = D*B, row scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
+#if 0
 
-
-GrB_Info GB (_DxB__pair_int8)
+GrB_Info GB ((node))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
@@ -245,7 +245,7 @@ GrB_Info GB (_DxB__pair_int8)
     #endif
 }
 
-
+#endif
 
 //------------------------------------------------------------------------------
 // eWiseAdd: C = A+B or C<M> = A+B
@@ -421,9 +421,8 @@ GrB_Info GB ((none))
     GB_void *Cx_output,         // Cx and Bx may be aliased
     const GB_void *x_input,
     const GB_void *Bx_input,
-    const bool B_iso,
     const int8_t *restrict Bb,
-    int64_t anz,
+    int64_t bnz,
     int nthreads
 )
 { 
@@ -435,7 +434,7 @@ GrB_Info GB ((none))
     int8_t *Bx = (int8_t *) Bx_input ;
     int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (p = 0 ; p < anz ; p++)
+    for (p = 0 ; p < bnz ; p++)
     {
         if (!GBB (Bb, p)) continue ;
         ; ;
@@ -457,7 +456,6 @@ GrB_Info GB ((none))
 (
     GB_void *Cx_output,         // Cx and Ax may be aliased
     const GB_void *Ax_input,
-    const bool A_iso,
     const GB_void *y_input,
     const int8_t *restrict Ab,
     int64_t anz,
@@ -492,7 +490,7 @@ GrB_Info GB ((none))
 
 // cij = op (x, aij), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA,A_iso)                 \
+#define GB_CAST_OP(pC,pA)                       \
 {                                               \
     ; ;               \
     Cx [pC] = 1 ;        \
@@ -536,7 +534,7 @@ GrB_Info GB ((none))
 
 // cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA,A_iso)                 \
+#define GB_CAST_OP(pC,pA)                       \
 {                                               \
     ; ;               \
     Cx [pC] = 1 ;        \

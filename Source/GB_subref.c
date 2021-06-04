@@ -12,7 +12,7 @@
 // means that the entry at position p in C is the same as the entry in A at
 // position pA.  In this case, Cx has a type of int64_t.
 
-// Numeric extraction:
+// Numeric extraction: C is iso if A is iso or C_iso is true on input
 
 //      Sparse submatrix reference, C = A(I,J), extracting the values.  This is
 //      an internal function called by GB_extract with symbolic==false, which
@@ -20,7 +20,7 @@
 //      called by GB_assign to extract the submask.  No pending tuples or
 //      zombies appear in A.
 
-// Symbolic extraction:
+// Symbolic extraction:  C is never iso
 
 //      Sparse submatrix reference, C = A(I,J), extracting the pattern, not the
 //      values.  For the symbolic case, this function is called only by
@@ -28,22 +28,19 @@
 //      same pattern (C->p and C->i) as numeric extraction, but with different
 //      values, C->x.  For numeric extracion if C(inew,jnew) = A(i,j), the
 //      value of A(i,j) is copied into C(i,j).  For symbolic extraction, its
-//      *pointer* is copied into C(i,j).  Suppose an entry A(i,j) is held in Ai
-//      [pa] and Ax [pa], and it appears in the output matrix C in Ci [pc] and
-//      Cx [pc].  Then the two methods differ as follows:
+//      *pointer* is copied into C(i,j).  Suppose an entry A(i,j) is held in
+//      Ai [pa] and Ax [pa], and it appears in the output matrix C in Ci [pc]
+//      and Cx [pc].  Then the two methods differ as follows:
 
 //          this is the same:
 
 //          i = Ai [pa] ;           // index i of entry A(i,j)
-
 //          aij = Ax [pa] ;         // value of the entry A(i,j)
-
 //          Ci [pc] = inew ;        // index inew of C(inew,jnew)
 
 //          this is different:
 
 //          Cx [pc] = aij ;         // for numeric extraction
-
 //          Cx [pc] = pa ;          // for symbolic extraction
 
 //      This function is called with symbolic==true by only by
@@ -94,6 +91,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     // output
     GrB_Matrix C,               // output matrix, static header
     // input, not modified
+    bool C_iso,                 // if true, return C as iso, regardless of A 
     const bool C_is_csc,        // requested format of C
     const GrB_Matrix A,
     const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.
@@ -117,14 +115,42 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
+    // check if C is iso and get its iso value
+    //--------------------------------------------------------------------------
+
+    GrB_Type ctype = (symbolic) ? GrB_INT64 : A->type ;
+    size_t csize = ctype->size ;
+    GB_void cscalar [GB_VLA(csize)] ;
+    memset (cscalar, 0, csize) ;
+    if (symbolic)
+    {
+        // symbolic extraction never results in an iso matrix
+        C_iso = false ;
+    }
+    else
+    {
+        // determine if C is iso and get the iso scalar
+        if (A->iso)
+        {
+            memcpy (cscalar, A->x, csize) ;
+            C_iso = true ;
+        }
+    }
+
+    if (C_iso)
+    {
+        GBURBLE ("(iso subref )") ;
+    }
+
+    //--------------------------------------------------------------------------
     // handle bitmap and full cases
     //--------------------------------------------------------------------------
 
     if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
     { 
         // C is constructed with same sparsity as A (bitmap or full)
-        return (GB_bitmap_subref (C, C_is_csc, A, I, ni, J, nj, symbolic,
-            Context)) ;
+        return (GB_bitmap_subref (C, C_iso, cscalar, C_is_csc, A, I, ni, J, nj,
+            symbolic, Context)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -174,7 +200,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // computed by phase0:
         Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon,
         // original input:
-        A->vlen, GB_NNZ (A), I, Context)) ;
+        A->vlen, GB_nnz (A), I, Context)) ;
 
     //--------------------------------------------------------------------------
     // phase1: count the number of entries in each vector of C
@@ -204,6 +230,8 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // from phase0:
         &Ch, Ch_size, Ap_start, Ap_end, Cnvec, need_qsort,
         Ikind, nI, Icolon, nJ,
+        // from the iso test above:
+        C_iso, cscalar,
         // original input:
         C_is_csc, A, I, symbolic, Context)) ;
 

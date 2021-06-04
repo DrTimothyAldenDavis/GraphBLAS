@@ -17,20 +17,34 @@
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    const int64_t  *restrict Ap = A->p ;
-    const int64_t  *restrict Ah = A->h ;
-    const int64_t  *restrict Ai = A->i ;
-    const int8_t   *restrict Ab = A->b ;
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ;
+    const int8_t  *restrict Ab = A->b ;
+    const bool A_iso = A->iso ;
     const int64_t avlen = A->vlen ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_dense = GB_as_if_full (A) ;
-    const int64_t anz = GB_NNZ_HELD (A) ;
+    const int64_t anz = GB_nnz_held (A) ;
 
-    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
-    int8_t   *restrict Cb = C->b ;
+    // since A is the mask, if A->iso is true, Mask_struct has been set true
+    ASSERT (GB_IMPLIES (A_iso, Mask_struct)) ;
+
+    int8_t *restrict Cb = C->b ;
     const int64_t cvlen = C->vlen ;
     const bool C_is_bitmap = GB_IS_BITMAP (C) ;
+
+    #undef GB_MASK_STRUCT
+    #ifdef GB_ISO_ASSIGN
+    ASSERT (C->iso) ;
+    ASSERT (A->iso) ;
+    ASSERT (Mask_struct) ;
+    #define GB_MASK_STRUCT true
+    #else
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    #define GB_MASK_STRUCT Mask_struct
+    #endif
 
     //--------------------------------------------------------------------------
     // C<A> = A
@@ -52,43 +66,52 @@
             // C is bitmap, A is dense
             //------------------------------------------------------------------
 
-            if (Mask_struct)
+            #ifdef GB_ISO_ASSIGN
             {
-                // C<A,struct>=A with C bitmap, A dense
-                int64_t p ;
-                #pragma omp parallel for num_threads(A_nthreads) \
-                    schedule(static)
-                for (p = 0 ; p < anz ; p++)
-                { 
-                    // Cx [p] = Ax [p]
-                    GB_COPY_A_TO_C (Cx, p, Ax, p) ;
-                }
                 GB_memset (Cb, 1, anz, A_nthreads) ;
                 cnvals = anz ;
             }
-            else
+            #else
             {
-                // C<A>=A with C bitmap, A dense
-                int tid ;
-                #pragma omp parallel for num_threads(A_nthreads) \
-                    schedule(static) reduction(+:cnvals)
-                for (tid = 0 ; tid < A_nthreads ; tid++)
+                if (Mask_struct)
                 {
-                    int64_t pA_start, pA_end, task_cnvals = 0 ;
-                    GB_PARTITION (pA_start, pA_end, anz, tid, A_nthreads) ;
-                    for (int64_t p = pA_start ; p < pA_end ; p++)
-                    {
-                        if (GB_AX_MASK (Ax, p, asize))
-                        { 
-                            // Cx [p] = Ax [p]
-                            GB_COPY_A_TO_C (Cx, p, Ax, p) ;
-                            task_cnvals += (Cb [p] == 0) ;
-                            Cb [p] = 1 ;
-                        }
+                    // C<A,struct>=A with C bitmap, A dense
+                    int64_t p ;
+                    #pragma omp parallel for num_threads(A_nthreads) \
+                        schedule(static)
+                    for (p = 0 ; p < anz ; p++)
+                    { 
+                        // Cx [p] = Ax [p]
+                        GB_COPY_A_TO_C (Cx, p, Ax, p, A_iso) ;
                     }
-                    cnvals += task_cnvals ;
+                    GB_memset (Cb, 1, anz, A_nthreads) ;
+                    cnvals = anz ;
+                }
+                else
+                {
+                    // C<A>=A with C bitmap, A dense
+                    int tid ;
+                    #pragma omp parallel for num_threads(A_nthreads) \
+                        schedule(static) reduction(+:cnvals)
+                    for (tid = 0 ; tid < A_nthreads ; tid++)
+                    {
+                        int64_t pA_start, pA_end, task_cnvals = 0 ;
+                        GB_PARTITION (pA_start, pA_end, anz, tid, A_nthreads) ;
+                        for (int64_t p = pA_start ; p < pA_end ; p++)
+                        {
+                            if (GB_AX_MASK (Ax, p, asize))
+                            { 
+                                // Cx [p] = Ax [p]
+                                GB_COPY_A_TO_C (Cx, p, Ax, p, false) ;
+                                task_cnvals += (Cb [p] == 0) ;
+                                Cb [p] = 1 ;
+                            }
+                        }
+                        cnvals += task_cnvals ;
+                    }
                 }
             }
+            #endif
 
         }
         else
@@ -98,33 +121,37 @@
             // C is hypersparse, sparse, or full, with all entries present
             //------------------------------------------------------------------
 
-            if (Mask_struct)
+            #ifndef GB_ISO_ASSIGN
             {
-                // C<A,struct>=A with C sparse/hyper/full
-                int64_t p ;
-                #pragma omp parallel for num_threads(A_nthreads) \
-                    schedule(static)
-                for (p = 0 ; p < anz ; p++)
-                { 
-                    // Cx [p] = Ax [p]
-                    GB_COPY_A_TO_C (Cx, p, Ax, p) ;
-                }
-            }
-            else
-            {
-                // C<A>=A with C sparse/hyper/full
-                int64_t p ;
-                #pragma omp parallel for num_threads(A_nthreads) \
-                    schedule(static)
-                for (p = 0 ; p < anz ; p++)
+                if (Mask_struct)
                 {
-                    if (GB_AX_MASK (Ax, p, asize))
+                    // C<A,struct>=A with C sparse/hyper/full
+                    int64_t p ;
+                    #pragma omp parallel for num_threads(A_nthreads) \
+                        schedule(static)
+                    for (p = 0 ; p < anz ; p++)
                     { 
                         // Cx [p] = Ax [p]
-                        GB_COPY_A_TO_C (Cx, p, Ax, p) ;
+                        GB_COPY_A_TO_C (Cx, p, Ax, p, A_iso) ;
+                    }
+                }
+                else
+                {
+                    // C<A>=A with C sparse/hyper/full
+                    int64_t p ;
+                    #pragma omp parallel for num_threads(A_nthreads) \
+                        schedule(static)
+                    for (p = 0 ; p < anz ; p++)
+                    {
+                        if (GB_AX_MASK (Ax, p, asize))
+                        { 
+                            // Cx [p] = Ax [p]
+                            GB_COPY_A_TO_C (Cx, p, Ax, p, false) ;
+                        }
                     }
                 }
             }
+            #endif
         }
 
     }
@@ -141,7 +168,7 @@
             // C is bitmap, A is bitmap
             //------------------------------------------------------------------
 
-            if (Mask_struct)
+            if (GB_MASK_STRUCT)
             {
                 // C<A,struct>=A with A and C bitmap
                 int tid ;
@@ -156,7 +183,9 @@
                         if (Ab [p])
                         { 
                             // Cx [p] = Ax [p]
-                            GB_COPY_A_TO_C (Cx, p, Ax, p) ;
+                            #ifndef GB_ISO_ASSIGN
+                            GB_COPY_A_TO_C (Cx, p, Ax, p, A_iso) ;
+                            #endif
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
@@ -167,6 +196,7 @@
             }
             else
             {
+                #ifndef GB_ISO_ASSIGN
                 // C<A>=A with A and C bitmap
                 int tid ;
                 #pragma omp parallel for num_threads(A_nthreads) \
@@ -180,13 +210,14 @@
                         if (Ab [p] && GB_AX_MASK (Ax, p, asize))
                         { 
                             // Cx [p] = Ax [p]
-                            GB_COPY_A_TO_C (Cx, p, Ax, p) ;
+                            GB_COPY_A_TO_C (Cx, p, Ax, p, false) ;
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
                     }
                     cnvals += task_cnvals ;
                 }
+                #endif
             }
 
         }
@@ -197,38 +228,42 @@
             // C is hypersparse, sparse, or full, with all entries present
             //------------------------------------------------------------------
 
-            if (Mask_struct)
+            #ifndef GB_ISO_ASSIGN
             {
-                // C<A,struct>=A with A bitmap, and C hyper/sparse/full
-                // this method is used by LAGraph_bfs_parent when q is
-                // a bitmap and pi is full.
-                int64_t p ;
-                #pragma omp parallel for num_threads(A_nthreads) \
-                    schedule(static)
-                for (p = 0 ; p < anz ; p++)
+                if (Mask_struct)
                 {
-                    // Cx [p] = Ax [p]
-                    if (Ab [p])
-                    { 
-                        GB_COPY_A_TO_C (Cx, p, Ax, p) ;
-                    }
-                }
-            }
-            else
-            {
-                // C<A>=A with A bitmap, and C hyper/sparse/full
-                int64_t p ;
-                #pragma omp parallel for num_threads(A_nthreads) \
-                    schedule(static)
-                for (p = 0 ; p < anz ; p++)
-                {
-                    if (Ab [p] && GB_AX_MASK (Ax, p, asize))
-                    { 
+                    // C<A,struct>=A with A bitmap, and C hyper/sparse/full
+                    // this method is used by LAGraph_bfs_parent when q is
+                    // a bitmap and pi is full.
+                    int64_t p ;
+                    #pragma omp parallel for num_threads(A_nthreads) \
+                        schedule(static)
+                    for (p = 0 ; p < anz ; p++)
+                    {
                         // Cx [p] = Ax [p]
-                        GB_COPY_A_TO_C (Cx, p, Ax, p) ;
+                        if (Ab [p])
+                        { 
+                            GB_COPY_A_TO_C (Cx, p, Ax, p, A_iso) ;
+                        }
+                    }
+                }
+                else
+                {
+                    // C<A>=A with A bitmap, and C hyper/sparse/full
+                    int64_t p ;
+                    #pragma omp parallel for num_threads(A_nthreads) \
+                        schedule(static)
+                    for (p = 0 ; p < anz ; p++)
+                    {
+                        if (Ab [p] && GB_AX_MASK (Ax, p, asize))
+                        { 
+                            // Cx [p] = Ax [p]
+                            GB_COPY_A_TO_C (Cx, p, Ax, p, false) ;
+                        }
                     }
                 }
             }
+            #endif
         }
 
     }
@@ -244,8 +279,13 @@
         const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
         int taskid ;
 
-        if (Mask_struct)
+        if (GB_MASK_STRUCT)
         {
+
+            //------------------------------------------------------------------
+            // mask is structural
+            //------------------------------------------------------------------
+
             if (C_is_bitmap)
             {
 
@@ -277,7 +317,9 @@
                         { 
                             int64_t p = pC + Ai [pA] ;
                             // Cx [p] = Ax [pA]
-                            GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
+                            #ifndef GB_ISO_ASSIGN
+                            GB_COPY_A_TO_C (Cx, p, Ax, pA, A_iso) ;
+                            #endif
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
@@ -293,6 +335,7 @@
                 // C is full, mask is structural
                 //--------------------------------------------------------------
 
+                #ifndef GB_ISO_ASSIGN
                 #pragma omp parallel for num_threads(A_nthreads) \
                     schedule(dynamic,1)
                 for (taskid = 0 ; taskid < A_ntasks ; taskid++)
@@ -316,15 +359,22 @@
                         { 
                             int64_t p = pC + Ai [pA] ;
                             // Cx [p] = Ax [pA]
-                            GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
+                            GB_COPY_A_TO_C (Cx, p, Ax, pA, A_iso) ;
                         }
                     }
                 }
+                #endif
             }
 
         }
         else
         {
+
+            //------------------------------------------------------------------
+            // mask is valued
+            //------------------------------------------------------------------
+
+            #ifndef GB_ISO_ASSIGN
             if (C_is_bitmap)
             {
 
@@ -358,7 +408,7 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
+                                GB_COPY_A_TO_C (Cx, p, Ax, pA, A_iso) ;
                                 task_cnvals += (Cb [p] == 0) ;
                                 Cb [p] = 1 ;
                             }
@@ -400,12 +450,13 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_A_TO_C (Cx, p, Ax, pA) ;
+                                GB_COPY_A_TO_C (Cx, p, Ax, pA, A_iso) ;
                             }
                         }
                     }
                 }
             }
+            #endif
         }
     }
 
@@ -418,4 +469,6 @@
         C->nvals = cnvals ;
     }
 }
+
+#undef GB_ISO_ASSIGN
 

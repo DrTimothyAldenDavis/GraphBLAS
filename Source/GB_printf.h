@@ -78,7 +78,6 @@
     }                                                                       \
     if (printf_result < 0)                                                  \
     {                                                                       \
-        int err = errno ;                                                   \
         return (GrB_INVALID_VALUE) ;                                        \
     }                                                                       \
 }

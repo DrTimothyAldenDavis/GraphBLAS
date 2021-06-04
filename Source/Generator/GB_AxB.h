@@ -19,6 +19,7 @@ GrB_Info GB (_Adot3B)
     const int nthreads
 ) ;
 
+if_not_any_pair_semiring
 GrB_Info GB (_Adot4B)
 (
     GrB_Matrix C,
@@ -28,6 +29,7 @@ GrB_Info GB (_Adot4B)
     int64_t *restrict B_slice, int nbslice,
     const int nthreads
 ) ;
+#endif
 
 GrB_Info GB (_Asaxpy3B)
 (

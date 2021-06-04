@@ -91,7 +91,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     //--------------------------------------------------------------------------
 
     // TODO: this content is opaque, try to remove it here
-    int64_t nzmax = A->nzmax ;
+    int64_t nzmax = GB_nnz_max (A) ;
     int64_t plen = A->plen ;
     int64_t nvec_nonempty = A->nvec_nonempty ;
 

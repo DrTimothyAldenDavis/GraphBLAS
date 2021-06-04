@@ -69,14 +69,23 @@
     }
 
     #if defined ( GB_PHASE_2_OF_2 )
+    #ifdef GB_ISO_EMULT
+    ASSERT (C->iso) ;
+    #else
+    ASSERT (!C->iso) ;
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    #endif
+
+    // one of A or B can be iso, but not both
     const bool A_iso = A->iso ;
     const bool B_iso = B->iso ;
+    ASSERT (!(A_iso && B_iso)) ;
+
     const int64_t  *restrict Cp = C->p ;
     const int64_t  *restrict Ch = C->h ;
           int64_t  *restrict Ci = C->i ;
-          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
     #endif
 
     //--------------------------------------------------------------------------

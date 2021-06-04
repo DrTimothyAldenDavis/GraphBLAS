@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// TODO::: move these into the MATLAB interface instead
+
 // These functions are only used by the MATLAB interface for
 // SuiteSparse:GraphBLAS.
 
@@ -104,10 +106,12 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
 ) ;
 
 GB_PUBLIC
-double GB_matlab_helper10       // norm (x-y,p)
+double GB_matlab_helper10       // norm (x-y,p), or -1 on error
 (
     GB_void *x_arg,             // float or double, depending on type parameter
+    bool x_iso,                 // true if x is iso
     GB_void *y_arg,             // same type as x, treat as zero if NULL
+    bool y_iso,                 // true if x is iso
     GrB_Type type,              // GrB_FP32 or GrB_FP64
     int64_t p,                  // 0, 1, 2, INT64_MIN, or INT64_MAX
     GrB_Index n

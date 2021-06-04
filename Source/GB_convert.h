@@ -29,14 +29,14 @@
 // true if A is sparse (but not hypersparse)
 #define GB_IS_SPARSE(A) ((A) != NULL && ((A)->h == NULL) && (A)->p != NULL)
 
-// determine the sparsity control for a matrix
-int GB_sparsity_control     // revised sparsity
+// determine the sparsity_control for a matrix
+int GB_sparsity_control     // revised sparsity_control
 (
-    int sparsity,           // sparsity control
+    int sparsity_control,   // sparsity_control
     int64_t vdim            // A->vdim, or -1 to ignore this condition
 ) ;
 
-// GB_sparsity: determine the current sparsity status of a matrix
+// GB_sparsity: determine the current sparsity_control status of a matrix
 static inline int GB_sparsity (GrB_Matrix A)
 {
     if (A == NULL)
@@ -93,7 +93,7 @@ bool GB_convert_sparse_to_hyper_test  // test sparse to hypersparse conversion
 bool GB_convert_bitmap_to_sparse_test    // test for hyper/sparse to bitmap
 (
     float bitmap_switch,    // A->bitmap_switch
-    int64_t anz,            // # of entries in A = GB_NNZ (A)
+    int64_t anz,            // # of entries in A = GB_nnz (A)
     int64_t vlen,           // A->vlen
     int64_t vdim            // A->vdim
 ) ;
@@ -101,7 +101,7 @@ bool GB_convert_bitmap_to_sparse_test    // test for hyper/sparse to bitmap
 bool GB_convert_sparse_to_bitmap_test    // test for hyper/sparse to bitmap
 (
     float bitmap_switch,    // A->bitmap_switch
-    int64_t anz,            // # of entries in A = GB_NNZ (A)
+    int64_t anz,            // # of entries in A = GB_nnz (A)
     int64_t vlen,           // A->vlen
     int64_t vdim            // A->vdim
 ) ;
@@ -141,11 +141,6 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
     // inputs: not modified
     const GrB_Matrix A,             // matrix to extract; not modified
     GB_Context Context
-) ;
-
-GrB_Info GB_convert_to_full     // convert matrix to full; delete prior values
-(
-    GrB_Matrix A                // matrix to convert to full
 ) ;
 
 GrB_Info GB_convert_any_to_bitmap   // convert to bitmap
@@ -193,15 +188,15 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     }                                                       \
 }
 
-#define GB_ENSURE_FULL(C)                                       \
-{                                                               \
-    ASSERT (GB_is_dense (C)) ;                                  \
-    if (GB_sparsity_control (C->sparsity, C->vdim) & GxB_FULL)  \
-    {                                                           \
-        /* convert C from any structure to full, */             \
-        /* if permitted by C->sparsity */                       \
-        GB_convert_any_to_full (C) ;                            \
-    }                                                           \
+#define GB_ENSURE_FULL(C)                                               \
+{                                                                       \
+    ASSERT (GB_is_dense (C)) ;                                          \
+    if (GB_sparsity_control (C->sparsity_control, C->vdim) & GxB_FULL)  \
+    {                                                                   \
+        /* convert C from any structure to full, */                     \
+        /* if permitted by C->sparsity_control */                       \
+        GB_convert_any_to_full (C) ;                                    \
+    }                                                                   \
 }
 
 //------------------------------------------------------------------------------
@@ -227,9 +222,7 @@ static inline bool GB_is_dense
         return (true) ;
     }
     // A is sparse, hyper, or bitmap: check if all entries present
-    GrB_Index anzmax ;
-    bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
-    return (ok && (anzmax == GB_NNZ (A))) ;
+    return (GB_nnz_full (A) == GB_nnz (A)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -260,9 +253,7 @@ static inline bool GB_as_if_full
         return (false) ;
     }
     // A is sparse, hyper, or bitmap: check if all entries present
-    GrB_Index anzmax ;
-    bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
-    return (ok && (anzmax == GB_NNZ (A))) ;
+    return (GB_nnz_full (A) == GB_nnz (A)) ;
 }
 
 //------------------------------------------------------------------------------

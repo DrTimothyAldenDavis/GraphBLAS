@@ -18,7 +18,7 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
 
     void **Ax,          // values
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso-valued
+    bool iso,           // if true, A is iso
 
     const GrB_Descriptor desc
 )

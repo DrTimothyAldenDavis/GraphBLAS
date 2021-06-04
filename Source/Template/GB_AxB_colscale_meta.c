@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// All entries in C=A*D are computed entirely in parallel.
+// This template is not used If C is iso, since all that is needed is to create
+// C as a shallow-copy of the pattern of A.
 
 // A and C can be jumbled.  D cannot, but it is a diagonal matrix so it is
 // never jumbled.
@@ -26,6 +27,7 @@
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_JUMBLED (D)) ;
+    ASSERT (!C->iso) ;
 
     //--------------------------------------------------------------------------
     // get C, A, and D

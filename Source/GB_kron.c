@@ -94,7 +94,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     GrB_Index cnrows, cncols, cnz = 0 ;
     bool ok = GB_Index_multiply (&cnrows, anrows,  bnrows) ;
     ok = ok && GB_Index_multiply (&cncols, ancols,  bncols) ;
-    ok = ok && GB_Index_multiply (&cnz, GB_NNZ (A), GB_NNZ (B)) ;
+    ok = ok && GB_Index_multiply (&cnz, GB_nnz (A), GB_nnz (B)) ;
     if (!ok || GB_NROWS (C) != cnrows || GB_NCOLS (C) != cncols)
     { 
         GB_ERROR (GrB_DIMENSION_MISMATCH, "%s:\n"
@@ -103,8 +103,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
             "second input is " GBd "-by-" GBd "%s with " GBd " entries",
             ok ? "Dimensions not compatible:" : "Problem too large:",
             GB_NROWS (C), GB_NCOLS (C), cnrows, cncols,
-            anrows, ancols, A_transpose ? " (transposed)" : "", GB_NNZ (A),
-            bnrows, bncols, B_transpose ? " (transposed)" : "", GB_NNZ (B)) ;
+            anrows, ancols, A_transpose ? " (transposed)" : "", GB_nnz (A),
+            bnrows, bncols, B_transpose ? " (transposed)" : "", GB_nnz (B)) ;
     }
 
     // quick return if an empty mask is complemented

@@ -428,7 +428,7 @@ GrB_Info GB_subassign_06n
                             // C (iC,jC) is not present, A (i,j) is present
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
-                            GB_PENDING_INSERT (Ax +(pA*asize)) ;
+                            GB_PENDING_INSERT_aij ;
                         }
                     }
                 }

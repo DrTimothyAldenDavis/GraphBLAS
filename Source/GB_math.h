@@ -300,7 +300,7 @@
 // This uses ACM Algo 116, by R. L. Smith, 1962, which tries to avoid underflow
 // and overflow.
 //
-// z can be the same variable as x or y.
+// z can be aliased with x or y.
 //
 // Note that this function has the same signature as SuiteSparse_divcomplex.
 
@@ -556,27 +556,31 @@ inline uint64_t GB_pow_uint64 (uint64_t x, uint64_t y)
 
 inline float GB_frexpxf (float x)
 {
+    // ignore the exponent and just return the mantissa
     int exp_ignored ;
     return (frexpf (x, &exp_ignored)) ;
 }
 
 inline float GB_frexpef (float x)
 {
+    // ignore the mantissa and just return the exponent
     int exp ;
-    float mantissa_ignored = frexpf (x, &exp) ;
+    (void) frexpf (x, &exp) ;
     return ((float) exp) ;
 }
 
 inline double GB_frexpx (double x)
 {
+    // ignore the exponent and just return the mantissa
     int exp_ignored ;
     return (frexp (x, &exp_ignored)) ;
 }
 
 inline double GB_frexpe (double x)
 {
+    // ignore the mantissa and just return the exponent
     int exp ;
-    double mantissa_ignored = frexp (x, &exp) ;
+    (void) frexp (x, &exp) ;
     return ((double) exp) ;
 }
 

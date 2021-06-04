@@ -137,14 +137,16 @@
                 int64_t kstart, kend ; 
                 GB_PARTITION (kstart, kend, avdim, b_tid, nbslice) ;
                 int8_t   *restrict Gb = Wf  + (a_tid * afpanel_size) ;
+                #if ( !GB_IS_ANY_PAIR_SEMIRING )
                 GB_ATYPE *restrict Gx = (GB_ATYPE *)
                     (Wax + (a_tid * axpanel_size)) ;
+                #endif
 
                 //--------------------------------------------------------------
                 // load A for this panel
                 //--------------------------------------------------------------
 
-// FIXME: if A iso, only load a single entry into Gx, and use Gx as iso
+// TODO::: if A iso, only load a single entry into Gx, and use Gx as iso
 
                 #if ( GB_A_IS_BITMAP )
                 {
@@ -170,7 +172,8 @@
                                     // Gx (ii,k) = Ax (istart+ii,k)
                                     GB_LOADA (Gx, pG, Ax, pA, A_iso) ;
                                 }
-                                #if GB_HAS_BITMAP_MULTADD
+                                #if GB_HAS_BITMAP_MULTADD \
+                                    && ( !GB_IS_ANY_PAIR_SEMIRING )
                                 else
                                 { 
                                     // Gx (ii,k) = 0
@@ -203,6 +206,7 @@
                     // A is full
                     //----------------------------------------------------------
 
+                    #if ( !GB_IS_ANY_PAIR_SEMIRING )
                     if (!A_is_pattern)
                     {
                         for (int64_t k = kstart ; k < kend ; k++)
@@ -216,6 +220,7 @@
                             }
                         }
                     }
+                    #endif
                 }
                 #endif
             }
@@ -241,25 +246,36 @@
             int64_t np = iend - istart ;
             if (np <= 0) continue ;
 
-            const int8_t   *restrict Gb ;
-            const GB_ATYPE *restrict Gx ;
-
+            const int8_t *restrict Gb ;
             if (load_apanel)
             { 
                 // A has been loaded into the G panel
                 Gb = Wf  + (a_tid * afpanel_size) ;
-                Gx = (GB_ATYPE *) (Wax + (a_tid * axpanel_size)) ;
             }
             else
             { 
                 // use A in-place
                 Gb = Ab ;
-                Gx = (GB_ATYPE *) Ax ;
             }
 
-            int8_t   *restrict Hf = Wf  + (a_tid * hpanel_size) + wafsize ;
+            int8_t *restrict Hf = Wf + (a_tid * hpanel_size) + wafsize ;
+
+            #if ( !GB_IS_ANY_PAIR_SEMIRING )
+            const GB_ATYPE *restrict Gx ;
+            if (load_apanel)
+            { 
+                // A has been loaded into the G panel
+                Gx = (GB_ATYPE *) (Wax + (a_tid * axpanel_size)) ;
+            }
+            else
+            { 
+                // use A in-place
+                Gx = (GB_ATYPE *) Ax ;
+            }
             GB_CTYPE *restrict Hx = (GB_CTYPE *)
                 (Wcx + (a_tid * hpanel_size) * GB_CSIZE) ;
+            #endif
+
             GB_XINIT ;  // for plus, bor, band, and bxor monoids only
 
             //------------------------------------------------------------------
@@ -388,9 +404,11 @@
             int64_t kstart, kend ; 
             GB_PARTITION (kstart, kend, bnvec, b_tid, nbslice) ;
 
-            int8_t   *restrict Hf = Wf  + (a_tid * hpanel_size) + wafsize ;
+            int8_t  *restrict Hf = Wf  + (a_tid * hpanel_size) + wafsize ;
+            #if ( !GB_IS_ANY_PAIR_SEMIRING )
             GB_CTYPE *restrict Hx = (GB_CTYPE *)
                 (Wcx + (a_tid * hpanel_size) * GB_CSIZE) ;
+            #endif
 
             //------------------------------------------------------------------
             // C<#M>(metapanel,j1:j2-1) += H (:,kstart:kend-1)
@@ -447,11 +465,7 @@
                         if (cb == 0)
                         { 
                             // C(i,j) = H(ii,kk)
-                            #if GB_IS_ANY_PAIR_SEMIRING
-                            Cx [pC] = GB_CTYPE_CAST (1,0) ; // C(i,j) = 1
-                            #else
                             GB_CIJ_GATHER (pC, pH) ;
-                            #endif
                             Cb [pC] = keep ;
                             task_cnvals++ ;
                         }

@@ -22,6 +22,9 @@
 
 // A type: double
 
+#define GB_ISO_SELECT \
+    0
+
 // kind
 #define GB_ENTRY_SELECTOR
 

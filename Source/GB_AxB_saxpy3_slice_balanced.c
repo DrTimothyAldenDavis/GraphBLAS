@@ -267,7 +267,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
     const int64_t bvdim = B->vdim ;
-    const int64_t bnz = GB_NNZ_HELD (B) ;
+    const int64_t bnz = GB_nnz_held (B) ;
     const int64_t bnvec = B->nvec ;
     const int64_t bvlen = B->vlen ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
@@ -407,7 +407,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         // Gustavson should be used with a small number of threads.
         // Matrix-vector has a maximum intensity of 1, so this heuristic only
         // applies to GrB_mxm.
-        double abnz = GB_NNZ (A) + GB_NNZ (B) + 1 ;
+        double abnz = GB_nnz (A) + GB_nnz (B) + 1 ;
         double workspace = (double) ntasks_initial * (double) cvlen ;
         double intensity = total_flops / abnz ;
         GBURBLE ("(intensity: %0.3g workspace/(nnz(A)+nnz(B)): %0.3g",

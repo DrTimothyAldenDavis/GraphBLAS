@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "May 18, 2021"
+#define GxB_IMPLEMENTATION_DATE "June 4, 2021"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 1
 #define GxB_IMPLEMENTATION_SUB   0
@@ -2399,6 +2399,15 @@ GrB_Info GrB_Vector_build_UDT       // build a vector from (I,X) tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
+GB_PUBLIC
+GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const GrB_Index *I,             // array of row indices of tuples
+    GxB_Scalar scalar,              // value for all tuples
+    GrB_Index nvals                 // number of tuples
+) ;
+
 // Type-generic version:  X can be a pointer to any supported C type or void *
 // for a user-defined type.
 
@@ -3093,6 +3102,16 @@ GrB_Info GrB_Matrix_build_UDT       // build a matrix from (I,J,X) tuples
     const void *X,                  // array of values of tuples
     GrB_Index nvals,                // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_build_Scalar    // build a matrix from (I,J,scalar) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const GrB_Index *I,             // array of row indices of tuples
+    const GrB_Index *J,             // array of column indices of tuples
+    GxB_Scalar scalar,              // value for all tuples
+    GrB_Index nvals                 // number of tuples
 ) ;
 
 // Type-generic version:  X can be a pointer to any supported C type or void *
@@ -8230,10 +8249,10 @@ GrB_Info GxB_Scalar_fprint          // print and check a GxB_Scalar
 // If any of the arrays Ab, Aj, Ai, Ax, vb, vi, or vx have zero size (with
 // nzmax of zero), they are allowed to be be NULL pointers on input.
 
-// A matrix or vector may be "iso-valued", where all entries present in the
-// pattern have the same value.  In this case, the boolean iso flag is true,
-// and the corresponding numerical array (Ax for matrices, vx for vectors,
-// below) need be only large enough to hold a single value.
+// A matrix or vector may be "iso", where all entries present in the pattern
+// have the same value.  In this case, the boolean iso flag is true, and the
+// corresponding numerical array (Ax for matrices, vx for vectors, below) need
+// be only large enough to hold a single value.
 
 // No error checking is performed on the content of the user input arrays.  If
 // the user input arrays do not conform to the precise specifications above,
@@ -8269,7 +8288,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Aj_size,  // size of Aj in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso-valued
+    bool iso,           // if true, A is iso
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8308,7 +8327,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Ai_size,  // size of Ai in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso-valued
+    bool iso,           // if true, A is iso
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8349,7 +8368,7 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     GrB_Index Ah_size,  // size of Ah in bytes
     GrB_Index Aj_size,  // size of Aj in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso-valued
+    bool iso,           // if true, A is iso
     GrB_Index nvec,     // number of rows that appear in Ah
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
@@ -8398,7 +8417,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GrB_Index Ah_size,  // size of Ah in bytes
     GrB_Index Ai_size,  // size of Ai in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso-valued
+    bool iso,           // if true, A is iso
     GrB_Index nvec,     // number of columns that appear in Ah
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
@@ -8444,7 +8463,7 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
                         // or Ax_size >= (type size), if iso is true
     GrB_Index Ab_size,  // size of Ab in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso-valued
+    bool iso,           // if true, A is iso
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8475,7 +8494,7 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
                         // or Ax_size >= (type size), if iso is true
     GrB_Index Ab_size,  // size of Ab in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso-valued
+    bool iso,           // if true, A is iso
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8504,7 +8523,7 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
                         // or Ax_size >= (type size), if iso is true
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso-valued
+    bool iso,           // if true, A is iso
     const GrB_Descriptor desc
 ) ;
 
@@ -8529,7 +8548,7 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
                         // or Ax_size >= (type size), if iso is true
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso-valued
+    bool iso,           // if true, A is iso
     const GrB_Descriptor desc
 ) ;
 
@@ -8555,7 +8574,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
                         // or vx_size >= (type size), if iso is true
     GrB_Index vi_size,  // size of vi in bytes
     GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso-valued
+    bool iso,           // if true, v is iso
     GrB_Index nvals,    // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted
     const GrB_Descriptor desc
@@ -8580,7 +8599,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
                         // or vx_size >= (type size), if iso is true
     GrB_Index vb_size,  // size of vb in bytes
     GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso-valued
+    bool iso,           // if true, v is iso
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8601,7 +8620,7 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     void **vx,          // values, vx_size >= nvals(v) * (type size)
                         // or vx_size >= (type size), if iso is true
     GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso-valued
+    bool iso,           // if true, v is iso
     const GrB_Descriptor desc
 ) ;
 
@@ -8644,7 +8663,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Aj_size, // size of Aj in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso-valued
+    bool *iso,          // if true, A is iso
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8662,7 +8681,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GrB_Index *Ap_size, // size of Ap in bytes
     GrB_Index *Ai_size, // size of Ai in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso-valued
+    bool *iso,          // if true, A is iso
     bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 ) ;
@@ -8682,7 +8701,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GrB_Index *Ah_size, // size of Ah in bytes
     GrB_Index *Aj_size, // size of Aj in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso-valued
+    bool *iso,          // if true, A is iso
     GrB_Index *nvec,    // number of rows that appear in Ah
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
@@ -8703,7 +8722,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Index *Ah_size, // size of Ah in bytes
     GrB_Index *Ai_size, // size of Ai in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso-valued
+    bool *iso,          // if true, A is iso
     GrB_Index *nvec,    // number of columns that appear in Ah
     bool *jumbled,      // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
@@ -8720,7 +8739,7 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     void **Ax,          // values
     GrB_Index *Ab_size, // size of Ab in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso-valued
+    bool *iso,          // if true, A is iso
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8736,7 +8755,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     void **Ax,          // values
     GrB_Index *Ab_size, // size of Ab in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso-valued
+    bool *iso,          // if true, A is iso
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8750,7 +8769,7 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     GrB_Index *ncols,   // number of columns of the matrix
     void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso-valued
+    bool *iso,          // if true, A is iso
     const GrB_Descriptor desc
 ) ;
 
@@ -8763,7 +8782,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     GrB_Index *ncols,   // number of columns of the matrix
     void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso-valued
+    bool *iso,          // if true, A is iso
     const GrB_Descriptor desc
 ) ;
 
@@ -8782,7 +8801,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     void **vx,          // values
     GrB_Index *vi_size, // size of vi in bytes
     GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso-valued
+    bool *iso,          // if true, v is iso
     GrB_Index *nvals,   // # of entries in vector
     bool *jumbled,      // if true, indices may be unsorted
     const GrB_Descriptor desc
@@ -8798,7 +8817,7 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     void **vx,          // values
     GrB_Index *vb_size, // size of vb in bytes
     GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso-valued
+    bool *iso,          // if true, v is iso
     GrB_Index *nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 ) ;
@@ -8811,7 +8830,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     GrB_Index *n,       // length of the vector
     void **vx,          // values
     GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso-valued
+    bool *iso,          // if true, v is iso
     const GrB_Descriptor desc
 ) ;
 

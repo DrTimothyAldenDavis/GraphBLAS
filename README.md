@@ -8,7 +8,7 @@ For the GraphBLAS/GraphBLAS MATLAB and Octave interface *only*:
 SPDX-License-Identifier: GPL-3.0-or-later
 (see below for a discussion of the licensing of this package).
 
-VERSION 5.1.0, May 24, 2021
+VERSION 5.1.0, June 4, 2021
 
 SuiteSparse:GraphBLAS is a complete implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -153,9 +153,9 @@ libgraphblas.so is license Apache-2.0, and there are no plans to change this.
 However, just because this code is free to use doesn't make it zero-cost to
 create.  If you are using GraphBLAS in a commercial product and are not
 supporting its development, it is in your best interest to reconsider.
-Otherwise, you will likely find that future updates to this package (and its
-MATLAB/Octave interface in particular) will migrate away from supporting your
-application and you will be left with orphaned code.
+Otherwise, you will likely find that future updates to the MATLAB/Octave
+interface will migrate away from supporting your application and you will be
+left with orphaned code.
 
 The MATLAB/Octave interface is now licensed under the GNU GPLv3.0 (or later)
 license, so if any code from the GraphBLAS/GraphBLAS folder is needed in a
@@ -168,14 +168,8 @@ would be disruptive to version management systems.  However, if you see an
 "Apache-2.0" stamp on any file in the GraphBLAS/GraphBLAS folder or its
 subfolders, ignore it and assume GPLv3.
 
-If sufficient commercial support is provided from companies needing to
-incorporate the MATLAB/Octave interface in their commercial applications, then
-this GNU GPLv3 could be replaced with its former Apache-2.0 license. Currently
-this is not the case; thus the retroactive change to GNU GPLv3.0 for these
-components.
-
-Of course, this licensing change has no impact at all on the use of GraphBLAS
-in Octave, since Octave itself is already under the GNU GPLv3.0 license.
+This licensing change has no impact at all on the use of GraphBLAS in Octave,
+since Octave itself is already under the GNU GPLv3.0 license.
 
 To support the development of GraphBLAS, contact the author (davis@tamu.edu) or
 the Texas A&M Foundation (True Brown, tbrown@txamfoundation.com; or Kevin

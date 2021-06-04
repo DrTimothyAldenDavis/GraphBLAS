@@ -27,23 +27,28 @@ fprintf ('\nuser       ') ;
 codegen_sel_method ('user',  ...
     [ 'user_select (' ...
       'flipij ? j : GBI (Ai, p, avlen), flipij ? GBI (Ai, p, avlen) : j, ' ...
-      'Ax +((p)*asize), xthunk)' ] , 'GB_void') ;
+      'Ax +(A_iso ? 0 :((p)*asize)), xthunk)' ] , 'GB_void') ;
 
 % TRIL, TRIU, DIAG, OFFIDIAG, RESIZE:
 fprintf ('\ntril       ') ;
 codegen_sel_method ('tril'      , [ ], 'GB_void' , 'GB_TRIL_SELECTOR'    ) ;
+codegen_sel_method ('tril'      , [ ], 'GB_void' , 'GB_TRIL_SELECTOR'    , 1) ;
 fprintf ('\ntriu       ') ;
 codegen_sel_method ('triu'      , [ ], 'GB_void' , 'GB_TRIU_SELECTOR'    ) ;
+codegen_sel_method ('triu'      , [ ], 'GB_void' , 'GB_TRIU_SELECTOR'    , 1) ;
 fprintf ('\ndiag       ') ;
 codegen_sel_method ('diag'      , [ ], 'GB_void' , 'GB_DIAG_SELECTOR'    ) ;
+codegen_sel_method ('diag'      , [ ], 'GB_void' , 'GB_DIAG_SELECTOR'    , 1) ;
 fprintf ('\noffdiag    ') ;
 codegen_sel_method ('offdiag'   , [ ], 'GB_void' , 'GB_OFFDIAG_SELECTOR' ) ;
+codegen_sel_method ('offdiag'   , [ ], 'GB_void' , 'GB_OFFDIAG_SELECTOR' , 1) ;
 fprintf ('\nresize     ') ;
 codegen_sel_method ('resize'    , [ ], 'GB_void' , 'GB_RESIZE_SELECTOR'  ) ;
+codegen_sel_method ('resize'    , [ ], 'GB_void' , 'GB_RESIZE_SELECTOR'  , 1) ;
 
 % NONZOMBIE:         name         selector                     type
-% phase1: depends on Ai only, so only nonzombie_any is used
-% phase2: use all 14 workers
+% phase1: depends on Ai only, so only nonzombie_iso is used
+% phase2: use all 15 workers
 fprintf ('\nnonzombie  ') ;
 codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'bool'      ) ;
 codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'int8_t'    ) ;
@@ -59,6 +64,7 @@ codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'double'    ) ;
 codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GxB_FC32_t') ;
 codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GxB_FC64_t') ;
 codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GB_void'   ) ;
+codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GB_void'   , [ ], 1) ;
 
 % NONZERO            name         selector       type
 fprintf ('\nnonzero    ') ;

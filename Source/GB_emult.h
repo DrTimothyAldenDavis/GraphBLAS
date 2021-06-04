@@ -173,5 +173,16 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     GB_Context Context
 ) ;
 
+bool GB_iso_emult           // c = op(a,b), return true if C is iso
+(
+    // output
+    GB_void *restrict c,    // output scalar of iso array
+    // input
+    GrB_Type ctype,         // type of c
+    GrB_Matrix A,           // input matrix
+    GrB_Matrix B,           // input matrix
+    GrB_BinaryOp op         // binary operator
+) ;
+
 #endif
 

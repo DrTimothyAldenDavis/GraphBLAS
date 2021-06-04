@@ -147,7 +147,7 @@ logstat ('test145',t) ; % dot4 for C += A'*B
 % tests with decent rates (30 to 40/sec)
 %----------------------------------------
 
-logstat ('test92',t) ;  % GB_subref (symbolic case)
+logstat ('test92',t) ;  % GB_subref: symbolic case
 logstat ('test108',t) ; % boolean monoids
 logstat ('test172',t) ; % test eWiseMult with M bitmap/full
 logstat ('test26',t) ;  % quick test of GxB_select
@@ -328,8 +328,6 @@ logstat ('test66',t) ;     %      % quick test for GrB_Matrix_reduce
 logstat ('test67',t) ;     %      % quick test for GrB_apply
 logstat ('test68',t) ;
 
-logstat ('test70',t) ;     %      % performance of triangle counting methods
-logstat ('test71',t) ;     %      % performance of triangle counting methods
 logstat ('test73',t) ;     %      % performance of C = A*B, with mask
 logstat ('test75',t) ;     %      % test GrB_mxm A'*B on all semirings
 logstat ('test78',t) ;     %    1 % quick test of hypersparse subref

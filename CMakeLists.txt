@@ -24,10 +24,12 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "May 18, 2021")
+set ( GraphBLAS_DATE "June 4, 2021")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 1 )
 set ( GraphBLAS_VERSION_SUB   0 )
+
+message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "Sept 25, 2019" )
@@ -393,8 +395,6 @@ if ( DEMO )
     #---------------------------------------------------------------------------
 
     add_executable ( pagerank_demo "Demo/Program/pagerank_demo.c" )
-    add_executable ( bfs_demo      "Demo/Program/bfs_demo.c" )
-    add_executable ( tri_demo      "Demo/Program/tri_demo.c" )
     add_executable ( openmp_demo   "Demo/Program/openmp_demo.c" )
     add_executable ( mis_demo      "Demo/Program/mis_demo.c" )
     add_executable ( complex_demo  "Demo/Program/complex_demo.c" )
@@ -406,8 +406,6 @@ if ( DEMO )
 
     # Libraries required for Demo programs
     target_link_libraries ( pagerank_demo PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-    target_link_libraries ( bfs_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-    target_link_libraries ( tri_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
     target_link_libraries ( openmp_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} )
     target_link_libraries ( mis_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
     target_link_libraries ( complex_demo  PUBLIC graphblas graphblasdemo ${GB_CUDA} )

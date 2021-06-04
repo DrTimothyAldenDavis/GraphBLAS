@@ -19,6 +19,8 @@
 GrB_Info GB_concat_full             // concatenate into a full matrix
 (
     GrB_Matrix C,                   // input/output matrix for results
+    const bool C_iso,               // if true, construct C as iso
+    const GB_void *cscalar,         // iso value of C, if C is io 
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
     const GrB_Index m,
     const GrB_Index n,
@@ -44,9 +46,10 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     size_t csize = ctype->size ;
     GB_Type_code ccode = ctype->code ;
     if (!GB_IS_FULL (C))
-    { 
+    {
+        // set C->iso = C_iso   OK
         GB_phbix_free (C) ;
-        GB_OK (GB_bix_alloc (C, cvlen * cvdim, false, false, false, true,
+        GB_OK (GB_bix_alloc (C, GB_nnz_full (C), GxB_FULL, false, true, C_iso,
             Context)) ;
         C->plen = -1 ;
         C->nvec = cvdim ;
@@ -57,6 +60,13 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
 
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;
+
+    if (C_iso)
+    {
+        // copy in the scalar as the iso value; no more work to do
+        memcpy (C->x, cscalar, csize) ;
+        return (GrB_SUCCESS) ;
+    }
 
     //--------------------------------------------------------------------------
     // concatenate all matrices into C
@@ -132,7 +142,8 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
                     // no typecasting needed
                     switch (csize)
                     {
-                        #define GB_COPY(pC,pA) Cx [pC] = Ax [pA]
+                        #define GB_COPY(pC,pA,A_iso)                        \
+                            Cx [pC] = GBX (Ax, pA, A_iso) ;
 
                         case 1 : // uint8, int8, bool, or 1-byte user-defined
                             #define GB_CTYPE uint8_t
@@ -158,9 +169,9 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
                         case 16 : // double complex or 16-byte user-defined
                             #define GB_CTYPE uint64_t
                             #undef  GB_COPY
-                            #define GB_COPY(pC,pA)                      \
-                                Cx [2*pC  ] = Ax [2*pA  ] ;             \
-                                Cx [2*pC+1] = Ax [2*pA+1] ;
+                            #define GB_COPY(pC,pA,A_iso)                    \
+                                Cx [2*pC  ] = GBX (Ax, 2*pA  , A_iso) ;     \
+                                Cx [2*pC+1] = GBX (Ax, 2*pA+1, A_iso) ;
                             #include "GB_concat_full_template.c"
                             break ;
 
@@ -176,8 +187,9 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
                 size_t asize = A->type->size ;
                 #define GB_CTYPE GB_void
                 #undef  GB_COPY
-                #define GB_COPY(pC,pA)  \
-                    cast_A_to_C (Cx + (pC)*csize, Ax + (pA)*asize, asize) ;
+                #define GB_COPY(pC,pA,A_iso)                    \
+                    cast_A_to_C (Cx + (pC)*csize,               \
+                        Ax + (A_iso ? 0:(pA)*asize), asize) ;
                 #include "GB_concat_full_template.c"
             }
 

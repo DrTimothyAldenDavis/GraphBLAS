@@ -56,11 +56,11 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
     //--------------------------------------------------------------------------
 
     return (GB_assign (
-        C,          C_replace,      // C matrix and its descriptor
+        C, C_replace,               // C matrix and its descriptor
         M, Mask_comp, Mask_struct,  // mask matrix and its descriptor
         false,                      // do not transpose the mask
         accum,                      // for accum (C(Rows,Cols),scalar)
-        NULL,       false,          // no explicit matrix A
+        NULL, false,                // no explicit matrix A
         Rows, nRows,                // row indices
         Cols, nCols,                // column indices
         true,                       // do scalar expansion

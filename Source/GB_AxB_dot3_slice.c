@@ -89,7 +89,7 @@ GrB_Info GB_AxB_dot3_slice
     int64_t *restrict Cwork = C->i ;
     const int64_t cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
-    const int64_t cnz = GB_NNZ_HELD (C) ;
+    const int64_t cnz = GB_nnz_held (C) ;
 
     //--------------------------------------------------------------------------
     // compute the cumulative sum of the work

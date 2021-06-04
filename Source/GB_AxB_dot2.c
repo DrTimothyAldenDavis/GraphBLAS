@@ -23,9 +23,7 @@
 #include "GB_binop.h"
 #include "GB_ek_slice.h"
 #include "GB_bitmap_assign_methods.h"
-#ifndef GBCOMPACT
 #include "GB_AxB__include.h"
-#endif
 
 #define GB_FREE_ALL                         \
 {                                           \
@@ -39,6 +37,8 @@ GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 (
     GrB_Matrix C,                   // output matrix, static header
+    const bool C_iso,               // true if C is iso
+    const GB_void *cscalar,         // iso value of C
     const GrB_Matrix M_in,          // mask matrix for C<!M>=A'*B, may be NULL
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
@@ -49,7 +49,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GB_Context Context
 )
 {
-// double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -150,11 +149,11 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     if (A_or_B_hyper && M_in != NULL)
     {
         // M2 = M_in (Ah, Bh), where M2 has a static header
+        // if Mask_struct then M2 is extracted as iso
         M2 = GB_clear_static_header (&M2_header) ;
-        GB_OK (GB_subref (M2, M_in->is_csc, M_in,
+        GB_OK (GB_subref (M2, Mask_struct, M_in->is_csc, M_in,
             (A_is_hyper) ? Ah : GrB_ALL, cvlen,
             (B_is_hyper) ? Bh : GrB_ALL, cvdim, false, Context)) ;
-        // TODO: if Mask_struct is true, only extract the pattern of M_in
         M = M2 ;
         ASSERT_MATRIX_OK_OR_NULL (M, "M submask dot A'*B", GB0) ;
     }
@@ -172,10 +171,10 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int64_t nbslice = 0 ;
 
     int64_t anvec = A->nvec ;
-    int64_t anz   = GB_NNZ_HELD (A) ;
+    int64_t anz   = GB_nnz_held (A) ;
 
     int64_t bnvec = B->nvec ;
-    int64_t bnz   = GB_NNZ_HELD (B) ;
+    int64_t bnz   = GB_nnz_held (B) ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
@@ -246,10 +245,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GB_pslice (A_slice, A->p, A->nvec, naslice, false) ;
     GB_pslice (B_slice, B->p, B->nvec, nbslice, false) ;
 
-// ttt = omp_get_wtime ( ) - ttt ;
-// GB_Global_timing_add (17, ttt) ;
-// ttt = omp_get_wtime ( ) ;
-
     //--------------------------------------------------------------------------
     // allocate C
     //--------------------------------------------------------------------------
@@ -258,14 +253,11 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     bool M_is_sparse_or_hyper = (M != NULL) &&
         (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     GrB_Type ctype = add->op->ztype ;
+    // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, true, // bitmap, static header
-        ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GxB_BITMAP, M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true,
+        ctype, cvlen, cvdim, GB_Ap_malloc, true, GxB_BITMAP,
+        M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso,
         Context)) ;
-
-// ttt = omp_get_wtime ( ) - ttt ;
-// GB_Global_timing_add (18, ttt) ;
-// ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // if M is sparse/hyper, scatter it into the C bitmap
@@ -297,51 +289,74 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // C<#>=A'*B, computing each entry with a dot product, via builtin semiring
     //--------------------------------------------------------------------------
 
-    bool done = false ;
-
-    #ifndef GBCOMPACT
-
-        //----------------------------------------------------------------------
-        // define the worker for the switch factory
-        //----------------------------------------------------------------------
-
-        #define GB_Adot2B(add,mult,xname) GB (_Adot2B_ ## add ## mult ## xname)
-
-        #define GB_AxB_WORKER(add,mult,xname)                                \
-        {                                                                    \
-            info = GB_Adot2B (add,mult,xname) (C, M, Mask_comp, Mask_struct, \
-                A, A_is_pattern, A_slice, B, B_is_pattern, B_slice,          \
-                nthreads, naslice, nbslice) ;                                \
-            done = (info != GrB_NO_VALUE) ;                                  \
-        }                                                                    \
-        break ;
+    if (C_iso)
+    {
 
         //----------------------------------------------------------------------
-        // launch the switch factory
+        // C is iso; compute the pattern of C<#>=A'*B with the any_pair semiring
         //----------------------------------------------------------------------
 
-        GB_Opcode mult_opcode, add_opcode ;
-        GB_Type_code xcode, ycode, zcode ;
+        memcpy (C->x, cscalar, ctype->size) ;
+        info = GB__Adot2B__any_pair_iso (C, M, Mask_comp, Mask_struct, A, true,
+            A_slice, B, true, B_slice, nthreads, naslice, nbslice) ;
+        ASSERT (info != GrB_NO_VALUE) ;
 
-        if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern, semiring,
-            flipxy, &mult_opcode, &add_opcode, &xcode, &ycode, &zcode))
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // C is non-iso
+        //----------------------------------------------------------------------
+
+        bool done = false ;
+
+        #ifndef GBCOMPACT
+
+            //------------------------------------------------------------------
+            // define the worker for the switch factory
+            //------------------------------------------------------------------
+
+            #define GB_Adot2B(add,mult,xname) \
+                GB (_Adot2B_ ## add ## mult ## xname)
+
+            #define GB_AxB_WORKER(add,mult,xname)                           \
+            {                                                               \
+                info = GB_Adot2B (add,mult,xname) (C, M, Mask_comp,         \
+                    Mask_struct, A, A_is_pattern, A_slice, B, B_is_pattern, \
+                    B_slice, nthreads, naslice, nbslice) ;                  \
+                done = (info != GrB_NO_VALUE) ;                             \
+            }                                                               \
+            break ;
+
+            //------------------------------------------------------------------
+            // launch the switch factory
+            //------------------------------------------------------------------
+
+            GB_Opcode mult_opcode, add_opcode ;
+            GB_Type_code xcode, ycode, zcode ;
+
+            if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern,
+                semiring, flipxy, &mult_opcode, &add_opcode, &xcode, &ycode,
+                &zcode))
+            { 
+                #include "GB_AxB_factory.c"
+            }
+            ASSERT (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
+
+        #endif
+
+        //----------------------------------------------------------------------
+        // C = A'*B, computing each entry with a dot product, with typecasting
+        //----------------------------------------------------------------------
+
+        if (!done)
         { 
-            #include "GB_AxB_factory.c"
+            #define GB_DOT2_GENERIC
+            GB_BURBLE_MATRIX (C, "(generic C%s=A'*B) ", (M == NULL) ? "" :
+                (Mask_comp ? "<!M>" : "<M>")) ;
+            #include "GB_AxB_dot_generic.c"
         }
-        ASSERT (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
-
-    #endif
-
-    //--------------------------------------------------------------------------
-    // C = A'*B, computing each entry with a dot product, with typecasting
-    //--------------------------------------------------------------------------
-
-    if (!done)
-    { 
-        #define GB_DOT2_GENERIC
-        GB_BURBLE_MATRIX (C, "(generic C%s=A'*B) ", (M == NULL) ? "" :
-            (Mask_comp ? "<!M>" : "<M>")) ;
-        #include "GB_AxB_dot_generic.c"
     }
 
     //--------------------------------------------------------------------------
@@ -474,11 +489,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
-
-// ttt = omp_get_wtime ( ) - ttt ;
-// GB_Global_timing_add (19, ttt) ;
-// ttt = omp_get_wtime ( ) ;
-
     return (GrB_SUCCESS) ;
 }
 

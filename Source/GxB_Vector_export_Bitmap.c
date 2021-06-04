@@ -21,7 +21,7 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     void **vx,          // values
     GrB_Index *vb_size, // size of vb in bytes
     GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, A is iso-valued
+    bool *iso,          // if true, A is iso
 
     GrB_Index *nvals,    // # of entries in bitmap
     const GrB_Descriptor desc

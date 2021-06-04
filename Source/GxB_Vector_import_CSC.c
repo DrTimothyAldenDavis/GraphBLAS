@@ -19,7 +19,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     void **vx,          // values
     GrB_Index vi_size,  // size of Ai in bytes
     GrB_Index vx_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso-valued
+    bool iso,           // if true, A is iso
 
     GrB_Index nvals,    // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted

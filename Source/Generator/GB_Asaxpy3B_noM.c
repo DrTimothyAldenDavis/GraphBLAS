@@ -10,13 +10,13 @@
 // If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 GB_AxB_defs_include
-#ifndef GBCOMPACT
+ifndef_compact
 
 //------------------------------------------------------------------------------
 // C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
-#if ( !GB_DISABLE )
+if_not_disabled
 
     #include "GB_AxB_saxpy3_template.h"
 
@@ -61,6 +61,5 @@ GB_AxB_defs_include
     }
 
 #endif
-
 #endif
 

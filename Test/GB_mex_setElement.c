@@ -41,7 +41,7 @@ GrB_Info set_ ## name                                                       \
     }                                                                       \
     if (debug_wait)                                                         \
     {                                                                       \
-        return (GB_Matrix_wait (A, "A", NULL)) ;                            \
+        return (GB_wait (A, "A", NULL)) ;                                   \
     }                                                                       \
     return (GrB_SUCCESS) ;                                                  \
 }
@@ -66,7 +66,6 @@ setEl (GxB_, FC64   , GxB_FC64_t    ) ;
 setEl (GrB_, UDT    , GxB_FC64_t) ;
 #undef  AMPERSAND
 
-
 // set all elements of a vector and return if an error is encountered
 #define vsetEl(prefix,name,type)                                            \
 GrB_Info vset_ ## name                                                      \
@@ -81,7 +80,7 @@ GrB_Info vset_ ## name                                                      \
     }                                                                       \
     if (debug_wait)                                                         \
     {                                                                       \
-        return (GB_Matrix_wait (A, "A", NULL)) ;                            \
+        return (GB_wait (A, "A", NULL)) ;                                   \
     }                                                                       \
     return (GrB_SUCCESS) ;                                                  \
 }
@@ -186,7 +185,7 @@ void mexFunction
         mexErrMsgTxt ("X cannot be sparse") ;
     }
 
-    // get debug_wait (if true, to GB_Matrix_wait after setElements)
+    // get debug_wait (if true, to GB_wait after setElements)
     GET_SCALAR (4, bool, debug_wait, false) ;
 
     if (mxIsComplex (pargin [3]))

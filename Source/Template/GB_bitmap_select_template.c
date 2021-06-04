@@ -20,6 +20,7 @@
 {
     int8_t *Ab = A->b ;
     GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const bool A_iso = A->iso ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
     const size_t asize = A->type->size ;
@@ -50,7 +51,6 @@
         #endif
         Cb [pA] = cb ;
         cnvals += cb ;
-        // if (Cx != NULL)
         { 
             // Cx [pA] = Ax [pA]
             GB_SELECT_ENTRY (Cx, pA, Ax, pA) ;

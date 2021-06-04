@@ -168,7 +168,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
             }
             #include "GB_bitmap_assign_A_template.c"
 
-            cnvals += GB_NNZ (A) ;
+            cnvals += GB_nnz (A) ;
         }
     }
 

@@ -40,10 +40,10 @@ void mexFunction
 
     // get A C (make a deep copy)
     #define GET_DEEP_COPY       \
-        C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;   \
-        GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, C->sparsity) ;      \
-        A = GB_mx_mxArray_to_Matrix (pargin [1], "A input", true, true) ;   \
-        GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, A->sparsity) ;
+        C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;      \
+        GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, C->sparsity_control) ; \
+        A = GB_mx_mxArray_to_Matrix (pargin [1], "A input", true, true) ;      \
+        GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, A->sparsity_control) ;
     #define FREE_DEEP_COPY      \
         GrB_Matrix_free_(&C) ;  \
         GrB_Matrix_free_(&A) ;

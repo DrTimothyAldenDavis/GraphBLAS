@@ -24,7 +24,7 @@ static inline GrB_Matrix GB_get_mask    // return M_in or NULL
     if (M_in != NULL && M_in->iso && !(*Mask_struct) &&
         (M_in->type->code != GB_UDT_code))
     {
-        // The mask is present, iso-valued, not structural, and does not have
+        // The mask is present, iso, not structural, and does not have
         // a user-defined type.  Convert the mask to a structural mask.
         (*Mask_struct) = true ;
 

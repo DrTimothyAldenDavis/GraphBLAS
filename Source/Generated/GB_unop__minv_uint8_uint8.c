@@ -32,8 +32,8 @@
     uint8_t
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA,A_iso) \
-    uint8_t aij = GBX (Ax, pA, A_iso)
+#define GB_GETA(aij,Ax,pA) \
+    uint8_t aij = Ax [pA]
 
 #define GB_CX(p) Cx [p]
 
@@ -46,10 +46,10 @@
     uint8_t z = aij ;
 
 // cij = op (aij)
-#define GB_CAST_OP(pC,pA,A_iso)     \
+#define GB_CAST_OP(pC,pA)           \
 {                                   \
     /* aij = Ax [pA] */             \
-    uint8_t aij = GBX (Ax, pA, A_iso) ;   \
+    uint8_t aij = Ax [pA] ;          \
     /* Cx [pC] = op (cast (aij)) */ \
     uint8_t z = aij ;               \
     Cx [pC] = GB_IMINV_UNSIGNED (z, 8) ;        \
@@ -71,7 +71,6 @@ GrB_Info GB (_unop_apply__minv_uint8_uint8)
 (
     uint8_t *Cx,       // Cx and Ax may be aliased
     const uint8_t *Ax,
-    const bool A_iso,
     const int8_t *restrict Ab,   // A->b if A is bitmap
     int64_t anz,
     int nthreads
@@ -82,9 +81,6 @@ GrB_Info GB (_unop_apply__minv_uint8_uint8)
     #else
     int64_t p ;
 
-    // TODO: if OP is ONE and iso-valued matrices are exploited, then
-    // do this in O(1) time.  Or, if C is also iso-valued, do in O(1) time.
-
     if (Ab == NULL)
     { 
         #if ( GB_OP_IS_IDENTITY_WITH_NO_TYPECAST )
@@ -93,7 +89,7 @@ GrB_Info GB (_unop_apply__minv_uint8_uint8)
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < anz ; p++)
             {
-                uint8_t aij = GBX (Ax, p, A_iso) ;
+                uint8_t aij = Ax [p] ;
                 uint8_t z = aij ;
                 Cx [p] = GB_IMINV_UNSIGNED (z, 8) ;
             }
@@ -106,7 +102,7 @@ GrB_Info GB (_unop_apply__minv_uint8_uint8)
         for (p = 0 ; p < anz ; p++)
         {
             if (!Ab [p]) continue ;
-            uint8_t aij = GBX (Ax, p, A_iso) ;
+            uint8_t aij = Ax [p] ;
             uint8_t z = aij ;
             Cx [p] = GB_IMINV_UNSIGNED (z, 8) ;
         }

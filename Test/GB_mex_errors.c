@@ -4541,7 +4541,7 @@ void mexFunction
     OK (GrB_Matrix_assign_BOOL (Eleven, NULL, NULL, (bool) true, I, 1, GrB_ALL, 0, NULL)) ;
     OK (GB_Matrix_check (Eleven, "Eleven", G2, NULL)) ;
 
-    if (!GB_IS_FULL (Eleven)) GB_Matrix_wait (Eleven, "Eleven", Context) ;
+    if (!GB_IS_FULL (Eleven)) GB_wait (Eleven, "Eleven", Context) ;
 
     for (int pr = -4 ; pr <= 3 ; pr++)
     {
@@ -5024,32 +5024,32 @@ void mexFunction
         OK (GxB_Matrix_subassign (B, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
         OK (GxB_Matrix_subassign (A, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
 
-        GB_Matrix_wait (A, "A", Context) ;
-        GB_Matrix_wait (B, "B", Context) ;
+        GB_wait (A, "A", Context) ;
+        GB_wait (B, "B", Context) ;
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_Matrix_free_(&B) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GxB_Matrix_subassign (B, Amask, NULL, A, ilist, n, jlist, n, NULL));
         OK (GxB_Matrix_subassign (A, Amask, NULL, A, ilist, n, jlist, n, NULL));
-        GB_Matrix_wait (A, "A", Context) ;
-        GB_Matrix_wait (B, "B", Context) ;
+        GB_wait (A, "A", Context) ;
+        GB_wait (B, "B", Context) ;
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_Matrix_free_(&B) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GxB_Vector_subassign (v, umask, NULL, u, GrB_ALL, n, NULL)) ;
         OK (GxB_Vector_subassign (u, umask, NULL, u, GrB_ALL, n, NULL)) ;
-        GB_Matrix_wait ((GrB_Matrix) u, "u", Context) ;
-        GB_Matrix_wait ((GrB_Matrix) v, "v", Context) ;
+        GB_wait ((GrB_Matrix) u, "u", Context) ;
+        GB_wait ((GrB_Matrix) v, "v", Context) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_Vector_free_(&v) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GxB_Vector_subassign (v, umask, NULL, u, ilist, n, NULL)) ;
         OK (GxB_Vector_subassign (u, umask, NULL, u, ilist, n, NULL)) ;
-        GB_Matrix_wait ((GrB_Matrix) v, "v", Context) ;
-        GB_Matrix_wait ((GrB_Matrix) u, "u", Context) ;
+        GB_wait ((GrB_Matrix) v, "v", Context) ;
+        GB_wait ((GrB_Matrix) u, "u", Context) ;
 
         OK (GxB_Vector_fprint_(v, G3, NULL)) ;
         OK (GxB_Vector_fprint_(u, G3, NULL)) ;
@@ -5069,8 +5069,8 @@ void mexFunction
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_Matrix_assign_(B, Amask, NULL, A, ilist, n, jlist, n, NULL)) ;
         OK (GrB_Matrix_assign_(A, Amask, NULL, A, ilist, n, jlist, n, NULL)) ;
-        if (!GB_IS_FULL (B)) GB_Matrix_wait (B, "B", Context) ;
-        if (!GB_IS_FULL (A)) GB_Matrix_wait (A, "A", Context) ;
+        if (!GB_IS_FULL (B)) GB_wait (B, "B", Context) ;
+        if (!GB_IS_FULL (A)) GB_wait (A, "A", Context) ;
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_Matrix_free_(&B) ;
 
@@ -5083,8 +5083,8 @@ void mexFunction
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_Vector_assign_(v, umask, NULL, u, ilist, n, NULL)) ;
         OK (GrB_Vector_assign_(u, umask, NULL, u, ilist, n, NULL)) ;
-        if (!GB_IS_FULL (v)) GB_Matrix_wait ((GrB_Matrix) v, "v", Context) ;
-        if (!GB_IS_FULL (u)) GB_Matrix_wait ((GrB_Matrix) u, "u", Context) ;
+        if (!GB_IS_FULL (v)) GB_wait ((GrB_Matrix) v, "v", Context) ;
+        if (!GB_IS_FULL (u)) GB_wait ((GrB_Matrix) u, "u", Context) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_Vector_free_(&v) ;
 

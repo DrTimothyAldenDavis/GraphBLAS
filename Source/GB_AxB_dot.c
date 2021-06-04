@@ -84,13 +84,28 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     ASSERT (!GB_ZOMBIES (B)) ;
 
     ASSERT_SEMIRING_OK (semiring, "semiring for dot A'*B", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (C_in, "C_int for dot A'*B", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // determine if C is iso
+    //--------------------------------------------------------------------------
+
+    GrB_Type ztype = semiring->add->op->ztype ;
+    size_t zsize = ztype->size ;
+    GB_void cscalar [GB_VLA(zsize)] ;
+    bool C_iso = GB_iso_AxB (cscalar, A, B, A->vlen, semiring) ;
+    if (C_iso)
+    { 
+        GBURBLE ("(iso dot) ") ;
+    }
 
     //--------------------------------------------------------------------------
     // in-place C+=A'*B.  mask is not present (and not applied)
     //--------------------------------------------------------------------------
 
-    if (GB_AxB_dot4_control (C_in, M, Mask_comp))
+    if (!C_iso && GB_AxB_dot4_control (C_in, M, Mask_comp))
     { 
+        // the C iso case is not handled, but C_in might be iso
         (*done_in_place) = true ;
         (*mask_applied) = false ;    // no mask to apply
         return (GB_AxB_dot4 (C_in, A, B, semiring, flipxy, Context)) ;
@@ -105,8 +120,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // no work to do; C is an empty matrix, normally hypersparse
         if (C_in != NULL) return (GrB_SUCCESS) ;
         return (GB_new (&C, true, // auto sparsity, static header
-            semiring->add->op->ztype, A->vdim, B->vdim, GB_Ap_calloc, true,
-            GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1, Context)) ;
+            ztype, A->vdim, B->vdim, GB_Ap_calloc, true, GxB_AUTO_SPARSITY,
+            GB_Global_hyper_switch_get ( ), 1, Context)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -128,9 +143,9 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 // if (GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring, flipxy, Context)
 
         // very rough estimate of the work to do
-        int64_t anz = GB_IS_FULL (A) ? GB_NNZ_FULL (A) : GB_NNZ (A) ;
-        int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ;
-        int64_t mnz = GB_NNZ (M) ;
+        int64_t anz = GB_nnz (A) ;
+        int64_t bnz = GB_nnz (B) ;
+        int64_t mnz = GB_nnz (M) ;
 
         double adeg = ((double) anz) / ((double) GB_IMAX (1, A->nvec)) ;
         double bdeg = ((double) bnz) / ((double) GB_IMAX (1, B->nvec)) ;
@@ -145,7 +160,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             && (semiring->header_size == 0)     // semiring is built-in
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code)
-            && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))
+            && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
+            && !C_iso)
 // to here ... ]
         {
             // use "the" GPU (TODO for GPU: could use multiple GPUs too)
@@ -156,8 +172,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         #endif
         { 
             // use the CPU
-            return (GB_AxB_dot3 (C, M, Mask_struct, A, B, semiring,
-                flipxy, Context)) ;
+            return (GB_AxB_dot3 (C, C_iso, cscalar, M, Mask_struct, A, B,
+                semiring, flipxy, Context)) ;
         }
     }
 
@@ -167,7 +183,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
     (*mask_applied) = (M != NULL) ; // mask applied if present
     (*done_in_place) = false ;      // TODO: allow dot2 to work in-place
-    return (GB_AxB_dot2 (C, M, Mask_comp, Mask_struct, A, B, semiring,
-        flipxy, Context)) ;
+    return (GB_AxB_dot2 (C, C_iso, cscalar, M, Mask_comp, Mask_struct, A, B,
+        semiring, flipxy, Context)) ;
 }
 

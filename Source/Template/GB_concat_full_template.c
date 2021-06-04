@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// If C and A are iso, this method is not used.
+
 {
 
     //--------------------------------------------------------------------------
@@ -14,6 +16,7 @@
     //--------------------------------------------------------------------------
 
     const GB_CTYPE *restrict Ax = (GB_CTYPE *) A->x ;
+    const bool A_iso = A->iso ;
     GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
 
     int64_t pA ;
@@ -26,7 +29,7 @@
         int64_t jC = cvstart + j ;
         int64_t pC = iC + jC * cvlen ;
         // Cx [pC] = Ax [pA] ;
-        GB_COPY (pC, pA) ;
+        GB_COPY (pC, pA, A_iso) ;
     }
 
     done = true ;

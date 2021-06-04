@@ -32,10 +32,10 @@
 
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_phbix_free (C2) ;          \
-    GB_phbix_free (M2) ;          \
-    GB_phbix_free (A2) ;          \
-    GB_phbix_free (SubMask) ;     \
+    GB_phbix_free (C2) ;            \
+    GB_phbix_free (M2) ;            \
+    GB_phbix_free (A2) ;            \
+    GB_phbix_free (SubMask) ;       \
     GB_FREE_WERK (&I2, I2_size) ;   \
     GB_FREE_WERK (&J2, J2_size) ;   \
 }
@@ -87,16 +87,16 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     GrB_Matrix SubMask = NULL ;
 
     GrB_Type atype = NULL ;
-    bool done = false ;
     int64_t ni, nj, nI, nJ, Icolon [3], Jcolon [3] ;
     int Ikind, Jkind ;
     ASSERT_MATRIX_OK (C_in, "C_in for assign", GB0) ;
+    int subassign_method ;
 
-    GB_OK (GB_assign_prep (&C, &M, &A, &C2, &M2, &A2,
+    GB_OK (GB_assign_prep (&C, &M, &A, &subassign_method, &C2, &M2, &A2,
         &C2_header, &M2_header, &A2_header, &MT_header, &AT_header,
         &I, &I2, &I2_size, &ni, &nI, &Ikind, Icolon,
         &J, &J2, &J2_size, &nj, &nJ, &Jkind, Jcolon,
-        &done, &atype, C_in, &C_replace, &assign_kind,
+        &atype, C_in, &C_replace, &assign_kind,
         M_in, Mask_comp, Mask_struct, M_transpose, accum,
         A_in, A_transpose, Rows, nRows_in, Cols, nCols_in,
         scalar_expansion, scalar, scalar_code, Context)) ;
@@ -104,20 +104,13 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     ASSERT_MATRIX_OK (C, "initial C for assign", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "initial M for assign", GB0) ;
 
-    if (done)
+    if (subassign_method == 0)
     { 
         // GB_assign_prep has handled the entire assignment itself
         ASSERT_MATRIX_OK (C_in, "QUICK : Final C for assign", GB0) ;
         ASSERT (C == C_in) ;
         return (GrB_SUCCESS) ;
     }
-
-    //--------------------------------------------------------------------------
-    // determine method for GB_subassigner
-    //--------------------------------------------------------------------------
-
-    int subassign_method = GB_subassigner_method (C, C_replace,
-        M, Mask_comp, Mask_struct, accum, A, Ikind, Jkind, scalar_expansion) ;
 
     //--------------------------------------------------------------------------
     // determine if the final C_replace phase is needed
@@ -243,8 +236,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 ASSERT (M->vlen == C->vlen && M->vdim == C->vdim) ;
             }
 
-            GB_OK (GB_subref (SubMask, true, M,
-                I_SubMask, ni_SubMask, J_SubMask, nj_SubMask,
+            // if Mask_struct then SubMask is extracted as iso
+            GB_OK (GB_subref (SubMask, Mask_struct,
+                true, M, I_SubMask, ni_SubMask, J_SubMask, nj_SubMask,
                 false, Context)) ;
 
             // GB_subref can return a jumbled result
@@ -255,10 +249,12 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // C(I,J)<SubMask> = A or accum (C(I,J),A) via GB_subassigner
             //------------------------------------------------------------------
 
-            // determine the method again since SubMask is not M
-            subassign_method = GB_subassigner_method (C, C_replace,
-                SubMask, Mask_comp, Mask_struct, accum, A, Ikind, Jkind,
-                scalar_expansion) ;
+            // determine the method again since SubMask is not M;
+            // no need to recompute C_iso_out and cout for the iso case
+            bool ignore ;
+            subassign_method = GB_subassigner_method (C, &ignore, NULL,
+                C_replace, SubMask, Mask_comp, Mask_struct, accum, A,
+                Ikind, Jkind, scalar_expansion, scalar, atype) ;
 
             GB_OK (GB_subassigner (C, subassign_method, C_replace,
                 SubMask, Mask_comp, Mask_struct, accum, A,

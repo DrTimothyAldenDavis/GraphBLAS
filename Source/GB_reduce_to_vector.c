@@ -101,7 +101,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp, Mask_struct) ;
 
     //--------------------------------------------------------------------------
-    // create B as full vector but with B->x of NULL
+    // create B as full iso vector
     //--------------------------------------------------------------------------
 
     // B is constructed with a static header in O(1) time and space, even
@@ -111,8 +111,14 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     info = GB_new (&B, true,  // full, static header
         ztype, m, 1, GB_Ap_null, true, GxB_FULL, GB_NEVER_HYPER, 1, Context) ;
     ASSERT (info == GrB_SUCCESS) ;
-    B->nzmax = m ;
     B->magic = GB_MAGIC ;
+    B->iso = true ;             // OK: B is a temporary matrix; no burble
+    size_t zsize = ztype->size ;
+    GB_void bscalar [GB_VLA(zsize)] ;
+    memset (bscalar, 0, zsize) ;
+    B->x = bscalar ;
+    B->x_shallow = true ;
+    B->x_size = zsize ;
     ASSERT_MATRIX_OK (B, "B for reduce-to-vector", GB0) ;
 
     //--------------------------------------------------------------------------

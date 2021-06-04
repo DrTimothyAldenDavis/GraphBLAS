@@ -7,9 +7,14 @@
 
 //------------------------------------------------------------------------------
 
+// TODO::: not called if C is iso on input
+
 // GB_AxB_dot4 does its computation in a single phase, computing its result in
 // the input matrix C, which is already dense.  The mask M is not handled by
-// this function.
+// this function.  C is not iso on output, but TODO: might be iso on input.
+
+// The accum operator is the same as monoid operator semiring->add->op, and the
+// type of C (C->type) matches the accum->ztype so no typecasting is needed.
 
 #include "GB_mxm.h"
 #include "GB_binop.h"
@@ -43,7 +48,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     ASSERT_MATRIX_OK (C, "C for dot in-place += A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot in-place += A'*B", GB0) ;
     ASSERT_MATRIX_OK (B, "B for dot in-place += A'*B", GB0) ;
-    ASSERT (GB_is_dense (C)) ;
+    ASSERT (GB_as_if_full (C)) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
@@ -57,6 +62,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     ASSERT (!GB_IS_BITMAP (C)) ;
 
     ASSERT_SEMIRING_OK (semiring, "semiring for in-place += A'*B", GB0) ;
+
     ASSERT (A->vlen == B->vlen) ;
 
     GB_WERK_DECLARE (A_slice, int64_t) ;
@@ -71,8 +77,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    int64_t anz = GB_NNZ_HELD (A) ;
-    int64_t bnz = GB_NNZ_HELD (B) ;
+    int64_t anz = GB_nnz_held (A) ;
+    int64_t bnz = GB_nnz_held (B) ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
 

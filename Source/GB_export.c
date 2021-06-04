@@ -7,10 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// No conversion is done, and the matrix is exported in its current sparsity
-// structure and by-row/by-col format.
+// No conversion is done, except to convert to non-iso if requested.  The
+// matrix is exported in its current sparsity structure and by-row/by-col
+// format.
 
 #include "GB_export.h"
+
+#define GB_FREE_ALL ;
 
 GrB_Info GB_export      // export a matrix in any format
 (
@@ -44,8 +47,8 @@ GrB_Info GB_export      // export a matrix in any format
     // information for all formats:
     int *sparsity,      // hypersparse, sparse, bitmap, or full
     bool *is_csc,       // if true then matrix is by-column, else by-row
-    bool *iso,          // if true then A is iso-valued and only one
-                        // entry is returned in Ax, regardless of nvals(A).
+    bool *iso,          // if true then A is iso and only one entry is returned
+                        // in Ax, regardless of nvals(A).
     GB_Context Context
 )
 {
@@ -54,6 +57,7 @@ GrB_Info GB_export      // export a matrix in any format
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (A != NULL) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
     ASSERT_MATRIX_OK (*A, "A to export", GB0) ;
@@ -95,6 +99,26 @@ GrB_Info GB_export      // export a matrix in any format
             break ;
 
         default: ;
+    }
+
+    //--------------------------------------------------------------------------
+    // ensure A is non-iso if requested, or export A as-is
+    //--------------------------------------------------------------------------
+
+    if (iso == NULL)
+    {
+        // ensure A is non-iso
+        // set A->iso = false   OK
+        GB_OK (GB_convert_any_to_non_iso (A, true, Context)) ;
+    }
+    else
+    { 
+        // do not convert the matrix; export A as-is, either iso or non-iso
+        (*iso) = (*A)->iso ;
+        if (*iso)
+        { 
+            GBURBLE ("(iso export )") ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -174,10 +198,6 @@ GrB_Info GB_export      // export a matrix in any format
     if (is_csc != NULL)
     { 
         (*is_csc) = (*A)->is_csc ;
-    }
-    if (iso != NULL)
-    { 
-        (*iso) = false ;     // TODO::: iso-valued matrices
     }
 
     //--------------------------------------------------------------------------

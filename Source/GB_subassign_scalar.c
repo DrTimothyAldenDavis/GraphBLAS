@@ -54,18 +54,17 @@ GrB_Info GB_subassign_scalar        // C(Rows,Cols)<M> += x
     // C(Rows,Cols)<M> = accum (C(Rows,Cols), scalar)
     //--------------------------------------------------------------------------
 
-    info = (GB_subassign (
-        C,          C_replace,      // C matrix and its descriptor
+    return (GB_subassign (
+        C, C_replace,               // C matrix and its descriptor
         M, Mask_comp, Mask_struct,  // mask matrix and its descriptor
         false,                      // do not transpose the mask
         accum,                      // for accum (C(Rows,Cols),scalar)
-        NULL,       false,          // no explicit matrix A
+        NULL, false,                // no explicit matrix A
         Rows, nRows,                // row indices
         Cols, nCols,                // column indices
         true,                       // do scalar expansion
         scalar,                     // scalar to assign, expands to become A
         scalar_code,                // type code of scalar to expand
         Context)) ;
-    return (info) ;
 }
 

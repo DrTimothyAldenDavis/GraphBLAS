@@ -7,10 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// Casts an input array Ax to an output array Cx with a different built-in
-// type.  Does not handle user-defined types.
-
-// FIXME: if A is iso, then create Cx as iso too
+// Casts an input array Ax to an output array Cx with a different type.
+// User-defined types can be copied without typecasting.  The iso case is not
+// handled; Ax and Cx must be the same size and no iso expansion is done.
 
 #include "GB.h"
 #ifndef GBCOMPACT
@@ -23,7 +22,6 @@ void GB_cast_array              // typecast an array
     GB_void *Cx,                // output array
     const GB_Type_code code1,   // type code for Cx
     GB_void *Ax,                // input array
-    const bool A_iso,           // true if Ax is iso-valued
     const GB_Type_code code2,   // type code for Ax
     const int8_t *restrict Ab,  // bitmap for Ax
     const size_t user_size,     // size of Ax and Cx if user-defined
@@ -36,7 +34,7 @@ void GB_cast_array              // typecast an array
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (anz == 0 || (Cx == Ax && !A_iso))
+    if (anz == 0 || Cx == Ax)
     { 
         // if anz is zero: no work to do, and the Ax and Cx pointer may be NULL
         // as well.  If Cx and Ax are aliased, then no copy is needed.
@@ -64,7 +62,7 @@ void GB_cast_array              // typecast an array
         #define GB_WORKER(ignore1,zname,ztype,xname,xtype)                  \
         {                                                                   \
             GrB_Info info = GB_unop_apply (zname,xname)                     \
-                ((ztype *) Cx, (xtype *) Ax, A_iso, Ab, anz, nthreads) ;    \
+                ((ztype *) Cx, (xtype *) Ax, Ab, anz, nthreads) ;           \
             if (info == GrB_SUCCESS) return ;                               \
         }                                                                   \
         break ;
@@ -91,7 +89,7 @@ void GB_cast_array              // typecast an array
     { 
         if (!GBB (Ab, p)) continue ;
         // Cx [p] = Ax [p]
-        cast_A_to_C (Cx +(p*csize), Ax +(A_iso ? 0:p*asize), asize) ;
+        cast_A_to_C (Cx +(p*csize), Ax +(p*asize), asize) ;
     }
 }
 

@@ -13,8 +13,10 @@
     // get A and C, and the slicing of C
     //--------------------------------------------------------------------------
 
+    #ifndef GB_ISO_SPLIT
     const GB_CTYPE *restrict Ax = (GB_CTYPE *) A->x ;
     GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    #endif
 
     //--------------------------------------------------------------------------
     // copy the tile from A to C
@@ -51,4 +53,5 @@
 }
 
 #undef GB_CTYPE
+#undef GB_ISO_SPLIT
 

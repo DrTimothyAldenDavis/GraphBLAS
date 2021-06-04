@@ -12,6 +12,10 @@
 // for user-defined operators, when typecasting occurs, or for FIRST[IJ]* and
 // SECOND[IJ]* positional operators.
 
+// TODO: the generic eWiseAdd is very similar; merge the 2 codes
+
+// C is not iso, but A and/or B might be.
+
 #include "GB_ewise.h"
 #include "GB_emult.h"
 #include "GB_binop.h"
@@ -66,6 +70,7 @@ void GB_ewise_generic       // generic ewise
     ASSERT_MATRIX_OK (A, "A for ewise generic", GB0) ;
     ASSERT_MATRIX_OK (B, "B for ewise generic", GB0) ;
     ASSERT_BINARYOP_OK (op, "op for ewise generic", GB0) ;
+    ASSERT (!C->iso) ;
 
     //--------------------------------------------------------------------------
     // get C

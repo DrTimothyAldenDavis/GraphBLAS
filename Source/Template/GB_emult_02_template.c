@@ -29,6 +29,10 @@
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
     const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
 
+    #ifdef GB_ISO_EMULT
+    ASSERT (C->iso) ;
+    #else
+    ASSERT (!C->iso) ;
     #if GB_FLIPPED
     const GB_BTYPE *restrict Ax = (GB_BTYPE *) A->x ;
     const GB_ATYPE *restrict Bx = (GB_ATYPE *) B->x ;
@@ -36,12 +40,16 @@
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
     #endif
+          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    #endif
+
+    // one of A or B can be iso, but not both
     const bool A_iso = A->iso ;
     const bool B_iso = B->iso ;
+    ASSERT (!(A_iso && B_iso)) ;
 
     const int64_t  *restrict Cp = C->p ;
           int64_t  *restrict Ci = C->i ;
-          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
 
     //--------------------------------------------------------------------------
     // C=A.*B or C<#M>=A.*B
@@ -81,12 +89,14 @@
                         if (!Bb [pB]) continue ;
                         // C (i,j) = A (i,j) .* B (i,j)
                         Ci [pC] = i ;
+                        #ifndef GB_ISO_EMULT
                         GB_GETA (aij, Ax, pA, A_iso) ;     
                         GB_GETB (bij, Bx, pB, B_iso) ;
                         #if GB_FLIPPED
                         GB_BINOP (GB_CX (pC), bij, aij, i, j) ;
                         #else
                         GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
+                        #endif
                         #endif
                         pC++ ;
                     }
@@ -120,12 +130,14 @@
                         int64_t i = Ai [pA] ;
                         int64_t pB = pB_start + i ;
                         // Ci [pA] = i ; already defined
+                        #ifndef GB_ISO_EMULT
                         GB_GETA (aij, Ax, pA, A_iso) ;
                         GB_GETB (bij, Bx, pB, B_iso) ;
                         #if GB_FLIPPED
                         GB_BINOP (GB_CX (pA), bij, aij, i, j) ;
                         #else
                         GB_BINOP (GB_CX (pA), aij, bij, i, j) ;
+                        #endif
                         #endif
                     }
                 }
@@ -167,12 +179,14 @@
                     if (!mij) continue ;
                     // C (i,j) = A (i,j) .* B (i,j)
                     Ci [pC] = i ;
+                    #ifndef GB_ISO_EMULT
                     GB_GETA (aij, Ax, pA, A_iso) ;     
                     GB_GETB (bij, Bx, pB, B_iso) ;
                     #if GB_FLIPPED
                     GB_BINOP (GB_CX (pC), bij, aij, i, j) ;
                     #else
                     GB_BINOP (GB_CX (pC), aij, bij, i, j) ;
+                    #endif
                     #endif
                     pC++ ;
                 }

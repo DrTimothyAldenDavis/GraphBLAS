@@ -1,7 +1,9 @@
 function C = assign (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %GRB.ASSIGN: assign a submatrix into a matrix.
 %
-%   C = GrB.assign (Cin, M, accum, A, I, J, desc)
+%   C = GrB_assign (Cin, M, accum, A, I, J, desc)
+
+%       GrB_assign (C,M,acc,A,I,ni,J,nj,d) // C<M>(I,J)  = acc(C(I,J),A)
 %
 %   C<M>(I,J) = A or accum (C(I,J), A)
 %

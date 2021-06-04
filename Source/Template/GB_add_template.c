@@ -91,17 +91,25 @@
     }
 
     #if defined ( GB_PHASE_2_OF_2 )
+    #ifdef GB_ISO_ADD
+    ASSERT (C->iso) ;
+    #else
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    ASSERT (!C->iso) ;
+    #endif
+
+    // unlike GB_emult, both A and B may be iso
     const bool A_iso = A->iso ;
     const bool B_iso = B->iso ;
     const int64_t  *restrict Cp = C->p ;
     const int64_t  *restrict Ch = C->h ;
           int8_t   *restrict Cb = C->b ;
           int64_t  *restrict Ci = C->i ;
-          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+
     // when C is bitmap or full:
-    const int64_t cnz = GB_NNZ_HELD (C) ;
+    const int64_t cnz = GB_nnz_held (C) ;
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     #endif
 
@@ -141,4 +149,6 @@
 
     #endif
 }
+
+#undef GB_ISO_ADD
 

@@ -215,9 +215,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     GB_cuda_stringifier mysemiring =  GB_cuda_stringifier();
     uint64_t sr_code;
 
+    // FIXME:  need GB_sparsity(C), etc, not C->sparsity
     mysemiring.enumify_semiring ( &sr_code, semiring, flipxy,
         ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
-        false, C->sparsity, M->sparsity, A->sparsity, B->sparsity) ;
+        false, C->sparsity, M->sparsity, A->sparsity, B->sparsity) ;    // FIXME
 
     const char *header_name = (const char *)"mySemiRing.h";
     mysemiring.load_string(header_name, semiring_code ) ;

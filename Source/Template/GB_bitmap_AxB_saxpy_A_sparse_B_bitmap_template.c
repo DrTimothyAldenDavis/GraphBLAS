@@ -94,14 +94,14 @@
             //------------------------------------------------------------------
 
             // Gb and Gx workspace to load the panel of B
-            int8_t   *restrict Gb = Wf + G_slice [tid] * bvlenb ;
-            GB_BTYPE *restrict Gx = (GB_BTYPE *)
-                (Wbx + G_slice [tid] * bvlenx) ;
-
             // Hf and Hx workspace to compute the panel of C
-            int8_t   *restrict Hf = Wf + (H_slice [tid] * cvlen) + gfspace ;
-            GB_CTYPE *restrict Hx = (GB_CTYPE *)
-                (Wcx +  H_slice [tid] * cvlenx) ;
+            int8_t *restrict Gb = Wf + G_slice [tid] * bvlenb ;
+            int8_t *restrict Hf = Wf + (H_slice [tid] * cvlen) + gfspace ;
+
+            #if ( !GB_IS_ANY_PAIR_SEMIRING )
+            GB_BTYPE *restrict Gx = (GB_BTYPE *) (Wbx + G_slice [tid] * bvlenx);
+            GB_CTYPE *restrict Hx = (GB_CTYPE *) (Wcx + H_slice [tid] * cvlenx);
+            #endif
             #if GB_IS_PLUS_FC32_MONOID
             float  *restrict Hx_real = (float *) Hx ;
             float  *restrict Hx_imag = Hx_real + 1 ;
@@ -156,6 +156,7 @@
                 }
                 #endif
 
+                #if ( !GB_IS_ANY_PAIR_SEMIRING )
                 if (!B_is_pattern)
                 {
                     if (np == 1)
@@ -180,6 +181,7 @@
                         }
                     }
                 }
+                #endif
 
                 //--------------------------------------------------------------
                 // H = A*G for one panel
@@ -351,11 +353,7 @@
                         if (cb == 0)
                         { 
                             // C(i,j) = H(i,jj)
-                            #if GB_IS_ANY_PAIR_SEMIRING
-                            Cx [pC] = GB_CTYPE_CAST (1, 0) ;    // C(i,j) = 1
-                            #else
                             GB_CIJ_GATHER (pC, pH) ;
-                            #endif
                             Cb [pC] = keep ;
                             task_cnvals++ ;
                         }
@@ -410,8 +408,10 @@
             int64_t task_cnvals = 0 ;
 
             // for Hx Gustavason workspace: use C(:,j) in-place:
+            #if ( !GB_IS_ANY_PAIR_SEMIRING )
             GB_CTYPE *restrict Hx = (GB_CTYPE *)
                 (((GB_void *) Cx) + (pC_start * GB_CSIZE)) ;
+            #endif
             #if GB_IS_PLUS_FC32_MONOID || GB_IS_ANY_FC32_MONOID
             float  *restrict Hx_real = (float *) Hx ;
             float  *restrict Hx_imag = Hx_real + 1 ;
@@ -496,11 +496,7 @@
                         { 
                             // C(i,j) is a new entry
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
-                            #if GB_IS_ANY_PAIR_SEMIRING
-                            GB_ATOMIC_SET_HX_ONE (i) ;      // C(i,j) = 1
-                            #else
                             GB_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
-                            #endif
                             task_cnvals++ ;
                             cb = keep ;                     // keep the entry
                         }
@@ -570,11 +566,7 @@
                         { 
                             // C(i,j) is a new entry
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
-                            #if GB_IS_ANY_PAIR_SEMIRING
-                            GB_ATOMIC_SET_HX_ONE (i) ;      // C(i,j) = 1
-                            #else
                             GB_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
-                            #endif
                             task_cnvals++ ;
                         }
                         else // cb == 1
@@ -653,8 +645,9 @@
 
             // for Hf and Hx Gustavason workspace: use W(:,tid):
             int8_t   *restrict Hf = Wf + pW_start ;
-            GB_CTYPE *restrict Hx = (GB_CTYPE *) 
-                (Wcx + (pW_start * cxsize)) ;
+            #if ( !GB_IS_ANY_PAIR_SEMIRING )
+            GB_CTYPE *restrict Hx = (GB_CTYPE *) (Wcx + (pW_start * cxsize)) ;
+            #endif
             #if GB_IS_PLUS_FC32_MONOID
             float  *restrict Hx_real = (float *) Hx ;
             float  *restrict Hx_imag = Hx_real + 1 ;
@@ -724,7 +717,6 @@
 
                     #if GB_IS_ANY_PAIR_SEMIRING
                     { 
-                        // Hx is not used; Cx [...] = 1 is done below
                         Hf [i] = 1 ;
                     }
                     #else
@@ -778,7 +770,9 @@
             int64_t task_cnvals = 0 ;
 
             // Hx = (typecasted) Wcx workspace, use Wf as-is
+            #if ( !GB_IS_ANY_PAIR_SEMIRING )
             GB_CTYPE *restrict Hx = ((GB_CTYPE *) Wcx) ;
+            #endif
             #if GB_IS_PLUS_FC32_MONOID
             float  *restrict Hx_real = (float *) Hx ;
             float  *restrict Hx_imag = Hx_real + 1 ;
@@ -830,11 +824,7 @@
                     if (cb == 0)
                     { 
                         // C(i,j) = W(i,w)
-                        #if GB_IS_ANY_PAIR_SEMIRING
-                        Cx [pC] = GB_CTYPE_CAST (1, 0) ;        // C(i,j) = 1
-                        #else
                         GB_CIJ_GATHER (pC, pW) ;
-                        #endif
                         Cb [pC] = keep ;
                         task_cnvals++ ;
                     }

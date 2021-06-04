@@ -10,7 +10,7 @@
 // If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 GB_AxB_defs_include
-#ifndef GBCOMPACT
+ifndef_compact
 
 //------------------------------------------------------------------------------
 // C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method (Gustavson + Hash)
@@ -28,7 +28,7 @@ GrB_Info GB (_Asaxpy3B)
     GB_Context Context
 )
 { 
-    #if GB_DISABLE
+    if_disabled
     return (GrB_NO_VALUE) ;
     #else
     ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;

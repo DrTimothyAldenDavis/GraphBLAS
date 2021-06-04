@@ -34,3 +34,4 @@ GrB_Info GB (_Adot2B__times_firstj1_int32)
 }
 
 #endif
+

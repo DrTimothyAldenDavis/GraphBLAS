@@ -39,6 +39,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 (
     GrB_Matrix C,               // output matrix (static header)
+    const GB_iso_code C_code_iso,   // iso code for C
     const GrB_Type ctype,       // type of output matrix C
     const bool C_is_csc,        // format of output matrix C
     const GrB_Matrix A,         // input matrix
@@ -57,8 +58,8 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     GrB_Matrix C,                       // output matrix
     const GrB_Matrix A,                 // input matrix
     // for sparse case:
-    int64_t *restrict *Workspaces,   // Workspaces, size nworkspaces
-    const int64_t *restrict A_slice, // how A is sliced, size nthreads+1
+    int64_t *restrict *Workspaces,      // Workspaces, size nworkspaces
+    const int64_t *restrict A_slice,    // how A is sliced, size nthreads+1
     int nworkspaces,                    // # of workspaces to use
     // for all cases:
     int nthreads                        // # of threads to use
@@ -67,6 +68,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
 void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
 (
     GrB_Matrix C,                       // output matrix
+    const GB_iso_code C_code_iso,       // iso code for C
         // no operator is applied if both op1 and op2 are NULL
         const GrB_UnaryOp op1,          // unary operator to apply
         const GrB_BinaryOp op2,         // binary operator to apply
@@ -74,8 +76,8 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,                 // input matrix
     // for sparse or hypersparse case:
-    int64_t *restrict *Workspaces,   // Workspaces, size nworkspaces
-    const int64_t *restrict A_slice, // how A is sliced, size nthreads+1
+    int64_t *restrict *Workspaces,      // Workspaces, size nworkspaces
+    const int64_t *restrict A_slice,    // how A is sliced, size nthreads+1
     int nworkspaces,                    // # of workspaces to use
     // for all cases:
     int nthreads                        // # of threads to use

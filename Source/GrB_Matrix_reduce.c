@@ -6,6 +6,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+#include "GB_reduce.h"
+#include "GB_binop.h"
+
+//------------------------------------------------------------------------------
 // GrB_Matrix_reduce_TYPE: reduce a matrix to a scalar
 //------------------------------------------------------------------------------
 
@@ -17,9 +22,6 @@
 // entries, the result t is the identity value of the monoid.  Unlike most
 // other GraphBLAS operations, this operation uses an accum operator but no
 // mask.
-
-#include "GB_reduce.h"
-#include "GB_binop.h"
 
 #define GB_MATRIX_TO_SCALAR(prefix,type,T)                                     \
 GrB_Info GB_EVAL3 (prefix, _Matrix_reduce_, T) /* c = accum (c, reduce (A)) */ \

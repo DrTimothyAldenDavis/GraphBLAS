@@ -50,11 +50,11 @@ GrB_Info GxB_Vector_subassign       // w(Rows)<M> = accum (w(Rows),u)
     //--------------------------------------------------------------------------
 
     info = GB_subassign (
-        (GrB_Matrix) w,     C_replace,  // w vector and its descriptor
+        (GrB_Matrix) w, C_replace,      // w vector and its descriptor
         M, Mask_comp, Mask_struct,      // mask and its descriptor
         false,                          // do not transpose the mask
         accum,                          // for accum (C(Rows,:),A)
-        (GrB_Matrix) u,     false,      // u as a matrix; never transposed
+        (GrB_Matrix) u, false,          // u as a matrix; never transposed
         Rows, nRows,                    // row indices
         GrB_ALL, 1,                     // all column indices
         false, NULL, GB_ignore_code,    // no scalar expansion

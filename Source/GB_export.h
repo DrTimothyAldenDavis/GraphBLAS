@@ -44,8 +44,8 @@ GrB_Info GB_import      // import a matrix in any format
     // information for all formats:
     int sparsity,       // hypersparse, sparse, bitmap, or full
     bool is_csc,        // if true then matrix is by-column, else by-row
-    bool iso,           // if true then A is iso-valued and only one
-                        // entry is provided in Ax, regardless of nvals(A).
+    bool iso,           // if true then A is iso and only one entry is provided
+                        // in Ax, regardless of nvals(A).
     GB_Context Context
 ) ;
 
@@ -81,8 +81,8 @@ GrB_Info GB_export      // export a matrix in any format
     // information for all formats:
     int *sparsity,      // hypersparse, sparse, bitmap, or full
     bool *is_csc,       // if true then matrix is by-column, else by-row
-    bool *iso,          // if true then A is iso-valued and only one
-                        // entry is returned in Ax, regardless of nvals(A).
+    bool *iso,          // if true then A is iso and only one entry is returned
+                        // in Ax, regardless of nvals(A).
     GB_Context Context
 ) ;
 

@@ -34,3 +34,4 @@ GrB_Info GB (_Adot2B__any_max_int16)
 }
 
 #endif
+

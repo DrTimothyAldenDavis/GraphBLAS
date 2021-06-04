@@ -54,14 +54,14 @@ GrB_Info GxB_Col_subassign          // C(Rows,col)<M> = accum (C(Rows,col),u)
     Cols [0] = col ;
 
     info = GB_subassign (
-        C,                  C_replace,      // C matrix and its descriptor
-        M_in, Mask_comp, Mask_struct,       // mask and its descriptor
-        false,                              // do not transpose the mask
-        accum,                              // for accum (C(Rows,col),u)
-        (GrB_Matrix) u,     false,          // u as a matrix; never transposed
-        Rows, nRows,                        // row indices
-        Cols, 1,                            // a single column index
-        false, NULL, GB_ignore_code,        // no scalar expansion
+        C, C_replace,                   // C matrix and its descriptor
+        M_in, Mask_comp, Mask_struct,   // mask and its descriptor
+        false,                          // do not transpose the mask
+        accum,                          // for accum (C(Rows,col),u)
+        (GrB_Matrix) u, false,          // u as a matrix; never transposed
+        Rows, nRows,                    // row indices
+        Cols, 1,                        // a single column index
+        false, NULL, GB_ignore_code,    // no scalar expansion
         Context) ;
 
     GB_BURBLE_END ;

@@ -62,7 +62,8 @@ void mexFunction
         // or when p = 0 (for Frobenius norm).  A cannot be bitmap.
         GrB_Index anz ;
         OK (GrB_Matrix_nvals (&anz, A)) ;
-        s = GB_matlab_helper10 (A->x, NULL, atype, norm_kind, anz) ;
+        s = GB_matlab_helper10 (A->x, A->iso, NULL, false,
+            atype, norm_kind, anz) ;
         if (s < 0) ERROR ("unknown norm") ;
     }
     else

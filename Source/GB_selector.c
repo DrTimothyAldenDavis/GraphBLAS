@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// GB_selector does the work for GB_select and the GxB_*select methods.
-// It also deletes zombies for GB_Matrix_wait using the NONZOMBIE operator,
-// and deletes entries outside a smaller matrix for GxB_*resize.
+// GB_selector does the work for GB_select and the GxB_*select methods.  It
+// also deletes zombies for GB_wait using the NONZOMBIE operator, and deletes
+// entries outside a smaller matrix for GxB_*resize.
 
 // TODO: GB_selector does not exploit the mask.
 
@@ -19,6 +19,8 @@
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 #include "GB_sel__include.h"
+#include "GB_scalar.h"
+#include "GB_transpose.h"
 
 #define GB_FREE_WORK                        \
 {                                           \
@@ -54,24 +56,24 @@ GrB_Info GB_selector
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT_SELECTOP_OK_OR_NULL (op, "selectop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_selector", GB0) ;
     ASSERT (opcode >= 0 && opcode <= GB_USER_SELECT_opcode) ;
-
     ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
     // positional selector (tril, triu, diag, offdiag, resize): can't be jumbled
-    ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_opcode, !GB_JUMBLED (A))) ;
-    // entry selector: jumbled OK
-    ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (A))) ;
-
-    GrB_Info info ;
-    bool in_place_A = (C == NULL) ; // GrB_Matrix_wait and GB_resize only
+    ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_opcode ||
+        opcode == GB_USER_SELECT_opcode, !GB_JUMBLED (A))) ;
+    // nonzombie, nentry selector: jumbled OK
+    ASSERT (GB_IMPLIES (opcode > GB_RESIZE_opcode && 
+        opcode < GB_USER_SELECT_opcode, GB_JUMBLED_OK (A))) ;
     ASSERT (C == NULL || (C != NULL && C->static_header)) ;
 
     //--------------------------------------------------------------------------
     // declare workspace
     //--------------------------------------------------------------------------
 
+    bool in_place_A = (C == NULL) ; // GrB_wait and GB_resize only
     int64_t *restrict Zp = NULL ; size_t Zp_size = 0 ;
     GB_WERK_DECLARE (Work, int64_t) ;
     int64_t *restrict Wfirst = NULL ;
@@ -79,11 +81,20 @@ GrB_Info GB_selector
     int64_t *restrict Cp_kfirst = NULL ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
+    int64_t avlen = A->vlen ;
+    int64_t avdim = A->vdim ;
+    const bool A_iso = A->iso ;
+
+    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
+    int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;
+    int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
+    GB_void *restrict Cx = NULL ; size_t Cx_size = 0 ;
+
     //--------------------------------------------------------------------------
     // get Thunk
     //--------------------------------------------------------------------------
 
-    // The scalar value of Thunk(0) is typecasted to an integer (int64_t
+    // The scalar value of Thunk is typecasted to an integer (int64_t
     // ithunk) for built-in operators (tril, triu, diag, offdiag, and resize).
     // It is also typecast to the same type as A (to the scalar athunk).  This
     // is used for gt, ge, lt, le, ne, eq to Thunk, for built-in types.
@@ -92,31 +103,80 @@ GrB_Info GB_selector
     // of zero.
 
     const int64_t asize = A->type->size ;
-    const GB_Type_code typecode = A->type->code ;
+    const GB_Type_code typecode = (A_iso) ? GB_ignore_code : A->type->code ;
 
     GB_void athunk [GB_VLA(asize)] ;
     memset (athunk, 0, asize) ;
     GB_void *restrict xthunk = athunk ;
 
-    if (Thunk != NULL && GB_NNZ (Thunk) > 0)
+    if (Thunk != NULL && GB_nnz ((GrB_Matrix) Thunk) > 0)
     {
         // xthunk points to Thunk->x for user-defined select operators
         xthunk = (GB_void *) Thunk->x ;
-        GB_Type_code tcode = Thunk->type->code ;
+        const GB_Type_code tcode = Thunk->type->code ;
         ithunk = 0 ;
         if (tcode <= GB_FP64_code && opcode < GB_USER_SELECT_opcode)
         { 
-            // ithunk = (int64_t) Thunk (0)
-            size_t tsize = Thunk->type->size ;
-            GB_cast_array ((GB_void *restrict) &ithunk, GB_INT64_code,
-                xthunk, false, tcode, NULL, tsize, 1, 1) ;
-            // athunk = (atype) Thunk (0)
-            GB_cast_array (athunk, typecode,
-                xthunk, false, tcode, NULL, tsize, 1, 1) ;
-            // xthunk now points to the typecasted (atype) Thunk (0)
+            // ithunk = (int64_t) Thunk
+            GB_cast_scalar (&ithunk, GB_INT64_code, xthunk, tcode,
+                sizeof (int64_t)) ;
+            // athunk = (atype) Thunk
+            GB_cast_scalar (athunk, A->type->code, xthunk, tcode, asize) ;
+            // xthunk now points to the typecasted (atype) Thunk
             xthunk = athunk ;
         }
     }
+
+    //--------------------------------------------------------------------------
+    // handle iso case for built-in select ops that depend only on the value
+    //--------------------------------------------------------------------------
+
+    if (A_iso && opcode >= GB_NONZERO_opcode && opcode <= GB_LE_THUNK_opcode)
+    { 
+        ASSERT (!in_place_A) ;
+        ASSERT (C != NULL && C->static_header) ;
+
+        // construct a scalar containing the iso scalar
+        struct GB_Scalar_opaque S_header ;
+        GxB_Scalar S = GB_Scalar_wrap (&S_header, A->type, A->x) ;
+        ASSERT_SCALAR_OK (S, "iso scalar wrap", GB0) ;
+
+        // apply the select operator to the iso scalar
+        GB_OK (GB_bitmap_selector (C, false, opcode, NULL, false,
+            (GrB_Matrix) S, ithunk, xthunk, Context)) ;
+        bool C_empty = (GB_nnz (C) == 0) ;
+        GB_phbix_free (C) ;
+
+        // check if C has 0 or 1 entry
+        if (C_empty)
+        {
+            // C is an empty matrix
+            return (GB_new (&C, true, // static header
+                A->type, avlen, avdim, GB_Ap_calloc, true,
+                GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ),
+                1, Context)) ;
+        }
+        else
+        {
+            // C is a shallow copy of A with all the same entries as A
+            // set C->iso = A->iso  OK
+            return (GB_shallow_copy (C, true, A, Context)) ;
+        }
+    }
+
+    // now if A is iso, the following operators still need to be handled:
+
+    //      GB_TRIL_opcode      : use GB_sel__tril_iso
+    //      GB_TRIU_opcode      : use GB_sel__triu_iso
+    //      GB_DIAG_opcode      : use GB_sel__diag_iso
+    //      GB_OFFDIAG_opcode   : use GB_sel__offdiag_iso
+    //      GB_RESIZE_opcode    : use GB_sel__resize_iso
+    //      GB_NONZOMBIE_opcode : use GB_sel__nonzombie_iso
+    //      GB_USER_SELECT_opcode : use GB_sel__user_any; with A_iso test
+    //          to load the value of A(i,j)
+
+    // The GB_sel__*_iso methods do not access the values of A and C,
+    // just the pattern.
 
     //--------------------------------------------------------------------------
     // get the user-defined operator
@@ -161,6 +221,22 @@ GrB_Info GB_selector
     }
 
     //--------------------------------------------------------------------------
+    // determine if C is iso for a non-iso A
+    //--------------------------------------------------------------------------
+
+    bool C_iso =
+        (A_iso && opcode < GB_USER_SELECT_opcode) ||    // C iso value is Ax [0]
+        (opcode == GB_EQ_ZERO_opcode) ||                // C iso value is zero
+        (opcode == GB_EQ_THUNK_opcode) ||               // C iso value is thunk
+        (opcode == GB_NONZERO_opcode &&
+         typecode == GB_BOOL_code) ;                    // C iso value is true
+
+    if (C_iso)
+    {
+        GB_BURBLE_MATRIX (A, "(iso select) ") ;
+    }
+
+    //--------------------------------------------------------------------------
     // bitmap/full case
     //--------------------------------------------------------------------------
 
@@ -169,7 +245,7 @@ GrB_Info GB_selector
         // this case is only used by GB_select
         GB_BURBLE_MATRIX (A, "(bitmap select: %s) ", op->name) ;
         ASSERT (C != NULL && C->static_header) ;
-        return (GB_bitmap_selector (C, opcode, user_select, flipij, A,
+        return (GB_bitmap_selector (C, C_iso, opcode, user_select, flipij, A,
             ithunk, xthunk, Context)) ;
     }
 
@@ -184,8 +260,6 @@ GrB_Info GB_selector
     int64_t *restrict Ah = A->h ;
     int64_t *restrict Ai = A->i ; size_t Ai_size = A->i_size ;
     GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
-    int64_t avlen = A->vlen ;
-    int64_t avdim = A->vdim ;
     int64_t anvec = A->nvec ;
     bool A_jumbled = A->jumbled ;
 
@@ -193,10 +267,6 @@ GrB_Info GB_selector
     // allocate the new vector pointers of C
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
-    int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;
-    int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
-    GB_void *restrict Cx = NULL ; size_t Cx_size = 0 ;
     int64_t cnz = 0 ;
 
     Cp = GB_CALLOC (anvec+1, int64_t, &Cp_size) ;
@@ -217,7 +287,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     int A_ntasks, A_nthreads ;
-    double work = 8*anvec + ((opcode == GB_DIAG_opcode) ? 0 : GB_NNZ_HELD (A)) ;
+    double work = 8*anvec + ((opcode == GB_DIAG_opcode) ? 0 : GB_nnz_held (A)) ;
     GB_SLICE_MATRIX_WORK (A, 8, chunk, work) ;
 
     //--------------------------------------------------------------------------
@@ -292,7 +362,7 @@ GrB_Info GB_selector
     cnz = Cp [anvec] ;
     cnz = GB_IMAX (cnz, 1) ;
     Ci = GB_MALLOC (cnz, int64_t, &Ci_size) ;
-    Cx = GB_MALLOC (cnz * asize, GB_void, &Cx_size) ;
+    Cx = GB_XALLOC (C_iso, cnz, asize, &Cx_size) ;
     if (Ci == NULL || Cx == NULL)
     { 
         // out of memory
@@ -300,11 +370,15 @@ GrB_Info GB_selector
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    if (opcode == GB_EQ_ZERO_opcode)
-    { 
-        // Set Cx [0..cnz-1] to all zero, so that phase2 only needs to
-        // construct the pattern in Ci.
-        GB_memset (Cx, 0, cnz * asize, nthreads_max) ;
+    //--------------------------------------------------------------------------
+    // set the iso value of C
+    //--------------------------------------------------------------------------
+
+    if (C_iso)
+    {
+        // The pattern of C is computed below, for the DIAG, OFFDIAG, TRIL,
+        // TRIU, RESIZE, and NONZOMBIE select operators.
+        GB_selector_iso_set (Cx, opcode, xthunk, Ax, typecode, asize) ;
     }
 
     //--------------------------------------------------------------------------
@@ -370,18 +444,13 @@ GrB_Info GB_selector
         GB_FREE (&Ax, Ax_size) ;
         A->i = Ci ; Ci = NULL ; A->i_size = Ci_size ;
         A->x = Cx ; Cx = NULL ; A->x_size = Cx_size ;
-        A->nzmax = cnz ;
         A->nvec_nonempty = C_nvec_nonempty ;
         A->jumbled = A_jumbled ;        // A remains jumbled (in-place select)
+        A->iso = C_iso ;                // OK: burble already done above
 
         // the NONZOMBIE opcode may have removed all zombies, but A->nzombie
-        // is still nonzero.  It set to zero in GB_Matrix_wait.
+        // is still nonzero.  It is set to zero in GB_wait.
         ASSERT_MATRIX_OK (A, "A output for GB_selector", GB_FLIP (GB0)) ;
-
-        // positional selector (tril, triu, diag, offdiag, resize): not jumbled
-        ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_opcode, !GB_JUMBLED (A))) ;
-        // entry selector: C can be returned as jumbled
-        ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (A))) ;
 
     }
     else
@@ -433,17 +502,12 @@ GrB_Info GB_selector
         C->h = Ch ; Ch = NULL ; C->h_size = Ch_size ;
         C->i = Ci ; Ci = NULL ; C->i_size = Ci_size ;
         C->x = Cx ; Cx = NULL ; C->x_size = Cx_size ;
-        C->nzmax = cnz ;
         C->magic = GB_MAGIC ;
         C->nvec_nonempty = C_nvec_nonempty ;
         C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
+        C->iso = C_iso ;            // OK: burble already done above
 
         ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;
-
-        // positional selector (tril, triu, diag, offdiag, resize): not jumbled
-        ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_opcode, !GB_JUMBLED (C))) ;
-        // entry selector: C can be returned as jumbled
-        ASSERT (GB_IMPLIES (opcode >  GB_RESIZE_opcode, GB_JUMBLED_OK (C))) ;
     }
 
     //--------------------------------------------------------------------------

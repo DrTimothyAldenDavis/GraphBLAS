@@ -69,7 +69,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     }
 
     // must be done after GrB_Matrix_wait:
-    int64_t cnz = GB_NNZ (C) ;
+    int64_t cnz = GB_nnz (C) ;
 
     ASSERT_MATRIX_OK (C, "TO MATLAB after assembling pending tuples", GB0) ;
 
@@ -94,7 +94,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     ASSERT (GB_JUMBLED_OK (C)) ;
     GrB_Matrix_wait (&C) ;
     ASSERT (!GB_JUMBLED (C)) ;
-    cnz = GB_NNZ (C) ;
+    cnz = GB_nnz (C) ;
 
     ASSERT_MATRIX_OK (C, "TO MATLAB, non-hyper CSC", GB0) ;
     ASSERT (!GB_JUMBLED (C)) ;
@@ -106,7 +106,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     // MATLAB doesn't want NULL pointers in its empty matrices
     if (C->x == NULL)
     {
-        ASSERT (C->nzmax == 0 && cnz == 0) ;
+        ASSERT (cnz == 0) ;
         C->x = (GB_void *) GB_malloc_memory (2 * sizeof (double),
             sizeof (GB_void), &(C->x_size)) ;
         memset (C->x, 0, 2 * sizeof (double)) ;
@@ -119,7 +119,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         // MATLAB doesn't want NULL pointers in its empty sparse matrices
         if (C->i == NULL)
         {
-            ASSERT (C->nzmax == 0 && cnz == 0) ;
+            ASSERT (cnz == 0) ;
             C->i = (int64_t *) GB_malloc_memory (1, sizeof (int64_t),
                 &(C->i_size)) ;
             C->i [0] = 0 ;
@@ -127,15 +127,13 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         }
         if (C->p == NULL)
         {
-            ASSERT (C->nzmax == 0 && cnz == 0) ;
+            ASSERT (cnz == 0) ;
             C->p = (int64_t *) GB_malloc_memory (C->vdim + 1, 
                 sizeof (int64_t), &(C->p_size)) ;
             memset (C->p, 0, (C->vdim + 1) * sizeof (int64_t)) ;
             C->p_shallow = false ;
         }
     }
-
-    C->nzmax = GB_IMAX (C->nzmax, 1) ;
 
     //--------------------------------------------------------------------------
     // create the MATLAB matrix A and link in the numerical values of C
@@ -251,7 +249,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     {
 
         // user-defined Complex type, or GraphBLAS GxB_FC64
-        A = mxCreateSparse (C->vlen, C->vdim, C->nzmax, mxCOMPLEX) ;
+        A = mxCreateSparse (C->vlen, C->vdim, cnz, mxCOMPLEX) ;
         memcpy (mxGetComplexDoubles (A), C->x, cnz * sizeof (GxB_FC64_t)) ;
 
     }
@@ -259,7 +257,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     {
 
         // C is single complex, typecast to sparse double complex
-        A = mxCreateSparse (C->vlen, C->vdim, C->nzmax, mxCOMPLEX) ;
+        A = mxCreateSparse (C->vlen, C->vdim, cnz, mxCOMPLEX) ;
         GB_cast_array (mxGetComplexDoubles (A), GB_FC64_code,
             C->x, C->type->code, NULL, C->type->size, cnz, 1) ;
 
@@ -299,7 +297,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     // set nrows, ncols, nzmax, and the pattern of A
     mxSetM (A, C->vlen) ;
     mxSetN (A, C->vdim) ;
-    mxSetNzmax (A, C->nzmax) ;
+    mxSetNzmax (A, cnz) ;
 
     if (!C_is_full)
     {

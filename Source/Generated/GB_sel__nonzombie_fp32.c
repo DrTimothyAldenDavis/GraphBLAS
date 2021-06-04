@@ -16,11 +16,14 @@
 // The selection is defined by the following types and operators:
 
 // functions:
-// phase1: GB (_sel_phase1__(none))
+// phase1: GB (_sel_phase1__nonzombie_fp32)
 // phase2: GB (_sel_phase2__nonzombie_fp32)
 // bitmap: GB (_sel_bitmap__(none))
 
 // A type: float
+
+#define GB_ISO_SELECT \
+    0
 
 // kind
 #define GB_ENTRY_SELECTOR
@@ -44,9 +47,9 @@
 // GB_sel_phase1
 //------------------------------------------------------------------------------
 
-#if 0
 
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_fp32)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -64,7 +67,7 @@ void GB (_sel_phase1__(none))
     #include "GB_select_phase1.c"
 }
 
-#endif
+
 
 //------------------------------------------------------------------------------
 // GB_sel_phase2

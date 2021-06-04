@@ -28,6 +28,8 @@
 GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 (
     GrB_Matrix C,                   // input/output matrix for results
+    const bool C_iso,               // if true, construct C as iso
+    const GB_void *cscalar,         // iso value of C, if C is io 
     const int64_t cnz,              // # of entries in C
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
     const GrB_Index m,
@@ -59,18 +61,24 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 
     float hyper_switch = C->hyper_switch ;
     float bitmap_switch = C->bitmap_switch ;
-    int sparsity_control = C->sparsity ;
+    int sparsity_control = C->sparsity_control ;
     bool static_header = C->static_header ;
     GB_phbix_free (C) ;
+    // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, static_header,   // prior static or dynamic header
         ctype, cvlen, cvdim, GB_Ap_malloc, csc, GxB_SPARSE, false,
-        hyper_switch, cvdim, cnz, true, Context)) ;
+        hyper_switch, cvdim, cnz, true, C_iso, Context)) ;
     C->bitmap_switch = bitmap_switch ;
-    C->sparsity = sparsity_control ;
+    C->sparsity_control = sparsity_control ;
     int64_t *restrict Cp = C->p ;
     int64_t *restrict Ci = C->i ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+
+    if (C_iso)
+    {
+        memcpy (C->x, cscalar, csize) ;
+    }
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -132,7 +140,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 if (T == NULL)
                 {
                     // copy A into T
-                    GB_OK (GB_dup2 (&T, A, true, NULL, Context)) ;
+                    // set T->iso = A->iso  OK: no burble needed
+                    GB_OK (GB_dup_worker (&T, A->iso, A, true, NULL, Context)) ;
                     // save T in array S
                     if (csc)
                     { 
@@ -289,6 +298,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             const int64_t *restrict Ap = A->p ;
             const int64_t *restrict Ah = A->h ;
             const int64_t *restrict Ai = A->i ;
+            const bool A_iso = A->iso ;
             GB_SLICE_MATRIX (A, 1, chunk) ;
 
             //------------------------------------------------------------------
@@ -297,13 +307,29 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 
             bool done = false ;
 
-            #ifndef GBCOMPACT
+            if (C_iso)
+            {
+
+                //--------------------------------------------------------------
+                // C and A are iso
+                //--------------------------------------------------------------
+
+                #define GB_ISO_CONCAT
+                #define GB_COPY(pC,pA,A_iso) ;
+                #include "GB_concat_sparse_template.c"
+
+            }
+            else
+            {
+
+                #ifndef GBCOMPACT
                 if (ccode == acode)
                 {
                     // no typecasting needed
                     switch (csize)
                     {
-                        #define GB_COPY(pC,pA) Cx [pC] = Ax [pA]
+                        #define GB_COPY(pC,pA,A_iso)                        \
+                            Cx [pC] = GBX (Ax, pA, A_iso) ;
 
                         case 1 : // uint8, int8, bool, or 1-byte user-defined
                             #define GB_CTYPE uint8_t
@@ -329,16 +355,17 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                         case 16 : // double complex or 16-byte user-defined
                             #define GB_CTYPE uint64_t
                             #undef  GB_COPY
-                            #define GB_COPY(pC,pA)                      \
-                                Cx [2*pC  ] = Ax [2*pA  ] ;             \
-                                Cx [2*pC+1] = Ax [2*pA+1] ;
+                            #define GB_COPY(pC,pA,A_iso)                    \
+                                Cx [2*pC  ] = GBX (Ax, 2*pA  , A_iso) ;     \
+                                Cx [2*pC+1] = GBX (Ax, 2*pA+1, A_iso) ;
                             #include "GB_concat_sparse_template.c"
                             break ;
 
                         default:;
                     }
                 }
-            #endif
+                #endif
+            }
 
             if (!done)
             { 
@@ -347,8 +374,9 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 size_t asize = A->type->size ;
                 #define GB_CTYPE GB_void
                 #undef  GB_COPY
-                #define GB_COPY(pC,pA)  \
-                    cast_A_to_C (Cx + (pC)*csize, Ax + (pA)*asize, asize) ;
+                #define GB_COPY(pC,pA,A_iso)                    \
+                    cast_A_to_C (Cx + (pC)*csize,               \
+                        Ax + (A_iso ? 0:(pA)*asize), asize) ;
                 #include "GB_concat_sparse_template.c"
             }
     

@@ -164,7 +164,7 @@ void mexFunction
     GrB_Matrix_free_(&A) ;
 
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
-    A->sparsity = 999 ;
+    A->sparsity_control = 999 ;
     ERR (GxB_Matrix_fprint (A, "invalid sparsity control", GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&A) ;
 
@@ -405,8 +405,6 @@ void mexFunction
     if (info != GrB_SUCCESS) mexErrMsgTxt ("huge fail2") ;
     info = GxB_Matrix_Option_set_(X, GxB_SPARSITY_CONTROL, GxB_BITMAP) ;
     if (info != GrB_OUT_OF_MEMORY) mexErrMsgTxt ("huge fail3") ;
-    info = GB_convert_to_full (X) ;
-    if (info != GrB_OUT_OF_MEMORY) mexErrMsgTxt ("huge fail4") ;
     GrB_Matrix_free (&X) ;
 
     //--------------------------------------------------------------------------

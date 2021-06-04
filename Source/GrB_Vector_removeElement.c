@@ -133,7 +133,7 @@ GrB_Info GrB_Vector_removeElement
         else
         { 
             // V is sparse and jumbled
-            GB_OK (GB_Matrix_wait ((GrB_Matrix) V, "v", Context)) ;
+            GB_OK (GB_wait ((GrB_Matrix) V, "v", Context)) ;
         }
         ASSERT (!GB_IS_FULL (V)) ;
         ASSERT (!GB_ZOMBIES (V)) ;
@@ -164,7 +164,7 @@ GrB_Info GrB_Vector_removeElement
 
     // if V is sparse, it may have pending tuples
     bool V_is_pending = GB_PENDING (V) ; 
-    if (V->nzmax == 0 && !V_is_pending)
+    if (GB_nnz (V) == 0 && !V_is_pending)
     { 
         // quick return
         return (GrB_SUCCESS) ;
@@ -183,7 +183,7 @@ GrB_Info GrB_Vector_removeElement
         GrB_Info info ;
         GB_WHERE (V, GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Vector_removeElement") ;
-        GB_OK (GB_Matrix_wait ((GrB_Matrix) V, "v", Context)) ;
+        GB_OK (GB_wait ((GrB_Matrix) V, "v", Context)) ;
         ASSERT (!GB_ZOMBIES (V)) ;
         ASSERT (!GB_JUMBLED (V)) ;
         ASSERT (!GB_PENDING (V)) ;

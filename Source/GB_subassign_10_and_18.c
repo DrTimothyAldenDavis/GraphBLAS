@@ -409,7 +409,7 @@ GrB_Info GB_subassign_10_and_18
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
                             int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                            GB_PENDING_INSERT (Ax +(pA*asize)) ;
+                            GB_PENDING_INSERT_aij ;
                         }
                     }
                     else if (Sfound)
@@ -492,7 +492,7 @@ GrB_Info GB_subassign_10_and_18
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
                             int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                            GB_PENDING_INSERT (Ax +(pA*asize)) ;
+                            GB_PENDING_INSERT_aij ;
                         }
                         GB_NEXT (A) ;
                     }
@@ -516,7 +516,7 @@ GrB_Info GB_subassign_10_and_18
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
                         int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                        GB_PENDING_INSERT (Ax +(pA*asize)) ;
+                        GB_PENDING_INSERT_aij ;
                     }
                     GB_NEXT (A) ;
                 }

@@ -10,7 +10,7 @@
 // All Global storage is declared, initialized, and accessed here.  The
 // contents of the GB_Global struct are only accessible to functions in this
 // file.  Global storage is used to keep track of the GraphBLAS mode (blocking
-// or non-blocking), for pointers to malloc/calloc/realloc/free functions,
+// or non-blocking), for pointers to malloc/realloc/free functions,
 // global matrix options, and other settings.
 
 #include "GB_atomics.h"
@@ -51,14 +51,13 @@ typedef struct
     void (* abort_function ) (void) ;
 
     //--------------------------------------------------------------------------
-    // malloc/calloc/realloc/free: memory management functions
+    // malloc/realloc/free: memory management functions
     //--------------------------------------------------------------------------
 
-    // All threads must use the same malloc/calloc/realloc/free functions.
+    // All threads must use the same malloc/realloc/free functions.
     // They default to the ANSI C11 functions, but can be defined by GxB_init.
 
     void * (* malloc_function  ) (size_t)         ;     // required
-//  void * (* calloc_function  ) (size_t, size_t) ;     // no longer used
     void * (* realloc_function ) (void *, size_t) ;     // may be NULL
     void   (* free_function    ) (void *)         ;     // required
     bool malloc_is_thread_safe ;   // default is true
@@ -197,9 +196,8 @@ GB_Global_struct GB_Global =
     // abort function for debugging only
     .abort_function   = abort,
 
-    // malloc/calloc/realloc/free functions: default to ANSI C11 functions
+    // malloc/realloc/free functions: default to ANSI C11 functions
     .malloc_function  = malloc,
-//  .calloc_function  = NULL,   // no longer used
     .realloc_function = realloc,
     .free_function    = free,
     .malloc_is_thread_safe = true,
@@ -694,40 +692,6 @@ void * GB_Global_malloc_function (size_t size)
     #endif
     return (p) ;
 }
-
-//------------------------------------------------------------------------------
-// calloc_function: no longer used
-//------------------------------------------------------------------------------
-
-//  void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
-//  { 
-//      GB_Global.calloc_function = calloc_function ;
-//  }
-
-//  bool GB_Global_have_calloc_function (void)
-//  { 
-//      return (GB_Global.calloc_function != NULL) ;
-//  }
-
-//  void * GB_Global_calloc_function (size_t count, size_t size)
-//  { 
-//      void *p = NULL ;
-//      if (GB_Global.malloc_is_thread_safe)
-//      {
-//          p = GB_Global.calloc_function (count, size) ;
-//      }
-//      else
-//      {
-//          #pragma omp critical(GB_malloc_protection)
-//          {
-//              p = GB_Global.calloc_function (count, size) ;
-//          }
-//      }
-//      #ifdef GB_DEBUG
-//      GB_Global_memtable_add (p, count * size) ;
-//      #endif
-//      return (p) ;
-//  }
 
 //------------------------------------------------------------------------------
 // realloc_function

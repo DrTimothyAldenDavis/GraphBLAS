@@ -34,3 +34,4 @@ GrB_Info GB (_Adot2B__bor_bor_uint16)
 }
 
 #endif
+

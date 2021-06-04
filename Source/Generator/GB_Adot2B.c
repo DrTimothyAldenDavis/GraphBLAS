@@ -10,7 +10,7 @@
 // If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 GB_AxB_defs_include
-#ifndef GBCOMPACT
+ifndef_compact
 
 //------------------------------------------------------------------------------
 // C=A'*B, C<M>=A'*B, or C<!M>=A'*B: dot product method where C is bitmap
@@ -25,7 +25,7 @@ GrB_Info GB (_Adot2B)
     int nthreads, int naslice, int nbslice
 )
 { 
-    #if GB_DISABLE
+    if_disabled
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_AxB_dot2_meta.c"
@@ -34,3 +34,4 @@ GrB_Info GB (_Adot2B)
 }
 
 #endif
+

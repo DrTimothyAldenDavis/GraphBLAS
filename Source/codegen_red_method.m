@@ -63,7 +63,7 @@ end
 % create the operator
 func = strrep (func, 'zarg', '`$1''') ;
 func = strrep (func, 'yarg', '`$2''') ;
-fprintf (f, 'define(`GB_REDUCE_OP'', `%s'')\n', func) ;
+fprintf (f, 'define(`GB_reduce_op'', `%s'')\n', func) ;
 
 % create the disable flag
 disable  = sprintf ('GxB_NO_%s', upper (opname)) ;

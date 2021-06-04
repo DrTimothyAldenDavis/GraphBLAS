@@ -38,6 +38,9 @@ GrB_Info GB_Mask_compatible     // check type and dimensions of mask
                     "M of type [%s] cannot be typecast to boolean",
                     M->type->name) ;
             }
+            // if M is iso and can be typecasted to bool, Mask_struct has been
+            // set true by GB_get_mask
+            ASSERT (!M->iso) ;
         }
 
         // check the mask dimensions

@@ -39,14 +39,13 @@
     const int64_t *restrict Bh = B->h ;
     const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
+    const bool B_iso = B->iso ;
     const int64_t bvlen = B->vlen ;
     const bool B_jumbled = B->jumbled ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
-    const bool B_iso = B->iso ;
 
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
@@ -57,11 +56,10 @@
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
+    const bool A_iso = A->iso ;
     const bool A_jumbled = A->jumbled ;
     const bool A_ok_for_binary_search = 
         ((A_is_sparse || A_is_hyper) && !A_jumbled) ;
-    const bool A_iso = A->iso ;
 
     #if ( !GB_NO_MASK )
     const int64_t *restrict Mp = M->p ;
@@ -75,6 +73,11 @@
     size_t msize = M->type->size ;
     int64_t mnvec = M->nvec ;
     int64_t mvlen = M->vlen ;
+    #endif
+
+    #if ( !GB_IS_ANY_PAIR_SEMIRING )
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
+    const GB_BTYPE *restrict Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     #endif
 
     //==========================================================================
@@ -304,9 +307,12 @@
     // phase5: numeric phase for coarse tasks, gather for fine tasks
     //==========================================================================
 
+    // C is iso for the ANY_PAIR semiring, and non-iso otherwise
     // allocate Ci and Cx
     int64_t cnz = Cp [cnvec] ;
-    GrB_Info info = GB_bix_alloc (C, cnz, false, false, true, true, Context) ;
+    // set C->iso = GB_IS_ANY_PAIR_SEMIRING     OK
+    GrB_Info info = GB_bix_alloc (C, cnz, GxB_SPARSE, false, true,
+        GB_IS_ANY_PAIR_SEMIRING, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -314,37 +320,11 @@
     }
 
     int64_t  *restrict Ci = C->i ;
+    #if ( !GB_IS_ANY_PAIR_SEMIRING )
     GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
-
-//  printf ("check Ci size %p %ld\n", C->i, C->i_size) ;
-    ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
-
-    #if GB_IS_ANY_PAIR_SEMIRING
-
-        // TODO: create C as a constant-value matrix.
-
-        // ANY_PAIR semiring: result is purely symbolic
-        int64_t pC ;
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (pC = 0 ; pC < cnz ; pC++)
-        { 
-            Cx [pC] = GB_CTYPE_CAST (1, 0) ;
-        }
-
-        // Just a precaution; these variables are not used below.  Any attempt
-        // to access them will lead to a compile error.
-        #define Cx is not used
-        #define Hx is not used
-
-        // these have been renamed to ANY_PAIR:
-        // EQ_PAIR
-        // LAND_PAIR
-        // LOR_PAIR
-        // MAX_PAIR
-        // MIN_PAIR
-        // TIMES_PAIR
-
     #endif
+
+    ASSERT (C->i_size == GB_Global_memtable_size (C->i)) ;
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (11, ttt) ;
@@ -400,10 +380,8 @@
                     { 
                         Ci [pC + i] = i ;
                     }
-                    #if !GB_IS_ANY_PAIR_SEMIRING
                     // copy Hx [istart:iend-1] into Cx [pC+istart:pC+iend-1]
                     GB_CIJ_MEMCPY (pC + istart, istart, iend - istart) ;
-                    #endif
                 }
                 else
                 {
@@ -599,9 +577,6 @@
 // GB_Global_timing_add (12, ttt) ;
 
 }
-
-#undef Cx
-#undef Hx
 
 #undef GB_NO_MASK
 #undef GB_MASK_COMP

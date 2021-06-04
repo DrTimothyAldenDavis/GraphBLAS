@@ -14,7 +14,8 @@
     //--------------------------------------------------------------------------
 
     GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
-    const int64_t cnz = GB_NNZ (C) ;
+    const int64_t cnz = GB_nnz (C) ;
+    ASSERT (!C->iso) ;
 
     //--------------------------------------------------------------------------
     // C += b where C is dense and b is a scalar

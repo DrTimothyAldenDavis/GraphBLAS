@@ -168,10 +168,18 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     const int64_t vlen = A->vlen ;
     const int64_t vdim = A->vdim ;
     const int64_t nvec = A->nvec ;
-    const int64_t anz = GB_NNZ (A) ;
+    const int64_t anz = GB_nnz (A) ;
 
     const int8_t *restrict Bb = B->b ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
+
+    //--------------------------------------------------------------------------
+    // check if C is iso and compute its iso value if it is
+    //--------------------------------------------------------------------------
+
+    const size_t csize = ctype->size ;
+    GB_void cscalar [GB_VLA(csize)] ;
+    bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
 
     //--------------------------------------------------------------------------
     // allocate C->p and C->h
@@ -332,7 +340,8 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     //--------------------------------------------------------------------------
 
     int64_t cnz = (C_has_pattern_of_A) ? anz : Cp [nvec] ;
-    GB_OK (GB_bix_alloc (C, cnz, false, false, true, true, Context)) ;
+    // set C->iso = C_iso   OK
+    GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso, Context)) ;
 
     //--------------------------------------------------------------------------
     // copy pattern into C
@@ -432,38 +441,62 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
+    #define GB_PHASE_2_OF_2
+
     bool done = false ;
 
-    #ifndef GBCOMPACT
+    if (C_iso)
+    {
 
         //----------------------------------------------------------------------
-        // define the worker for the switch factory
+        // C is iso
         //----------------------------------------------------------------------
 
-        #define GB_AemultB_02(mult,xname) GB (_AemultB_02_ ## mult ## xname)
+        // Cx [0] = cscalar = op (A,B)
+        GB_BURBLE_MATRIX (C, "(iso emult) ") ;
+        memcpy (C->x, cscalar, csize) ;
 
-        #define GB_BINOP_WORKER(mult,xname)                             \
-        {                                                               \
-            info = GB_AemultB_02(mult,xname) (C,                        \
-                M, Mask_struct, Mask_comp, A, B, flipxy,                \
-                Cp_kfirst, A_ek_slicing, A_ntasks, A_nthreads) ;        \
-            done = (info != GrB_NO_VALUE) ;                             \
-        }                                                               \
-        break ;
+        // pattern of C = set intersection of pattern of A and B
+        // flipxy is ignored since the operator is not applied
+        #define GB_ISO_EMULT
+        #include "GB_emult_02_template.c"
+        done = true ;
 
-        //----------------------------------------------------------------------
-        // launch the switch factory
-        //----------------------------------------------------------------------
+    }
+    else
+    {
 
-        GB_Type_code xcode, ycode, zcode ;
-        if (!op_is_positional &&
-            GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
-            op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
-        { 
-            #include "GB_binop_factory.c"
-        }
+        #ifndef GBCOMPACT
 
-    #endif
+            //------------------------------------------------------------------
+            // define the worker for the switch factory
+            //------------------------------------------------------------------
+
+            #define GB_AemultB_02(mult,xname) GB (_AemultB_02_ ## mult ## xname)
+
+            #define GB_BINOP_WORKER(mult,xname)                         \
+            {                                                           \
+                info = GB_AemultB_02(mult,xname) (C,                    \
+                    M, Mask_struct, Mask_comp, A, B, flipxy,            \
+                    Cp_kfirst, A_ek_slicing, A_ntasks, A_nthreads) ;    \
+                done = (info != GrB_NO_VALUE) ;                         \
+            }                                                           \
+            break ;
+
+            //------------------------------------------------------------------
+            // launch the switch factory
+            //------------------------------------------------------------------
+
+            GB_Type_code xcode, ycode, zcode ;
+            if (!op_is_positional &&
+                GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
+                op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
+            { 
+                #include "GB_binop_factory.c"
+            }
+
+        #endif
+    }
 
     //--------------------------------------------------------------------------
     // generic worker

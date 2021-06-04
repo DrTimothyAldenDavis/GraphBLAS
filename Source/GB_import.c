@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: import shallow for MATLAB
-
 #include "GB_export.h"
 
 GrB_Info GB_import      // import a matrix in any format
@@ -44,8 +42,8 @@ GrB_Info GB_import      // import a matrix in any format
     // information for all formats:
     int sparsity,       // hypersparse, sparse, bitmap, or full
     bool is_csc,        // if true then matrix is by-column, else by-row
-    bool iso,           // if true then A is iso-valued and only one
-                        // entry is provided in Ax, regardless of nvals(A).
+    bool iso,           // if true then A is iso and only one entry is provided
+                        // in Ax, regardless of nvals(A).
     GB_Context Context
 )
 {
@@ -66,30 +64,19 @@ GrB_Info GB_import      // import a matrix in any format
         return (GrB_INVALID_VALUE) ;
     }
 
-    if (iso)
-    {
-        return (GrB_INVALID_VALUE) ;    // TODO::: not yet supported
-    }
-
-    // full_size = vlen*vdim, for bitmap and full formats
-    bool ok = true ;
-    int64_t full_size ;
-    if (sparsity == GxB_BITMAP || sparsity == GxB_FULL)
-    {
-        ok = GB_Index_multiply ((GrB_Index *) &full_size, vlen, vdim) ;
-        if (!ok)
-        { 
-            // problem too large: only Ax_size == 1 is possible for GxB_FULL.
-            // GxB_BITMAP is infeasible and an error is returned below.
-            full_size = 1 ;
-        }
-    }
-
     if (Ax_size > 0)
     { 
         // Ax and (*Ax) are ignored if Ax_size is zero
         GB_RETURN_IF_NULL (Ax) ;
         GB_RETURN_IF_NULL (*Ax) ;
+    }
+
+    bool ok = true ;
+    int64_t full_size = 0, Ax_size_for_non_iso ;
+    if (sparsity == GxB_BITMAP || sparsity == GxB_FULL)
+    {
+        ok = GB_Index_multiply (&full_size, vlen, vdim) ;
+        if (!ok) full_size = INT64_MAX ;
     }
 
     switch (sparsity)
@@ -121,11 +108,7 @@ GrB_Info GB_import      // import a matrix in any format
             {
                 return (GrB_INVALID_VALUE) ;
             }
-            // check Ax
-            if (Ax_size > 0 && Ax_size < nvals * type->size)
-            {
-                return (GrB_INVALID_VALUE) ;
-            }
+            Ax_size_for_non_iso = nvals ;
             break ;
 
         case GxB_SPARSE : 
@@ -153,11 +136,7 @@ GrB_Info GB_import      // import a matrix in any format
             {
                 return (GrB_INVALID_VALUE) ;
             }
-            // check Ax
-            if (Ax_size > 1 && Ax_size < nvals * type->size)
-            {
-                return (GrB_INVALID_VALUE) ;
-            }
+            Ax_size_for_non_iso = nvals ;
             break ;
 
         case GxB_BITMAP : 
@@ -170,22 +149,33 @@ GrB_Info GB_import      // import a matrix in any format
             }
             if (nvals > full_size) return (GrB_INVALID_VALUE) ;
             if (Ab_size < full_size) return (GrB_INVALID_VALUE) ;
-            // check Ax
-            if (Ax_size > 0 && Ax_size < full_size * type->size)
-            {
-                return (GrB_INVALID_VALUE) ;
-            }
+            Ax_size_for_non_iso = full_size ;
             break ;
 
         case GxB_FULL : 
-            // check Ax
-            if (Ax_size > 0 && Ax_size < full_size * type->size)
-            {
-                return (GrB_INVALID_VALUE) ;
-            }
+            Ax_size_for_non_iso = full_size ;
             break ;
 
         default: ;
+    }
+
+    // check the size of Ax
+    if (iso)
+    {
+        // A is iso: Ax must be non-NULL and large enough to hold a single entry
+        if (Ax_size < type->size)
+        { 
+            return (GrB_INVALID_VALUE) ;
+        }
+    }
+    else
+    {
+        // A is non-iso: Ax_size must be zero (and Ax can be NULL),
+        // or Ax_size must be at least as large as Ax_size_for_non_iso
+        if (! (Ax_size == 0 || Ax_size >= Ax_size_for_non_iso))
+        { 
+            return (GrB_INVALID_VALUE) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -209,13 +199,18 @@ GrB_Info GB_import      // import a matrix in any format
 
     // transplant the user's content into the matrix
     (*A)->magic = GB_MAGIC ;
+    (*A)->iso = iso ;   // OK
+    if (iso)
+    { 
+        GBURBLE ("(iso import )") ;
+    }
 
     switch (sparsity)
     {
         case GxB_HYPERSPARSE : 
             (*A)->nvec = nvec ;
 
-            // import A->h
+            // import A->h, then fall through to sparse case
             (*A)->h = (int64_t *) (*Ah) ; (*Ah) = NULL ;
             (*A)->h_size = Ah_size ;
             #ifdef GB_DEBUG
@@ -225,8 +220,6 @@ GrB_Info GB_import      // import a matrix in any format
         case GxB_SPARSE : 
             (*A)->jumbled = jumbled ;   // import jumbled status
             (*A)->nvec_nonempty = -1 ;  // not computed; delay until required
-            (*A)->nzmax = GB_IMIN (Ai_size / sizeof (int64_t),
-                                   Ax_size / type->size) ;
 
             if (is_sparse_vector)
             {
@@ -253,7 +246,6 @@ GrB_Info GB_import      // import a matrix in any format
 
         case GxB_BITMAP : 
             (*A)->nvals = nvals ;
-            (*A)->nzmax = GB_IMIN (Ab_size, Ax_size / type->size) ;
 
             // import A->b
             (*A)->b = (*Ab) ; (*Ab) = NULL ;
@@ -264,7 +256,6 @@ GrB_Info GB_import      // import a matrix in any format
             break ;
 
         case GxB_FULL : 
-            (*A)->nzmax = Ax_size / type->size ;
             break ;
 
         default: ;

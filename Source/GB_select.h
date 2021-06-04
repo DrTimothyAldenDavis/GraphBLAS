@@ -42,6 +42,7 @@ GrB_Info GB_selector
 GrB_Info GB_bitmap_selector
 (
     GrB_Matrix C,               // output matrix, static header
+    const bool C_iso,           // if true, C is iso
     GB_Select_Opcode opcode,    // selector opcode
     const GxB_select_function user_select,      // user select function
     const bool flipij,          // if true, flip i and j for user operator
@@ -50,6 +51,42 @@ GrB_Info GB_bitmap_selector
     const GB_void *restrict xthunk,
     GB_Context Context
 ) ;
+
+//------------------------------------------------------------------------------
+// GB_selector_iso_set: assign the iso value of C for GB_*selector
+//------------------------------------------------------------------------------
+
+static inline void GB_selector_iso_set
+(
+    void *Cx,                       // output iso value
+    const GB_Select_Opcode opcode,  // selector opcode
+    const void *xthunk,             // thunk scalar, of size asize
+    const void *Ax,                 // Ax [0] scalar, of size asize
+    const GB_Type_code typecode,    // typecode of A->type
+    const size_t asize
+)
+{
+    if (opcode == GB_EQ_ZERO_opcode)
+    { 
+        // all entries in C are zero
+        memset (Cx, 0, asize) ;
+    }
+    else if (opcode == GB_EQ_THUNK_opcode)
+    {
+        // all entries in C are equal to thunk
+        memcpy (Cx, xthunk, asize) ;
+    }
+    else if (opcode == GB_NONZERO_opcode && typecode == GB_BOOL_code)
+    {
+        // all entries in C are true; C and A are boolean
+        memset (Cx, 1, 1) ;
+    }
+    else
+    {
+        // A and C are both iso, and selectop is builtin
+        memcpy (Cx, Ax, asize) ;
+    }
+}
 
 //------------------------------------------------------------------------------
 // compiler diagnostics

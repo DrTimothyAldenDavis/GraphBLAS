@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_msort_2: sort using GB_msort_2b
+// GB_mex_msort_2: sort using GB_msort_2
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -56,7 +56,7 @@ void mexFunction
     memcpy (Jout, J, n * sizeof (int64_t)) ;
 
     GB_MEX_TIC ;
-    GB_msort_2b (Iout, Jout, n, nthreads) ;
+    GB_msort_2 (Iout, Jout, n, nthreads) ;
     GB_MEX_TOC ;
 
     GB_mx_put_global (true) ;   

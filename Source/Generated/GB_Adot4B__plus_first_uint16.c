@@ -9,6 +9,7 @@
 
 // If this file is in the Generated/ folder, do not edit it (auto-generated).
 
+#if 1
 #include "GB_AxB_defs__plus_first_uint16.h"
 #ifndef GBCOMPACT
 
@@ -34,5 +35,6 @@ GrB_Info GB (_Adot4B__plus_first_uint16)
     #endif
 }
 
+#endif
 #endif
 

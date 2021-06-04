@@ -9,7 +9,7 @@
 
 // All entries in A must be present, with no pending work; GB_as_if_full (A)
 // must be true on input.  A may be hypersparse, sparse, bitmap, or full on
-// input, and full on output.
+// input. A is full on output.  If A is iso, it remains so on output.
 
 #include "GB.h"
 

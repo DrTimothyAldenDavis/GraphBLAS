@@ -58,6 +58,10 @@ GrB_Info GB_split                   // split a matrix
 
     ASSERT_MATRIX_OK (A, "A input for GB_concat", GB0) ;
     GB_MATRIX_WAIT (A) ;
+    if (A->iso)
+    { 
+        GBURBLE ("(iso split) ") ;
+    }
 
     //--------------------------------------------------------------------------
     // check the sizes of each tile

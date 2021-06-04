@@ -22,7 +22,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     void **Ax,          // values
     GrB_Index *Ab_size, // size of Ab in bytes
     GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso-valued
+    bool *iso,          // if true, A is iso
 
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc

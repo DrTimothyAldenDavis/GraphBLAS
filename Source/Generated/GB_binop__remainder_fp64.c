@@ -421,9 +421,8 @@ GrB_Info GB (_bind1st__remainder_fp64)
     GB_void *Cx_output,         // Cx and Bx may be aliased
     const GB_void *x_input,
     const GB_void *Bx_input,
-    const bool B_iso,
     const int8_t *restrict Bb,
-    int64_t anz,
+    int64_t bnz,
     int nthreads
 )
 { 
@@ -435,10 +434,10 @@ GrB_Info GB (_bind1st__remainder_fp64)
     double *Bx = (double *) Bx_input ;
     int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (p = 0 ; p < anz ; p++)
+    for (p = 0 ; p < bnz ; p++)
     {
         if (!GBB (Bb, p)) continue ;
-        double bij = GBX (Bx, p, B_iso) ;
+        double bij = GBX (Bx, p, false) ;
         Cx [p] = remainder (x, bij) ;
     }
     return (GrB_SUCCESS) ;
@@ -457,7 +456,6 @@ GrB_Info GB (_bind2nd__remainder_fp64)
 (
     GB_void *Cx_output,         // Cx and Ax may be aliased
     const GB_void *Ax_input,
-    const bool A_iso,
     const GB_void *y_input,
     const int8_t *restrict Ab,
     int64_t anz,
@@ -475,7 +473,7 @@ GrB_Info GB (_bind2nd__remainder_fp64)
     for (p = 0 ; p < anz ; p++)
     {
         if (!GBB (Ab, p)) continue ;
-        double aij = GBX (Ax, p, A_iso) ;
+        double aij = GBX (Ax, p, false) ;
         Cx [p] = remainder (aij, y) ;
     }
     return (GrB_SUCCESS) ;
@@ -492,9 +490,9 @@ GrB_Info GB (_bind2nd__remainder_fp64)
 
 // cij = op (x, aij), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA,A_iso)                 \
+#define GB_CAST_OP(pC,pA)                       \
 {                                               \
-    double aij = GBX (Ax, pA, A_iso) ;               \
+    double aij = GBX (Ax, pA, false) ;               \
     Cx [pC] = remainder (x, aij) ;        \
 }
 
@@ -536,9 +534,9 @@ GrB_Info GB (_bind1st_tran__remainder_fp64)
 
 // cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
-#define GB_CAST_OP(pC,pA,A_iso)                 \
+#define GB_CAST_OP(pC,pA)                       \
 {                                               \
-    double aij = GBX (Ax, pA, A_iso) ;               \
+    double aij = GBX (Ax, pA, false) ;               \
     Cx [pC] = remainder (aij, y) ;        \
 }
 

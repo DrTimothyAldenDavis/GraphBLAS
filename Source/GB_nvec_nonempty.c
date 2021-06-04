@@ -39,7 +39,7 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
         return ((A->vlen == 0) ? 0 : A->vdim) ;
     }
 
-    if (GB_NNZ (A) == 0)
+    if (GB_nnz (A) == 0)
     { 
         // A is sparse or hypersparse, with no entries
         return (0) ;

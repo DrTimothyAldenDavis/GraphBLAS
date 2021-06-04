@@ -38,14 +38,13 @@ bool GB_mx_isequal     // true if A and B are exactly the same
     if (A->vdim  != B->vdim ) return (false) ;
     if (A->nvec  != B->nvec ) return (false) ;
 
-    if (GB_NNZ (A)  != GB_NNZ (B) ) return (false) ;
+    if (GB_nnz (A)  != GB_nnz (B) ) return (false) ;
 
     if ((A->h != NULL) != (B->h != NULL)) return (false) ;
     if (A->is_csc   != B->is_csc  ) return (false) ;
 
     // these differences are OK
     // if (A->plen  != B->plen ) return (false) ;
-    // if (A->nzmax != B->nzmax) return (false) ;
     // if (AP->nmax != BP->nmax) return (false) ;
 
 //  if (A->p_shallow        != B->p_shallow        ) return (false) ;
@@ -67,7 +66,7 @@ bool GB_mx_isequal     // true if A and B are exactly the same
     }
 
     int64_t n = A->nvec ;
-    int64_t nnz = GB_NNZ (A) ;
+    int64_t nnz = GB_nnz (A) ;
     size_t s = sizeof (int64_t) ;
     size_t asize = A->type->size ;
 
@@ -99,7 +98,7 @@ bool GB_mx_isequal     // true if A and B are exactly the same
         }
     }
 
-    if (A->nzmax > 0 && B->nzmax > 0)
+    if (GB_nnz_max (A) > 0 && GB_nnz_max (B) > 0)
     {
         if (!A_is_dense)
         {

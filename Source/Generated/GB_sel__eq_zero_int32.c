@@ -22,6 +22,9 @@
 
 // A type: int32_t
 
+#define GB_ISO_SELECT \
+    0
+
 // kind
 #define GB_ENTRY_SELECTOR
 
@@ -38,7 +41,7 @@
 
 // Cx [pC] = Ax [pA], no typecast
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
-    /* assignment skipped, Cx already all zero */
+    /* assignment skipped, C is iso with all entries zero */
 
 //------------------------------------------------------------------------------
 // GB_sel_phase1

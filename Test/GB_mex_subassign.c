@@ -138,7 +138,7 @@ GrB_Info assign (GB_Context Context)
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for mex assign", pr) ;
     ASSERT_MATRIX_OK (A, "A for mex assign", pr) ;
 
-    if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_NNZ (A) == 1)
+    if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_nnz (A) == 1)
     {
         // scalar expansion to matrix or vector
         GB_void *Ax = A->x ;

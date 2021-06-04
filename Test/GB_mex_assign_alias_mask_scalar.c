@@ -141,7 +141,7 @@ void mexFunction
     // get C (make a deep copy)
     #define GET_DEEP_COPY       \
         C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;   \
-        GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, C->sparsity) ;
+        GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, C->sparsity_control) ;
     #define FREE_DEEP_COPY      \
         GrB_Matrix_free_(&C) ;
     GET_DEEP_COPY ;

@@ -73,7 +73,7 @@ GrB_Info GB_AxB_saxpy3_slice_quick
     { 
         // convert the single coarse task into a single fine task
         SaxpyTasks [0].start  = 0 ;                   // first entry in B(:,0)
-        SaxpyTasks [0].end = GB_NNZ_HELD (B) - 1 ;    // last entry in B(:,0)
+        SaxpyTasks [0].end = GB_nnz_held (B) - 1 ;    // last entry in B(:,0)
         SaxpyTasks [0].vector = 0 ;
         (*nfine) = 1 ;
     }

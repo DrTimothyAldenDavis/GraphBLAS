@@ -13,8 +13,10 @@
     // get C and the tile A
     //--------------------------------------------------------------------------
 
+    #ifndef GB_ISO_SPLIT
     const GB_CTYPE *restrict Ax = (GB_CTYPE *) A->x ;
     GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    #endif
 
     int64_t pC ;
     #pragma omp parallel for num_threads(C_nthreads) schedule(static) \
@@ -39,4 +41,5 @@
 }
 
 #undef GB_CTYPE
+#undef GB_ISO_SPLIT
 

@@ -19,7 +19,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
 
     void **vx,          // values
     GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso-valued
+    bool *iso,          // if true, v is iso
 
     const GrB_Descriptor desc
 )

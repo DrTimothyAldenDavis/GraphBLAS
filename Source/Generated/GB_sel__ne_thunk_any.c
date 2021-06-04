@@ -22,6 +22,9 @@
 
 // A type: GB_void
 
+#define GB_ISO_SELECT \
+    0
+
 // kind
 #define GB_ENTRY_SELECTOR
 

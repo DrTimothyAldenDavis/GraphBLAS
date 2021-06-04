@@ -6,8 +6,7 @@
 // For a hypersparse matrix, find k so that j == Ah [k], if it
 // appears in the list.
 
-// k is not needed by the caller, just the variables
-// pstart, pend, pleft, and found.
+// k is not needed by the caller, just pstart, pend, pleft, and found.
 
 // Once k is found, find pstart and pend, the start and end of the vector.
 // pstart and pend are defined for all sparsity structures: hypersparse,

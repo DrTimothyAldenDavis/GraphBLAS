@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// All entries in C=D*B are computed entirely in parallel. 
+// This template is not used If C is iso, since all that is needed is to create
+// C as a shallow-copy of the pattern of A.
 
 // B and C can be jumbled.  D cannot, but it is a diagonal matrix so it is
 // never jumbled.
@@ -24,18 +25,20 @@
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (!GB_JUMBLED (D)) ;
     ASSERT (GB_JUMBLED_OK (B)) ;
+    ASSERT (!C->iso) ;
 
     //--------------------------------------------------------------------------
-    // get C, D, and B
+    // get D and B
     //--------------------------------------------------------------------------
 
     const GB_ATYPE *restrict Dx = (GB_ATYPE *) (D_is_pattern ? NULL : D->x) ;
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
-    const int64_t  *restrict Bi = B->i ;
-    const int64_t bnz = GB_IS_FULL (B) ? GB_NNZ_FULL (B) : GB_NNZ (B) ;
-    const int64_t bvlen = B->vlen ;
     const bool D_iso = D->iso ;
+
+    const GB_BTYPE *restrict Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
     const bool B_iso = B->iso ;
+    const int64_t *restrict Bi = B->i ;
+    const int64_t bnz = GB_nnz (B) ;
+    const int64_t bvlen = B->vlen ;
 
     //--------------------------------------------------------------------------
     // C=D*B

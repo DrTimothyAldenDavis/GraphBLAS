@@ -238,9 +238,9 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     #ifndef GBCOMPACT
 
-    bool C_is_dense = GB_is_dense (C) && !GB_PENDING_OR_ZOMBIES (C) ;
-    bool A_is_dense = GB_is_dense (A1) ;
-    bool B_is_dense = GB_is_dense (B1) ;
+    bool C_as_if_full = GB_as_if_full (C) ;
+    bool A_as_if_full = GB_as_if_full (A1) ;
+    bool B_as_if_full = GB_as_if_full (B1) ;
 
     bool no_typecast =
         (op->ztype == C->type)              // no typecasting of C
@@ -258,24 +258,28 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         GB_ANY_PENDING_WORK (A1) ||
         GB_ANY_PENDING_WORK (B1) ;
 
+    bool any_iso = (A1->iso || B1->iso) ;
+
         // FUTURE: for sssp12:
         // C<A> = A+B where C is sparse and B is dense;
         // mask is structural, not complemented, C_replace is false.
         // C is not empty.  Use a kernel that computes T<A>=A+B
         // where T starts out empty; just iterate over the entries in A.
 
-    if (A_is_dense                          // A and B are dense
-        && B_is_dense
+    if (A_as_if_full                        // A and B are as-if-full
+        && B_as_if_full
+        && !any_iso                         // A and B are not iso
         && (M == NULL) && !Mask_comp        // no mask
         && (C->is_csc == T_is_csc)          // no transpose of C
         && no_typecast                      // no typecasting
         && (opcode < GB_USER_opcode)        // not a user-defined operator
-        && (!op_is_positional)              // op is not positional
-        && !any_bitmap 
+        && !op_is_positional                // op is not positional
+        && !any_bitmap                      // no bitmap matrices
         && !any_pending_work)               // no matrix has pending work
     {
 
-        if (C_is_dense                      // C is dense
+        if (C_as_if_full                    // C is as-if-full
+        && !C->iso                          // C is not iso
         && accum == op                      // accum is same as the op
         && (opcode >= GB_MIN_opcode)        // subset of binary operators
         && (opcode <= GB_RDIV_opcode))
@@ -302,7 +306,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
             // C_replace is ignored
             GBURBLE ("dense C=A+B ") ;
-            info = GB_dense_ewise3_noaccum (C, C_is_dense, A1, B1, op, Context);
+            info = GB_dense_ewise3_noaccum (C, C_as_if_full, A1, B1, op,
+                Context) ;
             GB_FREE_ALL ;
             if (info == GrB_SUCCESS)
             {

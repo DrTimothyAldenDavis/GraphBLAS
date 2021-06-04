@@ -10,7 +10,7 @@
 // If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 GB_AxB_defs_include
-#ifndef GBCOMPACT
+ifndef_compact
 
 //------------------------------------------------------------------------------
 // C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method, C is bitmap/full
@@ -27,7 +27,7 @@ GrB_Info GB (_AsaxbitB)
     GB_Context Context
 )
 { 
-    #if GB_DISABLE
+    if_disabled
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_bitmap_AxB_saxpy_template.c"

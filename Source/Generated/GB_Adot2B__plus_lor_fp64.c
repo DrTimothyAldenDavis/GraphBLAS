@@ -34,3 +34,4 @@ GrB_Info GB (_Adot2B__plus_lor_fp64)
 }
 
 #endif
+

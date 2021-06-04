@@ -41,14 +41,16 @@
 // 
 // For PageRank:
 // 
-//  FUTURE: constant-valued matrices/vectors (for r(:)=teleport)
+// TODO::: iso matrices/vectors (for r(:)=teleport)
 //      probably coupled with lazy malloc/free of A->x when converting from
-//      full (non-constant) to constant-valued.
+//      full (non-iso) to iso.
+//
+// FUTURE:
 //      need aggressive exploit of non-blocking mode, for x = sum (abs (t-r)),
 //      or GrB_vxv dot product, with PLUS_ABSDIFF semiring
 //
 // For BC:
-//  FUTURE: BC: constructing S will be faster with iso-valued matrices,
+//  FUTURE: BC: constructing S will be faster with iso matrices,
 //  once they are added to SuiteSparse:GraphBLAS.
 
 #endif

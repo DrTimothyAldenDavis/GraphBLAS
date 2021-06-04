@@ -22,6 +22,9 @@
 
 // A type: GB_void
 
+#define GB_ISO_SELECT \
+    0
+
 // kind
 #define GB_ENTRY_SELECTOR
 
@@ -30,7 +33,7 @@
 
 // test value of Ax [p]
 #define GB_TEST_VALUE_OF_ENTRY(p)                       \
-    user_select (flipij ? j : GBI (Ai, p, avlen), flipij ? GBI (Ai, p, avlen) : j, Ax +((p)*asize), xthunk)
+    user_select (flipij ? j : GBI (Ai, p, avlen), flipij ? GBI (Ai, p, avlen) : j, Ax +(A_iso ? 0 :((p)*asize)), xthunk)
 
 // get the vector index (user select operators only)
 #define GB_GET_J                                        \

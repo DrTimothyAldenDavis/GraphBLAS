@@ -34,3 +34,4 @@ GrB_Info GB (_Adot2B__any_eq_bool)
 }
 
 #endif
+

@@ -8,16 +8,14 @@
 //------------------------------------------------------------------------------
 
 // Not user-callable.  Implements the user-callable GrB_*_extract functions.
-
-// C<M> = accum (C, A (Rows,Cols)) or
-
-// C<M> = accum (C, AT(Rows,Cols)) where AT = A'
-
+//
+//      C<M> = accum (C, A (Rows,Cols)) or
+//      C<M> = accum (C, AT(Rows,Cols)) where AT = A'
+//
 // equivalently:
-
-// C<M> = accum (C, A(Rows,Cols) )
-
-// C<M> = accum (C, A(Cols,Rows)')
+//
+//      C<M> = accum (C, A(Rows,Cols) )
+//      C<M> = accum (C, A(Cols,Rows)')
 
 #include "GB_extract.h"
 #include "GB_subref.h"
@@ -160,9 +158,11 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     // T = A (I,J)
     //--------------------------------------------------------------------------
 
+    // TODO::: iso:  if accum is PAIR, extract T as iso
+
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = GB_clear_static_header (&T_header) ;
-    GB_OK (GB_subref (T, T_is_csc, A, I, ni, J, nj, false, Context)) ;
+    GB_OK (GB_subref (T, false, T_is_csc, A, I, ni, J, nj, false, Context)) ;
     ASSERT_MATRIX_OK (T, "T extracted", GB0) ;
     ASSERT (GB_JUMBLED_OK (T)) ;
 

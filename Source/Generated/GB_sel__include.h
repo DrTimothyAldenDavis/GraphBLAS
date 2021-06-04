@@ -54,8 +54,8 @@ void GB (_sel_bitmap__user_any)
 ) ;
 
 // SPDX-License-Identifier: Apache-2.0
-
-void GB (_sel_phase1__tril_any)
+#if 0
+void GB (_sel_phase1__(none))
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -68,7 +68,7 @@ void GB (_sel_phase1__tril_any)
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
+#endif
 
 void GB (_sel_phase2__tril_any)
 (
@@ -101,7 +101,7 @@ void GB (_sel_bitmap__tril_any)
 
 // SPDX-License-Identifier: Apache-2.0
 
-void GB (_sel_phase1__triu_any)
+void GB (_sel_phase1__tril_iso)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -115,6 +115,52 @@ void GB (_sel_phase1__triu_any)
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
+
+void GB (_sel_phase2__tril_iso)
+(
+    int64_t *restrict Ci,
+    GB_void *restrict Cx,
+    const int64_t *restrict Zp,
+    const int64_t *restrict Cp,
+    const int64_t *restrict Cp_kfirst,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+
+void GB (_sel_bitmap__tril_iso)
+(
+    int8_t *Cb,
+    GB_void *restrict Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+) ;
+
+// SPDX-License-Identifier: Apache-2.0
+#if 0
+void GB (_sel_phase1__(none))
+(
+    int64_t *restrict Zp,
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+#endif
 
 void GB (_sel_phase2__triu_any)
 (
@@ -147,7 +193,7 @@ void GB (_sel_bitmap__triu_any)
 
 // SPDX-License-Identifier: Apache-2.0
 
-void GB (_sel_phase1__diag_any)
+void GB (_sel_phase1__triu_iso)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -161,6 +207,52 @@ void GB (_sel_phase1__diag_any)
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
+
+void GB (_sel_phase2__triu_iso)
+(
+    int64_t *restrict Ci,
+    GB_void *restrict Cx,
+    const int64_t *restrict Zp,
+    const int64_t *restrict Cp,
+    const int64_t *restrict Cp_kfirst,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+
+void GB (_sel_bitmap__triu_iso)
+(
+    int8_t *Cb,
+    GB_void *restrict Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+) ;
+
+// SPDX-License-Identifier: Apache-2.0
+#if 0
+void GB (_sel_phase1__(none))
+(
+    int64_t *restrict Zp,
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+#endif
 
 void GB (_sel_phase2__diag_any)
 (
@@ -193,7 +285,7 @@ void GB (_sel_bitmap__diag_any)
 
 // SPDX-License-Identifier: Apache-2.0
 
-void GB (_sel_phase1__offdiag_any)
+void GB (_sel_phase1__diag_iso)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -207,6 +299,52 @@ void GB (_sel_phase1__offdiag_any)
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
+
+void GB (_sel_phase2__diag_iso)
+(
+    int64_t *restrict Ci,
+    GB_void *restrict Cx,
+    const int64_t *restrict Zp,
+    const int64_t *restrict Cp,
+    const int64_t *restrict Cp_kfirst,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+
+void GB (_sel_bitmap__diag_iso)
+(
+    int8_t *Cb,
+    GB_void *restrict Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+) ;
+
+// SPDX-License-Identifier: Apache-2.0
+#if 0
+void GB (_sel_phase1__(none))
+(
+    int64_t *restrict Zp,
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+#endif
 
 void GB (_sel_phase2__offdiag_any)
 (
@@ -239,7 +377,7 @@ void GB (_sel_bitmap__offdiag_any)
 
 // SPDX-License-Identifier: Apache-2.0
 
-void GB (_sel_phase1__resize_any)
+void GB (_sel_phase1__offdiag_iso)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -253,6 +391,52 @@ void GB (_sel_phase1__resize_any)
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 
+
+void GB (_sel_phase2__offdiag_iso)
+(
+    int64_t *restrict Ci,
+    GB_void *restrict Cx,
+    const int64_t *restrict Zp,
+    const int64_t *restrict Cp,
+    const int64_t *restrict Cp_kfirst,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+
+void GB (_sel_bitmap__offdiag_iso)
+(
+    int8_t *Cb,
+    GB_void *restrict Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+) ;
+
+// SPDX-License-Identifier: Apache-2.0
+#if 0
+void GB (_sel_phase1__(none))
+(
+    int64_t *restrict Zp,
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+#endif
 
 void GB (_sel_phase2__resize_any)
 (
@@ -284,8 +468,54 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
+
+void GB (_sel_phase1__resize_iso)
+(
+    int64_t *restrict Zp,
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+
+void GB (_sel_phase2__resize_iso)
+(
+    int64_t *restrict Ci,
+    GB_void *restrict Cx,
+    const int64_t *restrict Zp,
+    const int64_t *restrict Cp,
+    const int64_t *restrict Cp_kfirst,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
 #if 0
-void GB (_sel_phase1__(none))
+void GB (_sel_bitmap__(none))
+(
+    int8_t *Cb,
+    GB_void *restrict Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+) ;
+#endif
+// SPDX-License-Identifier: Apache-2.0
+
+void GB (_sel_phase1__nonzombie_bool)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -298,7 +528,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_bool)
 (
@@ -330,8 +560,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_int8)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -344,7 +574,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_int8)
 (
@@ -376,8 +606,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_int16)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -390,7 +620,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_int16)
 (
@@ -422,8 +652,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_int32)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -436,7 +666,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_int32)
 (
@@ -468,8 +698,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_int64)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -482,7 +712,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_int64)
 (
@@ -514,8 +744,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_uint8)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -528,7 +758,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_uint8)
 (
@@ -560,8 +790,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_uint16)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -574,7 +804,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_uint16)
 (
@@ -606,8 +836,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_uint32)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -620,7 +850,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_uint32)
 (
@@ -652,8 +882,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_uint64)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -666,7 +896,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_uint64)
 (
@@ -698,8 +928,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_fp32)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -712,7 +942,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_fp32)
 (
@@ -744,8 +974,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_fp64)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -758,7 +988,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_fp64)
 (
@@ -790,8 +1020,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_fc32)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -804,7 +1034,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_fc32)
 (
@@ -836,8 +1066,8 @@ void GB (_sel_bitmap__(none))
 ) ;
 #endif
 // SPDX-License-Identifier: Apache-2.0
-#if 0
-void GB (_sel_phase1__(none))
+
+void GB (_sel_phase1__nonzombie_fc64)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -850,7 +1080,7 @@ void GB (_sel_phase1__(none))
     const GxB_select_function user_select,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-#endif
+
 
 void GB (_sel_phase2__nonzombie_fc64)
 (
@@ -899,6 +1129,52 @@ void GB (_sel_phase1__nonzombie_any)
 
 
 void GB (_sel_phase2__nonzombie_any)
+(
+    int64_t *restrict Ci,
+    GB_void *restrict Cx,
+    const int64_t *restrict Zp,
+    const int64_t *restrict Cp,
+    const int64_t *restrict Cp_kfirst,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+#if 0
+void GB (_sel_bitmap__(none))
+(
+    int8_t *Cb,
+    GB_void *restrict Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+) ;
+#endif
+// SPDX-License-Identifier: Apache-2.0
+
+void GB (_sel_phase1__nonzombie_iso)
+(
+    int64_t *restrict Zp,
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+
+void GB (_sel_phase2__nonzombie_iso)
 (
     int64_t *restrict Ci,
     GB_void *restrict Cx,

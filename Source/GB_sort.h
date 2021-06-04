@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// All of the GB_qsort_* functions are single-threaded, by design.  Both
+// All of the GB_qsort_* functions are single-threaded, by design.  The
 // GB_msort_* functions are parallel.  None of these sorting methods are
 // guaranteed to be stable, but they are always used in GraphBLAS with unique
 // keys.
@@ -69,7 +69,7 @@ void GB_qsort_1b_size16 // GB_qsort_1b with A_1 with sizeof = 16
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void GB_qsort_1a    // sort array A of size 1-by-n
+void GB_qsort_1    // sort array A of size 1-by-n
 (
     int64_t *restrict A_0,      // size n array
     const int64_t n
@@ -93,7 +93,15 @@ void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
+GrB_Info GB_msort_1     // sort array A of size 1-by-n
+(
+    int64_t *restrict A_0,   // size n array
+    const int64_t n,
+    int nthreads                // # of threads to use
+) ;
+
+GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GrB_Info GB_msort_2    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     int64_t *restrict A_0,   // size n array
     int64_t *restrict A_1,   // size n array
@@ -102,7 +110,7 @@ GrB_Info GB_msort_2b    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 ) ;
 
 GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
+GrB_Info GB_msort_3    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 (
     int64_t *restrict A_0,   // size n array
     int64_t *restrict A_1,   // size n array
@@ -127,7 +135,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 
 // A [a] and B [b] are keys of two integers.
 
-// GB_lt_2 returns true if A [a] < B [b], for GB_qsort_2 and GB_msort_2b
+// GB_lt_2 returns true if A [a] < B [b], for GB_qsort_2 and GB_msort_2
 
 #define GB_lt_2(A_0, A_1, a, B_0, B_1, b)                                   \
 (                                                                           \
@@ -155,7 +163,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 
 // A [a] and B [b] are keys of three integers.
 
-// GB_lt_3 returns true if A [a] < B [b], for GB_qsort_3 and GB_msort_3b
+// GB_lt_3 returns true if A [a] < B [b], for GB_qsort_3 and GB_msort_3
 
 #define GB_lt_3(A_0, A_1, A_2, a, B_0, B_1, B_2, b)                         \
 (                                                                           \
@@ -178,7 +186,7 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 )
 
 //------------------------------------------------------------------------------
-// GB_eq_*: sorting comparator function, three keys
+// GB_eq_*: sorting comparator function, one to three keys
 //------------------------------------------------------------------------------
 
 // A [a] and B [b] are keys of two or three integers.
@@ -195,6 +203,11 @@ GrB_Info GB_msort_3b    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 (                                                                           \
     (A_0 [a] == B_0 [b]) &&                                                 \
     (A_1 [a] == B_1 [b])                                                    \
+)
+
+#define GB_eq_1(A_0, a, B_0, b)                                             \
+(                                                                           \
+    (A_0 [a] == B_0 [b])                                                    \
 )
 
 //------------------------------------------------------------------------------

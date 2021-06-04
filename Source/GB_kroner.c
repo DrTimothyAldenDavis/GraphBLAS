@@ -23,17 +23,18 @@
 // accounted for in the parallel load-balancing.
 
 #include "GB_kron.h"
+#include "GB_emult.h"
 
 #define GB_FREE_WORK        \
 {                           \
-    GB_phbix_free (A2) ;  \
-    GB_phbix_free (B2) ;  \
+    GB_phbix_free (A2) ;    \
+    GB_phbix_free (B2) ;    \
 }
 
 #define GB_FREE_ALL         \
 {                           \
     GB_FREE_WORK ;          \
-    GB_phbix_free (C) ;   \
+    GB_phbix_free (C) ;     \
 }
 
 GrB_Info GB_kroner                  // C = kron (A,B)
@@ -79,7 +80,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (A))
     { 
         GBURBLE ("A:") ;
-        GB_OK (GB_dup2 (&A2, A, true, A->type, Context)) ;  // static header
+        // set A2->iso = A->iso     OK: no need for burble
+        GB_OK (GB_dup_worker (&A2, A->iso, A, true, A->type, Context)) ;
         GB_OK (GB_convert_bitmap_to_sparse (A2, Context)) ;
         A = A2 ;
     }
@@ -88,10 +90,20 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (B))
     { 
         GBURBLE ("B:") ;
-        GB_OK (GB_dup2 (&B2, B, true, B->type, Context)) ;  // static header
+        // set B2->iso = B->iso     OK: no need for burble
+        GB_OK (GB_dup_worker (&B2, B->iso, B, true, B->type, Context)) ;
         GB_OK (GB_convert_bitmap_to_sparse (B2, Context)) ;
         B = B2 ;
     }
+
+    //--------------------------------------------------------------------------
+    // check if C is iso and compute its iso value if it is
+    //--------------------------------------------------------------------------
+
+    GrB_Type ctype = C->type ;
+    const size_t csize = ctype->size ;
+    GB_void cscalar [GB_VLA(csize)] ;
+    bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -105,7 +117,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
     int64_t anvec = A->nvec ;
-    int64_t anz = GB_NNZ (A) ;
+    int64_t anz = GB_nnz (A) ;
 
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
@@ -115,7 +127,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
     int64_t bnvec = B->nvec ;
-    int64_t bnz = GB_NNZ (B) ;
+    int64_t bnz = GB_nnz (B) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -141,15 +153,24 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     ok = ok & GB_Index_multiply (&cnvec, anvec, bnvec) ;
     ASSERT (ok) ;
 
+    if (C_iso)
+    {
+        // the values of A and B are no longer needed if C is iso
+        GBURBLE ("(iso kron) ") ;
+        A_is_pattern = true ;
+        B_is_pattern = true ;
+    }
+
     // C is hypersparse if either A or B are hypersparse.  It is never bitmap.
     bool C_is_hyper = (cvdim > 1) && (Ah != NULL || Bh != NULL) ;
-    bool C_is_full = GB_is_dense (A) && GB_is_dense (B) ;
+    bool C_is_full = GB_as_if_full (A) && GB_as_if_full (B) ;
     int sparsity = C_is_full ? GxB_FULL :
         ((C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
 
+    // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, true, // full, sparse, or hyper; static header
         op->ztype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
-        sparsity, true, B->hyper_switch, cnvec, cnzmax, true, Context)) ;
+        sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso, Context)) ;
 
     //--------------------------------------------------------------------------
     // get C and the operator
@@ -161,7 +182,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     GB_void *restrict Cx = (GB_void *) C->x ;
     int64_t *restrict Cx_int64 = NULL ;
     int32_t *restrict Cx_int32 = NULL ;
-    const int64_t csize = C->type->size ;
 
     GxB_binary_function fmult = op->function ;
     GB_Opcode opcode = op->opcode ;
@@ -222,6 +242,23 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     }
 
     C->magic = GB_MAGIC ;
+
+    //--------------------------------------------------------------------------
+    // C = kron (A,B) where C is iso and full
+    //--------------------------------------------------------------------------
+
+    if (C_iso)
+    {
+        // Cx [0] = cscalar = op (A,B)
+        memcpy (C->x, cscalar, csize) ;
+        if (C_is_full)
+        {
+            // no more work to do if C is iso and full
+            ASSERT_MATRIX_OK (C, "C=kron(A,B), iso full", GB0) ;
+            GB_FREE_WORK ;
+            return (GrB_SUCCESS) ;
+        }
+    }
 
     //--------------------------------------------------------------------------
     // C = kron (A,B)
@@ -328,7 +365,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                         default: ;
                     }
                 }
-                else
+                else if (!C_iso)
                 { 
                     // standard binary operator
                     fmult (Cx +(pC*csize), awork, bwork) ;

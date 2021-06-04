@@ -34,3 +34,4 @@ GrB_Info GB (_Adot2B__bxor_bxnor_uint8)
 }
 
 #endif
+

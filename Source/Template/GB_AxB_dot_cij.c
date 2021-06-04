@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product.  This template is
+// Computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product.  This template is
 // used for all three cases: C=A'*B, C<M>=A'*B, and C<!M>=A'*B in dot2 when C
 // is bitmap, and for C<M>=A'*B when C and M are sparse or hyper in dot3.
 
@@ -26,9 +26,7 @@
 // found, so these optimizations can be used only if A(:,i) and/or B(:,j) are
 // entirely populated.
 
-// For built-in, pre-generated semirings, the PAIR operator is only coupled
-// with either the ANY, PLUS, EQ, or XOR monoids, since the other monoids are
-// equivalent to the ANY monoid.
+// TODO::: if A or B are full, and no mask, create C as full (dot2)
 
 //------------------------------------------------------------------------------
 // C(i,j) = A(:,i)'*B(:,j): a single dot product
@@ -46,12 +44,8 @@
 
         #if GB_IS_PAIR_MULTIPLIER
         { 
-            #if GB_IS_ANY_MONOID
-            // ANY monoid: take the first entry found; this sets cij = 1
-            GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
-            #elif GB_IS_EQ_MONOID
-            // EQ_PAIR semiring: all entries are equal to 1
-            cij = 1 ;
+            #if ( GB_IS_ANY_PAIR_SEMIRING )
+            // nothing to do; C is iso
             #elif (GB_CTYPE_BITS > 0)
             // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
             // for bool, 8-bit, 16-bit, or 32-bit integer
@@ -107,12 +101,8 @@
 
         #if GB_IS_PAIR_MULTIPLIER
         {
-            #if GB_IS_ANY_MONOID
-            // ANY monoid: take the first entry found; this sets cij = 1
-            GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
-            #elif GB_IS_EQ_MONOID
-            // EQ_PAIR semiring: all entries are equal to 1
-            cij = 1 ;
+            #if ( GB_IS_ANY_PAIR_SEMIRING )
+            // nothing to do; C is iso
             #elif (GB_CTYPE_BITS > 0)
             // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
             // for bool, 8-bit, 16-bit, or 32-bit integer
@@ -205,12 +195,8 @@
 
         #if GB_IS_PAIR_MULTIPLIER
         { 
-            #if GB_IS_ANY_MONOID
-            // ANY monoid: take the first entry found; this sets cij = 1
-            GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
-            #elif GB_IS_EQ_MONOID
-            // EQ_PAIR semiring: all entries are equal to 1
-            cij = 1 ;
+            #if ( GB_IS_ANY_PAIR_SEMIRING )
+            // nothing to do; C is iso
             #elif (GB_CTYPE_BITS > 0)
             // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
             // for bool, 8-bit, 16-bit, or 32-bit integer

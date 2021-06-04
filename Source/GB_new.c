@@ -105,7 +105,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool A_is_full_or_bitmap = false ;
     A->hyper_switch = hyper_switch ;
     A->bitmap_switch = GB_Global_bitmap_switch_matrix_get (vlen, vdim) ;
-    A->sparsity = GxB_AUTO_SPARSITY ;
+    A->sparsity_control = GxB_AUTO_SPARSITY ;
 
     if (sparsity == GxB_HYPERSPARSE)
     { 
@@ -163,12 +163,11 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->i = NULL ; A->i_shallow = false ; A->i_size = 0 ;
     A->x = NULL ; A->x_shallow = false ; A->x_size = 0 ;
 
-    A->nzmax = 0 ;              // GB_NNZ(A) checks nzmax==0 before Ap[nvec]
     A->nvals = 0 ;              // for bitmapped matrices only
     A->nzombies = 0 ;
     A->jumbled = false ;
     A->Pending = NULL ;
-    A->iso = false ;
+    A->iso = false ;            // OK: if iso, burble in the caller
 
     //--------------------------------------------------------------------------
     // Allocate A->p and A->h if requested
@@ -178,10 +177,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     if (A_is_full_or_bitmap || Ap_option == GB_Ap_null)
     { 
         // A is not initialized yet; A->p and A->h are both NULL.
-        // sparse case: GB_NNZ(A) must check A->nzmax == 0 since A->p might not
-        // be allocated.
-        // full case: A->x not yet allocated.  A->nzmax still zero
-        // bitmap case: A->b, A->x not yet allocated.  A->nzmax still zero
         A->magic = GB_MAGIC2 ;
         A->p = NULL ;
         A->h = NULL ;
@@ -206,8 +201,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // This is faster but can only be used internally by GraphBLAS since
         // the matrix is allocated but not yet completely initialized.  The
         // caller must set A->p [0..plen] and then set A->magic to GB_MAGIC,
-        // before returning the matrix to the user application.  GB_NNZ(A) must
-        // check A->nzmax == 0 since A->p [A->nvec] might be undefined.
+        // before returning the matrix to the user application.
         A->magic = GB_MAGIC2 ;
         A->p = GB_MALLOC (A->plen+1, int64_t, &(A->p_size)) ;
         ASSERT (A->p_size == GB_Global_memtable_size (A->p)) ;

@@ -9,6 +9,12 @@ if (nargin < 8)
     no_min_max_any_times_monoids = false ;
 end
 
+is_pair = isequal (multop, 'pair') ;
+% the any_pair_iso semiring
+if (is_pair)
+    codegen_axb_method ('any', 'pair') ;
+end
+
 plusinf32 = 'INFINITY' ;
 neginf32  = '(-INFINITY)' ;
 plusinf64 = '((double) INFINITY)' ;
@@ -56,7 +62,7 @@ if (~no_min_max_any_times_monoids)
 end
 
 % ANY monoid: all are terminal.
-if (~no_min_max_any_times_monoids)
+if (~no_min_max_any_times_monoids && ~is_pair)
     add = 'w = t' ;
     addfunc = 't' ;
     codegen_axb_method ('any', multop, add, addfunc, imult, 'int8_t'  , 'int8_t'  , '0' , [ ], 0, 0) ;
@@ -131,7 +137,9 @@ end
 codegen_axb_method ('lor',  multop, 'w |= t', 'w | t', bmult, 'bool', 'bool', 'false', 'true' , 1, 0) ;
 codegen_axb_method ('land', multop, 'w &= t', 'w & t', bmult, 'bool', 'bool', 'true' , 'false', 1, 0) ;
 codegen_axb_method ('lxor', multop, 'w ^= t', 'w ^ t', bmult, 'bool', 'bool', 'false', [ ]    , 1, 0) ;
-codegen_axb_method ('any' , multop, 'w = t' , 't'    , bmult, 'bool', 'bool', '0'    , [ ]    , 0, 0) ;
+if (~is_pair)
+    codegen_axb_method ('any' , multop, 'w = t' , 't'    , bmult, 'bool', 'bool', '0'    , [ ]    , 0, 0) ;
+end
 add = 'w = (w == t)' ;
 addfunc = 'w == t' ;
 codegen_axb_method ('eq',   multop, add,      addfunc, bmult, 'bool', 'bool', 'true' , [ ]    , 0, 0) ;

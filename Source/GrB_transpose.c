@@ -124,6 +124,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
         // differ.  That can be postponed at no cost since the following step
         // is free.
         GBURBLE ("(cheap) ") ;
+        // set T->iso = A->iso  OK
         GB_OK (GB_shallow_copy (T, C_is_csc, A, Context)) ;
     }
 

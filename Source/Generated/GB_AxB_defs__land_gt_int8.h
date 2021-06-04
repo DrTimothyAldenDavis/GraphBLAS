@@ -10,6 +10,7 @@
 // If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 #include "GB_dev.h"
+
 #ifndef GBCOMPACT
 #include "GB.h"
 #include "GB_control.h"
@@ -55,9 +56,14 @@
 #define GB_CTYPE \
     bool
 
-#define GB_ASIZE (sizeof (GB_BTYPE))
-#define GB_BSIZE (sizeof (GB_BTYPE))
-#define GB_CSIZE (sizeof (GB_CTYPE))
+#define GB_ASIZE \
+    sizeof (int8_t)
+
+#define GB_BSIZE \
+    sizeof (int8_t) 
+
+#define GB_CSIZE \
+    sizeof (bool)
 
 // true for int64, uint64, float, double, float complex, and double complex 
 #define GB_CTYPE_IGNORE_OVERFLOW \
@@ -79,7 +85,8 @@
 #define GB_LOADB(Gx,pG,Bx,pB,B_iso) \
     Gx [pG] = GBX (Bx, pB, B_iso)
 
-#define GB_CX(p) Cx [p]
+#define GB_CX(p) \
+    Cx [p]
 
 // multiply operator
 #define GB_MULT(z, x, y, i, k, j) \
@@ -124,29 +131,21 @@
 #define GB_IS_PLUS_PAIR_REAL_SEMIRING \
     0
 
-// // 1 for performance-critical semirings, which get extra optimization
-// #define GB_IS_PERFORMANCE_CRITICAL_SEMIRING \
-//     GB_is_performance_critical_semiring
-
-// declare the cij scalar
-#if GB_IS_PLUS_PAIR_REAL_SEMIRING
-    // also initialize cij to zero
-    #define GB_CIJ_DECLARE(cij) \
-        bool cij = 0
-#else
-    // all other semirings: just declare cij, do not initialize it
-    #define GB_CIJ_DECLARE(cij) \
-        bool cij
-#endif
+// declare the cij scalar (initialize cij to zero for PLUS_PAIR)
+#define GB_CIJ_DECLARE(cij) \
+    bool cij
 
 // cij = Cx [pC]
-#define GB_GETC(cij,p) cij = Cx [p]
+#define GB_GETC(cij,p) \
+    cij = Cx [p]
 
 // Cx [pC] = cij
-#define GB_PUTC(cij,p) Cx [p] = cij
+#define GB_PUTC(cij,p) \
+    Cx [p] = cij
 
 // Cx [p] = t
-#define GB_CIJ_WRITE(p,t) Cx [p] = t
+#define GB_CIJ_WRITE(p,t) \
+    Cx [p] = t
 
 // C(i,j) += t
 #define GB_CIJ_UPDATE(p,t) \
@@ -181,7 +180,7 @@
         1
 #endif
 
-// 1 for the ANY_PAIR semirings
+// 1 for the ANY_PAIR_ISO semiring
 #define GB_IS_ANY_PAIR_SEMIRING \
     0
 
@@ -237,39 +236,25 @@
 #define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \
     GB_ATOMIC_COMPARE_EXCHANGE_8 (target, expected, desired)
 
-#if GB_IS_ANY_PAIR_SEMIRING
+// Hx [i] = t
+#define GB_HX_WRITE(i,t) \
+    Hx [i] = t
 
-    // result is purely symbolic; no numeric work to do.  Hx is not used.
-    #define GB_HX_WRITE(i,t)
-    #define GB_CIJ_GATHER(p,i)
-    #define GB_CIJ_GATHER_UPDATE(p,i)
-    #define GB_HX_UPDATE(i,t)
-    #define GB_CIJ_MEMCPY(p,i,len)
+// Cx [p] = Hx [i]
+#define GB_CIJ_GATHER(p,i) \
+    Cx [p] = Hx [i]
 
-#else
+// Cx [p] += Hx [i]
+#define GB_CIJ_GATHER_UPDATE(p,i) \
+    Cx [p] &= Hx [i]
 
-    // Hx [i] = t
-    #define GB_HX_WRITE(i,t) Hx [i] = t
+// Hx [i] += t
+#define GB_HX_UPDATE(i,t) \
+    Hx [i] &= t
 
-    // Hx [i] = identity
-    #define GB_HX_CLEAR(i) Hx [i] = GB_IDENTITY
-
-    // Cx [p] = Hx [i]
-    #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
-
-    // Cx [p] += Hx [i]
-    #define GB_CIJ_GATHER_UPDATE(p,i) \
-        Cx [p] &= Hx [i]
-
-    // Hx [i] += t
-    #define GB_HX_UPDATE(i,t) \
-        Hx [i] &= t
-
-    // memcpy (&(Cx [p]), &(Hx [i]), len)
-    #define GB_CIJ_MEMCPY(p,i,len) \
-        memcpy (Cx +(p), Hx +(i), (len) * sizeof(bool))
-
-#endif
+// memcpy (&(Cx [p]), &(Hx [i]), len)
+#define GB_CIJ_MEMCPY(p,i,len) \
+    memcpy (Cx +(p), Hx +(i), (len) * sizeof(bool));
 
 // 1 if the semiring has a concise bitmap multiply-add
 #define GB_HAS_BITMAP_MULTADD \

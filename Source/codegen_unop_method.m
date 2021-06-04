@@ -42,7 +42,8 @@ if (A_is_pattern)
     % A(i,j) is not needed
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
-    fprintf (f, 'define(`GB_geta'', `%s $1 = GBX ($2, $3, $4)'')\n', xtype) ;
+    % A is not iso, so GBX (Ax, p, A->iso) is not needed
+    fprintf (f, 'define(`GB_geta'', `%s $1 = $2 [$3]'')\n', xtype) ;
 end
 
 % type-specific IMINV

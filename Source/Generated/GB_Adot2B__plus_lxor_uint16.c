@@ -34,3 +34,4 @@ GrB_Info GB (_Adot2B__plus_lxor_uint16)
 }
 
 #endif
+

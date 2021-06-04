@@ -18,10 +18,9 @@
 // The operation is defined by the following types and operators:
 
 // functions:
-// C<M>=x (C is dense):          GB (_Cdense_05d__int64)
+// C<M>=x (C is as-is-full):     GB (_Cdense_05d__int64)
 // C<A>=A (C is dense):          GB (_Cdense_06d__int64)
 // C<M>=A (C is empty, A dense): GB (_Cdense_25__int64)
-// convert sparse to bitmap:     GB (_convert_s2b__int64)
 
 // C type:   int64_t
 
@@ -37,7 +36,7 @@
 #define GB_COPY_SCALAR_TO_C(p,x) Cx [p] = x
 
 // Cx [p] = Ax [pA]
-#define GB_COPY_A_TO_C(Cx,p,Ax,pA) Cx [p] = Ax [pA]
+#define GB_COPY_A_TO_C(Cx,p,Ax,pA,A_iso) Cx [p] = GBX (Ax, pA, A_iso)
 
 // test the mask condition with Ax [pA]
 #define GB_AX_MASK(Ax,pA,asize) \
@@ -110,27 +109,6 @@ GrB_Info GB (_Cdense_25__int64)
     #else
     ASSERT (C->type == A->type) ;
     #include "GB_dense_subassign_25_template.c"
-    return (GrB_SUCCESS) ;
-    #endif
-}
-
-//------------------------------------------------------------------------------
-// convert sparse to bitmap
-//------------------------------------------------------------------------------
-
-GrB_Info GB (_convert_s2b__int64)
-(
-    GrB_Matrix A,
-    GB_void *restrict Ax_new_void,
-    int8_t  *restrict Ab,
-    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
-)
-{ 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
-    int64_t *restrict Ax_new = (int64_t *) Ax_new_void ;
-    #include "GB_convert_sparse_to_bitmap_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

@@ -32,7 +32,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
     ASSERT (GB_IS_BITMAP (A)) ;
     GrB_Matrix C = NULL ;
 
-    int sparsity_control = A->sparsity ;
+    int sparsity_control = A->sparsity_control ;
     float hyper_switch = A->hyper_switch ;
     bool csc = A->is_csc ;
     GrB_Type atype = A->type ;
@@ -40,6 +40,8 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
     int64_t avdim = A->vdim ;
     size_t asize = atype->size ;
     const int8_t *restrict Ab = A->b ;
+    const bool A_iso = A->iso ;
+    int64_t anz = GB_nnz (A) ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
@@ -76,11 +78,12 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
             int64_t cnzmax = cvdim * cvlen ;
 
             C = NULL ;
+            // set C->iso = A_iso       OK
             GB_OK (GB_new_bix (&C, false,      // new header
                 atype, cvlen, cvdim, GB_Ap_null, csc, GxB_BITMAP, false,
-                hyper_switch, 0, cnzmax, true, Context)) ;
+                hyper_switch, 0, cnzmax, true, A_iso, Context)) ;
             int8_t *restrict Cb = C->b ;
-            C->sparsity = sparsity_control ;
+            C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             int C_nthreads = GB_nthreads (cnzmax, chunk, nthreads_max) ;
             int64_t cnz = 0 ;
@@ -91,8 +94,28 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
 
             bool done = false ;
 
-            #ifndef GBCOMPACT
+            if (A_iso)
             {
+
+                //--------------------------------------------------------------
+                // split an iso matrix A into an iso tile C
+                //--------------------------------------------------------------
+
+                // A is iso and so is C; copy the iso entry
+                memcpy (C->x, A->x, asize) ;
+                #define GB_ISO_SPLIT
+                #define GB_COPY(pC,pA) ;
+                #include "GB_split_bitmap_template.c"
+
+            }
+            else
+            {
+
+                //--------------------------------------------------------------
+                // split a non-iso matrix A into an non-iso tile C
+                //--------------------------------------------------------------
+
+                #ifndef GBCOMPACT
                 // no typecasting needed
                 switch (asize)
                 {
@@ -130,8 +153,8 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
 
                     default:;
                 }
+                #endif
             }
-            #endif
 
             if (!done)
             { 
@@ -139,7 +162,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
                 #define GB_CTYPE GB_void
                 #undef  GB_COPY
                 #define GB_COPY(pC,pA)  \
-                    memcpy (Cx + (pC)*asize, Ax + (pA)*asize, asize) ;
+                    memcpy (Cx + (pC)*asize, Ax +(pA)*asize, asize) ;
                 #include "GB_split_bitmap_template.c"
             }
 

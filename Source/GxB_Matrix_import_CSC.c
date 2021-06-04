@@ -22,7 +22,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GrB_Index Ap_size,  // size of Ap in bytes
     GrB_Index Ai_size,  // size of Ai in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso-valued
+    bool iso,           // if true, A is iso
 
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc

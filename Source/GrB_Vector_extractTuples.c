@@ -17,10 +17,12 @@
 // extract just the row indices, pass I as non-NULL, and X as NULL.  This is
 // like [I,~,~] = find (v) in MATLAB.
 
+// If v is iso and X is not NULL, the iso scalar vx [0] is expanded into X.
+
 #include "GB.h"
 
 #define GB_EXTRACT(prefix,type,T)                                             \
-GrB_Info GB_EVAL3 (prefix, _Vector_extractTuples_, T) /* [I,~,X] = find (A) */\
+GrB_Info GB_EVAL3 (prefix, _Vector_extractTuples_, T)                         \
 (                                                                             \
     GrB_Index *I,           /* array for returning row indices of tuples */   \
     type *X,                /* array for returning values of tuples      */   \

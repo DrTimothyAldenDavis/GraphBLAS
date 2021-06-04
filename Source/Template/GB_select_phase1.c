@@ -38,6 +38,7 @@
     const int64_t  *restrict Ah = A->h ;
     const int64_t  *restrict Ai = A->i ;
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    const bool A_iso = A->iso ;
     size_t  asize = A->type->size ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;

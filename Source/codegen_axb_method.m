@@ -7,7 +7,7 @@ function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, ...
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-if (isempty (mult))
+if (nargin >= 5 && isempty (mult))
     return
 end
 
@@ -33,6 +33,26 @@ is_max = isequal (addop, 'max') ;
 is_min = isequal (addop, 'min') ;
 is_eq  = isequal (addop, 'eq') ;
 is_any_pair = is_any && isequal (multop, 'pair') ;
+
+if (is_any_pair)
+    % the any_pair_iso semiring does not access any numerical values
+    add = ' ' ;
+    addfunc = ' ' ;
+    mult = ' ' ;
+    ztype = 'iso' ;
+    xytype = 'any type' ;
+    identity = ' ' ;
+    terminal = 'break' ;
+    omp_atomic = 1 ;
+    omp_microsoft_atomic = 0 ;
+    fprintf (f, 'define(`ifndef_compact'', `#if 1'')\n') ;
+    fprintf (f, 'define(`if_not_any_pair_semiring'', `#if 0'')\n') ;
+else
+    fprintf (f, 'define(`ifndef_compact'', `#ifndef GBCOMPACT'')\n') ;
+    fprintf (f, 'define(`if_not_any_pair_semiring'', `#if 1'')\n') ;
+end
+fprintf (f, 'define(`endif_compact'', `#endif'')\n') ;
+
 ztype_is_real = ~contains (ztype, 'FC') ;
 is_any_complex = is_any && ~ztype_is_real ;
 is_plus_pair_real = isequal (addop, 'plus') && isequal (multop, 'pair') ...
@@ -42,6 +62,11 @@ t_is_simple = isequal (multop, 'pair') || contains (multop, 'first') || contains
 t_is_nonnan = isequal (multop (1:2), 'is') || (multop (1) == 'l') ;
 
 switch (ztype)
+    case { 'iso' }
+        ztype_is_float = false ;
+        ztype_ignore_overflow = true ;
+        nbits = 0 ;
+        bits = '0' ;
     case { 'bool' }
         ztype_is_float = false ;
         ztype_ignore_overflow = false ;
@@ -105,8 +130,15 @@ if (is_pair)
     end
 end
 
-[fname, unsigned, bits] = codegen_type (xytype) ;
-[zname, ~, ~] = codegen_type (ztype) ;
+if (is_any_pair)
+    fname = 'iso' ;
+    unsigned = true ;
+    bits = 0 ;
+    zname = 'iso' ;
+else
+    [fname, unsigned, bits] = codegen_type (xytype) ;
+    [zname, ~, ~] = codegen_type (ztype) ;
+end
 
 name = sprintf ('%s_%s_%s', addop, multop, fname) ;
 
@@ -127,6 +159,16 @@ fprintf (f, 'define(`GB_ctype'', `%s'')\n', ztype) ;
 fprintf (f, 'define(`GB_atype'', `%s'')\n', xytype) ;
 fprintf (f, 'define(`GB_btype'', `%s'')\n', xytype) ;
 
+if (is_any_pair)
+    fprintf (f, 'define(`GB_csize'', `0'')\n', ztype) ;
+    fprintf (f, 'define(`GB_asize'', `0'')\n', xytype) ;
+    fprintf (f, 'define(`GB_bsize'', `0'')\n', xytype) ;
+else
+    fprintf (f, 'define(`GB_csize'', `sizeof (%s)'')\n', ztype) ;
+    fprintf (f, 'define(`GB_asize'', `sizeof (%s)'')\n', xytype) ;
+    fprintf (f, 'define(`GB_bsize'', `sizeof (%s)'')\n', xytype) ;
+end
+
 % flag if ztype can ignore overflow in some computations
 fprintf (f, 'define(`GB_ctype_ignore_overflow'', `%d'')\n', ztype_ignore_overflow) ;
 
@@ -136,6 +178,8 @@ switch (ztype)
         fprintf (f, 'define(`GB_ctype_cast'', `GxB_CMPLXF (((float) $1), ((float) $2))'')\n') ;
     case { 'GxB_FC64_t' }
         fprintf (f, 'define(`GB_ctype_cast'', `GxB_CMPLX (((double) $1), ((double) $2))'')\n') ;
+    case { 'iso' }
+        fprintf (f, 'define(`GB_ctype_cast'', `'')\n') ;
     otherwise
         fprintf (f, 'define(`GB_ctype_cast'', `((GB_ctype) $1)'')\n') ;
 end
@@ -146,6 +190,8 @@ switch (xytype)
         fprintf (f, 'define(`GB_atype_cast'', `GxB_CMPLXF (((float) $1), ((float) $2))'')\n') ;
     case { 'GxB_FC64_t' }
         fprintf (f, 'define(`GB_atype_cast'', `GxB_CMPLX (((double) $1), ((double) $2))'')\n') ;
+    case { 'any type' }
+        fprintf (f, 'define(`GB_atype_cast'', `'')\n') ;
     otherwise
         fprintf (f, 'define(`GB_atype_cast'', `((GB_atype) $1)'')\n') ;
 end
@@ -159,10 +205,15 @@ else
     fprintf (f, 'define(`GB_is_any_pair_semiring'', `0'')\n') ;
 end
 
-if (is_plus_pair_real)
+if (is_any_pair)
+    fprintf (f, 'define(`GB_is_plus_pair_real_semiring'', `0'')\n') ;
+    fprintf (f, 'define(`GB_cij_declare'', `'')\n') ;
+elseif (is_plus_pair_real)
     fprintf (f, 'define(`GB_is_plus_pair_real_semiring'', `1'')\n') ;
+    fprintf (f, 'define(`GB_cij_declare'', `%s cij = 0'')\n', ztype) ;
 else
     fprintf (f, 'define(`GB_is_plus_pair_real_semiring'', `0'')\n') ;
+    fprintf (f, 'define(`GB_cij_declare'', `%s cij'')\n', ztype) ;
 end
 
 if (is_pair)
@@ -176,14 +227,6 @@ if (is_eq)
 else
     fprintf (f, 'define(`GB_is_eq_monoid'', `0'')\n') ;
 end
-
-% for the conventional semirings in MATLAB, which get extra optimization
-% if (isequal (addop, 'plus') && isequal (multop, 'times') && ztype_is_float)
-%     fprintf (f, 'define(`GB_is_performance_critical_semiring'', `1'')\n') ;
-% else
-%     fprintf (f, 'define(`GB_is_performance_critical_semiring'', `0'')\n') ;
-% end
-
 
 if (is_any)
     % the ANY monoid terminates on the first entry seen
@@ -342,13 +385,19 @@ fprintf (f, 'define(`GB_has_omp_atomic'', `%d'')\n', omp_atomic) ;
 fprintf (f, 'define(`GB_microsoft_has_omp_atomic'', `%d'')\n', omp_microsoft_atomic) ;
 
 % to get an entry from A
-if (is_second || is_pair || is_positional)
+if (is_any_pair)
+    fprintf (f, 'define(`GB_a_is_pattern'', `1'')\n') ;
+    fprintf (f, 'define(`GB_geta'', `;'')\n') ;
+    fprintf (f, 'define(`GB_loada'', `;'')\n') ;
+elseif (is_second || is_pair || is_positional)
     % value of A is ignored for the SECOND and PAIR operators
     fprintf (f, 'define(`GB_a_is_pattern'', `1'')\n') ;
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
+    fprintf (f, 'define(`GB_loada'', `$1 [$2] = GBX ($3, $4, $5)'')\n') ;
 else
     fprintf (f, 'define(`GB_a_is_pattern'', `0'')\n') ;
     fprintf (f, 'define(`GB_geta'', `%s $1 = GBX ($2, $3, $4)'')\n', xytype) ;
+    fprintf (f, 'define(`GB_loada'', `$1 [$2] = GBX ($3, $4, $5)'')\n') ;
 end
 
 % to get an entry from B
@@ -363,6 +412,19 @@ else
     fprintf (f, 'define(`GB_loadb'', `$1 [$2] = GBX ($3, $4, $5)'')\n') ;
 end
 
+% access the values of C
+if (is_any_pair)
+    fprintf (f, 'define(`GB_cx'', `'')\n') ;
+    fprintf (f, 'define(`GB_getc'', `'')\n') ;
+    fprintf (f, 'define(`GB_putc'', `'')\n') ;
+    fprintf (f, 'define(`GB_cij_write'', `'')\n') ;
+else
+    fprintf (f, 'define(`GB_cx'', `Cx [p]'')\n') ;
+    fprintf (f, 'define(`GB_getc'', `cij = Cx [p]'')\n') ;
+    fprintf (f, 'define(`GB_putc'', `Cx [p] = cij'')\n') ;
+    fprintf (f, 'define(`GB_cij_write'', `Cx [p] = t'')\n') ;
+end
+
 % type-specific IDIV
 if (~isempty (strfind (mult, 'IDIV')))
     if (unsigned)
@@ -374,12 +436,18 @@ if (~isempty (strfind (mult, 'IDIV')))
 end
 
 % create the multiply operator (assignment)
-mult2 = strrep (mult,  'xarg', '`$2''') ;
-mult2 = strrep (mult2, 'yarg', '`$3''') ;
-fprintf (f, 'define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
+if (is_any_pair)
+    fprintf (f, 'define(`GB_multiply'', `'')\n') ;
+else
+    mult2 = strrep (mult,  'xarg', '`$2''') ;
+    mult2 = strrep (mult2, 'yarg', '`$3''') ;
+    fprintf (f, 'define(`GB_multiply'', `$1 = %s'')\n', mult2) ;
+end
 
 % create the add update, of the form w += t
-if (is_min)
+if (is_any_pair)
+    add2 = ';' ;
+elseif (is_min)
     if (contains (ztype, 'int'))
         % min monoid for signed or unsigned integers
         add2 = 'if ($1 > $2) { $1 = $2 ; }' ;
@@ -410,14 +478,32 @@ else
 end
 fprintf (f, 'define(`GB_add_update'', `%s'')\n', add2) ;
 
+if (is_any_pair)
+    fprintf (f, 'define(`GB_hx_write'', `;'')\n') ;
+    fprintf (f, 'define(`GB_cij_gather'', `;'')\n') ;
+    fprintf (f, 'define(`GB_cij_memcpy'', `;'')\n') ;
+else
+    fprintf (f, 'define(`GB_hx_write'', `Hx [i] = t'')\n') ;
+    fprintf (f, 'define(`GB_cij_gather'', `Cx [p] = Hx [i]'')\n') ;
+    fprintf (f, 'define(`GB_cij_memcpy'', `memcpy (Cx +(p), Hx +(i), (len) * sizeof(%s));'')\n', ztype) ;
+        
+end
+
 % create the add function, of the form w + t
-add2 = strrep (addfunc,  'w', '`$1''') ;
-add2 = strrep (add2,     't', '`$2''') ;
-fprintf (f, 'define(`GB_add_function'', `%s'')\n', add2) ;
+if (is_any_pair)
+    fprintf (f, 'define(`GB_add_function'', `'')\n') ;
+else
+    add2 = strrep (addfunc,  'w', '`$1''') ;
+    add2 = strrep (add2,     't', '`$2''') ;
+    fprintf (f, 'define(`GB_add_function'', `%s'')\n', add2) ;
+end
 
 % create the multiply-add operator
+need_mult_typecast = false ;
 is_imin_or_imax = (isequal (addop, 'min') || isequal (addop, 'max')) && contains (ztype, 'int') ;
-if (~is_imin_or_imax && ...
+if (is_any_pair)
+    fprintf (f, 'define(`GB_multiply_add'', `'')\n') ;
+elseif (~is_imin_or_imax && ...
     (isequal (ztype, 'float') || isequal (ztype, 'double') || ...
      isequal (ztype, 'bool') || is_first || is_second || is_pair || is_positional))
     % float and double do not get promoted.
@@ -429,7 +515,6 @@ if (~is_imin_or_imax && ...
     multadd = strrep (multadd, 'xarg', '`$2''') ;
     multadd = strrep (multadd, 'yarg', '`$3''') ;
     fprintf (f, 'define(`GB_multiply_add'', `%s'')\n', multadd) ;
-    need_mult_typecast = false ;
 else
     % use explicit typecasting to avoid ANSI C integer promotion.
     add2 = strrep (add,  'w', '`$1''') ;
@@ -645,21 +730,31 @@ fprintf (f, 'define(`GB_xinit'', `%s'')\n', xinit) ;
 % fprintf ('(%5s %-8s %10s): { %s } { %s } { %s }\n', addop, multop, ztype, xinit, xload, s) ;
 
 % create the disable flag
-disable  = sprintf ('GxB_NO_%s', upper (addop)) ;
-if (~isequal (addop, multop))
-    disable = [disable (sprintf (' || GxB_NO_%s', upper (multop)))] ;
+if (is_any_pair)
+    % never disable the any_pair_iso semiring
+    fprintf (f, 'define(`GB_disable'', `0'')\n') ;
+    fprintf (f, 'define(`if_disabled'', `#if 0'')\n') ;
+    fprintf (f, 'define(`if_not_disabled'', `#if 1'')\n') ;
+else
+    disable  = sprintf ('GxB_NO_%s', upper (addop)) ;
+    if (~isequal (addop, multop))
+        disable = [disable (sprintf (' || GxB_NO_%s', upper (multop)))] ;
+    end
+    disable = [disable (sprintf (' || GxB_NO_%s', upper (fname)))] ;
+    disable = [disable (sprintf (' || GxB_NO_%s_%s', upper (addop), upper (zname)))] ;
+    if (~ (isequal (addop, multop) && isequal (zname, fname)))
+        disable = [disable (sprintf (' || GxB_NO_%s_%s', upper (multop), upper (fname)))] ;
+    end
+    disable = [disable (sprintf (' || GxB_NO_%s_%s_%s', ...
+        upper (addop), upper (multop), upper (fname))) ] ;
+    fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
+    fprintf (f, 'define(`if_disabled'', `#if GB_DISABLE'')\n') ;
+    fprintf (f, 'define(`if_not_disabled'', `#if ( !GB_DISABLE )'')\n') ;
 end
-disable = [disable (sprintf (' || GxB_NO_%s', upper (fname)))] ;
-disable = [disable (sprintf (' || GxB_NO_%s_%s', upper (addop), upper (zname)))] ;
-if (~ (isequal (addop, multop) && isequal (zname, fname)))
-    disable = [disable (sprintf (' || GxB_NO_%s_%s', upper (multop), upper (fname)))] ;
-end
-disable = [disable (sprintf (' || GxB_NO_%s_%s_%s', ...
-    upper (addop), upper (multop), upper (fname))) ] ;
-fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
+
 fclose (f) ;
 
-nprune = 57 ;
+nprune = 74 ;
 
 % construct the *.c and *.h files for the semiring
 fmt = 'cat control.m4 Generator/%s.%s | m4 | tail -n +%d > Generated/%s__%s.%s' ;

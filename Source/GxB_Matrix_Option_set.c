@@ -62,9 +62,10 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
 
             {
                 va_start (ap, field) ;
-                int sparsity = va_arg (ap, int) ;
+                int sparsity_control = va_arg (ap, int) ;
                 va_end (ap) ;
-                A->sparsity = GB_sparsity_control (sparsity, (int64_t) (-1)) ;
+                A->sparsity_control =
+                    GB_sparsity_control (sparsity_control, (int64_t) (-1)) ;
             }
             break ;
 
@@ -86,7 +87,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 { 
                     // A = A', done in-place, and change to the new format.
                     // transpose: no typecast, no op, in-place of A
-                    GB_BURBLE_N (GB_NNZ (A), "(transpose) ") ;
+                    GB_BURBLE_N (GB_nnz (A), "(transpose) ") ;
                     GB_OK (GB_transpose (NULL, NULL, new_csc, A, // in_place_A
                         NULL, NULL, NULL, false, Context)) ;
                     ASSERT (A->is_csc == new_csc) ;

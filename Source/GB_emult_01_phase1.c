@@ -10,7 +10,7 @@
 // GB_emult_01_phase1 counts the number of entries in each vector of C, for
 // C=A.*B, C<M>=A.*B, or C<!M>=A.*B and then does a cumulative sum to find Cp.
 // GB_emult_01_phase1 is preceded by GB_emult_01_phase0, which finds the
-// non-empty vectors of C.  If the mask M is saprse, it is not complemented;
+// non-empty vectors of C.  If the mask M is sparse, it is not complemented;
 // only a bitmap or full M is complemented.
 
 // C is sparse or hypersparse, as determined by GB_add_sparsity.  

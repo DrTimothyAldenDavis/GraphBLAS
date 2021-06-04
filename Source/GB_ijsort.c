@@ -108,7 +108,7 @@ GrB_Info GB_ijsort
     // sort [I1 I1k]
     //--------------------------------------------------------------------------
 
-    info = GB_msort_2b ((int64_t *) I1, (int64_t *) I1k, ni, nthreads) ;
+    info = GB_msort_2 ((int64_t *) I1, (int64_t *) I1k, ni, nthreads) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

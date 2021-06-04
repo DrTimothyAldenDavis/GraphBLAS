@@ -54,9 +54,9 @@ GrB_Type type ;         // the type of each numerical entry
 
 // For the sparse and hypersparse formats, Ap is an integer array of size
 // A->plen+1, with Ap [0] always zero.  The matrix contains A->nvec sparse
-// vectors, where A->nvec <= A->plen <= A->vdim.  The arrays Ai and Ax are both
-// of size A->nzmax, and define the indices and values in each sparse vector.
-// The total number of entries in the matrix is Ap [nvec] <= A->nzmax.
+// vectors, where A->nvec <= A->plen <= A->vdim.  The arrays Ai and Ax define
+// the indices and values in each sparse vector.  The total number of entries
+// in the matrix is Ap [nvec] <= GB_nnz_max (A).
 // For the bitmap and full sparsity structures, Ap and Ai are NULL.
 
 // For both hypersparse and non-hypersparse matrices, if A->nvec_nonempty is
@@ -248,10 +248,10 @@ int64_t nvec_nonempty ; // the actual number of non-empty vectors, or -1 if
 
 int64_t *h ;            // list of non-empty vectors: h_size >= 8*max(plen,1)
 int64_t *p ;            // pointers: p_size >= 8*(plen+1)
-int64_t *i ;            // indices:  i_size >= 8*max(nzmax,1)
-void *x ;               // values:   x_size >= max(nzmax*A->type->size,1)
-int8_t *b ;             // bitmap:   b_size >= max(nzmax,1)
-int64_t nzmax ;         // max possible # of entries
+int64_t *i ;            // indices:  i_size >= 8*max(anz,1)
+void *x ;               // values:   x_size >= max(anz*A->type->size,1),
+                        //           or x_size >= 1 if A is iso
+int8_t *b ;             // bitmap:   b_size >= max(anz,1)
 int64_t nvals ;         // nvals(A) if A is bitmap
 
 size_t p_size ;         // exact size of A->p in bytes, zero if A->p is NULL
@@ -347,7 +347,7 @@ GB_Pending Pending ;        // list of pending tuples
 // in the right place in the matrix.  However, methods and operations in
 // GraphBLAS that cannot tolerate zombies in their input matries can check the
 // condition (A->nzombies > 0), and then delete all of them if they appear, via
-// GB_Matrix_wait.
+// GB_wait.
 
 uint64_t nzombies ;     // number of zombies marked for deletion
 
@@ -393,8 +393,8 @@ uint64_t nzombies ;     // number of zombies marked for deletion
 //      By default, all GrB_Matrices are held in CSR form, unless they are
 //      n-by-1 (then they are CSC).  The GrB_vector is always CSC.
 
-// (2) If A->sparsity is GxB_AUTO_SPARSITY (15), then the following rules are
-//      used to control the sparsity structure:
+// (2) If A->sparsity_control is GxB_AUTO_SPARSITY (15), then the following
+//      rules are used to control the sparsity structure:
 //
 //      (a) When a matrix is created, it is empty and starts as hypersparse,
 //          except that a GrB_Vector is never hypersparse.
@@ -405,9 +405,9 @@ uint64_t nzombies ;     // number of zombies marked for deletion
 //          A->hyper_switch = (1/16) by default.  See GB_convert*test.
 //
 //      (c) A matrix with all entries present is converted to full (anz =
-//          GB_NNZ(A) = anz_dense = (A->vlen)*(A->vdim)).
+//          GB_nnz (A) = anz_dense = (A->vlen)*(A->vdim)).
 //
-//      (d) A matrix with anz = GB_NNZ(A) entries and dimension A->vlen by
+//      (d) A matrix with anz = GB_nnz (A) entries and dimension A->vlen by
 //          A->vdim can have at most anz_dense = (A->vlen)*(A->vdim) entries.
 //          If A is sparse/hypersparse with anz > A->bitmap_switch * anz_dense,
 //          then it switches to bitmap.  If A is bitmap and anz =
@@ -416,7 +416,7 @@ uint64_t nzombies ;     // number of zombies marked for deletion
 
 float hyper_switch ;    // controls conversion hyper to/from sparse
 float bitmap_switch ;   // controls conversion sparse to/from bitmap
-int sparsity ;          // controls sparsity structure: hypersparse,
+int sparsity_control ;  // controls sparsity structure: hypersparse,
                         // sparse, bitmap, or full, or any combination.
 
 //------------------------------------------------------------------------------
@@ -449,7 +449,7 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
                         // matrices are never jumbled.
 
 //------------------------------------------------------------------------------
-// iso-valued matrices
+// iso matrices
 //------------------------------------------------------------------------------
 
 // Entries that are present in a GraphBLAS matrix, vector, or scalar always
@@ -462,13 +462,13 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
 
 // Instead, the common practice is to assign all entries present in the matrix
 // to be equal to a single value, typically 1 or true.  SuiteSparse:GraphBLAS
-// exploits this typical practice by allowing for iso-valued matrices, where
-// all entries present have the same value, held as A->x [0].  The sparsity
-// structure is kept, so in an iso-valued matrix, A(i,j) is either equal to
-// A->x [0], or not present in the sparsity pattern of A.
+// exploits this typical practice by allowing for iso matrices, where all
+// entries present have the same value, held as A->x [0].  The sparsity
+// structure is kept, so in an iso matrix, A(i,j) is either equal to A->x [0],
+// or not present in the sparsity pattern of A.
 
-// If A is full, A->x is the only component present, and thus a full iso-valued
-// matrix takes only O(1) memory, regardless of its dimension.
+// If A is full, A->x is the only component present, and thus a full iso matrix
+// takes only O(1) memory, regardless of its dimension.
 
 bool iso ;              // true if all entries have the same value
 
@@ -477,8 +477,9 @@ bool iso ;              // true if all entries have the same value
 //------------------------------------------------------------------------------
 
 // The matrix can be held in 8 formats: (hypersparse, sparse, bitmap, full) x
-// (CSR, CSC).  Each of these can also be iso-valued.  The comments below
+// (CSR, CSC).  Each of these can also be iso.  The comments below
 // assume A is in CSC format but the code works for both CSR and CSC.
+// The type is assumed to be double, just for illustration.
 
 #ifdef for_comments_only    // only so vim will add color to the code below:
 
@@ -506,8 +507,9 @@ bool iso ;              // true if all entries have the same value
             int64_t pA_end   = (k+1) * vlen ;
             for (p = pA_start ; p < pA_end ; p++)
             {
-                // A(i,j) has row i = (p % vlen)
-                // value aij = GBX (Ax, p, A->iso)
+                // entry A(i,j) with row index i and value aij
+                int64_t i = (p % vlen) ;
+                double aij = GBX (Ax, p, A->iso) ;
             }
         }
 
@@ -525,8 +527,9 @@ bool iso ;              // true if all entries have the same value
             {
                 if (Ab [p] != 0)
                 {
-                    // A(i,j) has row i = (p % vlen)
-                    // value aij = GBX (Ax, p, A->iso)
+                    // entry A(i,j) with row index i and value aij
+                    int64_t i = (p % vlen) ;
+                    double aij = GBX (Ax, p, A->iso) ;
                 }
                 else
                 {
@@ -544,8 +547,9 @@ bool iso ;              // true if all entries have the same value
             // operate on column A(:,j)
             for (p = Ap [k] ; p < Ap [k+1] ; p++)
             {
-                // A(i,j) has row i = Ai [p]
-                // value aij = GBX (Ax, p, A->iso)
+                // entry A(i,j) with row index i and value aij
+                int64_t i = Ai [p] ;
+                double aij = GBX (Ax, p, A->iso) ;
             }
         }
 
@@ -558,8 +562,9 @@ bool iso ;              // true if all entries have the same value
             // operate on column A(:,j)
             for (p = Ap [k] ; p < Ap [k+1] ; p++)
             {
-                // A(i,j) has row i = Ai [p]
-                // value aij = GBX (Ax, p, A->iso)
+                // entry A(i,j) with row index i and value aij
+                int64_t i = Ai [p] ;
+                double aij = GBX (Ax, p, A->iso) ;
             }
         }
 
@@ -575,9 +580,8 @@ bool iso ;              // true if all entries have the same value
             int64_t pA_end   = GBP (Ap, k+1, vlen) ;
             for (p = pA_start ; p < pA_end ; p++)
             {
-                // A(i,j) has row index i
-                // value aij = GBX (Ax, p, A->iso)
                 if (!GBB (Ab, p)) continue ;
+                // entry A(i,j) with row index i and value aij
                 int64_t i = GBI (Ai, p, vlen) ;
                 double aij = GBX (Ax, p, A->iso) ;
             }

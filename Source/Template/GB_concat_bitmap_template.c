@@ -13,8 +13,11 @@
     // get C and the tile A
     //--------------------------------------------------------------------------
 
+    #ifndef GB_ISO_CONCAT
+    const bool A_iso = A->iso ;
     const GB_CTYPE *restrict Ax = (GB_CTYPE *) A->x ;
     GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    #endif
     int8_t *restrict Cb = C->b ;
 
     //--------------------------------------------------------------------------
@@ -37,7 +40,7 @@
                 int64_t jC = cvstart + j ;
                 int64_t pC = iC + jC * cvlen ;
                 // Cx [pC] = Ax [pA] ;
-                GB_COPY (pC, pA) ;
+                GB_COPY (pC, pA, A_iso) ;
                 Cb [pC] = 1 ;
             }
         }
@@ -59,7 +62,7 @@
                     int64_t jC = cvstart + j ;
                     int64_t pC = iC + jC * cvlen ;
                     // Cx [pC] = Ax [pA] ;
-                    GB_COPY (pC, pA) ;
+                    GB_COPY (pC, pA, A_iso) ;
                     Cb [pC] = 1 ;
                 }
             }
@@ -93,7 +96,7 @@
                         int64_t i = Ai [pA] ;
                         int64_t pC = pC_start + i ;
                         // Cx [pC] = Ax [pA] ;
-                        GB_COPY (pC, pA) ;
+                        GB_COPY (pC, pA, A_iso) ;
                         Cb [pC] = 1 ;
                     }
                 }
@@ -106,4 +109,4 @@
 }
 
 #undef GB_CTYPE
-
+#undef GB_ISO_CONCAT

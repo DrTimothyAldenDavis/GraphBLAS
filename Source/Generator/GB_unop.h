@@ -3,7 +3,6 @@ GrB_Info GB (_unop_apply)
 (
     GB_ctype *Cx,
     const GB_atype *Ax,
-    const bool A_iso,
     const int8_t *restrict Ab,
     int64_t anz,
     int nthreads

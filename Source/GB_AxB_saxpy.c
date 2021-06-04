@@ -10,10 +10,6 @@
 #include "GB_mxm.h"
 #include "GB_bitmap_AxB_saxpy.h"
 
-//------------------------------------------------------------------------------
-// GB_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B
-//------------------------------------------------------------------------------
-
 // TODO: pass in user's C and accum, and allow bitmap multiply to work in-place
 
 GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
@@ -87,6 +83,19 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     }
 
     //--------------------------------------------------------------------------
+    // determine if C is iso
+    //--------------------------------------------------------------------------
+
+    GrB_Type ztype = semiring->add->op->ztype ;
+    size_t zsize = ztype->size ;
+    GB_void cscalar [GB_VLA(zsize)] ;
+    bool C_iso = GB_iso_AxB (cscalar, A, B, A->vdim, semiring) ;
+    if (C_iso)
+    { 
+        GBURBLE ("(iso saxpy) ") ;
+    }
+
+    //--------------------------------------------------------------------------
     // select the method to use
     //--------------------------------------------------------------------------
 
@@ -105,8 +114,9 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         // high enough so that the time to initialize the space.  C is sparse
         // or hypersparse.
 
-        info = GB_AxB_saxpy3 (C, C_sparsity, M, Mask_comp, Mask_struct, A, B,
-            semiring, flipxy, mask_applied, AxB_method, do_sort, Context) ;
+        info = GB_AxB_saxpy3 (C, C_iso, cscalar, C_sparsity, M, Mask_comp,
+            Mask_struct, A, B, semiring, flipxy, mask_applied, AxB_method,
+            do_sort, Context) ;
 
         if (info == GrB_NO_VALUE)
         { 
@@ -118,8 +128,8 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             // results in a different analysis in GB_AxB_saxpy3, with no mask
             // present.  Otherwise, GB_bitmap_AxB_saxpy, below, is called.
             ASSERT (M != NULL) ;
-            info = GB_AxB_saxpy (C, NULL, false, false, A, B, semiring,
-                flipxy, mask_applied, AxB_method, do_sort, Context) ;
+            info = GB_AxB_saxpy (C, NULL, false, false, A, B,
+                semiring, flipxy, mask_applied, AxB_method, do_sort, Context) ;
         }
 
     }
@@ -130,8 +140,9 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         // bitmap method: C is bitmap or full
         //----------------------------------------------------------------------
 
-        info = GB_bitmap_AxB_saxpy (C, C_sparsity, M, Mask_comp,
-            Mask_struct, A, B, semiring, flipxy, mask_applied, Context) ;
+        info = GB_bitmap_AxB_saxpy (C, C_iso, cscalar, C_sparsity, M,
+            Mask_comp, Mask_struct, A, B, semiring, flipxy, mask_applied,
+            Context) ;
     }
 
     return (info) ;

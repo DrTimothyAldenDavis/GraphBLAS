@@ -22,6 +22,9 @@
 
 // A type: GB_atype
 
+#define GB_ISO_SELECT \
+    GB_iso_select
+
 // kind
 GB_kind
 
@@ -30,7 +33,7 @@ GB_kind
 
 // test value of Ax [p]
 #define GB_TEST_VALUE_OF_ENTRY(p)                       \
-    GB_test_value_of_entry(p)
+    GB_test_value_of_entry
 
 // get the vector index (user select operators only)
 #define GB_GET_J                                        \

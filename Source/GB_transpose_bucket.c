@@ -51,13 +51,14 @@
 
 #define GB_FREE_ALL                                                     \
 {                                                                       \
-    GB_phbix_free (C) ;                                               \
+    GB_phbix_free (C) ;                                                 \
     GB_FREE_WORK ;                                                      \
 }
 
 GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 (
     GrB_Matrix C,               // output matrix (static header)
+    const GB_iso_code C_code_iso,   // iso code for C
     const GrB_Type ctype,       // type of output matrix C
     const bool C_is_csc,        // format of output matrix C
     const GrB_Matrix A,         // input matrix
@@ -100,7 +101,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // get A
     //--------------------------------------------------------------------------
 
-    int64_t anz = GB_NNZ (A) ;
+    int64_t anz = GB_nnz (A) ;
     int64_t vlen = A->vlen ;
 
     //--------------------------------------------------------------------------
@@ -120,9 +121,11 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     // C->p is allocated but not initialized.
     GrB_Info info ;
+    // set C->iso = C_iso   OK
+    bool C_iso = (C_code_iso != GB_NON_ISO) ;
     GB_OK (GB_new_bix (&C, true, // sparse, static header
         ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
-        GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, Context)) ;
+        GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, C_iso, Context)) ;
 
     int64_t *restrict Cp = C->p ;
 
@@ -320,7 +323,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     else
     { 
         // apply an operator, C has type op->ztype
-        GB_transpose_op (C, op1, op2, scalar, binop_bind1st, A,
+        GB_transpose_op (C, C_code_iso, op1, op2, scalar, binop_bind1st, A,
             Workspaces, A_slice, nworkspaces, nthreads) ;
     }
 

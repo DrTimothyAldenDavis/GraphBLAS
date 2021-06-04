@@ -17,6 +17,8 @@
 // So to extract just the row and col indices, pass I and J as non-NULL,
 // and X as NULL.  This is like [I,J,~] = find (A).
 
+// If A is iso and X is not NULL, the iso scalar Ax [0] is expanded into X.
+
 #include "GB.h"
 
 #define GB_EXTRACT(prefix,type,T)                                             \

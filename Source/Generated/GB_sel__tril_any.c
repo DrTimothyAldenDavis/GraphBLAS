@@ -16,11 +16,14 @@
 // The selection is defined by the following types and operators:
 
 // functions:
-// phase1: GB (_sel_phase1__tril_any)
+// phase1: GB (_sel_phase1__(none))
 // phase2: GB (_sel_phase2__tril_any)
 // bitmap: GB (_sel_bitmap__tril_any)
 
 // A type: GB_void
+
+#define GB_ISO_SELECT \
+    0
 
 // kind
 #define GB_TRIL_SELECTOR
@@ -44,9 +47,9 @@
 // GB_sel_phase1
 //------------------------------------------------------------------------------
 
+#if 0
 
-
-void GB (_sel_phase1__tril_any)
+void GB (_sel_phase1__(none))
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -64,7 +67,7 @@ void GB (_sel_phase1__tril_any)
     #include "GB_select_phase1.c"
 }
 
-
+#endif
 
 //------------------------------------------------------------------------------
 // GB_sel_phase2

@@ -46,6 +46,9 @@
 // full.  R is constructed as sparse, hypersparse, or bitmap, depending on
 // the sparsity of M and Z, as determined by GB_masker_sparsity.
 
+// R is iso if both C and Z are iso and zij == cij.  This is handled in
+// GB_masker_phase2.
+
 #include "GB_mask.h"
 #include "GB_add.h"
 #define GB_FREE_ALL ;

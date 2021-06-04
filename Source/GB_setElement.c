@@ -14,8 +14,7 @@
 // If C(row,col) is already present in the matrix, its value is overwritten
 // with the scalar.  Otherwise, if the mode determined by GrB_init is
 // non-blocking, the tuple (i,j,scalar) is appended to a list of pending tuples
-// to C.  When calling GrB_Matrix_wait, these pending tuples are assembled.
-// They are also assembled if the mode is blocking.
+// to C.  GB_wait assembles these pending tuples.
 
 // GrB_setElement is the same as GrB_*assign with an implied SECOND accum
 // operator whose ztype, xtype, and ytype are the same as C, with I=i, J=1, a
@@ -83,7 +82,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     #if GB_BURBLE
     bool burble = GB_Global_burble_get ( ) ;
     double t_burble = 0 ;
-    // do not burble when waiting on scalars or empty matrices
+    // do not burble when waiting on scalars
     burble = burble && ((C->vlen > 1) || (C->vdim > 1)) ;
     #endif
 
@@ -120,6 +119,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     bool found ;
     bool is_zombie ;
     bool C_is_bitmap = GB_IS_BITMAP (C) ;
+    size_t csize = ctype->size ;
 
     if (GB_IS_FULL (C) || C_is_bitmap)
     { 
@@ -131,6 +131,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         pleft = i + j * C->vlen ;
         found = true ;
         is_zombie = false ;
+
     }
     else
     {
@@ -175,12 +176,9 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         // if not zombie: action: ( =A ): copy A into C
         // else           action: ( undelete ): bring a zombie back to life
 
-        // found C (i,j), assign its value
-        size_t csize = ctype->size ;
-
-        // typecast or copy the scalar into C
-        GB_cast_array (((GB_void *) C->x) +(pleft*csize), ccode,
-            (GB_void *) scalar, false, scalar_code, NULL, csize, 1, 1) ;
+        // typecast or copy the scalar into C(i,j)
+        void *cx = ((GB_void *) C->x) + (pleft*csize) ;
+        GB_cast_scalar (cx, ccode, scalar, scalar_code, csize) ;
 
         if (is_zombie)
         { 
@@ -216,6 +214,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         GrB_Type stype = GB_code_type (scalar_code, ctype) ;
 
         bool wait = false ;
+        bool iso_wait = false ;
 
         if (C->Pending == NULL)
         { 
@@ -225,6 +224,30 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         }
         else
         {
+            if (C->iso)
+            { 
+                // C is iso, so Pending->x is currently NULL.  However, this
+                // new setElement entry might cause C to become non iso.  If
+                // the value of the scalar does not match the iso value of C, C
+                // will become non iso, so all prior tuples need to be
+                // assembled.
+                ASSERT (C->Pending->x == NULL) ;
+                if (ctype != stype)
+                { 
+                    // s = (ctype) scalar
+                    GB_void s [GB_VLA(csize)] ;
+                    GB_cast_scalar (s, ccode, scalar, scalar_code, csize) ;
+                    // compare s with the iso value of C
+                    wait = (memcmp (C->x, s, csize) != 0) ;
+                }
+                else
+                { 
+                    // compare the scalar with the iso value of C
+                    wait = (memcmp (C->x, scalar, csize) != 0) ;
+                }
+                iso_wait = wait ;
+            }
+
             if (stype != C->Pending->type)
             { 
                 // the scalar type (stype) must match the type of the
@@ -261,7 +284,19 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             #endif
 
             // delete any lingering zombies and assemble the pending tuples
-            GB_OK (GB_Matrix_wait (C, "C", Context)) ;
+            GB_OK (GB_wait (C, "C", Context)) ;
+            if (iso_wait)
+            {
+                // C is iso but will no longer be after this setElement
+                // set C->iso = false    OK
+                #if GB_BURBLE
+                if (burble)
+                {
+                    GBURBLE ("(non-iso setElement) ") ;
+                }
+                #endif
+                GB_OK (GB_convert_any_to_non_iso (C, true, Context)) ;
+            }
 
             #if GB_BURBLE
             if (burble)
@@ -289,7 +324,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         // becomes the type of this scalar, and the pending operator becomes
         // NULL, which is the implicit SECOND_ctype operator.
 
-        if (!GB_Pending_add (&(C->Pending), (GB_void *)scalar,
+        if (!GB_Pending_add (&(C->Pending), C->iso, (GB_void *)scalar,
             stype, NULL, i, j, C->vdim > 1, Context))
         { 
             // out of memory
@@ -309,7 +344,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         // ASSERT_MATRIX_OK (C, "did C for setElement (not found)", GB0) ;
 
         #if GB_BURBLE
-        // only burble if GB_Matrix_wait will be called
+        // only burble if GB_wait will be called
         burble = (burble && GB_shall_block (C)) ;
         if (burble)
         {

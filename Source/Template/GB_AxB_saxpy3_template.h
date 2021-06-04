@@ -102,7 +102,7 @@ break ;
             case 8: GB_SCATTER_M_j_TYPE (uint64_t, pMstart, pMend, mark) ;  \
             case 16:                                                        \
             {                                                               \
-                const uint64_t *restrict Mxx = (uint64_t *) Mx ;         \
+                const uint64_t *restrict Mxx = (uint64_t *) Mx ;            \
                 for (int64_t pM = pMstart ; pM < pMend ; pM++)              \
                 {                                                           \
                     /* if (M (i,j) == 1) mark Hf [i] */                     \
@@ -122,21 +122,21 @@ break ;
 //------------------------------------------------------------------------------
 
 // hash M(:,j) into Hf and Hi for coarse hash task, C<M>=A*B or C<!M>=A*B
-#define GB_HASH_M_j                                                     \
-    for (int64_t pM = pM_start ; pM < pM_end ; pM++)                    \
-    {                                                                   \
-        GB_GET_M_ij (pM) ;      /* get M(i,j) */                        \
-        if (!mij) continue ;    /* skip if M(i,j)=0 */                  \
-        int64_t i = GBI (Mi, pM, mvlen) ;                               \
-        for (GB_HASH (i))       /* find i in hash */                    \
-        {                                                               \
-            if (Hf [hash] < mark)                                       \
-            {                                                           \
-                Hf [hash] = mark ;  /* insert M(i,j)=1 */               \
-                Hi [hash] = i ;                                         \
-                break ;                                                 \
-            }                                                           \
-        }                                                               \
+#define GB_HASH_M_j                                         \
+    for (int64_t pM = pM_start ; pM < pM_end ; pM++)        \
+    {                                                       \
+        GB_GET_M_ij (pM) ;      /* get M(i,j) */            \
+        if (!mij) continue ;    /* skip if M(i,j)=0 */      \
+        int64_t i = GBI (Mi, pM, mvlen) ;                   \
+        for (GB_HASH (i))       /* find i in hash */        \
+        {                                                   \
+            if (Hf [hash] < mark)                           \
+            {                                               \
+                Hf [hash] = mark ;  /* insert M(i,j)=1 */   \
+                Hi [hash] = i ;                             \
+                break ;                                     \
+            }                                               \
+        }                                                   \
     }
 
 //------------------------------------------------------------------------------
@@ -284,7 +284,7 @@ break ;
     if (do_sort)                                                \
     {                                                           \
         /* sort the pattern of C(:,j) (non-default) */          \
-        GB_qsort_1a (Ci + Cp [kk], cjnz) ;                      \
+        GB_qsort_1 (Ci + Cp [kk], cjnz) ;                       \
     }                                                           \
     else                                                        \
     {                                                           \

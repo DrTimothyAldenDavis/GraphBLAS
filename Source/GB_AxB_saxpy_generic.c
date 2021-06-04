@@ -27,6 +27,8 @@
 //          GB_bitmap_AxB_saxpy_template.c.  The method constructs its own
 //          tasks in workspace defined and freed in that template.
 
+// C is not iso.
+
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
@@ -122,7 +124,7 @@ GrB_Info GB_AxB_saxpy_generic
     // user-defined monoid update cannot be done with an OpenMP atomic
     #define GB_HAS_OMP_ATOMIC 0
 
-    // no special cases
+    // no special cases (C is not iso)
     #define GB_IS_ANY_MONOID 0
     #define GB_IS_ANY_FC32_MONOID 0
     #define GB_IS_ANY_FC64_MONOID 0
@@ -203,9 +205,6 @@ GrB_Info GB_AxB_saxpy_generic
 
         // Hx [i] = t
         #define GB_HX_WRITE(i,t) Hx [i] = t
-
-        // Hx [i] = identity
-        #define GB_HX_CLEAR(i) memcpy (GB_HX (i), identity, csize)
 
         // Cx [p] = Hx [i]
         #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
