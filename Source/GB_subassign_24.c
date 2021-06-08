@@ -101,6 +101,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         //----------------------------------------------------------------------
 
         // make C full, if not full already
+        // printf ("copy dense A to C\n") ;
         C->nzombies = 0 ;                   // overwrite any zombies
         GB_Pending_free (&(C->Pending)) ;   // abandon all pending tuples
         C->iso = C_iso ;
@@ -115,12 +116,15 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         //----------------------------------------------------------------------
 
         // clear prior content of C, but keep the CSR/CSC format and its type
+        // printf ("copy pattern of A to C\n") ;
         bool C_is_csc = C->is_csc ;
         GB_phbix_free (C) ;
         // copy the pattern, not the values
         // set C->iso = C_iso   OK
         GB_OK (GB_dup_worker (&C, C_iso, A, false, C->type, Context)) ;
         C->is_csc = C_is_csc ;      // do not change the CSR/CSC format of C
+        // GB_assign_prep has assigned the C->x iso value, but this has just
+        // been cleared, so it needs to be reassigned below by GB_cast_matrix.
     }
 
     //--------------------------------------------------------------------------
@@ -132,11 +136,7 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         GBURBLE ("(typecast) ") ;
     }
 
-    if (!C->iso)
-    {
-        // if C is iso, GB_assign_prep has already assigned the iso value to C
-        GB_cast_matrix (C, A, Context) ;
-    }
+    GB_cast_matrix (C, A, Context) ;
 
     //--------------------------------------------------------------------------
     // restore the sparsity control of C

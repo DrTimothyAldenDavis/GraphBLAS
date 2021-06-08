@@ -34,7 +34,7 @@ void mexFunction
     // get cnz and level
     //--------------------------------------------------------------------------
 
-    int64_t cnz = (int64_t) mxGetScalar (pargin [1]) ;
+    double cnz = mxGetScalar (pargin [1]) ;
     int level = (int) mxGetScalar (pargin [2]) ;
 
     #define LEN 256
@@ -47,9 +47,13 @@ void mexFunction
     { 
         snprintf (s, LEN, "1 nonzero") ;
     }
+    else if (cnz < INT64_MAX)
+    {
+        snprintf (s, LEN, GBd " nonzeros", (int64_t) cnz) ;
+    }
     else
     { 
-        snprintf (s, LEN, GBd " nonzeros", cnz) ;
+        snprintf (s, LEN, "%g nonzeros", cnz) ;
     }
 
     s [LEN] = '\0' ;

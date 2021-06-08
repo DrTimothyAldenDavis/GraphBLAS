@@ -105,9 +105,10 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
     // conform the matrix to its new desired sparsity structure
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (A, "A set before conform", GB0) ;
     GB_OK (GB_conform (A, Context)) ;
     GB_BURBLE_END ;
-    ASSERT_MATRIX_OK (A, "A set", GB0) ;
+    ASSERT_MATRIX_OK (A, "A set after conform", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

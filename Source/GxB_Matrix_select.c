@@ -46,7 +46,7 @@ GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
     //--------------------------------------------------------------------------
 
     info = GB_select (
-        C,      C_replace,          // C and its descriptor
+        C, C_replace,               // C and its descriptor
         M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(C,T)
         op,                         // operator to select the entries

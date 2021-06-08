@@ -199,7 +199,6 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
                 break ;
 
             case GxB_BITMAP : 
-
             case GxB_FULL : 
 
                 switch (A_sparsity)

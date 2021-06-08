@@ -119,7 +119,12 @@ end
 fprintf (f, 'define(`GB_ctype_bits'', `%s'')\n', bits) ;
 
 % nbits: # of bits in the type, needed for the atomic compare-exchange:
-fprintf (f, 'define(`GB_atomic_compare_exchange'', `GB_ATOMIC_COMPARE_EXCHANGE_%d'')\n', nbits) ;
+if (nbits == 0)
+    % iso semiring: no atomic compare-exchanged needed
+    fprintf (f, 'define(`GB_atomic_compare_exchange'', `;'')\n') ;
+else
+    fprintf (f, 'define(`GB_atomic_compare_exchange'', `GB_ATOMIC_COMPARE_EXCHANGE_%d (target, expected, desired)'')\n', nbits) ;
+end
 
 if (is_pair)
     % these semirings are renamed to any_pair, and not thus created

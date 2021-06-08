@@ -105,8 +105,8 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     C->jumbled = A->jumbled ;           // C is jumbled if A is jumbled
     C->nvals = A->nvals ;               // if A bitmap 
     C->magic = GB_MAGIC ;
-    C->iso = A->iso ;                   // OK
-    if (A->iso)
+    C->iso = C_iso ;                    // OK
+    if (C_iso)
     {
         GB_BURBLE_MATRIX (A, "(iso apply) ") ;
     }
@@ -125,6 +125,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         C->i_shallow = false ;
         C->x_shallow = false ;
         C->jumbled = false ;
+        C->iso = false ;
         ASSERT_MATRIX_OK (C, "C = quick copy of empty A", GB0) ;
         return (GrB_SUCCESS) ;
     }
@@ -141,12 +142,11 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     //--------------------------------------------------------------------------
 
     // If the identity operator, first(A,y), or second(x,A) are used with no
-    // typecasting, and if C is not iso, C->x becomes a shallow copy of A->x,
-    // and no work is done.
+    // typecasting, C->x becomes a shallow copy of A->x, and no work is done.
 
     int64_t anz = GB_nnz_held (A) ;
 
-    if (!C_iso && (A->type == op_intype) &&
+    if ((A->type == op_intype) &&
         ((opcode == GB_IDENTITY_opcode) ||
          (opcode == GB_FIRST_opcode  && !binop_bind1st) ||
          (opcode == GB_SECOND_opcode &&  binop_bind1st)))
@@ -156,6 +156,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         C->x = A->x ;
         C->x_shallow = true ;       // C->x will not be freed when freeing C
         C->x_size = A->x_size ;
+        C->iso = A->iso ;           // C has the same iso property as A
         ASSERT_MATRIX_OK (C, "C = pure shallow (A)", GB0) ;
         return (GrB_SUCCESS) ;
     }

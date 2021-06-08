@@ -3355,7 +3355,6 @@
 #define GB_matlab_helper3i GM_matlab_helper3i
 #define GB_matlab_helper4 GM_matlab_helper4
 #define GB_matlab_helper5 GM_matlab_helper5
-#define GB_matlab_helper6 GM_matlab_helper6
 #define GB_matlab_helper7 GM_matlab_helper7
 #define GB_matlab_helper8 GM_matlab_helper8
 #define GB_matlab_helper9 GM_matlab_helper9

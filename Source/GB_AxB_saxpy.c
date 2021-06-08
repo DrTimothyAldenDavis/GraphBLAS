@@ -63,6 +63,28 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     GB_AxB_saxpy_sparsity (&C_sparsity, &saxpy_method,
         M, Mask_comp, A, B, Context) ;
 
+    //--------------------------------------------------------------------------
+    // determine if C is iso
+    //--------------------------------------------------------------------------
+
+    GrB_Type ztype = semiring->add->op->ztype ;
+    size_t zsize = ztype->size ;
+    GB_void cscalar [GB_VLA(zsize)] ;
+    bool C_iso = GB_iso_AxB (cscalar, A, B, A->vdim, semiring, flipxy) ;
+    if (C_iso)
+    { 
+        // revise the method if A and B are both iso and full
+        if (A->iso && GB_as_if_full (A) && B->iso && GB_as_if_full (B))
+        {
+            saxpy_method = GB_SAXPY_METHOD_ISO_FULL ;
+            C_sparsity = GxB_FULL ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // burble
+    //--------------------------------------------------------------------------
+
     if (M == NULL)
     {
         GBURBLE ("(%s=%s*%s) ",
@@ -83,23 +105,30 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     }
 
     //--------------------------------------------------------------------------
-    // determine if C is iso
-    //--------------------------------------------------------------------------
-
-    GrB_Type ztype = semiring->add->op->ztype ;
-    size_t zsize = ztype->size ;
-    GB_void cscalar [GB_VLA(zsize)] ;
-    bool C_iso = GB_iso_AxB (cscalar, A, B, A->vdim, semiring) ;
-    if (C_iso)
-    { 
-        GBURBLE ("(iso saxpy) ") ;
-    }
-
-    //--------------------------------------------------------------------------
     // select the method to use
     //--------------------------------------------------------------------------
 
-    if (saxpy_method == GB_SAXPY_METHOD_3)
+    if (saxpy_method == GB_SAXPY_METHOD_ISO_FULL)
+    {
+
+        //----------------------------------------------------------------------
+        // C is iso and full; do not apply the mask
+        //----------------------------------------------------------------------
+
+        GBURBLE ("(iso full saxpy) ") ;
+        GrB_Type ztype = semiring->add->op->ztype ;
+        // set C->iso = true    OK
+        info = GB_new_bix (&C, true,    // static header
+            ztype, A->vlen, B->vdim, GB_Ap_null, true, GxB_FULL, false,
+            GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Context) ;
+        if (info == GrB_SUCCESS)
+        {
+            C->magic = GB_MAGIC ;
+            memcpy (C->x, cscalar, zsize) ;
+        }
+
+    }
+    else if (saxpy_method == GB_SAXPY_METHOD_3)
     {
 
         //----------------------------------------------------------------------

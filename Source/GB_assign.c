@@ -180,8 +180,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // use GB_subassigner
         //----------------------------------------------------------------------
 
-        // M and A can have any sparsity structure.  C is typically not
-        // bitmap, except
+        // C, M, and A can have any sparsity structure.  C is typically not
+        // bitmap, except for a few methods (see GB_subassigner_method for
+        // a list).
 
         //----------------------------------------------------------------------
         // extract the SubMask = M (I,J) if needed
@@ -236,7 +237,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 ASSERT (M->vlen == C->vlen && M->vdim == C->vdim) ;
             }
 
-            // if Mask_struct then SubMask is extracted as iso
+            // if Mask_struct is true then SubMask is extracted as iso
             GB_OK (GB_subref (SubMask, Mask_struct,
                 true, M, I_SubMask, ni_SubMask, J_SubMask, nj_SubMask,
                 false, Context)) ;
@@ -249,10 +250,12 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // C(I,J)<SubMask> = A or accum (C(I,J),A) via GB_subassigner
             //------------------------------------------------------------------
 
-            // determine the method again since SubMask is not M;
-            // no need to recompute C_iso_out and cout for the iso case
-            bool ignore ;
-            subassign_method = GB_subassigner_method (C, &ignore, NULL,
+            // Determine the method again since SubMask is not M.  No need to
+            // recompute C_iso_out and cout for the iso case, since no change
+            // of method as a result of the SubMask will change the iso propery
+            // of C on output.
+
+            subassign_method = GB_subassigner_method (NULL, NULL, C,
                 C_replace, SubMask, Mask_comp, Mask_struct, accum, A,
                 Ikind, Jkind, scalar_expansion, scalar, atype) ;
 

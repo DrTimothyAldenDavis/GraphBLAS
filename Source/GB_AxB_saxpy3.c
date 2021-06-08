@@ -608,6 +608,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // C is iso; compute the pattern of C<#>=A*B with the any_pair semiring
         //----------------------------------------------------------------------
 
+        GBURBLE ("(iso sparse saxpy) ") ;
         info = GB__Asaxpy3B__any_pair_iso (C, M, Mask_comp, Mask_struct,
             M_packed_in_place, A, true, B, true, SaxpyTasks, ntasks, nfine,
             nthreads, do_sort, Context) ;
@@ -624,6 +625,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // C is non-iso
         //----------------------------------------------------------------------
 
+        GBURBLE ("(sparse saxpy) ") ;
         bool done = false ;
 
         #ifndef GBCOMPACT

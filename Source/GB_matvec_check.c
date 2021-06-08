@@ -8,8 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for code development only:
-// FIXME
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
@@ -67,6 +66,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         (A != NULL && A->type != NULL && A->type->name != NULL) ?
          A->type->name : "", kind) ;
 
+    #if GB_DEVELOPER
+    if (phantom) GBPR0 (" (phantom)") ;
+    #endif
+
     //--------------------------------------------------------------------------
     // check if null, freed, or uninitialized
     //--------------------------------------------------------------------------
@@ -122,7 +125,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         GBPR0 (" nvec_nonempty: " GBd , A->nvec_nonempty) ;
     }
-    GBPR0 (" nvec: " GBd " plen: " GBd  " vdim: " GBd "\n  hyper_switch %g "
+    GBPR0 (" nvec: " GBd " plen: " GBd " vdim: " GBd "\n  hyper_switch %g "
         "bitmap_switch %g\n",
         A->nvec, A->plen, A->vdim, A->hyper_switch, A->bitmap_switch) ;
     #endif
@@ -682,6 +685,18 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 GBPR ("\n") ;
             }
             ilast = i ;
+
+            if (phantom && anz_actual >= GB_NZBRIEF)
+            {
+                truncated = true ;
+                break ;
+            }
+        }
+
+        if (phantom && (truncated || k >= GB_NBRIEF))
+        {
+            truncated = true ;
+            break ;
         }
     }
 

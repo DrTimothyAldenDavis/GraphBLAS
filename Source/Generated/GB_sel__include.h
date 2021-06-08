@@ -54,6 +54,52 @@ void GB (_sel_bitmap__user_any)
 ) ;
 
 // SPDX-License-Identifier: Apache-2.0
+
+void GB (_sel_phase1__user_iso)
+(
+    int64_t *restrict Zp,
+    int64_t *restrict Cp,
+    int64_t *restrict Wfirst,
+    int64_t *restrict Wlast,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+
+void GB (_sel_phase2__user_iso)
+(
+    int64_t *restrict Ci,
+    GB_void *restrict Cx,
+    const int64_t *restrict Zp,
+    const int64_t *restrict Cp,
+    const int64_t *restrict Cp_kfirst,
+    const GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
+) ;
+
+
+void GB (_sel_bitmap__user_iso)
+(
+    int8_t *Cb,
+    GB_void *restrict Cx,
+    int64_t *cnvals_handle,
+    GrB_Matrix A,
+    const bool flipij,
+    const int64_t ithunk,
+    const GB_void *restrict xthunk,
+    const GxB_select_function user_select,
+    const int nthreads
+) ;
+
+// SPDX-License-Identifier: Apache-2.0
 #if 0
 void GB (_sel_phase1__(none))
 (

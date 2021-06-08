@@ -38,7 +38,5 @@ end
 
 A (~isfinite (A)) = 0 ;
 B (~isfinite (B)) = 0 ;
-if (err == 0)
-    err = GrB.normdiff (A, B, 1) ;
-end
+err = GrB.normdiff (A, B, 1) ;
 

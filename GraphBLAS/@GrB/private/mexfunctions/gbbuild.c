@@ -16,6 +16,10 @@
 // A = gbbuild (I, J, X, m, n, dup, desc) ;
 // A = gbbuild (I, J, X, m, n, dup, type, desc) ;
 
+// X and either I or J may be a scalars, in which case they are effectively
+// expanded so that they all have the same length.  X is only implicitly
+// expanded if A is built as an iso matrix.
+
 // m and n default to the largest index in I and J, respectively.
 
 // dup is a string that defaults to 'plus.xtype' where xtype is the type of X.
@@ -23,6 +27,11 @@
 
 // type is a string that defines is the type of A, which defaults to the type
 // of X.
+
+// If X is a scalar, and dup is '1st', '2nd', 'any', 'min', 'max', 'pair',
+// 'or', 'and', 'bitor', or 'bitand', then GxB_Matrix_build_Scalar is used and
+// A is built as an iso matrix (TODO).  X is not explicitly expanded. This is
+// much faster than when using the default dup.
 
 // The descriptor is optional; if present, it must be the last input parameter.
 // desc.kind is the only part used from the descriptor, and it defaults to
@@ -186,7 +195,35 @@ void mexFunction
         dup = gb_mxstring_to_binop (pargin [5], xtype, xtype) ;
     }
 
-    // if dup is NULL, defaults to plus.xtype, below.
+    // if dup is NULL, defaults to plus.xtype, below, or GrB_LOR for boolean
+
+    bool nice_iso_dup = false ;
+    if (dup == NULL)
+    {
+        // dup will be GrB_LOR which is nice for an iso build.  For all other
+        // types, the dup is plus, which is not nice.
+        nice_iso_dup = (xtype == GrB_BOOL) ;
+    }
+    else
+    {
+        // parse dup to see if it will build an iso matrix if X is a scalar
+        #define LEN 256
+        char sdup [LEN+2] ;
+        gb_mxstring_to_string (sdup, LEN, pargin [5], "dup") ;
+        int32_t position [2] ;
+        gb_find_dot (position, sdup) ;
+        if (position [0] >= 0) sdup [position [0]] = '\0' ;
+        nice_iso_dup =
+            MATCH (sdup, "1st") || MATCH (sdup, "first" ) ||
+            MATCH (sdup, "2nd") || MATCH (sdup, "second") ||
+            MATCH (sdup, "any") ||
+            MATCH (sdup, "min") || MATCH (sdup, "max"   ) ||
+            MATCH (sdup, "||" ) || MATCH (sdup, "|"     ) ||
+            MATCH (sdup, "&&" ) || MATCH (sdup, "&"     ) ||
+            MATCH (sdup, "or" ) || MATCH (sdup, "bitor" ) ||
+            MATCH (sdup, "and") || MATCH (sdup, "bitand") ||
+            MATCH (sdup, "lor") || MATCH (sdup, "land"  ) ;
+    }
 
     //--------------------------------------------------------------------------
     // get the output matrix type
@@ -211,16 +248,23 @@ void mexFunction
     sparsity = gb_get_sparsity (NULL, NULL, sparsity) ;
     GrB_Matrix A = gb_new (type, nrows, ncols, fmt, sparsity) ;
 
-    // expandx is true if X must be expanded from a scalar to a vector
     void *X2 = NULL ;
-    bool expandx = (nx == 1 && nx < nvals) ;
+    bool X_is_scalar = (nx == 1 && nx < nvals) ;
+    bool iso_build = X_is_scalar && nice_iso_dup ;
 
-    if (xtype == GrB_BOOL)
+    if (iso_build)
+    {
+        // build an iso matrix, with no dup operator needed
+        GxB_Scalar x_scalar = (GxB_Scalar) gb_get_shallow (pargin [2]) ;
+        OK1 (A, GxB_Matrix_build_Scalar (A, I, J, x_scalar, nvals)) ;
+        OK (GxB_Scalar_free (&x_scalar)) ;
+    }
+    else if (xtype == GrB_BOOL)
     { 
         bool empty = 0 ;
         bool *X = (nvals == 0) ? &empty : mxGetData (pargin [2]) ;
         if (dup == NULL) dup = GrB_LOR ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (bool)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -234,7 +278,7 @@ void mexFunction
         int8_t empty = 0 ;
         int8_t *X = (nvals == 0) ? &empty : mxGetInt8s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT8 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (int8_t)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -248,7 +292,7 @@ void mexFunction
         int16_t empty = 0 ;
         int16_t *X = (nvals == 0) ? &empty : mxGetInt16s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT16 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (int16_t)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -262,7 +306,7 @@ void mexFunction
         int32_t empty = 0 ;
         int32_t *X = (nvals == 0) ? &empty : mxGetInt32s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT32 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (int32_t)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -276,7 +320,7 @@ void mexFunction
         int64_t empty = 0 ;
         int64_t *X = (nvals == 0) ? &empty : mxGetInt64s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT64 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (int64_t)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -290,7 +334,7 @@ void mexFunction
         uint8_t empty = 0 ;
         uint8_t *X = (nvals == 0) ? &empty : mxGetUint8s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT8 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (uint8_t)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -304,7 +348,7 @@ void mexFunction
         uint16_t empty = 0 ;
         uint16_t *X = (nvals == 0) ? &empty : mxGetUint16s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT16 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (uint16_t)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -318,7 +362,7 @@ void mexFunction
         uint32_t empty = 0 ;
         uint32_t *X = (nvals == 0) ? &empty : mxGetUint32s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT32 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (uint32_t)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -332,7 +376,7 @@ void mexFunction
         uint64_t empty = 0 ;
         uint64_t *X = (nvals == 0) ? &empty : mxGetUint64s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT64 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (uint64_t)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -346,7 +390,7 @@ void mexFunction
         float empty = 0 ;
         float *X = (nvals == 0) ? &empty : mxGetSingles (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_FP32 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (float)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -360,7 +404,7 @@ void mexFunction
         double empty = 0 ;
         double *X = (nvals == 0) ? &empty : mxGetDoubles (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_FP64 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (double)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -375,7 +419,7 @@ void mexFunction
         GxB_FC32_t *X = &empty ;
         if (nvals > 0) X = (GxB_FC32_t *) mxGetComplexSingles (pargin [2]) ;
         if (dup == NULL) dup = GxB_PLUS_FC32 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (GxB_FC32_t)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
@@ -390,7 +434,7 @@ void mexFunction
         GxB_FC64_t *X = &empty ;
         if (nvals > 0) X = (GxB_FC64_t *) mxGetComplexDoubles (pargin [2]) ;
         if (dup == NULL) dup = GxB_PLUS_FC64 ;
-        if (expandx)
+        if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (GxB_FC64_t)) ;
             GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,

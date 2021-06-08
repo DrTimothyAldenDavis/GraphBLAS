@@ -148,8 +148,8 @@ GrB_Info GB_mxm                     // C<M> = A*B
 
 // for (int k = 0 ; k < 40 ; k++)
 // {
-    // double t = GB_Global_timing_get (k) ;
-    // if (t > 0) printf ("%2d: %g\n", k, t) ;
+//      double t = GB_Global_timing_get (k) ;
+//      if (t > 0) printf ("%2d: %g\n", k, t) ;
 // }
 
     if (done_in_place)

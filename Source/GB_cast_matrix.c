@@ -36,8 +36,11 @@ void GB_cast_matrix         // copy or typecast the values from A into C
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
     ASSERT (A->iso == C->iso) ;
-    printf ("cast matrix anz %ld\n", anz) ;     // FIXME
-    if (anz == 0) return ;
+    if (anz == 0)
+    { 
+        // nothing to do
+        return ;
+    }
 
     //--------------------------------------------------------------------------
     // copy or typecast from A into C

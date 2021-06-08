@@ -135,8 +135,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
     bool is_sparse = GB_IS_SPARSE (A) ;
     bool is_full = GB_IS_FULL (A) ;
     bool is_bitmap = GB_IS_BITMAP (A) ;
-    bool is_full_or_dense_with_no_pending_work = is_full || (GB_is_dense (A)
-        && !GB_ZOMBIES (A) && !GB_JUMBLED (A) && !GB_PENDING (A)) ;
+    bool as_if_full = GB_as_if_full (A) ;
 
     //--------------------------------------------------------------------------
     // select the sparsity structure
@@ -226,14 +225,16 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 
         case GxB_FULL : 
 
-            if (is_full_or_dense_with_no_pending_work)
+            if (as_if_full)
             { 
                 // if full or all entries present: to full
+                printf ("to full\n") ;
                 GB_convert_any_to_full (A) ;
             }
             else
             { 
                 // otherwise: to bitmap
+                printf ("to bitmap\n") ;
                 GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
             }
             break ;
@@ -244,7 +245,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 
         case GxB_HYPERSPARSE + GxB_FULL : 
 
-            if (is_full_or_dense_with_no_pending_work)
+            if (as_if_full)
             { 
                 // if all entries present: to full
                 GB_convert_any_to_full (A) ;
@@ -262,7 +263,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 
         case GxB_SPARSE + GxB_FULL :  
 
-            if (is_full_or_dense_with_no_pending_work)
+            if (as_if_full)
             { 
                 // if full or all entries present: to full
                 GB_convert_any_to_full (A) ;
@@ -280,7 +281,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_FULL : 
 
-            if (is_full_or_dense_with_no_pending_work)
+            if (as_if_full)
             { 
                 // if full or all entries present: to full
                 GB_convert_any_to_full (A) ;
@@ -303,13 +304,13 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
         // (12): bitmap or full
         //----------------------------------------------------------------------
 
-        case GxB_FULL + GxB_BITMAP : 
+        case GxB_BITMAP + GxB_FULL : 
 
             if (is_bitmap)
             { 
                 // leave in bitmap form, even if it can be converted to full
             }
-            else if (is_full_or_dense_with_no_pending_work)
+            else if (as_if_full)
             { 
                 // if full or all entries present: to full
                 GB_convert_any_to_full (A) ;
@@ -327,7 +328,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 
         case GxB_HYPERSPARSE + GxB_BITMAP + GxB_FULL : 
 
-            if (is_full_or_dense_with_no_pending_work && !is_bitmap)
+            if (as_if_full && !is_bitmap)
             { 
                 // if full or all entries present (and not bitmap): to full
                 GB_convert_any_to_full (A) ;
@@ -346,7 +347,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 
         case GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
 
-            if (is_full_or_dense_with_no_pending_work && !is_bitmap)
+            if (as_if_full && !is_bitmap)
             { 
                 // if full or all entries present (and not bitmap): to full
                 GB_convert_any_to_full (A) ;
@@ -366,7 +367,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
         default:
         case GxB_HYPERSPARSE + GxB_SPARSE + GxB_BITMAP + GxB_FULL : 
 
-            if (is_full_or_dense_with_no_pending_work && !is_bitmap)
+            if (as_if_full && !is_bitmap)
             { 
                 // if full or all entries present (and not bitmap): to full
                 GB_convert_any_to_full (A) ;

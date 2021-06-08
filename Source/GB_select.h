@@ -53,16 +53,16 @@ GrB_Info GB_bitmap_selector
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_selector_iso_set: assign the iso value of C for GB_*selector
+// GB_iso_select: assign the iso value of C for GB_*selector
 //------------------------------------------------------------------------------
 
-static inline void GB_selector_iso_set
+static inline void GB_iso_select
 (
     void *Cx,                       // output iso value
     const GB_Select_Opcode opcode,  // selector opcode
     const void *xthunk,             // thunk scalar, of size asize
     const void *Ax,                 // Ax [0] scalar, of size asize
-    const GB_Type_code typecode,    // typecode of A->type
+    const GB_Type_code acode,       // the type code of Ax
     const size_t asize
 )
 {
@@ -76,14 +76,14 @@ static inline void GB_selector_iso_set
         // all entries in C are equal to thunk
         memcpy (Cx, xthunk, asize) ;
     }
-    else if (opcode == GB_NONZERO_opcode && typecode == GB_BOOL_code)
+    else if (opcode == GB_NONZERO_opcode && acode == GB_BOOL_code)
     {
         // all entries in C are true; C and A are boolean
         memset (Cx, 1, 1) ;
     }
     else
     {
-        // A and C are both iso, and selectop is builtin
+        // A and C are both iso
         memcpy (Cx, Ax, asize) ;
     }
 }

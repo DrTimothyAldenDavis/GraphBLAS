@@ -42,7 +42,7 @@ GB_MATRIX_BUILD (GrB, uint64_t  , UINT64 , GrB_UINT64)
 GB_MATRIX_BUILD (GrB, float     , FP32   , GrB_FP32  )
 GB_MATRIX_BUILD (GrB, double    , FP64   , GrB_FP64  )
 GB_MATRIX_BUILD (GxB, GxB_FC32_t, FC32   , GxB_FC32  )
-GB_MATRIX_BUILD (GxB, GxB_FC64_t, FC64   , GxB_FC32  )
+GB_MATRIX_BUILD (GxB, GxB_FC64_t, FC64   , GxB_FC64  )
 
 // for user-defined types, X is assumed to have the same type as C:
 GB_MATRIX_BUILD (GrB, void      , UDT    , C->type   )

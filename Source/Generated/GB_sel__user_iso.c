@@ -16,14 +16,14 @@
 // The selection is defined by the following types and operators:
 
 // functions:
-// phase1: GB (_sel_phase1__user_any)
-// phase2: GB (_sel_phase2__user_any)
-// bitmap: GB (_sel_bitmap__user_any)
+// phase1: GB (_sel_phase1__user_iso)
+// phase2: GB (_sel_phase2__user_iso)
+// bitmap: GB (_sel_bitmap__user_iso)
 
 // A type: GB_void
 
 #define GB_ISO_SELECT \
-    0
+    1
 
 // kind
 #define GB_ENTRY_SELECTOR
@@ -33,7 +33,7 @@
 
 // test value of Ax [p]
 #define GB_TEST_VALUE_OF_ENTRY(p)                       \
-    user_select (flipij ? j : GBI (Ai, p, avlen), flipij ? GBI (Ai, p, avlen) : j, Ax +(p)*asize, xthunk)
+    user_select (flipij ? j : GBI (Ai, p, avlen), flipij ? GBI (Ai, p, avlen) : j, Ax, xthunk)
 
 // get the vector index (user select operators only)
 #define GB_GET_J                                        \
@@ -41,7 +41,7 @@
 
 // Cx [pC] = Ax [pA], no typecast
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
-    memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize)
+    /* assignment skipped, C and A are iso */
 
 //------------------------------------------------------------------------------
 // GB_sel_phase1
@@ -49,7 +49,7 @@
 
 
 
-void GB (_sel_phase1__user_any)
+void GB (_sel_phase1__user_iso)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -73,7 +73,7 @@ void GB (_sel_phase1__user_any)
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
-void GB (_sel_phase2__user_any)
+void GB (_sel_phase2__user_iso)
 (
     int64_t *restrict Ci,
     GB_void *restrict Cx,
@@ -98,7 +98,7 @@ void GB (_sel_phase2__user_any)
 
 
 
-void GB (_sel_bitmap__user_any)
+void GB (_sel_bitmap__user_iso)
 (
     int8_t *Cb,
     GB_void *restrict Cx,

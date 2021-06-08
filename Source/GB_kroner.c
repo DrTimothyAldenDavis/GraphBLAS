@@ -97,15 +97,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     }
 
     //--------------------------------------------------------------------------
-    // check if C is iso and compute its iso value if it is
-    //--------------------------------------------------------------------------
-
-    GrB_Type ctype = C->type ;
-    const size_t csize = ctype->size ;
-    GB_void cscalar [GB_VLA(csize)] ;
-    bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
-
-    //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
@@ -140,6 +131,15 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
+    // check if C is iso and compute its iso value if it is
+    //--------------------------------------------------------------------------
+
+    GrB_Type ctype = op->ztype ;
+    const size_t csize = ctype->size ;
+    GB_void cscalar [GB_VLA(csize)] ;
+    bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
+
+    //--------------------------------------------------------------------------
     // allocate the output matrix C
     //--------------------------------------------------------------------------
 
@@ -169,7 +169,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, true, // full, sparse, or hyper; static header
-        op->ztype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
+        ctype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
         sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso, Context)) ;
 
     //--------------------------------------------------------------------------
@@ -203,7 +203,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         Cx_int64 = (int64_t *) Cx ;
         Cx_int32 = (int32_t *) Cx ;
     }
-    bool is64 = (op->ztype == GrB_INT64) ;
+    bool is64 = (ctype == GrB_INT64) ;
 
     //--------------------------------------------------------------------------
     // compute the column counts of C, and C->h if C is hypersparse

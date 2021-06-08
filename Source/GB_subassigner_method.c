@@ -160,7 +160,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 S_Extraction = false ;
             }
             else if (C_is_empty && whole_C_matrix && Mask_struct &&
-                (scalar_expansion || A_as_if_full || A_is_bitmap))
+                (A_as_if_full || A_is_bitmap))
             {
                 // Method 25: C<M,s> = A, where M is structural, A is
                 // dense, and C starts out empty.  The pattern of C will be the
@@ -642,158 +642,167 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     //--------------------------------------------------------------------------
 
     // For scalar expansion, or if A is iso on input, then C might be iso on
-    // output.  Otherwise, C is always non-iso on output.
+    // output.  Otherwise, C is always non-iso on output.  Skip this if cout or
+    // C_iso_out are NULL, since that means they have already been computed.
 
-    if (cout != NULL    // skip this if cout already computed
-        && (scalar_expansion || A->iso || (anz == 1 && !A_is_bitmap)))
+    bool iso_check = (cout != NULL && C_iso_out != NULL) ;
+    if (iso_check)
     {
 
-        //----------------------------------------------------------------------
-        // cout = tentative iso value of C on output
-        //----------------------------------------------------------------------
-
-        GB_Type_code ccode = ctype->code ;
-        size_t       csize = ctype->size ;
-        GB_Type_code acode = atype->code ;
-        size_t       asize = atype->size ;
-
-        // cout = (ctype) (scalar or A->x)
-        GB_cast_scalar (cout, ccode,
-            (scalar_expansion) ? scalar : A->x, acode, asize) ;
-        bool c_ok = false ;
-        if (C_is_empty)
+        bool A_iso = scalar_expansion           // all scalars are iso
+            || (A != NULL && A->iso)            // or A is iso
+            || (anz == 1 && !A_is_bitmap) ;     // or A is effectively iso
+        if (A_iso)
         {
-            // C is empty on input
-            c_ok = true ;
-        }
-        else if (C->iso)
-        {
-            // C is iso on input; compare cout and C->x
-            c_ok = (memcmp (cout, C->x, csize) == 0) ;
-        }
 
-        //----------------------------------------------------------------------
-        // apply the accum, if present, and compare its result with cout
-        //----------------------------------------------------------------------
+            //------------------------------------------------------------------
+            // cout = tentative iso value of C on output
+            //------------------------------------------------------------------
 
-        bool accum_ok = true ;
-        if (c_ok && accum != NULL && C->iso)
-        {
-            ASSERT (!C_is_empty) ;
-            GxB_binary_function faccum = accum->function ;
+            GB_Type_code ccode = ctype->code ;
+            size_t       csize = ctype->size ;
+            GB_Type_code acode = atype->code ;
+            size_t       asize = atype->size ;
 
-            size_t xsize = accum->xtype->size ;
-            size_t ysize = accum->ytype->size ;
-            size_t zsize = accum->ztype->size ;
-
-            GB_Type_code xcode = accum->xtype->code ;
-            GB_Type_code ycode = accum->ytype->code ;
-            GB_Type_code zcode = accum->ztype->code ;
-
-            // x = (xtype) C->x
-            GB_void x [GB_VLA(xsize)] ;
-            GB_cast_scalar (x, xcode, C->x, ccode, csize) ;
-
-            // y = (ytype) (scalar or A->x)
-            GB_void y [GB_VLA(ysize)] ;
-            GB_cast_scalar (y, ycode,
+            // cout = (ctype) (scalar or A->x)
+            GB_cast_scalar (cout, ccode,
                 (scalar_expansion) ? scalar : A->x, acode, asize) ;
+            bool c_ok = false ;
+            if (C_is_empty)
+            {
+                // C is empty on input
+                c_ok = true ;
+            }
+            else if (C->iso)
+            {
+                // C is iso on input; compare cout and C->x
+                c_ok = (memcmp (cout, C->x, csize) == 0) ;
+            }
 
-            // z = x + y
-            GB_void z [GB_VLA(zsize)] ;
-            faccum (z, x, y) ;
+            //------------------------------------------------------------------
+            // apply the accum, if present, and compare its result with cout
+            //------------------------------------------------------------------
 
-            // c = (ctype) z
-            GB_void c [GB_VLA(csize)] ;
-            GB_cast_scalar (c, ccode, z, zcode, zsize) ;
+            bool accum_ok = false ;
+            if (c_ok && accum != NULL && C->iso)
+            {
+                ASSERT (!C_is_empty) ;
+                GxB_binary_function faccum = accum->function ;
 
-            // compare c and cout
-            accum_ok = (memcmp (cout, c, csize) == 0) ;
+                size_t xsize = accum->xtype->size ;
+                size_t ysize = accum->ytype->size ;
+                size_t zsize = accum->ztype->size ;
+
+                GB_Type_code xcode = accum->xtype->code ;
+                GB_Type_code ycode = accum->ytype->code ;
+                GB_Type_code zcode = accum->ztype->code ;
+
+                // x = (xtype) C->x
+                GB_void x [GB_VLA(xsize)] ;
+                GB_cast_scalar (x, xcode, C->x, ccode, csize) ;
+
+                // y = (ytype) (scalar or A->x)
+                GB_void y [GB_VLA(ysize)] ;
+                GB_cast_scalar (y, ycode,
+                    (scalar_expansion) ? scalar : A->x, acode, asize) ;
+
+                // z = x + y
+                GB_void z [GB_VLA(zsize)] ;
+                faccum (z, x, y) ;
+
+                // c = (ctype) z
+                GB_void c [GB_VLA(csize)] ;
+                GB_cast_scalar (c, ccode, z, zcode, zsize) ;
+
+                // compare c and cout
+                accum_ok = (memcmp (cout, c, csize) == 0) ;
+            }
+
+            switch (subassign_method)
+            {
+
+                //--------------------------------------------------------------
+                // C_out is iso if C_in empty, or C_in iso and cin == scalar
+                //--------------------------------------------------------------
+
+                case GB_SUBASSIGN_METHOD_01 :   // C(I,J) = scalar
+                case GB_SUBASSIGN_METHOD_05 :   // C(I,J)<M> = scalar
+                case GB_SUBASSIGN_METHOD_13 :   // C(I,J)<!M> = scalar
+                case GB_SUBASSIGN_METHOD_05d :  // C(:,:)<M> = scalar ; C dense
+                case GB_SUBASSIGN_METHOD_09 :   // C(I,J)<M,replace> = scalar
+                case GB_SUBASSIGN_METHOD_17 :   // C(I,J)<!M,replace> = scalar
+                case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> = scalar
+                    (*C_iso_out) = c_ok ;
+                    break ;
+
+                //--------------------------------------------------------------
+                // C_out is iso if C_in empty, or C_in iso and cin == a
+                //--------------------------------------------------------------
+
+                case GB_SUBASSIGN_METHOD_02 :   // C(I,J) = A
+                case GB_SUBASSIGN_METHOD_06s :  // C(I,J)<M> = A ; with S
+                case GB_SUBASSIGN_METHOD_14 :   // C(I,J)<!M> = A
+                case GB_SUBASSIGN_METHOD_10 :   // C(I,J)<M,replace> = A
+                case GB_SUBASSIGN_METHOD_18 :   // C(I,J)<!M,replace> = A
+                case GB_SUBASSIGN_METHOD_06d :  // C(:,:)<A> = A ; C is dense
+                case GB_SUBASSIGN_METHOD_06n :  // C(I,J)<M> = A ; no S
+                    (*C_iso_out) = c_ok ;
+                    break ;
+
+                //--------------------------------------------------------------
+                // C_out is always iso, regardless of C_in
+                //--------------------------------------------------------------
+
+                case GB_SUBASSIGN_METHOD_21 :   // C(:,:) = scalar
+                case GB_SUBASSIGN_METHOD_05e :  // C(:,:)<M,struct>=x ; C empty
+                case GB_SUBASSIGN_METHOD_05f :  // C(:,:)<C,struct>=scalar
+                    (*C_iso_out) = true ;       // scalars are always iso
+                    break ;
+
+                //--------------------------------------------------------------
+                // C_out is iso if A is iso, regardless of C_in
+                //--------------------------------------------------------------
+
+                case GB_SUBASSIGN_METHOD_24 :   // C = A
+                case GB_SUBASSIGN_METHOD_25 :   // C(:,:)<M,str> = A ; C empty
+                    (*C_iso_out) = true ;       // A is iso (see above)
+                    break ;
+
+                //--------------------------------------------------------------
+                // C_out is iso if C_in empty, or C_in iso and cin == cin+scalar
+                //--------------------------------------------------------------
+
+                case GB_SUBASSIGN_METHOD_03 :   // C(I,J) += scalar
+                case GB_SUBASSIGN_METHOD_07 :   // C(I,J)<M> += scalar
+                case GB_SUBASSIGN_METHOD_15 :   // C(I,J)<!M> += scalar
+                case GB_SUBASSIGN_METHOD_22 :   // C += scalar ; C is dense
+                case GB_SUBASSIGN_METHOD_11 :   // C(I,J)<M,replace> += scalar
+                    (*C_iso_out) = accum_ok ;
+                    break ;
+
+                //--------------------------------------------------------------
+                // C_out is iso if C_in empty, or C_in and A iso and cin==cin+a
+                //--------------------------------------------------------------
+
+                case GB_SUBASSIGN_METHOD_12 :   // C(I,J)<M,replace> += A
+                case GB_SUBASSIGN_METHOD_20 :   // C(I,J)<!M,replace> += A
+                case GB_SUBASSIGN_METHOD_04 :   // C(I,J) += A
+                case GB_SUBASSIGN_METHOD_08s :  // C(I,J)<M> += A, with S
+                case GB_SUBASSIGN_METHOD_16 :   // C(I,J)<!M> += A 
+                case GB_SUBASSIGN_METHOD_23 :   // C += A ; C is dense
+                case GB_SUBASSIGN_METHOD_08n :  // C(I,J)<M> += A, no S
+                    (*C_iso_out) = accum_ok ;
+                    break ;
+
+                default :;
+            }
         }
-
-        switch (subassign_method)
+        else
         {
-
-            //------------------------------------------------------------------
-            // C_out is iso if C_in empty, or C_in iso and cin == scalar
-            //------------------------------------------------------------------
-
-            case GB_SUBASSIGN_METHOD_01 :   // C(I,J) = scalar
-            case GB_SUBASSIGN_METHOD_05 :   // C(I,J)<M> = scalar
-            case GB_SUBASSIGN_METHOD_13 :   // C(I,J)<!M> = scalar
-            case GB_SUBASSIGN_METHOD_05d :  // C(:,:)<M> = scalar ; C is dense
-            case GB_SUBASSIGN_METHOD_09 :   // C(I,J)<M,replace> = scalar
-            case GB_SUBASSIGN_METHOD_17 :   // C(I,J)<!M,replace> = scalar
-            case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> = scalar
-                (*C_iso_out) = c_ok ;
-                break ;
-
-            //------------------------------------------------------------------
-            // C_out is iso if C_in empty, or C_in iso and cin == a
-            //------------------------------------------------------------------
-
-            case GB_SUBASSIGN_METHOD_02 :   // C(I,J) = A
-            case GB_SUBASSIGN_METHOD_06s :  // C(I,J)< M> = A ; with S
-            case GB_SUBASSIGN_METHOD_14 :   // C(I,J)<!M> = A
-            case GB_SUBASSIGN_METHOD_10 :   // C(I,J)< M,replace> = A
-            case GB_SUBASSIGN_METHOD_18 :   // C(I,J)<!M,replace> = A
-            case GB_SUBASSIGN_METHOD_06d :  // C(:,:)<A> = A ; C is dense
-            case GB_SUBASSIGN_METHOD_06n :  // C(I,J)<M> = A ; no S
-                (*C_iso_out) = c_ok ;
-                break ;
-
-            //------------------------------------------------------------------
-            // C_out is always iso, regardless of C_in
-            //------------------------------------------------------------------
-
-            case GB_SUBASSIGN_METHOD_21 :   // C(:,:) = scalar
-            case GB_SUBASSIGN_METHOD_05e :  // C(:,:)<M,struct>=scalar ; C empty
-            case GB_SUBASSIGN_METHOD_05f :  // C(:,:)<C,struct>=scalar
-                (*C_iso_out) = true ;
-                break ;
-
-            //------------------------------------------------------------------
-            // C_out is iso if A is iso, regardless of C_in
-            //------------------------------------------------------------------
-
-            case GB_SUBASSIGN_METHOD_24 :   // C = A
-            case GB_SUBASSIGN_METHOD_25 :   // C(:,:)<M,struct> = A ; C empty
-                (*C_iso_out) = A->iso ;
-                break ;
-
-            //------------------------------------------------------------------
-            // C_out is iso if C_in empty, or C_in iso and cin == cin + scalar
-            //------------------------------------------------------------------
-
-            case GB_SUBASSIGN_METHOD_03 :   // C(I,J) += scalar
-            case GB_SUBASSIGN_METHOD_07 :   // C(I,J)<M> += scalar
-            case GB_SUBASSIGN_METHOD_15 :   // C(I,J)<!M> += scalar
-            case GB_SUBASSIGN_METHOD_22 :   // C += scalar ; C is dense
-            case GB_SUBASSIGN_METHOD_11 :   // C(I,J)<M,replace> += scalar
-                (*C_iso_out) = accum_ok ;
-                break ;
-
-            //------------------------------------------------------------------
-            // C_out is iso if C_in empty, or C_in and A iso and cin == cin + a
-            //------------------------------------------------------------------
-
-            case GB_SUBASSIGN_METHOD_12 :   // C(I,J)< M,replace> += A
-            case GB_SUBASSIGN_METHOD_20 :   // C(I,J)<!M,replace> += A
-            case GB_SUBASSIGN_METHOD_04 :   // C(I,J) += A
-            case GB_SUBASSIGN_METHOD_08s :  // C(I,J)< M> += A, with S
-            case GB_SUBASSIGN_METHOD_16 :   // C(I,J)<!M> += A 
-            case GB_SUBASSIGN_METHOD_23 :   // C += A ; C is dense
-            case GB_SUBASSIGN_METHOD_08n :  // C(I,J)<M> += A, no S
-                (*C_iso_out) = accum_ok ;
-                break ;
-
-            default :;
+            // A is non-iso, so C is non-iso on output, and cout is not
+            // computed
+            (*C_iso_out) = false ;
         }
-    }
-    else
-    {
-        // otherwise, C is non-iso on output
-        (*C_iso_out) = false ;
     }
 
     //--------------------------------------------------------------------------
@@ -843,18 +852,18 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         // GB_accum_mask may use any of these methods, with I and J as GB_ALL.
 
         case GB_SUBASSIGN_METHOD_02 :   // C(I,J) = A
-        case GB_SUBASSIGN_METHOD_06s :  // C(I,J)< M> = A ; with S
+        case GB_SUBASSIGN_METHOD_06s :  // C(I,J)<M> = A ; with S
         case GB_SUBASSIGN_METHOD_14 :   // C(I,J)<!M> = A
-        case GB_SUBASSIGN_METHOD_10 :   // C(I,J)< M,replace> = A
+        case GB_SUBASSIGN_METHOD_10 :   // C(I,J)<M,replace> = A
         case GB_SUBASSIGN_METHOD_18 :   // C(I,J)<!M,replace> = A
-        case GB_SUBASSIGN_METHOD_12 :   // C(I,J)< M,replace> += A
+        case GB_SUBASSIGN_METHOD_12 :   // C(I,J)<M,replace> += A
         case GB_SUBASSIGN_METHOD_20 :   // C(I,J)<!M,replace> += A
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
             break ;
 
         case GB_SUBASSIGN_METHOD_04 :   // C(I,J) += A
-        case GB_SUBASSIGN_METHOD_08s :  // C(I,J)< M> += A, with S
+        case GB_SUBASSIGN_METHOD_08s :  // C(I,J)<M> += A, with S
         case GB_SUBASSIGN_METHOD_16 :   // C(I,J)<!M> += A 
         case GB_SUBASSIGN_METHOD_24 :   // C = A
             // M can have any sparsity structure, including bitmap
@@ -895,8 +904,6 @@ int GB_subassigner_method           // return method to use in GB_subassigner
     // return result
     //--------------------------------------------------------------------------
 
-    printf ("subassigner method: %d C_iso_out %d\n", subassign_method,
-        (*C_iso_out)) ;
     return (subassign_method) ;
 }
 

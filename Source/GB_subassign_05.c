@@ -285,36 +285,6 @@ GrB_Info GB_subassign_05
     // finalize the matrix and return result
     //--------------------------------------------------------------------------
 
-//     GB_SUBASSIGN_WRAPUP ;
-// FIXME
-
-
-    if (pending_sorted)                                                     
-    {                                                                       
-        for (int taskid = 0 ; pending_sorted && taskid < ntasks ; taskid++)  
-        {                                                                    
-            int64_t n = Npending [taskid] ;                                  
-            int64_t task_pending = Npending [taskid+1] - n ;                 
-            n += npending_orig ;                                             
-            if (task_pending > 0 && n > 0)                                   
-            {                                                                
-                /* (i,j) is the first pending tuple for this task; check */  
-                /* with the pending tuple just before it                 */  
-                ASSERT (n < npending_orig + nnew) ;                          
-                int64_t i = Pending_i [n] ;                                  
-                int64_t j = (Pending_j != NULL) ? Pending_j [n] : 0 ;        
-                int64_t ilast = Pending_i [n-1] ;                            
-                int64_t jlast = (Pending_j != NULL) ? Pending_j [n-1] : 0 ;  
-                pending_sorted = pending_sorted &&                           
-                    ((jlast < j) || (jlast == j && ilast <= i)) ;            
-            }                                                                
-        }                                                                    
-    }                                                                        
-    Pending->n += nnew ;                                                     
-    Pending->sorted = pending_sorted ;                                       
-    GB_FREE_ALL ;                                                            
-    ASSERT_MATRIX_OK (C, "C with pending tuples :"__FILE__, GB_FLIP (GB0)) ; 
-    return (GrB_SUCCESS) ;
-
+    GB_SUBASSIGN_WRAPUP ;
 }
 

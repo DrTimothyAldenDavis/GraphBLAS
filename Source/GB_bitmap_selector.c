@@ -43,7 +43,7 @@ GrB_Info GB_bitmap_selector
 
     int64_t anz = GB_nnz_held (A) ;
     const size_t asize = A->type->size ;
-    const GB_Type_code typecode = A->type->code ;
+    const GB_Type_code acode = A->type->code ;
 
     //--------------------------------------------------------------------------
     // allocate C
@@ -69,7 +69,7 @@ GrB_Info GB_bitmap_selector
 
     if (C_iso)
     {
-        GB_selector_iso_set (C->x, opcode, xthunk, A->x, typecode, asize) ;
+        GB_iso_select (C->x, opcode, xthunk, A->x, acode, asize) ;
     }
 
     //--------------------------------------------------------------------------
@@ -84,6 +84,8 @@ GrB_Info GB_bitmap_selector
             flipij, ithunk, (atype *) xthunk, user_select, nthreads) ;  \
     }                                                                   \
     break ;
+
+    const GB_Type_code typecode = (A->iso) ? GB_ignore_code : acode ;
     #include "GB_select_factory.c"
 
     //--------------------------------------------------------------------------

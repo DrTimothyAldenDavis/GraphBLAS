@@ -104,6 +104,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
         // C is iso; compute the pattern of C<#>=A*B with the any_pair semiring
         //----------------------------------------------------------------------
 
+        GBURBLE ("(iso bitmap saxpy) ") ;
         memcpy (C->x, cscalar, ctype->size) ;
         info = GB__AsaxbitB__any_pair_iso (C, M, Mask_comp, Mask_struct, A,
             true, B, true, Context) ;
@@ -116,6 +117,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
         // C is non-iso
         //----------------------------------------------------------------------
 
+        GBURBLE ("(bitmap saxpy) ") ;
         bool done = false ;
 
         #ifndef GBCOMPACT

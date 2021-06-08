@@ -1977,6 +1977,8 @@
 // However, semirings based on the ANY monoid are common: BFS in particular
 // uses ANY_FIRST, ANY_SECOND, and ANY_PAIR.
 
+// The ANY_PAIR_ISO semiring cannot be disabled.
+
 //  33 semirings enabled with the ANY monoid:
 //
 //      ANY:   FIRST, SECOND, PAIR (with bool, 10 real types)
@@ -2010,21 +2012,6 @@
 // #define GxB_NO_ANY_SECOND_UINT8      1
    #define GxB_NO_ANY_SECOND_FC32       1
    #define GxB_NO_ANY_SECOND_FC64       1
-
-// Not GrB_*, but used in BFS and others.  The only purely symbolic semiring.
-// #define GxB_NO_ANY_PAIR_BOOL         1
-// #define GxB_NO_ANY_PAIR_FP32         1
-// #define GxB_NO_ANY_PAIR_FP64         1
-// #define GxB_NO_ANY_PAIR_INT16        1
-// #define GxB_NO_ANY_PAIR_INT32        1
-// #define GxB_NO_ANY_PAIR_INT64        1
-// #define GxB_NO_ANY_PAIR_INT8         1
-// #define GxB_NO_ANY_PAIR_UINT16       1
-// #define GxB_NO_ANY_PAIR_UINT32       1
-// #define GxB_NO_ANY_PAIR_UINT64       1
-// #define GxB_NO_ANY_PAIR_UINT8        1
-   #define GxB_NO_ANY_PAIR_FC32         1
-   #define GxB_NO_ANY_PAIR_FC64         1
 
    #define GxB_NO_ANY_DIV_FP32          1
    #define GxB_NO_ANY_DIV_FP64          1

@@ -67,6 +67,8 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     // get the matrices
     //--------------------------------------------------------------------------
 
+// printf ("\n################################ gb_assign %d\n", do_subassign) ;
+
     GrB_Type atype, ctype ;
     GrB_Matrix C, M = NULL, A ;
 
@@ -84,6 +86,10 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&ctype, C)) ;
+
+// printf ("======== C for gb_assign: \n") ; GxB_print (C, 3) ;
+// printf ("======== M for gb_assign: \n") ; GxB_print (M, 3) ;
+// printf ("======== A for gb_assign: \n") ; GxB_print (A, 3) ;
 
     //--------------------------------------------------------------------------
     // get the operator
@@ -167,8 +173,10 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     if (scalar_assignment)
     { 
+// printf ("gb_matrix_assign_scalar ###############################\n") ;
         gb_matrix_assign_scalar (C, M, accum, A, I, ni, J, nj, desc,
             do_subassign) ;
+// printf ("DID gb_matrix_assign_scalar ###############################\n") ;
     }
     else
     {

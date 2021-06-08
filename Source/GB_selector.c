@@ -103,7 +103,7 @@ GrB_Info GB_selector
     // of zero.
 
     const int64_t asize = A->type->size ;
-    const GB_Type_code typecode = (A_iso) ? GB_ignore_code : A->type->code ;
+    const GB_Type_code acode = A->type->code ;
 
     GB_void athunk [GB_VLA(asize)] ;
     memset (athunk, 0, asize) ;
@@ -133,17 +133,28 @@ GrB_Info GB_selector
 
     if (A_iso && opcode >= GB_NONZERO_opcode && opcode <= GB_LE_THUNK_opcode)
     { 
+
+        // select op is NONZERO, EQ_ZERO, GT_ZERO, GE_ZERO, LT_ZERO, LE_ZERO,
+        // EQ_THUNK, GT_THUNK, GE_THUNK, LT_THUNK, or LE_THUNK.  All of these
+        // select ops depend only on the value of A(i,j).  Since A is iso,
+        // either all entries in A will be copied to C and thus C can be
+        // created as a shallow copy of A, or no entries from A will be copied
+        // to C and thus C is an empty matrix.  The select factory is not
+        // needed, except to check the iso value via GB_bitmap_selector.
+
         ASSERT (!in_place_A) ;
         ASSERT (C != NULL && C->static_header) ;
 
         // construct a scalar containing the iso scalar
         struct GB_Scalar_opaque S_header ;
         GxB_Scalar S = GB_Scalar_wrap (&S_header, A->type, A->x) ;
+        S->iso = false ;    // but ensure S is not iso
         ASSERT_SCALAR_OK (S, "iso scalar wrap", GB0) ;
 
         // apply the select operator to the iso scalar
         GB_OK (GB_bitmap_selector (C, false, opcode, NULL, false,
             (GrB_Matrix) S, ithunk, xthunk, Context)) ;
+        ASSERT_MATRIX_OK (C, "C from iso scalar test", GB0) ;
         bool C_empty = (GB_nnz (C) == 0) ;
         GB_phbix_free (C) ;
 
@@ -166,17 +177,16 @@ GrB_Info GB_selector
 
     // now if A is iso, the following operators still need to be handled:
 
-    //      GB_TRIL_opcode      : use GB_sel__tril_iso
-    //      GB_TRIU_opcode      : use GB_sel__triu_iso
-    //      GB_DIAG_opcode      : use GB_sel__diag_iso
-    //      GB_OFFDIAG_opcode   : use GB_sel__offdiag_iso
-    //      GB_RESIZE_opcode    : use GB_sel__resize_iso
-    //      GB_NONZOMBIE_opcode : use GB_sel__nonzombie_iso
-    //      GB_USER_SELECT_opcode : use GB_sel__user_any; with A_iso test
-    //          to load the value of A(i,j)
+    //      GB_TRIL_opcode        : use GB_sel__tril_iso
+    //      GB_TRIU_opcode        : use GB_sel__triu_iso
+    //      GB_DIAG_opcode        : use GB_sel__diag_iso
+    //      GB_OFFDIAG_opcode     : use GB_sel__offdiag_iso
+    //      GB_RESIZE_opcode      : use GB_sel__resize_iso
+    //      GB_NONZOMBIE_opcode   : use GB_sel__nonzombie_iso
+    //      GB_USER_SELECT_opcode : use GB_sel__user_iso
 
-    // The GB_sel__*_iso methods do not access the values of A and C,
-    // just the pattern.
+    // Except for GB_USER_SELECT_opcode, the GB_sel__*_iso methods do not
+    // access the values of A and C, just the pattern.
 
     //--------------------------------------------------------------------------
     // get the user-defined operator
@@ -224,12 +234,11 @@ GrB_Info GB_selector
     // determine if C is iso for a non-iso A
     //--------------------------------------------------------------------------
 
-    bool C_iso =
-        (A_iso && opcode < GB_USER_SELECT_opcode) ||    // C iso value is Ax [0]
-        (opcode == GB_EQ_ZERO_opcode) ||                // C iso value is zero
-        (opcode == GB_EQ_THUNK_opcode) ||               // C iso value is thunk
+    bool C_iso = A_iso ||                       // C iso value is Ax [0]
+        (opcode == GB_EQ_ZERO_opcode) ||        // C iso value is zero
+        (opcode == GB_EQ_THUNK_opcode) ||       // C iso value is thunk
         (opcode == GB_NONZERO_opcode &&
-         typecode == GB_BOOL_code) ;                    // C iso value is true
+         acode == GB_BOOL_code) ;               // C iso value is true
 
     if (C_iso)
     {
@@ -242,8 +251,7 @@ GrB_Info GB_selector
 
     if (use_bitmap_selector)
     { 
-        // this case is only used by GB_select
-        GB_BURBLE_MATRIX (A, "(bitmap select: %s) ", op->name) ;
+        GB_BURBLE_MATRIX (A, "(bitmap select) ") ;
         ASSERT (C != NULL && C->static_header) ;
         return (GB_bitmap_selector (C, C_iso, opcode, user_select, flipij, A,
             ithunk, xthunk, Context)) ;
@@ -332,16 +340,16 @@ GrB_Info GB_selector
     // define the worker for the switch factory
     #define GB_SELECT_PHASE1
     #define GB_sel1(opname,aname) GB (_sel_phase1_ ## opname ## aname)
-    #define GB_SEL_WORKER(opname,aname,atype)               \
-    {                                                       \
-        GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast,     \
-            A, flipij, ithunk,                              \
-            (atype *) xthunk, user_select,                  \
-            A_ek_slicing, A_ntasks, A_nthreads) ;           \
-    }                                                       \
+    #define GB_SEL_WORKER(opname,aname,atype)                               \
+    {                                                                       \
+        GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast, A, flipij, ithunk,  \
+            (atype *) xthunk, user_select, A_ek_slicing, A_ntasks,          \
+            A_nthreads) ;                                                   \
+    }                                                                       \
     break ;
 
     // launch the switch factory
+    const GB_Type_code typecode = (A_iso) ? GB_ignore_code : acode ;
     #include "GB_select_factory.c"
 
     #undef  GB_SELECT_PHASE1
@@ -376,9 +384,9 @@ GrB_Info GB_selector
 
     if (C_iso)
     {
-        // The pattern of C is computed below, for the DIAG, OFFDIAG, TRIL,
-        // TRIU, RESIZE, and NONZOMBIE select operators.
-        GB_selector_iso_set (Cx, opcode, xthunk, Ax, typecode, asize) ;
+        // The pattern of C is computed by the worker below, for the DIAG,
+        // OFFDIAG, TRIL, TRIU, RESIZE, NONZOMBIE, and USER select operators.
+        GB_iso_select (Cx, opcode, xthunk, Ax, acode, asize) ;
     }
 
     //--------------------------------------------------------------------------
@@ -388,14 +396,12 @@ GrB_Info GB_selector
     // define the worker for the switch factory
     #define GB_SELECT_PHASE2
     #define GB_sel2(opname,aname) GB (_sel_phase2_ ## opname ## aname)
-    #define GB_SEL_WORKER(opname,aname,atype)           \
-    {                                                   \
-        GB_sel2 (opname, aname) (Ci, (atype *) Cx,      \
-            Zp, Cp, Cp_kfirst,                          \
-            A, flipij, ithunk,                          \
-            (atype *) xthunk, user_select,              \
-            A_ek_slicing, A_ntasks, A_nthreads) ;       \
-    }                                                   \
+    #define GB_SEL_WORKER(opname,aname,atype)                               \
+    {                                                                       \
+        GB_sel2 (opname, aname) (Ci, (atype *) Cx, Zp, Cp, Cp_kfirst, A,    \
+            flipij, ithunk, (atype *) xthunk, user_select, A_ek_slicing,    \
+            A_ntasks, A_nthreads) ;                                         \
+    }                                                                       \
     break ;
 
     // launch the switch factory

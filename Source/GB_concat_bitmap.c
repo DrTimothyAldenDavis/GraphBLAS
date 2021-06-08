@@ -52,7 +52,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
     { 
         // set C->iso = C_iso   OK
         GB_phbix_free (C) ;
-        GB_OK (GB_bix_alloc (C, GB_nnz_full (C), GxB_BITMAP, false, true, C_iso,
+        GB_OK (GB_bix_alloc (C, GB_nnz_full (C), GxB_BITMAP, true, true, C_iso,
             Context)) ;
         C->plen = -1 ;
         C->nvec = cvdim ;

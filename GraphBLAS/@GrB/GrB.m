@@ -213,7 +213,6 @@ classdef GrB
 %   C = exp (G)             natural exponent
 %   C = expm1 (G)           exp (x) - 1
 %
-%   C = false (...)         all-false logical matrix
 %   [I,J,X] = find (G, ...) extract entries from a matrix
 %   C = fix (G)             round towards zero
 %   C = flip (G, dim)       flip the order of entries
@@ -276,7 +275,6 @@ classdef GrB
 %   e = numel (G)           m*n for an m-by-n GrB matrix G
 %   e = nzmax (G)           number of entries in a GrB matrix G
 %
-%   C = ones (...)          matrix with all ones, same type as G
 %
 %   C = pow2 (F, E)         base-2 power
 %   C = prod (G, option)    reduce via product, to vector or scalar
@@ -309,7 +307,6 @@ classdef GrB
 %   C = tanh (G)            hyperbolic tangent
 %   L = tril (G, k)         lower triangular part of GrB matrix G
 %   U = triu (G, k)         upper triangular part of GrB matrix G
-%   C = true (...)          all-true logical matrix
 %
 %   C = uint8 (G)           cast GrB matrix to MATLAB full uint8
 %   C = uint16 (G)          cast GrB matrix to MATLAB full uint16
@@ -317,8 +314,6 @@ classdef GrB
 %   C = uint64 (G)          cast GrB matrix to MATLAB full uint64
 %
 %   C = xor (A, B)          exclusive or
-%
-%   C = zeros (...)         all-zero matrix, same type as G
 %
 %-------------------------------------------------------------------------
 % Static Methods:
@@ -351,6 +346,12 @@ classdef GrB
 %   GrB.selectopinfo (op)        list properties of a select operator
 %   GrB.semiringinfo (s, type)   list properties of a semiring
 %   GrB.unopinfo (op, type)      list properties of a unary operator
+%
+%   basic matrices:
+%   C = GrB.false (...)          all-false logical matrix
+%   C = GrB.true (...)           all-true logical matrix
+%   C = GrB.ones (...)           matrix with all ones
+%   C = GrB.zeros (...)          all-zero matrix
 %
 %   operations:
 %   C = GrB.build (I,J,X,m,n,dup,type,desc) build a GrB matrix from
@@ -846,7 +847,6 @@ methods
     C = exp (G) ;
     C = expm1 (G) ;
 
-    C = false (varargin) ;
     [I,J,X] = find (G, k, search) ;
     C = fix (G) ;
     C = flip (G, dim) ;
@@ -909,8 +909,6 @@ methods
     s = numel (G) ;
     e = nzmax (G) ;
 
-    C = ones (varargin) ;
-
     C = pow2 (A, B) ;
     C = prod (G, option) ;
 
@@ -943,7 +941,6 @@ methods
     C = tanh (G) ;
     L = tril (G, k) ;
     U = triu (G, k) ;
-    C = true (varargin) ;
 
     C = uint8 (G) ;
     C = uint16 (G) ;
@@ -951,8 +948,6 @@ methods
     C = uint64 (G) ;
 
     C = xor (A, B) ;
-
-    C = zeros (varargin) ;
 
 end
 
@@ -1034,6 +1029,12 @@ methods (Static)
     v = version ;
     v = ver ;
     C = vreduce (Cin, M, accum, monoid, A, desc) ;
+
+    % these were formerly overloaded methods, now Static methods
+    C = false (varargin) ;
+    C = true (varargin) ;
+    C = ones (varargin) ;
+    C = zeros (varargin) ;
 
 end
 end

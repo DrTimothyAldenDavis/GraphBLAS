@@ -177,7 +177,6 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     // build C from the triplets
     //--------------------------------------------------------------------------
 
-          GB_void *S_work  = C_iso ? NULL    : Wx   ;
     const GB_void *S_input = C_iso ? cscalar : NULL ;
 
     GB_OK (GB_builder (
@@ -190,7 +189,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
         &Wi_size,
         (int64_t **) &Wj,       // Wj, free on output
         &Wj_size,
-        &S_work,                // Wx, free on output; or NULL if C is iso
+        (GB_void **) &Wx,       // Wx, free on output; or NULL if C is iso
         &Wx_size,
         false,                  // tuples need to be sorted
         true,                   // no duplicates
@@ -210,6 +209,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     C->sparsity_control = sparsity_control ;
     ASSERT (C->static_header == static_header) ;
     ASSERT (GB_IS_HYPERSPARSE (C)) ;
+    ASSERT_MATRIX_OK (C, "C from concat hyper", GB0) ;
 
     // workspace has been freed by GB_builder, or transplanted into C
     ASSERT (Wi == NULL) ;

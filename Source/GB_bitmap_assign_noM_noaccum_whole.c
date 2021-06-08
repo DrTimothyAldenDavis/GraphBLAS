@@ -36,7 +36,7 @@
 
 // For scalar assignment, C = x, this method just calls GB_convert_any_to_full,
 // which converts C to an iso full matrix (the iso value has already been set
-// by GB_assign_prep.
+// by GB_assign_prep).
 
 // For matrix assignment, C = A, if A is sparse or hyper and C may become
 // sparse or hyper, then the assignement is done by GB_subassign_24.

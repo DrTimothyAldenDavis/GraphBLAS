@@ -222,11 +222,13 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     if (cnz == 0)
     { 
         // construct C as an empty matrix
+        GBURBLE ("(empty concat) ") ;
         GB_OK (GB_clear (C, Context)) ;
     }
     else if (C_is_full)
     { 
         // construct C as full
+        GBURBLE ("(full concat) ") ;
         GB_OK (GB_concat_full (C, C_iso, cscalar,
             Tiles, m, n, Tile_rows, Tile_cols, Context)) ;
     }
@@ -234,18 +236,21 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
         cncols))
     { 
         // construct C as bitmap
+        GBURBLE ("(bitmap concat) ") ;
         GB_OK (GB_concat_bitmap (C, C_iso, cscalar,
             cnz, Tiles, m, n, Tile_rows, Tile_cols, Context)) ;
     }
     else if (GB_convert_sparse_to_hyper_test (C->hyper_switch, k, C->vdim))
     { 
         // construct C as hypersparse
+        GBURBLE ("(hyper concat) ") ;
         GB_OK (GB_concat_hyper (C, C_iso, cscalar,
             cnz, Tiles, m, n, Tile_rows, Tile_cols, Context)) ;
     }
     else
     { 
         // construct C as sparse
+        GBURBLE ("(sparse concat) ") ;
         GB_OK (GB_concat_sparse (C, C_iso, cscalar,
             cnz, Tiles, m, n, Tile_rows, Tile_cols, Context)) ;
     }

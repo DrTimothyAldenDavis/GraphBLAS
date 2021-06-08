@@ -22,22 +22,21 @@
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A) || GB_as_if_full (A)) ;
     ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (A) || GB_as_if_full (B)) ;
 
+    const bool A_iso = A->iso ;
+    const bool B_iso = B->iso ;
+
+    int8_t *restrict Cb = C->b ;
+    const int64_t cnz = GB_nnz_held (C) ;
+
     #ifdef GB_ISO_EMULT
     ASSERT (C->iso) ;
     #else
     ASSERT (!C->iso) ;
+    ASSERT (!(A_iso && B_iso)) ;    // one of A or B can be iso, but not both
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
           GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
     #endif
-
-    // one of A or B can be iso, but not both
-    const bool A_iso = A->iso ;
-    const bool B_iso = B->iso ;
-    ASSERT (!(A_iso && B_iso)) ;
-
-    int8_t *restrict Cb = C->b ;
-    const int64_t cnz = GB_nnz_held (C) ;
 
     //--------------------------------------------------------------------------
     // C=A.*B, C<M>=A.*B, or C<!M>=A.*B: C is bitmap

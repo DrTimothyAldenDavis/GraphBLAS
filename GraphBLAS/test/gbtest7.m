@@ -48,6 +48,11 @@ for k = 1: length(types)
     S = gbtest_cast (eye (3, 3), type) ;
     assert (gbtest_eq (S, G)) ;
     assert (isequal (GrB.type (G), type)) ;
+
+    % build an iso matrix
+    G = GrB.build (1:3, 1:3, X, 3, 3, '1st') ;
+    assert (gbtest_eq (S, G)) ;
+    assert (isequal (GrB.type (G), type)) ;
 end
 
 fprintf ('gbtest7: all tests passed\n') ;

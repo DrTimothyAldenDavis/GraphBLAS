@@ -15,10 +15,9 @@
     const int64_t  *restrict Ap = A->p ;
     const int64_t  *restrict Ah = A->h ;
     const int64_t  *restrict Ai = A->i ;
-    #if !GB_ISO_SELECT
+    // if A is iso and the op is user-defined, Ax [0] is passed to the user
+    // selectop
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
-    #endif
-    const bool A_iso = A->iso ;
     size_t asize = A->type->size ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;

@@ -98,6 +98,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     // extract the kth diagonal of A into the temporary hypersparse matrix T
     //--------------------------------------------------------------------------
 
+    // FIXME: if A is bitmap or full, do not use GB_selector
     GB_OK (GB_selector (T, GB_DIAG_opcode, NULL, false, A, k, NULL, Context)) ;
     GB_OK (GB_convert_any_to_hyper (T, Context)) ;
     GB_MATRIX_WAIT (T) ;

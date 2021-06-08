@@ -97,6 +97,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
         C->i_shallow = false ;
         C->x_shallow = false ;
         C->jumbled = false ;
+        C->iso = false ;
         ASSERT_MATRIX_OK (C, "C = quick copy of empty A", GB0) ;
         return (GrB_SUCCESS) ;
     }

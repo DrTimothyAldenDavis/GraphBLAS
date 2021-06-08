@@ -82,6 +82,7 @@ GrB_Info GB_AxB_saxpy_generic
 
 #define GB_SAXPY_METHOD_3 3
 #define GB_SAXPY_METHOD_BITMAP 5
+#define GB_SAXPY_METHOD_ISO_FULL 6
 
 #endif
 

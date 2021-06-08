@@ -264,29 +264,10 @@ void GB_matlab_helper5              // construct pattern of S
 }
 
 //------------------------------------------------------------------------------
-// GB_matlab_helper6: set bool array to all true gblogextract
-//------------------------------------------------------------------------------
-
-void GB_matlab_helper6              // set Gbool to all true
-(
-    bool *restrict Gbool,           // array of size gnvals
-    const GrB_Index gnvals
-)
-{
-
-    GB_NTHREADS (gnvals) ;
-
-    int64_t k ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (k = 0 ; k < gnvals ; k++)
-    {
-        Gbool [k] = true ;
-    }
-}
-
-//------------------------------------------------------------------------------
 // GB_matlab_helper7: Kx = uint64 (0:mnz-1), for gblogextract
 //------------------------------------------------------------------------------
+
+// TODO: use GrB_apply with a positional operator instead
 
 void GB_matlab_helper7              // Kx = uint64 (0:mnz-1)
 (
@@ -308,6 +289,8 @@ void GB_matlab_helper7              // Kx = uint64 (0:mnz-1)
 //------------------------------------------------------------------------------
 // GB_matlab_helper8: expand a scalar into an array for gbbuild
 //------------------------------------------------------------------------------
+
+// TODO: use GrB_assign instead
 
 void GB_matlab_helper8
 (

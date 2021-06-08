@@ -209,7 +209,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   c   r   +   A   ?       20x: C(:,:)<!M,repl> += A
 
         //----------------------------------------------------------------------
-        // FUTURE::: C<C,s> = x    C == M, replace all values, C_replace ignored
         // FUTURE::: C<C,s> += x   C == M, update all values, C_replace ignored
         // FUTURE::: C<C,s> = A    C == M, A dense, C_replace ignored
         //----------------------------------------------------------------------
@@ -661,7 +660,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // finalize C and return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C(I,J) result", GB0) ;
+    ASSERT_MATRIX_OK (C, "C subassigner result", GB0) ;
     return (GB_block (C, Context)) ;
 }
 

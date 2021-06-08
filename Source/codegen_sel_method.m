@@ -93,19 +93,18 @@ if (iso)
     % A is iso
     fprintf (f, 'define(`GB_select_entry'', `/* assignment skipped, C and A are iso */'')\n') ;
 elseif (isequal (opname, 'eq_zero'))
+    % create C as iso for all EQ_ZERO ops even when A is not iso, with iso value zero
     fprintf (f, 'define(`GB_select_entry'', `/* assignment skipped, C is iso with all entries zero */'')\n') ;
 elseif (isequal (opname, 'eq_thunk'))
     % create C as iso for all EQ_THUNK ops even when A is not iso, with iso value xthunk
     fprintf (f, 'define(`GB_select_entry'', `/* assignment skipped, C is iso with all entries equal to thunk */'')\n') ;
+elseif (isequal (opname, 'nonzero') && isequal (atype, 'bool'))
+    % create C as iso for NONZERO_BOOL even when A is not iso, with iso value true
+    fprintf (f, 'define(`GB_select_entry'', `/* assignment skipped, C is iso with all entries true */'')\n') ;
+elseif (isequal (atype, 'GB_void'))
+    fprintf (f, 'define(`GB_select_entry'', `memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize)'')\n') ;
 else
-    if (isequal (opname, 'nonzero') && isequal (atype, 'bool'))
-        % : create C as iso for NONZERO_BOOL, with iso value true
-        fprintf (f, 'define(`GB_select_entry'', `/* assignment skipped, C is iso with all entries true */'')\n') ;
-    elseif (isequal (atype, 'GB_void'))
-        fprintf (f, 'define(`GB_select_entry'', `memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize)'')\n') ;
-    else
-        fprintf (f, 'define(`GB_select_entry'', `Cx [pC] = Ax [pA]'')\n') ;
-    end
+    fprintf (f, 'define(`GB_select_entry'', `Cx [pC] = Ax [pA]'')\n') ;
 end
 
 fclose (f) ;

@@ -29,7 +29,7 @@
     [m n] = size (A) ;
 
     % make sure all input, internal, and output matrices are all stored by
-    % column 
+    % column
     save = GrB.format ;
     GrB.format ('by col') ;
     M = GrB (m, n, 'logical') ;
@@ -130,8 +130,11 @@ void mexFunction
     GrB_Index mnz ;
     OK (GrB_Matrix_nvals (&mnz, M)) ;
     int sparsity ;
+// printf ("\n GBLOGEXTRACT ========================================M:\n") ;
+// GxB_print (M,3) ;
     OK (GxB_Matrix_Option_get (M, GxB_SPARSITY_STATUS, &sparsity)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 5") ;
+    CHECK_ERROR (!M->iso, "internal error 42")  ;            	
 
     //--------------------------------------------------------------------------
     // G<M> = A
@@ -142,10 +145,14 @@ void mexFunction
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, A)) ;
     GrB_Matrix G = gb_new (type, nrows, ncols, GxB_BY_COL, not_bitmap) ;
+// GxB_print (M,3) ;
+// GxB_print (A,3) ;
     OK1 (G, GxB_Matrix_subassign (G, M, NULL,
         A, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
     OK (GrB_Matrix_free (&A_copy)) ;
     OK (GrB_Matrix_free (&A_input)) ;
+// printf ("\n=====================================G after subassign:\n") ;
+// GxB_print (G,3) ;
 
     //--------------------------------------------------------------------------
     // extract Gx, the values of G
@@ -154,6 +161,8 @@ void mexFunction
     GrB_Index gnvals ;
     OK1 (G, GrB_Matrix_wait (&G)) ;
     OK (GrB_Matrix_nvals (&gnvals, G)) ;
+// printf ("\n========================================G:\n") ;
+// GxB_print (G,3) ;
     OK (GxB_Matrix_Option_get (G, GxB_SPARSITY_STATUS, &sparsity)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 0") ;
 
@@ -162,22 +171,18 @@ void mexFunction
     void *Gx = G->x ;
     size_t Gx_size = G->x_size ;
     GB_Global_memtable_remove (G->x) ; G->x = NULL ; G->x_size = 0 ;
+    bool G_iso = G->iso  ;            	
 
     //--------------------------------------------------------------------------
-    // change G to boolean
+    // change G to boolean (all true and iso) TODO: use G as structural instead
     //--------------------------------------------------------------------------
 
-    G->type = GrB_BOOL ;
-    if (GB_nnz_max (G) > 0)
-    { 
-        // Add a new G->x to G
-        int64_t gnz = GB_nnz (G) ;
-        G->x = mxMalloc (gnz * sizeof (bool)) ;
-        G->x_size = (gnz * sizeof (bool)) ;
-        GB_Global_memtable_add (G->x, G->x_size) ;
-        bool *Gbool = G->x ;
-        GB_matlab_helper6 (Gbool, gnvals) ;
-    }
+    bool Gbool = true ;        							
+    G->type = GrB_BOOL ;       	             	 	                 	
+    G->x = &Gbool ;            		 	 	 	 	 	
+    G->iso = true ;            		 	 	 	 	 	
+    G->x_shallow = true ;      		 	 	 	 	 	
+    G->x_size = sizeof (bool) ; 						
 
     //--------------------------------------------------------------------------
     // K = structure of M, where the kth entry in K is equal to k
@@ -187,12 +192,16 @@ void mexFunction
     struct GB_Matrix_opaque K_header ;
     GrB_Matrix K = GB_clear_static_header (&K_header) ;
 
+// printf ("K = shallow copy of M\n") ;
     OK (GB_shallow_copy (K, GxB_BY_COL, M, Context)) ;
+// printf ("\n========================================K:\n") ;
+// GxB_print (K,3) ;
     OK (GxB_Matrix_Option_get (K, GxB_SPARSITY_STATUS, &sparsity)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 10") ;
 
     // Kx = uint64 (0:mnz-1)
     size_t Kx_size = (MAX (mnz, 1) * sizeof (uint64_t)) ;
+// printf ("mnz %ld Kx_size: %lu\n", mnz, Kx_size) ;
     uint64_t *Kx = mxMalloc (Kx_size) ;
     GB_matlab_helper7 (Kx, mnz) ;
 
@@ -202,6 +211,9 @@ void mexFunction
     K->type = GrB_UINT64 ;
     K->x_size = Kx_size ;
     GB_Global_memtable_add (K->x, K->x_size) ;
+    K->iso = false  ;            	
+// printf ("\n===================    now K is non-iso:\n") ;
+// GxB_print (K,3) ;
 
     //--------------------------------------------------------------------------
     // T<G> = K
@@ -235,7 +247,11 @@ void mexFunction
 
     GrB_Vector V ;
     OK (GrB_Vector_new (&V, type, mnz)) ;
+// printf ("\n========================================V:\n") ;
+// GxB_print (V,3) ;
     OK1 (V, GxB_Vector_Option_set (V, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+// printf ("\n========================================V after set:\n") ;
+// GxB_print (V,3) ;
 
     GB_Global_memtable_remove (V->i) ; gb_mxfree (&V->i) ;
     GB_Global_memtable_remove (V->x) ; gb_mxfree (&V->x) ;
@@ -250,6 +266,7 @@ void mexFunction
     V->x = Gx ;
     V->x_size = Gx_size ;
     V->x_shallow = false ;
+    V->iso = G_iso  ;            	
     GB_Global_memtable_add (V->x, V->x_size) ;  // this was the old G->x
 
     int64_t *Vp = V->p ;
@@ -274,6 +291,8 @@ void mexFunction
     //--------------------------------------------------------------------------
     // export the output matrix C back to MATLAB as a GraphBLAS matrix
     //--------------------------------------------------------------------------
+
+// printf ("\n========================================C ready:\n") ;
 
     pargout [0] = gb_export (&C, KIND_GRB) ;
     GB_WRAPUP ;

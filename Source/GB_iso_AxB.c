@@ -23,6 +23,59 @@
 #include "GB_reduce.h"
 #include "GB_binop.h"
 
+//------------------------------------------------------------------------------
+// GB_iso_mult: c = mult(a,b) or c = mult(b,a)
+//------------------------------------------------------------------------------
+
+static void GB_iso_mult         // c = mult(a,b) or c=mult(b,a)
+(
+    GB_void *restrict c,        // c has type zcode, and size zsize
+    const GB_void *restrict a, const GB_Type_code acode, const size_t asize,
+    const GB_void *restrict b, const GB_Type_code bcode, const size_t bsize,
+    GxB_binary_function fmult,
+    const bool flipxy,
+    const GB_Type_code xcode, const size_t xsize,
+    const GB_Type_code ycode, const size_t ysize,
+    const GB_Type_code zcode, const size_t zsize
+)
+{
+    if (flipxy)
+    { 
+        // c = mult(b,a)
+        GB_iso_mult (c, b, bcode, bsize, a, acode, asize, fmult, false,
+            xcode, xsize, ycode, ysize, zcode, zsize) ;
+    }
+    else
+    {
+        if (fmult == NULL)
+        { 
+            // fmult is the implicit FIRST operator from GB_reduce_to_vector
+            // c = (ztype) a
+            GB_cast_scalar (c, zcode, a, acode, asize) ;
+        }
+        else if (acode == xcode && bcode == ycode)
+        { 
+            // c = fmult (a,b)
+            fmult (c, a, b) ;
+        }
+        else
+        { 
+            // x = (xtype) a
+            GB_void x [GB_VLA(xsize)] ;
+            GB_cast_scalar (x, xcode, a, acode, asize) ;
+            // y = (ytype) b
+            GB_void y [GB_VLA(ysize)] ;
+            GB_cast_scalar (y, ycode, b, bcode, bsize) ;
+            // c = fmult (x,y)
+            fmult (c, x, y) ;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+// GB_iso_AxB
+//------------------------------------------------------------------------------
+
 bool GB_iso_AxB             // C = A*B, return true if C is iso
 (
     // output
@@ -31,7 +84,8 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
     GrB_Matrix A,           // input matrix
     GrB_Matrix B,           // input matrix
     uint64_t n,             // inner dimension of the matrix multiply
-    GrB_Semiring semiring   // semiring
+    GrB_Semiring semiring,  // semiring
+    bool flipxy             // true if z=fmult(b,a), false if z=fmult(a,b)
 )
 {
 
@@ -51,10 +105,9 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
     GB_Opcode add_opcode = semiring->add->op->opcode ;
     const GrB_BinaryOp multiply = semiring->multiply ;
 
-    if (GB_OP_IS_POSITIONAL (multiply) || add_opcode >= GB_USER_opcode)
+    if (GB_OP_IS_POSITIONAL (multiply))
     { 
-        // C is not iso if the multiply op is positional, or if the monoid
-        // is user-defined
+        // C is not iso if the multiply op is positional
         return (false) ;
     }
 
@@ -64,6 +117,7 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
 
     const GxB_binary_function fmult = multiply->function ;
     GB_Opcode mult_opcode = multiply->opcode ;
+    ASSERT (GB_IMPLIES (fmult == NULL, mult_opcode == GB_FIRST_opcode)) ;
 
     const GrB_Type xtype = multiply->xtype ;
     const GrB_Type ytype = multiply->ytype ;
@@ -91,7 +145,9 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
 
     if (xcode == GB_BOOL_code)
     { 
-        // rename a boolean multiply op
+        // rename a boolean multiply op:
+        // DIV becomes FIRST, RDIV becomes SECOND; all other renaming has no
+        // effect on this method. 
         mult_opcode = GB_boolean_rename (mult_opcode) ;
     }
 
@@ -113,12 +169,12 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
         add_opcode == GB_EQ_opcode || add_opcode == GB_TIMES_opcode ;
 
     // the FIRST or ANY multiply ops can both produce a FIRST result
-    const bool first =
-        mult_opcode == GB_FIRST_opcode || mult_opcode == GB_ANY_opcode ;
+    const bool first = (mult_opcode == GB_ANY_opcode) ||
+        (mult_opcode == (flipxy ? GB_SECOND_opcode : GB_FIRST_opcode)) ;
 
     // the SECOND or ANY multiply ops can both produce a SECOND result
-    const bool second =
-        mult_opcode == GB_SECOND_opcode || mult_opcode == GB_ANY_opcode ;
+    const bool second = (mult_opcode == GB_ANY_opcode) ||
+        (mult_opcode == (flipxy ? GB_FIRST_opcode : GB_SECOND_opcode)) ;
 
     //--------------------------------------------------------------------------
     // determine if C is iso
@@ -169,12 +225,12 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
         //----------------------------------------------------------------------
 
         if (zcode == xcode && acode == xcode)
-        {
+        { 
             // c = Ax [0]
             memcpy (c, A->x, zsize) ;
         }
         else
-        {
+        { 
             // c = (ztype) ((xtype) Ax [0])
             GB_void x [GB_VLA(xsize)] ;
             GB_cast_scalar (x, xcode, A->x, acode, asize) ;
@@ -191,33 +247,19 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
         //----------------------------------------------------------------------
 
         if (nice_monoid)
-        {
+        { 
 
             //------------------------------------------------------------------
             // C is iso, with c = fmult(a,b), for any fmult, incl. user-defined
             //------------------------------------------------------------------
 
-            if (acode == xcode && bcode == ycode)
-            {
-                // c = fmult (Ax [0], Bx [0])
-                fmult (c, A->x, B->x) ;
-            }
-            else
-            {
-                // x = (xtype) Ax [0]
-                GB_void x [GB_VLA(xsize)] ;
-                GB_cast_scalar (x, xcode, A->x, acode, asize) ;
-                // y = (ytype) Bx [0]
-                GB_void y [GB_VLA(ysize)] ;
-                GB_cast_scalar (y, ycode, B->x, bcode, bsize) ;
-                // c = fmult (x,y)
-                fmult (c, x, y) ;
-            }
+            GB_iso_mult (c, A->x, acode, asize, B->x, bcode, bsize,
+                fmult, flipxy, xcode, xsize, ycode, ysize, zcode, zsize) ;
             return (true) ;
 
         }
         else if (GB_as_if_full (A) && GB_as_if_full (B))
-        {
+        { 
 
             //------------------------------------------------------------------
             // C = A*B where A and B are both full and iso
@@ -230,24 +272,10 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
             // A(i,k)*B(k,j) is iso-valued for any i, j, or k, assuming n is
             // the inner dimension of the C=A*B matrix multiply.
 
-            // first, compute t = A(i,k)*B(k,j)
+            // t = A(i,k)*B(k,j)
             GB_void t [GB_VLA(zsize)] ;
-            if (acode == xcode && bcode == ycode)
-            {
-                // t = fmult (Ax [0], Bx [0])
-                fmult (t, A->x, B->x) ;
-            }
-            else
-            {
-                // x = (xtype) Ax [0]
-                GB_void x [GB_VLA(xsize)] ;
-                GB_cast_scalar (x, xcode, A->x, acode, asize) ;
-                // y = (ytype) Bx [0]
-                GB_void y [GB_VLA(ysize)] ;
-                GB_cast_scalar (y, ycode, B->x, bcode, bsize) ;
-                // c = fmult (x,y)
-                fmult (t, x, y) ;
-            }
+            GB_iso_mult (t, A->x, acode, asize, B->x, bcode, bsize,
+                fmult, flipxy, xcode, xsize, ycode, ysize, zcode, zsize) ;
 
             // reduce n copies of t to the single scalar c, in O(log(n))
             GxB_binary_function freduce = semiring->add->op->function ;

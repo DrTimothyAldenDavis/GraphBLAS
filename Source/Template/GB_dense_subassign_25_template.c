@@ -170,3 +170,6 @@
         #endif
     }
 }
+
+#undef GB_ISO_ASSIGN
+

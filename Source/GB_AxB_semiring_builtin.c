@@ -107,7 +107,7 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
             ((*add_opcode) == GB_MIN_opcode) ||
             ((*add_opcode) == GB_TIMES_opcode))
         // rename to ANY_PAIR
-        (*add_opcode) = GB_PAIR_opcode ;
+        (*add_opcode) = GB_ANY_opcode ;
     }
 
     return (true) ;

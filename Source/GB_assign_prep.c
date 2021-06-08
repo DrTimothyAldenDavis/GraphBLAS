@@ -106,10 +106,10 @@ GrB_Info GB_assign_prep
     GrB_Matrix M = M_in ;
     GrB_Matrix A = A_in ;
 
-    ASSERT_MATRIX_OK (C, "C input for GB_assign/subassign", GB0) ;
+    ASSERT_MATRIX_OK (C, "C input for GB_assign_prep", GB0) ;
     ASSERT (!GB_is_shallow (C)) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_assign/subassign", GB0) ;
-    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign/subassign", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_assign_prep", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign_prep", GB0) ;
     ASSERT (scode <= GB_UDT_code) ;
 
     GrB_Matrix C2 = NULL ;
@@ -167,7 +167,7 @@ GrB_Info GB_assign_prep
         // The pointer to the scalar is NULL.
         ASSERT (scalar == NULL) ;
         ASSERT (A != NULL) ;
-        ASSERT_MATRIX_OK (A, "A for GB_assign/GB_subassign", GB0) ;
+        ASSERT_MATRIX_OK (A, "A for GB_assign_prep", GB0) ;
         atype = A->type ;
     }
 
@@ -667,7 +667,7 @@ GrB_Info GB_assign_prep
     // GrB_Row_assign and GrB_Col_assign pass A as a typecasted vector,
     // which is then quickly transposed to a hypersparse matrix.
 
-    ASSERT_MATRIX_OK (C, "C here in GB_assign", GB0) ;
+    ASSERT_MATRIX_OK (C, "C here in GB_assign_prep", GB0) ;
 
     if (!scalar_expansion && A_transpose)
     { 
@@ -1042,11 +1042,11 @@ GrB_Info GB_assign_prep
 
     // This decision can change if wait(C) is done.
 
-    bool C_iso_out ;
+    bool C_iso_out = false ;
     size_t csize = ctype->size ;
     GB_void cout [GB_VLA(csize)] ;
-    (*subassign_method) = GB_subassigner_method (&C_iso_out, cout,
-        C, (*C_replace), M, Mask_comp, Mask_struct, accum, A, Ikind, Jkind,
+    (*subassign_method) = GB_subassigner_method (&C_iso_out, cout, C,
+        (*C_replace), M, Mask_comp, Mask_struct, accum, A, Ikind, Jkind,
         scalar_expansion, scalar, atype) ;
 
     //--------------------------------------------------------------------------
@@ -1204,8 +1204,8 @@ GrB_Info GB_assign_prep
         }
 
         // C has changed so recompute the subassigner method
-        (*subassign_method) = GB_subassigner_method (&C_iso_out, cout,
-            C, (*C_replace), M, Mask_comp, Mask_struct, accum, A, Ikind, Jkind,
+        (*subassign_method) = GB_subassigner_method (&C_iso_out, cout, C,
+            (*C_replace), M, Mask_comp, Mask_struct, accum, A, Ikind, Jkind,
             scalar_expansion, scalar, atype) ;
     }
 
@@ -1247,6 +1247,7 @@ GrB_Info GB_assign_prep
     // convert C to its final iso property
     //--------------------------------------------------------------------------
 
+    // printf ("FINAL C->iso %d C_iso_out %d\n", C->iso, C_iso_out) ;
     if (C->iso && !C_iso_out)
     {
         // C is iso on input, but non-iso on output; expand the iso value
@@ -1266,6 +1267,7 @@ GrB_Info GB_assign_prep
         // the iso status of C is unchanged
         ASSERT (memcmp (cout, C->x, csize) == 0) ;
     }
+    ASSERT_MATRIX_OK (C, "C output from GB_assign_prep", GB0) ;
 
     //--------------------------------------------------------------------------
     // return results

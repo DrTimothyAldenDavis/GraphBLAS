@@ -822,13 +822,17 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (T->x == NULL) ;
 
     T->iso = S_iso ;                // OK: T is iso if and only if Sx is iso
-    if (S_iso)
-    { 
-        GBURBLE ("(iso build) ") ;
-    }
-    else
-    { 
-        GBURBLE ("(build) ") ;
+    bool do_burble = (vlen > 1 || vdim > 1) && (nvals > 1) ;
+    if (do_burble)
+    {
+        if (S_iso)
+        { 
+            GBURBLE (T, "(iso build) ") ;
+        }
+        else
+        { 
+            GBURBLE (T, "(build) ") ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -1104,6 +1108,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
     bool nocasting = (ttype == stype) &&
         (ttype == xtype) && (ttype == ytype) && (ttype == ztype) ;
 
+    ASSERT_TYPE_OK (ttype, "ttype for build_factory", GB0) ;
+    ASSERT_TYPE_OK (stype, "stype for build_factory", GB0) ;
+    ASSERT_TYPE_OK (xtype, "xtype for build_factory", GB0) ;
+    ASSERT_TYPE_OK (ytype, "ytype for build_factory", GB0) ;
+    ASSERT_TYPE_OK (ztype, "ztype for build_factory", GB0) ;
+
     //--------------------------------------------------------------------------
     // STEP 5: assemble the tuples
     //--------------------------------------------------------------------------
@@ -1258,7 +1268,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (!done)
             {
-                GB_BURBLE_N (nvals, "(generic) ") ;
+                if (do_burble)
+                {
+                    GBURBLE ("(generic build) ") ;
+                }
 
                 //--------------------------------------------------------------
                 // no typecasting, but use the fdup function pointer and memcpy
@@ -1312,7 +1325,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // assemble the values Sx into T, typecasting as needed
             //------------------------------------------------------------------
 
-            GB_BURBLE_N (nvals, "(generic with typecast) ") ;
+            if (do_burble)
+            {
+                GBURBLE ("(generic build with typecast) ") ;
+            }
 
             // If T and Sx are iso, no typecasting is ever done, so this method
             // is not used in that case.

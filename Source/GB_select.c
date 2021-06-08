@@ -44,12 +44,12 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     GB_RETURN_IF_FAULTY (Thunk) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 
-    ASSERT_MATRIX_OK (C, "C input for GB_select", GB3) ;
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_select", GB3) ;
-    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_select", GB3) ;
-    ASSERT_SELECTOP_OK (op, "selectop for GB_select", GB3) ;
-    ASSERT_MATRIX_OK (A, "A input for GB_select", GB3) ;
-    ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_select", GB3) ;
+    ASSERT_MATRIX_OK (C, "C input for GB_select", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_select", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_select", GB0) ;
+    ASSERT_SELECTOP_OK (op, "selectop for GB_select", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_select", GB0) ;
+    ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_select", GB0) ;
 
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = GB_clear_static_header (&T_header) ;
@@ -58,7 +58,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     GrB_Info info ;
     GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, A->type, Context));
 
-    GB_Type_code typecode = A->type->code ;
+    GB_Type_code acode = A->type->code ;
     GB_Select_Opcode opcode = op->opcode ;
 
     // these opcodes are not availabe to the user
@@ -76,12 +76,12 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     {
         // built-in GT, GE, LT, and LE operators cannot be used with
         // user-defined or complex types.
-        if (typecode == GB_UDT_code)
+        if (acode == GB_UDT_code)
         { 
             GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Operator %s not defined for user-defined types", op->name) ;
         }
-        else if (typecode == GB_FC32_code || typecode == GB_FC64_code)
+        else if (acode == GB_FC32_code || acode == GB_FC64_code)
         { 
             GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Operator %s not defined for complex types", op->name) ;
@@ -241,12 +241,12 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     bool flipij = !A_csc ;
 
-    ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk now GB_select", GB3) ;
+    ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk now GB_select", GB0) ;
 
     // if A is boolean, get the value of Thunk typecasted to boolean
     bool bthunk = false ;
 
-    if (typecode == GB_BOOL_code && op_is_thunk_comparator && nz_thunk > 0)
+    if (acode == GB_BOOL_code && op_is_thunk_comparator && nz_thunk > 0)
     { 
         // bthunk = (bool) Thunk
         GB_cast_scalar (&bthunk, GB_BOOL_code, xthunk, ttype->code,
@@ -311,7 +311,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
                 // bool and uint: rename GxB_GT_ZERO to GxB_NONZERO
                 // user type: return error above
-                switch (typecode)
+                switch (acode)
                 {
                     case GB_BOOL_code   : 
                     case GB_UINT8_code  : 
@@ -326,7 +326,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
                 // bool and uint: always true; use GB_dup_worker
                 // user type: return error above
-                switch (typecode)
+                switch (acode)
                 {
                     case GB_BOOL_code   : 
                     case GB_UINT8_code  : 
@@ -341,7 +341,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
                 // bool and uint: always false; return an empty matrix
                 // user type: return error above
-                switch (typecode)
+                switch (acode)
                 {
                     case GB_BOOL_code   : 
                     case GB_UINT8_code  : 
@@ -356,7 +356,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
                 // bool and uint: rename GxB_LE_ZERO to GxB_EQ_ZERO
                 // user type: return error above
-                switch (typecode)
+                switch (acode)
                 {
                     case GB_BOOL_code   : 
                     case GB_UINT8_code  : 
@@ -371,7 +371,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
                 // bool: if thunk is true,  rename GxB_NE_THUNK to GxB_EQ_ZERO 
                 //       if thunk is false, rename GxB_NE_THUNK to GxB_NONZERO 
-                if (typecode == GB_BOOL_code)
+                if (acode == GB_BOOL_code)
                 { 
                     opcode = (bthunk) ? GB_EQ_ZERO_opcode : GB_NONZERO_opcode ;
                 }
@@ -381,7 +381,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
                 // bool: if thunk is true,  rename GxB_NE_THUNK to GxB_NONZERO 
                 //       if thunk is false, rename GxB_NE_THUNK to GxB_EQ_ZERO 
-                if (typecode == GB_BOOL_code)
+                if (acode == GB_BOOL_code)
                 { 
                     opcode = (bthunk) ? GB_NONZERO_opcode : GB_EQ_ZERO_opcode ;
                 }
@@ -392,7 +392,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 // bool: if thunk is true,  return an empty matrix
                 //       if thunk is false, rename GxB_GT_THUNK to GxB_NONZERO
                 // user type: return error above
-                if (typecode == GB_BOOL_code)
+                if (acode == GB_BOOL_code)
                 {
                     if (bthunk)
                     { 
@@ -411,7 +411,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 // bool: if thunk is true,  rename GxB_GE_THUNK to GxB_NONZERO
                 //       if thunk is false, use GB_dup_worker
                 // user type: return error above
-                if (typecode == GB_BOOL_code)
+                if (acode == GB_BOOL_code)
                 {
                     if (bthunk)
                     { 
@@ -430,7 +430,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 // bool: if thunk is true,  rename GxB_LT_THUNK to GxB_EQ_ZERO
                 //       if thunk is false, return an empty matrix
                 // user type: return error above
-                if (typecode == GB_BOOL_code)
+                if (acode == GB_BOOL_code)
                 {
                     if (bthunk)
                     { 
@@ -449,7 +449,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 // bool: if thunk is true,  use GB_dup_worker
                 //       if thunk is false, rename GxB_LE_ZERO to GxB_EQ_ZERO
                 // user type: return error
-                if (typecode == GB_BOOL_code)
+                if (acode == GB_BOOL_code)
                 {
                     if (bthunk)
                     { 
@@ -494,8 +494,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     }
 
     T->is_csc = A_csc ;
-    ASSERT_MATRIX_OK (T, "T=select(A,Thunk) output", GB3) ;
-    ASSERT_MATRIX_OK (C, "C for accum; T=select(A,Thunk) output", GB3) ;
+    ASSERT_MATRIX_OK (T, "T=select(A,Thunk) output", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for accum; T=select(A,Thunk) output", GB0) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask

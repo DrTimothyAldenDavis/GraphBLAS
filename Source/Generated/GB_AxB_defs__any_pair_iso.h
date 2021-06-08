@@ -234,7 +234,7 @@
 
 // atomic compare-exchange
 #define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \
-    GB_ATOMIC_COMPARE_EXCHANGE_0 (target, expected, desired)
+    ;
 
 // Hx [i] = t
 #define GB_HX_WRITE(i,t) \

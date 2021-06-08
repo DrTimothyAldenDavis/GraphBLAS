@@ -93,11 +93,34 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     GrB_Type ztype = semiring->add->op->ztype ;
     size_t zsize = ztype->size ;
     GB_void cscalar [GB_VLA(zsize)] ;
-    bool C_iso = GB_iso_AxB (cscalar, A, B, A->vlen, semiring) ;
+    bool C_iso = GB_iso_AxB (cscalar, A, B, A->vlen, semiring, flipxy) ;
     if (C_iso)
     { 
-        GBURBLE ("(iso dot) ") ;
+        // revise the method if A and B are both iso and full
+        if (A->iso && GB_as_if_full (A) && B->iso && GB_as_if_full (B))
+        {
+
+            //------------------------------------------------------------------
+            // C is iso and full; do not apply the mask
+            //------------------------------------------------------------------
+
+            GBURBLE ("(iso full dot) ") ;
+            (*done_in_place) = false ;
+            (*mask_applied) = false ;
+            // set C->iso = true    OK
+            GrB_Info info = GB_new_bix (&C, true,    // static header
+                ztype, A->vdim, B->vdim, GB_Ap_null, true, GxB_FULL, false,
+                GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Context) ;
+            if (info == GrB_SUCCESS)
+            {
+                C->magic = GB_MAGIC ;
+                memcpy (C->x, cscalar, zsize) ;
+            }
+            return (info) ;
+        }
     }
+
+    const char *iso_kind = (C_iso) ? "iso " : "" ;
 
     //--------------------------------------------------------------------------
     // in-place C+=A'*B.  mask is not present (and not applied)
@@ -108,6 +131,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // the C iso case is not handled, but C_in might be iso
         (*done_in_place) = true ;
         (*mask_applied) = false ;    // no mask to apply
+        GBURBLE ("(dot4) ") ;
         return (GB_AxB_dot4 (C_in, A, B, semiring, flipxy, Context)) ;
     }
 
@@ -118,6 +142,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     if (A->vlen == 0)
     { 
         // no work to do; C is an empty matrix, normally hypersparse
+        GBURBLE ("(empty dot) ") ;
         if (C_in != NULL) return (GrB_SUCCESS) ;
         return (GB_new (&C, true, // auto sparsity, static header
             ztype, A->vdim, B->vdim, GB_Ap_calloc, true, GxB_AUTO_SPARSITY,
@@ -133,7 +158,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
         // use dot3 if M is present and not complemented, and either sparse or
         // hypersparse
-        GBURBLE ("dot3 ") ;
+        GBURBLE ("(%sdot3) ", iso_kind) ;
         (*mask_applied) = true ;    // mask is always applied
         (*done_in_place) = false ;
 
@@ -181,6 +206,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     // general case: C<M>=A'*B, C<!M>=A'B*, or C=A'*B, not in-place
     //--------------------------------------------------------------------------
 
+    GBURBLE ("(%sdot2) ", iso_kind) ;
     (*mask_applied) = (M != NULL) ; // mask applied if present
     (*done_in_place) = false ;      // TODO: allow dot2 to work in-place
     return (GB_AxB_dot2 (C, C_iso, cscalar, M, Mask_comp, Mask_struct, A, B,

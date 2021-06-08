@@ -8,8 +8,9 @@
 //------------------------------------------------------------------------------
 
 // All entries in A must be present, with no pending work; GB_as_if_full (A)
-// must be true on input.  A may be hypersparse, sparse, bitmap, or full on
-// input. A is full on output.  If A is iso, it remains so on output.
+// must be true on input, or A must be iso.  A may be hypersparse, sparse,
+// bitmap, or full on input. A is full on output.  If A is iso, it remains so
+// on output.
 
 #include "GB.h"
 
@@ -25,7 +26,7 @@ void GB_convert_any_to_full     // convert any matrix to full
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A converting any to full", GB0) ;
-    ASSERT (GB_as_if_full (A)) ;
+    ASSERT (A->iso || GB_as_if_full (A)) ;
 
     if (GB_IS_FULL (A))
     { 

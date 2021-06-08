@@ -335,6 +335,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     bool C_iso = (C_code_iso != GB_NON_ISO) ;
     bool allocate_new_Cx = (ctype != atype) || (op1 != NULL) || (op2 != NULL)
         || C_iso ;
+    ASSERT (GB_IMPLIES (A->iso, C_iso)) ;
 
     if (C_iso && !op_is_positional)
     { 
@@ -390,6 +391,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             && op1 == NULL && op2 == NULL   // no operator to apply
             && atype == ctype ;             // no typecasting
 
+        int64_t anz_held = GB_nnz_held (A) ;
+        ASSERT (anz > 0 && anz_held > 0) ;
+
         // allocate T
         if (T_cheap)
         { 
@@ -403,10 +407,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         { 
             // allocate all of T, including T->b and T->x
             // set T->iso = C_iso   OK
-            if (C_iso)
             info = GB_new_bix (&T, true,  // bitmap or full, static header
                 ctype, avdim, avlen, GB_Ap_null, C_is_csc, sparsity, true,
-                A_hyper_switch, 1, anz, true, C_iso, Context) ;
+                A_hyper_switch, 1, anz_held, true, C_iso, Context) ;
         }
 
         if (info != GrB_SUCCESS)
@@ -429,8 +432,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // Since A is full, # threads to use is nthreads, and the
         // nworkspaces parameter is not used
 
-        int64_t anz_held = GB_nnz_held (A) ;
-        ASSERT (anz > 0 && anz_held > 0) ;
         int nthreads = GB_nthreads (anz_held + anvec, chunk, nthreads_max) ;
 
         if (T_cheap)

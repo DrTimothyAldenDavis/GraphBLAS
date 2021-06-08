@@ -183,8 +183,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     ASSERT (A->x == NULL) ;     // has been freed or removed
     A->x_shallow = false ;
-
-    ASSERT (C->x != NULL) ;
     C->x_shallow = false ;
 
     //--------------------------------------------------------------------------

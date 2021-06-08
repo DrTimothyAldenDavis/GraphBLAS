@@ -39,8 +39,13 @@ void gb_matrix_assign_scalar
 )
 {
 
+
     GrB_Type atype ;
     OK (GxB_Matrix_type (&atype, A)) ;
+
+// printf ("gb_matrix_assign_scalar here : %d\n", do_subassign) ;
+// GxB_print (atype, 3) ;
+
     if (atype == GrB_BOOL)
     {
         bool x = false ;

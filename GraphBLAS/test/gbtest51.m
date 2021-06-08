@@ -54,6 +54,7 @@ for k = 1:nfiles
     % fprintf ('--------------------------construct G:\n') ;
     [m, n] = size (G) ;
     if (m ~= n)
+        save gunk G
         G = [GrB(m,m) G ; G' GrB(n,n)] ; %#ok<*AGROW>   (concatenate)
     elseif (~issymmetric (G))
         G = G + G' ;

@@ -72,13 +72,6 @@ void GB_matlab_helper5              // construct pattern of S
 ) ;
 
 GB_PUBLIC
-void GB_matlab_helper6              // set Gbool to all true
-(
-    bool *restrict Gbool,        // array of size gnvals
-    const GrB_Index gnvals
-) ;
-
-GB_PUBLIC
 void GB_matlab_helper7              // Kx = uint64 (0:mnz-1)
 (
     uint64_t *restrict Kx,       // array of size mnz
