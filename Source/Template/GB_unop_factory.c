@@ -17,9 +17,9 @@
 
 {
     // switch factory for two types, controlled by code1 and code2
-    GB_Type_code code1 = op->ztype->code ;      // defines ztype
+    GB_Type_code code1 = op1->ztype->code ;     // defines ztype
     GB_Type_code code2 = Atype->code ;          // defines the type of A
-    GB_Opcode opcode = op->opcode ;
+    GB_Opcode opcode = op1->opcode ;
 
     ASSERT (code1 <= GB_UDT_code) ;
     ASSERT (code2 <= GB_UDT_code) ;

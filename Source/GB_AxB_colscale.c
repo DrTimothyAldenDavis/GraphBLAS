@@ -78,12 +78,12 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         (opcode == GB_FIRST_opcode || opcode == GB_SECOND_opcode))) ;
 
     //--------------------------------------------------------------------------
-    // determine if C is iso
+    // determine if C is iso (ignore the monoid since it isn't used)
     //--------------------------------------------------------------------------
 
     size_t zsize = ztype->size ;
     GB_void cscalar [GB_VLA(zsize)] ;
-    bool C_iso = GB_iso_AxB (cscalar, A, D, A->vdim, semiring, flipxy) ;
+    bool C_iso = GB_iso_AxB (cscalar, A, D, A->vdim, semiring, flipxy, true) ;
 
     //--------------------------------------------------------------------------
     // copy the pattern of A into C
@@ -186,6 +186,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
         bool A_is_pattern = false ;
         bool D_is_pattern = false ;
+        ASSERT (!op_is_pair) ;
 
         if (flipxy)
         { 
@@ -249,6 +250,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
             { 
                 // C=A*D, colscale with built-in operator
                 #define GB_BINOP_IS_SEMIRING_MULTIPLIER
+                #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
                 #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
             }

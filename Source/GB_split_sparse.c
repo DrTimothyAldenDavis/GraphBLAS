@@ -210,6 +210,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, A_iso,
                 Context)) ;
             int64_t *restrict Ci = C->i ;
+            C->magic = GB_MAGIC ;       // for GB_nnz_held(C), to slice C
 
             //------------------------------------------------------------------
             // copy the tile from A into C
@@ -228,6 +229,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 //--------------------------------------------------------------
 
                 // A is iso and so is C; copy the iso entry
+                GBURBLE ("(iso sparse split) ") ;
                 memcpy (C->x, A->x, asize) ;
                 #define GB_ISO_SPLIT
                 #define GB_COPY(pC,pA) ;
@@ -245,6 +247,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 // no typecasting needed
                 switch (asize)
                 {
+                    #undef  GB_COPY
                     #define GB_COPY(pC,pA) Cx [pC] = Ax [pA] ;
 
                     case 1 : // uint8, int8, bool, or 1-byte user-defined
@@ -318,8 +321,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             // conform the tile and save it in the Tiles array
             //------------------------------------------------------------------
 
-            C->magic = GB_MAGIC ;
             ASSERT_MATRIX_OK (C, "C for GB_split", GB0) ;
+            GB_OK (GB_hypermatrix_prune (C, Context)) ;
             GB_OK (GB_conform (C, Context)) ;
             if (csc)
             {
@@ -329,6 +332,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             {
                 GB_TILE (Tiles, outer, inner) = C ;
             }
+            ASSERT_MATRIX_OK (C, "final tile C for GB_split", GB0) ;
             C = NULL ;
         }
     }

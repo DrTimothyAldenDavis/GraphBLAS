@@ -1247,7 +1247,6 @@ GrB_Info GB_assign_prep
     // convert C to its final iso property
     //--------------------------------------------------------------------------
 
-    // printf ("FINAL C->iso %d C_iso_out %d\n", C->iso, C_iso_out) ;
     if (C->iso && !C_iso_out)
     {
         // C is iso on input, but non-iso on output; expand the iso value

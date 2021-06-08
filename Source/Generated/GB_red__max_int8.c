@@ -140,7 +140,7 @@ GrB_Info GB (_red_build__max_int8)
 (
     int8_t *restrict Tx,
     int64_t  *restrict Ti,
-    const int8_t *restrict S,
+    const int8_t *restrict Sx,
     int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict I_work,

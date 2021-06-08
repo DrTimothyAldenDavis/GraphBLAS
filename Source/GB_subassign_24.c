@@ -101,7 +101,6 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         //----------------------------------------------------------------------
 
         // make C full, if not full already
-        // printf ("copy dense A to C\n") ;
         C->nzombies = 0 ;                   // overwrite any zombies
         GB_Pending_free (&(C->Pending)) ;   // abandon all pending tuples
         C->iso = C_iso ;
@@ -116,7 +115,6 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         //----------------------------------------------------------------------
 
         // clear prior content of C, but keep the CSR/CSC format and its type
-        // printf ("copy pattern of A to C\n") ;
         bool C_is_csc = C->is_csc ;
         GB_phbix_free (C) ;
         // copy the pattern, not the values

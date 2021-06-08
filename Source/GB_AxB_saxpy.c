@@ -70,7 +70,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     GrB_Type ztype = semiring->add->op->ztype ;
     size_t zsize = ztype->size ;
     GB_void cscalar [GB_VLA(zsize)] ;
-    bool C_iso = GB_iso_AxB (cscalar, A, B, A->vdim, semiring, flipxy) ;
+    bool C_iso = GB_iso_AxB (cscalar, A, B, A->vdim, semiring, flipxy, false) ;
     if (C_iso)
     { 
         // revise the method if A and B are both iso and full

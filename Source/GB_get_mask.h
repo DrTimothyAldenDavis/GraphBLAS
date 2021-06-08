@@ -33,7 +33,7 @@ static inline GrB_Matrix GB_get_mask    // return M_in or NULL
         if (GB_is_nonzero ((GB_void *) M_in->x, M_in->type->size))
         {
             // M->x [0] is nonzero, so M is a structural mask.
-            // printf ("iso mask: struct\n") ;
+            GBURBLE ("(iso mask: struct) ") ;
             return (M_in) ;
         }
         else
@@ -44,7 +44,7 @@ static inline GrB_Matrix GB_get_mask    // return M_in or NULL
             // mask at all, with Mask_comp being false.  If Mask_comp is false,
             // then this is the same as no mask, complemented (the "quick mask"
             // case).
-            // printf ("iso mask: all zero\n") ;
+            GBURBLE ("(iso mask: all zero) ") ;
             (*Mask_comp) = !(*Mask_comp) ;
             return (NULL) ;
         }

@@ -79,7 +79,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     // clear prior content and create C as a full matrix.  Keep the same type
     // and CSR/CSC for C.  Allocate the values of C but do not initialize them.
 
-    if (!C_as_is_full)
+    if (!C_as_if_full)
     { 
         // free the content of C and reallocate it as a non-iso full matrix
         ASSERT (C != A && C != B) ;
@@ -88,6 +88,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
         GB_OK (GB_new_bix (&C, C->static_header,
             C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc, GxB_FULL, false,
             C->hyper_switch, -1, GB_nnz_full (C), true, false, Context)) ;
+        C->magic = GB_MAGIC ;
     }
     else if (!GB_IS_FULL (C))
     {

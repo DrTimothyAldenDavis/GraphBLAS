@@ -228,13 +228,11 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
             if (as_if_full)
             { 
                 // if full or all entries present: to full
-                printf ("to full\n") ;
                 GB_convert_any_to_full (A) ;
             }
             else
             { 
                 // otherwise: to bitmap
-                printf ("to bitmap\n") ;
                 GB_OK (GB_convert_any_to_bitmap (A, Context)) ;
             }
             break ;

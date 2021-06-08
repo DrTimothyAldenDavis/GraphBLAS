@@ -140,7 +140,7 @@ GrB_Info GB (_red_build__second_uint8)
 (
     uint8_t *restrict Tx,
     int64_t  *restrict Ti,
-    const uint8_t *restrict S,
+    const uint8_t *restrict Sx,
     int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict I_work,

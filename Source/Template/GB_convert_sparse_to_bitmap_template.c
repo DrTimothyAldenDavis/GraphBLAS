@@ -74,3 +74,5 @@
     done = true ;
 }
 
+#undef GB_ATYPE
+

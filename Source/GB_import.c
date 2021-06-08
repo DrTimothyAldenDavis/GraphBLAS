@@ -202,7 +202,7 @@ GrB_Info GB_import      // import a matrix in any format
     (*A)->iso = iso ;   // OK
     if (iso)
     { 
-        GBURBLE ("(iso import )") ;
+        GBURBLE ("(iso import) ") ;
     }
 
     switch (sparsity)

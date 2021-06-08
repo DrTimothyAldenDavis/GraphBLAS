@@ -119,6 +119,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
                 // no typecasting needed
                 switch (asize)
                 {
+                    #undef  GB_COPY
                     #define GB_COPY(pC,pA) Cx [pC] = Ax [pA]
 
                     case 1 : // uint8, int8, bool, or 1-byte user-defined

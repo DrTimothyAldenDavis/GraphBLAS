@@ -7,12 +7,12 @@ function gbtest102
 rng ('default') ;
 A = GrB (rand (2)) ;
 B = GrB (speye (2)) ;
-C1 = [A B]
-C2 = [double(A) double(B)]
+C1 = [A B] ;
+C2 = [double(A) double(B)] ;
 assert (isequal (C1, C2)) ;
 
-C1 = [A ; B] 
-C2 = [double(A) ; double(B)]
+C1 = [A ; B]  ;
+C2 = [double(A) ; double(B)] ;
 assert (isequal (C1, C2)) ;
 
 S1 = num2cell (C1) ;

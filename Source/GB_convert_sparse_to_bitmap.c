@@ -166,6 +166,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
             {
                 switch (asize)
                 {
+                    #undef  GB_COPY
                     #define GB_COPY(Axnew,pnew,Axold,p)         \
                         Axnew [pnew] = Axold [p] ;
 

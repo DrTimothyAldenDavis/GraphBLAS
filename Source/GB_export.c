@@ -117,7 +117,7 @@ GrB_Info GB_export      // export a matrix in any format
         (*iso) = (*A)->iso ;
         if (*iso)
         { 
-            GBURBLE ("(iso export )") ;
+            GBURBLE ("(iso export) ") ;
         }
     }
 

@@ -67,12 +67,12 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         (opcode == GB_FIRST_opcode || opcode == GB_SECOND_opcode))) ;
 
     //--------------------------------------------------------------------------
-    // determine if C is iso
+    // determine if C is iso (ignore the monoid since it isn't used)
     //--------------------------------------------------------------------------
 
     size_t zsize = ztype->size ;
     GB_void cscalar [GB_VLA(zsize)] ;
-    bool C_iso = GB_iso_AxB (cscalar, D, B, D->vdim, semiring, flipxy) ;
+    bool C_iso = GB_iso_AxB (cscalar, D, B, D->vdim, semiring, flipxy, true) ;
 
     //--------------------------------------------------------------------------
     // copy the pattern of B into C
@@ -233,6 +233,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
             { 
                 // C=D*B, rowscale with built-in operator
                 #define GB_BINOP_IS_SEMIRING_MULTIPLIER
+                #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
                 #undef  GB_BINOP_IS_SEMIRING_MULTIPLIER
             }

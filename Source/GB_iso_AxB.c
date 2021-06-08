@@ -85,7 +85,8 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
     GrB_Matrix B,           // input matrix
     uint64_t n,             // inner dimension of the matrix multiply
     GrB_Semiring semiring,  // semiring
-    bool flipxy             // true if z=fmult(b,a), false if z=fmult(a,b)
+    bool flipxy,            // true if z=fmult(b,a), false if z=fmult(a,b)
+    bool ignore_monoid      // rowscale and colscale do not use the monoid
 )
 {
 
@@ -155,8 +156,9 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
     // single result doesn't change the result: ANY, LAND, LOR, BAND, BOR, MIN
     // and MAX.  That is, x == reduce ([x x x x x ... x x x x]) holds for all
     // these monoids.  The monoids that do not fall into this "nice" category
-    // are PLUS, TIMES, EQ (LXNOR), LXOR, BXOR, and BXNOR.
-    const bool nice_monoid =
+    // are PLUS, TIMES, EQ (LXNOR), LXOR, BXOR, and BXNOR.  For row/col scaling,
+    // all monoids are "nice" since they aren't used.
+    const bool nice_monoid = ignore_monoid ||
         add_opcode == GB_ANY_opcode  ||
         add_opcode == GB_LAND_opcode || add_opcode == GB_LOR_opcode ||
         add_opcode == GB_BAND_opcode || add_opcode == GB_BOR_opcode ||

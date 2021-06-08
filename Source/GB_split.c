@@ -56,7 +56,7 @@ GrB_Info GB_split                   // split a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "A input for GB_concat", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_split", GB0) ;
     GB_MATRIX_WAIT (A) ;
     if (A->iso)
     { 
@@ -113,16 +113,19 @@ GrB_Info GB_split                   // split a matrix
     if (GB_is_dense (A))
     { 
         // A is full
+        GBURBLE ("(full split) ") ;
         GB_OK (GB_split_full (Tiles, m, n, Tile_rows, Tile_cols, A, Context)) ;
     }
     else if (GB_IS_BITMAP (A))
     { 
         // A is bitmap
+        GBURBLE ("(bitmap split) ") ;
         GB_OK (GB_split_bitmap (Tiles, m, n, Tile_rows, Tile_cols, A, Context));
     }
     else
     { 
         // A is sparse/hypersparse, each Tile has the same sparsity as A
+        GBURBLE ("(sparse/hyper split) ") ;
         GB_OK (GB_split_sparse (Tiles, m, n, Tile_rows, Tile_cols, A, Context));
     }
 

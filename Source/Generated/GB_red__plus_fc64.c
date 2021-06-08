@@ -140,7 +140,7 @@ GrB_Info GB (_red_build__plus_fc64)
 (
     GxB_FC64_t *restrict Tx,
     int64_t  *restrict Ti,
-    const GxB_FC64_t *restrict S,
+    const GxB_FC64_t *restrict Sx,
     int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict I_work,

@@ -328,6 +328,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                     // no typecasting needed
                     switch (csize)
                     {
+                        #undef  GB_COPY
                         #define GB_COPY(pC,pA,A_iso)                        \
                             Cx [pC] = GBX (Ax, pA, A_iso) ;
 

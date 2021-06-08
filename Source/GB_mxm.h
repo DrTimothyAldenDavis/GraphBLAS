@@ -255,7 +255,8 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
     GrB_Matrix B,           // input matrix
     uint64_t n,             // inner dimension of the matrix multiply
     GrB_Semiring semiring,  // semiring
-    bool flipxy             // true if z=fmult(b,a), false if z=fmult(a,b)
+    bool flipxy,            // true if z=fmult(b,a), false if z=fmult(a,b)
+    bool ignore_monoid      // rowscale and colscale do not use the monoid
 ) ;
 
 #endif

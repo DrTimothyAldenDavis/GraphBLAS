@@ -140,7 +140,7 @@ GrB_Info GB (_red_build__first_fp32)
 (
     float *restrict Tx,
     int64_t  *restrict Ti,
-    const float *restrict S,
+    const float *restrict Sx,
     int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict I_work,
