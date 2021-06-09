@@ -28,8 +28,6 @@
     ASSERT (M == NULL) ;
     ASSERT (A_is_full || B_is_full) ;
     ASSERT (C_sparsity == GxB_FULL) ;
-    printf ("full add, A_iso: %d B_iso %d\n", A_iso, B_iso) ;
-    printf ("A_is_full %d B_is_full% d\n", A_is_full, B_is_full) ;
 
     if (A_is_full && B_is_full)
     {

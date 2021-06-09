@@ -1,4 +1,4 @@
-% function gbtest11
+function gbtest11
 %GBTEST11 test GrB, sparse
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -9,10 +9,10 @@ A = 100 * rand (4) ;
 A (1,1:2) = 0 %#ok<*NOPRT>
 S = sparse (A)
 
-% x1 = GrB (S)
-% x2 = full (x1)
-% x3 = double (x2)
-% assert (gbtest_eq (S, x3))
+  x1 = GrB (S)
+  x2 = full (x1)
+  x3 = double (x2)
+  assert (gbtest_eq (S, x3))
 
 % assert (gbtest_eq (S, double (full (GrB (S)))))
 

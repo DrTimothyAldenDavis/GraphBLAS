@@ -114,13 +114,7 @@ void mexFunction
     // expand A to a full matrix
     //--------------------------------------------------------------------------
 
-// FIXME
-    printf ("A for expand to full (A):\n") ;
-    GxB_print (A, 3) ;
     GrB_Matrix C = gb_expand_to_full (A, type, fmt, id) ;
-    printf ("C = expand to full (A):\n") ;
-    GxB_print (C, 3) ;
-
     OK (GrB_Matrix_free (&A)) ;
     OK (GxB_Scalar_free (&id)) ;
 

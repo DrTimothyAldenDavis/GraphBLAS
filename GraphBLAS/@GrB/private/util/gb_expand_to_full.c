@@ -77,13 +77,8 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = gb_new (type, nrows, ncols, fmt, 0) ;
-    // FIXME
-    printf ("C=first(S,B)\n") ;
-    printf ("S:\n") ; GxB_print (S, 3) ;
-    printf ("B:\n") ; GxB_print (B, 3) ;
     OK1 (C, GrB_Matrix_eWiseAdd_BinaryOp (C, NULL, NULL,
         gb_first_binop (type), S, B, NULL)) ;
-    printf ("C:\n") ; GxB_print (C, 3) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
