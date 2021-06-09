@@ -77,16 +77,16 @@
 
 // cij = Ax [pA]
 #define GB_COPY_A_TO_C(cij,Ax,pA,A_iso) \
-    cij = (crealf (Ax [pA]) != 0) || (cimagf (Ax [pA]) != 0)
+    cij = (crealf (GBX (Ax, pA, A_iso)) != 0) || (cimagf (GBX (Ax, pA, A_iso)) != 0)
 
 // cij = Bx [pB]
 #define GB_COPY_B_TO_C(cij,Bx,pB,B_iso) \
-    cij = (crealf (Bx [pB]) != 0) || (cimagf (Bx [pB]) != 0)
+    cij = (crealf (GBX (Bx, pB, B_iso)) != 0) || (cimagf (GBX (Bx, pB, B_iso)) != 0)
 
 #define GB_CX(p) Cx [p]
 
 // binary operator
-#define GB_BINOP(z, x, y, i, j) \
+#define GB_BINOP(z,x,y,i,j) \
     z = GB_FC32_eq (x, y) ;
 
 // true if the binop must be flipped

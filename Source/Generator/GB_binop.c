@@ -86,8 +86,8 @@
 #define GB_CX(p) Cx [p]
 
 // binary operator
-#define GB_BINOP(z, x, y, i, j) \
-    GB_binaryop(z, x, y, i, j) ;
+#define GB_BINOP(z,x,y,i,j) \
+    GB_binaryop(z,x,y,i,j) ;
 
 // true if the binop must be flipped
 #define GB_BINOP_FLIP \
