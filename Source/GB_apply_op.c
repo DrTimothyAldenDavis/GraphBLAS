@@ -50,9 +50,16 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
     // check inputs
     //--------------------------------------------------------------------------
 
+    printf ("C_code_iso: %d\n", C_code_iso) ;
+    printf ("A->magic %ld\n", A->magic) ;
+    GxB_print (op1, 3) ;
+    GxB_print (op2, 3) ;
     ASSERT (Cx != NULL) ;
-    ASSERT (op1 != NULL || op2 != NULL) ;
-    ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB0) ;
+    ASSERT (op1 != NULL || op2 != NULL ||
+        C_code_iso == GB_ISO_1 ||
+        C_code_iso == GB_ISO_S ||
+        C_code_iso == GB_ISO_A) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB2) ;
     ASSERT (GB_JUMBLED_OK (A)) ;        // A can be jumbled
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     ASSERT (GB_IMPLIES (op1 != NULL, ctype == op1->ztype)) ;

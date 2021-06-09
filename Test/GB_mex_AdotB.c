@@ -64,16 +64,16 @@ GrB_Info adotb_complex (GB_Context Context)
     if (Mask != NULL)
     {
         // C<M> = A'*B using dot product method
-        info = GB_AxB_dot3 (C, Mask, false, Aconj, B, semiring, flipxy,
-            Context) ;
+        info = GB_AxB_dot3 (C, false, NULL, Mask, false, Aconj, B, semiring,
+            flipxy, Context) ;
         mask_applied = true ;
     }
     else
     {
         // C = A'*B using dot product method
         mask_applied = false ;  // no mask to apply
-        info = GB_AxB_dot2 (C, NULL, false, false, Aconj, B, semiring, flipxy,
-            Context) ;
+        info = GB_AxB_dot2 (C, false, NULL, NULL, false, false, Aconj, B,
+            semiring, flipxy, Context) ;
     }
 
     GrB_Matrix_free_(&Aconj) ;
@@ -99,7 +99,7 @@ GrB_Info adotb (GB_Context Context)
     if (Mask != NULL)
     {
         // C<M> = A'*B using dot product method
-        info = GB_AxB_dot3 (C, Mask, false, A, B,
+        info = GB_AxB_dot3 (C, false, NULL, Mask, false, A, B,
             semiring /* GxB_PLUS_TIMES_FP64 */,
             flipxy, Context) ;
         mask_applied = true ;
@@ -107,7 +107,7 @@ GrB_Info adotb (GB_Context Context)
     else
     {
         mask_applied = false ;  // no mask to apply
-        info = GB_AxB_dot2 (C, NULL, false, false, A, B,
+        info = GB_AxB_dot2 (C, false, NULL, NULL, false, false, A, B,
             semiring /* GxB_PLUS_TIMES_FP64 */, flipxy, Context) ;
     }
 
@@ -165,6 +165,12 @@ void mexFunction
     {
         FREE_ALL ;
         mexErrMsgTxt ("matrices must be CSC only") ;
+    }
+
+    if (A->iso || B->iso)
+    {
+        FREE_ALL ;
+        mexErrMsgTxt ("matrices must be non-iso only") ;
     }
 
     // get Mask (shallow copy)

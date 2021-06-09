@@ -47,14 +47,14 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
-    // ensure the matrix is in CSC format
+    // ensure the matrix is in by-col format
     //--------------------------------------------------------------------------
 
     if (!((*A)->is_csc))
     { 
-        // A = A', done in-place, to put A in CSC format
+        // A = A', done in-place, to put A in by-col format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose (NULL, NULL, true, *A,  // in_place_A
+        GB_OK (GB_transpose (*A, NULL, true, *A,  // A = A' in place
             NULL, NULL, NULL, false, Context)) ;
     }
 

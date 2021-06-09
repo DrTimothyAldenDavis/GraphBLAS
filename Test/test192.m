@@ -1,4 +1,4 @@
-function test192
+% function test192
 %TEST192 test GrB_assign C<C,struct>=scalar
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.

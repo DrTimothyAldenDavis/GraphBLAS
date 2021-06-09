@@ -49,15 +49,15 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     }
 
     //--------------------------------------------------------------------------
-    // ensure the matrix is full CSR
+    // ensure the matrix is full by-row
     //--------------------------------------------------------------------------
 
-    // ensure the matrix is in CSR format
+    // ensure the matrix is in by-row format
     if ((*A)->is_csc)
     { 
-        // A = A', done in-place, to put A in CSR format
+        // A = A', done in-place, to put A in by-row format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose (NULL, NULL, false, *A, // in_place_A
+        GB_OK (GB_transpose (*A, NULL, false, *A,   // A = A' in place
             NULL, NULL, NULL, false, Context)) ;
         GB_MATRIX_WAIT (*A) ;
     }

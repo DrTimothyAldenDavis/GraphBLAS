@@ -294,7 +294,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // MT = M_in' also typecasting to boolean.  It is not freed here
         // unless an error occurs, but is returned to the caller.
         GBURBLE ("(M transpose) ") ;
-        GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M_in,     // MT static
+        GB_OK (GB_transpose (MT, GrB_BOOL, C_is_csc, M_in, // MT static = M_in'
             NULL, NULL, NULL, false, Context)) ;
         M = MT ;
         (*M_transposed) = true ;
@@ -424,7 +424,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // with the swap_rule as defined above, this case will never occur.
             // The code is left here in case swap_rule changes in the future.
             ASSERT (GB_DEAD_CODE) ;
-            GB_OK (GB_transpose (&BT, btype_required, true, B,  // BT static
+            GB_OK (GB_transpose (BT, btype_required, true, B,  // BT static = B'
                 NULL, NULL, NULL, false, Context)) ;
             B = BT ;
         }
@@ -492,7 +492,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (axb_method == GB_USE_COLSCALE || axb_method == GB_USE_SAXPY)
         {
             // AT = A'
-            GB_OK (GB_transpose (&AT, atype_required, true, A,  // AT static
+            GB_OK (GB_transpose (AT, atype_required, true, A,  // AT static = A'
                 NULL, NULL, NULL, false, Context)) ;
             // do not use colscale if AT is now bitmap
             if (GB_IS_BITMAP (AT))
@@ -574,7 +574,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (axb_method != GB_USE_COLSCALE)
         {
             // BT = B'
-            GB_OK (GB_transpose (&BT, btype_required, true, B,  // BT static
+            GB_OK (GB_transpose (BT, btype_required, true, B,  // BT static = B'
                 NULL, NULL, NULL, false, Context)) ;
             // do not use rowscale if BT is now bitmap
             if (axb_method == GB_USE_ROWSCALE && GB_IS_BITMAP (BT))
@@ -607,7 +607,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C<M>=A*B' via dot product, or C_in<M>+=A*B' if in-place
                 GBURBLE ("C%s=A*B', dot_product (transposed %s) "
                     "(transposed %s) ", M_str, A_str, B_str) ;
-                GB_OK (GB_transpose (&AT, atype_required, true, A,  // AT static
+                GB_OK (GB_transpose (AT, atype_required, true, A, //AT static=A'
                     NULL, NULL, NULL, false, Context)) ;
                 GB_OK (GB_AxB_dot (C, (can_do_in_place) ? C_in : NULL,
                     M, Mask_comp, Mask_struct, AT, BT, semiring, flipxy,
@@ -710,7 +710,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C<M>=A*B via dot product, or C_in<M>+=A*B if in-place.
                 GBURBLE ("C%s=A*B', dot_product (transposed %s) ",
                     M_str, A_str) ;
-                GB_OK (GB_transpose (&AT, atype_required, true, A,  // AT static
+                GB_OK (GB_transpose (AT, atype_required, true, A, //AT static=A'
                     NULL, NULL, NULL, false, Context)) ;
                 GB_OK (GB_AxB_dot (C, (can_do_in_place) ? C_in : NULL,
                     M, Mask_comp, Mask_struct, AT, B, semiring, flipxy,

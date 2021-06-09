@@ -62,8 +62,9 @@ void mexFunction
     GB_void *C = mxGetData (pargout [0]) ;
 
     // cast the data from X to C
-    GB_cast_array (C, ctype->code, X, xtype->code, NULL,
-        xtype->size, nrows*ncols, 1) ;
+    int64_t cnz = nrows*ncols ;
+    if (C == NULL && cnz > 0) mexErrMsgTxt ("C is NULL!\n") ;
+    GB_cast_array (C, ctype->code, X, xtype->code, NULL, xtype->size, cnz, 1) ;
 
     GB_mx_put_global (do_cover) ;
 }

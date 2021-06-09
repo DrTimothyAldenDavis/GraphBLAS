@@ -257,7 +257,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         // T = op (A'), typecasting to op*->ztype
         // transpose: typecast, apply an op, not in-place.
         GBURBLE ("(transpose-op) ") ;
-        info = GB_transpose (&T, T_type, T_is_csc, A,   // T static
+        info = GB_transpose (T, T_type, T_is_csc, A,   // T static = A'
             op1, op2, scalar, binop_bind1st, Context) ;
         ASSERT (GB_JUMBLED_OK (T)) ;
         // A positional op is applied to C after the transpose is computed,
@@ -275,6 +275,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
             // the output Cx is aliased with C->x in GB_apply_op.
             GB_iso_code
                 C_code_iso = GB_iso_unop_code (C, op1, op2, binop_bind1st) ;
+printf ("Here %s %d\n", __FILE__, __LINE__) ;
             info = GB_apply_op ((GB_void *) C->x, C->type, C_code_iso,
                 op1, op2, scalar, binop_bind1st, C, Context) ;
             if (info == GrB_SUCCESS && C_code_iso != GB_NON_ISO)

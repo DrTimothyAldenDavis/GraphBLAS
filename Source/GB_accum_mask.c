@@ -197,12 +197,11 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // cannot have any zombies or pending tuples.
         // T can be jumbled.
         ASSERT (GB_JUMBLED_OK (T)) ;
-        GB_OK (GB_transpose (Thandle, NULL, C->is_csc, NULL,    // in_place_C
+        GB_OK (GB_transpose (T, NULL, C->is_csc, T,    // T static = T' in place
             NULL, NULL, NULL, false, Context)) ;
         #if GB_BURBLE
         T_transposed = true ;
         #endif
-        T = (*Thandle) ;
         ASSERT (GB_JUMBLED_OK (T)) ;
         ASSERT_MATRIX_OK (T, "[T = transposed]", GB0) ;
     }
@@ -219,7 +218,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // remove zombies and pending tuples from M.  M can be jumbled.
             GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
             ASSERT (GB_JUMBLED_OK (M)) ;
-            GB_OK (GB_transpose (&MT, GrB_BOOL, C->is_csc, M, // MT static
+            GB_OK (GB_transpose (MT, GrB_BOOL, C->is_csc, M, // MT static = M'
                 NULL, NULL, NULL, false, Context)) ;
             ASSERT (MT->static_header) ;
             // use the transpose mask

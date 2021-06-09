@@ -677,7 +677,7 @@ GrB_Info GB_assign_prep
         // A,  only construct the pattern of AT, not the values.
         GBURBLE ("(A transpose) ") ;
         AT = GB_clear_static_header (AT_header_handle) ;
-        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A,    // static header
+        GB_OK (GB_transpose (AT, NULL, C_is_csc, A,    // AT static = A'
             NULL, NULL, NULL, false, Context)) ;
         GB_MATRIX_WAIT (AT) ;       // A cannot be jumbled
         A = AT ;
@@ -709,7 +709,7 @@ GrB_Info GB_assign_prep
             // TODO: if Mask_struct, only construct the pattern of MT
             GBURBLE ("(M transpose) ") ;
             MT = GB_clear_static_header (MT_header_handle) ;
-            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, // static header
+            GB_OK (GB_transpose (MT, GrB_BOOL, C_is_csc, M, // MT static = M'
                 NULL, NULL, NULL, false, Context)) ;
             GB_MATRIX_WAIT (MT) ;       // M cannot be jumbled
             M = MT ;

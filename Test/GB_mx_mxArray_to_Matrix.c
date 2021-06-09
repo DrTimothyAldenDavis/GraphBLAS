@@ -65,6 +65,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     //--------------------------------------------------------------------------
 
     GB_CONTEXT ("mxArray_to_Matrix") ;
+    // printf ("mxArray to matrix: %s\n", name) ;
 
     GrB_Matrix A = NULL ;
 
@@ -241,8 +242,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
 
         // A is a deep copy and can be modified by GraphBLAS
-        info = GB_bix_alloc (A, anz, false, false, sparsity != GxB_FULL, true,
-            Context) ;
+        info = GB_bix_alloc (A, anz, sparsity, false, true, false, Context) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -275,13 +275,12 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             return (NULL) ;
         }
 
-        A->p_size = 0 ;
-        A->i_size = 0 ;
-
         if (sparsity != GxB_FULL)
         {
             A->p = Mp ;
             A->i = Mi ;
+            A->p_size = (ncols+1) * sizeof (int64_t) ;
+            A->i_size = GB_IMAX (anz, 1) * sizeof (int64_t) ;
             A->p_shallow = true ;
             A->i_shallow = true ;
         }
@@ -289,6 +288,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         {
             A->p = NULL ;
             A->i = NULL ;
+            A->p_size = 0 ;
+            A->i_size = 0 ;
             A->p_shallow = false ;
             A->i_shallow = false ;
         }
@@ -337,8 +338,12 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             }
         }
 
-        GB_cast_array (
-            A->x,
+        if (A->x == NULL && anz > 0)
+        {
+            printf ("A->x %p anz %ld\n", A->x, anz) ;
+            mexErrMsgTxt ("A->x is NULL!\n") ;
+        }
+        GB_cast_array (A->x,
             (atype_out_code == GB_UDT_code) ? GB_FC64_code : atype_out_code,
             Mx,
             (atype_in_code == GB_UDT_code) ? GB_FC64_code : atype_in_code,

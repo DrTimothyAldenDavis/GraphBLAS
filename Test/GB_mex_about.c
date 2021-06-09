@@ -547,7 +547,7 @@ void mexFunction
     p = GB_calloc_memory (4, sizeof (int64_t), &nbytes, NULL) ;
     CHECK (p != NULL) ;
     bool ok = true ;
-    p = GB_realloc_memory (6, 4, sizeof (int64_t), p, &nbytes, &ok, NULL) ;
+    p = GB_realloc_memory (6, sizeof (int64_t), p, &nbytes, &ok, NULL) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
     GB_FREE (&p, nbytes) ;
@@ -1158,11 +1158,11 @@ void mexFunction
     bool ignore ;
     struct GB_Matrix_opaque G_header ;
     GrB_Matrix G = GB_clear_static_header (&G_header) ;
-    ERR (GB_bitmap_AxB_saxpy (G, GxB_BITMAP, NULL, false, false, A, B,
-        GrB_PLUS_TIMES_SEMIRING_FP32, false, &ignore, NULL)) ;
+    ERR (GB_bitmap_AxB_saxpy (G, false, NULL, GxB_BITMAP, NULL, false, false,
+        A, B, GrB_PLUS_TIMES_SEMIRING_FP32, false, &ignore, NULL)) ;
     GrB_Matrix_free_(&A) ;
     GrB_Matrix_free_(&B) ;
-    CHECK (G->x == NULL) ;
+    CHECK (G->x == NULL) ;  // OK
 
     //--------------------------------------------------------------------------
     // wrapup

@@ -158,7 +158,7 @@ void mexFunction
     OK (GxB_Matrix_fprint (A, "valid matrix", GxB_SHORT, NULL)) ;
     // mangle the matrix
     GB_FREE (&(A->p), A->p_size) ;
-    GB_FREE (&(A->x), A->x_size) ;
+    GB_FREE (&(A->x), A->x_size) ;  // OK
     expected = GrB_INVALID_OBJECT ;
     ERR (GxB_Matrix_fprint (A, "invalid sparse matrix", GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&A) ;
@@ -186,7 +186,7 @@ void mexFunction
     ERR (GxB_Matrix_fprint (A, "full matrix cannot have zombies",
         GxB_SHORT, NULL)) ;
     A->nzombies = 0 ;
-    CHECK (GB_Pending_alloc (&(A->Pending), GrB_INT32, NULL, true, 4)) ;
+    CHECK (GB_Pending_alloc (&(A->Pending), false, GrB_INT32, NULL, true, 4)) ;
     ERR (GxB_Matrix_fprint (A, "full matrix cannot have pending tuples",
         GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&A) ;
@@ -379,10 +379,10 @@ void mexFunction
     bool ok = false ;
     int *p = GB_malloc_memory (4, sizeof (int), &nbytes) ;
     CHECK (p != NULL) ;
-    p = GB_realloc_memory (1024*1024, 4, sizeof (int), p, &nbytes, &ok, NULL) ;
+    p = GB_realloc_memory (1024*1024, sizeof (int), p, &nbytes, &ok, NULL) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
-    p = GB_realloc_memory (4, 4, GxB_INDEX_MAX + 1, p, &nbytes, &ok, NULL) ;
+    p = GB_realloc_memory (4, GxB_INDEX_MAX + 1, p, &nbytes, &ok, NULL) ;
     CHECK (!ok) ;
     GB_free_memory (&p, nbytes) ;
 

@@ -220,8 +220,8 @@ bool GB_mx_same     // true if arrays X and Y are the same
 
 bool GB_mx_xsame    // true if arrays X and Y are the same (ignoring zombies)
 (
-    char *X,
-    char *Y,
+    char *X,    bool X_iso,
+    char *Y,    bool Y_iso,
     int8_t *Xb,     // bitmap of X and Y (NULL if no bitmap)
     int64_t len,    // length of X and Y
     size_t s,       // size of each entry of X and Y
@@ -230,8 +230,8 @@ bool GB_mx_xsame    // true if arrays X and Y are the same (ignoring zombies)
 
 bool GB_mx_xsame32  // true if arrays X and Y are the same (ignoring zombies)
 (
-    float *X,
-    float *Y,
+    float *X,   bool X_iso,
+    float *Y,   bool Y_iso,
     int8_t *Xb,     // bitmap of X and Y (NULL if no bitmap)
     int64_t len,    // length of X and Y
     int64_t *I,     // row indices (for zombies), same length as X and Y
@@ -240,8 +240,8 @@ bool GB_mx_xsame32  // true if arrays X and Y are the same (ignoring zombies)
 
 bool GB_mx_xsame64  // true if arrays X and Y are the same (ignoring zombies)
 (
-    double *X,
-    double *Y,
+    double *X,  bool X_iso,
+    double *Y,  bool Y_iso,
     int8_t *Xb,     // bitmap of X and Y (NULL if no bitmap)
     int64_t len,    // length of X and Y
     int64_t *I,     // row indices (for zombies), same length as X and Y

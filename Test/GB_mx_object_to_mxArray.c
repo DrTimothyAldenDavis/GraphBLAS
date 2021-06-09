@@ -103,6 +103,13 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     ASSERT (GB_IS_SPARSE (C) || GB_IS_FULL (C)) ;
     ASSERT (C->is_csc) ;
 
+    // convert C to non-iso
+    if (C->iso)
+    {
+        GB_convert_any_to_non_iso (C, true, NULL) ;
+        ASSERT_MATRIX_OK (C, "TO MATLAB, non-iso non-hyper CSC", GB0) ;
+    }
+
     // MATLAB doesn't want NULL pointers in its empty matrices
     if (C->x == NULL)
     {
@@ -258,7 +265,9 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
 
         // C is single complex, typecast to sparse double complex
         A = mxCreateSparse (C->vlen, C->vdim, cnz, mxCOMPLEX) ;
-        GB_cast_array (mxGetComplexDoubles (A), GB_FC64_code,
+        GB_void *Ax = (GB_void *) mxGetComplexDoubles (A) ;
+        if (Ax == NULL && cnz > 0) mexErrMsgTxt ("Ax is NULL!\n") ;
+        GB_cast_array (Ax, GB_FC64_code,
             C->x, C->type->code, NULL, C->type->size, cnz, 1) ;
 
     }
@@ -270,6 +279,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         size_t Sx_size ;
         double *Sx = (double *) GB_malloc_memory (cnz+1, sizeof (double),
             &Sx_size) ;
+        if (Sx == NULL && cnz > 0) mexErrMsgTxt ("Sx is NULL!\n") ;
         GB_cast_array (Sx, GB_FP64_code,
             C->x, C->type->code, NULL, C->type->size, cnz, 1) ;
         mexMakeMemoryPersistent (Sx) ;

@@ -49,15 +49,15 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     }
 
     //--------------------------------------------------------------------------
-    // ensure the matrix is full CSC
+    // ensure the matrix is full by-col
     //--------------------------------------------------------------------------
 
-    // ensure the matrix is in CSC format
+    // ensure the matrix is in by-col format
     if (!((*A)->is_csc))
     { 
-        // A = A', done in-place, to put A in CSC format
+        // A = A', done in-place, to put A in by-col format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose (NULL, NULL, true, *A,      // in_place_A
+        GB_OK (GB_transpose (*A, NULL, true, *A,    // A = A' in place
             NULL, NULL, NULL, false, Context)) ;
         GB_MATRIX_WAIT (*A) ;
     }

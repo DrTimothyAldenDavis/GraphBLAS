@@ -45,14 +45,14 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     ASSERT_MATRIX_OK (*A, "A to export as CSR", GB0) ;
 
     //--------------------------------------------------------------------------
-    // ensure the matrix is sparse CSR
+    // ensure the matrix is sparse by-row
     //--------------------------------------------------------------------------
 
     if ((*A)->is_csc)
     { 
-        // A = A', done in-place, to put A in CSR format
+        // A = A', done in-place, to put A in by-row format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose (NULL, NULL, false, *A,     // in_place_A
+        GB_OK (GB_transpose (*A, NULL, false, *A,     // A = A' in place
             NULL, NULL, NULL, false, Context)) ;
     }
 

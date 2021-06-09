@@ -54,6 +54,12 @@ void mexFunction
         mexErrMsgTxt ("A must be complex") ;
     }
 
+    if (A->iso)
+    {
+        FREE_ALL ;
+        mexErrMsgTxt ("A must not be iso") ;
+    }
+
     GxB_FC64_t one  = GxB_CMPLX (1,0) ;
     GxB_FC64_t zero = GxB_CMPLX (0,0) ;
 
@@ -76,7 +82,7 @@ void mexFunction
     int64_t GET_SCALAR (1, int64_t, hack, -1) ;
     if (hack >= 0)
     {
-        GxB_FC64_t *Ax = A->x ;
+        GxB_FC64_t *Ax = A->x ;         // OK: A is non iso
         Ax [hack] = GxB_CMPLX (0,0) ;
     }
 

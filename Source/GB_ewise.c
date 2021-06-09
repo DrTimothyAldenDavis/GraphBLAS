@@ -189,7 +189,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // transpose: no typecast, no op, not in-place
         GBURBLE ("(M transpose) ") ;
         MT = GB_clear_static_header (&MT_header) ;
-        GB_OK (GB_transpose (&MT, GrB_BOOL, T_is_csc, M,    // MT static
+        GB_OK (GB_transpose (MT, GrB_BOOL, T_is_csc, M,    // MT static = M'
             NULL, NULL, NULL, false, Context)) ;
         M1 = MT ;
     }
@@ -204,7 +204,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // AT = A'
         // transpose: no typecast, no op, not in-place
         GBURBLE ("(A transpose) ") ;
-        GB_OK (GB_transpose (&AT, NULL, T_is_csc, A,        // AT static
+        GB_OK (GB_transpose (AT, NULL, T_is_csc, A,        // AT static = A'
             NULL, NULL, NULL, false, Context)) ;
         A1 = AT ;
         ASSERT_MATRIX_OK (AT, "AT from transpose", GB0) ;
@@ -220,7 +220,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // BT = B'
         // transpose: no typecast, no op, not in-place
         GBURBLE ("(B transpose) ") ;
-        GB_OK (GB_transpose (&BT, NULL, T_is_csc, B,        // BT static
+        GB_OK (GB_transpose (BT, NULL, T_is_csc, B,        // BT static = B'
             NULL, NULL, NULL, false, Context)) ;
         B1 = BT ;
     }

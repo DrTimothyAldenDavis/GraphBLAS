@@ -43,6 +43,7 @@ void GB_iso_unop            // Cx [0] = op1 (A), op2 (s,A) or op2 (A,s)
     GxB_Scalar scalar       // input scalar
 ) ;
 
+GB_PUBLIC
 GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
 (
     GrB_Matrix A,           // input/output matrix
@@ -50,6 +51,7 @@ GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
     GB_Context Contest
 ) ;
 
+GB_PUBLIC
 GrB_Info GB_convert_any_to_iso // convert non-iso matrix to iso
 (
     GrB_Matrix A,           // input/output matrix

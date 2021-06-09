@@ -47,14 +47,14 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
-    // ensure the matrix is in CSR format
+    // ensure the matrix is in by-row format
     //--------------------------------------------------------------------------
 
     if ((*A)->is_csc)
     { 
-        // A = A', done in-place, to put A in CSR format
+        // A = A', done in-place, to put A in by-row format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose (NULL, NULL, false, *A,     // in_place_A
+        GB_OK (GB_transpose (*A, NULL, false, *A,   // A = A' in place
             NULL, NULL, NULL, false, Context)) ;
     }
 

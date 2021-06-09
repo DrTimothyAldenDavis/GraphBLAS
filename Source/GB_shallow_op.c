@@ -175,8 +175,9 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    GB_OK (GB_apply_op ((GB_void *) C->x, C->type, C_code_iso,
-        op1, op2, scalar, binop_bind1st, A, Context)) ;
+printf ("Here %s %d\n", __FILE__, __LINE__) ;
+    GB_OK (GB_apply_op ((GB_void *) C->x, C->type, C_code_iso, op1, op2, scalar,
+        binop_bind1st, A, Context)) ;
 
     //--------------------------------------------------------------------------
     // return the result

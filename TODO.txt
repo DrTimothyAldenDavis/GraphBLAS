@@ -1,0 +1,10 @@
+FIXME:  do O(1) typecasting for iso matrices, if their types don't match
+    the operator.  Do this after WAIT on the inputs, since that may
+    change the iso property.
+
+FIXME:  after non-iso GrB*build, check if matrix is iso
+
+FIXME: in GraphBLAS/Test/GB_mx_mxArray_to_Matrix: provide option for checking
+    input matrix to see if could be presented as iso
+
+FIXME: pack/unpack

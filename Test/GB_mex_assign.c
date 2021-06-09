@@ -119,8 +119,7 @@ GrB_Info assign ( )
     }
     else if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_nnz (A) == 1)
     {
-        // scalar expansion to matrix or vector
-        GB_void *Ax = A->x ;
+        GB_void *Ax = A->x ; // OK: A is a scalar with exactly one entry
 
         if (ni == 1 && nj == 1 && Mask == NULL && I != GrB_ALL && J != GrB_ALL
             && GB_op_is_second (accum, C->type) && A->type->code <= GB_FC64_code

@@ -2048,8 +2048,8 @@ void mexFunction
     struct GB_Matrix_opaque HugeMatrix_header ;
     GrB_Matrix HugeMatrix = GB_clear_static_header (&HugeMatrix_header) ;
 
-    OK (GB_AxB_dot2 (HugeMatrix, NULL, false, false, HugeRow, HugeRow,
-        GxB_PLUS_TIMES_FP64, false, Context)) ;
+    OK (GB_AxB_dot2 (HugeMatrix, false, NULL, NULL, false, false, HugeRow,
+        HugeRow, GxB_PLUS_TIMES_FP64, false, Context)) ;
 
     GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", G3, ff) ;
     GrB_Matrix_free_(&HugeMatrix) ;
@@ -4705,7 +4705,7 @@ void mexFunction
     CHECK (nbytes == 0) ;
 
     ok = true ;
-    pp = GB_realloc_memory (UINT64_MAX, 0, 1, NULL, &nbytes, &ok, NULL) ;
+    pp = GB_realloc_memory (UINT64_MAX, 1, NULL, &nbytes, &ok, NULL) ;
     CHECK (!ok) ;
     CHECK (nbytes == 0) ;
 
@@ -4774,17 +4774,18 @@ void mexFunction
 
     CHECK (A != NULL) ;
     Context->where = "GB_bix_alloc" ;
-    info = GB_bix_alloc (A, GxB_INDEX_MAX+1, true, true, true, true, Context) ;
+    info = GB_bix_alloc (A, GxB_INDEX_MAX+1, GxB_SPARSE, true, true, false,
+        Context) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
 
     Context->where = "GB_ix_realloc" ;
 
     CHECK (A != NULL) ;
-    info = GB_ix_realloc (A, GxB_INDEX_MAX+1, true, Context) ;
+    info = GB_ix_realloc (A, GxB_INDEX_MAX+1, Context) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
 
     OK (GB_Matrix_check (A, "A pattern 1", G3, NULL)) ;
-    OK (GB_ix_realloc (A, 20, false, Context)) ;
+    OK (GB_ix_realloc (A, 20, Context)) ;
     CHECK (info == GrB_SUCCESS) ;
     OK (GB_Matrix_check (A, "A pattern 2", G3, NULL)) ;
 
@@ -4801,9 +4802,7 @@ void mexFunction
 
     struct GB_Matrix_opaque Q_header ;
     GrB_Matrix Q = GB_clear_static_header (&Q_header) ;
-    OK (GB_shallow_op (Q, true,
-        GrB_AINV_FP32, NULL, NULL, false,
-        C, Context)) ;
+    OK (GB_shallow_op (Q, true, GrB_AINV_FP32, NULL, NULL, false, C, Context)) ;
     OK (GB_Matrix_check (Q, "Q empty, float", G3, NULL)) ;
     GrB_Matrix_free_(&Q) ;
 

@@ -114,7 +114,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             if (csc != A->is_csc)
             {
                 // T = (ctype) A', not in-place, using a dynamic header
-                GB_OK (GB_transpose (&T, ctype, csc, A,
+                GB_OK (GB_transpose (T, ctype, csc, A, // T static = A'
                     NULL, NULL, NULL, false, Context)) ;
                 // save T in array S
                 if (csc)

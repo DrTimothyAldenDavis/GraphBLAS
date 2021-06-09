@@ -77,6 +77,7 @@ void GB_cast_matrix         // copy or typecast the values from A into C
         }
         else
         {
+            ASSERT (GB_IMPLIES (anz > 0, C->x != NULL)) ;
             GB_cast_array ((GB_void *) C->x, C->type->code, (GB_void *) A->x,
                 A->type->code, A->b, A->type->size, anz, nthreads) ;
         }
