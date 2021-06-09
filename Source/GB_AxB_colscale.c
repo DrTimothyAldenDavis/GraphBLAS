@@ -92,6 +92,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     // allocate C->x but do not initialize it
     // set C->iso = C_iso   OK
     GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype, Context)) ;
+    GB_void *restrict Cx = (GB_void *) C->x ;
 
     //--------------------------------------------------------------------------
     // C = A*D, column scale, compute numerical values
@@ -147,8 +148,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
                 default:  ;
             }
         }
-        GB_OK (GB_apply_op ((GB_void *) (C->x), C->type, GB_NON_ISO,
-            op1, NULL, NULL, false, A, Context)) ;
+        GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO, op1, NULL, NULL, false, A,
+            Context)) ;
         ASSERT_MATRIX_OK (C, "colscale positional: C = A*D output", GB0) ;
 
     }
@@ -160,14 +161,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         //----------------------------------------------------------------------
 
         GBURBLE ("(iso colscale) ") ;
-        C->x = GB_CALLOC (zsize, GB_void, &(C->x_size)) ;
-        if (C->x == NULL)
-        {
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-        memcpy (C->x, cscalar, zsize) ;
+        memcpy (Cx, cscalar, zsize) ;
 
     }
     else
@@ -285,8 +279,6 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
             // flipxy true:  aij = (ytype) A(i,j) and djj = (xtype) D(j,j)
             size_t aij_size = flipxy ? ysize : xsize ;
             size_t djj_size = flipxy ? xsize : ysize ;
-
-            GB_void *restrict Cx = (GB_void *) C->x ;
 
             GB_cast_function cast_A, cast_D ;
             if (flipxy)

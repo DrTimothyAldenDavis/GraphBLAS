@@ -9,6 +9,9 @@
 
 // If this file is in the Generated/ folder, do not edit it (auto-generated).
 
+// FIXME: remove this method and use type punning with sizes 1,2,4,8,16,other,
+// in each of the callers.
+
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_control.h"

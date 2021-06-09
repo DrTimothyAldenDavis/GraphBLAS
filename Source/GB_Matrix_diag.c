@@ -75,7 +75,7 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
     {
         // make a deep copy of V_in and convert to CSC
         // set T->iso = V_in->iso   OK
-        GB_OK (GB_dup_worker (&T, V_in->iso, V_in, true, V_in->type, Context)) ;
+        GB_OK (GB_dup_worker (&T, V_in->iso, V_in, true, NULL, Context)) ;
         GB_OK (GB_convert_bitmap_to_sparse (T, Context)) ;
         V = T ;
     }

@@ -20,13 +20,15 @@ void *GB_xalloc_memory      // return the newly-allocated space
     GB_Context Context
 )
 {
+    void *p ;
     if (iso)
     {
-        return (GB_CALLOC (type_size, GB_void, size)) ;
+        p = GB_CALLOC (type_size, GB_void, size) ;
     }
     else
     {
-        return (GB_MALLOC (n * type_size, GB_void, size)) ;
+        p = GB_MALLOC (n * type_size, GB_void, size) ;
     }
+    return (p) ;
 }
 

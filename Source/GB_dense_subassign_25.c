@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A dense
+// Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A bitmap/as-if-full
 
 // M:           present
 // Mask_comp:   false
@@ -17,12 +17,11 @@
 // A:           matrix
 // S:           none
 
-// C and M are sparse or hypersparse.
-// A can have any sparsity structure, even bitmap.  M may be jumbled.
-// If so, C is constructed as jumbled.  C is reconstructed with the same
-// structure as M and can have any sparsity structure on input.  The only
-// constraint is nnz(C) is zero on input.  A must be dense with no pending
-// work, or bitmap.
+// C and M are sparse or hypersparse.  A can have any sparsity structure, even
+// bitmap, but it must either be bitmap, or as-if-full.  M may be jumbled.  If
+// so, C is constructed as jumbled.  C is reconstructed with the same structure
+// as M and can have any sparsity structure on input.  The only constraint on C
+// is nnz(C) is zero on input.
 
 // C is iso if A is iso
 
@@ -76,7 +75,9 @@ GrB_Info GB_dense_subassign_25
     ASSERT (GB_as_if_full (A) || GB_IS_BITMAP (A)) ;
 
     const GB_Type_code ccode = C->type->code ;
-    bool C_iso = A->iso ;       // C is iso if A is iso
+    const GB_Type_code acode = A->type->code ;
+    const size_t asize = A->type->size ;
+    const bool C_iso = A->iso ;       // C is iso if A is iso
 
     //--------------------------------------------------------------------------
     // Method 25: C(:,:)<M> = A ; C is empty, A is dense, M is structural
@@ -120,12 +121,21 @@ GrB_Info GB_dense_subassign_25
     if (C_iso)
     {
 
+        //----------------------------------------------------------------------
+        // C is iso; assign the iso value and assign zombies if A is bitmap
+        //----------------------------------------------------------------------
+
         #define GB_ISO_ASSIGN
+        GB_cast_scalar (C->x, ccode, A->x, acode, asize) ;
         #include "GB_dense_subassign_25_template.c"
 
     }
     else
     {
+
+        //----------------------------------------------------------------------
+        // C is non-iso; assign values and pattern from A, through the mask
+        //----------------------------------------------------------------------
 
         bool done = false ;
 
@@ -151,6 +161,7 @@ GrB_Info GB_dense_subassign_25
 
             if (C->type == A->type && ccode < GB_UDT_code)
             { 
+                // FIXME: use cases 1,2,4,8,16,other
                 // C<M> = A
                 switch (ccode)
                 {
@@ -188,14 +199,11 @@ GrB_Info GB_dense_subassign_25
                 "method 25) ") ;
 
             const size_t csize = C->type->size ;
-            const size_t asize = A->type->size ;
-            const GB_Type_code acode = A->type->code ;
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
             // Cx [pC] = (ctype) Ax [pA]
             #define GB_COPY_A_TO_C(Cx,pC,Ax,pA,A_iso) \
-                cast_A_to_C (Cx + ((pC)*csize), \
-                    Ax + (A_iso ? 0:(pA)*asize), asize)
+                cast_A_to_C (Cx+((pC)*csize), Ax+(A_iso?0:(pA)*asize), asize)
 
             #define GB_CTYPE GB_void
             #define GB_ATYPE GB_void

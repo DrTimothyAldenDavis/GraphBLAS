@@ -10,9 +10,7 @@
 # simple Makefile for GraphBLAS, relies on cmake to do the actual build.  Use
 # the CMAKE_OPTIONS argument to this Makefile to pass options to cmake.
 
-# FIXME
-# JOBS ?= 8
-JOBS ?= 1
+JOBS ?= 8
 
 default: library
 

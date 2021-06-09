@@ -87,8 +87,11 @@ void *GB_xalloc_memory      // return the newly-allocated space
 
     #define GB_FREE(p,s) \
     { \
-        printf ("dealloc (%s, line %d): %p size %lu\n", \
-            __FILE__, __LINE__, p, s) ; \
+        if (p != NULL && (*(p)) != NULL) \
+        { \
+            printf ("dealloc (%s, line %d): %p size %lu\n", \
+                __FILE__, __LINE__, (*p), s) ; \
+        } \
         GB_dealloc_memory (p, s) ; \
     }
 
@@ -106,6 +109,11 @@ void *GB_xalloc_memory      // return the newly-allocated space
         p = (type *) GB_realloc_memory (nnew, sizeof (type), \
             (void *) p, s, ok, Context) ; \
         ; printf ("realloc (%s, line %d): size %lu\n", \
+            __FILE__, __LINE__, *(s)) ; \
+
+    #define GB_XALLOC(iso,n,type_size,s) \
+        GB_xalloc_memory (iso, n, type_size, s, Context) ; \
+        ; printf ("xalloc (%s, line %d): size %lu\n", \
             __FILE__, __LINE__, *(s)) ; \
 
 #else

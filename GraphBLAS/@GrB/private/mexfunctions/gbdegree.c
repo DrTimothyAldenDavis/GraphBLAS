@@ -12,12 +12,6 @@
 
 //  gbdegree (X, 'row')     row degree
 //  gbdegree (X, 'col')     column degree
-//  gbdegree (X, true)      native (get degree of each vector):
-//                          row degree if X is held by row,
-//                          col degree if X is held by col.
-//  gbdegree (X, false)     non-native (sum across vectors):
-//                          col degree if X is held by row,
-//                          row degree if X is held by col.
 
 #include "gb_matlab.h"
 
@@ -57,24 +51,19 @@ void mexFunction
     OK (GxB_Matrix_Option_get (X, GxB_FORMAT, &fmt)) ;
 
     bool native ;
-    if (mxIsChar (pargin [1]))
-    {
-        #define LEN 256
-        char dim_string [LEN+2] ;
-        gb_mxstring_to_string (dim_string, LEN, pargin [1], "dim") ;
-        if (MATCH (dim_string, "row"))
-        { 
-            native = (fmt == GxB_BY_ROW) ;
-        }
-        else // if (MATCH (dim_string, "col"))
-        { 
-            native = (fmt == GxB_BY_COL) ;
-        }
+    #define LEN 256
+    char dim_string [LEN+2] ;
+    gb_mxstring_to_string (dim_string, LEN, pargin [1], "dim") ;
+    if (MATCH (dim_string, "row"))
+    { 
+        native = (fmt == GxB_BY_ROW) ;
     }
     else
     { 
-        native = (mxGetScalar (pargin [1]) != 0) ;
+        native = (fmt == GxB_BY_COL) ;
     }
+
+    // FIXME: use GrB_mxv or GrB_vxm with PLUS_PAIR semiring for all cases
 
     //--------------------------------------------------------------------------
     // if X is bitmap: create a copy of X and convert it to sparse

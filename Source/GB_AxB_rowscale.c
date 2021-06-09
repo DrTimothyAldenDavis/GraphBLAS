@@ -81,6 +81,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     // allocate C->x but do not initialize it
     // set C->iso = C_iso   OK
     GB_OK (GB_dup_worker (&C, C_iso, B, false, ztype, Context)) ;
+    GB_void *restrict Cx = (GB_void *) C->x ;
 
     //--------------------------------------------------------------------------
     // C = D*B, row scale, compute numerical values
@@ -136,8 +137,8 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
                 default:  ;
             }
         }
-        GB_OK (GB_apply_op ((GB_void *) (C->x), C->type, GB_NON_ISO,
-            op1, NULL, NULL, false, B, Context)) ;
+        GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO, op1, NULL, NULL, false, B,
+            Context)) ;
         ASSERT_MATRIX_OK (C, "rowscale positional: C = D*B output", GB0) ;
 
     }
@@ -149,14 +150,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         //----------------------------------------------------------------------
 
         GBURBLE ("(iso rowscale) ") ;
-        C->x = GB_CALLOC (zsize, GB_void, &(C->x_size)) ;
-        if (C->x == NULL)
-        {
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-        memcpy (C->x, cscalar, zsize) ;
+        memcpy (Cx, cscalar, zsize) ;
 
     }
     else
@@ -175,6 +169,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
         bool D_is_pattern = false ;
         bool B_is_pattern = false ;
+        ASSERT (!op_is_pair) ;
 
         if (flipxy)
         { 
@@ -268,8 +263,6 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
             // flipxy true:  dii = (ytype) D(i,i) and bij = (xtype) B(i,j)
             size_t dii_size = flipxy ? ysize : xsize ;
             size_t bij_size = flipxy ? xsize : ysize ;
-
-            GB_void *restrict Cx = (GB_void *) C->x ;
 
             GB_cast_function cast_D, cast_B ;
             if (flipxy)

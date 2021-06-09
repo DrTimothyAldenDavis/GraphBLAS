@@ -112,6 +112,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     if (numeric)
     { 
         ASSERT (C_iso == A->iso) ;
+        ASSERT (C->type == A->type) ;
         GB_memcpy (C->x, Ax, (A->iso ? 1:anz) * atype->size, nthreads_max) ;
     }
 

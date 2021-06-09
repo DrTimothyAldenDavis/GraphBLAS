@@ -81,7 +81,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     { 
         GBURBLE ("A:") ;
         // set A2->iso = A->iso     OK: no need for burble
-        GB_OK (GB_dup_worker (&A2, A->iso, A, true, A->type, Context)) ;
+        GB_OK (GB_dup_worker (&A2, A->iso, A, true, NULL, Context)) ;
         GB_OK (GB_convert_bitmap_to_sparse (A2, Context)) ;
         A = A2 ;
     }
@@ -91,7 +91,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     { 
         GBURBLE ("B:") ;
         // set B2->iso = B->iso     OK: no need for burble
-        GB_OK (GB_dup_worker (&B2, B->iso, B, true, B->type, Context)) ;
+        GB_OK (GB_dup_worker (&B2, B->iso, B, true, NULL, Context)) ;
         GB_OK (GB_convert_bitmap_to_sparse (B2, Context)) ;
         B = B2 ;
     }

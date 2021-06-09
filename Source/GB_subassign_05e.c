@@ -74,14 +74,15 @@ GrB_Info GB_subassign_05e
     //--------------------------------------------------------------------------
 
     // clear prior content and then create a copy of the pattern of M.  Keep
-    // the same type and CSR/CSC for C.  Allocate the values of C but do not
-    // initialize them; the iso value of C has been assigned by GB_assign_prep.
+    // the same type and CSR/CSC for C.  Allocate C->x and assign to it the
+    // scalar.
 
     bool C_is_csc = C->is_csc ;
     GB_phbix_free (C) ;
     // set C->iso = true    OK
     GB_OK (GB_dup_worker (&C, true, M, false, C->type, Context)) ;
     C->is_csc = C_is_csc ;
+    GB_cast_scalar (C->x, C->type->code, scalar, atype->code, atype->size) ;
 
     C->jumbled = M->jumbled ;       // C is jumbled if M is jumbled
     ASSERT_MATRIX_OK (C, "C output for subassign method_05e", GB0) ;
