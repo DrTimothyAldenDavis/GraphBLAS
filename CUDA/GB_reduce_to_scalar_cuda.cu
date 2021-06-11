@@ -52,8 +52,7 @@ GrB_Info GB_reduce_to_scalar_cuda
     int ntasks = ( nnz + blocksize -1) / blocksize ;
 
     int32_t *block_sum;
-    //cudaMallocManaged ((void**) &block_sum, (num_reduce_blocks)*sizeof(int32_t)) ;
-    block_sum = (int32_t*)GB_cuda_malloc( (ntasks)*sizeof(int32_t)) ;
+    cudaMalloc ((void**) &block_sum, (ntasks)*sizeof(int32_t)) ;
 
     dim3 red_grid(ntasks);
     dim3 red_block(blocksize);
@@ -82,7 +81,7 @@ GrB_Info GB_reduce_to_scalar_cuda
         *s += (block_sum [i]) ; 
     }
 
-
+    cudaFree( block_sum);
     return (GrB_SUCCESS) ;
 }
 
