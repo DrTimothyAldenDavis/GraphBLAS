@@ -43,15 +43,15 @@ const std::vector<std::string> header_names ={};
 
 #define GB_FREE_WORK                                                    \
 {                                                                       \
-    /* free any dynamic headers allocated by GB_to_dynamic */           \
+    /* free any dynamic headers allocated by GB_do_dynamic_header */    \
     if (M_input_static) GB_Matrix_free (&M) ;                           \
     if (A_input_static) GB_Matrix_free (&A) ;                           \
     if (B_input_static) GB_Matrix_free (&B) ;                           \
-    GB_cuda_free (Nanobuckets) ;    Nanobuckets = NULL ;                \
-    GB_cuda_free (Blockbucket) ;    Blockbucket = NULL ;                \
-    GB_cuda_free (Bucket);          Bucket      = NULL;                 \
-    GB_cuda_free (Bucketp);         Bucketp     = NULL;                 \
-    GB_cuda_free (offset);          offset      = NULL;                 \
+    cudaFree (Nanobuckets) ;    Nanobuckets = NULL ;                    \
+    cudaFree (Blockbucket) ;    Blockbucket = NULL ;                    \
+    cudaFree (Bucket);          Bucket      = NULL;                     \
+    cudaFree (Bucketp);         Bucketp     = NULL;                     \
+    cudaFree (offset);          offset      = NULL;                     \
 }
 
 #define GB_FREE_ALL                                                     \
@@ -120,9 +120,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     ASSERT (!GB_JUMBLED (M_input)) ;
 
     // note that this appears after the wait on M_input:
-    GB_OK (GB_to_dynamic (&M, &M_input_static, M_input, Context)) ;
-    GB_OK (GB_to_dynamic (&A, &A_input_static, A_input, Context)) ;
-    GB_OK (GB_to_dynamic (&B, &B_input_static, B_input, Context)) ;
+    GB_OK (GB_do_dynamic_header (&M, M_input, Context)) ;
+    GB_OK (GB_do_dynamic_header (&A, A_input, Context)) ;
+    GB_OK (GB_do_dynamic_header (&B, B_input, Context)) ;
 
     int device = -1;
 
@@ -164,10 +164,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     // TODO tell GB_CREATE where to put the data: CPU or GPU (via
     // cudaMemAdvise), but this works as-is.
-    int sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    int sparsity_M = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     info = GB_new_bix (&C, false, // sparse or hyper (from M), dynamic header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        sparsity, false, M->hyper_switch, cnvec,
+        sparsity_M, false, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork 
         true, Context) ;
 
@@ -217,7 +217,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     mysemiring.enumify_semiring ( &sr_code, semiring, flipxy,
         ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
-        false, C->sparsity, M->sparsity, A->sparsity, B->sparsity) ;
+        false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
 
     const char *header_name = (const char *)"mySemiRing.h";
     mysemiring.load_string(header_name, semiring_code ) ;
@@ -275,13 +275,11 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     /*
     */
 
-    //cudaMallocManaged ((void**) &Bucketp, (NBUCKETS+1)*sizeof(int64_t)) ;
-    Bucketp = (int64_t*)GB_cuda_malloc( (NBUCKETS+1)*sizeof(int64_t) ) ;
+    cudaMalloc ((void**) &Bucketp, (NBUCKETS+1)*sizeof(int64_t)) ;
     cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId); 
     cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device); 
 
-    //cudaMallocManaged ((void**) &offset, (NBUCKETS)*sizeof(int64_t)) ;
-    offset = (int64_t*)GB_cuda_malloc( (NBUCKETS)*sizeof(int64_t) ) ;
+    cudaMalloc ((void**) &offset, (NBUCKETS)*sizeof(int64_t)) ;
     cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId); 
     cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device); 
 
@@ -657,7 +655,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     GBURBLE ("(GPU phase3 done) ") ;
 
     // transplant C into C_static, and free C
-    GB_to_static (C_static, &C, Context) ;
+    GB_undo_dynamic_header (&C_static, C, Context) ;
     ASSERT (C == NULL) ;
 
     std::string reduce_kernel_name = "reduceNonZombiesWarp";
@@ -669,8 +667,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     dim3 red_block( red_blocksz ) ;
 
     int32_t *block_sum;
-    //cudaMallocManaged ((void**) &block_sum, (num_reduce_blocks)*sizeof(int32_t)) ;
-    block_sum = (int32_t*)GB_cuda_malloc( (num_reduce_blocks)*sizeof(int32_t)) ;
+    cudaMallocManaged ((void**) &block_sum, (num_reduce_blocks)*sizeof(int32_t)) ;
 
     GBURBLE ("(GPU reduce launch nblocks,blocksize= %d,%d )\n", num_reduce_blocks, red_blocksz) ;
     jit::launcher( reduce_kernel_name + "_" + semiring_name,
@@ -697,7 +694,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     }
     printf("num_triangles = %d\n",  num_triangles );
 
-    GB_cuda_free( block_sum ); 
+    cudaFree( block_sum ); 
     //cudaMemPrefetchAsync( C->p, (mnvec+1) * sizeof (int64_t), cudaCpuDeviceId, NULL) ; //stream_data ) ;
     //cudaMemPrefetchAsync( C->i, cnz * sizeof (int64_t), cudaCpuDeviceId, NULL ) ; //stream_data ) ;
     //cudaMemPrefetchAsync( C->x, cnz * sizeof (int32_t), cudaCpuDeviceId, NULL ) ; //stream_data ) ;

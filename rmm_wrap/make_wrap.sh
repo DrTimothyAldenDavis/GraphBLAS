@@ -1,6 +1,6 @@
 #!/bin/bash
 
-g++ -c rmm_wrap.cpp -o rmm_wrap.o -I/home/jeaton/lib/include -I/usr/local/cuda/include -I.
+g++ -std=c++17 -c rmm_wrap.cpp -o rmm_wrap.o -I/home/jeaton/lib/include -I/usr/local/cuda/include -I.
 ar -rcsv rmm_wrap.a rmm_wrap.o 
 ranlib  rmm_wrap.a
 
