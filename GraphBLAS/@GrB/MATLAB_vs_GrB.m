@@ -69,27 +69,24 @@
 %     This feature is not yet supported but may be added in the future.
 %
 % ------------------------------------------------
-%% The outputs of min and max, and operations on complex matrices:
+%% min and max operations on complex matrices:
 % ------------------------------------------------
 %
 %     MATLAB can compute the min and max on complex values (they return
 %     the entry with the largest magnitude).  This is not well-defined
 %     mathematically, since the resulting min and max operations cannot be
 %     used as monoids, as they can for real types (integer or
-%     floating-point types).  As a result, GraphBLAS does not yet support
-%     min and max for complex types.
+%     floating-point types).  As a result, GraphBLAS does not support
+%     min and max for complex types, and will never do so.
 %
-%     The 2nd output for [x,i] = min (...) and max do not work in
-%     GraphBLAS, and the 'includenan' option is also not available.
 %     GraphBLAS uses the 'omitnan' behavior, which is the default in
-%     MATLAB.
+%     MATLAB.  The 'includenam' option is not available in GraphBLAS,
+%     but may appear in the future.
 %
 %     Likewise, logical comparators (< <= > >=) are not well-defined
 %     mathematically for complex types.  MATLAB defines them, but
 %     GraphBLAS does not.  GraphBLAS can only compare for equality (==)
 %     and inequality (~=) with complex types.
-%
-%     These features may be added to GraphBLAS in the future.
 %
 % ------------------------------------------------
 %% Singleton expansion:

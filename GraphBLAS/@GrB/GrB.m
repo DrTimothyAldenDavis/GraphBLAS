@@ -1,5 +1,5 @@
 classdef GrB
-%GrB GraphBLAS sparse matrices for MATLAB.
+%GrB GraphBLAS sparse matrices for Octave/MATLAB.
 %
 % GraphBLAS is a library for creating graph algorithms based on sparse
 % linear algebraic operations over semirings.  Visit http://graphblas.org
@@ -973,6 +973,8 @@ methods (Static)
     MATLAB_vs_GrB ;
     C = apply (Cin, M, accum, op, A, desc) ;
     C = apply2 (Cin, M, accum, op, A, B, desc) ;
+    [x,p] = argmin (A, dim) ;
+    [x,p] = argmax (A, dim) ;
     C = assign (Cin, M, accum, A, I, J, desc) ;
     [v, parent] = bfs (A, s, varargin) ;        % uses GrB matrices
     binopinfo (op, type) ;

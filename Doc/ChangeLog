@@ -2,7 +2,8 @@ Version 5.1.0, (FIXME: DATE), 2021
 
     * iso matrices and vectors added
     * GxB_*_build_Scalar added: builds an iso matrix or vector
-    * pack/unpack methods added: FIXME
+    * GxB_*_pack/unpack methods added: FIXME
+    * GrB.argmin/argmax: added to Octave/MATLAB interface
 
 Version 5.0.6, May 24, 2021
 
