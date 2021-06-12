@@ -11313,7 +11313,7 @@ nearly no extensions to the GraphBLAS C API.   SuiteSparse:GraphBLAS can often
 detect when the user application is creating a matrix or vector where all
 entries in the sparsity pattern take on the same numerical value.
 
-For example, $\bf C \langle C \rangle = 1$, when the mask is structural, sets
+For example, ${\bf C \langle C \rangle} = 1$, when the mask is structural, sets
 all entries in $\bf C$ to the value 1.  SuiteSparse:GraphBLAS detects this, and
 performs this assignment in $O(1)$ time.  It stores a single copy of this
 ``iso-value'' and sets an internal flag in the opaque data structure for $\bf
