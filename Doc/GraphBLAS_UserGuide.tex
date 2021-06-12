@@ -11296,11 +11296,373 @@ Most of the rest of the report is self-explanatory.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Iso matrices and vectors } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Iso-Valued Matrices and Vectors } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{iso}
 
-TODO describe % FIXME
+The GraphBLAS C API states that the entries in all \verb'GrB_Matrix' and
+\verb'GrB_Vector' objects have a numerical value, with either a built-in or
+user-defined type.  Representing an unweighted graph requires a value to be
+placed on each edge, typically $a_{ij}=1$.  Adding a structure-only data type
+would not mix well with the rest of GraphBLAS, where all operators, monoids,
+and semirings need to operate on a value, of some data type.  And yet
+unweighted graphs are very important in graph algorithms.
+
+The solution is simple, and exploiting it in SuiteSparse:GraphBLAS requires
+nearly no extensions to the GraphBLAS C API.   SuiteSparse:GraphBLAS can often
+detect when the user application is creating a matrix or vector where all
+entries in the sparsity pattern take on the same numerical value.
+
+For example, $\bf C \langle C \rangle = 1$, when the mask is structural, sets
+all entries in $\bf C$ to the value 1.  SuiteSparse:GraphBLAS detects this, and
+performs this assignment in $O(1)$ time.  It stores a single copy of this
+``iso-value'' and sets an internal flag in the opaque data structure for $\bf
+C$, which states that all entries in the pattern of $\bf C$ are equal to 1.
+This saves both time and memory and allows for the efficient representation of
+sparse adjacency matrices of unweighted graphs, yet does not change the C API.
+To the user application, it still appears that $\bf C$ has \verb'nvals(C)'
+entries, all equal to 1.
+
+Creating and operating on iso-valued matrices (or just {\em iso matrices} for 
+short) is significantly faster than creating matrix with different data values.
+A matrix that is iso requires only $O(1)$ space for its numerical values.
+The sparse and hypersparse formats require an additional $O(n+e)$ or $O(e)$
+integer space to hold the pattern of an $n$-by-$n$ matrix \verb'C', and
+a matrix \verb'C' in bitmap format requires $O(n^2)$ space for the bitmap.
+A full matrix requires no integer storage, so a matrix that is both iso and
+full requires only $O(1)$ space, regardless of its dimension.
+
+The sections below a describe the methods that can be used to create iso
+matrices and vectors.  Let $a$, $b$, and $c$ denote the iso values of \verb'A',
+\verb'B', and \verb'C', respectively.
+
+%-------------------------------------------------------------------------------
+\subsection{Iso matrices from matrix multiplication}
+%-------------------------------------------------------------------------------
+\label{iso_mxm}
+
+Consider \verb'GrB_mxm', \verb'GrB_mxv', and \verb'GrB_vxm', and
+    let \verb'C=A*B', where no mask is present, or \verb'C<M>=A*B' where
+    \verb'C' is initially empty.  If \verb'C' is not initially empty,
+    then these rules apply to a temporary matrix \verb'T<M>=A*B', which is
+    initially empty and is then assigned to \verb'C' via \verb'C<M>=T';
+    refer to Section~\ref{iso_mask} for more details.
+
+    The iso property of \verb'C' is determined with the following rules,
+    where the first rule that fits defines the property and value of \verb'C'.
+
+    \begin{itemize}
+    \item If the the semiring includes a positional multiplicative operator
+    (\verb'GxB_FIRSTI' , \verb'GrB_SECONDI', and related operators), then
+    \verb'C' is never iso.
+
+    \item Define an {\em iso-monoid} as a built-in monoid with the property
+    that reducing a set of $n>1$ identical values $x$ returns the same value
+    $x$.  These are the \verb'MIN' \verb'MAX' \verb'LOR' \verb'LAND' \verb'BOR'
+    \verb'BAND' and \verb'ANY' monoids.  All other monoids are not iso monoids:
+    \verb'PLUS', \verb'TIMES', \verb'LXNOR', \verb'EQ', \verb'BXOR',
+    \verb'BXNOR', and all user-defined monoids.   Currently, there is no
+    mechanism for telling SuiteSparse:GraphBLAS that a user-defined monoid
+    is an iso-monoid.
+
+    \item If the multiplicative op is \verb'PAIR', and the monoid is an
+    iso-monoid, or the \verb'EQ' or \verb'TIMES' monoids, then \verb'C' is
+    iso with a value of 1.
+
+    \item If both \verb'B' and the monoid are iso, and the multiplicative op is
+    \verb'SECOND' or \verb'ANY', then \verb'C' is iso with a value of $b$.
+
+    \item If both \verb'A' and the monoid are iso, and the multiplicative op is
+    \verb'FIRST' or \verb'ANY', then \verb'C' is iso with a value of $a$.
+
+    \item If \verb'A', \verb'B', and the monoid are all iso, then \verb'C'
+    is iso, with a value $c=f(a,b)$, where $f$ is any multiplicative op
+    (including user-defined, which assumes that a user-defined $f$ has no 
+    side effects).
+
+    \item If \verb'A' and \verb'B' are both iso and full (all entries present,
+    regardless of the format of the matrices), then \verb'C' is iso and full.
+    Its iso value is computed in $O(\log(n))$ time, via a reduction of $n$
+    copies of the value $t=f(a,b)$ to a scalar.  The storage required to
+    represent \verb'C' is just $O(1)$, regardless of its dimension.
+    Technically, the \verb'PLUS' monoid could be computed as $c=nt$ in $O(1)$
+    time, but the log-time reduction works for any monoid, including
+    user-defined ones.
+
+    \item Otherwise, \verb'C' is not iso.
+    \end{itemize}
+
+%-------------------------------------------------------------------------------
+\subsection{Iso matrices from eWiseMult and kronecker}
+%-------------------------------------------------------------------------------
+\label{iso_emult}
+
+Consider \verb'GrB_eWiseMult'.  Let
+\verb'C=A.*B', or \verb'C<M>=A.*B' with any mask and where \verb'C' is
+initially empty, where \verb'.*' denotes a binary operator $f(x,y)$
+applied with \verb'eWiseMult'.  These rules also apply to \verb'GrB_kronecker'.
+
+    \begin{itemize}
+    \item If the operator is positional (\verb'GxB_FIRSTI' and related) then
+    \verb'C' is not iso.
+
+    \item If the op is \verb'PAIR',
+        then \verb'C' is iso with $c=1$.
+
+    \item If \verb'B' is iso and the op is \verb'SECOND' or \verb'ANY',
+        then \verb'C' is iso with $c=b$.
+
+    \item If \verb'A' is iso and the op is \verb'FIRST' or \verb'ANY',
+        then \verb'C' is iso with $c=a$.
+
+    \item If both \verb'A' and \verb'B' are iso,
+        then \verb'C' is iso with $c=f(a,b)$.
+
+    \item Otherwise, \verb'C' is not iso.
+    \end{itemize}
+
+When \verb'C' is iso, the \verb'eWiseMult' of two iso full matrices takes only
+$O(1)$ time and memory.
+
+%-------------------------------------------------------------------------------
+\subsection{Iso matrices from eWiseAdd}
+%-------------------------------------------------------------------------------
+\label{iso_add}
+
+Consider \verb'GrB_eWiseAdd', and also the accumlator phase of \verb'C<M>+=T'
+when an accumulator operator is present.  Let \verb'C=A+B', or \verb'C<M>=A+B'
+with any mask and where \verb'C' is initially empty.
+
+    \begin{itemize}
+    \item If both \verb'A' and \verb'B' are full (all entries present), then
+    the rules for \verb'eWiseMult' in Section~\ref{iso_emult} are used
+    instead.
+
+    \item If the operator is positional (\verb'GxB_FIRSTI' and related) then
+    \verb'C' is not iso.
+
+    \item If $a$ and $b$ differ (when typecasted to the type of \verb'C'),
+    then \verb'C' is not iso.
+
+    \item If $c=f(a,b) = a = b$ holds, then \verb'C' is iso,
+    where $f(a,b)$ is the operator.
+
+    \item Otherwise, \verb'C' is not iso.
+    \end{itemize}
+
+When \verb'C' is iso, the \verb'eWiseAdd' of two iso full matrices takes only
+$O(1)$ time and memory.
+
+%-------------------------------------------------------------------------------
+\subsection{Reducing iso matrices to a scalar or vector}
+%-------------------------------------------------------------------------------
+\label{iso_reduce}
+
+If \verb'A' is iso with $e$ entries, reducing it to a scalar takes $O(\log(e))$
+time, regardless of the monoid used to reduce the matrix to a scalar.  Reducing
+\verb'A' to a vector \verb'c' is the same as the matrix-vector multiply
+\verb"c=A*x" or\verb"c=A'*x", depending on the descriptor, where \verb'x'
+is an iso full vector (refer to Section~\ref{iso_mxm}).
+
+%-------------------------------------------------------------------------------
+\subsection{Iso matrices from apply}
+%-------------------------------------------------------------------------------
+\label{iso_apply}
+
+Let \verb'C=f(A)' denote the application of a unary operator \verb'f',
+and let \verb'C=f(A,s)' and \verb'C=f(s,A)' denote the application of a binary
+operator with \verb's' a scalar.
+
+    \begin{itemize}
+    \item If the operator is positional (\verb'GxB_POSITION*',
+    \verb'GxB_FIRSTI', and related) then \verb'C' is not iso.
+
+    \item If the operator is \verb'ONE' or \verb'PAIR',
+        then \verb'C' iso with $c=1$.
+
+    \item If the operator is \verb'FIRST' or \verb'ANY' with \verb'C=f(s,A)',
+        then \verb'C' iso with $c=s$.
+
+    \item If the operator is \verb'SECOND' or \verb'ANY' with \verb'C=f(A,s)',
+        then \verb'C' iso with $c=s$.
+
+    \item If \verb'A' is iso then \verb'C' is iso:
+
+        \begin{itemize}
+        \item If the op is \verb'IDENTITY', the $c=a$.
+        \item If the op is unary with \verb'C=f(A)', then $c=f(a)$.
+        \item If the op is binary with \verb'C=f(s,A)', then $c=f(s,a)$.
+        \item If the op is binary with \verb'C=f(A,s)', then $c=f(a,s)$.
+        \end{itemize}
+
+
+    \item Otherwise, \verb'C' is not iso.
+    \end{itemize}
+
+%-------------------------------------------------------------------------------
+\subsection{Iso matrices from select}
+%-------------------------------------------------------------------------------
+\label{iso_select}
+
+Let \verb'C=select(A)' denote the application of a select operator.
+
+    \begin{itemize}
+    \item If \verb'A' is iso, then \verb'C' is iso with $c=a$.
+    \item If the select operator is \verb'EQ_ZERO' then \verb'C' is always
+        iso, with $c=0$.
+    \item If the select operator is \verb'NONZERO' and \verb'A' is boolean,
+        then \verb'C' is iso with $c=1$.
+    \item If the selector operator is \verb'EQ_THUNK' then \verb'C' is
+        always iso, with $c=t$ where $t$ is the value of the \verb'thunk'
+        scalar.
+    \item Otherwise, \verb'C' is not iso.
+    \end{itemize}
+
+%-------------------------------------------------------------------------------
+\subsection{Iso matrices from assign and subassign}
+%-------------------------------------------------------------------------------
+\label{iso_assign}
+
+These rules are somewhat complex.  Consider the assignment \verb'C<M>(I,J)=...'
+with \verb'GrB_assign'.  Internally, this assignment is converted into
+\verb'C(I,J)<M(I,J)>=...' and then \verb'GxB_subassign' is used.  Thus,
+all of the rules below assume the form \verb'C(I,J)<M>=...' where \verb'M'
+has the same size as the submatrix \verb'C(I,J)'.
+
+\subsubsection{Assignment with no accumulator operator}
+
+If no accumulator operator is present, the following rules are used.
+
+\begin{itemize}
+\item 
+For matrix assignment, \verb'A' must be iso.  For scalar assignment, the single
+scalar is implicitly expanded into an iso matrix \verb'A' of the right size.
+If these rules do not hold, \verb'C' is not iso.
+
+\item
+If \verb'A' is not iso, or if \verb'C' is not iso on input, then \verb'C' is
+not iso on output.
+
+\item
+If \verb'C' is iso or empty on input, and \verb'A' is iso (or scalar assignment
+is begin performed) and the iso values $c$ and $a$ (or the scalar $s$) match,
+then the following forms of assignment result in an iso matrix \verb'C'  on
+output:
+
+                \begin{itemize}
+                \item \verb'C(I,J) = scalar'
+                \item \verb'C(I,J)<M> = scalar'
+                \item \verb'C(I,J)<!M> = scalar'
+                \item \verb'C(I,J)<M,replace> = scalar'
+                \item \verb'C(I,J)<!M,replace> = scalar'
+                \item \verb'C(I,J) = A'
+                \item \verb'C(I,J)<M> = A'
+                \item \verb'C(I,J)<!M> = A'
+                \item \verb'C(I,J)<M,replace> = A'
+                \item \verb'C(I,J)<!M,replace> = A'
+                \end{itemize}
+
+\item
+For these forms of assignment, \verb'C' is always iso on output, regardless
+of its iso property on input:
+
+                \begin{itemize}
+                \item \verb'C(:,:) = scalar'
+                \item \verb'C(:,:)<M,struct>=scalar'; C empty on input.
+                \item \verb'C(:,:)<C,struct>=scalar'
+                \end{itemize}
+
+\item
+For these forms of assignment, \verb'C' is always iso on output if \verb'A'
+is iso:
+
+                \begin{itemize}
+                \item \verb'C = A'
+                \item \verb'C(:,:)<M,str> = A'; C empty on input.
+                \end{itemize}
+\end{itemize}
+
+
+\subsubsection{Assignment with an accumulator operator}
+
+If an accumulator operator is present, the following rules are used.
+Positional operators (\verb'GxB_FIRSTI' and related) cannot be used as
+accumulator operators, so these rules do not consider that case.
+
+\begin{itemize}
+\item 
+For matrix assignment, \verb'A' must be iso.  For scalar assignment, the single
+scalar is implicitly expanded into an iso matrix \verb'A' of the right size.
+If these rules do not hold, \verb'C' is not iso.
+
+\item For these forms of assignment \verb'C' is iso if \verb'C' is 
+empty on input, or if $c=c+a$ for the where $a$ is the iso value of \verb'A' or
+the value of the scalar for scalar assignment.
+
+                \begin{itemize}
+                \item \verb'C(I,J) += scalar'
+                \item \verb'C(I,J)<M> += scalar'
+                \item \verb'C(I,J)<!M> += scalar'
+                \item \verb'C(I,J)<M,replace> += scalar'
+                \item \verb'C(I,J)<!M,replace> += scalar'
+                \item \verb'C(I,J)<M,replace> += A'
+                \item \verb'C(I,J)<!M,replace> += A'
+                \item \verb'C(I,J) += A'
+                \item \verb'C(I,J)<M> += A'
+                \item \verb'C(I,J)<!M> += A '
+                \item \verb'C += A'
+                \end{itemize}
+\end{itemize}
+
+%-------------------------------------------------------------------------------
+\subsection{Iso matrices from build methods}
+%-------------------------------------------------------------------------------
+\label{iso_build}
+
+\verb'GxB_Matrix_build_Scalar' and \verb'GxB_Vector_build_Scalar'
+always construct an iso matrix/vector.
+
+% FIXME: other build
+
+%-------------------------------------------------------------------------------
+\subsection{Iso matrices from other methods}
+%-------------------------------------------------------------------------------
+\label{iso_other}
+
+For \verb'GrB_Matrix_dup' and \verb'GrB_Vector_dup', the output matrix/vector
+has the same iso property as the input matrix/vector.
+
+\verb'GrB_*_setElement_*' preserves the iso property of the matrix/vector it
+modifies, if the input scalar is equal to the iso value of the matrix/vector.
+
+\verb'GxB_Matrix_concat' constructs an iso matrix as its result if all input
+tiles are either empty or iso.
+
+\verb'GxB_Matrix_split' constructs its output tiles as iso if its input
+matrix is iso.
+
+\verb'GxB_Matrix_diag' constructs an iso matrix if its input vector is iso.
+
+\verb'GxB_Vector_diag' constructs an iso vector if its input matrix is iso.
+
+\verb'GrB_*extract' constructs an iso matrix/vector if its input matrix/vector
+is iso.
+
+\verb'GrB_transpose' constructs an iso matrix if its input is iso.
+
+The \verb'GxB_import/export/pack/unpack' methods preserve the iso property
+of their matrices/vectors.
+
+%-------------------------------------------------------------------------------
+\subsection{Iso matrices not exploited}
+%-------------------------------------------------------------------------------
+
+There are many cases where an matrix may have the iso property but it is not
+detected by SuiteSparse:GraphBLAS.  For example, if \verb'A' is non-iso,
+\verb'C=A(I,J)' from \verb'GrB_extract' may be iso, if all entries in the
+extracted submatrix have the same value.  Future versions of
+SuiteSparse:GraphBLAS may extend the rules described in this section to detect
+these cases.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
