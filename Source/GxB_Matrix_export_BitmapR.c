@@ -49,8 +49,7 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     { 
         // A = A', done in-place, to put A in by-row format
         GBURBLE ("(transpose) ") ;
-        GB_OK (GB_transpose (*A, NULL, false, *A,   // A = A' in place
-            NULL, NULL, NULL, false, Context)) ;
+        GB_OK (GB_transpose_in_place (*A, false, Context)) ;
     }
 
     GB_OK (GB_convert_any_to_bitmap (*A, Context)) ;

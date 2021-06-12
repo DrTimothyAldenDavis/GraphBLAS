@@ -62,9 +62,11 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     int64_t ninner = csc ? m : n ;
 
     if (C_iso)
-    {
+    { 
         // copy in the scalar as the iso value; no more work to do
         memcpy (C->x, cscalar, csize) ;
+        C->magic = GB_MAGIC ;
+        ASSERT_MATRIX_OK (C, "C output for concat iso full", GB0) ;
         return (GrB_SUCCESS) ;
     }
 
@@ -198,6 +200,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     }
 
     C->magic = GB_MAGIC ;
+    ASSERT_MATRIX_OK (C, "C output for concat full", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -50,20 +50,13 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
     // check inputs
     //--------------------------------------------------------------------------
 
-    printf ("C_code_iso: %d\n", C_code_iso) ;
-    printf ("A->magic %ld\n", A->magic) ;
-    GxB_print (op1, 3) ;
-    GxB_print (op2, 3) ;
     ASSERT (Cx != NULL) ;
-    ASSERT (op1 != NULL || op2 != NULL ||
-        C_code_iso == GB_ISO_1 ||
-        C_code_iso == GB_ISO_S ||
-        C_code_iso == GB_ISO_A) ;
-    ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB2) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_apply_op", GB0) ;
     ASSERT (GB_JUMBLED_OK (A)) ;        // A can be jumbled
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     ASSERT (GB_IMPLIES (op1 != NULL, ctype == op1->ztype)) ;
     ASSERT (GB_IMPLIES (op2 != NULL, ctype == op2->ztype)) ;
+    ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_apply_op", GB0) ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -73,7 +66,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
     // C is aliased to C.
 
     GB_void *Ax = (GB_void *) A->x ;        // A->x has type A->type
-    const int8_t  *Ab = A->b ;              // only if A is bitmap
+    const int8_t *Ab = A->b ;               // only if A is bitmap
     const GrB_Type Atype = A->type ;        // type of A->x
     const int64_t anz = GB_nnz_held (A) ;   // size of A->x and Cx
 
@@ -84,10 +77,30 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     //--------------------------------------------------------------------------
-    // apply the operator
+    // get the operator
     //--------------------------------------------------------------------------
 
-    GB_Opcode opcode = (op1 != NULL) ? op1->opcode : op2->opcode ;
+    GB_Opcode opcode ;
+    if (op1 != NULL)
+    {
+        opcode = op1->opcode ;
+    }
+    else if (op2 != NULL)
+    {
+        opcode = op2->opcode ;
+    }
+    else
+    {
+        // C is iso, with no operator to apply; just call GB_iso_unop below.
+        ASSERT (C_code_iso == GB_ISO_1 ||   // C iso value is 1
+                C_code_iso == GB_ISO_S ||   // C iso value is the scalar
+                C_code_iso == GB_ISO_A) ;   // C iso value is the iso value of A
+        opcode = GB_NOP_opcode ;
+    }
+
+    //--------------------------------------------------------------------------
+    // apply the operator
+    //--------------------------------------------------------------------------
 
     if (GB_OPCODE_IS_POSITIONAL (opcode))
     {
@@ -194,7 +207,8 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
         //----------------------------------------------------------------------
 
         // if C is iso, this function takes O(1) time
-        GB_BURBLE_N (anz, "(iso apply) ") ;
+        GBURBLE ("(iso apply) ") ;
+        ASSERT_MATRIX_OK (A, "A passing to GB_iso_unop", GB0) ;
         if (anz > 0)
         {
             // Cx [0] = op1 (A), op2 (scalar,A), or op2 (A,scalar)

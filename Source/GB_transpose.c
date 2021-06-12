@@ -90,11 +90,16 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     int64_t *jwork = NULL ; size_t jwork_size = 0 ;
     GB_void *Swork = NULL ; size_t Swork_size = 0 ;
 
-    ASSERT_MATRIX_OK (A, "A input for GB_transpose", GB3) ;
-    ASSERT_TYPE_OK_OR_NULL (ctype, "ctype for GB_transpose", GB3) ;
-    ASSERT_UNARYOP_OK_OR_NULL (op1_in, "unop for GB_transpose", GB3) ;
-    ASSERT_BINARYOP_OK_OR_NULL (op2_in, "binop for GB_transpose", GB3) ;
-    ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB3) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_transpose", GB0) ;
+    ASSERT_TYPE_OK_OR_NULL (ctype, "ctype for GB_transpose", GB0) ;
+    ASSERT_UNARYOP_OK_OR_NULL (op1_in, "unop for GB_transpose", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (op2_in, "binop for GB_transpose", GB0) ;
+    ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
+
+    if (in_place)
+    {
+        GBURBLE ("(in-place transpose) ") ;
+    }
 
     // get the current sparsity control of A
     float A_hyper_switch = A->hyper_switch ;
@@ -170,12 +175,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         GrB_Type op2_intype = binop_bind1st ? op2_in->xtype : op2_in->ytype ;
         opcode = op2_in->opcode ;
         // only GB_apply calls GB_transpose with op2_in, and it ensures this
-        // condition holds: the first(A,y), second(x,A), and any(...) have
-        // been renamed to identity(A), so these cases do not occur here.
-        ASSERT (!
-           ((opcode == GB_ANY_opcode) ||
-            (opcode == GB_FIRST_opcode  && !binop_bind1st) ||
-            (opcode == GB_SECOND_opcode &&  binop_bind1st))) ;
+        // condition holds: first(A,y), second(x,A) have been renamed to
+        // identity(A), and PAIR has been renamed one(A), so these cases do not
+        // occur here.
+        ASSERT (!((opcode == GB_PAIR_opcode) ||
+                  (opcode == GB_FIRST_opcode  && !binop_bind1st) ||
+                  (opcode == GB_SECOND_opcode &&  binop_bind1st))) ;
         // apply the operator, z=op2(A,y) or op2(x,A)
         op2 = op2_in ;
         ctype = op2->ztype ;
@@ -311,7 +316,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             else
             { 
                 // T is a purely shallow copy of A 
-                T->b_shallow = (Ab != NULL) ;
+                T->b_shallow = (A->b != NULL) ;
                 T->x_shallow = true ;
             }
             T->iso = A->iso ;   // OK
@@ -328,7 +333,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 NULL, NULL, 0, nthreads) ;
         }
 
-        ASSERT_MATRIX_OK (T, "T dense/bitmap", GB3) ;
+        ASSERT_MATRIX_OK (T, "T dense/bitmap", GB0) ;
         ASSERT (!GB_JUMBLED (T)) ;
 
     }
@@ -342,7 +347,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // transpose a vector (avlen-by-1) into a "row" matrix (1-by-avlen).
         // A must be sorted first.
 
-        ASSERT_MATRIX_OK (A, "the vector A must already be sorted", GB3) ;
+        ASSERT_MATRIX_OK (A, "the vector A must already be sorted", GB0) ;
         ASSERT (!GB_JUMBLED (A)) ;
 
         //----------------------------------------------------------------------
@@ -456,7 +461,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
         // transpose a "row" matrix (1-by-avdim) into a vector (avdim-by-1).
         // if A->vlen is 1, all vectors of A are implicitly sorted
-        ASSERT_MATRIX_OK (A, "1-by-n input A already sorted", GB3) ;
+        ASSERT_MATRIX_OK (A, "1-by-n input A already sorted", GB0) ;
 
         //----------------------------------------------------------------------
         // allocate workspace, if needed
@@ -672,7 +677,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // transpose a general sparse or hypersparse matrix
         //----------------------------------------------------------------------
 
-        ASSERT_MATRIX_OK (A, "A for GB_transpose", GB3) ;
+        ASSERT_MATRIX_OK (A, "A for GB_transpose", GB0) ;
 
         // T=A' with optional typecasting, or T=op(A')
 
@@ -709,9 +714,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             }
 
             // Construct the "row" indices of C, which are "column" indices of
-            // A.  This array becomes the permanent T->i on output.  This phase
-            // must be done before Chandle is created below, since that step
-            // destroys A.
+            // A.  This array becomes the permanent T->i on output.
 
             GB_OK (GB_extract_vector_list (iwork, A, Context)) ;
 
@@ -811,7 +814,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 // modified.
                 ASSERT (!C_iso) ;
                 ASSERT (!A->iso) ;
-                S_input = Ax ;          // S_input is used instead of Swork
+                S_input = A->x ;        // S_input is used instead of Swork
                 Swork = NULL ;
                 stype = atype ;
             }
@@ -870,7 +873,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 op1, op2, scalar, binop_bind1st,
                 nworkspaces_bucket, nthreads_bucket, Context)) ;
 
-            ASSERT_MATRIX_OK (T, "T from bucket", GB3) ;
+            ASSERT_MATRIX_OK (T, "T from bucket", GB0) ;
             ASSERT (GB_JUMBLED_OK (T)) ;
         }
     }
@@ -886,6 +889,11 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     {
         GB_phbix_free (A) ;
     }
+
+    // transplant the control settings from A to C
+    C->hyper_switch = A_hyper_switch ;
+    C->bitmap_switch = A_bitmap_switch ;
+    C->sparsity_control = A_sparsity_control ;
 
     // transplant T into the result C
     GB_OK (GB_transplant (C, ctype, &T, Context)) ;
@@ -908,17 +916,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             save_op1, save_op2, scalar, binop_bind1st, C, Context)) ;
     }
 
-    // transplant the control settings from A to C
-    C->hyper_switch = A_hyper_switch ;
-    C->bitmap_switch = A_bitmap_switch ;
-    C->sparsity_control = A_sparsity_control ;
-
-    ASSERT_MATRIX_OK (C, "C to conform in GB_transpose", GB3) ;
-
     // conform the result to the desired sparsity structure of A
+    ASSERT_MATRIX_OK (C, "C to conform in GB_transpose", GB0) ;
     GB_OK (GB_conform (C, Context)) ;
-
-    ASSERT_MATRIX_OK (*Chandle, "Chandle conformed in GB_transpose", GB3) ;
+    ASSERT_MATRIX_OK (C, "C output of GB_transpose", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

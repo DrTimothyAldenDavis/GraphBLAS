@@ -20,8 +20,10 @@
     GB_WERK_POP (A_ek_slicing, int64_t) ;
 
 #define GB_FREE_ALL         \
+{                           \
     GB_FREE_WORK ;          \
-    GB_phbix_free (C) ;
+    GB_phbix_free (C) ;     \
+}
 
 #include "GB_concat.h"
 
@@ -46,6 +48,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 
     GrB_Info info ;
     GrB_Matrix A = NULL ;
+    ASSERT_MATRIX_OK (C, "C input to concat sparse", GB0) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int64_t *Work = NULL ;
     size_t Work_size = 0 ;
@@ -114,6 +117,9 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             if (csc != A->is_csc)
             {
                 // T = (ctype) A', not in-place, using a dynamic header
+                GB_OK (GB_new (&T, false,   // auto sparsity, new header
+                    A->type, A->vdim, A->vlen, GB_Ap_null, csc,
+                    GxB_AUTO_SPARSITY, -1, 1, Context)) ;
                 GB_OK (GB_transpose (T, ctype, csc, A, // T static = A'
                     NULL, NULL, NULL, false, Context)) ;
                 // save T in array S
@@ -391,6 +397,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 
     GB_FREE_WORK ;
     C->magic = GB_MAGIC ;
+    ASSERT_MATRIX_OK (C, "C from concat sparse", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -185,8 +185,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     bool M_transpose = (T_is_csc != M_is_csc) ;
     if (M_transpose)
     { 
-        // MT = M'
-        // transpose: no typecast, no op, not in-place
+        // MT = (bool) M'
         GBURBLE ("(M transpose) ") ;
         MT = GB_clear_static_header (&MT_header) ;
         GB_OK (GB_transpose (MT, GrB_BOOL, T_is_csc, M,    // MT static = M'
@@ -195,7 +194,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     }
 
     //--------------------------------------------------------------------------
-    // transpose A if needed
+    // transpose A if needed: FIXME: typecast to op->xtype
     //--------------------------------------------------------------------------
 
     GrB_Matrix A1 = A ;
@@ -211,7 +210,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     }
 
     //--------------------------------------------------------------------------
-    // transpose B if needed
+    // transpose B if needed: FIXME: typecast to op->ytype
     //--------------------------------------------------------------------------
 
     GrB_Matrix B1 = B ;
@@ -371,7 +370,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // If T is hypersparse, T->h is always a shallow copy of A1->h, B1->h,
         // or M1->h.  Any of the three matrices A1, B1, or M1 may be temporary
         // transposes, AT, BT, and MT respectively.  If T->h is a shallow cpoy
-        // of a temporary matrix, then flip the ownership of the T->h array,
+        // of a temporary matrix, then change the ownership of the T->h array,
         // from the temporary matrix into T, so that T->h is not freed when AT,
         // BT, and MT are freed.
 

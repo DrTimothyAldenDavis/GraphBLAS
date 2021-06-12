@@ -383,7 +383,7 @@ GrB_Info GB_wait                // finish all pending computations
             A1->x_size = (A_iso ? 1 : anz1) * asize  ;
             A1->x_shallow = true ;
             A1->i = Ai + anz0 ;
-            A1->i_size = anz1 * asize ;
+            A1->i_size = anz1 * sizeof (int64_t) ;
             A1->i_shallow = true ;
             A1->iso = A_iso ;       // OK
 

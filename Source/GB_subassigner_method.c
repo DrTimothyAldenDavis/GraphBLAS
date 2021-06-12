@@ -87,15 +87,11 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
     // check if C is competely dense:  all entries present and no pending work.
     bool C_dense_update = false ;
-    if (C_as_if_full)
-    { 
-        // C is dense with no pending work
-        if (whole_C_matrix && no_mask && (accum != NULL)
+    if (C_as_if_full && whole_C_matrix && no_mask && (accum != NULL)
             && (ctype == accum->ztype) && (ctype == accum->xtype))
-        { 
-            // C(:,:) += x or A, where C is dense, no typecasting of C
-            C_dense_update = true ;
-        }
+    { 
+        // C(:,:) += x or A, where C is dense, no typecasting of C
+        C_dense_update = true ;
     }
 
     // GB_assign_prep has already disabled C_replace if no mask present
@@ -150,18 +146,18 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             S_Extraction = M_is_bitmap || A_is_bitmap ;
         }
         else
-        { 
+        {
             // C(I,J)<M> = A ;  use 06s (with S) or 06n (without S)
             // method 06s (with S) is faster when nnz (A) < nnz (M).
             if ((C_as_if_full || C_is_bitmap) && whole_C_matrix && M_is_A)
-            {
+            { 
                 // Method 06d: C<A> = A
                 method_06d = true ;
                 S_Extraction = false ;
             }
             else if (C_is_empty && whole_C_matrix && Mask_struct &&
                 (A_as_if_full || A_is_bitmap))
-            {
+            { 
                 // Method 25: C<M,s> = A, where M is structural, A is
                 // dense, and C starts out empty.  The pattern of C will be the
                 // same as M, and the subassign method is extremely simple.
@@ -169,7 +165,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 S_Extraction = false ;
             }
             else
-            {
+            { 
                 // Method 06n (no S) or Method 06s (with S):
                 // Method 06n is not used if M or A are bitmap.  If M and A are
                 // aliased and Method 06d is not used, then 06s is used instead
@@ -327,7 +323,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
     }
     else if (C_dense_update)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // C += A or x where C is dense or full (and becomes full)
@@ -347,12 +343,12 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         ASSERT (!S_Extraction) ;            // S is not used
 
         if (scalar_expansion)
-        {
+        { 
             // Method 22: C(:,:) += x where C is dense or full
             subassign_method = GB_SUBASSIGN_METHOD_22 ;
         }
         else
-        {
+        { 
             // Method 23: C(:,:) += A where C is dense or full
             subassign_method = GB_SUBASSIGN_METHOD_23 ;
         }
@@ -432,14 +428,14 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         ASSERT (!C_replace) ;
 
         if (accum != NULL)
-        { 
+        {
             if (S_Extraction)
-            {
+            { 
                 // Method 08s: C(I,J)<M> += A ; with S
                 subassign_method = GB_SUBASSIGN_METHOD_08s ;
             }
             else
-            {
+            { 
                 // Method 08n: C(I,J)<M> += A ; no S
                 // No matrix can be bitmap.
                 subassign_method = GB_SUBASSIGN_METHOD_08n ;
@@ -665,16 +661,17 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             size_t       asize = atype->size ;
 
             // cout = (ctype) (scalar or A->x)
-            GB_cast_scalar (cout, ccode,
-                (scalar_expansion) ? scalar : A->x, acode, asize) ;
+            GB_cast_scalar (cout, ccode, (scalar_expansion) ? scalar : A->x,
+                acode, asize) ;
             bool c_ok = false ;
             if (C_is_empty)
-            {
-                // C is empty on input
+            { 
+                // C is empty on input; note that C->iso might also be true,
+                // but this is ignored.
                 c_ok = true ;
             }
             else if (C->iso)
-            {
+            { 
                 // C is iso on input; compare cout and C->x
                 c_ok = (memcmp (cout, C->x, csize) == 0) ;
             }
@@ -686,36 +683,44 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             bool accum_ok = false ;
             if (c_ok && accum != NULL && C->iso)
             {
-                ASSERT (!C_is_empty) ;
-                GxB_binary_function faccum = accum->function ;
+                if (C_is_empty)
+                { 
+                    // If C is empty, the accum is not applied.
+                    accum_ok = true ;
+                }
+                else
+                { 
+                    // C is iso and not empty; check the result of accum
+                    GxB_binary_function faccum = accum->function ;
 
-                size_t xsize = accum->xtype->size ;
-                size_t ysize = accum->ytype->size ;
-                size_t zsize = accum->ztype->size ;
+                    size_t xsize = accum->xtype->size ;
+                    size_t ysize = accum->ytype->size ;
+                    size_t zsize = accum->ztype->size ;
 
-                GB_Type_code xcode = accum->xtype->code ;
-                GB_Type_code ycode = accum->ytype->code ;
-                GB_Type_code zcode = accum->ztype->code ;
+                    GB_Type_code xcode = accum->xtype->code ;
+                    GB_Type_code ycode = accum->ytype->code ;
+                    GB_Type_code zcode = accum->ztype->code ;
 
-                // x = (xtype) C->x
-                GB_void x [GB_VLA(xsize)] ;
-                GB_cast_scalar (x, xcode, C->x, ccode, csize) ;
+                    // x = (xtype) C->x
+                    GB_void x [GB_VLA(xsize)] ;
+                    GB_cast_scalar (x, xcode, C->x, ccode, csize) ;
 
-                // y = (ytype) (scalar or A->x)
-                GB_void y [GB_VLA(ysize)] ;
-                GB_cast_scalar (y, ycode,
-                    (scalar_expansion) ? scalar : A->x, acode, asize) ;
+                    // y = (ytype) (scalar or A->x)
+                    GB_void y [GB_VLA(ysize)] ;
+                    GB_cast_scalar (y, ycode,
+                        (scalar_expansion) ? scalar : A->x, acode, asize) ;
 
-                // z = x + y
-                GB_void z [GB_VLA(zsize)] ;
-                faccum (z, x, y) ;
+                    // z = x + y
+                    GB_void z [GB_VLA(zsize)] ;
+                    faccum (z, x, y) ;
 
-                // c = (ctype) z
-                GB_void c [GB_VLA(csize)] ;
-                GB_cast_scalar (c, ccode, z, zcode, zsize) ;
+                    // c = (ctype) z
+                    GB_void c [GB_VLA(csize)] ;
+                    GB_cast_scalar (c, ccode, z, zcode, zsize) ;
 
-                // compare c and cout
-                accum_ok = (memcmp (cout, c, csize) == 0) ;
+                    // compare c and cout
+                    accum_ok = (memcmp (cout, c, csize) == 0) ;
+                }
             }
 
             switch (subassign_method)
@@ -731,7 +736,6 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 case GB_SUBASSIGN_METHOD_05d :  // C(:,:)<M> = scalar ; C dense
                 case GB_SUBASSIGN_METHOD_09 :   // C(I,J)<M,replace> = scalar
                 case GB_SUBASSIGN_METHOD_17 :   // C(I,J)<!M,replace> = scalar
-                case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> = scalar
                     (*C_iso_out) = c_ok ;
                     break ;
 
@@ -777,6 +781,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 case GB_SUBASSIGN_METHOD_15 :   // C(I,J)<!M> += scalar
                 case GB_SUBASSIGN_METHOD_22 :   // C += scalar ; C is dense
                 case GB_SUBASSIGN_METHOD_11 :   // C(I,J)<M,replace> += scalar
+                case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> += scalar
                     (*C_iso_out) = accum_ok ;
                     break ;
 
@@ -798,7 +803,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
             }
         }
         else
-        {
+        { 
             // A is non-iso, so C is non-iso on output, and cout is not
             // computed
             (*C_iso_out) = false ;
@@ -840,7 +845,7 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         case GB_SUBASSIGN_METHOD_09 :   // C(I,J)<M,replace> = scalar
         case GB_SUBASSIGN_METHOD_11 :   // C(I,J)<M,replace> += scalar
         case GB_SUBASSIGN_METHOD_17 :   // C(I,J)<!M,replace> = scalar
-        case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> = scalar
+        case GB_SUBASSIGN_METHOD_19 :   // C(I,J)<!M,replace> += scalar
             // M can have any sparsity structure, including bitmap
             GB_USE_BITMAP_IF (C_is_bitmap || C_is_full) ;
             break ;

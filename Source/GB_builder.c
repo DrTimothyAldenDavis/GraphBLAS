@@ -827,11 +827,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     {
         if (S_iso)
         { 
-            GBURBLE (T, "(iso build) ") ;
+            GBURBLE ("(iso build) ") ;
         }
         else
         { 
-            GBURBLE (T, "(build) ") ;
+            GBURBLE ("(build) ") ;
         }
     }
 

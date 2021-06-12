@@ -20,7 +20,7 @@ GrB_Info GB_EVAL3 (prefix, _Vector_build_, T) /* build a vector from tuples*/ \
 )                                                                             \
 {                                                                             \
     GB_WHERE (w, "GrB_Vector_build_" GB_STR(T) " (w, I, X, nvals, dup)") ;    \
-    GB_BURBLE_START ("GrB_Vector_build") ;                                    \
+    GB_BURBLE_START ("GrB_Vector_build_" GB_STR(T)) ;                         \
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;  /* check now so w->type can be done */ \
     GB_RETURN_IF_NULL_OR_FAULTY (dup) ;                                       \
     ASSERT (GB_VECTOR_OK (w)) ;                                               \

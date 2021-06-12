@@ -502,22 +502,6 @@ break ;
 
     #define GB_ATOMIC_WRITE_HX(i,t)
 
-    //--------------------------------------------------------------------------
-    // ANY_PAIR: for the bitmap case only: Hx [i] = 1
-    //--------------------------------------------------------------------------
-
-    #if GB_IS_ANY_FC32_MONOID || GB_IS_ANY_FC64_MONOID
-        #define GB_ATOMIC_SET_HX_ONE(i)             \
-            GB_ATOMIC_WRITE                         \
-            Hx_real [2*(i)] = 1 ;                   \
-            GB_ATOMIC_WRITE                         \
-            Hx_imag [2*(i)] = 0 ;
-    #else
-        #define GB_ATOMIC_SET_HX_ONE(i)             \
-            GB_ATOMIC_WRITE                         \
-            Hx [i] = 1 ;
-    #endif
-
 #elif GB_HAS_ATOMIC
 
     //--------------------------------------------------------------------------

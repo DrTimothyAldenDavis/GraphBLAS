@@ -265,7 +265,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     }
     else if (M == NULL && accum == NULL && (C == A) && C->type == T_type)
     {
-        GBURBLE ("(inplace-op) ") ;
+        GBURBLE ("(in-place-op) ") ;
         // C = op (C), operating on the values in-place, with no typecasting
         // of the output of the operator with the matrix C.
         // No work to do if the op is identity.
@@ -275,7 +275,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
             // the output Cx is aliased with C->x in GB_apply_op.
             GB_iso_code
                 C_code_iso = GB_iso_unop_code (C, op1, op2, binop_bind1st) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
             info = GB_apply_op ((GB_void *) C->x, C->type, C_code_iso,
                 op1, op2, scalar, binop_bind1st, C, Context) ;
             if (info == GrB_SUCCESS && C_code_iso != GB_NON_ISO)

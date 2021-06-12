@@ -137,7 +137,6 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
                 default:  ;
             }
         }
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
         GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO, op1, NULL, NULL, false, B,
             Context)) ;
         ASSERT_MATRIX_OK (C, "rowscale positional: C = D*B output", GB0) ;

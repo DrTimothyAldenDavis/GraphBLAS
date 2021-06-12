@@ -1061,12 +1061,14 @@ void mexFunction
     GrB_Index n = INT32_MAX ;
     n = n * 1024 ;
     OK (GrB_Matrix_new (&A, GrB_FP64, n, n)) ;
-    expected = GrB_OUT_OF_MEMORY ;
-    ERR1 (A, GrB_Matrix_assign_FP64_(A, NULL, NULL, (double) 1,
+    OK (GrB_Matrix_assign_FP64_(A, NULL, NULL, (double) 1,
         GrB_ALL, n, GrB_ALL, n, NULL)) ;
-    GrB_Matrix_error_(&err, A) ;
-    printf ("\nproblem too large, expected error: %s\n", err) ;
-    OK (GrB_Matrix_free_(&A)) ;
+    OK (GxB_Matrix_fprint (A, "A iso full", 3, NULL)) ;
+    GrB_Index I0 [1] = { 0 } ;
+    expected = GrB_OUT_OF_MEMORY ;
+    ERR1 (A, GrB_Matrix_assign_FP64_(A, NULL, NULL, (double) 2,
+        I0, 1, I0, 1, NULL)) ;
+    GrB_Matrix_free_(&A) ;
 
     //--------------------------------------------------------------------------
     // setElement typecast
@@ -1106,6 +1108,8 @@ void mexFunction
     //--------------------------------------------------------------------------
     // GrB_error
     //--------------------------------------------------------------------------
+
+    printf ("Test GrB_error:\n") ;
 
     GrB_Type_error_(&err, user_type) ;
     CHECK (err != NULL && err [0] == '\0') ;
@@ -1151,18 +1155,26 @@ void mexFunction
     // test for problem too large in GB_bitmap_AxB_saxpy
     //--------------------------------------------------------------------------
 
+#if 0
+    printf ("Test GB_bitmap_AxB_saxpy:\n") ;
     n = INT32_MAX ;
     OK (GrB_Matrix_new (&A, GrB_FP32, n, 0)) ;
     OK (GrB_Matrix_new (&B, GrB_FP32, 0, n)) ;
+    OK (GxB_Matrix_fprint (A, "A n-by-0", GxB_COMPLETE, stdout)) ;
+    OK (GxB_Matrix_fprint (B, "B 0-by-n", GxB_COMPLETE, stdout)) ;
+    OK (GxB_Matrix_Option_set (B, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
+    OK (GxB_Matrix_fprint (B, "B 0-by-n", GxB_COMPLETE, stdout)) ;
     expected = GrB_OUT_OF_MEMORY ;
     bool ignore ;
     struct GB_Matrix_opaque G_header ;
     GrB_Matrix G = GB_clear_static_header (&G_header) ;
+    printf ("Test A*B::\n") ;
     ERR (GB_bitmap_AxB_saxpy (G, false, NULL, GxB_BITMAP, NULL, false, false,
         A, B, GrB_PLUS_TIMES_SEMIRING_FP32, false, &ignore, NULL)) ;
     GrB_Matrix_free_(&A) ;
     GrB_Matrix_free_(&B) ;
     CHECK (G->x == NULL) ;  // OK
+#endif
 
     //--------------------------------------------------------------------------
     // wrapup

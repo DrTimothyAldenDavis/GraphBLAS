@@ -38,6 +38,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
 
     GrB_Info info ;
     GrB_Matrix A = NULL ;
+    ASSERT_MATRIX_OK (C, "C input to concat hyper", GB0) ;
 
     int64_t *restrict Wi = NULL ; size_t Wi_size = 0 ;
     int64_t *restrict Wj = NULL ; size_t Wj_size = 0 ;

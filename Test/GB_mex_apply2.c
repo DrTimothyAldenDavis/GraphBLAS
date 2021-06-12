@@ -326,9 +326,6 @@ void mexFunction
         mexErrMsgTxt ("desc failed") ;
     }
 
-    printf ("GB_mex_apply2: ===================\n") ; GxB_print (op, 3) ;
-    GxB_print (A,3) ;
-
     // C<Mask> = accum(C,op(x,A))
     if (GB_NCOLS (C) == 1 && (desc == NULL || desc->in0 == GxB_DEFAULT)
         && GB_VECTOR_OK (C))

@@ -27,12 +27,12 @@
     GrB_Matrix_free_(&E) ;            CHECK (E            == NULL) ;      \
     GrB_Matrix_free_(&F) ;            CHECK (F            == NULL) ;      \
     GrB_Matrix_free_(&H) ;            CHECK (H            == NULL) ;      \
-    GrB_Matrix_free_(&Agunk) ;        CHECK (Agunk        == NULL) ;      \
+    GrB_Matrix_free_(&Acrud) ;        CHECK (Acrud        == NULL) ;      \
     GrB_Matrix_free_(&Aempty) ;       CHECK (Aempty       == NULL) ;      \
     GrB_Type_free_(&T) ;              CHECK (T            == NULL) ;      \
-    GrB_Type_free_(&Tgunk) ;          CHECK (Tgunk        == NULL) ;      \
+    GrB_Type_free_(&Tcrud) ;          CHECK (Tcrud        == NULL) ;      \
     GrB_UnaryOp_free_(&op1) ;         CHECK (op1          == NULL) ;      \
-    GrB_UnaryOp_free_(&op1gunk) ;     CHECK (op1gunk      == NULL) ;      \
+    GrB_UnaryOp_free_(&op1crud) ;     CHECK (op1crud      == NULL) ;      \
     GrB_BinaryOp_free_(&op2) ;        CHECK (op2          == NULL) ;      \
     GrB_BinaryOp_free_(&op3) ;        CHECK (op3          == NULL) ;      \
     GrB_UnaryOp_free_(&op1b) ;        CHECK (op1b         == NULL) ;      \
@@ -41,25 +41,25 @@
     GrB_Semiring_free_(&semiring2) ;  CHECK (semiring2    == NULL) ;      \
     GrB_Descriptor_free_(&descb) ;    CHECK (descb        == NULL) ;      \
     GrB_Vector_free_(&vb) ;           CHECK (vb           == NULL) ;      \
-    GrB_BinaryOp_free_(&op2gunk) ;    CHECK (op2gunk      == NULL) ;      \
+    GrB_BinaryOp_free_(&op2crud) ;    CHECK (op2crud      == NULL) ;      \
     GrB_Monoid_free_(&monoid) ;       CHECK (monoid       == NULL) ;      \
-    GrB_Monoid_free_(&monoid_gunk) ;  CHECK (monoid_gunk  == NULL) ;      \
+    GrB_Monoid_free_(&monoid_crud) ;  CHECK (monoid_crud  == NULL) ;      \
     GrB_Semiring_free_(&semiring) ;   CHECK (semiring     == NULL) ;      \
-    GrB_Semiring_free_(&semigunk) ;   CHECK (semigunk     == NULL) ;      \
+    GrB_Semiring_free_(&semicrud) ;   CHECK (semicrud     == NULL) ;      \
     GrB_Vector_free_(&v) ;            CHECK (v            == NULL) ;      \
     GrB_Vector_free_(&w) ;            CHECK (w            == NULL) ;      \
     GrB_Vector_free_(&u) ;            CHECK (u            == NULL) ;      \
     GrB_Vector_free_(&z) ;            CHECK (z            == NULL) ;      \
     GrB_Vector_free_(&h) ;            CHECK (h            == NULL) ;      \
-    GrB_Vector_free_(&vgunk) ;        CHECK (vgunk        == NULL) ;      \
+    GrB_Vector_free_(&vcrud) ;        CHECK (vcrud        == NULL) ;      \
     GrB_Vector_free_(&vempty) ;       CHECK (vempty       == NULL) ;      \
     GrB_Descriptor_free_(&desc) ;     CHECK (desc         == NULL) ;      \
     GrB_Descriptor_free_(&dtn) ;      CHECK (dtn          == NULL) ;      \
     GrB_Descriptor_free_(&dnt) ;      CHECK (dnt          == NULL) ;      \
     GrB_Descriptor_free_(&dtt) ;      CHECK (dtt          == NULL) ;      \
-    GrB_Descriptor_free_(&dgunk) ;    CHECK (dgunk        == NULL) ;      \
+    GrB_Descriptor_free_(&dcrud) ;    CHECK (dcrud        == NULL) ;      \
     GxB_SelectOp_free_(&selectop) ;   CHECK (selectop     == NULL) ;      \
-    GxB_SelectOp_free_(&selectopgunk) ; CHECK (selectopgunk == NULL) ;    \
+    GxB_SelectOp_free_(&selectopcrud) ; CHECK (selectopcrud == NULL) ;    \
     GxB_Scalar_free_(&a_scalar) ;                                         \
     GB_mx_put_global (true) ;                                             \
 }
@@ -70,6 +70,8 @@
 #define G2 GxB_SHORT
 #define G1 GxB_SUMMARY
 #define G0 GxB_SILENT
+
+typedef int16_t user_int ;
 
 void f1 (double *z, const uint32_t *x) ;
 void f2 (int32_t *z, const uint8_t *x, const int16_t *y) ;
@@ -140,20 +142,20 @@ void mexFunction
     nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d after complex init\n", nmalloc) ;
 
-    GrB_Matrix A = NULL, B = NULL, C = NULL, Z = NULL, Agunk = NULL,
+    GrB_Matrix A = NULL, B = NULL, C = NULL, Z = NULL, Acrud = NULL,
                Aempty = NULL, E = NULL, F = NULL, A0 = NULL, H = NULL,
                Empty1 = NULL, A4 = NULL, C4 = NULL ;
-    GrB_Vector v = NULL, vgunk = NULL, vempty = NULL, w = NULL, u = NULL,
+    GrB_Vector v = NULL, vcrud = NULL, vempty = NULL, w = NULL, u = NULL,
                v0 = NULL, v2 = NULL, z = NULL, h = NULL, vb = NULL ;
-    GrB_Type T = NULL, Tgunk ;
-    GrB_UnaryOp op1 = NULL, op1gunk = NULL, o1 = NULL, op1b = NULL ;
-    GrB_BinaryOp op2 = NULL, op2gunk = NULL, o2 = NULL, op0 = NULL, op3 = NULL,
+    GrB_Type T = NULL, Tcrud ;
+    GrB_UnaryOp op1 = NULL, op1crud = NULL, o1 = NULL, op1b = NULL ;
+    GrB_BinaryOp op2 = NULL, op2crud = NULL, o2 = NULL, op0 = NULL, op3 = NULL,
                 op2b = NULL ;
-    GrB_Monoid monoid = NULL, monoid_gunk = NULL, m2 = NULL, m0 = NULL,
+    GrB_Monoid monoid = NULL, monoid_crud = NULL, m2 = NULL, m0 = NULL,
         monoidb = NULL ;
-    GrB_Semiring semiring = NULL, semigunk = NULL, s2 = NULL, s0 = NULL,
+    GrB_Semiring semiring = NULL, semicrud = NULL, s2 = NULL, s0 = NULL,
         semiring2 = NULL ;
-    GrB_Descriptor desc = NULL, dgunk = NULL, d0 = NULL,
+    GrB_Descriptor desc = NULL, dcrud = NULL, d0 = NULL,
         dnt = NULL, dtn = NULL, dtt = NULL, descb = NULL ;
     GrB_Desc_Value dval ;
     GrB_Index n = 0, nvals = 0, n2 = 0, i = 0, j = 0, a, b, uvals = 0 ;
@@ -179,7 +181,7 @@ void mexFunction
 
     GB_void *pp = NULL ;
 
-    GxB_SelectOp selectop = NULL, selectopgunk = NULL, sel0 ;
+    GxB_SelectOp selectop = NULL, selectopcrud = NULL, sel0 ;
     GxB_Scalar a_scalar = NULL ;
 
     char *err ;
@@ -243,10 +245,10 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    Tgunk = T ;
+    Tcrud = T ;
     T = NULL ;
-    Tgunk->magic = 42 ;
-    ERR (GxB_Type_size (&s, Tgunk)) ;
+    Tcrud->magic = 42 ;
+    ERR (GxB_Type_size (&s, Tcrud)) ;
 
     T = GrB_INT32 ;
     OK (GrB_Type_free_(&GrB_INT32)) ;
@@ -290,7 +292,7 @@ void mexFunction
         OK (GxB_Type_fprint_(ttype, G3, ff)) ;
     }
 
-    // Tgunk is allocated but uninitialized
+    // Tcrud is allocated but uninitialized
 
     //--------------------------------------------------------------------------
     // UnaryOp
@@ -318,13 +320,13 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_UnaryOp_new (&op1, f1, Tgunk, Tgunk)) ;
+    ERR (GrB_UnaryOp_new (&op1, f1, Tcrud, Tcrud)) ;
     CHECK (op1 == NULL) ;
 
-    ERR (GrB_UnaryOp_new (&op1, f1, GrB_FP64, Tgunk)) ;
+    ERR (GrB_UnaryOp_new (&op1, f1, GrB_FP64, Tcrud)) ;
     CHECK (op1 == NULL) ;
 
-    ERR (GrB_UnaryOp_new (&op1, f1, Tgunk, GrB_FP64)) ;
+    ERR (GrB_UnaryOp_new (&op1, f1, Tcrud, GrB_FP64)) ;
     CHECK (op1 == NULL) ;
 
     OK (GrB_UnaryOp_new (&op1, f1, GrB_FP64, GrB_UINT32)) ;
@@ -350,16 +352,16 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    op1gunk = op1 ;
+    op1crud = op1 ;
     op1 = NULL ;
 
-    op1gunk->magic = 99 ;
+    op1crud->magic = 99 ;
     T = NULL ;
 
-    ERR (GxB_UnaryOp_ztype (&T, op1gunk)) ;
+    ERR (GxB_UnaryOp_ztype (&T, op1crud)) ;
     CHECK (T == NULL) ;
 
-    ERR (GxB_UnaryOp_xtype (&T, op1gunk)) ;
+    ERR (GxB_UnaryOp_xtype (&T, op1crud)) ;
     CHECK (T == NULL) ;
 
     o1 = GrB_IDENTITY_BOOL ;
@@ -389,7 +391,7 @@ void mexFunction
     #undef FREE_DEEP_COPY
     #undef GET_DEEP_COPY
 
-    // op1gunk is allocated but uninitialized
+    // op1crud is allocated but uninitialized
 
     //--------------------------------------------------------------------------
     // BinaryOp
@@ -417,13 +419,13 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_BinaryOp_new (&op2, f2, Tgunk, GrB_UINT8, GrB_INT16)) ;
+    ERR (GrB_BinaryOp_new (&op2, f2, Tcrud, GrB_UINT8, GrB_INT16)) ;
     CHECK (op2 == NULL) ;
 
-    ERR (GrB_BinaryOp_new (&op2, f2, GrB_INT32, Tgunk, GrB_INT16)) ;
+    ERR (GrB_BinaryOp_new (&op2, f2, GrB_INT32, Tcrud, GrB_INT16)) ;
     CHECK (op2 == NULL) ;
 
-    ERR (GrB_BinaryOp_new (&op2, f2, GrB_INT32, GrB_UINT8, Tgunk)) ;
+    ERR (GrB_BinaryOp_new (&op2, f2, GrB_INT32, GrB_UINT8, Tcrud)) ;
     CHECK (op2 == NULL) ;
 
     OK (GrB_BinaryOp_new (&op2, f2, GrB_INT32, GrB_UINT8, GrB_INT16)) ;
@@ -437,18 +439,18 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    op2gunk = op2 ;
+    op2crud = op2 ;
     op2 = NULL ;
-    op2gunk->magic = 77 ;
+    op2crud->magic = 77 ;
     T = NULL ;
 
-    ERR (GxB_BinaryOp_ztype (&T, op2gunk)) ;
+    ERR (GxB_BinaryOp_ztype (&T, op2crud)) ;
     CHECK (T == NULL) ;
 
-    ERR (GxB_BinaryOp_xtype (&T, op2gunk)) ;
+    ERR (GxB_BinaryOp_xtype (&T, op2crud)) ;
     CHECK (T == NULL) ;
 
-    ERR (GxB_BinaryOp_ytype (&T, op2gunk)) ;
+    ERR (GxB_BinaryOp_ytype (&T, op2crud)) ;
     CHECK (T == NULL) ;
 
     o2 = GrB_PLUS_FP64 ;
@@ -557,23 +559,23 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_Monoid_new_BOOL    (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
-    ERR (GrB_Monoid_new_INT8    (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
-    ERR (GrB_Monoid_new_UINT8   (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
-    ERR (GrB_Monoid_new_INT16   (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
-    ERR (GrB_Monoid_new_UINT16  (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
-    ERR (GrB_Monoid_new_INT32   (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
-    ERR (GrB_Monoid_new_UINT32  (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
-    ERR (GrB_Monoid_new_INT64   (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
-    ERR (GrB_Monoid_new_UINT64  (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
-    ERR (GrB_Monoid_new_FP32    (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
-    ERR (GrB_Monoid_new_FP64    (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
+    ERR (GrB_Monoid_new_BOOL    (&monoid, op2crud, 0)) ; CHECK (monoid == NULL);
+    ERR (GrB_Monoid_new_INT8    (&monoid, op2crud, 0)) ; CHECK (monoid == NULL);
+    ERR (GrB_Monoid_new_UINT8   (&monoid, op2crud, 0)) ; CHECK (monoid == NULL);
+    ERR (GrB_Monoid_new_INT16   (&monoid, op2crud, 0)) ; CHECK (monoid == NULL);
+    ERR (GrB_Monoid_new_UINT16  (&monoid, op2crud, 0)) ; CHECK (monoid == NULL);
+    ERR (GrB_Monoid_new_INT32   (&monoid, op2crud, 0)) ; CHECK (monoid == NULL);
+    ERR (GrB_Monoid_new_UINT32  (&monoid, op2crud, 0)) ; CHECK (monoid == NULL);
+    ERR (GrB_Monoid_new_INT64   (&monoid, op2crud, 0)) ; CHECK (monoid == NULL);
+    ERR (GrB_Monoid_new_UINT64  (&monoid, op2crud, 0)) ; CHECK (monoid == NULL);
+    ERR (GrB_Monoid_new_FP32    (&monoid, op2crud, 0)) ; CHECK (monoid == NULL);
+    ERR (GrB_Monoid_new_FP64    (&monoid, op2crud, 0)) ; CHECK (monoid == NULL);
 
     expected = GrB_NULL_POINTER ;
-    ERR (GrB_Monoid_new_UDT (&monoid, op2gunk, NULL)) ; CHECK (monoid == NULL) ;
+    ERR (GrB_Monoid_new_UDT (&monoid, op2crud, NULL)) ; CHECK (monoid == NULL) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
-    ERR (GrB_Monoid_new_INT32 (&monoid, op2gunk, 0)) ;
+    ERR (GrB_Monoid_new_INT32 (&monoid, op2crud, 0)) ;
     CHECK (monoid == NULL) ;
 
     expected = GrB_NULL_POINTER ;
@@ -661,14 +663,14 @@ void mexFunction
     ERR (GxB_Monoid_terminal (NULL, &x_double, GxB_MAX_FP64_MONOID)) ;
     ERR (GxB_Monoid_terminal (&has_terminal, &x_double, NULL)) ;
 
-    monoid_gunk = monoid ;
-    monoid_gunk->magic = 8080 ;
+    monoid_crud = monoid ;
+    monoid_crud->magic = 8080 ;
     monoid = NULL ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     x_double = 33. ;
-    ERR (GxB_Monoid_identity (&x_double, monoid_gunk)) ;
+    ERR (GxB_Monoid_identity (&x_double, monoid_crud)) ;
     CHECK (x_double == 33.) ;
 
     expected = GrB_NULL_POINTER ;
@@ -689,7 +691,7 @@ void mexFunction
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     o2 = NULL ;
-    ERR (GxB_Monoid_operator (&o2, monoid_gunk)) ;
+    ERR (GxB_Monoid_operator (&o2, monoid_crud)) ;
     CHECK (o2 == NULL) ;
 
     OK (GrB_Monoid_new_FP64 (&m2, GrB_PLUS_FP64, (double) 0)) ;
@@ -701,7 +703,7 @@ void mexFunction
     OK (GrB_Monoid_free_(&m2)) ;
     CHECK (m2 == NULL) ;
 
-    // monoid_gunk is allocated but not initialized
+    // monoid_crud is allocated but not initialized
 
     //--------------------------------------------------------------------------
     // Semiring
@@ -724,10 +726,10 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_Semiring_new (&semiring, monoid_gunk, GrB_PLUS_FP64)) ;
+    ERR (GrB_Semiring_new (&semiring, monoid_crud, GrB_PLUS_FP64)) ;
     CHECK (semiring == NULL) ;
 
-    ERR (GrB_Semiring_new (&semiring, GxB_MAX_FP32_MONOID, op2gunk)) ;
+    ERR (GrB_Semiring_new (&semiring, GxB_MAX_FP32_MONOID, op2crud)) ;
     CHECK (semiring == NULL) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
@@ -762,17 +764,17 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    semigunk = semiring ;
-    semigunk->magic = 747 ;
+    semicrud = semiring ;
+    semicrud->magic = 747 ;
     semiring = NULL ;
 
     m2 = GxB_MAX_INT32_MONOID ;
-    ERR (GxB_Semiring_add (&m2, semigunk)) ;
+    ERR (GxB_Semiring_add (&m2, semicrud)) ;
     CHECK (m2 == GxB_MAX_INT32_MONOID) ;
     m2 = NULL ;
 
     o2 = GxB_LXOR_BOOL ;
-    ERR (GxB_Semiring_multiply (&o2, semigunk)) ;
+    ERR (GxB_Semiring_multiply (&o2, semicrud)) ;
     CHECK (o2 == GxB_LXOR_BOOL) ;
     o2 = NULL ;
 
@@ -787,7 +789,7 @@ void mexFunction
     OK (GrB_Semiring_free_(&s2)) ;
     CHECK (s2 == NULL) ;
 
-    // semigunk is allocated but not initialized
+    // semicrud is allocated but not initialized
 
     //--------------------------------------------------------------------------
     // user defined ops
@@ -879,9 +881,9 @@ void mexFunction
     OK (GrB_Vector_new (&vempty, GrB_BOOL, 0)) ;
     CHECK (vempty != NULL) ;
 
-    OK (GrB_Vector_new (&vgunk, GrB_BOOL, 1)) ;
-    CHECK (vgunk != NULL) ;
-    vgunk->magic = 1024 ;
+    OK (GrB_Vector_new (&vcrud, GrB_BOOL, 1)) ;
+    CHECK (vcrud != NULL) ;
+    vcrud->magic = 1024 ;
 
     OK (GrB_Vector_new (&v, GrB_UINT16, 32)) ;
     CHECK (v != NULL) ;
@@ -899,7 +901,7 @@ void mexFunction
 
     ERR (GrB_Vector_dup (NULL, NULL)) ;
     ERR (GrB_Vector_dup (NULL, v)) ;
-    ERR (GrB_Vector_dup (NULL, vgunk)) ;
+    ERR (GrB_Vector_dup (NULL, vcrud)) ;
     ERR (GrB_Vector_dup (NULL, vempty)) ;
     ERR (GrB_Vector_clear (NULL)) ;
 
@@ -908,7 +910,7 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_Vector_dup (&u, vgunk)) ;
+    ERR (GrB_Vector_dup (&u, vcrud)) ;
     CHECK (u == NULL) ;
 
     OK (GrB_Vector_clear (v)) ;
@@ -917,7 +919,7 @@ void mexFunction
 
     ERR (GrB_Vector_size (NULL, NULL)) ;
     ERR (GrB_Vector_size (NULL, v)) ;
-    ERR (GrB_Vector_size (NULL, vgunk)) ;
+    ERR (GrB_Vector_size (NULL, vcrud)) ;
     ERR (GrB_Vector_size (NULL, vempty)) ;
     ERR (GrB_Vector_size (&n, NULL)) ;
     CHECK (n == 0) ;
@@ -928,8 +930,8 @@ void mexFunction
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     nvals = 7 ;
-    ERR (GrB_Vector_dup (&u, vgunk)) ;
-    ERR (GrB_Vector_nvals (&nvals, vgunk)) ;
+    ERR (GrB_Vector_dup (&u, vcrud)) ;
+    ERR (GrB_Vector_nvals (&nvals, vcrud)) ;
     CHECK (nvals == 7) ;
 
     OK (GrB_Vector_setElement_INT32  (v, 12, 0)) ;
@@ -986,19 +988,19 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_Vector_nvals (NULL, vgunk)) ;
-    ERR (GxB_Vector_type (NULL, vgunk)) ;
-    ERR (GxB_Vector_type (&T, vgunk)) ;
+    ERR (GrB_Vector_nvals (NULL, vcrud)) ;
+    ERR (GxB_Vector_type (NULL, vcrud)) ;
+    ERR (GxB_Vector_type (&T, vcrud)) ;
     CHECK (T == NULL) ;
 
     nvals = 42 ;
-    ERR (GrB_Vector_nvals (&nvals, vgunk)) ;
+    ERR (GrB_Vector_nvals (&nvals, vcrud)) ;
     CHECK (nvals == 42) ;
 
     OK (GrB_Vector_free_(&v)) ;
     CHECK (v == NULL) ;
 
-    // vgunk is allocated but not initialized
+    // vcrud is allocated but not initialized
 
     //--------------------------------------------------------------------------
     // Vector build
@@ -1022,22 +1024,22 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR1 (vgunk, GrB_Vector_build_BOOL   (vgunk, NULL, NULL, 0, NULL)) ;
-    ERR1 (vgunk, GrB_Vector_build_INT8   (vgunk, NULL, NULL, 0, NULL)) ;
-    ERR1 (vgunk, GrB_Vector_build_UINT8  (vgunk, NULL, NULL, 0, NULL)) ;
-    ERR1 (vgunk, GrB_Vector_build_INT16  (vgunk, NULL, NULL, 0, NULL)) ;
-    ERR1 (vgunk, GrB_Vector_build_UINT16 (vgunk, NULL, NULL, 0, NULL)) ;
-    ERR1 (vgunk, GrB_Vector_build_INT32  (vgunk, NULL, NULL, 0, NULL)) ;
-    ERR1 (vgunk, GrB_Vector_build_UINT32 (vgunk, NULL, NULL, 0, NULL)) ;
-    ERR1 (vgunk, GrB_Vector_build_INT64  (vgunk, NULL, NULL, 0, NULL)) ;
-    ERR1 (vgunk, GrB_Vector_build_UINT64 (vgunk, NULL, NULL, 0, NULL)) ;
-    ERR1 (vgunk, GrB_Vector_build_FP32   (vgunk, NULL, NULL, 0, NULL)) ;
-    ERR1 (vgunk, GrB_Vector_build_FP64   (vgunk, NULL, NULL, 0, NULL)) ;
-    ERR1 (vgunk, GrB_Vector_build_UDT    (vgunk, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_BOOL   (vcrud, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_INT8   (vcrud, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_UINT8  (vcrud, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_INT16  (vcrud, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_UINT16 (vcrud, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_INT32  (vcrud, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_UINT32 (vcrud, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_INT64  (vcrud, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_UINT64 (vcrud, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_FP32   (vcrud, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_FP64   (vcrud, NULL, NULL, 0, NULL)) ;
+    ERR1 (vcrud, GrB_Vector_build_UDT    (vcrud, NULL, NULL, 0, NULL)) ;
 
     expected = GrB_NULL_POINTER ;
 
-    OK  (GrB_Vector_new (&v, GrB_FP64, 10)) ;
+    OK (GrB_Vector_new (&v, GrB_FP64, 10)) ;
     ERR1 (v, GrB_Vector_build_FP64 (v, I, NULL, 0, NULL)) ;
     ERR1 (v, GrB_Vector_build_FP64_(v, I, X,    0, NULL)) ;
 
@@ -1049,12 +1051,24 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR1 (v, GrB_Vector_build_FP64_(v, I, X, 5, op2gunk)) ;
+    ERR1 (v, GrB_Vector_build_FP64_(v, I, X, 5, op2crud)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
 
     ERR1 (v, GrB_Vector_build_FP64_(v, I, X, 5, GrB_LE_FP64)) ;
-    ERR1 (v, GrB_Vector_build_UDT_(v, I, (void *) X, 5, GrB_PLUS_FP64)) ;
+
+    printf ("build udt:\n") ;
+    OK (GrB_Vector_free_(&v)) ;
+    GrB_Type user_type = NULL ;
+    OK (GrB_Type_new (&user_type, sizeof (user_int))) ;
+    OK (GrB_Vector_new (&v, user_type, 10)) ;
+    info = GrB_Vector_build_UDT (v, I, (void *) X, 5, GrB_PLUS_FP64) ;
+    GrB_Vector_error (&err, v) ;
+    printf ("info %d expected error: %s\n", info, err) ;
+    GxB_Vector_fprint (v, "v", G3, NULL) ;
+    OK (GrB_Vector_free_(&v)) ;
+
+    OK (GrB_Vector_new (&v, GrB_FP64, 10)) ;
 
     OK (GxB_BinaryOp_fprint (Complex_plus, "Complex-plus op", G3, f)) ;
     OK (GxB_Type_fprint (Complex, "Complex user type", G3, f)) ;
@@ -1139,18 +1153,18 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR1 (vgunk, GrB_Vector_setElement_BOOL   (vgunk, 0, 0)) ;
-    ERR1 (vgunk, GrB_Vector_setElement_INT8   (vgunk, 0, 0)) ;
-    ERR1 (vgunk, GrB_Vector_setElement_UINT8  (vgunk, 0, 0)) ;
-    ERR1 (vgunk, GrB_Vector_setElement_INT16  (vgunk, 0, 0)) ;
-    ERR1 (vgunk, GrB_Vector_setElement_UINT16 (vgunk, 0, 0)) ;
-    ERR1 (vgunk, GrB_Vector_setElement_INT32  (vgunk, 0, 0)) ;
-    ERR1 (vgunk, GrB_Vector_setElement_UINT32 (vgunk, 0, 0)) ;
-    ERR1 (vgunk, GrB_Vector_setElement_INT64  (vgunk, 0, 0)) ;
-    ERR1 (vgunk, GrB_Vector_setElement_UINT64 (vgunk, 0, 0)) ;
-    ERR1 (vgunk, GrB_Vector_setElement_FP32   (vgunk, 0, 0)) ;
-    ERR1 (vgunk, GrB_Vector_setElement_FP64   (vgunk, 0, 0)) ;
-    ERR1 (vgunk, GrB_Vector_setElement_UDT    (vgunk, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_BOOL   (vcrud, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_INT8   (vcrud, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_UINT8  (vcrud, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_INT16  (vcrud, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_UINT16 (vcrud, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_INT32  (vcrud, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_UINT32 (vcrud, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_INT64  (vcrud, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_UINT64 (vcrud, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_FP32   (vcrud, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_FP64   (vcrud, 0, 0)) ;
+    ERR1 (vcrud, GrB_Vector_setElement_UDT    (vcrud, 0, 0)) ;
 
     expected = GrB_INVALID_INDEX ;
 
@@ -1195,18 +1209,18 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_Vector_extractElement_BOOL   (NULL, vgunk, 0)) ;
-    ERR (GrB_Vector_extractElement_INT8   (NULL, vgunk, 0)) ;
-    ERR (GrB_Vector_extractElement_UINT8  (NULL, vgunk, 0)) ;
-    ERR (GrB_Vector_extractElement_INT16  (NULL, vgunk, 0)) ;
-    ERR (GrB_Vector_extractElement_UINT16 (NULL, vgunk, 0)) ;
-    ERR (GrB_Vector_extractElement_INT32  (NULL, vgunk, 0)) ;
-    ERR (GrB_Vector_extractElement_UINT32 (NULL, vgunk, 0)) ;
-    ERR (GrB_Vector_extractElement_INT64  (NULL, vgunk, 0)) ;
-    ERR (GrB_Vector_extractElement_UINT64 (NULL, vgunk, 0)) ;
-    ERR (GrB_Vector_extractElement_FP32   (NULL, vgunk, 0)) ;
-    ERR (GrB_Vector_extractElement_FP64   (NULL, vgunk, 0)) ;
-    ERR (GrB_Vector_extractElement_UDT    (NULL, vgunk, 0)) ;
+    ERR (GrB_Vector_extractElement_BOOL   (NULL, vcrud, 0)) ;
+    ERR (GrB_Vector_extractElement_INT8   (NULL, vcrud, 0)) ;
+    ERR (GrB_Vector_extractElement_UINT8  (NULL, vcrud, 0)) ;
+    ERR (GrB_Vector_extractElement_INT16  (NULL, vcrud, 0)) ;
+    ERR (GrB_Vector_extractElement_UINT16 (NULL, vcrud, 0)) ;
+    ERR (GrB_Vector_extractElement_INT32  (NULL, vcrud, 0)) ;
+    ERR (GrB_Vector_extractElement_UINT32 (NULL, vcrud, 0)) ;
+    ERR (GrB_Vector_extractElement_INT64  (NULL, vcrud, 0)) ;
+    ERR (GrB_Vector_extractElement_UINT64 (NULL, vcrud, 0)) ;
+    ERR (GrB_Vector_extractElement_FP32   (NULL, vcrud, 0)) ;
+    ERR (GrB_Vector_extractElement_FP64   (NULL, vcrud, 0)) ;
+    ERR (GrB_Vector_extractElement_UDT    (NULL, vcrud, 0)) ;
 
     expected = GrB_INVALID_INDEX ;
 
@@ -1277,18 +1291,18 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_Vector_extractTuples_BOOL   (NULL, NULL, &nvals, vgunk)) ;
-    ERR (GrB_Vector_extractTuples_INT8   (NULL, NULL, &nvals, vgunk)) ;
-    ERR (GrB_Vector_extractTuples_UINT8  (NULL, NULL, &nvals, vgunk)) ;
-    ERR (GrB_Vector_extractTuples_INT16  (NULL, NULL, &nvals, vgunk)) ;
-    ERR (GrB_Vector_extractTuples_UINT16 (NULL, NULL, &nvals, vgunk)) ;
-    ERR (GrB_Vector_extractTuples_INT32  (NULL, NULL, &nvals, vgunk)) ;
-    ERR (GrB_Vector_extractTuples_UINT32 (NULL, NULL, &nvals, vgunk)) ;
-    ERR (GrB_Vector_extractTuples_INT64  (NULL, NULL, &nvals, vgunk)) ;
-    ERR (GrB_Vector_extractTuples_UINT64 (NULL, NULL, &nvals, vgunk)) ;
-    ERR (GrB_Vector_extractTuples_FP32   (NULL, NULL, &nvals, vgunk)) ;
-    ERR (GrB_Vector_extractTuples_FP64   (NULL, NULL, &nvals, vgunk)) ;
-    ERR (GrB_Vector_extractTuples_UDT    (NULL, NULL, &nvals, vgunk)) ;
+    ERR (GrB_Vector_extractTuples_BOOL   (NULL, NULL, &nvals, vcrud)) ;
+    ERR (GrB_Vector_extractTuples_INT8   (NULL, NULL, &nvals, vcrud)) ;
+    ERR (GrB_Vector_extractTuples_UINT8  (NULL, NULL, &nvals, vcrud)) ;
+    ERR (GrB_Vector_extractTuples_INT16  (NULL, NULL, &nvals, vcrud)) ;
+    ERR (GrB_Vector_extractTuples_UINT16 (NULL, NULL, &nvals, vcrud)) ;
+    ERR (GrB_Vector_extractTuples_INT32  (NULL, NULL, &nvals, vcrud)) ;
+    ERR (GrB_Vector_extractTuples_UINT32 (NULL, NULL, &nvals, vcrud)) ;
+    ERR (GrB_Vector_extractTuples_INT64  (NULL, NULL, &nvals, vcrud)) ;
+    ERR (GrB_Vector_extractTuples_UINT64 (NULL, NULL, &nvals, vcrud)) ;
+    ERR (GrB_Vector_extractTuples_FP32   (NULL, NULL, &nvals, vcrud)) ;
+    ERR (GrB_Vector_extractTuples_FP64   (NULL, NULL, &nvals, vcrud)) ;
+    ERR (GrB_Vector_extractTuples_UDT    (NULL, NULL, &nvals, vcrud)) ;
 
     expected = GrB_INSUFFICIENT_SPACE ;
 
@@ -1339,9 +1353,9 @@ void mexFunction
     OK (GrB_Matrix_new (&Aempty, GrB_BOOL, 0, 0)) ;
     CHECK (Aempty != NULL) ;
 
-    OK (GrB_Matrix_new (&Agunk, GrB_BOOL, 1, 1)) ;
-    CHECK (Agunk != NULL) ;
-    Agunk->magic = 1024 ;
+    OK (GrB_Matrix_new (&Acrud, GrB_BOOL, 1, 1)) ;
+    CHECK (Acrud != NULL) ;
+    Acrud->magic = 1024 ;
 
     OK (GrB_Matrix_new (&A, GrB_UINT16, 32, 8)) ;
     CHECK (A != NULL) ;
@@ -1359,7 +1373,7 @@ void mexFunction
 
     ERR (GrB_Matrix_dup (NULL, NULL)) ;
     ERR (GrB_Matrix_dup (NULL, A)) ;
-    ERR (GrB_Matrix_dup (NULL, Agunk)) ;
+    ERR (GrB_Matrix_dup (NULL, Acrud)) ;
     ERR (GrB_Matrix_dup (NULL, Aempty)) ;
     ERR (GrB_Matrix_clear (NULL)) ;
 
@@ -1368,10 +1382,10 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_Matrix_nrows (&n, Agunk)) ;
-    ERR (GrB_Matrix_ncols (&n, Agunk)) ;
-    ERR (GrB_Matrix_nvals (&n, Agunk)) ;
-    ERR (GrB_Matrix_dup (&C, Agunk)) ;
+    ERR (GrB_Matrix_nrows (&n, Acrud)) ;
+    ERR (GrB_Matrix_ncols (&n, Acrud)) ;
+    ERR (GrB_Matrix_nvals (&n, Acrud)) ;
+    ERR (GrB_Matrix_dup (&C, Acrud)) ;
     CHECK (C == NULL) ;
 
     OK (GrB_Matrix_clear (A)) ;
@@ -1381,14 +1395,14 @@ void mexFunction
     n = 999 ;
     ERR (GrB_Matrix_nrows (NULL, NULL)) ;
     ERR (GrB_Matrix_nrows (NULL, A)) ;
-    ERR (GrB_Matrix_nrows (NULL, Agunk)) ;
+    ERR (GrB_Matrix_nrows (NULL, Acrud)) ;
     ERR (GrB_Matrix_nrows (NULL, Aempty)) ;
     ERR (GrB_Matrix_nrows (&n, NULL)) ;
     CHECK (n == 999) ;
 
     ERR (GrB_Matrix_ncols (NULL, NULL)) ;
     ERR (GrB_Matrix_ncols (NULL, A)) ;
-    ERR (GrB_Matrix_ncols (NULL, Agunk)) ;
+    ERR (GrB_Matrix_ncols (NULL, Acrud)) ;
     ERR (GrB_Matrix_ncols (NULL, Aempty)) ;
     ERR (GrB_Matrix_ncols (&n, NULL)) ;
     CHECK (n == 999) ;
@@ -1401,7 +1415,7 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_Matrix_dup (&C, Agunk)) ;
+    ERR (GrB_Matrix_dup (&C, Acrud)) ;
 
     OK (GrB_Matrix_setElement_INT32 (A, 21, 0, 2)) ;
     OK (GrB_Matrix_setElement_INT32 (A, 19, 3, 1)) ;
@@ -1436,19 +1450,19 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_Matrix_nvals (NULL, Agunk)) ;
-    ERR (GxB_Matrix_type (NULL, Agunk)) ;
-    ERR (GxB_Matrix_type (&T, Agunk)) ;
+    ERR (GrB_Matrix_nvals (NULL, Acrud)) ;
+    ERR (GxB_Matrix_type (NULL, Acrud)) ;
+    ERR (GxB_Matrix_type (&T, Acrud)) ;
     CHECK (T == NULL) ;
 
     nvals = 42 ;
-    ERR (GrB_Matrix_nvals (&nvals, Agunk)) ;
+    ERR (GrB_Matrix_nvals (&nvals, Acrud)) ;
     CHECK (nvals == 42) ;
 
     OK (GrB_Matrix_free_(&A)) ;
     CHECK (A == NULL) ;
 
-    // Agunk is allocated but not initialized
+    // Acrud is allocated but not initialized
 
     //--------------------------------------------------------------------------
     // Matrix build
@@ -1472,18 +1486,18 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR1 (Agunk, GrB_Matrix_build_BOOL   (Agunk, NULL, NULL, NULL, 0, NULL)) ;
-    ERR1 (Agunk, GrB_Matrix_build_INT8   (Agunk, NULL, NULL, NULL, 0, NULL)) ;
-    ERR1 (Agunk, GrB_Matrix_build_UINT8  (Agunk, NULL, NULL, NULL, 0, NULL)) ;
-    ERR1 (Agunk, GrB_Matrix_build_INT16  (Agunk, NULL, NULL, NULL, 0, NULL)) ;
-    ERR1 (Agunk, GrB_Matrix_build_UINT16 (Agunk, NULL, NULL, NULL, 0, NULL)) ;
-    ERR1 (Agunk, GrB_Matrix_build_INT32  (Agunk, NULL, NULL, NULL, 0, NULL)) ;
-    ERR1 (Agunk, GrB_Matrix_build_UINT32 (Agunk, NULL, NULL, NULL, 0, NULL)) ;
-    ERR1 (Agunk, GrB_Matrix_build_INT64  (Agunk, NULL, NULL, NULL, 0, NULL)) ;
-    ERR1 (Agunk, GrB_Matrix_build_UINT64 (Agunk, NULL, NULL, NULL, 0, NULL)) ;
-    ERR1 (Agunk, GrB_Matrix_build_FP32   (Agunk, NULL, NULL, NULL, 0, NULL)) ;
-    ERR1 (Agunk, GrB_Matrix_build_FP64   (Agunk, NULL, NULL, NULL, 0, NULL)) ;
-    ERR1 (Agunk, GrB_Matrix_build_UDT    (Agunk, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_BOOL   (Acrud, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_INT8   (Acrud, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_UINT8  (Acrud, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_INT16  (Acrud, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_UINT16 (Acrud, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_INT32  (Acrud, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_UINT32 (Acrud, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_INT64  (Acrud, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_UINT64 (Acrud, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_FP32   (Acrud, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_FP64   (Acrud, NULL, NULL, NULL, 0, NULL)) ;
+    ERR1 (Acrud, GrB_Matrix_build_UDT    (Acrud, NULL, NULL, NULL, 0, NULL)) ;
 
     expected = GrB_NULL_POINTER ;
 
@@ -1502,7 +1516,7 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR1 (A, GrB_Matrix_build_FP64_(A, I, J, X, 5, op2gunk)) ;
+    ERR1 (A, GrB_Matrix_build_FP64_(A, I, J, X, 5, op2crud)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
 
@@ -1510,14 +1524,21 @@ void mexFunction
     if (Complex == GxB_FC64)
     {
         OK (GrB_Matrix_build_FP64_(A, I, J, X, 5, Complex_plus)) ;
-        GrB_Matrix_free_(&A) ;
-        OK (GrB_Matrix_new (&A, GrB_FP64, 10, 5)) ;
     }
     else
     {
         ERR1 (A, GrB_Matrix_build_FP64_(A, I, J, X, 5, Complex_plus)) ;
     }
+
+    GrB_Matrix_free_(&A) ;
+    OK (GrB_Matrix_new (&A, user_type, 10, 10)) ;
     ERR1 (A, GrB_Matrix_build_UDT_(A, I, J, (void *) X, 5, GrB_PLUS_FP64)) ;
+    GrB_Matrix_error (&err, A) ;
+    printf ("info %d expected error: %s\n", info, err) ;
+    GrB_Type_free_(&user_type) ;
+
+    GrB_Matrix_free_(&A) ;
+    OK (GrB_Matrix_new (&A, GrB_FP64, 10, 5)) ;
 
     expected = GrB_OUTPUT_NOT_EMPTY ;
 
@@ -1575,18 +1596,18 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR1 (Agunk, GrB_Matrix_setElement_BOOL   (Agunk, 0, 0, 0)) ;
-    ERR1 (Agunk, GrB_Matrix_setElement_INT8   (Agunk, 0, 0, 0)) ;
-    ERR1 (Agunk, GrB_Matrix_setElement_UINT8  (Agunk, 0, 0, 0)) ;
-    ERR1 (Agunk, GrB_Matrix_setElement_INT16  (Agunk, 0, 0, 0)) ;
-    ERR1 (Agunk, GrB_Matrix_setElement_UINT16 (Agunk, 0, 0, 0)) ;
-    ERR1 (Agunk, GrB_Matrix_setElement_INT32  (Agunk, 0, 0, 0)) ;
-    ERR1 (Agunk, GrB_Matrix_setElement_UINT32 (Agunk, 0, 0, 0)) ;
-    ERR1 (Agunk, GrB_Matrix_setElement_INT64  (Agunk, 0, 0, 0)) ;
-    ERR1 (Agunk, GrB_Matrix_setElement_UINT64 (Agunk, 0, 0, 0)) ;
-    ERR1 (Agunk, GrB_Matrix_setElement_FP32   (Agunk, 0, 0, 0)) ;
-    ERR1 (Agunk, GrB_Matrix_setElement_FP64   (Agunk, 0, 0, 0)) ;
-    ERR1 (Agunk, GrB_Matrix_setElement_UDT    (Agunk, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_BOOL   (Acrud, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_INT8   (Acrud, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_UINT8  (Acrud, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_INT16  (Acrud, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_UINT16 (Acrud, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_INT32  (Acrud, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_UINT32 (Acrud, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_INT64  (Acrud, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_UINT64 (Acrud, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_FP32   (Acrud, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_FP64   (Acrud, 0, 0, 0)) ;
+    ERR1 (Acrud, GrB_Matrix_setElement_UDT    (Acrud, 0, 0, 0)) ;
 
     expected = GrB_INVALID_INDEX ;
 
@@ -1631,18 +1652,18 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_Matrix_extractElement_BOOL   (NULL, Agunk, 0, 0)) ;
-    ERR (GrB_Matrix_extractElement_INT8   (NULL, Agunk, 0, 0)) ;
-    ERR (GrB_Matrix_extractElement_UINT8  (NULL, Agunk, 0, 0)) ;
-    ERR (GrB_Matrix_extractElement_INT16  (NULL, Agunk, 0, 0)) ;
-    ERR (GrB_Matrix_extractElement_UINT16 (NULL, Agunk, 0, 0)) ;
-    ERR (GrB_Matrix_extractElement_INT32  (NULL, Agunk, 0, 0)) ;
-    ERR (GrB_Matrix_extractElement_UINT32 (NULL, Agunk, 0, 0)) ;
-    ERR (GrB_Matrix_extractElement_INT64  (NULL, Agunk, 0, 0)) ;
-    ERR (GrB_Matrix_extractElement_UINT64 (NULL, Agunk, 0, 0)) ;
-    ERR (GrB_Matrix_extractElement_FP32   (NULL, Agunk, 0, 0)) ;
-    ERR (GrB_Matrix_extractElement_FP64   (NULL, Agunk, 0, 0)) ;
-    ERR (GrB_Matrix_extractElement_UDT    (NULL, Agunk, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_BOOL   (NULL, Acrud, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_INT8   (NULL, Acrud, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_UINT8  (NULL, Acrud, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_INT16  (NULL, Acrud, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_UINT16 (NULL, Acrud, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_INT32  (NULL, Acrud, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_UINT32 (NULL, Acrud, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_INT64  (NULL, Acrud, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_UINT64 (NULL, Acrud, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_FP32   (NULL, Acrud, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_FP64   (NULL, Acrud, 0, 0)) ;
+    ERR (GrB_Matrix_extractElement_UDT    (NULL, Acrud, 0, 0)) ;
 
     expected = GrB_INVALID_INDEX ;
 
@@ -1712,18 +1733,18 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GrB_Matrix_extractTuples_BOOL   (NULL, NULL, NULL, &nvals, Agunk)) ;
-    ERR (GrB_Matrix_extractTuples_INT8   (NULL, NULL, NULL, &nvals, Agunk)) ;
-    ERR (GrB_Matrix_extractTuples_UINT8  (NULL, NULL, NULL, &nvals, Agunk)) ;
-    ERR (GrB_Matrix_extractTuples_INT16  (NULL, NULL, NULL, &nvals, Agunk)) ;
-    ERR (GrB_Matrix_extractTuples_UINT16 (NULL, NULL, NULL, &nvals, Agunk)) ;
-    ERR (GrB_Matrix_extractTuples_INT32  (NULL, NULL, NULL, &nvals, Agunk)) ;
-    ERR (GrB_Matrix_extractTuples_UINT32 (NULL, NULL, NULL, &nvals, Agunk)) ;
-    ERR (GrB_Matrix_extractTuples_INT64  (NULL, NULL, NULL, &nvals, Agunk)) ;
-    ERR (GrB_Matrix_extractTuples_UINT64 (NULL, NULL, NULL, &nvals, Agunk)) ;
-    ERR (GrB_Matrix_extractTuples_FP32   (NULL, NULL, NULL, &nvals, Agunk)) ;
-    ERR (GrB_Matrix_extractTuples_FP64   (NULL, NULL, NULL, &nvals, Agunk)) ;
-    ERR (GrB_Matrix_extractTuples_UDT    (NULL, NULL, NULL, &nvals, Agunk)) ;
+    ERR (GrB_Matrix_extractTuples_BOOL   (NULL, NULL, NULL, &nvals, Acrud)) ;
+    ERR (GrB_Matrix_extractTuples_INT8   (NULL, NULL, NULL, &nvals, Acrud)) ;
+    ERR (GrB_Matrix_extractTuples_UINT8  (NULL, NULL, NULL, &nvals, Acrud)) ;
+    ERR (GrB_Matrix_extractTuples_INT16  (NULL, NULL, NULL, &nvals, Acrud)) ;
+    ERR (GrB_Matrix_extractTuples_UINT16 (NULL, NULL, NULL, &nvals, Acrud)) ;
+    ERR (GrB_Matrix_extractTuples_INT32  (NULL, NULL, NULL, &nvals, Acrud)) ;
+    ERR (GrB_Matrix_extractTuples_UINT32 (NULL, NULL, NULL, &nvals, Acrud)) ;
+    ERR (GrB_Matrix_extractTuples_INT64  (NULL, NULL, NULL, &nvals, Acrud)) ;
+    ERR (GrB_Matrix_extractTuples_UINT64 (NULL, NULL, NULL, &nvals, Acrud)) ;
+    ERR (GrB_Matrix_extractTuples_FP32   (NULL, NULL, NULL, &nvals, Acrud)) ;
+    ERR (GrB_Matrix_extractTuples_FP64   (NULL, NULL, NULL, &nvals, Acrud)) ;
+    ERR (GrB_Matrix_extractTuples_UDT    (NULL, NULL, NULL, &nvals, Acrud)) ;
 
     expected = GrB_INSUFFICIENT_SPACE ;
 
@@ -1747,7 +1768,7 @@ void mexFunction
     CHECK (A == NULL) ;
 
     // The following are now allocated; keep them for the rest the tests:
-    // Agunk, Tgunk, op1gunk, op2gunk, monoid_gunk, semigunk, Aempty, vempty
+    // Acrud, Tcrud, op1crud, op2crud, monoid_crud, semicrud, Aempty, vempty
 
     //--------------------------------------------------------------------------
     // Descriptor
@@ -1758,9 +1779,9 @@ void mexFunction
 
     ERR (GrB_Descriptor_new (NULL)) ;
 
-    OK (GrB_Descriptor_new (&dgunk)) ;
-    CHECK (dgunk != NULL) ;
-    dgunk->magic = 22309483 ;
+    OK (GrB_Descriptor_new (&dcrud)) ;
+    CHECK (dcrud != NULL) ;
+    dcrud->magic = 22309483 ;
 
     GrB_Descriptor dnull = NULL ;
 
@@ -1772,11 +1793,11 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERRD (dgunk, GxB_Desc_set (dgunk, 0, 0)) ;
-    ERR (GxB_Desc_get (dgunk, 0, &dval)) ;
+    ERRD (dcrud, GxB_Desc_set (dcrud, 0, 0)) ;
+    ERR (GxB_Desc_get (dcrud, 0, &dval)) ;
 
-    ERRD (dgunk, GrB_Descriptor_set (dgunk, 0, 0)) ;
-    ERR (GxB_Descriptor_get (&dval, dgunk, 0)) ;
+    ERRD (dcrud, GrB_Descriptor_set (dcrud, 0, 0)) ;
+    ERR (GxB_Descriptor_get (&dval, dcrud, 0)) ;
 
     OK (GxB_Desc_get (dnull, 0, &dval)) ;
     CHECK (dval == GxB_DEFAULT) ;
@@ -1855,8 +1876,8 @@ void mexFunction
     CHECK (dval == GxB_DEFAULT) ;
 
     // The following are now allocated; keep them for the rest the tests:
-    // Agunk, Tgunk, op1gunk, op2gunk, monoid_gunk, semigunk, Aempty, vempty,
-    // desc, dgunk
+    // Acrud, Tcrud, op1crud, op2crud, monoid_crud, semicrud, Aempty, vempty,
+    // desc, dcrud
 
     #define FREE_DEEP_COPY ;
     #define GET_DEEP_COPY ;
@@ -1965,29 +1986,29 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR1 (Agunk, GrB_mxm (Agunk,  NULL , NULL   , NULL    , NULL , NULL , NULL )) ;
-    ERR1 (C, GrB_mxm (C    ,  Agunk, NULL   , NULL    , NULL , NULL , NULL )) ;
-    ERR1 (C, GrB_mxm (C    ,  C    , NULL   , NULL    , Agunk, NULL , NULL )) ;
-    ERR1 (C, GrB_mxm (C    ,  C    , NULL   , NULL    , A    , Agunk, NULL )) ;
-    ERR1 (C, GrB_mxm (C    ,  C    , NULL   , NULL    , A    , A    , dgunk)) ;
-    ERR1 (C, GrB_mxm (C    ,  C    , op2gunk, NULL    , A    , A    , NULL )) ;
-    ERR1 (C, GrB_mxm (C    ,  C    , o2     , semigunk, A    , A    , NULL )) ;
+    ERR1 (Acrud, GrB_mxm (Acrud,  NULL , NULL   , NULL    , NULL , NULL , NULL )) ;
+    ERR1 (C, GrB_mxm (C    ,  Acrud, NULL   , NULL    , NULL , NULL , NULL )) ;
+    ERR1 (C, GrB_mxm (C    ,  C    , NULL   , NULL    , Acrud, NULL , NULL )) ;
+    ERR1 (C, GrB_mxm (C    ,  C    , NULL   , NULL    , A    , Acrud, NULL )) ;
+    ERR1 (C, GrB_mxm (C    ,  C    , NULL   , NULL    , A    , A    , dcrud)) ;
+    ERR1 (C, GrB_mxm (C    ,  C    , op2crud, NULL    , A    , A    , NULL )) ;
+    ERR1 (C, GrB_mxm (C    ,  C    , o2     , semicrud, A    , A    , NULL )) ;
 
-    ERR1 (vgunk, GrB_vxm (vgunk,  NULL , NULL   , NULL    , NULL , NULL , NULL )) ;
-    ERR1 (v, GrB_vxm (v    ,  vgunk, NULL   , NULL    , NULL , NULL , NULL )) ;
-    ERR1 (v, GrB_vxm (v    ,  v    , NULL   , NULL    , vgunk, NULL , NULL )) ;
-    ERR1 (v, GrB_vxm (v    ,  v    , NULL   , NULL    , v    , Agunk, NULL )) ;
-    ERR1 (v, GrB_vxm (v    ,  v    , NULL   , NULL    , v    , A    , dgunk)) ;
-    ERR1 (v, GrB_vxm (v    ,  v    , op2gunk, NULL    , v    , A    , NULL )) ;
-    ERR1 (v, GrB_vxm (v    ,  v    , o2     , semigunk, v    , A    , NULL )) ;
+    ERR1 (vcrud, GrB_vxm (vcrud,  NULL , NULL   , NULL    , NULL , NULL , NULL )) ;
+    ERR1 (v, GrB_vxm (v    ,  vcrud, NULL   , NULL    , NULL , NULL , NULL )) ;
+    ERR1 (v, GrB_vxm (v    ,  v    , NULL   , NULL    , vcrud, NULL , NULL )) ;
+    ERR1 (v, GrB_vxm (v    ,  v    , NULL   , NULL    , v    , Acrud, NULL )) ;
+    ERR1 (v, GrB_vxm (v    ,  v    , NULL   , NULL    , v    , A    , dcrud)) ;
+    ERR1 (v, GrB_vxm (v    ,  v    , op2crud, NULL    , v    , A    , NULL )) ;
+    ERR1 (v, GrB_vxm (v    ,  v    , o2     , semicrud, v    , A    , NULL )) ;
 
-    ERR1 (vgunk, GrB_mxv (vgunk,  NULL , NULL   , NULL    , NULL , NULL , NULL )) ;
-    ERR1 (v, GrB_mxv (v    ,  vgunk, NULL   , NULL    , NULL , NULL , NULL )) ;
-    ERR1 (v, GrB_mxv (v    ,  v    , NULL   , NULL    , Agunk, NULL , NULL )) ;
-    ERR1 (v, GrB_mxv (v    ,  v    , NULL   , NULL    , A    , vgunk, NULL )) ;
-    ERR1 (v, GrB_mxv (v    ,  v    , NULL   , NULL    , A    , v    , dgunk)) ;
-    ERR1 (v, GrB_mxv (v    ,  v    , op2gunk, NULL    , A    , v    , NULL )) ;
-    ERR1 (v, GrB_mxv (v    ,  v    , o2     , semigunk, A    , v    , NULL )) ;
+    ERR1 (vcrud, GrB_mxv (vcrud,  NULL , NULL   , NULL    , NULL , NULL , NULL )) ;
+    ERR1 (v, GrB_mxv (v    ,  vcrud, NULL   , NULL    , NULL , NULL , NULL )) ;
+    ERR1 (v, GrB_mxv (v    ,  v    , NULL   , NULL    , Acrud, NULL , NULL )) ;
+    ERR1 (v, GrB_mxv (v    ,  v    , NULL   , NULL    , A    , vcrud, NULL )) ;
+    ERR1 (v, GrB_mxv (v    ,  v    , NULL   , NULL    , A    , v    , dcrud)) ;
+    ERR1 (v, GrB_mxv (v    ,  v    , op2crud, NULL    , A    , v    , NULL )) ;
+    ERR1 (v, GrB_mxv (v    ,  v    , o2     , semicrud, A    , v    , NULL )) ;
 
     expected = GrB_NULL_POINTER ;
 
@@ -2032,8 +2053,8 @@ void mexFunction
     OK (GrB_mxm (C, NULL, o2 , s2, A, B, NULL)) ;
 
     // The following are now allocated; keep them for the rest the tests:
-    // Agunk, Tgunk, op1gunk, op2gunk, monoid_gunk, semigunk, Aempty, vempty,
-    // desc, dgunk, A, B, C, E, F, Z, v, u
+    // Acrud, Tcrud, op1crud, op2crud, monoid_crud, semicrud, Aempty, vempty,
+    // desc, dcrud, A, B, C, E, F, Z, v, u
 
     //--------------------------------------------------------------------------
     // GrB_mxm dot product
@@ -2128,11 +2149,11 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    m0 = monoid_gunk ;
-    s0 = semigunk ;
-    v0 = vgunk ;
-    A0 = Agunk ;
-    op0 = op2gunk ;
+    m0 = monoid_crud ;
+    s0 = semicrud ;
+    v0 = vcrud ;
+    A0 = Acrud ;
+    op0 = op2crud ;
 
     ERR1 (v0, GrB_Vector_eWiseMult_Semiring_(v0, NULL, NULL, s0 , v0, v0, d0)) ;  // vector semiring
     ERR1 (v0, GrB_Vector_eWiseMult_Semiring_(v0, NULL, NULL, s2 , v0, v0, d0)) ;
@@ -2260,8 +2281,8 @@ void mexFunction
     ERR1 (C, GrB_Matrix_eWiseAdd_BinaryOp_(C , NULL, NULL, o2 , A , B , dtt)) ;
 
     // The following are now allocated; keep them for the rest the tests:
-    // Agunk, Tgunk, op1gunk, op2gunk, monoid_gunk, semigunk, Aempty, vempty,
-    // desc, dgunk, A, B, C, E, F, Z, v, u, dnt, dtn, dtt
+    // Acrud, Tcrud, op1crud, op2crud, monoid_crud, semicrud, Aempty, vempty,
+    // desc, dcrud, A, B, C, E, F, Z, v, u, dnt, dtn, dtt
 
     //--------------------------------------------------------------------------
     // GrB_kronecker
@@ -2287,11 +2308,11 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    m0 = monoid_gunk ;
-    s0 = semigunk ;
-    v0 = vgunk ;
-    A0 = Agunk ;
-    op0 = op2gunk ;
+    m0 = monoid_crud ;
+    s0 = semicrud ;
+    v0 = vcrud ;
+    A0 = Acrud ;
+    op0 = op2crud ;
 
     ERR1 (A0, GrB_Matrix_kronecker_BinaryOp_(A0, NULL, NULL, op0, A0, A0, d0)) ;  // matrix op
     ERR1 (A0, GrB_Matrix_kronecker_BinaryOp_(A0, NULL, NULL, o2 , A0, A0, d0)) ;
@@ -2345,10 +2366,10 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    v0 = vgunk ;
-    A0 = Agunk ;
-    d0 = dgunk ;
-    op0 = op2gunk ;
+    v0 = vcrud ;
+    A0 = Acrud ;
+    d0 = dcrud ;
+    op0 = op2crud ;
 
     ERR1 (v0, GrB_Vector_extract_(v0, NULL, NULL, v0, I0, 0,    d0)) ;     // vector extract
     ERR1 (v,  GrB_Vector_extract_(v , v0  , NULL, v0, I0, 0,    d0)) ;
@@ -2536,10 +2557,10 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    v0 = vgunk ;
-    A0 = Agunk ;
-    d0 = dgunk ;
-    op0 = op2gunk ;
+    v0 = vcrud ;
+    A0 = Acrud ;
+    d0 = dcrud ;
+    op0 = op2crud ;
 
     ERR1 (v0, GxB_Vector_subassign_(v0, NULL, NULL, v0, I, 0, d0)) ;        // vector assign
     ERR1 (v,  GxB_Vector_subassign_(v , v0  , NULL, v0, I, 0, d0)) ;
@@ -2936,10 +2957,10 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    v0 = vgunk ;
-    A0 = Agunk ;
-    d0 = dgunk ;
-    op0 = op2gunk ;
+    v0 = vcrud ;
+    A0 = Acrud ;
+    d0 = dcrud ;
+    op0 = op2crud ;
 
     ERR1 (v0, GrB_Vector_assign_(v0, NULL, NULL, v0, I, 0, d0)) ;          // vector assign
     ERR1 (v,  GrB_Vector_assign_(v , v0  , NULL, v0, I, 0, d0)) ;
@@ -3213,24 +3234,24 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    v0 = vgunk ;
-    A0 = Agunk ;
-    d0 = dgunk ;
-    op0 = op2gunk ;
+    v0 = vcrud ;
+    A0 = Acrud ;
+    d0 = dcrud ;
+    op0 = op2crud ;
 
-    ERR1 (v0, GrB_Vector_apply_(v0, NULL, NULL, op1gunk, v0, d0)) ;
-    ERR1 (v,  GrB_Vector_apply_(v , v0  , NULL, op1gunk, v0, d0)) ;
-    ERR1 (v,  GrB_Vector_apply_(v , v   , NULL, op1gunk, v0, d0)) ;
-    ERR1 (v,  GrB_Vector_apply_(v , v   , NULL, op1gunk, v , d0)) ;
-    ERR1 (v,  GrB_Vector_apply_(v , v   , op0 , op1gunk, v , NULL)) ;
-    ERR1 (v,  GrB_Vector_apply_(v , v   , NULL, op1gunk, v , NULL)) ;
+    ERR1 (v0, GrB_Vector_apply_(v0, NULL, NULL, op1crud, v0, d0)) ;
+    ERR1 (v,  GrB_Vector_apply_(v , v0  , NULL, op1crud, v0, d0)) ;
+    ERR1 (v,  GrB_Vector_apply_(v , v   , NULL, op1crud, v0, d0)) ;
+    ERR1 (v,  GrB_Vector_apply_(v , v   , NULL, op1crud, v , d0)) ;
+    ERR1 (v,  GrB_Vector_apply_(v , v   , op0 , op1crud, v , NULL)) ;
+    ERR1 (v,  GrB_Vector_apply_(v , v   , NULL, op1crud, v , NULL)) ;
 
-    ERR1 (A0, GrB_Matrix_apply_(A0, NULL, NULL, op1gunk, A0, d0)) ;
-    ERR1 (A,  GrB_Matrix_apply_(A , A0  , NULL, op1gunk, A0, d0)) ;
-    ERR1 (A,  GrB_Matrix_apply_(A , A   , NULL, op1gunk, A0, d0)) ;
-    ERR1 (A,  GrB_Matrix_apply_(A , A   , NULL, op1gunk, A , d0)) ;
-    ERR1 (A,  GrB_Matrix_apply_(A , A   , op0 , op1gunk, A , NULL)) ;
-    ERR1 (A,  GrB_Matrix_apply_(A , A   , NULL, op1gunk, A , NULL)) ;
+    ERR1 (A0, GrB_Matrix_apply_(A0, NULL, NULL, op1crud, A0, d0)) ;
+    ERR1 (A,  GrB_Matrix_apply_(A , A0  , NULL, op1crud, A0, d0)) ;
+    ERR1 (A,  GrB_Matrix_apply_(A , A   , NULL, op1crud, A0, d0)) ;
+    ERR1 (A,  GrB_Matrix_apply_(A , A   , NULL, op1crud, A , d0)) ;
+    ERR1 (A,  GrB_Matrix_apply_(A , A   , op0 , op1crud, A , NULL)) ;
+    ERR1 (A,  GrB_Matrix_apply_(A , A   , NULL, op1crud, A , NULL)) ;
 
     expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
 
@@ -3288,20 +3309,20 @@ void mexFunction
     ERR1 (A,  GxB_Matrix_select_(A , NULL, NULL, NULL, A0, NULL, d0)) ;
     ERR1 (A,  GxB_Matrix_select_(A , NULL, NULL, NULL, A , NULL, d0)) ;
 
-    CHECK (selectopgunk == NULL) ;
-    OK (GxB_SelectOp_new (&selectopgunk, fselect, GrB_FP64, GrB_FP64)) ;
-    CHECK (selectopgunk != NULL) ;
-    selectopgunk->magic = 22309483 ;
+    CHECK (selectopcrud == NULL) ;
+    OK (GxB_SelectOp_new (&selectopcrud, fselect, GrB_FP64, GrB_FP64)) ;
+    CHECK (selectopcrud != NULL) ;
+    selectopcrud->magic = 22309483 ;
     expected = GrB_UNINITIALIZED_OBJECT ;
-    ERR (GB_SelectOp_check (selectopgunk, "select gunk", G3, NULL)) ;
+    ERR (GB_SelectOp_check (selectopcrud, "select crud", G3, NULL)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    v0 = vgunk ;
-    A0 = Agunk ;
-    d0 = dgunk ;
-    op0 = op2gunk ;
-    sel0 = selectopgunk ;
+    v0 = vcrud ;
+    A0 = Acrud ;
+    d0 = dcrud ;
+    op0 = op2crud ;
+    sel0 = selectopcrud ;
 
     ERR1 (v0, GxB_Vector_select_(v0, NULL, NULL, sel0, v0, NULL, d0)) ;
     ERR1 (v,  GxB_Vector_select_(v , v0  , NULL, sel0, v0, NULL, d0)) ;
@@ -3470,10 +3491,10 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    m0 = monoid_gunk ;
-    v0 = vgunk ;
-    A0 = Agunk ;
-    op0 = op2gunk ;
+    m0 = monoid_crud ;
+    v0 = vcrud ;
+    A0 = Acrud ;
+    op0 = op2crud ;
 
     // matrix to scalar
 
@@ -3619,11 +3640,11 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    m0 = monoid_gunk ;
-    v0 = vgunk ;
-    A0 = Agunk ;
-    op0 = op2gunk ;
-    d0 = dgunk ;
+    m0 = monoid_crud ;
+    v0 = vcrud ;
+    A0 = Acrud ;
+    op0 = op2crud ;
+    d0 = dcrud ;
 
     ERR1 (v0, GrB_Matrix_reduce_BinaryOp_(v0, v0  , op0 , op0, A0, d0)) ;    // reduce via op
     ERR1 (v0, GrB_Matrix_reduce_BinaryOp_(v0, v0  , op0 , o2 , A0, d0)) ;
@@ -3675,11 +3696,11 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR1 (Agunk, GrB_transpose (Agunk, NULL , NULL   , NULL , NULL )) ;
-    ERR1 (A,  GrB_transpose (A    , Agunk, NULL   , NULL , NULL )) ;
-    ERR1 (A,  GrB_transpose (A    , A    , op2gunk, NULL , NULL )) ;
-    ERR1 (A,  GrB_transpose (A    , NULL , NULL   , Agunk, NULL )) ;
-    ERR1 (A,  GrB_transpose (A    , NULL , NULL   , A    , dgunk)) ;
+    ERR1 (Acrud, GrB_transpose (Acrud, NULL , NULL   , NULL , NULL )) ;
+    ERR1 (A,  GrB_transpose (A    , Acrud, NULL   , NULL , NULL )) ;
+    ERR1 (A,  GrB_transpose (A    , A    , op2crud, NULL , NULL )) ;
+    ERR1 (A,  GrB_transpose (A    , NULL , NULL   , Acrud, NULL )) ;
+    ERR1 (A,  GrB_transpose (A    , NULL , NULL   , A    , dcrud)) ;
 
     expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
 
@@ -3718,7 +3739,7 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GB_entry_check (Tgunk, X, 5, NULL)) ;
+    ERR (GB_entry_check (Tcrud, X, 5, NULL)) ;
     printf ("\nAll GB_entry_check tests passed (errors expected)\n") ;
 
     //--------------------------------------------------------------------------
@@ -3734,7 +3755,7 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
-    ERR (GB_Type_check (Tgunk, "Tgunk", G1, ff)) ;
+    ERR (GB_Type_check (Tcrud, "Tcrud", G1, ff)) ;
 
     CHECK (T == NULL) ;
     // test the function instead of the macro:
@@ -3903,7 +3924,7 @@ void mexFunction
     ERR (GB_SelectOp_check (selectop, "selectop invalid opcode", G1, ff)) ;
     selectop->opcode = GB_USER_SELECT_opcode ;
 
-    selectop->xtype = Tgunk ;
+    selectop->xtype = Tcrud ;
     ERR (GB_SelectOp_check (selectop, "selectop invalid xtype", G1, ff)) ;
     selectop->xtype = GrB_FP64 ;
 
@@ -4291,7 +4312,7 @@ void mexFunction
     AP = A->Pending ;
     CHECK (AP != NULL) ;
     CHECK (AP->op == NULL) ;
-    AP->op = op2gunk ;
+    AP->op = op2crud ;
     ERR (GB_Matrix_check (A, "invalid operator", G3, NULL)) ;
     AP->op = NULL ;
 
@@ -4606,81 +4627,81 @@ void mexFunction
     printf ("\nAll blocking/nonblocking mode tests passed\n") ;
 
     //--------------------------------------------------------------------------
-    // restore all 'gunk' objects so they can be freed
+    // restore all 'crud' objects so they can be freed
     //--------------------------------------------------------------------------
 
-    // printf ("\n-------------- Restore gunk objects:\n") ;
+    // printf ("\n-------------- Restore crud objects:\n") ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     Context->where = "GB *_check" ;
 
-    ERR (GB_Type_check (Tgunk, "", G0, NULL)) ;
-    ERR (GB_UnaryOp_check (op1gunk, "", G0, NULL)) ;
-    ERR (GB_BinaryOp_check (op2gunk, "", G0, NULL)) ;
-    ERR (GB_Monoid_check (monoid_gunk, "", G0, NULL)) ;
-    ERR (GB_Semiring_check (semigunk, "", G0, NULL)) ;
-    ERR (GB_Vector_check (vgunk, "", G0, NULL)) ;
-    ERR (GB_Matrix_check (Agunk, "", G0, NULL)) ;
-    ERR (GB_Descriptor_check (dgunk, "", G0, NULL)) ;
-    GB_SelectOp_check (selectopgunk, "", G3, NULL) ;
-    ERR (GB_SelectOp_check (selectopgunk, "", G0, NULL)) ;
+    ERR (GB_Type_check (Tcrud, "", G0, NULL)) ;
+    ERR (GB_UnaryOp_check (op1crud, "", G0, NULL)) ;
+    ERR (GB_BinaryOp_check (op2crud, "", G0, NULL)) ;
+    ERR (GB_Monoid_check (monoid_crud, "", G0, NULL)) ;
+    ERR (GB_Semiring_check (semicrud, "", G0, NULL)) ;
+    ERR (GB_Vector_check (vcrud, "", G0, NULL)) ;
+    ERR (GB_Matrix_check (Acrud, "", G0, NULL)) ;
+    ERR (GB_Descriptor_check (dcrud, "", G0, NULL)) ;
+         GB_SelectOp_check (selectopcrud, "", G3, NULL) ;
+    ERR (GB_SelectOp_check (selectopcrud, "", G0, NULL)) ;
 
-    ERR (GxB_Type_fprint (Tgunk, "crud", G0, ff)) ;
-    ERR (GxB_UnaryOp_fprint (op1gunk, "crud", G0, ff)) ;
-    ERR (GxB_BinaryOp_fprint (op2gunk, "crud", G0, ff)) ;
-    ERR (GxB_Monoid_fprint (monoid_gunk, "crud", G0, ff)) ;
-    ERR (GxB_Semiring_fprint (semigunk, "crud", G0, ff)) ;
-    ERR (GxB_Vector_fprint (vgunk, "crud", G0, ff)) ;
-    ERR (GxB_Matrix_fprint (Agunk, "crud", G0, ff)) ;
-    ERR (GxB_Descriptor_fprint (dgunk, "crud", G0, ff)) ;
-    GxB_SelectOp_fprint (selectopgunk, "crud", G3, ff) ;
-    ERR (GxB_SelectOp_fprint (selectopgunk, "crud", G0, ff)) ;
+    ERR (GxB_Type_fprint (Tcrud, "crud", G0, ff)) ;
+    ERR (GxB_UnaryOp_fprint (op1crud, "crud", G0, ff)) ;
+    ERR (GxB_BinaryOp_fprint (op2crud, "crud", G0, ff)) ;
+    ERR (GxB_Monoid_fprint (monoid_crud, "crud", G0, ff)) ;
+    ERR (GxB_Semiring_fprint (semicrud, "crud", G0, ff)) ;
+    ERR (GxB_Vector_fprint (vcrud, "crud", G0, ff)) ;
+    ERR (GxB_Matrix_fprint (Acrud, "crud", G0, ff)) ;
+    ERR (GxB_Descriptor_fprint (dcrud, "crud", G0, ff)) ;
+         GxB_SelectOp_fprint (selectopcrud, "crud", G3, ff) ;
+    ERR (GxB_SelectOp_fprint (selectopcrud, "crud", G0, ff)) ;
 
     #define REMAGIC(p) if (p != NULL) p->magic = GB_MAGIC ;
-    REMAGIC (Tgunk)
-    REMAGIC (op1gunk)
-    REMAGIC (op2gunk)
-    REMAGIC (monoid_gunk)
-    REMAGIC (semigunk)
-    REMAGIC (vgunk)
-    REMAGIC (Agunk)
-    REMAGIC (dgunk)
-    REMAGIC (selectopgunk)
+    REMAGIC (Tcrud)
+    REMAGIC (op1crud)
+    REMAGIC (op2crud)
+    REMAGIC (monoid_crud)
+    REMAGIC (semicrud)
+    REMAGIC (vcrud)
+    REMAGIC (Acrud)
+    REMAGIC (dcrud)
+    REMAGIC (selectopcrud)
     #undef REMAGIC
 
-    OK (GB_Type_check (Tgunk, "", G0, NULL)) ;
-    OK (GB_UnaryOp_check (op1gunk, "", G0, NULL)) ;
-    OK (GB_BinaryOp_check (op2gunk, "", G0, NULL)) ;
-    OK (GB_Monoid_check (monoid_gunk, "", G0, NULL)) ;
-    OK (GB_Semiring_check (semigunk, "", G0, NULL)) ;
-    OK (GB_Vector_check (vgunk, "", G0, NULL)) ;
-    OK (GB_Matrix_check (Agunk, "", G0, NULL)) ;
-    OK (GB_Descriptor_check (dgunk, "", G0, NULL)) ;
-    OK (GB_SelectOp_check (selectopgunk, "", G0, NULL)) ;
+    OK (GB_Type_check (Tcrud, "", G0, NULL)) ;
+    OK (GB_UnaryOp_check (op1crud, "", G0, NULL)) ;
+    OK (GB_BinaryOp_check (op2crud, "", G0, NULL)) ;
+    OK (GB_Monoid_check (monoid_crud, "", G0, NULL)) ;
+    OK (GB_Semiring_check (semicrud, "", G0, NULL)) ;
+    OK (GB_Vector_check (vcrud, "", G0, NULL)) ;
+    OK (GB_Matrix_check (Acrud, "", G0, NULL)) ;
+    OK (GB_Descriptor_check (dcrud, "", G0, NULL)) ;
+    OK (GB_SelectOp_check (selectopcrud, "", G0, NULL)) ;
 
-    OK (GxB_Type_fprint_(Tgunk, G0, ff)) ;
-    OK (GxB_UnaryOp_fprint_(op1gunk, G0, ff)) ;
-    OK (GxB_BinaryOp_fprint_(op2gunk, G0, ff)) ;
-    OK (GxB_Monoid_fprint_(monoid_gunk, G0, ff)) ;
-    OK (GxB_Semiring_fprint_(semigunk, G0, ff)) ;
-    OK (GxB_Vector_fprint_(vgunk, G0, ff)) ;
-    OK (GxB_Matrix_fprint_(Agunk, G0, ff)) ;
-    OK (GxB_Descriptor_fprint_(dgunk, G0, ff)) ;
-    OK (GxB_SelectOp_fprint_(selectopgunk, G0, ff)) ;
+    OK (GxB_Type_fprint_(Tcrud, G0, ff)) ;
+    OK (GxB_UnaryOp_fprint_(op1crud, G0, ff)) ;
+    OK (GxB_BinaryOp_fprint_(op2crud, G0, ff)) ;
+    OK (GxB_Monoid_fprint_(monoid_crud, G0, ff)) ;
+    OK (GxB_Semiring_fprint_(semicrud, G0, ff)) ;
+    OK (GxB_Vector_fprint_(vcrud, G0, ff)) ;
+    OK (GxB_Matrix_fprint_(Acrud, G0, ff)) ;
+    OK (GxB_Descriptor_fprint_(dcrud, G0, ff)) ;
+    OK (GxB_SelectOp_fprint_(selectopcrud, G0, ff)) ;
 
     //--------------------------------------------------------------------------
     // GB_Descriptor_get
     //--------------------------------------------------------------------------
 
     expected = GrB_INVALID_OBJECT ;
-    dgunk->out = 999 ;
+    dcrud->out = 999 ;
     x_bool = false ;
     Context->where = "GB_Descriptor_get" ;
-    ERR (GB_Descriptor_get (dgunk, &x_bool, NULL, NULL, NULL, NULL, NULL, NULL,
+    ERR (GB_Descriptor_get (dcrud, &x_bool, NULL, NULL, NULL, NULL, NULL, NULL,
         Context)) ; 
     CHECK (x_bool == false) ;
-    dgunk->out = GxB_DEFAULT ;
+    dcrud->out = GxB_DEFAULT ;
 
     //--------------------------------------------------------------------------
     // Wathen
@@ -4772,15 +4793,21 @@ void mexFunction
     // internal GB * routines
     //--------------------------------------------------------------------------
 
+#if 0
+    OK (GxB_Matrix_fprint (A, "A for bix_alloc", G3, NULL)) ;
     CHECK (A != NULL) ;
     Context->where = "GB_bix_alloc" ;
     info = GB_bix_alloc (A, GxB_INDEX_MAX+1, GxB_SPARSE, true, true, false,
         Context) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
+    OK (GrB_Matrix_free_(&A)) ;
+    OK (GrB_Matrix_new (&A, GrB_BOOL, 11, 11)) ;
+#endif
 
     Context->where = "GB_ix_realloc" ;
 
     CHECK (A != NULL) ;
+    OK (GxB_Matrix_fprint (A, "A for ix_realloc", G3, NULL)) ;
     info = GB_ix_realloc (A, GxB_INDEX_MAX+1, Context) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
 
@@ -5671,10 +5698,10 @@ void mexFunction
     GrB_Matrix_free_(&Z) ;            CHECK (Z            == NULL) ;
     GrB_Matrix_free_(&H) ;            CHECK (H            == NULL) ;
     GrB_Type_free_(&T) ;              CHECK (T            == NULL) ;
-    GrB_Matrix_free_(&Agunk) ;        CHECK (Agunk        == NULL) ;
-    GrB_Type_free_(&Tgunk) ;          CHECK (Tgunk        == NULL) ;
-    GrB_UnaryOp_free_(&op1gunk) ;     CHECK (op1gunk      == NULL) ;
-    GrB_BinaryOp_free_(&op2gunk) ;    CHECK (op2gunk      == NULL) ;
+    GrB_Matrix_free_(&Acrud) ;        CHECK (Acrud        == NULL) ;
+    GrB_Type_free_(&Tcrud) ;          CHECK (Tcrud        == NULL) ;
+    GrB_UnaryOp_free_(&op1crud) ;     CHECK (op1crud      == NULL) ;
+    GrB_BinaryOp_free_(&op2crud) ;    CHECK (op2crud      == NULL) ;
     GrB_BinaryOp_free_(&op3) ;        CHECK (op3          == NULL) ;
     GrB_UnaryOp_free_(&op1b) ;        CHECK (op1b         == NULL) ;
     GrB_BinaryOp_free_(&op2b) ;       CHECK (op2b         == NULL) ;
@@ -5682,18 +5709,18 @@ void mexFunction
     GrB_Descriptor_free_(&descb) ;    CHECK (descb        == NULL) ;
     GrB_Vector_free_(&vb) ;           CHECK (vb           == NULL) ;
     GrB_Monoid_free_(&monoidb) ;      CHECK (monoidb      == NULL) ;
-    GrB_Monoid_free_(&monoid_gunk) ;  CHECK (monoid_gunk  == NULL) ;
-    GrB_Semiring_free_(&semigunk) ;   CHECK (semigunk     == NULL) ;
-    GrB_Vector_free_(&vgunk) ;        CHECK (vgunk        == NULL) ;
+    GrB_Monoid_free_(&monoid_crud) ;  CHECK (monoid_crud  == NULL) ;
+    GrB_Semiring_free_(&semicrud) ;   CHECK (semicrud     == NULL) ;
+    GrB_Vector_free_(&vcrud) ;        CHECK (vcrud        == NULL) ;
     GrB_Matrix_free_(&Aempty) ;       CHECK (Aempty       == NULL) ;
     GrB_Vector_free_(&vempty) ;       CHECK (vempty       == NULL) ;
     GrB_Descriptor_free_(&desc) ;     CHECK (desc         == NULL) ;
     GrB_Descriptor_free_(&dtn) ;      CHECK (dtn          == NULL) ;
     GrB_Descriptor_free_(&dnt) ;      CHECK (dnt          == NULL) ;
     GrB_Descriptor_free_(&dtt) ;      CHECK (dtt          == NULL) ;
-    GrB_Descriptor_free_(&dgunk) ;    CHECK (dgunk        == NULL) ;
+    GrB_Descriptor_free_(&dcrud) ;    CHECK (dcrud        == NULL) ;
     GxB_SelectOp_free_(&selectop) ;   CHECK (selectop     == NULL) ;
-    GxB_SelectOp_free_(&selectopgunk) ; CHECK (selectopgunk == NULL) ;
+    GxB_SelectOp_free_(&selectopcrud) ; CHECK (selectopcrud == NULL) ;
 
     nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d before complex_finalize\n", nmalloc) ;

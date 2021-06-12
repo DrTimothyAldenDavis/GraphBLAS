@@ -1263,8 +1263,8 @@ GrB_Info GB_assign_prep
     }
     else if (C->iso && C_iso_out)
     {
-        // the iso status of C is unchanged
-        ASSERT (memcmp (cout, C->x, csize) == 0) ;
+        // the iso status of C is unchanged; set its new iso value
+        memcpy (C->x, cout, csize) ;
     }
     ASSERT_MATRIX_OK (C, "C output from GB_assign_prep", GB0) ;
 

@@ -86,10 +86,8 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 if (A->is_csc != new_csc)
                 { 
                     // A = A', done in-place, and change to the new format.
-                    // transpose: no typecast, no op, in-place of A
                     GB_BURBLE_N (GB_nnz (A), "(transpose) ") ;
-                    GB_OK (GB_transpose (A, NULL, new_csc, A, // A=A' in place
-                        NULL, NULL, NULL, false, Context)) ;
+                    GB_OK (GB_transpose_in_place (A, new_csc, Context)) ;
                     ASSERT (A->is_csc == new_csc) ;
                     ASSERT (GB_JUMBLED_OK (A)) ;
                 }

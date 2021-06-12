@@ -21,7 +21,7 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_build_, T) /* build a matrix from tuples */\
 )                                                                             \
 {                                                                             \
     GB_WHERE (C, "GrB_Matrix_build_" GB_STR(T) " (C, I, J, X, nvals, dup)") ; \
-    GB_BURBLE_START ("GrB_Matrix_build") ;                                    \
+    GB_BURBLE_START ("GrB_Matrix_build_" GB_STR(T)) ;                         \
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;  /* check now so C->type can be done */ \
     GB_RETURN_IF_NULL_OR_FAULTY (dup) ;                                       \
     GrB_Info info = GB_build (C, I, J, X, nvals, dup, xtype,                  \

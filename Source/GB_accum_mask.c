@@ -197,8 +197,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // cannot have any zombies or pending tuples.
         // T can be jumbled.
         ASSERT (GB_JUMBLED_OK (T)) ;
-        GB_OK (GB_transpose (T, NULL, C->is_csc, T,    // T static = T' in place
-            NULL, NULL, NULL, false, Context)) ;
+        GB_OK (GB_transpose_in_place (T, C->is_csc, Context)) ;
         #if GB_BURBLE
         T_transposed = true ;
         #endif

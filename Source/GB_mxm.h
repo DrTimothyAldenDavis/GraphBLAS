@@ -208,7 +208,7 @@ static inline bool GB_AxB_dot4_control
 )
 {
     return (C_in != NULL && 
-        !C_in->iso              // TODO::: allow C_in to be iso
+        !C_in->iso              // FIXME::: allow C_in to be iso
         && M == NULL && !Mask_comp && !GB_IS_BITMAP (C_in)) ;
 }
 

@@ -7,6 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// The input matrix A need not be entirely valid.  GB_transpose can be
+// transposing the matrix in place, which case the contents of A have already
+// been transplanted into T, and only A->x remains.
+
+
 #include "GB.h"
 
 void GB_iso_unop            // Cx [0] = op1 (A), op2 (s,A) or op2 (A,s)
@@ -27,7 +32,7 @@ void GB_iso_unop            // Cx [0] = op1 (A), op2 (s,A) or op2 (A,s)
     // get inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "A for GB_iso_unop", GB0) ;
+    ASSERT (A != NULL && A->type != NULL) ;
     ASSERT_TYPE_OK (ctype, "ctype for GB_iso_unop", GB0) ;
     ASSERT (Cx != NULL) ;
 
@@ -71,6 +76,9 @@ void GB_iso_unop            // Cx [0] = op1 (A), op2 (s,A) or op2 (A,s)
         // Cx [0] depends on the iso value of A
         //----------------------------------------------------------------------
 
+        ASSERT (A->x != NULL && A->x_size >= asize) ;
+        ASSERT (A->iso) ;
+
         if (C_code_iso == GB_ISO_A)
         { 
 
@@ -109,6 +117,7 @@ void GB_iso_unop            // Cx [0] = op1 (A), op2 (s,A) or op2 (A,s)
             //------------------------------------------------------------------
 
             ASSERT_BINARYOP_OK (op2, "op2 for GB_iso_unop", GB0) ;
+            ASSERT_SCALAR_OK (scalar, "scalar for GB_iso_unop, for op2", GB0) ;
             GB_Type_code xcode = op2->xtype->code ;
             GB_Type_code ycode = op2->ytype->code ;
             size_t xsize = op2->xtype->size ;
