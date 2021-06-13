@@ -91,7 +91,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
         C->magic = GB_MAGIC ;
     }
     else if (!GB_IS_FULL (C))
-    {
+    { 
         // ensure C is full
         GB_convert_any_to_full (C) ;
     }

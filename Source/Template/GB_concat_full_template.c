@@ -22,7 +22,7 @@
     int64_t pA ;
     #pragma omp parallel for num_threads(A_nthreads) schedule(static)
     for (pA = 0 ; pA < anz ; pA++)
-    {
+    { 
         int64_t i = pA % avlen ;
         int64_t j = pA / avlen ;
         int64_t iC = cistart + i ;

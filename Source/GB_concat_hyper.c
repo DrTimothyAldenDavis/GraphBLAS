@@ -30,7 +30,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     const int64_t *restrict Tile_cols,  // size n+1
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // allocate triplet workspace to construct C as hypersparse
@@ -61,7 +61,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     Wi = GB_MALLOC (cnz, int64_t, &Wi_size) ;               // becomes C->i
     Wj = GB_MALLOC_WERK (cnz, int64_t, &Wj_size) ;          // freed below
     if (!C_iso)
-    {
+    { 
         Wx = GB_MALLOC_WERK (cnz * csize, GB_void, &Wx_size) ;  // freed below
     }
     if (Wi == NULL || Wj == NULL || (!C_iso && Wx == NULL))

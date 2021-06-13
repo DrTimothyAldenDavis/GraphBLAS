@@ -62,7 +62,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     //--------------------------------------------------------------------------
 
     if (C->iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // compute the iso value and transpose the pattern
@@ -77,7 +77,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // transpose the values and pattern

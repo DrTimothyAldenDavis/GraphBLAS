@@ -50,7 +50,7 @@ void gb_usage       // check usage and make sure GrB.init has been called
         OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
 
         // print 1-based indices
-        GB_Global_print_one_based_set (true) ;      // TODO:: add to GxB_set/get
+        OK (GxB_Global_Option_set (GxB_PRINT_1BASED, true)) ;
 
         // for debug only
         GB_Global_abort_function_set (gb_abort) ;   // TODO:: add as GxB_set/get

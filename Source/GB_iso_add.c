@@ -94,7 +94,7 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
     //--------------------------------------------------------------------------
 
     if (op == NULL)
-    {
+    { 
 
         // For GB_wait, the pattern of A and B are known to be disjoint, so no
         // operator is used, and op is NULL.  No typecasting is done.
@@ -138,7 +138,7 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
         GB_cast_scalar (c, ccode, z, zcode, zsize) ;
 
         if (memcmp (c, a, csize) != 0)
-        {
+        { 
             // the iso values of C and A differ
             return (false) ;
         }

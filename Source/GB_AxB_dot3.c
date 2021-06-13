@@ -240,7 +240,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso; compute the pattern of C<M>=A'*B with the any_pair semiring

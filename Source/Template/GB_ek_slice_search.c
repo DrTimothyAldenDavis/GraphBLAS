@@ -37,11 +37,11 @@ static inline void GB_ek_slice_search
     // vector that owns the entry Ai [pfirst] and Ax [pfirst].
     int64_t kfirst ;
     if (taskid == 0)
-    {
+    { 
         kfirst = 0 ;
     }
     else
-    {
+    { 
         kfirst = GB_search_for_vector (pfirst, Ap, 0, anvec, avlen) ;
     }
 
@@ -49,16 +49,16 @@ static inline void GB_ek_slice_search
     // vector that owns the entry Ai [plast] and Ax [plast].
     int64_t klast ;
     if (taskid == ntasks-1)
-    {
+    { 
         klast = anvec - 1 ;
     }
     else if (pfirst > plast)
-    {
+    { 
         // this task does no work
         klast = kfirst ;
     }
     else
-    {
+    { 
         klast = GB_search_for_vector (plast, Ap, kfirst, anvec, avlen) ;
     }
     kfirst_slice [taskid] = kfirst ;

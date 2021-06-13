@@ -72,10 +72,10 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     GB_void cscalar [GB_VLA(zsize)] ;
     bool C_iso = GB_iso_AxB (cscalar, A, B, A->vdim, semiring, flipxy, false) ;
     if (C_iso)
-    { 
+    {
         // revise the method if A and B are both iso and full
         if (A->iso && GB_as_if_full (A) && B->iso && GB_as_if_full (B))
-        {
+        { 
             saxpy_method = GB_SAXPY_METHOD_ISO_FULL ;
             C_sparsity = GxB_FULL ;
         }
@@ -86,14 +86,14 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     //--------------------------------------------------------------------------
 
     if (M == NULL)
-    {
+    { 
         GBURBLE ("(%s=%s*%s) ",
             GB_sparsity_char (C_sparsity),
             GB_sparsity_char_matrix (A),
             GB_sparsity_char_matrix (B)) ;
     }
     else
-    {
+    { 
         GBURBLE ("(%s%s%s%s%s=%s*%s) ",
             GB_sparsity_char (C_sparsity),
             Mask_struct ? "{" : "<",
@@ -122,7 +122,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             ztype, A->vlen, B->vdim, GB_Ap_null, true, GxB_FULL, false,
             GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Context) ;
         if (info == GrB_SUCCESS)
-        {
+        { 
             C->magic = GB_MAGIC ;
             memcpy (C->x, cscalar, zsize) ;
         }
@@ -163,7 +163,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // bitmap method: C is bitmap or full

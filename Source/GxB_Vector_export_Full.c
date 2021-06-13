@@ -23,7 +23,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
 
     const GrB_Descriptor desc
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -157,7 +157,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
         }
         else if (A->iso)
-        {
+        { 
 
             //------------------------------------------------------------------
             // reduce an iso matrix to scalar

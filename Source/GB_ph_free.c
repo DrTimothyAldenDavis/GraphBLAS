@@ -44,7 +44,7 @@ void GB_ph_free                 // free A->p and A->h of a matrix
 
     // free A->h unless it is shallow
     if (!A->h_shallow)
-    {
+    { 
         GB_FREE (&(A->h), A->h_size) ;
     }
     A->h = NULL ;

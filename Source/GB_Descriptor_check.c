@@ -161,7 +161,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     }
 
     if (D->do_sort)
-    {
+    { 
         GBPR0 ("    d.sort     = true\n") ;
     }
 

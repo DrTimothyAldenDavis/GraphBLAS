@@ -27,7 +27,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const GrB_Matrix A,             // input matrix
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -71,7 +71,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     int64_t *restrict Wp = NULL ;
     Wp = GB_MALLOC_WERK (anvec, int64_t, &Wp_size) ;
     if (Wp == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
@@ -99,7 +99,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
         int64_t akstart = akend ;
 
         if (A_is_hyper)
-        {
+        { 
             // A is hypersparse: look for vector avend in the A->h hyper list.
             // The vectors to handle for this outer loop are in
             // Ah [akstart:akend-1].
@@ -110,7 +110,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             ASSERT (GB_IMPLIES (akstart <= akend-1, Ah [akend-1] < avend)) ;
         }
         else
-        {
+        { 
             // A is sparse; the vectors to handle are akstart:akend-1
             akend = avend ;
         }
@@ -157,11 +157,11 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 int64_t pA_end = Ap [k+1] ;
                 int64_t aknz = pA_end - pA ;
                 if (aknz == 0 || Ai [pA] >= aiend)
-                {
+                { 
                     // this vector of C is empty
                 }
                 else if (aknz > 256)
-                {
+                { 
                     // use binary search to find aiend
                     bool found ;
                     int64_t pright = pA_end - 1 ;
@@ -194,7 +194,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 }
                 Cp [k-akstart] = (pA - Wp [k]) ; // # of entries in this vector
                 if (A_is_hyper)
-                {
+                { 
                     Ch [k-akstart] = Ah [k] - avstart ;
                 }
             }
@@ -222,7 +222,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             bool done = false ;
 
             if (A_iso)
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // split an iso matrix A into an iso tile C
@@ -310,7 +310,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 int64_t k ;
                 #pragma omp parallel for num_threads(nth) schedule(static)
                 for (k = akstart ; k < akend ; k++)
-                {
+                { 
                     int64_t ck = k - akstart ;
                     int64_t cknz = Cp [ck+1] - Cp [ck] ;
                     Wp [k] += cknz ;
@@ -325,11 +325,11 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             GB_OK (GB_hypermatrix_prune (C, Context)) ;
             GB_OK (GB_conform (C, Context)) ;
             if (csc)
-            {
+            { 
                 GB_TILE (Tiles, inner, outer) = C ;
             }
             else
-            {
+            { 
                 GB_TILE (Tiles, outer, inner) = C ;
             }
             ASSERT_MATRIX_OK (C, "final tile C for GB_split", GB0) ;

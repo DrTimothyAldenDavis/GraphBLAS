@@ -16,7 +16,7 @@ void GB_iso_reduce_to_scalar        // s = reduce (A) where A is iso
     GrB_Matrix A,           // matrix to reduce
     GB_Context Context
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

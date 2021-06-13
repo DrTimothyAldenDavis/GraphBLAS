@@ -69,7 +69,7 @@
 
             GB_PRAGMA_SIMD
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-            {
+            { 
                 int64_t i = GBI (Ai, pA, avlen) ;       // i = Ai [pA]
                 int64_t pC = pC_start + pA - p0 ;
                 Ci [pC] = cistart + i ;

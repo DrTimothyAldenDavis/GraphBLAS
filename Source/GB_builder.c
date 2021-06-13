@@ -567,12 +567,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
             //------------------------------------------------------------------
 
             if (S_iso)
-            {
+            { 
                 // K_work is NULL; only sort (j,i)
                 info = GB_msort_2 (J_work, I_work, nvals, nthreads) ;
             }
             else
-            {
+            { 
                 info = GB_msort_3 (J_work, I_work, K_work, nvals, nthreads) ;
             }
 
@@ -601,12 +601,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
             //------------------------------------------------------------------
 
             if (S_iso)
-            {
+            { 
                 // K_work is NULL; only sort (i)
                 info = GB_msort_1 (I_work, nvals, nthreads) ;
             }
             else
-            {
+            { 
                 info = GB_msort_2 (I_work, K_work, nvals, nthreads) ;
             }
 
@@ -1212,7 +1212,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             bool done = false ;
 
             if (S_iso)
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // T and Sx are iso; set iso value and delete duplicates
@@ -1225,7 +1225,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             }
             else
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // T and Sx are not iso; call in the workers
@@ -1268,10 +1268,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (!done)
             {
-                if (do_burble)
-                {
-                    GBURBLE ("(generic build) ") ;
-                }
+                if (do_burble) GBURBLE ("(generic build) ") ;
 
                 //--------------------------------------------------------------
                 // no typecasting, but use the fdup function pointer and memcpy

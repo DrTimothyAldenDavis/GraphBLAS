@@ -24,7 +24,7 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
 
     const GrB_Descriptor desc
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor

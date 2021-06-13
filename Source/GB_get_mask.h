@@ -31,13 +31,13 @@ static inline GrB_Matrix GB_get_mask    // return M_in or NULL
         // check the value of the mask; if M->x [0] is zero, then all entries
         // of M are zero.
         if (GB_is_nonzero ((GB_void *) M_in->x, M_in->type->size))
-        {
+        { 
             // M->x [0] is nonzero, so M is a structural mask.
             GBURBLE ("(iso mask: struct) ") ;
             return (M_in) ;
         }
         else
-        {
+        { 
             // M->x [0] is zero, so all entries present in the iso matrix M
             // have the value zero.  This is the same as a matrix M with no
             // entries at all.  If Mask_comp is true, this is the same as no
@@ -50,7 +50,7 @@ static inline GrB_Matrix GB_get_mask    // return M_in or NULL
         }
     }
     else
-    {
+    { 
         // no change to M_in, Mask_struct, or Mask_comp
         return (M_in) ;
     }

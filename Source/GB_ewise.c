@@ -156,7 +156,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     }
 
     if (!T_is_csc)
-    { 
+    {
         if (op_is_positional)
         { 
             // positional ops must be flipped, with i and j swapped
@@ -347,7 +347,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     }
     else
-    { 
+    {
 
         //----------------------------------------------------------------------
         // T<any mask> = A.*B

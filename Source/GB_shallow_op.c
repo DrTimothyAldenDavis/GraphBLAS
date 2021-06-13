@@ -107,7 +107,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     C->magic = GB_MAGIC ;
     C->iso = C_iso ;                    // OK
     if (C_iso)
-    {
+    { 
         GB_BURBLE_MATRIX (A, "(iso apply) ") ;
     }
 

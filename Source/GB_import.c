@@ -85,7 +85,7 @@ GrB_Info GB_import      // import a matrix in any format
             // check Ap and get nvals
             if (nvec > vdim) return (GrB_INVALID_VALUE) ;
             if (Ap_size < (nvec+1) * sizeof (int64_t))
-            {
+            { 
                 return (GrB_INVALID_VALUE) ;
             }
             GB_RETURN_IF_NULL (Ap) ;
@@ -95,17 +95,17 @@ GrB_Info GB_import      // import a matrix in any format
             GB_RETURN_IF_NULL (Ah) ;
             GB_RETURN_IF_NULL (*Ah) ;
             if (Ah_size < nvec * sizeof (int64_t))
-            {
+            { 
                 return (GrB_INVALID_VALUE) ;
             }
             // check Ai
             if (Ai_size > 0)
-            {
+            { 
                 GB_RETURN_IF_NULL (Ai) ;
                 GB_RETURN_IF_NULL (*Ai) ;
             }
             if (Ai_size < nvals * sizeof (int64_t))
-            {
+            { 
                 return (GrB_INVALID_VALUE) ;
             }
             Ax_size_for_non_iso = nvals ;
@@ -119,7 +119,7 @@ GrB_Info GB_import      // import a matrix in any format
                 // the # of entries in the vector.  All other uses of GB_import
                 // pass in Ap for the sparse case
                 if (Ap_size < (vdim+1) * sizeof (int64_t))
-                {
+                { 
                     return (GrB_INVALID_VALUE) ;
                 }
                 GB_RETURN_IF_NULL (Ap) ;
@@ -128,12 +128,12 @@ GrB_Info GB_import      // import a matrix in any format
             }
             // check Ai
             if (Ai_size > 0)
-            {
+            { 
                 GB_RETURN_IF_NULL (Ai) ;
                 GB_RETURN_IF_NULL (*Ai) ;
             }
             if (Ai_size < nvals * sizeof (int64_t))
-            {
+            { 
                 return (GrB_INVALID_VALUE) ;
             }
             Ax_size_for_non_iso = nvals ;
@@ -143,7 +143,7 @@ GrB_Info GB_import      // import a matrix in any format
             // check Ab
             if (!ok) return (GrB_INVALID_VALUE) ;
             if (Ab_size > 0)
-            {
+            { 
                 GB_RETURN_IF_NULL (Ab) ;
                 GB_RETURN_IF_NULL (*Ab) ;
             }
@@ -214,6 +214,9 @@ GrB_Info GB_import      // import a matrix in any format
             (*A)->h = (int64_t *) (*Ah) ; (*Ah) = NULL ;
             (*A)->h_size = Ah_size ;
             #ifdef GB_DEBUG
+            #ifdef GB_MEMDUMP
+            printf ("import A->h to memtable: %p\n", A->h) ;
+            #endif
             GB_Global_memtable_add ((*A)->h, (*A)->h_size) ;
             #endif
 
@@ -222,7 +225,7 @@ GrB_Info GB_import      // import a matrix in any format
             (*A)->nvec_nonempty = -1 ;  // not computed; delay until required
 
             if (is_sparse_vector)
-            {
+            { 
                 // GxB_Vector_import_CSC passes in Ap as NULL
                 (*A)->p [1] = nvals ;
             }
@@ -232,6 +235,9 @@ GrB_Info GB_import      // import a matrix in any format
                 (*A)->p = (int64_t *) (*Ap) ; (*Ap) = NULL ;
                 (*A)->p_size = Ap_size ;
                 #ifdef GB_DEBUG
+                #ifdef GB_MEMDUMP
+                printf ("import A->p to memtable: %p\n", A->p) ;
+                #endif
                 GB_Global_memtable_add ((*A)->p, (*A)->p_size) ;
                 #endif
             }
@@ -240,6 +246,9 @@ GrB_Info GB_import      // import a matrix in any format
             (*A)->i = (int64_t *) (*Ai) ; (*Ai) = NULL ;
             (*A)->i_size = Ai_size ;
             #ifdef GB_DEBUG
+            #ifdef GB_MEMDUMP
+            printf ("import A->i to memtable: %p\n", A->i) ;
+            #endif
             GB_Global_memtable_add ((*A)->i, (*A)->i_size) ;
             #endif
             break ;
@@ -251,6 +260,9 @@ GrB_Info GB_import      // import a matrix in any format
             (*A)->b = (*Ab) ; (*Ab) = NULL ;
             (*A)->b_size = Ab_size ;
             #ifdef GB_DEBUG
+            #ifdef GB_MEMDUMP
+            printf ("import A->b to memtable: %p\n", A->b) ;
+            #endif
             GB_Global_memtable_add ((*A)->b, (*A)->b_size) ;
             #endif
             break ;
@@ -267,6 +279,9 @@ GrB_Info GB_import      // import a matrix in any format
         (*A)->x = (*Ax) ; (*Ax) = NULL ;
         (*A)->x_size = Ax_size ;
         #ifdef GB_DEBUG
+        #ifdef GB_MEMDUMP
+        printf ("import A->x to memtable: %p\n", A->x) ;
+        #endif
         GB_Global_memtable_add ((*A)->x, (*A)->x_size) ;
         #endif
     }

@@ -177,7 +177,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     // add Cp as the vector pointers for C, from GB_add_phase1
     if (C_is_sparse_or_hyper)
-    {
+    { 
         C->nvec_nonempty = Cnvec_nonempty ;
         C->p = (int64_t *) Cp ; C->p_size = Cp_size ;
         (*Cp_handle) = NULL ;
@@ -206,7 +206,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     bool done = false ;
 
     if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso
@@ -305,7 +305,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             cast_Z_to_C = GB_copy_user_user ;
         }
         else
-        { 
+        {
             // normal case, with optional typecasting
             fadd = op->function ;       // NULL if op is positional
             asize = A->type->size ;
@@ -382,7 +382,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         #define GB_CTYPE GB_void
 
         if (op_is_positional)
-        { 
+        {
 
             //------------------------------------------------------------------
             // C(i,j) = positional_op (aij, bij)
@@ -391,7 +391,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             int64_t offset = GB_positional_offset (opcode) ;
 
             if (op->ztype == GrB_INT64)
-            {
+            { 
                 switch (opcode)
                 {
                     case GB_FIRSTI_opcode    : // z = first_i(A(i,j),y) == i
@@ -418,7 +418,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 }
             }
             else
-            {
+            { 
                 switch (opcode)
                 {
                     case GB_FIRSTI_opcode    : // z = first_i(A(i,j),y) == i

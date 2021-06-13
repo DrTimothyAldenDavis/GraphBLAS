@@ -28,7 +28,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     const int64_t *restrict Tile_cols,  // size n+1
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // allocate C as a full matrix
@@ -46,7 +46,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     size_t csize = ctype->size ;
     GB_Type_code ccode = ctype->code ;
     if (!GB_IS_FULL (C))
-    {
+    { 
         // set C->iso = C_iso   OK
         GB_phbix_free (C) ;
         GB_OK (GB_bix_alloc (C, GB_nnz_full (C), GxB_FULL, false, true, C_iso,

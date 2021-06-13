@@ -198,9 +198,9 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         //----------------------------------------------------------------------
 
         if (X != NULL)
-        { 
+        {
             if (A->iso)
-            {
+            { 
                 // typecast the scalar and expand it into X
                 size_t xsize = GB_code_size (xcode, asize) ;
                 GB_void scalar [GB_VLA(xsize)] ;
@@ -208,7 +208,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
                 GB_iso_expand (X, anz, scalar, xsize, Context) ;
             }
             else
-            {
+            { 
                 // typecast or copy the values from A into X
                 ASSERT (X != NULL) ;
                 GB_cast_array ((GB_void *) X, xcode, (GB_void *) A->x, acode,

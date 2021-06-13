@@ -139,7 +139,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
 
     }
     else if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // iso numeric subref
@@ -154,7 +154,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // non-iso numeric subref

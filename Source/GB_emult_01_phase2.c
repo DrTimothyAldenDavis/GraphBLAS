@@ -190,7 +190,7 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
     bool done = false ;
 
     if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso

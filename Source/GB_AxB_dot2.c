@@ -84,14 +84,14 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT (A_in->vlen > 0) ;
 
     if (M_in == NULL)
-    {
+    { 
         GBURBLE ("(%s=%s'*%s) ",
             GB_sparsity_char (GxB_BITMAP),
             GB_sparsity_char_matrix (A_in),
             GB_sparsity_char_matrix (B_in)) ;
     }
     else
-    {
+    { 
         GBURBLE ("(%s%s%s%s%s=%s'*%s) ",
             GB_sparsity_char (GxB_BITMAP),
             Mask_struct ? "{" : "<",
@@ -137,7 +137,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     int64_t cnz ;
     if (!GB_Index_multiply ((GrB_Index *) (&cnz), cvlen, cvdim))
-    {
+    { 
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -147,7 +147,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     if (A_or_B_hyper && M_in != NULL)
-    {
+    { 
         // M2 = M_in (Ah, Bh), where M2 has a static header
         // if Mask_struct then M2 is extracted as iso
         M2 = GB_clear_static_header (&M2_header) ;
@@ -158,7 +158,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         ASSERT_MATRIX_OK_OR_NULL (M, "M submask dot A'*B", GB0) ;
     }
     else
-    {
+    { 
         // use the mask as-is
         M = M_in ;
     }
@@ -290,7 +290,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso; compute the pattern of C<#>=A'*B with the any_pair semiring

@@ -24,7 +24,7 @@ GrB_Info GxB_Matrix_build_Scalar
     GxB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

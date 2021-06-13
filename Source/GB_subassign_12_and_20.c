@@ -87,12 +87,12 @@ GrB_Info GB_subassign_12_and_20
     //--------------------------------------------------------------------------
 
     if (A_is_bitmap)
-    {
+    { 
         // all of IxJ must be examined
         GB_SUBASSIGN_IXJ_SLICE ;
     }
     else
-    {
+    { 
         // traverse all A+S
         GB_SUBASSIGN_TWO_SLICE (A, S) ;
     }

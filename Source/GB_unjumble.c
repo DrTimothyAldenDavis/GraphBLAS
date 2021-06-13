@@ -25,7 +25,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     ASSERT (GB_PENDING_OK (A)) ;    // pending tuples are not modified
 
     if (!A->jumbled)
-    {
+    { 
         // nothing to do
         return (GrB_SUCCESS) ;
     }

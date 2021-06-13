@@ -108,7 +108,7 @@
     int M_ntasks = 0 ;
 
     if (M != NULL)
-    { 
+    {
         ASSERT (C->vlen == M->vlen) ;
         ASSERT (C->vdim == M->vdim) ;
         Mp = M->p ;
@@ -193,7 +193,7 @@
             nbslice = 1 ;
         }
         else
-        {
+        { 
             // determine number of slices for A and B
             ntasks = 2 * nthreads ;
             int naslice_max = GB_ICEIL (avlen, GB_PANEL_SIZE) ;
@@ -359,7 +359,7 @@
             GBURBLE ("(coarse, threads: 1) ") ;
         }
         else if (nthreads <= bvdim)
-        {
+        { 
             // All tasks are coarse, and each coarse task does 1 or more
             // whole vectors of B
             ntasks = GB_IMIN (bvdim, 2 * nthreads) ;
@@ -367,7 +367,7 @@
             GBURBLE ("(coarse, threads: %d, tasks %d) ", nthreads, ntasks) ;
         }
         else
-        {
+        { 
             // All tasks are fine.  Each task does a slice of a single vector
             // of B, and each vector of B is handled by the same # of fine
             // tasks.
@@ -413,7 +413,7 @@
         }
 
         if (M == NULL)
-        { 
+        {
 
             //------------------------------------------------------------------
             // C = A*B, no mask, A sparse/hyper, B bitmap/full
@@ -424,14 +424,14 @@
             #undef  keep
             #define keep 1
             if (B_is_bitmap)
-            {
+            { 
                 // A is sparse/hyper, B is bitmap, no mask
                 #undef  GB_B_IS_BITMAP
                 #define GB_B_IS_BITMAP 1
                 #include "GB_bitmap_AxB_saxpy_A_sparse_B_bitmap_template.c"
             }
             else
-            {
+            { 
                 // A is sparse/hyper, B is full, no mask
                 #undef  GB_B_IS_BITMAP
                 #define GB_B_IS_BITMAP 0
@@ -442,7 +442,7 @@
 
         }
         else if (M_is_sparse_or_hyper)
-        { 
+        {
 
             //------------------------------------------------------------------
             // C<M> or <!M> = A*B, M and A are sparse/hyper, B bitmap/full
@@ -453,14 +453,14 @@
             #undef  keep
             const int8_t keep = (Mask_comp) ? 1 : 3 ;
             if (B_is_bitmap)
-            {
+            { 
                 // A is sparse/hyper, B is bitmap, M is sparse/hyper
                 #undef  GB_B_IS_BITMAP
                 #define GB_B_IS_BITMAP 1
                 #include "GB_bitmap_AxB_saxpy_A_sparse_B_bitmap_template.c"
             }
             else
-            {
+            { 
                 // A is sparse/hyper, B is full, no mask
                 #undef  GB_B_IS_BITMAP
                 #define GB_B_IS_BITMAP 0
@@ -471,7 +471,7 @@
 
         }
         else
-        { 
+        {
 
             //------------------------------------------------------------------
             // C<M> or <!M> = A*B, M bitmap, A sparse, B bitmap
@@ -482,14 +482,14 @@
             #undef  keep
             #define keep 1
             if (B_is_bitmap)
-            {
+            { 
                 // A is sparse/hyper, B is bitmap, M is bitmap/full
                 #undef  GB_B_IS_BITMAP
                 #define GB_B_IS_BITMAP 1
                 #include "GB_bitmap_AxB_saxpy_A_sparse_B_bitmap_template.c"
             }
             else
-            {
+            { 
                 // A is sparse/hyper, B is full, M is bitmap/full
                 #undef  GB_B_IS_BITMAP
                 #define GB_B_IS_BITMAP 0

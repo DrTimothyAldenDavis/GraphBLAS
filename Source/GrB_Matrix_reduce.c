@@ -119,7 +119,7 @@ GrB_Info GrB_Matrix_reduce_BinaryOp
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Descriptor desc       // descriptor for w, M, and A
 )
-{ 
+{
     GB_WHERE (w, "GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
 

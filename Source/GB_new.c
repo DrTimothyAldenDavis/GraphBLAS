@@ -79,7 +79,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         (*Ahandle)->header_size = header_size ;
     }
     else
-    {
+    { 
         // the header of A has been provided on input.  It may already be
         // malloc'd, or it might be statically allocated in the caller. 
         (*Ahandle)->static_header = A_static_header ;
@@ -134,7 +134,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
 
     // content that is freed or reset in GB_ph_free
     if (A_is_full_or_bitmap)
-    {  
+    { 
         // A is full or bitmap
         A->plen = -1 ;
         A->nvec = vdim ;
@@ -222,7 +222,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
             GB_Matrix_free (Ahandle) ;
         }
         else
-        {
+        { 
             // the header was not allocated here; only free the content of A
             GB_phbix_free (A) ;
         }

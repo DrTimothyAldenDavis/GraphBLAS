@@ -154,7 +154,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     }
     else if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso; pattern already computed above

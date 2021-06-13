@@ -369,7 +369,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     for (int taskid = 1 ; taskid < ntasks ; taskid++)
     {
         if (taskid == SaxpyTasks [taskid].leader)
-        {
+        { 
             hx_pad = GB_ICEIL (64, csize) ;
             hi_pad = 64 / sizeof (int64_t) ;
             break ;
@@ -403,12 +403,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         {
             // fine task
             if (use_Gustavson)
-            {
+            { 
                 // fine Gustavson task
                 nfine_gus++ ;
             }
             else
-            {
+            { 
                 // fine hash task
                 nfine_hash++ ;
             }
@@ -417,12 +417,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         {
             // coarse task
             if (use_Gustavson)
-            {
+            { 
                 // coarse Gustavson task
                 ncoarse_gus++ ;
             }
             else
-            {
+            { 
                 // coarse hash task
                 ncoarse_hash++ ;
             }

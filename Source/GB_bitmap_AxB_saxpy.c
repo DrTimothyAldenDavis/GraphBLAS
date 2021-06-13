@@ -98,7 +98,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     //--------------------------------------------------------------------------
 
     if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso; compute the pattern of C<#>=A*B with the any_pair semiring

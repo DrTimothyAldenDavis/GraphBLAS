@@ -629,20 +629,20 @@
                 int64_t kC = TaskList [taskid].kfirst ;
                 bool do_post_sort = (TaskList [taskid].len != 0) ;
                 if (do_post_sort)
-                { 
+                {
                     // This is the first fine task with method 10 for C(:,kC).
                     // The vector C(:,kC) must be sorted, since method 10 left
                     // it with unsorted indices.
                     int64_t pC = Cp [kC] ;
                     int64_t clen = Cp [kC+1] - pC ;
                     #if defined ( GB_ISO_SUBREF )
-                    {
+                    { 
                         // iso numeric subref C=A(I,J)
                         // just sort the pattern of C(:,kC)
                         GB_qsort_1 (Ci + pC, clen) ;
                     }
                     #else
-                    {
+                    { 
                         // sort the pattern of C(:,kC), and the values
                         GB_qsort_1b (Ci + pC, (GB_void *) (Cx + pC*GB_CSIZE1),
                             GB_CSIZE2, clen) ;

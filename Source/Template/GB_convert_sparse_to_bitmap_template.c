@@ -55,7 +55,7 @@
             else
             {
                 for (int64_t p = pA_start ; p < pA_end ; p++)
-                { 
+                {
                     // A(i,j) has index i, value Axold [p]
                     int64_t i = Ai [p] ;
                     if (!GB_IS_ZOMBIE (i))

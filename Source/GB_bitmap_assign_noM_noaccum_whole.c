@@ -96,7 +96,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
 
         }
         else
-        { 
+        {
 
             //------------------------------------------------------------------
             // matrix assignment: C = A
@@ -106,7 +106,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
             GB_GET_A_AND_SCALAR
 
             if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
-            { 
+            {
 
                 //--------------------------------------------------------------
                 // C = A where C is bitmap and A is bitmap or full

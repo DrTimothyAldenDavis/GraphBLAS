@@ -29,7 +29,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor

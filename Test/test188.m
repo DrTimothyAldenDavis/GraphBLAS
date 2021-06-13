@@ -52,6 +52,7 @@ for d = [1e-4 0.01 0.2 0.8 inf]
                 for kc = 1:length (types)
                     ctype = types {kc} ;
                     for fmt = 0:1
+save gunk Tiles ctype fmt
                         C1 = GB_mex_concat  (Tiles, ctype, fmt) ;
                         C2 = GB_spec_concat (Tiles, ctype) ;
                         GB_spec_compare (C1, C2) ;

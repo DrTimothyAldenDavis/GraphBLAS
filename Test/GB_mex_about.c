@@ -851,9 +851,14 @@ void mexFunction
     OK (GxB_Matrix_select_(C, NULL, NULL, selectop, A, thunk, NULL)) ;
 
     printf ("\nprint in one-based, long format:\n") ;
-    GB_Global_print_one_based_set (true) ;
+    bool onebased ;
+    OK (GxB_Global_Option_set (GxB_PRINT_1BASED, true)) ;
+    OK (GxB_Global_Option_get (GxB_PRINT_1BASED, &onebased)) ;
+    CHECK (onebased) ;
     OK (GxB_Matrix_fprint_(C, GxB_COMPLETE_VERBOSE, NULL)) ;
-    GB_Global_print_one_based_set (false) ;
+    OK (GxB_Global_Option_set (GxB_PRINT_1BASED, false)) ;
+    OK (GxB_Global_Option_get (GxB_PRINT_1BASED, &onebased)) ;
+    CHECK (!onebased) ;
 
     expected = GrB_NULL_POINTER ;
     ERR1 (C, GxB_Matrix_select_(C, NULL, NULL, selectop, A, NULL, NULL)) ;

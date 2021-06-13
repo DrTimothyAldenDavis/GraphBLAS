@@ -227,7 +227,7 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // TODO: could make these components of C shallow instead
 
     if (GB_IS_HYPERSPARSE (M))
-    {
+    { 
         // copy M->h into C->h
         GB_memcpy (C->h, Mh, nvec * sizeof (int64_t), M_nthreads) ;
     }
@@ -268,7 +268,7 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     #define GB_PHASE_2_OF_2
 
     if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso

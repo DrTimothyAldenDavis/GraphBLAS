@@ -30,7 +30,7 @@
         int64_t pA = iA + jA * avlen ;
         Cb [pC] = Ab [pA] ;
         if (Ab [pA])
-        {
+        { 
             // Cx [pC] = Ax [pA] ;
             GB_COPY (pC, pA) ;
             cnz++ ;

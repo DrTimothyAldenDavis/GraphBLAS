@@ -108,7 +108,7 @@
     // by dot2.
 
     if (M_is_sparse && Mask_struct && A_is_sparse && B_is_sparse)
-    {
+    { 
         // special case: M is sparse and structural, and A and B are sparse
         #define GB_MASK_SPARSE_AND_STRUCTURAL
         #define GB_A_IS_SPARSE 1
@@ -123,7 +123,7 @@
         #undef GB_MASK_SPARSE_AND_STRUCTURAL
     }
     else
-    {
+    { 
         // general case
         const GB_void *restrict Mx = (GB_void *) (Mask_struct ? NULL : (M->x)) ;
         const size_t msize = M->type->size ;

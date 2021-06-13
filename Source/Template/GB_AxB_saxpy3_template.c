@@ -219,7 +219,7 @@
 
                 GB_GET_M_j ;                // get M(:,j)
                 if (M_packed_in_place)
-                { 
+                {
                     // M(:,j) is packed, and thus not scattered into Hf
                     if (M_is_bitmap && Mask_struct)
                     { 
@@ -257,7 +257,7 @@
 
                 GB_GET_M_j ;                // get M(:,j)
                 if (M_packed_in_place)
-                { 
+                {
                     // M(:,j) is packed, and thus not scattered into Hf
                     if (M_is_bitmap && Mask_struct)
                     { 
@@ -497,10 +497,10 @@
                     //----------------------------------------------------------
 
                     if (M_packed_in_place)
-                    { 
+                    {
                         // M is packed, and thus not scattered into Hf
                         if (M_is_bitmap && Mask_struct)
-                        {
+                        { 
                             // M is bitmap and structural
                             #define GB_MASK_IS_BITMAP_AND_STRUCTURAL
                             #undef  GB_CHECK_MASK_ij
@@ -509,7 +509,7 @@
                             #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                         }
                         else
-                        {
+                        { 
                             // M is bitmap/dense
                             #undef  GB_CHECK_MASK_ij
                             #define GB_CHECK_MASK_ij                        \
@@ -520,7 +520,7 @@
                         }
                     }
                     else
-                    {
+                    { 
                         // M is sparse and scattered into Hf
                         #include "GB_AxB_saxpy3_coarseHash_M_phase5.c"
                     }
@@ -533,10 +533,10 @@
                     // phase5: coarse hash task, C<!M>=A*B
                     //---------------------------------------------------------- 
                     if (M_packed_in_place)
-                    { 
+                    {
                         // M is packed, and thus not scattered into Hf
                         if (M_is_bitmap && Mask_struct)
-                        {
+                        { 
                             // M is bitmap and structural
                             #define GB_MASK_IS_BITMAP_AND_STRUCTURAL
                             #undef  GB_CHECK_MASK_ij
@@ -545,7 +545,7 @@
                             #include "GB_AxB_saxpy3_coarseHash_phase5.c"
                         }
                         else
-                        {
+                        { 
                             // M is bitmap/dense
                             #undef  GB_CHECK_MASK_ij
                             #define GB_CHECK_MASK_ij                        \
@@ -556,7 +556,7 @@
                         }
                     }
                     else
-                    {
+                    { 
                         // M is sparse and scattered into Hf
                         #include "GB_AxB_saxpy3_coarseHash_notM_phase5.c"
                     }

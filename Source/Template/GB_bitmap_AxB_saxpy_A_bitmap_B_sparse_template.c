@@ -329,7 +329,7 @@
                     GB_XLOAD (bkj) ;            // X [1] = bkj (plus_times only)
                     // H_panel (:,j) = G_panel (:,k) * B(k,j)
                     for (int64_t ii = 0 ; ii < np ; ii++)
-                    { 
+                    {
                         #if GB_HAS_BITMAP_MULTADD
                         { 
                             // if (Gb (ii,k))

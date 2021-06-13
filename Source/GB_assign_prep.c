@@ -971,7 +971,7 @@ GrB_Info GB_assign_prep
     }
 
     if (C_exploit_alias_with_M)
-    { 
+    {
         // C<C,s>=scalar, and C_replace can be ignored.
         ASSERT (C_aliased) ;            // C is aliased with M, but this is OK
         ASSERT (!GB_aliased (C, A)) ;   // A is not present so C != A
@@ -1100,7 +1100,7 @@ GrB_Info GB_assign_prep
 
     }
     else
-    { 
+    {
 
         //----------------------------------------------------------------------
         // prior pending tuples exist: check if action: ( delete ) can occur
@@ -1117,7 +1117,7 @@ GrB_Info GB_assign_prep
             wait = true ;
         }
         else if (accum == NULL)
-        { 
+        {
             // This GxB_subassign can potentially use action: ( delete ), and
             // thus prior pending tuples must be assembled first.  However, if
             // A is completely dense, then C(I,J)=A cannot delete any entries
@@ -1140,7 +1140,7 @@ GrB_Info GB_assign_prep
         //----------------------------------------------------------------------
 
         if (!wait)
-        { 
+        {
 
             // ( delete ) will not occur, but new pending tuples may be added
             // via the action: ( insert ).  Check if the accum operator is the
@@ -1173,7 +1173,7 @@ GrB_Info GB_assign_prep
                 wait = true ;
             }
             else if (C->iso != C_iso_out)
-            {
+            { 
                 // the iso property of C is changing
                 wait = true ;
             }
@@ -1185,7 +1185,7 @@ GrB_Info GB_assign_prep
     //--------------------------------------------------------------------------
 
     if (wait)
-    { 
+    {
 
         // Prior computations are not compatible with this assignment, so all
         // prior work must be finished.  This potentially costly.
@@ -1248,21 +1248,21 @@ GrB_Info GB_assign_prep
     //--------------------------------------------------------------------------
 
     if (C->iso && !C_iso_out)
-    {
+    { 
         // C is iso on input, but non-iso on output; expand the iso value
         // into all of C->x
         // set C->iso = false    OK
         GB_OK (GB_convert_any_to_non_iso (C, true, Context)) ;
     }
     else if (!C->iso && C_iso_out)
-    {
+    { 
         // C is non-iso on input, but iso on output
         // copy the cout scalar into C->x
         // set C->iso = true    OK
         GB_OK (GB_convert_any_to_iso (C, cout, true, Context)) ;
     }
     else if (C->iso && C_iso_out)
-    {
+    { 
         // the iso status of C is unchanged; set its new iso value
         memcpy (C->x, cout, csize) ;
     }

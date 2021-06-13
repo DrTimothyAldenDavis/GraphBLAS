@@ -165,14 +165,14 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 
     #define GB_PHASE_2_OF_2
     if (R_iso)
-    {
+    { 
         GBURBLE ("(iso mask) ") ;
         #define GB_ISO_MASKER
         memcpy (R->x, C->x, C->type->size) ;
         #include "GB_masker_template.c"
     }
     else
-    {
+    { 
         #include "GB_masker_template.c"
     }
 

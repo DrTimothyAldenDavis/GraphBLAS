@@ -129,9 +129,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool can_do_in_place = false ;
 
     if (C_in != NULL)
-    { 
+    {
         if (GB_IS_BITMAP (C_in))
-        {
+        { 
             // C is bitmap
             ASSERT (!GB_PENDING (C_in)) ; // no pending tuples in bitmap
             ASSERT (!GB_ZOMBIES (C_in)) ; // bitmap never has zombies
@@ -463,7 +463,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // auto selection for A'*B
             if (GB_AxB_dot4_control (can_do_in_place ? C_in : NULL,
                 M, Mask_comp))
-            {
+            { 
                 // C+=A'*B can be done with dot4
                 axb_method = GB_USE_DOT ;
             }
@@ -473,7 +473,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 axb_method = GB_USE_DOT ;
             }
             else if (GB_AxB_dot2_control (A, B, Context))
-            {
+            { 
                 // C=A'*B or C<!M>=A'B* can efficiently use the dot2 method
                 axb_method = GB_USE_DOT ;
             }

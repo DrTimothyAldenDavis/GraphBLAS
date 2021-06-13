@@ -130,7 +130,7 @@ GrB_Info GB_resize              // change the size of a matrix
         //----------------------------------------------------------------------
 
         if (!in_place && A_is_bitmap)
-        {
+        { 
             // allocate new space for A->b
             Ab_new = GB_MALLOC (nzmax_new*asize, int8_t, &Ab_new_size) ;
             ok = ok && (Ab_new != NULL) ;
@@ -197,7 +197,7 @@ GrB_Info GB_resize              // change the size of a matrix
             //------------------------------------------------------------------
 
             if (A_is_bitmap)
-            { 
+            {
                 int8_t *restrict Ab_old = A->b ;
                 int64_t pnew ;
                 int64_t anvals = 0 ;

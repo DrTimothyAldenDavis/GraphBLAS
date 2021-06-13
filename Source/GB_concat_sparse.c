@@ -40,7 +40,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     const int64_t *restrict Tile_cols,  // size n+1
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // allocate C as a sparse matrix
@@ -79,7 +79,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     if (C_iso)
-    {
+    { 
         memcpy (C->x, cscalar, csize) ;
     }
 
@@ -114,14 +114,17 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             A = csc ? GB_TILE (Tiles, inner, outer)
                     : GB_TILE (Tiles, outer, inner) ;
             GrB_Matrix T = NULL ;
+            ASSERT_MATRIX_OK (A, "A tile for concat sparse", GB0) ;
             if (csc != A->is_csc)
             {
                 // T = (ctype) A', not in-place, using a dynamic header
+//              printf ("new T:\n") ;
                 GB_OK (GB_new (&T, false,   // auto sparsity, new header
                     A->type, A->vdim, A->vlen, GB_Ap_null, csc,
                     GxB_AUTO_SPARSITY, -1, 1, Context)) ;
-                GB_OK (GB_transpose (T, ctype, csc, A, // T static = A'
-                    NULL, NULL, NULL, false, Context)) ;
+//              printf ("got new T: %p\n", T) ;
+//              printf ("contents %p %p %p %p %p\n",
+//                  T->p, T->h, T->b, T->i, T->x) ;
                 // save T in array S
                 if (csc)
                 { 
@@ -131,8 +134,12 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 { 
                     GB_TILE (S, outer, inner) = T ;
                 }
+                GB_OK (GB_transpose (T, ctype, csc, A, // T static = A'
+                    NULL, NULL, NULL, false, Context)) ;
+                ASSERT_MATRIX_OK (T, "T=A' for concat sparse", GB0) ;
                 A = T ;
                 GB_MATRIX_WAIT (A) ;
+                ASSERT_MATRIX_OK (T, "T after wait for concat sparse", GB0) ;
             }
             ASSERT (C->is_csc == A->is_csc) ;
             ASSERT (!GB_ANY_PENDING_WORK (A)) ;
@@ -157,9 +164,11 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                     { 
                         GB_TILE (S, outer, inner) = T ;
                     }
+                    ASSERT_MATRIX_OK (T, "T=dup(A) for concat sparse", GB0) ;
                 }
                 // convert T from bitmap to sparse
                 GB_OK (GB_convert_bitmap_to_sparse (T, Context)) ;
+                ASSERT_MATRIX_OK (T, "T bitmap to sparse, concat sparse", GB0) ;
                 A = T ;
             }
 
@@ -256,6 +265,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 A = csc ? GB_TILE (Tiles, inner, outer)
                         : GB_TILE (Tiles, outer, inner) ;
             }
+            ASSERT_MATRIX_OK (A, "A tile again, concat sparse", GB0) ;
 
             ASSERT (!GB_IS_BITMAP (A)) ;
             ASSERT (C->is_csc == A->is_csc) ;
@@ -314,7 +324,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             bool done = false ;
 
             if (C_iso)
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // C and A are iso

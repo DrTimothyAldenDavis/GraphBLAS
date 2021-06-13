@@ -39,7 +39,7 @@ GrB_Info GB_subassign_05e
     const GrB_Type atype,
     GB_Context Context
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

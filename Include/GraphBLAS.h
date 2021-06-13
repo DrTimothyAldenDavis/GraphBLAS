@@ -3814,6 +3814,7 @@ typedef enum            // for global options or matrix options
     GxB_PRINTF = 101,   // printf function diagnostic output
     GxB_FLUSH = 102,    // flush function diagnostic output
     GxB_MEMORY_POOL = 103,  // memory pool control
+    GxB_PRINT_1BASED = 104,   // print matrices as 0-based or 1-based
 
     //------------------------------------------------------------
     // for GxB_Matrix_Option_get only:

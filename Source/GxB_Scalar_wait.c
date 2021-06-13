@@ -17,7 +17,7 @@ GrB_Info GxB_Scalar_wait    // finish all work on a scalar
 (
     GxB_Scalar *s
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -33,7 +33,7 @@ GrB_Info GxB_Scalar_wait    // finish all work on a scalar
     //--------------------------------------------------------------------------
 
     if (GB_ANY_PENDING_WORK (*s))
-    {
+    { 
         GrB_Info info ;
         GB_BURBLE_START ("GxB_Scalar_wait") ;
         GB_OK (GB_wait ((GrB_Matrix) (*s), "scalar", Context)) ;

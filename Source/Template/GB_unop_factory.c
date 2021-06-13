@@ -25,7 +25,7 @@
     ASSERT (code2 <= GB_UDT_code) ;
 
     if (opcode == GB_IDENTITY_opcode)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // z = (ztype) x, with arbitrary typecasting

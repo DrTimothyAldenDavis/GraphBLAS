@@ -1,5 +1,4 @@
-% FIXME
-% function test145
+function test145
 %TEST145 test dot4
 % GB_AxB_dot4 computes C+=A'*B when C is dense.
 

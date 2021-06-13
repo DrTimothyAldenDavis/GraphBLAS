@@ -47,7 +47,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
 
     bool ok = true ;
     if (sparsity == GxB_BITMAP)
-    { 
+    {
         if (bitmap_calloc)
         { 
             // content is fully defined

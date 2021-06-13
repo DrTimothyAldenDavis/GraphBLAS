@@ -33,7 +33,7 @@
             int64_t pA ;
             #pragma omp parallel for num_threads(A_nthreads) schedule(static)
             for (pA = 0 ; pA < anz ; pA++)
-            {
+            { 
                 int64_t i = pA % avlen ;
                 int64_t j = pA / avlen ;
                 int64_t iC = cistart + i ;
@@ -55,7 +55,7 @@
             for (pA = 0 ; pA < anz ; pA++)
             {
                 if (Ab [pA])
-                {
+                { 
                     int64_t i = pA % avlen ;
                     int64_t j = pA / avlen ;
                     int64_t iC = cistart + i ;
@@ -92,7 +92,7 @@
                         kfirst, klast, pstart_Aslice, Ap, avlen) ;
                     GB_PRAGMA_SIMD
                     for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                    {
+                    { 
                         int64_t i = Ai [pA] ;
                         int64_t pC = pC_start + i ;
                         // Cx [pC] = Ax [pA] ;

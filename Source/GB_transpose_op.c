@@ -80,7 +80,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     //--------------------------------------------------------------------------
 
     if (C->iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // apply the operator to the iso value and transpose the pattern

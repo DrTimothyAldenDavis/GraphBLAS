@@ -37,11 +37,11 @@ GrB_Info GB_convert_any_to_iso // convert non-iso matrix to iso
     if (scalar == NULL)
     {
         if (A->iso)
-        {
+        { 
             memcpy (ascalar, A->x, asize) ;
         }
         else
-        {
+        { 
             memset (ascalar, 0, asize) ;
         }
     }
@@ -80,11 +80,11 @@ GrB_Info GB_convert_any_to_iso // convert non-iso matrix to iso
     //--------------------------------------------------------------------------
 
     if (scalar == NULL)
-    {
+    { 
         memcpy (A->x, ascalar, asize) ;
     }
     else
-    {
+    { 
         memcpy (A->x, scalar, asize) ;
     }
 

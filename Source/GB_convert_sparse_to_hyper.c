@@ -43,7 +43,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
     //--------------------------------------------------------------------------
 
     if (GB_IS_SPARSE (A))
-    { 
+    {
 
         //----------------------------------------------------------------------
         // determine the number of threads to use

@@ -119,7 +119,7 @@ GrB_Info GB_dense_subassign_25
     //--------------------------------------------------------------------------
 
     if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso; assign the iso value and assign zombies if A is bitmap
@@ -160,7 +160,7 @@ GrB_Info GB_dense_subassign_25
             //------------------------------------------------------------------
 
             if (C->type == A->type && ccode < GB_UDT_code)
-            { 
+            {
                 // FIXME: use cases 1,2,4,8,16,other
                 // C<M> = A
                 switch (ccode)

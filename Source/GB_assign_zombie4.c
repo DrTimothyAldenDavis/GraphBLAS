@@ -143,7 +143,7 @@ void GB_assign_zombie4
                         mij = GBB (Mb, pM) && GB_mcast (Mx, pM, msize) ;
                     }
                     else
-                    { 
+                    {
                         // M is sparse or hypersparse
                         int64_t pM, pM_end ;
                         int64_t pleft = 0 ;

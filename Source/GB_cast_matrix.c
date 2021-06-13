@@ -54,11 +54,11 @@ void GB_cast_matrix         // copy or typecast the values from A into C
         //----------------------------------------------------------------------
 
         if (A->iso)
-        {
+        { 
             memcpy (C->x, A->x, C->type->size) ;
         }
         else
-        {
+        { 
             GB_memcpy (C->x, A->x, anz * C->type->size, nthreads) ;
         }
 
@@ -71,12 +71,12 @@ void GB_cast_matrix         // copy or typecast the values from A into C
         //----------------------------------------------------------------------
 
         if (A->iso)
-        {
+        { 
             // C->x [0] = (ctype) A->x [0]
             GB_iso_unop (C->x, C->type, GB_ISO_A, NULL, NULL, A, NULL) ;
         }
         else
-        {
+        { 
             ASSERT (GB_IMPLIES (anz > 0, C->x != NULL)) ;
             GB_cast_array ((GB_void *) C->x, C->type->code, (GB_void *) A->x,
                 A->type->code, A->b, A->type->size, anz, nthreads) ;

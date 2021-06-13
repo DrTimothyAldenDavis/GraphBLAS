@@ -21,22 +21,22 @@ int64_t GB_nnz_held
 {
 
     if (A == NULL || A->magic != GB_MAGIC)
-    {
+    { 
         // A is NULL or not initialized
         return (0) ;
     }
     else if (A->p != NULL)
-    {
+    { 
         // A is sparse or hypersparse
         return (A->p [A->nvec]) ;
     }
     else if (A->b != NULL || A->x != NULL)
-    {
+    { 
         // A is bitmap or full
         return (GB_nnz_full (A)) ;
     }
     else
-    {
+    { 
         // A is empty
         return (0) ;
     }

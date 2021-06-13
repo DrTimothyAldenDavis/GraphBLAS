@@ -225,7 +225,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         else
         {
             if (C->iso)
-            { 
+            {
                 // C is iso, so Pending->x is currently NULL.  However, this
                 // new setElement entry might cause C to become non iso.  If
                 // the value of the scalar does not match the iso value of C, C
@@ -286,7 +286,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // delete any lingering zombies and assemble the pending tuples
             GB_OK (GB_wait (C, "C", Context)) ;
             if (iso_wait)
-            {
+            { 
                 // C is iso but will no longer be after this setElement
                 // set C->iso = false    OK
                 #if GB_BURBLE

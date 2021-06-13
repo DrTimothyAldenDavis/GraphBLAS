@@ -96,7 +96,6 @@ GB_mex_hack (hack) ;
 logstat ('test195',t) ; % test all variants of saxpy3
 logstat ('test194',t) ; % test GxB_Vector_diag
 logstat ('test193',t) ; % test GxB_Matrix_diag
-logstat ('test190',t) ; % test dense matrix for C<!M>=A*B
 logstat ('test189',t) ; % test large assign
 
 logstat ('test183',s) ; % test eWiseMult with hypersparse mask
@@ -159,7 +158,6 @@ logstat ('test163',t) ; % test C<!M>=A'*B where C and M are sparse
 % tests with decent rates (20 to 30/sec)
 %----------------------------------------
 
-logstat ('test146',t) ; % expand scalar
 logstat ('test173',t) ; % test GrB_assign C<A>=A
 logstat ('test157',t) ; % test sparsity formats
 logstat ('test29',t) ;  % reduce with zombies
@@ -200,7 +198,6 @@ logstat ('test00',s);   % GB_mex_mis (single threaded)
 logstat ('test54',t) ;  % assign and extract with begin:inc:end
 logstat ('test104',t) ; % export/import
 logstat ('test11',t) ;  % exhaustive test of GrB_extractTuples
-logstat ('test28',t) ;  % mxm with aliased inputs, C<C> = accum(C,C*C)
 
 %----------------------------------------
 % tests with very low coverage/sec rates  (< 1/sec)
@@ -214,7 +211,6 @@ logstat ('test107',t) ; % monoids with terminal values
 logstat ('test69',t) ;  % assign and subassign with alias
 logstat ('test135',t) ; % reduce to scalar
 logstat ('test17',t) ;  % quick test of GrB_*_extractElement
-logstat ('test143',t) ; % mxm, special cases
 logstat ('test27',t) ;  % quick test of GxB_select (LoHi_band)
 logstat ('test53',t) ;  % quick test of GB_mex_Matrix_extract
 logstat ('test77',t) ;  % quick tests of GrB_kronecker
@@ -279,6 +275,7 @@ logstat ('test24',t) ;     %   42 % test of GrB_Matrix_reduce
 logstat ('test24(1)',t) ;  %      % exhaustive test of GrB_Matrix_reduce
 logstat ('test25',t) ;     %      % long test of GxB_select
 logstat ('test26(1)',t) ;  %      % performance test of GxB_select (use ssget)
+logstat ('test28',t) ;     %    1 % mxm with aliased inputs, C<C> = accum(C,C*C)
 
 logstat ('test30') ;       %   11 % GB_mex_subassign, scalar expansion
 logstat ('test30b') ;      %    9 % performance GB_mex_assign, scalar expansion
@@ -371,11 +368,15 @@ logstat ('test122',t) ;    %      % performance tests for GrB_assign
 logstat ('test123',t) ;    %      % test MIS on large matrix
 logstat ('test126',t) ;    %    7 % test GrB_reduce to vector on a very sparse matrix 
 
+logstat ('test143',t) ;    %   37 % mxm, special cases
+logstat ('test146',t) ;    %   .1 % expand scalar
 logstat ('test147',t) ;           % C<M>=A*B with very sparse M
 logstat ('test149',t) ;           % test fine hash tasks for C<!M>=A*B
 
 logstat ('test168',t) ;           % test C=A+B with C and B full, A bitmap
-logstat ('test171',t) ;     %   1 % test conversion and GB_memset
+logstat ('test171',t) ;    %    1 % test conversion and GB_memset
+
+logstat ('test190',t) ;    %   .3 % test dense matrix for C<!M>=A*B
 
 % tested via test16:
 logstat ('testc1',t) ;     %      % test complex operators

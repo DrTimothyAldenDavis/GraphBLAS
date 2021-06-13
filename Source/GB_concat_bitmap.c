@@ -30,7 +30,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
     const int64_t *restrict Tile_cols,  // size n+1
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // allocate C as a bitmap matrix
@@ -65,7 +65,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
     int64_t ninner = csc ? m : n ;
 
     if (C_iso)
-    {
+    { 
         memcpy (C->x, cscalar, csize) ;
     }
 
@@ -136,7 +136,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
             bool done = false ;
 
             if (C_iso)
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // C and A are iso

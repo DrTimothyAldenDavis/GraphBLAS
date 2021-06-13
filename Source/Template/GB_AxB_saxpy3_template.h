@@ -324,27 +324,27 @@ break ;
 #if GB_IS_ANY_PAIR_SEMIRING
 
     // ANY_PAIR: result is purely symbolic
-    #define GB_SORT_AND_GATHER_HASHED_C_j(hash_mark)            \
+    #define GB_SORT_AND_GATHER_HASHED_C_j(hash_mark)                    \
         GB_SORT_C_j_PATTERN ;
 
 #else
 
     // gather the values of C(:,j) for a coarse hash task
-    #define GB_SORT_AND_GATHER_HASHED_C_j(hash_mark)                        \
-        GB_SORT_C_j_PATTERN ;                                               \
-        for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)                  \
-        {                                                                   \
-            int64_t i = Ci [pC] ;                                           \
-            for (GB_HASH (i))           /* find i in hash table */          \
-            {                                                               \
-                if (Hf [hash] == (hash_mark) && (Hi [hash] == i))           \
-                {                                                           \
-                    /* i found in the hash table */                         \
-                    /* Cx [pC] = Hx [hash] ; */                             \
-                    GB_CIJ_GATHER (pC, hash) ;                              \
-                    break ;                                                 \
-                }                                                           \
-            }                                                               \
+    #define GB_SORT_AND_GATHER_HASHED_C_j(hash_mark)                    \
+        GB_SORT_C_j_PATTERN ;                                           \
+        for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)              \
+        {                                                               \
+            int64_t i = Ci [pC] ;                                       \
+            for (GB_HASH (i))           /* find i in hash table */      \
+            {                                                           \
+                if (Hf [hash] == (hash_mark) && (Hi [hash] == i))       \
+                {                                                       \
+                    /* i found in the hash table */                     \
+                    /* Cx [pC] = Hx [hash] ; */                         \
+                    GB_CIJ_GATHER (pC, hash) ;                          \
+                    break ;                                             \
+                }                                                       \
+            }                                                           \
         }
 
 #endif

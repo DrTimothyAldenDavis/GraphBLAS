@@ -199,7 +199,7 @@ GrB_Info GB_init            // start up GraphBLAS
     }
     else
     #endif
-    {
+    { 
         // CUDA not available at compile-time, or available but not requested.
         GB_Global_gpu_control_set (GxB_GPU_NEVER) ;
         GB_Global_gpu_count_set (0) ;

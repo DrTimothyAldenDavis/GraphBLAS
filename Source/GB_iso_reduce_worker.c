@@ -24,7 +24,7 @@ void GB_iso_reduce_worker
 {
 
     if (n == 1)
-    {
+    { 
         memcpy (s, a, zsize) ;
     }
     else
@@ -39,7 +39,7 @@ void GB_iso_reduce_worker
         // if n is odd, s is now the reduction of 2*floor(n/2) == n-1 entries.
 
         if (n & 1)
-        {
+        { 
             // n is odd, so add more more entry with s = freduce (s, a)
             freduce (s, s, a) ;
         }

@@ -22,7 +22,7 @@ GrB_Info GB_split_full              // split a full matrix
     const GrB_Matrix A,             // input matrix
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -91,7 +91,7 @@ GrB_Info GB_split_full              // split a full matrix
             bool done = false ;
 
             if (A_iso)
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // split an iso matrix A into an iso tile C
@@ -170,11 +170,11 @@ GrB_Info GB_split_full              // split a full matrix
             ASSERT_MATRIX_OK (C, "C for GB_split", GB0) ;
             GB_OK (GB_conform (C, Context)) ;
             if (csc)
-            {
+            { 
                 GB_TILE (Tiles, inner, outer) = C ;
             }
             else
-            {
+            { 
                 GB_TILE (Tiles, outer, inner) = C ;
             }
             C = NULL ;

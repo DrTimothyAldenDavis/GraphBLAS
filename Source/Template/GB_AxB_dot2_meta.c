@@ -125,7 +125,7 @@
         #if ( GB_IS_ANY_MONOID )
         if (B_is_bitmap && A_is_sparse && M_is_bitmap && Mask_struct
             && Mask_comp)
-        {
+        { 
 
             //------------------------------------------------------------------
             // C<#M,struct> = A'*B, special case

@@ -106,13 +106,13 @@ GrB_Info GB_export      // export a matrix in any format
     //--------------------------------------------------------------------------
 
     if (iso == NULL)
-    {
+    { 
         // ensure A is non-iso
         // set A->iso = false   OK
         GB_OK (GB_convert_any_to_non_iso (*A, true, Context)) ;
     }
     else
-    { 
+    {
         // do not convert the matrix; export A as-is, either iso or non-iso
         (*iso) = (*A)->iso ;
         if (*iso)
@@ -131,6 +131,9 @@ GrB_Info GB_export      // export a matrix in any format
 
     // export A->x
     #ifdef GB_DEBUG
+    #ifdef GB_MEMDUMP
+    printf ("export A->x from memtable: %p\n", A->x) ;
+    #endif
     GB_Global_memtable_remove ((*A)->x) ;
     #endif
     (*Ax) = (*A)->x ; (*A)->x = NULL ;
@@ -143,6 +146,9 @@ GrB_Info GB_export      // export a matrix in any format
 
             // export A->h
             #ifdef GB_DEBUG
+            #ifdef GB_MEMDUMP
+            printf ("export A->h from memtable: %p\n", A->h) ;
+            #endif
             GB_Global_memtable_remove ((*A)->h) ;
             #endif
             (*Ah) = (GrB_Index *) ((*A)->h) ; (*A)->h = NULL ;
@@ -162,6 +168,9 @@ GrB_Info GB_export      // export a matrix in any format
             else
             {
                 #ifdef GB_DEBUG
+                #ifdef GB_MEMDUMP
+                printf ("export A->p from memtable: %p\n", A->p) ;
+                #endif
                 GB_Global_memtable_remove ((*A)->p) ;
                 #endif
                 (*Ap) = (GrB_Index *) ((*A)->p) ; (*A)->p = NULL ;
@@ -170,6 +179,9 @@ GrB_Info GB_export      // export a matrix in any format
 
             // export A->i
             #ifdef GB_DEBUG
+            #ifdef GB_MEMDUMP
+            printf ("export A->i from memtable: %p\n", A->i) ;
+            #endif
             GB_Global_memtable_remove ((*A)->i) ;
             #endif
             (*Ai) = (GrB_Index *) ((*A)->i) ; (*A)->i = NULL ;
@@ -181,6 +193,9 @@ GrB_Info GB_export      // export a matrix in any format
 
             // export A->b
             #ifdef GB_DEBUG
+            #ifdef GB_MEMDUMP
+            printf ("export A->b from memtable: %p\n", A->b) ;
+            #endif
             GB_Global_memtable_remove ((*A)->b) ;
             #endif
             (*Ab) = (*A)->b ; (*A)->b = NULL ;

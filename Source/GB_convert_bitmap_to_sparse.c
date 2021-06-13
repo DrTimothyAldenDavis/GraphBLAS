@@ -63,7 +63,7 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     bool Ax_shallow ;
     const bool A_iso = A->iso ;
     if (A_iso)
-    {
+    { 
         // remove A->x from the matrix so it is not freed by GB_phbix_free
         Ax = A->x ;
         Ax_shallow = A->x_shallow ;

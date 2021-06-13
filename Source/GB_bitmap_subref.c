@@ -236,7 +236,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // C=A(I,J) non-iso numeric with A and C full, both are non-iso

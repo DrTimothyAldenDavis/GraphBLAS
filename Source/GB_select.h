@@ -72,17 +72,17 @@ static inline void GB_iso_select
         memset (Cx, 0, asize) ;
     }
     else if (opcode == GB_EQ_THUNK_opcode)
-    {
+    { 
         // all entries in C are equal to thunk
         memcpy (Cx, xthunk, asize) ;
     }
     else if (opcode == GB_NONZERO_opcode && acode == GB_BOOL_code)
-    {
+    { 
         // all entries in C are true; C and A are boolean
         memset (Cx, 1, 1) ;
     }
     else
-    {
+    { 
         // A and C are both iso
         memcpy (Cx, Ax, asize) ;
     }

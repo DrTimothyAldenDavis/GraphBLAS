@@ -27,7 +27,7 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     GrB_Index *nvals,   // # of entries in bitmap
     const GrB_Descriptor desc
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor

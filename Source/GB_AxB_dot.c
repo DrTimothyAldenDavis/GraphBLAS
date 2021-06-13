@@ -95,7 +95,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     GB_void cscalar [GB_VLA(zsize)] ;
     bool C_iso = GB_iso_AxB (cscalar, A, B, A->vlen, semiring, flipxy, false) ;
     if (C_iso)
-    { 
+    {
         // revise the method if A and B are both iso and full
         if (A->iso && GB_as_if_full (A) && B->iso && GB_as_if_full (B))
         {
@@ -112,7 +112,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
                 ztype, A->vdim, B->vdim, GB_Ap_null, true, GxB_FULL, false,
                 GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Context) ;
             if (info == GrB_SUCCESS)
-            {
+            { 
                 C->magic = GB_MAGIC ;
                 memcpy (C->x, cscalar, zsize) ;
             }

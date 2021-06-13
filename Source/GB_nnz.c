@@ -20,27 +20,27 @@ int64_t GB_nnz      // return nnz(A) or INT64_MAX if integer overflow
 {
 
     if (A == NULL || A->magic != GB_MAGIC)
-    {
+    { 
         // A is NULL or uninitialized
         return (0) ;
     }
     else if (A->p != NULL)
-    {
+    { 
         // A is sparse or hypersparse
         return (A->p [A->nvec]) ;
     }
     else if (A->b != NULL)
-    {
+    { 
         // A is bitmap
         return (A->nvals) ;
     }
     else if (A->x != NULL)
-    {
+    { 
         // A is full
         return (GB_nnz_full (A)) ;
     }
     else
-    {
+    { 
         // A is empty
         return (0) ;
     }

@@ -154,7 +154,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     ASSERT (ok) ;
 
     if (C_iso)
-    {
+    { 
         // the values of A and B are no longer needed if C is iso
         GBURBLE ("(iso kron) ") ;
         A_is_pattern = true ;
@@ -252,7 +252,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         // Cx [0] = cscalar = op (A,B)
         memcpy (C->x, cscalar, csize) ;
         if (C_is_full)
-        {
+        { 
             // no more work to do if C is iso and full
             ASSERT_MATRIX_OK (C, "C=kron(A,B), iso full", GB0) ;
             GB_FREE_WORK ;

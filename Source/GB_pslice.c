@@ -29,7 +29,7 @@ static void GB_pslice_worker
     int tlo,                        // assign to Slice [(tlo+1):(thi-1)]
     int thi                     
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

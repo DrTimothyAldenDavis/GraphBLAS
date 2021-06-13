@@ -68,7 +68,7 @@ GrB_Info GB_bitmap_selector
     //--------------------------------------------------------------------------
 
     if (C_iso)
-    {
+    { 
         GB_iso_select (C->x, opcode, xthunk, A->x, acode, asize) ;
     }
 

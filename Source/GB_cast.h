@@ -57,8 +57,7 @@ static inline void GB_cast_one  // z = 1 with typecasting zcode
     void *z,                    // output scalar z of type zcode
     GB_Type_code zcode          // type of z
 )
-{
-
+{ 
     GB_cast_function cast_one = GB_cast_factory (zcode, GB_UINT8_code) ;
     uint8_t one = 1 ;
     cast_one (z, (GB_void *) &one, sizeof (uint8_t)) ;

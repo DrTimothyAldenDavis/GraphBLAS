@@ -123,7 +123,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     GB_void cscalar [GB_VLA(csize)] ;
     memset (cscalar, 0, csize) ;
     if (symbolic)
-    {
+    { 
         // symbolic extraction never results in an iso matrix
         C_iso = false ;
     }
@@ -131,14 +131,14 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     {
         // determine if C is iso and get the iso scalar
         if (A->iso)
-        {
+        { 
             memcpy (cscalar, A->x, csize) ;
             C_iso = true ;
         }
     }
 
     if (C_iso)
-    {
+    { 
         GBURBLE ("(iso subref )") ;
     }
 

@@ -21,14 +21,14 @@ int64_t GB_nnz_max
 {
 
     if (A == NULL || A->x == NULL || A->type == NULL)
-    {
+    { 
         // A is empty
         return (0) ;
     }
     int64_t nnz_max ;
     int64_t xmax = A->x_size / A->type->size ;
     if (A->p != NULL)
-    { 
+    {
         // A is sparse (p,i,x) or hypersparse (p,h,i,x):
         nnz_max = (A->i == NULL) ? 0 : (A->i_size / sizeof (int64_t)) ;
         if (!A->iso)
@@ -37,7 +37,7 @@ int64_t GB_nnz_max
         }
     }
     else if (A->b != NULL)
-    { 
+    {
         // A is bitmap (b,x):
         nnz_max = A->b_size / sizeof (bool) ;
         if (!A->iso)

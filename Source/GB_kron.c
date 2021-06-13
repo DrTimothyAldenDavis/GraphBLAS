@@ -127,7 +127,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     }
 
     if (!T_is_csc)
-    { 
+    {
         if (GB_OP_IS_POSITIONAL (op))
         { 
             // positional ops must be flipped, with i and j swapped
@@ -140,7 +140,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     GB_AxB_pattern (&A_is_pattern, &B_is_pattern, false, op->opcode) ;
 
     if (A_transpose)
-    {
+    { 
         // AT = A' and typecast to op->xtype
         // transpose: typecast, no op, not in-place
         GBURBLE ("(A transpose) ") ;
@@ -152,7 +152,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     }
 
     if (B_transpose)
-    {
+    { 
         // BT = B' and typecast to op->ytype
         // transpose: typecast, no op, not in-place
         GBURBLE ("(B transpose) ") ;

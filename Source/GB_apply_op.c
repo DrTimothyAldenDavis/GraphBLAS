@@ -82,15 +82,15 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
 
     GB_Opcode opcode ;
     if (op1 != NULL)
-    {
+    { 
         opcode = op1->opcode ;
     }
     else if (op2 != NULL)
-    {
+    { 
         opcode = op2->opcode ;
     }
     else
-    {
+    { 
         // C is iso, with no operator to apply; just call GB_iso_unop below.
         ASSERT (C_code_iso == GB_ISO_1 ||   // C iso value is 1
                 C_code_iso == GB_ISO_S ||   // C iso value is the scalar
@@ -146,7 +146,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
         // fail if out of memory.
 
         if (is64)
-        {
+        { 
             int64_t *restrict Cx_int = (int64_t *) Cx ;
             switch (opcode)
             {
@@ -172,7 +172,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
             }
         }
         else
-        {
+        { 
             int32_t *restrict Cx_int = (int32_t *) Cx ;
             switch (opcode)
             {
@@ -210,7 +210,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
         GBURBLE ("(iso apply) ") ;
         ASSERT_MATRIX_OK (A, "A passing to GB_iso_unop", GB0) ;
         if (anz > 0)
-        {
+        { 
             // Cx [0] = op1 (A), op2 (scalar,A), or op2 (A,scalar)
             GB_iso_unop (Cx, ctype, C_code_iso, op1, op2, A, scalar) ;
         }

@@ -38,7 +38,7 @@ GrB_Info GB_compatible          // SUCCESS if all is OK, *_MISMATCH otherwise
     //--------------------------------------------------------------------------
 
     if (accum != NULL)
-    {
+    { 
         // Results T are accumlated via C<M>=accum(C,T)
 
         // For entries in C and T, c=z=accum(c,t) is computed, so C must

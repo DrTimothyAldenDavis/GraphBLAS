@@ -23,7 +23,7 @@ GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
     GxB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

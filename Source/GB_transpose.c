@@ -97,7 +97,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
 
     if (in_place)
-    {
+    { 
         GBURBLE ("(in-place transpose) ") ;
     }
 
@@ -421,13 +421,13 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // transplant or shallow-copy A->i as the new T->h
         T->h = A->i ; T->h_size = A->i_size ;
         if (in_place)
-        {
+        { 
             // transplant A->i as T->h
             T->h_shallow = A->i_shallow ;
             A->i = NULL ;
         }
         else
-        {
+        { 
             // T->h is a shallow copy of A->i
             T->h_shallow = true ;
         }
@@ -540,13 +540,13 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             ASSERT (!allocate_Tx) ;
             T->x = A->x ; T->x_size = A->x_size ;
             if (in_place)
-            {
+            { 
                 // transplant A->x as T->x
                 T->x_shallow = A->x_shallow ;
                 A->x = NULL ;
             }
             else
-            {
+            { 
                 // T->x is a shallow copy of A->x
                 T->x_shallow = true ;
             }
@@ -789,7 +789,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             GrB_Type stype ;
             GB_void sscalar [GB_VLA(csize)] ;
             if (C_iso)
-            {
+            { 
                 // apply the op to the iso scalar
                 GB_iso_unop (sscalar, ctype, C_code_iso, op1, op2, A, scalar) ;
                 S_input = sscalar ;     // S_input is used instead of Swork
@@ -862,7 +862,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // transpose via bucket sort
@@ -900,9 +900,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
     // apply a positional operator, after transposing the matrix
     if (op_is_positional)
-    { 
+    {
         if (C->iso)
-        {
+        { 
             // If C was constructed as iso; it needs to be expanded first,
             // but do not initialize the values.  These are computed by
             // GB_apply_op below.

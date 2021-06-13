@@ -293,7 +293,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     //--------------------------------------------------------------------------
 
     if (M == NULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // M is not present 
@@ -333,7 +333,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         }
 
         if (AxB_method == GxB_AxB_HASH)
-        {
+        { 
             // Use the hash method for all tasks (except for those tasks which
             // require a hash table size >= cvlen; those tasks use Gustavson).
             // Do not scatter the mask into the Hf hash workspace.  The work
@@ -361,7 +361,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
 
     }
     else if (axbflops < ((double) Mwork * GB_MWORK_ALPHA))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // M is costly to use; apply it after C=A*B
@@ -413,14 +413,14 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         GBURBLE ("(intensity: %0.3g workspace/(nnz(A)+nnz(B)): %0.3g",
             intensity, workspace / abnz) ;
         if (intensity >= 8 && workspace < abnz)
-        {
+        { 
             // work intensity is large, and Gustvason workspace is modest;
             // use Gustavson for all tasks
             AxB_method = GxB_AxB_GUSTAVSON ;
             GBURBLE (": select Gustvason) ") ;
         }
         else
-        {
+        { 
             // use default task creation: mix of Hash and Gustavson
             GBURBLE (") ") ;
         }

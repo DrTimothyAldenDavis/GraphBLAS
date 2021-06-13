@@ -22,11 +22,11 @@ void *GB_xalloc_memory      // return the newly-allocated space
 {
     void *p ;
     if (iso)
-    {
+    { 
         p = GB_CALLOC (type_size, GB_void, size) ;
     }
     else
-    {
+    { 
         p = GB_MALLOC (n * type_size, GB_void, size) ;
     }
     return (p) ;

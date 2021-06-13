@@ -91,7 +91,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     const int64_t *restrict Ap = A->p ;
 
     if (Ap != NULL)
-    { 
+    {
         // A is sparse or hypersparse
         const int64_t *restrict Ai = A->i ;
 

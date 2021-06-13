@@ -75,7 +75,7 @@ bool GB_iso_emult           // c = op(a,b), return true if C is iso
     //--------------------------------------------------------------------------
 
     if (opcode == GB_PAIR_opcode)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso, with c = 1
@@ -93,12 +93,12 @@ bool GB_iso_emult           // c = op(a,b), return true if C is iso
         //----------------------------------------------------------------------
 
         if (ccode == ycode && bcode == ycode)
-        {
+        { 
             // c = Bx [0]
             memcpy (c, B->x, csize) ;
         }
         else
-        {
+        { 
             // c = (ctype) ((ytype) Bx [0])
             GB_void y [GB_VLA(ysize)] ;
             GB_cast_scalar (y, ycode, B->x, bcode, bsize) ;
@@ -115,12 +115,12 @@ bool GB_iso_emult           // c = op(a,b), return true if C is iso
         //----------------------------------------------------------------------
 
         if (ccode == xcode && acode == xcode)
-        {
+        { 
             // c = Ax [0]
             memcpy (c, A->x, csize) ;
         }
         else
-        {
+        { 
             // c = (ctype) ((xtype) Ax [0])
             GB_void x [GB_VLA(xsize)] ;
             GB_cast_scalar (x, xcode, A->x, acode, asize) ;
@@ -137,12 +137,12 @@ bool GB_iso_emult           // c = op(a,b), return true if C is iso
         //----------------------------------------------------------------------
 
         if (acode == xcode && bcode == ycode && ccode == zcode)
-        {
+        { 
             // c = op (Ax [0], Bx [0])
             femult (c, A->x, B->x) ;
         }
         else
-        {
+        { 
             // x = (xtype) Ax [0]
             GB_void x [GB_VLA(xsize)] ;
             GB_cast_scalar (x, xcode, A->x, acode, asize) ;

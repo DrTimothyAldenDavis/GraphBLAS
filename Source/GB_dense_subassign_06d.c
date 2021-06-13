@@ -98,7 +98,7 @@ GrB_Info GB_dense_subassign_06d
         A_ntasks = (A_nthreads == 1) ? 1 : (8 * A_nthreads) ;
     }
     else
-    {
+    { 
         GB_SLICE_MATRIX (A, 8, 32*chunk) ;
     }
 
@@ -107,7 +107,7 @@ GrB_Info GB_dense_subassign_06d
     //--------------------------------------------------------------------------
 
     if (C->iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso

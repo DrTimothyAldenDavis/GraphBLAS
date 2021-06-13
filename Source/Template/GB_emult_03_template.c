@@ -69,7 +69,7 @@
                     (GBB (Ab, pstart + i)
                     &&  // TODO: for GB_add, use || instead
                     GBB (Bb, pstart + i)))
-                {
+                { 
                     int64_t p = pstart + i ;
                     // C (i,j) = A (i,j) .* B (i,j)
                     Ci [pC] = i ;

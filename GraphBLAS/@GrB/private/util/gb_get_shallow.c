@@ -448,13 +448,15 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     A->b_shallow = (A->b != NULL) ;
     A->i_shallow = (A->i != NULL) ;
     A->x_shallow = (A->x != NULL) ;
-    #ifdef GB_DEBUG
+    #ifdef GB_MEMDUMP
+    printf ("remove from memtable: p:%p h:%p b:%p i:%p x:%p\n",
+        A->p, A->h, A->b, A->i, A->x) ;
+    #endif
     if (A->p != NULL) GB_Global_memtable_remove (A->p) ;
     if (A->h != NULL) GB_Global_memtable_remove (A->h) ;
     if (A->b != NULL) GB_Global_memtable_remove (A->b) ;
     if (A->i != NULL) GB_Global_memtable_remove (A->i) ;
     if (A->x != NULL) GB_Global_memtable_remove (A->x) ;
-    #endif
 
     //--------------------------------------------------------------------------
     // return the result

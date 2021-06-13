@@ -20,7 +20,7 @@ GrB_Matrix GB_hyper_pack            // return C
     GrB_Matrix C,                   // output matrix
     const GrB_Matrix A              // input matrix, not modified.
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

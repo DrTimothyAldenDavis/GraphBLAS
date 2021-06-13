@@ -126,14 +126,14 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     int C_sparsity = GB_sparsity (A) ;
 
     if (M == NULL)
-    {
+    { 
         GBURBLE ("emult_02:(%s=%s.*%s)",
             GB_sparsity_char (C_sparsity),
             GB_sparsity_char_matrix (A),
             GB_sparsity_char_matrix (B)) ;
     }
     else
-    {
+    { 
         GBURBLE ("emult_02:(%s<%s%s%s>=%s.*%s) ",
             GB_sparsity_char (C_sparsity),
             Mask_comp ? "!" : "",
@@ -350,13 +350,13 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     // TODO: could make these components of C shallow instead of memcpy
 
     if (GB_IS_HYPERSPARSE (A))
-    {
+    { 
         // copy A->h into C->h
         GB_memcpy (C->h, Ah, nvec * sizeof (int64_t), A_nthreads) ;
     }
 
     if (C_has_pattern_of_A)
-    {
+    { 
         // B is full and no mask present, so the pattern of C is the same as
         // the pattern of A
         GB_memcpy (Cp, Ap, (nvec+1) * sizeof (int64_t), A_nthreads) ;
@@ -446,7 +446,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     bool done = false ;
 
     if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso

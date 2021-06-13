@@ -132,7 +132,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     if (A_iso && opcode >= GB_NONZERO_opcode && opcode <= GB_LE_THUNK_opcode)
-    { 
+    {
 
         // select op is NONZERO, EQ_ZERO, GT_ZERO, GE_ZERO, LT_ZERO, LE_ZERO,
         // EQ_THUNK, GT_THUNK, GE_THUNK, LT_THUNK, or LE_THUNK.  All of these
@@ -160,7 +160,7 @@ GrB_Info GB_selector
 
         // check if C has 0 or 1 entry
         if (C_empty)
-        {
+        { 
             // C is an empty matrix
             return (GB_new (&C, true, // static header
                 A->type, avlen, avdim, GB_Ap_calloc, true,
@@ -168,7 +168,7 @@ GrB_Info GB_selector
                 1, Context)) ;
         }
         else
-        {
+        { 
             // C is a shallow copy of A with all the same entries as A
             // set C->iso = A->iso  OK
             return (GB_shallow_copy (C, true, A, Context)) ;
@@ -241,7 +241,7 @@ GrB_Info GB_selector
          acode == GB_BOOL_code) ;               // C iso value is true
 
     if (C_iso)
-    {
+    { 
         GB_BURBLE_MATRIX (A, "(iso select) ") ;
     }
 
@@ -383,7 +383,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     if (C_iso)
-    {
+    { 
         // The pattern of C is computed by the worker below, for the DIAG,
         // OFFDIAG, TRIL, TRIU, RESIZE, NONZOMBIE, and USER select operators.
         GB_iso_select (Cx, opcode, xthunk, Ax, acode, asize) ;
@@ -474,7 +474,7 @@ GrB_Info GB_selector
         ASSERT (info == GrB_SUCCESS) ;
 
         if (A->h != NULL)
-        { 
+        {
 
             //------------------------------------------------------------------
             // A and C are hypersparse: copy non-empty vectors from Ah to Ch

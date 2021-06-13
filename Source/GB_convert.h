@@ -213,7 +213,7 @@ static inline bool GB_is_dense
     // A can have any sparsity structure: hyper, sparse, bitmap, or full.
     // It can be converted to full, if zombies/tuples/jumbled are discarded.
     if (A == NULL)
-    {
+    { 
         return (false) ;
     }
     if (GB_IS_FULL (A))
@@ -239,7 +239,7 @@ static inline bool GB_as_if_full
     // A can have any sparsity structure: hyper, sparse, bitmap, or full.
     // It can be converted to full.
     if (A == NULL)
-    {
+    { 
         return (false) ;
     }
     if (GB_IS_FULL (A))
@@ -248,7 +248,7 @@ static inline bool GB_as_if_full
         return (true) ;
     }
     if (GB_ANY_PENDING_WORK (A))
-    {
+    { 
         // A has pending work and so cannot be treated as if full.
         return (false) ;
     }

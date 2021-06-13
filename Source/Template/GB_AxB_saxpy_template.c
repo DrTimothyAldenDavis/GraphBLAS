@@ -14,26 +14,26 @@
     {
 
         case GB_SAXPY_METHOD_3 :
-        { 
+        {
             // C is sparse or hypersparse, using minimal workspace.
             ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
 
             if (M == NULL)
-            {
+            { 
                 // C = A*B, no mask
                 #define GB_NO_MASK 1
                 #define GB_MASK_COMP 0
                 #include "GB_AxB_saxpy3_template.c"
             }
             else if (!Mask_comp)
-            {
+            { 
                 // C<M> = A*B
                 #define GB_NO_MASK 0
                 #define GB_MASK_COMP 0
                 #include "GB_AxB_saxpy3_template.c"
             }
             else
-            {
+            { 
                 // C<!M> = A*B
                 #define GB_NO_MASK 0
                 #define GB_MASK_COMP 1

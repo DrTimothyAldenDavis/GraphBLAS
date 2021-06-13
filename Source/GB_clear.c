@@ -123,7 +123,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         }
         A->p [0] = 0 ;
         if (plen > 0)
-        {
+        { 
             A->p [1] = 0 ;
             A->h [0] = 0 ;
         }

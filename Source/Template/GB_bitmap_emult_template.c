@@ -86,7 +86,7 @@
 
     }
     else if (ewise_method == GB_EMULT_METHOD_06)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // C is bitmap, !M is sparse or hyper
@@ -214,7 +214,7 @@
                 {
                     // M(i,j) is true, so C(i,j) can be computed
                     if (GBB (Ab, p) && GBB (Bb, p))
-                    {
+                    { 
                         // C (i,j) = A (i,j) + B (i,j)
                         #ifndef GB_ISO_EMULT
                         GB_GETA (aij, Ax, p, A_iso) ;
@@ -226,7 +226,7 @@
                     }
                 }
                 else
-                {
+                { 
                     // M(i,j) == 1, so C(i,j) is not computed
                     Cb [p] = 0 ;
                 }

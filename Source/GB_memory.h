@@ -83,7 +83,7 @@ void *GB_xalloc_memory      // return the newly-allocated space
 // malloc/calloc/realloc/free: for permanent contents of GraphBLAS objects
 //------------------------------------------------------------------------------
 
-#if 0
+#ifdef GB_MEMDUMP
 
     #define GB_FREE(p,s) \
     { \

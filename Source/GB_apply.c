@@ -55,7 +55,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     GB_Opcode opcode ;
     GrB_Type T_type ;
     if (op1 != NULL)
-    { 
+    {
         // apply a unary operator
         GB_RETURN_IF_FAULTY (op1) ;
         ASSERT_UNARYOP_OK (op1, "op1 for GB_apply", GB0) ;
@@ -178,7 +178,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     //--------------------------------------------------------------------------
 
     if (op2 != NULL)
-    { 
+    {
+     
         // first(A,x) and second(y,A) become identity(A)
         if ((opcode == GB_FIRST_opcode  && !binop_bind1st) ||
             (opcode == GB_SECOND_opcode &&  binop_bind1st))
@@ -271,7 +272,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         // No work to do if the op is identity.
         // FUTURE::: also handle C += op(C), with accum.
         if (opcode != GB_IDENTITY_opcode)
-        { 
+        {
             // the output Cx is aliased with C->x in GB_apply_op.
             GB_iso_code
                 C_code_iso = GB_iso_unop_code (C, op1, op2, binop_bind1st) ;

@@ -49,7 +49,7 @@
     //--------------------------------------------------------------------------
 
     if (A_is_bitmap)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // A is bitmap, so zombies can be created in C
@@ -92,7 +92,7 @@
                 // pA points to the start of A(:,j) since A is dense
                 int64_t pA = j * avlen ;
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
-                { 
+                {
                     int64_t i = Mi [pM] ;
                     int64_t p = pA + i ;
                     if (Ab [p])

@@ -17,7 +17,7 @@ GrB_Info GrB_Matrix_wait    // finish all work on a matrix
 (
     GrB_Matrix *A
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

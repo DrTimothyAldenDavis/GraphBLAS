@@ -53,7 +53,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     }
 
     if (monoid->identity == NULL)
-    {
+    { 
         GBPR0 ("    Identity value is missing\n") ;
         return (GrB_INVALID_OBJECT) ;
     }

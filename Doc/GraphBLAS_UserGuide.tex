@@ -153,6 +153,7 @@ are extensions to the v1.3 GraphBLAS C API.
     \item added \verb'GrB.argmin/argmax' to Octave/MATLAB interface
     \item added \verb'GxB_*_pack/unpack' methods as alternatives to  % FIXME
         import/export.
+    \item added \verb'GxB_PRINT_1BASED' to the global settings.
     \end{packed_itemize}
 
 \item Version 5.0.6 (May 24, 2021)
@@ -7073,6 +7074,7 @@ field                       & value         & description \\
 \verb'GxB_PRINTF'           & see below     & diagnostic output \\
 \verb'GxB_FLUSH'            & see below     & diagnostic output \\
 \verb'GxB_MEMORY_POOL'      & \verb'int64_t [64]' & memory pool control \\
+\verb'GxB_PRINT_1BASED'     & \verb'int'    & for printing matrices/vectors \\
 \end{tabular}
 }
 
@@ -7149,6 +7151,7 @@ field                       & value         & description \\
 \verb'GxB_PRINTF'           & see below     & diagnostic output \\
 \verb'GxB_FLUSH'            & see below     & diagnostic output \\
 \verb'GxB_MEMORY_POOL'      & \verb'int64_t [64]' & memory pool control \\
+\verb'GxB_PRINT_1BASED'     & \verb'int'    & for printing matrices/vectors \\
 \hline
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
 \verb'GxB_LIBRARY_NAME'         & \verb'char *' & name of library \\
@@ -7506,6 +7509,8 @@ typedef enum
     GxB_BURBLE = 99,                    // diagnositic output
     GxB_PRINTF = 101,               // printf function for diagnostic output
     GxB_FLUSH = 102,                // flush function for diagnostic output
+    GxB_MEMORY_POOL = 103,  // memory pool control
+    GxB_PRINT_1BASED = 104, // print matrices as 0-based or 1-based
 
     // for matrix/vector get only:
     GxB_SPARSITY_STATUS = 33,   // query the sparsity of a matrix or vector
@@ -7733,8 +7738,9 @@ The \verb'field' parameter can be
 \verb'GxB_BURBLE',
 \verb'GxB_PRINTF',
 \verb'GxB_FLUSH',
+\verb'GxB_MEMORY_POOL',
 or
-\verb'GxB_MEMORY_POOL'.
+\verb'GxB_PRINT_1BASED'.
 
 For example, the following usage sets the global hypersparsity ratio to 0.2,
 the format of future matrices to \verb'GxB_BY_COL', the maximum number
@@ -7862,6 +7868,7 @@ This usage of \verb'GxB_get' retrieves the value of a global option.  The
         \verb'GxB_PRINTF'       & printf function \\
         \verb'GxB_FLUSH'        & flush function \\
         \verb'GxB_MEMORY_POOL'  & memory pool control \\
+        \verb'GxB_PRINT_1BASED' & for printing matrices/vectors \\
         \hline
         \verb'GxB_LIBRARY_NAME'         & the string
                                         \verb'"SuiteSparse:GraphBLAS"' \\
@@ -8050,7 +8057,9 @@ To set/get the global options:
     int64_t free_pool_limit [64] ;
     GxB_set (GxB_MEMORY_POOL, free_pool_limit) ;
     GxB_set (GxB_MEMORY_POOL, NULL) ;     // set defaults
-    GxB_get (GxB_MEMORY_POOL, free_pool_limit) ; \end{verbatim} }
+    GxB_get (GxB_MEMORY_POOL, free_pool_limit) ;
+    GxB_set (GxB_PRINT_1BASED, bool onebased) ;
+    GxB_get (GxB_PRINT_1BASED, bool *onebased) ; \end{verbatim} }
 
 \noindent
 To get global options that can be queried but not modified:
@@ -11017,6 +11026,12 @@ by trying to parse the resulting output via another program.  The intent of
 these functions is to produce a report of an object for visual inspection.  If
 the user application needs to extract content from a GraphBLAS matrix or
 vector, use \verb'GrB_*_extractTuples' or the import/export methods instead.
+
+GraphBLAS matrices and vectors are zero-based, where indices of an $n$-by-$n$
+matrix are in the range 0 to $n-1$.  However, Octave, MATLAB, and Julia prefer
+to print their matrices and vectors as one-based.  To enable 1-based printing,
+use \verb'GxB_set (GxB_PRINT_1BASED, true)'.  Printing is done as zero-based by
+default.
 
 \newpage
 %===============================================================================

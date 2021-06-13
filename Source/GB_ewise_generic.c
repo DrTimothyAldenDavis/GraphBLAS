@@ -225,7 +225,7 @@ void GB_ewise_generic       // generic ewise
         // C(i,j) = (ctype) (A(i,j) + B(i,j))
         if (ewise_method == GB_EMULT_METHOD_02A ||
             ewise_method == GB_EMULT_METHOD_02B)
-        {
+        { 
             // handle flipxy
             #undef  GB_BINOP
             #define GB_BINOP(cij, aij, bij, i, j)   \
@@ -242,7 +242,7 @@ void GB_ewise_generic       // generic ewise
             #include "GB_emult_02_template.c"
         }
         else if (ewise_method == GB_EMULT_METHOD_03)
-        {
+        { 
             #undef  GB_BINOP
             #define GB_BINOP(cij, aij, bij, i, j)   \
                 GB_void z [GB_VLA(zsize)] ;         \
@@ -251,11 +251,11 @@ void GB_ewise_generic       // generic ewise
             #include "GB_emult_03_template.c"
         }
         else if (C_sparsity == GxB_BITMAP)
-        {
+        { 
             #include "GB_bitmap_emult_template.c"
         }
         else
-        {
+        { 
             #include "GB_emult_01_meta.c"
         }
     }

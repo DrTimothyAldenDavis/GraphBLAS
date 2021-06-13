@@ -25,7 +25,7 @@
 
         GB_WERK_PUSH (GH_slice, 2*ntasks, int64_t) ;
         if (GH_slice == NULL)
-        {
+        { 
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -46,7 +46,7 @@
             G_slice [tid] = gwork ;
             H_slice [tid] = hwork ;
             if (jpanel > 1)
-            {
+            { 
                 // no need to allocate workspace for Gb and Gx if jpanel == 1
                 gwork += jpanel ;
             }
@@ -64,7 +64,7 @@
         Wbx = GB_MALLOC_WERK (wbxspace, GB_void, &Wbx_size) ;
         Wcx = GB_MALLOC_WERK (wcxspace, GB_void, &Wcx_size) ;
         if (Wf == NULL || Wcx == NULL || Wbx == NULL)
-        {
+        { 
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -137,7 +137,7 @@
                 #if GB_B_IS_BITMAP
                 {
                     if (np == 1)
-                    {
+                    { 
                         // no need to load a single vector of B
                         Gb = (int8_t *) (Bb + (j1 * bvlen)) ;
                     }
@@ -160,7 +160,7 @@
                 if (!B_is_pattern)
                 {
                     if (np == 1)
-                    {
+                    { 
                         // no need to load a single vector of B
                         GB_void *restrict Bx = (GB_void *) (B->x) ;
                         Gx = (GB_BTYPE *) (Bx + (j1 * bvlen) * GB_BSIZE) ;

@@ -25,7 +25,7 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     const GrB_Index n,
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // allocate workspace

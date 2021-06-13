@@ -25,7 +25,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     bool jumbled,       // if true, indices may be unsorted
     const GrB_Descriptor desc
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor

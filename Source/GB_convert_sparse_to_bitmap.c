@@ -154,7 +154,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
         bool done = false ;
 
         if (A_iso)
-        {
+        { 
             // A is iso; numerical entries are not modified
             #define GB_COPY(Axnew,pnew,Axold,p) ;
             #include "GB_convert_sparse_to_bitmap_template.c"
@@ -222,7 +222,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     //--------------------------------------------------------------------------
 
     if (in_place)
-    {
+    { 
         // if in-place, remove A->x from A so it is not freed
         A->x = NULL ;
         A->x_shallow = false ;

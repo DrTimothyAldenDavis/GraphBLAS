@@ -143,7 +143,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     }
     else if (C_iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso; pattern already computed above

@@ -461,7 +461,7 @@ float GB_Global_bitmap_switch_matrix_get (int64_t vlen, int64_t vdim)
 
 GB_PUBLIC
 void GB_Global_bitmap_switch_default (void)
-{
+{ 
     GB_Global.bitmap_switch [0] = GB_BITSWITCH_1 ;
     GB_Global.bitmap_switch [1] = GB_BITSWITCH_2 ;
     GB_Global.bitmap_switch [2] = GB_BITSWITCH_3_to_4 ;
@@ -544,7 +544,9 @@ void GB_Global_memtable_add (void *p, size_t size)
     ASSERT ((p == NULL) == (size == 0)) ;
     if (p == NULL) return ;
     bool fail = false ;
-    // printf ("memtable add %p size %ld\n", p, size) ;
+    #ifdef GB_MEMDUMP
+    printf ("memtable add %p size %ld\n", p, size) ;
+    #endif
     #pragma omp critical(GB_memtable)
     {
         int n = GB_Global.nmemtable  ;
@@ -571,7 +573,9 @@ void GB_Global_memtable_add (void *p, size_t size)
         }
     }
     ASSERT (!fail) ;
-    // GB_Global_memtable_dump ( ) ;
+    #ifdef GB_MEMDUMP
+    GB_Global_memtable_dump ( ) ;
+    #endif
     #endif
 }
 
@@ -636,7 +640,9 @@ void GB_Global_memtable_remove (void *p)
     #ifdef GB_DEBUG
     if (p == NULL) return ;
     bool found = false ;
-    // printf ("memtable remove %p ", p) ;
+    #ifdef GB_MEMDUMP
+    printf ("memtable remove %p ", p) ;
+    #endif
     #pragma omp critical(GB_memtable)
     {
         int n = GB_Global.nmemtable  ;
@@ -660,7 +666,9 @@ void GB_Global_memtable_remove (void *p)
         GB_Global_memtable_dump ( ) ;
     }
     ASSERT (found) ;
-    // GB_Global_memtable_dump ( ) ;
+    #ifdef GB_MEMDUMP
+    GB_Global_memtable_dump ( ) ;
+    #endif
     #endif
 }
 
@@ -898,25 +906,25 @@ bool GB_Global_burble_get (void)
 
 GB_PUBLIC
 GB_printf_function_t GB_Global_printf_get ( )
-{
+{ 
     return (GB_Global.printf_func) ;
 }
 
 GB_PUBLIC
 GB_flush_function_t GB_Global_flush_get ( )
-{
+{ 
     return (GB_Global.flush_func) ;
 }
 
 GB_PUBLIC
 void GB_Global_printf_set (GB_printf_function_t pr_func)
-{
+{ 
     GB_Global.printf_func = pr_func ;
 }
 
 GB_PUBLIC
 void GB_Global_flush_set (GB_flush_function_t fl_func)
-{
+{ 
     GB_Global.flush_func = fl_func ;
 }
 
@@ -983,7 +991,7 @@ double GB_Global_gpu_chunk_get (void)
 }
 
 bool GB_Global_gpu_count_set (bool enable_cuda)
-{
+{ 
     // set the # of GPUs in the system;
     // this function is only called once, by GB_init.
     #if defined ( GBCUDA )
@@ -1001,7 +1009,7 @@ bool GB_Global_gpu_count_set (bool enable_cuda)
 }
 
 int GB_Global_gpu_count_get (void)
-{
+{ 
     // get the # of GPUs in the system
     return (GB_Global.gpu_count) ;
 }
@@ -1010,49 +1018,49 @@ int GB_Global_gpu_count_get (void)
     if (device < 0 || device >= GB_Global.gpu_count) return (error) ;
 
 size_t GB_Global_gpu_memorysize_get (int device)
-{
+{ 
     // get the memory size of a specific GPU
     GB_GPU_DEVICE_CHECK (0) ;       // memory size zero if invalid GPU
     return (GB_Global.gpu_properties [device].total_global_memory) ;
 }
 
 int GB_Global_gpu_sm_get (int device)
-{
+{ 
     // get the # of SMs in a specific GPU
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
     return (GB_Global.gpu_properties [device].number_of_sms)  ;
 }
 
 bool GB_Global_gpu_device_pool_size_set( int device, size_t size)
-{
+{ 
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
     GB_Global.gpu_properties [device].pool_size = (int) size ;
     return( true); 
 }
 
 bool GB_Global_gpu_device_max_pool_size_set( int device, size_t size)
-{
+{ 
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
     GB_Global.gpu_properties[device].max_pool_size = (int) size ;
     return( true); 
 }
 
 bool GB_Global_gpu_device_memory_resource_set( int device, void *resource)
-{
+{ 
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
     GB_Global.gpu_properties[device].memory_resource = resource;
     return( true); 
 }
 
 void* GB_Global_gpu_device_memory_resource_get( int device )
-{
+{ 
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
     return ( GB_Global.gpu_properties [device].memory_resource ) ;
     //NOTE: this returns a void*, needs to be cast to be used
 }
 
 bool GB_Global_gpu_device_properties_get (int device)
-{
+{ 
     // get all properties of a specific GPU;
     // this function is only called once per GPU, by GB_init.
     GB_GPU_DEVICE_CHECK (false) ;   // fail if invalid GPU
