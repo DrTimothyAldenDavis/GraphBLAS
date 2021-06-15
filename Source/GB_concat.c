@@ -84,7 +84,7 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     memset (cscalar, 0, csize) ;
     memset (ascalar, 0, csize) ;
     int64_t cnz = 0 ;
-    int64_t k = 0 ;
+    int64_t cnvec_estimate = 0 ;    // upper bound on C->nvec if hypersparse
 
     for (int64_t i = 0 ; i < m ; i++)
     {
@@ -107,11 +107,12 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
             int A_sparsity = GB_sparsity (A) ;
             if (A_sparsity == GxB_HYPERSPARSE)
             { 
-                k += A->nvec ;
+                cnvec_estimate += A->nvec ;
             }
             else
             { 
-                k += csc ? ncols : nrows ;
+                int64_t n = csc ? ncols : nrows ;
+                cnvec_estimate += GB_IMIN (n, anz) ;
             }
             GrB_Type atype = A->type ;
             #define offset (GB_Global_print_one_based_get ( ) ? 1 : 0)
@@ -210,11 +211,6 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
             GB_NROWS (C), GB_NCOLS (C), cnrows, cncols) ;
     }
 
-    if (cnz > 1 && C_iso)
-    { 
-        GBURBLE ("(iso concat) ") ;
-    }
-
     //--------------------------------------------------------------------------
     // C = concatenate (Tiles)
     //--------------------------------------------------------------------------
@@ -228,7 +224,7 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     else if (C_is_full)
     { 
         // construct C as full
-        GBURBLE ("(full concat) ") ;
+        GBURBLE ("(%sfull concat) ", C_iso ? "iso " : "") ;
         GB_OK (GB_concat_full (C, C_iso, cscalar,
             Tiles, m, n, Tile_rows, Tile_cols, Context)) ;
     }
@@ -236,21 +232,22 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
         cncols))
     { 
         // construct C as bitmap
-        GBURBLE ("(bitmap concat) ") ;
+        GBURBLE ("(%sbitmap concat) ", C_iso ? "iso " : "") ;
         GB_OK (GB_concat_bitmap (C, C_iso, cscalar,
             cnz, Tiles, m, n, Tile_rows, Tile_cols, Context)) ;
     }
-    else if (GB_convert_sparse_to_hyper_test (C->hyper_switch, k, C->vdim))
+    else if (GB_convert_sparse_to_hyper_test (C->hyper_switch, cnvec_estimate,
+        C->vdim))
     { 
         // construct C as hypersparse
-        GBURBLE ("(hyper concat) ") ;
+        GBURBLE ("(%shyper concat) ", C_iso ? "iso " : "") ;
         GB_OK (GB_concat_hyper (C, C_iso, cscalar,
             cnz, Tiles, m, n, Tile_rows, Tile_cols, Context)) ;
     }
     else
     { 
         // construct C as sparse
-        GBURBLE ("(sparse concat) ") ;
+        GBURBLE ("(%ssparse concat) ", C_iso ? "iso " : "") ;
         GB_OK (GB_concat_sparse (C, C_iso, cscalar,
             cnz, Tiles, m, n, Tile_rows, Tile_cols, Context)) ;
     }

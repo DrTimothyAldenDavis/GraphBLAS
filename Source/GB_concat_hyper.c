@@ -178,7 +178,11 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     // build C from the triplets
     //--------------------------------------------------------------------------
 
-    const GB_void *S_input = C_iso ? cscalar : NULL ;
+    const GB_void *S_input = NULL ;
+    if (C_iso)
+    { 
+        S_input = cscalar ;
+    }
 
     GB_OK (GB_builder (
         C,                      // create C using a static or dynamic header

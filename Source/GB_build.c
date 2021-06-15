@@ -173,8 +173,12 @@ GrB_Info GB_build               // build matrix
 
     if (X_iso)
     {
+GB_GOTCHA ; // X iso
 
-        // C and scalar must be compatible
+        //----------------------------------------------------------------------
+        // C and scalar must be compatible for iso build
+        //----------------------------------------------------------------------
+
         if (!GB_Type_compatible (xtype, C->type))
         { 
             GB_ERROR (GrB_DOMAIN_MISMATCH,
@@ -213,6 +217,7 @@ GrB_Info GB_build               // build matrix
         // C and X must be compatible
         if (!GB_Type_compatible (xtype, C->type))
         { 
+GB_GOTCHA ;
             GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Array of type [%s] cannot be typecast to matrix of type"
                 " [%s]\n", xtype->name, C->type->name) ;

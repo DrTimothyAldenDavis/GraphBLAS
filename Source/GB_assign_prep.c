@@ -1174,6 +1174,7 @@ GrB_Info GB_assign_prep
             }
             else if (C->iso != C_iso_out)
             { 
+GB_GOTCHA ; // iso wait: if the iso property of C is changing
                 // the iso property of C is changing
                 wait = true ;
             }
@@ -1193,11 +1194,12 @@ GrB_Info GB_assign_prep
         ASSERT_MATRIX_OK (C, "C before wait", GB0) ;
         GB_MATRIX_WAIT (C) ;
 
-        // GB_wait, may have deleted all the zombies in C, so check again if C
+        // GB_wait may have deleted all the zombies in C, so check again if C
         // is empty.
         C_is_empty = (GB_nnz (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
         if (C_is_empty)
         { 
+GB_GOTCHA ; // wait: C empty
             // C is completely empty.  C_replace is irrelevant so set it false
             GBURBLE ("(C empty) ") ;
             (*C_replace) = false ;

@@ -38,6 +38,7 @@ static inline GrB_Matrix GB_get_mask    // return M_in or NULL
         }
         else
         { 
+GB_GOTCHA ; // iso mask: all zero
             // M->x [0] is zero, so all entries present in the iso matrix M
             // have the value zero.  This is the same as a matrix M with no
             // entries at all.  If Mask_comp is true, this is the same as no

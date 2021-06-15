@@ -42,6 +42,7 @@
     }
     else if (opcode == GB_ONE_opcode)
     {
+GB_GOTCHA ; // ONE op: FIXME: no longer needed; using iso case
 
         //----------------------------------------------------------------------
         // z = (ztype) 1, where the type of A is ignored

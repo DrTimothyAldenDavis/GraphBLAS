@@ -138,6 +138,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int64_t cnz ;
     if (!GB_Index_multiply ((GrB_Index *) (&cnz), cvlen, cvdim))
     { 
+GB_GOTCHA ;     // problem too large
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }

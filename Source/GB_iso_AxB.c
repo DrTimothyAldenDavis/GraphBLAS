@@ -198,7 +198,7 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
 
     }
     else if (B_iso && nice_monoid && second)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso, with c = b
@@ -220,7 +220,7 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
 
     }
     else if (A_iso && nice_monoid && first)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso, with c = a

@@ -86,7 +86,7 @@ bool GB_iso_emult           // c = op(a,b), return true if C is iso
 
     }
     else if (B->iso && (opcode == GB_SECOND_opcode || opcode == GB_ANY_opcode))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso, with c = b
@@ -108,7 +108,7 @@ bool GB_iso_emult           // c = op(a,b), return true if C is iso
 
     }
     else if (A->iso && (opcode == GB_FIRST_opcode || opcode == GB_ANY_opcode))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso, with c = a
@@ -130,7 +130,7 @@ bool GB_iso_emult           // c = op(a,b), return true if C is iso
 
     }
     else if (A->iso && B->iso)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C is iso, with c = op(a,b), for any op, including user-defined

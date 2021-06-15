@@ -290,6 +290,7 @@ GrB_Info GB_msort_1     // sort array A of size 1-by-n
     int nthreads                // # of threads to use
 )
 {
+GB_GOTCHA ; // msort1
 
     //--------------------------------------------------------------------------
     // handle small problems with a single thread

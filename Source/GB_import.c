@@ -86,6 +86,7 @@ GrB_Info GB_import      // import a matrix in any format
             if (nvec > vdim) return (GrB_INVALID_VALUE) ;
             if (Ap_size < (nvec+1) * sizeof (int64_t))
             { 
+GB_GOTCHA ; // import Ap too small (hypersparse)
                 return (GrB_INVALID_VALUE) ;
             }
             GB_RETURN_IF_NULL (Ap) ;
@@ -96,6 +97,7 @@ GrB_Info GB_import      // import a matrix in any format
             GB_RETURN_IF_NULL (*Ah) ;
             if (Ah_size < nvec * sizeof (int64_t))
             { 
+GB_GOTCHA ; // import Ah too small
                 return (GrB_INVALID_VALUE) ;
             }
             // check Ai
@@ -106,6 +108,7 @@ GrB_Info GB_import      // import a matrix in any format
             }
             if (Ai_size < nvals * sizeof (int64_t))
             { 
+GB_GOTCHA ; // import Ai too small (hypersparse)
                 return (GrB_INVALID_VALUE) ;
             }
             Ax_size_for_non_iso = nvals ;
@@ -120,6 +123,7 @@ GrB_Info GB_import      // import a matrix in any format
                 // pass in Ap for the sparse case
                 if (Ap_size < (vdim+1) * sizeof (int64_t))
                 { 
+GB_GOTCHA ; // import Ap too small (sparse)
                     return (GrB_INVALID_VALUE) ;
                 }
                 GB_RETURN_IF_NULL (Ap) ;
@@ -134,6 +138,7 @@ GrB_Info GB_import      // import a matrix in any format
             }
             if (Ai_size < nvals * sizeof (int64_t))
             { 
+GB_GOTCHA ; // import Ai too small (sparse)
                 return (GrB_INVALID_VALUE) ;
             }
             Ax_size_for_non_iso = nvals ;
@@ -161,10 +166,12 @@ GrB_Info GB_import      // import a matrix in any format
 
     // check the size of Ax
     if (iso)
-    {
+    { 
         // A is iso: Ax must be non-NULL and large enough to hold a single entry
+        GBURBLE ("(iso import) ") ;
         if (Ax_size < type->size)
         { 
+GB_GOTCHA ; // iso import, Ax too small
             return (GrB_INVALID_VALUE) ;
         }
     }
@@ -174,6 +181,7 @@ GrB_Info GB_import      // import a matrix in any format
         // or Ax_size must be at least as large as Ax_size_for_non_iso
         if (! (Ax_size == 0 || Ax_size >= Ax_size_for_non_iso))
         { 
+GB_GOTCHA ; // non-iso import, Ax too small
             return (GrB_INVALID_VALUE) ;
         }
     }
@@ -200,10 +208,6 @@ GrB_Info GB_import      // import a matrix in any format
     // transplant the user's content into the matrix
     (*A)->magic = GB_MAGIC ;
     (*A)->iso = iso ;   // OK
-    if (iso)
-    { 
-        GBURBLE ("(iso import) ") ;
-    }
 
     switch (sparsity)
     {

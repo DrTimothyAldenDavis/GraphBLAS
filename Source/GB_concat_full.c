@@ -147,33 +147,33 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
                         #define GB_COPY(pC,pA,A_iso)                        \
                             Cx [pC] = GBX (Ax, pA, A_iso) ;
 
-                        case 1 : // uint8, int8, bool, or 1-byte user-defined
+                        case GB_1BYTE : // uint8, int8, bool, or 1-byte user
                             #define GB_CTYPE uint8_t
                             #include "GB_concat_full_template.c"
                             break ;
 
-                        case 2 : // uint16, int16, or 2-byte user-defined
+                        case GB_2BYTE : // uint16, int16, or 2-byte user
                             #define GB_CTYPE uint16_t
                             #include "GB_concat_full_template.c"
                             break ;
 
-                        case 4 : // uint32, int32, float, or 4-byte user-defined
+                        case GB_4BYTE : // uint32, int32, float, or 4-byte user
                             #define GB_CTYPE uint32_t
                             #include "GB_concat_full_template.c"
                             break ;
 
-                        case 8 : // uint64, int64, double, float complex,
-                                 // or 8-byte user defined
+                        case GB_8BYTE : // uint64, int64, double, float complex,
+                                        // or 8-byte user defined
                             #define GB_CTYPE uint64_t
                             #include "GB_concat_full_template.c"
                             break ;
 
-                        case 16 : // double complex or 16-byte user-defined
+                        case GB_16BYTE : // double complex or 16-byte user
                             #define GB_CTYPE uint64_t
                             #undef  GB_COPY
                             #define GB_COPY(pC,pA,A_iso)                    \
-                                Cx [2*pC  ] = GBX (Ax, 2*pA  , A_iso) ;     \
-                                Cx [2*pC+1] = GBX (Ax, 2*pA+1, A_iso) ;
+                                Cx [2*pC  ] = Ax [A_iso ? 0 : (2*pA)] ;     \
+                                Cx [2*pC+1] = Ax [A_iso ? 1 : (2*pA+1)] ;
                             #include "GB_concat_full_template.c"
                             break ;
 

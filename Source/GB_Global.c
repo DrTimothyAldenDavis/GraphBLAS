@@ -651,7 +651,6 @@ void GB_Global_memtable_remove (void *p)
             if (p == GB_Global.memtable_p [i])
             {
                 // found p in the table; remove it
-                // printf ("size %ld\n", GB_Global.memtable_s [i]) ;
                 GB_Global.memtable_p [i] = GB_Global.memtable_p [n-1] ;
                 GB_Global.memtable_s [i] = GB_Global.memtable_s [n-1] ;
                 GB_Global.nmemtable -- ;
@@ -1018,49 +1017,49 @@ int GB_Global_gpu_count_get (void)
     if (device < 0 || device >= GB_Global.gpu_count) return (error) ;
 
 size_t GB_Global_gpu_memorysize_get (int device)
-{ 
+{
     // get the memory size of a specific GPU
     GB_GPU_DEVICE_CHECK (0) ;       // memory size zero if invalid GPU
     return (GB_Global.gpu_properties [device].total_global_memory) ;
 }
 
 int GB_Global_gpu_sm_get (int device)
-{ 
+{
     // get the # of SMs in a specific GPU
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
     return (GB_Global.gpu_properties [device].number_of_sms)  ;
 }
 
 bool GB_Global_gpu_device_pool_size_set( int device, size_t size)
-{ 
+{
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
     GB_Global.gpu_properties [device].pool_size = (int) size ;
     return( true); 
 }
 
 bool GB_Global_gpu_device_max_pool_size_set( int device, size_t size)
-{ 
+{
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
     GB_Global.gpu_properties[device].max_pool_size = (int) size ;
     return( true); 
 }
 
 bool GB_Global_gpu_device_memory_resource_set( int device, void *resource)
-{ 
+{
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
     GB_Global.gpu_properties[device].memory_resource = resource;
     return( true); 
 }
 
 void* GB_Global_gpu_device_memory_resource_get( int device )
-{ 
+{
     GB_GPU_DEVICE_CHECK (0) ;       // zero if invalid GPU
     return ( GB_Global.gpu_properties [device].memory_resource ) ;
     //NOTE: this returns a void*, needs to be cast to be used
 }
 
 bool GB_Global_gpu_device_properties_get (int device)
-{ 
+{
     // get all properties of a specific GPU;
     // this function is only called once per GPU, by GB_init.
     GB_GPU_DEVICE_CHECK (false) ;   // fail if invalid GPU
@@ -1156,7 +1155,6 @@ void GB_Global_free_pool_init (bool clear)
 static inline void GB_Global_free_pool_check (void *p, int k, char *where)
 {
     // check the size of the block
-    // printf ("check %p\n", p) ;
     ASSERT (k >= 3 && k < 64) ;
     ASSERT (p != NULL) ;
     size_t size = GB_Global_memtable_size (p) ;
@@ -1184,11 +1182,9 @@ void *GB_Global_free_pool_get (int k)
     { 
         // clear the next pointer inside the block, since the block needs
         // to be all zero
-        // printf ("got %p k %d\n", p, k) ;
         #ifdef GB_DEBUG
         GB_Global_free_pool_check (p, k, "get") ;
         #endif
-        // GB_Global_free_pool_dump (2) ; printf ("\ndid get\n\n") ;
     }
     return (p) ;
 }
@@ -1208,13 +1204,11 @@ bool GB_Global_free_pool_put (void *p, int k)
         if (returned_to_pool)
         {
             // add the block to the head of the free_pool list
-            // printf ("put %p k %d\n", p, k) ;
             GB_Global.free_pool_nblocks [k]++ ;
             GB_NEXT (p) = GB_Global.free_pool [k] ;
             GB_Global.free_pool [k] = p ;
         }
     }
-    // GB_Global_free_pool_dump (2) ; printf ("\ndid put\n\n") ;
     return (returned_to_pool) ;
 }
 

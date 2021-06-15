@@ -28,7 +28,8 @@ void GB_iso_reduce_worker
         memcpy (s, a, zsize) ;
     }
     else
-    {
+    { 
+
         // reduce floor (n/2) entries to the scalar s
         GB_iso_reduce_worker (s, freduce, a, n/2, zsize) ;
 

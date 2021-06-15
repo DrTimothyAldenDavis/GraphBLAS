@@ -22,6 +22,7 @@ int64_t GB_nnz_held
 
     if (A == NULL || A->magic != GB_MAGIC)
     { 
+GB_GOTCHA ; // A is NULL or not initialized
         // A is NULL or not initialized
         return (0) ;
     }
@@ -37,6 +38,7 @@ int64_t GB_nnz_held
     }
     else
     { 
+GB_GOTCHA ; // A is empty
         // A is empty
         return (0) ;
     }

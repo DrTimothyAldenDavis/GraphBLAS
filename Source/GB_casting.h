@@ -534,11 +534,11 @@ static inline bool GB_mcast         // return the value of M(i,j)
         switch (msize)
         {
             default:
-            case 1: return ((*(uint8_t  *) (Mx +((pM)*1))) != 0) ;
-            case 2: return ((*(uint16_t *) (Mx +((pM)*2))) != 0) ;
-            case 4: return ((*(uint32_t *) (Mx +((pM)*4))) != 0) ;
-            case 8: return ((*(uint64_t *) (Mx +((pM)*8))) != 0) ;
-            case 16:
+            case GB_1BYTE: return ((*(uint8_t  *) (Mx +((pM)*1))) != 0) ;
+            case GB_2BYTE: return ((*(uint16_t *) (Mx +((pM)*2))) != 0) ;
+            case GB_4BYTE: return ((*(uint32_t *) (Mx +((pM)*4))) != 0) ;
+            case GB_8BYTE: return ((*(uint64_t *) (Mx +((pM)*8))) != 0) ;
+            case GB_16BYTE:
             {
                 const uint64_t *restrict Zx = (uint64_t *) Mx ;
                 return (Zx [2*pM] != 0 || Zx [2*pM+1] != 0) ;

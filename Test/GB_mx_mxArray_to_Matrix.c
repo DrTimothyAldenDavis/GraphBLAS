@@ -65,7 +65,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     //--------------------------------------------------------------------------
 
     GB_CONTEXT ("mxArray_to_Matrix") ;
-    // printf ("mxArray to matrix: %s\n", name) ;
 
     GrB_Matrix A = NULL ;
 
@@ -97,6 +96,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // get the matrix
     //--------------------------------------------------------------------------
 
+    bool A_iso = false ;
     const mxArray *Amatrix = NULL ;
     GrB_Type atype_in, atype_out ;
     GB_Type_code atype_in_code, atype_out_code ;
@@ -139,6 +139,22 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             mxArray *s = mxGetFieldByNumber (A_matlab, 0, fieldnumber) ;
             atype_out = GB_mx_string_to_Type (s, atype_in) ;
         }
+
+        // get the iso property (false if not present)
+        fieldnumber = mxGetFieldNumber (A_matlab, "iso") ;
+        if (fieldnumber >= 0)
+        {
+            mxArray *s = mxGetFieldByNumber (A_matlab, 0, fieldnumber) ;
+            if (mxIsLogicalScalar (s))
+            {
+                A_iso = mxIsLogicalScalarTrue (s) ;
+            }
+            else
+            {
+                A_iso = (mxGetScalar (s) != 0) ;
+            }
+        }
+
     }
     else
     {
@@ -340,7 +356,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         if (A->x == NULL && anz > 0)
         {
-            printf ("A->x %p anz %ld\n", A->x, anz) ;
             mexErrMsgTxt ("A->x is NULL!\n") ;
         }
         GB_cast_array (A->x,
@@ -351,6 +366,49 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             (atype_in_code == GB_UDT_code) ? sizeof(GxB_FC64_t) :atype_in->size,
             anz, 1) ;
     }
+
+    //--------------------------------------------------------------------------
+    // compute the # of non-empty vectors in A only when needed
+    //--------------------------------------------------------------------------
+
+    if (sparsity != GxB_FULL)
+    {
+        A->nvec_nonempty = -1 ;
+    }
+
+    //--------------------------------------------------------------------------
+    // set the iso property
+    //--------------------------------------------------------------------------
+
+    if (A_iso)
+    {
+        if (!A->x_shallow)
+        {
+            // convert A to iso, and reduce the size of A->x to a single entry
+            if (A->x_size >= atype_out->size)
+            {
+                // use the first entry of A->x as the iso value of A
+                A->iso = true ;
+                GB_convert_any_to_iso (A, NULL, true, NULL) ;
+            }
+            else
+            {
+                // A is converted to iso, but it doesn't have enough space in
+                // A->x for the iso value, so set it to zero
+                A->iso = false ;
+                GB_convert_any_to_iso (A, NULL, true, NULL) ;
+            }
+        }
+        else
+        {
+            // just set the iso flag, leave A->x unmodified.  A can be iso
+            // only if A->x is large enough to hold at least 1 entry.
+            A->iso = (A->x_size >= atype_out->size) ;
+        }
+    }
+
+    ASSERT_MATRIX_OK (A, "got natural A from MATLAB", GB0) ;
+    ASSERT (A->h == NULL) ;
 
     //--------------------------------------------------------------------------
     // look for CSR/CSC and hyper/non-hyper format
@@ -401,18 +459,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     }
 
     //--------------------------------------------------------------------------
-    // compute the # of non-empty vectors in A only when needed
-    //--------------------------------------------------------------------------
-
-    if (sparsity != GxB_FULL)
-    {
-        A->nvec_nonempty = -1 ;
-    }
-
-    ASSERT_MATRIX_OK (A, "got natural A from MATLAB", GB0) ;
-    ASSERT (A->h == NULL) ;
-
-    //--------------------------------------------------------------------------
     // convert to CSR if requested
     //--------------------------------------------------------------------------
 
@@ -426,7 +472,10 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // so convert it back; hypersparsity is defined below
         if (sparsity != GxB_FULL)
         {
+            bool burble = GB_Global_burble_get ( ) ;
+            if (burble) printf (" [ GB_mx_mxArray_to_Matrix ") ;
             GB_convert_hyper_to_sparse (A, Context) ;
+            if (burble) printf ("]\n") ;
         }
         ASSERT (!A->is_csc) ;
     }

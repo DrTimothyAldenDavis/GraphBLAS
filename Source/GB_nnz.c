@@ -41,6 +41,7 @@ int64_t GB_nnz      // return nnz(A) or INT64_MAX if integer overflow
     }
     else
     { 
+GB_GOTCHA ;     // A is empty
         // A is empty
         return (0) ;
     }

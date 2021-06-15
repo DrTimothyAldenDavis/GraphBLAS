@@ -62,4 +62,5 @@ end
 
 A.class = type ;
 A.pattern = logical (spones (A.matrix)) ;
+A.iso = false ;
 

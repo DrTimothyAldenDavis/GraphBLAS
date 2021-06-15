@@ -49,7 +49,7 @@ void GB_iso_reduce_to_scalar        // s = reduce (A) where A is iso
     GB_cast_scalar (a, zcode, A->x, A->type->code, zsize) ;
 
     //--------------------------------------------------------------------------
-    // reduce n entries, all equal to a, to the scalar s
+    // reduce n entries, all equal to a, to the scalar s, in O(log(n)) time
     //--------------------------------------------------------------------------
 
     GB_iso_reduce_worker (s, freduce, a, n, zsize) ;

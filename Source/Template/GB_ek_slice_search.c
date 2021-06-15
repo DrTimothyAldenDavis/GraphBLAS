@@ -54,6 +54,7 @@ static inline void GB_ek_slice_search
     }
     else if (pfirst > plast)
     { 
+GB_GOTCHA ; // empty task
         // this task does no work
         klast = kfirst ;
     }

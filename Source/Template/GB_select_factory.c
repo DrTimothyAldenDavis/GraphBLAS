@@ -17,7 +17,9 @@ switch (opcode)
         #else
         switch (typecode)
         {
-            case GB_ignore_code  : GB_SEL_WORKER (_tril, _iso, GB_void)
+            case GB_ignore_code  : 
+                                   GB_GOTCHA ;  // iso tril phase 2
+                                   GB_SEL_WORKER (_tril, _iso, GB_void)
             default              : GB_SEL_WORKER (_tril, _any, GB_void)
         }
         break ;
@@ -30,7 +32,9 @@ switch (opcode)
         #else
         switch (typecode)
         {
-            case GB_ignore_code  : GB_SEL_WORKER (_triu, _iso, GB_void)
+            case GB_ignore_code  : 
+                                   GB_GOTCHA ;  // iso triu phase 2
+                                   GB_SEL_WORKER (_triu, _iso, GB_void)
             default              : GB_SEL_WORKER (_triu, _any, GB_void)
         }
         break ;
@@ -43,7 +47,9 @@ switch (opcode)
         #else
         switch (typecode)
         {
-            case GB_ignore_code  : GB_SEL_WORKER (_diag, _iso, GB_void)
+            case GB_ignore_code  : 
+                                   GB_GOTCHA ;  // iso diag phase 2
+                                   GB_SEL_WORKER (_diag, _iso, GB_void)
             default              : GB_SEL_WORKER (_diag, _any, GB_void)
         }
         break ;
@@ -56,7 +62,9 @@ switch (opcode)
         #else
         switch (typecode)
         {
-            case GB_ignore_code  : GB_SEL_WORKER (_offdiag, _iso, GB_void)
+            case GB_ignore_code  : 
+                                   GB_GOTCHA ;  // iso offdiag phase 2
+                                   GB_SEL_WORKER (_offdiag, _iso, GB_void)
             default              : GB_SEL_WORKER (_offdiag, _any, GB_void)
         }
         break ;
@@ -66,7 +74,9 @@ switch (opcode)
 
         switch (typecode)
         {
-            case GB_ignore_code  : GB_SEL_WORKER (_user, _iso, GB_void)
+            case GB_ignore_code  : 
+                                   GB_GOTCHA ;  // iso user, phase 2
+                                   GB_SEL_WORKER (_user, _iso, GB_void)
             default              : GB_SEL_WORKER (_user, _any, GB_void)
         }
         break ;
@@ -81,7 +91,9 @@ switch (opcode)
         #else
         switch (typecode)
         {
-            case GB_ignore_code  : GB_SEL_WORKER (_resize, _iso, GB_void)
+            case GB_ignore_code  : 
+                                   GB_GOTCHA ;  // iso resize, phase 2
+                                   GB_SEL_WORKER (_resize, _iso, GB_void)
             default              : GB_SEL_WORKER (_resize, _any, GB_void)
         }
         break ;

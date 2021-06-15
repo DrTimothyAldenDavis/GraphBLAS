@@ -88,8 +88,6 @@ GrB_Info GB_split_full              // split a full matrix
             // copy the tile from A into C
             //------------------------------------------------------------------
 
-            bool done = false ;
-
             if (A_iso)
             { 
 
@@ -99,7 +97,6 @@ GrB_Info GB_split_full              // split a full matrix
 
                 // A is iso and so is C; copy the iso entry
                 memcpy (C->x, A->x, asize) ;
-                done = true ;
 
             }
             else
@@ -109,6 +106,7 @@ GrB_Info GB_split_full              // split a full matrix
                 // split a non-iso matrix A into an non-iso tile C
                 //--------------------------------------------------------------
 
+                bool done = false ;
                 #ifndef GBCOMPACT
                 {
                     // no typecasting needed
@@ -116,28 +114,28 @@ GrB_Info GB_split_full              // split a full matrix
                     {
                         #define GB_COPY(pC,pA) Cx [pC] = Ax [pA]
 
-                        case 1 : // uint8, int8, bool, or 1-byte user-defined
+                        case GB_1BYTE : // uint8, int8, bool, or 1-byte user
                             #define GB_CTYPE uint8_t
                             #include "GB_split_full_template.c"
                             break ;
 
-                        case 2 : // uint16, int16, or 2-byte user-defined
+                        case GB_2BYTE : // uint16, int16, or 2-byte user
                             #define GB_CTYPE uint16_t
                             #include "GB_split_full_template.c"
                             break ;
 
-                        case 4 : // uint32, int32, float, or 4-byte user-defined
+                        case GB_4BYTE : // uint32, int32, float, or 4-byte user
                             #define GB_CTYPE uint32_t
                             #include "GB_split_full_template.c"
                             break ;
 
-                        case 8 : // uint64, int64, double, float complex,
-                                 // or 8-byte user defined
+                        case GB_8BYTE : // uint64, int64, double, float
+                                        // complex, or 8-byte user
                             #define GB_CTYPE uint64_t
                             #include "GB_split_full_template.c"
                             break ;
 
-                        case 16 : // double complex or 16-byte user-defined
+                        case GB_16BYTE : // double complex or 16-byte user
                             #define GB_CTYPE uint64_t
                             #undef  GB_COPY
                             #define GB_COPY(pC,pA)                          \
@@ -153,6 +151,7 @@ GrB_Info GB_split_full              // split a full matrix
 
                 if (!done)
                 { 
+GB_GOTCHA ; // split_full, user defined type (size not 1, 2, 4, 8, 16)
                     // user-defined types
                     #define GB_CTYPE GB_void
                     #undef  GB_COPY

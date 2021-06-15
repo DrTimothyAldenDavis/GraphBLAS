@@ -93,6 +93,14 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test203',t) ; % test iso subref
+logstat ('test202',t) ; % test iso add and emult
+logstat ('test201',t) ; % test iso reduce to vector
+logstat ('test200',t) ; % test iso full matrix multiply
+logstat ('test199',t) ; % test dot2 with hypersparse
+logstat ('test198',t) ; % test apply with C=op(C)
+logstat ('test197',t) ; % test large sparse split
+logstat ('test196',t) ; % test hypersparse concat
 logstat ('test195',t) ; % test all variants of saxpy3
 logstat ('test194',t) ; % test GxB_Vector_diag
 logstat ('test193',t) ; % test GxB_Matrix_diag

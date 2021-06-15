@@ -126,6 +126,7 @@
         if (B_is_bitmap && A_is_sparse && M_is_bitmap && Mask_struct
             && Mask_comp)
         { 
+GB_GOTCHA ; // dot2: A sparse, B bitmap, M bitmap, M struct, !M, any monoid
 
             //------------------------------------------------------------------
             // C<#M,struct> = A'*B, special case

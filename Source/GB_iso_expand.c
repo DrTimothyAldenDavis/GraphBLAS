@@ -34,7 +34,7 @@ void GB_iso_expand          // expand an iso scalar into an entire array
     switch (size)
     {
 
-        case 1 : // GrB_BOOL, GrB_UINT8, GrB_INT8, and UDT of size 1
+        case GB_1BYTE : // bool, uint8, int8, and UDT of size 1
         {
             uint8_t a0 = (*((uint8_t *) scalar)) ;
             uint8_t *restrict Z = (uint8_t *) X ;
@@ -46,7 +46,7 @@ void GB_iso_expand          // expand an iso scalar into an entire array
         }
         break ;
 
-        case 2 : // GrB_UINT16, GrB_INT16, and UDT of size 2
+        case GB_2BYTE : // uint16, int16, and UDT of size 2
         {
             uint16_t a0 = (*((uint16_t *) scalar)) ;
             uint16_t *restrict Z = (uint16_t *) X ;
@@ -58,7 +58,7 @@ void GB_iso_expand          // expand an iso scalar into an entire array
         }
         break ;
 
-        case 4 : // GrB_UINT32, GrB_INT32, GrB_FP32, and UDT of size 4
+        case GB_4BYTE : // uint32, int32, float, and UDT of size 4
         {
             uint32_t a0 = (*((uint32_t *) scalar)) ;
             uint32_t *restrict Z = (uint32_t *) X ;
@@ -70,7 +70,7 @@ void GB_iso_expand          // expand an iso scalar into an entire array
         }
         break ;
 
-        case 8 : // GrB_UINT64, GrB_INT64, GrB_FP64, GxB_FC32, and UDT size 8
+        case GB_8BYTE : // uint64, int64, double, float complex, UDT size 8
         {
             uint64_t a0 = (*((uint64_t *) scalar)) ;
             uint64_t *restrict Z = (uint64_t *) X ;
@@ -82,7 +82,7 @@ void GB_iso_expand          // expand an iso scalar into an entire array
         }
         break ;
 
-        case 16 : // GxB_FC64, and UDT size 16
+        case GB_16BYTE : // double complex, and UDT size 16
         {
             uint64_t *restrict a = (uint64_t *) scalar ;
             uint64_t *restrict Z = (uint64_t *) X ;
@@ -97,6 +97,7 @@ void GB_iso_expand          // expand an iso scalar into an entire array
 
         default : // user-defined types of arbitrary size
         {
+GB_GOTCHA ;     // iso expand, user type
             GB_void *restrict Z = (GB_void *) X ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < n ; p++)

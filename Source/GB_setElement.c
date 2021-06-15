@@ -225,7 +225,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         else
         {
             if (C->iso)
-            {
+            { 
+GB_GOTCHA ; // C->iso on input, with pending
                 // C is iso, so Pending->x is currently NULL.  However, this
                 // new setElement entry might cause C to become non iso.  If
                 // the value of the scalar does not match the iso value of C, C
@@ -234,6 +235,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
                 ASSERT (C->Pending->x == NULL) ;
                 if (ctype != stype)
                 { 
+GB_GOTCHA ; // C->iso on input, with pending, ctype != stype
                     // s = (ctype) scalar
                     GB_void s [GB_VLA(csize)] ;
                     GB_cast_scalar (s, ccode, scalar, scalar_code, csize) ;
@@ -242,6 +244,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
                 }
                 else
                 { 
+GB_GOTCHA ; // C->iso on input, with pending, ctype == stype
                     // compare the scalar with the iso value of C
                     wait = (memcmp (C->x, scalar, csize) != 0) ;
                 }
@@ -287,6 +290,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             GB_OK (GB_wait (C, "C", Context)) ;
             if (iso_wait)
             { 
+GB_GOTCHA ;     // iso wait
                 // C is iso but will no longer be after this setElement
                 // set C->iso = false    OK
                 #if GB_BURBLE

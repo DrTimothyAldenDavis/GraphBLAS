@@ -108,6 +108,7 @@ GrB_Info GB_dense_subassign_06d
 
     if (C->iso)
     { 
+GB_GOTCHA ;     // C<A>=A, C and A are iso
 
         //----------------------------------------------------------------------
         // C is iso

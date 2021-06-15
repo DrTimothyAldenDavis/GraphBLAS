@@ -16,7 +16,7 @@
     #ifndef GB_ISO_CONCAT
     const bool A_iso = A->iso ;
     const GB_CTYPE *restrict Ax = (GB_CTYPE *) A->x ;
-    GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
     #endif
     int8_t *restrict Cb = C->b ;
 

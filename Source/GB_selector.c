@@ -132,7 +132,8 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     if (A_iso && opcode >= GB_NONZERO_opcode && opcode <= GB_LE_THUNK_opcode)
-    {
+    { 
+GB_GOTCHA ;     // iso select: code is nonzero to le_thunk
 
         // select op is NONZERO, EQ_ZERO, GT_ZERO, GE_ZERO, LT_ZERO, LE_ZERO,
         // EQ_THUNK, GT_THUNK, GE_THUNK, LT_THUNK, or LE_THUNK.  All of these
@@ -161,6 +162,7 @@ GrB_Info GB_selector
         // check if C has 0 or 1 entry
         if (C_empty)
         { 
+GB_GOTCHA ;     // iso select: code is nonzero to le_thunk.  C empty
             // C is an empty matrix
             return (GB_new (&C, true, // static header
                 A->type, avlen, avdim, GB_Ap_calloc, true,
@@ -169,6 +171,7 @@ GrB_Info GB_selector
         }
         else
         { 
+GB_GOTCHA ;     // iso select: code is nonzero to le_thunk.  C not empty
             // C is a shallow copy of A with all the same entries as A
             // set C->iso = A->iso  OK
             return (GB_shallow_copy (C, true, A, Context)) ;

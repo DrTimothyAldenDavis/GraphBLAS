@@ -26,9 +26,14 @@
 // preserved, do C.pattern = GB_spones_mex (C.matrix) in MATLAB before
 // modifying C.matrix.
 
+// If the GraphBLAS matrix is iso, it is converted to non-iso, but if it is
+// returned as a struct to MATLAB, the C.iso is set true.  Then when the
+// struct is read back into GraphBLAS, the flag can be used to restore the
+// iso property of the GraphBLAS matrix .
+
 #include "GB_mex.h"
 
-static const char *MatrixFields [ ] = { "matrix", "class", "values" } ;
+static const char *MatrixFields [ ] = { "matrix", "class", "iso", "values" } ;
 
 mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
 (
@@ -104,7 +109,8 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     ASSERT (C->is_csc) ;
 
     // convert C to non-iso
-    if (C->iso)
+    bool C_iso = C->iso ;
+    if (C_iso)
     {
         GB_convert_any_to_non_iso (C, true, NULL) ;
         ASSERT_MATRIX_OK (C, "TO MATLAB, non-iso non-hyper CSC", GB0) ;
@@ -334,14 +340,17 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     {
         // create the type
         mxArray *atype = GB_mx_Type_to_mxstring (ctype) ;
+        // create the iso flag
+        mxArray *c_iso = mxCreateLogicalScalar (C_iso) ;
         // create the output struct
         Astruct = mxCreateStructMatrix (1, 1,
-           (X == NULL) ? 2 : 3, MatrixFields) ;
+           (X == NULL) ? 3 : 4, MatrixFields) ;
         mxSetFieldByNumber (Astruct, 0, 0, A) ;
         mxSetFieldByNumber (Astruct, 0, 1, atype) ;
+        mxSetFieldByNumber (Astruct, 0, 2, c_iso) ;
         if (X != NULL)
         {
-            mxSetFieldByNumber (Astruct, 0, 2, X) ;
+            mxSetFieldByNumber (Astruct, 0, 3, X) ;
         }
         return (Astruct) ;
     }

@@ -55,12 +55,6 @@ void GB_qsort_1b_size8  // GB_qsort_1b with A_1 with sizeof = 8
     const int64_t n
 ) ;
 
-typedef struct
-{
-    uint8_t stuff [16] ;            // not accessed directly
-}
-GB_blob16 ;                         // sizeof (GB_blob16) is 16.
-
 void GB_qsort_1b_size16 // GB_qsort_1b with A_1 with sizeof = 16
 (
     int64_t *restrict A_0,       // size n array

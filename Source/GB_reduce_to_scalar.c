@@ -163,7 +163,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             // reduce an iso matrix to scalar
             //------------------------------------------------------------------
 
-            // this takes at most O(log(nvals(A)) time, for any monoid
+            // this takes at most O(log(nvals(A))) time, for any monoid
             GB_iso_reduce_to_scalar (s, reduce, A, Context) ;
 
         }

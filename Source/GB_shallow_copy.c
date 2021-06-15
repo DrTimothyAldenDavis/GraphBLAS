@@ -80,6 +80,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->iso = A->iso ;                   // OK: C has the same iso property as A
     if (A->iso)
     { 
+GB_GOTCHA ; // shallow copy, A iso
         GB_BURBLE_MATRIX (A, "(iso copy) ") ;
     }
 

@@ -158,6 +158,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 
         if (C_iso)
         { 
+GB_GOTCHA ; // iso bitmap subref, A and C bitmap
 
             //------------------------------------------------------------------
             // C=A(I,J) iso numeric with A and C bitmap
@@ -227,6 +228,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         }
         else if (C_iso)
         { 
+GB_GOTCHA ; // iso bitmap subref, A and C full
 
             //------------------------------------------------------------------
             // C=A(I,J) iso numeric with A and C full

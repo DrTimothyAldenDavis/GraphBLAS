@@ -60,6 +60,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     size_t asize = A->type->size ;
     if (A->iso)
     { 
+GB_GOTCHA ; // ix_realloc, A iso
         // shrink A->x so it holds a single entry
         GB_REALLOC (A->x, asize, GB_void, &(A->x_size), &ok2, Context) ;
     }

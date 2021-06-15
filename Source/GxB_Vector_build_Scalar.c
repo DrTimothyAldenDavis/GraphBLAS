@@ -24,6 +24,7 @@ GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
     GrB_Index nvals                 // number of tuples
 )
 { 
+GB_GOTCHA ; // iso vector build
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -36,7 +37,8 @@ GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
     ASSERT (GB_VECTOR_OK (w)) ;
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
-    {
+    { 
+GB_GOTCHA ; // scalar is empty
         GB_ERROR (GrB_INVALID_VALUE, "Scalar value is %s", "missing") ;
     }
 

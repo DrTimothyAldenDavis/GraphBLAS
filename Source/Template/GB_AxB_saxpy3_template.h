@@ -36,10 +36,10 @@
     int64_t mjnz_much = mjnz * gamma
 
 //------------------------------------------------------------------------------
-// GB_SCATTER_M_j_TYPE: scatter M(:,j) of the given type into Gus. workspace
+// GB_SCATTER_Mj_t: scatter M(:,j) of the given type into Gus. workspace
 //------------------------------------------------------------------------------
 
-#define GB_SCATTER_M_j_TYPE(mask_t,pMstart,pMend,mark)                  \
+#define GB_SCATTER_Mj_t(mask_t,pMstart,pMend,mark)                      \
 {                                                                       \
     const mask_t *restrict Mxx = (mask_t *) Mx ;                        \
     if (M_is_bitmap)                                                    \
@@ -96,11 +96,11 @@ break ;
         switch (msize)                                                      \
         {                                                                   \
             default:                                                        \
-            case 1: GB_SCATTER_M_j_TYPE (uint8_t , pMstart, pMend, mark) ;  \
-            case 2: GB_SCATTER_M_j_TYPE (uint16_t, pMstart, pMend, mark) ;  \
-            case 4: GB_SCATTER_M_j_TYPE (uint32_t, pMstart, pMend, mark) ;  \
-            case 8: GB_SCATTER_M_j_TYPE (uint64_t, pMstart, pMend, mark) ;  \
-            case 16:                                                        \
+            case GB_1BYTE: GB_SCATTER_Mj_t (uint8_t , pMstart, pMend, mark) ; \
+            case GB_2BYTE: GB_SCATTER_Mj_t (uint16_t, pMstart, pMend, mark) ; \
+            case GB_4BYTE: GB_SCATTER_Mj_t (uint32_t, pMstart, pMend, mark) ; \
+            case GB_8BYTE: GB_SCATTER_Mj_t (uint64_t, pMstart, pMend, mark) ; \
+            case GB_16BYTE:                                                 \
             {                                                               \
                 const uint64_t *restrict Mxx = (uint64_t *) Mx ;            \
                 for (int64_t pM = pMstart ; pM < pMend ; pM++)              \

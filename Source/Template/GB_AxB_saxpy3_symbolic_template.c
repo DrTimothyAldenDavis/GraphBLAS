@@ -295,29 +295,29 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                         switch (msize)
                         {
                             default:
-                            case 1 : 
+                            case GB_1BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint8_t
                                 #undef  M_SIZE
                                 #define M_SIZE 1
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
-                            case 2 : 
+                            case GB_2BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
-                            case 4 : 
+                            case GB_4BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
-                            case 8 : 
+                            case GB_8BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
-                            case 16 : 
+                            case GB_16BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint64_t
                                 #undef  M_SIZE
@@ -370,29 +370,29 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                         switch (msize)
                         {
                             default:
-                            case 1 : 
+                            case GB_1BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint8_t
                                 #undef  M_SIZE
                                 #define M_SIZE 1
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
-                            case 2 : 
+                            case GB_2BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint16_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
-                            case 4 : 
+                            case GB_4BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint32_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
-                            case 8 : 
+                            case GB_8BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint64_t
                                 #include "GB_AxB_saxpy3_coarseHash_phase1.c"
                                 break ;
-                            case 16 : 
+                            case GB_16BYTE : 
                                 #undef  M_TYPE
                                 #define M_TYPE uint64_t
                                 #undef  M_SIZE

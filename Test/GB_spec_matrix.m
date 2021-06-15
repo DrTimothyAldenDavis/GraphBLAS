@@ -121,7 +121,7 @@ if (isstruct (Cin) && isfield (Cin, 'values') &&  ...
     % to int64 or uint64 can lead to loss of precision.  So in this case,
     % use Cin.values instead.
     X = GB_spec_zeros (size (Cin.matrix), xtype) ;
-    [I J ~] = find (xpattern) ;
+    [I, J, ~] = find (xpattern) ;
     Cx = Cin.values ;
     assert (length (I) == length (Cx)) ;
     for k = 1:length (Cin.values)
@@ -150,4 +150,20 @@ Cout.class = xtype ;
 % is always dense.  Cout.class always matches type(Cout.matrix).
 assert (isstruct (Cout)) ;
 assert (~issparse (Cout.matrix)) ;
+
+% handle the iso case
+if (isstruct (Cin) && isfield (Cin, 'iso'))
+    iso = Cin.iso ;
+    if (iso)
+        % get the first entry in the pattern
+        [I,J] = ind2sub (size (xpattern), find (xpattern)) ;
+        if (isempty (I))
+            xiso = 0 ;
+        else
+            xiso = X (I (1), J (1)) ;
+        end
+        Cout.matrix (xpattern) = xiso ;
+    end
+    Cout.iso = iso ;
+end
 

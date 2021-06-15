@@ -167,7 +167,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;      // A can be jumbled
     GB_MATRIX_WAIT (scalar) ;
 
-    if (op2 != NULL && GB_nnz ((GrB_Matrix ) scalar) != 1)
+    if (op2 != NULL && GB_nnz ((GrB_Matrix) scalar) != 1)
     { 
         // the scalar entry must be present
         GB_ERROR (GrB_INVALID_VALUE, "%s", "Scalar must contain an entry") ;
@@ -264,7 +264,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         // A positional op is applied to C after the transpose is computed,
         // using the T_is_csc format.  The ijflip is handled above.
     }
-    else if (M == NULL && accum == NULL && (C == A) && C->type == T_type)
+    else if (M == NULL && accum == NULL && (C == A) && C->type == T_type
+        && GB_nnz (C) > 0)
     {
         GBURBLE ("(in-place-op) ") ;
         // C = op (C), operating on the values in-place, with no typecasting

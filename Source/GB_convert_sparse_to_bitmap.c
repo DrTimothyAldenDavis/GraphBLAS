@@ -170,28 +170,28 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
                     #define GB_COPY(Axnew,pnew,Axold,p)         \
                         Axnew [pnew] = Axold [p] ;
 
-                    case 1 : // uint8, int8, bool, or 1-byte user-defined
+                    case GB_1BYTE : // uint8, int8, bool, or 1-byte user
                         #define GB_ATYPE uint8_t
                         #include "GB_convert_sparse_to_bitmap_template.c"
                         break ;
 
-                    case 2 : // uint16, int16, or 2-byte user-defined
+                    case GB_2BYTE : // uint16, int16, or 2-byte user-defined
                         #define GB_ATYPE uint16_t
                         #include "GB_convert_sparse_to_bitmap_template.c"
                         break ;
 
-                    case 4 : // uint32, int32, float, or 4-byte user-defined
+                    case GB_4BYTE : // uint32, int32, float, or 4-byte user
                         #define GB_ATYPE uint32_t
                         #include "GB_convert_sparse_to_bitmap_template.c"
                         break ;
 
-                    case 8 : // uint64, int64, double, float complex,
+                    case GB_8BYTE : // uint64, int64, double, float complex,
                              // or 8-byte user defined
                         #define GB_ATYPE uint64_t
                         #include "GB_convert_sparse_to_bitmap_template.c"
                         break ;
 
-                    case 16 : // double complex or 16-byte user-defined
+                    case GB_16BYTE : // double complex or 16-byte user-defined
                         #define GB_ATYPE uint64_t
                         #undef  GB_COPY
                         #define GB_COPY(Axnew,pnew,Axold,p)     \

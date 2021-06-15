@@ -31,6 +31,7 @@
 
 #include "GB_prefix.h"
 #include "GB_dev.h"
+#include "GB_bytes.h"
 #include "GB_defaults.h"
 #include "GB_compiler.h"
 #include "GB_coverage.h"

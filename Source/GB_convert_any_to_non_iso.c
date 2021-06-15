@@ -24,6 +24,7 @@ GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
     ASSERT_MATRIX_OK (A, "A to convert to non-iso", GB0) ;
     if (!A->iso)
     { 
+GB_GOTCHA ; // A already non iso, nothing to do
         // nothing to do
         return (GrB_SUCCESS) ;
     }

@@ -637,6 +637,7 @@
                     int64_t clen = Cp [kC+1] - pC ;
                     #if defined ( GB_ISO_SUBREF )
                     { 
+GB_GOTCHA ; // iso subref, sort
                         // iso numeric subref C=A(I,J)
                         // just sort the pattern of C(:,kC)
                         GB_qsort_1 (Ci + pC, clen) ;

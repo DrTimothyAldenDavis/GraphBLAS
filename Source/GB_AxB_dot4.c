@@ -99,6 +99,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 
     if (flipxy)
     { 
+GB_GOTCHA ; // dot4 flipxy
         // z = fmult (b,a) will be computed
         A_is_pattern = op_is_first  || op_is_pair ;
         B_is_pattern = op_is_second || op_is_pair ;
