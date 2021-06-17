@@ -4,11 +4,12 @@
 
 bool GB_reduce_to_scalar_cuda_branch 
 (
-    const GrB_Monoid reduce,    // monoid to do the reduction
+    const GrB_Monoid reduce,        // monoid to do the reduction
     const GrB_Matrix A,             // input matrix
     GB_Context Context
 )
 {
+
     // work to do
     double work = GB_NNZ (A) ;
 

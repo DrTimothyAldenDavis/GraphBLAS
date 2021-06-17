@@ -106,6 +106,13 @@ bool GB_cuda_get_device_properties
     GB_cuda_device *prop
 ) ;
 
+bool GB_reduce_to_scalar_cuda_branch 
+(
+    const GrB_Monoid reduce,        // monoid to do the reduction
+    const GrB_Matrix A,             // input matrix
+    GB_Context Context
+) ;
+
 GrB_Info GB_reduce_to_scalar_cuda
 (
     GB_void *s,
