@@ -498,10 +498,10 @@ GB_CAST_FUNCTION (GxB_FC64_t, GxB_FC32_t)
 #undef  GB_CAST
 #define GB_CAST(ztype,x) x
 GB_CAST_FUNCTION (GxB_FC64_t, GxB_FC64_t)
-
-#undef  GB_CAST
-#undef  GB_CAST_FUNCTION
 #endif
+
+#undef GB_CAST
+#undef GB_CAST_FUNCTION
 
 //------------------------------------------------------------------------------
 // GB_mcast: cast a mask entry from any native type to boolean
