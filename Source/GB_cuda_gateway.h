@@ -106,16 +106,12 @@ bool GB_cuda_get_device_properties
     GB_cuda_device *prop
 ) ;
 
-GrB_Info GB_cuda_red__plus_int64
+GrB_Info GB_reduce_to_scalar_cuda
 (
-    int64_t *result,
-    int64_t *Ax,
-    int64_t anz,
-    int64_t *restrict W,      // array of size ntasks
-    int64_t worksize,
-    int ntasks,
-    int nthreads,
-    int blocksize
+    GB_void *s,
+    const GrB_Monoid reduce,
+    const GrB_Matrix A,
+    GB_Context Context
 ) ;
 
 GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method

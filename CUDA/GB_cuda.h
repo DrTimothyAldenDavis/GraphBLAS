@@ -24,9 +24,6 @@
 extern "C"
 {
     #include "GB.h"
-    #include "GB_Global.h"
-    #include <stdint.h>
-    #include <stddef.h>
 }
 
 // GB_cuda_gateway.h is also included in Source/GB* files, which are not
