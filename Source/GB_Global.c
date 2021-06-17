@@ -142,7 +142,7 @@ typedef struct
     int64_t free_pool_limit [64] ;
 
     //--------------------------------------------------------------------------
-    // RMM allocate/deallocate functions
+    // PMR allocate/deallocate functions
     //--------------------------------------------------------------------------
 
     void * (* pmr_allocate_function  ) (size_t *) ;
@@ -337,7 +337,7 @@ GB_Global_struct GB_Global =
     .gpu_control = GxB_DEFAULT,         // always, never, or default
     .gpu_chunk = GB_GPU_CHUNK_DEFAULT,  // min problem size for using a GPU
 
-    // RMM memory management functions
+    // PMR memory management (NVIDIA Rapids Memory Manager, for example)
     .pmr_allocate_function = NULL,
     .pmr_deallocate_function = NULL,
 
@@ -1270,7 +1270,7 @@ int64_t GB_Global_free_pool_nblocks_total (void)
 }
 
 //------------------------------------------------------------------------------
-// RMM memory allocator
+// PMR memory allocator
 //------------------------------------------------------------------------------
 
 void GB_Global_pmr_allocate_function_set
@@ -1290,7 +1290,7 @@ void GB_Global_pmr_deallocate_function_set
 }
 
 //------------------------------------------------------------------------------
-// generic memory allocator: ANSI C11 malloc/free or RMM allocate/deallocate
+// generic memory allocator: ANSI C11 malloc/free or PMR allocate/deallocate
 //------------------------------------------------------------------------------
 
 void *GB_Global_allocate_function (size_t *size)
@@ -1298,7 +1298,7 @@ void *GB_Global_allocate_function (size_t *size)
     void *p = NULL ;
     if (GB_Global.pmr_allocate_function != NULL)
     {
-        // use the RMM resource to allocate memory
+        // use the PMR resource to allocate memory
         p = GB_Global.pmr_allocate_function (size) ;
     }
     else if (GB_Global.malloc_is_thread_safe)
@@ -1324,7 +1324,7 @@ void GB_Global_deallocate_function (void *p, size_t size)
 { 
     if (GB_Global.pmr_deallocate_function != NULL)
     {
-        // use the RMM resource to deallocate memory
+        // use the PMR resource to deallocate memory
         GB_Global.pmr_deallocate_function (p, size) ;
     }
     if (GB_Global.malloc_is_thread_safe)

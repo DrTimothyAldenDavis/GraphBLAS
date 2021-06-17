@@ -143,5 +143,16 @@ GB_PUBLIC void     GB_Global_rmm_deallocate_function_set
 GB_PUBLIC void *   GB_Global_allocate_function (size_t *size) ;
 GB_PUBLIC void     GB_Global_deallocate_function (void *p, size_t size) ;
 
+GB_PUBLIC
+void GB_Global_pmr_allocate_function_set
+(
+    void * (* pmr_allocate_function) (size_t *)
+) ;
+GB_PUBLIC
+void GB_Global_pmr_deallocate_function_set
+(
+    void * (* pmr_deallocate_function) (void *, size_t)
+) ;
+
 #endif
 
