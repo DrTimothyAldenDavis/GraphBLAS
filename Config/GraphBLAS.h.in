@@ -351,14 +351,14 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     bool user_malloc_is_thread_safe // true if malloc/.../free are thread-safe
 ) ;
 
-// GxB_RMM_init is a DRAFT: do not use it yet.
+// GxB_pmr_init is a DRAFT: do not use it yet.
 GB_PUBLIC
-GrB_Info GxB_RMM_init       // start up GraphBLAS for use with RMM
+GrB_Info GxB_pmr_init       // start up GraphBLAS for use with pmr
 (
     GrB_Mode mode,          // blocking or non-blocking mode
-    // RMM allocate/deallocate memory management functions
-    void * (* rmm_allocate_function   ) (size_t *),
-    void   (* rmm_deallocate_function ) (void *p, size_t size)
+    // pmr allocate/deallocate memory management functions
+    void * (* pmr_allocate_function   ) (size_t *),
+    void   (* pmr_deallocate_function ) (void *p, size_t size)
 ) ;
 
 GB_PUBLIC
