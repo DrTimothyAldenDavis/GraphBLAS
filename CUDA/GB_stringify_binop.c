@@ -22,7 +22,7 @@
 void GB_stringify_binop
 (
     // output:
-    char *binop_macro,  // string with the #define macro
+    char * restrict binop_macro,  // string with the #define macro
     // input:
     const char *macro_name,   // name of macro to construct
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
@@ -525,7 +525,7 @@ void GB_enumify_binop
 void GB_charify_binop
 (
     // output:
-    char **op_string,   // string defining the operator (NULL if failure)
+    const char **op_string,   // string defining the operator (NULL if failure)
     // input:
     int ecode           // from GB_enumify_binop
 )
@@ -793,10 +793,10 @@ void GB_charify_binop
 void GB_macrofy_binop
 (
     // output:
-    char *binop_macro,          // string with the #define macro
+    char * restrict binop_macro,          // string with the #define macro
     // input:
     const char *macro_name,     // name of macro to construct
-    char *op_string,            // string defining the operator
+    const char *op_string,            // string defining the operator
     bool flipxy                 // if true, use mult(y,x) else mult(x,y)
 )
 {

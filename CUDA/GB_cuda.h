@@ -12,9 +12,6 @@
 #ifndef GB_CUDA_H
 #define GB_CUDA_H
 
-// nvcc chokes on the 'restrict' keyword, so define it to the empty string
-// for compiling the *.cu files.
-#define restrict
 
 // nvcc also chokes on fpclassify (an ANSI C11 construct that does not appear
 // in C++11, it seems).  It also issues spurious warnings about compiler
@@ -25,6 +22,11 @@ extern "C"
 {
     #include "GB.h"
 }
+
+// nvcc chokes on the 'restrict' keyword, so define it to the empty string
+// for compiling the *.cu files.
+#undef restrict
+#define restrict __restrict__
 
 // GB_cuda_gateway.h is also included in Source/GB* files, which are not
 // compiled with nvcc, nor do they see the cuda.h or cuda_runtime.h

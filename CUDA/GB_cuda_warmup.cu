@@ -9,15 +9,6 @@
 //------------------------------------------------------------------------------
 
 #include "GB_cuda.h"
-/*
-#include "rmm/include/rmm/mr/device/managed_memory_resource.hpp"
-#include "rmm/include/rmm/mr/device/pool_memory_resource.hpp"
-#include "rmm/include/rmm/mr/device/owning_wrapper.hpp"
-#include "rmm/include/rmm/mr/device/default_memory_resource.hpp"
-#include "rmm/include/rmm/mr/device/per_device_resource.hpp"
-#include "rmm/include/rmm/mr/device/cnmem_managed_memory_resource.hpp"
-*/
-// #include "rmm/detail/cnmem.h"
 
 bool GB_cuda_warmup (int device)
 {
@@ -46,8 +37,8 @@ bool GB_cuda_warmup (int device)
     }
     printf ("oooo nice block of memory of size %lu\n", size) ;
     GB_free_memory (&p, size) ;
-
-    p = cudaMalloc (1) ;
+    
+    cudaMalloc ( &p, size ) ;
     if (p == NULL)
     {
         printf ("Hey!! where's da GPU???\n") ;
