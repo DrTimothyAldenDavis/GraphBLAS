@@ -149,8 +149,13 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 // to here ... ]
         {
             // use "the" GPU (TODO for GPU: could use multiple GPUs too)
-            return (GB_AxB_dot3_cuda (C, M, Mask_struct, A, B, semiring,
-                flipxy, Context)) ;
+
+            GB_MATRIX_WAIT (M) ;    // make sure it's not jumbled
+            if (GB_AxB_dot3_control (M, Mask_comp))
+            {
+                return (GB_AxB_dot3_cuda (C, M, Mask_struct, A, B, semiring,
+                    flipxy, Context)) ;
+            }
         }
         else
         #endif
