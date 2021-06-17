@@ -163,7 +163,7 @@ void GB_enumify_semiring   // enumerate a semiring
     //--------------------------------------------------------------------------
 
     int add_ecode, id_ecode, term_ecode ;
-    GB_enumify_monoid (&add_code, &id_ecode, &term_ecode, ) ;
+    GB_enumify_monoid (&add_ecode, &id_ecode, &term_ecode, add_opcode, zcode ) ;
 
     //--------------------------------------------------------------------------
     // enumify the types
@@ -308,7 +308,7 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     char terminal_expression_macro [GB_CUDA_STRLEN+1] ;
     char terminal_statement_macro  [GB_CUDA_STRLEN+1] ;
     GB_macrofy_monoid (add_macro, identity_macro, terminal_expression_macro,
-        terminal_statement_macro, add_ecode, id_ecode, term_ecode) ;
+        terminal_statement_macro, add_ecode, id_ecode, term_ecode, is_term) ;
 
     //--------------------------------------------------------------------------
     // macro to typecast the result back into C

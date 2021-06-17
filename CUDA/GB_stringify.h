@@ -133,7 +133,8 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // inputs:
     int add_ecode,      // binary op as an enum
     int id_ecode,       // identity value as an enum
-    int term_ecode      // terminal value as an enum (< 30 is terminal)
+    int term_ecode,     // terminal value as an enum (< 30 is terminal)
+    bool is_term
 ) ;
 
 //------------------------------------------------------------------------------
@@ -239,7 +240,7 @@ void GB_enumify_terminal       // return enum of terminal value
 (
     // output:
     bool *is_monoid_terminal,   // true if monoid is terminal
-    int *ecode,                 // enumerated terminal, 0 to 17 (-1 if fail)
+    int *ecode,                 // enumerated terminal, 0 to 31 (-1 if fail)
     // input:
     GB_Opcode opcode,           // built-in binary opcode of a monoid
     GB_Type_code zcode          // type code used in the opcode we want

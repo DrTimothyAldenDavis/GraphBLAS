@@ -155,10 +155,10 @@ void GB_charify_identity_or_terminal
         case 10 : f = "UINT32_MAX"  ; break ;
         case 11 : f = "UINT64_MAX"  ; break ;
         case 12 : f = "INFINITY"    ; break ;
-        case 13 ; f = "INT8_MIN"    ; break ;
-        case 14 ; f = "INT16_MIN"   ; break ;
-        case 15 ; f = "INT32_MIN"   ; break ;
-        case 16 ; f = "INT64_MIN"   ; break ;
+        case 13 : f = "INT8_MIN"    ; break ;
+        case 14 : f = "INT16_MIN"   ; break ;
+        case 15 : f = "INT32_MIN"   ; break ;
+        case 16 : f = "INT64_MIN"   ; break ;
         case 17 : f = "-INFINITY"   ; break ;
         case 18 : f = "0"           ; break ;       // for the ANY monoid only
 

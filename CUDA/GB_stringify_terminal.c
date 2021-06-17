@@ -44,7 +44,7 @@ void GB_stringify_terminal         // return strings to check terminal
     int ecode ;
 
     // get ecode and bool (is_monoid_terminal) from the opcode and zcode
-    GB_enumify_terminal (&ecode, opcode, zcode) ;
+    GB_enumify_terminal ( is_monoid_terminal, &ecode, opcode, zcode) ;
     (*is_monoid_terminal) = (ecode <= 29) ;
 
     // convert ecode and is_monoid_terminal to strings
@@ -68,6 +68,7 @@ void GB_stringify_terminal         // return strings to check terminal
 void GB_enumify_terminal       // return enum of terminal value
 (
     // output:
+    bool *is_monoid_terminal,   // true if monoid is terminal
     int *ecode,                 // enumerated terminal, 0 to 31 (-1 if fail)
     // input:
     GB_Opcode opcode,           // built-in binary opcode of a monoid
@@ -176,7 +177,7 @@ void GB_enumify_terminal       // return enum of terminal value
             e = 31 ;                    // builtin with no terminal value
             break ;
 
-        case GB_USER_opcode :
+        //case GB_USER_opcode :
 
     }
 

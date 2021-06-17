@@ -17,11 +17,11 @@
 
 // Define a factory class for building any buffer of text
 class GB_cuda_stringifier {
-  char callback_buffer[4096];
-  char *callback_string;
-  const char *include_filename;
+    char callback_buffer[4096];
+    char *callback_string;
+    const char *include_filename;
 
-  public:
+    public:
 
 //------------------------------------------------------------------------------
 // load string: set string and file name to mimic
@@ -78,20 +78,20 @@ class GB_cuda_stringifier {
     {
        GB_enumify_semiring (
 	    // output:
-	    scode,        // unique encoding of the entire semiring
+	    scode,         // unique encoding of the entire semiring
 	    // input:
-	    semiring,  // the semiring to enumify
-	    flipxy,            // multiplier is: mult(a,b) or mult(b,a)
+	    semiring,      // the semiring to enumify
+	    flipxy,        // multiplier is: mult(a,b) or mult(b,a)
 	    ctype,         // the type of C
 	    mtype,         // the type of M, or NULL if no mask
 	    atype,         // the type of A
 	    btype,         // the type of B
-	    Mask_struct,       // mask is structural
-	    Mask_comp,         // mask is complemented
-	    C_sparsity,         // sparsity structure of C
-	    M_sparsity,         // sparsity structure of M
-	    A_sparsity,         // sparsity structure of A
-	    B_sparsity          // sparsity structure of B
+	    Mask_struct,   // mask is structural
+	    Mask_comp,     // mask is complemented
+	    C_sparsity,    // sparsity structure of C
+	    M_sparsity,    // sparsity structure of M
+	    A_sparsity,    // sparsity structure of A
+	    B_sparsity     // sparsity structure of B
        ) ;
 
     }
@@ -99,12 +99,12 @@ class GB_cuda_stringifier {
     void macrofy_semiring 
     (
         // input:
-        uint64_t scode          // unique encoding of the entire semiring
+        uint64_t scode        // unique encoding of the entire semiring
     )
     {
        GB_macrofy_semiring (
 	    // output:
-	    callback_buffer,      // all macros that define the semiring
+	    callback_buffer,  // all macros that define the semiring
 	    // input:
 	    scode
        ) ;

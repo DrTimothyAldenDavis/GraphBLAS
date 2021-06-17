@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_cuda.h"
-#include "rmm/detail/cnmem.h"
+#include "rmm/detail/cnmem.hpp"
 
 void GB_cuda_free (void *p)     // standard free signature
 {

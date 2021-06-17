@@ -72,7 +72,7 @@ void GB_enumify_binop
         // user-defined operator
         //----------------------------------------------------------------------
 
-        case GB_USER_opcode
+        case GB_USER_opcode :
 
             e = 0 ; break ;
 
@@ -344,7 +344,7 @@ void GB_enumify_binop
                 case GB_UINT8_code  : e = 87 ; break ;
                 case GB_UINT16_code : e = 88 ; break ;
                 case GB_UINT32_code : e = 89 ; break ;
-                case GB_UINT64_code : e = 90 ; break 
+                case GB_UINT64_code : e = 90 ; break ;
                 default             : e = -1 ; break ;
             }
             break ;
@@ -754,7 +754,7 @@ void GB_charify_binop
 
         // ldexp
         case 129 : f = "ldexpf (x, y)"              ; break ;
-        case 130 ; f = "ldexp (x, y)"               ; break ;
+        case 130 : f = "ldexp (x, y)"               ; break ;
 
         // cmplex
         case 131 : f = "GxB_CMPLXF (x, y)"          ; break ;

@@ -50,14 +50,15 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // inputs:
     int add_ecode,      // binary op as an enum
     int id_ecode,       // identity value as an enum
-    int term_ecode      // terminal value as an enum (< 30 is terminal)
+    int term_ecode,     // terminal value as an enum (< 30 is terminal)
+    bool is_term
 )
 {
 
     char s [GB_CUDA_STRLEN+1] ;
 
     GB_charify_binop (&s, add_ecode) ;
-    GB_macrofy_binop (add_macro, "GB_ADD", s) ;
+    GB_macrofy_binop (add_macro, "GB_ADD", s, false) ;
 
     GB_charify_identity_or_terminal (&s, id_ecode) ;
     GB_macrofy_identity (identity_macro, s) ;
@@ -66,9 +67,9 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     char tstmt [GB_CUDA_STRLEN+1] ;
 
     // convert ecode and is_term to strings
-    GB_charify_identity_or_terminal (&s, ecode) ;
-    GB_charify_terminal_expression (texpr, s, is_term, ecode) ;
-    GB_charify_terminal_statement  (tstmt, s, is_term, ecode) ;
+    GB_charify_identity_or_terminal (&s, id_ecode) ;
+    GB_charify_terminal_expression (texpr, s, is_term, term_ecode) ;
+    GB_charify_terminal_statement  (tstmt, s, is_term, term_ecode) ;
 
     // convert strings to macros
     GB_macrofy_terminal_expression (terminal_expression_macro,

@@ -41,6 +41,7 @@ void GB_enumify_sparsity    // enumerate the sparsity structure of a matrix
     int A_sparsity          // GxB_SPARSE, GxB_HYPERSPARSE, GxB_BITMAP, GxB_FULL
 )
 {
+    int e;
 
     if (A_sparsity == GxB_SPARSE || A_sparsity == 0)
     {
@@ -119,6 +120,7 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
             break ;
 
         default :
+            break ;
     }
 }
 
