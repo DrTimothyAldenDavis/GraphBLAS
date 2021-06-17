@@ -99,12 +99,13 @@ void rmm_initialize(RMM_Handle *handle, RMM_MODE mode,  std::size_t init_pool_si
 
 void *rmm_allocate( std::size_t *size)
 {
-    std::size_t aligned = *size % 256;
+
+    std::size_t aligned = (*size) % 256;
     if (aligned > 0)
     {
-        *size += (aligned);
+        *size += (256 -aligned);
     }
-    //printf(" rmm_alloc %ld bytes\n",*size);
+    printf(" rmm_alloc %ld bytes\n",*size);
     rmm::mr::device_memory_resource *mr=  rmm::mr::get_current_device_resource();
     return mr->allocate( *size );
 }

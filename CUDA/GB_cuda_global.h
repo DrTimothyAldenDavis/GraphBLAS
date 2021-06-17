@@ -7,12 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_CUDA_GLOBAL_H
-#define GB_CUDA_GLOBAL_H
+#ifndef GB_CUDA_GLOBAL_HPP
+#define GB_CUDA_GLOBAL_HPP
 
 #include "GB_cuda_stringifier.hpp"
 
+
 std::istream* callback_wrapper( std::string file_name, std::iostream& tmp) ;
+
 
 #endif
 

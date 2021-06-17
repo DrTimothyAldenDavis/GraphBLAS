@@ -34,10 +34,18 @@ extern "C"
 #include "templates/reduceNonZombiesWarp.cu.jit"
 
 #include "GB_jit_launcher.h"
-#include "GB_cuda_stringifier.hpp"
-#include "GB_cuda_global.h"
+//#include "GB_cuda_global.hpp" //<- contains callback wrapper and ptr
 
-GB_cuda_stringifier *SR_callback_ptr;
+GB_cuda_stringifier  SR_callback_ptr;
+
+std::istream* callback_wrapper
+(
+    std::string file_name,      // string with the requested "file" name
+    std::iostream& file_stream  // the I/O stream for the "file" contents
+)
+{
+    return SR_callback_ptr.callback (file_name, file_stream) ;
+}
 
 const std::vector<std::string> header_names ={};
 
@@ -222,7 +230,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     const char *header_name = (const char *)"mySemiRing.h";
     mysemiring.load_string(header_name, semiring_code ) ;
 
-    SR_callback_ptr = &mysemiring;
+    SR_callback_ptr = mysemiring;
 
     GBURBLE ("(GPU stringified) ") ;
     //--------------------------------------------------------------------------

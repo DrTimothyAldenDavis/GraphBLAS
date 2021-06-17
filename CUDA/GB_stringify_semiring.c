@@ -39,7 +39,8 @@ void GB_stringify_semiring     // build a semiring (name and code)
 
     uint64_t scode ;
     GB_enumify_semiring (&scode,
-        semiring, flipxy, ctype, mtype, atype, btype, Mask_struct, Mask_comp,
+        semiring, flipxy, 
+        ctype, mtype, atype, btype, Mask_struct, Mask_comp,
         C_sparsity, M_sparsity, A_sparsity, B_sparsity) ;
     GB_macrofy_semiring (semiring_macros, scode) ;
 }
