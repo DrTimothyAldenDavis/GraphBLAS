@@ -1,10 +1,10 @@
 function [x,p] = argmin (A, dim)
-%GRB.ARGMIN argmin of a MATLAB or GraphBLAS matrix
+%GRB.ARGMIN argmin of a built-in or GraphBLAS matrix
 %
 % [x,p] = argmin(A,1) computes the argmin of each column of A, similar to
-%       the MATLAB [x,p] = min(A), or min(A,[],1), with x and p being
-%       n-by-1 vectors where A is m-by-n.  If x(j) and p(j) are present,
-%       then x(j) = min(A(:,j)) = A(p(j),j).
+%       [x,p] = min(A), or min(A,[],1), with x and p being n-by-1 vectors
+%       where A is m-by-n.  If x(j) and p(j) are present, then x(j) =
+%       min(A(:,j)) = A(p(j),j).
 %
 % [x,p] = argmin(A,2) computes the argmin of each row of A, with x and p
 %       being m-by-1 vectors where A is m-by-n.  If x(i) and p(i) are
@@ -14,12 +14,13 @@ function [x,p] = argmin (A, dim)
 %       and p is a 2-by-1 vector, with x = min(A,[],'all') = A(p(1),p(2)).
 %       If dim is not present, it defaults to 0.
 %
-% Unlike the MATLAB min, entries not present in A are not assumed to have
-% the value zero.  Instead, they are ignored.  If column A(:,j) has no
-% entries, x(j) and p(j) are not present in the sparsity pattern of x and
-% p, respectively.  GrB.argmin always returns x and p as column vectors,
-% while MATLAB returns x and p as either row or column or vectors,
-% depending on dim.  NaNs are ignored.  If x(j) is NaN, p(j) is empty.
+% Unlike the built-in min, entries not present in A are not assumed to
+% have the value zero.  Instead, they are ignored.  If column A(:,j) has
+% no entries, x(j) and p(j) are not present in the sparsity pattern of x
+% and p, respectively.  GrB.argmin always returns x and p as column
+% vectors, while the built-in min returns x and p as either row or column
+% or vectors, depending on dim.  NaNs are ignored.  If x(j) is NaN, p(j)
+% is empty.
 %
 % Example:
 %

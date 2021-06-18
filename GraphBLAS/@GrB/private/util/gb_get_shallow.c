@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_get_shallow: create a shallow copy of a MATLAB sparse matrix
+// gb_get_shallow: create a shallow copy of a built-in sparse matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// A = gb_get_shallow (X) constructs a shallow GrB_Matrix from a MATLAB
-// mxArray, which can either be a MATLAB sparse matrix (double, complex, or
-// logical) or a MATLAB struct that contains a GraphBLAS matrix.
+// A = gb_get_shallow (X) constructs a shallow GrB_Matrix from a built-in
+// mxArray, which can either be a built-in sparse matrix (double, complex, or
+// logical) or a built-in struct that contains a GraphBLAS matrix.
 
 // X must not be NULL, but it can be an empty matrix, as X = [ ] or even X = ''
 // (the empty string).  In this case, A is returned as NULL.  This is not an
@@ -19,12 +19,12 @@
 // For v4, iso is false, and the s component has length 9.
 // For v5, iso may be true, and the s component has length 10.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define IF(error,message) \
     CHECK_ERROR (error, "invalid GraphBLAS struct (" message ")" ) ;
 
-GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
+GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
 (
     const mxArray *X
 )
@@ -49,8 +49,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         // matrix is empty
         //----------------------------------------------------------------------
 
-        // X is a 0-by-0 MATLAB matrix.  Create a new 0-by-0 matrix of the same
-        // type as X, with the default format.
+        // X is a 0-by-0 built-in matrix.  Create a new 0-by-0 matrix of the
+        // same type as X, with the default format.
         OK (GrB_Matrix_new (&A, gb_mxarray_type (X), 0, 0)) ;
 
     }
@@ -58,7 +58,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     { 
 
         //----------------------------------------------------------------------
-        // construct a shallow GrB_Matrix copy from a MATLAB struct
+        // construct a shallow GrB_Matrix copy from a built-in struct
         //----------------------------------------------------------------------
 
         bool GraphBLASv4 = false ;
@@ -303,7 +303,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     {
 
         //----------------------------------------------------------------------
-        // construct a shallow GrB_Matrix copy of a MATLAB matrix
+        // construct a shallow GrB_Matrix copy of a built-in matrix
         //----------------------------------------------------------------------
 
         // get the type and dimensions
@@ -317,14 +317,14 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         GrB_Index *Xp, *Xi, nzmax ;
         if (X_is_sparse)
         { 
-            // get the nzmax, Xp, and Xi from the MATLAB sparse matrix X
+            // get the nzmax, Xp, and Xi from the built-in sparse matrix X
             nzmax = (GrB_Index) mxGetNzmax (X) ;
             Xp = (GrB_Index *) mxGetJc (X) ;
             Xi = (GrB_Index *) mxGetIr (X) ;
         }
         else
         { 
-            // X is a MATLAB full matrix; so is the GrB_Matrix
+            // X is a built-in full matrix; so is the GrB_Matrix
             nzmax = nrows * ncols ;
             Xp = NULL ;
             Xi = NULL ;
@@ -335,25 +335,25 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         size_t type_size = 0 ;
         if (type == GrB_FP64)
         { 
-            // MATLAB sparse or full double matrix
+            // built-in sparse or full double matrix
             Xx = mxGetDoubles (X) ;
             type_size = sizeof (double) ;
         }
         else if (type == GxB_FC64)
         { 
-            // MATLAB sparse or full double complex matrix
+            // built-in sparse or full double complex matrix
             Xx = mxGetComplexDoubles (X) ;
             type_size = 2 * sizeof (double) ;
         }
         else if (type == GrB_BOOL)
         { 
-            // MATLAB sparse or full logical matrix
+            // built-in sparse or full logical matrix
             Xx = mxGetData (X) ;
             type_size = sizeof (bool) ;
         }
         else if (X_is_sparse)
         {
-            // MATLAB does not support any other kinds of sparse matrices
+            // Built-in sparse matrices do not support any other kinds
             ERROR ("unsupported type") ;
         }
         else if (type == GrB_INT8)
@@ -424,7 +424,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         if (X_is_sparse)
         { 
             // import the matrix in CSC format.  This sets Xp, Xi, and Xx to
-            // NULL, but it does not change the MATLAB matrix they came from.
+            // NULL, but it does not change the built-in matrix they came from.
             OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, &Xp, &Xi, &Xx,
                 (ncols+1) * sizeof (int64_t),
                 nzmax * sizeof (int64_t),

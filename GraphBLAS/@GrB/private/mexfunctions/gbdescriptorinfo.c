@@ -12,7 +12,7 @@
 // gbdescriptorinfo
 // gbdescriptorinfo (desc)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: GrB.descriptorinfo or GrB.descriptorinfo (desc)"
 
@@ -59,17 +59,17 @@ void mexFunction
     OK (GxB_Descriptor_fprint (desc, "", GxB_COMPLETE, NULL)) ;
 
     //--------------------------------------------------------------------------
-    // print the extra terms in the MATLAB interface descriptor
+    // print the extra terms in the interface descriptor
     //--------------------------------------------------------------------------
 
     printf ("    d.kind     = ") ;
     switch (kind)
     {
-        case KIND_SPARSE : printf ("sparse\n")  ; break ;
-        case KIND_FULL   : printf ("full\n")    ; break ;
-        case KIND_MATLAB : printf ("matlab\n")  ; break ;
-        case KIND_GRB    :
-        default          : printf ("GrB\n")     ; break ;
+        case KIND_SPARSE  : printf ("sparse\n")  ; break ;
+        case KIND_FULL    : printf ("full\n")    ; break ;
+        case KIND_BUILTIN : printf ("builtin\n")  ; break ;
+        case KIND_GRB     :
+        default           : printf ("GrB\n")     ; break ;
     }
 
     printf ("    d.base     = ") ;

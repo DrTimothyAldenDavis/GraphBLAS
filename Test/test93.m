@@ -32,7 +32,7 @@ for n = [10 100 1000 1e4 1e5 ] % 1e6]
     e = norm (r1 - r2) / norm (r1) ;
     fprintf ('i1 i2 mismatch: %d\n', mismatch) ;
     fprintf ('r1-r2 = %g\n', e) ;
-    fprintf ('time: MATLAB %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
+    fprintf ('time: built-in %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
     % if (n <= 1e5)
     %     assert (mismatch < 100) ;
     %    end
@@ -83,7 +83,7 @@ for n = [10 100 1000 1e4 1e5 ] % 1e6]
     e = norm (ir1 - ir2) / norm (ir1) ;
     fprintf ('i1 i2 mismatch: %d\n', mismatch) ;
     fprintf ('r1-r2 = %g\n', e) ;
-    fprintf ('time: MATLAB %g GraphBLAS %g speedup %g\n', ti1, ti2, ti1/ti2) ;
+    fprintf ('time: built-in %g GraphBLAS %g speedup %g\n', ti1, ti2, ti1/ti2) ;
     if (n < 1e4)
         assert (mismatch < n/10) ;
         assert (e < 1e-4) ;

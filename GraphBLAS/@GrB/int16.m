@@ -1,8 +1,8 @@
 function C = int16 (G)
-%INT16 cast a GraphBLAS matrix to MATLAB full int16 matrix.
-% C = int16 (G) typecasts the GrB matrix G to a MATLAB full int16 matrix.
-% The result C is full since MATLAB does not support sparse int16
-% matrices.
+%INT16 cast a GraphBLAS matrix to built-in full int16 matrix.
+% C = int16 (G) typecasts the GrB matrix G to a built-in full int16
+% matrix.  The result C is full since sparse int16 matrices are not
+% built-in.
 %
 % To typecast the matrix G to a GraphBLAS sparse int16 matrix instead,
 % use C = GrB (G, 'int16').
@@ -15,5 +15,5 @@ function C = int16 (G)
 
 G = G.opaque ;
 desc.kind = 'full' ;
-C = gbfull (G, 'int16', int16 (0), desc) ;      % export as a MATLAB full matrix
+C = gbfull (G, 'int16', int16 (0), desc) ;      % export as a full matrix
 

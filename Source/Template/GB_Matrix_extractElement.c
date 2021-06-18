@@ -34,6 +34,10 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (x) ;
 
+    // TODO: do not wait unless jumbled.  First try to find the element.
+    // If found (live or zombie), no need to wait.  If not found and pending
+    // tuples exist, wait and then extractElement again.
+
     // delete any lingering zombies, assemble any pending tuples, and unjumble
     if (GB_ANY_PENDING_WORK (A))
     { 

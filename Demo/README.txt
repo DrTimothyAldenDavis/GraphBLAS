@@ -33,7 +33,7 @@ in Demo/Source:
     simple_rand.c           a very simple random number generator
     simple_timer.c          a simple yet portable timer
     usercomplex.c           user-defined double complex type
-    wathen.c                GraphBLAS version of the MATLAB wathen.m
+    wathen.c                GraphBLAS version of wathen.m
     dpagerank.c             PageRank via real semiring
     dpagerank2.c            PageRank via pagegrank semiring
     drowscale.c             row scaling for dpagerank
@@ -60,7 +60,7 @@ in Demo/Program:
 in Demo/Output:
 --------------------------------------------------------------------------------
 
-    complex_demo_out.m  output of complex_demo, run in MATLAB to check results
+    complex_demo_out.m  output of complex_demo
     mis_demo.out        output of mis_demo
     simple_test.out     output of simple_demo
     tri_demo.out        output of tri_demo

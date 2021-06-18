@@ -6,8 +6,6 @@
 #include "mex.h"
 #define SPOK_INT mwSignedIndex
 #else
-/* for use outside of MATLAB, use with -DSPOK_INT=long to get long version of
-   code, -DSPOK_INT=int for int version, etc */
 #ifndef SPOK_INT
 #define SPOK_INT ptrdiff_t
 #endif

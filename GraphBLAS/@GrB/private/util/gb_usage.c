@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 void gb_usage       // check usage and make sure GrB.init has been called
 (
@@ -36,7 +36,7 @@ void gb_usage       // check usage and make sure GrB.init has been called
         OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
             false)) ;
 
-        // must use mexPrintf to print to MATLAB Command Window
+        // must use mexPrintf to print to Command Window
         OK (GxB_Global_Option_set (GxB_PRINTF, mexPrintf)) ;
         OK (GxB_Global_Option_set (GxB_FLUSH, gb_flush)) ;
 
@@ -46,7 +46,7 @@ void gb_usage       // check usage and make sure GrB.init has been called
              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } ;
         OK (GxB_Global_Option_set (GxB_MEMORY_POOL, free_pool_limit)) ;
 
-        // MATLAB matrices are stored by column
+        // built-in matrices are stored by column
         OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
 
         // print 1-based indices

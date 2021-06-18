@@ -20,7 +20,7 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 (
     GrB_Matrix C,               // output matrix C, possibly modified in-place
@@ -90,7 +90,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     int nthreads                        // # of threads to use
 ) ;
 
-GB_PUBLIC                   // used by GraphBLAS MATLAB interface
+GB_PUBLIC
 GrB_Info GB_shallow_copy    // create a purely shallow matrix
 (
     GrB_Matrix C,           // output matrix C, with a static header

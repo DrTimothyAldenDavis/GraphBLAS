@@ -282,7 +282,7 @@ static void GB_msort_1_merge
 // GB_msort_1: parallel mergesort
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_msort_1     // sort array A of size 1-by-n
 (
     int64_t *restrict A_0,   // size n array
@@ -290,7 +290,6 @@ GrB_Info GB_msort_1     // sort array A of size 1-by-n
     int nthreads                // # of threads to use
 )
 {
-GB_GOTCHA ; // msort1
 
     //--------------------------------------------------------------------------
     // handle small problems with a single thread

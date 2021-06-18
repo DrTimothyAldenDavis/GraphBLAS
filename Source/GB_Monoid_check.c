@@ -9,7 +9,7 @@
 
 #include "GB.h"
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
 (
     const GrB_Monoid monoid,    // GraphBLAS monoid to print and check
@@ -54,7 +54,6 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
 
     if (monoid->identity == NULL)
     { 
-GB_GOTCHA ; // monoid->identity NULL
         GBPR0 ("    Identity value is missing\n") ;
         return (GrB_INVALID_OBJECT) ;
     }

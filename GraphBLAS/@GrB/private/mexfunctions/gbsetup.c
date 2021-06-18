@@ -8,9 +8,9 @@
 //------------------------------------------------------------------------------
 
 // gbsetup initializes GraphBLAS by calling GxB_init and by setting
-// all GraphBLAS global variables to their MATLAB defaults.
+// all GraphBLAS global variables to their defaults.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "GrB.setup"
 

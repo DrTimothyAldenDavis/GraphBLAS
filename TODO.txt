@@ -10,3 +10,8 @@ FIXME: in GraphBLAS/Test/GB_mx_mxArray_to_Matrix: provide option for checking
 FIXME: pack/unpack
 
 FIXME: set print1
+
+FIXME: in gbtest47:
+.............OMP: Warning #190: Forking a process while a parallel region is active is potentially unsafe.
+........................................
+

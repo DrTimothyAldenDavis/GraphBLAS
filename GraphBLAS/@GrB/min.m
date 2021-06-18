@@ -10,7 +10,7 @@ function C = min (A, B, option)
 % C = min (A, [ ], 1) is a row vector with C(j) = min (A (:,j))
 % C = min (A, [ ], 2) is a column vector with C(i) = min (A (i,:))
 %
-% The 2nd output of [C,I] = min (...) in the MATLAB built-in min
+% The 2nd output of [C,I] = min (...) in the built-in min
 % is not supported; see GrB.argmin instead.  The min (..., nanflag)
 % option is not yet supported; only the 'omitnan' behavior is supported.
 %
@@ -29,7 +29,7 @@ if (isobject (A))
 end
 
 type = gbtype (A) ;
-if (contains (type, 'complex'))
+if (gb_contains (type, 'complex'))
     error ('complex matrices not yet supported') ;
 elseif (isequal (type, 'logical'))
     op = '&.logical' ;

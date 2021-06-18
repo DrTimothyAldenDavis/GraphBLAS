@@ -9,7 +9,7 @@ function C = conj (G)
 
 Q = G.opaque ;
 
-if (contains (gbtype (Q), 'complex'))
+if (gb_contains (gbtype (Q), 'complex'))
     C = GrB (gbapply ('conj', Q)) ;
 else
     C = G ;

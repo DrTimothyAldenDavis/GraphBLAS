@@ -101,7 +101,7 @@ C = A'*B' ;
 tm5 = toc ;
 
 if (n > 500)
-    fprintf ('MATLAB time: %g %g %g %g\n', tm1, tm2, tm3, tm5) ;
+    fprintf ('built-in time: %g %g %g %g\n', tm1, tm2, tm3, tm5) ;
     fprintf ('with mask:\n') ;
 end
 
@@ -122,7 +122,7 @@ C = (A'*B') .* Mask ;
 tmm5 = toc ;
 
 if (n > 500)
-    fprintf ('MATLAB time: %g %g %g %g\n', tmm1, tmm2, tmm3, tmm5) ;
+    fprintf ('built-in time: %g %g %g %g\n', tmm1, tmm2, tmm3, tmm5) ;
 end
 
 dnn = struct ;

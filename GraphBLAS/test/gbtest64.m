@@ -30,7 +30,6 @@ warning ('off', 'GrB:pagerank') ;
 
 r1 = centrality (A, 'pagerank', 'MaxIterations', 2) ;
 [msg, id] = lastwarn ; %#ok<*ASGLU>
-assert (isequal (id, 'MATLAB:graphfun:centrality:PageRankNoConv')) ;
 
 r2 = GrB.pagerank (G, struct ('maxit', 2)) ;
 [msg, id] = lastwarn ;

@@ -15,9 +15,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_warnings.h"
-#ifndef MATLAB_MEX_FILE
 #define GB_LIBRARY
-#endif
 
 //------------------------------------------------------------------------------
 // user-visible GraphBLAS.h
@@ -105,7 +103,7 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 // more restrictive.
 
 // GB_aliased also checks the content of A and B
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 bool GB_aliased             // determine if A and B are aliased
 (
     GrB_Matrix A,           // input A matrix
@@ -113,7 +111,7 @@ bool GB_aliased             // determine if A and B are aliased
 ) ;
 
 // matrices returned to the user are never shallow; internal matrices may be
-GB_PUBLIC                       // used by the MATLAB interface
+GB_PUBLIC
 bool GB_is_shallow              // true if any component of A is shallow
 (
     GrB_Matrix A                // matrix to query
@@ -147,7 +145,7 @@ typedef enum                    // input parameter to GB_new and GB_new_bix
 }
 GB_Ap_code ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_new                 // create matrix, except for indices & values
 (
     GrB_Matrix *Ahandle,        // handle of matrix to create
@@ -247,7 +245,7 @@ GrB_Info GB_matvec_type            // get the type of a matrix
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
 (
     GrB_Matrix A,           // matrix to allocate space for
@@ -260,7 +258,7 @@ GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_ix_realloc      // reallocate space in a matrix
 (
     GrB_Matrix A,               // matrix to allocate space for
@@ -268,13 +266,13 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_bix_free                // free A->b, A->i, and A->x of a matrix
 (
     GrB_Matrix A                // matrix with content to free
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_ph_free                 // free A->p and A->h of a matrix
 (
     GrB_Matrix A                // matrix with content to free
@@ -285,7 +283,7 @@ void GB_phbix_free              // free all content of a matrix
     GrB_Matrix A                // matrix with content to free
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 bool GB_Type_compatible             // check if two types can be typecast
 (
     const GrB_Type atype,
@@ -421,7 +419,7 @@ GrB_Info GB_ewise_slice
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_slice_vector
 (
     // output: return i, pA, and pB
@@ -491,7 +489,7 @@ GrB_Info GB_transplant_conform      // transplant and conform hypersparsity
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 size_t GB_code_size             // return the size of a type, given its code
 (
     const GB_Type_code code,    // input code of the type to find the size of
@@ -505,14 +503,14 @@ void GB_Matrix_free             // free a matrix
 
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Type GB_code_type           // return the GrB_Type corresponding to the code
 (
     const GB_Type_code code,    // type code to convert
     const GrB_Type type         // user type if code is GB_UDT_code
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_pslice                      // slice Ap
 (
     int64_t *restrict Slice,     // size ntasks+1
@@ -531,7 +529,7 @@ void GB_eslice
     const int ntasks        // # of tasks
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_cumsum                      // cumulative sum of an array
 (
     int64_t *restrict count,     // size n+1, input/output
@@ -541,7 +539,7 @@ void GB_cumsum                      // cumulative sum of an array
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_Descriptor_get      // get the contents of a descriptor
 (
     const GrB_Descriptor desc,  // descriptor to query, may be NULL
@@ -586,7 +584,7 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 bool GB_Index_multiply      // true if ok, false if overflow
 (
     GrB_Index *restrict c,  // c = a*b, or zero if overflow occurs
@@ -594,7 +592,7 @@ bool GB_Index_multiply      // true if ok, false if overflow
     const int64_t b
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 bool GB_size_t_multiply     // true if ok, false if overflow
 (
     size_t *c,              // c = a*b, or zero if overflow occurs
@@ -651,14 +649,14 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_block   // apply all pending computations if blocking mode enabled
 (
     GrB_Matrix A,
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 bool GB_op_is_second    // return true if op is SECOND, of the right type
 (
     GrB_BinaryOp op,
@@ -668,7 +666,7 @@ bool GB_op_is_second    // return true if op is SECOND, of the right type
 
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 char *GB_code_string            // return a static string for a type name
 (
     const GB_Type_code code     // code to convert to string
@@ -682,7 +680,7 @@ GrB_Info GB_resize              // change the size of a matrix
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 int64_t GB_nvec_nonempty        // return # of non-empty vectors
 (
     const GrB_Matrix A,         // input matrix to examine

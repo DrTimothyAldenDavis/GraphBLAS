@@ -240,7 +240,7 @@
                     // GB_RANGE with ibegin==iend, GB_STRIDE such as 0:-1:0
                     // (with length 1), or a GB_LIST with ni=1.
 
-                    // Time: 50x faster than MATLAB
+                    // Time: 50x faster
 
                     ASSERT (!fine_task) ;
                     ASSERT (alen == 1) ;
@@ -258,7 +258,7 @@
                 case 4 : // Ikind is ":", thus C(:,kC) = A (:,kA)
                 //--------------------------------------------------------------
 
-                    // Time: 1x MATLAB but low speedup on the Mac.  Why?
+                    // Time: 1x faster but low speedup on the Mac.  Why?
                     // Probably memory bound since it is just memcpy's.
 
                     ASSERT (Ikind == GB_ALL && ibegin == 0) ;
@@ -292,7 +292,7 @@
                 case 5 : // Ikind is GB_RANGE = ibegin:iend
                 //--------------------------------------------------------------
 
-                    // Time: much faster than MATLAB.  Good speedup too.
+                    // Time: much faster.  Good speedup too.
 
                     ASSERT (Ikind == GB_RANGE) ;
                     #if defined ( GB_PHASE_1_OF_2 )
@@ -373,8 +373,8 @@
                 case 7 : // I is ibegin:iinc:iend with iinc > 1
                 //--------------------------------------------------------------
 
-                    // Time: 1 thread: C=A(1:2:n,:) is 3x slower than MATLAB
-                    // but has good speedup.  About as fast as MATLAB with
+                    // Time: 1 thread: C=A(1:2:n,:) is 3x slower
+                    // but has good speedup.  About as fast with
                     // enough threads.
 
                     ASSERT (Ikind == GB_STRIDE && iinc > 1) ;
@@ -407,8 +407,8 @@
                 case 8 : // I = ibegin:(-iinc):iend, with iinc < -1
                 //----------------------------------------------------------
 
-                    // Time: 2x slower than MATLAB for iinc = -2 or -8.
-                    // Good speedup though.  Faster than MATLAB for
+                    // Time: 2x slower for iinc = -2 or -8.
+                    // Good speedup though.  Faster for
                     // large values (iinc = -128).
                 
                     ASSERT (Ikind == GB_STRIDE && iinc < -1) ;
@@ -441,7 +441,7 @@
                 case 9 : // I = ibegin:(-1):iend
                 //----------------------------------------------------------
 
-                    // Time: much faster than MATLAB.  Good speedup.
+                    // Time: much faster.  Good speedup.
 
                     ASSERT (Ikind == GB_STRIDE && iinc == -1) ;
                     #if defined ( GB_PHASE_1_OF_2 )
@@ -464,7 +464,7 @@
                 case 10 : // I unsorted, and C needs qsort, duplicates OK
                 //--------------------------------------------------------------
 
-                    // Time: with one thread: 2x slower than MATLAB, probably
+                    // Time: with one thread: 2x slower, probably
                     // because of the qsort.  Good speedup however.  This used
                     // if qsort is needed but ndupl == 0.  Try a method that
                     // needs qsort, but no duplicates?
@@ -615,9 +615,6 @@
     // phase2: post sort for any vectors handled by fine tasks with method 10
     //--------------------------------------------------------------------------
 
-    // TODO: skip the sort if C is allowed to be jumbled on output.
-    // Flag C as jumbled instead.
-
     #if defined ( GB_PHASE_2_OF_2 )
     {
         if (post_sort)
@@ -637,7 +634,6 @@
                     int64_t clen = Cp [kC+1] - pC ;
                     #if defined ( GB_ISO_SUBREF )
                     { 
-GB_GOTCHA ; // iso subref, sort
                         // iso numeric subref C=A(I,J)
                         // just sort the pattern of C(:,kC)
                         GB_qsort_1 (Ci + pC, clen) ;

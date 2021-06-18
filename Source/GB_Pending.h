@@ -177,29 +177,5 @@ static inline bool GB_Pending_add   // add a tuple to the list
 #define GB_PENDING_INSERT_aij                                               \
     GB_PENDING_INSERT (Ax + (A_iso ? 0 : ((pA)*asize)))
 
-//------------------------------------------------------------------------------
-// GB_shall_block: see if the matrix should be finished
-//------------------------------------------------------------------------------
-
-// returns true if GB_wait should be done
-
-static inline bool GB_shall_block
-(
-    GrB_Matrix A
-)
-{ 
-
-    if (!GB_ANY_PENDING_WORK (A))
-    { 
-        // no pending work, so no need to block
-        return (false) ;
-    }
-    double npending = (double) GB_Pending_n (A) ;
-    double anzmax = ((double) A->vlen) * ((double) A->vdim) ;
-    bool many_pending = (npending >= anzmax) ;
-    bool blocking = (GB_Global_mode_get ( ) == GrB_BLOCKING) ;
-    return (many_pending || blocking) ;
-}
-
 #endif
 

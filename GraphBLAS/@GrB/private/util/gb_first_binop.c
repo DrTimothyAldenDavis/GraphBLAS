@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator
 (

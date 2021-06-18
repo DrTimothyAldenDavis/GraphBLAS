@@ -45,14 +45,14 @@ for n = 100:100:1000
         A3 = GrB.random (n, n, d) ;
         A4 = GrB.random (n, n, d) ;
 
-        % convert to MATLAB double sparse matrices
+        % convert to built-in double sparse matrices
         B1 = double (A1) ;
         B2 = double (A2) ;
         B3 = double (A3) ;
         B4 = double (A4) ;
 
         C1 = [A1 A2 ; A3 A4] ;  % using GrB horzcat and vertcat
-        C2 = [B1 B2 ; B3 B4] ;  % using MATLAB horzcat and vercat
+        C2 = [B1 B2 ; B3 B4] ;  % using built-in horzcat and vercat
         assert (isequal (C1, C2)) ;
 
         % test mat2cell
@@ -68,7 +68,7 @@ for n = 100:100:1000
         S1 {2,2} = A4 ;
         C3 = GrB.cell2mat (S1) ;
 
-        % and compare with the MATLAB cell2mat
+        % and compare with the built-in cell2mat
         S2 = cell (2,2) ;
         S2 {1,1} = B1 ;
         S2 {1,2} = B2 ;
@@ -81,16 +81,16 @@ for n = 100:100:1000
         % test cat
         C1 = [A1 A2 A3 A4] ;            % GrB/horzcat
         C2 = cat (2, A1, A2, A3, A4) ;  % GrB/cat
-        C3 = [B1 B2 B3 B4] ;            % MATLAB/horzcat
-        C4 = cat (2, B1, B2, B3, B4) ;  % MATLAB/cat
+        C3 = [B1 B2 B3 B4] ;            % built-in/horzcat
+        C4 = cat (2, B1, B2, B3, B4) ;  % built-in/cat
         assert (isequal (C1, C2)) ;
         assert (isequal (C1, C3)) ;
         assert (isequal (C1, C4)) ;
 
         C1 = [A1 ; A2 ; A3 ; A4] ;      % GrB/vertcat
         C2 = cat (1, A1, A2, A3, A4) ;  % GrB/cat
-        C3 = [B1 ; B2 ; B3 ; B4] ;      % MATLAB/vertcat
-        C4 = cat (1, B1, B2, B3, B4) ;  % MATLAB/cat
+        C3 = [B1 ; B2 ; B3 ; B4] ;      % built-in/vertcat
+        C4 = cat (1, B1, B2, B3, B4) ;  % built-in/cat
         assert (isequal (C1, C2)) ;
         assert (isequal (C1, C3)) ;
         assert (isequal (C1, C4)) ;

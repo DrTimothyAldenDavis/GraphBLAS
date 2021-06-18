@@ -10,7 +10,7 @@ function C = angle (G)
 G = G.opaque ;
 [m, n, type] = gbsize (G) ;
 
-if (contains (type, 'complex'))
+if (gb_contains (type, 'complex'))
     C = GrB (gbapply ('carg', G)) ;
 else
     % C is all zero

@@ -17,7 +17,7 @@
 // 2, x and p are vectors of the same size.  For dim = 0, x is a scalar and p
 // is 2-by-1, containing the row and column index of the argmin/max of A.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: [x,p] = gbargminmax (A, minmax, dim)"
 
@@ -83,7 +83,7 @@ static void gb_argminmax
     // note: typecasting from an m-by-1  GrB_Matrix to a GrB_Vector is
     // not allowed by the GraphBLAS C API, but it can be done in SuiteSparse.
     // A more portable method would construct x as a GrB_Vector,
-    // but using x as a GrB_Matrix simplifies the gb_export to MATLAB.
+    // but using x as a GrB_Matrix simplifies the gb_export.
 
     OK (GrB_Matrix_new (&D, type, m, m)) ;
     OK (GxB_Matrix_diag (D, *x, 0, NULL)) ;
@@ -117,9 +117,9 @@ static void gb_argminmax
     // for dim=2: find the position of the min/max entry in each row:
     // p = G*y, so that p(i) = j if x(i) = A(i,j) = min/max (A (i,:)).
 
-    // For both cases, use the SECONDI1 operator since MATLAB is 1-based.
-    // The ANY monoid would be faster, but this uses MIN so that the result
-    // for the MATLAB user is repeatable.
+    // For both cases, use the SECONDI1 operator since built-in indexing is
+    // 1-based.  The ANY monoid would be faster, but this uses MIN so that the
+    // result for the user is repeatable.
     OK (GrB_mxv (*p, NULL, NULL, GxB_MIN_SECONDI1_INT64, G, y, desc)) ;
 
     //--------------------------------------------------------------------------

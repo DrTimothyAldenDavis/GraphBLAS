@@ -27,14 +27,14 @@
 // Z(i,j)=C(i,j).  If C(i,j) is not present but T(i,j) is present, then
 // Z(i,j)=T(i,j).  The pattern of Z = accum(C,T) is the union of C and T.
 
-// The Z = accum (C,T) phase is mimiced by the GB_spec_accum.m MATLAB script.
+// The Z = accum (C,T) phase is mimiced by the GB_spec_accum.m script.
 
 // The next step is C<M> = Z.
 
 // This denotes how the matrix Z is written into C, under the control of the
 // mask (or !M if Mask_comp is true), and the C_replace flag (which
 // indicates that C should be set to zero first.  This is C<M>=Z in
-// GraphBLAS notation.  See GB_mask.c, or GB_spec_mask.m for a MATLAB script
+// GraphBLAS notation.  See GB_mask.c, or GB_spec_mask.m for a script
 // that describes this step.
 
 // If M is not present, C = Z is returned. Otherwise, M defines what
@@ -54,7 +54,7 @@
 /* -----------------------------------------------------------------------------
 
     function Z = GB_spec_accum (accum, C, T, identity)
-    %GB_SPEC_ACCUM: a MATLAB mimic of the Z=accum(C,T) operation in GraphBLAS
+    %GB_SPEC_ACCUM: a mimic of the Z=accum(C,T) operation in GraphBLAS
     %
     % Z = GB_spec_accum (accum, C, T, identity)
     %

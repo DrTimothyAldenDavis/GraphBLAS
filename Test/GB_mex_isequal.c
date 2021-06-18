@@ -54,7 +54,7 @@ void mexFunction
     bool result ;
     METHOD (isequal (&result, A, B, Complex_eq)) ;
 
-    // return C to MATLAB as a plain sparse matrix
+    // return C as a plain sparse matrix
     pargout [0] = mxCreateDoubleScalar ((double) result) ;
 
     FREE_ALL ;

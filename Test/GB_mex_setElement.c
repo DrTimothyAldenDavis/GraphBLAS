@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_setElement: MATLAB interface for A(i,j) = x
+// GB_mex_setElement: interface for A(i,j) = x
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -267,7 +267,7 @@ void mexFunction
     // only do debug checks after adding lots of tuples
     if (ni > 1000) { ASSERT_MATRIX_OK (A, "A added pending tuples", GB0) ; }
 
-    // return A to MATLAB as a struct and free the GraphBLAS A
+    // return A as a struct and free the GraphBLAS A
     pargout [0] = GB_mx_Matrix_to_mxArray (&A, "A output", true) ;
 
     FREE_ALL ;

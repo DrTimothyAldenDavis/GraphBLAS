@@ -27,7 +27,7 @@
     GB_phbix_free (C) ;                         \
 }
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 (
     GrB_Matrix C,                   // output matrix, static header

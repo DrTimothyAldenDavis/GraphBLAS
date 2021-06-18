@@ -10,7 +10,7 @@
 // The return value A is set to either the input matrix A_input, or the A_copy
 // matrix.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 GrB_Matrix gb_by_col            // return the matrix by column
 (

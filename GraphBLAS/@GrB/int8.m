@@ -1,8 +1,7 @@
 function C = int8 (G)
-%INT8 cast a GraphBLAS matrix to MATLAB full int8 matrix.
-% C = int8 (G) typecasts the GrB matrix G to a MATLAB full int8 matrix.
-% The result C is full since MATLAB does not support sparse int8
-% matrices.
+%INT8 cast a GraphBLAS matrix to built-in full int8 matrix.
+% C = int8 (G) typecasts the GrB matrix G to a built-in full int8 matrix.
+% The result C is full since sparse int8 matrices are not built-in.
 %
 % To typecast the matrix G to a GraphBLAS sparse int8 matrix instead, use
 % C = GrB (G, 'int8').
@@ -16,5 +15,5 @@ function C = int8 (G)
 
 G = G.opaque ;
 desc.kind = 'full' ;
-C = gbfull (G, 'int8', int8 (0), desc) ;        % export as a MATLAB full matrix
+C = gbfull (G, 'int8', int8 (0), desc) ;        % export as a full matrix
 

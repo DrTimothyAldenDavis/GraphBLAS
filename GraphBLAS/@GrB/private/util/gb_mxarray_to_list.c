@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_mxarray_to_list: convert a MATLAB array to a list of integers
+// gb_mxarray_to_list: convert a built-in array to a list of integers
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,11 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// The MATLAB list may be double, int64, or uint64.  If double or 1-based
+// The built-in list may be double, int64, or uint64.  If double or 1-based
 // int64, a new integer list is created, and the 1-based input list is
 // converted to the 0-based integer list.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 int64_t *gb_mxarray_to_list     // return List of integers
 (
@@ -32,7 +32,7 @@ int64_t *gb_mxarray_to_list     // return List of integers
     CHECK_ERROR (mxIsComplex (mxList), "index list cannot be complex") ;
 
     //--------------------------------------------------------------------------
-    // get the length and class of the MATLAB list
+    // get the length and class of the built-in list
     //--------------------------------------------------------------------------
 
     (*len) = mxGetNumberOfElements (mxList) ;
@@ -75,20 +75,20 @@ int64_t *gb_mxarray_to_list     // return List of integers
             // input list is 1-based double
             double *List_double = mxGetDoubles (mxList) ;
             CHECK_ERROR (List_double == NULL, "index list must be integer") ;
-            bool ok = GB_matlab_helper3 (List, List_double, (*len), List_max) ;
+            bool ok = GB_helper3 (List, List_double, (*len), List_max) ;
             CHECK_ERROR (!ok, "index must be integer") ;
         }
         else if (class == mxINT64_CLASS)
         { 
             // input list is 1-based int64
             int64_t *List_int64 = (int64_t *) mxGetInt64s (mxList) ;
-            GB_matlab_helper3i (List, List_int64, (*len), List_max) ;
+            GB_helper3i (List, List_int64, (*len), List_max) ;
         }
         else // if (class == mxUINT64_CLASS)
         { 
             // input list is 1-based uint64
             int64_t *List_int64 = (int64_t *) mxGetUint64s (mxList) ;
-            GB_matlab_helper3i (List, List_int64, (*len), List_max) ;
+            GB_helper3i (List, List_int64, (*len), List_max) ;
         }
         return (List) ;
     }

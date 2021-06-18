@@ -7,13 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// The input may be either a GraphBLAS matrix struct or a standard MATLAB
+// The input may be either a GraphBLAS matrix struct or a standard built-in
 // sparse matrix.
 
 //  gbdegree (X, 'row')     row degree
 //  gbdegree (X, 'col')     column degree
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: degree = gbdegree (X, dim)"
 
@@ -98,7 +98,7 @@ void mexFunction
         // get the degree of each vector of X, where X is sparse or hypersparse
         //----------------------------------------------------------------------
 
-        if (!GB_matlab_helper9 (X, &degree, &degree_size,
+        if (!GB_helper9 (X, &degree, &degree_size,
             &list, &list_size, &nvec))
         {
             ERROR ("out of memory") ;
@@ -139,7 +139,7 @@ void mexFunction
                     NULL)) ;
 
                 // get the degree of nonempty rows of T
-                if (!GB_matlab_helper9 (T, &degree, &degree_size,
+                if (!GB_helper9 (T, &degree, &degree_size,
                     &list, &list_size, &nvec))
                 {
                     ERROR ("out of memory") ;
@@ -182,7 +182,7 @@ void mexFunction
                     NULL)) ;
 
                 // get the degree of nonempty columns of T
-                if (!GB_matlab_helper9 (T, &degree, &degree_size,
+                if (!GB_helper9 (T, &degree, &degree_size,
                     &list, &list_size, &nvec))
                 {
                     ERROR ("out of memory") ;
@@ -207,7 +207,7 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and export d to MATLAB as a GraphBLAS matrix
+    // free workspace and export d as a GraphBLAS matrix
     //--------------------------------------------------------------------------
 
     OK (GrB_Vector_free (&y)) ;

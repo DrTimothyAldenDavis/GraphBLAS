@@ -96,7 +96,6 @@ GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
     const bool C_iso = V->iso ;
     if (C_iso)
     { 
-GB_GOTCHA ; // C iso
         GBURBLE ("(iso diag) ") ;
     }
     const bool csc = C->is_csc ;

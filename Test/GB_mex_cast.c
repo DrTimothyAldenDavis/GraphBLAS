@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_cast: cast a MATLAB array using C-style casting rules
+// GB_mex_cast: cast a built-in array using C-style casting rules
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Usage: C = GB_mex_cast (X, type) casts the dense array X to given type using
-// C-style typecasting rules instead of MATLAB's rules.
+// C-style typecasting rules instead of built-in rules.
 
 #include "GB_mex.h"
 

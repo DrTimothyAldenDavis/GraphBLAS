@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_export_to_mxfull: export a full array to a MATLAB full matrix
+// gb_export_to_mxfull: export a full array to a built-in full matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,15 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// The input (void *) X is exported to a MATLAB full mxArray S.
+// The input (void *) X is exported to a built-in full mxArray S.
 
 // The input array must be deep, but this cannot be checked here.  The caller
-// must ensure that the input X is deep.  The output is a standard MATLAB full
+// must ensure that the input X is deep.  The output is a standard built-in full
 // matrix as an mxArray.  No typecasting is done.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
-mxArray *gb_export_to_mxfull    // return exported MATLAB full matrix F
+mxArray *gb_export_to_mxfull    // return exported built-in full matrix F
 (
     void **X_handle,            // pointer to array to export
     const GrB_Index nrows,      // dimensions of F
@@ -124,7 +124,7 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB full matrix F
     (*X_handle) = NULL ;
 
     //--------------------------------------------------------------------------
-    // return the new MATLAB full matrix
+    // return the new built-in full matrix
     //--------------------------------------------------------------------------
 
     return (F) ;

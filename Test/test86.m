@@ -29,7 +29,7 @@ for subset = [n 1e6 1e4 100]
     tic ;
     C = A (I2,J2) ;
     t1 = toc ;
-    fprintf ('    MATLAB %12.6f\n', t1) ;
+    fprintf ('    builtin %12.6f\n', t1) ;
     [cm cn] = size (C) ;
     S = sparse (cm, cn) ;
     I0 = uint64 (I2) - 1 ;
@@ -52,7 +52,7 @@ for subset = [n 1e6 1e4 100]
     tic ;
     C = A (I2,:) ;
     t1 = toc ;
-    fprintf ('    MATLAB %12.6f\n', t1) ;
+    fprintf ('    builtin %12.6f\n', t1) ;
     [cm cn] = size (C) ;
     S = sparse (cm, cn) ;
     I0 = uint64 (I2) - 1 ;
@@ -76,7 +76,7 @@ for inc = [1:10 16 64 128 256 1024 100000 1e6 2e6]
     % C = A (1:inc:n, 1:inc:n) ;
       C = A (1:inc:n, :) ;
     t1 = toc ;
-    fprintf ('    MATLAB %12.6f\n', t1) ;
+    fprintf ('    builtin %12.6f\n', t1) ;
     clear I J
     I.begin = 0 ; I.inc = inc ; I.end = n-1 ;
     J.begin = 0 ; J.inc = 1   ; J.end = n-1 ;
@@ -100,7 +100,7 @@ for hi = [1:10 16 64 128 256 1024 100000 1e6 2e6]
     tic
     C = A (1:hi, 1:hi) ;
     t1 = toc ;
-    fprintf ('    MATLAB %12.6f\n', t1) ;
+    fprintf ('    builtin %12.6f\n', t1) ;
     I.begin = 0 ;
     I.inc = 1 ;
     I.end = hi-1 ;
@@ -125,7 +125,7 @@ for lo = [1:10 16 64 128 256 1024 100000 1e6 2e6]
         tic
         C = A (lo:hi, lo:hi) ;
         t1 = toc ;
-        fprintf ('    MATLAB %12.6f\n', t1) ;
+        fprintf ('    builtin %12.6f\n', t1) ;
         I.begin = lo-1 ;
         I.inc = 1 ;
         I.end = hi-1 ;
@@ -151,7 +151,7 @@ for lo = [1:10 16 64 128 256 1024 100000 1e6 2e6]
         tic
         C = A (hi:-1:lo, hi:-1:lo) ;
         t1 = toc ;
-        fprintf ('    MATLAB %12.6f\n', t1) ;
+        fprintf ('    builtin %12.6f\n', t1) ;
         I.begin = hi-1 ;
         I.inc = -1 ;
         I.end = lo-1 ;
@@ -174,7 +174,7 @@ for inc = [1:10 16 64 128 256 1024 100000 1e6 2e6]
     tic
     C = A (n:(-inc):1, n:(-inc):1) ;
     t1 = toc ;
-    fprintf ('    MATLAB %12.6f\n', t1) ;
+    fprintf ('    builtin %12.6f\n', t1) ;
     I.begin = n-1 ;
     I.inc = -inc ;
     I.end = 0 ;

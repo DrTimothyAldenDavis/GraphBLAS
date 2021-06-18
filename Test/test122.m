@@ -22,7 +22,7 @@ k = 3000 ;
 
 d.mask = 'complement' ;
 
-ncores = feature ('numcores') ;
+ncores = feature_numcores ;
 
 for dc = [2 0 1e-6 1e-5 1e-4 1e-3 1e-2 0.1 1]
 
@@ -58,7 +58,7 @@ for dc = [2 0 1e-6 1e-5 1e-4 1e-3 1e-2 0.1 1]
 
         tm = inf ;
         if (n < 500)
-            % MATLAB is exceedingly slow for this case
+            % built-in methods are exceedingly slow for this case
             tic
             C1 = C0 ;
             % Csub = C1 (1:k, 1:k) ;
@@ -89,7 +89,7 @@ for dc = [2 0 1e-6 1e-5 1e-4 1e-3 1e-2 0.1 1]
                 t1 = tg ;
             end
 
-            fprintf ('%3d : MATLAB: %10.4f GB: %8.4f', nthreads, tm, tg) ;
+            fprintf ('%3d : builtin: %10.4f GB: %8.4f', nthreads, tm, tg) ;
             fprintf (' speedup %10.4f %10.4f\n', tm / tg, t1/tg) ;
 
         end

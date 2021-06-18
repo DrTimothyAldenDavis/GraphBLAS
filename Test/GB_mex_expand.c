@@ -107,7 +107,7 @@ void mexFunction
         }
     }
 
-    // return result to MATLAB
+    // return result
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C result", true) ;
     FREE_ALL ;
 }

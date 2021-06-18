@@ -29,7 +29,7 @@
 
 // (6) Otherwise, the global default format is used for C.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 GxB_Format_Value gb_get_format          // GxB_BY_ROW or GxB_BY_COL
 (

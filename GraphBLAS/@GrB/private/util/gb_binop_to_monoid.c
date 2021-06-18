@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 GrB_Monoid gb_binop_to_monoid           // return monoid from a binary op
 (

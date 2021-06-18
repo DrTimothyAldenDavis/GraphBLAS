@@ -104,7 +104,7 @@ typedef struct
     GB_flush_function_t flush_func ;   // pointer to flush
 
     //--------------------------------------------------------------------------
-    // for MATLAB interface only
+    // for @GrB interface only
     //--------------------------------------------------------------------------
 
     bool print_one_based ;          // if true, print 1-based indices
@@ -216,7 +216,7 @@ GB_Global_struct GB_Global =
     .printf_func = NULL,
     .flush_func = NULL,
 
-    // for MATLAB interface only
+    // for @GrB interface only
     .print_one_based = false,   // if true, print 1-based indices
 
     .timing = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -928,7 +928,7 @@ void GB_Global_flush_set (GB_flush_function_t fl_func)
 }
 
 //------------------------------------------------------------------------------
-// for MATLAB interface only
+// for @GrB interface only
 //------------------------------------------------------------------------------
 
 GB_PUBLIC

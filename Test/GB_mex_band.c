@@ -148,7 +148,7 @@ void mexFunction
 
     GB_MEX_TOC ;
 
-    // return C to MATLAB as a sparse matrix and free the GraphBLAS C
+    // return C as a sparse matrix and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", false) ;
 
     FREE_ALL ;

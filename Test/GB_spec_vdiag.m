@@ -1,5 +1,5 @@
 function V = GB_spec_vdiag (A, k, vtype)
-%GB_SPEC_VDIAG a MATLAB mimic of GxB_Vector_diag
+%GB_SPEC_VDIAG a mimic of GxB_Vector_diag
 %
 % Usage:
 % V = GB_spec_vdiag (A, k, vtype)

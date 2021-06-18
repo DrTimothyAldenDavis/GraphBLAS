@@ -10,7 +10,7 @@
 #ifndef GB_WAIT_H
 #define GB_WAIT_H
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_wait                // finish all pending computations
 (
     GrB_Matrix A,               // matrix with pending computations

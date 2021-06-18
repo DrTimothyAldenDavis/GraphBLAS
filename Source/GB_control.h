@@ -1916,15 +1916,15 @@
    #define GxB_NO_PLUS_PLUS_FC32        1
    #define GxB_NO_PLUS_PLUS_FC64        1
 
-// the conventional semiring, used by C=A*B for built-in MATLAB matrices
+// the conventional semiring, used by C=A*B for built-in matrices
 // #define GxB_NO_PLUS_TIMES_FC32       1
 // #define GxB_NO_PLUS_TIMES_FC64       1
 
-// needed by GrB_reduce to vector, or s = sum (A) in MATLAB interface
+// needed by GrB_reduce to vector, or s = sum (A) in @GrB interface
 // #define GxB_NO_PLUS_FIRST_FC32       1
 // #define GxB_NO_PLUS_FIRST_FC64       1
 
-// needed by GrB_reduce to vector, or s = sum (A) in MATLAB interface
+// needed by GrB_reduce to vector, or s = sum (A) in @GrB interface
 // #define GxB_NO_PLUS_SECOND_FC32      1
 // #define GxB_NO_PLUS_SECOND_FC64      1
 
@@ -1949,11 +1949,11 @@
    #define GxB_NO_TIMES_TIMES_FC32      1
    #define GxB_NO_TIMES_TIMES_FC64      1
 
-// needed by GrB_reduce to vector, or s = prod (A) in MATLAB interface
+// needed by GrB_reduce to vector, or s = prod (A) in @GrB interface
 // #define GxB_NO_TIMES_FIRST_FC32      1
 // #define GxB_NO_TIMES_FIRST_FC64      1
 
-// needed by GrB_reduce to vecto, or s = prod (A) in MATLAB interface
+// needed by GrB_reduce to vecto, or s = prod (A) in @GrB interface
 // #define GxB_NO_TIMES_SECOND_FC32     1
 // #define GxB_NO_TIMES_SECOND_FC64     1
 
@@ -2320,8 +2320,8 @@
 
 // No builtin GrB_* semirings use positional multiplicative operators.
 // BFS_parent uses ANY_SECONDI.  1-based semirings are important for 1-based
-// framewarks such as MATLAB.  In a semiring, the multiplicative operator
-// SECONDI is the same as FIRSTJ.
+// framewarks such as Julia and Octave.  In a semiring, the multiplicative
+// operator SECONDI is the same as FIRSTJ.
 
 //  36 positional semirings:
 //

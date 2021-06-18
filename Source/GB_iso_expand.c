@@ -97,7 +97,6 @@ void GB_iso_expand          // expand an iso scalar into an entire array
 
         default : // user-defined types of arbitrary size
         {
-GB_GOTCHA ;     // iso expand, user type
             GB_void *restrict Z = (GB_void *) X ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < n ; p++)

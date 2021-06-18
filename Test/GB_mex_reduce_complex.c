@@ -86,7 +86,7 @@ void mexFunction
         Ax [hack] = GxB_CMPLX (0,0) ;
     }
 
-    // allocate the MATLAB output scalar
+    // allocate the output scalar
     pargout [0] = GB_mx_create_full (1, 1, GxB_FC64) ;
     GxB_FC64_t *c = (GxB_FC64_t *) mxGetComplexDoubles (pargout [0]) ;
 

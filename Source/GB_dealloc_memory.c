@@ -15,7 +15,7 @@
 
 #include "GB.h"
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_dealloc_memory      // free memory, return to free_pool or free it
 (
     // input/output

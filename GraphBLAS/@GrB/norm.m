@@ -6,7 +6,7 @@ function s = norm (G, kind)
 %   norm (G,inf) is the maximum sum of the rows of abs (G).
 %   norm (G,'fro') is the Frobenius norm of G: the sqrt of the sum of the
 %       squares of the entries in G.
-%   The 2-norm is not available for either MATLAB or GraphBLAS sparse
+%   The 2-norm is not available for either built-in or GraphBLAS sparse
 %       matrices.
 %
 % If G is a row or column vector:

@@ -10,7 +10,7 @@ end
 
 type = gbtype (A) ;
 desc.kind = 'full' ;
-C = gbfull (A, type, 0, desc) ;                 % export as a MATLAB full matrix
+C = gbfull (A, type, 0, desc) ;                 % export as a full matrix
 x = C (1) ;
 y = C (2) ;
 

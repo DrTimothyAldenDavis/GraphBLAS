@@ -12,7 +12,7 @@
 // gbmonoidinfo (monoid)
 // gbmonoidinfo (monoid, type)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: GrB.monoidinfo (monoid) or GrB.monoidinfo (monoid,type)"
 

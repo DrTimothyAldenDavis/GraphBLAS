@@ -1,6 +1,6 @@
 function C = logical (G)
-%LOGICAL typecast a GraphBLAS matrix to MATLAB logical matrix.
-% C = logical (G) typecasts the GraphBLAS matrix G to into a MATLAB
+%LOGICAL typecast a GraphBLAS matrix to built-in logical matrix.
+% C = logical (G) typecasts the GraphBLAS matrix G to into a built-in
 % logical matrix.  C is full if all entries in G are present, and
 % sparse otherwise.
 %
@@ -15,5 +15,5 @@ function C = logical (G)
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 G = G.opaque ;
-C = gbmatlab (G, 'logical') ;
+C = gbbuiltin (G, 'logical') ;
 

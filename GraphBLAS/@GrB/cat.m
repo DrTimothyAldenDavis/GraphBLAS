@@ -10,7 +10,7 @@ function C = cat (dim, varargin)
 %
 % If A and B are @GrB matrices and S = {A B} is a cell array, then
 % C = cat (dim, S) does not trigger the @GrB/cat method, but uses
-% the MATLAB built-in method instead.  Use GrB.cell2mat instead.
+% the built-in method instead.  Use GrB.cell2mat instead.
 %
 % If the matrices have different types, the type is determined
 % according to the rules in GrB.optype.

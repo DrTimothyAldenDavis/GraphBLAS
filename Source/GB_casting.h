@@ -18,7 +18,7 @@
 
 typedef void (*GB_cast_function) (void *, const void *, size_t) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 (
     const GB_Type_code code1,      // the type of z, the output value
@@ -32,11 +32,10 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 // The GraphBLAS C API states that typecasting follows the rules of the C
 // language.  However, the ANSI C11 language specification states that results
 // are undefined when typecasting a float or double to an integer value that is
-// outside the range of the integer type.  MATLAB handles this case by
+// outside the range of the integer type.  GraphBLAS handles this case by
 // typecasting a float or double that is larger than the maximum integer to the
 // max integer, and a value less than the minimum integer to the min integer.
-// NaN's are typecasted to the integer value zero.  GraphBLAS follows the same
-// rules as MATLAB.
+// NaN's are typecasted to the integer value zero.
 
 inline int8_t GB_cast_to_int8_t (double x)
 { 
@@ -131,9 +130,8 @@ inline void GB (_cast_ ## ztype ## _ ## xtype)                          \
 //------------------------------------------------------------------------------
 
 // Typecasting a NaN to a bool results in 'true', as defined by the ANSI C11
-// standard (NaN converts to true, since Nan != 0 is true).  MATLAB throws an
-// error when trying to convert NaN's to logical.  GraphBLAS follows the ANSI
-// C11 standard in this case.
+// standard (NaN converts to true, since Nan != 0 is true).  GraphBLAS follows
+// the ANSI C11 standard in this case.
 
 #undef  GB_CAST
 #define GB_CAST(ztype,x) (ztype) x

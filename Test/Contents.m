@@ -1,52 +1,52 @@
-% GraphBLAS Test/ folder: test GraphBLAS in MATLAB
+% GraphBLAS Test/ folder: test GraphBLAS
 % See the README.txt file for more details.
 
 % Primary functiuns
 
-%   make          - compiles the MATLAB interface to GraphBLAS (for testing only)
+%   make          - compiles the interface to GraphBLAS (for testing only)
 %   testall       - run all GraphBLAS tests
 %   nthreads_get  - get # of threads and chunk to use in GraphBLAS
 %   nthreads_set  - set # of threads and chunk to use in GraphBLAS
 
-% MATLAB mimics of GraphBLAS operations:
+% mimics of GraphBLAS operations:
 %
-%   GB_spec_Col_assign            - a MATLAB mimic of GrB_Col_assign
-%   GB_spec_Col_extract           - a MATLAB mimic of GrB_Col_extract
-%   GB_spec_Matrix_extract        - a MATLAB mimic of GrB_Matrix_extract
-%   GB_spec_Matrix_extractElement - a MATLAB mimic of GrB_Matrix_extractElement
-%   GB_spec_Row_assign            - a MATLAB mimic of GrB_Row_assign
-%   GB_spec_Vector_extract        - a MATLAB mimic of GrB_Vector_extract
-%   GB_spec_Vector_extractElement - a MATLAB mimic of GrB_Matrix_extractElement
-%   GB_spec_accum                 - MATLAB mimic of the Z=accum(C,T) operation in GraphBLAS
+%   GB_spec_Col_assign            - a mimic of GrB_Col_assign
+%   GB_spec_Col_extract           - a mimic of GrB_Col_extract
+%   GB_spec_Matrix_extract        - a mimic of GrB_Matrix_extract
+%   GB_spec_Matrix_extractElement - a mimic of GrB_Matrix_extractElement
+%   GB_spec_Row_assign            - a mimic of GrB_Row_assign
+%   GB_spec_Vector_extract        - a mimic of GrB_Vector_extract
+%   GB_spec_Vector_extractElement - a mimic of GrB_Matrix_extractElement
+%   GB_spec_accum                 - mimic of the Z=accum(C,T) operation in GraphBLAS
 %   GB_spec_accum_mask            - apply the accumulator and mask
-%   GB_spec_apply                 - a MATLAB mimic of GrB_apply
-%   GB_spec_assign                - a MATLAB mimic of GrB_assign (but not Row or Col variants)
-%   GB_spec_build                 - a MATLAB version of GrB_Matrix_build and GrB_vector_build
-%   GB_spec_compare               - compare MATLAB mimic result with GraphBLAS result
+%   GB_spec_apply                 - a mimic of GrB_apply
+%   GB_spec_assign                - a mimic of GrB_assign (but not Row or Col variants)
+%   GB_spec_build                 - a version of GrB_Matrix_build and GrB_vector_build
+%   GB_spec_compare               - compare mimic result with GraphBLAS result
 %   GB_spec_descriptor            - return components of a descriptor
-%   GB_spec_Matrix_eWiseAdd       - a MATLAB mimic of GrB_Matrix_eWiseAdd
-%   GB_spec_Vector_eWiseAdd       - a MATLAB mimic of GrB_Vector_eWiseAdd
-%   GB_spec_Matrix_eWiseMult      - a MATLAB mimic of GrB_Matrix_eWiseMult
-%   GB_spec_Vector_eWiseMult      - a MATLAB mimic of GrB_Vector_eWiseMult
-%   GB_spec_extractTuples         - a MATLAB mimic of GrB_*_extractTuples
+%   GB_spec_Matrix_eWiseAdd       - a mimic of GrB_Matrix_eWiseAdd
+%   GB_spec_Vector_eWiseAdd       - a mimic of GrB_Vector_eWiseAdd
+%   GB_spec_Matrix_eWiseMult      - a mimic of GrB_Matrix_eWiseMult
+%   GB_spec_Vector_eWiseMult      - a mimic of GrB_Vector_eWiseMult
+%   GB_spec_extractTuples         - a mimic of GrB_*_extractTuples
 %   GB_spec_identity              - the additive identity of a monoid
-%   GB_spec_kron                  - a MATLAB mimic of GrB_kronecker
-%   GB_spec_mask                  - a pure MATLAB implementation of GrB_mask
-%   GB_spec_matrix                - a MATLAB mimic that conforms a matrix to the GraphBLAS spec
-%   GB_spec_mxm                   - a MATLAB mimic of GrB_mxm
-%   GB_spec_mxv                   - a MATLAB mimic of GrB_mxv
+%   GB_spec_kron                  - a mimic of GrB_kronecker
+%   GB_spec_mask                  - a pure implementation of GrB_mask
+%   GB_spec_matrix                - a mimic that conforms a matrix to the GraphBLAS spec
+%   GB_spec_mxm                   - a mimic of GrB_mxm
+%   GB_spec_mxv                   - a mimic of GrB_mxv
 %   GB_spec_op                    - apply a unary or binary operator
 %   GB_spec_operator              - get the contents of an operator
 %   GB_spec_opsall                - return a list of all operators, types, and semirings
 %   GB_spec_random                - generate random matrix
-%   GB_spec_reduce_to_scalar      - a MATLAB mimic of GrB_reduce (to scalar)
-%   GB_spec_reduce_to_vector      - a MATLAB mimic of GrB_reduce (to vector)
-%   GB_spec_resize                - a MATLAB mimic of GxB_resize
-%   GB_spec_select                - a MATLAB mimic of GxB_select
+%   GB_spec_reduce_to_scalar      - a mimic of GrB_reduce (to scalar)
+%   GB_spec_reduce_to_vector      - a mimic of GrB_reduce (to vector)
+%   GB_spec_resize                - a mimic of GxB_resize
+%   GB_spec_select                - a mimic of GxB_select
 %   GB_spec_semiring              - create a semiring
-%   GB_spec_subassign             - a MATLAB mimic of GxB_subassign
-%   GB_spec_transpose             - a MATLAB mimic of GrB_transpose
-%   GB_spec_vxm                   - a MATLAB mimic of GrB_vxm
+%   GB_spec_subassign             - a mimic of GxB_subassign
+%   GB_spec_transpose             - a mimic of GrB_transpose
+%   GB_spec_vxm                   - a mimic of GrB_vxm
 %   GB_complex_compare            - compare GraphBLAS results for complex types
 %   GB_user_op                    - apply a complex binary and unary operator
 %   GB_user_opsall                - return list of complex operators
@@ -119,8 +119,8 @@
 %   test52   - test AdotB vs AxB
 %   test53   - test GrB_Matrix_extract
 %   test54   - test GB_subref (numeric case) with I=lo:hi, J=lo:hi
-%   test55   - test GxB_subassign, illustrate duplicate indices, MATLAB vs GraphBLAS
-%   test55b  - test GrB_assign, illustrate duplicate indices, MATLAB vs GraphBLAS
+%   test55   - test GxB_subassign, illustrate duplicate indices
+%   test55b  - test GrB_assign, illustrate duplicate indices
 %   test56   - test GrB_*_build
 %   test57   - test operator on large uint32 values
 %   test58   - test GrB_eWiseAdd
@@ -285,11 +285,6 @@
 
 %   flopcount        - cumulative sum of flop counts for A*B, C<M>=A*B, C<!M>=A*B
 %   floptest         - compare flopcount with GB_mex_mxm_flops
-
-% Other demos
-
-%   ../Demo/MATLAB/kron_demo      - test Program/kron_demo.c and compare with MATLAB kron
-%   ../Demo/MATLAB/kron_test      - test kron_demo.m
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

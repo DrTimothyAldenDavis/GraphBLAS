@@ -57,7 +57,7 @@ void mexFunction
         mexErrMsgTxt ("mis failed") ;
     }
 
-    // return iset to MATLAB
+    // return iset
     Iset = (GrB_Matrix) iset ;
     pargout [0] = GB_mx_Matrix_to_mxArray (&Iset, "iset result", false) ;
 

@@ -10,7 +10,7 @@ Prob = ssget (2662)
 A = Prob.A ;
 
 % make symmetric and remove self edges
-fprintf ('prep (in MATLAB):\n') ;
+fprintf ('prep (in built-in):\n') ;
 tic
 A = spones (A) ;
 A = A+A' ;
@@ -19,7 +19,7 @@ A = A+A' ;
 n = size (A,1) ;
 toc
 
-ncores = feature ('numcores') ;
+ncores = feature_numcores ;
 
 for seed = 1:3
     fprintf ('\n') ;

@@ -70,8 +70,6 @@ GrB_Info GB_split                   // split a matrix
     int64_t nrows = GB_NROWS (A) ;
     int64_t ncols = GB_NCOLS (A) ;
 
-    #define offset (GB_Global_print_one_based_get ( ) ? 1 : 0)
-
     int64_t s = 0 ;
     for (int64_t i = 0 ; i < m ; i++)
     {

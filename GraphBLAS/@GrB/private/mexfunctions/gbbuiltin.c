@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbmatlab: convert to a sparse or full MATLAB matrix
+// gbbuiltin: convert to a sparse or full built-in matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,17 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// The input may be either a GraphBLAS matrix struct or a standard MATLAB
-// sparse or full matrix.  The output is a standard MATLAB sparse or full
+// The input may be either a GraphBLAS matrix struct or a standard built-in
+// sparse or full matrix.  The output is a standard built-in sparse or full
 // matrix: full if all entries are present, and sparse otherwise.
 
 // Usage:
 
-// A = gbmatlab (X, type)
+// A = gbbuiltin (X, type)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
-#define USAGE "usage: A = gbmatlab (X, type)"
+#define USAGE "usage: A = gbbuiltin (X, type)"
 
 void mexFunction
 (
@@ -56,10 +56,10 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // export the input matrix to a MATLAB sparse or full matrix
+    // export the input matrix to a built-in sparse or full matrix
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export (&X, KIND_MATLAB) ;
+    pargout [0] = gb_export (&X, KIND_BUILTIN) ;
     GB_WRAPUP ;
 }
 

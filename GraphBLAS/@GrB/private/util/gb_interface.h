@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_matlab.h: definitions for MATLAB interface for SuiteSparse:GraphBLAS
+// gb_interface.h: definitions the SuiteSparse:GraphBLAS interface
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,14 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// This MATLAB interface depends heavily on internal details of the
+// This interface depends heavily on internal details of the
 // SuiteSparse:GraphBLAS library.  Thus, GB.h is #include'd, not just
 // GraphBLAS.h.
 
-#ifndef GB_MATLAB_H
-#define GB_MATLAB_H
+#ifndef GB_INTERFACE_H
+#define GB_INTERFACE_H
 
-#include "GB_matlab_helper.h"
+#include "GB_helper.h"
 #include "mex.h"
 #include <ctype.h>
 
@@ -88,10 +88,10 @@ void gbcov_put (void) ;
 
 typedef enum            // output of GrB.methods
 {
-    KIND_GRB = 0,       // return a MATLAB struct containing a GrB_Matrix
-    KIND_SPARSE = 1,    // return a MATLAB sparse matrix
-    KIND_FULL = 2,      // return a MATLAB full matrix
-    KIND_MATLAB = 3     // return a MATLAB sparse or full matrix (full if all
+    KIND_GRB = 0,       // return a struct containing a GrB_Matrix
+    KIND_SPARSE = 1,    // return a built-in sparse matrix
+    KIND_FULL = 2,      // return a built-in full matrix
+    KIND_BUILTIN = 3    // return a built-in sparse or full matrix (full if all
                         // entries present, sparse otherwise)
 }
 kind_enum_t ;
@@ -99,8 +99,7 @@ kind_enum_t ;
 // [I,J,X] = GrB.extracttuples (A, desc) can return I and J in three ways:
 //
 //      one-based double:   just like [I,J,X] = find (A)
-//      one-based int64:    I and J are one-based, just as in MATLAB, but
-//                          are int64.
+//      one-based int64:    I and J are one-based, as built-in but int64.
 //      zero-based int64:   I and J are zero-based, and int64.  This is meant
 //                          for internal use in GrB methods, but it is also
 //                          the
@@ -146,35 +145,35 @@ static inline int64_t gb_double_to_integer (double x)
 // function prototypes
 //------------------------------------------------------------------------------
 
-GrB_Type gb_mxarray_type        // return the GrB_Type of a MATLAB matrix
+GrB_Type gb_mxarray_type        // return the GrB_Type of a built-in matrix
 (
     const mxArray *X
 ) ;
 
-GrB_Type gb_mxstring_to_type    // return the GrB_Type from a MATLAB string
+GrB_Type gb_mxstring_to_type    // return the GrB_Type from a built-in string
 (
-    const mxArray *S        // MATLAB mxArray containing a string
+    const mxArray *S        // built-in mxArray containing a string
 ) ;
 
-void gb_mxstring_to_string  // copy a MATLAB string into a C string
+void gb_mxstring_to_string  // copy a built-in string into a C string
 (
     char *string,           // size at least maxlen+1
     const size_t maxlen,    // length of string
-    const mxArray *S,       // MATLAB mxArray containing a string
+    const mxArray *S,       // built-in mxArray containing a string
     const char *name        // name of the mxArray
 ) ;
 
-GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
+GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
 (
     const mxArray *X
 ) ;
 
-GrB_Matrix gb_get_deep      // return a deep GrB_Matrix copy of a MATLAB X
+GrB_Matrix gb_get_deep      // return a deep GrB_Matrix copy of a built-in X
 (
-    const mxArray *X        // input MATLAB matrix (sparse or struct)
+    const mxArray *X        // input built-in matrix (sparse or struct)
 ) ;
 
-GrB_Type gb_type_to_mxstring    // return the MATLAB string from a GrB_Type
+GrB_Type gb_type_to_mxstring    // return the built-in string from a GrB_Type
 (
     const GrB_Type type
 ) ;
@@ -198,7 +197,7 @@ GrB_Matrix gb_new               // create and empty matrix C
 
 void gb_abort ( void ) ;    // failure
 
-int gb_flush ( void ) ;     // flush mexPrintf output to MATLAB Command Window
+int gb_flush ( void ) ;     // flush mexPrintf output to Command Window
 
 void gb_usage       // check usage and make sure GxB_init has been called
 (
@@ -219,7 +218,7 @@ GrB_Type gb_string_to_type      // return the GrB_Type from a string
 
 GrB_UnaryOp gb_mxstring_to_unop         // return unary operator from a string
 (
-    const mxArray *mxstring,            // MATLAB string
+    const mxArray *mxstring,            // built-in string
     const GrB_Type default_type         // default type if not in the string
 ) ;
 
@@ -238,7 +237,7 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
 
 GrB_BinaryOp gb_mxstring_to_binop       // return binary operator from a string
 (
-    const mxArray *mxstring,            // MATLAB string
+    const mxArray *mxstring,            // built-in string
     const GrB_Type atype,               // type of A
     const GrB_Type btype                // type of B
 ) ;
@@ -259,7 +258,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
 GrB_Semiring gb_mxstring_to_semiring    // return semiring from a string
 (
-    const mxArray *mxstring,            // MATLAB string
+    const mxArray *mxstring,            // built-in string
     const GrB_Type atype,               // type of A
     const GrB_Type btype                // type of B
 ) ;
@@ -279,7 +278,7 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
 
 GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
 (
-    const mxArray *desc_matlab, // MATLAB struct with possible descriptor
+    const mxArray *desc_builtin,// built-in struct with possible descriptor
     kind_enum_t *kind,          // GrB, sparse, or full
     GxB_Format_Value *fmt,      // by row or by col
     int *sparsity,              // hypersparse/sparse/bitmap/full
@@ -294,17 +293,17 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
     GrB_Matrix id               // identity value, use zero if NULL
 ) ;
 
-mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
+mxArray *gb_export_to_mxstruct  // return exported built-in struct G
 (
     GrB_Matrix *A_handle        // matrix to export; freed on output
 ) ;
 
-mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
+mxArray *gb_export_to_mxsparse  // return exported built-in sparse matrix S
 (
     GrB_Matrix *A_handle        // matrix to export; freed on output
 ) ;
 
-mxArray *gb_export_to_mxfull    // return exported MATLAB full matrix F
+mxArray *gb_export_to_mxfull    // return exported built-in full matrix F
 (
     void **X_handle,            // pointer to array to export
     const GrB_Index nrows,      // dimensions of F
@@ -312,7 +311,7 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB full matrix F
     GrB_Type type               // type of the array
 ) ;
 
-mxArray *gb_export              // return the exported MATLAB matrix or struct
+mxArray *gb_export              // return the exported built-in matrix or struct
 (
     GrB_Matrix *C_handle,       // GrB_Matrix to export and free
     kind_enum_t kind            // GrB, sparse, or full
@@ -325,15 +324,15 @@ GxB_SelectOp gb_string_to_selectop      // return select operator from a string
 
 GxB_SelectOp gb_mxstring_to_selectop    // return select operator from a string
 (
-    const mxArray *mxstring             // MATLAB string
+    const mxArray *mxstring             // built-in string
 ) ;
 
-bool gb_mxarray_is_scalar   // true if MATLAB array is a scalar
+bool gb_mxarray_is_scalar   // true if built-in array is a scalar
 (
     const mxArray *S
 ) ;
 
-bool gb_mxarray_is_empty    // true if MATLAB array is NULL, or 2D and 0-by-0
+bool gb_mxarray_is_empty    // true if built-in array is NULL, or 2D and 0-by-0
 (
     const mxArray *S
 ) ;
@@ -354,7 +353,7 @@ int64_t *gb_mxarray_to_list     // return List of integers
 
 GrB_Index *gb_mxcell_to_index   // return index list I
 (
-    const mxArray *I_cell,      // MATLAB cell array
+    const mxArray *I_cell,      // built-in cell array
     base_enum_t base,           // I is one-based or zero-based
     const GrB_Index n,          // dimension of matrix being indexed
     bool *I_allocated,          // true if output array I is allocated
@@ -379,14 +378,14 @@ GrB_Monoid gb_string_to_monoid          // return monoid from a string
 
 GrB_Monoid gb_mxstring_to_monoid        // return monoid from a string
 (
-    const mxArray *mxstring,            // MATLAB string
+    const mxArray *mxstring,            // built-in string
     const GrB_Type type                 // default type if not in the string
 ) ;
 
 bool gb_mxstring_to_format      // true if a valid format is found
 (
     // input
-    const mxArray *mxformat,    // MATLAB string, 'by row' or 'by col'
+    const mxArray *mxformat,    // built-in string, 'by row' or 'by col'
     // output
     GxB_Format_Value *fmt,
     int *sparsity

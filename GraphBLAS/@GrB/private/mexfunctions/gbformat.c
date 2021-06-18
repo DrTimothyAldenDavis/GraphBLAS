@@ -12,9 +12,9 @@
 // fmt = gbformat ;                 get the global default format (row/col)
 // fmt = gbformat (fmt) ;           set the global default format
 // [f,sparsity] = gbformat (G) ;    get the format and sparsity of a matrix
-//                                  (either GraphBLAS or MATLAB)
+//                                  (either GraphBLAS or built-in)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: [f,s] = GrB.format, GrB.format (f), GrB.format (G)"
 
@@ -112,12 +112,12 @@ void mexFunction
         { 
 
             //------------------------------------------------------------------
-            // GrB.format (A) for a MATLAB matrix A
+            // GrB.format (A) for a built-in matrix A
             //------------------------------------------------------------------
 
-            // MATLAB matrices are always stored by column
+            // built-in matrices are always stored by column
             fmt = GxB_BY_COL ;
-            // MATLAB matrices are sparse or full, never hypersparse or bitmap
+            // built-in matrices are sparse or full, never hypersparse or bitmap
             sparsity = mxIsSparse (pargin [0]) ? GxB_SPARSE : GxB_FULL ;
         }
     }

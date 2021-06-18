@@ -9,10 +9,10 @@ function C = diag (A, k)
 % c = diag (A,k) when A is a matrix returns a column vector c formed the
 % entries on the kth diagonal of A.  The main diagonal is c = diag (A).
 %
-% The GraphBLAS diag function always constructs a GraphBLAS sparse matrix,
-% unlike the built-in MATLAB diag, which always constructs a MATLAB full
-% matrix.  To use this overloaded function for a MATLAB sparse matrix A,
-% use C = diag (A, GrB (k)) ;
+% The GraphBLAS diag function always constructs a GraphBLAS sparse
+% matrix, unlike the built-in diag, which always constructs a full
+% matrix.  To use this overloaded function for a non-@GrB sparse matrix
+% A, use C = diag (A, GrB (k)) ;
 %
 % Examples:
 %

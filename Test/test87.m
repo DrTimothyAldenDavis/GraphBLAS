@@ -6,7 +6,7 @@ function test87
 
 [save save_chunk] = nthreads_get ;
 chunk = 4096 ;
-nthreads = feature ('numcores') ;
+nthreads = feature_numcores ;
 nthreads_set (nthreads, chunk) ;
 
 rng ('default') ;
@@ -20,7 +20,7 @@ fprintf ('building random sparse matrix, %d by %d\n', k,2) ;
 A = sprandn (k, 2, 0.01) ;
 B = sprandn (k, 2, 0.01) ;
 
-fprintf ('MATLAB:\n') ;
+fprintf ('builtin:\n') ;
 tic
 C = A'*B ;
 toc
@@ -46,7 +46,7 @@ assert (norm (C-C2,1) / norm (C,1) < 1e-12)
 assert (norm (C-C3,1) / norm (C,1) < 1e-12)
 assert (norm (C-C4,1) / norm (C,1) < 1e-12)
 
-fprintf ('MATLAB: %10.4f  GB:auto: %10.4f speedup %10.4f\n', ...
+fprintf ('builtin: %10.4f  GB:auto: %10.4f speedup %10.4f\n', ...
     tm, tg, tm/tg) ;
 
 %-------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ fprintf ('building random sparse matrix, %d by %d\n', k,m) ;
 A = sprandn (k, 2, 0.01) ;
 B = sprandn (k, m, 0.01) ;
 
-fprintf ('MATLAB:\n') ;
+fprintf ('builtin:\n') ;
 tic
 C = A'*B ;
 toc
@@ -77,7 +77,7 @@ tg1 = grbresults ;
 fprintf ('just A*B %g (both A and B non-hypersparse)\n', tg1) ;
 
 % this is slower than GB_mex_AxB (A',B) even though it uses the
-% same method, because the MATLAB A' above is non-hypersparse,
+% same method, because the builtin A' above is non-hypersparse,
 % but the internal AT=A' is hypersparse.
 
 fprintf ('GrB A''*B native (AT becomes hypersparse):\n') ;
@@ -86,7 +86,7 @@ C4 = GB_mex_AxB (A,B, true) ;
 toc
 tg = grbresults ;
 
-fprintf ('MATLAB: %10.4f  GB:auto: %10.4f(%s) speedup %10.4f\n', ...
+fprintf ('builtin: %10.4f  GB:auto: %10.4f(%s) speedup %10.4f\n', ...
     tm, tg, tm/tg) ;
 
 assert (norm (C-C2,1) / norm (C,1) < 1e-12)
@@ -114,7 +114,7 @@ tg = grbresults ;
 assert (isequal (AT1, AT2.matrix)) ;
 
 fprintf ('size of AT: %d %d\n', mm, nn) ;
-fprintf ('MATLAB transpose %g GB %g speedup %g\n', tm, tg, tm/tg) ;
+fprintf ('builtin transpose %g GB %g speedup %g\n', tm, tg, tm/tg) ;
 
 fprintf ('GrB (AT)*B:\n') ;
 tic
@@ -133,12 +133,12 @@ n = size (A, 1) ;
 x = sparse (rand (n,1)) ;
 z = full (x) ;
 
-fprintf ('MATLAB: x full:\n') ;
+fprintf ('builtin: x full:\n') ;
 tic
 y0 = A'*z ;
 toc
 
-fprintf ('MATLAB: x sparse:\n') ;
+fprintf ('builtin: x sparse:\n') ;
 tic
 y1 = A'*x ;
 toc
@@ -166,7 +166,7 @@ assert (isequal (y1, y2)) ;
 % assert (isequal (y1, y3)) ;
 assert (norm (y1-y3,1) / norm (y1,1) < eps)
 
-fprintf ('MATLAB: %10.4f  GB:auto: %10.4f speedup %10.4f\n', ...
+fprintf ('builtin: %10.4f  GB:auto: %10.4f speedup %10.4f\n', ...
     tm, tg, tm/tg) ;
 
 %-------------------------------------------------------------------------------
@@ -174,12 +174,12 @@ fprintf ('\n--------------------------------------------------\n') ;
 
 fprintf ('\nx''A where A is big and x is a dense vector\n') ;
 
-fprintf ('MATLAB: x full:\n') ;
+fprintf ('builtin: x full:\n') ;
 tic
 y0 = z'*A ;
 toc
 
-fprintf ('MATLAB: x sparse:\n') ;
+fprintf ('builtin: x sparse:\n') ;
 tic
 y1 = x'*A ;
 toc
@@ -206,19 +206,19 @@ assert (isequal (y1, y2)) ;
 % assert (isequal (y1, y3)) ;
 assert (norm (y1-y2,1) / norm (y2,1) < eps)
 
-fprintf ('MATLAB: %10.4f  GB:auto: %10.4f speedup %10.4f\n', ...
+fprintf ('builtin: %10.4f  GB:auto: %10.4f speedup %10.4f\n', ...
     tm, tg, tm/tg) ;
 
 %-------------------------------------------------------------------------------
 fprintf ('\n--------------------------------------------------\n') ;
 fprintf ('\nA*x where A is big and x is a dense vector\n') ;
 
-fprintf ('MATLAB: x full:\n') ;
+fprintf ('builtin: x full:\n') ;
 tic
 y0 = A*z ;
 toc
 
-fprintf ('MATLAB: x sparse:\n') ;
+fprintf ('builtin: x sparse:\n') ;
 tic
 y1 = A*x ;
 toc
@@ -234,7 +234,7 @@ assert (isequal (y1, sparse (y0))) ;
 % assert (isequal (y1, y3)) ;
 assert (norm (y1-y3,1) / norm (y1,1) < eps)
 
-fprintf ('MATLAB: %10.4f  GB:auto: %10.4f speedup %10.4f\n', ...
+fprintf ('builtin: %10.4f  GB:auto: %10.4f speedup %10.4f\n', ...
     tm, tg, tm/tg) ;
 
 %-------------------------------------------------------------------------------
@@ -243,7 +243,7 @@ fprintf ('\n--------------------------------------------------\n') ;
 fprintf ('\nA''*x where A is big and x is a very sparse vector\n') ;
 x = sprandn (n,1, 0.0001) ;
 
-fprintf ('MATLAB: x sparse:\n') ;
+fprintf ('builtin: x sparse:\n') ;
 tic
 y1 = A'*x ;
 toc
@@ -269,7 +269,7 @@ assert (isequal (y1, y2)) ;
 % assert (isequal (y1, y3)) ;
 assert (norm (y1-y3,1) / norm (y1,1) < eps)
 
-fprintf ('MATLAB: %10.4f  GB:auto: %10.4f speedup %10.4f\n', ...
+fprintf ('builtin: %10.4f  GB:auto: %10.4f speedup %10.4f\n', ...
     tm, tg, tm/tg) ;
 
 fprintf ('\ntest87: all tests passed\n') ;

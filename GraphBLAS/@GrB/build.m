@@ -4,13 +4,13 @@ function C = build (varargin)
 %   C = GrB.build (I, J, X, m, n, dup, type, desc)
 %
 % GrB.build constructs an m-by-n GraphBLAS sparse matrix C from a list of
-% entries, analogous to A = sparse (I, J, X, m, n) to construct a MATLAB
+% entries, analogous to A = sparse (I, J, X, m, n) to construct a
 % sparse matrix A.
 %
 % If not present or empty, m defaults to the largest row index in the
 % list I, and n defaults to the largest column index in the list J.  dup
 % defaults to '+' for non-logical types, and 'or' for logical, which gives
-% the same behavior as the MATLAB sparse function: duplicate entries are
+% the same behavior as the built-in sparse function: duplicate entries are
 % added together.
 %
 % dup is a string that defines a binary function; see 'help GrB.binopinfo'
@@ -37,7 +37,7 @@ function C = build (varargin)
 %
 % The integer arrays I and J may be double, int64, or uint64:
 % If I, J, and X are double, the following examples construct the same
-% MATLAB sparse matrix S:
+% sparse matrix S:
 %
 %   S = sparse (I, J, X) ;
 %   S = GrB.build (I, J, X, struct ('kind', 'sparse')) ;
@@ -46,14 +46,14 @@ function C = build (varargin)
 %
 % The row and column indices I and J need not be in any particular order,
 % but GrB.build is fastest if I and J are provided in column-major order
-% if building a MATLAB sparse matrix.  If desc.format is 'by row', then
+% if building a built-in sparse matrix.  If desc.format is 'by row', then
 % GrB.build is fastest if I and J are in row-major order.
 %
 % If desc.base is 'zero-based', then I and J are treated as zero-based,
 % where (0,0) is the first entry in the top left of S, and (m-1,n-1)
 % is the position in the bottom right corner of S.  GrB.build is fastest
 % if I and J are int64 or uint64, and desc.base is 'zero-based'.  The
-% default is the same as MATLAB, which is 'one-based'.
+% default is the same as built-in indexing, which is 'one-based'.
 %
 % If I, J, and/or X are scalars, and any of I, J, or X is a vector of
 % length e, the scalars are expanded into vectors of length e.  Any

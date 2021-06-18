@@ -11,7 +11,7 @@
 
 // v = gbvdiag (A, k, desc)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: v = gbvdiag (A, k, desc)"
 
@@ -102,7 +102,7 @@ void mexFunction
     OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------
-    // export the output matrix V back to MATLAB
+    // export the output matrix V
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&V, kind) ;

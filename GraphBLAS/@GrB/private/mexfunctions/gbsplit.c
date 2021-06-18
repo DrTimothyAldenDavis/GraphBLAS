@@ -15,7 +15,7 @@
 
 // where C is a 2D cell array of matrices.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.split (A, m, n, desc)"
 
@@ -107,7 +107,7 @@ void mexFunction
     OK (GxB_Matrix_split (Tiles, m, n, Tile_nrows, Tile_ncols, A, desc)) ;
 
     //--------------------------------------------------------------------------
-    // convert the Tiles array to a MATLAB cell array
+    // convert the Tiles array to a built-in cell array
     //--------------------------------------------------------------------------
 
     mxArray *C = mxCreateCellMatrix (m, n) ;
@@ -131,7 +131,7 @@ void mexFunction
     mxFree (Tile_ncols) ;
 
     //--------------------------------------------------------------------------
-    // export the output cell array C back to MATLAB
+    // export the output cell array C
     //--------------------------------------------------------------------------
 
     pargout [0] = C ;

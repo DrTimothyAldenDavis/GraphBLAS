@@ -7,14 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// The input may be either a GraphBLAS matrix struct or a standard MATLAB
+// The input may be either a GraphBLAS matrix struct or a standard built-in
 // sparse matrix.
 
 // Usage
 
 // nvals = gbnvals (X)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: nvals = gbnvals (X)"
 

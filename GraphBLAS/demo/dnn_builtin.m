@@ -1,5 +1,5 @@
-function Y = dnn_matlab (W, bias, Y0)
-%DNN_MATLAB Sparse deep neural network in pure MATLAB
+function Y = dnn_builtin (W, bias, Y0)
+%DNN_BUILTIN Sparse deep neural network in without @GrB methods 
 % Performs ReLU inference using input feature vector(s) Y0, DNN weights W,
 % and bias vectors.
 %
@@ -7,11 +7,11 @@ function Y = dnn_matlab (W, bias, Y0)
 %
 % Usage:
 %
-%   Y = dnn_matlab (W, bias, Y0)
+%   Y = dnn_builtin (W, bias, Y0)
 %
-% See also dnn_gb, dnn_mat2gb.
+% See also GrB.dnn, dnn_builtin2gb.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 Y = Y0 ;

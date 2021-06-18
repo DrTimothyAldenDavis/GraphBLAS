@@ -73,7 +73,7 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
                 t1 = tg ;
             end
             fprintf ('nthreads %2d GraphBLAS time: %12.4f ', nthreads, tg) ;
-            fprintf ('speedup %12.4f over MATLAB: %12.4f\n', t1/tg, tm/tg) ;
+            fprintf ('speedup %12.4f over built-in: %12.4f\n', t1/tg, tm/tg) ;
             assert (GB_spok (C4) == 1) ;
             assert (isequal (C1, C4)) ;
         end
@@ -103,7 +103,7 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
                 t1 = tg ;
             end
             fprintf ('nthreads %2d GraphBLAS time: %12.4f ', nthreads, tg) ;
-            fprintf ('speedup %12.4f over MATLAB: %12.4f\n', t1/tg, tm/tg) ;
+            fprintf ('speedup %12.4f over built-in: %12.4f\n', t1/tg, tm/tg) ;
             assert (GB_spok (C4.matrix) == 1) ;
             assert (isequal (C1, C4.matrix)) ;
         end
@@ -137,7 +137,7 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
                 t1 = tg ;
             end
             fprintf ('nthreads %2d GraphBLAS time: %12.4f ', nthreads, tg) ;
-            fprintf ('speedup %12.4f over MATLAB: %12.4f\n', t1/tg, tm/tg) ;
+            fprintf ('speedup %12.4f over built-in: %12.4f\n', t1/tg, tm/tg) ;
             assert (GB_spok (C4.matrix) == 1) ;
             assert (isequal (C1, C4.matrix)) ;
         end
@@ -166,7 +166,7 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
                 t1 = tg ;
             end
             fprintf ('nthreads %2d GraphBLAS time: %12.4f ', nthreads, tg) ;
-            fprintf ('speedup %12.4f over MATLAB: %12.4f\n', t1/tg, tm/tg) ;
+            fprintf ('speedup %12.4f over built-in: %12.4f\n', t1/tg, tm/tg) ;
             assert (GB_spok (C4.matrix) == 1) ;
             assert (isequal (C1, C4.matrix)) ;
         end
@@ -196,7 +196,7 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
                 t1 = tg ;
             end
             fprintf ('nthreads %2d GraphBLAS time: %12.4f ', nthreads, tg) ;
-            fprintf ('speedup %12.4f over MATLAB: %12.4f\n', t1/tg, tm/tg) ;
+            fprintf ('speedup %12.4f over built-in: %12.4f\n', t1/tg, tm/tg) ;
             assert (GB_spok (C4.matrix) == 1) ;
             assert (isequal (C1, C4.matrix)) ;
         end

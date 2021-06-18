@@ -7,7 +7,7 @@ function selectopinfo (op)
 % For GrB.selectop(op), the op must be one of the following strings.
 % Some of the operators have equivalent synonyms.
 %
-%   op                      MATLAB equivalent
+%   op                      built-in equivalent
 %   --------                -----------------
 %   'tril'                  C = tril (A,b)
 %   'triu'                  C = triu (A,b)

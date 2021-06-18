@@ -14,7 +14,7 @@
 // respectively.  C is not modified outside that single row (for
 // GrB_Row_assign) or column (for GrB_Col_assign).
 
-// This function does the same thing as the MATLAB mimics GB_spec_assign.m
+// This function does the same thing as the mimics GB_spec_assign.m
 // (when kind=0), GB_spec_Col_assign (when kind=1), and GB_spec_Row_assign
 // (when kind=2).
 
@@ -568,7 +568,7 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // return C to MATLAB as a struct
+    // return C as a struct
     //--------------------------------------------------------------------------
 
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C assign result", true) ;

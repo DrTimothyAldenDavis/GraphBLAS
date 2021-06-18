@@ -7,35 +7,30 @@
 
 //------------------------------------------------------------------------------
 
-// Convert a GraphBLAS sparse or full matrix to a MATLAB struct C containing
+// Convert a GraphBLAS sparse or full matrix to a built-in struct C containing
 // C.matrix and a string C.class.  The GraphBLAS matrix is destroyed.
 
 // This could be done using only user-callable GraphBLAS functions, by
-// extracting the tuples and converting them into a MATLAB sparse matrix.  But
+// extracting the tuples and converting them into a built-in sparse matrix.  But
 // that would be much slower and take more memory.  Instead, most of the work
 // can be done by pointers, and directly accessing the internal contents of C.
 // If C has type GB_BOOL_code or GB_FP64_code, then C can be converted to a
-// MATLAB matrix in constant time with essentially no extra memory allocated.
-// This is faster, but it means that this MATLAB interface will only work with
+// built-in matrix in constant time with essentially no extra memory allocated.
+// This is faster, but it means that this Test interface will only work with
 // this specific implementation of GraphBLAS.
 
-// Note that the GraphBLAS matrix may contain explicit zeros.  These entries
-// should not appear in a MATLAB matrix but MATLAB handles them without
-// difficulty.  They are returned to MATLAB in C.matrix.  If any work is done
-// in MATLAB on the matrix, these entries will get dropped.  If they are to be
-// preserved, do C.pattern = GB_spones_mex (C.matrix) in MATLAB before
-// modifying C.matrix.
+// Note that the GraphBLAS matrix may contain explicit zeros.
 
 // If the GraphBLAS matrix is iso, it is converted to non-iso, but if it is
-// returned as a struct to MATLAB, the C.iso is set true.  Then when the
-// struct is read back into GraphBLAS, the flag can be used to restore the
-// iso property of the GraphBLAS matrix .
+// returned as a struct, the C.iso is set true.  Then when the struct is read
+// back into GraphBLAS, the flag can be used to restore the iso property of the
+// GraphBLAS matrix .
 
 #include "GB_mex.h"
 
 static const char *MatrixFields [ ] = { "matrix", "class", "iso", "values" } ;
 
-mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
+mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
 (
     GrB_Matrix *handle,             // handle of GraphBLAS matrix to convert
     const char *name,
@@ -76,11 +71,11 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     // must be done after GrB_Matrix_wait:
     int64_t cnz = GB_nnz (C) ;
 
-    ASSERT_MATRIX_OK (C, "TO MATLAB after assembling pending tuples", GB0) ;
+    ASSERT_MATRIX_OK (C, "TO mxArray after assembling pending tuples", GB0) ;
 
     // ensure C is sparse or full, not hypersparse or bitmap
     GxB_Matrix_Option_set_(C, GxB_SPARSITY_CONTROL, GxB_FULL + GxB_SPARSE) ;
-    ASSERT_MATRIX_OK (C, "TO MATLAB, sparse or full", GB0) ;
+    ASSERT_MATRIX_OK (C, "TO mxArray, sparse or full", GB0) ;
     ASSERT (!GB_IS_HYPERSPARSE (C)) ;
     ASSERT (!GB_IS_BITMAP (C)) ;
 
@@ -101,7 +96,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     ASSERT (!GB_JUMBLED (C)) ;
     cnz = GB_nnz (C) ;
 
-    ASSERT_MATRIX_OK (C, "TO MATLAB, non-hyper CSC", GB0) ;
+    ASSERT_MATRIX_OK (C, "TO mxArray, non-hyper CSC", GB0) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_IS_HYPERSPARSE (C)) ;
     ASSERT (!GB_IS_BITMAP (C)) ;
@@ -113,10 +108,10 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     if (C_iso)
     {
         GB_convert_any_to_non_iso (C, true, NULL) ;
-        ASSERT_MATRIX_OK (C, "TO MATLAB, non-iso non-hyper CSC", GB0) ;
+        ASSERT_MATRIX_OK (C, "TO mxArray, non-iso non-hyper CSC", GB0) ;
     }
 
-    // MATLAB doesn't want NULL pointers in its empty matrices
+    // empty built-in matrices don't want NULL pointers
     if (C->x == NULL)
     {
         ASSERT (cnz == 0) ;
@@ -129,7 +124,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     bool C_is_full = (sparsity == GxB_FULL) ;
     if (!C_is_full)
     {
-        // MATLAB doesn't want NULL pointers in its empty sparse matrices
+        // empty built-in sparse matrices don't want NULL pointers
         if (C->i == NULL)
         {
             ASSERT (cnz == 0) ;
@@ -149,7 +144,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     }
 
     //--------------------------------------------------------------------------
-    // create the MATLAB matrix A and link in the numerical values of C
+    // create the built-in matrix A and link in the numerical values of C
     //--------------------------------------------------------------------------
 
     if (C_is_full)
@@ -231,31 +226,31 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
 
         mexMakeMemoryPersistent (C->x) ;
         C->x_shallow = false ;
-        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; now in MATLAB C
+        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; now in built-in C
 
     }
     else if (C->type == GrB_BOOL)
     {
-        // C is boolean, which is the same as a MATLAB logical sparse matrix
+        // C is boolean, which is the same as a built-in logical sparse matrix
         A = mxCreateSparseLogicalMatrix (0, 0, 0) ;
         mexMakeMemoryPersistent (C->x) ;
         mxSetData (A, (bool *) C->x) ;
         C->x_shallow = false ;
 
         // C->x is treated as if it was freed
-        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; now in MATLAB C
+        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; now in built-in C
 
     }
     else if (C->type == GrB_FP64)
     {
-        // C is double, which is the same as a MATLAB double sparse matrix
+        // C is double, which is the same as a built-in double sparse matrix
         A = mxCreateSparse (0, 0, 0, mxREAL) ;
         mexMakeMemoryPersistent (C->x) ;
         mxSetData (A, C->x) ;
         C->x_shallow = false ;
 
         // C->x is treated as if it was freed
-        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; in MATLAB C
+        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; in built-in C
 
     }
     else if (C->type == Complex || C->type == GxB_FC64)
@@ -280,7 +275,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     else
     {
 
-        // otherwise C is cast into a MATLAB double sparse matrix
+        // otherwise C is cast into a built-in double sparse matrix
         A = mxCreateSparse (0, 0, 0, mxREAL) ;
         size_t Sx_size ;
         double *Sx = (double *) GB_malloc_memory (cnz+1, sizeof (double),
@@ -291,8 +286,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         mexMakeMemoryPersistent (Sx) ;
         mxSetPr (A, Sx) ;
 
-        // Sx was just malloc'd, and given to MATLAB.  Treat it as if
-        // GraphBLAS has freed it
+        // Sx was just malloc'd.  Treat it as if GraphBLAS has freed it
         GB_AS_IF_FREE (Sx) ;
 
         if (create_struct)
@@ -333,7 +327,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     }
 
     // free C, but leave any shallow components untouched
-    // since these have been transplanted into the MATLAB matrix.
+    // since these have been transplanted into the built-in matrix.
     GrB_Matrix_free_(handle) ;
 
     if (create_struct)

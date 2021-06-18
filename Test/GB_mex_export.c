@@ -360,7 +360,7 @@ void mexFunction
     // import/export
     METHOD (import_export2 ( )) ;
 
-    // return C to MATLAB
+    // return C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C export/import", false) ;
 
     FREE_ALL ;

@@ -104,7 +104,7 @@ GB_saxpy3task_struct ;
 // GB_AxB_saxpy3_flopcount:  compute flops for GB_AxB_saxpy3
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_AxB_saxpy3_flopcount
 (
     int64_t *Mwork,             // amount of work to handle the mask M

@@ -28,7 +28,7 @@
 
 // Cin and A are required.  See GrB.m for more details.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 #include "GB_ij.h"
 
 void gb_assign                  // gbassign or gbsubassign mexFunctions
@@ -67,8 +67,6 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     // get the matrices
     //--------------------------------------------------------------------------
 
-// printf ("\n################################ gb_assign %d\n", do_subassign) ;
-
     GrB_Type atype, ctype ;
     GrB_Matrix C, M = NULL, A ;
 
@@ -86,10 +84,6 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&ctype, C)) ;
-
-// printf ("======== C for gb_assign: \n") ; GxB_print (C, 3) ;
-// printf ("======== M for gb_assign: \n") ; GxB_print (M, 3) ;
-// printf ("======== A for gb_assign: \n") ; GxB_print (A, 3) ;
 
     //--------------------------------------------------------------------------
     // get the operator
@@ -173,10 +167,8 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     if (scalar_assignment)
     { 
-// printf ("gb_matrix_assign_scalar ###############################\n") ;
         gb_matrix_assign_scalar (C, M, accum, A, I, ni, J, nj, desc,
             do_subassign) ;
-// printf ("DID gb_matrix_assign_scalar ###############################\n") ;
     }
     else
     {
@@ -201,7 +193,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     if (J_allocated) gb_mxfree (&J) ;
 
     //--------------------------------------------------------------------------
-    // export the output matrix C back to MATLAB
+    // export the output matrix C
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;

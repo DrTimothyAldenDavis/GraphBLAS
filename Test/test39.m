@@ -12,7 +12,7 @@ end
 
 [save save_chunk] = nthreads_get ;
 chunk = 4096 ;
-nthreads = feature ('numcores') ;
+nthreads = feature_numcores ;
 nthreads_set (nthreads, chunk) ;
 
 rng ('default') ;
@@ -52,10 +52,10 @@ toc
 tg = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
 assert (isequal (C1, C.matrix)) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
+fprintf ('speedup over built-in: %g\n\n', tm/tg) ;
 
 fprintf ('\n===============================================================n') ;
-fprintf ('\nGraphBLAS: C = (single) A'' compared with C=A'' in MATLAB\n') ;
+fprintf ('\nGraphBLAS: C = (single) A'' compared with C=A'' in built-in\n') ;
 clear Empty_struct
 Empty_struct.matrix = sparse (n, m) ;
 Empty_struct.class = 'single' ;
@@ -72,7 +72,7 @@ C2 = GB_mex_transpose (Empty_struct, [ ], '', A) ;
 toc
 tg = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
+fprintf ('speedup over built-in: %g\n\n', tm/tg) ;
 
 [I1, J1, X1] = find (C1) ;
 [I2, J2, X2] = find (C2.matrix) ;
@@ -97,7 +97,7 @@ toc
 tg = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
 assert (isequal (C1, C.matrix)) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
+fprintf ('speedup over built-in: %g\n\n', tm/tg) ;
 
 fprintf ('\n===============================================================n') ;
 fprintf ('\nC = A + B\n') ;
@@ -118,7 +118,7 @@ C2 = GB_mex_transpose (A, [ ], 'plus', B, D) ;
 toc
 tg = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
+fprintf ('speedup over built-in: %g\n\n', tm/tg) ;
 assert (isequal (C1, C2.matrix)) ;
 
 fprintf ('\nusing accum and GB_add:\n') ;
@@ -127,7 +127,7 @@ C2 = GB_mex_transpose (B, [ ], 'plus', A, D) ;
 toc
 tg = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
+fprintf ('speedup over built-in: %g\n\n', tm/tg) ;
 assert (isequal (C1, C2.matrix)) ;
 
 fprintf ('\nvia GB_add and then accum:\n') ;
@@ -138,7 +138,7 @@ C3 = GB_mex_Matrix_eWiseAdd (Cin, [ ], '', 'plus', A, B) ;
 toc
 tg = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
+fprintf ('speedup over built-in: %g\n\n', tm/tg) ;
 assert (isequal (C1, C3.matrix)) ;
 
 fprintf ('\nvia GB_add:\n') ;
@@ -147,7 +147,7 @@ C4 = GB_mex_AplusB (A, B, 'plus') ;
 toc
 tg = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
+fprintf ('speedup over built-in: %g\n\n', tm/tg) ;
 assert (isequal (C1, C4)) ;
 
 fprintf ('\nvia GB_add:\n') ;
@@ -156,7 +156,7 @@ C4 = GB_mex_AplusB (B, A, 'plus') ;
 toc
 tg = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
+fprintf ('speedup over built-in: %g\n\n', tm/tg) ;
 assert (isequal (C1, C4)) ;
 
 fprintf ('\n===============================================================n') ;
@@ -189,7 +189,7 @@ C3 = GB_mex_Matrix_eWiseAdd (Cin, [ ], 'plus', 'plus', A, B) ;
 toc
 tg = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm1/tg) ;
+fprintf ('speedup over built-in: %g\n\n', tm1/tg) ;
 
 assert (isequal (C1, C3.matrix)) ;
 
@@ -201,7 +201,7 @@ C4 = GB_mex_AplusB (C4, B, 'plus') ;
 toc
 tg2 = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg1+tg2) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm2/(tg1+tg2)) ;
+fprintf ('speedup over built-in: %g\n\n', tm2/(tg1+tg2)) ;
 assert (isequal (C1, C4)) ;;
 
 fprintf ('\nvia two GB_add: (Cin+(A+B)):\n') ;
@@ -213,7 +213,7 @@ tg2 = grbresults ;
 toc
 tg = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg1+tg2) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm3/(tg1+tg2)) ;
+fprintf ('speedup over built-in: %g\n\n', tm3/(tg1+tg2)) ;
 assert (isequal (C1, C4)) 
 
 fprintf ('\nvia two GB_add: (Cin+B)+A)):\n') ;
@@ -224,7 +224,7 @@ C4 = GB_mex_AplusB (C4, A, 'plus') ;
 toc (tstart)
 tg2 = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg1+tg2) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm5/(tg1+tg2)) ;
+fprintf ('speedup over built-in: %g\n\n', tm5/(tg1+tg2)) ;
 assert (isequal (C1, C4)) ;;
 
 nthreads_set (save, save_chunk) ;

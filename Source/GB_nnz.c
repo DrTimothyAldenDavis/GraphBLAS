@@ -19,7 +19,7 @@ int64_t GB_nnz      // return nnz(A) or INT64_MAX if integer overflow
 )
 {
 
-    if (A == NULL || A->magic != GB_MAGIC)
+    if (A == NULL || A->magic != GB_MAGIC || A->x == 0)
     { 
         // A is NULL or uninitialized
         return (0) ;
@@ -34,16 +34,10 @@ int64_t GB_nnz      // return nnz(A) or INT64_MAX if integer overflow
         // A is bitmap
         return (A->nvals) ;
     }
-    else if (A->x != NULL)
+    else
     { 
         // A is full
         return (GB_nnz_full (A)) ;
-    }
-    else
-    { 
-GB_GOTCHA ;     // A is empty
-        // A is empty
-        return (0) ;
     }
 }
 

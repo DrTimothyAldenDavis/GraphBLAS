@@ -71,8 +71,8 @@ function unopinfo (op, type)
 %   erf         z = erf (x)     error function
 %   erfc        z = erfc (x)    complementary error function
 %   frexpx      z = frexpx (x)  mantissa from ANSI C11 frexp function
-%   frexpe      z = frexpe (x)  exponent from ANSI C11 frexp function
-%                               The MATLAB [f,e]=log2(x) returns
+%   frexpe      z = frexpe (x)  exponent from ANSI C11 frexp function;
+%                               the built-in [f,e]=log2(x) returns
 %                               f = frexpx (x) and e = frexpe (x).
 %
 % For integer types only (result is same type as input):

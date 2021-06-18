@@ -15,7 +15,7 @@ else
 end
 
 if (builtin ('issparse', G) && id == 0)
-    % a MATLAB sparse matrix 'never' contains explicit zeros,
+    % a built-in sparse matrix 'never' contains explicit zeros,
     % so no need to prune.  C should be returned as a GraphBLAS
     % matrix, however.
     C = GrB (G) ;

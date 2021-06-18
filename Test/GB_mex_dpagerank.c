@@ -75,7 +75,7 @@ void mexFunction
         mexErrMsgTxt ("failed") ;
     }
 
-    // return PageRank to MATLAB
+    // return PageRank
     pargout [0] = mxCreateDoubleMatrix (1, n, mxREAL) ;
     pargout [1] = mxCreateDoubleMatrix (1, n, mxREAL) ;
     pargout [2] = mxCreateDoubleScalar ((double) iters) ;

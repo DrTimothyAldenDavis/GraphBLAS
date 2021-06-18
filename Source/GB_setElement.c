@@ -79,23 +79,59 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     ASSERT (GB_PENDING_OK (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
 
-    #if GB_BURBLE
-    bool burble = GB_Global_burble_get ( ) ;
-    double t_burble = 0 ;
-    // do not burble when waiting on scalars
-    burble = burble && ((C->vlen > 1) || (C->vdim > 1)) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // sort C if needed; do not assemble pending tuples or kill zombies yet
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_WAIT_IF_JUMBLED (C) ;
+    if (C->jumbled)
+    { 
+        GB_OK (GB_wait (C, "C (setElement:jumbled)", Context)) ;
+    }
 
     // zombies and pending tuples are still OK, but C is no longer jumbled
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (GB_PENDING_OK (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
+
+    //--------------------------------------------------------------------------
+    // check if C needs to convert to non-iso
+    //--------------------------------------------------------------------------
+
+    // stype is the type of this scalar
+    GrB_Type stype = GB_code_type (scalar_code, ctype) ;
+    size_t csize = ctype->size ;
+
+    if (C->iso)
+    {
+        // typecast the scalar to the type of C and check the iso value
+        // s = (ctype) scalar
+        bool convert_to_non_iso ;
+        if (ctype != stype)
+        { 
+GB_GOTCHA ; // setElement: C iso, scalar of different type
+            // s = (ctype) scalar
+            GB_void s [GB_VLA(csize)] ;
+            GB_cast_scalar (s, ccode, scalar, scalar_code, csize) ;
+            // compare s with the iso value of C
+            convert_to_non_iso = (memcmp (C->x, s, csize) != 0) ;
+        }
+        else
+        { 
+            // compare the scalar with the iso value of C
+            convert_to_non_iso = (memcmp (C->x, scalar, csize) != 0) ;
+        }
+        if (convert_to_non_iso)
+        { 
+            // The new entry differs from the iso value of C.  Assemble all
+            // pending tuples and convert C to non-iso.  Zombies are OK.
+            if (C->Pending != NULL)
+            { 
+GB_GOTCHA ; // setElement: wait, convert to non-iso
+                GB_OK (GB_wait (C, "C (setElement:to non-iso)", Context)) ;
+            }
+            GB_OK (GB_convert_any_to_non_iso (C, true, Context)) ;
+        }
+    }
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format
@@ -119,7 +155,6 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     bool found ;
     bool is_zombie ;
     bool C_is_bitmap = GB_IS_BITMAP (C) ;
-    size_t csize = ctype->size ;
 
     if (GB_IS_FULL (C) || C_is_bitmap)
     { 
@@ -176,9 +211,12 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         // if not zombie: action: ( =A ): copy A into C
         // else           action: ( undelete ): bring a zombie back to life
 
-        // typecast or copy the scalar into C(i,j)
-        void *cx = ((GB_void *) C->x) + (pleft*csize) ;
-        GB_cast_scalar (cx, ccode, scalar, scalar_code, csize) ;
+        if (!C->iso)
+        { 
+            // typecast or copy the scalar into C(i,j)
+            void *cx = ((GB_void *) C->x) + (pleft*csize) ;
+            GB_cast_scalar (cx, ccode, scalar, scalar_code, csize) ;
+        }
 
         if (is_zombie)
         { 
@@ -194,12 +232,12 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             C->b [pleft] = 1 ;
         }
 
-        // the check is fine but just costly even when debugging
-        // ASSERT_MATRIX_OK (C, "did C for setElement (found)", GB0) ;
         return (GrB_SUCCESS) ;
+
     }
     else
     {
+
         //----------------------------------------------------------------------
         // C (i,j) not found: add a pending tuple
         //----------------------------------------------------------------------
@@ -210,11 +248,11 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         // the first pending tuple, or its type must match the prior pending
         // tuples.  See GB_subassign_methods.h for a complete description.
 
-        // stype is the type of this scalar
-        GrB_Type stype = GB_code_type (scalar_code, ctype) ;
+        //----------------------------------------------------------------------
+        // check for wait
+        //----------------------------------------------------------------------
 
         bool wait = false ;
-        bool iso_wait = false ;
 
         if (C->Pending == NULL)
         { 
@@ -224,33 +262,6 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         }
         else
         {
-            if (C->iso)
-            { 
-GB_GOTCHA ; // C->iso on input, with pending
-                // C is iso, so Pending->x is currently NULL.  However, this
-                // new setElement entry might cause C to become non iso.  If
-                // the value of the scalar does not match the iso value of C, C
-                // will become non iso, so all prior tuples need to be
-                // assembled.
-                ASSERT (C->Pending->x == NULL) ;
-                if (ctype != stype)
-                { 
-GB_GOTCHA ; // C->iso on input, with pending, ctype != stype
-                    // s = (ctype) scalar
-                    GB_void s [GB_VLA(csize)] ;
-                    GB_cast_scalar (s, ccode, scalar, scalar_code, csize) ;
-                    // compare s with the iso value of C
-                    wait = (memcmp (C->x, s, csize) != 0) ;
-                }
-                else
-                { 
-GB_GOTCHA ; // C->iso on input, with pending, ctype == stype
-                    // compare the scalar with the iso value of C
-                    wait = (memcmp (C->x, scalar, csize) != 0) ;
-                }
-                iso_wait = wait ;
-            }
-
             if (stype != C->Pending->type)
             { 
                 // the scalar type (stype) must match the type of the
@@ -270,46 +281,18 @@ GB_GOTCHA ; // C->iso on input, with pending, ctype == stype
 
         if (wait)
         { 
+
+            //------------------------------------------------------------------
+            // incompatible pending tuples: wait is required
+            //------------------------------------------------------------------
+
             // Pending tuples exist.  Either the pending operator is not
             // SECOND_ctype (implicit or explicit), or the type of prior
             // pending tuples is not the same as the type of the scalar.  This
             // new tuple requires both conditions to hold.  All prior tuples
             // must be assembled before this new one can be added.
-
-            #if GB_BURBLE
-            if (burble)
-            {
-                GBURBLE (" [ *_setElement ") ;
-                #if defined ( _OPENMP )
-                t_burble = GB_OPENMP_GET_WTIME ;
-                #endif
-            }
-            #endif
-
-            // delete any lingering zombies and assemble the pending tuples
-            GB_OK (GB_wait (C, "C", Context)) ;
-            if (iso_wait)
-            { 
-GB_GOTCHA ;     // iso wait
-                // C is iso but will no longer be after this setElement
-                // set C->iso = false    OK
-                #if GB_BURBLE
-                if (burble)
-                {
-                    GBURBLE ("(non-iso setElement) ") ;
-                }
-                #endif
-                GB_OK (GB_convert_any_to_non_iso (C, true, Context)) ;
-            }
-
-            #if GB_BURBLE
-            if (burble)
-            {
-                GB_BURBLE_END ;
-            }
-            #endif
-
-            ASSERT (C->Pending == NULL) ;
+            GB_OK (GB_wait (C, "C (setElement:incompatible pending tuples)",
+                Context)) ;
 
             // repeat the search since the C(i,j) entry may have been in
             // the list of pending tuples.  There are no longer any pending
@@ -317,58 +300,42 @@ GB_GOTCHA ;     // iso wait
             // pending operator will become the implicit SECOND_ctype,
             // and the type of the pending tuples will become ctype.
             return (GB_setElement (C, scalar, row, col, scalar_code, Context)) ;
+
         }
-
-        // the new tuple is now compatible with prior tuples, if any
-        ASSERT (GB_PENDING_OK (C)) ;
-        ASSERT (GB_ZOMBIES_OK (C)) ;
-
-        // C (i,j) must be added to the list of pending tuples.
-        // If this is the first pending tuple, then the type of pending tuples
-        // becomes the type of this scalar, and the pending operator becomes
-        // NULL, which is the implicit SECOND_ctype operator.
-
-        if (!GB_Pending_add (&(C->Pending), C->iso, (GB_void *)scalar,
-            stype, NULL, i, j, C->vdim > 1, Context))
-        { 
-            // out of memory
-            GB_phbix_free (C) ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-
-        ASSERT (GB_PENDING (C)) ;
-
-        // if this was the first tuple, then the pending operator and
-        // pending type have been defined
-        ASSERT (GB_op_is_second (C->Pending->op, ctype)) ;
-        ASSERT (C->Pending->type == stype) ;
-        ASSERT (C->Pending->size == stype->size) ;
-
-        // this assert is fine, just costly even when debugging
-        // ASSERT_MATRIX_OK (C, "did C for setElement (not found)", GB0) ;
-
-        #if GB_BURBLE
-        // only burble if GB_wait will be called
-        burble = (burble && GB_shall_block (C)) ;
-        if (burble)
+        else
         {
-            GBURBLE (" [ *_setElement ") ;
-            #if defined ( _OPENMP )
-            t_burble = GB_OPENMP_GET_WTIME ;
-            #endif
+
+            //------------------------------------------------------------------
+            // the new tuple is now compatible with prior tuples, if any
+            //------------------------------------------------------------------
+
+            ASSERT (GB_PENDING_OK (C)) ;
+            ASSERT (GB_ZOMBIES_OK (C)) ;
+
+            // C (i,j) must be added to the list of pending tuples.
+            // If this is the first pending tuple, then the type of pending
+            // tuples becomes the type of this scalar, and the pending operator
+            // becomes NULL, which is the implicit SECOND_ctype operator.
+
+            if (!GB_Pending_add (&(C->Pending), C->iso, (GB_void *)scalar,
+                stype, NULL, i, j, C->vdim > 1, Context))
+            { 
+                // out of memory
+                GB_phbix_free (C) ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+
+            ASSERT (GB_PENDING (C)) ;
+
+            // if this was the first tuple, then the pending operator and
+            // pending type have been defined
+            ASSERT (GB_op_is_second (C->Pending->op, ctype)) ;
+            ASSERT (C->Pending->type == stype) ;
+            ASSERT (C->Pending->size == stype->size) ;
+
+            // one more pending tuple; block if too many of them
+            return (GB_block (C, Context)) ;
         }
-        #endif
-
-        info = GB_block (C, Context) ;
-
-        #if GB_BURBLE
-        if (burble)
-        {
-            GB_BURBLE_END ;
-        }
-        #endif
-
-        return (info) ;
     }
 }
 

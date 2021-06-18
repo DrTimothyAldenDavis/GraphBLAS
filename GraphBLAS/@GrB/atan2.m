@@ -21,7 +21,7 @@ end
 atype = gbtype (A) ;
 btype = gbtype (B) ;
 
-if (contains (atype, 'complex') || contains (btype, 'complex'))
+if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
     error ('inputs must be real') ;
 end
 

@@ -7,15 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// The input may be either a GraphBLAS matrix struct or a standard MATLAB
+// The input may be either a GraphBLAS matrix struct or a standard built-in
 // sparse or full matrix.  The output is a GraphBLAS matrix by default, with
 // all entries present, of the given type.  Entries are filled in with the id
 // value, whose default value is zero.
 
 // If desc.kind = 'grb', or if the descriptor is not present, the output is a
-// GraphBLAS full matrix.  Otherwise the output is a MATLAB full matrix
+// GraphBLAS full matrix.  Otherwise the output is a built-in full matrix
 // (desc.kind = 'full').   The two other cases, desc.kind = 'sparse' and
-// 'matlab' are treated as 'full'.
+// 'builtin' are treated as 'full'.
 
 // Usage:
 //  C = gbfull (A)
@@ -23,7 +23,7 @@
 //  C = gbfull (A, type, id)
 //  C = gbfull (A, type, id, desc)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: C = gbfull (A, type, id, desc)"
 
@@ -96,12 +96,12 @@ void mexFunction
     // finalize the kind and format
     //--------------------------------------------------------------------------
 
-    // ignore desc.kind = 'sparse' or 'matlab' and just use 'full' instead
-    kind = (kind == KIND_SPARSE || kind == KIND_MATLAB) ? KIND_FULL : kind ;
+    // ignore desc.kind = 'sparse' or 'builtin' and just use 'full' instead
+    kind = (kind == KIND_SPARSE || kind == KIND_BUILTIN) ? KIND_FULL : kind ;
 
     if (kind == KIND_FULL)
     {
-        // MATLAB matrices are always held by column
+        // built-in matrices are always held by column
         fmt = GxB_BY_COL ;
     }
     else

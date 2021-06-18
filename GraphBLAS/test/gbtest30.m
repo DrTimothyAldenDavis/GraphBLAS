@@ -63,7 +63,7 @@ try
     fprintf ('H2 = H (1:middle, 1:middle) will fail:\n') ;
     H2 = H (1:middle, 1:middle)
 catch expected_error
-    fprintf ('MATLAB colon notation 1:%d fails (too big!)\n\n', middle) ;
+    fprintf ('colon notation 1:%d fails (too big!)\n\n', middle) ;
     expected_error
 end
 

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// This is for testing only.  See GrB_mxm instead.  Returns a plain MATLAB
+// This is for testing only.  See GrB_mxm instead.  Returns a plain built-in
 // matrix, in double.  The semiring is plus-rdiv-fp64 where plus is the 
 // built-in GrB_PLUS_FP64 operator, and rdiv is z=y/x in double.
 
@@ -183,7 +183,7 @@ void mexFunction
 
     METHOD (axb (Context, cprint)) ;
 
-    // return C to MATLAB
+    // return C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AxB result", false) ;
 
     FREE_ALL ;

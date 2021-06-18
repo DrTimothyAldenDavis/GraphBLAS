@@ -20,7 +20,7 @@
 
 // Cin and A required.  See GrB.m for more details.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.subassign (Cin, M, accum, A, I, J, desc)"
 

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Extracts all tuples from a column, like [I,~,X] = find (v) in MATLAB.  If
+// Extracts all tuples from a column, like [I,~,X] = find (v).  If
 // any parameter I and/or X is NULL, then that component is not extracted.  The
 // size of the I and X arrays (those that are not NULL) is given by nvals,
 // which must be at least as large as GrB_nvals (&nvals, v).  The values in the
@@ -15,7 +15,7 @@
 
 // If any parameter I and/or X is NULL, that component is not extracted.  So to
 // extract just the row indices, pass I as non-NULL, and X as NULL.  This is
-// like [I,~,~] = find (v) in MATLAB.
+// like [I,~,~] = find (v).
 
 // If v is iso and X is not NULL, the iso scalar vx [0] is expanded into X.
 

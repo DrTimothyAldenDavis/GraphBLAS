@@ -72,7 +72,7 @@ fprintf ('\nWathen matrices:\n') ;
                     B = GB_mex_wathen (nx, ny, method, scale, rho) ;
                     t2 = toc ;
                     assert (norm (A-B,1) < 16 * eps (norm (A,1))) ;
-                    fprintf ('nx %d ny %d n %d nz %d MATLAB %10.4f GB %10.4f speedup %g\n', ...
+                    fprintf ('nx %d ny %d n %d nz %d built-in %10.4f GB %10.4f speedup %g\n', ...
                     nx, ny, n, nz, t1, t2, t1/t2) ;
                 end
             end

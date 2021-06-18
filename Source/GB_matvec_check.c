@@ -14,7 +14,7 @@
 #include "GB_Pending.h"
 #include "GB.h"
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
     const GrB_Matrix A,     // GraphBLAS matrix to print and check
@@ -502,7 +502,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         if (A->x == NULL || A->x_size < A->type->size)
         { 
-GB_GOTCHA ; // iso matrix invalid:  A->x null or too small
             GBPR0 ("  invalid iso matrix\n") ;
             return (GrB_INVALID_OBJECT) ;
         }

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: s = gbnormdiff (A, B, kind)"
 
@@ -62,7 +62,7 @@ void mexFunction
         // or when p = 0 (for Frobenius norm)
         GrB_Index anz ;
         OK (GrB_Matrix_nvals (&anz, A)) ;
-        s = GB_matlab_helper10 (A->x, A->iso, B->x, B->iso,
+        s = GB_helper10 (A->x, A->iso, B->x, B->iso,
             atype, norm_kind, anz) ;
         if (s < 0) ERROR ("unknown norm") ;
     }

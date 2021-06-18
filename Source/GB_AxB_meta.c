@@ -33,7 +33,7 @@
 #include "GB_mxm.h"
 #include "GB_transpose.h"
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 (
     GrB_Matrix C,                   // output, static header (if not in-place)
@@ -246,8 +246,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // C  = A*B'        use as-is
         // C  = A*B         use as-is
 
-    // This rule is the same as that used by SuiteSparse/MATLAB_Tools/SSMULT,
-    // which is the built-in sparse matrix multiply function in MATLAB.
+    // This rule is the same as that used by SSMULT in SuiteSparse.
 
     bool swap_rule =
         ( C_transpose &&  A_transpose &&  B_transpose) ||   // C' = A'*B'

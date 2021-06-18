@@ -22,13 +22,13 @@ for k = [10:22]
     tic
     C1 (M) = A ;
     t3 = toc ;
-    fprintf ('C(M)=A in GrB    : %g sec\n', t3) ;
+    fprintf ('C(M)=A in GrB     : %g sec\n', t3) ;
 
     C2 = C0 ;
     tic
     C2 (M) = A ;
     t2 = toc ;
-    fprintf ('C(M)=A in MATLAB : %g sec  GrB speedup: %g\n', t2, t2/t3) ;
+    fprintf ('C(M)=A in builtin : %g sec  GrB speedup: %g\n', t2, t2/t3) ;
 
     assert (isequal (C1, C2)) ;
 end

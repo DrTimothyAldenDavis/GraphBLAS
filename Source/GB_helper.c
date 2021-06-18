@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_matlab_helper.c: helper functions for MATLAB interface
+// GB_helper.c: helper functions for @GrB interface
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,12 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-// TODO::: move these into the MATLAB interface instead
+// TODO::: move these into the @GrB interface instead
 
-// These functions are only used by the MATLAB interface for
+// These functions are only used by the @GrB interface for
 // SuiteSparse:GraphBLAS.
 
-#include "GB_matlab_helper.h"
+#include "GB_helper.h"
 
 //------------------------------------------------------------------------------
 // GB_NTHREADS: determine the number of threads to use
@@ -40,10 +40,10 @@
     GB_FREE (&Work, Work_size) ;
 
 //------------------------------------------------------------------------------
-// GB_matlab_helper1: convert 0-based indices to 1-based for gbextracttuples
+// GB_helper1: convert 0-based indices to 1-based for gbextracttuples
 //------------------------------------------------------------------------------
 
-void GB_matlab_helper1              // convert zero-based indices to one-based
+void GB_helper1              // convert zero-based indices to one-based
 (
     double *restrict I_double,      // output array
     const GrB_Index *restrict I,    // input array
@@ -62,10 +62,10 @@ void GB_matlab_helper1              // convert zero-based indices to one-based
 }
 
 //------------------------------------------------------------------------------
-// GB_matlab_helper1i: convert 0-based indices to 1-based for gbextracttuples
+// GB_helper1i: convert 0-based indices to 1-based for gbextracttuples
 //------------------------------------------------------------------------------
 
-void GB_matlab_helper1i             // convert zero-based indices to one-based
+void GB_helper1i             // convert zero-based indices to one-based
 (
     int64_t *restrict I,            // input/output array
     int64_t nvals                   // size of input/output array
@@ -83,10 +83,10 @@ void GB_matlab_helper1i             // convert zero-based indices to one-based
 }
 
 //------------------------------------------------------------------------------
-// GB_matlab_helper3: convert 1-based indices to 0-based for gb_mxarray_to_list
+// GB_helper3: convert 1-based indices to 0-based for gb_mxarray_to_list
 //------------------------------------------------------------------------------
 
-bool GB_matlab_helper3              // return true if OK, false on error
+bool GB_helper3              // return true if OK, false on error
 (
     int64_t *restrict List,             // size len, output array
     const double *restrict List_double, // size len, input array
@@ -141,10 +141,10 @@ bool GB_matlab_helper3              // return true if OK, false on error
 }
 
 //------------------------------------------------------------------------------
-// GB_matlab_helper3i: convert 1-based indices to 0-based for gb_mxarray_to_list
+// GB_helper3i: convert 1-based indices to 0-based for gb_mxarray_to_list
 //------------------------------------------------------------------------------
 
-bool GB_matlab_helper3i             // return true if OK, false on error
+bool GB_helper3i             // return true if OK, false on error
 (
     int64_t *restrict List,             // size len, output array
     const int64_t *restrict List_int64, // size len, input array
@@ -187,10 +187,10 @@ bool GB_matlab_helper3i             // return true if OK, false on error
 }
 
 //------------------------------------------------------------------------------
-// GB_matlab_helper4: find the max entry in an index list for gbbuild
+// GB_helper4: find the max entry in an index list for gbbuild
 //------------------------------------------------------------------------------
 
-bool GB_matlab_helper4              // return true if OK, false on error
+bool GB_helper4              // return true if OK, false on error
 (
     const GrB_Index *restrict I,    // array of size len
     const int64_t len,
@@ -232,10 +232,10 @@ bool GB_matlab_helper4              // return true if OK, false on error
 }
 
 //------------------------------------------------------------------------------
-// GB_matlab_helper5: construct pattern of S for gblogassign
+// GB_helper5: construct pattern of S for gblogassign
 //------------------------------------------------------------------------------
 
-void GB_matlab_helper5              // construct pattern of S
+void GB_helper5              // construct pattern of S
 (
     GrB_Index *restrict Si,         // array of size anz
     GrB_Index *restrict Sj,         // array of size anz
@@ -264,12 +264,12 @@ void GB_matlab_helper5              // construct pattern of S
 }
 
 //------------------------------------------------------------------------------
-// GB_matlab_helper7: Kx = uint64 (0:mnz-1), for gblogextract
+// GB_helper7: Kx = uint64 (0:mnz-1), for gblogextract
 //------------------------------------------------------------------------------
 
 // TODO: use GrB_apply with a positional operator instead
 
-void GB_matlab_helper7              // Kx = uint64 (0:mnz-1)
+void GB_helper7              // Kx = uint64 (0:mnz-1)
 (
     uint64_t *restrict Kx,          // array of size mnz
     const GrB_Index mnz
@@ -287,12 +287,12 @@ void GB_matlab_helper7              // Kx = uint64 (0:mnz-1)
 }
 
 //------------------------------------------------------------------------------
-// GB_matlab_helper8: expand a scalar into an array for gbbuild
+// GB_helper8: expand a scalar into an array for gbbuild
 //------------------------------------------------------------------------------
 
 // TODO: use GrB_assign instead
 
-void GB_matlab_helper8
+void GB_helper8
 (
     GB_void *C,         // output array of size nvals * s
     GB_void *A,         // input scalar of size s
@@ -313,12 +313,12 @@ void GB_matlab_helper8
 }
 
 //------------------------------------------------------------------------------
-// GB_matlab_helper9: compute the degree of each vector
+// GB_helper9: compute the degree of each vector
 //------------------------------------------------------------------------------
 
 // TODO: use GrB_mxv or GrB_vxm when possible.
 
-bool GB_matlab_helper9  // true if successful, false if out of memory
+bool GB_helper9  // true if successful, false if out of memory
 (
     GrB_Matrix A,           // input matrix
     int64_t **degree,       // degree of each vector, size nvec
@@ -329,7 +329,7 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
 )
 {
 
-    ASSERT_MATRIX_OK (A, "A for matlab helper9", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for helper9", GB0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A) || GB_IS_FULL (A)) ;
 
@@ -376,7 +376,7 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
 }
 
 //------------------------------------------------------------------------------
-// GB_matlab_helper10: compute norm (x-y,p) of two dense FP32 or FP64 vectors
+// GB_helper10: compute norm (x-y,p) of two dense FP32 or FP64 vectors
 //------------------------------------------------------------------------------
 
 // p can be:
@@ -387,7 +387,7 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
 //      INT64_MIN   (-inf)-norm, min (abs (x-y))
 //      other:      p-norm not yet computed
 
-double GB_matlab_helper10       // norm (x-y,p), or -1 on error
+double GB_helper10       // norm (x-y,p), or -1 on error
 (
     GB_void *x_arg,             // float or double, depending on type parameter
     bool x_iso,                 // true if x is iso

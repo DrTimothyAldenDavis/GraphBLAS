@@ -99,5 +99,6 @@ for k = [false true]
     end
 end
 
+GB_builtin_complex_set (true) ;
 fprintf ('\ntest100: all tests passed\n') ;
 

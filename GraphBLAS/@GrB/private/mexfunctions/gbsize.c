@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbsize: dimension and type of a GraphBLAS or MATLAB matrix
+// gbsize: dimension and type of a GraphBLAS or built-in matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// The input may be either a GraphBLAS matrix struct or a standard MATLAB
+// The input may be either a GraphBLAS matrix struct or a standard built-in
 // matrix.  Note that the output may be int64, to accomodate huge hypersparse
 // matrices.  Also returns the type of the matrix.
 
@@ -15,7 +15,7 @@
 
 // [m, n, type] = gbsize (X)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: [m n type] = gbsize (X)"
 
@@ -35,7 +35,7 @@ void mexFunction
     gb_usage (nargin == 1 && nargout <= 4, USAGE) ;
 
     //--------------------------------------------------------------------------
-    // get the # of rows and columns of a GraphBLAS or MATLAB matrix
+    // get the # of rows and columns of a GraphBLAS or built-in matrix
     //--------------------------------------------------------------------------
 
     GrB_Index nrows, ncols ;
@@ -88,14 +88,14 @@ void mexFunction
     {
 
         //----------------------------------------------------------------------
-        // get the size of a MATLAB matrix
+        // get the size of a built-in matrix
         //----------------------------------------------------------------------
 
         nrows = (GrB_Index) mxGetM (pargin [0]) ;
         ncols = (GrB_Index) mxGetN (pargin [0]) ;
 
         //----------------------------------------------------------------------
-        // get the type of a MATLAB matrix, if requested
+        // get the type of a built-in matrix, if requested
         //----------------------------------------------------------------------
 
         if (nargout > 2)

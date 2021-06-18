@@ -1,8 +1,8 @@
 function C = single (G)
-%SINGLE cast a GraphBLAS matrix to MATLAB full single matrix.
-% C = single (G) typecasts the GrB matrix G to a MATLAB full single
-% matrix.  The result C is full since MATLAB does not support sparse
-% single matrices.  C is real if G is real, and complex if G is complex.
+%SINGLE cast a GraphBLAS matrix to built-in full single matrix.
+% C = single (G) typecasts the GrB matrix G to a built-in full single
+% matrix.  The result C is full since sparse single matrices are not
+% built-in.  C is real if G is real, and complex if G is complex.
 %
 % To typecast the matrix G to a GraphBLAS sparse single matrix instead,
 % use C = GrB (G, 'single').  To typecast to a sparse single complex
@@ -16,7 +16,7 @@ function C = single (G)
 
 G = G.opaque ;
 desc.kind = 'full' ;
-if (contains (gbtype (G), 'complex'))
+if (gb_contains (gbtype (G), 'complex'))
     z = complex (single (0)) ;
     ctype = 'single complex' ;
 else
@@ -24,5 +24,5 @@ else
     ctype = 'single' ;
 end
 
-C = gbfull (G, ctype, z, desc) ;                % export as a MATLAB full matrix
+C = gbfull (G, ctype, z, desc) ;                % export as a full matrix
 

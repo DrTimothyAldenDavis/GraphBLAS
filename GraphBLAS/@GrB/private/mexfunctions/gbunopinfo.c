@@ -12,7 +12,7 @@
 // gbunopinfo (unop)
 // gbunopinfo (unop, type)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: GrB.unopinfo (unop) or GrB.unopinfo (unop,type)"
 

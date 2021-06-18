@@ -16,7 +16,7 @@
 
 // Nearly all GraphBLAS operations take a mask, which controls how the result
 // of the computations, Z, are copied into the result matrix C.  The following
-// working MATLAB script, GB_spec_mask, defines how this is done.  In the
+// working script, GB_spec_mask.m, defines how this is done.  In the
 // comments, C(i,j) is shorthand for the index i in the jth vector, and
 // likewise for M, Z, and R.  If the matrices are all CSC, then this is row i
 // and column j.  If the matrices are all CSR, then it is row j and column i.
@@ -26,7 +26,7 @@
 /*
 
     function R = GB_spec_mask (C, M, Z, C_replace, Mask_comp,identity)
-    %GB_SPEC_MASK: a pure MATLAB implementation of GB_mask
+    %GB_SPEC_MASK: an implementation of GB_mask
     %
     % Computes C<M> = Z, in GraphBLAS notation.
     %

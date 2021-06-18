@@ -92,7 +92,7 @@ static GrB_Info GB_dc
 // GB_Descriptor_check
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
 (
     const GrB_Descriptor D,     // GraphBLAS descriptor to print and check
@@ -162,7 +162,6 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
 
     if (D->do_sort)
     { 
-GB_GOTCHA ; // d.sort is true
         GBPR0 ("    d.sort     = true\n") ;
     }
 

@@ -11,7 +11,7 @@
 #define GB_ADD_H
 #include "GB.h"
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
     GrB_Matrix C,           // output matrix, static header

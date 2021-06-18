@@ -110,7 +110,6 @@ void GB_iso_unop            // Cx [0] = op1 (A), op2 (s,A) or op2 (A,s)
         }
         else
         { 
-GB_GOTCHA ; // iso unop: C = op2(s,A) or ops (A,s)
 
             //------------------------------------------------------------------
             // Cx [0] = op2 (scalar,A) or op2 (A,scalar)
@@ -128,7 +127,7 @@ GB_GOTCHA ; // iso unop: C = op2(s,A) or ops (A,s)
 
             if (C_code_iso == GB_ISO_OP2_SA)
             { 
-GB_GOTCHA ; // iso unop: C = op2(s,A)
+
                 //--------------------------------------------------------------
                 // Cx [0] = op2 (scalar, A)
                 //--------------------------------------------------------------
@@ -139,7 +138,6 @@ GB_GOTCHA ; // iso unop: C = op2(s,A)
             }
             else // (C_code_iso == GB_ISO_OP2_AS)
             { 
-GB_GOTCHA ; // iso unop: C = op2(A,s)
 
                 //--------------------------------------------------------------
                 // Cx [0] = op2 (A, scalar)

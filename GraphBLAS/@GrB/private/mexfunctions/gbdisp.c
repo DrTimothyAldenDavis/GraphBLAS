@@ -11,7 +11,7 @@
 
 // gbdisp (C, cnz, level)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: gbdisp (C, cnz, level)"
 
@@ -63,7 +63,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // print 1-based indices
-    GB_Global_print_one_based_set (true) ;
+    OK (GxB_Global_Option_set (GxB_PRINT_1BASED, true)) ;
 
     GrB_Matrix C = gb_get_shallow (pargin [0]) ;
     OK (GxB_Matrix_fprint (C, s, level, NULL)) ;

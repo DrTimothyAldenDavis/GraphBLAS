@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// Returns a plain MATLAB sparse matrix, not a struct.  Only works in double
-// and complex.  Input matrices must be MATLAB sparse matrices, or GraphBLAS
+// Returns a plain built-in sparse matrix, not a struct.  Only works in double
+// and complex.  Input matrices must be built-in sparse matrices, or GraphBLAS
 // structs in CSC format.
 
 #include "GB_mex.h"
@@ -222,7 +222,7 @@ void mexFunction
         METHOD (adotb (Context)) ;
     }
 
-    // return C to MATLAB
+    // return C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AdotB result", false) ;
 
     FREE_ALL ;

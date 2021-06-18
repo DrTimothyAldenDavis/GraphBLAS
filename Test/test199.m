@@ -1,9 +1,12 @@
 function test199
 %TEST199 test dot2 with hypersparse
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 rng ('default') ;
 
-GrB.burble (1) ;
+% GrB.burble (1) ;
 n = 10 ;
 A.matrix = sprand (n, n, 0.5) ;
 A.sparsity = 1 ;    % hypersparse

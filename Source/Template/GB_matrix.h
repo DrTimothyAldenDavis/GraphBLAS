@@ -137,7 +137,7 @@ GrB_Type type ;         // the type of each numerical entry
     // --------------------------------------
 
         // Ap, Ai, and Ax store a sparse matrix in the a very similar style
-        // as MATLAB and CSparse, as a collection of sparse column vectors.
+        // as CSparse, as a collection of sparse column vectors.
 
         // Column A(:,j) is held in two parts: the row indices are in
         // Ai [Ap [j]...Ap [j+1]-1], and the numerical values are in the
@@ -199,41 +199,6 @@ GrB_Type type ;         // the type of each numerical entry
         // A is m-by-n: where A->vdim = n, and A->vlen = m
 
 //------------------------------------------------------------------------------
-// GraphBLAS vs MATLAB vs CSparse
-//------------------------------------------------------------------------------
-
-// Like MATLAB, the indices in a completed GraphBLAS matrix (as implemented
-// here) are always kept sorted.  If all vectors in a matrix have row indices
-// in strictly ascending order, the matrix is called "unjumbled" in this code.
-// A matrix with one or more unsorted vectors is "jumbled".
-
-// GraphBLAS allows for pending operations, in a matrix with pending work.
-// Pending work includes one or more of the following (1) the presence of
-// zombies, (2) pending tuples, and (3) the matrix is jumbled.
-
-// Unlike MATLAB, explicit zeros are never dropped in a GraphBLAS matrix.  They
-// cannot be since the semiring "zero" might be something else, like -Infinity
-// for a max-plus semiring.  However, dropping zeros is a minor nuance in the
-// data structure.
-
-// Like GraphBLAS, CSparse also keeps explicit zeros.  CSparse allows its
-// matrices to be jumbled at any time, and this is not considered an unfinished
-// GraphBLAS matrix.
-
-// Finally, MATLAB only allows for boolean ("logical" class) and double
-// precision sparse matrices (complex and real).  CSparse only supports double.
-// By contrast, GraphBLAS supports any type, including types defined at run
-// time by the user application.  In the GraphBLAS code, the term "nonzero" is
-// sometimes used in the comments, but this is short-hand for the phrase "an
-// entry A(i,j) whose value is explicity held in the matrix and which appears
-// in the pattern; its value can be anything".  Entries not in the pattern are
-// simply "not there"; see for example GrB_*_extractElement.  The actual
-// numerical value of these implicit entries is dependent upon the identity
-// value of the semiring's monoid operation used on the matrix.  The actual
-// semiring is not held in the matrix itself, and there are no restrictions on
-// using a matrix in multiple semirings.
-
-//------------------------------------------------------------------------------
 // primary matrix content
 //------------------------------------------------------------------------------
 
@@ -264,27 +229,17 @@ size_t x_size ;         // exact size of A->x in bytes, zero if A->x is NULL
 // pending tuples
 //------------------------------------------------------------------------------
 
-// The list of pending tuples is a feature that does not appear in MATLAB or
-// CSparse, although something like it appears in CHOLMOD as the "unpacked"
-// matrix format, which allows the pattern of a matrix to be modified when
-// updating/downdating a Cholesky factorization.
-
 // If an entry A(i,j) does not appear in the data structure, assigning A(i,j)=x
 // requires all entries in vectors j to the end of matrix to be shifted down by
-// one, taking up to O(nnz(A)) time to do so.  This very slow, and it is why in
-// both MATLAB and CSparse, the recommendation is to create a list of tuples,
-// and to build a sparse matrix all at once.  This is done by the MATLAB
-// "sparse" function, the CSparse "cs_compress", and the GraphBLAS
-// GrB_Matrix_build and GrB_Vector_build functions.
+// one, taking up to O(nnz(A)) time to do so.  This very slow.
 
-// MATLAB does not have a "non-blocking" mode of operation, so A(i,j)=x can be
-// very slow for a single scalar x.  With GraphBLAS' non-blocking mode, tuples
-// from GrB_setElement and GrB_*assign can be held in another format that is
-// easy to update: a conventional list of tuples, held inside the matrix
-// itself.  A list of tuples is easy to update but hard to work with in most
-// operations, so whenever another GraphBLAS method or operation needs to
-// access the matrix, the matrix is finalized by applying all the pending
-// updates.
+// Without its "non-blocking" mode of operation, A(i,j)=x would be very slow
+// for a single scalar x.  With GraphBLAS' non-blocking mode, tuples from
+// GrB_setElement and GrB_*assign can be held in another format that is easy to
+// update: a conventional list of tuples, held inside the matrix itself.  A
+// list of tuples is easy to update but hard to work with in most operations,
+// so whenever another GraphBLAS method or operation needs to access the
+// matrix, the matrix is finalized by applying all the pending updates.
 
 // When a new entry is added that does not exist in the matrix, it is added to
 // this list of pending tuples.  Only when the matrix is needed in another

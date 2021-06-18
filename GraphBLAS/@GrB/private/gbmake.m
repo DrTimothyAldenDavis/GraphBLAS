@@ -1,12 +1,12 @@
 function gbmake (what)
-%GBMAKE compile MATLAB interface for SuiteSparse:GraphBLAS
+%GBMAKE compile @GrB interface for SuiteSparse:GraphBLAS
 %
 % Usage:
 %   gbmake
 %
-% gbmake compiles the MATLAB interface for SuiteSparse:GraphBLAS.  The
-% GraphBLAS library must already be compiled and installed.  MATLAB 9.4
-% (R2018a) or later is required.
+% gbmake compiles the @GrB interface for SuiteSparse:GraphBLAS.  The
+% GraphBLAS library must already be compiled and installed.
+% Octave 7 (recommended) or MATLAB 9.4 (R2018a) or later is required.
 %
 % For the Mac, the GraphBLAS library must be installed in /usr/local/lib/ as
 % libgraphblas.dylib.  It cannot be used where it is created in ../build,
@@ -30,12 +30,12 @@ if (have_octave)
         gb_error ('Octave 7 or later is required') ;
     end
 else
-    if verLessThan ('matlab', '9.4')
+    if verLessThan ('matlab', '9.4')    % OK: MATLAB only
         error ('MATLAB 9.4 (R2018a) or later is required') ;
     end
     % MATLAB 9.10 (R2021a) and following include a built-in GraphBLAS library
     % that conflicts with this version, so rename this version.
-    need_rename = ~verLessThan ('matlab', '9.10') ;
+    need_rename = ~verLessThan ('matlab', '9.10') ; % OK: MATLAB only
 end
 
 % finish GraphBLAS
@@ -53,7 +53,7 @@ make_all = (isequal (what, 'all')) ;
 if (have_octave)
     %% Octave does not have the new MEX classdef object and as of
     %% version 7, the mex command doesn't handle compiler options
-    %% the same way as MATLAB's mex command.
+    %% the same way.
 
     % use -R2018a for the new interleaved complex API
     flags = '-O -R2018a -std=c11 -fopenmp -fPIC -Wno-pragmas' ;
@@ -108,8 +108,8 @@ if ispc
     %   devenv graphblas.sln /build "release|x64" /project graphblas
     %
     % The above commands require MS Visual Studio.  The graphblas.lib is
-    % compiled and placed in GraphBLAS/build/Release.  Then in MATLAB in this
-    % folder, do:
+    % compiled and placed in GraphBLAS/build/Release.  Then in the
+    % Command Window do:
     %
     %   gbmake
     if (need_rename)
@@ -126,7 +126,8 @@ else
     %   sudo make install
     %
     % If you can't do "sudo make install" then add the GraphBLAS/build
-    % folder to your LD_LIBRARY_PATH.  Then in this folder in MATLAB do:
+    % folder to your LD_LIBRARY_PATH.  Then in this folder in the
+    % Command Window do:
     %
     %   gbmake
     if (need_rename)
@@ -137,7 +138,7 @@ else
 end
 
 if (need_rename)
-    fprintf ('This version of MATLAB includes an earlier version of\n') ;
+    fprintf ('R2021a and later include an earlier version of\n') ;
     fprintf ('GraphBLAS, as a built-in library.  This interface to the\n') ;
     fprintf ('latest version of GraphBLAS links against a library with\n') ;
     fprintf ('with renamed symbols, to avoid a library conflict.\n') ;
@@ -235,7 +236,7 @@ try
 catch
 end
 
-fprintf ('Compilation of the MATLAB interface to GraphBLAS is complete.\n') ;
+fprintf ('Compilation of the @GrB interface to GraphBLAS is complete.\n') ;
 fprintf ('Add the following commands to your startup.m file:\n\n') ;
 here1 = cd ('../..') ;
 addpath (pwd) ;

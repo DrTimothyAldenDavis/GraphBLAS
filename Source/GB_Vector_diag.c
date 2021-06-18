@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #define GB_FREE_WORK        \
-    GB_Matrix_free (&T) ;
+    GB_phbix_free (T) ;
 
 #define GB_FREE_ALL         \
     GB_FREE_WORK ;          \
@@ -122,7 +122,6 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     V->iso = T->iso ;       // OK
     if (V->iso)
     { 
-GB_GOTCHA ; // iso diag
         GBURBLE ("(iso diag) ") ;
     }
 

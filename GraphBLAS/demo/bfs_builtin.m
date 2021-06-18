@@ -1,7 +1,7 @@
-function v = bfs_matlab (A, s)
-%BFS_MATLAB breadth-first-search in MATLAB
+function v = bfs_builtin (A, s)
+%BFS_BUILTIN breadth-first-search using purely built-in methods
 %
-% v = bfs_matlab (A, s)
+% v = bfs_builtin (A, s)
 %
 % A is a square binary matrix, corresponding to the adjacency matrix of a
 % graph, with A(i,j)=1 denoting the edge (i,j).  Self loops are permitted, and

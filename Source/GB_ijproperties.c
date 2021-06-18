@@ -349,7 +349,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
     ASSERT (((*Ikind) == GB_ALL || (*Ikind) == GB_RANGE) == I_contig) ;
 
     // I_is_contig is true if the list of row indices is a contiguous list,
-    // imin:imax in MATLAB notation.  This is an important special case.
+    // imin:imax.  This is an important special case.
 
     // I_is_unsorted is true if I is an explicit list, the list is non-empty,
     // and the indices are not sorted in ascending order.

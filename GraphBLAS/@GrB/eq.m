@@ -3,7 +3,7 @@ function C = eq (A, B)
 % C = (A == B) compares A and B element-by-element.  One or
 % both may be scalars.  Otherwise, A and B must have the same size.
 %
-% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
+% The input matrices may be either GraphBLAS and/or built-in matrices, in
 % any combination.  C is returned as a GraphBLAS matrix.
 %
 % See also GrB/lt, GrB/le, GrB/gt, GrB/ge, GrB/ne.

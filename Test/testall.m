@@ -41,9 +41,9 @@ extra {2} = [1 1] ;
 clear global GraphBLAS_grbcov
 
 % use built-in complex data types by default
-GB_builtin_complex_set (1) ;
+GB_builtin_complex_set (true) ;
 
-% many of the tests use SuiteSparse/MATLAB_Tools/spok, a copy of which is
+% many of the tests use spok in SuiteSparse, a copy of which is
 % included here in GraphBLAS/Test/spok.
 addpath ('../Test/spok') ;
 addpath ('../Demo/MATLAB') ;
@@ -55,6 +55,10 @@ catch
 end
 
 logstat ;             % start the log.txt
+hack = GB_mex_hack ;
+
+hack (2) = 0 ;
+GB_mex_hack (hack) ;
 
 %-------------------------------------------------------------------------------
 % quick tests for statement coverage
@@ -69,9 +73,9 @@ logstat ;             % start the log.txt
 %----------------------------------------
 
 % disable the Werk stack for these tests:
-hack = GB_mex_hack ;
 hack (2) = 1 ;
 GB_mex_hack (hack) ;
+
 
 logstat ('test192',t) ; % test C<C,struct>=scalar
 logstat ('test191',t) ; % test split
@@ -93,6 +97,11 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test208',t) ; % test iso apply, bind 1st and 2nd
+logstat ('test207',t) ; % test iso subref
+logstat ('test206',t) ; % test iso select
+logstat ('test205',t) ; % test iso kron
+logstat ('test204',t) ; % test iso diag
 logstat ('test203',t) ; % test iso subref
 logstat ('test202',t) ; % test iso add and emult
 logstat ('test201',t) ; % test iso reduce to vector
@@ -314,8 +323,8 @@ logstat ('test51') ;       %      % performance test GB_mex_subassign
 logstat ('test51b') ;      %      % performance test GB_mex_assign, multiple ops
 logstat ('test52',t) ;     %      % performance of A*B with tall mtx, AdotB, AxB
 logstat ('test53',t) ;     %      % exhaustive test of GB_mex_Matrix_extract
-logstat ('test55',t) ;     %      % GxB_subassign, dupl, MATLAB vs GraphBLAS
-logstat ('test55b',t) ;    %      % GrB_assign, duplicates, MATLAB vs GraphBLAS
+logstat ('test55',t) ;     %      % GxB_subassign, dupl, built-in vs GraphBLAS
+logstat ('test55b',t) ;    %      % GrB_assign, duplicates, built-in vs GrB
 logstat ('test56',t) ;     %      % test GrB_*_build
 logstat ('test57',t) ;     %      % test operator on large uint32 values
 logstat ('test58(0)') ;    %      % longer GB_mex_Matrix_eWiseAdd performance

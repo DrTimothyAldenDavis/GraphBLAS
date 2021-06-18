@@ -167,7 +167,7 @@ static inline int GB_nthreads   // return # of threads to use
 //  GrB_error (&error, A) ;
 //  printf ("%s", error) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 const char *GB_status_code (GrB_Info info) ;
 
 // maximum size of the error logger string

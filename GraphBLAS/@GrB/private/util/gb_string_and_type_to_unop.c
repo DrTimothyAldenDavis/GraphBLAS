@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
-// op_name: a MATLAB string defining the operator name.
+// op_name: a built-in string defining the operator name.
 
 // For all 13 types:
 //      identity, ainv, minv, one, abs
@@ -53,9 +53,9 @@
 //  lgamma      gammaln
 //  tgamma      gamma
 //  exp2        pow2
-//  i           i1  positioni   positioni1 (since MATLAB is 1-based)
+//  i           i1  positioni   positioni1 (since default is 1-based)
 //  i0          positioni0
-//  j           j1  positionj   positionj1 (since MATLAB is 1-based)
+//  j           j1  positionj   positionj1 (since default is 1-based)
 //  j0          positionj0
 
 GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type

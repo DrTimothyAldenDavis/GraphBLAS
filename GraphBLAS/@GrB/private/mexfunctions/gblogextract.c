@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// gblogextract computes the MATLAB logical indexing expression C = A(M).  The
+// gblogextract computes the built-in logical indexing expression C = A(M).  The
 // matrices A and M must be the same size.  M is normally logical but it can be
 // of any type in this mexFunction.  M should not have any explicit zeros.  C
 // has the same type as A, and is a sparse vector of size nnz(M)-by-1.
@@ -21,9 +21,9 @@
 /*
 
     function C = gblogextract (A, M_input)
-    % Computing the MATLAB logical indexing expression C = A(M) in GraphBLAS.
+    % Computing the built-in logical indexing expression C = A(M) in GraphBLAS.
     % C is a sparse vector of size nnz(M)-by-1.  M is normally a sparse logical
-    % matrix, either GraphBLAS or MATLAB, but it can be of any type.
+    % matrix, either GraphBLAS or built-in, but it can be of any type.
     % A and M have the same size.
 
     [m n] = size (A) ;
@@ -79,7 +79,7 @@
 
 // TODO:: do not directly access opaque content
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 #include "GB_transpose.h"
 
 #define USAGE "usage: C = gblogextract (A, M)"
@@ -130,8 +130,6 @@ void mexFunction
     GrB_Index mnz ;
     OK (GrB_Matrix_nvals (&mnz, M)) ;
     int sparsity ;
-// printf ("\n GBLOGEXTRACT ========================================M:\n") ;
-// GxB_print (M,3) ;
     OK (GxB_Matrix_Option_get (M, GxB_SPARSITY_STATUS, &sparsity)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 5") ;
     CHECK_ERROR (!M->iso, "internal error 42")  ;            	
@@ -145,14 +143,10 @@ void mexFunction
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, A)) ;
     GrB_Matrix G = gb_new (type, nrows, ncols, GxB_BY_COL, not_bitmap) ;
-// GxB_print (M,3) ;
-// GxB_print (A,3) ;
     OK1 (G, GxB_Matrix_subassign (G, M, NULL,
         A, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
     OK (GrB_Matrix_free (&A_copy)) ;
     OK (GrB_Matrix_free (&A_input)) ;
-// printf ("\n=====================================G after subassign:\n") ;
-// GxB_print (G,3) ;
 
     //--------------------------------------------------------------------------
     // extract Gx, the values of G
@@ -161,8 +155,6 @@ void mexFunction
     GrB_Index gnvals ;
     OK1 (G, GrB_Matrix_wait (&G)) ;
     OK (GrB_Matrix_nvals (&gnvals, G)) ;
-// printf ("\n========================================G:\n") ;
-// GxB_print (G,3) ;
     OK (GxB_Matrix_Option_get (G, GxB_SPARSITY_STATUS, &sparsity)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 0") ;
 
@@ -195,18 +187,14 @@ void mexFunction
     struct GB_Matrix_opaque K_header ;
     GrB_Matrix K = GB_clear_static_header (&K_header) ;
 
-// printf ("K = shallow copy of M\n") ;
     OK (GB_shallow_copy (K, GxB_BY_COL, M, Context)) ;
-// printf ("\n========================================K:\n") ;
-// GxB_print (K,3) ;
     OK (GxB_Matrix_Option_get (K, GxB_SPARSITY_STATUS, &sparsity)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 10") ;
 
     // Kx = uint64 (0:mnz-1)
     size_t Kx_size = (MAX (mnz, 1) * sizeof (uint64_t)) ;
-// printf ("mnz %ld Kx_size: %lu\n", mnz, Kx_size) ;
     uint64_t *Kx = mxMalloc (Kx_size) ;
-    GB_matlab_helper7 (Kx, mnz) ;
+    GB_helper7 (Kx, mnz) ;
 
     // add a new K->x to K
     K->x = Kx ;
@@ -218,8 +206,6 @@ void mexFunction
     #endif
     GB_Global_memtable_add (K->x, K->x_size) ;
     K->iso = false  ;            	
-// printf ("\n===================    now K is non-iso:\n") ;
-// GxB_print (K,3) ;
 
     //--------------------------------------------------------------------------
     // T<G> = K
@@ -256,11 +242,7 @@ void mexFunction
 
     GrB_Vector V ;
     OK (GrB_Vector_new (&V, type, mnz)) ;
-// printf ("\n========================================V:\n") ;
-// GxB_print (V,3) ;
     OK1 (V, GxB_Vector_Option_set (V, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
-// printf ("\n========================================V after set:\n") ;
-// GxB_print (V,3) ;
 
     #ifdef GB_MEMDUMP
     printf ("remove V->i from memtable: %p\n", V->i) ;
@@ -294,7 +276,7 @@ void mexFunction
     V->magic = GB_MAGIC ;
     V->nvec_nonempty = (tnvals > 0) ? 1 : 0 ;
 
-    // typecast V to a matrix C, for export back to MATLAB
+    // typecast V to a matrix C, for export
     GrB_Matrix C = (GrB_Matrix) V ;
     V = NULL ;
 
@@ -308,10 +290,8 @@ void mexFunction
     OK (GrB_Matrix_free (&M)) ;
 
     //--------------------------------------------------------------------------
-    // export the output matrix C back to MATLAB as a GraphBLAS matrix
+    // export the output matrix C as a GraphBLAS matrix
     //--------------------------------------------------------------------------
-
-// printf ("\n========================================C ready:\n") ;
 
     pargout [0] = gb_export (&C, KIND_GRB) ;
     GB_WRAPUP ;

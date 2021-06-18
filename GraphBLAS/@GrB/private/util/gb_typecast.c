@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 GrB_Matrix gb_typecast          // C = (type) A, where C is deep
 (
@@ -51,18 +51,15 @@ GrB_Matrix gb_typecast          // C = (type) A, where C is deep
 
     if (gb_is_integer (type) && gb_is_float (atype))
     { 
-        // C = (type) round (A), using MATLAB rules for typecasting.
+        // C = (type) round (A), using built-in rules for typecasting.
         OK1 (C, GrB_Matrix_apply (C, NULL, NULL, gb_round_binop (atype), A,
             NULL)) ;
     }
     else
     { 
         // C = (type) A, with GraphBLAS typecasting if needed.
-// printf ("gb_typecast C for C=A\n") ; GxB_print (C, 3) ;
-// printf ("gb_typecast A for C=A\n") ; GxB_print (A, 3) ;
         OK1 (C, GrB_Matrix_assign (C, NULL, NULL, A,
             GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
-// printf ("gb_typecast C did C=A\n") ; GxB_print (C, 3) ;
     }
 
     //--------------------------------------------------------------------------

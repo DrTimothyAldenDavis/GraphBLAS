@@ -1,5 +1,5 @@
 function [C err] = kron_demo (A,B)
-%KRON_DEMO test Program/kron_demo.c and compare with MATLAB kron
+%KRON_DEMO test Program/kron_demo.c and compare with built-in kron
 % Usage:
 % [C err] = kron_demo (A,B)
 
@@ -25,7 +25,7 @@ system ('../../build/kron_demo A.tsv B.tsv C.tsv') ;
 load C.tsv ;
 C = spconvert (C) ;
 
-% compare with MATLAB
+% compare with built-in 
 C2 = kron (A, B) ;
 
 err = norm (C-C2, 1) / (norm (A,1) + norm (B,1)) ;

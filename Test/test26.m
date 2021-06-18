@@ -8,7 +8,7 @@ fprintf ('\ntest26 ------------------------------performance of GxB_select\n') ;
 
 [save_nthreads save_chunk] = nthreads_get ;
 chunk = 4096 ;
-nthreads = feature ('numcores') ;
+nthreads = feature_numcores ;
 nthreads_set (nthreads, chunk) ;
 
 [~, ~, ~, ~, ~, select_ops] = GB_spec_opsall ;
@@ -119,7 +119,7 @@ for probs = 1:nprobs
             end
 
             if (~ischar (C2))
-                fprintf ('MATLAB: %10.6f ', t2) ;
+                fprintf ('builtin: %10.6f ', t2) ;
                 fprintf ('nnz: %10d speedup %5.2f ', nnz (C2), t2/t1) ;
 
                 if (~ischar (C3))

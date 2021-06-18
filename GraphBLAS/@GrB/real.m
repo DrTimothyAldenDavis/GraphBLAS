@@ -9,7 +9,7 @@ function C = real (G)
 
 Q = G.opaque ;
 
-if (contains (gbtype (Q), 'complex'))
+if (gb_contains (gbtype (Q), 'complex'))
     C = GrB (gbapply ('creal', Q)) ;
 else
     % G is already real

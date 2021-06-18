@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Sort an index array and remove duplicates.  In MATLAB notation:
+// Sort an index array and remove duplicates:
 
 /*
     [I1 I1k] = sort (I) ;

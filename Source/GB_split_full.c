@@ -151,7 +151,6 @@ GrB_Info GB_split_full              // split a full matrix
 
                 if (!done)
                 { 
-GB_GOTCHA ; // split_full, user defined type (size not 1, 2, 4, 8, 16)
                     // user-defined types
                     #define GB_CTYPE GB_void
                     #undef  GB_COPY

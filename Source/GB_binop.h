@@ -38,7 +38,7 @@ GrB_BinaryOp GB_flip_op     // flip a binary operator, or NULL on error
     bool *handled           // true if operator is handled
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 GB_Opcode GB_boolean_rename     // renamed opcode
 (
     const GB_Opcode opcode      // opcode to rename

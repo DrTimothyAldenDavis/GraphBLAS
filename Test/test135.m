@@ -11,7 +11,7 @@ rng ('default') ;
 n = 10e6 ;
 
 [save_nthreads, save_chunk] = nthreads_get ;
-nthreads_max = feature ('numcores')
+nthreads_max = feature_numcores
 
 %-------------------------------------------------------------------------------
 fprintf ('================== int8 min:\n') ;
@@ -23,7 +23,7 @@ s = int8 (inf) ;
 tic
 c0 = min (X) ;
 tm = toc ;
-fprintf ('MATLAB: %g sec\n', tm) ;
+fprintf ('built-in: %g sec\n', tm) ;
 
 A.matrix = sparse (double (X)) ;
 A.pattern = logical (spones (X)) ;
@@ -53,7 +53,7 @@ A.class = 'double' ;
 tic
 c0 = min (X) ;
 tm = toc ;
-fprintf ('MATLAB: %g sec\n', tm) ;
+fprintf ('built-in: %g sec\n', tm) ;
 
 s = double (inf) ;
 
@@ -76,7 +76,7 @@ X = rand (n,1) ;
 tic
 c0 = sum (X) ;
 tm = toc ;
-fprintf ('MATLAB: %g sec (full)\n', tm) ;
+fprintf ('built-in: %g sec (full)\n', tm) ;
 
 X = sparse (X) ;
 
@@ -87,7 +87,7 @@ A.class = 'double' ;
 tic
 c0 = full (sum (X)) ;
 tm = toc ;
-fprintf ('MATLAB: %g sec (sparse)\n', tm) ;
+fprintf ('built-in: %g sec (sparse)\n', tm) ;
 
 s = double (inf) ;
 

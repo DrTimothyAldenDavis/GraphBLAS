@@ -204,7 +204,7 @@ are extensions to the v1.3 GraphBLAS C API.
         wrong descriptors for \verb'GrB_INP0' and \verb'GrB_INP1'.
         Caught by Erik Welch, Anaconda.
     \item memory pool added for faster allocation/free of small blocks
-    \item \verb'@GrB' MATLAB interface ported to MATLAB R2021a.
+    \item \verb'@GrB' interface ported to MATLAB R2021a.
     \item \verb'GxB_PRINTF' and \verb'GxB_FLUSH' global options added.
     \item \verb'GxB_Matrix_diag': construct a diagonal matrix from a vector
     \item \verb'GxB_Vector_diag': extract a diagonal from a matrix
@@ -227,14 +227,13 @@ are extensions to the v1.3 GraphBLAS C API.
 
     \begin{packed_itemize}
     \item faster min/max monoids
-    \item MATLAB: \verb'G=GrB(G)' converts \verb'G' from v3 object to v4
+    \item \verb'G=GrB(G)' converts \verb'G' from v3 object to v4
     \end{packed_itemize}
 
 \item Version 4.0.2 (Jan 13, 2021)
 
     \begin{packed_itemize}
     \item ability to load \verb'*.mat' files saved with the v3 \verb'GrB'
-        MATLAB interface.
     \end{packed_itemize}
 
 \item Version 4.0.1 (Jan 4, 2021)
@@ -270,7 +269,7 @@ are extensions to the v1.3 GraphBLAS C API.
         Windows.
     \item \verb'GxB_BURBLE' added as a supported feature.  This was an
         undocumented feature of prior versions.
-    \item bug fix: \verb'A({lo,hi})=scalar' in MATLAB,
+    \item bug fix: \verb'A({lo,hi})=scalar'
         \verb'A(lo:hi)=scalar' was OK
     \end{packed_itemize}
 
@@ -290,16 +289,16 @@ are extensions to the v1.3 GraphBLAS C API.
     Added complex types (\verb'GxB_FC32' and \verb'GxB_FC64'), many unary
     operators, binary operators, monoids, and semirings.  Added bitwise
     operators, and their monoids and semirings.  Added the predefined monoids
-    and semirings from the v1.3 spec.  MATLAB interface: added complex matrices
-    and operators, and changed behavior of integer operations to more closely
-    match the behavior on MATLAB integer matrices.  The rules for typecasting
-    large floating point values to integers has changed.  The specific
-    object-based \verb'GrB_Matrix_wait', \verb'GrB_Vector_wait', etc, functions
-    have been added.  The no-argument \verb'GrB_wait()' is deprecated.  Added
-    \verb'GrB_getVersion', \verb'GrB_Matrix_resize', \verb'GrB_Vector_resize',
-    \verb'GrB_kronecker', \verb'GrB_*_wait', scalar binding with binary
-    operators for \verb'GrB_apply', \verb'GrB_Matrix_removeElement', and
-    \verb'GrB_Vector_removeElement'.
+    and semirings from the v1.3 spec.  \verb'@GrB' interface: added complex
+    matrices and operators, and changed behavior of integer operations to more
+    closely match the behavior on built-in integer matrices.  The rules for
+    typecasting large floating point values to integers has changed.  The
+    specific object-based \verb'GrB_Matrix_wait', \verb'GrB_Vector_wait', etc,
+    functions have been added.  The no-argument \verb'GrB_wait()' is
+    deprecated.  Added \verb'GrB_getVersion', \verb'GrB_Matrix_resize',
+    \verb'GrB_Vector_resize', \verb'GrB_kronecker', \verb'GrB_*_wait', scalar
+    binding with binary operators for \verb'GrB_apply',
+    \verb'GrB_Matrix_removeElement', and \verb'GrB_Vector_removeElement'.
 
 \item Version 3.2.0 (Feb 20, 2020).  Faster \verb'GrB_mxm', \verb'GrB_mxv', and
     \verb'GrB_vxm', and faster operations on dense matrices/vectors.  Removed
@@ -309,7 +308,7 @@ are extensions to the v1.3 GraphBLAS C API.
     Added the structural mask option.  Changed default chunk size to 65,536.
     Note that v3.2.0 is not compatible with the MS Visual Studio compiler; use
     v3.1.2 instead.
-    MATLAB interface modified:  \verb'GrB.init' is now optional.
+    \verb'@GrB' interface modified:  \verb'GrB.init' is now optional.
 
 \item Version 3.1.2 (Dec, 2019).  Changes to allow SuiteSparse:GraphBLAS
     to be compiled with the Microsoft Visual Studio compiler.  This compiler
@@ -320,9 +319,9 @@ are extensions to the v1.3 GraphBLAS C API.
     to 128 bytes in size.  These changes have no effect if you have an ANSI C11
     compliant compiler.
 
-    MATLAB interface modified:  \verb'GrB.init' is now required.
+    \verb'@GrB' interface modified:  \verb'GrB.init' is now required.
 
-\item Version 3.1.0 (Oct 1, 2019).  MATLAB interface added.  See the \newline
+\item Version 3.1.0 (Oct 1, 2019).  \verb'@GrB' interface added.  See the \newline
     \verb'GraphBLAS/GraphBLAS' folder for details and documentation,
     and Section~\ref{octave_matlab}.
 
@@ -372,7 +371,7 @@ the \verb'Demos' folder.
 \item
 Version 2.1 (Oct 2018) was
 a major update with support for new matrix formats
-(by row or column, and hypersparse matrices), and MATLAB-like colon notation
+(by row or column, and hypersparse matrices), and colon notation
 (\verb'I=begin:end' or \verb'I=begin:inc:end').  Some graph algorithms are more
 naturally expressed with matrices stored by row, and this version includes the
 new \verb'GxB_BY_ROW' format.  The default format in Version 2.1 and
@@ -510,7 +509,7 @@ monoids, semirings, and a descriptor object used for parameter settings.
 Details are given in Section~\ref{objects}.  Once these objects are created
 they can be used in mathematical {\em operations} (not to be confused with the
 how the term {\em operator} is used in GraphBLAS).  A short summary of these
-operations and their nearest MATLAB analog is given in the table below.
+operations and their nearest Octave/MATLAB analog is given in the table below.
 
 % \vspace{0.1in}
 \begin{tabular}{ll}
@@ -528,11 +527,11 @@ select                              & \verb'C=tril(A)' \\
 \end{tabular}
 \vspace{0.1in}
 
-GraphBLAS can do far more than what MATLAB can do in these rough analogs, but
-the list provides a first step in describing what GraphBLAS can do.  Details of
-each GraphBLAS operation are given in Section~\ref{operations}.  With this
-brief overview, the full scope of GraphBLAS extensions of these operations can
-now be described.
+GraphBLAS can do far more than what Octave/MATLAB can do in these rough
+analogs, but the list provides a first step in describing what GraphBLAS can
+do.  Details of each GraphBLAS operation are given in Section~\ref{operations}.
+With this brief overview, the full scope of GraphBLAS extensions of these
+operations can now be described.
 
 GraphBLAS has 13 built-in scalar types: Boolean, single and double precision
 floating-point (real and complex), and 8, 16, 32, and 64-bit signed and

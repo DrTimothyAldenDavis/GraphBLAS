@@ -1,8 +1,8 @@
 function make (what)
-%MAKE compiles the MATLAB interface to GraphBLAS (for testing only)
+%MAKE compiles the @GrB interface to GraphBLAS (for testing only)
 % and dynamically links it with the libraries in ../build/libgraphblas.
 %
-% This MATLAB interface to GraphBLAS is meant for testing and development,
+% This @GrB interface to GraphBLAS is meant for testing and development,
 % not for general use.
 %
 % Usage:
@@ -28,7 +28,12 @@ end
 
 fprintf ('\nCompiling GraphBLAS tests:\n') ;
 
-need_rename = ~verLessThan ('matlab', '9.10') ;
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+if (have_octave)
+    need_rename = false ;
+else
+    need_rename = ~verLessThan ('matlab', '9.10') ; % OK: MATLAB only
+end
 
 try
     spok (sparse (1)) ;
@@ -47,26 +52,28 @@ make_all = (isequal (what, 'all')) ;
 
 flags = '-g -R2018a' ;
 
-try
-    if (strncmp (computer, 'GLNX', 4))
-        % remove -ansi from CFLAGS and replace it with -std=c11
-        cc = mex.getCompilerConfigurations ('C', 'Selected') ;
-        env = cc.Details.SetEnv ;
-        c1 = strfind (env, 'CFLAGS=') ;
-        q = strfind (env, '"') ;
-        q = q (q > c1) ;
-        if (~isempty (c1) && length (q) > 1)
-            c2 = q (2) ;
-            cflags = env (c1:c2) ;  % the CFLAGS="..." string
-            ansi = strfind (cflags, '-ansi') ;
-            if (~isempty (ansi))
-                cflags = [cflags(1:ansi-1) '-std=c11' cflags(ansi+5:end)] ;
-                flags = [flags ' ' cflags] ;
-                fprintf ('compiling with -std=c11 instead of default -ansi\n') ;
+if (~have_octave)
+    try
+        if (strncmp (computer, 'GLNX', 4))
+            % remove -ansi from CFLAGS and replace it with -std=c11
+            cc = mex.getCompilerConfigurations ('C', 'Selected') ;
+            env = cc.Details.SetEnv ;
+            c1 = strfind (env, 'CFLAGS=') ;
+            q = strfind (env, '"') ;
+            q = q (q > c1) ;
+            if (~isempty (c1) && length (q) > 1)
+                c2 = q (2) ;
+                cflags = env (c1:c2) ;  % the CFLAGS="..." string
+                ansi = strfind (cflags, '-ansi') ;
+                if (~isempty (ansi))
+                    cflags = [cflags(1:ansi-1) '-std=c11' cflags(ansi+5:end)] ;
+                    flags = [flags ' ' cflags] ;
+                    fprintf ('compiling with -std=c11 instead of default -ansi\n') ;
+                end
             end
         end
+    catch
     end
-catch
 end
 
 mexfunctions = dir ('GB_mex_*.c') ;

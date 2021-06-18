@@ -15,7 +15,7 @@
 
 // where Tiles is a 2D cell array of matrices.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.cat (Tiles, desc)"
 
@@ -129,7 +129,7 @@ void mexFunction
     mxFree (Tiles) ;
 
     //--------------------------------------------------------------------------
-    // export the output matrix C back to MATLAB
+    // export the output matrix C
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;

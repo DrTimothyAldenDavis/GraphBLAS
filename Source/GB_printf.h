@@ -20,9 +20,8 @@
 #define GBu "%" PRIu64
 #define GBd "%" PRId64
 
-// print to the standard output, and flush the result.  This function can
-// print to the MATLAB command window.  No error check is done.  This function
-// is used for the BURBLE, and for debugging output. 
+// print to the standard output, and flush the result.  No error check is done.
+// This function is used for the BURBLE, and for debugging output. 
 #define GBDUMP(...)                                                     \
 {                                                                       \
     GB_printf_function_t printf_func = GB_Global_printf_get ( ) ;       \

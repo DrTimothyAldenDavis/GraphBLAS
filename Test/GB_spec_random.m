@@ -52,7 +52,7 @@ else
     A.matrix = scale * sprandn (m, n, d) ;
 end
 
-if (contains (type, 'complex'))
+if (test_contains (type, 'complex'))
     if (isinf (d))
         A.matrix = A.matrix + 1i * scale * sparse (rand (m, n)) ;
     else

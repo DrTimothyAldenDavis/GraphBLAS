@@ -1,6 +1,9 @@
 function test196
 %TEST196 test large hypersparse concat
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
 rng ('default') ;
 m = 2e6 ;
 n = 1e6 ;

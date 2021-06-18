@@ -94,7 +94,7 @@ void mexFunction
     // V = diag (A,k)
     METHOD (GxB_Vector_diag (V, A, k, NULL)) ;
 
-    // return V to MATLAB as a struct
+    // return V as a struct
     pargout [0] = GB_mx_Matrix_to_mxArray ((GrB_Matrix *) &V, "V=diag(A,k)",
         true) ;
     FREE_ALL ;

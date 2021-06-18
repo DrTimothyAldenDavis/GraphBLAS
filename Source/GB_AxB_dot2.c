@@ -33,7 +33,7 @@
     GB_WERK_POP (A_slice, int64_t) ;        \
 }
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 (
     GrB_Matrix C,                   // output matrix, static header
@@ -136,12 +136,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int64_t cvdim = B->vdim ;
 
     int64_t cnz ;
-    if (!GB_Index_multiply ((GrB_Index *) (&cnz), cvlen, cvdim))
-    { 
-GB_GOTCHA ;     // problem too large
-        // problem too large
-        return (GrB_OUT_OF_MEMORY) ;
-    }
+    bool ok = GB_Index_multiply ((GrB_Index *) (&cnz), cvlen, cvdim) ;
 
     //--------------------------------------------------------------------------
     // extract the submask if A or B are hypersparse 
@@ -172,10 +167,10 @@ GB_GOTCHA ;     // problem too large
     int64_t nbslice = 0 ;
 
     int64_t anvec = A->nvec ;
-    int64_t anz   = GB_nnz_held (A) ;
+    double anz = (double) GB_nnz_held (A) ;
 
     int64_t bnvec = B->nvec ;
-    int64_t bnz   = GB_nnz_held (B) ;
+    double bnz = (double) GB_nnz_held (B) ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
@@ -237,7 +232,7 @@ GB_GOTCHA ;     // problem too large
 
     GB_WERK_PUSH (A_slice, naslice + 1, int64_t) ;
     GB_WERK_PUSH (B_slice, nbslice + 1, int64_t) ;
-    if (A_slice == NULL || B_slice == NULL)
+    if (A_slice == NULL || B_slice == NULL || !ok)
     { 
         // out of memory
         GB_FREE_ALL ;

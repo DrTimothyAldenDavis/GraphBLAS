@@ -107,9 +107,12 @@ GrB_Info GB_export      // export a matrix in any format
 
     if (iso == NULL)
     { 
-GB_GOTCHA ; // iso NULL export
         // ensure A is non-iso
         // set A->iso = false   OK
+        if ((*A)->iso)
+        { 
+            GBURBLE ("(iso to non-iso export) ") ;
+        }
         GB_OK (GB_convert_any_to_non_iso (*A, true, Context)) ;
     }
     else
@@ -118,6 +121,7 @@ GB_GOTCHA ; // iso NULL export
         (*iso) = (*A)->iso ;
         if (*iso)
         { 
+GB_GOTCHA ;
             GBURBLE ("(iso export) ") ;
         }
     }

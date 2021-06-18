@@ -155,7 +155,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     if (C_iso)
     { 
-GB_GOTCHA ; // iso kron
         // the values of A and B are no longer needed if C is iso
         GBURBLE ("(iso kron) ") ;
         A_is_pattern = true ;
@@ -250,7 +249,6 @@ GB_GOTCHA ; // iso kron
 
     if (C_iso)
     {
-GB_GOTCHA ; // iso kron
         // Cx [0] = cscalar = op (A,B)
         memcpy (C->x, cscalar, csize) ;
         if (C_is_full)

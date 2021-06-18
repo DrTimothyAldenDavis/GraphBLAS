@@ -28,7 +28,7 @@
 // implicitly expanded into a matrix the same size as C(I,J), but this occurs
 // inside GxB_*subassign, not here.
 
-// This function does the same thing as the MATLAB mimic GB_spec_subassign.m.
+// This function does the same thing as the mimic GB_spec_subassign.m.
 
 //------------------------------------------------------------------------------
 
@@ -733,7 +733,7 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // return C to MATLAB as a struct
+    // return C as a struct
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;

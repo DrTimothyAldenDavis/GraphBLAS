@@ -15,9 +15,9 @@ function C = prod (G, option)
 % C = prod (G,2) takes the product of each row, resulting in an m-by-1
 % column vector C where C(i) is the product of all entries in G(i,:).
 %
-% The built-in MATLAB prod (A, ... type, nanflag) allows for different
-% kinds of products to be computed, and the NaN behavior can be specified.
-% The GraphBLAS prod (G,...) uses only a type of 'native', and a nanflag of
+% The built-in prod (A, ... type, nanflag) allows for different kinds of
+% products to be computed, and the NaN behavior can be specified.  The
+% GraphBLAS prod (G,...) uses only a type of 'native', and a nanflag of
 % 'includenan'.  See 'help prod' for more details.
 %
 % See also GrB/all, GrB/max, GrB/min, GrB/sum.

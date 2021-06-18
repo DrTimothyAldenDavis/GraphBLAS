@@ -53,12 +53,12 @@ else
 end
 fprintf (f, 'define(`endif_compact'', `#endif'')\n') ;
 
-ztype_is_real = ~contains (ztype, 'FC') ;
+ztype_is_real = ~codegen_contains (ztype, 'FC') ;
 is_any_complex = is_any && ~ztype_is_real ;
 is_plus_pair_real = isequal (addop, 'plus') && isequal (multop, 'pair') ...
     && ztype_is_real ;
 
-t_is_simple = isequal (multop, 'pair') || contains (multop, 'first') || contains (multop, 'second') ;
+t_is_simple = isequal (multop, 'pair') || codegen_contains (multop, 'first') || codegen_contains (multop, 'second') ;
 t_is_nonnan = isequal (multop (1:2), 'is') || (multop (1) == 'l') ;
 
 switch (ztype)
@@ -301,21 +301,21 @@ else
 end
 
 % firsti multiply operator
-if (contains (multop, 'firsti'))
+if (codegen_contains (multop, 'firsti'))
     fprintf (f, 'define(`GB_is_firsti_multiplier'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_is_firsti_multiplier'', `0'')\n') ;
 end
 
 % firstj multiply operator
-if (contains (multop, 'firstj'))
+if (codegen_contains (multop, 'firstj'))
     fprintf (f, 'define(`GB_is_firstj_multiplier'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_is_firstj_multiplier'', `0'')\n') ;
 end
 
 % secondj multiply operator
-if (contains (multop, 'secondj'))
+if (codegen_contains (multop, 'secondj'))
     fprintf (f, 'define(`GB_is_secondj_multiplier'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_is_secondj_multiplier'', `0'')\n') ;
@@ -351,7 +351,7 @@ end
 
 % min monoids:
 if (is_min)
-    if (contains (ztype, 'int'))
+    if (codegen_contains (ztype, 'int'))
         % min monoid for signed or unsigned integers
         fprintf (f, 'define(`GB_is_imin_monoid'', `1'')\n') ;
         fprintf (f, 'define(`GB_is_fmin_monoid'', `0'')\n') ;
@@ -368,7 +368,7 @@ end
 
 % max monoids:
 if (is_max)
-    if (contains (ztype, 'int'))
+    if (codegen_contains (ztype, 'int'))
         % max monoid for signed or unsigned integers
         fprintf (f, 'define(`GB_is_imax_monoid'', `1'')\n') ;
         fprintf (f, 'define(`GB_is_fmax_monoid'', `0'')\n') ;
@@ -453,7 +453,7 @@ end
 if (is_any_pair)
     add2 = ';' ;
 elseif (is_min)
-    if (contains (ztype, 'int'))
+    if (codegen_contains (ztype, 'int'))
         % min monoid for signed or unsigned integers
         add2 = 'if ($1 > $2) { $1 = $2 ; }' ;
     else
@@ -465,7 +465,7 @@ elseif (is_min)
         end
     end
 elseif (is_max)
-    if (contains (ztype, 'int'))
+    if (codegen_contains (ztype, 'int'))
         % max monoid for signed or unsigned integers
         add2 = 'if ($1 < $2) { $1 = $2 ; }' ;
     else
@@ -505,7 +505,7 @@ end
 
 % create the multiply-add operator
 need_mult_typecast = false ;
-is_imin_or_imax = (isequal (addop, 'min') || isequal (addop, 'max')) && contains (ztype, 'int') ;
+is_imin_or_imax = (isequal (addop, 'min') || isequal (addop, 'max')) && codegen_contains (ztype, 'int') ;
 if (is_any_pair)
     fprintf (f, 'define(`GB_multiply_add'', `'')\n') ;
 elseif (~is_imin_or_imax && ...
@@ -583,7 +583,7 @@ switch (addop)
 
     % min/max monoids:
     case { 'min' }
-        if (contains (ztype, 'int'))
+        if (codegen_contains (ztype, 'int'))
             % min for signed or unsigned integers
             if (t_is_simple)
                 s = sprintf ('if (exists && cx > %s) { cx = %s ; }', ...
@@ -607,11 +607,11 @@ switch (addop)
                 ztype, mult2) ;
             end
         end
-        if (contains (ztype, 'uint'))
+        if (codegen_contains (ztype, 'uint'))
             idbyte = '0xFF' ;
         end
     case { 'max' }
-        if (contains (ztype, 'int'))
+        if (codegen_contains (ztype, 'int'))
             % max for signed or unsigned integers
             if (t_is_simple)
                 s = sprintf ('if (exists && cx < %s) { cx = %s ; }', ...
@@ -636,7 +636,7 @@ switch (addop)
                 ztype, mult2) ;
             end
         end
-        if (contains (ztype, 'uint'))
+        if (codegen_contains (ztype, 'uint'))
             idbyte = '0' ;
         end
 
@@ -708,7 +708,7 @@ end
 
 % disable the bitmap multadd when using div or rdiv and any floating-point
 % type, to avoid divide-by-zero when operating on entries not in the bitmap.
-if (contains (multop, 'div') && ztype_is_float)
+if (codegen_contains (multop, 'div') && ztype_is_float)
     s = '' ;
 end
 

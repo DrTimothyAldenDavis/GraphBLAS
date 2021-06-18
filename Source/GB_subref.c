@@ -85,7 +85,7 @@
 
 #include "GB_subref.h"
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 (
     // output
@@ -139,7 +139,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 
     if (C_iso)
     { 
-        GBURBLE ("(iso subref )") ;
+        GBURBLE ("(iso subref) ") ;
     }
 
     //--------------------------------------------------------------------------

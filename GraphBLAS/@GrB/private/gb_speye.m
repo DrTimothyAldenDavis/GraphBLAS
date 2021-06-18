@@ -17,7 +17,7 @@ desc.base = 'zero-based' ;
 
 if (isequal (type, 'single complex'))
     X = complex (ones (mn, 1, 'single')) ;
-elseif (contains (type, 'complex'))
+elseif (gb_contains (type, 'complex'))
     X = complex (ones (mn, 1, 'double')) ;
 else
     X = ones (mn, 1, type) ;

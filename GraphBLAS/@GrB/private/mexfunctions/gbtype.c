@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbtype: type of a GraphBLAS matrix struct, or any MATLAB variable
+// gbtype: type of a GraphBLAS matrix struct, or any built-in variable
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,14 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// The input may be any MATLAB variable.  If it is a GraphBLAS G.opaque struct,
-// then its internal type is returned.
+// The input may be any built-in variable.  If it is a GraphBLAS G.opaque
+// struct, then its internal type is returned.
 
 // Usage
 
 // type = gbtype (X)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: type = gbtype (X)"
 
@@ -65,7 +65,7 @@ void mexFunction
     if (c == NULL)
     { 
         // if c is still NULL, then it is not a GraphBLAS opaque struct.
-        // get the type of a MATLAB matrix
+        // get the type of a built-in matrix
         c = gb_mxclass_to_mxstring (class, is_complex) ;
     }
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbbuild: build a GraphBLAS matrix or a MATLAB sparse matrix
+// gbbuild: build a GraphBLAS matrix or a built-in sparse matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -37,7 +37,7 @@
 // desc.kind is the only part used from the descriptor, and it defaults to
 // desc.kind = 'GrB'.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: A = GrB.build (I, J, X, m, n, dup, type, desc)"
 
@@ -119,7 +119,7 @@ void mexFunction
     if (ni == 1 && ni < nvals)
     { 
         GrB_Index *I2 = (GrB_Index *) mxMalloc (nvals * sizeof (GrB_Index)) ;
-        GB_matlab_helper8 ((GB_void *) I2, (GB_void *) I, nvals,
+        GB_helper8 ((GB_void *) I2, (GB_void *) I, nvals,
             sizeof (GrB_Index)) ;
         if (I_allocated) gb_mxfree (&I) ;
         I_allocated = true ;
@@ -129,7 +129,7 @@ void mexFunction
     if (nj == 1 && nj < nvals)
     { 
         GrB_Index *J2 = (GrB_Index *) mxMalloc (nvals * sizeof (GrB_Index)) ;
-        GB_matlab_helper8 ((GB_void *) J2, (GB_void *) J, nvals,
+        GB_helper8 ((GB_void *) J2, (GB_void *) J, nvals,
             sizeof (GrB_Index)) ;
         if (J_allocated) gb_mxfree (&J) ;
         J_allocated = true ;
@@ -153,7 +153,7 @@ void mexFunction
         else
         { 
             // nrows = max entry in I+1
-            bool ok = GB_matlab_helper4 (I, ni, &nrows) ;
+            bool ok = GB_helper4 (I, ni, &nrows) ;
             CHECK_ERROR (!ok, "out of memory") ;
         }
     }
@@ -174,7 +174,7 @@ void mexFunction
         else
         { 
             // ncols = max entry in J+1
-            bool ok = GB_matlab_helper4 (J, nj, &ncols) ;
+            bool ok = GB_helper4 (J, nj, &ncols) ;
             CHECK_ERROR (!ok, "out of memory") ;
         }
     }
@@ -267,7 +267,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (bool)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (bool)) ;
             X = (bool *) X2 ;
         }
@@ -281,7 +281,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (int8_t)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (int8_t)) ;
             X = (int8_t *) X2 ;
         }
@@ -295,7 +295,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (int16_t)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (int16_t)) ;
             X = (int16_t *) X2 ;
         }
@@ -309,7 +309,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (int32_t)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (int32_t)) ;
             X = (int32_t *) X2 ;
         }
@@ -323,7 +323,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (int64_t)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (int64_t)) ;
             X = (int64_t *) X2 ;
         }
@@ -337,7 +337,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (uint8_t)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (uint8_t)) ;
             X = (uint8_t *) X2 ;
         }
@@ -351,7 +351,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (uint16_t)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (uint16_t)) ;
             X = (uint16_t *) X2 ;
         }
@@ -365,7 +365,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (uint32_t)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (uint32_t)) ;
             X = (uint32_t *) X2 ;
         }
@@ -379,7 +379,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (uint64_t)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (uint64_t)) ;
             X = (uint64_t *) X2 ;
         }
@@ -393,7 +393,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (float)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (float)) ;
             X = (float *) X2 ;
         }
@@ -407,7 +407,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (double)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (double)) ;
             X = (double *) X2 ;
         }
@@ -422,7 +422,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (GxB_FC32_t)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (GxB_FC32_t)) ;
             X = (GxB_FC32_t *) X2 ;
         }
@@ -437,7 +437,7 @@ void mexFunction
         if (X_is_scalar)
         { 
             X2 = mxMalloc (nvals * sizeof (GxB_FC64_t)) ;
-            GB_matlab_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
+            GB_helper8 ((GB_void *) X2, (GB_void *) X, nvals,
                 sizeof (GxB_FC64_t)) ;
             X = (GxB_FC64_t *) X2 ;
         }
@@ -457,7 +457,7 @@ void mexFunction
     if (J_allocated) gb_mxfree (&J) ;
 
     //--------------------------------------------------------------------------
-    // export the output matrix A back to MATLAB
+    // export the output matrix A
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&A, kind) ;

@@ -57,15 +57,15 @@
 #include <stdarg.h>
 
 //==============================================================================
-// renaming for use in MATLAB
+// renaming for use in R2021a or later
 //==============================================================================
 
 #define GB_CAT2(x,y) x ## y
 #define GB_EVAL2(x,y) GB_CAT2 (x,y)
 
 #ifdef GBRENAME
-    // All symbols must be renamed for the MATLAB interface when using MATLAB
-    // R2021a and following, since those versions of MATLAB include an earlier
+    // All symbols must be renamed for the @GrB interface when using
+    // R2021a and following, since those versions include an earlier
     // version of SuiteSparse:GraphBLAS.
     #define GB(x)   GB_EVAL2 (GM_, x)
     #define GRB(x)  GB_EVAL2 (GrM_, x)
@@ -612,21 +612,21 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
 
 typedef struct GB_Type_opaque *GrB_Type ;
 
-// GraphBLAS predefined types and their counterparts in pure C and in MATLAB
+// GraphBLAS predefined types and their counterparts in pure C:
 GB_PUBLIC GrB_Type
-    GrB_BOOL   ,        // in C: bool               in MATLAB: logical
-    GrB_INT8   ,        // in C: int8_t             in MATLAB: int8
-    GrB_INT16  ,        // in C: int16_t            in MATLAB: int16
-    GrB_INT32  ,        // in C: int32_t            in MATLAB: int32
-    GrB_INT64  ,        // in C: int64_t            in MATLAB: int64
-    GrB_UINT8  ,        // in C: uint8_t            in MATLAB: uint8
-    GrB_UINT16 ,        // in C: uint16_t           in MATLAB: uint16
-    GrB_UINT32 ,        // in C: uint32_t           in MATLAB: uint32
-    GrB_UINT64 ,        // in C: uint64_t           in MATLAB: uint64
-    GrB_FP32   ,        // in C: float              in MATLAB: single
-    GrB_FP64   ,        // in C: double             in MATLAB: double
-    GxB_FC32   ,        // in C: float complex      in MATLAB: single complex
-    GxB_FC64   ;        // in C: double complex     in MATLAB: double complex
+    GrB_BOOL   ,        // in C: bool
+    GrB_INT8   ,        // in C: int8_t
+    GrB_INT16  ,        // in C: int16_t
+    GrB_INT32  ,        // in C: int32_t
+    GrB_INT64  ,        // in C: int64_t
+    GrB_UINT8  ,        // in C: uint8_t
+    GrB_UINT16 ,        // in C: uint16_t
+    GrB_UINT32 ,        // in C: uint32_t
+    GrB_UINT64 ,        // in C: uint64_t
+    GrB_FP32   ,        // in C: float
+    GrB_FP64   ,        // in C: double
+    GxB_FC32   ,        // in C: float complex
+    GxB_FC64   ;        // in C: double complex
 
 //------------------------------------------------------------------------------
 // helper macros for polymorphic functions
@@ -1145,7 +1145,7 @@ GB_PUBLIC GrB_BinaryOp
     // Since y must be signed, it cannot have the same type as x when x is
     // unsigned; it is always GrB_INT8 for all 8 versions of this operator.
     // The GxB_BSHIFT_* operators compute the arithmetic shift, and produce the
-    // same results as the MATLAB BITSHIFT function, for all possible inputs.
+    // same results as the bitshift.m function, for all possible inputs.
 
 GB_PUBLIC GrB_BinaryOp
 
@@ -1222,7 +1222,7 @@ GB_PUBLIC GrB_BinaryOp
 // has a special value, and thus z=first_i1(A(i,j),j) returns i+1 instead of i.
 // This can be useful when using a positional operator to construct a mask
 // matrix or vector for another GraphBLAS operation.  It is also essential for
-// the MATLAB interface, since the user view of matrix indices in MATLAB is
+// the @GrB interface, since the user view of matrix indices in @GrB is
 // 1-based, not 0-based.
 
 // When applied to a vector, j is always equal to 0.  For a GxB_SCALAR,
@@ -1286,19 +1286,17 @@ GB_PUBLIC GrB_UnaryOp
 // not define what boolean "division" means.  SuiteSparse:GraphBLAS makes the
 // following interpretation.
 
-// GraphBLAS does not generate exceptions for divide-by-zero, so the results
-// are defined just as they are in MATLAB.  Floating-point divide-by-zero
-// follows the IEEE 754 standard: 1/0 is +Inf, -1/0 is -Inf, and 0/0 is NaN.
-// For integer division by zero, if x is positive, x/0 is the largest integer,
-// -x/0 is the integer minimum (zero for unsigned integers), and 0/0 is zero.
-// For example, for int8, 1/0 is 127, and -1/0 is -128.  For uint8, 1/0 is 255
-// and 0/0 is zero.
+// GraphBLAS does not generate exceptions for divide-by-zero.  Floating-point
+// divide-by-zero follows the IEEE 754 standard: 1/0 is +Inf, -1/0 is -Inf, and
+// 0/0 is NaN.  For integer division by zero, if x is positive, x/0 is the
+// largest integer, -x/0 is the integer minimum (zero for unsigned integers),
+// and 0/0 is zero.  For example, for int8, 1/0 is 127, and -1/0 is -128.  For
+// uint8, 1/0 is 255 and 0/0 is zero.
 
-// Boolean division is not in MATLAB.  For SuiteSparse:GraphBLAS, boolean
-// division is treated as if it were an unsigned integer type with true=1 and
-// false=0, and with the max and min value being 1 and 0.  As a result,
-// GrB_IDENTITY_BOOL, GrB_AINV_BOOL, and GrB_MINV_BOOL all give the same result
-// (z = x).
+// Boolean division is treated as if it were an unsigned integer type with
+// true=1 and false=0, and with the max and min value being 1 and 0.  As a
+// result, GrB_IDENTITY_BOOL, GrB_AINV_BOOL, and GrB_MINV_BOOL all give the
+// same result (z = x).
 
 // With this convention for boolean "division", there are 11 unique binary
 // operators that are purely boolean.  Other named *_BOOL operators are
@@ -2256,7 +2254,7 @@ GrB_Info GrB_Vector_free    // free a vector
 // GrB_Vector_build
 //------------------------------------------------------------------------------
 
-// GrB_Vector_build:  w = sparse (I,1,X) in MATLAB notation, but using any
+// GrB_Vector_build:  w = sparse (I,1,X), but using any
 // associative operator to assemble duplicate entries.
 
 GB_PUBLIC
@@ -2726,10 +2724,10 @@ GrB_Info GrB_Vector_removeElement
 // GrB_Vector_extractTuples
 //------------------------------------------------------------------------------
 
-// Extracts all tuples from a vector, like [I,~,X] = find (v) in MATLAB.  If
+// Extracts all tuples from a vector, like [I,~,X] = find (v).  If
 // any parameter I and/or X is NULL, then that component is not extracted.  For
 // example, to extract just the row indices, pass I as non-NULL, and X as NULL.
-// This is like [I,~,~] = find (v) in MATLAB.
+// This is like [I,~,~] = find (v).
 
 GB_PUBLIC
 GrB_Info GrB_Vector_extractTuples_BOOL      // [I,~,X] = find (v)
@@ -2947,7 +2945,7 @@ GrB_Info GrB_Matrix_free    // free a matrix
 // GrB_Matrix_build
 //------------------------------------------------------------------------------
 
-// GrB_Matrix_build:  C = sparse (I,J,X) in MATLAB notation, but using any
+// GrB_Matrix_build:  C = sparse (I,J,X), but using any
 // associative operator to assemble duplicate entries.
 
 GB_PUBLIC
@@ -3142,7 +3140,7 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
 // GrB_Matrix_setElement
 //------------------------------------------------------------------------------
 
-// Set a single entry in a matrix, C(i,j) = x in MATLAB notation, typecasting
+// Set a single entry in a matrix, C(i,j) = x, typecasting
 // from the type of x to the type of C, as needed.
 
 GB_PUBLIC
@@ -3464,7 +3462,7 @@ GrB_Info GrB_Matrix_removeElement
 // GrB_Matrix_extractTuples
 //------------------------------------------------------------------------------
 
-// Extracts all tuples from a matrix, like [I,J,X] = find (A) in MATLAB.  If
+// Extracts all tuples from a matrix, like [I,J,X] = find (A).  If
 // any parameter I, J and/or X is NULL, then that component is not extracted.
 // For example, to extract just the row and col indices, pass I and J as
 // non-NULL, and X as NULL.  This is like [I,J,~] = find (A).
@@ -3704,9 +3702,7 @@ GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
 // C(i,i) = v(i).  If k is nonzero, C is square with dimension n+abs(k).  If k
 // is positive, it denotes diagonals above the main diagonal, with C(i,i+k) =
 // v(i).  If k is negative, it denotes diagonals below the main diagonal of C,
-// with C(i-k,i) = v(i).  This behavior is identical to the MATLAB statement
-// C = diag(v,k), where v is a vector, except that GxB_Matrix_diag can also
-// do typecasting.
+// with C(i-k,i) = v(i).
 
 // C must already exist on input, of the correct size.  Any existing entries in
 // C are discarded.  The type of C is preserved, so that if the type of C and v
@@ -3729,9 +3725,7 @@ GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
 // the main diagonal of A.  Let A have dimension m-by-n.  If k is in the range
 // 0 to n-1, then v has length min(m,n-k).  If k is negative and in the range 
 // -1 to -m+1, then v has length min(m+k,n).  If k is outside these ranges,
-// v has length 0 (this is not an error).  This function computes the same
-// thing as the MATLAB statement v = diag(A,k) when A is a matrix, except that
-// GxB_Vector_diag can also do typecasting.
+// v has length 0 (this is not an error).
 
 // v must already exist on input, of the correct length; that is
 // GrB_Vector_size (&len,v) must return len = 0 if k >= n or k <= -m, len =
@@ -3847,10 +3841,10 @@ typedef enum
 }
 GxB_Format_Value ;
 
-// The default format is by column, just like MATLAB.  These constants are
-// defined as GB_PUBLIC const, so that if SuiteSparse:GraphBLAS is recompiled
-// with a different default format, and the application is relinked but not
-// recompiled, it will acquire the new default values.
+// The default format is by row.  These constants are defined as GB_PUBLIC
+// const, so that if SuiteSparse:GraphBLAS is recompiled with a different
+// default format, and the application is relinked but not recompiled, it will
+// acquire the new default values.
 GB_PUBLIC const GxB_Format_Value GxB_FORMAT_DEFAULT ;
 
 // the default hyper_switch parameter
@@ -4315,8 +4309,8 @@ GrB_Info GrB_mxv                    // w<Mask> = accum (w, A*u)
 // GrB_eWiseMult: element-wise matrix and vector operations, set intersection
 //==============================================================================
 
-// GrB_eWiseMult computes C<Mask> = accum (C, A.*B), where ".*" is MATLAB
-// notation, and where pairs of elements in two matrices (or vectors) are
+// GrB_eWiseMult computes C<Mask> = accum (C, A.*B), where ".*" is the Hadamard
+// product, and where pairs of elements in two matrices (or vectors) are
 // pairwise "multiplied" with C(i,j) = mult (A(i,j),B(i,j)).
 
 GB_PUBLIC
@@ -4539,23 +4533,22 @@ GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<Mask> = accum (C, A+B)
 // GrB_extract: extract a submatrix or subvector
 //==============================================================================
 
-// Extract entries from a matrix or vector; T = A(I,J) in MATLAB notation.
-// This (like most GraphBLAS methods) is then followed by C<Mask>=accum(C,T).
+// Extract entries from a matrix or vector; T = A(I,J).  This (like most
+// GraphBLAS methods) is then followed by C<Mask>=accum(C,T).
 
-// To extract all rows of a matrix or vector, as in A (:,J) in MATLAB, use
-// I=GrB_ALL as the input argument.  For all columns of a matrix, use
-// J=GrB_ALL.
+// To extract all rows of a matrix or vector, as in A (:,J), use I=GrB_ALL as
+// the input argument.  For all columns of a matrix, use J=GrB_ALL.
 
 GB_PUBLIC const uint64_t *GrB_ALL ;
 
 // To extract a range of rows and columns, I and J can be a list of 2 or 3
-// indices that defines a range (begin:end) or a strided range (begin:inc:end),
-// in MATLAB notation.  To specify the MATLAB syntax I = begin:end, the array I
-// has size at least 2, where I [GxB_BEGIN] = begin and I [GxB_END] = end.  The
-// parameter ni is then passed as the special value GxB_RANGE.  To specify the
-// MATLAB syntax I = begin:inc:end, the array I has size at least three, with
-// the values begin, end, and inc (in that order), and then pass in the value
-// ni = GxB_STRIDE.  The same can be done for the list J and its size, nj.
+// indices that defines a range (begin:end) or a strided range (begin:inc:end).
+// To specify the colon syntax I = begin:end, the array I has size at least 2,
+// where I [GxB_BEGIN] = begin and I [GxB_END] = end.  The parameter ni is then
+// passed as the special value GxB_RANGE.  To specify the colon syntax I =
+// begin:inc:end, the array I has size at least three, with the values begin,
+// end, and inc (in that order), and then pass in the value ni = GxB_STRIDE.
+// The same can be done for the list J and its size, nj.
 
 // These special values of ni and nj can be used for GrB_assign,
 // GrB_extract, and GxB_subassign.
@@ -4570,7 +4563,7 @@ GB_PUBLIC const uint64_t *GrB_ALL ;
 #define GxB_END   (1)
 #define GxB_INC   (2)
 
-// For example, the MATLAB notation 10:-2:1 defines a sequence [10 8 6 4 2].
+// For example, the notation 10:-2:1 defines a sequence [10 8 6 4 2].
 // The end point of the sequence (1) need not appear in the sequence, if
 // the last increment goes past it.  To specify the same in GraphBLAS,
 // use:
@@ -4652,7 +4645,7 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
 // GxB_subassign: matrix and vector subassign: C(I,J)<Mask> = accum (C(I,J), A)
 //==============================================================================
 
-// Assign entries in a matrix or vector; C(I,J) = A in MATLAB notation.
+// Assign entries in a matrix or vector; C(I,J) = A.
 
 // Each GxB_subassign function is very similar to its corresponding GrB_assign
 // function in the spec, but they differ in two ways: (1) the mask in
@@ -5184,7 +5177,7 @@ GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
 // GrB_assign: matrix and vector assign: C<Mask>(I,J) = accum (C(I,J), A)
 //==============================================================================
 
-// Assign entries in a matrix or vector; C(I,J) = A in MATLAB notation.
+// Assign entries in a matrix or vector; C(I,J) = A.
 // Each of these can be used with their generic name, GrB_assign.
 
 GB_PUBLIC
@@ -6570,8 +6563,7 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
 // Reduce the entries in a matrix to a vector, a column vector t such that
 // t(i) = sum (A (i,:)), and where "sum" is a commutative and associative
 // monoid with an identity value.  A can be transposed, which reduces down the
-// columns instead of the rows.  This behavior is the transpose of the MATLAB
-// convention, where r=sum(A) produces a row vector and sums each column.
+// columns instead of the rows.
 
 // For GrB_Matrix_reduce_BinaryOp, the GrB_BinaryOp op must correspond to a
 // known built-in monoid:

@@ -39,7 +39,10 @@ function gbdemo2 (bnz)
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 % reset to the default number of threads
-maxNumCompThreads ('automatic') ;
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+if (~have_octave)
+    maxNumCompThreads ('automatic') ;
+end
 GrB.clear ;
 
 nthreads = GrB.threads ;
@@ -85,11 +88,11 @@ for n = 1000:1000:6000
     % do the same assignment in pure MATLAB
     tic
     C (I,J) = A ;
-    matlab_time = toc ;
+    builtin_time = toc ;
 
-    fprintf ('    MATLAB time:    %g sec\n', matlab_time) ;
+    fprintf ('    MATLAB time:    %g sec\n', builtin_time) ;
     fprintf ('    Speedup of GraphBLAS over MATLAB: %g\n', ...
-        matlab_time / gb_time) ;
+        builtin_time / gb_time) ;
 
     % check the result
     tic

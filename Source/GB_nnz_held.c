@@ -20,9 +20,8 @@ int64_t GB_nnz_held
 )
 {
 
-    if (A == NULL || A->magic != GB_MAGIC)
+    if (A == NULL || A->magic != GB_MAGIC || A->x == NULL)
     { 
-GB_GOTCHA ; // A is NULL or not initialized
         // A is NULL or not initialized
         return (0) ;
     }
@@ -31,16 +30,10 @@ GB_GOTCHA ; // A is NULL or not initialized
         // A is sparse or hypersparse
         return (A->p [A->nvec]) ;
     }
-    else if (A->b != NULL || A->x != NULL)
+    else
     { 
         // A is bitmap or full
         return (GB_nnz_full (A)) ;
-    }
-    else
-    { 
-GB_GOTCHA ; // A is empty
-        // A is empty
-        return (0) ;
     }
 }
 

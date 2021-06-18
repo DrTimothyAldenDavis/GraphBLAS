@@ -74,7 +74,7 @@ GrB_Info GB_dense_subassign_05d
     GB_ENSURE_FULL (C) ;    // convert C to full, if sparsity control allows it
     if (C->iso)
     { 
-GB_GOTCHA ;     // C<M>=scalar, C iso full, nothing to do
+// GB_GOTCHA ;     // C<M>=scalar, C iso full, nothing to do (gbtest29)
         // work has already been done by GB_assign_prep
         return (GrB_SUCCESS) ;
     }

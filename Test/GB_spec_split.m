@@ -1,5 +1,5 @@
 function C = GB_spec_split (A, ms, ns)
-%GB_SPEC_SPLIT a MATLAB mimic of GxB_Matrix_split
+%GB_SPEC_SPLIT a mimic of GxB_Matrix_split
 %
 % Usage:
 % C = GB_spec_split (A, ms, ns)

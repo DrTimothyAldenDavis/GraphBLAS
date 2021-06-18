@@ -1,8 +1,8 @@
 function count = fprintf (varargin)
 %FPRINTF Write formatted data to a text file.
-% The GraphBLAS fprintf function is identical to the built-in MATLAB
+% The GraphBLAS fprintf function is identical to the built-in
 % function; this overloaded method simply typecasts any GraphBLAS matrices
-% to MATLAB matrices first, and then calls the builtin fprintf.
+% to built-in matrices first, and then calls the builtin fprintf.
 %
 % See also fprintf, sprintf, GrB/sprintf.
 

@@ -6,7 +6,7 @@ function test48
 
 [save save_chunk] = nthreads_get ;
 chunk = 4096 ;
-nthreads = feature ('numcores') ;
+nthreads = feature_numcores ;
 nthreads_set (nthreads, chunk) ;
 
 % d = struct ('inp1', 'tran', 'inp0', 'tran') ;
@@ -100,7 +100,7 @@ for pp = 0:2
             assert (isequal_roundoff (c0, ch.matrix)) ;
 
             fprintf ('%8d : ', nnz (x)) ;
-            fprintf ('auto: %10.4f dot: %10.4f gus: %10.4f hash: %10.4f MATLAB %10.4f', ...
+            fprintf ('auto: %10.4f dot: %10.4f gus: %10.4f hash: %10.4f builtin %10.4f', ...
                 ta, t, tg, th, t2) ;
             fprintf (' speedup auto: %10.2f dot: %10.2f gus: %10.2f hash: %10.2f\n', ...
                 t2/ta, t2/t, t2/tg, t2/th) ;
@@ -153,7 +153,7 @@ for pp = 0:2
             assert (isequal_roundoff (c0, ch.matrix)) ;
 
             fprintf ('%8d : ', nnz (x)) ;
-            fprintf ('auto: %10.4f dot: %10.4f gus: %10.4f hash: %10.4f MATLAB %10.4f', ...
+            fprintf ('auto: %10.4f dot: %10.4f gus: %10.4f hash: %10.4f builtin %10.4f', ...
                 ta, t, tg, th, t2) ;
             fprintf (' speedup auto: %10.2f dot: %10.2f gus: %10.2f hash: %10.2f\n', ...
                 t2/ta, t2/t, t2/tg, t2/th) ;
@@ -209,7 +209,7 @@ for pp = 0:2
             assert (isequal_roundoff (c0, ch.matrix)) ;
 
             fprintf ('%8d : ', nnz (x)) ;
-            fprintf ('auto: %10.4f dot: %10.4f gus: %10.4f hash: %10.4f MATLAB %10.4f', ...
+            fprintf ('auto: %10.4f dot: %10.4f gus: %10.4f hash: %10.4f builtin %10.4f', ...
                 ta, t, tg, th, t2) ;
             fprintf (' speedup auto: %10.2f dot: %10.2f gus: %10.2f hash: %10.2f\n', ...
                 t2/ta, t2/t, t2/tg, t2/th) ;
@@ -262,7 +262,7 @@ for pp = 0:2
             assert (isequal_roundoff (c0, ch.matrix)) ;
 
             fprintf ('%8d : ', nnz (x)) ;
-            fprintf ('auto: %10.4f dot: %10.4f gus: %10.4f hash: %10.4f MATLAB %10.4f', ...
+            fprintf ('auto: %10.4f dot: %10.4f gus: %10.4f hash: %10.4f builtin %10.4f', ...
                 ta, t, tg, th, t2) ;
             fprintf (' speedup auto: %10.2f dot: %10.2f gus: %10.2f hash: %10.2f\n', ...
                 t2/ta, t2/t, t2/tg, t2/th) ;
@@ -318,7 +318,7 @@ for pp = 0:2
             assert (isequal_roundoff (c0, ch.matrix)) ;
 
             fprintf ('%8d : ', nnz (x)) ;
-            fprintf ('auto: %10.4f dot: %10.4f gus: %10.4f hash: %10.4f MATLAB %10.4f', ...
+            fprintf ('auto: %10.4f dot: %10.4f gus: %10.4f hash: %10.4f builtin %10.4f', ...
                 ta, t, tg, th, t2) ;
             fprintf (' speedup auto: %10.2f dot: %10.2f gus: %10.2f hash: %10.2f\n', ...
                 t2/ta, t2/t, t2/tg, t2/th) ;

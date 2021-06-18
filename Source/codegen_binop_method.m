@@ -47,10 +47,10 @@ switch (binop)
         binop_is_semiring_multiplier = true ;
     case { 'eq', 'iseq', 'ne', 'isne' }
         % these do not appear in complex semirings
-        binop_is_semiring_multiplier = (~contains (xtype, 'FC')) ;
+        binop_is_semiring_multiplier = (~codegen_contains (xtype, 'FC')) ;
     case { 'bor', 'band', 'bxor', 'bxnor' }
         % these operators are used in GB_AxB_*scale for uint* only
-        binop_is_semiring_multiplier = contains (xtype, 'uint') ;
+        binop_is_semiring_multiplier = codegen_contains (xtype, 'uint') ;
     otherwise
         % these operators are not used in GB_AxB_*scale by any builtin semiring
         binop_is_semiring_multiplier = false ;

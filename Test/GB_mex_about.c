@@ -113,80 +113,87 @@ void mexFunction
 
     GrB_Type t ;
 
-    GB_UnaryOp_check (GrB_LNOT, "LNOT", GxB_COMPLETE, stdout) ;
-    GxB_UnaryOp_ztype (&t, GrB_LNOT) ;
-    GB_UnaryOp_check (t, "ztype", GxB_COMPLETE, stdout) ;
-    GxB_UnaryOp_xtype (&t, GrB_LNOT) ;
-    GB_UnaryOp_check (t, "xtype", GxB_COMPLETE, stdout) ;
+    OK (GB_UnaryOp_check (GrB_LNOT, "LNOT", GxB_COMPLETE, stdout)) ;
+    OK (GxB_UnaryOp_ztype (&t, GrB_LNOT)) ;
+    OK (GB_Type_check (t, "ztype", GxB_COMPLETE, stdout)) ;
+    OK (GxB_UnaryOp_xtype (&t, GrB_LNOT)) ;
+    OK (GB_Type_check (t, "xtype", GxB_COMPLETE, stdout)) ;
 
-    GB_UnaryOp_check (GxB_LNOT_FP32, "LNOT_FP32", GxB_COMPLETE, stdout) ;
-    GxB_UnaryOp_ztype (&t, GxB_LNOT_FP32) ;
-    GB_UnaryOp_check (t, "ztype", GxB_COMPLETE, stdout) ;
-    GxB_UnaryOp_xtype (&t, GxB_LNOT_FP32) ;
-    GB_UnaryOp_check (t, "xtype", GxB_COMPLETE, stdout) ;
+    OK (GB_UnaryOp_check (GxB_LNOT_FP32, "LNOT_FP32", GxB_COMPLETE, stdout)) ;
+    OK (GxB_UnaryOp_ztype (&t, GxB_LNOT_FP32)) ;
+    OK (GB_Type_check (t, "ztype", GxB_COMPLETE, stdout)) ;
+    OK (GxB_UnaryOp_xtype (&t, GxB_LNOT_FP32)) ;
+    OK (GB_Type_check (t, "xtype", GxB_COMPLETE, stdout)) ;
 
-    GB_BinaryOp_check (GxB_ISEQ_INT32, "ISEQ_INT32", GxB_COMPLETE, stdout) ;
-    GxB_BinaryOp_ztype (&t, GxB_ISEQ_INT32) ;
-    GB_BinaryOp_check (t, "ztype", GxB_COMPLETE, stdout) ;
-    GxB_BinaryOp_xtype (&t, GxB_ISEQ_INT32) ;
-    GB_BinaryOp_check (t, "xtype", GxB_COMPLETE, stdout) ;
-    GxB_BinaryOp_ytype (&t, GxB_ISEQ_INT32) ;
-    GB_BinaryOp_check (t, "ytype", GxB_COMPLETE, stdout) ;
+    OK (GB_BinaryOp_check (GxB_ISEQ_INT32, "ISEQ_INT32", GxB_COMPLETE, stdout)) ;
+    OK (GxB_BinaryOp_ztype (&t, GxB_ISEQ_INT32)) ;
+    OK (GB_Type_check (t, "ztype", GxB_COMPLETE, stdout)) ;
+    OK (GxB_BinaryOp_xtype (&t, GxB_ISEQ_INT32)) ;
+    OK (GB_Type_check (t, "xtype", GxB_COMPLETE, stdout)) ;
+    OK (GxB_BinaryOp_ytype (&t, GxB_ISEQ_INT32)) ;
+    OK (GB_Type_check (t, "ytype", GxB_COMPLETE, stdout)) ;
 
-    GB_BinaryOp_check (GrB_EQ_INT32, "EQ_INT32", GxB_COMPLETE, stdout) ;
-    GxB_BinaryOp_ztype (&t, GrB_EQ_INT32) ;
-    GB_BinaryOp_check (t, "ztype", GxB_COMPLETE, stdout) ;
-    GxB_BinaryOp_xtype (&t, GrB_EQ_INT32) ;
-    GB_BinaryOp_check (t, "xtype", GxB_COMPLETE, stdout) ;
-    GxB_BinaryOp_ytype (&t, GrB_EQ_INT32) ;
-    GB_BinaryOp_check (t, "ytype", GxB_COMPLETE, stdout) ;
+    OK (GB_BinaryOp_check (GrB_EQ_INT32, "EQ_INT32", GxB_COMPLETE, stdout)) ;
+    OK (GxB_BinaryOp_ztype (&t, GrB_EQ_INT32)) ;
+    OK (GB_Type_check (t, "ztype", GxB_COMPLETE, stdout)) ;
+    OK (GxB_BinaryOp_xtype (&t, GrB_EQ_INT32)) ;
+    OK (GB_Type_check (t, "xtype", GxB_COMPLETE, stdout)) ;
+    OK (GxB_BinaryOp_ytype (&t, GrB_EQ_INT32)) ;
+    OK (GB_Type_check (t, "ytype", GxB_COMPLETE, stdout)) ;
 
     GrB_Monoid m ;
     GrB_BinaryOp op ;
 
-    GrB_Monoid_new_UINT16_(&m, GrB_PLUS_UINT16, (uint16_t) 0) ;
+    OK (GrB_Monoid_new_UINT16_(&m, GrB_PLUS_UINT16, (uint16_t) 0)) ;
     OK (GrB_Monoid_wait_(&m)) ;
-    GB_Monoid_check (m, "plus uint16 monoid", GxB_COMPLETE, stdout) ;
+    OK (GB_Monoid_check (m, "plus uint16 monoid", GxB_COMPLETE, stdout)) ;
     uint16_t id ;
-    GxB_Monoid_identity (&id, m) ;
+    OK (GxB_Monoid_identity (&id, m)) ;
     printf ("id is %d\n", id) ;
-    GxB_Monoid_operator (&op, m) ;
-    GB_Monoid_check (op, "plus op from monoid", GxB_COMPLETE, stdout) ;
+    OK (GxB_Monoid_operator (&op, m)) ;
+    OK (GB_BinaryOp_check (op, "plus op from monoid", GxB_COMPLETE, stdout)) ;
+
+    // mangle the identity
+    void *save_identity = m->identity ;
+    m->identity = NULL ;
+    GrB_Info expected = GrB_INVALID_OBJECT ;
+    ERR (GB_Monoid_check (m, "mangled monoid, no identity", GxB_COMPLETE, stdout)) ;
+    m->identity = save_identity ;
 
     GrB_Monoid_free_(&m) ;
 
     int16_t id0 = INT16_MIN ;
 
     GrB_Monoid_new_INT16_(&m, GrB_MAX_INT16, id0) ;
-    GB_Monoid_check (m, "max int16 monoid", GxB_COMPLETE, stdout) ;
+    OK (GB_Monoid_check (m, "max int16 monoid", GxB_COMPLETE, stdout)) ;
     int16_t id1 ;
-    GxB_Monoid_identity (&id1, m) ;
+    OK (GxB_Monoid_identity (&id1, m)) ;
     printf ("id1 is %d\n", id1) ;
-    GxB_Monoid_operator (&op, m) ;
-    GB_BinaryOp_check (op, "plus op from monoid", GxB_COMPLETE, stdout) ;
+    OK (GxB_Monoid_operator (&op, m)) ;
+    OK (GB_BinaryOp_check (op, "plus op from monoid", GxB_COMPLETE, stdout)) ;
 
     GrB_Semiring sem ;
-    GrB_Semiring_new (&sem, m, GrB_TIMES_INT16) ;
+    OK (GrB_Semiring_new (&sem, m, GrB_TIMES_INT16)) ;
     OK (GrB_Semiring_wait_(&sem)) ;
-    GB_Semiring_check (sem, "\nnew sem", GxB_COMPLETE, stdout) ;
+    OK (GB_Semiring_check (sem, "\nnew sem", GxB_COMPLETE, stdout)) ;
 
     GrB_Monoid mm ;
-    GxB_Semiring_add (&mm, sem) ;
-    GB_Monoid_check (mm, "sem mm", GxB_COMPLETE, stdout) ;
-    GxB_Semiring_multiply (&op, sem) ;
-    GB_BinaryOp_check (op, "sem mult", GxB_COMPLETE, stdout) ;
+    OK (GxB_Semiring_add (&mm, sem)) ;
+    OK (GB_Monoid_check (mm, "sem mm", GxB_COMPLETE, stdout)) ;
+    OK (GxB_Semiring_multiply (&op, sem)) ;
+    OK (GB_BinaryOp_check (op, "sem mult", GxB_COMPLETE, stdout)) ;
 
-    GrB_Monoid_free_(&m) ;
-    GrB_Semiring_free_(&sem) ;
+    OK (GrB_Monoid_free_(&m)) ;
+    OK (GrB_Semiring_free_(&sem)) ;
 
     int64_t *stuff = NULL ;
     int64_t morestuff = 44 ;
     GrB_Matrix Gunk ;
-    GrB_Matrix_new (&Gunk, GrB_FP64, 5, 5) ;
+    OK (GrB_Matrix_new (&Gunk, GrB_FP64, 5, 5)) ;
     info = ack (&morestuff, Gunk) ;
 
-    GxB_Matrix_type (&t, Gunk) ;
-    GB_Type_check (t, "matrix Gunk type is:", GxB_COMPLETE, stdout) ;
+    OK (GxB_Matrix_type (&t, Gunk)) ;
+    OK (GB_Type_check (t, "matrix Gunk type is:", GxB_COMPLETE, stdout)) ;
 
     GrB_Vector victor ;
     GrB_Vector_new (&victor, GrB_UINT32, 43) ;
@@ -211,6 +218,11 @@ void mexFunction
     GxB_Desc_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
     GxB_Desc_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
     GxB_Desc_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ; CHECK (val == GxB_DEFAULT) ;
+
+    GxB_Desc_set (Duh, GxB_SORT, true) ;
+    GB_Descriptor_check (Duh, "\n------------------------------- Duh set sort:",
+        GxB_COMPLETE, stdout) ;
+    GxB_Desc_get (Duh, GxB_SORT, &val) ; printf ("got sort %d\n", val) ; CHECK (val == true) ;
 
     GxB_Desc_set (Duh, GrB_INP0, GrB_TRAN) ;
     GB_Descriptor_check (Duh, "\n------------------------------- Duh set:",
@@ -573,7 +585,7 @@ void mexFunction
     GB_Global_hack_set (1, 99123) ; CHECK (GB_Global_hack_get (1) == 99123) ;
     GB_Global_hack_set (1, hack1) ; CHECK (GB_Global_hack_get (1) == hack1) ;
 
-    GrB_Info expected = GrB_INVALID_VALUE ;
+    expected = GrB_INVALID_VALUE ;
 
     //--------------------------------------------------------------------------
     // GB_pslice

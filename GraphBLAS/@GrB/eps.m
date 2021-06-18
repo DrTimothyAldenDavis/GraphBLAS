@@ -11,7 +11,7 @@ function C = eps (G)
 % FUTURE: GraphBLAS should have a built-in unary operator to
 % compute eps.
 
-% convert to a MATLAB full matrix and use the MATLAB eps:
+% convert to a built-in full matrix and use the built-in eps:
 
 % FUTURE: there should be a sparse version of 'eps'.  C is full because
 % eps (0) is 2^(-1024).

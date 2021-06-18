@@ -66,7 +66,7 @@ void mexFunction
         mexErrMsgTxt ("wathen failed") ;
     }
 
-    // return A to MATLAB
+    // return A
     pargout [0] = GB_mx_Matrix_to_mxArray (&A, "A final", false) ;
 
     FREE_ALL ;

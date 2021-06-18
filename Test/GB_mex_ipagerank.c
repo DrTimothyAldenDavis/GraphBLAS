@@ -57,7 +57,7 @@ void mexFunction
     ipagerank (&P, A) ;
     GB_MEX_TOC ;
 
-    // return iPageRank to MATLAB
+    // return iPageRank
     pargout [0] = mxCreateDoubleMatrix (1, n, mxREAL) ;
     pargout [1] = mxCreateDoubleMatrix (1, n, mxREAL) ;
 

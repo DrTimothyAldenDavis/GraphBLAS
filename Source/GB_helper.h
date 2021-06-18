@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_matlab_helper.h: helper functions for MATLAB interface
+// GB_helper.h: helper functions for @GrB interface
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,18 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// TODO::: move these into the MATLAB interface instead
+// TODO::: move these into the @GrB interface instead
 
-// These functions are only used by the MATLAB interface for
+// These functions are only used by the @GrB interface for
 // SuiteSparse:GraphBLAS.
 
-#ifndef GB_MATLAB_HELPER_H
-#define GB_MATLAB_HELPER_H
+#ifndef GB_HELPER_H
+#define GB_HELPER_H
 
 #include "GB.h"
 
 GB_PUBLIC
-void GB_matlab_helper1              // convert zero-based indices to one-based
+void GB_helper1              // convert zero-based indices to one-based
 (
     double *restrict I_double,   // output array
     const GrB_Index *restrict I, // input array
@@ -26,14 +26,14 @@ void GB_matlab_helper1              // convert zero-based indices to one-based
 ) ;
 
 GB_PUBLIC
-void GB_matlab_helper1i             // convert zero-based indices to one-based
+void GB_helper1i             // convert zero-based indices to one-based
 (
     int64_t *restrict I,         // input/output array
     int64_t nvals                   // size of input/output array
 ) ;
 
 GB_PUBLIC
-bool GB_matlab_helper3              // return true if OK, false on error
+bool GB_helper3              // return true if OK, false on error
 (
     int64_t *restrict List,      // size len, output array
     const double *restrict List_double, // size len, input array
@@ -42,7 +42,7 @@ bool GB_matlab_helper3              // return true if OK, false on error
 ) ;
 
 GB_PUBLIC
-bool GB_matlab_helper3i             // return true if OK, false on error
+bool GB_helper3i             // return true if OK, false on error
 (
     int64_t *restrict List,      // size len, output array
     const int64_t *restrict List_int64, // size len, input array
@@ -51,7 +51,7 @@ bool GB_matlab_helper3i             // return true if OK, false on error
 ) ;
 
 GB_PUBLIC
-bool GB_matlab_helper4              // return true if OK, false on error
+bool GB_helper4              // return true if OK, false on error
 (
     const GrB_Index *restrict I, // array of size len
     const int64_t len,
@@ -59,7 +59,7 @@ bool GB_matlab_helper4              // return true if OK, false on error
 ) ;
 
 GB_PUBLIC
-void GB_matlab_helper5              // construct pattern of S
+void GB_helper5              // construct pattern of S
 (
     GrB_Index *restrict Si,         // array of size anz
     GrB_Index *restrict Sj,         // array of size anz
@@ -72,14 +72,14 @@ void GB_matlab_helper5              // construct pattern of S
 ) ;
 
 GB_PUBLIC
-void GB_matlab_helper7              // Kx = uint64 (0:mnz-1)
+void GB_helper7              // Kx = uint64 (0:mnz-1)
 (
     uint64_t *restrict Kx,       // array of size mnz
     const GrB_Index mnz
 ) ;
 
 GB_PUBLIC
-void GB_matlab_helper8
+void GB_helper8
 (
     GB_void *C,         // output array of size nvals * s
     GB_void *A,         // input scalar of size s
@@ -88,7 +88,7 @@ void GB_matlab_helper8
 ) ;
 
 GB_PUBLIC
-bool GB_matlab_helper9  // true if successful, false if out of memory
+bool GB_helper9  // true if successful, false if out of memory
 (
     GrB_Matrix A,           // input matrix
     int64_t **degree,       // degree of each vector, size nvec
@@ -99,7 +99,7 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
 ) ;
 
 GB_PUBLIC
-double GB_matlab_helper10       // norm (x-y,p), or -1 on error
+double GB_helper10       // norm (x-y,p), or -1 on error
 (
     GB_void *x_arg,             // float or double, depending on type parameter
     bool x_iso,                 // true if x is iso

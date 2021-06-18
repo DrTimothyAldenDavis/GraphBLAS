@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// gblogassign computes the MATLAB logical indexing expression C(M) = A.  The
+// gblogassign computes the built-in logical indexing expression C(M) = A.  The
 // matrices C and M must be the same size.  M is normally logical but it can be
 // of any type in this mexFunction.  M should not have any explicit zeros.  A
 // is a sparse vector of size nnz(M)-by-1.  Scalar expansion is not handled.
@@ -22,10 +22,10 @@
 /*
 
     function C = gblogassign (C, M_input, A)
-    % Computing the MATLAB logical indexing expression C(M) = A in GraphBLAS.
+    % Computing the built-in logical indexing expression C(M) = A in GraphBLAS.
     % A is a sparse vector of size nnz(M)-by-1 (scalar expansion is not
     % handled). M is normally a sparse logical matrix, either GraphBLAS or
-    % MATLAB, but it can be of any type.  C and M have the same size.
+    % built-in, but it can be of any type.  C and M have the same size.
 
     % make sure all matrices are stored by column
     save = GrB.format ;
@@ -65,7 +65,7 @@
 
 // C is always returned as a GrB matrix.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: C = gblogassign (C, M, A)"
 #define ERR "A must be a vector of length nnz(M) for logical indexing, C(M)=A"
@@ -194,7 +194,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // TODO: use a shallow variant of GxB*export to access content of M and A
-    GrB_Index *Ai =            							   
+    GrB_Index *Ai =            							
         (GrB_Index *) A->i ;   	             	 	                 	
     void *Ax = A->x ;          		 	 	 	 	 	
     char nil [16] =            		 	 	 	 	 	
@@ -215,7 +215,7 @@ void mexFunction
 
     GrB_Index *Si = mxMalloc (MAX (anz, 1) * sizeof (GrB_Index)) ;
     GrB_Index *Sj = mxMalloc (MAX (anz, 1) * sizeof (GrB_Index)) ;
-    GB_matlab_helper5 (Si, Sj, Mi, Mj, M->vlen, Ai, A->vlen, anz) ;
+    GB_helper5 (Si, Sj, Mi, Mj, M->vlen, Ai, A->vlen, anz) ;
     GrB_Matrix S = gb_new (atype, nrows, ncols, GxB_BY_COL, 0) ;
 
     if (A->iso)
@@ -366,7 +366,7 @@ void mexFunction
     OK (GrB_Matrix_free (&A_input)) ;
 
     //--------------------------------------------------------------------------
-    // export the output matrix C back to MATLAB as a GraphBLAS matrix
+    // export the output matrix C as a GraphBLAS matrix
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, KIND_GRB) ;

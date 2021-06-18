@@ -19,7 +19,7 @@ I.begin = 0 ;
 I.inc = 1 ;
 I.end = n-1 ;
 
-ncores = feature ('numcores') ;
+ncores = feature_numcores ;
 
 for dc = [0 1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
 

@@ -79,7 +79,7 @@ for d = 0:10
                     identity = logical (id) ;
                     result = GB_mex_reduce_bool (A, op, identity) ;
 
-                    % now compute in MATLAB
+                    % now compute with built-in methods
 
                     % known identity values
                     z = identity ;

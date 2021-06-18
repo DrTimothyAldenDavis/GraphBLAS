@@ -8,11 +8,9 @@
 
 //------------------------------------------------------------------------------
 
-// Compute the cumulative sum of an array count[0:n], of size n+1
-// in pseudo-MATLAB notation:
+// Compute the cumulative sum of an array count[0:n], of size n+1:
 
 //      k = sum (count [0:n-1] != 0) ;
-
 //      count = cumsum ([0 count[0:n-1]]) ;
 
 // That is, count [j] on input is overwritten with the value of

@@ -602,7 +602,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (S_iso)
             { 
-GB_GOTCHA ; // S iso, vector build
+GB_GOTCHA ; // iso vector sort
                 // K_work is NULL; only sort (i)
                 info = GB_msort_1 (I_work, nvals, nthreads) ;
             }
@@ -1141,6 +1141,15 @@ GB_GOTCHA ; // S iso, vector build
         S_work = NULL ;
         (*S_work_handle) = NULL ;
         (*S_work_size_handle) = 0 ;
+
+        int64_t tx_size_required = tnz * tsize ;
+        if (2 * tx_size_required < T->x_size)
+        { 
+            // shrink the size of T->x
+            bool ok = true ;
+            GB_REALLOC (T->x, tx_size_required, GB_void, &(T->x_size), &ok,
+                Context) ;
+        }
 
     }
     else

@@ -13,7 +13,7 @@
 // the Mask is a single row or column in these cases, and C is not modified
 // outside that single row (for GrB_Row_assign) or column (for GrB_Col_assign).
 
-// This function does the same thing as the MATLAB mimic GB_spec_assign.m.
+// This function does the same thing as the mimic GB_spec_assign.m.
 
 //------------------------------------------------------------------------------
 
@@ -485,7 +485,7 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // return C to MATLAB as a struct
+    // return C as a struct
     //--------------------------------------------------------------------------
 
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C assign result", true) ;

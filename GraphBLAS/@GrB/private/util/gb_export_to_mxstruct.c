@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_export_to_mxstruct: export a GrB_Matrix to a MATLAB struct
+// gb_export_to_mxstruct: export a GrB_Matrix to a built-in struct
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 // The input GrB_Matrix A is exported to a GraphBLAS matrix struct G, and freed.
 
-// The input GrB_Matrix A must be deep.  The output is a MATLAB struct
+// The input GrB_Matrix A must be deep.  The output is a built-in struct
 // holding the content of the GrB_Matrix.
 
 // The GraphBLASv4 and v5 structs are identical, except that s has size 9
@@ -17,7 +17,7 @@
 // uniform valued.  If the matrix is uniform-valued, the x array is only
 // large enough to hold a single entry.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 // for hypersparse, sparse, or full matrices
 static const char *MatrixFields [6] =
@@ -45,7 +45,7 @@ static const char *Bitmap_MatrixFields [4] =
 
 //------------------------------------------------------------------------------
 
-mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
+mxArray *gb_export_to_mxstruct  // return exported built-in struct G
 (
     GrB_Matrix *A_handle        // matrix to export; freed on output
 )
@@ -259,7 +259,6 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     { 
         mxSetN (Ax_mx, Ax_size) ;
         void *p = mxGetUint8s (Ax_mx) ; gb_mxfree (&p) ;
-        // printf ("Set Ax %p size %lu\n", Ax, Ax_size) ;
         mxSetUint8s (Ax_mx, Ax) ;
     }
     mxSetFieldByNumber (G, 0, 2, Ax_mx) ;
@@ -295,7 +294,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     }
 
     //--------------------------------------------------------------------------
-    // return the MATLAB struct
+    // return the built-in struct
     //--------------------------------------------------------------------------
 
     return (G) ;

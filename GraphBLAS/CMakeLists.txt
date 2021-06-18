@@ -3,14 +3,14 @@
 #-------------------------------------------------------------------------------
 
 # SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
-# The @GrB MATLAB interface is under the GNU GPLv3 (or later) license.
+# The @GrB interface is under the GNU GPLv3 (or later) license.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# CMakeLists.txt: instructions for cmake to build GraphBLAS for use in MATLAB.
-# This method is required for MATLAB R2021a and following, since that
-# version of MATLAB includes v3.3.3 of GraphBLAS, used by the built-in C=A*B.
-# Using this version of GraphBLAS causes a naming conflict, which this
-# cmake handles.
+# CMakeLists.txt: instructions for cmake to build GraphBLAS for use in
+# Octave/MATLAB.  This method is required for MATLAB R2021a and following,
+# since that version of MATLAB includes v3.3.3 of GraphBLAS, used by the
+# built-in C=A*B.  Using this version of GraphBLAS causes a naming conflict,
+# which this cmake handles.
 
 #-------------------------------------------------------------------------------
 # get the version
@@ -29,7 +29,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "June 11, 2021")
+set ( GraphBLAS_DATE "June 15, 2021")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 1 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -84,7 +84,7 @@ set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 include_directories ( ../Source/Template ../Source ../Source/Generated ../Source/Generator ../Include rename )
 
 #-------------------------------------------------------------------------------
-# compiler options: MATLAB only supports gcc and MS Visual Studio
+# compiler options:
 #-------------------------------------------------------------------------------
 
 # check which compiler is being used.  If you need to make

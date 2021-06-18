@@ -49,9 +49,9 @@ for k2 = 1:length(ops)
             ylimits = [ ] ;
     end
 
-    if (contains (type, 'single'))
+    if (test_contains (type, 'single'))
         tol = 1e-5 ;
-    elseif (contains (type, 'double'))
+    elseif (test_contains (type, 'double'))
         tol = 1e-12 ;
     else
         tol = 0 ;

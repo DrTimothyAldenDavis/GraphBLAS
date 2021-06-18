@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex.h: definitions for the MATLAB interface to GraphBLAS
+// GB_mex.h: definitions for the Test interface to GraphBLAS
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -24,7 +24,7 @@
 
 #include "graphblas_demos.h"
 
-// demos.h use mxMalloc, etc, and so do the MATLAB Test/* mexFunctions,
+// demos.h use mxMalloc, etc, and so do the Test/* mexFunctions,
 // but the tests here need to distinguish between mxMalloc and malloc.
 #undef malloc
 #undef calloc
@@ -57,7 +57,7 @@ void GB_mx_abort (void) ;               // assertion failure
 bool GB_mx_mxArray_to_BinaryOp          // true if successful, false otherwise
 (
     GrB_BinaryOp *op_handle,            // the binary op
-    const mxArray *op_matlab,           // MATLAB version of op
+    const mxArray *op_builtin,          // built-in version of op
     const char *name,                   // name of the argument
     const GrB_Type default_optype,      // default operator type
     const bool user_complex             // if true, use user-defined Complex
@@ -66,7 +66,7 @@ bool GB_mx_mxArray_to_BinaryOp          // true if successful, false otherwise
 bool GB_mx_mxArray_to_UnaryOp           // true if successful
 (
     GrB_UnaryOp *op_handle,             // the unary op
-    const mxArray *op_matlab,           // MATLAB version of op
+    const mxArray *op_builtin,          // built-in version of op
     const char *name,                   // name of the argument
     const GrB_Type default_optype,      // default operator type
     const bool user_complex             // if true, use user-defined Complex
@@ -75,7 +75,7 @@ bool GB_mx_mxArray_to_UnaryOp           // true if successful
 bool GB_mx_mxArray_to_SelectOp          // true if successful
 (
     GxB_SelectOp *handle,               // returns GraphBLAS version of op
-    const mxArray *op_matlab,           // MATLAB version of op
+    const mxArray *op_builtin,          // built-in version of op
     const char *name                    // name of the argument
 ) ;
 
@@ -83,8 +83,8 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
 (
     GrB_BinaryOp *op_handle,        // the binary op
     const GrB_Type default_optype,  // default operator type
-    const mxArray *opname_mx,       // MATLAB string with operator name
-    const mxArray *optype_mx,       // MATLAB string with operator type
+    const mxArray *opname_mx,       // built-in string with operator name
+    const mxArray *optype_mx,       // built-in string with operator type
     const bool user_complex         // if true, use user-defined Complex op
 ) ;
 
@@ -92,26 +92,26 @@ bool GB_mx_string_to_UnaryOp            // true if successful, false otherwise
 (
     GrB_UnaryOp *op_handle,             // the unary op
     const GrB_Type default_optype,      // default operator type
-    const mxArray *opname_mx,           // MATLAB string with operator name
-    const mxArray *optype_mx,           // MATLAB string with operator type
+    const mxArray *opname_mx,           // built-in string with operator name
+    const mxArray *optype_mx,           // built-in string with operator type
     const bool user_complex             // true if X is complex
 ) ;
 
-mxArray *GB_mx_Vector_to_mxArray    // returns the MATLAB mxArray
+mxArray *GB_mx_Vector_to_mxArray    // returns the built-in mxArray
 (
     GrB_Vector *handle,             // handle of GraphBLAS matrix to convert
     const char *name,               // name for error reporting
     const bool create_struct        // if true, then return a struct
 ) ;
 
-mxArray *GB_mx_Matrix_to_mxArray    // returns the MATLAB mxArray
+mxArray *GB_mx_Matrix_to_mxArray    // returns the built-in mxArray
 (
     GrB_Matrix *handle,             // handle of GraphBLAS matrix to convert
     const char *name,
     const bool create_struct        // if true, then return a struct
 ) ;
 
-mxArray *GB_mx_object_to_mxArray    // returns the MATLAB mxArray
+mxArray *GB_mx_object_to_mxArray    // returns the built-in mxArray
 (
     GrB_Matrix *handle,             // handle of GraphBLAS matrix to convert
     const char *name,
@@ -120,7 +120,7 @@ mxArray *GB_mx_object_to_mxArray    // returns the MATLAB mxArray
 
 GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 (
-    const mxArray *A_matlab,            // MATLAB version of A
+    const mxArray *A_builtin,           // built-in version of A
     const char *name,                   // name of the argument
     bool deep_copy,                     // if true, return a deep copy
     const bool empty    // if false, 0-by-0 matrices are returned as NULL.
@@ -129,7 +129,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
 GrB_Vector GB_mx_mxArray_to_Vector     // returns GraphBLAS version of V
 (
-    const mxArray *V_matlab,            // MATLAB version of V
+    const mxArray *V_builtin,           // built-in version of V
     const char *name,                   // name of the argument
     const bool deep_copy,               // if true, return a deep copy
     const bool empty    // if false, 0-by-0 matrices are returned as NULL.
@@ -138,12 +138,12 @@ GrB_Vector GB_mx_mxArray_to_Vector     // returns GraphBLAS version of V
 
 GrB_Type GB_mx_Type                    // returns a GraphBLAS type
 (
-    const mxArray *X                   // MATLAB matrix to query
+    const mxArray *X                   // built-in matrix to query
 ) ;
 
 void GB_mx_mxArray_to_array    // convert mxArray to array
 (
-    const mxArray *Xmatlab,     // input MATLAB array
+    const mxArray *Xbuiltin,    // input built-in array
     // output:
     GB_void **X,                // pointer to numerical values (shallow)
     int64_t *nrows,             // number of rows of X
@@ -155,20 +155,20 @@ int GB_mx_mxArray_to_string // returns length of string, or -1 if S not a string
 (
     char *string,           // size maxlen
     const size_t maxlen,    // length of string
-    const mxArray *S        // MATLAB mxArray containing a string
+    const mxArray *S        // built-in mxArray containing a string
 ) ;
 
 bool GB_mx_mxArray_to_Descriptor    // true if successful, false otherwise
 (
     GrB_Descriptor *handle,         // descriptor to return
-    const mxArray *D_matlab,        // MATLAB struct
+    const mxArray *D_builtin,       // built-in struct
     const char *name                // name of the descriptor
 ) ;
 
 bool GB_mx_mxArray_to_Semiring         // true if successful
 (
     GrB_Semiring *handle,               // the semiring
-    const mxArray *semiring_matlab,     // MATLAB version of semiring
+    const mxArray *semiring_builtin,    // built-in version of semiring
     const char *name,                   // name of the argument
     const GrB_Type default_optype,      // default operator type
     const bool user_complex         // if true, use user-defined Complex op
@@ -188,7 +188,7 @@ GrB_Monoid GB_mx_BinaryOp_to_Monoid // monoid, or NULL if error
 bool GB_mx_mxArray_to_indices       // true if successful, false otherwise
 (
     GrB_Index **handle,             // index array returned
-    const mxArray *I_matlab,        // MATLAB mxArray to get
+    const mxArray *I_builtin,       // built-in mxArray to get
     GrB_Index *ni,                  // length of I, or special
     GrB_Index Icolon [3],           // for all but GB_LIST
     bool *I_is_list                 // true if I is an explicit list
@@ -267,14 +267,14 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
     GrB_Matrix arg2         // second possible alias
 ) ;
 
-mxArray *GB_mx_create_full      // return new MATLAB full matrix
+mxArray *GB_mx_create_full      // return new built-in full matrix
 (
     const GrB_Index nrows,
     const GrB_Index ncols,
     GrB_Type type               // type of the matrix to create
 ) ;
 
-mxArray *GB_mx_Type_to_mxstring        // returns a MATLAB string
+mxArray *GB_mx_Type_to_mxstring        // returns a built-in string
 (
     const GrB_Type type
 ) ;
@@ -417,16 +417,16 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
 // statement coverage
 //------------------------------------------------------------------------------
 
-// GB_cover_get copies GraphBLAS_grbcov from the MATLAB global workspace into
-// the internal GB_cov array.  The MATLAB array is created if it doesn't exist.
-// Thus, to clear the counts simply clear GraphBLAS_grbcov from the MATLAB
-// global workpace.
+// GB_cover_get copies GraphBLAS_grbcov from the built-in global workspace into
+// the internal GB_cov array.  The built-in array is created if it doesn't
+// exist.  Thus, to clear the counts simply clear GraphBLAS_grbcov from the
+// built-in global workpace.
 void GB_cover_get (void) ;
 
-// GB_cover_put copies the internal GB_cov array back into the MATLAB
-// GraphBLAS_grbcov array, for analysis and for subsequent statement counting.
-// This way, multiple tests in MATLAB can be accumulated into a single array
-// of counters.
+// GB_cover_put copies the internal GB_cov array back into the GraphBLAS_grbcov
+// array, for analysis and for subsequent statement counting.  This way,
+// multiple tests in built-in can be accumulated into a single array of
+// counters.
 void GB_cover_put (void) ;
 
 #endif

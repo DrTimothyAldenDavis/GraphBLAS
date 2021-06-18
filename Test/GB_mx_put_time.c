@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mx_put_time: put the time back to the global MATLAB workspace
+// GB_mx_put_time: put the time back to the global workspace
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -14,19 +14,19 @@ double grbtime = 0, tic [2] = {0,0} ;
 void GB_mx_put_time (void)
 {
 
-    // create a MATLAB array with the right size
-    mxArray * grbresults_matlab = GB_mx_create_full (1, 2, GrB_FP64) ;
+    // create a built-in array with the right size
+    mxArray * grbresults_builtin = GB_mx_create_full (1, 2, GrB_FP64) ;
 
-    // copy the time into the MATLAB array
-    double *t = (double *) mxGetData (grbresults_matlab) ;
+    // copy the time into the built-in array
+    double *t = (double *) mxGetData (grbresults_builtin) ;
 
     t [0] = grbtime ;
     t [1] = 0 ;
 
     grbtime = 0 ;
 
-    // put the MATLAB array into the global workspace, overwriting the
+    // put the built-in array into the global workspace, overwriting the
     // version that was already there
-    mexPutVariable ("global", "GraphBLAS_results", grbresults_matlab) ;
+    mexPutVariable ("global", "GraphBLAS_results", grbresults_builtin) ;
 }
 

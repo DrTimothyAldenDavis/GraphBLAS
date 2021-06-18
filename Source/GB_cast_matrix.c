@@ -55,7 +55,7 @@ void GB_cast_matrix         // copy or typecast the values from A into C
 
         if (A->iso)
         { 
-GB_GOTCHA ; // A iso, ctype == atype (just memcpy)
+            // A iso, ctype == atype
             memcpy (C->x, A->x, C->type->size) ;
         }
         else

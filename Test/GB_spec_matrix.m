@@ -1,5 +1,5 @@
 function Cout = GB_spec_matrix (Cin, identity)
-%GB_SPEC_MATRIX a MATLAB mimic that conforms a matrix to the GraphBLAS spec
+%GB_SPEC_MATRIX a mimic that conforms a matrix to the GraphBLAS spec
 %
 % Cout = GB_spec_matrix (Cin)
 % Cout = GB_spec_matrix (Cin, identity)
@@ -32,9 +32,7 @@ function Cout = GB_spec_matrix (Cin, identity)
 % identity.
 %
 % The matrix is typecast to Cout.class using the typecasting GraphBLAS
-% typecasting rules, which differ from MATLAB's rules, particular for integer
-% types.  Since MATLAB can only represent 'logical' and 'double' sparse
-% matries, the matrix is converted to full.
+% typecasting rules.
 %
 % Converting a matrix from sparse to full is not part of the GraphBLAS spec, of
 % course.  Neither is the identity value a part of the matrix structure in
@@ -46,13 +44,13 @@ function Cout = GB_spec_matrix (Cin, identity)
 % the implicit zero, with a change to the GraphBLAS data structure for the
 % matrix.
 %
-% However, MATLAB only supports logical, double, and double complex
-% sparse matrices, so to the MATLAB mimic functions GB_spec_* operate only on
-% dense matrices.  When a MATLAB sparse matrix is converted into a dense matrix,
+% However, built-in methods only support logical, double, and double complex
+% sparse matrices, so to the mimic functions GB_spec_* operate only on dense
+% matrices.  When a built-in sparse matrix is converted into a dense matrix,
 % the entries not in the pattern must be set to an explicit value: the
 % addititive identity.
 %
-% The MATLAB mimic routines, GB_spec_* are written almost purely in M, and
+% The mimic routines, GB_spec_* are written almost purely in M, and
 % do not call GraphBLAS functions (with the exception of typecasting and
 % operators).  They always return a stuct C with a dense C.matrix, a
 % pattern C.pattern and type C.class.

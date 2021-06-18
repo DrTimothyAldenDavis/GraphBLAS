@@ -43,7 +43,7 @@ assert (istril (C)) ;
 types = gbtest_types ;
 for k = 1:length (types)
     type = types {k} ;
-    if (contains (type, 'complex') || isequal (type, 'logical'))
+    if (gb_contains (type, 'complex') || isequal (type, 'logical'))
         continue ;
     end
     I = GrB ([1 2], type) ;

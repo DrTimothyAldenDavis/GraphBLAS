@@ -88,13 +88,11 @@ GB_iso_code GB_iso_unop_code
         }
         else if (binop_bind1st)
         { 
-GB_GOTCHA ; // C = op2 (scalar, A), iso
             // C = op2 (scalar, A)
             return (GB_ISO_OP2_SA) ;
         }
         else
         { 
-GB_GOTCHA ; // C = op2 (A, scalar), iso
             // C = op2 (A, scalar)
             return (GB_ISO_OP2_AS) ;
         }

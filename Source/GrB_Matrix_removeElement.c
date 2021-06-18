@@ -161,7 +161,7 @@ GrB_Info GrB_Matrix_removeElement
         else
         { 
             // C is sparse or hypersparse, and jumbled
-            GB_OK (GB_wait (C, "C", Context)) ;
+            GB_OK (GB_wait (C, "C (removeElement:jumbled)", Context)) ;
         }
         ASSERT (!GB_IS_FULL (C)) ;
         ASSERT (!GB_ZOMBIES (C)) ;
@@ -236,7 +236,7 @@ GrB_Info GrB_Matrix_removeElement
         GrB_Info info ;
         GB_WHERE (C, GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Matrix_removeElement") ;
-        GB_OK (GB_wait (C, "C", Context)) ;
+        GB_OK (GB_wait (C, "C (removeElement:pending tuples)", Context)) ;
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_JUMBLED (C)) ;
         ASSERT (!GB_PENDING (C)) ;

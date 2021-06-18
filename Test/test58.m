@@ -12,7 +12,7 @@ fprintf ('\ntest58: ----- quick performance for GB_mex_Matrix_eWiseAdd\n') ;
 
 [save save_chunk] = nthreads_get ;
 chunk = 4096 ;
-nthreads = feature ('numcores') ;
+nthreads = feature_numcores ;
 nthreads_set (nthreads, chunk) ;
 
 
@@ -34,7 +34,7 @@ if (~cover)
     t2 = grbresults ;
     assert (isequal (C2.matrix,  C))
 
-    fprintf ('MATLAB: %g GB: %g  speedup: %g\n', t1, t2, t1/t2) ;
+    fprintf ('built-in: %g GB: %g  speedup: %g\n', t1, t2, t1/t2) ;
 end
 
 if (cover)
@@ -78,7 +78,7 @@ for m = nn
         assert (isequal (C1, C2.matrix)) ;
 
         fprintf ('A+B:   ') ;
-        fprintf ('m %6d n %6d nz %8d: MATLAB %8.4f GrB %8.4f', ...
+        fprintf ('m %6d n %6d nz %8d: built-in %8.4f GrB %8.4f', ...
             m, n, nnz (C1), t1, t2) ;
         % fprintf (' Cs: %8.4f', t3) ;
         fprintf (' speedup %g\n', t1/t2) ;
@@ -99,7 +99,7 @@ for m = nn
         assert (isequal (C1, C2.matrix)) ;
 
         fprintf ('A+B'':  ') ;
-        fprintf ('m %6d n %6d nz %8d: MATLAB %8.4f GrB %8.4f', ...
+        fprintf ('m %6d n %6d nz %8d: built-in %8.4f GrB %8.4f', ...
             m, n, nnz (C1), t1, t2) ;
         % fprintf (' Cs: %8.4f', t3) ;
         fprintf (' speedup %g\n', t1/t2) ;
@@ -120,7 +120,7 @@ for m = nn
         assert (isequal (C1, C2.matrix)) ;
 
         fprintf ('A''+B:  ') ;
-        fprintf ('m %6d n %6d nz %8d: MATLAB %8.4f GrB %8.4f', ...
+        fprintf ('m %6d n %6d nz %8d: built-in %8.4f GrB %8.4f', ...
             m, n, nnz (C1), t1, t2) ;
         % fprintf (' Cs: %8.4f', t3) ;
         fprintf (' speedup %g\n', t1/t2) ;
@@ -141,7 +141,7 @@ for m = nn
         assert (isequal (C1, C2.matrix)) ;
 
         fprintf ('A''+B'': ') ;
-        fprintf ('m %6d n %6d nz %8d: MATLAB %8.4f GrB %8.4f', ...
+        fprintf ('m %6d n %6d nz %8d: built-in %8.4f GrB %8.4f', ...
             m, n, nnz (C1), t1, t2) ;
         % fprintf (' Cs: %8.4f', t3) ;
         fprintf (' speedup %g\n', t1/t2) ;

@@ -155,7 +155,7 @@ void mexFunction
     GB_Global_malloc_debug_set (save) ;
 
     //--------------------------------------------------------------------------
-    // return C to MATLAB as a MATLAB sparse matrix
+    // return C as a built-in sparse matrix
     //--------------------------------------------------------------------------
 
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C mex_edit result", false) ;

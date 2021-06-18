@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// This is for testing only.  See GrB_mxm instead.  Returns a plain MATLAB
+// This is for testing only.  See GrB_mxm instead.  Returns a plain built-in
 // matrix, in double.
 
 #include "GB_mex.h"
@@ -286,7 +286,7 @@ void mexFunction
         METHOD (axb (Context)) ;
     }
 
-    // return C to MATLAB
+    // return C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AxB result", false) ;
 
     FREE_ALL ;

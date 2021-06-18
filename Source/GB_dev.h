@@ -29,7 +29,7 @@
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
 // (GraphBLAS will be exceedingly slow; this is for development only)
-#define GB_DEBUG
+// #define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1.
@@ -51,13 +51,25 @@
 // 
 // For PageRank:
 // 
-// TODO::: iso matrices/vectors (for r(:)=teleport)
+// FIXME iso matrices/vectors (for r(:)=teleport)
 //      probably coupled with lazy malloc/free of A->x when converting from
 //      full (non-iso) to iso.
 //
 // FUTURE:
-//      need aggressive exploit of non-blocking mode, for x = sum (abs (t-r)),
-//      or GrB_vxv dot product, with PLUS_ABSDIFF semiring
+//      add binary operators:
+//          DIFF1(x,y) = abs(x-y), for all types
+//          DIFF2(x,y) = (x-y)^2 for real types, (x-y)*conj(x-y) for complex
+//      to compute x = sum (abs (t-r)), with PLUS_DIFF1 semiring
+//
+//          1-norm of a x-y:  PLUS_DIFF1 with GxB_vtxv
+//          2-norm of a x-y:  PLUS_DIFF2 with GxB_vtxv, the sqrt of the scalar
+//          +inf-norm of a x-y:  MAX_DIFF1 with GxB_vtxv
+//          -inf-norm of a x-y:  MIN_DIFF1 with GxB_vtxv
+//
+//      to compute these for just a vector x, use y as all-zero iso full
+//
+//      GxB_vtxv : inner product of 2 vectors, result is a GxB_Scalar
+//      GxB_vxvt : outer product of 2 vectors, result is a GrB_Matrix
 //
 // For BC:
 //  FUTURE: BC: constructing S will be faster with iso matrices,

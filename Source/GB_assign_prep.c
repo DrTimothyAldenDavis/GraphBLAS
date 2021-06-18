@@ -755,7 +755,7 @@ GrB_Info GB_assign_prep
 
     // A side benefit of this pre-sort is that it ensures that the results of
     // GrB_assign and GxB_subassign are completely defined if I and J have
-    // duplicates.  The definition of this pre-sort is given in MATLAB below.
+    // duplicates.  The definition of this pre-sort is given below.
 
     /*
         function C = subassign (C, I, J, A)
@@ -780,7 +780,7 @@ GrB_Info GB_assign_prep
     */
 
     // With this subassign script, the result returned by GB_subassigner
-    // matches the behavior in MATLAB, so the following holds:
+    // matches the following behavior:
 
     /*
         C4 = C ;
@@ -789,8 +789,7 @@ GrB_Info GB_assign_prep
         assert (isequal (C4, C3)) ;
     */
 
-    // That is, the pre-sort of I, J, and A has no effect on the final C, in
-    // MATLAB.
+    // That is, the pre-sort of I, J, and A has no effect on the final C.
 
     // The pre-sort itself takes additional work and memory space, but it may
     // actually improve the performance since it makes the data access of C

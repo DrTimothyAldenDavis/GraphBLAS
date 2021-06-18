@@ -9,7 +9,7 @@
 
 #include "GB.h"
 
-GB_PUBLIC                       // used by the MATLAB interface
+GB_PUBLIC
 bool GB_is_shallow              // true if any component of A is shallow
 (
     GrB_Matrix A                // matrix to query
@@ -18,7 +18,6 @@ bool GB_is_shallow              // true if any component of A is shallow
 
     if (A == NULL)
     { 
-GB_GOTCHA ; // a NULL pointer is not shallow
         // a NULL pointer is not shallow
         return (false) ;
     }

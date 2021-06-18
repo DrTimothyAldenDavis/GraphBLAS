@@ -10,5 +10,5 @@ function s = isreal (G)
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 G = G.opaque ;
-s = ~contains (gbtype (G), 'complex') ;
+s = ~gb_contains (gbtype (G), 'complex') ;
 

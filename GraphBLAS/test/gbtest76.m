@@ -232,9 +232,9 @@ function gbtest76b (A, B, G, H, tol)
     err = norm (C1-C2, 1) ;
     assert (err < tol) ;
 
-    if (contains (GrB.type (G), 'double'))
-        % MATLAB cannot compute spfun for single;
-        % MATLAB and GraphBLAS can't do this for int*
+    if (gb_contains (GrB.type (G), 'double'))
+        % built-in methods cannot compute spfun for single;
+        % built-in methods and GraphBLAS can't do this for int*
         C1 = spfun ('cos', A) ;
         C2 = spfun ('cos', G) ;
         err = norm (C1-C2, 1) ;

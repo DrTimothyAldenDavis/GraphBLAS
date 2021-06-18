@@ -1,14 +1,10 @@
 function gbcovmake
-%GBCOVMAKE compile the MATLAB interface for statement coverage testing
+%GBCOVMAKE compile the interface for statement coverage testing
 %
 % See also: gbcover, gbcov_edit
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
-
-if verLessThan ('matlab', '9.4')
-    error ('MATLAB 9.4 (R2018a) or later is required') ;
-end
 
 warning ('off', 'MATLAB:MKDIR:DirectoryExists') ;
 mkdir ('tmp/@GrB/') ;
@@ -42,12 +38,12 @@ count = gbcov_edit (ufiles, count, 'tmp/@GrB/util') ;
 
 % create the gbfinish.c file and place in tmp/@GrB/util
 f = fopen ('tmp/@GrB/util/gbcovfinish.c', 'w') ;
-fprintf (f, '#include "gb_matlab.h"\n') ;
+fprintf (f, '#include "gb_interface.h"\n') ;
 fprintf (f, 'int64_t gbcov [GBCOV_MAX] ;\n') ;
 fprintf (f, 'int gbcov_max = %d ;\n', count) ;
 fclose (f) ;
 
-% compile the modified MATLAB interface
+% compile the modified interface
 
 % use -R2018a for the new interleaved complex API
 flags = '-g -R2018a -DGBCOV' ;

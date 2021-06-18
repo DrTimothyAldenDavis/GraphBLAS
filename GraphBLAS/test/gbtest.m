@@ -1,9 +1,9 @@
 function gbtest
-%GBTEST test GraphBLAS MATLAB interface
+%GBTEST test GraphBLAS
 % First compile the GraphBLAS library by typing 'make' in the top-level
 % GraphBLAS folder, in your system shell.  That statement will use cmake to
 % compile GraphBLAS.  Use 'make JOBS=40' to compile in parallel (replace '40'
-% with the number of cores in your system).  Next, do the following in MATLAB:
+% with the number of cores in your system).  Next, do the following:
 %
 % Example:
 %
@@ -11,21 +11,16 @@ function gbtest
 %   addpath (pwd) ;
 %   savepath ;          % if this fails, edit your startup.m file
 %   cd @GrB/private
-%   gbmake ;            % compile the MATLAB interface to GraphBLAS
+%   gbmake ;            % compile the interface to GraphBLAS
 %   cd ../../test
 %   gbtest              % run this test
-%
-% NOTE: All lines of all m-files are covered by this test, but the MATLAB
-% profiler shows that some lines are untested.  All of these 'untested' lines
-% are end statements that appear after an error ('...') statement, so they are
-% not reachable.
 %
 % See also GrB.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-% gbtest3 requires ../demo/dnn_matlab.m and ../demo/dnn_mat2gb.m.
+% gbtest3 requires ../demo/dnn_builtin.m and ../demo/dnn_builtin2gb.m.
 demo_folder = fullfile (fileparts (mfilename ('fullpath')), '../demo') ;
 addpath (demo_folder) ;
 rng ('default') ;
@@ -141,7 +136,10 @@ gbtest96  % test GrB.optype
 gbtest00  % test GrB.bfs and plot (graph (G))
 
 % restore default # of threads
-maxNumCompThreads ('automatic') ;
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+if (~have_octave)
+    maxNumCompThreads ('automatic') ;
+end
 GrB.clear
 
 fprintf ('\ngbtest: all tests passed\n') ;

@@ -12,7 +12,7 @@
 // gbbinopinfo (binop)
 // gbbinopinfo (binop, type)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: GrB.binopinfo (binop) or GrB.binopinfo (binop,type)"
 

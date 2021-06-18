@@ -26,7 +26,7 @@ I.begin = 0 ;
 I.inc = 1 ;
 I.end = k-1 ;
 
-ncores = feature ('numcores') ;
+ncores = feature_numcores ;
 
 % warmup
 C1 = C0 ;
@@ -54,7 +54,7 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
         t1 = tg ;
     end
 
-    fprintf ('%3d : MATLAB: %10.4f GB: %10.4f speedup %10.4f %10.4f\n', ...
+    fprintf ('%3d : built-in: %10.4f GB: %10.4f speedup %10.4f %10.4f\n', ...
         nthreads, tm, tg, tm / tg, t1/tg) ;
 
     assert (isequal (C1, C2.matrix)) ;
@@ -88,7 +88,7 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
         t1 = tg ;
     end
 
-    fprintf ('%3d : MATLAB: %10.4f GB: %10.4f speedup %10.4f %10.4f\n', ...
+    fprintf ('%3d : built-in: %10.4f GB: %10.4f speedup %10.4f %10.4f\n', ...
         nthreads, tm, tg, tm / tg, t1/tg) ;
 
     assert (isequal (B1, B2.matrix)) ;

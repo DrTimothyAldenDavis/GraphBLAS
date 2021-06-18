@@ -1,6 +1,6 @@
-% SuiteSparse/GraphBLAS/GraphBLAS/test: testing GraphBLAS MATLAB interface
+% SuiteSparse/GraphBLAS/GraphBLAS/test: testing GraphBLAS interface
 %
-%  gbtest    - test GraphBLAS MATLAB interface
+%  gbtest    - test GraphBLAS interface
 %
 %  gbtest0   - test GrB.clear
 %  gbtest1   - test GrB
@@ -114,7 +114,7 @@
 %  gbtest_eq      - tests if A and B are equal, after dropping zeros.
 %  gbtest_perf1   - test A*x performance
 %  gbtest_perf2   - test A'*x performance
-%  gbtest_cast    - cast a MATLAB matrix to another type.
+%  gbtest_cast    - cast a built-in matrix to another type.
 %  gbtest_complex - return list of complex operators
 %  gbtest_err     - compare two matrices
 

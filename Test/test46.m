@@ -8,7 +8,7 @@ fprintf ('\n--------------performance test GB_mex_subassign\n') ;
 
 [save save_chunk] = nthreads_get ;
 chunk = 4096 ;
-nthreads = feature ('numcores') ;
+nthreads = feature_numcores ;
 nthreads_set (nthreads, chunk) ;
 debug_off
 
@@ -88,7 +88,7 @@ I = randperm (m,ni) ;
 J = randperm (n,nj) ;
 fprintf ('nnzB: %g\n', nnz (B)) ;
 
-fprintf ('\nC(I,J)=B, MATLAB start:\n')
+fprintf ('\nC(I,J)=B, builtin start:\n')
 tic
 C (I,J) = B ;
 toc
@@ -116,7 +116,7 @@ end
 C = A ;
 C (1,1) = 1 ;
 
-fprintf ('\nC(I,J)+=B, MATLAB start:\n')
+fprintf ('\nC(I,J)+=B, builtin start:\n')
 tic
 C (I,J) = C (I,J) + B ;
 toc

@@ -66,7 +66,7 @@ for m = [1 5 10 ]
             for k = 1:length (complex_unary)
                 op = complex_unary {k} ;
                 C1 = GrB.apply (op, A) ;
-                % try MATLAB
+                % try built-in methods
                 switch (op)
                     case { 'minv' }
                         C2 = 1./A ;
@@ -112,7 +112,7 @@ for m = [1 5 10 ]
                         continue
                     end
                     C1 = GrB.emult (op, A, B) ;
-                    % try MATLAB
+                    % try built-in methods
                     switch (op)
                         case { '1st' }
                             C2 = A ;

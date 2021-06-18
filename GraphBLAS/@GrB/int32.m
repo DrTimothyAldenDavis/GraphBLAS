@@ -1,8 +1,7 @@
 function C = int32 (G)
-%INT32 cast a GraphBLAS matrix to MATLAB full int32 matrix.
-% C = int32 (G) typecasts the GrB matrix G to a MATLAB full int32 matrix.
-% The result C is full since MATLAB does not support sparse int32
-% matrices.
+%INT32 cast a GraphBLAS matrix to built-in full int32 matrix.
+% C = int32 (G) typecasts the GrB matrix G to a built-in full int32 matrix.
+% The result C is full since sparse int32 matrices are not built-in.
 %
 % To typecast the matrix G to a GraphBLAS sparse int32 matrix instead,
 % use C = GrB (G, 'int32').
@@ -15,5 +14,5 @@ function C = int32 (G)
 
 G = G.opaque ;
 desc.kind = 'full' ;
-C = gbfull (G, 'int32', int32 (0), desc) ;      % export as a MATLAB full matrix
+C = gbfull (G, 'int32', int32 (0), desc) ;      % export as a full matrix
 

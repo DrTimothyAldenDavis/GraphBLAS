@@ -1,6 +1,8 @@
-% FIXME
-% function test200
+function test200
 %TEST200 test iso full matrix multiply
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
 

@@ -11,7 +11,7 @@
 #define GB_SUBREF_H
 #include "GB_ij.h"
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 (
     // output
