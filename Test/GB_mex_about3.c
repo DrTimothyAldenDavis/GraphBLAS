@@ -47,7 +47,7 @@ void mexFunction
 {
 
     GrB_Info info ;
-    GrB_Matrix C = NULL ;
+    GrB_Matrix C = NULL, A = NULL, M = NULL ;
     GrB_Vector w = NULL ;
     GrB_Type myint = NULL, myblob = NULL ;
     GB_void *Null = NULL ;
@@ -182,6 +182,7 @@ void mexFunction
     ERR (GxB_Vector_build_Scalar (w, I, scalar, 4)) ;
     OK (GrB_error (&s, w)) ;
     printf ("expected error: [%s]\n", s) ;
+    GrB_Vector_free_(&w) ;
 
     //--------------------------------------------------------------------------
     // build error handling
@@ -208,6 +209,8 @@ void mexFunction
     OK (GrB_error (&s, C)) ;
     printf ("expected error: [%s]\n", s) ;
     GrB_Matrix_free_(&C) ;
+    GxB_Scalar_free_(&scalar) ;
+    GrB_Type_free_(&myint) ;
 
     //--------------------------------------------------------------------------
     // import/export
@@ -266,7 +269,7 @@ void mexFunction
     OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols,
         &Ap, &Ah, &Ai, &Ax,
         Ap_size, Ah_size, Ai_size, Ax_size, iso, nvec, jumbled, NULL)) ;
-    OK (GxB_Matrix_fprint (C, "C imported hyper", GxB_COMPLETE, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C imported hyper", GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&C) ;
 
     OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
@@ -279,7 +282,20 @@ void mexFunction
 
     OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols, &Ap, &Ai, &Ax,
         Ap_size, Ai_size, Ax_size, false, jumbled, NULL)) ;
-    OK (GxB_Matrix_fprint (C, "C imported non-iso", GxB_COMPLETE, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C imported non-iso", GxB_SHORT, NULL)) ;
+    OK (GrB_Matrix_free_(&C)) ;
+
+    // export as CSC iso
+    OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
+    OK (GrB_Matrix_assign_FP32 (C, NULL, NULL, 1, GrB_ALL, 10, GrB_ALL, 10,
+        NULL)) ;
+    OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &Ap, &Ai, &Ax,
+        &Ap_size, &Ai_size, &Ax_size, &iso, &jumbled, NULL)) ;
+
+    // import as CSC iso
+    OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols, &Ap, &Ai, &Ax,
+        Ap_size, Ai_size, Ax_size, iso, jumbled, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C imported iso", GxB_SHORT, NULL)) ;
     OK (GrB_Matrix_free_(&C)) ;
 
     //--------------------------------------------------------------------------
@@ -309,7 +325,7 @@ void mexFunction
         }
     }
     OK (GrB_Matrix_wait (&C)) ;
-    OK (GxB_Matrix_fprint (C, "C blob", GxB_COMPLETE, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C blob", GxB_SHORT, NULL)) ;
 
     for (int i = 0 ; i < 4 ; i++)
     {
@@ -346,7 +362,6 @@ void mexFunction
                 printf ("Tile(%d,%d) = [%d, %d, %d, %d]\n", i, j,
                     blob_scalar.blob [0], blob_scalar.blob [1],
                     blob_scalar.blob [2], blob_scalar.blob [3]) ;
-
                 CHECK (blob_scalar.blob [0] == i + istart) ;
                 CHECK (blob_scalar.blob [1] == j + jstart) ;
                 CHECK (blob_scalar.blob [2] == 32) ;
@@ -397,7 +412,12 @@ void mexFunction
     OK (GxB_Matrix_fprint (C, "C blob jumbled", GxB_COMPLETE, NULL)) ;
     OK (GrB_Matrix_wait (&C)) ;
     OK (GxB_Matrix_fprint (C, "C blob wait", GxB_COMPLETE, NULL)) ;
+
+    // converting a non-iso matrix to non-iso does nothing
+    OK (GB_convert_any_to_non_iso (C, true, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C blob non iso", GxB_COMPLETE, NULL)) ;
     GrB_Matrix_free_(&C) ;
+    GrB_Type_free_(&myblob) ;
 
     //--------------------------------------------------------------------------
     // setElement
@@ -406,19 +426,72 @@ void mexFunction
     OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
     OK (GrB_Matrix_assign_FP32 (C, NULL, NULL, 1, GrB_ALL, 10, GrB_ALL, 10,
         NULL)) ;
-    OK (GxB_Matrix_fprint (C, "C iso full", GxB_COMPLETE, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C iso full", GxB_SHORT, NULL)) ;
     OK (GrB_Matrix_setElement_FP32 (C, 2, 0, 0)) ;
-    OK (GxB_Matrix_fprint (C, "C non-iso full", GxB_COMPLETE, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C non-iso full", GxB_SHORT, NULL)) ;
+    GrB_Matrix_free_(&C) ;
+
+    //--------------------------------------------------------------------------
+    // assign_prep: wait if iso property of C is changing
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
+    OK (GrB_Matrix_new (&A, GrB_FP32, 4, 4)) ;
+    OK (GrB_Matrix_assign_FP32 (A, NULL, NULL, 1, GrB_ALL, 4, GrB_ALL, 4,
+        NULL)) ;
+    OK (GxB_Matrix_fprint (A, "A iso", GxB_SHORT, NULL)) ;
+    OK (GrB_Matrix_assign (C, NULL, NULL, A, I, 4, I, 4, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C iso with pending", GxB_SHORT, NULL)) ;
+    GrB_Matrix_free_(&A) ;
+
+    OK (GrB_Matrix_new (&A, GrB_FP32, 2, 2)) ;
+    OK (GrB_Matrix_setElement_FP32 (A, 1.1, 0, 0)) ;
+    OK (GrB_Matrix_setElement_FP32 (A, 1.2, 0, 1)) ;
+    OK (GrB_Matrix_setElement_FP32 (A, 2.1, 1, 0)) ;
+    OK (GrB_Matrix_setElement_FP32 (A, 2.2, 1, 1)) ;
+    OK (GxB_Matrix_fprint (A, "A non-iso", GxB_SHORT, NULL)) ;
+    OK (GrB_Matrix_assign (C, NULL, NULL, A, I, 2, I, 2, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C non-iso", GxB_SHORT, NULL)) ;
+
+    GrB_Matrix_free_(&A) ;
+    GrB_Matrix_free_(&C) ;
+
+    //--------------------------------------------------------------------------
+    // iso masker
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&C, GrB_FP32, 100, 100)) ;
+    OK (GrB_Matrix_new (&M, GrB_BOOL, 100, 100)) ;
+    OK (GrB_Matrix_setElement_BOOL (M, true, 0, 0)) ;
+    OK (GrB_Matrix_setElement_BOOL (M, true, 1, 0)) ;
+    OK (GrB_Matrix_assign_FP32 (C, M, NULL, 1, GrB_ALL, 100, GrB_ALL, 100,
+        NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C iso", GxB_SHORT, NULL)) ;
+
+    OK (GrB_Matrix_new (&A, GrB_FP32, 100, 100)) ;
+    OK (GrB_Matrix_clear (M)) ;
+    OK (GrB_Matrix_setElement_BOOL (M, true, 0, 2)) ;
+    OK (GrB_Matrix_setElement_BOOL (M, true, 1, 2)) ;
+    OK (GrB_Matrix_assign_FP32 (A, M, NULL, 1, GrB_ALL, 100, GrB_ALL, 100,
+        NULL)) ;
+    OK (GxB_Matrix_fprint (C, "A iso", GxB_SHORT, NULL)) ;
+
+    // C<M>=op(A)
+    OK (GrB_Matrix_apply (C, M, NULL, GrB_ABS_FP32, A, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C iso, C<M>=op(A)", GxB_SHORT, NULL)) ;
+
+    GrB_Matrix_free_(&M) ;
+    GrB_Matrix_free_(&A) ;
+    GrB_Matrix_free_(&C) ;
+
+    //--------------------------------------------------------------------------
+    // iso setElement
+    //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
     // wrapup
     //--------------------------------------------------------------------------
 
-    GxB_Scalar_free_(&scalar) ;
-    GrB_Vector_free_(&w) ;
-    GrB_Matrix_free_(&C) ;
-    GrB_Type_free_(&myint) ;
-    GrB_Type_free_(&myblob) ;
     GB_mx_put_global (true) ;   
     fclose (f) ;
     printf ("\nGB_mex_about3: all tests passed\n\n") ;

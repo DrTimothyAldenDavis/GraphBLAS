@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_binop_flip:  flip a binary multiply operator in a semiring
+// GB_flip_opcode:  flip a binary multiply operator in a semiring
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -11,12 +11,10 @@
 // This function is only used for semirings, for matrix-matrix multiply.
 // It is not used for GrB_apply or GrB_eWise*.
 
-// TODO: rename this to GB_flip_opcode
-
 #include "GB.h"
 #include "GB_binop.h"
 
-GB_Opcode GB_binop_flip     // flipped opcode, or -1 on error
+GB_Opcode GB_flip_opcode    // flipped opcode, or -1 on error
 (
     GB_Opcode opcode,       // opcode to flip
     bool *handled           // true if opcode is handled by flipping the opcode

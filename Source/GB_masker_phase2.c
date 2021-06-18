@@ -166,7 +166,6 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     #define GB_PHASE_2_OF_2
     if (R_iso)
     { 
-GB_GOTCHA ; // iso mask: R is iso
         GBURBLE ("(iso mask) ") ;
         #define GB_ISO_MASKER
         memcpy (R->x, C->x, C->type->size) ;

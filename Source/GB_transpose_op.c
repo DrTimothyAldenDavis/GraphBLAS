@@ -14,8 +14,8 @@
 // output typecasting done with the output of the operator.
 
 // If the op is positional, it has been replaced with the unary op
-// GxB_ONE_INT64, as a placeholder.  The true op (either op1 or op2) is applied
-// later, in GB_transpose.
+// GxB_ONE_INT64, as a placeholder, and C_code_iso is GB_ISO_1.  The true op
+// (either op1 or op2) is applied later, in GB_transpose.
 
 // If A is sparse or hypersparse
 //      The pattern of C is constructed.  C is sparse.
@@ -112,13 +112,12 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
 
         #ifndef GBCOMPACT
         if ((Atype == op1->xtype)
-            || (opcode == GB_IDENTITY_opcode) 
-            || (opcode == GB_ONE_opcode))       // TODO::: remove
+            || (opcode == GB_IDENTITY_opcode))
         { 
 
-            // The switch factory is used if the op1 is IDENTITY or ONE, or if
-            // no typecasting is being done.
-            // The IDENTITY operator can do arbitrary typecasting.
+            // The switch factory is used if the op1 is IDENTITY, or if no
+            // typecasting is being done.  The IDENTITY operator can do
+            // arbitrary typecasting.
 
             //------------------------------------------------------------------
             // define the worker for the switch factory

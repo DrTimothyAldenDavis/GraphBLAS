@@ -80,7 +80,7 @@
         { 
             // flip a positional multiplicative operator
             bool handled ;
-            opcode = GB_binop_flip (opcode, &handled) ; // for positional ops
+            opcode = GB_flip_opcode (opcode, &handled) ; // for positional ops
             ASSERT (handled) ;      // all positional ops can be flipped
         }
 
@@ -96,8 +96,16 @@
         // address of Cx [p]
         #define GB_CX(p) (&Cx [p])
 
-        // cij = Cx [p]
-        #define GB_GETC(cij,p) cij = Cx [p]
+        // get the value of C(i,j) on input, for dot4 only
+        #define GB_GET4C(cij,p)                                         \
+            if (C_in_iso)                                               \
+            {                                                           \
+                memcpy (&cij, cinput, csize) ;                          \
+            }                                                           \
+            else                                                        \
+            {                                                           \
+                cij = Cx [p] ;                                          \
+            }
 
         // Cx [p] = cij
         #define GB_PUTC(cij,p) Cx [p] = cij
@@ -251,9 +259,17 @@
         #undef  GB_CX
         #define GB_CX(p) Cx +((p)*csize)
 
-        // cij = Cx [p]
-        #undef  GB_GETC
-        #define GB_GETC(cij,p) memcpy (cij, GB_CX (p), csize)
+        // get the value of C(i,j) on input, for dot4 only
+        #undef  GB_GET4C
+        #define GB_GET4C(cij,p)                                         \
+            if (C_in_iso)                                               \
+            {                                                           \
+                memcpy (cij, cinput, csize) ;                           \
+            }                                                           \
+            else                                                        \
+            {                                                           \
+                memcpy (cij, GB_CX (p), csize) ;                        \
+            }
 
         // Cx [p] = cij
         #undef  GB_PUTC
@@ -284,7 +300,7 @@
             { 
                 // flip first and second
                 bool handled ;
-                opcode = GB_binop_flip (opcode, &handled) ; // for 1st and 2nd
+                opcode = GB_flip_opcode (opcode, &handled) ; // for 1st and 2nd
                 ASSERT (handled) ;      // FIRST and SECOND ops can be flipped
             }
             if (opcode == GB_FIRST_opcode)

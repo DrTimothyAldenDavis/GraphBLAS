@@ -26,7 +26,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     GB_Type_code *zcode             // type code for z output
 ) ;
 
-GB_Opcode GB_binop_flip     // flipped opcode, or -1 on error
+GB_Opcode GB_flip_opcode    // flipped opcode, or -1 on error
 (
     GB_Opcode opcode,       // opcode to flip
     bool *handled           // true if opcode is handled by flipping the opcode

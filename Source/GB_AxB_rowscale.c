@@ -98,7 +98,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         { 
             // the multiplicatve operator is fmult(y,x), so flip the opcode
             bool handled ;
-            opcode = GB_binop_flip (opcode, &handled) ; // for positional ops
+            opcode = GB_flip_opcode (opcode, &handled) ; // for positional ops
             ASSERT (handled) ;      // all positional ops can be flipped
         }
         // determine unary operator to compute C=D*B
@@ -137,8 +137,8 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
                 default:  ;
             }
         }
-        GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO, op1, NULL, NULL, false, B,
-            Context)) ;
+        GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO, op1,   // positional op
+            NULL, NULL, false, B, Context)) ;
         ASSERT_MATRIX_OK (C, "rowscale positional: C = D*B output", GB0) ;
 
     }

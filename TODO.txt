@@ -2,16 +2,15 @@ FIXME:  do O(1) typecasting for iso matrices, if their types don't match
     the operator.  Do this after WAIT on the inputs, since that may
     change the iso property.
 
-FIXME:  after non-iso GrB*build, check if matrix is iso
+FIXME: after non-iso GrB*build, check if matrix is iso
 
 FIXME: in GraphBLAS/Test/GB_mx_mxArray_to_Matrix: provide option for checking
-    input matrix to see if could be presented as iso
+    input matrix to see if it could be presented as iso
 
 FIXME: pack/unpack
 
-FIXME: set print1
+FIXME: use GB_blob16 for all GB_16BYTE cases
 
-FIXME: in gbtest47:
-.............OMP: Warning #190: Forking a process while a parallel region is active is potentially unsafe.
-........................................
+FIXME: if no typecasting, replace GB_type* methods with GB_1BYTE ... GB_16BYTE
+    cases
 

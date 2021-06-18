@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// TODO::: allow C_in to be iso on input
-
 // C+=A'*B where C is a dense matrix and computed in-place.  The monoid of the
 // semiring matches the accum operator, and the type of C matches the ztype of
 // accum.  That is, no typecasting can be done with C.
@@ -16,7 +14,8 @@
 // The PAIR operator as the multiplier provides important special cases.
 
 // The matrix C is the user input matrix.  C is not iso on output, but might
-// iso on input.  A and B can be iso.
+// iso on input, in which case the input iso scalar is cinput, and C->x has
+// been expanded but is not initialized.  A and/or B can be iso.
 
 {
 
@@ -124,7 +123,7 @@
                     // both A and B are full
                     //----------------------------------------------------------
 
-                    GB_GETC (cij, pC) ;             // cij = Cx [pC]
+                    GB_GET4C (cij, pC) ;                // cij = Cx [pC]
                     #if GB_IS_PAIR_MULTIPLIER
                     { 
                         #if GB_IS_ANY_MONOID
@@ -190,7 +189,7 @@
                     // A is full and B is sparse/hyper
                     //----------------------------------------------------------
 
-                    GB_GETC (cij, pC) ;                 // cij = Cx [pC]
+                    GB_GET4C (cij, pC) ;                // cij = Cx [pC]
                     #if GB_IS_PAIR_MULTIPLIER
                     { 
                         #if GB_IS_ANY_MONOID
@@ -292,7 +291,7 @@
                     // A is sparse/hyper and B is full
                     //----------------------------------------------------------
 
-                    GB_GETC (cij, pC) ;             // cij = Cx [pC]
+                    GB_GET4C (cij, pC) ;                // cij = Cx [pC]
                     #if GB_IS_PAIR_MULTIPLIER
                     { 
                         #if GB_IS_ANY_MONOID

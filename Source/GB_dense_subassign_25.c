@@ -120,7 +120,6 @@ GrB_Info GB_dense_subassign_25
 
     if (C_iso)
     { 
-GB_GOTCHA ; // assign25, C iso
 
         //----------------------------------------------------------------------
         // C is iso; assign the iso value and assign zombies if A is bitmap

@@ -93,8 +93,10 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     ASSERT (GB_PENDING_OK (C)) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
 
+    bool C_is_full = GB_IS_FULL (C) ;
+
     //--------------------------------------------------------------------------
-    // check if C needs to convert to non-iso
+    // check if C needs to convert to non-iso, or if C is a new iso matrix
     //--------------------------------------------------------------------------
 
     // stype is the type of this scalar
@@ -103,12 +105,16 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 
     if (C->iso)
     {
-        // typecast the scalar to the type of C and check the iso value
+
+        //----------------------------------------------------------------------
+        // typecast the scalar and compare with the iso value of C
+        //----------------------------------------------------------------------
+
         // s = (ctype) scalar
         bool convert_to_non_iso ;
         if (ctype != stype)
         { 
-GB_GOTCHA ; // setElement: C iso, scalar of different type
+// GB_GOTCHA ; // setElement: C iso, scalar of different type
             // s = (ctype) scalar
             GB_void s [GB_VLA(csize)] ;
             GB_cast_scalar (s, ccode, scalar, scalar_code, csize) ;
@@ -120,16 +126,38 @@ GB_GOTCHA ; // setElement: C iso, scalar of different type
             // compare the scalar with the iso value of C
             convert_to_non_iso = (memcmp (C->x, scalar, csize) != 0) ;
         }
+
         if (convert_to_non_iso)
         { 
             // The new entry differs from the iso value of C.  Assemble all
             // pending tuples and convert C to non-iso.  Zombies are OK.
             if (C->Pending != NULL)
             { 
-GB_GOTCHA ; // setElement: wait, convert to non-iso
+// GB_GOTCHA ; // setElement: wait, convert to non-iso
                 GB_OK (GB_wait (C, "C (setElement:to non-iso)", Context)) ;
             }
             GB_OK (GB_convert_any_to_non_iso (C, true, Context)) ;
+        }
+
+    }
+    else if (GB_nnz (C) == 0 && !C_is_full && C->Pending == NULL)
+    {
+
+        //----------------------------------------------------------------------
+        // C is empty: this is the first setElement, convert C to iso
+        //----------------------------------------------------------------------
+
+        // s = (ctype) scalar
+        if (ctype != stype)
+        { 
+            // s = (ctype) scalar
+            GB_void s [GB_VLA(csize)] ;
+            GB_cast_scalar (s, ccode, scalar, scalar_code, csize) ;
+            GB_OK (GB_convert_any_to_iso (C, s, true, Context)) ;
+        }
+        else
+        { 
+            GB_OK (GB_convert_any_to_iso (C, scalar, true, Context)) ;
         }
     }
 
@@ -156,7 +184,7 @@ GB_GOTCHA ; // setElement: wait, convert to non-iso
     bool is_zombie ;
     bool C_is_bitmap = GB_IS_BITMAP (C) ;
 
-    if (GB_IS_FULL (C) || C_is_bitmap)
+    if (C_is_full || C_is_bitmap)
     { 
 
         //----------------------------------------------------------------------

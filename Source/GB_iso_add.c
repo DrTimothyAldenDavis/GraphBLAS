@@ -95,11 +95,9 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
 
     if (op == NULL)
     { 
-GB_GOTCHA ; // iso_add, op is NULL (GB_wait)
 
         // For GB_wait, the pattern of A and B are known to be disjoint, so no
         // operator is used, and op is NULL.  No typecasting is done.
-
         ASSERT (ctype == A->type) ;
         memcpy (c, a, csize) ;
         return (true) ;

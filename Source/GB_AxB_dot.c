@@ -28,7 +28,7 @@
 // The output matrix C has not been allocated.  It is an uninitialzed static
 // header on input.  The mask M is optional.
 
-// If the result is computed in-place, then the C parameger is ignored, and the
+// If the result is computed in-place, then the C parameter is ignored, and the
 // result is computed in C_in instead.  This case requires the accum operator
 // to match the monoid of the semiring.
 
@@ -84,7 +84,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     ASSERT (!GB_ZOMBIES (B)) ;
 
     ASSERT_SEMIRING_OK (semiring, "semiring for dot A'*B", GB0) ;
-    ASSERT_MATRIX_OK_OR_NULL (C_in, "C_int for dot A'*B", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (C_in, "C_in for dot A'*B", GB0) ;
 
     //--------------------------------------------------------------------------
     // determine if C is iso
@@ -126,9 +126,11 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     // in-place C+=A'*B.  mask is not present (and not applied)
     //--------------------------------------------------------------------------
 
-    if (!C_iso && GB_AxB_dot4_control (C_in, M, Mask_comp))
+    if (GB_AxB_dot4_control (C_iso, C_in, M, Mask_comp))
     { 
-        // the C iso case is not handled, but C_in might be iso
+        // C_in must be as-if-full on input.  M must be NULL and not
+        // complemented.  the C iso case is not handled (where C is iso on
+        // output), but C_in might be iso on input.
         (*done_in_place) = true ;
         (*mask_applied) = false ;    // no mask to apply
         GBURBLE ("(dot4) ") ;

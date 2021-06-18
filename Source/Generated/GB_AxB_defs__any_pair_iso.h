@@ -135,8 +135,8 @@
 #define GB_CIJ_DECLARE(cij) \
     
 
-// cij = Cx [pC]
-#define GB_GETC(cij,p) \
+// cij = Cx [pC] for dot4 method only
+#define GB_GET4C(cij,p) \
     
 
 // Cx [pC] = cij

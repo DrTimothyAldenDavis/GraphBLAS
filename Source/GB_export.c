@@ -121,7 +121,6 @@ GrB_Info GB_export      // export a matrix in any format
         (*iso) = (*A)->iso ;
         if (*iso)
         { 
-GB_GOTCHA ;
             GBURBLE ("(iso export) ") ;
         }
     }

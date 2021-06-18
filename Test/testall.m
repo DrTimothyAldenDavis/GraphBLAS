@@ -97,6 +97,14 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test216',t) ; % test C<A>=A, iso case
+logstat ('test215',t) ; % test C<M>=A'*B (dot2, ANY_PAIR semiring)
+logstat ('test214',t) ; % test C<M>=A'*B (tricount)
+logstat ('test213',t) ; % test iso assign (method 05d)
+logstat ('test212',t) ; % test iso mask all zero
+logstat ('test211',t) ; % test iso assign
+logstat ('test210',t) ; % test iso assign25: C<M,struct>=A, C empty, A dense
+logstat ('test209',t) ; % test iso build
 logstat ('test208',t) ; % test iso apply, bind 1st and 2nd
 logstat ('test207',t) ; % test iso subref
 logstat ('test206',t) ; % test iso select

@@ -1121,7 +1121,6 @@ GrB_Info GB_assign_prep
             // thus prior pending tuples must be assembled first.  However, if
             // A is completely dense, then C(I,J)=A cannot delete any entries
             // from C.
-
             if (scalar_expansion || GB_is_dense (A))
             { 
                 // A is a scalar or dense matrix, so entries cannot be deleted
@@ -1173,7 +1172,6 @@ GrB_Info GB_assign_prep
             }
             else if (C->iso != C_iso_out)
             { 
-GB_GOTCHA ; // iso wait: if the iso property of C is changing
                 // the iso property of C is changing
                 wait = true ;
             }
@@ -1186,7 +1184,6 @@ GB_GOTCHA ; // iso wait: if the iso property of C is changing
 
     if (wait)
     {
-
         // Prior computations are not compatible with this assignment, so all
         // prior work must be finished.  This potentially costly.
         // delete any lingering zombies and assemble any pending tuples
@@ -1194,15 +1191,9 @@ GB_GOTCHA ; // iso wait: if the iso property of C is changing
         GB_MATRIX_WAIT (C) ;
 
         // GB_wait may have deleted all the zombies in C, so check again if C
-        // is empty.
+        // is empty.  If so, C_replace is irrelevant so set it false
         C_is_empty = (GB_nnz (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
-        if (C_is_empty)
-        { 
-GB_GOTCHA ; // wait: C empty
-            // C is completely empty.  C_replace is irrelevant so set it false
-            GBURBLE ("(C empty) ") ;
-            (*C_replace) = false ;
-        }
+        if (C_is_empty) (*C_replace) = false ;
 
         // C has changed so recompute the subassigner method
         (*subassign_method) = GB_subassigner_method (&C_iso_out, cout, C,

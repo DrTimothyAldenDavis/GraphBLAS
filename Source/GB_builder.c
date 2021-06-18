@@ -602,7 +602,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (S_iso)
             { 
-GB_GOTCHA ; // iso vector sort
                 // K_work is NULL; only sort (i)
                 info = GB_msort_1 (I_work, nvals, nthreads) ;
             }

@@ -690,7 +690,6 @@ int GB_subassigner_method           // return method to use in GB_subassigner
                 }
                 else
                 { 
-GB_GOTCHA ; // subassign, c_ok, with accum, C not empty
                     // C is iso and not empty; check the result of accum
                     GxB_binary_function faccum = accum->function ;
 

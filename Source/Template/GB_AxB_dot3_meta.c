@@ -109,7 +109,6 @@
 
     if (M_is_sparse && Mask_struct && A_is_sparse && B_is_sparse)
     { 
-// GB_GOTCHA ; // M sparse, M struct, A sparse, B sparse (gbtest50, tricount)
         // special case: M is sparse and structural, and A and B are sparse
         #define GB_MASK_SPARSE_AND_STRUCTURAL
         #define GB_A_IS_SPARSE 1

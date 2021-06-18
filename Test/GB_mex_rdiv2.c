@@ -125,11 +125,10 @@ GrB_Info axb (GB_Context Context)
 
     if (info == GrB_SUCCESS)
     {
-// FIXME:
-//      if (done_in_place != do_in_place)
-//      {
-//          mexErrMsgTxt ("failure: not in place as expected\n") ;
-//      }
+        if (done_in_place != do_in_place)
+        {
+            mexErrMsgTxt ("failure: not in place as expected\n") ;
+        }
         if (!done_in_place)
         {
             GrB_Matrix_free_(&C) ;

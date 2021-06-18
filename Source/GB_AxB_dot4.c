@@ -7,11 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// TODO::: not called if C is iso on input
-
 // GB_AxB_dot4 does its computation in a single phase, computing its result in
-// the input matrix C, which is already dense.  The mask M is not handled by
-// this function.  C is not iso on output, but TODO: might be iso on input.
+// the input matrix C, which is already as-if-full (in any format).  The mask M
+// is not handled by this function.  C is not iso on output, but might be iso
+// on input (if so, C is converted from iso on input to non-iso on output).
 
 // The accum operator is the same as monoid operator semiring->add->op, and the
 // type of C (C->type) matches the accum->ztype so no typecasting is needed.
@@ -29,9 +28,15 @@
     GB_WERK_POP (A_slice, int64_t) ;    \
 }
 
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_FREE_WORK ;                      \
+    GB_phbix_free (C) ;                 \
+}
+
 GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 (
-    GrB_Matrix C,                   // input/output matrix, must be dense
+    GrB_Matrix C,                   // input/output matrix, must be as-if-full
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C+=A*B
@@ -58,11 +63,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
-
-    ASSERT (!GB_IS_BITMAP (C)) ;
-
     ASSERT_SEMIRING_OK (semiring, "semiring for in-place += A'*B", GB0) ;
-
     ASSERT (A->vlen == B->vlen) ;
 
     GB_WERK_DECLARE (A_slice, int64_t) ;
@@ -99,7 +100,6 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 
     if (flipxy)
     { 
-GB_GOTCHA ; // dot4 flipxy
         // z = fmult (b,a) will be computed
         A_is_pattern = op_is_first  || op_is_pair ;
         B_is_pattern = op_is_second || op_is_pair ;
@@ -123,8 +123,8 @@ GB_GOTCHA ; // dot4 flipxy
     // slice A and B
     //--------------------------------------------------------------------------
 
-    // A and B can have any sparsity: full, sparse, or hypersparse.
-    // C is always full.
+    // A and B can have any sparsity: sparse/hyper/bitmap/full.
+    // C is always as-if-full.
 
     int64_t anvec = A->nvec ;
     int64_t vlen  = A->vlen ;
@@ -148,6 +148,21 @@ GB_GOTCHA ; // dot4 flipxy
     GB_pslice (B_slice, B->p, bnvec, nbslice, false) ;
 
     //--------------------------------------------------------------------------
+    // if C is iso on input: get the iso scalar and convert C to non-iso
+    //--------------------------------------------------------------------------
+
+    size_t csize = C->type->size ; 
+    GB_void cinput [GB_VLA(csize)] ;
+    memset (cinput, 0, csize) ;
+    bool C_in_iso = C->iso ;
+    if (C->iso)
+    { 
+        memcpy (cinput, C->x, csize) ;
+        GB_OK (GB_convert_any_to_non_iso (C, false, Context)) ;
+        ASSERT (!C->iso) ;
+    }
+
+    //--------------------------------------------------------------------------
     // C += A'*B, computing each entry with a dot product, via builtin semiring
     //--------------------------------------------------------------------------
 
@@ -161,14 +176,14 @@ GB_GOTCHA ; // dot4 flipxy
 
         #define GB_Adot4B(add,mult,xname) GB (_Adot4B_ ## add ## mult ## xname)
 
-        #define GB_AxB_WORKER(add,mult,xname)           \
-        {                                               \
-            info = GB_Adot4B (add,mult,xname) (C,       \
-                A, A_is_pattern, A_slice, naslice,      \
-                B, B_is_pattern, B_slice, nbslice,      \
-                nthreads) ;                             \
-            done = (info != GrB_NO_VALUE) ;             \
-        }                                               \
+        #define GB_AxB_WORKER(add,mult,xname)                       \
+        {                                                           \
+            info = GB_Adot4B (add,mult,xname) (C, C_in_iso, cinput, \
+                A, A_is_pattern, A_slice, naslice,                  \
+                B, B_is_pattern, B_slice, nbslice,                  \
+                nthreads) ;                                         \
+            done = (info != GrB_NO_VALUE) ;                         \
+        }                                                           \
         break ;
 
         //----------------------------------------------------------------------

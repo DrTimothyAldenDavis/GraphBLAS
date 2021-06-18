@@ -22,7 +22,7 @@ GrB_Info GB (_Adot3B)
 if_not_any_pair_semiring
 GrB_Info GB (_Adot4B)
 (
-    GrB_Matrix C,
+    GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A, bool A_is_pattern,
     int64_t *restrict A_slice, int naslice,
     const GrB_Matrix B, bool B_is_pattern,

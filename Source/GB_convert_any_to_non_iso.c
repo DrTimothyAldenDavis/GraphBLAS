@@ -24,7 +24,6 @@ GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
     ASSERT_MATRIX_OK (A, "A to convert to non-iso", GB0) ;
     if (!A->iso)
     { 
-// GB_GOTCHA ; // A already non iso, nothing to do (gbtest1)
         // nothing to do
         return (GrB_SUCCESS) ;
     }
@@ -35,7 +34,10 @@ GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
 
     size_t asize = A->type->size ;
     GB_void scalar [GB_VLA(asize)] ;
-    memcpy (scalar, A->x, asize) ;
+    if (initialize)
+    { 
+        memcpy (scalar, A->x, asize) ;
+    }
 
     //--------------------------------------------------------------------------
     // ensure A->x is large enough, and not shallow

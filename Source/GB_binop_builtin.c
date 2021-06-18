@@ -143,7 +143,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
         // versions (DIV vs RDIV, ...).  Flipping the operator does not handle
         // ATAN2, BGET, and other built-in operators, but these do not
         // correspond to built-in semirings.
-        (*opcode) = GB_binop_flip (*opcode, &handled) ; // for any opcode
+        (*opcode) = GB_flip_opcode (*opcode, &handled) ; // for any opcode
     }
 
     return (handled) ;

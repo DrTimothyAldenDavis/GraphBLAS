@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for code development only:
-// FIXME
+// FIXME: turn off dev setting
 #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"

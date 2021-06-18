@@ -79,7 +79,7 @@ static void GB_iso_mult         // c = mult(a,b) or c=mult(b,a)
 bool GB_iso_AxB             // C = A*B, return true if C is iso
 (
     // output
-    GB_void *restrict c,    // output scalar of iso array
+    GB_void *restrict c,    // output scalar of iso array (not computed if NULL)
     // input
     GrB_Matrix A,           // input matrix
     GrB_Matrix B,           // input matrix
@@ -97,7 +97,6 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
     ASSERT_MATRIX_OK (A, "A for GB_iso_AxB", GB0) ;
     ASSERT_MATRIX_OK (B, "B for GB_iso_AxB", GB0) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for GB_iso_AxB", GB0) ;
-    ASSERT (c != NULL) ;
 
     //--------------------------------------------------------------------------
     // quick return if multop is positional
@@ -187,56 +186,65 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
     const bool B_iso = B->iso || (GB_nnz (B) == 1 && !GB_IS_BITMAP (B)) ;
 
     if (nice_with_pair && mult_opcode == GB_PAIR_opcode)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // C is iso, with c = 1
         //----------------------------------------------------------------------
 
-        GB_cast_one (c, zcode) ;
+        if (c != NULL)
+        { 
+            GB_cast_one (c, zcode) ;
+        }
         return (true) ;
 
     }
     else if (B_iso && nice_monoid && second)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // C is iso, with c = b
         //----------------------------------------------------------------------
 
-        if (zcode == ycode && bcode == ycode)
+        if (c != NULL)
         { 
-            // c = Bx [0]
-            memcpy (c, B->x, zsize) ;
-        }
-        else
-        { 
-            // c = (ztype) ((ytype) Bx [0])
-            GB_void y [GB_VLA(ysize)] ;
-            GB_cast_scalar (y, ycode, B->x, bcode, bsize) ;
-            GB_cast_scalar (c, zcode, y, ycode, ysize) ;
+            if (zcode == ycode && bcode == ycode)
+            { 
+                // c = Bx [0]
+                memcpy (c, B->x, zsize) ;
+            }
+            else
+            { 
+                // c = (ztype) ((ytype) Bx [0])
+                GB_void y [GB_VLA(ysize)] ;
+                GB_cast_scalar (y, ycode, B->x, bcode, bsize) ;
+                GB_cast_scalar (c, zcode, y, ycode, ysize) ;
+            }
         }
         return (true) ;
 
     }
     else if (A_iso && nice_monoid && first)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // C is iso, with c = a
         //----------------------------------------------------------------------
 
-        if (zcode == xcode && acode == xcode)
+        if (c != NULL)
         { 
-            // c = Ax [0]
-            memcpy (c, A->x, zsize) ;
-        }
-        else
-        { 
-            // c = (ztype) ((xtype) Ax [0])
-            GB_void x [GB_VLA(xsize)] ;
-            GB_cast_scalar (x, xcode, A->x, acode, asize) ;
-            GB_cast_scalar (c, zcode, x, xcode, xsize) ;
+            if (zcode == xcode && acode == xcode)
+            { 
+                // c = Ax [0]
+                memcpy (c, A->x, zsize) ;
+            }
+            else
+            { 
+                // c = (ztype) ((xtype) Ax [0])
+                GB_void x [GB_VLA(xsize)] ;
+                GB_cast_scalar (x, xcode, A->x, acode, asize) ;
+                GB_cast_scalar (c, zcode, x, xcode, xsize) ;
+            }
         }
         return (true) ;
 
@@ -249,19 +257,22 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
         //----------------------------------------------------------------------
 
         if (nice_monoid)
-        { 
+        {
 
             //------------------------------------------------------------------
             // C is iso, with c = fmult(a,b), for any fmult, incl. user-defined
             //------------------------------------------------------------------
 
-            GB_iso_mult (c, A->x, acode, asize, B->x, bcode, bsize,
-                fmult, flipxy, xcode, xsize, ycode, ysize, zcode, zsize) ;
+            if (c != NULL)
+            { 
+                GB_iso_mult (c, A->x, acode, asize, B->x, bcode, bsize,
+                    fmult, flipxy, xcode, xsize, ycode, ysize, zcode, zsize) ;
+            }
             return (true) ;
 
         }
         else if (GB_as_if_full (A) && GB_as_if_full (B))
-        { 
+        {
 
             //------------------------------------------------------------------
             // C = A*B where A and B are both full and iso
@@ -274,14 +285,17 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
             // A(i,k)*B(k,j) is iso-valued for any i, j, or k, assuming n is
             // the inner dimension of the C=A*B matrix multiply.
 
-            // t = A(i,k)*B(k,j)
-            GB_void t [GB_VLA(zsize)] ;
-            GB_iso_mult (t, A->x, acode, asize, B->x, bcode, bsize,
-                fmult, flipxy, xcode, xsize, ycode, ysize, zcode, zsize) ;
+            if (c != NULL)
+            { 
+                // t = A(i,k)*B(k,j)
+                GB_void t [GB_VLA(zsize)] ;
+                GB_iso_mult (t, A->x, acode, asize, B->x, bcode, bsize,
+                    fmult, flipxy, xcode, xsize, ycode, ysize, zcode, zsize) ;
 
-            // reduce n copies of t to the single scalar c, in O(log(n))
-            GxB_binary_function freduce = semiring->add->op->function ;
-            GB_iso_reduce_worker (c, freduce, t, n, zsize) ;
+                // reduce n copies of t to the single scalar c, in O(log(n))
+                GxB_binary_function freduce = semiring->add->op->function ;
+                GB_iso_reduce_worker (c, freduce, t, n, zsize) ;
+            }
 
             // the total time to compute C=A*B where all matrices are n-by-n
             // and full is thus O(log(n)), much smaller than O(n^3) for the

@@ -7,30 +7,30 @@
 
 //------------------------------------------------------------------------------
 
-// TODO::: allow C_in to be iso on input
-
 // C+=A'*B where C is a dense matrix and computed in-place.  The monoid of the
 // semiring matches the accum operator, and the type of C matches the ztype of
 // accum.  That is, no typecasting can be done with C.
 
 // The matrix C is the user input matrix.  C is not iso on output, but might
-// iso on input.  A and B can be iso.
+// iso on input, in which case the input iso scalar is cinput, and C->x has
+// been expanded but is not initialized.  A and/or B can be iso.
 
 #define GB_DOT4
 
 // cij += A(k,i) * B(k,j)
 #undef  GB_DOT
-#define GB_DOT(k,pA,pB)                                             \
-{                                                                   \
-    if (!cij_updated)                                               \
-    {                                                               \
-        cij_updated = true ;                                        \
-        GB_GETC (cij, pC) ;                 /* cij = Cx [pC] */     \
-    }                                                               \
-    GB_GETA (aki, Ax, pA, A_iso) ;          /* aki = A(k,i) */      \
-    GB_GETB (bkj, Bx, pB, B_iso) ;          /* bkj = B(k,j) */      \
-    GB_MULTADD (cij, aki, bkj, i, k, j) ;   /* cij += aki * bkj */  \
-    GB_DOT_TERMINAL (cij) ;         /* break if cij == terminal */  \
+#define GB_DOT(k,pA,pB)                                                 \
+{                                                                       \
+    if (!cij_updated)                                                   \
+    {                                                                   \
+        /* get the value of C(i,j) on input (may be the iso scalar) */  \
+        cij_updated = true ;                                            \
+        GB_GET4C (cij, pC) ;                /* cij = Cx [pC] */         \
+    }                                                                   \
+    GB_GETA (aki, Ax, pA, A_iso) ;          /* aki = A(k,i) */          \
+    GB_GETB (bkj, Bx, pB, B_iso) ;          /* bkj = B(k,j) */          \
+    GB_MULTADD (cij, aki, bkj, i, k, j) ;   /* cij += aki * bkj */      \
+    GB_DOT_TERMINAL (cij) ;         /* break if cij == terminal */      \
 }
 
 // C(i,j) = cij
@@ -42,12 +42,12 @@
 
 // save C(i,j) if it has been updated
 #undef  GB_DOT_SAVE_CIJ
-#define GB_DOT_SAVE_CIJ         \
-{                               \
-    if (cij_updated)            \
-    {                           \
-        GB_PUTC (cij, pC) ;     \
-    }                           \
+#define GB_DOT_SAVE_CIJ             \
+{                                   \
+    if (cij_updated || C_in_iso)    \
+    {                               \
+        GB_PUTC (cij, pC) ;         \
+    }                               \
 }
 
 { 
@@ -82,7 +82,7 @@
     #error "any_pair_iso semiring not supported for the dot4 method"
     #endif
 
-    ASSERT (!C->iso) ;
+    ASSERT (!C->iso) ; // C was iso on input, it has been expanded to non-iso
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) (B_is_pattern ? NULL : B->x) ;
           GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;

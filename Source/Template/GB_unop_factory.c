@@ -23,6 +23,7 @@
 
     ASSERT (code1 <= GB_UDT_code) ;
     ASSERT (code2 <= GB_UDT_code) ;
+    ASSERT (opcode != GB_ONE_opcode) ; // C is iso and the factory isn't used
 
     if (opcode == GB_IDENTITY_opcode)
     { 
@@ -38,33 +39,6 @@
         #define GB_OPNAME _identity
         #define GB_EXCLUDE_SAME_TYPES
         #include "GB_2type_factory.c"
-
-    }
-    else if (opcode == GB_ONE_opcode)
-    {
-GB_GOTCHA ; // ONE op: FIXME: no longer needed; using iso case
-
-        //----------------------------------------------------------------------
-        // z = (ztype) 1, where the type of A is ignored
-        //----------------------------------------------------------------------
-
-        switch (code1)
-        {
-            case GB_BOOL_code   : GB_WORKER (_one, _bool  , bool      , _bool  , bool      )
-            case GB_INT8_code   : GB_WORKER (_one, _int8  , int8_t    , _int8  , int8_t    )
-            case GB_INT16_code  : GB_WORKER (_one, _int16 , int16_t   , _int16 , int16_t   )
-            case GB_INT32_code  : GB_WORKER (_one, _int32 , int32_t   , _int32 , int32_t   )
-            case GB_INT64_code  : GB_WORKER (_one, _int64 , int64_t   , _int64 , int64_t   )
-            case GB_UINT8_code  : GB_WORKER (_one, _uint8 , uint8_t   , _uint8 , uint8_t   )
-            case GB_UINT16_code : GB_WORKER (_one, _uint16, uint16_t  , _uint16, uint16_t  )
-            case GB_UINT32_code : GB_WORKER (_one, _uint32, uint32_t  , _uint32, uint32_t  )
-            case GB_UINT64_code : GB_WORKER (_one, _uint64, uint64_t  , _uint64, uint64_t  )
-            case GB_FP32_code   : GB_WORKER (_one, _fp32  , float     , _fp32  , float     )
-            case GB_FP64_code   : GB_WORKER (_one, _fp64  , double    , _fp64  , double    )
-            case GB_FC32_code   : GB_WORKER (_one, _fc32  , GxB_FC32_t, _fc32  , GxB_FC32_t)
-            case GB_FC64_code   : GB_WORKER (_one, _fc64  , GxB_FC64_t, _fc64  , GxB_FC64_t)
-            default: ;
-        }
 
     }
     else if ((code1 == GB_FP32_code && code2 == GB_FC32_code) ||

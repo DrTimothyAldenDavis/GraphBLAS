@@ -234,13 +234,9 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
             || (opcode == GB_ONE_opcode))
         { 
 
-            // The switch factory is used if the op1 is IDENTITY or ONE, or
-            // if no typecasting is being done.  The ONE operator ignores
-            // the type of its input and just produces a 1 of op1->ztype ==
-            // op1->xtype.  The IDENTITY operator can do arbitrary
+            // The switch factory is used if the op1 is IDENTITY, or if no
+            // typecasting is being done.  IDENTITY operator can do arbitrary
             // typecasting.
-
-            // TODO::: no longer need the ONE operator in the switch case below
 
             //------------------------------------------------------------------
             // define the worker for the switch factory

@@ -321,7 +321,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         { 
             can_do_in_place = false ;
         }
-
         // TODO: A and B can be transposed below, so this check should be
         // done after any such transposings.
     }
@@ -460,7 +459,16 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (AxB_method == GxB_DEFAULT)
         {
             // auto selection for A'*B
-            if (GB_AxB_dot4_control (can_do_in_place ? C_in : NULL,
+            bool C_out_iso = false ;    // ignored unless C can be done in-place
+            if (can_do_in_place && C_in != NULL)
+            { 
+                // check if C will be iso on output (for dot4 control only).
+                // Ignored if dot4 C_in is not present or C cannot be
+                // computed in-place.
+                C_out_iso = GB_iso_AxB (NULL, A, B, A->vlen, semiring, flipxy,
+                    false) ;
+            }
+            if (GB_AxB_dot4_control (C_out_iso, can_do_in_place ? C_in : NULL,
                 M, Mask_comp))
             { 
                 // C+=A'*B can be done with dot4
@@ -476,7 +484,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C=A'*B or C<!M>=A'B* can efficiently use the dot2 method
                 axb_method = GB_USE_DOT ;
             }
-
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 

@@ -198,18 +198,21 @@ void GB_AxB_pattern
 // GB_AxB_dot4_control: determine if the dot4 method should be used
 //------------------------------------------------------------------------------
 
-// C += A'*B where C is modified in-place
+// C += A'*B where C is modified in-place. C may be iso on input but dot4
+// does not handle the case where C is iso on output.  C must be as-if-full
+// on input, and remains so on output.
 
 static inline bool GB_AxB_dot4_control
 (
-    const GrB_Matrix C_in,      // NULL if C cannot be modified in-place
-    const GrB_Matrix M,
-    const bool Mask_comp
+    const bool C_out_iso,       // true if C is iso on output; must be false
+                                // to use dot4
+    const GrB_Matrix C_in,      // must be present and as-if-full to use dot4
+    const GrB_Matrix M,         // must be NULL to use dot4
+    const bool Mask_comp        // must be false to use dot4
 )
 {
-    return (C_in != NULL && 
-        !C_in->iso              // FIXME::: allow C_in to be iso
-        && M == NULL && !Mask_comp && !GB_IS_BITMAP (C_in)) ;
+    return (!C_out_iso && C_in != NULL && M == NULL && !Mask_comp &&
+        GB_as_if_full (C_in)) ;
 }
 
 //------------------------------------------------------------------------------

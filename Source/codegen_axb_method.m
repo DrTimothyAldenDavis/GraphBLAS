@@ -2,7 +2,8 @@ function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, ...
     xytype, identity, terminal, omp_atomic, omp_microsoft_atomic)
 %CODEGEN_AXB_METHOD create a function to compute C=A*B over a semiring
 %
-% codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, identity, terminal, omp_atomic, omp_microsoft_atomic)
+% codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, ...
+%   identity, terminal, omp_atomic, omp_microsoft_atomic)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -420,12 +421,12 @@ end
 % access the values of C
 if (is_any_pair)
     fprintf (f, 'define(`GB_cx'', `'')\n') ;
-    fprintf (f, 'define(`GB_getc'', `'')\n') ;
+    fprintf (f, 'define(`GB_get4c'', `'')\n') ;
     fprintf (f, 'define(`GB_putc'', `'')\n') ;
     fprintf (f, 'define(`GB_cij_write'', `'')\n') ;
 else
     fprintf (f, 'define(`GB_cx'', `Cx [p]'')\n') ;
-    fprintf (f, 'define(`GB_getc'', `cij = Cx [p]'')\n') ;
+    fprintf (f, 'define(`GB_get4c'', `cij = (C_in_iso) ? cinput : Cx [p]'')\n');
     fprintf (f, 'define(`GB_putc'', `Cx [p] = cij'')\n') ;
     fprintf (f, 'define(`GB_cij_write'', `Cx [p] = t'')\n') ;
 end
@@ -769,6 +770,10 @@ base = { 'GB_Adot2B', 'GB_Adot3B', 'GB_Adot4B', 'GB_AsaxbitB', ...
 suffix = { 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'h' } ;
 
 for k = 1:length (base)
+    if (is_any_pair && isequal (base {k}, 'GB_Adot4B'))
+        % do not create the any_pair iso semiring for dot4
+        continue ;
+    end
     cmd = sprintf (fmt, base {k}, suffix {k}, nprune, base {k}, name, suffix {k}) ;
     system (cmd) ;
 end

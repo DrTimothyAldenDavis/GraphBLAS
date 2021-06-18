@@ -135,9 +135,9 @@ ifndef_compact
 #define GB_CIJ_DECLARE(cij) \
     GB_cij_declare
 
-// cij = Cx [pC]
-#define GB_GETC(cij,p) \
-    GB_getc
+// cij = Cx [pC] for dot4 method only
+#define GB_GET4C(cij,p) \
+    GB_get4c
 
 // Cx [pC] = cij
 #define GB_PUTC(cij,p) \

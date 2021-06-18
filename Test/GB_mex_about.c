@@ -1169,31 +1169,6 @@ void mexFunction
     GrB_Matrix_free_(&A) ;
 
     //--------------------------------------------------------------------------
-    // test for problem too large in GB_bitmap_AxB_saxpy
-    //--------------------------------------------------------------------------
-
-#if 0
-    printf ("Test GB_bitmap_AxB_saxpy:\n") ;
-    n = INT32_MAX ;
-    OK (GrB_Matrix_new (&A, GrB_FP32, n, 0)) ;
-    OK (GrB_Matrix_new (&B, GrB_FP32, 0, n)) ;
-    OK (GxB_Matrix_fprint (A, "A n-by-0", GxB_COMPLETE, stdout)) ;
-    OK (GxB_Matrix_fprint (B, "B 0-by-n", GxB_COMPLETE, stdout)) ;
-    OK (GxB_Matrix_Option_set (B, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
-    OK (GxB_Matrix_fprint (B, "B 0-by-n", GxB_COMPLETE, stdout)) ;
-    expected = GrB_OUT_OF_MEMORY ;
-    bool ignore ;
-    struct GB_Matrix_opaque G_header ;
-    GrB_Matrix G = GB_clear_static_header (&G_header) ;
-    printf ("Test A*B::\n") ;
-    ERR (GB_bitmap_AxB_saxpy (G, false, NULL, GxB_BITMAP, NULL, false, false,
-        A, B, GrB_PLUS_TIMES_SEMIRING_FP32, false, &ignore, NULL)) ;
-    GrB_Matrix_free_(&A) ;
-    GrB_Matrix_free_(&B) ;
-    CHECK (G->x == NULL) ;  // OK
-#endif
-
-    //--------------------------------------------------------------------------
     // wrapup
     //--------------------------------------------------------------------------
 

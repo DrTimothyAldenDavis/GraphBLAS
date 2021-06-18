@@ -9,7 +9,6 @@
 
 // If this file is in the Generated/ folder, do not edit it (auto-generated).
 
-#if 1
 #include "GB_AxB_defs__any_eq_uint8.h"
 #ifndef GBCOMPACT
 
@@ -19,7 +18,7 @@
 
 GrB_Info GB (_Adot4B__any_eq_uint8)
 (
-    GrB_Matrix C,
+    GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A, bool A_is_pattern,
     int64_t *restrict A_slice, int naslice,
     const GrB_Matrix B, bool B_is_pattern,
@@ -30,11 +29,11 @@ GrB_Info GB (_Adot4B__any_eq_uint8)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    const bool cinput = (*((const bool *) cinput_void)) ;
     #include "GB_AxB_dot4_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
 
-#endif
 #endif
 

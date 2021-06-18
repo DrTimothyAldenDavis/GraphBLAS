@@ -135,9 +135,9 @@
 #define GB_CIJ_DECLARE(cij) \
     int32_t cij
 
-// cij = Cx [pC]
-#define GB_GETC(cij,p) \
-    cij = Cx [p]
+// cij = Cx [pC] for dot4 method only
+#define GB_GET4C(cij,p) \
+    cij = (C_in_iso) ? cinput : Cx [p]
 
 // Cx [pC] = cij
 #define GB_PUTC(cij,p) \

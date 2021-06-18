@@ -912,7 +912,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
         // the positional operator is applied in-place to the values of C
         // Cx = op (C)
-        GB_OK (GB_apply_op ((GB_void *) C->x, ctype, GB_NON_ISO,
+        GB_OK (GB_apply_op ((GB_void *) C->x, ctype, GB_NON_ISO, // positional
             save_op1, save_op2, scalar, binop_bind1st, C, Context)) ;
     }
 
