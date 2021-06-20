@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_transpose:  C=A' or C=op(A'), with typecasting
+// GB_transpose: C=A' or C=op(A'), with typecasting
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.

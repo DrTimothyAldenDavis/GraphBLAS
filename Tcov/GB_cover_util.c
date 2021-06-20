@@ -27,28 +27,27 @@ void GB_cover_get ( )
 {
 
     // get GraphBLAS_grbcov from global workspace
-    mxArray *GB_cov_matlab = NULL ;
-    GB_cov_matlab =
-        (mxArray *) mexGetVariablePtr ("global", "GraphBLAS_grbcov") ;
+    mxArray *GB_cov_mx = NULL ;
+    GB_cov_mx = (mxArray *) mexGetVariablePtr ("global", "GraphBLAS_grbcov") ;
 
-    if (GB_cov_matlab == NULL || mxIsEmpty (GB_cov_matlab))
+    if (GB_cov_mx == NULL || mxIsEmpty (GB_cov_mx))
     {
         // doesn't exist; create it and set it to zero
-        GB_cov_matlab = mxCreateNumericMatrix (1, GB_cover_max,
+        GB_cov_mx = mxCreateNumericMatrix (1, GB_cover_max,
             mxINT64_CLASS, mxREAL) ;
         // copy it back to the global workspace
-        mexPutVariable ("global", "GraphBLAS_grbcov", GB_cov_matlab) ;
+        mexPutVariable ("global", "GraphBLAS_grbcov", GB_cov_mx) ;
     }
 
     // it should exist now, but double-check
-    if (GB_cov_matlab == NULL || mxIsEmpty (GB_cov_matlab))
+    if (GB_cov_mx == NULL || mxIsEmpty (GB_cov_mx))
     {
-        mexErrMsgTxt ("GB_cov_matlab still null!") ;
+        mexErrMsgTxt ("GB_cov_mx still null!") ;
     }
 
     // get a pointer to the content of the GraphBLAS_grbcov array in the
     // workspace
-    int64_t *g = (int64_t *) mxGetData (GB_cov_matlab) ;
+    int64_t *g = (int64_t *) mxGetData (GB_cov_mx) ;
 
     // getting paranoid here; this should never happen
     if (g == NULL) mexErrMsgTxt ("g null!") ;
@@ -72,15 +71,15 @@ void GB_cover_put ( )
     // printf ("GB_cover_put: %d\n", GB_cover_max) ;
 
     // create a built-in array with the right size
-    mxArray * GB_cov_matlab = mxCreateNumericMatrix (1, GB_cover_max,
+    mxArray * GB_cov_mx = mxCreateNumericMatrix (1, GB_cover_max,
             mxINT64_CLASS, mxREAL) ;
 
     // copy the updated GB_cov counter array into the built-in array
-    int64_t *g = (int64_t *) mxGetData (GB_cov_matlab) ;
+    int64_t *g = (int64_t *) mxGetData (GB_cov_mx) ;
     memcpy (g, GB_cov, GB_cover_max * sizeof (int64_t)) ;
 
     // put the built-in array into the global workspace, overwriting the
     // version that was already there
-    mexPutVariable ("global", "GraphBLAS_grbcov", GB_cov_matlab) ;
+    mexPutVariable ("global", "GraphBLAS_grbcov", GB_cov_mx) ;
 }
 

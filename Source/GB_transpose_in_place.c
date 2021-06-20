@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // All other uses of GB_tranpose are not in-place.
+// No operator is applied and no typecasting is done.
 
 #include "GB_transpose.h"
 

@@ -10,7 +10,6 @@ end
 try
     addpath ('../Test') ;
     addpath ('../Test/spok') ;
-    addpath ('../Demo/MATLAB') ;
     cd ../Test/spok
     spok_install ;
     cd ../../Tcov

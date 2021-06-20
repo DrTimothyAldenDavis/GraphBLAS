@@ -20,15 +20,6 @@ fprintf (f, '// This file has been automatically generated from Generator/GB_uno
 fprintf (f, '\n\n') ;
 fclose (f) ;
 
-codegen_unop_template ('one', ...
-    'true',                     ... % bool
-    '1',                        ... % int
-    '1',                        ... % uint
-    '1',                        ... % float
-    '1',                        ... % double
-    'GxB_CMPLXF(1,0)',          ... % GxB_FC32_t
-    'GxB_CMPLX(1,0)') ;         ... % GxB_FC64_t
-
 codegen_unop_template ('identity', ...
     'xarg',                     ... % bool
     'xarg',                     ... % int

@@ -798,10 +798,10 @@ void mexFunction
     #define FREE_DEEP_COPY Complex_finalize ( ) ;
     #define GET_DEEP_COPY ;
 
-    METHOD (Complex_finalize ( )) ;
-    METHOD (Complex_init (true)) ;
-    METHOD (Complex_finalize ( )) ;
-    METHOD (Complex_init (false)) ;
+    OK (Complex_finalize ( )) ;
+    OK (Complex_init (true)) ;
+    OK (Complex_finalize ( )) ;
+    OK (Complex_init (false)) ;
 
     #undef FREE_DEEP_COPY
     #undef GET_DEEP_COPY
@@ -1941,12 +1941,12 @@ void mexFunction
 
     printf ("create test matrices-----------------------------------------\n") ;
 
-    OK (random_matrix (&A, false, false, 3, 4, 12, 0, false)) ;
-    OK (random_matrix (&B, false, false, 4, 2,  6, 0, false)) ;
-    OK (random_matrix (&C, false, false, 3, 2,  4, 0, false)) ;
-    OK (random_matrix (&E, false, false, 3, 2,  4, 0, false)) ;
-    OK (random_matrix (&F, false, false, 3, 2,  4, 0, false)) ;
-    OK (random_matrix (&Z, false, false, 3, 2,  8, 0, true)) ;   // Z complex
+    OK (GB_mx_random_matrix (&A, false, false, 3, 4, 12, 0, false)) ;
+    OK (GB_mx_random_matrix (&B, false, false, 4, 2,  6, 0, false)) ;
+    OK (GB_mx_random_matrix (&C, false, false, 3, 2,  4, 0, false)) ;
+    OK (GB_mx_random_matrix (&E, false, false, 3, 2,  4, 0, false)) ;
+    OK (GB_mx_random_matrix (&F, false, false, 3, 2,  4, 0, false)) ;
+    OK (GB_mx_random_matrix (&Z, false, false, 3, 2,  8, 0, true)) ; // complex
 
     OK (GrB_Matrix_wait_(&A)) ;
     OK (GrB_Matrix_wait_(&B)) ;
@@ -4704,13 +4704,6 @@ void mexFunction
     dcrud->out = GxB_DEFAULT ;
 
     //--------------------------------------------------------------------------
-    // Wathen
-    //--------------------------------------------------------------------------
-
-    expected = GrB_INVALID_VALUE ;
-    ERR (wathen (NULL, -1, -1, 0, 0, &x)) ;
-
-    //--------------------------------------------------------------------------
     // malloc wrappers
     //--------------------------------------------------------------------------
 
@@ -4858,7 +4851,7 @@ void mexFunction
     GrB_Index ilist [NWHAT] = { 8, 9, 0, 1, 5, 6, 11, 3, 2, 10, 7, 4 } ;
     GrB_Index jlist [NWHAT] = { 0, 11, 1, 7, 8, 4, 2, 3, 5, 6, 10, 9 } ;
 
-    OK (random_matrix (&A, false, false, n, n, nvals, 0, false)) ;
+    OK (GB_mx_random_matrix (&A, false, false, n, n, nvals, 0, false)) ;
     OK (GrB_Vector_new (&u, GrB_FP64, n)) ;
     OK (GrB_Vector_setElement_FP64 (u, (double) 3.4, 0)) ;
 
@@ -4882,8 +4875,9 @@ void mexFunction
             case 0: Amask = NULL ; umask = NULL ; break ;
             case 1: Amask = A    ; umask = u    ; break ;
             case 2:
-            OK (random_matrix (&Amask, false, false, n, n, nvals, 0, false)) ;
-            OK (random_matrix (&F,     false, false, n, 1, uvals, 0, false)) ;
+            OK (GB_mx_random_matrix (&Amask, false, false, n, n, nvals, 0,
+                false)) ;
+            OK (GB_mx_random_matrix (&F,false, false, n, 1, uvals, 0, false)) ;
             // vectors cannot be hypersparse
             OK (GxB_Matrix_Option_set_(F, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
             // vectors cannot be CSC: this is a hack just for brutal testing

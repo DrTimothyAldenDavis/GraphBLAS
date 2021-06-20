@@ -193,8 +193,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     if (C->is_csc != T->is_csc)
     { 
-        // transpose: no typecast, no op, in-place of T, but T
-        // cannot have any zombies or pending tuples.
         // T can be jumbled.
         ASSERT (GB_JUMBLED_OK (T)) ;
         GB_OK (GB_transpose_in_place (T, C->is_csc, Context)) ;
@@ -211,14 +209,12 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // that C and M are not aliased.
 
         // MT = M' to conform M to the same CSR/CSC format as C.
-        // transpose: typecast, no op, not in-place
         if (MT_in == NULL)
         { 
             // remove zombies and pending tuples from M.  M can be jumbled.
             GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
             ASSERT (GB_JUMBLED_OK (M)) ;
-            GB_OK (GB_transpose (MT, GrB_BOOL, C->is_csc, M, // MT static = M'
-                NULL, NULL, NULL, false, Context)) ;
+            GB_OK (GB_transpose_cast (MT, GrB_BOOL, C->is_csc, M, Context)) ;
             ASSERT (MT->static_header) ;
             // use the transpose mask
             M = MT ;

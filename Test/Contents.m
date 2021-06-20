@@ -57,7 +57,6 @@
 
 % Test scripts:
 
-%   test00   - test GB_mex_mis
 %   test01   - test GraphBLAS error handling
 %   test02   - test GrB_*_dup
 %   test03   - test GB_*_check functions
@@ -158,15 +157,11 @@
 %   test90   - test AxB with user-defined semirings: plus_rdiv and plus_rdiv2
 %   test91   - test subref performance on dense vectors
 %   test92   - test GB_subref (symbolic case)
-%   test93   - test dpagerank and ipagerank
-%   test93b  - test dpagerank and ipagerank
-%   test94   - test pagerank
 %   test95   - performance test for GrB_transpose
 %   test96   - test dot product
 %   test97   - test GB_assign, scalar expansion and zombies
 %   test98   - test GrB_mxm, typecasting on the fly
 %   test99   - test GB_mex_transpose with explicit zeros in the Mask
-%   test100  - test GB_mex_isequal
 %   test101  - test import/export
 %   test102  - test GB_AxB_saxpy3_flopcount
 %   test103  - test aliases in GrB_transpose
@@ -189,7 +184,6 @@
 %   test120  - performance tests for GrB_assign
 %   test121  - performance tests for GrB_assign
 %   test122  - performance tests for GrB_assign
-%   test123  - test MIS on large matrix
 %   test124  - GrB_extract, trigger case 6
 %   test125  - test GrB_mxm: row and column scaling
 %   test126  - test GrB_reduce to vector on a very sparse matrix 
@@ -275,7 +269,6 @@
 %   stat             - report status of statement coverage and malloc debugging
 %   GB_define        - create C source code for GraphBLAS.h
 
-%   grbresults       - return time taken by last GraphBLAS function
 %   isequal_roundoff - compare two matrices, allowing for roundoff errors
 
 %   test_other       - installs all packages needed for extensive tests

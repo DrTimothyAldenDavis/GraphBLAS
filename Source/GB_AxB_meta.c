@@ -281,9 +281,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // explicitly transpose the mask
     //--------------------------------------------------------------------------
 
-    // all uses of GB_transpose below:
-    // transpose: typecast, no op, not in-place, static header
-
     GrB_Matrix M ;
 
     // TODO: if Mask_struct is true, do not create values of MT = M'
@@ -293,8 +290,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // MT = M_in' also typecasting to boolean.  It is not freed here
         // unless an error occurs, but is returned to the caller.
         GBURBLE ("(M transpose) ") ;
-        GB_OK (GB_transpose (MT, GrB_BOOL, C_is_csc, M_in, // MT static = M_in'
-            NULL, NULL, NULL, false, Context)) ;
+        GB_OK (GB_transpose_cast (MT, GrB_BOOL, C_is_csc, M_in, Context)) ;
         M = MT ;
         (*M_transposed) = true ;
     }
@@ -361,22 +357,22 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool A_is_pattern ;
     bool B_is_pattern ;
 
-    GrB_Type atype_required, btype_required ;
+    GrB_Type atype_cast, btype_cast ;
     if (flipxy)
     { 
         // A is passed as y, and B as x, in z = mult(x,y)
         A_is_pattern = op_is_first  || op_is_pair || op_is_positional ;
         B_is_pattern = op_is_second || op_is_pair || op_is_positional ;
-        atype_required = A_is_pattern ? A->type : semiring->multiply->ytype ;
-        btype_required = B_is_pattern ? B->type : semiring->multiply->xtype ;
+        atype_cast = A_is_pattern ? A->type : semiring->multiply->ytype ;
+        btype_cast = B_is_pattern ? B->type : semiring->multiply->xtype ;
     }
     else
     { 
         // A is passed as x, and B as y, in z = mult(x,y)
         A_is_pattern = op_is_second || op_is_pair || op_is_positional ;
         B_is_pattern = op_is_first  || op_is_pair || op_is_positional ;
-        atype_required = A_is_pattern ? A->type : semiring->multiply->xtype ;
-        btype_required = B_is_pattern ? B->type : semiring->multiply->ytype ;
+        atype_cast = A_is_pattern ? A->type : semiring->multiply->xtype ;
+        btype_cast = B_is_pattern ? B->type : semiring->multiply->ytype ;
     }
 
     bool allow_scale = true ;
@@ -422,8 +418,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // with the swap_rule as defined above, this case will never occur.
             // The code is left here in case swap_rule changes in the future.
             ASSERT (GB_DEAD_CODE) ;
-            GB_OK (GB_transpose (BT, btype_required, true, B,  // BT static = B'
-                NULL, NULL, NULL, false, Context)) ;
+            GB_OK (GB_transpose_cast (BT, btype_cast, true, B, Context)) ;
             B = BT ;
         }
 
@@ -498,8 +493,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (axb_method == GB_USE_COLSCALE || axb_method == GB_USE_SAXPY)
         {
             // AT = A'
-            GB_OK (GB_transpose (AT, atype_required, true, A,  // AT static = A'
-                NULL, NULL, NULL, false, Context)) ;
+            GB_OK (GB_transpose_cast (AT, atype_cast, true, A, Context)) ;
             // do not use colscale if AT is now bitmap
             if (GB_IS_BITMAP (AT))
             { 
@@ -580,8 +574,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (axb_method != GB_USE_COLSCALE)
         {
             // BT = B'
-            GB_OK (GB_transpose (BT, btype_required, true, B,  // BT static = B'
-                NULL, NULL, NULL, false, Context)) ;
+            GB_OK (GB_transpose_cast (BT, btype_cast, true, B, Context)) ;
             // do not use rowscale if BT is now bitmap
             if (axb_method == GB_USE_ROWSCALE && GB_IS_BITMAP (BT))
             { 
@@ -613,8 +606,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C<M>=A*B' via dot product, or C_in<M>+=A*B' if in-place
                 GBURBLE ("C%s=A*B', dot_product (transposed %s) "
                     "(transposed %s) ", M_str, A_str, B_str) ;
-                GB_OK (GB_transpose (AT, atype_required, true, A, //AT static=A'
-                    NULL, NULL, NULL, false, Context)) ;
+                GB_OK (GB_transpose_cast (AT, atype_cast, true, A, Context)) ;
                 GB_OK (GB_AxB_dot (C, (can_do_in_place) ? C_in : NULL,
                     M, Mask_comp, Mask_struct, AT, BT, semiring, flipxy,
                     mask_applied, done_in_place, Context)) ;
@@ -716,8 +708,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C<M>=A*B via dot product, or C_in<M>+=A*B if in-place.
                 GBURBLE ("C%s=A*B', dot_product (transposed %s) ",
                     M_str, A_str) ;
-                GB_OK (GB_transpose (AT, atype_required, true, A, //AT static=A'
-                    NULL, NULL, NULL, false, Context)) ;
+                GB_OK (GB_transpose_cast (AT, atype_cast, true, A, Context)) ;
                 GB_OK (GB_AxB_dot (C, (can_do_in_place) ? C_in : NULL,
                     M, Mask_comp, Mask_struct, AT, B, semiring, flipxy,
                     mask_applied, done_in_place, Context)) ;

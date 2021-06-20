@@ -297,18 +297,17 @@ are extensions to the v1.3 GraphBLAS C API.
     functions have been added.  The no-argument \verb'GrB_wait()' is
     deprecated.  Added \verb'GrB_getVersion', \verb'GrB_Matrix_resize',
     \verb'GrB_Vector_resize', \verb'GrB_kronecker', \verb'GrB_*_wait', scalar
-    binding with binary operators for \verb'GrB_apply',
+    binding with binary operators for \verb'GrB_apply', \newline
     \verb'GrB_Matrix_removeElement', and \verb'GrB_Vector_removeElement'.
 
 \item Version 3.2.0 (Feb 20, 2020).  Faster \verb'GrB_mxm', \verb'GrB_mxv', and
     \verb'GrB_vxm', and faster operations on dense matrices/vectors.  Removed
     compile-time user objects (\verb'GxB_*_define'), since these were not
     compatible with the faster matrix operations.  Added the \verb'ANY' and
-    \verb'PAIR' operators.  Added the predefined descriptor, \verb'GrB_DESC_*'.
-    Added the structural mask option.  Changed default chunk size to 65,536.
-    Note that v3.2.0 is not compatible with the MS Visual Studio compiler; use
-    v3.1.2 instead.
-    \verb'@GrB' interface modified:  \verb'GrB.init' is now optional.
+    \verb'PAIR' operators.  Added the predefined descriptors,
+    \verb'GrB_DESC_*'.  Added the structural mask option.  Changed default
+    chunk size to 65,536.  \verb'@GrB' interface modified:  \verb'GrB.init' is
+    now optional.
 
 \item Version 3.1.2 (Dec, 2019).  Changes to allow SuiteSparse:GraphBLAS
     to be compiled with the Microsoft Visual Studio compiler.  This compiler
@@ -321,9 +320,9 @@ are extensions to the v1.3 GraphBLAS C API.
 
     \verb'@GrB' interface modified:  \verb'GrB.init' is now required.
 
-\item Version 3.1.0 (Oct 1, 2019).  \verb'@GrB' interface added.  See the \newline
-    \verb'GraphBLAS/GraphBLAS' folder for details and documentation,
-    and Section~\ref{octave_matlab}.
+\item Version 3.1.0 (Oct 1, 2019).  \verb'@GrB' interface added.  See the
+    \newline \verb'GraphBLAS/GraphBLAS' folder for details and documentation,
+    and Section~\ref{octave}.
 
 \item Version 3.0 (July 26, 2019), with OpenMP parallelism.
 
@@ -993,7 +992,7 @@ reduces down the columns, not across the rows.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The Octave/MATLAB interface to SuiteSparse:GraphBLAS is included with this
-distribution, described in Section~\ref{octave_matlab}.
+distribution, described in Section~\ref{octave}.
 It is fully polished, and fully tested, but does have
 some limitations that will be addressed in future releases.
 
@@ -1004,7 +1003,7 @@ See the links below (see Sections \ref{python} and \ref{julia}).
 %===============================================================================
 \subsection{Octave/MATLAB Interface}
 %===============================================================================
-\label{octave_matlab}
+\label{octave}
 
 An easy-to-use Octave/MATLAB interface for SuiteSparse:GraphBLAS is available;
 see the documentation in the \verb'GraphBLAS/GraphBLAS' folder for details.
@@ -11397,7 +11396,7 @@ this large can be represented by SuiteSparse:GraphBLAS, but only in a
 hypersparse form.
 
 Now, suppose you wish to compute the maximum value in each row, reducing the
-matrix to a vector.  This can be down with \verb'GrB_reduce':
+matrix to a vector.  This can be done with \verb'GrB_reduce':
 
 {\footnotesize
 \begin{verbatim}
@@ -11773,6 +11772,10 @@ has the same iso property as the input matrix/vector.
 \item
 \verb'GrB_*_setElement_*' preserves the iso property of the matrix/vector it
 modifies, if the input scalar is equal to the iso value of the matrix/vector.
+If the matrix or vector has no entries, the first call to \verb'setElement'
+makes it iso.  This allows a sequence of \verb'setElement' calls with the same
+scalar value to create an entire iso matrix or vector, if starting from
+an empty matrix or vector.
 
 \item
 \verb'GxB_Matrix_concat' constructs an iso matrix as its result if all input

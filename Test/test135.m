@@ -30,15 +30,17 @@ A.pattern = logical (spones (X)) ;
 A.class = 'int8' ;
 
 nthreads_set (1,1) ;
+tic
 c1 = GB_mex_reduce_to_scalar (s, [ ], 'min', A) ;
+t1 = toc ;
 assert (c1 == c0) ;
-t1 = grbresults ;
 fprintf ('1 thread  %g sec\n', t1) ;
 
 nthreads_set (nthreads_max,1) ;
+tic
 c2 = GB_mex_reduce_to_scalar (s, [ ], 'min', A) ;
+t2 = toc ;
 assert (c2 == c0) ;
-t2 = grbresults ;
 fprintf ('%d threads %g sec\n', nthreads_max, t2) ;
 
 %-------------------------------------------------------------------------------
@@ -58,15 +60,17 @@ fprintf ('built-in: %g sec\n', tm) ;
 s = double (inf) ;
 
 nthreads_set (1,1) ;
+tic
 c1 = GB_mex_reduce_to_scalar (s, [ ], 'min', A) ;
+t1 = toc ;
 assert (c1 == c0) ;
-t1 = grbresults ;
 fprintf ('1 thread  %g sec\n', t1) ;
 
 nthreads_set (nthreads_max,1) ;
+tic
 c2 = GB_mex_reduce_to_scalar (s, [ ], 'min', A) ;
+t2 = toc ;
 assert (c2 == c0) ;
-t2 = grbresults ;
 fprintf ('%d threads %g sec\n', nthreads_max, t2) ;
 
 %-------------------------------------------------------------------------------
@@ -92,15 +96,17 @@ fprintf ('built-in: %g sec (sparse)\n', tm) ;
 s = double (inf) ;
 
 nthreads_set (1,1) ;
+tic
 c1 = GB_mex_reduce_to_scalar (s, [ ], 'plus', A) ;
+t1 = toc ;
 assert (norm (c1 - c0) / norm (c0) < 1e-12) ;
-t1 = grbresults ;
 fprintf ('1 thread  %g sec\n', t1) ;
 
 nthreads_set (nthreads_max,1) ;
+tic
 c2 = GB_mex_reduce_to_scalar (s, [ ], 'plus', A) ;
+t2 = toc ;
 assert (norm (c2 - c0) / norm (c0) < 1e-12) ;
-t2 = grbresults ;
 fprintf ('%d threads %g sec\n', nthreads_max, t2) ;
 
 %-------------------------------------------------------------------------------

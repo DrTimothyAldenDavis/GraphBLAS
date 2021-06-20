@@ -37,10 +37,8 @@ C3 = GB_mex_AxB (A',B) ;
 toc
 
 fprintf ('GrB A''*B native:\n') ;
-% tic
 C4 = GB_mex_AxB (A,B, true) ;
-% toc
-tg = grbresults ;
+tg = toc ;
 
 assert (norm (C-C2,1) / norm (C,1) < 1e-12)
 assert (norm (C-C3,1) / norm (C,1) < 1e-12)
@@ -72,8 +70,7 @@ toc
 fprintf ('GrB (A'')*B:\n') ;
 tic
 C3 = GB_mex_AxB (A',B) ;
-toc
-tg1 = grbresults ;
+tg1 = toc ;
 fprintf ('just A*B %g (both A and B non-hypersparse)\n', tg1) ;
 
 % this is slower than GB_mex_AxB (A',B) even though it uses the
@@ -83,8 +80,7 @@ fprintf ('just A*B %g (both A and B non-hypersparse)\n', tg1) ;
 fprintf ('GrB A''*B native (AT becomes hypersparse):\n') ;
 tic
 C4 = GB_mex_AxB (A,B, true) ;
-toc
-tg = grbresults ;
+tg = toc ;
 
 fprintf ('builtin: %10.4f  GB:auto: %10.4f(%s) speedup %10.4f\n', ...
     tm, tg, tm/tg) ;
@@ -108,8 +104,7 @@ S = sparse (mm,nn) ;
 
 tic
 AT2 = GB_mex_transpose (S, [ ], [ ], A)
-toc
-tg = grbresults ;
+tg = toc ;
 
 assert (isequal (AT1, AT2.matrix)) ;
 
@@ -119,8 +114,7 @@ fprintf ('builtin transpose %g GB %g speedup %g\n', tm, tg, tm/tg) ;
 fprintf ('GrB (AT)*B:\n') ;
 tic
 C3 = GB_mex_AxB (AT1,B) ;
-toc
-tg1 = grbresults ;
+tg1 = toc ;
 fprintf ('just A*B %g\n', tg1) ;
 
 %-------------------------------------------------------------------------------
@@ -152,8 +146,7 @@ toc
 fprintf ('GrB A''xB auto select:\n') ;
 tic
 y3 = GB_mex_AxB (A,x, true) ;
-toc
-tg = grbresults ;
+tg = toc ;
 fprintf ('GrB time is %g\n', tg) ;
 
 fprintf ('GrB (A'')xB outer:\n') ;
@@ -193,8 +186,7 @@ toc
 fprintf ('GrB A''xB auto select:\n') ;
 tic
 y3 = GB_mex_AxB (x, A, true) ;
-toc
-tg = grbresults ;
+tg = toc ;
 
 fprintf ('GrB (A''B outer:\n') ;
 tic
@@ -227,8 +219,7 @@ tm = toc ;
 fprintf ('GrB AxB:\n') ;
 tic
 y3 = GB_mex_AxB (A, x, false) ;
-toc
-tg = grbresults ;
+tg = toc ;
 
 assert (isequal (y1, sparse (y0))) ;
 % assert (isequal (y1, y3)) ;
@@ -257,8 +248,7 @@ toc
 fprintf ('GrB A''xB auto select:\n') ;
 tic
 y3 = GB_mex_AxB (A,x, true) ;
-toc
-tg = grbresults ;
+tg = toc ;
 
 fprintf ('GrB (A'')xB outer:\n') ;
 tic

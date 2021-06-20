@@ -44,13 +44,13 @@ $V ../build/mis_demo 0 10000 10000 100000 1      >> mis_demo.out
 $V ../build/mis_demo 0 100000 100000 10000000 0  >> mis_demo.out
 $V ../build/mis_demo 0 100000 100000 10000000 1  >> mis_demo.out
 
-diff -I time Output/simple_demo.out       simple_demo.out
-diff -I time Output/complex_demo_out.m    complex_demo_out.m
-diff -I time Output/wildtype_demo.out     wildtype_demo.out
-diff -I time Output/mis_demo.out          mis_demo.out
+diff Output/simple_demo.out       simple_demo.out
+diff Output/complex_demo_out.m    complex_demo_out.m
+diff Output/wildtype_demo.out     wildtype_demo.out
+diff Output/mis_demo.out          mis_demo.out
 
 echo "Comparing PageRank results:"
-diff -I time -I " d:" Output/pagerank_demo.out     pagerank_demo.out
+diff -I " d:" Output/pagerank_demo.out     pagerank_demo.out
 echo "Some mismatches are expected between dpagerank and ipagerank."
 echo "number of mismatches between dpagerank and ipagerank in your tests: "
 grep mismatch pagerank_demo.out | wc -l

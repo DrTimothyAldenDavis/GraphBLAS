@@ -56,8 +56,8 @@ t = toc ;
 
 tic
 [Iout, Jout] = GB_mex_qsort_2 (I, J) ;
+t2_just = toc ;
 t2 = toc ;
-t2_just = grbresults ;
 assert (isequal ([Iout Jout], IJout));
 
 fprintf ('built-in: sortrows %g sec  qsort2: %g %g speedup: %g\n', ...
@@ -67,9 +67,9 @@ for nthreads = [1 2 4 8 16 20 32 40 64 128 256]
     if (nthreads > 2*nthreads_max)
         break ;
     end
-    % tic
+    tic
     [Iout, Jout] = GB_mex_msort_2 (I, J, nthreads) ;
-    tp = grbresults ; % toc ;
+    tp = toc ;
     if (nthreads == 1)
         tp1 = tp ;
     end
@@ -92,7 +92,7 @@ t = toc ;
 
 tic
 [Iout, Jout, Kout] = GB_mex_qsort_3 (I, J, K) ;
-t2_just = grbresults ;
+t2_just = toc ;
 t2 = toc ;
 assert (isequal ([Iout Jout Kout], IJKout))
 
@@ -102,9 +102,9 @@ for nthreads = [1 2 4 8 16 20 32 40 64 128 256]
     if (nthreads > 2*nthreads_max)
         break ;
     end
-    % tic
+    tic
     [Iout, Jout, Kout] = GB_mex_msort_3 (I, J, K, nthreads) ;
-    tp = grbresults ; % toc ;
+    tp = toc ;
     if (nthreads == 1)
         tp1 = tp ;
     end

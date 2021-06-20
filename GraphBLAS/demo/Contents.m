@@ -2,7 +2,7 @@
 %
 %   dnn_builtin - Sparse deep neural network without @GrB
 %   gbdemo      - run the graphblas_demo.m
-%   gbdemo2     - Extreme performance differences: GraphBLAS vs MATLAB.
+%   gbdemo2     - Extreme performance differences: GraphBLAS vs built-in methods
 %   graphblas_demo      - GraphBLAS: graph algorithms in the language of linear algebra
 %   graphblas_demo2     - Run the GraphBLAS demo2
 %

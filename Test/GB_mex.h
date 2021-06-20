@@ -21,20 +21,17 @@
 #include "GB_sort.h"
 #include "GB_apply.h"
 #include "GB_mex_generic.h"
-
-#include "graphblas_demos.h"
-
-// demos.h use mxMalloc, etc, and so do the Test/* mexFunctions,
-// but the tests here need to distinguish between mxMalloc and malloc.
-#undef malloc
-#undef calloc
-#undef realloc
-#undef free
-
 #undef OK
-#include "usercomplex.h"
+#include "GB_mx_usercomplex.h"
 #include "mex.h"
 #include "matrix.h"
+
+#define SIMPLE_RAND_MAX 32767
+uint64_t simple_rand (void) ;
+void simple_rand_seed (uint64_t seed) ;
+uint64_t simple_rand_getseed (void) ;
+double simple_rand_x (void) ;
+uint64_t simple_rand_i (void) ;
 
 #define PARGIN(k) ((nargin > (k)) ? pargin [k] : NULL)
 
@@ -44,13 +41,6 @@
 
 // MATCH(s,t) compares two strings and returns true if equal
 #define MATCH(s,t) (strcmp(s,t) == 0)
-
-// timer functions, and result statistics
-extern double grbtime, tic [2] ;
-void GB_mx_put_time (void) ;
-void GB_mx_clear_time (void) ;          // clear the time and start the tic
-#define GB_MEX_TIC { GB_mx_clear_time ( ) ; }
-#define GB_MEX_TOC { grbtime = simple_toc (tic) ; }
 
 void GB_mx_abort (void) ;               // assertion failure
 
@@ -285,6 +275,18 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
     const GrB_Type default_type     // default type if string empty
 ) ;
 
+GrB_Info GB_mx_random_matrix      // create a random double-precision matrix
+(
+    GrB_Matrix *A_output,   // handle of matrix to create
+    bool make_symmetric,    // if true, return A as symmetric
+    bool no_self_edges,     // if true, then do not create self edges
+    int64_t nrows,          // number of rows
+    int64_t ncols,          // number of columns
+    int64_t nedges,         // number of edges
+    int method,             // method to use: 0:setElement, 1:build,
+    bool A_complex          // if true, create a Complex matrix
+) ;
+
 //------------------------------------------------------------------------------
 
 // remove a block that had been allocated from within GraphBLAS and then
@@ -338,9 +340,7 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
     if (!malloc_debug)                                                      \
     {                                                                       \
         /* no malloc debugging; just call the method */                     \
-        GB_MEX_TIC ;                                                        \
         GrB_Info info = GRAPHBLAS_OPERATION ;                               \
-        GB_MEX_TOC ;                                                        \
         if (info == GrB_PANIC) mexErrMsgTxt ("panic!") ;                    \
         if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))                \
         {                                                                   \
@@ -362,10 +362,8 @@ GrB_Type GB_mx_string_to_Type       // GrB_Type from the string
             METHOD_TRY ;                                                    \
             /* call the method with malloc debug enabled */                 \
             GB_Global_malloc_debug_set (true) ;                             \
-            GB_MEX_TIC ;                                                    \
             GrB_Info info = GRAPHBLAS_OPERATION ;                           \
             /* do not finish the work */                                    \
-            GB_MEX_TOC ;                                                    \
             GB_Global_malloc_debug_set (false) ;                            \
             if (tries > 1000000) mexErrMsgTxt ("infinite loop!") ;          \
             if (info == GrB_SUCCESS || info == GrB_NO_VALUE)                \

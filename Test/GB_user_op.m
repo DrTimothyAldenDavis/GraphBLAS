@@ -2,7 +2,6 @@ function [z tol] = GB_user_op (op, x, y)
 %GB_USER_OP apply a complex binary and unary operator
 %
 % built-in equivalents of the GraphBLAS user-defined Complex operators.
-% See ../Demo/usercomplex.[ch] and the GB_mex_op mexFunction
 %
 % [z tol] = GB_user_op (op,x,y) returns tol true if GB_mex_op(op,x,y) is
 % allowed to have roundoff error when compared with GB_user_op(op,x,y).  tol is

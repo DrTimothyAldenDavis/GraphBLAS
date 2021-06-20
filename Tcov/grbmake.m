@@ -1,7 +1,7 @@
 function grbmake
 %GBMAKE compile the GraphBLAS library for statement coverage testing
 %
-% This function compiles ../Source and ../Demo to create the
+% This function compiles ../Source to create the
 % libgraphblas_tcov.so (or *.dylib) library, inserting code code for statement
 % coverage testing.  It does not compile the mexFunctions.
 %
@@ -19,8 +19,7 @@ copyfile ('../Include/GraphBLAS.h', 'tmp_include/GraphBLAS.h') ;
 copyfile ('../GraphBLAS/rename/GB_rename.h', 'tmp_include/GB_rename.h') ;
 
 % create the include files and place in tmp_include
-hfiles = [ dir('../Demo/Include') ; ...
-           dir('../Source/*.h') ; ...
+hfiles = [ dir('../Source/*.h') ; ...
            dir('../Source/Template') ; ...
            dir('../Source/Generated/*.h') ; ] ;
 count = grbcover_edit (hfiles, 0, 'tmp_include') ;
@@ -43,7 +42,12 @@ fclose (f) ;
 
 % compile the libgraphblas_tcov.so library
 
-need_rename = ~verLessThan ('matlab', '9.10') ;
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+if (have_octave)
+    need_rename = false ;
+else
+    need_rename = ~verLessThan ('matlab', '9.10') ;
+end
 
 if (need_rename)
     fprintf ('Rename with -DGBRENAME=1\n') ;

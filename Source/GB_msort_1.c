@@ -70,14 +70,14 @@ static int64_t GB_msort_1_binary_search    // return pleft
 
     // Modify pleft and pright:
     if (!found && (pleft == pright))
-    {
+    { 
         if (GB_lt_1 (X_0, pleft,
                      Y_0, pivot))
-        { 
+        {
             pleft++ ;
         }
         else
-        { 
+        {
 //          pright++ ;  // (not needed)
         }
     }

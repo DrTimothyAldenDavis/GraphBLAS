@@ -88,8 +88,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
             if (csc != A->is_csc)
             { 
                 // T = (ctype) A', not in-place
-                GB_OK (GB_transpose (T, ctype, csc, A,     // T static = A'
-                    NULL, NULL, NULL, false, Context)) ;
+                GB_OK (GB_transpose_cast (T, ctype, csc, A, Context)) ;
                 A = T ;
                 GB_MATRIX_WAIT (A) ;
             }

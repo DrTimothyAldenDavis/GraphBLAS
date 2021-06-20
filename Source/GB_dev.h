@@ -44,18 +44,12 @@
 // notes on future work
 //------------------------------------------------------------------------------
 
-// FUTURE: can handle transpose of full or bitmap input matrices just by
-// changing how they are accessed
-// 
+// FUTURE: transpose full or bitmap inputs by changing how they are accessed
+
 // FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
-// 
-// For PageRank:
-// 
-// FIXME iso matrices/vectors (for r(:)=teleport)
-//      probably coupled with lazy malloc/free of A->x when converting from
-//      full (non-iso) to iso.
+
+// FUTURE: DIFF1, DIFF2 binary operators, GxB_vxv
 //
-// FUTURE:
 //      add binary operators:
 //          DIFF1(x,y) = abs(x-y), for all types
 //          DIFF2(x,y) = (x-y)^2 for real types, (x-y)*conj(x-y) for complex
@@ -70,10 +64,6 @@
 //
 //      GxB_vtxv : inner product of 2 vectors, result is a GxB_Scalar
 //      GxB_vxvt : outer product of 2 vectors, result is a GrB_Matrix
-//
-// For BC:
-//  FUTURE: BC: constructing S will be faster with iso matrices,
-//  once they are added to SuiteSparse:GraphBLAS.
 
 #endif
 

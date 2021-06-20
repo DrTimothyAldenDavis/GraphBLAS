@@ -14,5 +14,5 @@ and should not be editted.  If the Generator/ files are modified then type:
 
     codegen
 
-in Octave or MATLAB to construct the Generated/ files.
+in Octave to construct the Generated/ files.
 

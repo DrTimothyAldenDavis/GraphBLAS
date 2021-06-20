@@ -47,8 +47,9 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
 
     % warmup
     C2 = GB_mex_assign (C0, [ ], [ ], A, I, I) ;
+    tic
     C2 = GB_mex_assign (C0, [ ], [ ], A, I, I) ;
-    tg = grbresults ;
+    tg = toc ;
 
     if (nthreads == 1)
         t1 = tg ;
@@ -80,9 +81,9 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
 
     % warmup
     B2 = GB_mex_Matrix_extract (S, [ ], [ ], C1, I, I) ;
-
+    tic
     B2 = GB_mex_Matrix_extract (S, [ ], [ ], C1, I, I) ;
-    tg = grbresults ;
+    tg = toc ;
 
     if (nthreads == 1)
         t1 = tg ;

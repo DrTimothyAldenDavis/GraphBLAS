@@ -1,5 +1,5 @@
 function gbdemo2 (bnz)
-%GBDEMO2 Extreme performance differences: GraphBLAS vs MATLAB.
+%GBDEMO2 Extreme performance differences: GraphBLAS vs built-in methods.
 %
 % Usage:
 %

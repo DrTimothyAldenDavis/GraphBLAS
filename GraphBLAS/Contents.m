@@ -2,8 +2,8 @@
 %
 % GraphBLAS is a library for creating graph algorithms based on sparse
 % linear algebraic operations over semirings.  Its @GrB interface
-% provides faster sparse matrix operations than the built-in methods in
-% MATLAB, as well as sparse integer and single-precision matrices, and
+% provides faster sparse matrix operations than the built-in methods,
+% as well as sparse integer and single-precision matrices, and
 % operations with arbitrary semirings.  See 'help GrB' for details.
 %
 % The constructor method is GrB.  If A is any matrix (GraphBLAS,

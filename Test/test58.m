@@ -30,8 +30,9 @@ if (~cover)
     C = Cin + (A+B) ;
     t1 =toc ;
 
+    tic
     C2 = GB_mex_Matrix_eWiseAdd (Cin, Mask, accum, add, A, B, [ ]) ;
-    t2 = grbresults ;
+    t2 = toc ;
     assert (isequal (C2.matrix,  C))
 
     fprintf ('built-in: %g GB: %g  speedup: %g\n', t1, t2, t1/t2) ;
@@ -69,11 +70,11 @@ for m = nn
         end
         t1 = toc / trials ;
 
-        tg = 0 ;
+        tic
         for k = 1:trials
             C2 = GB_mex_Matrix_eWiseAdd (Cin, [ ], accum, add, A, B, [ ]) ;
-            tg = tg + grbresults ;
         end
+        tg = toc ;
         t2 = tg /trials ;
         assert (isequal (C1, C2.matrix)) ;
 
@@ -90,11 +91,11 @@ for m = nn
         end
         t1 = toc / trials ;
 
-        tg = 0 ;
+        tic ;
         for k = 1:trials
             C2 = GB_mex_Matrix_eWiseAdd (Cin, [ ], accum, add, A, BT, Dnt) ;
-            tg = tg + grbresults ;
         end
+        tg = toc ;
         t2 = tg /trials ;
         assert (isequal (C1, C2.matrix)) ;
 
@@ -111,11 +112,11 @@ for m = nn
         end
         t1 = toc / trials  ;
 
-        tg = 0 ;
+        tic
         for k = 1:trials
             C2 = GB_mex_Matrix_eWiseAdd (Cin, [ ], accum, add, AT, B, Dtn) ;
-            tg = tg + grbresults ;
         end
+        tg = toc ;
         t2 = tg /trials ;
         assert (isequal (C1, C2.matrix)) ;
 
@@ -132,11 +133,11 @@ for m = nn
         end
         t1 = toc / trials ;
 
-        tg = 0 ;
+        tic ;
         for k = 1:trials
             C2 = GB_mex_Matrix_eWiseAdd (Cin, [ ], accum, add, AT, BT, Dtt) ;
-            tg = tg + grbresults ;
         end
+        tg = toc ;
         t2 = tg /trials ;
         assert (isequal (C1, C2.matrix)) ;
 

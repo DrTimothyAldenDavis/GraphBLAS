@@ -55,9 +55,7 @@ void mexFunction
     int64_t *Jout = mxGetData (pargout [1]) ;
     memcpy (Jout, J, n * sizeof (int64_t)) ;
 
-    GB_MEX_TIC ;
     GB_msort_2 (Iout, Jout, n, nthreads) ;
-    GB_MEX_TOC ;
 
     GB_mx_put_global (true) ;   
 }

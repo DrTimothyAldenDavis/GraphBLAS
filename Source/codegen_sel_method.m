@@ -14,6 +14,7 @@ if (nargin < 5)
 end
 
 is_entry_selector = isempty (kind) ;
+is_nonzombie_selector = isequal (opname, 'nonzombie') ;
 
 f = fopen ('control.m4', 'w') ;
 
@@ -24,7 +25,7 @@ end
 
 name = sprintf ('%s_%s', opname, aname) ;
 
-enable_phase1 = iso || is_entry_selector ;
+enable_phase1 = iso || (is_entry_selector && ~is_nonzombie_selector) ;
 
 % fprintf ('\nname: %s phase1: %d', name, enable_phase1) ;
 
@@ -58,7 +59,7 @@ else
     fprintf (f, 'define(`GB_test_value_of_entry'', `%s'')\n', func) ;
 end
 
-if (is_entry_selector)
+if (is_entry_selector || is_nonzombie_selector)
     fprintf (f, 'define(`GB_kind'', `#define GB_ENTRY_SELECTOR'')\n') ;
 else
     fprintf (f, 'define(`GB_kind'', `#define %s'')\n', kind) ;

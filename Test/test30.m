@@ -27,8 +27,7 @@ function test30
 
     tic 
     C2 = GB_mex_subassign (A, [], [], scalar, I0, J0, []) ;
-    toc
-    t = grbresults
+    t = toc ;
 
     C = A ; 
     fprintf ('start builtin:\n') ;

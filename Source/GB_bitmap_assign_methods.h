@@ -399,6 +399,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
     GB_Context Context
 ) ;
 
+GB_PUBLIC
 GrB_Info GB_bitmap_assign_noM_noaccum
 (
     // input/output:

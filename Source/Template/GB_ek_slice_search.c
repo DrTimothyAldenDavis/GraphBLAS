@@ -11,10 +11,6 @@
 #define GB_EK_SLICE_SEARCH_H
 #include "GB_search_for_vector_template.c"
 
-//------------------------------------------------------------------------------
-// GB_ek_slice_search: find the first and last vectors in a slice
-//------------------------------------------------------------------------------
-
 static inline void GB_ek_slice_search
 (
     // input:
@@ -31,7 +27,6 @@ static inline void GB_ek_slice_search
 {
     int64_t pfirst = pstart_slice [taskid] ;
     int64_t plast  = pstart_slice [taskid+1] - 1 ;
-    // ASSERT (pfirst <= plast) ;
 
     // find the first vector of the slice for task taskid: the
     // vector that owns the entry Ai [pfirst] and Ax [pfirst].
@@ -54,7 +49,6 @@ static inline void GB_ek_slice_search
     }
     else if (pfirst > plast)
     { 
-GB_GOTCHA ; // empty task
         // this task does no work
         klast = kfirst ;
     }
@@ -64,7 +58,6 @@ GB_GOTCHA ; // empty task
     }
     kfirst_slice [taskid] = kfirst ;
     klast_slice  [taskid] = klast ;
-    // ASSERT (0 <= kfirst && kfirst <= klast && klast < anvec) ;
 }
 
 #endif

@@ -8,8 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for code development only:
-// FIXME: turn off dev setting
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB.h"
@@ -365,11 +364,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (pr_short || pr_complete)
     {
         if (A->static_header)
-        { 
+        {
             GBPR ("  static header,") ;
         }
         else
-        { 
+        {
             GBPR ("  header %p", A) ;
         }
         GBPR (" number of memory blocks: " GBd "\n", nallocs) ;

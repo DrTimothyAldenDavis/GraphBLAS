@@ -30,12 +30,12 @@ if (have_octave)
         gb_error ('Octave 7 or later is required') ;
     end
 else
-    if verLessThan ('matlab', '9.4')    % OK: MATLAB only
+    if verLessThan ('matlab', '9.4')
         error ('MATLAB 9.4 (R2018a) or later is required') ;
     end
     % MATLAB 9.10 (R2021a) and following include a built-in GraphBLAS library
     % that conflicts with this version, so rename this version.
-    need_rename = ~verLessThan ('matlab', '9.10') ; % OK: MATLAB only
+    need_rename = ~verLessThan ('matlab', '9.10') ;
 end
 
 % finish GraphBLAS

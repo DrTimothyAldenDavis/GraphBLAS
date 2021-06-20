@@ -3,7 +3,7 @@ SPDX-License-Identifier: Apache-2.0
 
 GraphBLAS/Test:
 
-This folder includes an Octave/MATLAB interface that tests each GraphBLAS
+This folder includes an *.m interface that tests each GraphBLAS
 function.  It is meant for testing and development only, not for general usage.
 The interface is not designed to be simple, clean, elegant, and
 well-documented.  Such an interface would interfere with the purpose of these
@@ -20,7 +20,7 @@ Microft Visual Studio does not support ANSI C11 so this test is not available
 on Windows unless you use another compiler.
 
 To run the tests, use the following command in this directory, in the 
-Octave/MATLAB Command Window:
+Octave Command Window:
 
     make ; testall
 
@@ -50,7 +50,7 @@ increased until the function succeeds.  During this entire process, a count is
 kept of malloc'd blocks, and an error is reported if a leak is found.
 GraphBLAS will be very slow with malloc debugging enabled.  It is only done
 through the @GrB interface and has no effect when GraphBLAS is used through a
-C program (as in the Demo/ programs).
+C program.
 
 To enable further debugging tests, see the comments in Source/GB.h.
 

@@ -2,15 +2,9 @@
 /* Copyright 2008-2011, Timothy A. Davis, http://suitesparse.com */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#ifdef MATLAB_MEX_FILE
-#include "mex.h"
-#define SPOK_INT mwSignedIndex
-#else
-#ifndef SPOK_INT
-#define SPOK_INT ptrdiff_t
-#endif
-#endif
-
+#include <stdint.h>
+#include <stddef.h>
+#define SPOK_INT int64_t
 #define SPOK_OK 1
 #define SPOK_WARNING 0
 

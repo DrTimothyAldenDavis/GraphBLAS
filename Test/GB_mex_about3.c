@@ -11,6 +11,7 @@
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
+#include "GB_bitmap_assign_methods.h"
 
 #define USAGE "GB_mex_about3"
 
@@ -48,6 +49,7 @@ void mexFunction
 
     GrB_Info info ;
     GrB_Matrix C = NULL, A = NULL, M = NULL ;
+    GrB_Descriptor desc = NULL ;
     GrB_Vector w = NULL ;
     GrB_Type myint = NULL, myblob = NULL ;
     GB_void *Null = NULL ;
@@ -65,6 +67,8 @@ void mexFunction
     // GxB_set/get for printf and flush
     //--------------------------------------------------------------------------
 
+    bool save_burble = false ;
+    OK (GxB_Global_Option_get (GxB_BURBLE, &save_burble)) ;
     OK (GxB_Global_Option_set (GxB_BURBLE, true)) ;
     OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
 
@@ -87,7 +91,7 @@ void mexFunction
     printf ("\nBurble with myprintf/myflush:\n") ;
     OK (GrB_Matrix_nvals (&nvals, C)) ;
     CHECK (nvals == 0) ;
-    OK (GxB_Global_Option_set (GxB_BURBLE, false)) ;
+    OK (GxB_Global_Option_set (GxB_BURBLE, save_burble)) ;
 
     OK (GxB_Global_Option_set (GxB_PRINTF, printf)) ;
     OK (GxB_Global_Option_set (GxB_FLUSH, NULL)) ;
@@ -244,6 +248,7 @@ void mexFunction
         Ap_size, Ai_size, 0, iso, jumbled, NULL)) ;
     ERR (GxB_Matrix_import_CSC (&C, type, nrows, ncols, &Ap, &Ai, &Null,
         Ap_size, Ai_size, 0, true, jumbled, NULL)) ;
+
     OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols, &Ap, &Ai, &Ax,
         Ap_size, Ai_size, Ax_size, iso, jumbled, NULL)) ;
     OK (GxB_Matrix_fprint (C, "C imported sparse", GxB_COMPLETE, NULL)) ;
@@ -280,8 +285,12 @@ void mexFunction
     OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &Ap, &Ai, &Ax,
         &Ap_size, &Ai_size, &Ax_size, NULL, &jumbled, NULL)) ;
 
+    ERR (GxB_Matrix_import_CSC (&C, type, nrows, ncols, &Ap, &Ai, &Ax,
+        Ap_size, Ai_size, 0, false, jumbled, NULL)) ;
+
     OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols, &Ap, &Ai, &Ax,
         Ap_size, Ai_size, Ax_size, false, jumbled, NULL)) ;
+
     OK (GxB_Matrix_fprint (C, "C imported non-iso", GxB_SHORT, NULL)) ;
     OK (GrB_Matrix_free_(&C)) ;
 
@@ -299,7 +308,7 @@ void mexFunction
     OK (GrB_Matrix_free_(&C)) ;
 
     //--------------------------------------------------------------------------
-    // split a user-defined full matrix
+    // split a user-defined matrix
     //--------------------------------------------------------------------------
 
     typedef struct
@@ -313,62 +322,76 @@ void mexFunction
     myblob_struct blob_scalar ;
     OK (GrB_Matrix_new (&C, myblob, 4, 4)) ;
 
-    for (int i = 0 ; i < 4 ; i++)
-    {
-        for (int j = 0 ; j < 4 ; j++)
-        {
-            blob_scalar.blob [0] = i ;
-            blob_scalar.blob [1] = j ;
-            blob_scalar.blob [2] = 32 ;
-            blob_scalar.blob [3] = 99 ;
-            OK (GrB_Matrix_setElement_UDT (C, &blob_scalar, i, j)) ;
-        }
-    }
-    OK (GrB_Matrix_wait (&C)) ;
-    OK (GxB_Matrix_fprint (C, "C blob", GxB_SHORT, NULL)) ;
-
-    for (int i = 0 ; i < 4 ; i++)
-    {
-        for (int j = 0 ; j < 4 ; j++)
-        {
-            OK (GrB_Matrix_extractElement_UDT (&blob_scalar, C, i, j)) ;
-            CHECK (blob_scalar.blob [0] == i) ;
-            CHECK (blob_scalar.blob [1] == j) ;
-            CHECK (blob_scalar.blob [2] == 32) ;
-            CHECK (blob_scalar.blob [3] == 99) ;
-            printf ("C(%d,%d) = [%d, %d, %d, %d]\n", i, j,
-                blob_scalar.blob [0], blob_scalar.blob [1],
-                blob_scalar.blob [2], blob_scalar.blob [3]) ;
-        }
-    }
-
     GrB_Matrix Tiles [4]  = { NULL, NULL, NULL, NULL} ;
     GrB_Index Tile_nrows [2] = { 2, 2 } ;
     GrB_Index Tile_ncols [2] = { 2, 2 } ;
-    OK (GxB_Matrix_split (Tiles, 2, 2, Tile_nrows, Tile_ncols, C, NULL)) ;
 
-    for (int k = 0 ; k < 4 ; k++)
+    for (int sparsity_control = 1 ;
+             sparsity_control <= 8 ;
+             sparsity_control *= 2)
     {
-        printf ("\n================ Tile %d\n", k) ;
-        OK (GxB_Matrix_fprint (Tiles [k], "Tile", GxB_COMPLETE, NULL)) ;
-        int istart = (k == 0 || k == 1) ? 0 : 2 ;
-        int jstart = (k == 0 || k == 2) ? 0 : 2 ;
-        for (int i = 0 ; i < 2 ; i++)
+        
+        printf ("\n################# sparsity_control %d\n", sparsity_control) ;
+        OK (GrB_Matrix_clear (C)) ;
+
+        for (int i = 0 ; i < 4 ; i++)
         {
-            for (int j = 0 ; j < 2 ; j++)
+            for (int j = 0 ; j < 4 ; j++)
             {
-                OK (GrB_Matrix_extractElement_UDT (&blob_scalar,
-                    Tiles [k], i, j)) ;
-                printf ("Tile(%d,%d) = [%d, %d, %d, %d]\n", i, j,
-                    blob_scalar.blob [0], blob_scalar.blob [1],
-                    blob_scalar.blob [2], blob_scalar.blob [3]) ;
-                CHECK (blob_scalar.blob [0] == i + istart) ;
-                CHECK (blob_scalar.blob [1] == j + jstart) ;
-                CHECK (blob_scalar.blob [2] == 32) ;
-                CHECK (blob_scalar.blob [3] == 99) ;
+                if (sparsity_control < 8 && i == j) continue ;
+                blob_scalar.blob [0] = i ;
+                blob_scalar.blob [1] = j ;
+                blob_scalar.blob [2] = 32 ;
+                blob_scalar.blob [3] = 99 ;
+                OK (GrB_Matrix_setElement_UDT (C, &blob_scalar, i, j)) ;
             }
         }
-        OK (GrB_Matrix_free_(& (Tiles [k]))) ;
+        OK (GrB_Matrix_wait (&C)) ;
+        OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity_control)) ;
+        OK (GxB_Matrix_fprint (C, "C blob", GxB_SHORT, NULL)) ;
+
+        for (int i = 0 ; i < 4 ; i++)
+        {
+            for (int j = 0 ; j < 4 ; j++)
+            {
+                OK (GrB_Matrix_extractElement_UDT (&blob_scalar, C, i, j)) ;
+                if (sparsity_control < 8 && i == j) continue ;
+                CHECK (blob_scalar.blob [0] == i) ;
+                CHECK (blob_scalar.blob [1] == j) ;
+                CHECK (blob_scalar.blob [2] == 32) ;
+                CHECK (blob_scalar.blob [3] == 99) ;
+                printf ("C(%d,%d) = [%d, %d, %d, %d]\n", i, j,
+                    blob_scalar.blob [0], blob_scalar.blob [1],
+                    blob_scalar.blob [2], blob_scalar.blob [3]) ;
+            }
+        }
+
+        OK (GxB_Matrix_split (Tiles, 2, 2, Tile_nrows, Tile_ncols, C, NULL)) ;
+
+        for (int k = 0 ; k < 4 ; k++)
+        {
+            printf ("\n================ Tile %d\n", k) ;
+            OK (GxB_Matrix_fprint (Tiles [k], "Tile", GxB_COMPLETE, NULL)) ;
+            int istart = (k == 0 || k == 1) ? 0 : 2 ;
+            int jstart = (k == 0 || k == 2) ? 0 : 2 ;
+            for (int i = 0 ; i < 2 ; i++)
+            {
+                for (int j = 0 ; j < 2 ; j++)
+                {
+                    if (sparsity_control < 8 && i+istart == j+jstart) continue ;
+                    OK (GrB_Matrix_extractElement_UDT (&blob_scalar,
+                        Tiles [k], i, j)) ;
+                    printf ("Tile(%d,%d) = [%d, %d, %d, %d]\n", i, j,
+                        blob_scalar.blob [0], blob_scalar.blob [1],
+                        blob_scalar.blob [2], blob_scalar.blob [3]) ;
+                    CHECK (blob_scalar.blob [0] == i + istart) ;
+                    CHECK (blob_scalar.blob [1] == j + jstart) ;
+                    CHECK (blob_scalar.blob [2] == 32) ;
+                    CHECK (blob_scalar.blob [3] == 99) ;
+                }
+            }
+            OK (GrB_Matrix_free_(& (Tiles [k]))) ;
+        }
     }
 
     // create an iso matrix
@@ -485,8 +508,123 @@ void mexFunction
     GrB_Matrix_free_(&C) ;
 
     //--------------------------------------------------------------------------
-    // iso setElement
+    // bitmap assign
     //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
+    OK (GrB_Matrix_setElement_FP32 (C, 1.1, 0, 0)) ;
+    OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
+    OK (GrB_Matrix_setElement_FP32 (C, 9.9, 4, 4)) ;
+    OK (GrB_Matrix_setElement_FP32 (C, 9.7, 3, 3)) ;
+    OK (GxB_Matrix_fprint (C, "C for C<M>=A", GxB_SHORT, NULL)) ;
+
+    OK (GrB_Matrix_new (&A, GrB_FP32, 2, 2)) ;
+    OK (GrB_Matrix_setElement_FP32 (A, 1.1, 0, 0)) ;
+    OK (GrB_Matrix_setElement_FP32 (A, 1.2, 0, 1)) ;
+    OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
+    OK (GxB_Matrix_fprint (A, "A for C<M>=A", GxB_SHORT, NULL)) ;
+
+    // C(I,I) = A
+    OK (GB_bitmap_assign_noM_noaccum (C, true,
+        I, 2, GB_LIST, NULL, I, 2, GB_LIST, NULL,
+        false, true, A, NULL, GrB_BOOL, GB_ASSIGN, NULL)) ;
+
+    OK (GxB_Matrix_fprint (C, "C after C<M>=A", GxB_SHORT, NULL)) ;
+
+    GrB_Matrix_free_(&A) ;
+    GrB_Matrix_free_(&C) ;
+
+    //--------------------------------------------------------------------------
+    // descriptor
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Descriptor_new (&desc)) ;
+    OK (GrB_Descriptor_set (desc, GrB_MASK, GrB_COMP)) ;
+    OK (GxB_Descriptor_fprint (desc, "descriptor !M", GxB_SHORT, NULL)) ;
+    OK (GrB_Descriptor_free (&desc)) ;
+
+    //--------------------------------------------------------------------------
+    // shallow alias
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
+    OK (GrB_Matrix_setElement_FP32 (C, 9.9, 4, 4)) ;
+    OK (GrB_Matrix_setElement_FP32 (C, 9.7, 3, 3)) ;
+    OK (GrB_Matrix_wait (&C)) ;
+    OK (GrB_Matrix_dup (&A, C)) ;
+    save = A->x ;
+    A->x = C->x ;
+    A->x_shallow = true ;
+    CHECK (GB_aliased (A, C)) ;
+    A->x = save ;
+    A->x_shallow = false ;
+    GrB_Matrix_free_(&A) ;
+    GrB_Matrix_free_(&C) ;
+
+    //--------------------------------------------------------------------------
+    // vector extractElement with pending work
+    //--------------------------------------------------------------------------
+
+    float gamma = 999 ;
+    OK (GrB_Vector_new (&w, GrB_FP32, 100)) ;
+    OK (GrB_Vector_setElement_FP32 (w, 0, 0)) ;
+    OK (GxB_Vector_fprint (w, "w after first setElement", GxB_SHORT, NULL)) ;
+    OK (GrB_Vector_setElement_FP64 (w, 1, 1)) ;     // converts to non-iso
+    OK (GrB_Vector_setElement_FP32 (w, 2, 2)) ;
+    OK (GrB_Vector_setElement_FP32 (w, -1, 1)) ;
+    OK (GrB_Vector_setElement_FP32 (w, 3, 2)) ;
+    OK (GrB_Vector_setElement_FP64 (w, 2, 0)) ;
+    OK (GxB_Vector_fprint (w, "w before extractElement", GxB_SHORT, NULL)) ;
+    OK (GrB_Vector_extractElement_FP32 (&gamma, w, 1)) ;
+    OK (GxB_Vector_fprint (w, "w after extractElement", GxB_SHORT, NULL)) ;
+    CHECK (gamma == -1) ;
+    OK (GrB_Vector_extractElement_FP32 (&gamma, w, 0)) ;
+    CHECK (gamma == 2) ;
+    GrB_Vector_free_(&w) ;
+
+    //--------------------------------------------------------------------------
+    // transpose with pending work
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
+    OK (GrB_Matrix_setElement_FP32 (C, 8.25, 2, 4)) ;
+    OK (GrB_Matrix_setElement_FP32 (C, 9.5, 1, 3)) ;
+    OK (GxB_Matrix_fprint (C, "C before transpose", GxB_SHORT, NULL)) ;
+    OK (GrB_transpose (C, NULL, NULL, C, NULL)) ;
+    OK (GxB_Matrix_fprint (C, "C after transpose", GxB_SHORT, NULL)) ;
+    OK (GrB_Matrix_extractElement_FP32 (&gamma, C, 3, 1)) ;
+    CHECK (gamma == 9.5) ;
+    OK (GrB_Matrix_extractElement_FP32 (&gamma, C, 4, 2)) ;
+    CHECK (gamma == 8.25) ;
+    OK (GrB_Matrix_nvals (&nvals, C)) ;
+    CHECK (nvals == 2) ;
+    GrB_Matrix_free_(&C) ;
+
+    //--------------------------------------------------------------------------
+    // GB_ek_slice
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&C, GrB_FP32, 3, 4)) ;
+    OK (GrB_Matrix_assign_FP32 (C, NULL, NULL, 1, GrB_ALL, 4, GrB_ALL, 4,
+        NULL)) ;
+    int64_t A_ek_slicing [1000] ;
+    for (int ntasks = 1 ; ntasks < 20 ; ntasks++)
+    {
+        GB_ek_slice (A_ek_slicing, C, ntasks) ;
+
+        int64_t *kfirst_slice = A_ek_slicing ;
+        int64_t *klast_slice  = A_ek_slicing + ntasks ;
+        int64_t *pstart_slice = A_ek_slicing + ntasks * 2 ;
+
+        printf ("\n----------------- ntasks: %d\n", ntasks) ;
+        for (int tid = 0 ; tid < ntasks ; tid++)
+        {
+            printf ("task: %3d kfirst: %d klast: %d pfirst: %2d plast: %2d\n",
+                tid, kfirst_slice [tid], klast_slice [tid],
+                pstart_slice [tid], pstart_slice [tid+1]-1) ;
+        }
+    }
+    GrB_Matrix_free_(&C) ;
 
     //--------------------------------------------------------------------------
     // wrapup

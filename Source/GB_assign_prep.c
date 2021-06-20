@@ -545,7 +545,7 @@ GrB_Info GB_assign_prep
                     // GB_clear either converts C to an empty sparse/hyper
                     // matrix, or to a bitmap matrix with no entries, depending
                     // on its sparsity control setting.
-                    GBURBLE ("clear C ") ;
+                    GBURBLE ("(clear C) ") ;
                     GB_OK (GB_clear (C, Context)) ;
                 }
                 break ;
@@ -672,13 +672,11 @@ GrB_Info GB_assign_prep
     if (!scalar_expansion && A_transpose)
     { 
         // AT = A', with no typecasting
-        // transpose: no typecast, no op, not in-place
         // TODO: if accum is present and it does not depend on the values of
-        // A,  only construct the pattern of AT, not the values.
+        // A,  construct AT as iso.
         GBURBLE ("(A transpose) ") ;
         AT = GB_clear_static_header (AT_header_handle) ;
-        GB_OK (GB_transpose (AT, NULL, C_is_csc, A,    // AT static = A'
-            NULL, NULL, NULL, false, Context)) ;
+        GB_OK (GB_transpose_cast (AT, NULL, C_is_csc, A, Context)) ;
         GB_MATRIX_WAIT (AT) ;       // A cannot be jumbled
         A = AT ;
     }
@@ -705,12 +703,10 @@ GrB_Info GB_assign_prep
         { 
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
-            // transpose: typecast, no op, not in-place
             // TODO: if Mask_struct, only construct the pattern of MT
             GBURBLE ("(M transpose) ") ;
             MT = GB_clear_static_header (MT_header_handle) ;
-            GB_OK (GB_transpose (MT, GrB_BOOL, C_is_csc, M, // MT static = M'
-                NULL, NULL, NULL, false, Context)) ;
+            GB_OK (GB_transpose_cast (MT, GrB_BOOL, C_is_csc, M, Context)) ;
             GB_MATRIX_WAIT (MT) ;       // M cannot be jumbled
             M = MT ;
         }

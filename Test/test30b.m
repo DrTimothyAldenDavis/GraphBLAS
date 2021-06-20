@@ -27,10 +27,9 @@ scalar = sparse (pi) ;
 % of the input matrix.
 
 fprintf ('start GraphBLAS:\n') ;
-tic 
+tic
 C2 = GB_mex_assign (A, [], [], scalar, I0, J0, []) ;
-toc
-t = grbresults
+t = toc ;
 
 C = A ; 
 fprintf ('start built-in method:\n') ;

@@ -49,7 +49,6 @@ int main (int argc, char **argv)
     PageRank *Pd = NULL, *P2 = NULL ;
     iPageRank *Pi = NULL ;
 
-    double tic [2], t ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
     int nthreads ;
     OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads)) ;
@@ -79,41 +78,35 @@ int main (int argc, char **argv)
     // compute the page rank via a real semiring
     //--------------------------------------------------------------------------
 
-    simple_tic (tic) ;
     OK (dpagerank (&Pd, A)) ;
-    t = simple_toc (tic) ;
 
-    fprintf (stderr, "n %g edges %g  dpagerank time : %14.6f iters: 20\n",
-        (double) n, (double) nvals, t) ;
-    printf  (        "n %g edges %g  dpagerank time : %14.6f iters: 20\n",
-        (double) n, (double) nvals, t) ;
+    fprintf (stderr, "n %g edges %g  dpagerank iters: 20\n",
+        (double) n, (double) nvals) ;
+    printf  (        "n %g edges %g  dpagerank iters: 20\n",
+        (double) n, (double) nvals) ;
 
     //--------------------------------------------------------------------------
     // compute the page rank via an integer semiring
     //--------------------------------------------------------------------------
 
-    simple_tic (tic) ;
     OK (ipagerank (&Pi, A)) ;
-    t = simple_toc (tic) ;
 
-    fprintf (stderr, "n %g edges %g  ipagerank time : %14.6f iters: 20\n",
-        (double) n, (double) nvals, t) ;
-    printf  (        "n %g edges %g  ipagerank time : %14.6f iters: 20\n",
-        (double) n, (double) nvals, t) ;
+    fprintf (stderr, "n %g edges %g  ipagerank iters: 20\n",
+        (double) n, (double) nvals) ;
+    printf  (        "n %g edges %g  ipagerank iters: 20\n",
+        (double) n, (double) nvals) ;
 
     //--------------------------------------------------------------------------
     // compute the page rank via an extreme semiring
     //--------------------------------------------------------------------------
 
     int iters ;
-    simple_tic (tic) ;
     OK (dpagerank2 (&P2, A, 100, 1e-5, &iters, GxB_DEFAULT)) ;
-    t = simple_toc (tic) ;
 
-    fprintf (stderr, "n %g edges %g  dpagerank time : %14.6f iters: %d\n",
-        (double) n, (double) nvals, t, iters) ;
-    printf  (        "n %g edges %g  dpagerank time : %14.6f iters: %d\n",
-        (double) n, (double) nvals, t, iters) ;
+    fprintf (stderr, "n %g edges %g  dpagerank iters: %d\n",
+        (double) n, (double) nvals, iters) ;
+    printf  (        "n %g edges %g  dpagerank iters: %d\n",
+        (double) n, (double) nvals, iters) ;
 
     //--------------------------------------------------------------------------
     // print results

@@ -48,18 +48,16 @@ void mexFunction
     if (method == 3)
     {
         // test out-of-memory condition
-        METHOD (random_matrix (&A, make_symmetric, no_self_edges,
+        METHOD (GB_mx_random_matrix (&A, make_symmetric, no_self_edges,
             nrows, ncols, ntuples, method, A_complex)) ;
     }
     else
     {
-        GB_MEX_TIC ;
-        GrB_Info info = random_matrix (&A, make_symmetric, no_self_edges,
+        GrB_Info info = GB_mx_random_matrix (&A, make_symmetric, no_self_edges,
             nrows, ncols, ntuples, method, A_complex) ;
-        GB_MEX_TOC ;
         if (info != GrB_SUCCESS)
         {
-            mexErrMsgTxt ("random_matrix failed") ;
+            mexErrMsgTxt ("GB_mx_random_matrix failed") ;
         }
     }
 

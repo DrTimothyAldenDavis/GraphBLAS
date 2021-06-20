@@ -45,8 +45,7 @@ GB_builtin_complex_set (true) ;
 
 % many of the tests use spok in SuiteSparse, a copy of which is
 % included here in GraphBLAS/Test/spok.
-addpath ('../Test/spok') ;
-addpath ('../Demo/MATLAB') ;
+addpath ('spok') ;
 
 try
     spok (sparse (1)) ;
@@ -97,6 +96,11 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test221',t) ; % test C += A where C is bitmap and A is full
+logstat ('test220',t) ; % test mask C<M>=Z, iso case
+logstat ('test219',s) ; % test reduce to scalar (1 thread)
+logstat ('test218',t) ; % test C=A+B, C and A are full, B is bitmap
+logstat ('test217',t) ; % test C<repl>(I,J)=A, bitmap assign
 logstat ('test216',t) ; % test C<A>=A, iso case
 logstat ('test215',t) ; % test C<M>=A'*B (dot2, ANY_PAIR semiring)
 logstat ('test214',t) ; % test C<M>=A'*B (tricount)
@@ -162,7 +166,6 @@ logstat ('test09',t) ;  % duplicate I,J test of GB_mex_subassign
 logstat ('test132',t) ; % setElement
 logstat ('test167',t) ; % test C<M>=A*B with very sparse M, different types
 logstat ('test177',t) ; % test C<!M>=A*B, C and B bitmap, M and A sparse
-logstat ('test94',t) ; logstat ('test94',s) ;  % pagerank
 logstat ('test141',t) ; % eWiseAdd with dense matrices
 logstat ('test144',t) ; % cumsum
 logstat ('test145',t) ; % dot4 for C += A'*B
@@ -219,7 +222,6 @@ logstat ('test175',t) ; % test142 updated
 logstat ('test160',t) ; % test A*B, parallel
 logstat ('test160',s) ; % test A*B, single threaded
 logstat ('test134',t) ; % quick test of GxB_select
-logstat ('test00',s);   % GB_mex_mis (single threaded)
 logstat ('test54',t) ;  % assign and extract with begin:inc:end
 logstat ('test104',t) ; % export/import
 logstat ('test11',t) ;  % exhaustive test of GrB_extractTuples
@@ -236,7 +238,6 @@ logstat ('test107',t) ; % monoids with terminal values
 logstat ('test69',t) ;  % assign and subassign with alias
 logstat ('test135',t) ; % reduce to scalar
 logstat ('test17',t) ;  % quick test of GrB_*_extractElement
-logstat ('test27',t) ;  % quick test of GxB_select (LoHi_band)
 logstat ('test53',t) ;  % quick test of GB_mex_Matrix_extract
 logstat ('test77',t) ;  % quick tests of GrB_kronecker
 logstat ('test19',t) ;  % GxB_subassign, many pending operators
@@ -274,18 +275,12 @@ if (longtests)
 % test script              % time % description
 % ------------------------ % ---- % ------------------------------
 
-logstat ('test00',t) ;     %    8 % GB_mex_mis (multiple threads)
 logstat ('test05',t) ;     %      % quick setElement test, with typecasting
-logstat ('test06',t) ;     %  532 % test GrB_mxm on all semirings
 logstat ('test06(936)',t); %      % performance test GrB_mxm on all semirings
 logstat ('test07',t) ;     %    0 % quick test GB_mex_subassign
 logstat ('test07',s) ;     %    0 % quick test GB_mex_subassign
-logstat ('test08',t) ;     %   35 % quick test GB_mex_subassign
-logstat ('test08b',t) ;    %      % quick test GB_mex_assign
 logstat ('test09b',t) ;    %      % duplicate I,J test of GB_mex_assign
 
-logstat ('test12',t) ;     %      % Wathen finite-element matrices (short test)
-logstat ('test12(0)',t) ;  %      % Wathen finite-element matrices (full test)
 logstat ('test13',t) ;     %      % simple tests of GB_mex_transpose
 logstat ('test15',t) ;            % simple test of GB_mex_AxB
 logstat ('test18(1)',t) ;  %      % lengthy tests of GrB_eWiseAdd and eWiseMult
@@ -300,6 +295,7 @@ logstat ('test24',t) ;     %   42 % test of GrB_Matrix_reduce
 logstat ('test24(1)',t) ;  %      % exhaustive test of GrB_Matrix_reduce
 logstat ('test25',t) ;     %      % long test of GxB_select
 logstat ('test26(1)',t) ;  %      % performance test of GxB_select (use ssget)
+logstat ('test27',t) ;     %   13 % quick test of GxB_select (LoHi_band)
 logstat ('test28',t) ;     %    1 % mxm with aliased inputs, C<C> = accum(C,C*C)
 
 logstat ('test30') ;       %   11 % GB_mex_subassign, scalar expansion
@@ -353,7 +349,7 @@ logstat ('test68',t) ;
 logstat ('test73',t) ;     %      % performance of C = A*B, with mask
 logstat ('test75',t) ;     %      % test GrB_mxm A'*B on all semirings
 logstat ('test78',t) ;     %    1 % quick test of hypersparse subref
-logstat ('test79',t) ;     %      % run all in SuiteSparse Collection w/ test06
+logstat ('test79',t) ;     %      % run all in SuiteSparse Collection
 
 logstat ('test85',t) ;     %    0 % GrB_transpose (1-by-n with typecasting)
 logstat ('test86',t) ;     %      % performance test of of GrB_Matrix_extract
@@ -363,15 +359,12 @@ logstat ('test89',t) ;     %      % performance test of complex A*B
 
 logstat ('test90',t) ;     %    1 % test user-defined semirings
 logstat ('test91',t) ;     %      % test subref performance on dense vectors
-logstat ('test93',t) ;     %    3 % pagerank
-logstat ('test93b',t) ;    %      % dpagerank and ipagerank
 logstat ('test95',t) ;     %      % performance test for GrB_transpose
 logstat ('test96',t) ;     %   16 % A*B using dot product
 logstat ('test97',t) ;     %    0 % GB_mex_assign, scalar expansion and zombies
 logstat ('test98',t) ;     %      % GB_mex_mxm, typecast on the fly
 logstat ('test99',t) ;     %   20 % GB_mex_transpose w/ explicit 0s in the Mask
 
-logstat ('test100',t) ;    %    5 % GB_mex_isequal
 logstat ('test102',t);     %    1 % GB_AxB_saxpy3_flopcount
 logstat ('test103',t) ;    %      % GrB_transpose aliases
 logstat ('test105',t) ;    %    2 % eWiseAdd for hypersparse
@@ -390,7 +383,6 @@ logstat ('test119',t) ;    %      % performance tests for GrB_assign
 logstat ('test120',t) ;    %      % performance tests for GrB_assign
 logstat ('test121',t) ;    %      % performance tests for GrB_assign
 logstat ('test122',t) ;    %      % performance tests for GrB_assign
-logstat ('test123',t) ;    %      % test MIS on large matrix
 logstat ('test126',t) ;    %    7 % test GrB_reduce to vector on a very sparse matrix 
 
 logstat ('test143',t) ;    %   37 % mxm, special cases

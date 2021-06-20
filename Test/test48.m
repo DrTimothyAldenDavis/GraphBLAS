@@ -72,23 +72,19 @@ for pp = 0:2
 
             % tic
             ca = GB_mex_mxm (w, [],[], semiring, A, x, dt_auto) ;
-            % t = toc ;
-            ta = grbresults ;
+            ta = toc ;
 
-            % tic
+            tic
             c1 = GB_mex_mxm (w, [],[], semiring, A, x, dt_dot) ;
-            % t = toc ;
-            t = grbresults ;
+            t = toc ;
 
-            % tic
+            tic
             cg = GB_mex_mxm (w, [],[], semiring, A, x, dt_gus) ;
-            % t = toc ;
-            tg = grbresults ;
+            tg = toc ;
 
-            % tic
+            tic
             ch = GB_mex_mxm (w, [],[], semiring, A, x, dt_hash) ;
-            % t = toc ;
-            th = grbresults ;
+            th = toc ;
 
             tic
             c0 = A'*x ;
@@ -123,25 +119,21 @@ for pp = 0:2
                 x = sparse (rand (n, ncols)) ;
             end
 
-            % tic
+            tic
             ca = GB_mex_mxm (w, [],[], semiring, A, x, da_auto) ;
-            % t = toc ;
-            ta = grbresults ;
+            ta = toc
 
-            % tic
+            tic
             c1 = GB_mex_mxm (w, [],[], semiring, A, x, da_dot) ;
-            % t = toc ;
-            t = grbresults ;
+            t = toc ;
 
-            % tic
+            tic
             cg = GB_mex_mxm (w, [],[], semiring, A, x, da_gus) ;
-            % t = toc ;
-            tg = grbresults ;
+            tg = toc ;
 
-            % tic
+            tic
             ch = GB_mex_mxm (w, [],[], semiring, A, x, da_hash) ;
-            % t = toc ;
-            th = grbresults ;
+            th = toc ;
 
             tic
             c0 = A*x ;
@@ -178,25 +170,21 @@ for pp = 0:2
                 x = sparse (rand (n, ncols)) ;
             end
 
-            % tic
+            tic
             ca = GB_mex_mxm (w, [],[], semiring, x, A, dtn_auto) ;
-            % t = toc ;
-            ta = grbresults ;
+            ta = toc ;
 
-            % tic
+            tic
             c1 = GB_mex_mxm (w, [],[], semiring, x, A, dtn_dot) ;
-            % t = toc ;
-            t = grbresults ;
+            t = toc ;
 
-            % tic
+            tic
             cg = GB_mex_mxm (w, [],[], semiring, x, A, dtn_gus) ;
-            % t = toc ;
-            tg = grbresults ;
+            tg = toc ;
 
-            % tic
+            tic
             ch = GB_mex_mxm (w, [],[], semiring, x, A, dtn_hash) ;
-            % t = toc ;
-            th = grbresults ;
+            th = toc ;
 
             tic
             c0 = x'*A ;
@@ -232,25 +220,21 @@ for pp = 0:2
                 x = sparse (rand (n, ncols)) ;
             end
 
-            % tic
+            tic
             ca = GB_mex_mxm (w, [],[], semiring, x, A, dtt_auto) ;
-            % t = toc ;
-            ta = grbresults ;
+            ta = toc ;
 
-            % tic
+            tic
             c1 = GB_mex_mxm (w, [],[], semiring, x, A, dtt_dot) ;
-            % t = toc ;
-            t = grbresults ;
+            t = toc ;
 
-            % tic
+            tic
             cg = GB_mex_mxm (w, [],[], semiring, x, A, dtt_gus) ;
-            % t = toc ;
-            tg = grbresults ;
+            tg = toc ;
 
-            % tic
+            tic
             ch = GB_mex_mxm (w, [],[], semiring, x, A, dtt_hash) ;
-            % t = toc ;
-            th = grbresults ;
+            th = toc ;
 
             tic
             c0 = x'*A' ;
@@ -288,25 +272,21 @@ for pp = 0:2
             end
             x=x' ;
 
-            % tic
+            tic
             ca = GB_mex_mxm (w, [],[], semiring, A, x, dtt_auto) ;
-            % t = toc ;
-            ta = grbresults ;
+            ta = toc ;
 
-            % tic
+            tic
             c1 = GB_mex_mxm (w, [],[], semiring, A, x, dtt_dot) ;
-            % t = toc ;
-            t = grbresults ;
+            t = toc ;
 
-            % tic
+            tic
             cg = GB_mex_mxm (w, [],[], semiring, A, x, dtt_gus) ;
-            % t = toc ;
-            tg = grbresults ;
+            tg = toc ;
 
-            % tic
+            tic
             ch = GB_mex_mxm (w, [],[], semiring, A, x, dtt_hash) ;
-            % t = toc ;
-            th = grbresults ;
+            th = toc ;
 
             tic
             c0 = A'*x' ;

@@ -41,8 +41,9 @@ for nthreads = [1 2 4 8 16 20 32 40 64 128 260 256]
     % warmup
     [I2, J2, X2] = GB_mex_extractTuples (A) ;
     % for timing
+    tic
     [I2, J2, X2] = GB_mex_extractTuples (A) ;
-    t = grbresults ;
+    t = toc ;
     if (nthreads == 1)
         t1 = t ;
     end

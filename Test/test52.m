@@ -79,7 +79,6 @@ for n = [1 10 20:10:60 61:65 70:10:100]
     tic
     C4 = GB_mex_AxB (A,B, true) ;
     t4 = toc ;
-    t4 = grbresults ;
 
     % fprintf ('GrB A''*B native:\n') ;
     tic

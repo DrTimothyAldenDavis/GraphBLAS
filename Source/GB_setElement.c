@@ -114,7 +114,6 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         bool convert_to_non_iso ;
         if (ctype != stype)
         { 
-// GB_GOTCHA ; // setElement: C iso, scalar of different type
             // s = (ctype) scalar
             GB_void s [GB_VLA(csize)] ;
             GB_cast_scalar (s, ccode, scalar, scalar_code, csize) ;
@@ -133,7 +132,6 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // pending tuples and convert C to non-iso.  Zombies are OK.
             if (C->Pending != NULL)
             { 
-// GB_GOTCHA ; // setElement: wait, convert to non-iso
                 GB_OK (GB_wait (C, "C (setElement:to non-iso)", Context)) ;
             }
             GB_OK (GB_convert_any_to_non_iso (C, true, Context)) ;

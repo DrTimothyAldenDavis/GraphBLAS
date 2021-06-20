@@ -32,8 +32,9 @@ fprintf ('built-in  transpose time: %g\n', tmsum / ntrials) ;
 
 % C = 0 ; C += A'
 for trial = 1:ntrials
+    tic
     C = GB_mex_transpose (Cin, [ ], 'plus', A) ;
-    tg (trial) = grbresults ;
+    tg (trial) = toc ;
 end
 tgsum = sum (tg) ;
 fprintf ('GraphBLAS transpose time: %g (for C=0 ; C+=A'')\n', tgsum / ntrials) ;
@@ -42,8 +43,9 @@ fprintf ('speedup over built-in: %g\n', tmsum / tgsum) ;
 
 % C = A'
 for trial = 1:ntrials
+    tic
     C = GB_mex_transpose (Cin, [ ], [ ], A) ;
-    tg (trial) = grbresults ;
+    tg (trial) = toc ;
 end
 tgsum = sum (tg) ;
 fprintf ('GraphBLAS transpose time: %g (for C=A'')\n', tgsum / ntrials) ;
@@ -57,8 +59,9 @@ tic
 y2 = yin + (sum (A,2)) ;
 t1 = toc ;
 
+toc
 y = GB_mex_reduce_to_vector (yin, [ ], 'plus', 'plus', A) ;
-t2 = grbresults ;
+t2 = tic ;
 fprintf ('built-in: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
 err = norm (1*(y.matrix) - y2, 1) ;
 if (norm (y2) ~= 0)
@@ -74,8 +77,9 @@ tic
 y2 = (sum (A,2)) ;
 t1 = toc ;
 
+tic
 y = GB_mex_reduce_to_vector (yin, [ ], [ ], 'plus', A) ;
-t2 = grbresults ;
+t2 = toc ;
 fprintf ('built-in: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
 err = norm (1*(y.matrix) - y2, 1) ;
 if (norm (y2) ~= 0)
@@ -93,8 +97,9 @@ t1 = toc ;
 
 desc.inp0 = 'tran' ;
 
+tic
 y = GB_mex_reduce_to_vector (yin, [ ], [ ], 'plus', A, desc) ;
-t2 = grbresults ;
+t2 = toc ;
 fprintf ('built-in: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
 err = norm (1*(y.matrix) - y2', 1) ;
 if (norm (y2) ~= 0)

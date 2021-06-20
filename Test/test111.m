@@ -67,8 +67,9 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
 
         for nthreads = [1 2 4 8 20 40]
             nthreads_set (nthreads, chunk) ;
+            tic ;
             C4 = GB_mex_AplusB (A, B, 'plus') ;
-            tg = grbresults ;
+            tg = toc ;
             if (nthreads == 1)
                 t1 = tg ;
             end
@@ -96,9 +97,9 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
             nthreads_set (nthreads, chunk) ;
             % warmup
             C4 = GB_mex_Vector_eWiseAdd (Empty, M0, [ ], 'plus', A, B, [ ]) ;
-            %
+            tic
             C4 = GB_mex_Vector_eWiseAdd (Empty, M0, [ ], 'plus', A, B, [ ]) ;
-            tg = grbresults ;
+            tg = toc ;
             if (nthreads == 1)
                 t1 = tg ;
             end
@@ -127,11 +128,12 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
             % warmup
             C4 = GB_mex_Vector_eWiseAdd (Empty, [ ], [ ], 'plus', A, B, [ ]) ;
             C4 = GB_mex_Vector_eWiseMult(Empty, [ ], [ ], 'times',M, C4, [ ]) ;
-            %
+            tic
             C4 = GB_mex_Vector_eWiseAdd (Empty, [ ], [ ], 'plus', A, B, [ ]) ;
-            tg1 = grbresults ;
+            tg1 = toc ;
+            tic
             C4 = GB_mex_Vector_eWiseMult(Empty, [ ], [ ], 'times',M, C4, [ ]) ;
-            tg2 = grbresults ;
+            tg2 = toc ;
             tg = tg1 + tg2 ;
             if (nthreads == 1)
                 t1 = tg ;
@@ -159,9 +161,9 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
             nthreads_set (nthreads, chunk) ;
             % warmup
             C4 = GB_mex_Vector_eWiseMult (Empty, [ ], [ ], 'times', A,B, [ ]) ;
-            %
+            tic
             C4 = GB_mex_Vector_eWiseMult (Empty, [ ], [ ], 'times', A,B, [ ]) ;
-            tg = grbresults ;
+            tg = toc ;
             if (nthreads == 1)
                 t1 = tg ;
             end
@@ -189,9 +191,9 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
             nthreads_set (nthreads, chunk) ;
             % warmup
             C4 = GB_mex_Vector_eWiseMult (Empty, M0, [ ], 'times', A,B, [ ]) ;
-            %
+            tic
             C4 = GB_mex_Vector_eWiseMult (Empty, M0, [ ], 'times', A,B, [ ]) ;
-            tg = grbresults ;
+            tg = toc ;
             if (nthreads == 1)
                 t1 = tg ;
             end

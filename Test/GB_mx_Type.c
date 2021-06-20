@@ -9,8 +9,7 @@
 
 // Given a built-in matrix, return the equivalent GraphBLAS type.  For GxB_FC64,
 // the Complex type is returned.  This may equal GxB_FC64, or it might be the
-// user-defined type, as determined by Complex_init in
-// GraphBLAS/Demo/Source/usercomplex.c.
+// user-defined type, as determined by Complex_init in GB_mx_usercomplex.
 
 #include "GB_mex.h"
 

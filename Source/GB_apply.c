@@ -179,7 +179,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     if (op2 != NULL)
     {
-     
+
         // first(A,x) and second(y,A) become identity(A)
         if ((opcode == GB_FIRST_opcode  && !binop_bind1st) ||
             (opcode == GB_SECOND_opcode &&  binop_bind1st))
@@ -256,10 +256,9 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     if (A_transpose)
     { 
         // T = op (A'), typecasting to op*->ztype
-        // transpose: typecast, apply an op, not in-place.
         GBURBLE ("(transpose-op) ") ;
-        info = GB_transpose (T, T_type, T_is_csc, A,   // T static = A'
-            op1, op2, scalar, binop_bind1st, Context) ;
+        info = GB_transpose (T, T_type, T_is_csc, A, op1, op2, scalar,
+            binop_bind1st, Context) ;
         ASSERT (GB_JUMBLED_OK (T)) ;
         // A positional op is applied to C after the transpose is computed,
         // using the T_is_csc format.  The ijflip is handled above.
@@ -293,8 +292,8 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     { 
         // T = op (A), pattern is a shallow copy of A, type is op*->ztype.
         GBURBLE ("(shallow-op) ") ;
-        info = GB_shallow_op (T, T_is_csc,
-            op1, op2, scalar, binop_bind1st, A, Context) ;
+        info = GB_shallow_op (T, T_is_csc, op1, op2, scalar, binop_bind1st,
+            A, Context) ;
     }
 
     if (info != GrB_SUCCESS)

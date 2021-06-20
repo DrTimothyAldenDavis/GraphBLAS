@@ -91,8 +91,6 @@ while (ncand > 0)
 
     % compute a random probability scaled by inverse of degree
     % FUTURE: this is slower than it should be; rand may not be parallel,
-    % See GraphBLAS/Demo/Source/mis.c and the prand_* functions for a better
-    % approach using user-defined types and operators.
     prob = 0.0001 + rand (n,1) ./ (1 + 2 * degrees) ;
     prob = GrB.assign (prob, candidates, prob, r_desc) ;
 

@@ -14,9 +14,6 @@ catch
 end
 cd (here) ;
 
-fprintf ('\n------------------installing GraphBLAS/Demo/MATLAB\n') ;
-addpath ../Demo/MATLAB
-
 fprintf ('\n------------------installing spok\n') ;
 cd spok
 addpath (pwd) ;

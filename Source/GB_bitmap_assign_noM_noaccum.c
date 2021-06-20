@@ -38,6 +38,7 @@
 
 #define GB_FREE_ALL ;
 
+GB_PUBLIC
 GrB_Info GB_bitmap_assign_noM_noaccum
 (
     // input/output:
@@ -89,7 +90,6 @@ GrB_Info GB_bitmap_assign_noM_noaccum
         if (assign_kind == GB_ASSIGN)
         { 
             // for assign: set all Cb(:,:) to zero
-GB_GOTCHA ; // bitmap assign, set all Cb to zero
             GB_memset (Cb, 0, cnzmax, nthreads_max) ;
             cnvals = 0 ;
         }

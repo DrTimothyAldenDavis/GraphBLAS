@@ -94,9 +94,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
         { 
             // If there is no accum operator, T is transplanted into Z and
             // typecasted into the C->type during the transpose.
-            // transpose: typecast, no op, not in-place
-            GB_OK (GB_transpose (T, C->type, C_is_csc, A,  // T static = A'
-                NULL, NULL, NULL, false, Context)) ;
+            GB_OK (GB_transpose_cast (T, C->type, C_is_csc, A, Context)) ;
         }
         else
         { 
@@ -105,9 +103,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
             // but not C are typecasted directly into C->type.  Thus, the
             // typecast of T (if any) must wait, and be done in call to GB_add
             // in GB_accum_mask.
-            // transpose: no typecast, no op, not in-place
-            GB_OK (GB_transpose (T, A->type, C_is_csc, A,  // T static = A'
-                NULL, NULL, NULL, false, Context)) ;
+            GB_OK (GB_transpose_cast (T, A->type, C_is_csc, A, Context)) ;
         }
 
         // no operator; typecasting done if accum is NULL
