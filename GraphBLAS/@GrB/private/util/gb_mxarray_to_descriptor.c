@@ -181,8 +181,8 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
             (*kind) = KIND_FULL ;       // built-in full matrix
         }
         else if (MATCH (s, "builtin")   // preferred
-            || MATCH (s, "matlab")      // deprecated
-            || MATCH (s, "octave"))
+            || MATCH (s, "matlab")      // deprecated (use 'builtin')
+            || MATCH (s, "octave"))     // 'builtin' is preferred
         {
             (*kind) = KIND_BUILTIN ;    // built-in sparse or full matrix
         }

@@ -4087,7 +4087,7 @@ GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
 ) ;
 \end{verbatim} } \end{mdframed}
 
-TODO describe % FIXME
+TODO describe % FIXME: Vector_build_Scalar
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_setElement:}    add an entry to a vector}
@@ -4635,7 +4635,7 @@ complex, and logical sparse matrices.
 ) ;
 \end{verbatim} } \end{mdframed}
 
-TODO describe % FIXME
+TODO describe % FIXME: Matrix_build_Scalar
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_setElement:}   add an entry to a matrix}
@@ -12124,18 +12124,10 @@ SuiteSparse:GraphBLAS.
     end \end{verbatim}}
 
 If this were done in MATLAB or in GraphBLAS with blocking mode enabled, the
-computations would be extremely slow.  This example is taken from Loren Shure's
-blog on MATLAB Central, {\em Loren on the Art of MATLAB} \cite{Davis07},
-which discusses the built-in \verb'wathen' function.  In
-MATLAB, a far better approach is to construct a list of tuples \verb'[I,J,X]'
-and to use \verb'sparse(I,J,X,n,n)'. This is identical to creating the same
-list of tuples in GraphBLAS and using the \verb'GrB_Matrix_build', which is
-equally fast.  The difference in time between using \verb'sparse' or
-\verb'GrB_Matrix_build', and using submatrix assignment with blocking mode (or
-in MATLAB which does not have a nonblocking mode) can be extreme.  For the
-example matrix discussed in \cite{Davis07}, using \verb'sparse' instead of
-submatrix assignment in MATLAB cut the run time of \verb'wathen' from 305
-seconds down to 1.6 seconds.
+computations would be extremely slow.  A far better approach is to construct a
+list of tuples \verb'[I,J,X]' and to use \verb'sparse(I,J,X,n,n)'. This is
+identical to creating the same list of tuples in GraphBLAS and using the
+\verb'GrB_Matrix_build', which is equally fast.
 
 In SuiteSparse:GraphBLAS, the performance of both methods is essentially
 identical, and roughly as fast as \verb'sparse' in MATLAB.  Inside

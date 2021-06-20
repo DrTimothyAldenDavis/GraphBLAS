@@ -96,6 +96,7 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test222',t) ; % test user selectop for iso matrices
 logstat ('test221',t) ; % test C += A where C is bitmap and A is full
 logstat ('test220',t) ; % test mask C<M>=Z, iso case
 logstat ('test219',s) ; % test reduce to scalar (1 thread)
