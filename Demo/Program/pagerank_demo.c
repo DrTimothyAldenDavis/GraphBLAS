@@ -50,10 +50,8 @@ int main (int argc, char **argv)
     iPageRank *Pi = NULL ;
 
     OK (GrB_init (GrB_NONBLOCKING)) ;
-    int nthreads ;
-    OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads)) ;
-    fprintf (stderr, "\npagerank_demo: nthreads: %d\n", nthreads) ;
-    printf  (        "\npagerank_demo: nthreads: %d\n", nthreads) ;
+    fprintf (stderr, "\npagerank_demo: DO NOT BENCHMARK; see LAGraph\n") ;
+     printf (        "\npagerank_demo: DO NOT BENCHMARK; see LAGraph\n") ;
 
     //--------------------------------------------------------------------------
     // read a matrix from stdin

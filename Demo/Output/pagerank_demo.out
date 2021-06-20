@@ -1,5 +1,5 @@
 
-pagerank_demo: nthreads: 8
+pagerank_demo: DO NOT BENCHMARK; see LAGraph
 ntuples: 3
 nrows 3 ncols 3
 leave A as-is
@@ -20,7 +20,7 @@ Top 3 nodes:
     1 d:[     2 :   3.33331362e-01] i:[     2 :   2.81427298e+08] x:[     1 :   3.33333333e-01]mismatch
     2 d:[     1 :   3.27806943e-01] i:[     1 :   2.76763104e+08] x:[     2 :   3.33333333e-01]mismatch
 
-pagerank_demo: nthreads: 8
+pagerank_demo: DO NOT BENCHMARK; see LAGraph
 ntuples: 8
 nrows 4 ncols 4
 leave A as-is
@@ -47,7 +47,7 @@ Top 4 nodes:
     2 d:[     2 :   2.46134013e-01] i:[     2 :   1.98442073e+08] x:[     2 :   2.50000000e-01]
     3 d:[     3 :   2.46134013e-01] i:[     3 :   1.98442073e+08] x:[     3 :   2.50000000e-01]
 
-pagerank_demo: nthreads: 8
+pagerank_demo: DO NOT BENCHMARK; see LAGraph
 ntuples: 10
 nrows 4 ncols 4
 leave A as-is
@@ -76,7 +76,7 @@ Top 4 nodes:
     2 d:[     2 :   2.74516447e-01] i:[     2 :   2.21325008e+08] x:[     2 :   2.74518319e-01]
     3 d:[     3 :   1.62822368e-01] i:[     3 :   1.31273234e+08] x:[     3 :   1.62821121e-01]
 
-pagerank_demo: nthreads: 8
+pagerank_demo: DO NOT BENCHMARK; see LAGraph
 ntuples: 224
 nrows 48 ncols 48
 leave A as-is
@@ -169,7 +169,7 @@ Top 48 nodes:
    46 d:[    47 :   3.45092025e-03] i:[    47 :   3.51434800e+06] x:[    47 :   3.45092025e-03]
    47 d:[    45 :   3.41530055e-03] i:[    45 :   3.47807400e+06] x:[    45 :   3.41530055e-03]
 
-pagerank_demo: nthreads: 8
+pagerank_demo: DO NOT BENCHMARK; see LAGraph
 ntuples: 147631
 nrows 4884 ncols 4884
 leave A as-is
@@ -5098,7 +5098,7 @@ Top 4884 nodes:
  4882 d:[  4881 :   3.35779202e-05] i:[  4881 :   3.57160000e+04] x:[  4881 :   3.35779202e-05]
  4883 d:[  4882 :   3.20757501e-05] i:[  4882 :   3.41180000e+04] x:[  4882 :   3.20757501e-05]
 
-pagerank_demo: nthreads: 8
+pagerank_demo: DO NOT BENCHMARK; see LAGraph
 ntuples: 1069
 nrows 183 ncols 183
 leave A as-is
@@ -5326,7 +5326,7 @@ Top 183 nodes:
   181 d:[    71 :   9.32960149e-04] i:[    71 :   9.81500000e+05] x:[    71 :   9.32960149e-04]
   182 d:[    52 :   8.65660337e-04] i:[    52 :   9.10699000e+05] x:[    52 :   8.65660337e-04]
 
-pagerank_demo: nthreads: 8
+pagerank_demo: DO NOT BENCHMARK; see LAGraph
 ntuples: 299
 nrows 67 ncols 67
 leave A as-is
