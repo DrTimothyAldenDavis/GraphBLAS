@@ -71,7 +71,6 @@
                 {
                     // A is never full; that case is now handled by the
                     // bitmap selector instead.
-                    // int64_t i = GBI (Ai, pA, avlen) ;
                     ASSERT (Ai != NULL) ;
                     int64_t i = Ai [pA] ;
                     if (GB_TEST_VALUE_OF_ENTRY (pA))

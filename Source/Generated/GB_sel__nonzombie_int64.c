@@ -16,7 +16,7 @@
 // The selection is defined by the following types and operators:
 
 // functions:
-// phase1: GB (_sel_phase1__nonzombie_int64)
+// phase1: GB (_sel_phase1__(none))
 // phase2: GB (_sel_phase2__nonzombie_int64)
 // bitmap: GB (_sel_bitmap__(none))
 
@@ -33,7 +33,7 @@
 
 // test value of Ax [p]
 #define GB_TEST_VALUE_OF_ENTRY(p)                       \
-    GB_IS_NOT_ZOMBIE (Ai, p)
+    Ai [p] >= 0
 
 // get the vector index (user select operators only)
 #define GB_GET_J                                        \
@@ -47,9 +47,9 @@
 // GB_sel_phase1
 //------------------------------------------------------------------------------
 
+#if 0
 
-
-void GB (_sel_phase1__nonzombie_int64)
+void GB (_sel_phase1__(none))
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -67,7 +67,7 @@ void GB (_sel_phase1__nonzombie_int64)
     #include "GB_select_phase1.c"
 }
 
-
+#endif
 
 //------------------------------------------------------------------------------
 // GB_sel_phase2

@@ -59,22 +59,23 @@ codegen_sel_method ('resize'    , [ ], 'GB_void' , 'GB_RESIZE_SELECTOR'  , 1) ;
 % NONZOMBIE:         name         selector                     type
 % phase1: depends on Ai only, so only nonzombie_iso is used
 % phase2: use all 15 workers
+% TODO NONZOMBIE can use cases 1, 2, 4, 8, 16, other
 fprintf ('\nnonzombie  ') ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'bool'      ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'int8_t'    ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'int16_t'   ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'int32_t'   ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'int64_t'   ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'uint8_t'   ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'uint16_t'  ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'uint32_t'  ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'uint64_t'  ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'float'     ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'double'    ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GxB_FC32_t') ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GxB_FC64_t') ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GB_void'   ) ;
-codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GB_void'   , [ ], 1) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'bool'      ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'int8_t'    ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'int16_t'   ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'int32_t'   ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'int64_t'   ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'uint8_t'   ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'uint16_t'  ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'uint32_t'  ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'uint64_t'  ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'float'     ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'double'    ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'GxB_FC32_t') ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'GxB_FC64_t') ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'GB_void'   ) ;
+codegen_sel_method ('nonzombie', 'Ai [p] >= 0', 'GB_void'   , [ ], 1) ;
 
 %===============================================================================
 % select ops with no iso variants
@@ -83,6 +84,8 @@ codegen_sel_method ('nonzombie', 'GB_IS_NOT_ZOMBIE (Ai, p)', 'GB_void'   , [ ], 
 % None of these selectops require an iso variant for the selectop worker.  They
 % are only used when A is non-iso.  The iso case is handled in GB_selector,
 % where either C is all of A, or C is empty.
+
+% TODO NONZERO, EQ_ZERO, NE_THUNK, EQ_THUNK can use cases 1, 2, 4, 8, 16, other
 
 % NONZERO            name         selector       type
 fprintf ('\nnonzero    ') ;

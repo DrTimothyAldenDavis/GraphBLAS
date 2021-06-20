@@ -71,7 +71,10 @@ switch (opcode)
         }
         break ;
 
+    //--------------------------------------------------------------------------
     // resize and nonzombie selectors are not used for the bitmap case
+    //--------------------------------------------------------------------------
+
     #ifndef GB_BITMAP_SELECTOR
 
     case GB_RESIZE_opcode        :  // C = resize (A)
@@ -112,7 +115,7 @@ switch (opcode)
             case GB_FC64_code   : GB_SEL_WORKER (_nonzombie, _fc64, GxB_FC64_t)
             case GB_UDT_code    : GB_SEL_WORKER (_nonzombie, _any   , GB_void )
             case GB_ignore_code : GB_SEL_WORKER (_nonzombie, _iso   , GB_void )
-            default: ;
+            default: ;          // not used
         }
         break ;
         #endif
