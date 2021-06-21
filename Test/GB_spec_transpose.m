@@ -50,7 +50,7 @@ function C = GB_spec_transpose (C, Mask, accum, A, descriptor)
 % operator z=op(x,y) are all the same: optype.  This is true for all built-in
 % operators, but in GraphBLAS users can define their own operators with x, y
 % and z being all different domains.  That feature is not modeled by this
-% function.
+% method.
 %
 % Returns a struct with a dense matrix C.matrix with class C.class.
 %

@@ -1,4 +1,4 @@
-% function test209
+function test209
 %TEST209 test iso build
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.

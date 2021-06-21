@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // Given the opcode of a operator z = op (x,y), and a flipxy flag, determine if
-// C=op(A,B) will use just the pattern of A and/or B.
+// C=op(A,B) will use just the pattern of A and/or B.  op(A,B) is the multiply
+// operator for C=A*B, or the ewise operator for eWiseMult.
 
 #include "GB.h"
 #include "GB_binop.h"

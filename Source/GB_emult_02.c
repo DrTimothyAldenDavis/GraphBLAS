@@ -144,6 +144,44 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     }
 
     //--------------------------------------------------------------------------
+    // revise the operator to handle flipxy
+    //--------------------------------------------------------------------------
+
+    // Replace the ANY operator with SECOND.  ANY and SECOND give the same
+    // result if flipxy is false.  However, SECOND is changed to FIRST if
+    // flipxy is true.  This ensures that the results do not depend on the
+    // sparsity structures of A and B.
+
+    if (op->opcode == GB_ANY_opcode)
+    {
+        switch (op->xtype->code)
+        {
+            case GB_BOOL_code   : op = GrB_SECOND_BOOL   ; break ;
+            case GB_INT8_code   : op = GrB_SECOND_INT8   ; break ;
+            case GB_INT16_code  : op = GrB_SECOND_INT16  ; break ;
+            case GB_INT32_code  : op = GrB_SECOND_INT32  ; break ;
+            case GB_INT64_code  : op = GrB_SECOND_INT64  ; break ;
+            case GB_UINT8_code  : op = GrB_SECOND_UINT8  ; break ;
+            case GB_UINT16_code : op = GrB_SECOND_UINT16 ; break ;
+            case GB_UINT32_code : op = GrB_SECOND_UINT32 ; break ;
+            case GB_UINT64_code : op = GrB_SECOND_UINT64 ; break ;
+            case GB_FP32_code   : op = GrB_SECOND_FP32   ; break ;
+            case GB_FP64_code   : op = GrB_SECOND_FP64   ; break ;
+            case GB_FC32_code   : op = GxB_SECOND_FC32   ; break ;
+            case GB_FC64_code   : op = GxB_SECOND_FC64   ; break ;
+            default: ;
+        }
+    }
+
+    if (flipxy)
+    {
+        bool handled ;
+        op = GB_flip_op (op, &handled) ;
+        if (handled) flipxy = false ;
+    }
+    ASSERT_BINARYOP_OK (op, "final op for emult_02", GB0) ;
+
+    //--------------------------------------------------------------------------
     // declare workspace
     //--------------------------------------------------------------------------
 
@@ -365,48 +403,6 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 
     C->jumbled = A->jumbled ;
     C->magic = GB_MAGIC ;
-
-    //--------------------------------------------------------------------------
-    // special case for the ANY operator 
-    //--------------------------------------------------------------------------
-
-    // Replace the ANY operator with SECOND.  ANY and SECOND give the same
-    // result if flipxy is false.  However, SECOND is changed to FIRST if
-    // flipxy is true.  This ensures that the results do not depend on the
-    // sparsity structures of A and B.
-
-    if (op->opcode == GB_ANY_opcode)
-    {
-        switch (op->xtype->code)
-        {
-            case GB_BOOL_code   : op = GrB_SECOND_BOOL   ; break ;
-            case GB_INT8_code   : op = GrB_SECOND_INT8   ; break ;
-            case GB_INT16_code  : op = GrB_SECOND_INT16  ; break ;
-            case GB_INT32_code  : op = GrB_SECOND_INT32  ; break ;
-            case GB_INT64_code  : op = GrB_SECOND_INT64  ; break ;
-            case GB_UINT8_code  : op = GrB_SECOND_UINT8  ; break ;
-            case GB_UINT16_code : op = GrB_SECOND_UINT16 ; break ;
-            case GB_UINT32_code : op = GrB_SECOND_UINT32 ; break ;
-            case GB_UINT64_code : op = GrB_SECOND_UINT64 ; break ;
-            case GB_FP32_code   : op = GrB_SECOND_FP32   ; break ;
-            case GB_FP64_code   : op = GrB_SECOND_FP64   ; break ;
-            case GB_FC32_code   : op = GxB_SECOND_FC32   ; break ;
-            case GB_FC64_code   : op = GxB_SECOND_FC64   ; break ;
-            default: ;
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // handle flipxy
-    //--------------------------------------------------------------------------
-
-    if (flipxy)
-    {
-        bool handled ;
-        op = GB_flip_op (op, &handled) ;
-        if (handled) flipxy = false ;
-    }
-    ASSERT_BINARYOP_OK (op, "final op for emult_02", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the opcode

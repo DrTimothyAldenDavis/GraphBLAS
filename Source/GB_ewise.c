@@ -199,19 +199,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     //--------------------------------------------------------------------------
 
     bool A_is_pattern = false, B_is_pattern = false ;
-    if (eWiseAdd)
-    {
-        // eWiseAdd can only create AT and BT as iso if the op is positional,
-        // or pair
-        if (op_is_positional || opcode == GB_PAIR_opcode)
-        { 
-            A_is_pattern = true ;
-            B_is_pattern = true ;
-        }
-    }
-    else
+    if (!eWiseAdd)
     { 
-        // eWiseMult can create AT and BT as iso for first/second as well
+        // eWiseMult can create AT and BT as iso if the op is FIRST, SECOND, or
+        // PAIR; eWiseAdd cannot.
         GB_binop_pattern (&A_is_pattern, &B_is_pattern, false, opcode) ;
     }
 
@@ -234,6 +225,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         GB_OK (GB_transpose_cast (BT, op->ytype, T_is_csc, B, B_is_pattern,
             Context)) ;
         B1 = BT ;
+        ASSERT_MATRIX_OK (BT, "BT from transpose", GB0) ;
     }
 
     //--------------------------------------------------------------------------

@@ -18,8 +18,8 @@
 #define GB_EMULT_METHOD_02A 2       /* use GB_emult_02 (A,B) */
 #define GB_EMULT_METHOD_02B (-2)    /* use GB_emult_02 (B,A, flipxy true) */
 #define GB_EMULT_METHOD_03  3       /* use GB_emult_03 */
-#define GB_EMULT_METHOD_04A 4       /* use GB_emult_04 (M,A,B) */
-#define GB_EMULT_METHOD_04B (-4)    /* use GB_emult_04 (M,B,A, flipxy true) */
+#define GB_EMULT_METHOD_04A 4       /* use GB_emult_04 (A,B) */
+#define GB_EMULT_METHOD_04B (-4)    /* use GB_emult_04 (B,A, flipxy true) */
 #define GB_EMULT_METHOD_05  5       /* use GB_emult_bitmap method 05 */
 #define GB_EMULT_METHOD_06  6       /* use GB_emult_bitmap method 06 */
 #define GB_EMULT_METHOD_07  7       /* use GB_emult_bitmap method 07 */
