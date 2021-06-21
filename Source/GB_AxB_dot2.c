@@ -20,7 +20,6 @@
 
 #include "GB_mxm.h"
 #include "GB_subref.h"
-#include "GB_binop.h"
 #include "GB_ek_slice.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_AxB__include.h"
@@ -221,7 +220,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GrB_Monoid add = semiring->add ;
     ASSERT (mult->ztype == add->op->ztype) ;
     bool A_is_pattern, B_is_pattern ;
-    GB_AxB_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
+    GB_binop_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace and slice A and B

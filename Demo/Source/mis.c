@@ -14,8 +14,7 @@
 // No copyright claim is made for this particular file; the above copyright
 // applies to all of SuiteSparse:GraphBLAS, not this file.
 
-// This method has been updated as of Version 2.2 of SuiteSparse:GraphBLAS.  It
-// now uses GrB_vxm instead of GrB_mxv.
+// FUTURE: revise this method and add it to LAGraph
 
 #include "GraphBLAS.h"
 #undef GB_PUBLIC
@@ -51,6 +50,9 @@ GrB_Info mis                    // compute a maximal independent set
     int64_t seed                // random number seed
 )
 {
+    printf ("MIS demo: this code old, and slower than it will be once the\n") ;
+    printf ("TODOs are fixed below.  MIS will be added to LAGraph and\n") ;
+    printf ("removed from the GraphBLAS/Demo folder.\n") ;
 
     GrB_Vector iset = NULL ;
     GrB_Vector prob = NULL ;            // random probability for each node
@@ -89,18 +91,18 @@ GrB_Info mis                    // compute a maximal independent set
 
     // compute the degree of each nodes
     GrB_Vector_new (&degrees, GrB_FP64, n) ;
-    // FIXME: use GrB_mxv with v iso full, semiring GrB_PLUS_PAIR_FP64
+    // TODO: use GrB_mxv with v iso full, semiring GrB_PLUS_PAIR_FP64
     GrB_Matrix_reduce_Monoid (degrees, NULL, NULL, GrB_PLUS_MONOID_FP64,
         A, NULL) ;
 
     // singletons are not candidates; they are added to iset first instead
     // candidates[degree != 0] = 1
-    // FIXME: use GrB_DESC_S
+    // TODO: use GrB_DESC_S
     GrB_Vector_assign_BOOL (candidates, degrees, NULL, true, GrB_ALL, n, NULL); 
 
     // add all singletons to iset
     // iset[degree == 0] = 1
-    // FIXME: use GrB_DESC_RSC, but only do this if nvals(degree) < n
+    // TODO: use GrB_DESC_RSC, but only do this if nvals(degree) < n
     GrB_Vector_assign_BOOL (iset, degrees, NULL, true, GrB_ALL, n, GrB_DESC_RC);
 
     // Iterate while there are candidates to check.
@@ -120,11 +122,11 @@ GrB_Info mis                    // compute a maximal independent set
         //      GrB_DESC_R) ;
         prand_xget (X, Seed) ;
         GrB_Vector_eWiseMult_BinaryOp (prob, candidates, NULL, set_random,
-            degrees, X, GrB_DESC_R) ;   // FIXME: use GrB_DESC_RS
+            degrees, X, GrB_DESC_R) ;   // TODO: use GrB_DESC_RS
 
         // compute the max probability of all neighbors
         GrB_vxm (neighbor_max, candidates, NULL, maxSelect1st,
-            prob, A, GrB_DESC_R) ;      // FIXME: use GrB_DESC_RS
+            prob, A, GrB_DESC_R) ;      // TODO: use GrB_DESC_RS
 
         // select node if its probability is > than all its active neighbors
         GrB_Vector_eWiseAdd_BinaryOp (new_members, NULL, NULL, GrB_GT_FP64,
@@ -137,18 +139,18 @@ GrB_Info mis                    // compute a maximal independent set
         // remove new members from set of candidates
         // candidates<!new_members> = candidates
         GrB_Vector_apply (candidates, new_members, NULL, GrB_IDENTITY_BOOL,
-            candidates, GrB_DESC_RC) ;      // FIXME: use GrB_DESC_RSC
+            candidates, GrB_DESC_RC) ;      // TODO: use GrB_DESC_RSC
 
         GrB_Vector_nvals (&nvals, candidates) ;
         if (nvals == 0) { break ; }                  // early exit condition
 
         // Neighbors of new members can also be removed from candidates
-        // FIXME: use ANY_PAIR?
+        // TODO: use ANY_PAIR?
         GrB_vxm (new_neighbors, candidates, NULL, GrB_LOR_LAND_SEMIRING_BOOL,
-            new_members, A, NULL) ;         // FIXME: use GrB_DESC_S
+            new_members, A, NULL) ;         // TODO: use GrB_DESC_S
         // candidates<!new_neighbors> = candidates
         GrB_Vector_apply (candidates, new_neighbors, NULL, GrB_IDENTITY_BOOL,
-            candidates, GrB_DESC_RC) ;      // FIXME: use GrB_DESC_RSC?
+            candidates, GrB_DESC_RC) ;      // TODO: use GrB_DESC_RSC?
 
         GrB_Vector_nvals (&nvals, candidates) ;
 

@@ -214,7 +214,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // remove zombies and pending tuples from M.  M can be jumbled.
             GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
             ASSERT (GB_JUMBLED_OK (M)) ;
-            GB_OK (GB_transpose_cast (MT, GrB_BOOL, C->is_csc, M, Context)) ;
+            GB_OK (GB_transpose_cast (MT, GrB_BOOL, C->is_csc, M, Mask_struct,
+                Context)) ;
             ASSERT (MT->static_header) ;
             // use the transpose mask
             M = MT ;

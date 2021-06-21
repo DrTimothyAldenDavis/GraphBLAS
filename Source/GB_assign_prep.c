@@ -676,7 +676,7 @@ GrB_Info GB_assign_prep
         // A,  construct AT as iso.
         GBURBLE ("(A transpose) ") ;
         AT = GB_clear_static_header (AT_header_handle) ;
-        GB_OK (GB_transpose_cast (AT, NULL, C_is_csc, A, Context)) ;
+        GB_OK (GB_transpose_cast (AT, A->type, C_is_csc, A, false, Context)) ;
         GB_MATRIX_WAIT (AT) ;       // A cannot be jumbled
         A = AT ;
     }
@@ -703,10 +703,10 @@ GrB_Info GB_assign_prep
         { 
             // MT = M' to conform M to the same CSR/CSC format as C,
             // and typecast to boolean.
-            // TODO: if Mask_struct, only construct the pattern of MT
             GBURBLE ("(M transpose) ") ;
             MT = GB_clear_static_header (MT_header_handle) ;
-            GB_OK (GB_transpose_cast (MT, GrB_BOOL, C_is_csc, M, Context)) ;
+            GB_OK (GB_transpose_cast (MT, GrB_BOOL, C_is_csc, M, Mask_struct,
+                Context)) ;
             GB_MATRIX_WAIT (MT) ;       // M cannot be jumbled
             M = MT ;
         }

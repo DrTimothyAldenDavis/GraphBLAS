@@ -139,7 +139,7 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 5.1.0 (FIXME: date)   % FIXME
+\item Version 5.1.0 (FIXME: date)
 
     \begin{packed_itemize}
     \item iso matrices added:  these are matrices and vectors whose
@@ -151,7 +151,7 @@ are extensions to the v1.3 GraphBLAS C API.
             which always build iso matrices and vectors.
     \item import/export methods can now import/export iso matrices and vectors.
     \item added \verb'GrB.argmin/argmax' to Octave/MATLAB interface
-    \item added \verb'GxB_*_pack/unpack' methods as alternatives to  % FIXME
+    \item added \verb'GxB_*_pack/unpack' methods as alternatives to
         import/export.
     \item added \verb'GxB_PRINT_1BASED' to the global settings.
     \end{packed_itemize}
@@ -12385,11 +12385,14 @@ the value of the scalar for scalar assignment.
 \verb'GxB_Matrix_build_Scalar' and \verb'GxB_Vector_build_Scalar'
 always construct an iso matrix/vector.
 
-\verb'GrB_Matrix_build' and \verb'GrB_Vector_build' can also construct
-iso matrices and vectors.  A non-iso matrix/vector is constructed first, and
-then the entries are checked to see if they are all equal.
-
-% FIXME: other build: implement post-iso check for GrB*build.
+\verb'GrB_Matrix_build' and \verb'GrB_Vector_build' can also construct iso
+matrices and vectors.  A non-iso matrix/vector is constructed first, and then
+the entries are checked to see if they are all equal.  The resulting iso-valued
+matrix/vector will be efficient to use and will use less memory than a non-iso
+matrix/vector.  However, constructing an iso matrix/vector with
+\verb'GrB_Matrix_build' and \verb'GrB_Vector_build' will take take more time
+and memory than constructing the matrix/vector with
+\verb'GxB_Matrix_build_Scalar' or \verb'GxB_Vector_build_Scalar'.
 
 %-------------------------------------------------------------------------------
 \subsection{Iso matrices from other methods}

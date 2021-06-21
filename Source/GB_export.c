@@ -136,7 +136,7 @@ GrB_Info GB_export      // export a matrix in any format
     // export A->x
     #ifdef GB_DEBUG
     #ifdef GB_MEMDUMP
-    printf ("export A->x from memtable: %p\n", A->x) ;
+    printf ("export A->x from memtable: %p\n", (*A)->x) ;
     #endif
     GB_Global_memtable_remove ((*A)->x) ;
     #endif
@@ -151,7 +151,7 @@ GrB_Info GB_export      // export a matrix in any format
             // export A->h
             #ifdef GB_DEBUG
             #ifdef GB_MEMDUMP
-            printf ("export A->h from memtable: %p\n", A->h) ;
+            printf ("export A->h from memtable: %p\n", (*A)->h) ;
             #endif
             GB_Global_memtable_remove ((*A)->h) ;
             #endif
@@ -173,7 +173,7 @@ GrB_Info GB_export      // export a matrix in any format
             {
                 #ifdef GB_DEBUG
                 #ifdef GB_MEMDUMP
-                printf ("export A->p from memtable: %p\n", A->p) ;
+                printf ("export A->p from memtable: %p\n", (*A)->p) ;
                 #endif
                 GB_Global_memtable_remove ((*A)->p) ;
                 #endif
@@ -184,7 +184,7 @@ GrB_Info GB_export      // export a matrix in any format
             // export A->i
             #ifdef GB_DEBUG
             #ifdef GB_MEMDUMP
-            printf ("export A->i from memtable: %p\n", A->i) ;
+            printf ("export A->i from memtable: %p\n", (*A)->i) ;
             #endif
             GB_Global_memtable_remove ((*A)->i) ;
             #endif
@@ -198,7 +198,7 @@ GrB_Info GB_export      // export a matrix in any format
             // export A->b
             #ifdef GB_DEBUG
             #ifdef GB_MEMDUMP
-            printf ("export A->b from memtable: %p\n", A->b) ;
+            printf ("export A->b from memtable: %p\n", (*A)->b) ;
             #endif
             GB_Global_memtable_remove ((*A)->b) ;
             #endif

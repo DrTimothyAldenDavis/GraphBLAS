@@ -17,6 +17,7 @@
 #include "GB_transpose.h"
 #include "GB_accum_mask.h"
 #include "GB_dense.h"
+#include "GB_binop.h"
 
 #define GB_FREE_ALL         \
 {                           \
@@ -188,34 +189,50 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // MT = (bool) M'
         GBURBLE ("(M transpose) ") ;
         MT = GB_clear_static_header (&MT_header) ;
-        GB_OK (GB_transpose_cast (MT, GrB_BOOL, T_is_csc, M, Context)) ;
+        GB_OK (GB_transpose_cast (MT, GrB_BOOL, T_is_csc, M, Mask_struct,
+            Context)) ;
         M1 = MT ;
     }
 
     //--------------------------------------------------------------------------
-    // transpose A if needed: FIXME: typecast to op->xtype
+    // transpose A and/or B if needed:
     //--------------------------------------------------------------------------
+
+    bool A_is_pattern = false, B_is_pattern = false ;
+    if (eWiseAdd)
+    {
+        // eWiseAdd can only create AT and BT as iso if the op is positional,
+        // or pair
+        if (op_is_positional || opcode == GB_PAIR_opcode)
+        { 
+            A_is_pattern = true ;
+            B_is_pattern = true ;
+        }
+    }
+    else
+    { 
+        // eWiseMult can create AT and BT as iso for first/second as well
+        GB_binop_pattern (&A_is_pattern, &B_is_pattern, false, opcode) ;
+    }
 
     GrB_Matrix A1 = A ;
     if (A_transpose)
     { 
-        // AT = A'
+        // AT = (xtype) A' or AT = (xtype) one (A')
         GBURBLE ("(A transpose) ") ;
-        GB_OK (GB_transpose_cast (AT, NULL, T_is_csc, A, Context)) ; // FIXME
+        GB_OK (GB_transpose_cast (AT, op->xtype, T_is_csc, A, A_is_pattern,
+            Context)) ;
         A1 = AT ;
         ASSERT_MATRIX_OK (AT, "AT from transpose", GB0) ;
     }
 
-    //--------------------------------------------------------------------------
-    // transpose B if needed: FIXME: typecast to op->ytype
-    //--------------------------------------------------------------------------
-
     GrB_Matrix B1 = B ;
     if (B_transpose)
     { 
-        // BT = B'
+        // BT = (ytype) B' or BT = (ytype) one (B')
         GBURBLE ("(B transpose) ") ;
-        GB_OK (GB_transpose_cast (BT, NULL, T_is_csc, B, Context)) ; // FIXME
+        GB_OK (GB_transpose_cast (BT, op->ytype, T_is_csc, B, B_is_pattern,
+            Context)) ;
         B1 = BT ;
     }
 

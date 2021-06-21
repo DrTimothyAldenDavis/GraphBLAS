@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_pattern: determine if the values of A and B will be used by C=A*B 
+// GB_binop_pattern: determine if values of A and B will be used by C=op(A,B)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,20 +7,21 @@
 
 //------------------------------------------------------------------------------
 
-// Given the opcode of a multiplicative operator z = mult (x,y), and a flipxy
-// flag, determine if C=A*B will use just the pattern of A and/or B.
+// Given the opcode of a operator z = op (x,y), and a flipxy flag, determine if
+// C=op(A,B) will use just the pattern of A and/or B.
 
-#include "GB_mxm.h"
+#include "GB.h"
+#include "GB_binop.h"
 
-void GB_AxB_pattern
+void GB_binop_pattern
 (
     // outputs:
-    bool *A_is_pattern,     // true if A is pattern-only, because of the mult
-    bool *B_is_pattern,     // true if B is pattern-only, because of the mult
+    bool *A_is_pattern,     // true if A is pattern-only, because of the op
+    bool *B_is_pattern,     // true if B is pattern-only, because of the op
     // inputs:
-    const bool flipxy,      // if true,  z = mult (b,a) will be computed
-                            // if false, z = mult (a,b) will be computed
-    const GB_Opcode mult_opcode // opcode of multiply operator
+    const bool flipxy,      // if true,  z = op (b,a) will be computed
+                            // if false, z = op (a,b) will be computed
+    const GB_Opcode opcode  // opcode of binary op
 )
 {
 
@@ -28,10 +29,10 @@ void GB_AxB_pattern
     // determine A_is_pattern and B_is_pattern
     //--------------------------------------------------------------------------
 
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (mult_opcode) ;
-    bool op_is_first  = (mult_opcode == GB_FIRST_opcode) ;
-    bool op_is_second = (mult_opcode == GB_SECOND_opcode) ;
-    bool op_is_pair   = (mult_opcode == GB_PAIR_opcode) ;
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_first  = (opcode == GB_FIRST_opcode) ;
+    bool op_is_second = (opcode == GB_SECOND_opcode) ;
+    bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
 
     if (op_is_positional || op_is_pair)
     { 

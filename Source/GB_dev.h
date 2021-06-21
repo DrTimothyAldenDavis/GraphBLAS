@@ -29,7 +29,7 @@
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
 // (GraphBLAS will be exceedingly slow; this is for development only)
-// #define GB_DEBUG
+#define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1.
@@ -64,6 +64,10 @@
 //
 //      GxB_vtxv : inner product of 2 vectors, result is a GxB_Scalar
 //      GxB_vxvt : outer product of 2 vectors, result is a GrB_Matrix
+
+// FUTURE: do O(1)-time typecasting for iso matrices, if their types don't match
+//      the operator.  Do this after WAIT on the inputs, since that may change
+//      the iso property.
 
 #endif
 

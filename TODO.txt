@@ -1,10 +1,5 @@
-FIXME:  do O(1) typecasting for iso matrices, if their types don't match
-    the operator.  Do this after WAIT on the inputs, since that may
-    change the iso property.
 
 FIXME: after non-iso GrB*build, check if matrix is iso
 
 FIXME: pack/unpack
-
-FIXME: if no typecasting, replace GB_type* methods with GB_1BYTE ... GB_16BYTE
 

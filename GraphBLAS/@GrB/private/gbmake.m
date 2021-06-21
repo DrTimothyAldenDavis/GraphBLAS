@@ -50,19 +50,13 @@ end
 
 make_all = (isequal (what, 'all')) ;
 
+% use -R2018a for the new interleaved complex API
 if (have_octave)
-    %% Octave does not have the new MEX classdef object and as of
-    %% version 7, the mex command doesn't handle compiler options
-    %% the same way.
-
-    % use -R2018a for the new interleaved complex API
+    % Octave does not have the new MEX classdef object and as of version 7, the
+    % mex command doesn't handle compiler options the same way.
     flags = '-O -R2018a -std=c11 -fopenmp -fPIC -Wno-pragmas' ;
 else
-    % use -R2018a for the new interleaved complex API
-    % FIXME: -g is enabled
-    flags = '-g -R2018a' ;
-%   flags = '-O -R2018a' ;
-
+    flags = '-O -R2018a' ;
     try
         if (strncmp (computer, 'GLNX', 4))
             % remove -ansi from CFLAGS and replace it with -std=c11

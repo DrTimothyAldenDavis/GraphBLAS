@@ -72,5 +72,16 @@ void GB_binop_rename            // rename a bound binary op
     bool binop_bind1st
 ) ;
 
+void GB_binop_pattern
+(
+    // outputs:
+    bool *A_is_pattern,     // true if A is pattern-only, because of the op
+    bool *B_is_pattern,     // true if B is pattern-only, because of the op
+    // inputs:
+    const bool flipxy,      // if true,  z = op (b,a) will be computed
+                            // if false, z = op (a,b) will be computed
+    const GB_Opcode opcode  // opcode of binary op
+) ;
+
 #endif
 

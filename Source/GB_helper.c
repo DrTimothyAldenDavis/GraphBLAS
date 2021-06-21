@@ -313,69 +313,6 @@ void GB_helper8
 }
 
 //------------------------------------------------------------------------------
-// GB_helper9: compute the degree of each vector
-//------------------------------------------------------------------------------
-
-// TODO: use GrB_mxv or GrB_vxm when possible.
-
-bool GB_helper9  // true if successful, false if out of memory
-(
-    GrB_Matrix A,           // input matrix
-    int64_t **degree,       // degree of each vector, size nvec
-    size_t *degree_size,    // size of degree, in bytes
-    GrB_Index **list,       // list of non-empty vectors
-    size_t *list_size,      // size of degree, in bytes
-    GrB_Index *nvec         // # of non-empty vectors
-)
-{
-
-    ASSERT_MATRIX_OK (A, "A for helper9", GB0) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;
-    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A) || GB_IS_FULL (A)) ;
-
-    int64_t anvec = A->nvec ;
-    GB_NTHREADS (anvec) ;
-
-    uint64_t *List   = NULL ; size_t List_size = 0 ;
-    int64_t  *Degree = NULL ; size_t Degree_size = 0 ;
-
-    List   = GB_MALLOC (anvec, uint64_t, &List_size) ;
-    Degree = GB_MALLOC (anvec, int64_t , &Degree_size) ;
-
-    if (List == NULL || Degree == NULL)
-    {
-        GB_FREE (&List, List_size) ;
-        GB_FREE (&Degree, Degree_size) ;
-        return (false) ;
-    }
-
-    #ifdef GB_DEBUG
-    // remove List and Degree from the debug memtable, since they will be
-    // imported as the degree GrB_Vector d
-    GB_Global_memtable_remove (List) ;
-    GB_Global_memtable_remove (Degree) ;
-    #endif
-
-    int64_t *Ah = A->h ;
-    int64_t *Ap = A->p ;
-    int64_t avlen = A->vlen ;
-
-    int64_t k ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (k = 0 ; k < anvec ; k++)
-    {
-        List [k] = GBH (Ah, k) ;
-        Degree [k] = (Ap == NULL) ? avlen : (Ap [k+1] - Ap [k]) ;
-    }
-
-    // return result
-    (*degree) = Degree ;    (*degree_size) = Degree_size ;
-    (*list) = List ;        (*list_size) = List_size ;
-    (*nvec) = anvec ;
-    return (true) ;
-}
-
-//------------------------------------------------------------------------------
 // GB_helper10: compute norm (x-y,p) of two dense FP32 or FP64 vectors
 //------------------------------------------------------------------------------
 

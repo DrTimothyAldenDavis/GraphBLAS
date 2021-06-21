@@ -1,5 +1,5 @@
 go:
-	nm -gD /usr/local/lib/libgraphblas.so | grep -v "__" > lib
+	nm -gD ../../build/libgraphblas.so | grep -v "__" > lib
 	grep " GrB_" lib \
             | grep -v GrB_Type_new \
             | grep -v GrB_UnaryOp_new \

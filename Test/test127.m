@@ -227,6 +227,7 @@ for k1 = 1:length (types)
         % A+B'
         %---------------------------------------
 
+save gunk C op A BT dnt tol
         C0 = GB_spec_Matrix_eWiseAdd (C, [ ], [ ], op, A, BT, dnt) ;
         C1 = GB_mex_Matrix_eWiseAdd  (C, [ ], [ ], op, A, BT, dnt) ;
         GB_spec_compare (C0, C1, 0, tol) ;

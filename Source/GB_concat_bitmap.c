@@ -87,7 +87,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
             if (csc != A->is_csc)
             { 
                 // T = (ctype) A'
-                GB_OK (GB_transpose_cast (T, ctype, csc, A, Context)) ;
+                GB_OK (GB_transpose_cast (T, ctype, csc, A, false, Context)) ;
                 A = T ;
                 GB_MATRIX_WAIT (A) ;
             }

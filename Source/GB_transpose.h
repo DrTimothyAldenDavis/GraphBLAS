@@ -43,12 +43,13 @@ GrB_Info GB_transpose_in_place   // C=A', no change of type, no operators
     GB_Context Context
 ) ;
 
-GrB_Info GB_transpose_cast      // C=(ctype)A' with typecast, not in-place
+GrB_Info GB_transpose_cast      // C= (ctype) A' or one (A'), not in-place
 (
     GrB_Matrix C,               // output matrix C, not in place
-    GrB_Type ctype,             // desired type of C; if NULL use A->type
+    GrB_Type ctype,             // desired type of C
     const bool C_is_csc,        // desired CSR/CSC format of C
     const GrB_Matrix A,         // input matrix; C != A
+    const bool iso_one,         // if true, C = one (A'), as iso
     GB_Context Context
 ) ;
 

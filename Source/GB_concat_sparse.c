@@ -130,7 +130,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 { 
                     GB_TILE (S, outer, inner) = T ;
                 }
-                GB_OK (GB_transpose_cast (T, ctype, csc, A, Context)) ;
+                GB_OK (GB_transpose_cast (T, ctype, csc, A, false, Context)) ;
                 A = T ;
                 GB_MATRIX_WAIT (A) ;
                 ASSERT_MATRIX_OK (A, "T=A' for concat sparse", GB0) ;

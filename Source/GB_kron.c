@@ -135,17 +135,15 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
         }
     }
 
-    // TODO: if A, B are pattern: do not compute values of AT=A', BT=B'
     bool A_is_pattern, B_is_pattern ;
-    GB_AxB_pattern (&A_is_pattern, &B_is_pattern, false, op->opcode) ;
+    GB_binop_pattern (&A_is_pattern, &B_is_pattern, false, op->opcode) ;
 
     if (A_transpose)
     { 
         // AT = A' and typecast to op->xtype
         GBURBLE ("(A transpose) ") ;
-        GrB_Type atype = A_is_pattern ? A->type : op->xtype ;
-        GB_OK (GB_transpose_cast (AT, atype, T_is_csc, A, Context)) ;
-        ASSERT_MATRIX_OK (A , "A after AT kron", GB0) ;
+        GB_OK (GB_transpose_cast (AT, op->xtype, T_is_csc, A, A_is_pattern,
+            Context)) ;
         ASSERT_MATRIX_OK (AT, "AT kron", GB0) ;
     }
 
@@ -153,8 +151,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     { 
         // BT = B' and typecast to op->ytype
         GBURBLE ("(B transpose) ") ;
-        GrB_Type btype = B_is_pattern ? B->type : op->ytype ;
-        GB_OK (GB_transpose_cast (BT, btype, T_is_csc, B, Context)) ;
+        GB_OK (GB_transpose_cast (BT, op->ytype, T_is_csc, B, B_is_pattern,
+            Context)) ;
         ASSERT_MATRIX_OK (BT, "BT kron", GB0) ;
     }
 

@@ -712,6 +712,8 @@ GrB_Info GB_hypermatrix_prune
     GB_Context Context
 ) ;
 
+GrB_UnaryOp GB_unop_one (GB_Type_code xcode) ;
+
 //------------------------------------------------------------------------------
 // boiler plate macros for checking inputs and returning if an error occurs
 //------------------------------------------------------------------------------

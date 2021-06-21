@@ -187,7 +187,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GrB_Monoid add = semiring->add ;
     ASSERT (mult->ztype == add->op->ztype) ;
     bool A_is_pattern, B_is_pattern ;
-    GB_AxB_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
+    GB_binop_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
 
     GB_Opcode mult_opcode, add_opcode ;
     GB_Type_code xcode, ycode, zcode ;
