@@ -4,9 +4,6 @@ FIXME:  do O(1) typecasting for iso matrices, if their types don't match
 
 FIXME: after non-iso GrB*build, check if matrix is iso
 
-FIXME: in GraphBLAS/Test/GB_mx_mxArray_to_Matrix: provide option for checking
-    input matrix to see if it could be presented as iso
-
 FIXME: pack/unpack
 
 FIXME: use GB_blob16 for all GB_16BYTE cases

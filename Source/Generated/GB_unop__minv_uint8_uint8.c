@@ -55,10 +55,6 @@
     Cx [pC] = GB_IMINV_UNSIGNED (z, 8) ;        \
 }
 
-// true if operator is the identity op with no typecasting
-#define GB_OP_IS_IDENTITY_WITH_NO_TYPECAST \
-    0
-
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_MINV || GxB_NO_UINT8)
@@ -66,6 +62,7 @@
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
+
 
 GrB_Info GB (_unop_apply__minv_uint8_uint8)
 (
@@ -80,20 +77,15 @@ GrB_Info GB (_unop_apply__minv_uint8_uint8)
     return (GrB_NO_VALUE) ;
     #else
     int64_t p ;
-
     if (Ab == NULL)
     { 
-        #if ( GB_OP_IS_IDENTITY_WITH_NO_TYPECAST )
-            GB_memcpy (Cx, Ax, anz * sizeof (uint8_t), nthreads) ;
-        #else
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (p = 0 ; p < anz ; p++)
-            {
-                uint8_t aij = Ax [p] ;
-                uint8_t z = aij ;
-                Cx [p] = GB_IMINV_UNSIGNED (z, 8) ;
-            }
-        #endif
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (p = 0 ; p < anz ; p++)
+        {
+            uint8_t aij = Ax [p] ;
+            uint8_t z = aij ;
+            Cx [p] = GB_IMINV_UNSIGNED (z, 8) ;
+        }
     }
     else
     { 
@@ -110,6 +102,7 @@ GrB_Info GB (_unop_apply__minv_uint8_uint8)
     return (GrB_SUCCESS) ;
     #endif
 }
+
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

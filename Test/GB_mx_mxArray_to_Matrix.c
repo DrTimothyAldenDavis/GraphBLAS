@@ -358,13 +358,24 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         {
             mexErrMsgTxt ("A->x is NULL!\n") ;
         }
-        GB_cast_array (A->x,
-            (atype_out_code == GB_UDT_code) ? GB_FC64_code : atype_out_code,
-            Mx,
-            (atype_in_code == GB_UDT_code) ? GB_FC64_code : atype_in_code,
-            NULL,
-            (atype_in_code == GB_UDT_code) ? sizeof(GxB_FC64_t) :atype_in->size,
-            anz, 1) ;
+
+        GB_Type_code code1 =
+            (atype_out_code == GB_UDT_code) ? GB_FC64_code : atype_out_code ;
+
+        GB_Type_code code2 =
+            (atype_in_code == GB_UDT_code) ? GB_FC64_code : atype_in_code ;
+
+        size_t asize =
+            (atype_in_code == GB_UDT_code) ? sizeof(GxB_FC64_t) :atype_in->size;
+
+        if (code1 == code2)
+        {
+            memcpy (A->x, Mx, anz * asize) ;
+        }
+        else
+        {
+            GB_cast_array (A->x, code1, Mx, code2, NULL, anz, 1) ;
+        }
     }
 
     //--------------------------------------------------------------------------

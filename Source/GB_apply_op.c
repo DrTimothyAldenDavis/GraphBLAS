@@ -229,14 +229,12 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
         // determine number of threads to use
         int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
         #ifndef GBCOMPACT
-        if ((Atype == op1->xtype)
-            || (opcode == GB_IDENTITY_opcode)
-            || (opcode == GB_ONE_opcode))
+        if (Atype == op1->xtype || opcode == GB_IDENTITY_opcode)
         { 
 
             // The switch factory is used if the op1 is IDENTITY, or if no
             // typecasting is being done.  IDENTITY operator can do arbitrary
-            // typecasting.
+            // typecasting (it is not used if no typecasting is done).
 
             //------------------------------------------------------------------
             // define the worker for the switch factory
@@ -292,16 +290,17 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
     {
 
         //----------------------------------------------------------------------
-        // apply the binary operator to all entries of A
+        // apply a binary operator (bound to a scalar)
         //----------------------------------------------------------------------
 
         ASSERT_BINARYOP_OK (op2, "standard op2 for GB_apply_op", GB0) ;
         ASSERT_SCALAR_OK (scalar, "scalar for GB_apply_op", GB0) ;
 
         GB_Type_code xcode, ycode, zcode ;
-        bool op_is_first  = (opcode == GB_FIRST_opcode) ;
-        bool op_is_second = (opcode == GB_SECOND_opcode) ;
-        bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
+        ASSERT (opcode != GB_FIRST_opcode) ;
+        ASSERT (opcode != GB_SECOND_opcode) ;
+        ASSERT (opcode != GB_PAIR_opcode) ;
+        ASSERT (opcode != GB_ANY_opcode) ;
 
         size_t asize = Atype->size ;
         size_t ssize = scalar->type->size ;
@@ -314,24 +313,21 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
         ycode = op2->ytype->code ;
 
         // typecast the scalar to the operator input
-        bool ignore_scalar = false ;
         size_t ssize_cast ;
         GB_Type_code scode_cast ;
         if (binop_bind1st)
         { 
             ssize_cast = xsize ;
             scode_cast = xcode ;
-            ignore_scalar = op_is_second || op_is_pair ;
         }
         else
         { 
             ssize_cast = ysize ;
             scode_cast = ycode ;
-            ignore_scalar = op_is_first  || op_is_pair ;
         }
         GB_void swork [GB_VLA(ssize_cast)] ;
         GB_void *scalarx = (GB_void *) scalar->x ;
-        if (scode_cast != scode && !ignore_scalar)
+        if (scode_cast != scode)
         { 
             // typecast the scalar to the operator input, in swork
             GB_cast_function cast_s = GB_cast_factory (scode_cast, scode) ;
@@ -350,9 +346,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
             // z = op2(scalar,Ax)
             //------------------------------------------------------------------
 
-            if (GB_binop_builtin (
-                op2->xtype, ignore_scalar,
-                Atype,      op_is_first  || op_is_pair,
+            if (GB_binop_builtin (op2->xtype, false, Atype, false,
                 op2, false, &opcode, &xcode, &ycode, &zcode))
             { 
 
@@ -373,6 +367,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
                 // launch the switch factory
                 //--------------------------------------------------------------
 
+                #define GB_NO_FIRST
                 #define GB_NO_SECOND
                 #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
@@ -385,9 +380,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
             // z = op2(Ax,scalar)
             //------------------------------------------------------------------
 
-            if (GB_binop_builtin (
-                Atype,      op_is_second || op_is_pair,
-                op2->ytype, ignore_scalar,
+            if (GB_binop_builtin (Atype, false, op2->ytype, false,
                 op2, false, &opcode, &xcode, &ycode, &zcode))
             { 
 
@@ -410,6 +403,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
                 //--------------------------------------------------------------
 
                 #define GB_NO_FIRST
+                #define GB_NO_SECOND
                 #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
             }

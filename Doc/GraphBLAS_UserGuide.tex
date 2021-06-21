@@ -1392,9 +1392,10 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 \verb'GxB_init' is identical to \verb'GrB_init', except that it also redefines
 the memory management functions that SuiteSparse:GraphBLAS will use.  Giving
 the user application control over this is particularly important when using the
-\verb'GxB_*import' and \verb'GxB_*export' functions described in
-Section~\ref{import_export}, since they require the user application and
-GraphBLAS to use the same memory manager.
+\verb'GxB_*import', \verb'GxB_*export', \verb'GxB_*pack', and
+\verb'GxB_*unpack' functions described in Section~\ref{import_export},
+since they require the user application and GraphBLAS to use
+the same memory manager.
 
 \verb'user_calloc_function' and \verb'user_realloc_function' are optional, and
 may be \verb'NULL'.  If \verb'NULL', then the \verb'user_malloc_function' is
@@ -3829,6 +3830,7 @@ This section describes a set of methods that create, modify, query,
 and destroy a GraphBLAS sparse vector, \verb'GrB_Vector':
 
 \vspace{0.2in}
+\noindent
 {\footnotesize
 \begin{tabular}{ll}
 \hline
@@ -3836,11 +3838,11 @@ and destroy a GraphBLAS sparse vector, \verb'GrB_Vector':
 \verb'GrB_Vector_wait'           & wait for a vector \\
 \verb'GrB_Vector_dup'            & copy a vector \\
 \verb'GrB_Vector_clear'          & clear a vector of all entries \\
-\verb'GrB_Vector_size'           & return the size of a vector \\
-\verb'GrB_Vector_nvals'          & return the number of entries in a vector \\
-\verb'GxB_Vector_type'           & return the type of a vector \\
-\verb'GrB_Vector_build'          & build a vector from a set of tuples \\
-\verb'GxB_Vector_build_Scalar'   & build a vector from a set of tuples \\
+\verb'GrB_Vector_size'           & size of a vector \\
+\verb'GrB_Vector_nvals'          & number of entries in a vector \\
+\verb'GxB_Vector_type'           & type of a vector \\
+\verb'GrB_Vector_build'          & build a vector from tuples \\
+\verb'GxB_Vector_build_Scalar'   & build a vector from tuples \\
 \verb'GrB_Vector_setElement'     & add an entry to a vector \\
 \verb'GrB_Vector_extractElement' & get an entry from a vector \\
 \verb'GrB_Vector_removeElement'  & remove an entry from a vector \\
@@ -3852,21 +3854,21 @@ and destroy a GraphBLAS sparse vector, \verb'GrB_Vector':
 \verb'GrB_Vector_free'           & free a vector \\
 \hline
 \hline
-\verb'GxB_Vector_import_CSC'     & import a vector in CSC format \\
-\verb'GxB_Vector_export_CSC'     & export a vector in CSC format \\
+\verb'GxB_Vector_import_CSC',    \verb'GxB_Vector_pack_CSC'         & import a vector in CSC format \\
+\verb'GxB_Vector_export_CSC',    \verb'GxB_Vector_unpack_CSC'       & export a vector in CSC format \\
 \hline
-\verb'GxB_Vector_import_Bitmap'  & import a vector in bitmap format \\
-\verb'GxB_Vector_export_Bitmap'  & export a vector in bitmap format \\
+\verb'GxB_Vector_import_Bitmap', \verb'GxB_Vector_pack_Bitmap'      & import a vector in bitmap format \\
+\verb'GxB_Vector_export_Bitmap', \verb'GxB_Vector_unpack_Bitmap'    & export a vector in bitmap format \\
 \hline
-\verb'GxB_Vector_import_Full'    & import a vector in full format \\
-\verb'GxB_Vector_export_Full'    & export a vector in full format \\
+\verb'GxB_Vector_import_Full',   \verb'GxB_Vector_pack_Full'        & import a vector in full format \\
+\verb'GxB_Vector_export_Full',   \verb'GxB_Vector_unpack_Full'      & export a vector in full format \\
 \hline
 \end{tabular}
 }
 
 \vspace{0.2in}
-Refer to Section~\ref{import_export} for a discussion the import/export
-methods.
+Refer to Section~\ref{import_export} for a discussion the
+import/export/pack/unpack methods.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -4087,7 +4089,15 @@ GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
 ) ;
 \end{verbatim} } \end{mdframed}
 
-TODO describe % FIXME: Vector_build_Scalar
+\verb'GxB_Vector_build_Scalar' constructs a sparse vector \verb'w' from a set
+of tuples defined by the index array \verb'I' of length \verb'nvals', and a
+scalar.  The scalar is the value of all of the tuples.  Unlike
+\verb'GrB_Vector_build', there is no \verb'dup' operator to handle duplicate
+entries.  Instead, any duplicates are silently ignored (if the number of
+duplicates is desired, simply compare the input \verb'nvals' with the value
+returned by \verb'GrB_Vector_nvals' after the vector is constructed).  All
+entries in the sparsity pattern of \verb'w' are identical, and equal to the
+input scalar value.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_setElement:}    add an entry to a vector}
@@ -4278,6 +4288,7 @@ This section describes a set of methods that create, modify, query,
 and destroy a GraphBLAS sparse matrix, \verb'GrB_Matrix':
 
 \vspace{0.2in}
+\noindent
 {\footnotesize
 \begin{tabular}{ll}
 \hline
@@ -4285,55 +4296,55 @@ and destroy a GraphBLAS sparse matrix, \verb'GrB_Matrix':
 \verb'GrB_Matrix_wait'          & wait for a matrix \\
 \verb'GrB_Matrix_dup'           & copy a matrix \\
 \verb'GrB_Matrix_clear'         & clear a matrix of all entries \\
-\verb'GrB_Matrix_nrows'         & return the number of rows of a matrix \\
-\verb'GrB_Matrix_ncols'         & return the number of columns of a matrix \\
-\verb'GrB_Matrix_nvals'         & return the number of entries in a matrix \\
-\verb'GxB_Matrix_type'          & return the type of a matrix \\
-\verb'GrB_Matrix_build'         & build a matrix from a set of tuples \\
-\verb'GxB_Matrix_build_Scalar'  & build a matrix from a set of tuples \\
+\verb'GrB_Matrix_nrows'         & number of rows of a matrix \\
+\verb'GrB_Matrix_ncols'         & number of columns of a matrix \\
+\verb'GrB_Matrix_nvals'         & number of entries in a matrix \\
+\verb'GxB_Matrix_type'          & type of a matrix \\
+\verb'GrB_Matrix_build'         & build a matrix from tuples \\
+\verb'GxB_Matrix_build_Scalar'  & build a matrix from tuples \\
 \verb'GrB_Matrix_setElement'    & add an entry to a matrix \\
 \verb'GrB_Matrix_extractElement'& get an entry from a matrix \\
 \verb'GrB_Matrix_removeElement' & remove an entry from a matrix \\
 \verb'GrB_Matrix_extractTuples' & get all entries from a matrix \\
 \verb'GrB_Matrix_resize'        & resize a matrix \\
 % new in v5:------------
-\verb'GxB_Matrix_concat'        & concatenate many matrices into one matrix \\
-\verb'GxB_Matrix_split'         & split one matrix into many matrices \\
-\verb'GxB_Matrix_diag'          & construct a diagonal matrix from a vector \\
+\verb'GxB_Matrix_concat'        & concatenate matrices into a matrix \\
+\verb'GxB_Matrix_split'         & split a matrix into matrices \\
+\verb'GxB_Matrix_diag'          & diagonal matrix from vector \\
 %-----------------------
 \verb'GrB_Matrix_free'          & free a matrix \\
 \hline
 \hline
-\verb'GxB_Matrix_import_CSR'      & import a matrix in CSR form \\
-\verb'GxB_Matrix_export_CSR'      & export a matrix in CSR form \\
+\verb'GxB_Matrix_import_CSR',      \verb'GxB_Matrix_import_CSR'      & import a matrix in CSR form \\
+\verb'GxB_Matrix_export_CSR',      \verb'GxB_Matrix_export_CSR'      & export a matrix in CSR form \\
 \hline
-\verb'GxB_Matrix_import_CSC'      & import a matrix in CSC form \\
-\verb'GxB_Matrix_export_CSC'      & export a matrix in CSC form \\
+\verb'GxB_Matrix_import_CSC',      \verb'GxB_Matrix_import_CSC'      & import a matrix in CSC form \\
+\verb'GxB_Matrix_export_CSC',      \verb'GxB_Matrix_export_CSC'      & export a matrix in CSC form \\
 \hline
-\verb'GxB_Matrix_import_HyperCSR' & import a matrix in HyperCSR form \\
-\verb'GxB_Matrix_export_HyperCSR' & export a matrix in HyperCSR form \\
+\verb'GxB_Matrix_import_HyperCSR', \verb'GxB_Matrix_import_HyperCSR' & import a matrix in HyperCSR form \\
+\verb'GxB_Matrix_export_HyperCSR', \verb'GxB_Matrix_export_HyperCSR' & export a matrix in HyperCSR form \\
 \hline
-\verb'GxB_Matrix_import_HyperCSC' & import a matrix in HyperCSC form \\
-\verb'GxB_Matrix_export_HyperCSC' & export a matrix in HyperCSC form \\
+\verb'GxB_Matrix_import_HyperCSC', \verb'GxB_Matrix_import_HyperCSC' & import a matrix in HyperCSC form \\
+\verb'GxB_Matrix_export_HyperCSC', \verb'GxB_Matrix_export_HyperCSC' & export a matrix in HyperCSC form \\
 \hline
-\verb'GxB_Matrix_import_BitmapR'  & import a matrix in BitmapR form \\
-\verb'GxB_Matrix_export_BitmapR'  & export a matrix in BitmapR form \\
+\verb'GxB_Matrix_import_BitmapR',  \verb'GxB_Matrix_import_BitmapR'  & import a matrix in BitmapR form \\
+\verb'GxB_Matrix_export_BitmapR',  \verb'GxB_Matrix_export_BitmapR'  & export a matrix in BitmapR form \\
 \hline
-\verb'GxB_Matrix_import_BitmapC'  & import a matrix in BitmapC form \\
-\verb'GxB_Matrix_export_BitmapC'  & export a matrix in BitmapC form \\
+\verb'GxB_Matrix_import_BitmapC',  \verb'GxB_Matrix_import_BitmapC'  & import a matrix in BitmapC form \\
+\verb'GxB_Matrix_export_BitmapC',  \verb'GxB_Matrix_export_BitmapC'  & export a matrix in BitmapC form \\
 \hline
-\verb'GxB_Matrix_import_FullR'    & import a matrix in FullR form \\
-\verb'GxB_Matrix_export_FullR'    & export a matrix in FullR form \\
+\verb'GxB_Matrix_import_FullR',    \verb'GxB_Matrix_import_FullR'    & import a matrix in FullR form \\
+\verb'GxB_Matrix_export_FullR',    \verb'GxB_Matrix_export_FullR'    & export a matrix in FullR form \\
 \hline
-\verb'GxB_Matrix_import_FullC'    & import a matrix in FullC form \\
-\verb'GxB_Matrix_export_FullC'    & export a matrix in FullC form \\
+\verb'GxB_Matrix_import_FullC',    \verb'GxB_Matrix_import_FullC'    & import a matrix in FullC form \\
+\verb'GxB_Matrix_export_FullC',    \verb'GxB_Matrix_export_FullC'    & export a matrix in FullC form \\
 \hline
 \end{tabular}
 }
 \vspace{0.2in}
 
-Refer to Section~\ref{import_export} for a discussion the import/export
-methods.
+Refer to Section~\ref{import_export} for a discussion the
+import/export/pack/unpack methods.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -4635,7 +4646,15 @@ complex, and logical sparse matrices.
 ) ;
 \end{verbatim} } \end{mdframed}
 
-TODO describe % FIXME: Matrix_build_Scalar
+\verb'GxB_Matrix_build_Scalar' constructs a sparse matrix \verb'C' from a set
+of tuples defined the index arrays \verb'I' and \verb'J' of length
+\verb'nvals', and a scalar.  The scalar is the value of all of the tuples.
+Unlike \verb'GrB_Matrix_build', there is no \verb'dup' operator to handle
+duplicate entries.  Instead, any duplicates are silently ignored (if the number
+of duplicates is desired, simply compare the input \verb'nvals' with the value
+returned by \verb'GrB_Vector_nvals' after the matrix is constructed).  All
+entries in the sparsity pattern of \verb'C' are identical, and equal to the
+input scalar value.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_setElement:}   add an entry to a matrix}
@@ -5005,20 +5024,20 @@ pending updates to the matrix are abandoned.
 
 \newpage
 %===============================================================================
-\subsection{GraphBLAS matrix and vector import/export} %========================
+\subsection{GraphBLAS matrix and vector import/export/pack/unpack} %============
 %===============================================================================
 \label{import_export}
 
-The import/export functions allow the user application to create a
+The import/export/pack/unpack functions allow the user application to create a
 \verb'GrB_Matrix' or \verb'GrB_Vector' object, and to extract its contents,
 faster and with less memory overhead than the \verb'GrB_*_build' and
 \verb'GrB_*_extractTuples' functions.
 
-The semantics of import/export are the same as the {\em move constructor} in
-C++.  On import, the user provides a set of arrays that have been previously
-allocated via the ANSI C \verb'malloc', \verb'calloc', or \verb'realloc'
-functions (by default), or by the corresponding functions passed to
-\verb'GxB_init'.  The arrays define the content of the matrix or vector.
+The semantics of import/export/pack/unpack are the same as the {\em move
+constructor} in C++.  On import/pack, the user provides a set of arrays that
+have been previously allocated via the ANSI C \verb'malloc', \verb'calloc', or
+\verb'realloc' functions (by default), or by the corresponding functions passed
+to \verb'GxB_init'.  The arrays define the content of the matrix or vector.
 Unlike \verb'GrB_*_build', the GraphBLAS library then takes ownership of the
 user's input arrays and may either:
 
@@ -5034,34 +5053,49 @@ the input to its internal format, and then free the user's input arrays.
 GraphBLAS implementation may also choose to use a mix of the two strategies.
 \end{enumerate}
 
-SuiteSparse:GraphBLAS takes the first approach, and so the import functions
-always take $O(1)$ time, and require $O(1)$ memory space to be allocated.
+SuiteSparse:GraphBLAS takes the first approach, and so the import/pack
+functions always take $O(1)$ time, and require $O(1)$ memory space to be
+allocated.
 
 Regardless of the method chosen, as listed above, the input arrays are no
 longer owned by the user application.  If \verb'A' is a \verb'GrB_Matrix'
-created by an import, the user input arrays are freed no later than
+created by an import/pack, the user input arrays are freed no later than
 \verb'GrB_free(&A)', and may be freed earlier, at the discretion of the
 GraphBLAS library.  The data structure of the \verb'GrB_Matrix' and
 \verb'GrB_Vector' remain opaque.
 
-The export of a \verb'GrB_Matrix' or \verb'GrB_Vector' is symmetric with the
-import operation.  The export changes the ownership of the arrays, where the
-\verb'GrB_Matrix' or \verb'GrB_Vector' no longer exists when the export
-completes, and instead the user is returned several arrays that contain the
+The export/unpack of a \verb'GrB_Matrix' or \verb'GrB_Vector' is symmetric with the
+import/pack operation.  The export/unpack changes the ownership of the arrays, which are
+
+returned to the user and which contain the
 matrix or vector in the requested format.  Ownership of these arrays is given
 to the user application, which is then responsible for freeing them via the
 ANSI C \verb'free' function (by default), or by the \verb'free_function' that
 was passed in to \verb'GxB_init'.  Alternatively, these arrays can be
-re-imported into a \verb'GrB_Matrix' or \verb'GrB_Vector', at which point they
+re-imported/re-packed into a \verb'GrB_Matrix' or \verb'GrB_Vector', at which point they
 again become the responsibility of GraphBLAS.
 
-For an export, if the output format matches the current internal format of the
+For an export/unpack, if the output format matches the current internal format of the
 matrix or vector then these arrays are returned to the user application in
 $O(1)$ time and with no memory copying performed.  Otherwise, the
 \verb'GrB_Matrix' or \verb'GrB_Vector' is first converted into the requested
 format, and then exported.
 
-Exporting a matrix or vector forces completion of any pending operations on the
+The import and pack methods are nearly identical.  They differ only in how
+the matrix or vector is created.  For the import, the matrix/vector argument
+is passed in as \verb'&A', and the object is created, just like \verb'GrB_Matrix_new', and its
+contents are then populated with the new content.
+For the pack methods, the \verb'A' matrix/vector must already exist on input, and its contents are
+populated with the new content, just like \verb'GrB_Matrix_build'.
+
+The export and unpack methods are also nearly identical.  They differ only in
+how the matrix or vector is handled on return.  For the export methods,
+\verb'&A' is passed in, and the object is destroyed after its contents are
+exported, and \verb'A' is set to \verb'NULL' to indicate this.  For the unpack
+methods, \verb'A' is passed in, and the matrix/vector still exists on return,
+just with no entries.  Its type and dimensions are preserved.
+
+Exporting/unpacking a matrix or vector forces completion of any pending operations on the
 matrix, with one exception.  SuiteSparse:GraphBLAS supports three kinds of
 pending operations: {\em zombies} (pending deletions), {\em pending tuples}
 (pending insertions), and a {\em lazy sort}.  In the latter, if the matrix or
@@ -5069,30 +5103,31 @@ vector is left in a {\em jumbled} state, indices in any row or column may
 appear out of order.  If unjumbled, the indices always appear in ascending
 order.
 
-The vector import/export methods use a three formats for a \verb'GrB_Vector'.
-Eight different formats are provided for the import/export of a
-\verb'GrB_Matrix'.  For each format, the numerical value array (\verb'Ax' or
-\verb'vx') has a C type corresponding to one of the 13 built-in types in
-GraphBLAS (\verb'bool', \verb'int*_t', \verb'uint*_t', \verb'float',
-\verb'double' \verb'float complex', \verb'double complex'), or that corresponds
-with the user-defined type.  No typecasting is done on import or export.
+The vector import/export/pack/unpack methods use a three formats for a
+\verb'GrB_Vector'.  Eight different formats are provided for the
+import/export/pack/unpack of a \verb'GrB_Matrix'.  For each format, the
+numerical value array (\verb'Ax' or \verb'vx') has a C type corresponding to
+one of the 13 built-in types in GraphBLAS (\verb'bool', \verb'int*_t',
+\verb'uint*_t', \verb'float', \verb'double' \verb'float complex', \verb'double complex'),
+or that corresponds with the user-defined type.  No typecasting is
+done.
 
 If \verb'iso' is true, then all entries present in the matrix or vector
 have the same value, and the \verb'Ax' array (for matrices) or \verb'vx' array
 (for vectors) only need to be large enough to hold a single value.
 
-The export of a \verb'GrB_Vector' in \verb'CSC' format may return the indices
-in a jumbled state, in any order.
+The export/unpack of a \verb'GrB_Vector' in \verb'CSC' format may return the
+indices in a jumbled state, in any order.
 
 For a \verb'GrB_Matrix' in \verb'CSR' or \verb'HyperCSR' format, if the matrix
 is returned as jumbled, the column indices in any given row may appear out of
 order.  For \verb'CSC' or \verb'HyperCSC' formats, if the matrix is returned as
 jumbled, the row indices in any given column may appear out of order.
 
-On import, if the user-provided arrays contain jumbled row or column vectors,
-then the input flag \verb'jumbled' must be passed in as \verb'true'.  On
-export, if \verb'*jumbled' is \verb'NULL', this indicates to the export method
-that the user expects the exported matrix or vector to be returned in an
+On import/pack, if the user-provided arrays contain jumbled row or column
+vectors, then the input flag \verb'jumbled' must be passed in as \verb'true'.
+On export, if \verb'*jumbled' is \verb'NULL', this indicates to the export
+method that the user expects the exported matrix or vector to be returned in an
 ordered, unjumbled state.  If \verb'*jumbled' is provided, then it is return as
 \verb'true' if the indices may appear out of order, or \verb'false' if they are
 known to be in ascending order.
@@ -5107,61 +5142,61 @@ The table below lists the methods presented in this section.
 \hline
 method & purpose & Section \\
 \hline
-\verb'GxB_Vector_import_CSC'     & import a vector in CSC format
-                                    & \ref{vector_import_csc} \\
-\verb'GxB_Vector_export_CSC'     & export a vector in CSC format
-                                    & \ref{vector_export_csc} \\
+\verb'GxB_Vector_import_CSC'     & import a vector in CSC format & \ref{vector_import_csc} \\
+\verb'GxB_Vector_pack_CSC'       & pack a vector in CSC format & \ref{vector_pack_csc} \\
+\verb'GxB_Vector_export_CSC'     & export a vector in CSC format & \ref{vector_export_csc} \\
+\verb'GxB_Vector_unpack_CSC'     & unpack a vector in CSC format & \ref{vector_unpack_csc} \\
 \hline
-\verb'GxB_Vector_import_Bitmap'  & import a vector in bitmap format
-                                    & \ref{vector_import_bitmap} \\
-\verb'GxB_Vector_export_Bitmap'  & export a vector in bitmap format
-                                    & \ref{vector_export_bitmap} \\
+\verb'GxB_Vector_import_Bitmap'  & import a vector in bitmap format & \ref{vector_import_bitmap} \\
+\verb'GxB_Vector_pack_Bitmap'    & pack a vector in bitmap format & \ref{vector_pack_bitmap} \\
+\verb'GxB_Vector_export_Bitmap'  & export a vector in bitmap format & \ref{vector_export_bitmap} \\
+\verb'GxB_Vector_unpack_Bitmap'  & unpack a vector in bitmap format & \ref{vector_unpack_bitmap} \\
 \hline
-\verb'GxB_Vector_import_Full'    & import a vector in full format
-                                    & \ref{vector_import_full} \\
-\verb'GxB_Vector_export_Full'    & export a vector in full format
-                                    & \ref{vector_export_full} \\
+\verb'GxB_Vector_import_Full'    & import a vector in full format & \ref{vector_import_full} \\
+\verb'GxB_Vector_pack_Full'      & pack a vector in full format & \ref{vector_pack_full} \\
+\verb'GxB_Vector_export_Full'    & export a vector in full format & \ref{vector_export_full} \\
+\verb'GxB_Vector_unpack_Full'    & unpack a vector in full format & \ref{vector_unpack_full} \\
 \hline
 \hline
-\verb'GxB_Matrix_import_CSR'      & import a matrix in CSR form
-                                    & \ref{matrix_import_csr} \\
-\verb'GxB_Matrix_export_CSR'      & export a matrix in CSR form
-                                    & \ref{matrix_export_csr} \\
+\verb'GxB_Matrix_import_CSR'      & import a matrix in CSR form & \ref{matrix_import_csr} \\
+\verb'GxB_Matrix_pack_CSR'        & pack a matrix in CSR form & \ref{matrix_pack_csr} \\
+\verb'GxB_Matrix_export_CSR'      & export a matrix in CSR form & \ref{matrix_export_csr} \\
+\verb'GxB_Matrix_unpack_CSR'      & unpack a matrix in CSR form & \ref{matrix_unpack_csr} \\
 \hline
-\verb'GxB_Matrix_import_CSC'      & import a matrix in CSC form
-                                    & \ref{matrix_import_csc} \\
-\verb'GxB_Matrix_export_CSC'      & export a matrix in CSC form
-                                    & \ref{matrix_export_csc} \\
+\verb'GxB_Matrix_import_CSC'      & import a matrix in CSC form & \ref{matrix_import_csc} \\
+\verb'GxB_Matrix_pack_CSC'        & pack a matrix in CSC form & \ref{matrix_pack_csc} \\
+\verb'GxB_Matrix_export_CSC'      & export a matrix in CSC form & \ref{matrix_export_csc} \\
+\verb'GxB_Matrix_unpack_CSC'      & unpack a matrix in CSC form & \ref{matrix_unpack_csc} \\
 \hline
-\verb'GxB_Matrix_import_HyperCSR' & import a matrix in HyperCSR form
-                                    & \ref{matrix_import_hypercsr} \\
-\verb'GxB_Matrix_export_HyperCSR' & export a matrix in HyperCSR form
-                                    & \ref{matrix_export_hypercsr} \\
+\verb'GxB_Matrix_import_HyperCSR' & import a matrix in HyperCSR form & \ref{matrix_import_hypercsr} \\
+\verb'GxB_Matrix_pack_HyperCSR'   & pack a matrix in HyperCSR form & \ref{matrix_pack_hypercsr} \\
+\verb'GxB_Matrix_export_HyperCSR' & export a matrix in HyperCSR form & \ref{matrix_export_hypercsr} \\
+\verb'GxB_Matrix_unpack_HyperCSR' & unpack a matrix in HyperCSR form & \ref{matrix_unpack_hypercsr} \\
 \hline
-\verb'GxB_Matrix_import_HyperCSC' & import a matrix in HyperCSC form
-                                    & \ref{matrix_import_hypercsc} \\
-\verb'GxB_Matrix_export_HyperCSC' & export a matrix in HyperCSC form
-                                    & \ref{matrix_export_hypercsc} \\
+\verb'GxB_Matrix_import_HyperCSC' & import a matrix in HyperCSC form & \ref{matrix_import_hypercsc} \\
+\verb'GxB_Matrix_pack_HyperCSC'   & pack a matrix in HyperCSC form & \ref{matrix_pack_hypercsc} \\
+\verb'GxB_Matrix_export_HyperCSC' & export a matrix in HyperCSC form & \ref{matrix_export_hypercsc} \\
+\verb'GxB_Matrix_unpack_HyperCSC' & unpack a matrix in HyperCSC form & \ref{matrix_unpack_hypercsc} \\
 \hline
-\verb'GxB_Matrix_import_BitmapR'  & import a matrix in BitmapR form
-                                    & \ref{matrix_import_bitmapr} \\
-\verb'GxB_Matrix_export_BitmapR'  & export a matrix in BitmapR form
-                                    & \ref{matrix_export_bitmapr} \\
+\verb'GxB_Matrix_import_BitmapR'  & import a matrix in BitmapR form & \ref{matrix_import_bitmapr} \\
+\verb'GxB_Matrix_pack_BitmapR'    & pack a matrix in BitmapR form & \ref{matrix_pack_bitmapr} \\
+\verb'GxB_Matrix_export_BitmapR'  & export a matrix in BitmapR form & \ref{matrix_export_bitmapr} \\
+\verb'GxB_Matrix_unpack_BitmapR'  & unpack a matrix in BitmapR form & \ref{matrix_unpack_bitmapr} \\
 \hline
-\verb'GxB_Matrix_import_BitmapC'  & import a matrix in BitmapC form
-                                    & \ref{matrix_import_bitmapc} \\
-\verb'GxB_Matrix_export_BitmapC'  & export a matrix in BitmapC form
-                                    & \ref{matrix_export_bitmapc} \\
+\verb'GxB_Matrix_import_BitmapC'  & import a matrix in BitmapC form & \ref{matrix_import_bitmapc} \\
+\verb'GxB_Matrix_pack_BitmapC'    & pack a matrix in BitmapC form & \ref{matrix_pack_bitmapc} \\
+\verb'GxB_Matrix_export_BitmapC'  & export a matrix in BitmapC form & \ref{matrix_export_bitmapc} \\
+\verb'GxB_Matrix_unpack_BitmapC'  & unpack a matrix in BitmapC form & \ref{matrix_unpack_bitmapc} \\
 \hline
-\verb'GxB_Matrix_import_FullR'    & import a matrix in FullR form
-                                    & \ref{matrix_import_fullr} \\
-\verb'GxB_Matrix_export_FullR'    & export a matrix in FullR form
-                                    & \ref{matrix_export_fullr} \\
+\verb'GxB_Matrix_import_FullR'    & import a matrix in FullR form & \ref{matrix_import_fullr} \\
+\verb'GxB_Matrix_pack_FullR'      & pack a matrix in FullR form & \ref{matrix_pack_fullr} \\
+\verb'GxB_Matrix_export_FullR'    & export a matrix in FullR form & \ref{matrix_export_fullr} \\
+\verb'GxB_Matrix_unpack_FullR'    & unpack a matrix in FullR form & \ref{matrix_unpack_fullr} \\
 \hline
-\verb'GxB_Matrix_import_FullC'    & import a matrix in FullC form
-                                    & \ref{matrix_import_fullc} \\
-\verb'GxB_Matrix_export_FullC'    & export a matrix in FullC form
-                                    & \ref{matrix_export_fullc} \\
+\verb'GxB_Matrix_import_FullC'    & import a matrix in FullC form & \ref{matrix_import_fullc} \\
+\verb'GxB_Matrix_pack_FullC'      & pack a matrix in FullC form & \ref{matrix_pack_fullc} \\
+\verb'GxB_Matrix_export_FullC'    & export a matrix in FullC form & \ref{matrix_export_fullc} \\
+\verb'GxB_Matrix_unpack_FullC'    & unpack a matrix in FullC form & \ref{matrix_unpack_fullc} \\
 \hline
 \end{tabular}
 }
@@ -5215,6 +5250,34 @@ If not successful, \verb'v' is returned as \verb'NULL' and \verb'vi' and
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_pack\_CSC} pack a vector in CSC form}
+%-------------------------------------------------------------------------------
+\label{vector_pack_csc}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
+(
+    GrB_Vector v,       // vector to create (type and length unchanged)
+    GrB_Index **vi,     // indices, vi_size >= nvals(v) * sizeof(int64_t)
+    void **vx,          // values, vx_size >= nvals(v) * (type size)
+                        // or vx_size >= (type size), if iso is true
+    GrB_Index vi_size,  // size of vi in bytes
+    GrB_Index vx_size,  // size of vx in bytes
+    bool iso,           // if true, v is iso
+    GrB_Index nvals,    // # of entries in vector
+    bool jumbled,       // if true, indices may be unsorted
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Vector_import_CSC', except that the vector must
+exist on input with the right type and length.  No typecasting is done.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_export\_CSC:} export a vector in CSC form}
 %-------------------------------------------------------------------------------
 \label{vector_export_csc}
@@ -5259,6 +5322,33 @@ arrays are returned as \verb'NULL'; this is not an error condition.
 
 If not successful, \verb'v' is unmodified and \verb'vi' and \verb'vx' are
 not modified.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_unpack\_CSC:} unpack a vector in CSC form}
+%-------------------------------------------------------------------------------
+\label{vector_unpack_csc}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_unpack_CSC  // unpack a CSC vector
+(
+    GrB_Vector v,       // vector to unpack (type and length unchanged)
+    GrB_Index **vi,     // indices
+    void **vx,          // values
+    GrB_Index *vi_size, // size of vi in bytes
+    GrB_Index *vx_size, // size of vx in bytes
+    bool *iso,          // if true, v is iso
+    GrB_Index *nvals,   // # of entries in vector
+    bool *jumbled,      // if true, indices may be unsorted
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Vector_export_CSC', except that the vector still
+exists on output with the type and length unchanged, but with no entries.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -5313,6 +5403,33 @@ If not successful, \verb'v' is returned as \verb'NULL' and \verb'vb' and
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_pack\_Bitmap} pack a vector in bitmap form}
+%-------------------------------------------------------------------------------
+\label{vector_pack_bitmap}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_pack_Bitmap // pack a bitmap vector
+(
+    GrB_Vector v,       // vector to create (type and length unchanged)
+    int8_t **vb,        // bitmap, vb_size >= n
+    void **vx,          // values, vx_size >= n * (type size)
+                        // or vx_size >= (type size), if iso is true
+    GrB_Index vb_size,  // size of vb in bytes
+    GrB_Index vx_size,  // size of vx in bytes
+    bool iso,           // if true, v is iso
+    GrB_Index nvals,    // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Vector_import_Bitmap', except that the vector must
+exist on input with the right type and length.  No typecasting is done.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_export\_Bitmap:} export a vector in bitmap form}
 %-------------------------------------------------------------------------------
 \label{vector_export_bitmap}
@@ -5355,6 +5472,31 @@ undefined in this case).  The corresponding numerical values are returned in
 If not successful, \verb'v' is unmodified and \verb'vb' and \verb'vx' are not
 modified.
 
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_unpack\_Bitmap:} unpack a vector in bitmap form}
+%-------------------------------------------------------------------------------
+\label{vector_unpack_bitmap}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_unpack_Bitmap   // unpack a bitmap vector
+(
+    GrB_Vector v,       // vector to unpack (type and length unchanged)
+    int8_t **vb,        // bitmap
+    void **vx,          // values
+    GrB_Index *vb_size, // size of vb in bytes
+    GrB_Index *vx_size, // size of vx in bytes
+    bool *iso,          // if true, v is iso
+    GrB_Index *nvals,    // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Vector_export_Bitmap', except that the vector still
+exists on output with the type and length unchanged, but with no entries.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -5396,6 +5538,30 @@ If not successful, \verb'v' is returned as \verb'NULL' and
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_pack\_Full} pack a vector in full form}
+%-------------------------------------------------------------------------------
+\label{vector_pack_full}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_pack_Full // pack a full vector
+(
+    GrB_Vector v,       // vector to create (type and length unchanged)
+    void **vx,          // values, vx_size >= nvals(v) * (type size)
+                        // or vx_size >= (type size), if iso is true
+    GrB_Index vx_size,  // size of vx in bytes
+    bool iso,           // if true, v is iso
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Vector_import_Full', except that the vector must
+exist on input with the right type and length.  No typecasting is done.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_export\_Full:} export a vector in full form}
 %-------------------------------------------------------------------------------
 \label{vector_export_full}
@@ -5434,6 +5600,29 @@ that were in \verb'v' are returned in the array \verb'vx', \verb'vb', where
 \verb'vx[i]'.
 
 If not successful, \verb'v' is unmodified and \verb'vx' is not modified.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_unpack\_Full:} unpack a vector in full form}
+%-------------------------------------------------------------------------------
+\label{vector_unpack_full}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
+(
+    GrB_Vector v,       // vector to unpack (type and length unchanged)
+    void **vx,          // values
+    GrB_Index *vx_size, // size of vx in bytes
+    bool *iso,          // if true, v is iso
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Vector_export_Full', except that the vector still
+exists on output with the type and length unchanged, but with no entries.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -5588,6 +5777,35 @@ the user application, which is eventually responsible for freeing them with
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_pack\_CSR:} pack a CSR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_pack_csr}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_pack_CSR      // pack a CSR matrix
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
+    GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)* sizeof(int64_t)
+    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A) * sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Aj_size,  // size of Aj in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    bool jumbled,       // if true, indices in each row may be unsorted
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_import_CSR', except that the matrix must
+exist on input with the right type and dimensions.  No typecasting is done.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_CSR:} export a CSR matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_export_csr}
@@ -5612,7 +5830,6 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
-
 \end{verbatim}
 } \end{mdframed}
 
@@ -5642,6 +5859,34 @@ size at least \verb'nvals'.
 This method takes $O(1)$ time if the matrix is already in CSR format
 internally.  Otherwise, the matrix is converted to CSR format and then
 exported.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_unpack\_CSR:} unpack a CSR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_unpack_csr}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_unpack_CSR  // unpack a CSR matrix
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    GrB_Index **Ap,     // row "pointers"
+    GrB_Index **Aj,     // column indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Aj_size, // size of Aj in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    bool *jumbled,      // if true, indices in each row may be unsorted
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_export_CSR', except that the matrix still
+exists on output with the type and dimensions unchanged, but with no entries.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -5735,6 +5980,35 @@ are still freed and returned as \verb'NULL', if the method is successful).
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_pack\_CSC:} pack a CSC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_pack_csc}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_pack_CSC      // pack a CSC matrix
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
+    GrB_Index **Ap,     // col "pointers", Ap_size >= (ncols+1)*sizeof(int64_t)
+    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Ai_size,  // size of Ai in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    bool jumbled,       // if true, indices in each column may be unsorted
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_import_CSC', except that the matrix must
+exist on input with the right type and dimensions.  No typecasting is done.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_CSC:} export a CSC matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_export_csc}
@@ -5778,6 +6052,34 @@ described in Section~\ref{matrix_import_csc}.
 This method takes $O(1)$ time if the matrix is already in CSC format
 internally.  Otherwise, the matrix is converted to CSC format and then
 exported.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_unpack\_CSC:} unpack a CSC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_unpack_csc}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    GrB_Index **Ap,     // column "pointers"
+    GrB_Index **Ai,     // row indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Ai_size, // size of Ai in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    bool *jumbled,      // if true, indices in each column may be unsorted
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_unpack_CSC', except that the matrix still
+exists on output with the type and dimensions unchanged, but with no entries.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -5896,6 +6198,38 @@ are still freed and returned as \verb'NULL', if the method is successful).
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_pack\_HyperCSR:} pack a HyperCSR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_pack_hypercsr}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
+    GrB_Index **Ap,     // row "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
+    GrB_Index **Ah,     // row indices, Ah_size >= nvec*sizeof(int64_t)
+    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Ah_size,  // size of Ah in bytes
+    GrB_Index Aj_size,  // size of Aj in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    GrB_Index nvec,     // number of rows that appear in Ah
+    bool jumbled,       // if true, indices in each row may be unsorted
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_import_HyperCSR', except that the matrix must
+exist on input with the right type and dimensions.  No typecasting is done.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_HyperCSR:} export a HyperCSR matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_export_hypercsr}
@@ -5942,6 +6276,37 @@ Section~\ref{matrix_import_hypercsr}.
 This method takes $O(1)$ time if the matrix is already in HyperCSR format
 internally.  Otherwise, the matrix is converted to HyperCSR format and then
 exported.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_unpack\_HyperCSR:} unpack a HyperCSR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_unpack_hypercsr}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    GrB_Index **Ap,     // row "pointers"
+    GrB_Index **Ah,     // row indices
+    GrB_Index **Aj,     // column indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Ah_size, // size of Ah in bytes
+    GrB_Index *Aj_size, // size of Aj in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    GrB_Index *nvec,    // number of rows that appear in Ah
+    bool *jumbled,      // if true, indices in each row may be unsorted
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_export_HyperCSR', except that the matrix still
+exists on output with the type and dimensions unchanged, but with no entries.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -6000,6 +6365,38 @@ assuming it has type \verb'GrB_FP64':
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_pack\_HyperCSC:} pack a HyperCSC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_pack_hypercsc}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
+    GrB_Index **Ap,     // row "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
+    GrB_Index **Ah,     // row indices, Ah_size >= nvec*sizeof(int64_t)
+    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Ah_size,  // size of Ah in bytes
+    GrB_Index Aj_size,  // size of Aj in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    GrB_Index nvec,     // number of rows that appear in Ah
+    bool jumbled,       // if true, indices in each row may be unsorted
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_import_HyperCSC', except that the matrix must
+exist on input with the right type and dimensions.  No typecasting is done.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_HyperCSC:} export a HyperCSC matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_export_hypercsc}
@@ -6049,10 +6446,41 @@ exported.
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_unpack\_HyperCSC:} unpack a HyperCSC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_unpack_hypercsc}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    GrB_Index **Ap,     // row "pointers"
+    GrB_Index **Ah,     // row indices
+    GrB_Index **Aj,     // column indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Ah_size, // size of Ah in bytes
+    GrB_Index *Aj_size, // size of Aj in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    GrB_Index *nvec,    // number of rows that appear in Ah
+    bool *jumbled,      // if true, indices in each row may be unsorted
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_export_HyperCSC', except that the matrix still
+exists on output with the type and dimensions unchanged, but with no entries.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_import\_BitmapR:} import a BitmapR matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_import_bitmapr}
-{
+
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
@@ -6141,7 +6569,34 @@ just $O(1)$ space.  If it does fail, it returns \verb'GrB_OUT_OF_MEMORY',
 and it leaves the two user arrays unmodified.  They are still owned by
 the user application, which is eventually responsible for freeing them with
 \verb'free(Ab)', etc.
-}
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_pack\_BitmapR:} pack a BitmapR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_pack_bitmapr}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_pack_BitmapR  // pack a bitmap matrix, held by row
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
+    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ab_size,  // size of Ab in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    GrB_Index nvals,    // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_import_BitmapR', except that the matrix must
+exist on input with the right type and dimensions.  No typecasting is done.
+
 \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_BitmapR:} export a BitmapR matrix}
@@ -6188,6 +6643,32 @@ exported.
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_unpack\_BitmapR:} unpack a BitmapR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_unpack_bitmapr}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_unpack_BitmapR  // unpack a bitmap matrix, by row
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    int8_t **Ab,        // bitmap
+    void **Ax,          // values
+    GrB_Index *Ab_size, // size of Ab in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    GrB_Index *nvals,   // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_export_BitmapR', except that the matrix still
+exists on output with the type and dimensions unchanged, but with no entries.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_import\_BitmapC:} import a BitmapC matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_import_bitmapc}
@@ -6218,6 +6699,34 @@ format.  It is identical to \verb'GxB_Matrix_import_BitmapR', except that the
 entry $A(i,j)$ is held in \verb'Ab[i+j*nrows]' and \verb'Ax[i+j*nrows]',
 in column-major format.
 
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_pack\_BitmapC:} pack a BitmapC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_pack_bitmapc}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_pack_BitmapC  // pack a bitmap matrix, held by column
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
+    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ab_size,  // size of Ab in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    GrB_Index nvals,    // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_import_BitmapC', except that the matrix must
+exist on input with the right type and dimensions.  No typecasting is done.
+
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_BitmapC:} export a BitmapC matrix}
 %-------------------------------------------------------------------------------
@@ -6248,6 +6757,32 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
 It is identical to \verb'GxB_Matrix_export_BitmapR', except that the
 entry $A(i,j)$ is held in \verb'Ab[i+j*nrows]' and \verb'Ax[i+j*nrows]',
 in column-major format.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_unpack\_BitmapC:} unpack a BitmapC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_unpack_bitmapc}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_unpack_BitmapC  // unpack a bitmap matrix, by col
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    int8_t **Ab,        // bitmap
+    void **Ax,          // values
+    GrB_Index *Ab_size, // size of Ab in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    GrB_Index *nvals,   // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_export_BitmapC', except that the matrix still
+exists on output with the type and dimensions unchanged, but with no entries.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -6297,6 +6832,30 @@ regardless of \verb'nrows' and \verb'ncols'.
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_pack\_FullR:} pack a FullR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_pack_fullr}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_pack_FullR  // pack a full matrix, held by row
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_import_FullR', except that the matrix must
+exist on input with the right type and dimensions.  No typecasting is done.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_FullR:} export a FullR matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_export_fullr}
@@ -6326,6 +6885,29 @@ That is, prior to export, \verb'GrB_Matrix_nvals (&nvals, A)' must return
 \verb'nvals' equal to \verb'nrows*ncols'.  Otherwise, if the \verb'A' is
 exported with \newline \verb'GxB_Matrix_export_FullR', an error is returned
 (\verb'GrB_INVALID_VALUE') and the matrix is not exported.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_unpack\_FullR:} unpack a FullR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_unpack_fullr}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_unpack_FullR  // unpack a full matrix, by row
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    void **Ax,          // values
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_export_FullR', except that the matrix still
+exists on output with the type and dimensions unchanged, but with no entries.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -6375,6 +6957,30 @@ regardless of \verb'nrows' and \verb'ncols'.
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_pack\_FullC:} pack a FullC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_pack_fullc}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_import_FullC', except that the matrix must
+exist on input with the right type and dimensions.  No typecasting is done.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_FullC:} export a FullC matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_export_fullc}
@@ -6404,6 +7010,29 @@ That is, prior to export, \verb'GrB_Matrix_nvals (&nvals, A)' must return
 \verb'nvals' equal to \verb'nrows*ncols'.  Otherwise, if the \verb'A' is
 exported with \newline \verb'GxB_Matrix_export_FullC', an error is returned
 (\verb'GrB_INVALID_VALUE') and the matrix is not exported.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_unpack\_FullC:} unpack a FullC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_unpack_fullc}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_unpack_FullC  // unpack a full matrix, by column
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    void **Ax,          // values
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+Identical to \verb'GxB_Matrix_export_FullC', except that the matrix still
+exists on output with the type and dimensions unchanged, but with no entries.
 
 \newpage
 %===============================================================================
@@ -11485,8 +12114,7 @@ Consider \verb'GrB_mxm', \verb'GrB_mxv', and \verb'GrB_vxm', and
     let \verb'C=A*B', where no mask is present, or \verb'C<M>=A*B' where
     \verb'C' is initially empty.  If \verb'C' is not initially empty,
     then these rules apply to a temporary matrix \verb'T<M>=A*B', which is
-    initially empty and is then assigned to \verb'C' via \verb'C<M>=T';
-    refer to Section~\ref{iso_mask} for more details.
+    initially empty and is then assigned to \verb'C' via \verb'C<M>=T'.
 
     The iso property of \verb'C' is determined with the following rules,
     where the first rule that fits defines the property and value of \verb'C'.
@@ -11757,7 +12385,11 @@ the value of the scalar for scalar assignment.
 \verb'GxB_Matrix_build_Scalar' and \verb'GxB_Vector_build_Scalar'
 always construct an iso matrix/vector.
 
-% FIXME: other build
+\verb'GrB_Matrix_build' and \verb'GrB_Vector_build' can also construct
+iso matrices and vectors.  A non-iso matrix/vector is constructed first, and
+then the entries are checked to see if they are all equal.
+
+% FIXME: other build: implement post-iso check for GrB*build.
 
 %-------------------------------------------------------------------------------
 \subsection{Iso matrices from other methods}
@@ -12725,6 +13357,7 @@ subsections.  Next:
 
 %----------------------------------------
 \subsection{Compiling the Octave/MATLAB interface (for MATLAB R2021a and later)}
+\label{R2021a}
 %----------------------------------------
 
 MATLAB R2021a includes its own copy of SuiteSparse:GraphBLAS v3.3.3, as the

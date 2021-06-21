@@ -22,7 +22,7 @@
 // C=binop(A,B) is defined by the following types and operators:
 
 // A+B function (eWiseAdd):         GB (_AaddB__div_uint8)
-// A.*B function (eWiseMult):       GB (_AemultB)
+// A.*B function (eWiseMult):       GB (_AemultB_01__div_uint8)
 // A.*B function (eWiseMult):       GB (_AemultB_02__div_uint8)
 // A.*B function (eWiseMult):       GB (_AemultB_03__div_uint8)
 // A.*B function (eWiseMult):       GB (_AemultB_bitmap__div_uint8)
@@ -286,6 +286,8 @@ GrB_Info GB (_AaddB__div_uint8)
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
+
+
 GrB_Info GB (_AemultB_01__div_uint8)
 (
     GrB_Matrix C,
@@ -313,9 +315,13 @@ GrB_Info GB (_AemultB_01__div_uint8)
     #endif
 }
 
+
+
 //------------------------------------------------------------------------------
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB (_AemultB_02__div_uint8)
 (
@@ -361,9 +367,13 @@ GrB_Info GB (_AemultB_02__div_uint8)
     #endif
 }
 
+
+
 //------------------------------------------------------------------------------
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB (_AemultB_03__div_uint8)
 (
@@ -384,9 +394,13 @@ GrB_Info GB (_AemultB_03__div_uint8)
     #endif
 }
 
+
+
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB (_AemultB_bitmap__div_uint8)
 (
@@ -409,6 +423,8 @@ GrB_Info GB (_AemultB_bitmap__div_uint8)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+
 
 //------------------------------------------------------------------------------
 // Cx = op (x,Bx):  apply a binary operator to a matrix with scalar bind1st

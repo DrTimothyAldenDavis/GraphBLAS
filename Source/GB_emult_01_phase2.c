@@ -215,8 +215,6 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
             // define the worker for the switch factory
             //------------------------------------------------------------------
 
-            // TODO: no need for the PAIR operator for emult
-
             #define GB_AemultB_01(mult,xname) GB (_AemultB_01_ ## mult ## xname)
 
             #define GB_BINOP_WORKER(mult,xname)                             \
@@ -238,6 +236,7 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
                 GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
                 op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
             { 
+                #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
             }
 

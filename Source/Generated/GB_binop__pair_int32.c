@@ -22,12 +22,12 @@
 // C=binop(A,B) is defined by the following types and operators:
 
 // A+B function (eWiseAdd):         GB (_AaddB__pair_int32)
-// A.*B function (eWiseMult):       GB (_AemultB)
-// A.*B function (eWiseMult):       GB (_AemultB_02__pair_int32)
-// A.*B function (eWiseMult):       GB (_AemultB_03__pair_int32)
-// A.*B function (eWiseMult):       GB (_AemultB_bitmap__pair_int32)
+// A.*B function (eWiseMult):       GB ((none))
+// A.*B function (eWiseMult):       GB ((none))
+// A.*B function (eWiseMult):       GB ((none))
+// A.*B function (eWiseMult):       GB ((none))
 // A*D function (colscale):         GB ((none))
-// D*A function (rowscale):         GB ((node))
+// D*A function (rowscale):         GB ((none))
 // C+=B function (dense accum):     GB (_Cdense_accumB__pair_int32)
 // C+=b function (dense accum):     GB (_Cdense_accumb__pair_int32)
 // C+=A+B function (dense ewise3):  GB ((none))
@@ -228,7 +228,7 @@ GrB_Info GB ((none))
 
 #if 0
 
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
@@ -286,7 +286,9 @@ GrB_Info GB (_AaddB__pair_int32)
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_AemultB_01__pair_int32)
+#if 0
+
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -313,11 +315,15 @@ GrB_Info GB (_AemultB_01__pair_int32)
     #endif
 }
 
+#endif
+
 //------------------------------------------------------------------------------
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_AemultB_02__pair_int32)
+#if 0
+
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -361,11 +367,15 @@ GrB_Info GB (_AemultB_02__pair_int32)
     #endif
 }
 
+#endif
+
 //------------------------------------------------------------------------------
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_AemultB_03__pair_int32)
+#if 0
+
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -384,11 +394,15 @@ GrB_Info GB (_AemultB_03__pair_int32)
     #endif
 }
 
+#endif
+
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_AemultB_bitmap__pair_int32)
+#if 0
+
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -409,6 +423,8 @@ GrB_Info GB (_AemultB_bitmap__pair_int32)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 // Cx = op (x,Bx):  apply a binary operator to a matrix with scalar bind1st

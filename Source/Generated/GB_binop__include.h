@@ -41,7 +41,6 @@ GrB_Info GB (_Cdense_accumb__first_bool)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_bool)
 (
     GrB_Matrix C,
@@ -49,7 +48,6 @@ GrB_Info GB (_AxD__first_bool)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_bool)
 (
     GrB_Matrix C,
@@ -57,7 +55,6 @@ GrB_Info GB (_DxB__first_bool)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_bool)
@@ -79,6 +76,7 @@ GrB_Info GB (_AaddB__first_bool)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_bool)
 (
     GrB_Matrix C,
@@ -97,7 +95,6 @@ GrB_Info GB (_AemultB_01__first_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_bool)
 (
     GrB_Matrix C,
@@ -110,7 +107,6 @@ GrB_Info GB (_AemultB_02__first_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_bool)
 (
     GrB_Matrix C,
@@ -121,7 +117,6 @@ GrB_Info GB (_AemultB_03__first_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_bool)
 (
     GrB_Matrix C,
@@ -137,7 +132,8 @@ GrB_Info GB (_AemultB_bitmap__first_bool)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_bool)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -146,22 +142,7 @@ GrB_Info GB (_bind1st__first_bool)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_bool)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -171,9 +152,15 @@ GrB_Info GB (_bind1st_tran__first_bool)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -220,7 +207,6 @@ GrB_Info GB (_Cdense_accumb__first_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_int8)
 (
     GrB_Matrix C,
@@ -228,7 +214,6 @@ GrB_Info GB (_AxD__first_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_int8)
 (
     GrB_Matrix C,
@@ -236,7 +221,6 @@ GrB_Info GB (_DxB__first_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_int8)
@@ -258,6 +242,7 @@ GrB_Info GB (_AaddB__first_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_int8)
 (
     GrB_Matrix C,
@@ -276,7 +261,6 @@ GrB_Info GB (_AemultB_01__first_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_int8)
 (
     GrB_Matrix C,
@@ -289,7 +273,6 @@ GrB_Info GB (_AemultB_02__first_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_int8)
 (
     GrB_Matrix C,
@@ -300,7 +283,6 @@ GrB_Info GB (_AemultB_03__first_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_int8)
 (
     GrB_Matrix C,
@@ -316,7 +298,8 @@ GrB_Info GB (_AemultB_bitmap__first_int8)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_int8)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -325,22 +308,7 @@ GrB_Info GB (_bind1st__first_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_int8)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -350,9 +318,15 @@ GrB_Info GB (_bind1st_tran__first_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -399,7 +373,6 @@ GrB_Info GB (_Cdense_accumb__first_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_int16)
 (
     GrB_Matrix C,
@@ -407,7 +380,6 @@ GrB_Info GB (_AxD__first_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_int16)
 (
     GrB_Matrix C,
@@ -415,7 +387,6 @@ GrB_Info GB (_DxB__first_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_int16)
@@ -437,6 +408,7 @@ GrB_Info GB (_AaddB__first_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_int16)
 (
     GrB_Matrix C,
@@ -455,7 +427,6 @@ GrB_Info GB (_AemultB_01__first_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_int16)
 (
     GrB_Matrix C,
@@ -468,7 +439,6 @@ GrB_Info GB (_AemultB_02__first_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_int16)
 (
     GrB_Matrix C,
@@ -479,7 +449,6 @@ GrB_Info GB (_AemultB_03__first_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_int16)
 (
     GrB_Matrix C,
@@ -495,7 +464,8 @@ GrB_Info GB (_AemultB_bitmap__first_int16)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_int16)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -504,22 +474,7 @@ GrB_Info GB (_bind1st__first_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_int16)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -529,9 +484,15 @@ GrB_Info GB (_bind1st_tran__first_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -578,7 +539,6 @@ GrB_Info GB (_Cdense_accumb__first_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_int32)
 (
     GrB_Matrix C,
@@ -586,7 +546,6 @@ GrB_Info GB (_AxD__first_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_int32)
 (
     GrB_Matrix C,
@@ -594,7 +553,6 @@ GrB_Info GB (_DxB__first_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_int32)
@@ -616,6 +574,7 @@ GrB_Info GB (_AaddB__first_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_int32)
 (
     GrB_Matrix C,
@@ -634,7 +593,6 @@ GrB_Info GB (_AemultB_01__first_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_int32)
 (
     GrB_Matrix C,
@@ -647,7 +605,6 @@ GrB_Info GB (_AemultB_02__first_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_int32)
 (
     GrB_Matrix C,
@@ -658,7 +615,6 @@ GrB_Info GB (_AemultB_03__first_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_int32)
 (
     GrB_Matrix C,
@@ -674,7 +630,8 @@ GrB_Info GB (_AemultB_bitmap__first_int32)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_int32)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -683,22 +640,7 @@ GrB_Info GB (_bind1st__first_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_int32)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -708,9 +650,15 @@ GrB_Info GB (_bind1st_tran__first_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -757,7 +705,6 @@ GrB_Info GB (_Cdense_accumb__first_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_int64)
 (
     GrB_Matrix C,
@@ -765,7 +712,6 @@ GrB_Info GB (_AxD__first_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_int64)
 (
     GrB_Matrix C,
@@ -773,7 +719,6 @@ GrB_Info GB (_DxB__first_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_int64)
@@ -795,6 +740,7 @@ GrB_Info GB (_AaddB__first_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_int64)
 (
     GrB_Matrix C,
@@ -813,7 +759,6 @@ GrB_Info GB (_AemultB_01__first_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_int64)
 (
     GrB_Matrix C,
@@ -826,7 +771,6 @@ GrB_Info GB (_AemultB_02__first_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_int64)
 (
     GrB_Matrix C,
@@ -837,7 +781,6 @@ GrB_Info GB (_AemultB_03__first_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_int64)
 (
     GrB_Matrix C,
@@ -853,7 +796,8 @@ GrB_Info GB (_AemultB_bitmap__first_int64)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_int64)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -862,22 +806,7 @@ GrB_Info GB (_bind1st__first_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_int64)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -887,9 +816,15 @@ GrB_Info GB (_bind1st_tran__first_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -936,7 +871,6 @@ GrB_Info GB (_Cdense_accumb__first_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_uint8)
 (
     GrB_Matrix C,
@@ -944,7 +878,6 @@ GrB_Info GB (_AxD__first_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_uint8)
 (
     GrB_Matrix C,
@@ -952,7 +885,6 @@ GrB_Info GB (_DxB__first_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_uint8)
@@ -974,6 +906,7 @@ GrB_Info GB (_AaddB__first_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_uint8)
 (
     GrB_Matrix C,
@@ -992,7 +925,6 @@ GrB_Info GB (_AemultB_01__first_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_uint8)
 (
     GrB_Matrix C,
@@ -1005,7 +937,6 @@ GrB_Info GB (_AemultB_02__first_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_uint8)
 (
     GrB_Matrix C,
@@ -1016,7 +947,6 @@ GrB_Info GB (_AemultB_03__first_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_uint8)
 (
     GrB_Matrix C,
@@ -1032,7 +962,8 @@ GrB_Info GB (_AemultB_bitmap__first_uint8)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_uint8)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -1041,22 +972,7 @@ GrB_Info GB (_bind1st__first_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_uint8)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -1066,9 +982,15 @@ GrB_Info GB (_bind1st_tran__first_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -1115,7 +1037,6 @@ GrB_Info GB (_Cdense_accumb__first_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_uint16)
 (
     GrB_Matrix C,
@@ -1123,7 +1044,6 @@ GrB_Info GB (_AxD__first_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_uint16)
 (
     GrB_Matrix C,
@@ -1131,7 +1051,6 @@ GrB_Info GB (_DxB__first_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_uint16)
@@ -1153,6 +1072,7 @@ GrB_Info GB (_AaddB__first_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_uint16)
 (
     GrB_Matrix C,
@@ -1171,7 +1091,6 @@ GrB_Info GB (_AemultB_01__first_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_uint16)
 (
     GrB_Matrix C,
@@ -1184,7 +1103,6 @@ GrB_Info GB (_AemultB_02__first_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_uint16)
 (
     GrB_Matrix C,
@@ -1195,7 +1113,6 @@ GrB_Info GB (_AemultB_03__first_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_uint16)
 (
     GrB_Matrix C,
@@ -1211,7 +1128,8 @@ GrB_Info GB (_AemultB_bitmap__first_uint16)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_uint16)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -1220,22 +1138,7 @@ GrB_Info GB (_bind1st__first_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_uint16)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -1245,9 +1148,15 @@ GrB_Info GB (_bind1st_tran__first_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -1294,7 +1203,6 @@ GrB_Info GB (_Cdense_accumb__first_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_uint32)
 (
     GrB_Matrix C,
@@ -1302,7 +1210,6 @@ GrB_Info GB (_AxD__first_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_uint32)
 (
     GrB_Matrix C,
@@ -1310,7 +1217,6 @@ GrB_Info GB (_DxB__first_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_uint32)
@@ -1332,6 +1238,7 @@ GrB_Info GB (_AaddB__first_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_uint32)
 (
     GrB_Matrix C,
@@ -1350,7 +1257,6 @@ GrB_Info GB (_AemultB_01__first_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_uint32)
 (
     GrB_Matrix C,
@@ -1363,7 +1269,6 @@ GrB_Info GB (_AemultB_02__first_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_uint32)
 (
     GrB_Matrix C,
@@ -1374,7 +1279,6 @@ GrB_Info GB (_AemultB_03__first_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_uint32)
 (
     GrB_Matrix C,
@@ -1390,7 +1294,8 @@ GrB_Info GB (_AemultB_bitmap__first_uint32)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_uint32)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -1399,22 +1304,7 @@ GrB_Info GB (_bind1st__first_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_uint32)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -1424,9 +1314,15 @@ GrB_Info GB (_bind1st_tran__first_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -1473,7 +1369,6 @@ GrB_Info GB (_Cdense_accumb__first_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_uint64)
 (
     GrB_Matrix C,
@@ -1481,7 +1376,6 @@ GrB_Info GB (_AxD__first_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_uint64)
 (
     GrB_Matrix C,
@@ -1489,7 +1383,6 @@ GrB_Info GB (_DxB__first_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_uint64)
@@ -1511,6 +1404,7 @@ GrB_Info GB (_AaddB__first_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_uint64)
 (
     GrB_Matrix C,
@@ -1529,7 +1423,6 @@ GrB_Info GB (_AemultB_01__first_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_uint64)
 (
     GrB_Matrix C,
@@ -1542,7 +1435,6 @@ GrB_Info GB (_AemultB_02__first_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_uint64)
 (
     GrB_Matrix C,
@@ -1553,7 +1445,6 @@ GrB_Info GB (_AemultB_03__first_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_uint64)
 (
     GrB_Matrix C,
@@ -1569,7 +1460,8 @@ GrB_Info GB (_AemultB_bitmap__first_uint64)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_uint64)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -1578,22 +1470,7 @@ GrB_Info GB (_bind1st__first_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_uint64)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -1603,9 +1480,15 @@ GrB_Info GB (_bind1st_tran__first_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -1652,7 +1535,6 @@ GrB_Info GB (_Cdense_accumb__first_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_fp32)
 (
     GrB_Matrix C,
@@ -1660,7 +1542,6 @@ GrB_Info GB (_AxD__first_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_fp32)
 (
     GrB_Matrix C,
@@ -1668,7 +1549,6 @@ GrB_Info GB (_DxB__first_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_fp32)
@@ -1690,6 +1570,7 @@ GrB_Info GB (_AaddB__first_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_fp32)
 (
     GrB_Matrix C,
@@ -1708,7 +1589,6 @@ GrB_Info GB (_AemultB_01__first_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_fp32)
 (
     GrB_Matrix C,
@@ -1721,7 +1601,6 @@ GrB_Info GB (_AemultB_02__first_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_fp32)
 (
     GrB_Matrix C,
@@ -1732,7 +1611,6 @@ GrB_Info GB (_AemultB_03__first_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_fp32)
 (
     GrB_Matrix C,
@@ -1748,7 +1626,8 @@ GrB_Info GB (_AemultB_bitmap__first_fp32)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_fp32)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -1757,22 +1636,7 @@ GrB_Info GB (_bind1st__first_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_fp32)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -1782,9 +1646,15 @@ GrB_Info GB (_bind1st_tran__first_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -1831,7 +1701,6 @@ GrB_Info GB (_Cdense_accumb__first_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_fp64)
 (
     GrB_Matrix C,
@@ -1839,7 +1708,6 @@ GrB_Info GB (_AxD__first_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_fp64)
 (
     GrB_Matrix C,
@@ -1847,7 +1715,6 @@ GrB_Info GB (_DxB__first_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_fp64)
@@ -1869,6 +1736,7 @@ GrB_Info GB (_AaddB__first_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_fp64)
 (
     GrB_Matrix C,
@@ -1887,7 +1755,6 @@ GrB_Info GB (_AemultB_01__first_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_fp64)
 (
     GrB_Matrix C,
@@ -1900,7 +1767,6 @@ GrB_Info GB (_AemultB_02__first_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_fp64)
 (
     GrB_Matrix C,
@@ -1911,7 +1777,6 @@ GrB_Info GB (_AemultB_03__first_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_fp64)
 (
     GrB_Matrix C,
@@ -1927,7 +1792,8 @@ GrB_Info GB (_AemultB_bitmap__first_fp64)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_fp64)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -1936,22 +1802,7 @@ GrB_Info GB (_bind1st__first_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_fp64)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -1961,9 +1812,15 @@ GrB_Info GB (_bind1st_tran__first_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -2010,7 +1867,6 @@ GrB_Info GB (_Cdense_accumb__first_fc32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_fc32)
 (
     GrB_Matrix C,
@@ -2018,7 +1874,6 @@ GrB_Info GB (_AxD__first_fc32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_fc32)
 (
     GrB_Matrix C,
@@ -2026,7 +1881,6 @@ GrB_Info GB (_DxB__first_fc32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_fc32)
@@ -2048,6 +1902,7 @@ GrB_Info GB (_AaddB__first_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_fc32)
 (
     GrB_Matrix C,
@@ -2066,7 +1921,6 @@ GrB_Info GB (_AemultB_01__first_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_fc32)
 (
     GrB_Matrix C,
@@ -2079,7 +1933,6 @@ GrB_Info GB (_AemultB_02__first_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_fc32)
 (
     GrB_Matrix C,
@@ -2090,7 +1943,6 @@ GrB_Info GB (_AemultB_03__first_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_fc32)
 (
     GrB_Matrix C,
@@ -2106,7 +1958,8 @@ GrB_Info GB (_AemultB_bitmap__first_fc32)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_fc32)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -2115,22 +1968,7 @@ GrB_Info GB (_bind1st__first_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_fc32)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -2140,9 +1978,15 @@ GrB_Info GB (_bind1st_tran__first_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -2189,7 +2033,6 @@ GrB_Info GB (_Cdense_accumb__first_fc64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__first_fc64)
 (
     GrB_Matrix C,
@@ -2197,7 +2040,6 @@ GrB_Info GB (_AxD__first_fc64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__first_fc64)
 (
     GrB_Matrix C,
@@ -2205,7 +2047,6 @@ GrB_Info GB (_DxB__first_fc64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__first_fc64)
@@ -2227,6 +2068,7 @@ GrB_Info GB (_AaddB__first_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__first_fc64)
 (
     GrB_Matrix C,
@@ -2245,7 +2087,6 @@ GrB_Info GB (_AemultB_01__first_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__first_fc64)
 (
     GrB_Matrix C,
@@ -2258,7 +2099,6 @@ GrB_Info GB (_AemultB_02__first_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__first_fc64)
 (
     GrB_Matrix C,
@@ -2269,7 +2109,6 @@ GrB_Info GB (_AemultB_03__first_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__first_fc64)
 (
     GrB_Matrix C,
@@ -2285,7 +2124,8 @@ GrB_Info GB (_AemultB_bitmap__first_fc64)
 ) ;
 
 
-GrB_Info GB (_bind1st__first_fc64)
+#if 0
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,
     const GB_void *x_input,
@@ -2294,22 +2134,7 @@ GrB_Info GB (_bind1st__first_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-#if 0
 GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-
-GrB_Info GB (_bind1st_tran__first_fc64)
 (
     GrB_Matrix C,
     const GB_void *x_input,
@@ -2319,9 +2144,15 @@ GrB_Info GB (_bind1st_tran__first_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -2368,7 +2199,6 @@ GrB_Info GB (_Cdense_accumb__second_bool)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_bool)
 (
     GrB_Matrix C,
@@ -2376,7 +2206,6 @@ GrB_Info GB (_AxD__second_bool)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_bool)
 (
     GrB_Matrix C,
@@ -2384,7 +2213,6 @@ GrB_Info GB (_DxB__second_bool)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_bool)
@@ -2406,6 +2234,7 @@ GrB_Info GB (_AaddB__second_bool)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_bool)
 (
     GrB_Matrix C,
@@ -2424,7 +2253,6 @@ GrB_Info GB (_AemultB_01__second_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_bool)
 (
     GrB_Matrix C,
@@ -2437,7 +2265,6 @@ GrB_Info GB (_AemultB_02__second_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_bool)
 (
     GrB_Matrix C,
@@ -2448,7 +2275,6 @@ GrB_Info GB (_AemultB_03__second_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_bool)
 (
     GrB_Matrix C,
@@ -2463,6 +2289,7 @@ GrB_Info GB (_AemultB_bitmap__second_bool)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -2473,21 +2300,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_bool)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -2498,10 +2310,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_bool)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -2511,7 +2329,7 @@ GrB_Info GB (_bind2nd_tran__second_bool)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -2547,7 +2365,6 @@ GrB_Info GB (_Cdense_accumb__second_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_int8)
 (
     GrB_Matrix C,
@@ -2555,7 +2372,6 @@ GrB_Info GB (_AxD__second_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_int8)
 (
     GrB_Matrix C,
@@ -2563,7 +2379,6 @@ GrB_Info GB (_DxB__second_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_int8)
@@ -2585,6 +2400,7 @@ GrB_Info GB (_AaddB__second_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_int8)
 (
     GrB_Matrix C,
@@ -2603,7 +2419,6 @@ GrB_Info GB (_AemultB_01__second_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_int8)
 (
     GrB_Matrix C,
@@ -2616,7 +2431,6 @@ GrB_Info GB (_AemultB_02__second_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_int8)
 (
     GrB_Matrix C,
@@ -2627,7 +2441,6 @@ GrB_Info GB (_AemultB_03__second_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_int8)
 (
     GrB_Matrix C,
@@ -2642,6 +2455,7 @@ GrB_Info GB (_AemultB_bitmap__second_int8)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -2652,21 +2466,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -2677,10 +2476,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_int8)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -2690,7 +2495,7 @@ GrB_Info GB (_bind2nd_tran__second_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -2726,7 +2531,6 @@ GrB_Info GB (_Cdense_accumb__second_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_int16)
 (
     GrB_Matrix C,
@@ -2734,7 +2538,6 @@ GrB_Info GB (_AxD__second_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_int16)
 (
     GrB_Matrix C,
@@ -2742,7 +2545,6 @@ GrB_Info GB (_DxB__second_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_int16)
@@ -2764,6 +2566,7 @@ GrB_Info GB (_AaddB__second_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_int16)
 (
     GrB_Matrix C,
@@ -2782,7 +2585,6 @@ GrB_Info GB (_AemultB_01__second_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_int16)
 (
     GrB_Matrix C,
@@ -2795,7 +2597,6 @@ GrB_Info GB (_AemultB_02__second_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_int16)
 (
     GrB_Matrix C,
@@ -2806,7 +2607,6 @@ GrB_Info GB (_AemultB_03__second_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_int16)
 (
     GrB_Matrix C,
@@ -2821,6 +2621,7 @@ GrB_Info GB (_AemultB_bitmap__second_int16)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -2831,21 +2632,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -2856,10 +2642,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_int16)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -2869,7 +2661,7 @@ GrB_Info GB (_bind2nd_tran__second_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -2905,7 +2697,6 @@ GrB_Info GB (_Cdense_accumb__second_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_int32)
 (
     GrB_Matrix C,
@@ -2913,7 +2704,6 @@ GrB_Info GB (_AxD__second_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_int32)
 (
     GrB_Matrix C,
@@ -2921,7 +2711,6 @@ GrB_Info GB (_DxB__second_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_int32)
@@ -2943,6 +2732,7 @@ GrB_Info GB (_AaddB__second_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_int32)
 (
     GrB_Matrix C,
@@ -2961,7 +2751,6 @@ GrB_Info GB (_AemultB_01__second_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_int32)
 (
     GrB_Matrix C,
@@ -2974,7 +2763,6 @@ GrB_Info GB (_AemultB_02__second_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_int32)
 (
     GrB_Matrix C,
@@ -2985,7 +2773,6 @@ GrB_Info GB (_AemultB_03__second_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_int32)
 (
     GrB_Matrix C,
@@ -3000,6 +2787,7 @@ GrB_Info GB (_AemultB_bitmap__second_int32)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -3010,21 +2798,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -3035,10 +2808,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_int32)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3048,7 +2827,7 @@ GrB_Info GB (_bind2nd_tran__second_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -3084,7 +2863,6 @@ GrB_Info GB (_Cdense_accumb__second_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_int64)
 (
     GrB_Matrix C,
@@ -3092,7 +2870,6 @@ GrB_Info GB (_AxD__second_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_int64)
 (
     GrB_Matrix C,
@@ -3100,7 +2877,6 @@ GrB_Info GB (_DxB__second_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_int64)
@@ -3122,6 +2898,7 @@ GrB_Info GB (_AaddB__second_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_int64)
 (
     GrB_Matrix C,
@@ -3140,7 +2917,6 @@ GrB_Info GB (_AemultB_01__second_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_int64)
 (
     GrB_Matrix C,
@@ -3153,7 +2929,6 @@ GrB_Info GB (_AemultB_02__second_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_int64)
 (
     GrB_Matrix C,
@@ -3164,7 +2939,6 @@ GrB_Info GB (_AemultB_03__second_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_int64)
 (
     GrB_Matrix C,
@@ -3179,6 +2953,7 @@ GrB_Info GB (_AemultB_bitmap__second_int64)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -3189,21 +2964,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -3214,10 +2974,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_int64)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3227,7 +2993,7 @@ GrB_Info GB (_bind2nd_tran__second_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -3263,7 +3029,6 @@ GrB_Info GB (_Cdense_accumb__second_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_uint8)
 (
     GrB_Matrix C,
@@ -3271,7 +3036,6 @@ GrB_Info GB (_AxD__second_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_uint8)
 (
     GrB_Matrix C,
@@ -3279,7 +3043,6 @@ GrB_Info GB (_DxB__second_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_uint8)
@@ -3301,6 +3064,7 @@ GrB_Info GB (_AaddB__second_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_uint8)
 (
     GrB_Matrix C,
@@ -3319,7 +3083,6 @@ GrB_Info GB (_AemultB_01__second_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_uint8)
 (
     GrB_Matrix C,
@@ -3332,7 +3095,6 @@ GrB_Info GB (_AemultB_02__second_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_uint8)
 (
     GrB_Matrix C,
@@ -3343,7 +3105,6 @@ GrB_Info GB (_AemultB_03__second_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_uint8)
 (
     GrB_Matrix C,
@@ -3358,6 +3119,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint8)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -3368,21 +3130,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -3393,10 +3140,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_uint8)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3406,7 +3159,7 @@ GrB_Info GB (_bind2nd_tran__second_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -3442,7 +3195,6 @@ GrB_Info GB (_Cdense_accumb__second_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_uint16)
 (
     GrB_Matrix C,
@@ -3450,7 +3202,6 @@ GrB_Info GB (_AxD__second_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_uint16)
 (
     GrB_Matrix C,
@@ -3458,7 +3209,6 @@ GrB_Info GB (_DxB__second_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_uint16)
@@ -3480,6 +3230,7 @@ GrB_Info GB (_AaddB__second_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_uint16)
 (
     GrB_Matrix C,
@@ -3498,7 +3249,6 @@ GrB_Info GB (_AemultB_01__second_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_uint16)
 (
     GrB_Matrix C,
@@ -3511,7 +3261,6 @@ GrB_Info GB (_AemultB_02__second_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_uint16)
 (
     GrB_Matrix C,
@@ -3522,7 +3271,6 @@ GrB_Info GB (_AemultB_03__second_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_uint16)
 (
     GrB_Matrix C,
@@ -3537,6 +3285,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint16)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -3547,21 +3296,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -3572,10 +3306,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_uint16)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3585,7 +3325,7 @@ GrB_Info GB (_bind2nd_tran__second_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -3621,7 +3361,6 @@ GrB_Info GB (_Cdense_accumb__second_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_uint32)
 (
     GrB_Matrix C,
@@ -3629,7 +3368,6 @@ GrB_Info GB (_AxD__second_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_uint32)
 (
     GrB_Matrix C,
@@ -3637,7 +3375,6 @@ GrB_Info GB (_DxB__second_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_uint32)
@@ -3659,6 +3396,7 @@ GrB_Info GB (_AaddB__second_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_uint32)
 (
     GrB_Matrix C,
@@ -3677,7 +3415,6 @@ GrB_Info GB (_AemultB_01__second_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_uint32)
 (
     GrB_Matrix C,
@@ -3690,7 +3427,6 @@ GrB_Info GB (_AemultB_02__second_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_uint32)
 (
     GrB_Matrix C,
@@ -3701,7 +3437,6 @@ GrB_Info GB (_AemultB_03__second_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_uint32)
 (
     GrB_Matrix C,
@@ -3716,6 +3451,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint32)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -3726,21 +3462,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -3751,10 +3472,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_uint32)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3764,7 +3491,7 @@ GrB_Info GB (_bind2nd_tran__second_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -3800,7 +3527,6 @@ GrB_Info GB (_Cdense_accumb__second_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_uint64)
 (
     GrB_Matrix C,
@@ -3808,7 +3534,6 @@ GrB_Info GB (_AxD__second_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_uint64)
 (
     GrB_Matrix C,
@@ -3816,7 +3541,6 @@ GrB_Info GB (_DxB__second_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_uint64)
@@ -3838,6 +3562,7 @@ GrB_Info GB (_AaddB__second_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_uint64)
 (
     GrB_Matrix C,
@@ -3856,7 +3581,6 @@ GrB_Info GB (_AemultB_01__second_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_uint64)
 (
     GrB_Matrix C,
@@ -3869,7 +3593,6 @@ GrB_Info GB (_AemultB_02__second_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_uint64)
 (
     GrB_Matrix C,
@@ -3880,7 +3603,6 @@ GrB_Info GB (_AemultB_03__second_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_uint64)
 (
     GrB_Matrix C,
@@ -3895,6 +3617,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint64)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -3905,21 +3628,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -3930,10 +3638,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_uint64)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -3943,7 +3657,7 @@ GrB_Info GB (_bind2nd_tran__second_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -3979,7 +3693,6 @@ GrB_Info GB (_Cdense_accumb__second_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_fp32)
 (
     GrB_Matrix C,
@@ -3987,7 +3700,6 @@ GrB_Info GB (_AxD__second_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_fp32)
 (
     GrB_Matrix C,
@@ -3995,7 +3707,6 @@ GrB_Info GB (_DxB__second_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_fp32)
@@ -4017,6 +3728,7 @@ GrB_Info GB (_AaddB__second_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_fp32)
 (
     GrB_Matrix C,
@@ -4035,7 +3747,6 @@ GrB_Info GB (_AemultB_01__second_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_fp32)
 (
     GrB_Matrix C,
@@ -4048,7 +3759,6 @@ GrB_Info GB (_AemultB_02__second_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_fp32)
 (
     GrB_Matrix C,
@@ -4059,7 +3769,6 @@ GrB_Info GB (_AemultB_03__second_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_fp32)
 (
     GrB_Matrix C,
@@ -4074,6 +3783,7 @@ GrB_Info GB (_AemultB_bitmap__second_fp32)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -4084,21 +3794,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -4109,10 +3804,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_fp32)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4122,7 +3823,7 @@ GrB_Info GB (_bind2nd_tran__second_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -4158,7 +3859,6 @@ GrB_Info GB (_Cdense_accumb__second_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_fp64)
 (
     GrB_Matrix C,
@@ -4166,7 +3866,6 @@ GrB_Info GB (_AxD__second_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_fp64)
 (
     GrB_Matrix C,
@@ -4174,7 +3873,6 @@ GrB_Info GB (_DxB__second_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_fp64)
@@ -4196,6 +3894,7 @@ GrB_Info GB (_AaddB__second_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_fp64)
 (
     GrB_Matrix C,
@@ -4214,7 +3913,6 @@ GrB_Info GB (_AemultB_01__second_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_fp64)
 (
     GrB_Matrix C,
@@ -4227,7 +3925,6 @@ GrB_Info GB (_AemultB_02__second_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_fp64)
 (
     GrB_Matrix C,
@@ -4238,7 +3935,6 @@ GrB_Info GB (_AemultB_03__second_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_fp64)
 (
     GrB_Matrix C,
@@ -4253,6 +3949,7 @@ GrB_Info GB (_AemultB_bitmap__second_fp64)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -4263,21 +3960,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -4288,10 +3970,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_fp64)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4301,7 +3989,7 @@ GrB_Info GB (_bind2nd_tran__second_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -4337,7 +4025,6 @@ GrB_Info GB (_Cdense_accumb__second_fc32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_fc32)
 (
     GrB_Matrix C,
@@ -4345,7 +4032,6 @@ GrB_Info GB (_AxD__second_fc32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_fc32)
 (
     GrB_Matrix C,
@@ -4353,7 +4039,6 @@ GrB_Info GB (_DxB__second_fc32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_fc32)
@@ -4375,6 +4060,7 @@ GrB_Info GB (_AaddB__second_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_fc32)
 (
     GrB_Matrix C,
@@ -4393,7 +4079,6 @@ GrB_Info GB (_AemultB_01__second_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_fc32)
 (
     GrB_Matrix C,
@@ -4406,7 +4091,6 @@ GrB_Info GB (_AemultB_02__second_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_fc32)
 (
     GrB_Matrix C,
@@ -4417,7 +4101,6 @@ GrB_Info GB (_AemultB_03__second_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_fc32)
 (
     GrB_Matrix C,
@@ -4432,6 +4115,7 @@ GrB_Info GB (_AemultB_bitmap__second_fc32)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -4442,21 +4126,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -4467,10 +4136,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_fc32)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4480,7 +4155,7 @@ GrB_Info GB (_bind2nd_tran__second_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -4516,7 +4191,6 @@ GrB_Info GB (_Cdense_accumb__second_fc64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__second_fc64)
 (
     GrB_Matrix C,
@@ -4524,7 +4198,6 @@ GrB_Info GB (_AxD__second_fc64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__second_fc64)
 (
     GrB_Matrix C,
@@ -4532,7 +4205,6 @@ GrB_Info GB (_DxB__second_fc64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__second_fc64)
@@ -4554,6 +4226,7 @@ GrB_Info GB (_AaddB__second_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__second_fc64)
 (
     GrB_Matrix C,
@@ -4572,7 +4245,6 @@ GrB_Info GB (_AemultB_01__second_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__second_fc64)
 (
     GrB_Matrix C,
@@ -4585,7 +4257,6 @@ GrB_Info GB (_AemultB_02__second_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__second_fc64)
 (
     GrB_Matrix C,
@@ -4596,7 +4267,6 @@ GrB_Info GB (_AemultB_03__second_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__second_fc64)
 (
     GrB_Matrix C,
@@ -4611,6 +4281,7 @@ GrB_Info GB (_AemultB_bitmap__second_fc64)
     GB_Context Context
 ) ;
 
+
 #if 0
 GrB_Info GB ((none))
 (
@@ -4621,21 +4292,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd__second_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -4646,10 +4302,16 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-
-GrB_Info GB (_bind2nd_tran__second_fc64)
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -4659,7 +4321,7 @@ GrB_Info GB (_bind2nd_tran__second_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
+#endif
 
 // SPDX-License-Identifier: Apache-2.0
 #if 0
@@ -4695,7 +4357,6 @@ GrB_Info GB (_Cdense_accumb__pair_bool)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -4703,15 +4364,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_bool)
@@ -4733,7 +4392,8 @@ GrB_Info GB (_AaddB__pair_bool)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_bool)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -4751,8 +4411,7 @@ GrB_Info GB (_AemultB_01__pair_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_bool)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -4764,8 +4423,7 @@ GrB_Info GB (_AemultB_02__pair_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_bool)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -4775,8 +4433,7 @@ GrB_Info GB (_AemultB_03__pair_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_bool)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -4789,6 +4446,7 @@ GrB_Info GB (_AemultB_bitmap__pair_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -4800,21 +4458,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -4825,9 +4468,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -4874,7 +4523,6 @@ GrB_Info GB (_Cdense_accumb__pair_int8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -4882,15 +4530,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_int8)
@@ -4912,7 +4558,8 @@ GrB_Info GB (_AaddB__pair_int8)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_int8)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -4930,8 +4577,7 @@ GrB_Info GB (_AemultB_01__pair_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_int8)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -4943,8 +4589,7 @@ GrB_Info GB (_AemultB_02__pair_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_int8)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -4954,8 +4599,7 @@ GrB_Info GB (_AemultB_03__pair_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_int8)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -4968,6 +4612,7 @@ GrB_Info GB (_AemultB_bitmap__pair_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -4979,21 +4624,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5004,9 +4634,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5053,7 +4689,6 @@ GrB_Info GB (_Cdense_accumb__pair_int16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5061,15 +4696,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_int16)
@@ -5091,7 +4724,8 @@ GrB_Info GB (_AaddB__pair_int16)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_int16)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -5109,8 +4743,7 @@ GrB_Info GB (_AemultB_01__pair_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_int16)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -5122,8 +4755,7 @@ GrB_Info GB (_AemultB_02__pair_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_int16)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -5133,8 +4765,7 @@ GrB_Info GB (_AemultB_03__pair_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_int16)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -5147,6 +4778,7 @@ GrB_Info GB (_AemultB_bitmap__pair_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -5158,21 +4790,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5183,9 +4800,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5232,7 +4855,6 @@ GrB_Info GB (_Cdense_accumb__pair_int32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5240,15 +4862,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_int32)
@@ -5270,7 +4890,8 @@ GrB_Info GB (_AaddB__pair_int32)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_int32)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -5288,8 +4909,7 @@ GrB_Info GB (_AemultB_01__pair_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_int32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -5301,8 +4921,7 @@ GrB_Info GB (_AemultB_02__pair_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_int32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -5312,8 +4931,7 @@ GrB_Info GB (_AemultB_03__pair_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_int32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -5326,6 +4944,7 @@ GrB_Info GB (_AemultB_bitmap__pair_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -5337,21 +4956,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5362,9 +4966,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5411,7 +5021,6 @@ GrB_Info GB (_Cdense_accumb__pair_int64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5419,15 +5028,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_int64)
@@ -5449,7 +5056,8 @@ GrB_Info GB (_AaddB__pair_int64)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_int64)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -5467,8 +5075,7 @@ GrB_Info GB (_AemultB_01__pair_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_int64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -5480,8 +5087,7 @@ GrB_Info GB (_AemultB_02__pair_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_int64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -5491,8 +5097,7 @@ GrB_Info GB (_AemultB_03__pair_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_int64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -5505,6 +5110,7 @@ GrB_Info GB (_AemultB_bitmap__pair_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -5516,21 +5122,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5541,9 +5132,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5590,7 +5187,6 @@ GrB_Info GB (_Cdense_accumb__pair_uint8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5598,15 +5194,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_uint8)
@@ -5628,7 +5222,8 @@ GrB_Info GB (_AaddB__pair_uint8)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_uint8)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -5646,8 +5241,7 @@ GrB_Info GB (_AemultB_01__pair_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_uint8)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -5659,8 +5253,7 @@ GrB_Info GB (_AemultB_02__pair_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_uint8)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -5670,8 +5263,7 @@ GrB_Info GB (_AemultB_03__pair_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_uint8)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -5684,6 +5276,7 @@ GrB_Info GB (_AemultB_bitmap__pair_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -5695,21 +5288,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5720,9 +5298,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5769,7 +5353,6 @@ GrB_Info GB (_Cdense_accumb__pair_uint16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5777,15 +5360,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_uint16)
@@ -5807,7 +5388,8 @@ GrB_Info GB (_AaddB__pair_uint16)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_uint16)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -5825,8 +5407,7 @@ GrB_Info GB (_AemultB_01__pair_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_uint16)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -5838,8 +5419,7 @@ GrB_Info GB (_AemultB_02__pair_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_uint16)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -5849,8 +5429,7 @@ GrB_Info GB (_AemultB_03__pair_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_uint16)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -5863,6 +5442,7 @@ GrB_Info GB (_AemultB_bitmap__pair_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -5874,21 +5454,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5899,9 +5464,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5948,7 +5519,6 @@ GrB_Info GB (_Cdense_accumb__pair_uint32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -5956,15 +5526,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_uint32)
@@ -5986,7 +5554,8 @@ GrB_Info GB (_AaddB__pair_uint32)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_uint32)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -6004,8 +5573,7 @@ GrB_Info GB (_AemultB_01__pair_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_uint32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6017,8 +5585,7 @@ GrB_Info GB (_AemultB_02__pair_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_uint32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6028,8 +5595,7 @@ GrB_Info GB (_AemultB_03__pair_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_uint32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -6042,6 +5608,7 @@ GrB_Info GB (_AemultB_bitmap__pair_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -6053,21 +5620,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6078,9 +5630,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6127,7 +5685,6 @@ GrB_Info GB (_Cdense_accumb__pair_uint64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6135,15 +5692,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_uint64)
@@ -6165,7 +5720,8 @@ GrB_Info GB (_AaddB__pair_uint64)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_uint64)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -6183,8 +5739,7 @@ GrB_Info GB (_AemultB_01__pair_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_uint64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6196,8 +5751,7 @@ GrB_Info GB (_AemultB_02__pair_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_uint64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6207,8 +5761,7 @@ GrB_Info GB (_AemultB_03__pair_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_uint64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -6221,6 +5774,7 @@ GrB_Info GB (_AemultB_bitmap__pair_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -6232,21 +5786,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6257,9 +5796,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6306,7 +5851,6 @@ GrB_Info GB (_Cdense_accumb__pair_fp32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6314,15 +5858,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_fp32)
@@ -6344,7 +5886,8 @@ GrB_Info GB (_AaddB__pair_fp32)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_fp32)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -6362,8 +5905,7 @@ GrB_Info GB (_AemultB_01__pair_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_fp32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6375,8 +5917,7 @@ GrB_Info GB (_AemultB_02__pair_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_fp32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6386,8 +5927,7 @@ GrB_Info GB (_AemultB_03__pair_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_fp32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -6400,6 +5940,7 @@ GrB_Info GB (_AemultB_bitmap__pair_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -6411,21 +5952,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6436,9 +5962,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6485,7 +6017,6 @@ GrB_Info GB (_Cdense_accumb__pair_fp64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6493,15 +6024,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_fp64)
@@ -6523,7 +6052,8 @@ GrB_Info GB (_AaddB__pair_fp64)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_fp64)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -6541,8 +6071,7 @@ GrB_Info GB (_AemultB_01__pair_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_fp64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6554,8 +6083,7 @@ GrB_Info GB (_AemultB_02__pair_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_fp64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6565,8 +6093,7 @@ GrB_Info GB (_AemultB_03__pair_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_fp64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -6579,6 +6106,7 @@ GrB_Info GB (_AemultB_bitmap__pair_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -6590,21 +6118,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6615,9 +6128,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6664,7 +6183,6 @@ GrB_Info GB (_Cdense_accumb__pair_fc32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6672,15 +6190,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_fc32)
@@ -6702,7 +6218,8 @@ GrB_Info GB (_AaddB__pair_fc32)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_fc32)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -6720,8 +6237,7 @@ GrB_Info GB (_AemultB_01__pair_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_fc32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6733,8 +6249,7 @@ GrB_Info GB (_AemultB_02__pair_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_fc32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6744,8 +6259,7 @@ GrB_Info GB (_AemultB_03__pair_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_fc32)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -6758,6 +6272,7 @@ GrB_Info GB (_AemultB_bitmap__pair_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -6769,21 +6284,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6794,9 +6294,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6843,7 +6349,6 @@ GrB_Info GB (_Cdense_accumb__pair_fc64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6851,15 +6356,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pair_fc64)
@@ -6881,7 +6384,8 @@ GrB_Info GB (_AaddB__pair_fc64)
     GB_Context Context
 ) ;
 
-GrB_Info GB (_AemultB_01__pair_fc64)
+#if 0
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int C_sparsity,
@@ -6899,8 +6403,7 @@ GrB_Info GB (_AemultB_01__pair_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
-GrB_Info GB (_AemultB_02__pair_fc64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6912,8 +6415,7 @@ GrB_Info GB (_AemultB_02__pair_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_03__pair_fc64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -6923,8 +6425,7 @@ GrB_Info GB (_AemultB_03__pair_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
-GrB_Info GB (_AemultB_bitmap__pair_fc64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const int ewise_method,
@@ -6937,6 +6438,7 @@ GrB_Info GB (_AemultB_bitmap__pair_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
+#endif
 
 #if 0
 GrB_Info GB ((none))
@@ -6948,21 +6450,6 @@ GrB_Info GB ((none))
     int64_t bnz,
     int nthreads
 ) ;
-#endif
-
-#if 0
-GrB_Info GB ((none))
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-#endif
-
-#if 0
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -6973,9 +6460,15 @@ GrB_Info GB ((none))
     int nworkspaces,
     int nthreads
 ) ;
-#endif
-
-#if 0
+GrB_Info GB ((none))
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -7022,7 +6515,6 @@ GrB_Info GB (_Cdense_accumb__min_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__min_int8)
 (
     GrB_Matrix C,
@@ -7030,7 +6522,6 @@ GrB_Info GB (_AxD__min_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__min_int8)
 (
     GrB_Matrix C,
@@ -7038,7 +6529,6 @@ GrB_Info GB (_DxB__min_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__min_int8)
@@ -7060,6 +6550,7 @@ GrB_Info GB (_AaddB__min_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__min_int8)
 (
     GrB_Matrix C,
@@ -7078,7 +6569,6 @@ GrB_Info GB (_AemultB_01__min_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__min_int8)
 (
     GrB_Matrix C,
@@ -7091,7 +6581,6 @@ GrB_Info GB (_AemultB_02__min_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__min_int8)
 (
     GrB_Matrix C,
@@ -7102,7 +6591,6 @@ GrB_Info GB (_AemultB_03__min_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__min_int8)
 (
     GrB_Matrix C,
@@ -7118,6 +6606,7 @@ GrB_Info GB (_AemultB_bitmap__min_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__min_int8)
 (
     GB_void *Cx_output,
@@ -7127,21 +6616,6 @@ GrB_Info GB (_bind1st__min_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__min_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__min_int8)
 (
     GrB_Matrix C,
@@ -7152,9 +6626,15 @@ GrB_Info GB (_bind1st_tran__min_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__min_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__min_int8)
 (
     GrB_Matrix C,
@@ -7201,7 +6681,6 @@ GrB_Info GB (_Cdense_accumb__min_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__min_int16)
 (
     GrB_Matrix C,
@@ -7209,7 +6688,6 @@ GrB_Info GB (_AxD__min_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__min_int16)
 (
     GrB_Matrix C,
@@ -7217,7 +6695,6 @@ GrB_Info GB (_DxB__min_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__min_int16)
@@ -7239,6 +6716,7 @@ GrB_Info GB (_AaddB__min_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__min_int16)
 (
     GrB_Matrix C,
@@ -7257,7 +6735,6 @@ GrB_Info GB (_AemultB_01__min_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__min_int16)
 (
     GrB_Matrix C,
@@ -7270,7 +6747,6 @@ GrB_Info GB (_AemultB_02__min_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__min_int16)
 (
     GrB_Matrix C,
@@ -7281,7 +6757,6 @@ GrB_Info GB (_AemultB_03__min_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__min_int16)
 (
     GrB_Matrix C,
@@ -7297,6 +6772,7 @@ GrB_Info GB (_AemultB_bitmap__min_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__min_int16)
 (
     GB_void *Cx_output,
@@ -7306,21 +6782,6 @@ GrB_Info GB (_bind1st__min_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__min_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__min_int16)
 (
     GrB_Matrix C,
@@ -7331,9 +6792,15 @@ GrB_Info GB (_bind1st_tran__min_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__min_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__min_int16)
 (
     GrB_Matrix C,
@@ -7380,7 +6847,6 @@ GrB_Info GB (_Cdense_accumb__min_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__min_int32)
 (
     GrB_Matrix C,
@@ -7388,7 +6854,6 @@ GrB_Info GB (_AxD__min_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__min_int32)
 (
     GrB_Matrix C,
@@ -7396,7 +6861,6 @@ GrB_Info GB (_DxB__min_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__min_int32)
@@ -7418,6 +6882,7 @@ GrB_Info GB (_AaddB__min_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__min_int32)
 (
     GrB_Matrix C,
@@ -7436,7 +6901,6 @@ GrB_Info GB (_AemultB_01__min_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__min_int32)
 (
     GrB_Matrix C,
@@ -7449,7 +6913,6 @@ GrB_Info GB (_AemultB_02__min_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__min_int32)
 (
     GrB_Matrix C,
@@ -7460,7 +6923,6 @@ GrB_Info GB (_AemultB_03__min_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__min_int32)
 (
     GrB_Matrix C,
@@ -7476,6 +6938,7 @@ GrB_Info GB (_AemultB_bitmap__min_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__min_int32)
 (
     GB_void *Cx_output,
@@ -7485,21 +6948,6 @@ GrB_Info GB (_bind1st__min_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__min_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__min_int32)
 (
     GrB_Matrix C,
@@ -7510,9 +6958,15 @@ GrB_Info GB (_bind1st_tran__min_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__min_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__min_int32)
 (
     GrB_Matrix C,
@@ -7559,7 +7013,6 @@ GrB_Info GB (_Cdense_accumb__min_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__min_int64)
 (
     GrB_Matrix C,
@@ -7567,7 +7020,6 @@ GrB_Info GB (_AxD__min_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__min_int64)
 (
     GrB_Matrix C,
@@ -7575,7 +7027,6 @@ GrB_Info GB (_DxB__min_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__min_int64)
@@ -7597,6 +7048,7 @@ GrB_Info GB (_AaddB__min_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__min_int64)
 (
     GrB_Matrix C,
@@ -7615,7 +7067,6 @@ GrB_Info GB (_AemultB_01__min_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__min_int64)
 (
     GrB_Matrix C,
@@ -7628,7 +7079,6 @@ GrB_Info GB (_AemultB_02__min_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__min_int64)
 (
     GrB_Matrix C,
@@ -7639,7 +7089,6 @@ GrB_Info GB (_AemultB_03__min_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__min_int64)
 (
     GrB_Matrix C,
@@ -7655,6 +7104,7 @@ GrB_Info GB (_AemultB_bitmap__min_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__min_int64)
 (
     GB_void *Cx_output,
@@ -7664,21 +7114,6 @@ GrB_Info GB (_bind1st__min_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__min_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__min_int64)
 (
     GrB_Matrix C,
@@ -7689,9 +7124,15 @@ GrB_Info GB (_bind1st_tran__min_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__min_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__min_int64)
 (
     GrB_Matrix C,
@@ -7738,7 +7179,6 @@ GrB_Info GB (_Cdense_accumb__min_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__min_uint8)
 (
     GrB_Matrix C,
@@ -7746,7 +7186,6 @@ GrB_Info GB (_AxD__min_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__min_uint8)
 (
     GrB_Matrix C,
@@ -7754,7 +7193,6 @@ GrB_Info GB (_DxB__min_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__min_uint8)
@@ -7776,6 +7214,7 @@ GrB_Info GB (_AaddB__min_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__min_uint8)
 (
     GrB_Matrix C,
@@ -7794,7 +7233,6 @@ GrB_Info GB (_AemultB_01__min_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__min_uint8)
 (
     GrB_Matrix C,
@@ -7807,7 +7245,6 @@ GrB_Info GB (_AemultB_02__min_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__min_uint8)
 (
     GrB_Matrix C,
@@ -7818,7 +7255,6 @@ GrB_Info GB (_AemultB_03__min_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__min_uint8)
 (
     GrB_Matrix C,
@@ -7834,6 +7270,7 @@ GrB_Info GB (_AemultB_bitmap__min_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__min_uint8)
 (
     GB_void *Cx_output,
@@ -7843,21 +7280,6 @@ GrB_Info GB (_bind1st__min_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__min_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__min_uint8)
 (
     GrB_Matrix C,
@@ -7868,9 +7290,15 @@ GrB_Info GB (_bind1st_tran__min_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__min_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__min_uint8)
 (
     GrB_Matrix C,
@@ -7917,7 +7345,6 @@ GrB_Info GB (_Cdense_accumb__min_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__min_uint16)
 (
     GrB_Matrix C,
@@ -7925,7 +7352,6 @@ GrB_Info GB (_AxD__min_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__min_uint16)
 (
     GrB_Matrix C,
@@ -7933,7 +7359,6 @@ GrB_Info GB (_DxB__min_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__min_uint16)
@@ -7955,6 +7380,7 @@ GrB_Info GB (_AaddB__min_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__min_uint16)
 (
     GrB_Matrix C,
@@ -7973,7 +7399,6 @@ GrB_Info GB (_AemultB_01__min_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__min_uint16)
 (
     GrB_Matrix C,
@@ -7986,7 +7411,6 @@ GrB_Info GB (_AemultB_02__min_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__min_uint16)
 (
     GrB_Matrix C,
@@ -7997,7 +7421,6 @@ GrB_Info GB (_AemultB_03__min_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__min_uint16)
 (
     GrB_Matrix C,
@@ -8013,6 +7436,7 @@ GrB_Info GB (_AemultB_bitmap__min_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__min_uint16)
 (
     GB_void *Cx_output,
@@ -8022,21 +7446,6 @@ GrB_Info GB (_bind1st__min_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__min_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__min_uint16)
 (
     GrB_Matrix C,
@@ -8047,9 +7456,15 @@ GrB_Info GB (_bind1st_tran__min_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__min_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__min_uint16)
 (
     GrB_Matrix C,
@@ -8096,7 +7511,6 @@ GrB_Info GB (_Cdense_accumb__min_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__min_uint32)
 (
     GrB_Matrix C,
@@ -8104,7 +7518,6 @@ GrB_Info GB (_AxD__min_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__min_uint32)
 (
     GrB_Matrix C,
@@ -8112,7 +7525,6 @@ GrB_Info GB (_DxB__min_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__min_uint32)
@@ -8134,6 +7546,7 @@ GrB_Info GB (_AaddB__min_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__min_uint32)
 (
     GrB_Matrix C,
@@ -8152,7 +7565,6 @@ GrB_Info GB (_AemultB_01__min_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__min_uint32)
 (
     GrB_Matrix C,
@@ -8165,7 +7577,6 @@ GrB_Info GB (_AemultB_02__min_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__min_uint32)
 (
     GrB_Matrix C,
@@ -8176,7 +7587,6 @@ GrB_Info GB (_AemultB_03__min_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__min_uint32)
 (
     GrB_Matrix C,
@@ -8192,6 +7602,7 @@ GrB_Info GB (_AemultB_bitmap__min_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__min_uint32)
 (
     GB_void *Cx_output,
@@ -8201,21 +7612,6 @@ GrB_Info GB (_bind1st__min_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__min_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__min_uint32)
 (
     GrB_Matrix C,
@@ -8226,9 +7622,15 @@ GrB_Info GB (_bind1st_tran__min_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__min_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__min_uint32)
 (
     GrB_Matrix C,
@@ -8275,7 +7677,6 @@ GrB_Info GB (_Cdense_accumb__min_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__min_uint64)
 (
     GrB_Matrix C,
@@ -8283,7 +7684,6 @@ GrB_Info GB (_AxD__min_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__min_uint64)
 (
     GrB_Matrix C,
@@ -8291,7 +7691,6 @@ GrB_Info GB (_DxB__min_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__min_uint64)
@@ -8313,6 +7712,7 @@ GrB_Info GB (_AaddB__min_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__min_uint64)
 (
     GrB_Matrix C,
@@ -8331,7 +7731,6 @@ GrB_Info GB (_AemultB_01__min_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__min_uint64)
 (
     GrB_Matrix C,
@@ -8344,7 +7743,6 @@ GrB_Info GB (_AemultB_02__min_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__min_uint64)
 (
     GrB_Matrix C,
@@ -8355,7 +7753,6 @@ GrB_Info GB (_AemultB_03__min_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__min_uint64)
 (
     GrB_Matrix C,
@@ -8371,6 +7768,7 @@ GrB_Info GB (_AemultB_bitmap__min_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__min_uint64)
 (
     GB_void *Cx_output,
@@ -8380,21 +7778,6 @@ GrB_Info GB (_bind1st__min_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__min_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__min_uint64)
 (
     GrB_Matrix C,
@@ -8405,9 +7788,15 @@ GrB_Info GB (_bind1st_tran__min_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__min_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__min_uint64)
 (
     GrB_Matrix C,
@@ -8454,7 +7843,6 @@ GrB_Info GB (_Cdense_accumb__min_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__min_fp32)
 (
     GrB_Matrix C,
@@ -8462,7 +7850,6 @@ GrB_Info GB (_AxD__min_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__min_fp32)
 (
     GrB_Matrix C,
@@ -8470,7 +7857,6 @@ GrB_Info GB (_DxB__min_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__min_fp32)
@@ -8492,6 +7878,7 @@ GrB_Info GB (_AaddB__min_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__min_fp32)
 (
     GrB_Matrix C,
@@ -8510,7 +7897,6 @@ GrB_Info GB (_AemultB_01__min_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__min_fp32)
 (
     GrB_Matrix C,
@@ -8523,7 +7909,6 @@ GrB_Info GB (_AemultB_02__min_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__min_fp32)
 (
     GrB_Matrix C,
@@ -8534,7 +7919,6 @@ GrB_Info GB (_AemultB_03__min_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__min_fp32)
 (
     GrB_Matrix C,
@@ -8550,6 +7934,7 @@ GrB_Info GB (_AemultB_bitmap__min_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__min_fp32)
 (
     GB_void *Cx_output,
@@ -8559,21 +7944,6 @@ GrB_Info GB (_bind1st__min_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__min_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__min_fp32)
 (
     GrB_Matrix C,
@@ -8584,9 +7954,15 @@ GrB_Info GB (_bind1st_tran__min_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__min_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__min_fp32)
 (
     GrB_Matrix C,
@@ -8633,7 +8009,6 @@ GrB_Info GB (_Cdense_accumb__min_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__min_fp64)
 (
     GrB_Matrix C,
@@ -8641,7 +8016,6 @@ GrB_Info GB (_AxD__min_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__min_fp64)
 (
     GrB_Matrix C,
@@ -8649,7 +8023,6 @@ GrB_Info GB (_DxB__min_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__min_fp64)
@@ -8671,6 +8044,7 @@ GrB_Info GB (_AaddB__min_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__min_fp64)
 (
     GrB_Matrix C,
@@ -8689,7 +8063,6 @@ GrB_Info GB (_AemultB_01__min_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__min_fp64)
 (
     GrB_Matrix C,
@@ -8702,7 +8075,6 @@ GrB_Info GB (_AemultB_02__min_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__min_fp64)
 (
     GrB_Matrix C,
@@ -8713,7 +8085,6 @@ GrB_Info GB (_AemultB_03__min_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__min_fp64)
 (
     GrB_Matrix C,
@@ -8729,6 +8100,7 @@ GrB_Info GB (_AemultB_bitmap__min_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__min_fp64)
 (
     GB_void *Cx_output,
@@ -8738,21 +8110,6 @@ GrB_Info GB (_bind1st__min_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__min_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__min_fp64)
 (
     GrB_Matrix C,
@@ -8763,9 +8120,15 @@ GrB_Info GB (_bind1st_tran__min_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__min_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__min_fp64)
 (
     GrB_Matrix C,
@@ -8812,7 +8175,6 @@ GrB_Info GB (_Cdense_accumb__max_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__max_int8)
 (
     GrB_Matrix C,
@@ -8820,7 +8182,6 @@ GrB_Info GB (_AxD__max_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__max_int8)
 (
     GrB_Matrix C,
@@ -8828,7 +8189,6 @@ GrB_Info GB (_DxB__max_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__max_int8)
@@ -8850,6 +8210,7 @@ GrB_Info GB (_AaddB__max_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__max_int8)
 (
     GrB_Matrix C,
@@ -8868,7 +8229,6 @@ GrB_Info GB (_AemultB_01__max_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__max_int8)
 (
     GrB_Matrix C,
@@ -8881,7 +8241,6 @@ GrB_Info GB (_AemultB_02__max_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__max_int8)
 (
     GrB_Matrix C,
@@ -8892,7 +8251,6 @@ GrB_Info GB (_AemultB_03__max_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__max_int8)
 (
     GrB_Matrix C,
@@ -8908,6 +8266,7 @@ GrB_Info GB (_AemultB_bitmap__max_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__max_int8)
 (
     GB_void *Cx_output,
@@ -8917,21 +8276,6 @@ GrB_Info GB (_bind1st__max_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__max_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__max_int8)
 (
     GrB_Matrix C,
@@ -8942,9 +8286,15 @@ GrB_Info GB (_bind1st_tran__max_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__max_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__max_int8)
 (
     GrB_Matrix C,
@@ -8991,7 +8341,6 @@ GrB_Info GB (_Cdense_accumb__max_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__max_int16)
 (
     GrB_Matrix C,
@@ -8999,7 +8348,6 @@ GrB_Info GB (_AxD__max_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__max_int16)
 (
     GrB_Matrix C,
@@ -9007,7 +8355,6 @@ GrB_Info GB (_DxB__max_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__max_int16)
@@ -9029,6 +8376,7 @@ GrB_Info GB (_AaddB__max_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__max_int16)
 (
     GrB_Matrix C,
@@ -9047,7 +8395,6 @@ GrB_Info GB (_AemultB_01__max_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__max_int16)
 (
     GrB_Matrix C,
@@ -9060,7 +8407,6 @@ GrB_Info GB (_AemultB_02__max_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__max_int16)
 (
     GrB_Matrix C,
@@ -9071,7 +8417,6 @@ GrB_Info GB (_AemultB_03__max_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__max_int16)
 (
     GrB_Matrix C,
@@ -9087,6 +8432,7 @@ GrB_Info GB (_AemultB_bitmap__max_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__max_int16)
 (
     GB_void *Cx_output,
@@ -9096,21 +8442,6 @@ GrB_Info GB (_bind1st__max_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__max_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__max_int16)
 (
     GrB_Matrix C,
@@ -9121,9 +8452,15 @@ GrB_Info GB (_bind1st_tran__max_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__max_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__max_int16)
 (
     GrB_Matrix C,
@@ -9170,7 +8507,6 @@ GrB_Info GB (_Cdense_accumb__max_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__max_int32)
 (
     GrB_Matrix C,
@@ -9178,7 +8514,6 @@ GrB_Info GB (_AxD__max_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__max_int32)
 (
     GrB_Matrix C,
@@ -9186,7 +8521,6 @@ GrB_Info GB (_DxB__max_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__max_int32)
@@ -9208,6 +8542,7 @@ GrB_Info GB (_AaddB__max_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__max_int32)
 (
     GrB_Matrix C,
@@ -9226,7 +8561,6 @@ GrB_Info GB (_AemultB_01__max_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__max_int32)
 (
     GrB_Matrix C,
@@ -9239,7 +8573,6 @@ GrB_Info GB (_AemultB_02__max_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__max_int32)
 (
     GrB_Matrix C,
@@ -9250,7 +8583,6 @@ GrB_Info GB (_AemultB_03__max_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__max_int32)
 (
     GrB_Matrix C,
@@ -9266,6 +8598,7 @@ GrB_Info GB (_AemultB_bitmap__max_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__max_int32)
 (
     GB_void *Cx_output,
@@ -9275,21 +8608,6 @@ GrB_Info GB (_bind1st__max_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__max_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__max_int32)
 (
     GrB_Matrix C,
@@ -9300,9 +8618,15 @@ GrB_Info GB (_bind1st_tran__max_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__max_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__max_int32)
 (
     GrB_Matrix C,
@@ -9349,7 +8673,6 @@ GrB_Info GB (_Cdense_accumb__max_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__max_int64)
 (
     GrB_Matrix C,
@@ -9357,7 +8680,6 @@ GrB_Info GB (_AxD__max_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__max_int64)
 (
     GrB_Matrix C,
@@ -9365,7 +8687,6 @@ GrB_Info GB (_DxB__max_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__max_int64)
@@ -9387,6 +8708,7 @@ GrB_Info GB (_AaddB__max_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__max_int64)
 (
     GrB_Matrix C,
@@ -9405,7 +8727,6 @@ GrB_Info GB (_AemultB_01__max_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__max_int64)
 (
     GrB_Matrix C,
@@ -9418,7 +8739,6 @@ GrB_Info GB (_AemultB_02__max_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__max_int64)
 (
     GrB_Matrix C,
@@ -9429,7 +8749,6 @@ GrB_Info GB (_AemultB_03__max_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__max_int64)
 (
     GrB_Matrix C,
@@ -9445,6 +8764,7 @@ GrB_Info GB (_AemultB_bitmap__max_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__max_int64)
 (
     GB_void *Cx_output,
@@ -9454,21 +8774,6 @@ GrB_Info GB (_bind1st__max_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__max_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__max_int64)
 (
     GrB_Matrix C,
@@ -9479,9 +8784,15 @@ GrB_Info GB (_bind1st_tran__max_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__max_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__max_int64)
 (
     GrB_Matrix C,
@@ -9528,7 +8839,6 @@ GrB_Info GB (_Cdense_accumb__max_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__max_uint8)
 (
     GrB_Matrix C,
@@ -9536,7 +8846,6 @@ GrB_Info GB (_AxD__max_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__max_uint8)
 (
     GrB_Matrix C,
@@ -9544,7 +8853,6 @@ GrB_Info GB (_DxB__max_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__max_uint8)
@@ -9566,6 +8874,7 @@ GrB_Info GB (_AaddB__max_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__max_uint8)
 (
     GrB_Matrix C,
@@ -9584,7 +8893,6 @@ GrB_Info GB (_AemultB_01__max_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__max_uint8)
 (
     GrB_Matrix C,
@@ -9597,7 +8905,6 @@ GrB_Info GB (_AemultB_02__max_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__max_uint8)
 (
     GrB_Matrix C,
@@ -9608,7 +8915,6 @@ GrB_Info GB (_AemultB_03__max_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__max_uint8)
 (
     GrB_Matrix C,
@@ -9624,6 +8930,7 @@ GrB_Info GB (_AemultB_bitmap__max_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__max_uint8)
 (
     GB_void *Cx_output,
@@ -9633,21 +8940,6 @@ GrB_Info GB (_bind1st__max_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__max_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__max_uint8)
 (
     GrB_Matrix C,
@@ -9658,9 +8950,15 @@ GrB_Info GB (_bind1st_tran__max_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__max_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__max_uint8)
 (
     GrB_Matrix C,
@@ -9707,7 +9005,6 @@ GrB_Info GB (_Cdense_accumb__max_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__max_uint16)
 (
     GrB_Matrix C,
@@ -9715,7 +9012,6 @@ GrB_Info GB (_AxD__max_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__max_uint16)
 (
     GrB_Matrix C,
@@ -9723,7 +9019,6 @@ GrB_Info GB (_DxB__max_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__max_uint16)
@@ -9745,6 +9040,7 @@ GrB_Info GB (_AaddB__max_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__max_uint16)
 (
     GrB_Matrix C,
@@ -9763,7 +9059,6 @@ GrB_Info GB (_AemultB_01__max_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__max_uint16)
 (
     GrB_Matrix C,
@@ -9776,7 +9071,6 @@ GrB_Info GB (_AemultB_02__max_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__max_uint16)
 (
     GrB_Matrix C,
@@ -9787,7 +9081,6 @@ GrB_Info GB (_AemultB_03__max_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__max_uint16)
 (
     GrB_Matrix C,
@@ -9803,6 +9096,7 @@ GrB_Info GB (_AemultB_bitmap__max_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__max_uint16)
 (
     GB_void *Cx_output,
@@ -9812,21 +9106,6 @@ GrB_Info GB (_bind1st__max_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__max_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__max_uint16)
 (
     GrB_Matrix C,
@@ -9837,9 +9116,15 @@ GrB_Info GB (_bind1st_tran__max_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__max_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__max_uint16)
 (
     GrB_Matrix C,
@@ -9886,7 +9171,6 @@ GrB_Info GB (_Cdense_accumb__max_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__max_uint32)
 (
     GrB_Matrix C,
@@ -9894,7 +9178,6 @@ GrB_Info GB (_AxD__max_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__max_uint32)
 (
     GrB_Matrix C,
@@ -9902,7 +9185,6 @@ GrB_Info GB (_DxB__max_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__max_uint32)
@@ -9924,6 +9206,7 @@ GrB_Info GB (_AaddB__max_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__max_uint32)
 (
     GrB_Matrix C,
@@ -9942,7 +9225,6 @@ GrB_Info GB (_AemultB_01__max_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__max_uint32)
 (
     GrB_Matrix C,
@@ -9955,7 +9237,6 @@ GrB_Info GB (_AemultB_02__max_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__max_uint32)
 (
     GrB_Matrix C,
@@ -9966,7 +9247,6 @@ GrB_Info GB (_AemultB_03__max_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__max_uint32)
 (
     GrB_Matrix C,
@@ -9982,6 +9262,7 @@ GrB_Info GB (_AemultB_bitmap__max_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__max_uint32)
 (
     GB_void *Cx_output,
@@ -9991,21 +9272,6 @@ GrB_Info GB (_bind1st__max_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__max_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__max_uint32)
 (
     GrB_Matrix C,
@@ -10016,9 +9282,15 @@ GrB_Info GB (_bind1st_tran__max_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__max_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__max_uint32)
 (
     GrB_Matrix C,
@@ -10065,7 +9337,6 @@ GrB_Info GB (_Cdense_accumb__max_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__max_uint64)
 (
     GrB_Matrix C,
@@ -10073,7 +9344,6 @@ GrB_Info GB (_AxD__max_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__max_uint64)
 (
     GrB_Matrix C,
@@ -10081,7 +9351,6 @@ GrB_Info GB (_DxB__max_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__max_uint64)
@@ -10103,6 +9372,7 @@ GrB_Info GB (_AaddB__max_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__max_uint64)
 (
     GrB_Matrix C,
@@ -10121,7 +9391,6 @@ GrB_Info GB (_AemultB_01__max_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__max_uint64)
 (
     GrB_Matrix C,
@@ -10134,7 +9403,6 @@ GrB_Info GB (_AemultB_02__max_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__max_uint64)
 (
     GrB_Matrix C,
@@ -10145,7 +9413,6 @@ GrB_Info GB (_AemultB_03__max_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__max_uint64)
 (
     GrB_Matrix C,
@@ -10161,6 +9428,7 @@ GrB_Info GB (_AemultB_bitmap__max_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__max_uint64)
 (
     GB_void *Cx_output,
@@ -10170,21 +9438,6 @@ GrB_Info GB (_bind1st__max_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__max_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__max_uint64)
 (
     GrB_Matrix C,
@@ -10195,9 +9448,15 @@ GrB_Info GB (_bind1st_tran__max_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__max_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__max_uint64)
 (
     GrB_Matrix C,
@@ -10244,7 +9503,6 @@ GrB_Info GB (_Cdense_accumb__max_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__max_fp32)
 (
     GrB_Matrix C,
@@ -10252,7 +9510,6 @@ GrB_Info GB (_AxD__max_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__max_fp32)
 (
     GrB_Matrix C,
@@ -10260,7 +9517,6 @@ GrB_Info GB (_DxB__max_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__max_fp32)
@@ -10282,6 +9538,7 @@ GrB_Info GB (_AaddB__max_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__max_fp32)
 (
     GrB_Matrix C,
@@ -10300,7 +9557,6 @@ GrB_Info GB (_AemultB_01__max_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__max_fp32)
 (
     GrB_Matrix C,
@@ -10313,7 +9569,6 @@ GrB_Info GB (_AemultB_02__max_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__max_fp32)
 (
     GrB_Matrix C,
@@ -10324,7 +9579,6 @@ GrB_Info GB (_AemultB_03__max_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__max_fp32)
 (
     GrB_Matrix C,
@@ -10340,6 +9594,7 @@ GrB_Info GB (_AemultB_bitmap__max_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__max_fp32)
 (
     GB_void *Cx_output,
@@ -10349,21 +9604,6 @@ GrB_Info GB (_bind1st__max_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__max_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__max_fp32)
 (
     GrB_Matrix C,
@@ -10374,9 +9614,15 @@ GrB_Info GB (_bind1st_tran__max_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__max_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__max_fp32)
 (
     GrB_Matrix C,
@@ -10423,7 +9669,6 @@ GrB_Info GB (_Cdense_accumb__max_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__max_fp64)
 (
     GrB_Matrix C,
@@ -10431,7 +9676,6 @@ GrB_Info GB (_AxD__max_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__max_fp64)
 (
     GrB_Matrix C,
@@ -10439,7 +9683,6 @@ GrB_Info GB (_DxB__max_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__max_fp64)
@@ -10461,6 +9704,7 @@ GrB_Info GB (_AaddB__max_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__max_fp64)
 (
     GrB_Matrix C,
@@ -10479,7 +9723,6 @@ GrB_Info GB (_AemultB_01__max_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__max_fp64)
 (
     GrB_Matrix C,
@@ -10492,7 +9735,6 @@ GrB_Info GB (_AemultB_02__max_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__max_fp64)
 (
     GrB_Matrix C,
@@ -10503,7 +9745,6 @@ GrB_Info GB (_AemultB_03__max_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__max_fp64)
 (
     GrB_Matrix C,
@@ -10519,6 +9760,7 @@ GrB_Info GB (_AemultB_bitmap__max_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__max_fp64)
 (
     GB_void *Cx_output,
@@ -10528,21 +9770,6 @@ GrB_Info GB (_bind1st__max_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__max_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__max_fp64)
 (
     GrB_Matrix C,
@@ -10553,9 +9780,15 @@ GrB_Info GB (_bind1st_tran__max_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__max_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__max_fp64)
 (
     GrB_Matrix C,
@@ -10602,7 +9835,6 @@ GrB_Info GB (_Cdense_accumb__plus_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_int8)
 (
     GrB_Matrix C,
@@ -10610,7 +9842,6 @@ GrB_Info GB (_AxD__plus_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_int8)
 (
     GrB_Matrix C,
@@ -10618,7 +9849,6 @@ GrB_Info GB (_DxB__plus_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_int8)
@@ -10640,6 +9870,7 @@ GrB_Info GB (_AaddB__plus_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_int8)
 (
     GrB_Matrix C,
@@ -10658,7 +9889,6 @@ GrB_Info GB (_AemultB_01__plus_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_int8)
 (
     GrB_Matrix C,
@@ -10671,7 +9901,6 @@ GrB_Info GB (_AemultB_02__plus_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_int8)
 (
     GrB_Matrix C,
@@ -10682,7 +9911,6 @@ GrB_Info GB (_AemultB_03__plus_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_int8)
 (
     GrB_Matrix C,
@@ -10698,6 +9926,7 @@ GrB_Info GB (_AemultB_bitmap__plus_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_int8)
 (
     GB_void *Cx_output,
@@ -10707,21 +9936,6 @@ GrB_Info GB (_bind1st__plus_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_int8)
 (
     GrB_Matrix C,
@@ -10732,9 +9946,15 @@ GrB_Info GB (_bind1st_tran__plus_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_int8)
 (
     GrB_Matrix C,
@@ -10781,7 +10001,6 @@ GrB_Info GB (_Cdense_accumb__plus_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_int16)
 (
     GrB_Matrix C,
@@ -10789,7 +10008,6 @@ GrB_Info GB (_AxD__plus_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_int16)
 (
     GrB_Matrix C,
@@ -10797,7 +10015,6 @@ GrB_Info GB (_DxB__plus_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_int16)
@@ -10819,6 +10036,7 @@ GrB_Info GB (_AaddB__plus_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_int16)
 (
     GrB_Matrix C,
@@ -10837,7 +10055,6 @@ GrB_Info GB (_AemultB_01__plus_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_int16)
 (
     GrB_Matrix C,
@@ -10850,7 +10067,6 @@ GrB_Info GB (_AemultB_02__plus_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_int16)
 (
     GrB_Matrix C,
@@ -10861,7 +10077,6 @@ GrB_Info GB (_AemultB_03__plus_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_int16)
 (
     GrB_Matrix C,
@@ -10877,6 +10092,7 @@ GrB_Info GB (_AemultB_bitmap__plus_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_int16)
 (
     GB_void *Cx_output,
@@ -10886,21 +10102,6 @@ GrB_Info GB (_bind1st__plus_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_int16)
 (
     GrB_Matrix C,
@@ -10911,9 +10112,15 @@ GrB_Info GB (_bind1st_tran__plus_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_int16)
 (
     GrB_Matrix C,
@@ -10960,7 +10167,6 @@ GrB_Info GB (_Cdense_accumb__plus_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_int32)
 (
     GrB_Matrix C,
@@ -10968,7 +10174,6 @@ GrB_Info GB (_AxD__plus_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_int32)
 (
     GrB_Matrix C,
@@ -10976,7 +10181,6 @@ GrB_Info GB (_DxB__plus_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_int32)
@@ -10998,6 +10202,7 @@ GrB_Info GB (_AaddB__plus_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_int32)
 (
     GrB_Matrix C,
@@ -11016,7 +10221,6 @@ GrB_Info GB (_AemultB_01__plus_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_int32)
 (
     GrB_Matrix C,
@@ -11029,7 +10233,6 @@ GrB_Info GB (_AemultB_02__plus_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_int32)
 (
     GrB_Matrix C,
@@ -11040,7 +10243,6 @@ GrB_Info GB (_AemultB_03__plus_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_int32)
 (
     GrB_Matrix C,
@@ -11056,6 +10258,7 @@ GrB_Info GB (_AemultB_bitmap__plus_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_int32)
 (
     GB_void *Cx_output,
@@ -11065,21 +10268,6 @@ GrB_Info GB (_bind1st__plus_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_int32)
 (
     GrB_Matrix C,
@@ -11090,9 +10278,15 @@ GrB_Info GB (_bind1st_tran__plus_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_int32)
 (
     GrB_Matrix C,
@@ -11139,7 +10333,6 @@ GrB_Info GB (_Cdense_accumb__plus_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_int64)
 (
     GrB_Matrix C,
@@ -11147,7 +10340,6 @@ GrB_Info GB (_AxD__plus_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_int64)
 (
     GrB_Matrix C,
@@ -11155,7 +10347,6 @@ GrB_Info GB (_DxB__plus_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_int64)
@@ -11177,6 +10368,7 @@ GrB_Info GB (_AaddB__plus_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_int64)
 (
     GrB_Matrix C,
@@ -11195,7 +10387,6 @@ GrB_Info GB (_AemultB_01__plus_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_int64)
 (
     GrB_Matrix C,
@@ -11208,7 +10399,6 @@ GrB_Info GB (_AemultB_02__plus_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_int64)
 (
     GrB_Matrix C,
@@ -11219,7 +10409,6 @@ GrB_Info GB (_AemultB_03__plus_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_int64)
 (
     GrB_Matrix C,
@@ -11235,6 +10424,7 @@ GrB_Info GB (_AemultB_bitmap__plus_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_int64)
 (
     GB_void *Cx_output,
@@ -11244,21 +10434,6 @@ GrB_Info GB (_bind1st__plus_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_int64)
 (
     GrB_Matrix C,
@@ -11269,9 +10444,15 @@ GrB_Info GB (_bind1st_tran__plus_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_int64)
 (
     GrB_Matrix C,
@@ -11318,7 +10499,6 @@ GrB_Info GB (_Cdense_accumb__plus_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_uint8)
 (
     GrB_Matrix C,
@@ -11326,7 +10506,6 @@ GrB_Info GB (_AxD__plus_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_uint8)
 (
     GrB_Matrix C,
@@ -11334,7 +10513,6 @@ GrB_Info GB (_DxB__plus_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_uint8)
@@ -11356,6 +10534,7 @@ GrB_Info GB (_AaddB__plus_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_uint8)
 (
     GrB_Matrix C,
@@ -11374,7 +10553,6 @@ GrB_Info GB (_AemultB_01__plus_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_uint8)
 (
     GrB_Matrix C,
@@ -11387,7 +10565,6 @@ GrB_Info GB (_AemultB_02__plus_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_uint8)
 (
     GrB_Matrix C,
@@ -11398,7 +10575,6 @@ GrB_Info GB (_AemultB_03__plus_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_uint8)
 (
     GrB_Matrix C,
@@ -11414,6 +10590,7 @@ GrB_Info GB (_AemultB_bitmap__plus_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_uint8)
 (
     GB_void *Cx_output,
@@ -11423,21 +10600,6 @@ GrB_Info GB (_bind1st__plus_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_uint8)
 (
     GrB_Matrix C,
@@ -11448,9 +10610,15 @@ GrB_Info GB (_bind1st_tran__plus_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_uint8)
 (
     GrB_Matrix C,
@@ -11497,7 +10665,6 @@ GrB_Info GB (_Cdense_accumb__plus_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_uint16)
 (
     GrB_Matrix C,
@@ -11505,7 +10672,6 @@ GrB_Info GB (_AxD__plus_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_uint16)
 (
     GrB_Matrix C,
@@ -11513,7 +10679,6 @@ GrB_Info GB (_DxB__plus_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_uint16)
@@ -11535,6 +10700,7 @@ GrB_Info GB (_AaddB__plus_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_uint16)
 (
     GrB_Matrix C,
@@ -11553,7 +10719,6 @@ GrB_Info GB (_AemultB_01__plus_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_uint16)
 (
     GrB_Matrix C,
@@ -11566,7 +10731,6 @@ GrB_Info GB (_AemultB_02__plus_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_uint16)
 (
     GrB_Matrix C,
@@ -11577,7 +10741,6 @@ GrB_Info GB (_AemultB_03__plus_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_uint16)
 (
     GrB_Matrix C,
@@ -11593,6 +10756,7 @@ GrB_Info GB (_AemultB_bitmap__plus_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_uint16)
 (
     GB_void *Cx_output,
@@ -11602,21 +10766,6 @@ GrB_Info GB (_bind1st__plus_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_uint16)
 (
     GrB_Matrix C,
@@ -11627,9 +10776,15 @@ GrB_Info GB (_bind1st_tran__plus_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_uint16)
 (
     GrB_Matrix C,
@@ -11676,7 +10831,6 @@ GrB_Info GB (_Cdense_accumb__plus_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_uint32)
 (
     GrB_Matrix C,
@@ -11684,7 +10838,6 @@ GrB_Info GB (_AxD__plus_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_uint32)
 (
     GrB_Matrix C,
@@ -11692,7 +10845,6 @@ GrB_Info GB (_DxB__plus_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_uint32)
@@ -11714,6 +10866,7 @@ GrB_Info GB (_AaddB__plus_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_uint32)
 (
     GrB_Matrix C,
@@ -11732,7 +10885,6 @@ GrB_Info GB (_AemultB_01__plus_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_uint32)
 (
     GrB_Matrix C,
@@ -11745,7 +10897,6 @@ GrB_Info GB (_AemultB_02__plus_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_uint32)
 (
     GrB_Matrix C,
@@ -11756,7 +10907,6 @@ GrB_Info GB (_AemultB_03__plus_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_uint32)
 (
     GrB_Matrix C,
@@ -11772,6 +10922,7 @@ GrB_Info GB (_AemultB_bitmap__plus_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_uint32)
 (
     GB_void *Cx_output,
@@ -11781,21 +10932,6 @@ GrB_Info GB (_bind1st__plus_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_uint32)
 (
     GrB_Matrix C,
@@ -11806,9 +10942,15 @@ GrB_Info GB (_bind1st_tran__plus_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_uint32)
 (
     GrB_Matrix C,
@@ -11855,7 +10997,6 @@ GrB_Info GB (_Cdense_accumb__plus_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_uint64)
 (
     GrB_Matrix C,
@@ -11863,7 +11004,6 @@ GrB_Info GB (_AxD__plus_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_uint64)
 (
     GrB_Matrix C,
@@ -11871,7 +11011,6 @@ GrB_Info GB (_DxB__plus_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_uint64)
@@ -11893,6 +11032,7 @@ GrB_Info GB (_AaddB__plus_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_uint64)
 (
     GrB_Matrix C,
@@ -11911,7 +11051,6 @@ GrB_Info GB (_AemultB_01__plus_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_uint64)
 (
     GrB_Matrix C,
@@ -11924,7 +11063,6 @@ GrB_Info GB (_AemultB_02__plus_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_uint64)
 (
     GrB_Matrix C,
@@ -11935,7 +11073,6 @@ GrB_Info GB (_AemultB_03__plus_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_uint64)
 (
     GrB_Matrix C,
@@ -11951,6 +11088,7 @@ GrB_Info GB (_AemultB_bitmap__plus_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_uint64)
 (
     GB_void *Cx_output,
@@ -11960,21 +11098,6 @@ GrB_Info GB (_bind1st__plus_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_uint64)
 (
     GrB_Matrix C,
@@ -11985,9 +11108,15 @@ GrB_Info GB (_bind1st_tran__plus_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_uint64)
 (
     GrB_Matrix C,
@@ -12034,7 +11163,6 @@ GrB_Info GB (_Cdense_accumb__plus_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_fp32)
 (
     GrB_Matrix C,
@@ -12042,7 +11170,6 @@ GrB_Info GB (_AxD__plus_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_fp32)
 (
     GrB_Matrix C,
@@ -12050,7 +11177,6 @@ GrB_Info GB (_DxB__plus_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_fp32)
@@ -12072,6 +11198,7 @@ GrB_Info GB (_AaddB__plus_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_fp32)
 (
     GrB_Matrix C,
@@ -12090,7 +11217,6 @@ GrB_Info GB (_AemultB_01__plus_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_fp32)
 (
     GrB_Matrix C,
@@ -12103,7 +11229,6 @@ GrB_Info GB (_AemultB_02__plus_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_fp32)
 (
     GrB_Matrix C,
@@ -12114,7 +11239,6 @@ GrB_Info GB (_AemultB_03__plus_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_fp32)
 (
     GrB_Matrix C,
@@ -12130,6 +11254,7 @@ GrB_Info GB (_AemultB_bitmap__plus_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_fp32)
 (
     GB_void *Cx_output,
@@ -12139,21 +11264,6 @@ GrB_Info GB (_bind1st__plus_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_fp32)
 (
     GrB_Matrix C,
@@ -12164,9 +11274,15 @@ GrB_Info GB (_bind1st_tran__plus_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_fp32)
 (
     GrB_Matrix C,
@@ -12213,7 +11329,6 @@ GrB_Info GB (_Cdense_accumb__plus_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_fp64)
 (
     GrB_Matrix C,
@@ -12221,7 +11336,6 @@ GrB_Info GB (_AxD__plus_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_fp64)
 (
     GrB_Matrix C,
@@ -12229,7 +11343,6 @@ GrB_Info GB (_DxB__plus_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_fp64)
@@ -12251,6 +11364,7 @@ GrB_Info GB (_AaddB__plus_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_fp64)
 (
     GrB_Matrix C,
@@ -12269,7 +11383,6 @@ GrB_Info GB (_AemultB_01__plus_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_fp64)
 (
     GrB_Matrix C,
@@ -12282,7 +11395,6 @@ GrB_Info GB (_AemultB_02__plus_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_fp64)
 (
     GrB_Matrix C,
@@ -12293,7 +11405,6 @@ GrB_Info GB (_AemultB_03__plus_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_fp64)
 (
     GrB_Matrix C,
@@ -12309,6 +11420,7 @@ GrB_Info GB (_AemultB_bitmap__plus_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_fp64)
 (
     GB_void *Cx_output,
@@ -12318,21 +11430,6 @@ GrB_Info GB (_bind1st__plus_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_fp64)
 (
     GrB_Matrix C,
@@ -12343,9 +11440,15 @@ GrB_Info GB (_bind1st_tran__plus_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_fp64)
 (
     GrB_Matrix C,
@@ -12392,7 +11495,6 @@ GrB_Info GB (_Cdense_accumb__plus_fc32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_fc32)
 (
     GrB_Matrix C,
@@ -12400,7 +11502,6 @@ GrB_Info GB (_AxD__plus_fc32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_fc32)
 (
     GrB_Matrix C,
@@ -12408,7 +11509,6 @@ GrB_Info GB (_DxB__plus_fc32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_fc32)
@@ -12430,6 +11530,7 @@ GrB_Info GB (_AaddB__plus_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_fc32)
 (
     GrB_Matrix C,
@@ -12448,7 +11549,6 @@ GrB_Info GB (_AemultB_01__plus_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_fc32)
 (
     GrB_Matrix C,
@@ -12461,7 +11561,6 @@ GrB_Info GB (_AemultB_02__plus_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_fc32)
 (
     GrB_Matrix C,
@@ -12472,7 +11571,6 @@ GrB_Info GB (_AemultB_03__plus_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_fc32)
 (
     GrB_Matrix C,
@@ -12488,6 +11586,7 @@ GrB_Info GB (_AemultB_bitmap__plus_fc32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_fc32)
 (
     GB_void *Cx_output,
@@ -12497,21 +11596,6 @@ GrB_Info GB (_bind1st__plus_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_fc32)
 (
     GrB_Matrix C,
@@ -12522,9 +11606,15 @@ GrB_Info GB (_bind1st_tran__plus_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_fc32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_fc32)
 (
     GrB_Matrix C,
@@ -12571,7 +11661,6 @@ GrB_Info GB (_Cdense_accumb__plus_fc64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__plus_fc64)
 (
     GrB_Matrix C,
@@ -12579,7 +11668,6 @@ GrB_Info GB (_AxD__plus_fc64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__plus_fc64)
 (
     GrB_Matrix C,
@@ -12587,7 +11675,6 @@ GrB_Info GB (_DxB__plus_fc64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__plus_fc64)
@@ -12609,6 +11696,7 @@ GrB_Info GB (_AaddB__plus_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__plus_fc64)
 (
     GrB_Matrix C,
@@ -12627,7 +11715,6 @@ GrB_Info GB (_AemultB_01__plus_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__plus_fc64)
 (
     GrB_Matrix C,
@@ -12640,7 +11727,6 @@ GrB_Info GB (_AemultB_02__plus_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__plus_fc64)
 (
     GrB_Matrix C,
@@ -12651,7 +11737,6 @@ GrB_Info GB (_AemultB_03__plus_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__plus_fc64)
 (
     GrB_Matrix C,
@@ -12667,6 +11752,7 @@ GrB_Info GB (_AemultB_bitmap__plus_fc64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__plus_fc64)
 (
     GB_void *Cx_output,
@@ -12676,21 +11762,6 @@ GrB_Info GB (_bind1st__plus_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__plus_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__plus_fc64)
 (
     GrB_Matrix C,
@@ -12701,9 +11772,15 @@ GrB_Info GB (_bind1st_tran__plus_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__plus_fc64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__plus_fc64)
 (
     GrB_Matrix C,
@@ -12750,7 +11827,6 @@ GrB_Info GB (_Cdense_accumb__minus_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_int8)
 (
     GrB_Matrix C,
@@ -12758,7 +11834,6 @@ GrB_Info GB (_AxD__minus_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_int8)
 (
     GrB_Matrix C,
@@ -12766,7 +11841,6 @@ GrB_Info GB (_DxB__minus_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_int8)
@@ -12788,6 +11862,7 @@ GrB_Info GB (_AaddB__minus_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_int8)
 (
     GrB_Matrix C,
@@ -12806,7 +11881,6 @@ GrB_Info GB (_AemultB_01__minus_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_int8)
 (
     GrB_Matrix C,
@@ -12819,7 +11893,6 @@ GrB_Info GB (_AemultB_02__minus_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_int8)
 (
     GrB_Matrix C,
@@ -12830,7 +11903,6 @@ GrB_Info GB (_AemultB_03__minus_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_int8)
 (
     GrB_Matrix C,
@@ -12846,6 +11918,7 @@ GrB_Info GB (_AemultB_bitmap__minus_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_int8)
 (
     GB_void *Cx_output,
@@ -12855,21 +11928,6 @@ GrB_Info GB (_bind1st__minus_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_int8)
 (
     GrB_Matrix C,
@@ -12880,9 +11938,15 @@ GrB_Info GB (_bind1st_tran__minus_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_int8)
 (
     GrB_Matrix C,
@@ -12929,7 +11993,6 @@ GrB_Info GB (_Cdense_accumb__minus_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_int16)
 (
     GrB_Matrix C,
@@ -12937,7 +12000,6 @@ GrB_Info GB (_AxD__minus_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_int16)
 (
     GrB_Matrix C,
@@ -12945,7 +12007,6 @@ GrB_Info GB (_DxB__minus_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_int16)
@@ -12967,6 +12028,7 @@ GrB_Info GB (_AaddB__minus_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_int16)
 (
     GrB_Matrix C,
@@ -12985,7 +12047,6 @@ GrB_Info GB (_AemultB_01__minus_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_int16)
 (
     GrB_Matrix C,
@@ -12998,7 +12059,6 @@ GrB_Info GB (_AemultB_02__minus_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_int16)
 (
     GrB_Matrix C,
@@ -13009,7 +12069,6 @@ GrB_Info GB (_AemultB_03__minus_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_int16)
 (
     GrB_Matrix C,
@@ -13025,6 +12084,7 @@ GrB_Info GB (_AemultB_bitmap__minus_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_int16)
 (
     GB_void *Cx_output,
@@ -13034,21 +12094,6 @@ GrB_Info GB (_bind1st__minus_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_int16)
 (
     GrB_Matrix C,
@@ -13059,9 +12104,15 @@ GrB_Info GB (_bind1st_tran__minus_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_int16)
 (
     GrB_Matrix C,
@@ -13108,7 +12159,6 @@ GrB_Info GB (_Cdense_accumb__minus_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_int32)
 (
     GrB_Matrix C,
@@ -13116,7 +12166,6 @@ GrB_Info GB (_AxD__minus_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_int32)
 (
     GrB_Matrix C,
@@ -13124,7 +12173,6 @@ GrB_Info GB (_DxB__minus_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_int32)
@@ -13146,6 +12194,7 @@ GrB_Info GB (_AaddB__minus_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_int32)
 (
     GrB_Matrix C,
@@ -13164,7 +12213,6 @@ GrB_Info GB (_AemultB_01__minus_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_int32)
 (
     GrB_Matrix C,
@@ -13177,7 +12225,6 @@ GrB_Info GB (_AemultB_02__minus_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_int32)
 (
     GrB_Matrix C,
@@ -13188,7 +12235,6 @@ GrB_Info GB (_AemultB_03__minus_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_int32)
 (
     GrB_Matrix C,
@@ -13204,6 +12250,7 @@ GrB_Info GB (_AemultB_bitmap__minus_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_int32)
 (
     GB_void *Cx_output,
@@ -13213,21 +12260,6 @@ GrB_Info GB (_bind1st__minus_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_int32)
 (
     GrB_Matrix C,
@@ -13238,9 +12270,15 @@ GrB_Info GB (_bind1st_tran__minus_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_int32)
 (
     GrB_Matrix C,
@@ -13287,7 +12325,6 @@ GrB_Info GB (_Cdense_accumb__minus_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_int64)
 (
     GrB_Matrix C,
@@ -13295,7 +12332,6 @@ GrB_Info GB (_AxD__minus_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_int64)
 (
     GrB_Matrix C,
@@ -13303,7 +12339,6 @@ GrB_Info GB (_DxB__minus_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_int64)
@@ -13325,6 +12360,7 @@ GrB_Info GB (_AaddB__minus_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_int64)
 (
     GrB_Matrix C,
@@ -13343,7 +12379,6 @@ GrB_Info GB (_AemultB_01__minus_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_int64)
 (
     GrB_Matrix C,
@@ -13356,7 +12391,6 @@ GrB_Info GB (_AemultB_02__minus_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_int64)
 (
     GrB_Matrix C,
@@ -13367,7 +12401,6 @@ GrB_Info GB (_AemultB_03__minus_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_int64)
 (
     GrB_Matrix C,
@@ -13383,6 +12416,7 @@ GrB_Info GB (_AemultB_bitmap__minus_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_int64)
 (
     GB_void *Cx_output,
@@ -13392,21 +12426,6 @@ GrB_Info GB (_bind1st__minus_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_int64)
 (
     GrB_Matrix C,
@@ -13417,9 +12436,15 @@ GrB_Info GB (_bind1st_tran__minus_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_int64)
 (
     GrB_Matrix C,
@@ -13466,7 +12491,6 @@ GrB_Info GB (_Cdense_accumb__minus_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_uint8)
 (
     GrB_Matrix C,
@@ -13474,7 +12498,6 @@ GrB_Info GB (_AxD__minus_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_uint8)
 (
     GrB_Matrix C,
@@ -13482,7 +12505,6 @@ GrB_Info GB (_DxB__minus_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_uint8)
@@ -13504,6 +12526,7 @@ GrB_Info GB (_AaddB__minus_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_uint8)
 (
     GrB_Matrix C,
@@ -13522,7 +12545,6 @@ GrB_Info GB (_AemultB_01__minus_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_uint8)
 (
     GrB_Matrix C,
@@ -13535,7 +12557,6 @@ GrB_Info GB (_AemultB_02__minus_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_uint8)
 (
     GrB_Matrix C,
@@ -13546,7 +12567,6 @@ GrB_Info GB (_AemultB_03__minus_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_uint8)
 (
     GrB_Matrix C,
@@ -13562,6 +12582,7 @@ GrB_Info GB (_AemultB_bitmap__minus_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_uint8)
 (
     GB_void *Cx_output,
@@ -13571,21 +12592,6 @@ GrB_Info GB (_bind1st__minus_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_uint8)
 (
     GrB_Matrix C,
@@ -13596,9 +12602,15 @@ GrB_Info GB (_bind1st_tran__minus_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_uint8)
 (
     GrB_Matrix C,
@@ -13645,7 +12657,6 @@ GrB_Info GB (_Cdense_accumb__minus_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_uint16)
 (
     GrB_Matrix C,
@@ -13653,7 +12664,6 @@ GrB_Info GB (_AxD__minus_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_uint16)
 (
     GrB_Matrix C,
@@ -13661,7 +12671,6 @@ GrB_Info GB (_DxB__minus_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_uint16)
@@ -13683,6 +12692,7 @@ GrB_Info GB (_AaddB__minus_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_uint16)
 (
     GrB_Matrix C,
@@ -13701,7 +12711,6 @@ GrB_Info GB (_AemultB_01__minus_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_uint16)
 (
     GrB_Matrix C,
@@ -13714,7 +12723,6 @@ GrB_Info GB (_AemultB_02__minus_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_uint16)
 (
     GrB_Matrix C,
@@ -13725,7 +12733,6 @@ GrB_Info GB (_AemultB_03__minus_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_uint16)
 (
     GrB_Matrix C,
@@ -13741,6 +12748,7 @@ GrB_Info GB (_AemultB_bitmap__minus_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_uint16)
 (
     GB_void *Cx_output,
@@ -13750,21 +12758,6 @@ GrB_Info GB (_bind1st__minus_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_uint16)
 (
     GrB_Matrix C,
@@ -13775,9 +12768,15 @@ GrB_Info GB (_bind1st_tran__minus_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_uint16)
 (
     GrB_Matrix C,
@@ -13824,7 +12823,6 @@ GrB_Info GB (_Cdense_accumb__minus_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_uint32)
 (
     GrB_Matrix C,
@@ -13832,7 +12830,6 @@ GrB_Info GB (_AxD__minus_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_uint32)
 (
     GrB_Matrix C,
@@ -13840,7 +12837,6 @@ GrB_Info GB (_DxB__minus_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_uint32)
@@ -13862,6 +12858,7 @@ GrB_Info GB (_AaddB__minus_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_uint32)
 (
     GrB_Matrix C,
@@ -13880,7 +12877,6 @@ GrB_Info GB (_AemultB_01__minus_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_uint32)
 (
     GrB_Matrix C,
@@ -13893,7 +12889,6 @@ GrB_Info GB (_AemultB_02__minus_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_uint32)
 (
     GrB_Matrix C,
@@ -13904,7 +12899,6 @@ GrB_Info GB (_AemultB_03__minus_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_uint32)
 (
     GrB_Matrix C,
@@ -13920,6 +12914,7 @@ GrB_Info GB (_AemultB_bitmap__minus_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_uint32)
 (
     GB_void *Cx_output,
@@ -13929,21 +12924,6 @@ GrB_Info GB (_bind1st__minus_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_uint32)
 (
     GrB_Matrix C,
@@ -13954,9 +12934,15 @@ GrB_Info GB (_bind1st_tran__minus_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_uint32)
 (
     GrB_Matrix C,
@@ -14003,7 +12989,6 @@ GrB_Info GB (_Cdense_accumb__minus_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_uint64)
 (
     GrB_Matrix C,
@@ -14011,7 +12996,6 @@ GrB_Info GB (_AxD__minus_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_uint64)
 (
     GrB_Matrix C,
@@ -14019,7 +13003,6 @@ GrB_Info GB (_DxB__minus_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_uint64)
@@ -14041,6 +13024,7 @@ GrB_Info GB (_AaddB__minus_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_uint64)
 (
     GrB_Matrix C,
@@ -14059,7 +13043,6 @@ GrB_Info GB (_AemultB_01__minus_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_uint64)
 (
     GrB_Matrix C,
@@ -14072,7 +13055,6 @@ GrB_Info GB (_AemultB_02__minus_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_uint64)
 (
     GrB_Matrix C,
@@ -14083,7 +13065,6 @@ GrB_Info GB (_AemultB_03__minus_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_uint64)
 (
     GrB_Matrix C,
@@ -14099,6 +13080,7 @@ GrB_Info GB (_AemultB_bitmap__minus_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_uint64)
 (
     GB_void *Cx_output,
@@ -14108,21 +13090,6 @@ GrB_Info GB (_bind1st__minus_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_uint64)
 (
     GrB_Matrix C,
@@ -14133,9 +13100,15 @@ GrB_Info GB (_bind1st_tran__minus_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_uint64)
 (
     GrB_Matrix C,
@@ -14182,7 +13155,6 @@ GrB_Info GB (_Cdense_accumb__minus_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_fp32)
 (
     GrB_Matrix C,
@@ -14190,7 +13162,6 @@ GrB_Info GB (_AxD__minus_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_fp32)
 (
     GrB_Matrix C,
@@ -14198,7 +13169,6 @@ GrB_Info GB (_DxB__minus_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_fp32)
@@ -14220,6 +13190,7 @@ GrB_Info GB (_AaddB__minus_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_fp32)
 (
     GrB_Matrix C,
@@ -14238,7 +13209,6 @@ GrB_Info GB (_AemultB_01__minus_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_fp32)
 (
     GrB_Matrix C,
@@ -14251,7 +13221,6 @@ GrB_Info GB (_AemultB_02__minus_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_fp32)
 (
     GrB_Matrix C,
@@ -14262,7 +13231,6 @@ GrB_Info GB (_AemultB_03__minus_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_fp32)
 (
     GrB_Matrix C,
@@ -14278,6 +13246,7 @@ GrB_Info GB (_AemultB_bitmap__minus_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_fp32)
 (
     GB_void *Cx_output,
@@ -14287,21 +13256,6 @@ GrB_Info GB (_bind1st__minus_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_fp32)
 (
     GrB_Matrix C,
@@ -14312,9 +13266,15 @@ GrB_Info GB (_bind1st_tran__minus_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_fp32)
 (
     GrB_Matrix C,
@@ -14361,7 +13321,6 @@ GrB_Info GB (_Cdense_accumb__minus_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_fp64)
 (
     GrB_Matrix C,
@@ -14369,7 +13328,6 @@ GrB_Info GB (_AxD__minus_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_fp64)
 (
     GrB_Matrix C,
@@ -14377,7 +13335,6 @@ GrB_Info GB (_DxB__minus_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_fp64)
@@ -14399,6 +13356,7 @@ GrB_Info GB (_AaddB__minus_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_fp64)
 (
     GrB_Matrix C,
@@ -14417,7 +13375,6 @@ GrB_Info GB (_AemultB_01__minus_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_fp64)
 (
     GrB_Matrix C,
@@ -14430,7 +13387,6 @@ GrB_Info GB (_AemultB_02__minus_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_fp64)
 (
     GrB_Matrix C,
@@ -14441,7 +13397,6 @@ GrB_Info GB (_AemultB_03__minus_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_fp64)
 (
     GrB_Matrix C,
@@ -14457,6 +13412,7 @@ GrB_Info GB (_AemultB_bitmap__minus_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_fp64)
 (
     GB_void *Cx_output,
@@ -14466,21 +13422,6 @@ GrB_Info GB (_bind1st__minus_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_fp64)
 (
     GrB_Matrix C,
@@ -14491,9 +13432,15 @@ GrB_Info GB (_bind1st_tran__minus_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_fp64)
 (
     GrB_Matrix C,
@@ -14540,7 +13487,6 @@ GrB_Info GB (_Cdense_accumb__minus_fc32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_fc32)
 (
     GrB_Matrix C,
@@ -14548,7 +13494,6 @@ GrB_Info GB (_AxD__minus_fc32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_fc32)
 (
     GrB_Matrix C,
@@ -14556,7 +13501,6 @@ GrB_Info GB (_DxB__minus_fc32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_fc32)
@@ -14578,6 +13522,7 @@ GrB_Info GB (_AaddB__minus_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_fc32)
 (
     GrB_Matrix C,
@@ -14596,7 +13541,6 @@ GrB_Info GB (_AemultB_01__minus_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_fc32)
 (
     GrB_Matrix C,
@@ -14609,7 +13553,6 @@ GrB_Info GB (_AemultB_02__minus_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_fc32)
 (
     GrB_Matrix C,
@@ -14620,7 +13563,6 @@ GrB_Info GB (_AemultB_03__minus_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_fc32)
 (
     GrB_Matrix C,
@@ -14636,6 +13578,7 @@ GrB_Info GB (_AemultB_bitmap__minus_fc32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_fc32)
 (
     GB_void *Cx_output,
@@ -14645,21 +13588,6 @@ GrB_Info GB (_bind1st__minus_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_fc32)
 (
     GrB_Matrix C,
@@ -14670,9 +13598,15 @@ GrB_Info GB (_bind1st_tran__minus_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_fc32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_fc32)
 (
     GrB_Matrix C,
@@ -14719,7 +13653,6 @@ GrB_Info GB (_Cdense_accumb__minus_fc64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__minus_fc64)
 (
     GrB_Matrix C,
@@ -14727,7 +13660,6 @@ GrB_Info GB (_AxD__minus_fc64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__minus_fc64)
 (
     GrB_Matrix C,
@@ -14735,7 +13667,6 @@ GrB_Info GB (_DxB__minus_fc64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__minus_fc64)
@@ -14757,6 +13688,7 @@ GrB_Info GB (_AaddB__minus_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__minus_fc64)
 (
     GrB_Matrix C,
@@ -14775,7 +13707,6 @@ GrB_Info GB (_AemultB_01__minus_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__minus_fc64)
 (
     GrB_Matrix C,
@@ -14788,7 +13719,6 @@ GrB_Info GB (_AemultB_02__minus_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__minus_fc64)
 (
     GrB_Matrix C,
@@ -14799,7 +13729,6 @@ GrB_Info GB (_AemultB_03__minus_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__minus_fc64)
 (
     GrB_Matrix C,
@@ -14815,6 +13744,7 @@ GrB_Info GB (_AemultB_bitmap__minus_fc64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__minus_fc64)
 (
     GB_void *Cx_output,
@@ -14824,21 +13754,6 @@ GrB_Info GB (_bind1st__minus_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__minus_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__minus_fc64)
 (
     GrB_Matrix C,
@@ -14849,9 +13764,15 @@ GrB_Info GB (_bind1st_tran__minus_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__minus_fc64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__minus_fc64)
 (
     GrB_Matrix C,
@@ -14898,7 +13819,6 @@ GrB_Info GB (_Cdense_accumb__rminus_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_int8)
 (
     GrB_Matrix C,
@@ -14906,7 +13826,6 @@ GrB_Info GB (_AxD__rminus_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_int8)
 (
     GrB_Matrix C,
@@ -14914,7 +13833,6 @@ GrB_Info GB (_DxB__rminus_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_int8)
@@ -14936,6 +13854,7 @@ GrB_Info GB (_AaddB__rminus_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_int8)
 (
     GrB_Matrix C,
@@ -14954,7 +13873,6 @@ GrB_Info GB (_AemultB_01__rminus_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_int8)
 (
     GrB_Matrix C,
@@ -14967,7 +13885,6 @@ GrB_Info GB (_AemultB_02__rminus_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_int8)
 (
     GrB_Matrix C,
@@ -14978,7 +13895,6 @@ GrB_Info GB (_AemultB_03__rminus_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_int8)
 (
     GrB_Matrix C,
@@ -14994,6 +13910,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_int8)
 (
     GB_void *Cx_output,
@@ -15003,21 +13920,6 @@ GrB_Info GB (_bind1st__rminus_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_int8)
 (
     GrB_Matrix C,
@@ -15028,9 +13930,15 @@ GrB_Info GB (_bind1st_tran__rminus_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_int8)
 (
     GrB_Matrix C,
@@ -15077,7 +13985,6 @@ GrB_Info GB (_Cdense_accumb__rminus_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_int16)
 (
     GrB_Matrix C,
@@ -15085,7 +13992,6 @@ GrB_Info GB (_AxD__rminus_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_int16)
 (
     GrB_Matrix C,
@@ -15093,7 +13999,6 @@ GrB_Info GB (_DxB__rminus_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_int16)
@@ -15115,6 +14020,7 @@ GrB_Info GB (_AaddB__rminus_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_int16)
 (
     GrB_Matrix C,
@@ -15133,7 +14039,6 @@ GrB_Info GB (_AemultB_01__rminus_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_int16)
 (
     GrB_Matrix C,
@@ -15146,7 +14051,6 @@ GrB_Info GB (_AemultB_02__rminus_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_int16)
 (
     GrB_Matrix C,
@@ -15157,7 +14061,6 @@ GrB_Info GB (_AemultB_03__rminus_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_int16)
 (
     GrB_Matrix C,
@@ -15173,6 +14076,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_int16)
 (
     GB_void *Cx_output,
@@ -15182,21 +14086,6 @@ GrB_Info GB (_bind1st__rminus_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_int16)
 (
     GrB_Matrix C,
@@ -15207,9 +14096,15 @@ GrB_Info GB (_bind1st_tran__rminus_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_int16)
 (
     GrB_Matrix C,
@@ -15256,7 +14151,6 @@ GrB_Info GB (_Cdense_accumb__rminus_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_int32)
 (
     GrB_Matrix C,
@@ -15264,7 +14158,6 @@ GrB_Info GB (_AxD__rminus_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_int32)
 (
     GrB_Matrix C,
@@ -15272,7 +14165,6 @@ GrB_Info GB (_DxB__rminus_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_int32)
@@ -15294,6 +14186,7 @@ GrB_Info GB (_AaddB__rminus_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_int32)
 (
     GrB_Matrix C,
@@ -15312,7 +14205,6 @@ GrB_Info GB (_AemultB_01__rminus_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_int32)
 (
     GrB_Matrix C,
@@ -15325,7 +14217,6 @@ GrB_Info GB (_AemultB_02__rminus_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_int32)
 (
     GrB_Matrix C,
@@ -15336,7 +14227,6 @@ GrB_Info GB (_AemultB_03__rminus_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_int32)
 (
     GrB_Matrix C,
@@ -15352,6 +14242,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_int32)
 (
     GB_void *Cx_output,
@@ -15361,21 +14252,6 @@ GrB_Info GB (_bind1st__rminus_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_int32)
 (
     GrB_Matrix C,
@@ -15386,9 +14262,15 @@ GrB_Info GB (_bind1st_tran__rminus_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_int32)
 (
     GrB_Matrix C,
@@ -15435,7 +14317,6 @@ GrB_Info GB (_Cdense_accumb__rminus_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_int64)
 (
     GrB_Matrix C,
@@ -15443,7 +14324,6 @@ GrB_Info GB (_AxD__rminus_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_int64)
 (
     GrB_Matrix C,
@@ -15451,7 +14331,6 @@ GrB_Info GB (_DxB__rminus_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_int64)
@@ -15473,6 +14352,7 @@ GrB_Info GB (_AaddB__rminus_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_int64)
 (
     GrB_Matrix C,
@@ -15491,7 +14371,6 @@ GrB_Info GB (_AemultB_01__rminus_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_int64)
 (
     GrB_Matrix C,
@@ -15504,7 +14383,6 @@ GrB_Info GB (_AemultB_02__rminus_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_int64)
 (
     GrB_Matrix C,
@@ -15515,7 +14393,6 @@ GrB_Info GB (_AemultB_03__rminus_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_int64)
 (
     GrB_Matrix C,
@@ -15531,6 +14408,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_int64)
 (
     GB_void *Cx_output,
@@ -15540,21 +14418,6 @@ GrB_Info GB (_bind1st__rminus_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_int64)
 (
     GrB_Matrix C,
@@ -15565,9 +14428,15 @@ GrB_Info GB (_bind1st_tran__rminus_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_int64)
 (
     GrB_Matrix C,
@@ -15614,7 +14483,6 @@ GrB_Info GB (_Cdense_accumb__rminus_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_uint8)
 (
     GrB_Matrix C,
@@ -15622,7 +14490,6 @@ GrB_Info GB (_AxD__rminus_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_uint8)
 (
     GrB_Matrix C,
@@ -15630,7 +14497,6 @@ GrB_Info GB (_DxB__rminus_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_uint8)
@@ -15652,6 +14518,7 @@ GrB_Info GB (_AaddB__rminus_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_uint8)
 (
     GrB_Matrix C,
@@ -15670,7 +14537,6 @@ GrB_Info GB (_AemultB_01__rminus_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_uint8)
 (
     GrB_Matrix C,
@@ -15683,7 +14549,6 @@ GrB_Info GB (_AemultB_02__rminus_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_uint8)
 (
     GrB_Matrix C,
@@ -15694,7 +14559,6 @@ GrB_Info GB (_AemultB_03__rminus_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_uint8)
 (
     GrB_Matrix C,
@@ -15710,6 +14574,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_uint8)
 (
     GB_void *Cx_output,
@@ -15719,21 +14584,6 @@ GrB_Info GB (_bind1st__rminus_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_uint8)
 (
     GrB_Matrix C,
@@ -15744,9 +14594,15 @@ GrB_Info GB (_bind1st_tran__rminus_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_uint8)
 (
     GrB_Matrix C,
@@ -15793,7 +14649,6 @@ GrB_Info GB (_Cdense_accumb__rminus_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_uint16)
 (
     GrB_Matrix C,
@@ -15801,7 +14656,6 @@ GrB_Info GB (_AxD__rminus_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_uint16)
 (
     GrB_Matrix C,
@@ -15809,7 +14663,6 @@ GrB_Info GB (_DxB__rminus_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_uint16)
@@ -15831,6 +14684,7 @@ GrB_Info GB (_AaddB__rminus_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_uint16)
 (
     GrB_Matrix C,
@@ -15849,7 +14703,6 @@ GrB_Info GB (_AemultB_01__rminus_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_uint16)
 (
     GrB_Matrix C,
@@ -15862,7 +14715,6 @@ GrB_Info GB (_AemultB_02__rminus_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_uint16)
 (
     GrB_Matrix C,
@@ -15873,7 +14725,6 @@ GrB_Info GB (_AemultB_03__rminus_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_uint16)
 (
     GrB_Matrix C,
@@ -15889,6 +14740,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_uint16)
 (
     GB_void *Cx_output,
@@ -15898,21 +14750,6 @@ GrB_Info GB (_bind1st__rminus_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_uint16)
 (
     GrB_Matrix C,
@@ -15923,9 +14760,15 @@ GrB_Info GB (_bind1st_tran__rminus_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_uint16)
 (
     GrB_Matrix C,
@@ -15972,7 +14815,6 @@ GrB_Info GB (_Cdense_accumb__rminus_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_uint32)
 (
     GrB_Matrix C,
@@ -15980,7 +14822,6 @@ GrB_Info GB (_AxD__rminus_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_uint32)
 (
     GrB_Matrix C,
@@ -15988,7 +14829,6 @@ GrB_Info GB (_DxB__rminus_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_uint32)
@@ -16010,6 +14850,7 @@ GrB_Info GB (_AaddB__rminus_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_uint32)
 (
     GrB_Matrix C,
@@ -16028,7 +14869,6 @@ GrB_Info GB (_AemultB_01__rminus_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_uint32)
 (
     GrB_Matrix C,
@@ -16041,7 +14881,6 @@ GrB_Info GB (_AemultB_02__rminus_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_uint32)
 (
     GrB_Matrix C,
@@ -16052,7 +14891,6 @@ GrB_Info GB (_AemultB_03__rminus_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_uint32)
 (
     GrB_Matrix C,
@@ -16068,6 +14906,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_uint32)
 (
     GB_void *Cx_output,
@@ -16077,21 +14916,6 @@ GrB_Info GB (_bind1st__rminus_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_uint32)
 (
     GrB_Matrix C,
@@ -16102,9 +14926,15 @@ GrB_Info GB (_bind1st_tran__rminus_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_uint32)
 (
     GrB_Matrix C,
@@ -16151,7 +14981,6 @@ GrB_Info GB (_Cdense_accumb__rminus_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_uint64)
 (
     GrB_Matrix C,
@@ -16159,7 +14988,6 @@ GrB_Info GB (_AxD__rminus_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_uint64)
 (
     GrB_Matrix C,
@@ -16167,7 +14995,6 @@ GrB_Info GB (_DxB__rminus_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_uint64)
@@ -16189,6 +15016,7 @@ GrB_Info GB (_AaddB__rminus_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_uint64)
 (
     GrB_Matrix C,
@@ -16207,7 +15035,6 @@ GrB_Info GB (_AemultB_01__rminus_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_uint64)
 (
     GrB_Matrix C,
@@ -16220,7 +15047,6 @@ GrB_Info GB (_AemultB_02__rminus_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_uint64)
 (
     GrB_Matrix C,
@@ -16231,7 +15057,6 @@ GrB_Info GB (_AemultB_03__rminus_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_uint64)
 (
     GrB_Matrix C,
@@ -16247,6 +15072,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_uint64)
 (
     GB_void *Cx_output,
@@ -16256,21 +15082,6 @@ GrB_Info GB (_bind1st__rminus_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_uint64)
 (
     GrB_Matrix C,
@@ -16281,9 +15092,15 @@ GrB_Info GB (_bind1st_tran__rminus_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_uint64)
 (
     GrB_Matrix C,
@@ -16330,7 +15147,6 @@ GrB_Info GB (_Cdense_accumb__rminus_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_fp32)
 (
     GrB_Matrix C,
@@ -16338,7 +15154,6 @@ GrB_Info GB (_AxD__rminus_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_fp32)
 (
     GrB_Matrix C,
@@ -16346,7 +15161,6 @@ GrB_Info GB (_DxB__rminus_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_fp32)
@@ -16368,6 +15182,7 @@ GrB_Info GB (_AaddB__rminus_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_fp32)
 (
     GrB_Matrix C,
@@ -16386,7 +15201,6 @@ GrB_Info GB (_AemultB_01__rminus_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_fp32)
 (
     GrB_Matrix C,
@@ -16399,7 +15213,6 @@ GrB_Info GB (_AemultB_02__rminus_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_fp32)
 (
     GrB_Matrix C,
@@ -16410,7 +15223,6 @@ GrB_Info GB (_AemultB_03__rminus_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_fp32)
 (
     GrB_Matrix C,
@@ -16426,6 +15238,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_fp32)
 (
     GB_void *Cx_output,
@@ -16435,21 +15248,6 @@ GrB_Info GB (_bind1st__rminus_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_fp32)
 (
     GrB_Matrix C,
@@ -16460,9 +15258,15 @@ GrB_Info GB (_bind1st_tran__rminus_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_fp32)
 (
     GrB_Matrix C,
@@ -16509,7 +15313,6 @@ GrB_Info GB (_Cdense_accumb__rminus_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_fp64)
 (
     GrB_Matrix C,
@@ -16517,7 +15320,6 @@ GrB_Info GB (_AxD__rminus_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_fp64)
 (
     GrB_Matrix C,
@@ -16525,7 +15327,6 @@ GrB_Info GB (_DxB__rminus_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_fp64)
@@ -16547,6 +15348,7 @@ GrB_Info GB (_AaddB__rminus_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_fp64)
 (
     GrB_Matrix C,
@@ -16565,7 +15367,6 @@ GrB_Info GB (_AemultB_01__rminus_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_fp64)
 (
     GrB_Matrix C,
@@ -16578,7 +15379,6 @@ GrB_Info GB (_AemultB_02__rminus_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_fp64)
 (
     GrB_Matrix C,
@@ -16589,7 +15389,6 @@ GrB_Info GB (_AemultB_03__rminus_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_fp64)
 (
     GrB_Matrix C,
@@ -16605,6 +15404,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_fp64)
 (
     GB_void *Cx_output,
@@ -16614,21 +15414,6 @@ GrB_Info GB (_bind1st__rminus_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_fp64)
 (
     GrB_Matrix C,
@@ -16639,9 +15424,15 @@ GrB_Info GB (_bind1st_tran__rminus_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_fp64)
 (
     GrB_Matrix C,
@@ -16688,7 +15479,6 @@ GrB_Info GB (_Cdense_accumb__rminus_fc32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_fc32)
 (
     GrB_Matrix C,
@@ -16696,7 +15486,6 @@ GrB_Info GB (_AxD__rminus_fc32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_fc32)
 (
     GrB_Matrix C,
@@ -16704,7 +15493,6 @@ GrB_Info GB (_DxB__rminus_fc32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_fc32)
@@ -16726,6 +15514,7 @@ GrB_Info GB (_AaddB__rminus_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_fc32)
 (
     GrB_Matrix C,
@@ -16744,7 +15533,6 @@ GrB_Info GB (_AemultB_01__rminus_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_fc32)
 (
     GrB_Matrix C,
@@ -16757,7 +15545,6 @@ GrB_Info GB (_AemultB_02__rminus_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_fc32)
 (
     GrB_Matrix C,
@@ -16768,7 +15555,6 @@ GrB_Info GB (_AemultB_03__rminus_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_fc32)
 (
     GrB_Matrix C,
@@ -16784,6 +15570,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_fc32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_fc32)
 (
     GB_void *Cx_output,
@@ -16793,21 +15580,6 @@ GrB_Info GB (_bind1st__rminus_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_fc32)
 (
     GrB_Matrix C,
@@ -16818,9 +15590,15 @@ GrB_Info GB (_bind1st_tran__rminus_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_fc32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_fc32)
 (
     GrB_Matrix C,
@@ -16867,7 +15645,6 @@ GrB_Info GB (_Cdense_accumb__rminus_fc64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rminus_fc64)
 (
     GrB_Matrix C,
@@ -16875,7 +15652,6 @@ GrB_Info GB (_AxD__rminus_fc64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rminus_fc64)
 (
     GrB_Matrix C,
@@ -16883,7 +15659,6 @@ GrB_Info GB (_DxB__rminus_fc64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rminus_fc64)
@@ -16905,6 +15680,7 @@ GrB_Info GB (_AaddB__rminus_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rminus_fc64)
 (
     GrB_Matrix C,
@@ -16923,7 +15699,6 @@ GrB_Info GB (_AemultB_01__rminus_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rminus_fc64)
 (
     GrB_Matrix C,
@@ -16936,7 +15711,6 @@ GrB_Info GB (_AemultB_02__rminus_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rminus_fc64)
 (
     GrB_Matrix C,
@@ -16947,7 +15721,6 @@ GrB_Info GB (_AemultB_03__rminus_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rminus_fc64)
 (
     GrB_Matrix C,
@@ -16963,6 +15736,7 @@ GrB_Info GB (_AemultB_bitmap__rminus_fc64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rminus_fc64)
 (
     GB_void *Cx_output,
@@ -16972,21 +15746,6 @@ GrB_Info GB (_bind1st__rminus_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rminus_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rminus_fc64)
 (
     GrB_Matrix C,
@@ -16997,9 +15756,15 @@ GrB_Info GB (_bind1st_tran__rminus_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rminus_fc64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rminus_fc64)
 (
     GrB_Matrix C,
@@ -17046,7 +15811,6 @@ GrB_Info GB (_Cdense_accumb__times_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_int8)
 (
     GrB_Matrix C,
@@ -17054,7 +15818,6 @@ GrB_Info GB (_AxD__times_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_int8)
 (
     GrB_Matrix C,
@@ -17062,7 +15825,6 @@ GrB_Info GB (_DxB__times_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_int8)
@@ -17084,6 +15846,7 @@ GrB_Info GB (_AaddB__times_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_int8)
 (
     GrB_Matrix C,
@@ -17102,7 +15865,6 @@ GrB_Info GB (_AemultB_01__times_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_int8)
 (
     GrB_Matrix C,
@@ -17115,7 +15877,6 @@ GrB_Info GB (_AemultB_02__times_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_int8)
 (
     GrB_Matrix C,
@@ -17126,7 +15887,6 @@ GrB_Info GB (_AemultB_03__times_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_int8)
 (
     GrB_Matrix C,
@@ -17142,6 +15902,7 @@ GrB_Info GB (_AemultB_bitmap__times_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_int8)
 (
     GB_void *Cx_output,
@@ -17151,21 +15912,6 @@ GrB_Info GB (_bind1st__times_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_int8)
 (
     GrB_Matrix C,
@@ -17176,9 +15922,15 @@ GrB_Info GB (_bind1st_tran__times_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_int8)
 (
     GrB_Matrix C,
@@ -17225,7 +15977,6 @@ GrB_Info GB (_Cdense_accumb__times_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_int16)
 (
     GrB_Matrix C,
@@ -17233,7 +15984,6 @@ GrB_Info GB (_AxD__times_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_int16)
 (
     GrB_Matrix C,
@@ -17241,7 +15991,6 @@ GrB_Info GB (_DxB__times_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_int16)
@@ -17263,6 +16012,7 @@ GrB_Info GB (_AaddB__times_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_int16)
 (
     GrB_Matrix C,
@@ -17281,7 +16031,6 @@ GrB_Info GB (_AemultB_01__times_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_int16)
 (
     GrB_Matrix C,
@@ -17294,7 +16043,6 @@ GrB_Info GB (_AemultB_02__times_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_int16)
 (
     GrB_Matrix C,
@@ -17305,7 +16053,6 @@ GrB_Info GB (_AemultB_03__times_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_int16)
 (
     GrB_Matrix C,
@@ -17321,6 +16068,7 @@ GrB_Info GB (_AemultB_bitmap__times_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_int16)
 (
     GB_void *Cx_output,
@@ -17330,21 +16078,6 @@ GrB_Info GB (_bind1st__times_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_int16)
 (
     GrB_Matrix C,
@@ -17355,9 +16088,15 @@ GrB_Info GB (_bind1st_tran__times_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_int16)
 (
     GrB_Matrix C,
@@ -17404,7 +16143,6 @@ GrB_Info GB (_Cdense_accumb__times_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_int32)
 (
     GrB_Matrix C,
@@ -17412,7 +16150,6 @@ GrB_Info GB (_AxD__times_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_int32)
 (
     GrB_Matrix C,
@@ -17420,7 +16157,6 @@ GrB_Info GB (_DxB__times_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_int32)
@@ -17442,6 +16178,7 @@ GrB_Info GB (_AaddB__times_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_int32)
 (
     GrB_Matrix C,
@@ -17460,7 +16197,6 @@ GrB_Info GB (_AemultB_01__times_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_int32)
 (
     GrB_Matrix C,
@@ -17473,7 +16209,6 @@ GrB_Info GB (_AemultB_02__times_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_int32)
 (
     GrB_Matrix C,
@@ -17484,7 +16219,6 @@ GrB_Info GB (_AemultB_03__times_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_int32)
 (
     GrB_Matrix C,
@@ -17500,6 +16234,7 @@ GrB_Info GB (_AemultB_bitmap__times_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_int32)
 (
     GB_void *Cx_output,
@@ -17509,21 +16244,6 @@ GrB_Info GB (_bind1st__times_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_int32)
 (
     GrB_Matrix C,
@@ -17534,9 +16254,15 @@ GrB_Info GB (_bind1st_tran__times_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_int32)
 (
     GrB_Matrix C,
@@ -17583,7 +16309,6 @@ GrB_Info GB (_Cdense_accumb__times_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_int64)
 (
     GrB_Matrix C,
@@ -17591,7 +16316,6 @@ GrB_Info GB (_AxD__times_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_int64)
 (
     GrB_Matrix C,
@@ -17599,7 +16323,6 @@ GrB_Info GB (_DxB__times_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_int64)
@@ -17621,6 +16344,7 @@ GrB_Info GB (_AaddB__times_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_int64)
 (
     GrB_Matrix C,
@@ -17639,7 +16363,6 @@ GrB_Info GB (_AemultB_01__times_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_int64)
 (
     GrB_Matrix C,
@@ -17652,7 +16375,6 @@ GrB_Info GB (_AemultB_02__times_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_int64)
 (
     GrB_Matrix C,
@@ -17663,7 +16385,6 @@ GrB_Info GB (_AemultB_03__times_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_int64)
 (
     GrB_Matrix C,
@@ -17679,6 +16400,7 @@ GrB_Info GB (_AemultB_bitmap__times_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_int64)
 (
     GB_void *Cx_output,
@@ -17688,21 +16410,6 @@ GrB_Info GB (_bind1st__times_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_int64)
 (
     GrB_Matrix C,
@@ -17713,9 +16420,15 @@ GrB_Info GB (_bind1st_tran__times_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_int64)
 (
     GrB_Matrix C,
@@ -17762,7 +16475,6 @@ GrB_Info GB (_Cdense_accumb__times_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_uint8)
 (
     GrB_Matrix C,
@@ -17770,7 +16482,6 @@ GrB_Info GB (_AxD__times_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_uint8)
 (
     GrB_Matrix C,
@@ -17778,7 +16489,6 @@ GrB_Info GB (_DxB__times_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_uint8)
@@ -17800,6 +16510,7 @@ GrB_Info GB (_AaddB__times_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_uint8)
 (
     GrB_Matrix C,
@@ -17818,7 +16529,6 @@ GrB_Info GB (_AemultB_01__times_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_uint8)
 (
     GrB_Matrix C,
@@ -17831,7 +16541,6 @@ GrB_Info GB (_AemultB_02__times_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_uint8)
 (
     GrB_Matrix C,
@@ -17842,7 +16551,6 @@ GrB_Info GB (_AemultB_03__times_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_uint8)
 (
     GrB_Matrix C,
@@ -17858,6 +16566,7 @@ GrB_Info GB (_AemultB_bitmap__times_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_uint8)
 (
     GB_void *Cx_output,
@@ -17867,21 +16576,6 @@ GrB_Info GB (_bind1st__times_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_uint8)
 (
     GrB_Matrix C,
@@ -17892,9 +16586,15 @@ GrB_Info GB (_bind1st_tran__times_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_uint8)
 (
     GrB_Matrix C,
@@ -17941,7 +16641,6 @@ GrB_Info GB (_Cdense_accumb__times_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_uint16)
 (
     GrB_Matrix C,
@@ -17949,7 +16648,6 @@ GrB_Info GB (_AxD__times_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_uint16)
 (
     GrB_Matrix C,
@@ -17957,7 +16655,6 @@ GrB_Info GB (_DxB__times_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_uint16)
@@ -17979,6 +16676,7 @@ GrB_Info GB (_AaddB__times_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_uint16)
 (
     GrB_Matrix C,
@@ -17997,7 +16695,6 @@ GrB_Info GB (_AemultB_01__times_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_uint16)
 (
     GrB_Matrix C,
@@ -18010,7 +16707,6 @@ GrB_Info GB (_AemultB_02__times_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_uint16)
 (
     GrB_Matrix C,
@@ -18021,7 +16717,6 @@ GrB_Info GB (_AemultB_03__times_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_uint16)
 (
     GrB_Matrix C,
@@ -18037,6 +16732,7 @@ GrB_Info GB (_AemultB_bitmap__times_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_uint16)
 (
     GB_void *Cx_output,
@@ -18046,21 +16742,6 @@ GrB_Info GB (_bind1st__times_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_uint16)
 (
     GrB_Matrix C,
@@ -18071,9 +16752,15 @@ GrB_Info GB (_bind1st_tran__times_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_uint16)
 (
     GrB_Matrix C,
@@ -18120,7 +16807,6 @@ GrB_Info GB (_Cdense_accumb__times_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_uint32)
 (
     GrB_Matrix C,
@@ -18128,7 +16814,6 @@ GrB_Info GB (_AxD__times_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_uint32)
 (
     GrB_Matrix C,
@@ -18136,7 +16821,6 @@ GrB_Info GB (_DxB__times_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_uint32)
@@ -18158,6 +16842,7 @@ GrB_Info GB (_AaddB__times_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_uint32)
 (
     GrB_Matrix C,
@@ -18176,7 +16861,6 @@ GrB_Info GB (_AemultB_01__times_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_uint32)
 (
     GrB_Matrix C,
@@ -18189,7 +16873,6 @@ GrB_Info GB (_AemultB_02__times_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_uint32)
 (
     GrB_Matrix C,
@@ -18200,7 +16883,6 @@ GrB_Info GB (_AemultB_03__times_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_uint32)
 (
     GrB_Matrix C,
@@ -18216,6 +16898,7 @@ GrB_Info GB (_AemultB_bitmap__times_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_uint32)
 (
     GB_void *Cx_output,
@@ -18225,21 +16908,6 @@ GrB_Info GB (_bind1st__times_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_uint32)
 (
     GrB_Matrix C,
@@ -18250,9 +16918,15 @@ GrB_Info GB (_bind1st_tran__times_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_uint32)
 (
     GrB_Matrix C,
@@ -18299,7 +16973,6 @@ GrB_Info GB (_Cdense_accumb__times_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_uint64)
 (
     GrB_Matrix C,
@@ -18307,7 +16980,6 @@ GrB_Info GB (_AxD__times_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_uint64)
 (
     GrB_Matrix C,
@@ -18315,7 +16987,6 @@ GrB_Info GB (_DxB__times_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_uint64)
@@ -18337,6 +17008,7 @@ GrB_Info GB (_AaddB__times_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_uint64)
 (
     GrB_Matrix C,
@@ -18355,7 +17027,6 @@ GrB_Info GB (_AemultB_01__times_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_uint64)
 (
     GrB_Matrix C,
@@ -18368,7 +17039,6 @@ GrB_Info GB (_AemultB_02__times_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_uint64)
 (
     GrB_Matrix C,
@@ -18379,7 +17049,6 @@ GrB_Info GB (_AemultB_03__times_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_uint64)
 (
     GrB_Matrix C,
@@ -18395,6 +17064,7 @@ GrB_Info GB (_AemultB_bitmap__times_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_uint64)
 (
     GB_void *Cx_output,
@@ -18404,21 +17074,6 @@ GrB_Info GB (_bind1st__times_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_uint64)
 (
     GrB_Matrix C,
@@ -18429,9 +17084,15 @@ GrB_Info GB (_bind1st_tran__times_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_uint64)
 (
     GrB_Matrix C,
@@ -18478,7 +17139,6 @@ GrB_Info GB (_Cdense_accumb__times_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_fp32)
 (
     GrB_Matrix C,
@@ -18486,7 +17146,6 @@ GrB_Info GB (_AxD__times_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_fp32)
 (
     GrB_Matrix C,
@@ -18494,7 +17153,6 @@ GrB_Info GB (_DxB__times_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_fp32)
@@ -18516,6 +17174,7 @@ GrB_Info GB (_AaddB__times_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_fp32)
 (
     GrB_Matrix C,
@@ -18534,7 +17193,6 @@ GrB_Info GB (_AemultB_01__times_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_fp32)
 (
     GrB_Matrix C,
@@ -18547,7 +17205,6 @@ GrB_Info GB (_AemultB_02__times_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_fp32)
 (
     GrB_Matrix C,
@@ -18558,7 +17215,6 @@ GrB_Info GB (_AemultB_03__times_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_fp32)
 (
     GrB_Matrix C,
@@ -18574,6 +17230,7 @@ GrB_Info GB (_AemultB_bitmap__times_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_fp32)
 (
     GB_void *Cx_output,
@@ -18583,21 +17240,6 @@ GrB_Info GB (_bind1st__times_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_fp32)
 (
     GrB_Matrix C,
@@ -18608,9 +17250,15 @@ GrB_Info GB (_bind1st_tran__times_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_fp32)
 (
     GrB_Matrix C,
@@ -18657,7 +17305,6 @@ GrB_Info GB (_Cdense_accumb__times_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_fp64)
 (
     GrB_Matrix C,
@@ -18665,7 +17312,6 @@ GrB_Info GB (_AxD__times_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_fp64)
 (
     GrB_Matrix C,
@@ -18673,7 +17319,6 @@ GrB_Info GB (_DxB__times_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_fp64)
@@ -18695,6 +17340,7 @@ GrB_Info GB (_AaddB__times_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_fp64)
 (
     GrB_Matrix C,
@@ -18713,7 +17359,6 @@ GrB_Info GB (_AemultB_01__times_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_fp64)
 (
     GrB_Matrix C,
@@ -18726,7 +17371,6 @@ GrB_Info GB (_AemultB_02__times_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_fp64)
 (
     GrB_Matrix C,
@@ -18737,7 +17381,6 @@ GrB_Info GB (_AemultB_03__times_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_fp64)
 (
     GrB_Matrix C,
@@ -18753,6 +17396,7 @@ GrB_Info GB (_AemultB_bitmap__times_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_fp64)
 (
     GB_void *Cx_output,
@@ -18762,21 +17406,6 @@ GrB_Info GB (_bind1st__times_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_fp64)
 (
     GrB_Matrix C,
@@ -18787,9 +17416,15 @@ GrB_Info GB (_bind1st_tran__times_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_fp64)
 (
     GrB_Matrix C,
@@ -18836,7 +17471,6 @@ GrB_Info GB (_Cdense_accumb__times_fc32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_fc32)
 (
     GrB_Matrix C,
@@ -18844,7 +17478,6 @@ GrB_Info GB (_AxD__times_fc32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_fc32)
 (
     GrB_Matrix C,
@@ -18852,7 +17485,6 @@ GrB_Info GB (_DxB__times_fc32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_fc32)
@@ -18874,6 +17506,7 @@ GrB_Info GB (_AaddB__times_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_fc32)
 (
     GrB_Matrix C,
@@ -18892,7 +17525,6 @@ GrB_Info GB (_AemultB_01__times_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_fc32)
 (
     GrB_Matrix C,
@@ -18905,7 +17537,6 @@ GrB_Info GB (_AemultB_02__times_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_fc32)
 (
     GrB_Matrix C,
@@ -18916,7 +17547,6 @@ GrB_Info GB (_AemultB_03__times_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_fc32)
 (
     GrB_Matrix C,
@@ -18932,6 +17562,7 @@ GrB_Info GB (_AemultB_bitmap__times_fc32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_fc32)
 (
     GB_void *Cx_output,
@@ -18941,21 +17572,6 @@ GrB_Info GB (_bind1st__times_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_fc32)
 (
     GrB_Matrix C,
@@ -18966,9 +17582,15 @@ GrB_Info GB (_bind1st_tran__times_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_fc32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_fc32)
 (
     GrB_Matrix C,
@@ -19015,7 +17637,6 @@ GrB_Info GB (_Cdense_accumb__times_fc64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__times_fc64)
 (
     GrB_Matrix C,
@@ -19023,7 +17644,6 @@ GrB_Info GB (_AxD__times_fc64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__times_fc64)
 (
     GrB_Matrix C,
@@ -19031,7 +17651,6 @@ GrB_Info GB (_DxB__times_fc64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__times_fc64)
@@ -19053,6 +17672,7 @@ GrB_Info GB (_AaddB__times_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__times_fc64)
 (
     GrB_Matrix C,
@@ -19071,7 +17691,6 @@ GrB_Info GB (_AemultB_01__times_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__times_fc64)
 (
     GrB_Matrix C,
@@ -19084,7 +17703,6 @@ GrB_Info GB (_AemultB_02__times_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__times_fc64)
 (
     GrB_Matrix C,
@@ -19095,7 +17713,6 @@ GrB_Info GB (_AemultB_03__times_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__times_fc64)
 (
     GrB_Matrix C,
@@ -19111,6 +17728,7 @@ GrB_Info GB (_AemultB_bitmap__times_fc64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__times_fc64)
 (
     GB_void *Cx_output,
@@ -19120,21 +17738,6 @@ GrB_Info GB (_bind1st__times_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__times_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__times_fc64)
 (
     GrB_Matrix C,
@@ -19145,9 +17748,15 @@ GrB_Info GB (_bind1st_tran__times_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__times_fc64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__times_fc64)
 (
     GrB_Matrix C,
@@ -19194,7 +17803,6 @@ GrB_Info GB (_Cdense_accumb__div_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_int8)
 (
     GrB_Matrix C,
@@ -19202,7 +17810,6 @@ GrB_Info GB (_AxD__div_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_int8)
 (
     GrB_Matrix C,
@@ -19210,7 +17817,6 @@ GrB_Info GB (_DxB__div_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_int8)
@@ -19232,6 +17838,7 @@ GrB_Info GB (_AaddB__div_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_int8)
 (
     GrB_Matrix C,
@@ -19250,7 +17857,6 @@ GrB_Info GB (_AemultB_01__div_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_int8)
 (
     GrB_Matrix C,
@@ -19263,7 +17869,6 @@ GrB_Info GB (_AemultB_02__div_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_int8)
 (
     GrB_Matrix C,
@@ -19274,7 +17879,6 @@ GrB_Info GB (_AemultB_03__div_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_int8)
 (
     GrB_Matrix C,
@@ -19290,6 +17894,7 @@ GrB_Info GB (_AemultB_bitmap__div_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_int8)
 (
     GB_void *Cx_output,
@@ -19299,21 +17904,6 @@ GrB_Info GB (_bind1st__div_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_int8)
 (
     GrB_Matrix C,
@@ -19324,9 +17914,15 @@ GrB_Info GB (_bind1st_tran__div_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_int8)
 (
     GrB_Matrix C,
@@ -19373,7 +17969,6 @@ GrB_Info GB (_Cdense_accumb__div_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_int16)
 (
     GrB_Matrix C,
@@ -19381,7 +17976,6 @@ GrB_Info GB (_AxD__div_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_int16)
 (
     GrB_Matrix C,
@@ -19389,7 +17983,6 @@ GrB_Info GB (_DxB__div_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_int16)
@@ -19411,6 +18004,7 @@ GrB_Info GB (_AaddB__div_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_int16)
 (
     GrB_Matrix C,
@@ -19429,7 +18023,6 @@ GrB_Info GB (_AemultB_01__div_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_int16)
 (
     GrB_Matrix C,
@@ -19442,7 +18035,6 @@ GrB_Info GB (_AemultB_02__div_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_int16)
 (
     GrB_Matrix C,
@@ -19453,7 +18045,6 @@ GrB_Info GB (_AemultB_03__div_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_int16)
 (
     GrB_Matrix C,
@@ -19469,6 +18060,7 @@ GrB_Info GB (_AemultB_bitmap__div_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_int16)
 (
     GB_void *Cx_output,
@@ -19478,21 +18070,6 @@ GrB_Info GB (_bind1st__div_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_int16)
 (
     GrB_Matrix C,
@@ -19503,9 +18080,15 @@ GrB_Info GB (_bind1st_tran__div_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_int16)
 (
     GrB_Matrix C,
@@ -19552,7 +18135,6 @@ GrB_Info GB (_Cdense_accumb__div_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_int32)
 (
     GrB_Matrix C,
@@ -19560,7 +18142,6 @@ GrB_Info GB (_AxD__div_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_int32)
 (
     GrB_Matrix C,
@@ -19568,7 +18149,6 @@ GrB_Info GB (_DxB__div_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_int32)
@@ -19590,6 +18170,7 @@ GrB_Info GB (_AaddB__div_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_int32)
 (
     GrB_Matrix C,
@@ -19608,7 +18189,6 @@ GrB_Info GB (_AemultB_01__div_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_int32)
 (
     GrB_Matrix C,
@@ -19621,7 +18201,6 @@ GrB_Info GB (_AemultB_02__div_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_int32)
 (
     GrB_Matrix C,
@@ -19632,7 +18211,6 @@ GrB_Info GB (_AemultB_03__div_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_int32)
 (
     GrB_Matrix C,
@@ -19648,6 +18226,7 @@ GrB_Info GB (_AemultB_bitmap__div_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_int32)
 (
     GB_void *Cx_output,
@@ -19657,21 +18236,6 @@ GrB_Info GB (_bind1st__div_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_int32)
 (
     GrB_Matrix C,
@@ -19682,9 +18246,15 @@ GrB_Info GB (_bind1st_tran__div_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_int32)
 (
     GrB_Matrix C,
@@ -19731,7 +18301,6 @@ GrB_Info GB (_Cdense_accumb__div_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_int64)
 (
     GrB_Matrix C,
@@ -19739,7 +18308,6 @@ GrB_Info GB (_AxD__div_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_int64)
 (
     GrB_Matrix C,
@@ -19747,7 +18315,6 @@ GrB_Info GB (_DxB__div_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_int64)
@@ -19769,6 +18336,7 @@ GrB_Info GB (_AaddB__div_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_int64)
 (
     GrB_Matrix C,
@@ -19787,7 +18355,6 @@ GrB_Info GB (_AemultB_01__div_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_int64)
 (
     GrB_Matrix C,
@@ -19800,7 +18367,6 @@ GrB_Info GB (_AemultB_02__div_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_int64)
 (
     GrB_Matrix C,
@@ -19811,7 +18377,6 @@ GrB_Info GB (_AemultB_03__div_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_int64)
 (
     GrB_Matrix C,
@@ -19827,6 +18392,7 @@ GrB_Info GB (_AemultB_bitmap__div_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_int64)
 (
     GB_void *Cx_output,
@@ -19836,21 +18402,6 @@ GrB_Info GB (_bind1st__div_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_int64)
 (
     GrB_Matrix C,
@@ -19861,9 +18412,15 @@ GrB_Info GB (_bind1st_tran__div_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_int64)
 (
     GrB_Matrix C,
@@ -19910,7 +18467,6 @@ GrB_Info GB (_Cdense_accumb__div_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_uint8)
 (
     GrB_Matrix C,
@@ -19918,7 +18474,6 @@ GrB_Info GB (_AxD__div_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_uint8)
 (
     GrB_Matrix C,
@@ -19926,7 +18481,6 @@ GrB_Info GB (_DxB__div_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_uint8)
@@ -19948,6 +18502,7 @@ GrB_Info GB (_AaddB__div_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_uint8)
 (
     GrB_Matrix C,
@@ -19966,7 +18521,6 @@ GrB_Info GB (_AemultB_01__div_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_uint8)
 (
     GrB_Matrix C,
@@ -19979,7 +18533,6 @@ GrB_Info GB (_AemultB_02__div_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_uint8)
 (
     GrB_Matrix C,
@@ -19990,7 +18543,6 @@ GrB_Info GB (_AemultB_03__div_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_uint8)
 (
     GrB_Matrix C,
@@ -20006,6 +18558,7 @@ GrB_Info GB (_AemultB_bitmap__div_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_uint8)
 (
     GB_void *Cx_output,
@@ -20015,21 +18568,6 @@ GrB_Info GB (_bind1st__div_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_uint8)
 (
     GrB_Matrix C,
@@ -20040,9 +18578,15 @@ GrB_Info GB (_bind1st_tran__div_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_uint8)
 (
     GrB_Matrix C,
@@ -20089,7 +18633,6 @@ GrB_Info GB (_Cdense_accumb__div_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_uint16)
 (
     GrB_Matrix C,
@@ -20097,7 +18640,6 @@ GrB_Info GB (_AxD__div_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_uint16)
 (
     GrB_Matrix C,
@@ -20105,7 +18647,6 @@ GrB_Info GB (_DxB__div_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_uint16)
@@ -20127,6 +18668,7 @@ GrB_Info GB (_AaddB__div_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_uint16)
 (
     GrB_Matrix C,
@@ -20145,7 +18687,6 @@ GrB_Info GB (_AemultB_01__div_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_uint16)
 (
     GrB_Matrix C,
@@ -20158,7 +18699,6 @@ GrB_Info GB (_AemultB_02__div_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_uint16)
 (
     GrB_Matrix C,
@@ -20169,7 +18709,6 @@ GrB_Info GB (_AemultB_03__div_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_uint16)
 (
     GrB_Matrix C,
@@ -20185,6 +18724,7 @@ GrB_Info GB (_AemultB_bitmap__div_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_uint16)
 (
     GB_void *Cx_output,
@@ -20194,21 +18734,6 @@ GrB_Info GB (_bind1st__div_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_uint16)
 (
     GrB_Matrix C,
@@ -20219,9 +18744,15 @@ GrB_Info GB (_bind1st_tran__div_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_uint16)
 (
     GrB_Matrix C,
@@ -20268,7 +18799,6 @@ GrB_Info GB (_Cdense_accumb__div_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_uint32)
 (
     GrB_Matrix C,
@@ -20276,7 +18806,6 @@ GrB_Info GB (_AxD__div_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_uint32)
 (
     GrB_Matrix C,
@@ -20284,7 +18813,6 @@ GrB_Info GB (_DxB__div_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_uint32)
@@ -20306,6 +18834,7 @@ GrB_Info GB (_AaddB__div_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_uint32)
 (
     GrB_Matrix C,
@@ -20324,7 +18853,6 @@ GrB_Info GB (_AemultB_01__div_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_uint32)
 (
     GrB_Matrix C,
@@ -20337,7 +18865,6 @@ GrB_Info GB (_AemultB_02__div_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_uint32)
 (
     GrB_Matrix C,
@@ -20348,7 +18875,6 @@ GrB_Info GB (_AemultB_03__div_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_uint32)
 (
     GrB_Matrix C,
@@ -20364,6 +18890,7 @@ GrB_Info GB (_AemultB_bitmap__div_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_uint32)
 (
     GB_void *Cx_output,
@@ -20373,21 +18900,6 @@ GrB_Info GB (_bind1st__div_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_uint32)
 (
     GrB_Matrix C,
@@ -20398,9 +18910,15 @@ GrB_Info GB (_bind1st_tran__div_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_uint32)
 (
     GrB_Matrix C,
@@ -20447,7 +18965,6 @@ GrB_Info GB (_Cdense_accumb__div_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_uint64)
 (
     GrB_Matrix C,
@@ -20455,7 +18972,6 @@ GrB_Info GB (_AxD__div_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_uint64)
 (
     GrB_Matrix C,
@@ -20463,7 +18979,6 @@ GrB_Info GB (_DxB__div_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_uint64)
@@ -20485,6 +19000,7 @@ GrB_Info GB (_AaddB__div_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_uint64)
 (
     GrB_Matrix C,
@@ -20503,7 +19019,6 @@ GrB_Info GB (_AemultB_01__div_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_uint64)
 (
     GrB_Matrix C,
@@ -20516,7 +19031,6 @@ GrB_Info GB (_AemultB_02__div_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_uint64)
 (
     GrB_Matrix C,
@@ -20527,7 +19041,6 @@ GrB_Info GB (_AemultB_03__div_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_uint64)
 (
     GrB_Matrix C,
@@ -20543,6 +19056,7 @@ GrB_Info GB (_AemultB_bitmap__div_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_uint64)
 (
     GB_void *Cx_output,
@@ -20552,21 +19066,6 @@ GrB_Info GB (_bind1st__div_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_uint64)
 (
     GrB_Matrix C,
@@ -20577,9 +19076,15 @@ GrB_Info GB (_bind1st_tran__div_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_uint64)
 (
     GrB_Matrix C,
@@ -20626,7 +19131,6 @@ GrB_Info GB (_Cdense_accumb__div_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_fp32)
 (
     GrB_Matrix C,
@@ -20634,7 +19138,6 @@ GrB_Info GB (_AxD__div_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_fp32)
 (
     GrB_Matrix C,
@@ -20642,7 +19145,6 @@ GrB_Info GB (_DxB__div_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_fp32)
@@ -20664,6 +19166,7 @@ GrB_Info GB (_AaddB__div_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_fp32)
 (
     GrB_Matrix C,
@@ -20682,7 +19185,6 @@ GrB_Info GB (_AemultB_01__div_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_fp32)
 (
     GrB_Matrix C,
@@ -20695,7 +19197,6 @@ GrB_Info GB (_AemultB_02__div_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_fp32)
 (
     GrB_Matrix C,
@@ -20706,7 +19207,6 @@ GrB_Info GB (_AemultB_03__div_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_fp32)
 (
     GrB_Matrix C,
@@ -20722,6 +19222,7 @@ GrB_Info GB (_AemultB_bitmap__div_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_fp32)
 (
     GB_void *Cx_output,
@@ -20731,21 +19232,6 @@ GrB_Info GB (_bind1st__div_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_fp32)
 (
     GrB_Matrix C,
@@ -20756,9 +19242,15 @@ GrB_Info GB (_bind1st_tran__div_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_fp32)
 (
     GrB_Matrix C,
@@ -20805,7 +19297,6 @@ GrB_Info GB (_Cdense_accumb__div_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_fp64)
 (
     GrB_Matrix C,
@@ -20813,7 +19304,6 @@ GrB_Info GB (_AxD__div_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_fp64)
 (
     GrB_Matrix C,
@@ -20821,7 +19311,6 @@ GrB_Info GB (_DxB__div_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_fp64)
@@ -20843,6 +19332,7 @@ GrB_Info GB (_AaddB__div_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_fp64)
 (
     GrB_Matrix C,
@@ -20861,7 +19351,6 @@ GrB_Info GB (_AemultB_01__div_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_fp64)
 (
     GrB_Matrix C,
@@ -20874,7 +19363,6 @@ GrB_Info GB (_AemultB_02__div_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_fp64)
 (
     GrB_Matrix C,
@@ -20885,7 +19373,6 @@ GrB_Info GB (_AemultB_03__div_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_fp64)
 (
     GrB_Matrix C,
@@ -20901,6 +19388,7 @@ GrB_Info GB (_AemultB_bitmap__div_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_fp64)
 (
     GB_void *Cx_output,
@@ -20910,21 +19398,6 @@ GrB_Info GB (_bind1st__div_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_fp64)
 (
     GrB_Matrix C,
@@ -20935,9 +19408,15 @@ GrB_Info GB (_bind1st_tran__div_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_fp64)
 (
     GrB_Matrix C,
@@ -20984,7 +19463,6 @@ GrB_Info GB (_Cdense_accumb__div_fc32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_fc32)
 (
     GrB_Matrix C,
@@ -20992,7 +19470,6 @@ GrB_Info GB (_AxD__div_fc32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_fc32)
 (
     GrB_Matrix C,
@@ -21000,7 +19477,6 @@ GrB_Info GB (_DxB__div_fc32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_fc32)
@@ -21022,6 +19498,7 @@ GrB_Info GB (_AaddB__div_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_fc32)
 (
     GrB_Matrix C,
@@ -21040,7 +19517,6 @@ GrB_Info GB (_AemultB_01__div_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_fc32)
 (
     GrB_Matrix C,
@@ -21053,7 +19529,6 @@ GrB_Info GB (_AemultB_02__div_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_fc32)
 (
     GrB_Matrix C,
@@ -21064,7 +19539,6 @@ GrB_Info GB (_AemultB_03__div_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_fc32)
 (
     GrB_Matrix C,
@@ -21080,6 +19554,7 @@ GrB_Info GB (_AemultB_bitmap__div_fc32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_fc32)
 (
     GB_void *Cx_output,
@@ -21089,21 +19564,6 @@ GrB_Info GB (_bind1st__div_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_fc32)
 (
     GrB_Matrix C,
@@ -21114,9 +19574,15 @@ GrB_Info GB (_bind1st_tran__div_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_fc32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_fc32)
 (
     GrB_Matrix C,
@@ -21163,7 +19629,6 @@ GrB_Info GB (_Cdense_accumb__div_fc64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__div_fc64)
 (
     GrB_Matrix C,
@@ -21171,7 +19636,6 @@ GrB_Info GB (_AxD__div_fc64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__div_fc64)
 (
     GrB_Matrix C,
@@ -21179,7 +19643,6 @@ GrB_Info GB (_DxB__div_fc64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__div_fc64)
@@ -21201,6 +19664,7 @@ GrB_Info GB (_AaddB__div_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__div_fc64)
 (
     GrB_Matrix C,
@@ -21219,7 +19683,6 @@ GrB_Info GB (_AemultB_01__div_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__div_fc64)
 (
     GrB_Matrix C,
@@ -21232,7 +19695,6 @@ GrB_Info GB (_AemultB_02__div_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__div_fc64)
 (
     GrB_Matrix C,
@@ -21243,7 +19705,6 @@ GrB_Info GB (_AemultB_03__div_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__div_fc64)
 (
     GrB_Matrix C,
@@ -21259,6 +19720,7 @@ GrB_Info GB (_AemultB_bitmap__div_fc64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__div_fc64)
 (
     GB_void *Cx_output,
@@ -21268,21 +19730,6 @@ GrB_Info GB (_bind1st__div_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__div_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__div_fc64)
 (
     GrB_Matrix C,
@@ -21293,9 +19740,15 @@ GrB_Info GB (_bind1st_tran__div_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__div_fc64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__div_fc64)
 (
     GrB_Matrix C,
@@ -21342,7 +19795,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_int8)
 (
     GrB_Matrix C,
@@ -21350,7 +19802,6 @@ GrB_Info GB (_AxD__rdiv_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_int8)
 (
     GrB_Matrix C,
@@ -21358,7 +19809,6 @@ GrB_Info GB (_DxB__rdiv_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_int8)
@@ -21380,6 +19830,7 @@ GrB_Info GB (_AaddB__rdiv_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_int8)
 (
     GrB_Matrix C,
@@ -21398,7 +19849,6 @@ GrB_Info GB (_AemultB_01__rdiv_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_int8)
 (
     GrB_Matrix C,
@@ -21411,7 +19861,6 @@ GrB_Info GB (_AemultB_02__rdiv_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_int8)
 (
     GrB_Matrix C,
@@ -21422,7 +19871,6 @@ GrB_Info GB (_AemultB_03__rdiv_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_int8)
 (
     GrB_Matrix C,
@@ -21438,6 +19886,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_int8)
 (
     GB_void *Cx_output,
@@ -21447,21 +19896,6 @@ GrB_Info GB (_bind1st__rdiv_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_int8)
 (
     GrB_Matrix C,
@@ -21472,9 +19906,15 @@ GrB_Info GB (_bind1st_tran__rdiv_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_int8)
 (
     GrB_Matrix C,
@@ -21521,7 +19961,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_int16)
 (
     GrB_Matrix C,
@@ -21529,7 +19968,6 @@ GrB_Info GB (_AxD__rdiv_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_int16)
 (
     GrB_Matrix C,
@@ -21537,7 +19975,6 @@ GrB_Info GB (_DxB__rdiv_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_int16)
@@ -21559,6 +19996,7 @@ GrB_Info GB (_AaddB__rdiv_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_int16)
 (
     GrB_Matrix C,
@@ -21577,7 +20015,6 @@ GrB_Info GB (_AemultB_01__rdiv_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_int16)
 (
     GrB_Matrix C,
@@ -21590,7 +20027,6 @@ GrB_Info GB (_AemultB_02__rdiv_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_int16)
 (
     GrB_Matrix C,
@@ -21601,7 +20037,6 @@ GrB_Info GB (_AemultB_03__rdiv_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_int16)
 (
     GrB_Matrix C,
@@ -21617,6 +20052,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_int16)
 (
     GB_void *Cx_output,
@@ -21626,21 +20062,6 @@ GrB_Info GB (_bind1st__rdiv_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_int16)
 (
     GrB_Matrix C,
@@ -21651,9 +20072,15 @@ GrB_Info GB (_bind1st_tran__rdiv_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_int16)
 (
     GrB_Matrix C,
@@ -21700,7 +20127,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_int32)
 (
     GrB_Matrix C,
@@ -21708,7 +20134,6 @@ GrB_Info GB (_AxD__rdiv_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_int32)
 (
     GrB_Matrix C,
@@ -21716,7 +20141,6 @@ GrB_Info GB (_DxB__rdiv_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_int32)
@@ -21738,6 +20162,7 @@ GrB_Info GB (_AaddB__rdiv_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_int32)
 (
     GrB_Matrix C,
@@ -21756,7 +20181,6 @@ GrB_Info GB (_AemultB_01__rdiv_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_int32)
 (
     GrB_Matrix C,
@@ -21769,7 +20193,6 @@ GrB_Info GB (_AemultB_02__rdiv_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_int32)
 (
     GrB_Matrix C,
@@ -21780,7 +20203,6 @@ GrB_Info GB (_AemultB_03__rdiv_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_int32)
 (
     GrB_Matrix C,
@@ -21796,6 +20218,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_int32)
 (
     GB_void *Cx_output,
@@ -21805,21 +20228,6 @@ GrB_Info GB (_bind1st__rdiv_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_int32)
 (
     GrB_Matrix C,
@@ -21830,9 +20238,15 @@ GrB_Info GB (_bind1st_tran__rdiv_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_int32)
 (
     GrB_Matrix C,
@@ -21879,7 +20293,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_int64)
 (
     GrB_Matrix C,
@@ -21887,7 +20300,6 @@ GrB_Info GB (_AxD__rdiv_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_int64)
 (
     GrB_Matrix C,
@@ -21895,7 +20307,6 @@ GrB_Info GB (_DxB__rdiv_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_int64)
@@ -21917,6 +20328,7 @@ GrB_Info GB (_AaddB__rdiv_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_int64)
 (
     GrB_Matrix C,
@@ -21935,7 +20347,6 @@ GrB_Info GB (_AemultB_01__rdiv_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_int64)
 (
     GrB_Matrix C,
@@ -21948,7 +20359,6 @@ GrB_Info GB (_AemultB_02__rdiv_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_int64)
 (
     GrB_Matrix C,
@@ -21959,7 +20369,6 @@ GrB_Info GB (_AemultB_03__rdiv_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_int64)
 (
     GrB_Matrix C,
@@ -21975,6 +20384,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_int64)
 (
     GB_void *Cx_output,
@@ -21984,21 +20394,6 @@ GrB_Info GB (_bind1st__rdiv_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_int64)
 (
     GrB_Matrix C,
@@ -22009,9 +20404,15 @@ GrB_Info GB (_bind1st_tran__rdiv_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_int64)
 (
     GrB_Matrix C,
@@ -22058,7 +20459,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_uint8)
 (
     GrB_Matrix C,
@@ -22066,7 +20466,6 @@ GrB_Info GB (_AxD__rdiv_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_uint8)
 (
     GrB_Matrix C,
@@ -22074,7 +20473,6 @@ GrB_Info GB (_DxB__rdiv_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_uint8)
@@ -22096,6 +20494,7 @@ GrB_Info GB (_AaddB__rdiv_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_uint8)
 (
     GrB_Matrix C,
@@ -22114,7 +20513,6 @@ GrB_Info GB (_AemultB_01__rdiv_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_uint8)
 (
     GrB_Matrix C,
@@ -22127,7 +20525,6 @@ GrB_Info GB (_AemultB_02__rdiv_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_uint8)
 (
     GrB_Matrix C,
@@ -22138,7 +20535,6 @@ GrB_Info GB (_AemultB_03__rdiv_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_uint8)
 (
     GrB_Matrix C,
@@ -22154,6 +20550,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_uint8)
 (
     GB_void *Cx_output,
@@ -22163,21 +20560,6 @@ GrB_Info GB (_bind1st__rdiv_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_uint8)
 (
     GrB_Matrix C,
@@ -22188,9 +20570,15 @@ GrB_Info GB (_bind1st_tran__rdiv_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_uint8)
 (
     GrB_Matrix C,
@@ -22237,7 +20625,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_uint16)
 (
     GrB_Matrix C,
@@ -22245,7 +20632,6 @@ GrB_Info GB (_AxD__rdiv_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_uint16)
 (
     GrB_Matrix C,
@@ -22253,7 +20639,6 @@ GrB_Info GB (_DxB__rdiv_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_uint16)
@@ -22275,6 +20660,7 @@ GrB_Info GB (_AaddB__rdiv_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_uint16)
 (
     GrB_Matrix C,
@@ -22293,7 +20679,6 @@ GrB_Info GB (_AemultB_01__rdiv_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_uint16)
 (
     GrB_Matrix C,
@@ -22306,7 +20691,6 @@ GrB_Info GB (_AemultB_02__rdiv_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_uint16)
 (
     GrB_Matrix C,
@@ -22317,7 +20701,6 @@ GrB_Info GB (_AemultB_03__rdiv_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_uint16)
 (
     GrB_Matrix C,
@@ -22333,6 +20716,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_uint16)
 (
     GB_void *Cx_output,
@@ -22342,21 +20726,6 @@ GrB_Info GB (_bind1st__rdiv_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_uint16)
 (
     GrB_Matrix C,
@@ -22367,9 +20736,15 @@ GrB_Info GB (_bind1st_tran__rdiv_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_uint16)
 (
     GrB_Matrix C,
@@ -22416,7 +20791,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_uint32)
 (
     GrB_Matrix C,
@@ -22424,7 +20798,6 @@ GrB_Info GB (_AxD__rdiv_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_uint32)
 (
     GrB_Matrix C,
@@ -22432,7 +20805,6 @@ GrB_Info GB (_DxB__rdiv_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_uint32)
@@ -22454,6 +20826,7 @@ GrB_Info GB (_AaddB__rdiv_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_uint32)
 (
     GrB_Matrix C,
@@ -22472,7 +20845,6 @@ GrB_Info GB (_AemultB_01__rdiv_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_uint32)
 (
     GrB_Matrix C,
@@ -22485,7 +20857,6 @@ GrB_Info GB (_AemultB_02__rdiv_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_uint32)
 (
     GrB_Matrix C,
@@ -22496,7 +20867,6 @@ GrB_Info GB (_AemultB_03__rdiv_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_uint32)
 (
     GrB_Matrix C,
@@ -22512,6 +20882,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_uint32)
 (
     GB_void *Cx_output,
@@ -22521,21 +20892,6 @@ GrB_Info GB (_bind1st__rdiv_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_uint32)
 (
     GrB_Matrix C,
@@ -22546,9 +20902,15 @@ GrB_Info GB (_bind1st_tran__rdiv_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_uint32)
 (
     GrB_Matrix C,
@@ -22595,7 +20957,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_uint64)
 (
     GrB_Matrix C,
@@ -22603,7 +20964,6 @@ GrB_Info GB (_AxD__rdiv_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_uint64)
 (
     GrB_Matrix C,
@@ -22611,7 +20971,6 @@ GrB_Info GB (_DxB__rdiv_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_uint64)
@@ -22633,6 +20992,7 @@ GrB_Info GB (_AaddB__rdiv_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_uint64)
 (
     GrB_Matrix C,
@@ -22651,7 +21011,6 @@ GrB_Info GB (_AemultB_01__rdiv_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_uint64)
 (
     GrB_Matrix C,
@@ -22664,7 +21023,6 @@ GrB_Info GB (_AemultB_02__rdiv_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_uint64)
 (
     GrB_Matrix C,
@@ -22675,7 +21033,6 @@ GrB_Info GB (_AemultB_03__rdiv_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_uint64)
 (
     GrB_Matrix C,
@@ -22691,6 +21048,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_uint64)
 (
     GB_void *Cx_output,
@@ -22700,21 +21058,6 @@ GrB_Info GB (_bind1st__rdiv_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_uint64)
 (
     GrB_Matrix C,
@@ -22725,9 +21068,15 @@ GrB_Info GB (_bind1st_tran__rdiv_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_uint64)
 (
     GrB_Matrix C,
@@ -22774,7 +21123,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_fp32)
 (
     GrB_Matrix C,
@@ -22782,7 +21130,6 @@ GrB_Info GB (_AxD__rdiv_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_fp32)
 (
     GrB_Matrix C,
@@ -22790,7 +21137,6 @@ GrB_Info GB (_DxB__rdiv_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_fp32)
@@ -22812,6 +21158,7 @@ GrB_Info GB (_AaddB__rdiv_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_fp32)
 (
     GrB_Matrix C,
@@ -22830,7 +21177,6 @@ GrB_Info GB (_AemultB_01__rdiv_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_fp32)
 (
     GrB_Matrix C,
@@ -22843,7 +21189,6 @@ GrB_Info GB (_AemultB_02__rdiv_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_fp32)
 (
     GrB_Matrix C,
@@ -22854,7 +21199,6 @@ GrB_Info GB (_AemultB_03__rdiv_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_fp32)
 (
     GrB_Matrix C,
@@ -22870,6 +21214,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_fp32)
 (
     GB_void *Cx_output,
@@ -22879,21 +21224,6 @@ GrB_Info GB (_bind1st__rdiv_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_fp32)
 (
     GrB_Matrix C,
@@ -22904,9 +21234,15 @@ GrB_Info GB (_bind1st_tran__rdiv_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_fp32)
 (
     GrB_Matrix C,
@@ -22953,7 +21289,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_fp64)
 (
     GrB_Matrix C,
@@ -22961,7 +21296,6 @@ GrB_Info GB (_AxD__rdiv_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_fp64)
 (
     GrB_Matrix C,
@@ -22969,7 +21303,6 @@ GrB_Info GB (_DxB__rdiv_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_fp64)
@@ -22991,6 +21324,7 @@ GrB_Info GB (_AaddB__rdiv_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_fp64)
 (
     GrB_Matrix C,
@@ -23009,7 +21343,6 @@ GrB_Info GB (_AemultB_01__rdiv_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_fp64)
 (
     GrB_Matrix C,
@@ -23022,7 +21355,6 @@ GrB_Info GB (_AemultB_02__rdiv_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_fp64)
 (
     GrB_Matrix C,
@@ -23033,7 +21365,6 @@ GrB_Info GB (_AemultB_03__rdiv_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_fp64)
 (
     GrB_Matrix C,
@@ -23049,6 +21380,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_fp64)
 (
     GB_void *Cx_output,
@@ -23058,21 +21390,6 @@ GrB_Info GB (_bind1st__rdiv_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_fp64)
 (
     GrB_Matrix C,
@@ -23083,9 +21400,15 @@ GrB_Info GB (_bind1st_tran__rdiv_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_fp64)
 (
     GrB_Matrix C,
@@ -23132,7 +21455,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_fc32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_fc32)
 (
     GrB_Matrix C,
@@ -23140,7 +21462,6 @@ GrB_Info GB (_AxD__rdiv_fc32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_fc32)
 (
     GrB_Matrix C,
@@ -23148,7 +21469,6 @@ GrB_Info GB (_DxB__rdiv_fc32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_fc32)
@@ -23170,6 +21490,7 @@ GrB_Info GB (_AaddB__rdiv_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_fc32)
 (
     GrB_Matrix C,
@@ -23188,7 +21509,6 @@ GrB_Info GB (_AemultB_01__rdiv_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_fc32)
 (
     GrB_Matrix C,
@@ -23201,7 +21521,6 @@ GrB_Info GB (_AemultB_02__rdiv_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_fc32)
 (
     GrB_Matrix C,
@@ -23212,7 +21531,6 @@ GrB_Info GB (_AemultB_03__rdiv_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_fc32)
 (
     GrB_Matrix C,
@@ -23228,6 +21546,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_fc32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_fc32)
 (
     GB_void *Cx_output,
@@ -23237,21 +21556,6 @@ GrB_Info GB (_bind1st__rdiv_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_fc32)
 (
     GrB_Matrix C,
@@ -23262,9 +21566,15 @@ GrB_Info GB (_bind1st_tran__rdiv_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_fc32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_fc32)
 (
     GrB_Matrix C,
@@ -23311,7 +21621,6 @@ GrB_Info GB (_Cdense_accumb__rdiv_fc64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__rdiv_fc64)
 (
     GrB_Matrix C,
@@ -23319,7 +21628,6 @@ GrB_Info GB (_AxD__rdiv_fc64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__rdiv_fc64)
 (
     GrB_Matrix C,
@@ -23327,7 +21635,6 @@ GrB_Info GB (_DxB__rdiv_fc64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__rdiv_fc64)
@@ -23349,6 +21656,7 @@ GrB_Info GB (_AaddB__rdiv_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__rdiv_fc64)
 (
     GrB_Matrix C,
@@ -23367,7 +21675,6 @@ GrB_Info GB (_AemultB_01__rdiv_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__rdiv_fc64)
 (
     GrB_Matrix C,
@@ -23380,7 +21687,6 @@ GrB_Info GB (_AemultB_02__rdiv_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__rdiv_fc64)
 (
     GrB_Matrix C,
@@ -23391,7 +21697,6 @@ GrB_Info GB (_AemultB_03__rdiv_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__rdiv_fc64)
 (
     GrB_Matrix C,
@@ -23407,6 +21712,7 @@ GrB_Info GB (_AemultB_bitmap__rdiv_fc64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__rdiv_fc64)
 (
     GB_void *Cx_output,
@@ -23416,21 +21722,6 @@ GrB_Info GB (_bind1st__rdiv_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__rdiv_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__rdiv_fc64)
 (
     GrB_Matrix C,
@@ -23441,9 +21732,15 @@ GrB_Info GB (_bind1st_tran__rdiv_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__rdiv_fc64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__rdiv_fc64)
 (
     GrB_Matrix C,
@@ -23490,7 +21787,6 @@ GrB_Info GB (_Cdense_accumb__iseq_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__iseq_int8)
 (
     GrB_Matrix C,
@@ -23498,7 +21794,6 @@ GrB_Info GB (_AxD__iseq_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__iseq_int8)
 (
     GrB_Matrix C,
@@ -23506,7 +21801,6 @@ GrB_Info GB (_DxB__iseq_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__iseq_int8)
@@ -23528,6 +21822,7 @@ GrB_Info GB (_AaddB__iseq_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_int8)
 (
     GrB_Matrix C,
@@ -23546,7 +21841,6 @@ GrB_Info GB (_AemultB_01__iseq_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_int8)
 (
     GrB_Matrix C,
@@ -23559,7 +21853,6 @@ GrB_Info GB (_AemultB_02__iseq_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_int8)
 (
     GrB_Matrix C,
@@ -23570,7 +21863,6 @@ GrB_Info GB (_AemultB_03__iseq_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_int8)
 (
     GrB_Matrix C,
@@ -23586,6 +21878,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_int8)
 (
     GB_void *Cx_output,
@@ -23595,21 +21888,6 @@ GrB_Info GB (_bind1st__iseq_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_int8)
 (
     GrB_Matrix C,
@@ -23620,9 +21898,15 @@ GrB_Info GB (_bind1st_tran__iseq_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_int8)
 (
     GrB_Matrix C,
@@ -23669,7 +21953,6 @@ GrB_Info GB (_Cdense_accumb__iseq_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__iseq_int16)
 (
     GrB_Matrix C,
@@ -23677,7 +21960,6 @@ GrB_Info GB (_AxD__iseq_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__iseq_int16)
 (
     GrB_Matrix C,
@@ -23685,7 +21967,6 @@ GrB_Info GB (_DxB__iseq_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__iseq_int16)
@@ -23707,6 +21988,7 @@ GrB_Info GB (_AaddB__iseq_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_int16)
 (
     GrB_Matrix C,
@@ -23725,7 +22007,6 @@ GrB_Info GB (_AemultB_01__iseq_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_int16)
 (
     GrB_Matrix C,
@@ -23738,7 +22019,6 @@ GrB_Info GB (_AemultB_02__iseq_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_int16)
 (
     GrB_Matrix C,
@@ -23749,7 +22029,6 @@ GrB_Info GB (_AemultB_03__iseq_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_int16)
 (
     GrB_Matrix C,
@@ -23765,6 +22044,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_int16)
 (
     GB_void *Cx_output,
@@ -23774,21 +22054,6 @@ GrB_Info GB (_bind1st__iseq_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_int16)
 (
     GrB_Matrix C,
@@ -23799,9 +22064,15 @@ GrB_Info GB (_bind1st_tran__iseq_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_int16)
 (
     GrB_Matrix C,
@@ -23848,7 +22119,6 @@ GrB_Info GB (_Cdense_accumb__iseq_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__iseq_int32)
 (
     GrB_Matrix C,
@@ -23856,7 +22126,6 @@ GrB_Info GB (_AxD__iseq_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__iseq_int32)
 (
     GrB_Matrix C,
@@ -23864,7 +22133,6 @@ GrB_Info GB (_DxB__iseq_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__iseq_int32)
@@ -23886,6 +22154,7 @@ GrB_Info GB (_AaddB__iseq_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_int32)
 (
     GrB_Matrix C,
@@ -23904,7 +22173,6 @@ GrB_Info GB (_AemultB_01__iseq_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_int32)
 (
     GrB_Matrix C,
@@ -23917,7 +22185,6 @@ GrB_Info GB (_AemultB_02__iseq_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_int32)
 (
     GrB_Matrix C,
@@ -23928,7 +22195,6 @@ GrB_Info GB (_AemultB_03__iseq_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_int32)
 (
     GrB_Matrix C,
@@ -23944,6 +22210,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_int32)
 (
     GB_void *Cx_output,
@@ -23953,21 +22220,6 @@ GrB_Info GB (_bind1st__iseq_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_int32)
 (
     GrB_Matrix C,
@@ -23978,9 +22230,15 @@ GrB_Info GB (_bind1st_tran__iseq_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_int32)
 (
     GrB_Matrix C,
@@ -24027,7 +22285,6 @@ GrB_Info GB (_Cdense_accumb__iseq_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__iseq_int64)
 (
     GrB_Matrix C,
@@ -24035,7 +22292,6 @@ GrB_Info GB (_AxD__iseq_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__iseq_int64)
 (
     GrB_Matrix C,
@@ -24043,7 +22299,6 @@ GrB_Info GB (_DxB__iseq_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__iseq_int64)
@@ -24065,6 +22320,7 @@ GrB_Info GB (_AaddB__iseq_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_int64)
 (
     GrB_Matrix C,
@@ -24083,7 +22339,6 @@ GrB_Info GB (_AemultB_01__iseq_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_int64)
 (
     GrB_Matrix C,
@@ -24096,7 +22351,6 @@ GrB_Info GB (_AemultB_02__iseq_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_int64)
 (
     GrB_Matrix C,
@@ -24107,7 +22361,6 @@ GrB_Info GB (_AemultB_03__iseq_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_int64)
 (
     GrB_Matrix C,
@@ -24123,6 +22376,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_int64)
 (
     GB_void *Cx_output,
@@ -24132,21 +22386,6 @@ GrB_Info GB (_bind1st__iseq_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_int64)
 (
     GrB_Matrix C,
@@ -24157,9 +22396,15 @@ GrB_Info GB (_bind1st_tran__iseq_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_int64)
 (
     GrB_Matrix C,
@@ -24206,7 +22451,6 @@ GrB_Info GB (_Cdense_accumb__iseq_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__iseq_uint8)
 (
     GrB_Matrix C,
@@ -24214,7 +22458,6 @@ GrB_Info GB (_AxD__iseq_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__iseq_uint8)
 (
     GrB_Matrix C,
@@ -24222,7 +22465,6 @@ GrB_Info GB (_DxB__iseq_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__iseq_uint8)
@@ -24244,6 +22486,7 @@ GrB_Info GB (_AaddB__iseq_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_uint8)
 (
     GrB_Matrix C,
@@ -24262,7 +22505,6 @@ GrB_Info GB (_AemultB_01__iseq_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_uint8)
 (
     GrB_Matrix C,
@@ -24275,7 +22517,6 @@ GrB_Info GB (_AemultB_02__iseq_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_uint8)
 (
     GrB_Matrix C,
@@ -24286,7 +22527,6 @@ GrB_Info GB (_AemultB_03__iseq_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_uint8)
 (
     GrB_Matrix C,
@@ -24302,6 +22542,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_uint8)
 (
     GB_void *Cx_output,
@@ -24311,21 +22552,6 @@ GrB_Info GB (_bind1st__iseq_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_uint8)
 (
     GrB_Matrix C,
@@ -24336,9 +22562,15 @@ GrB_Info GB (_bind1st_tran__iseq_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_uint8)
 (
     GrB_Matrix C,
@@ -24385,7 +22617,6 @@ GrB_Info GB (_Cdense_accumb__iseq_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__iseq_uint16)
 (
     GrB_Matrix C,
@@ -24393,7 +22624,6 @@ GrB_Info GB (_AxD__iseq_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__iseq_uint16)
 (
     GrB_Matrix C,
@@ -24401,7 +22631,6 @@ GrB_Info GB (_DxB__iseq_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__iseq_uint16)
@@ -24423,6 +22652,7 @@ GrB_Info GB (_AaddB__iseq_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_uint16)
 (
     GrB_Matrix C,
@@ -24441,7 +22671,6 @@ GrB_Info GB (_AemultB_01__iseq_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_uint16)
 (
     GrB_Matrix C,
@@ -24454,7 +22683,6 @@ GrB_Info GB (_AemultB_02__iseq_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_uint16)
 (
     GrB_Matrix C,
@@ -24465,7 +22693,6 @@ GrB_Info GB (_AemultB_03__iseq_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_uint16)
 (
     GrB_Matrix C,
@@ -24481,6 +22708,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_uint16)
 (
     GB_void *Cx_output,
@@ -24490,21 +22718,6 @@ GrB_Info GB (_bind1st__iseq_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_uint16)
 (
     GrB_Matrix C,
@@ -24515,9 +22728,15 @@ GrB_Info GB (_bind1st_tran__iseq_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_uint16)
 (
     GrB_Matrix C,
@@ -24564,7 +22783,6 @@ GrB_Info GB (_Cdense_accumb__iseq_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__iseq_uint32)
 (
     GrB_Matrix C,
@@ -24572,7 +22790,6 @@ GrB_Info GB (_AxD__iseq_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__iseq_uint32)
 (
     GrB_Matrix C,
@@ -24580,7 +22797,6 @@ GrB_Info GB (_DxB__iseq_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__iseq_uint32)
@@ -24602,6 +22818,7 @@ GrB_Info GB (_AaddB__iseq_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_uint32)
 (
     GrB_Matrix C,
@@ -24620,7 +22837,6 @@ GrB_Info GB (_AemultB_01__iseq_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_uint32)
 (
     GrB_Matrix C,
@@ -24633,7 +22849,6 @@ GrB_Info GB (_AemultB_02__iseq_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_uint32)
 (
     GrB_Matrix C,
@@ -24644,7 +22859,6 @@ GrB_Info GB (_AemultB_03__iseq_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_uint32)
 (
     GrB_Matrix C,
@@ -24660,6 +22874,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_uint32)
 (
     GB_void *Cx_output,
@@ -24669,21 +22884,6 @@ GrB_Info GB (_bind1st__iseq_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_uint32)
 (
     GrB_Matrix C,
@@ -24694,9 +22894,15 @@ GrB_Info GB (_bind1st_tran__iseq_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_uint32)
 (
     GrB_Matrix C,
@@ -24743,7 +22949,6 @@ GrB_Info GB (_Cdense_accumb__iseq_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__iseq_uint64)
 (
     GrB_Matrix C,
@@ -24751,7 +22956,6 @@ GrB_Info GB (_AxD__iseq_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__iseq_uint64)
 (
     GrB_Matrix C,
@@ -24759,7 +22963,6 @@ GrB_Info GB (_DxB__iseq_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__iseq_uint64)
@@ -24781,6 +22984,7 @@ GrB_Info GB (_AaddB__iseq_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_uint64)
 (
     GrB_Matrix C,
@@ -24799,7 +23003,6 @@ GrB_Info GB (_AemultB_01__iseq_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_uint64)
 (
     GrB_Matrix C,
@@ -24812,7 +23015,6 @@ GrB_Info GB (_AemultB_02__iseq_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_uint64)
 (
     GrB_Matrix C,
@@ -24823,7 +23025,6 @@ GrB_Info GB (_AemultB_03__iseq_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_uint64)
 (
     GrB_Matrix C,
@@ -24839,6 +23040,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_uint64)
 (
     GB_void *Cx_output,
@@ -24848,21 +23050,6 @@ GrB_Info GB (_bind1st__iseq_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_uint64)
 (
     GrB_Matrix C,
@@ -24873,9 +23060,15 @@ GrB_Info GB (_bind1st_tran__iseq_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_uint64)
 (
     GrB_Matrix C,
@@ -24922,7 +23115,6 @@ GrB_Info GB (_Cdense_accumb__iseq_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__iseq_fp32)
 (
     GrB_Matrix C,
@@ -24930,7 +23122,6 @@ GrB_Info GB (_AxD__iseq_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__iseq_fp32)
 (
     GrB_Matrix C,
@@ -24938,7 +23129,6 @@ GrB_Info GB (_DxB__iseq_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__iseq_fp32)
@@ -24960,6 +23150,7 @@ GrB_Info GB (_AaddB__iseq_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_fp32)
 (
     GrB_Matrix C,
@@ -24978,7 +23169,6 @@ GrB_Info GB (_AemultB_01__iseq_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_fp32)
 (
     GrB_Matrix C,
@@ -24991,7 +23181,6 @@ GrB_Info GB (_AemultB_02__iseq_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_fp32)
 (
     GrB_Matrix C,
@@ -25002,7 +23191,6 @@ GrB_Info GB (_AemultB_03__iseq_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_fp32)
 (
     GrB_Matrix C,
@@ -25018,6 +23206,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_fp32)
 (
     GB_void *Cx_output,
@@ -25027,21 +23216,6 @@ GrB_Info GB (_bind1st__iseq_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_fp32)
 (
     GrB_Matrix C,
@@ -25052,9 +23226,15 @@ GrB_Info GB (_bind1st_tran__iseq_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_fp32)
 (
     GrB_Matrix C,
@@ -25101,7 +23281,6 @@ GrB_Info GB (_Cdense_accumb__iseq_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__iseq_fp64)
 (
     GrB_Matrix C,
@@ -25109,7 +23288,6 @@ GrB_Info GB (_AxD__iseq_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__iseq_fp64)
 (
     GrB_Matrix C,
@@ -25117,7 +23295,6 @@ GrB_Info GB (_DxB__iseq_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__iseq_fp64)
@@ -25139,6 +23316,7 @@ GrB_Info GB (_AaddB__iseq_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_fp64)
 (
     GrB_Matrix C,
@@ -25157,7 +23335,6 @@ GrB_Info GB (_AemultB_01__iseq_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_fp64)
 (
     GrB_Matrix C,
@@ -25170,7 +23347,6 @@ GrB_Info GB (_AemultB_02__iseq_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_fp64)
 (
     GrB_Matrix C,
@@ -25181,7 +23357,6 @@ GrB_Info GB (_AemultB_03__iseq_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_fp64)
 (
     GrB_Matrix C,
@@ -25197,6 +23372,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_fp64)
 (
     GB_void *Cx_output,
@@ -25206,21 +23382,6 @@ GrB_Info GB (_bind1st__iseq_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_fp64)
 (
     GrB_Matrix C,
@@ -25231,9 +23392,15 @@ GrB_Info GB (_bind1st_tran__iseq_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_fp64)
 (
     GrB_Matrix C,
@@ -25280,7 +23447,6 @@ GrB_Info GB (_Cdense_accumb__iseq_fc32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -25288,15 +23454,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__iseq_fc32)
@@ -25318,6 +23482,7 @@ GrB_Info GB (_AaddB__iseq_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_fc32)
 (
     GrB_Matrix C,
@@ -25336,7 +23501,6 @@ GrB_Info GB (_AemultB_01__iseq_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_fc32)
 (
     GrB_Matrix C,
@@ -25349,7 +23513,6 @@ GrB_Info GB (_AemultB_02__iseq_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_fc32)
 (
     GrB_Matrix C,
@@ -25360,7 +23523,6 @@ GrB_Info GB (_AemultB_03__iseq_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_fc32)
 (
     GrB_Matrix C,
@@ -25376,6 +23538,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_fc32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_fc32)
 (
     GB_void *Cx_output,
@@ -25385,21 +23548,6 @@ GrB_Info GB (_bind1st__iseq_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_fc32)
 (
     GrB_Matrix C,
@@ -25410,9 +23558,15 @@ GrB_Info GB (_bind1st_tran__iseq_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_fc32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_fc32)
 (
     GrB_Matrix C,
@@ -25459,7 +23613,6 @@ GrB_Info GB (_Cdense_accumb__iseq_fc64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -25467,15 +23620,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__iseq_fc64)
@@ -25497,6 +23648,7 @@ GrB_Info GB (_AaddB__iseq_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__iseq_fc64)
 (
     GrB_Matrix C,
@@ -25515,7 +23667,6 @@ GrB_Info GB (_AemultB_01__iseq_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__iseq_fc64)
 (
     GrB_Matrix C,
@@ -25528,7 +23679,6 @@ GrB_Info GB (_AemultB_02__iseq_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__iseq_fc64)
 (
     GrB_Matrix C,
@@ -25539,7 +23689,6 @@ GrB_Info GB (_AemultB_03__iseq_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__iseq_fc64)
 (
     GrB_Matrix C,
@@ -25555,6 +23704,7 @@ GrB_Info GB (_AemultB_bitmap__iseq_fc64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__iseq_fc64)
 (
     GB_void *Cx_output,
@@ -25564,21 +23714,6 @@ GrB_Info GB (_bind1st__iseq_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__iseq_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__iseq_fc64)
 (
     GrB_Matrix C,
@@ -25589,9 +23724,15 @@ GrB_Info GB (_bind1st_tran__iseq_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__iseq_fc64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__iseq_fc64)
 (
     GrB_Matrix C,
@@ -25638,7 +23779,6 @@ GrB_Info GB (_Cdense_accumb__isne_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isne_int8)
 (
     GrB_Matrix C,
@@ -25646,7 +23786,6 @@ GrB_Info GB (_AxD__isne_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isne_int8)
 (
     GrB_Matrix C,
@@ -25654,7 +23793,6 @@ GrB_Info GB (_DxB__isne_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isne_int8)
@@ -25676,6 +23814,7 @@ GrB_Info GB (_AaddB__isne_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_int8)
 (
     GrB_Matrix C,
@@ -25694,7 +23833,6 @@ GrB_Info GB (_AemultB_01__isne_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_int8)
 (
     GrB_Matrix C,
@@ -25707,7 +23845,6 @@ GrB_Info GB (_AemultB_02__isne_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_int8)
 (
     GrB_Matrix C,
@@ -25718,7 +23855,6 @@ GrB_Info GB (_AemultB_03__isne_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_int8)
 (
     GrB_Matrix C,
@@ -25734,6 +23870,7 @@ GrB_Info GB (_AemultB_bitmap__isne_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_int8)
 (
     GB_void *Cx_output,
@@ -25743,21 +23880,6 @@ GrB_Info GB (_bind1st__isne_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_int8)
 (
     GrB_Matrix C,
@@ -25768,9 +23890,15 @@ GrB_Info GB (_bind1st_tran__isne_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_int8)
 (
     GrB_Matrix C,
@@ -25817,7 +23945,6 @@ GrB_Info GB (_Cdense_accumb__isne_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isne_int16)
 (
     GrB_Matrix C,
@@ -25825,7 +23952,6 @@ GrB_Info GB (_AxD__isne_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isne_int16)
 (
     GrB_Matrix C,
@@ -25833,7 +23959,6 @@ GrB_Info GB (_DxB__isne_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isne_int16)
@@ -25855,6 +23980,7 @@ GrB_Info GB (_AaddB__isne_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_int16)
 (
     GrB_Matrix C,
@@ -25873,7 +23999,6 @@ GrB_Info GB (_AemultB_01__isne_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_int16)
 (
     GrB_Matrix C,
@@ -25886,7 +24011,6 @@ GrB_Info GB (_AemultB_02__isne_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_int16)
 (
     GrB_Matrix C,
@@ -25897,7 +24021,6 @@ GrB_Info GB (_AemultB_03__isne_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_int16)
 (
     GrB_Matrix C,
@@ -25913,6 +24036,7 @@ GrB_Info GB (_AemultB_bitmap__isne_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_int16)
 (
     GB_void *Cx_output,
@@ -25922,21 +24046,6 @@ GrB_Info GB (_bind1st__isne_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_int16)
 (
     GrB_Matrix C,
@@ -25947,9 +24056,15 @@ GrB_Info GB (_bind1st_tran__isne_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_int16)
 (
     GrB_Matrix C,
@@ -25996,7 +24111,6 @@ GrB_Info GB (_Cdense_accumb__isne_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isne_int32)
 (
     GrB_Matrix C,
@@ -26004,7 +24118,6 @@ GrB_Info GB (_AxD__isne_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isne_int32)
 (
     GrB_Matrix C,
@@ -26012,7 +24125,6 @@ GrB_Info GB (_DxB__isne_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isne_int32)
@@ -26034,6 +24146,7 @@ GrB_Info GB (_AaddB__isne_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_int32)
 (
     GrB_Matrix C,
@@ -26052,7 +24165,6 @@ GrB_Info GB (_AemultB_01__isne_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_int32)
 (
     GrB_Matrix C,
@@ -26065,7 +24177,6 @@ GrB_Info GB (_AemultB_02__isne_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_int32)
 (
     GrB_Matrix C,
@@ -26076,7 +24187,6 @@ GrB_Info GB (_AemultB_03__isne_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_int32)
 (
     GrB_Matrix C,
@@ -26092,6 +24202,7 @@ GrB_Info GB (_AemultB_bitmap__isne_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_int32)
 (
     GB_void *Cx_output,
@@ -26101,21 +24212,6 @@ GrB_Info GB (_bind1st__isne_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_int32)
 (
     GrB_Matrix C,
@@ -26126,9 +24222,15 @@ GrB_Info GB (_bind1st_tran__isne_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_int32)
 (
     GrB_Matrix C,
@@ -26175,7 +24277,6 @@ GrB_Info GB (_Cdense_accumb__isne_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isne_int64)
 (
     GrB_Matrix C,
@@ -26183,7 +24284,6 @@ GrB_Info GB (_AxD__isne_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isne_int64)
 (
     GrB_Matrix C,
@@ -26191,7 +24291,6 @@ GrB_Info GB (_DxB__isne_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isne_int64)
@@ -26213,6 +24312,7 @@ GrB_Info GB (_AaddB__isne_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_int64)
 (
     GrB_Matrix C,
@@ -26231,7 +24331,6 @@ GrB_Info GB (_AemultB_01__isne_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_int64)
 (
     GrB_Matrix C,
@@ -26244,7 +24343,6 @@ GrB_Info GB (_AemultB_02__isne_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_int64)
 (
     GrB_Matrix C,
@@ -26255,7 +24353,6 @@ GrB_Info GB (_AemultB_03__isne_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_int64)
 (
     GrB_Matrix C,
@@ -26271,6 +24368,7 @@ GrB_Info GB (_AemultB_bitmap__isne_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_int64)
 (
     GB_void *Cx_output,
@@ -26280,21 +24378,6 @@ GrB_Info GB (_bind1st__isne_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_int64)
 (
     GrB_Matrix C,
@@ -26305,9 +24388,15 @@ GrB_Info GB (_bind1st_tran__isne_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_int64)
 (
     GrB_Matrix C,
@@ -26354,7 +24443,6 @@ GrB_Info GB (_Cdense_accumb__isne_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isne_uint8)
 (
     GrB_Matrix C,
@@ -26362,7 +24450,6 @@ GrB_Info GB (_AxD__isne_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isne_uint8)
 (
     GrB_Matrix C,
@@ -26370,7 +24457,6 @@ GrB_Info GB (_DxB__isne_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isne_uint8)
@@ -26392,6 +24478,7 @@ GrB_Info GB (_AaddB__isne_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_uint8)
 (
     GrB_Matrix C,
@@ -26410,7 +24497,6 @@ GrB_Info GB (_AemultB_01__isne_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_uint8)
 (
     GrB_Matrix C,
@@ -26423,7 +24509,6 @@ GrB_Info GB (_AemultB_02__isne_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_uint8)
 (
     GrB_Matrix C,
@@ -26434,7 +24519,6 @@ GrB_Info GB (_AemultB_03__isne_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_uint8)
 (
     GrB_Matrix C,
@@ -26450,6 +24534,7 @@ GrB_Info GB (_AemultB_bitmap__isne_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_uint8)
 (
     GB_void *Cx_output,
@@ -26459,21 +24544,6 @@ GrB_Info GB (_bind1st__isne_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_uint8)
 (
     GrB_Matrix C,
@@ -26484,9 +24554,15 @@ GrB_Info GB (_bind1st_tran__isne_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_uint8)
 (
     GrB_Matrix C,
@@ -26533,7 +24609,6 @@ GrB_Info GB (_Cdense_accumb__isne_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isne_uint16)
 (
     GrB_Matrix C,
@@ -26541,7 +24616,6 @@ GrB_Info GB (_AxD__isne_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isne_uint16)
 (
     GrB_Matrix C,
@@ -26549,7 +24623,6 @@ GrB_Info GB (_DxB__isne_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isne_uint16)
@@ -26571,6 +24644,7 @@ GrB_Info GB (_AaddB__isne_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_uint16)
 (
     GrB_Matrix C,
@@ -26589,7 +24663,6 @@ GrB_Info GB (_AemultB_01__isne_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_uint16)
 (
     GrB_Matrix C,
@@ -26602,7 +24675,6 @@ GrB_Info GB (_AemultB_02__isne_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_uint16)
 (
     GrB_Matrix C,
@@ -26613,7 +24685,6 @@ GrB_Info GB (_AemultB_03__isne_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_uint16)
 (
     GrB_Matrix C,
@@ -26629,6 +24700,7 @@ GrB_Info GB (_AemultB_bitmap__isne_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_uint16)
 (
     GB_void *Cx_output,
@@ -26638,21 +24710,6 @@ GrB_Info GB (_bind1st__isne_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_uint16)
 (
     GrB_Matrix C,
@@ -26663,9 +24720,15 @@ GrB_Info GB (_bind1st_tran__isne_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_uint16)
 (
     GrB_Matrix C,
@@ -26712,7 +24775,6 @@ GrB_Info GB (_Cdense_accumb__isne_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isne_uint32)
 (
     GrB_Matrix C,
@@ -26720,7 +24782,6 @@ GrB_Info GB (_AxD__isne_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isne_uint32)
 (
     GrB_Matrix C,
@@ -26728,7 +24789,6 @@ GrB_Info GB (_DxB__isne_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isne_uint32)
@@ -26750,6 +24810,7 @@ GrB_Info GB (_AaddB__isne_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_uint32)
 (
     GrB_Matrix C,
@@ -26768,7 +24829,6 @@ GrB_Info GB (_AemultB_01__isne_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_uint32)
 (
     GrB_Matrix C,
@@ -26781,7 +24841,6 @@ GrB_Info GB (_AemultB_02__isne_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_uint32)
 (
     GrB_Matrix C,
@@ -26792,7 +24851,6 @@ GrB_Info GB (_AemultB_03__isne_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_uint32)
 (
     GrB_Matrix C,
@@ -26808,6 +24866,7 @@ GrB_Info GB (_AemultB_bitmap__isne_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_uint32)
 (
     GB_void *Cx_output,
@@ -26817,21 +24876,6 @@ GrB_Info GB (_bind1st__isne_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_uint32)
 (
     GrB_Matrix C,
@@ -26842,9 +24886,15 @@ GrB_Info GB (_bind1st_tran__isne_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_uint32)
 (
     GrB_Matrix C,
@@ -26891,7 +24941,6 @@ GrB_Info GB (_Cdense_accumb__isne_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isne_uint64)
 (
     GrB_Matrix C,
@@ -26899,7 +24948,6 @@ GrB_Info GB (_AxD__isne_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isne_uint64)
 (
     GrB_Matrix C,
@@ -26907,7 +24955,6 @@ GrB_Info GB (_DxB__isne_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isne_uint64)
@@ -26929,6 +24976,7 @@ GrB_Info GB (_AaddB__isne_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_uint64)
 (
     GrB_Matrix C,
@@ -26947,7 +24995,6 @@ GrB_Info GB (_AemultB_01__isne_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_uint64)
 (
     GrB_Matrix C,
@@ -26960,7 +25007,6 @@ GrB_Info GB (_AemultB_02__isne_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_uint64)
 (
     GrB_Matrix C,
@@ -26971,7 +25017,6 @@ GrB_Info GB (_AemultB_03__isne_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_uint64)
 (
     GrB_Matrix C,
@@ -26987,6 +25032,7 @@ GrB_Info GB (_AemultB_bitmap__isne_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_uint64)
 (
     GB_void *Cx_output,
@@ -26996,21 +25042,6 @@ GrB_Info GB (_bind1st__isne_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_uint64)
 (
     GrB_Matrix C,
@@ -27021,9 +25052,15 @@ GrB_Info GB (_bind1st_tran__isne_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_uint64)
 (
     GrB_Matrix C,
@@ -27070,7 +25107,6 @@ GrB_Info GB (_Cdense_accumb__isne_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isne_fp32)
 (
     GrB_Matrix C,
@@ -27078,7 +25114,6 @@ GrB_Info GB (_AxD__isne_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isne_fp32)
 (
     GrB_Matrix C,
@@ -27086,7 +25121,6 @@ GrB_Info GB (_DxB__isne_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isne_fp32)
@@ -27108,6 +25142,7 @@ GrB_Info GB (_AaddB__isne_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_fp32)
 (
     GrB_Matrix C,
@@ -27126,7 +25161,6 @@ GrB_Info GB (_AemultB_01__isne_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_fp32)
 (
     GrB_Matrix C,
@@ -27139,7 +25173,6 @@ GrB_Info GB (_AemultB_02__isne_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_fp32)
 (
     GrB_Matrix C,
@@ -27150,7 +25183,6 @@ GrB_Info GB (_AemultB_03__isne_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_fp32)
 (
     GrB_Matrix C,
@@ -27166,6 +25198,7 @@ GrB_Info GB (_AemultB_bitmap__isne_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_fp32)
 (
     GB_void *Cx_output,
@@ -27175,21 +25208,6 @@ GrB_Info GB (_bind1st__isne_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_fp32)
 (
     GrB_Matrix C,
@@ -27200,9 +25218,15 @@ GrB_Info GB (_bind1st_tran__isne_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_fp32)
 (
     GrB_Matrix C,
@@ -27249,7 +25273,6 @@ GrB_Info GB (_Cdense_accumb__isne_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isne_fp64)
 (
     GrB_Matrix C,
@@ -27257,7 +25280,6 @@ GrB_Info GB (_AxD__isne_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isne_fp64)
 (
     GrB_Matrix C,
@@ -27265,7 +25287,6 @@ GrB_Info GB (_DxB__isne_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isne_fp64)
@@ -27287,6 +25308,7 @@ GrB_Info GB (_AaddB__isne_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_fp64)
 (
     GrB_Matrix C,
@@ -27305,7 +25327,6 @@ GrB_Info GB (_AemultB_01__isne_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_fp64)
 (
     GrB_Matrix C,
@@ -27318,7 +25339,6 @@ GrB_Info GB (_AemultB_02__isne_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_fp64)
 (
     GrB_Matrix C,
@@ -27329,7 +25349,6 @@ GrB_Info GB (_AemultB_03__isne_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_fp64)
 (
     GrB_Matrix C,
@@ -27345,6 +25364,7 @@ GrB_Info GB (_AemultB_bitmap__isne_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_fp64)
 (
     GB_void *Cx_output,
@@ -27354,21 +25374,6 @@ GrB_Info GB (_bind1st__isne_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_fp64)
 (
     GrB_Matrix C,
@@ -27379,9 +25384,15 @@ GrB_Info GB (_bind1st_tran__isne_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_fp64)
 (
     GrB_Matrix C,
@@ -27428,7 +25439,6 @@ GrB_Info GB (_Cdense_accumb__isne_fc32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -27436,15 +25446,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__isne_fc32)
@@ -27466,6 +25474,7 @@ GrB_Info GB (_AaddB__isne_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_fc32)
 (
     GrB_Matrix C,
@@ -27484,7 +25493,6 @@ GrB_Info GB (_AemultB_01__isne_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_fc32)
 (
     GrB_Matrix C,
@@ -27497,7 +25505,6 @@ GrB_Info GB (_AemultB_02__isne_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_fc32)
 (
     GrB_Matrix C,
@@ -27508,7 +25515,6 @@ GrB_Info GB (_AemultB_03__isne_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_fc32)
 (
     GrB_Matrix C,
@@ -27524,6 +25530,7 @@ GrB_Info GB (_AemultB_bitmap__isne_fc32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_fc32)
 (
     GB_void *Cx_output,
@@ -27533,21 +25540,6 @@ GrB_Info GB (_bind1st__isne_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_fc32)
 (
     GrB_Matrix C,
@@ -27558,9 +25550,15 @@ GrB_Info GB (_bind1st_tran__isne_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_fc32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_fc32)
 (
     GrB_Matrix C,
@@ -27607,7 +25605,6 @@ GrB_Info GB (_Cdense_accumb__isne_fc64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -27615,15 +25612,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__isne_fc64)
@@ -27645,6 +25640,7 @@ GrB_Info GB (_AaddB__isne_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isne_fc64)
 (
     GrB_Matrix C,
@@ -27663,7 +25659,6 @@ GrB_Info GB (_AemultB_01__isne_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isne_fc64)
 (
     GrB_Matrix C,
@@ -27676,7 +25671,6 @@ GrB_Info GB (_AemultB_02__isne_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isne_fc64)
 (
     GrB_Matrix C,
@@ -27687,7 +25681,6 @@ GrB_Info GB (_AemultB_03__isne_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isne_fc64)
 (
     GrB_Matrix C,
@@ -27703,6 +25696,7 @@ GrB_Info GB (_AemultB_bitmap__isne_fc64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isne_fc64)
 (
     GB_void *Cx_output,
@@ -27712,21 +25706,6 @@ GrB_Info GB (_bind1st__isne_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isne_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isne_fc64)
 (
     GrB_Matrix C,
@@ -27737,9 +25716,15 @@ GrB_Info GB (_bind1st_tran__isne_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isne_fc64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isne_fc64)
 (
     GrB_Matrix C,
@@ -27786,7 +25771,6 @@ GrB_Info GB (_Cdense_accumb__isgt_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isgt_int8)
 (
     GrB_Matrix C,
@@ -27794,7 +25778,6 @@ GrB_Info GB (_AxD__isgt_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isgt_int8)
 (
     GrB_Matrix C,
@@ -27802,7 +25785,6 @@ GrB_Info GB (_DxB__isgt_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isgt_int8)
@@ -27824,6 +25806,7 @@ GrB_Info GB (_AaddB__isgt_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isgt_int8)
 (
     GrB_Matrix C,
@@ -27842,7 +25825,6 @@ GrB_Info GB (_AemultB_01__isgt_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isgt_int8)
 (
     GrB_Matrix C,
@@ -27855,7 +25837,6 @@ GrB_Info GB (_AemultB_02__isgt_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isgt_int8)
 (
     GrB_Matrix C,
@@ -27866,7 +25847,6 @@ GrB_Info GB (_AemultB_03__isgt_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isgt_int8)
 (
     GrB_Matrix C,
@@ -27882,6 +25862,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isgt_int8)
 (
     GB_void *Cx_output,
@@ -27891,21 +25872,6 @@ GrB_Info GB (_bind1st__isgt_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isgt_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isgt_int8)
 (
     GrB_Matrix C,
@@ -27916,9 +25882,15 @@ GrB_Info GB (_bind1st_tran__isgt_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isgt_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isgt_int8)
 (
     GrB_Matrix C,
@@ -27965,7 +25937,6 @@ GrB_Info GB (_Cdense_accumb__isgt_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isgt_int16)
 (
     GrB_Matrix C,
@@ -27973,7 +25944,6 @@ GrB_Info GB (_AxD__isgt_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isgt_int16)
 (
     GrB_Matrix C,
@@ -27981,7 +25951,6 @@ GrB_Info GB (_DxB__isgt_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isgt_int16)
@@ -28003,6 +25972,7 @@ GrB_Info GB (_AaddB__isgt_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isgt_int16)
 (
     GrB_Matrix C,
@@ -28021,7 +25991,6 @@ GrB_Info GB (_AemultB_01__isgt_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isgt_int16)
 (
     GrB_Matrix C,
@@ -28034,7 +26003,6 @@ GrB_Info GB (_AemultB_02__isgt_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isgt_int16)
 (
     GrB_Matrix C,
@@ -28045,7 +26013,6 @@ GrB_Info GB (_AemultB_03__isgt_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isgt_int16)
 (
     GrB_Matrix C,
@@ -28061,6 +26028,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isgt_int16)
 (
     GB_void *Cx_output,
@@ -28070,21 +26038,6 @@ GrB_Info GB (_bind1st__isgt_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isgt_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isgt_int16)
 (
     GrB_Matrix C,
@@ -28095,9 +26048,15 @@ GrB_Info GB (_bind1st_tran__isgt_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isgt_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isgt_int16)
 (
     GrB_Matrix C,
@@ -28144,7 +26103,6 @@ GrB_Info GB (_Cdense_accumb__isgt_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isgt_int32)
 (
     GrB_Matrix C,
@@ -28152,7 +26110,6 @@ GrB_Info GB (_AxD__isgt_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isgt_int32)
 (
     GrB_Matrix C,
@@ -28160,7 +26117,6 @@ GrB_Info GB (_DxB__isgt_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isgt_int32)
@@ -28182,6 +26138,7 @@ GrB_Info GB (_AaddB__isgt_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isgt_int32)
 (
     GrB_Matrix C,
@@ -28200,7 +26157,6 @@ GrB_Info GB (_AemultB_01__isgt_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isgt_int32)
 (
     GrB_Matrix C,
@@ -28213,7 +26169,6 @@ GrB_Info GB (_AemultB_02__isgt_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isgt_int32)
 (
     GrB_Matrix C,
@@ -28224,7 +26179,6 @@ GrB_Info GB (_AemultB_03__isgt_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isgt_int32)
 (
     GrB_Matrix C,
@@ -28240,6 +26194,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isgt_int32)
 (
     GB_void *Cx_output,
@@ -28249,21 +26204,6 @@ GrB_Info GB (_bind1st__isgt_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isgt_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isgt_int32)
 (
     GrB_Matrix C,
@@ -28274,9 +26214,15 @@ GrB_Info GB (_bind1st_tran__isgt_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isgt_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isgt_int32)
 (
     GrB_Matrix C,
@@ -28323,7 +26269,6 @@ GrB_Info GB (_Cdense_accumb__isgt_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isgt_int64)
 (
     GrB_Matrix C,
@@ -28331,7 +26276,6 @@ GrB_Info GB (_AxD__isgt_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isgt_int64)
 (
     GrB_Matrix C,
@@ -28339,7 +26283,6 @@ GrB_Info GB (_DxB__isgt_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isgt_int64)
@@ -28361,6 +26304,7 @@ GrB_Info GB (_AaddB__isgt_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isgt_int64)
 (
     GrB_Matrix C,
@@ -28379,7 +26323,6 @@ GrB_Info GB (_AemultB_01__isgt_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isgt_int64)
 (
     GrB_Matrix C,
@@ -28392,7 +26335,6 @@ GrB_Info GB (_AemultB_02__isgt_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isgt_int64)
 (
     GrB_Matrix C,
@@ -28403,7 +26345,6 @@ GrB_Info GB (_AemultB_03__isgt_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isgt_int64)
 (
     GrB_Matrix C,
@@ -28419,6 +26360,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isgt_int64)
 (
     GB_void *Cx_output,
@@ -28428,21 +26370,6 @@ GrB_Info GB (_bind1st__isgt_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isgt_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isgt_int64)
 (
     GrB_Matrix C,
@@ -28453,9 +26380,15 @@ GrB_Info GB (_bind1st_tran__isgt_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isgt_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isgt_int64)
 (
     GrB_Matrix C,
@@ -28502,7 +26435,6 @@ GrB_Info GB (_Cdense_accumb__isgt_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isgt_uint8)
 (
     GrB_Matrix C,
@@ -28510,7 +26442,6 @@ GrB_Info GB (_AxD__isgt_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isgt_uint8)
 (
     GrB_Matrix C,
@@ -28518,7 +26449,6 @@ GrB_Info GB (_DxB__isgt_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isgt_uint8)
@@ -28540,6 +26470,7 @@ GrB_Info GB (_AaddB__isgt_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isgt_uint8)
 (
     GrB_Matrix C,
@@ -28558,7 +26489,6 @@ GrB_Info GB (_AemultB_01__isgt_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isgt_uint8)
 (
     GrB_Matrix C,
@@ -28571,7 +26501,6 @@ GrB_Info GB (_AemultB_02__isgt_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isgt_uint8)
 (
     GrB_Matrix C,
@@ -28582,7 +26511,6 @@ GrB_Info GB (_AemultB_03__isgt_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isgt_uint8)
 (
     GrB_Matrix C,
@@ -28598,6 +26526,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isgt_uint8)
 (
     GB_void *Cx_output,
@@ -28607,21 +26536,6 @@ GrB_Info GB (_bind1st__isgt_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isgt_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isgt_uint8)
 (
     GrB_Matrix C,
@@ -28632,9 +26546,15 @@ GrB_Info GB (_bind1st_tran__isgt_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isgt_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isgt_uint8)
 (
     GrB_Matrix C,
@@ -28681,7 +26601,6 @@ GrB_Info GB (_Cdense_accumb__isgt_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isgt_uint16)
 (
     GrB_Matrix C,
@@ -28689,7 +26608,6 @@ GrB_Info GB (_AxD__isgt_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isgt_uint16)
 (
     GrB_Matrix C,
@@ -28697,7 +26615,6 @@ GrB_Info GB (_DxB__isgt_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isgt_uint16)
@@ -28719,6 +26636,7 @@ GrB_Info GB (_AaddB__isgt_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isgt_uint16)
 (
     GrB_Matrix C,
@@ -28737,7 +26655,6 @@ GrB_Info GB (_AemultB_01__isgt_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isgt_uint16)
 (
     GrB_Matrix C,
@@ -28750,7 +26667,6 @@ GrB_Info GB (_AemultB_02__isgt_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isgt_uint16)
 (
     GrB_Matrix C,
@@ -28761,7 +26677,6 @@ GrB_Info GB (_AemultB_03__isgt_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isgt_uint16)
 (
     GrB_Matrix C,
@@ -28777,6 +26692,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isgt_uint16)
 (
     GB_void *Cx_output,
@@ -28786,21 +26702,6 @@ GrB_Info GB (_bind1st__isgt_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isgt_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isgt_uint16)
 (
     GrB_Matrix C,
@@ -28811,9 +26712,15 @@ GrB_Info GB (_bind1st_tran__isgt_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isgt_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isgt_uint16)
 (
     GrB_Matrix C,
@@ -28860,7 +26767,6 @@ GrB_Info GB (_Cdense_accumb__isgt_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isgt_uint32)
 (
     GrB_Matrix C,
@@ -28868,7 +26774,6 @@ GrB_Info GB (_AxD__isgt_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isgt_uint32)
 (
     GrB_Matrix C,
@@ -28876,7 +26781,6 @@ GrB_Info GB (_DxB__isgt_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isgt_uint32)
@@ -28898,6 +26802,7 @@ GrB_Info GB (_AaddB__isgt_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isgt_uint32)
 (
     GrB_Matrix C,
@@ -28916,7 +26821,6 @@ GrB_Info GB (_AemultB_01__isgt_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isgt_uint32)
 (
     GrB_Matrix C,
@@ -28929,7 +26833,6 @@ GrB_Info GB (_AemultB_02__isgt_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isgt_uint32)
 (
     GrB_Matrix C,
@@ -28940,7 +26843,6 @@ GrB_Info GB (_AemultB_03__isgt_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isgt_uint32)
 (
     GrB_Matrix C,
@@ -28956,6 +26858,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isgt_uint32)
 (
     GB_void *Cx_output,
@@ -28965,21 +26868,6 @@ GrB_Info GB (_bind1st__isgt_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isgt_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isgt_uint32)
 (
     GrB_Matrix C,
@@ -28990,9 +26878,15 @@ GrB_Info GB (_bind1st_tran__isgt_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isgt_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isgt_uint32)
 (
     GrB_Matrix C,
@@ -29039,7 +26933,6 @@ GrB_Info GB (_Cdense_accumb__isgt_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isgt_uint64)
 (
     GrB_Matrix C,
@@ -29047,7 +26940,6 @@ GrB_Info GB (_AxD__isgt_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isgt_uint64)
 (
     GrB_Matrix C,
@@ -29055,7 +26947,6 @@ GrB_Info GB (_DxB__isgt_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isgt_uint64)
@@ -29077,6 +26968,7 @@ GrB_Info GB (_AaddB__isgt_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isgt_uint64)
 (
     GrB_Matrix C,
@@ -29095,7 +26987,6 @@ GrB_Info GB (_AemultB_01__isgt_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isgt_uint64)
 (
     GrB_Matrix C,
@@ -29108,7 +26999,6 @@ GrB_Info GB (_AemultB_02__isgt_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isgt_uint64)
 (
     GrB_Matrix C,
@@ -29119,7 +27009,6 @@ GrB_Info GB (_AemultB_03__isgt_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isgt_uint64)
 (
     GrB_Matrix C,
@@ -29135,6 +27024,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isgt_uint64)
 (
     GB_void *Cx_output,
@@ -29144,21 +27034,6 @@ GrB_Info GB (_bind1st__isgt_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isgt_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isgt_uint64)
 (
     GrB_Matrix C,
@@ -29169,9 +27044,15 @@ GrB_Info GB (_bind1st_tran__isgt_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isgt_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isgt_uint64)
 (
     GrB_Matrix C,
@@ -29218,7 +27099,6 @@ GrB_Info GB (_Cdense_accumb__isgt_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isgt_fp32)
 (
     GrB_Matrix C,
@@ -29226,7 +27106,6 @@ GrB_Info GB (_AxD__isgt_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isgt_fp32)
 (
     GrB_Matrix C,
@@ -29234,7 +27113,6 @@ GrB_Info GB (_DxB__isgt_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isgt_fp32)
@@ -29256,6 +27134,7 @@ GrB_Info GB (_AaddB__isgt_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isgt_fp32)
 (
     GrB_Matrix C,
@@ -29274,7 +27153,6 @@ GrB_Info GB (_AemultB_01__isgt_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isgt_fp32)
 (
     GrB_Matrix C,
@@ -29287,7 +27165,6 @@ GrB_Info GB (_AemultB_02__isgt_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isgt_fp32)
 (
     GrB_Matrix C,
@@ -29298,7 +27175,6 @@ GrB_Info GB (_AemultB_03__isgt_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isgt_fp32)
 (
     GrB_Matrix C,
@@ -29314,6 +27190,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isgt_fp32)
 (
     GB_void *Cx_output,
@@ -29323,21 +27200,6 @@ GrB_Info GB (_bind1st__isgt_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isgt_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isgt_fp32)
 (
     GrB_Matrix C,
@@ -29348,9 +27210,15 @@ GrB_Info GB (_bind1st_tran__isgt_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isgt_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isgt_fp32)
 (
     GrB_Matrix C,
@@ -29397,7 +27265,6 @@ GrB_Info GB (_Cdense_accumb__isgt_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isgt_fp64)
 (
     GrB_Matrix C,
@@ -29405,7 +27272,6 @@ GrB_Info GB (_AxD__isgt_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isgt_fp64)
 (
     GrB_Matrix C,
@@ -29413,7 +27279,6 @@ GrB_Info GB (_DxB__isgt_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isgt_fp64)
@@ -29435,6 +27300,7 @@ GrB_Info GB (_AaddB__isgt_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isgt_fp64)
 (
     GrB_Matrix C,
@@ -29453,7 +27319,6 @@ GrB_Info GB (_AemultB_01__isgt_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isgt_fp64)
 (
     GrB_Matrix C,
@@ -29466,7 +27331,6 @@ GrB_Info GB (_AemultB_02__isgt_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isgt_fp64)
 (
     GrB_Matrix C,
@@ -29477,7 +27341,6 @@ GrB_Info GB (_AemultB_03__isgt_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isgt_fp64)
 (
     GrB_Matrix C,
@@ -29493,6 +27356,7 @@ GrB_Info GB (_AemultB_bitmap__isgt_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isgt_fp64)
 (
     GB_void *Cx_output,
@@ -29502,21 +27366,6 @@ GrB_Info GB (_bind1st__isgt_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isgt_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isgt_fp64)
 (
     GrB_Matrix C,
@@ -29527,9 +27376,15 @@ GrB_Info GB (_bind1st_tran__isgt_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isgt_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isgt_fp64)
 (
     GrB_Matrix C,
@@ -29576,7 +27431,6 @@ GrB_Info GB (_Cdense_accumb__islt_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__islt_int8)
 (
     GrB_Matrix C,
@@ -29584,7 +27438,6 @@ GrB_Info GB (_AxD__islt_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__islt_int8)
 (
     GrB_Matrix C,
@@ -29592,7 +27445,6 @@ GrB_Info GB (_DxB__islt_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__islt_int8)
@@ -29614,6 +27466,7 @@ GrB_Info GB (_AaddB__islt_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__islt_int8)
 (
     GrB_Matrix C,
@@ -29632,7 +27485,6 @@ GrB_Info GB (_AemultB_01__islt_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__islt_int8)
 (
     GrB_Matrix C,
@@ -29645,7 +27497,6 @@ GrB_Info GB (_AemultB_02__islt_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__islt_int8)
 (
     GrB_Matrix C,
@@ -29656,7 +27507,6 @@ GrB_Info GB (_AemultB_03__islt_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__islt_int8)
 (
     GrB_Matrix C,
@@ -29672,6 +27522,7 @@ GrB_Info GB (_AemultB_bitmap__islt_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__islt_int8)
 (
     GB_void *Cx_output,
@@ -29681,21 +27532,6 @@ GrB_Info GB (_bind1st__islt_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__islt_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__islt_int8)
 (
     GrB_Matrix C,
@@ -29706,9 +27542,15 @@ GrB_Info GB (_bind1st_tran__islt_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__islt_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__islt_int8)
 (
     GrB_Matrix C,
@@ -29755,7 +27597,6 @@ GrB_Info GB (_Cdense_accumb__islt_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__islt_int16)
 (
     GrB_Matrix C,
@@ -29763,7 +27604,6 @@ GrB_Info GB (_AxD__islt_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__islt_int16)
 (
     GrB_Matrix C,
@@ -29771,7 +27611,6 @@ GrB_Info GB (_DxB__islt_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__islt_int16)
@@ -29793,6 +27632,7 @@ GrB_Info GB (_AaddB__islt_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__islt_int16)
 (
     GrB_Matrix C,
@@ -29811,7 +27651,6 @@ GrB_Info GB (_AemultB_01__islt_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__islt_int16)
 (
     GrB_Matrix C,
@@ -29824,7 +27663,6 @@ GrB_Info GB (_AemultB_02__islt_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__islt_int16)
 (
     GrB_Matrix C,
@@ -29835,7 +27673,6 @@ GrB_Info GB (_AemultB_03__islt_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__islt_int16)
 (
     GrB_Matrix C,
@@ -29851,6 +27688,7 @@ GrB_Info GB (_AemultB_bitmap__islt_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__islt_int16)
 (
     GB_void *Cx_output,
@@ -29860,21 +27698,6 @@ GrB_Info GB (_bind1st__islt_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__islt_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__islt_int16)
 (
     GrB_Matrix C,
@@ -29885,9 +27708,15 @@ GrB_Info GB (_bind1st_tran__islt_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__islt_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__islt_int16)
 (
     GrB_Matrix C,
@@ -29934,7 +27763,6 @@ GrB_Info GB (_Cdense_accumb__islt_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__islt_int32)
 (
     GrB_Matrix C,
@@ -29942,7 +27770,6 @@ GrB_Info GB (_AxD__islt_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__islt_int32)
 (
     GrB_Matrix C,
@@ -29950,7 +27777,6 @@ GrB_Info GB (_DxB__islt_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__islt_int32)
@@ -29972,6 +27798,7 @@ GrB_Info GB (_AaddB__islt_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__islt_int32)
 (
     GrB_Matrix C,
@@ -29990,7 +27817,6 @@ GrB_Info GB (_AemultB_01__islt_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__islt_int32)
 (
     GrB_Matrix C,
@@ -30003,7 +27829,6 @@ GrB_Info GB (_AemultB_02__islt_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__islt_int32)
 (
     GrB_Matrix C,
@@ -30014,7 +27839,6 @@ GrB_Info GB (_AemultB_03__islt_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__islt_int32)
 (
     GrB_Matrix C,
@@ -30030,6 +27854,7 @@ GrB_Info GB (_AemultB_bitmap__islt_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__islt_int32)
 (
     GB_void *Cx_output,
@@ -30039,21 +27864,6 @@ GrB_Info GB (_bind1st__islt_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__islt_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__islt_int32)
 (
     GrB_Matrix C,
@@ -30064,9 +27874,15 @@ GrB_Info GB (_bind1st_tran__islt_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__islt_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__islt_int32)
 (
     GrB_Matrix C,
@@ -30113,7 +27929,6 @@ GrB_Info GB (_Cdense_accumb__islt_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__islt_int64)
 (
     GrB_Matrix C,
@@ -30121,7 +27936,6 @@ GrB_Info GB (_AxD__islt_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__islt_int64)
 (
     GrB_Matrix C,
@@ -30129,7 +27943,6 @@ GrB_Info GB (_DxB__islt_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__islt_int64)
@@ -30151,6 +27964,7 @@ GrB_Info GB (_AaddB__islt_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__islt_int64)
 (
     GrB_Matrix C,
@@ -30169,7 +27983,6 @@ GrB_Info GB (_AemultB_01__islt_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__islt_int64)
 (
     GrB_Matrix C,
@@ -30182,7 +27995,6 @@ GrB_Info GB (_AemultB_02__islt_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__islt_int64)
 (
     GrB_Matrix C,
@@ -30193,7 +28005,6 @@ GrB_Info GB (_AemultB_03__islt_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__islt_int64)
 (
     GrB_Matrix C,
@@ -30209,6 +28020,7 @@ GrB_Info GB (_AemultB_bitmap__islt_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__islt_int64)
 (
     GB_void *Cx_output,
@@ -30218,21 +28030,6 @@ GrB_Info GB (_bind1st__islt_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__islt_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__islt_int64)
 (
     GrB_Matrix C,
@@ -30243,9 +28040,15 @@ GrB_Info GB (_bind1st_tran__islt_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__islt_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__islt_int64)
 (
     GrB_Matrix C,
@@ -30292,7 +28095,6 @@ GrB_Info GB (_Cdense_accumb__islt_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__islt_uint8)
 (
     GrB_Matrix C,
@@ -30300,7 +28102,6 @@ GrB_Info GB (_AxD__islt_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__islt_uint8)
 (
     GrB_Matrix C,
@@ -30308,7 +28109,6 @@ GrB_Info GB (_DxB__islt_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__islt_uint8)
@@ -30330,6 +28130,7 @@ GrB_Info GB (_AaddB__islt_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__islt_uint8)
 (
     GrB_Matrix C,
@@ -30348,7 +28149,6 @@ GrB_Info GB (_AemultB_01__islt_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__islt_uint8)
 (
     GrB_Matrix C,
@@ -30361,7 +28161,6 @@ GrB_Info GB (_AemultB_02__islt_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__islt_uint8)
 (
     GrB_Matrix C,
@@ -30372,7 +28171,6 @@ GrB_Info GB (_AemultB_03__islt_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__islt_uint8)
 (
     GrB_Matrix C,
@@ -30388,6 +28186,7 @@ GrB_Info GB (_AemultB_bitmap__islt_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__islt_uint8)
 (
     GB_void *Cx_output,
@@ -30397,21 +28196,6 @@ GrB_Info GB (_bind1st__islt_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__islt_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__islt_uint8)
 (
     GrB_Matrix C,
@@ -30422,9 +28206,15 @@ GrB_Info GB (_bind1st_tran__islt_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__islt_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__islt_uint8)
 (
     GrB_Matrix C,
@@ -30471,7 +28261,6 @@ GrB_Info GB (_Cdense_accumb__islt_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__islt_uint16)
 (
     GrB_Matrix C,
@@ -30479,7 +28268,6 @@ GrB_Info GB (_AxD__islt_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__islt_uint16)
 (
     GrB_Matrix C,
@@ -30487,7 +28275,6 @@ GrB_Info GB (_DxB__islt_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__islt_uint16)
@@ -30509,6 +28296,7 @@ GrB_Info GB (_AaddB__islt_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__islt_uint16)
 (
     GrB_Matrix C,
@@ -30527,7 +28315,6 @@ GrB_Info GB (_AemultB_01__islt_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__islt_uint16)
 (
     GrB_Matrix C,
@@ -30540,7 +28327,6 @@ GrB_Info GB (_AemultB_02__islt_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__islt_uint16)
 (
     GrB_Matrix C,
@@ -30551,7 +28337,6 @@ GrB_Info GB (_AemultB_03__islt_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__islt_uint16)
 (
     GrB_Matrix C,
@@ -30567,6 +28352,7 @@ GrB_Info GB (_AemultB_bitmap__islt_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__islt_uint16)
 (
     GB_void *Cx_output,
@@ -30576,21 +28362,6 @@ GrB_Info GB (_bind1st__islt_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__islt_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__islt_uint16)
 (
     GrB_Matrix C,
@@ -30601,9 +28372,15 @@ GrB_Info GB (_bind1st_tran__islt_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__islt_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__islt_uint16)
 (
     GrB_Matrix C,
@@ -30650,7 +28427,6 @@ GrB_Info GB (_Cdense_accumb__islt_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__islt_uint32)
 (
     GrB_Matrix C,
@@ -30658,7 +28434,6 @@ GrB_Info GB (_AxD__islt_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__islt_uint32)
 (
     GrB_Matrix C,
@@ -30666,7 +28441,6 @@ GrB_Info GB (_DxB__islt_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__islt_uint32)
@@ -30688,6 +28462,7 @@ GrB_Info GB (_AaddB__islt_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__islt_uint32)
 (
     GrB_Matrix C,
@@ -30706,7 +28481,6 @@ GrB_Info GB (_AemultB_01__islt_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__islt_uint32)
 (
     GrB_Matrix C,
@@ -30719,7 +28493,6 @@ GrB_Info GB (_AemultB_02__islt_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__islt_uint32)
 (
     GrB_Matrix C,
@@ -30730,7 +28503,6 @@ GrB_Info GB (_AemultB_03__islt_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__islt_uint32)
 (
     GrB_Matrix C,
@@ -30746,6 +28518,7 @@ GrB_Info GB (_AemultB_bitmap__islt_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__islt_uint32)
 (
     GB_void *Cx_output,
@@ -30755,21 +28528,6 @@ GrB_Info GB (_bind1st__islt_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__islt_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__islt_uint32)
 (
     GrB_Matrix C,
@@ -30780,9 +28538,15 @@ GrB_Info GB (_bind1st_tran__islt_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__islt_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__islt_uint32)
 (
     GrB_Matrix C,
@@ -30829,7 +28593,6 @@ GrB_Info GB (_Cdense_accumb__islt_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__islt_uint64)
 (
     GrB_Matrix C,
@@ -30837,7 +28600,6 @@ GrB_Info GB (_AxD__islt_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__islt_uint64)
 (
     GrB_Matrix C,
@@ -30845,7 +28607,6 @@ GrB_Info GB (_DxB__islt_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__islt_uint64)
@@ -30867,6 +28628,7 @@ GrB_Info GB (_AaddB__islt_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__islt_uint64)
 (
     GrB_Matrix C,
@@ -30885,7 +28647,6 @@ GrB_Info GB (_AemultB_01__islt_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__islt_uint64)
 (
     GrB_Matrix C,
@@ -30898,7 +28659,6 @@ GrB_Info GB (_AemultB_02__islt_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__islt_uint64)
 (
     GrB_Matrix C,
@@ -30909,7 +28669,6 @@ GrB_Info GB (_AemultB_03__islt_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__islt_uint64)
 (
     GrB_Matrix C,
@@ -30925,6 +28684,7 @@ GrB_Info GB (_AemultB_bitmap__islt_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__islt_uint64)
 (
     GB_void *Cx_output,
@@ -30934,21 +28694,6 @@ GrB_Info GB (_bind1st__islt_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__islt_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__islt_uint64)
 (
     GrB_Matrix C,
@@ -30959,9 +28704,15 @@ GrB_Info GB (_bind1st_tran__islt_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__islt_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__islt_uint64)
 (
     GrB_Matrix C,
@@ -31008,7 +28759,6 @@ GrB_Info GB (_Cdense_accumb__islt_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__islt_fp32)
 (
     GrB_Matrix C,
@@ -31016,7 +28766,6 @@ GrB_Info GB (_AxD__islt_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__islt_fp32)
 (
     GrB_Matrix C,
@@ -31024,7 +28773,6 @@ GrB_Info GB (_DxB__islt_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__islt_fp32)
@@ -31046,6 +28794,7 @@ GrB_Info GB (_AaddB__islt_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__islt_fp32)
 (
     GrB_Matrix C,
@@ -31064,7 +28813,6 @@ GrB_Info GB (_AemultB_01__islt_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__islt_fp32)
 (
     GrB_Matrix C,
@@ -31077,7 +28825,6 @@ GrB_Info GB (_AemultB_02__islt_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__islt_fp32)
 (
     GrB_Matrix C,
@@ -31088,7 +28835,6 @@ GrB_Info GB (_AemultB_03__islt_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__islt_fp32)
 (
     GrB_Matrix C,
@@ -31104,6 +28850,7 @@ GrB_Info GB (_AemultB_bitmap__islt_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__islt_fp32)
 (
     GB_void *Cx_output,
@@ -31113,21 +28860,6 @@ GrB_Info GB (_bind1st__islt_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__islt_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__islt_fp32)
 (
     GrB_Matrix C,
@@ -31138,9 +28870,15 @@ GrB_Info GB (_bind1st_tran__islt_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__islt_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__islt_fp32)
 (
     GrB_Matrix C,
@@ -31187,7 +28925,6 @@ GrB_Info GB (_Cdense_accumb__islt_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__islt_fp64)
 (
     GrB_Matrix C,
@@ -31195,7 +28932,6 @@ GrB_Info GB (_AxD__islt_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__islt_fp64)
 (
     GrB_Matrix C,
@@ -31203,7 +28939,6 @@ GrB_Info GB (_DxB__islt_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__islt_fp64)
@@ -31225,6 +28960,7 @@ GrB_Info GB (_AaddB__islt_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__islt_fp64)
 (
     GrB_Matrix C,
@@ -31243,7 +28979,6 @@ GrB_Info GB (_AemultB_01__islt_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__islt_fp64)
 (
     GrB_Matrix C,
@@ -31256,7 +28991,6 @@ GrB_Info GB (_AemultB_02__islt_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__islt_fp64)
 (
     GrB_Matrix C,
@@ -31267,7 +29001,6 @@ GrB_Info GB (_AemultB_03__islt_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__islt_fp64)
 (
     GrB_Matrix C,
@@ -31283,6 +29016,7 @@ GrB_Info GB (_AemultB_bitmap__islt_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__islt_fp64)
 (
     GB_void *Cx_output,
@@ -31292,21 +29026,6 @@ GrB_Info GB (_bind1st__islt_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__islt_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__islt_fp64)
 (
     GrB_Matrix C,
@@ -31317,9 +29036,15 @@ GrB_Info GB (_bind1st_tran__islt_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__islt_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__islt_fp64)
 (
     GrB_Matrix C,
@@ -31366,7 +29091,6 @@ GrB_Info GB (_Cdense_accumb__isge_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isge_int8)
 (
     GrB_Matrix C,
@@ -31374,7 +29098,6 @@ GrB_Info GB (_AxD__isge_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isge_int8)
 (
     GrB_Matrix C,
@@ -31382,7 +29105,6 @@ GrB_Info GB (_DxB__isge_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isge_int8)
@@ -31404,6 +29126,7 @@ GrB_Info GB (_AaddB__isge_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isge_int8)
 (
     GrB_Matrix C,
@@ -31422,7 +29145,6 @@ GrB_Info GB (_AemultB_01__isge_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isge_int8)
 (
     GrB_Matrix C,
@@ -31435,7 +29157,6 @@ GrB_Info GB (_AemultB_02__isge_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isge_int8)
 (
     GrB_Matrix C,
@@ -31446,7 +29167,6 @@ GrB_Info GB (_AemultB_03__isge_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isge_int8)
 (
     GrB_Matrix C,
@@ -31462,6 +29182,7 @@ GrB_Info GB (_AemultB_bitmap__isge_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isge_int8)
 (
     GB_void *Cx_output,
@@ -31471,21 +29192,6 @@ GrB_Info GB (_bind1st__isge_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isge_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isge_int8)
 (
     GrB_Matrix C,
@@ -31496,9 +29202,15 @@ GrB_Info GB (_bind1st_tran__isge_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isge_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isge_int8)
 (
     GrB_Matrix C,
@@ -31545,7 +29257,6 @@ GrB_Info GB (_Cdense_accumb__isge_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isge_int16)
 (
     GrB_Matrix C,
@@ -31553,7 +29264,6 @@ GrB_Info GB (_AxD__isge_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isge_int16)
 (
     GrB_Matrix C,
@@ -31561,7 +29271,6 @@ GrB_Info GB (_DxB__isge_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isge_int16)
@@ -31583,6 +29292,7 @@ GrB_Info GB (_AaddB__isge_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isge_int16)
 (
     GrB_Matrix C,
@@ -31601,7 +29311,6 @@ GrB_Info GB (_AemultB_01__isge_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isge_int16)
 (
     GrB_Matrix C,
@@ -31614,7 +29323,6 @@ GrB_Info GB (_AemultB_02__isge_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isge_int16)
 (
     GrB_Matrix C,
@@ -31625,7 +29333,6 @@ GrB_Info GB (_AemultB_03__isge_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isge_int16)
 (
     GrB_Matrix C,
@@ -31641,6 +29348,7 @@ GrB_Info GB (_AemultB_bitmap__isge_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isge_int16)
 (
     GB_void *Cx_output,
@@ -31650,21 +29358,6 @@ GrB_Info GB (_bind1st__isge_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isge_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isge_int16)
 (
     GrB_Matrix C,
@@ -31675,9 +29368,15 @@ GrB_Info GB (_bind1st_tran__isge_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isge_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isge_int16)
 (
     GrB_Matrix C,
@@ -31724,7 +29423,6 @@ GrB_Info GB (_Cdense_accumb__isge_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isge_int32)
 (
     GrB_Matrix C,
@@ -31732,7 +29430,6 @@ GrB_Info GB (_AxD__isge_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isge_int32)
 (
     GrB_Matrix C,
@@ -31740,7 +29437,6 @@ GrB_Info GB (_DxB__isge_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isge_int32)
@@ -31762,6 +29458,7 @@ GrB_Info GB (_AaddB__isge_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isge_int32)
 (
     GrB_Matrix C,
@@ -31780,7 +29477,6 @@ GrB_Info GB (_AemultB_01__isge_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isge_int32)
 (
     GrB_Matrix C,
@@ -31793,7 +29489,6 @@ GrB_Info GB (_AemultB_02__isge_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isge_int32)
 (
     GrB_Matrix C,
@@ -31804,7 +29499,6 @@ GrB_Info GB (_AemultB_03__isge_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isge_int32)
 (
     GrB_Matrix C,
@@ -31820,6 +29514,7 @@ GrB_Info GB (_AemultB_bitmap__isge_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isge_int32)
 (
     GB_void *Cx_output,
@@ -31829,21 +29524,6 @@ GrB_Info GB (_bind1st__isge_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isge_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isge_int32)
 (
     GrB_Matrix C,
@@ -31854,9 +29534,15 @@ GrB_Info GB (_bind1st_tran__isge_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isge_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isge_int32)
 (
     GrB_Matrix C,
@@ -31903,7 +29589,6 @@ GrB_Info GB (_Cdense_accumb__isge_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isge_int64)
 (
     GrB_Matrix C,
@@ -31911,7 +29596,6 @@ GrB_Info GB (_AxD__isge_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isge_int64)
 (
     GrB_Matrix C,
@@ -31919,7 +29603,6 @@ GrB_Info GB (_DxB__isge_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isge_int64)
@@ -31941,6 +29624,7 @@ GrB_Info GB (_AaddB__isge_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isge_int64)
 (
     GrB_Matrix C,
@@ -31959,7 +29643,6 @@ GrB_Info GB (_AemultB_01__isge_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isge_int64)
 (
     GrB_Matrix C,
@@ -31972,7 +29655,6 @@ GrB_Info GB (_AemultB_02__isge_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isge_int64)
 (
     GrB_Matrix C,
@@ -31983,7 +29665,6 @@ GrB_Info GB (_AemultB_03__isge_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isge_int64)
 (
     GrB_Matrix C,
@@ -31999,6 +29680,7 @@ GrB_Info GB (_AemultB_bitmap__isge_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isge_int64)
 (
     GB_void *Cx_output,
@@ -32008,21 +29690,6 @@ GrB_Info GB (_bind1st__isge_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isge_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isge_int64)
 (
     GrB_Matrix C,
@@ -32033,9 +29700,15 @@ GrB_Info GB (_bind1st_tran__isge_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isge_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isge_int64)
 (
     GrB_Matrix C,
@@ -32082,7 +29755,6 @@ GrB_Info GB (_Cdense_accumb__isge_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isge_uint8)
 (
     GrB_Matrix C,
@@ -32090,7 +29762,6 @@ GrB_Info GB (_AxD__isge_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isge_uint8)
 (
     GrB_Matrix C,
@@ -32098,7 +29769,6 @@ GrB_Info GB (_DxB__isge_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isge_uint8)
@@ -32120,6 +29790,7 @@ GrB_Info GB (_AaddB__isge_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isge_uint8)
 (
     GrB_Matrix C,
@@ -32138,7 +29809,6 @@ GrB_Info GB (_AemultB_01__isge_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isge_uint8)
 (
     GrB_Matrix C,
@@ -32151,7 +29821,6 @@ GrB_Info GB (_AemultB_02__isge_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isge_uint8)
 (
     GrB_Matrix C,
@@ -32162,7 +29831,6 @@ GrB_Info GB (_AemultB_03__isge_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isge_uint8)
 (
     GrB_Matrix C,
@@ -32178,6 +29846,7 @@ GrB_Info GB (_AemultB_bitmap__isge_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isge_uint8)
 (
     GB_void *Cx_output,
@@ -32187,21 +29856,6 @@ GrB_Info GB (_bind1st__isge_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isge_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isge_uint8)
 (
     GrB_Matrix C,
@@ -32212,9 +29866,15 @@ GrB_Info GB (_bind1st_tran__isge_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isge_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isge_uint8)
 (
     GrB_Matrix C,
@@ -32261,7 +29921,6 @@ GrB_Info GB (_Cdense_accumb__isge_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isge_uint16)
 (
     GrB_Matrix C,
@@ -32269,7 +29928,6 @@ GrB_Info GB (_AxD__isge_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isge_uint16)
 (
     GrB_Matrix C,
@@ -32277,7 +29935,6 @@ GrB_Info GB (_DxB__isge_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isge_uint16)
@@ -32299,6 +29956,7 @@ GrB_Info GB (_AaddB__isge_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isge_uint16)
 (
     GrB_Matrix C,
@@ -32317,7 +29975,6 @@ GrB_Info GB (_AemultB_01__isge_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isge_uint16)
 (
     GrB_Matrix C,
@@ -32330,7 +29987,6 @@ GrB_Info GB (_AemultB_02__isge_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isge_uint16)
 (
     GrB_Matrix C,
@@ -32341,7 +29997,6 @@ GrB_Info GB (_AemultB_03__isge_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isge_uint16)
 (
     GrB_Matrix C,
@@ -32357,6 +30012,7 @@ GrB_Info GB (_AemultB_bitmap__isge_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isge_uint16)
 (
     GB_void *Cx_output,
@@ -32366,21 +30022,6 @@ GrB_Info GB (_bind1st__isge_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isge_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isge_uint16)
 (
     GrB_Matrix C,
@@ -32391,9 +30032,15 @@ GrB_Info GB (_bind1st_tran__isge_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isge_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isge_uint16)
 (
     GrB_Matrix C,
@@ -32440,7 +30087,6 @@ GrB_Info GB (_Cdense_accumb__isge_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isge_uint32)
 (
     GrB_Matrix C,
@@ -32448,7 +30094,6 @@ GrB_Info GB (_AxD__isge_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isge_uint32)
 (
     GrB_Matrix C,
@@ -32456,7 +30101,6 @@ GrB_Info GB (_DxB__isge_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isge_uint32)
@@ -32478,6 +30122,7 @@ GrB_Info GB (_AaddB__isge_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isge_uint32)
 (
     GrB_Matrix C,
@@ -32496,7 +30141,6 @@ GrB_Info GB (_AemultB_01__isge_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isge_uint32)
 (
     GrB_Matrix C,
@@ -32509,7 +30153,6 @@ GrB_Info GB (_AemultB_02__isge_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isge_uint32)
 (
     GrB_Matrix C,
@@ -32520,7 +30163,6 @@ GrB_Info GB (_AemultB_03__isge_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isge_uint32)
 (
     GrB_Matrix C,
@@ -32536,6 +30178,7 @@ GrB_Info GB (_AemultB_bitmap__isge_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isge_uint32)
 (
     GB_void *Cx_output,
@@ -32545,21 +30188,6 @@ GrB_Info GB (_bind1st__isge_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isge_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isge_uint32)
 (
     GrB_Matrix C,
@@ -32570,9 +30198,15 @@ GrB_Info GB (_bind1st_tran__isge_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isge_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isge_uint32)
 (
     GrB_Matrix C,
@@ -32619,7 +30253,6 @@ GrB_Info GB (_Cdense_accumb__isge_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isge_uint64)
 (
     GrB_Matrix C,
@@ -32627,7 +30260,6 @@ GrB_Info GB (_AxD__isge_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isge_uint64)
 (
     GrB_Matrix C,
@@ -32635,7 +30267,6 @@ GrB_Info GB (_DxB__isge_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isge_uint64)
@@ -32657,6 +30288,7 @@ GrB_Info GB (_AaddB__isge_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isge_uint64)
 (
     GrB_Matrix C,
@@ -32675,7 +30307,6 @@ GrB_Info GB (_AemultB_01__isge_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isge_uint64)
 (
     GrB_Matrix C,
@@ -32688,7 +30319,6 @@ GrB_Info GB (_AemultB_02__isge_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isge_uint64)
 (
     GrB_Matrix C,
@@ -32699,7 +30329,6 @@ GrB_Info GB (_AemultB_03__isge_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isge_uint64)
 (
     GrB_Matrix C,
@@ -32715,6 +30344,7 @@ GrB_Info GB (_AemultB_bitmap__isge_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isge_uint64)
 (
     GB_void *Cx_output,
@@ -32724,21 +30354,6 @@ GrB_Info GB (_bind1st__isge_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isge_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isge_uint64)
 (
     GrB_Matrix C,
@@ -32749,9 +30364,15 @@ GrB_Info GB (_bind1st_tran__isge_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isge_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isge_uint64)
 (
     GrB_Matrix C,
@@ -32798,7 +30419,6 @@ GrB_Info GB (_Cdense_accumb__isge_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isge_fp32)
 (
     GrB_Matrix C,
@@ -32806,7 +30426,6 @@ GrB_Info GB (_AxD__isge_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isge_fp32)
 (
     GrB_Matrix C,
@@ -32814,7 +30433,6 @@ GrB_Info GB (_DxB__isge_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isge_fp32)
@@ -32836,6 +30454,7 @@ GrB_Info GB (_AaddB__isge_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isge_fp32)
 (
     GrB_Matrix C,
@@ -32854,7 +30473,6 @@ GrB_Info GB (_AemultB_01__isge_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isge_fp32)
 (
     GrB_Matrix C,
@@ -32867,7 +30485,6 @@ GrB_Info GB (_AemultB_02__isge_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isge_fp32)
 (
     GrB_Matrix C,
@@ -32878,7 +30495,6 @@ GrB_Info GB (_AemultB_03__isge_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isge_fp32)
 (
     GrB_Matrix C,
@@ -32894,6 +30510,7 @@ GrB_Info GB (_AemultB_bitmap__isge_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isge_fp32)
 (
     GB_void *Cx_output,
@@ -32903,21 +30520,6 @@ GrB_Info GB (_bind1st__isge_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isge_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isge_fp32)
 (
     GrB_Matrix C,
@@ -32928,9 +30530,15 @@ GrB_Info GB (_bind1st_tran__isge_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isge_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isge_fp32)
 (
     GrB_Matrix C,
@@ -32977,7 +30585,6 @@ GrB_Info GB (_Cdense_accumb__isge_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isge_fp64)
 (
     GrB_Matrix C,
@@ -32985,7 +30592,6 @@ GrB_Info GB (_AxD__isge_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isge_fp64)
 (
     GrB_Matrix C,
@@ -32993,7 +30599,6 @@ GrB_Info GB (_DxB__isge_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isge_fp64)
@@ -33015,6 +30620,7 @@ GrB_Info GB (_AaddB__isge_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isge_fp64)
 (
     GrB_Matrix C,
@@ -33033,7 +30639,6 @@ GrB_Info GB (_AemultB_01__isge_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isge_fp64)
 (
     GrB_Matrix C,
@@ -33046,7 +30651,6 @@ GrB_Info GB (_AemultB_02__isge_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isge_fp64)
 (
     GrB_Matrix C,
@@ -33057,7 +30661,6 @@ GrB_Info GB (_AemultB_03__isge_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isge_fp64)
 (
     GrB_Matrix C,
@@ -33073,6 +30676,7 @@ GrB_Info GB (_AemultB_bitmap__isge_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isge_fp64)
 (
     GB_void *Cx_output,
@@ -33082,21 +30686,6 @@ GrB_Info GB (_bind1st__isge_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isge_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isge_fp64)
 (
     GrB_Matrix C,
@@ -33107,9 +30696,15 @@ GrB_Info GB (_bind1st_tran__isge_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isge_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isge_fp64)
 (
     GrB_Matrix C,
@@ -33156,7 +30751,6 @@ GrB_Info GB (_Cdense_accumb__isle_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isle_int8)
 (
     GrB_Matrix C,
@@ -33164,7 +30758,6 @@ GrB_Info GB (_AxD__isle_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isle_int8)
 (
     GrB_Matrix C,
@@ -33172,7 +30765,6 @@ GrB_Info GB (_DxB__isle_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isle_int8)
@@ -33194,6 +30786,7 @@ GrB_Info GB (_AaddB__isle_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isle_int8)
 (
     GrB_Matrix C,
@@ -33212,7 +30805,6 @@ GrB_Info GB (_AemultB_01__isle_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isle_int8)
 (
     GrB_Matrix C,
@@ -33225,7 +30817,6 @@ GrB_Info GB (_AemultB_02__isle_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isle_int8)
 (
     GrB_Matrix C,
@@ -33236,7 +30827,6 @@ GrB_Info GB (_AemultB_03__isle_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isle_int8)
 (
     GrB_Matrix C,
@@ -33252,6 +30842,7 @@ GrB_Info GB (_AemultB_bitmap__isle_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isle_int8)
 (
     GB_void *Cx_output,
@@ -33261,21 +30852,6 @@ GrB_Info GB (_bind1st__isle_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isle_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isle_int8)
 (
     GrB_Matrix C,
@@ -33286,9 +30862,15 @@ GrB_Info GB (_bind1st_tran__isle_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isle_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isle_int8)
 (
     GrB_Matrix C,
@@ -33335,7 +30917,6 @@ GrB_Info GB (_Cdense_accumb__isle_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isle_int16)
 (
     GrB_Matrix C,
@@ -33343,7 +30924,6 @@ GrB_Info GB (_AxD__isle_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isle_int16)
 (
     GrB_Matrix C,
@@ -33351,7 +30931,6 @@ GrB_Info GB (_DxB__isle_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isle_int16)
@@ -33373,6 +30952,7 @@ GrB_Info GB (_AaddB__isle_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isle_int16)
 (
     GrB_Matrix C,
@@ -33391,7 +30971,6 @@ GrB_Info GB (_AemultB_01__isle_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isle_int16)
 (
     GrB_Matrix C,
@@ -33404,7 +30983,6 @@ GrB_Info GB (_AemultB_02__isle_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isle_int16)
 (
     GrB_Matrix C,
@@ -33415,7 +30993,6 @@ GrB_Info GB (_AemultB_03__isle_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isle_int16)
 (
     GrB_Matrix C,
@@ -33431,6 +31008,7 @@ GrB_Info GB (_AemultB_bitmap__isle_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isle_int16)
 (
     GB_void *Cx_output,
@@ -33440,21 +31018,6 @@ GrB_Info GB (_bind1st__isle_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isle_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isle_int16)
 (
     GrB_Matrix C,
@@ -33465,9 +31028,15 @@ GrB_Info GB (_bind1st_tran__isle_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isle_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isle_int16)
 (
     GrB_Matrix C,
@@ -33514,7 +31083,6 @@ GrB_Info GB (_Cdense_accumb__isle_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isle_int32)
 (
     GrB_Matrix C,
@@ -33522,7 +31090,6 @@ GrB_Info GB (_AxD__isle_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isle_int32)
 (
     GrB_Matrix C,
@@ -33530,7 +31097,6 @@ GrB_Info GB (_DxB__isle_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isle_int32)
@@ -33552,6 +31118,7 @@ GrB_Info GB (_AaddB__isle_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isle_int32)
 (
     GrB_Matrix C,
@@ -33570,7 +31137,6 @@ GrB_Info GB (_AemultB_01__isle_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isle_int32)
 (
     GrB_Matrix C,
@@ -33583,7 +31149,6 @@ GrB_Info GB (_AemultB_02__isle_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isle_int32)
 (
     GrB_Matrix C,
@@ -33594,7 +31159,6 @@ GrB_Info GB (_AemultB_03__isle_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isle_int32)
 (
     GrB_Matrix C,
@@ -33610,6 +31174,7 @@ GrB_Info GB (_AemultB_bitmap__isle_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isle_int32)
 (
     GB_void *Cx_output,
@@ -33619,21 +31184,6 @@ GrB_Info GB (_bind1st__isle_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isle_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isle_int32)
 (
     GrB_Matrix C,
@@ -33644,9 +31194,15 @@ GrB_Info GB (_bind1st_tran__isle_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isle_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isle_int32)
 (
     GrB_Matrix C,
@@ -33693,7 +31249,6 @@ GrB_Info GB (_Cdense_accumb__isle_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isle_int64)
 (
     GrB_Matrix C,
@@ -33701,7 +31256,6 @@ GrB_Info GB (_AxD__isle_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isle_int64)
 (
     GrB_Matrix C,
@@ -33709,7 +31263,6 @@ GrB_Info GB (_DxB__isle_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isle_int64)
@@ -33731,6 +31284,7 @@ GrB_Info GB (_AaddB__isle_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isle_int64)
 (
     GrB_Matrix C,
@@ -33749,7 +31303,6 @@ GrB_Info GB (_AemultB_01__isle_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isle_int64)
 (
     GrB_Matrix C,
@@ -33762,7 +31315,6 @@ GrB_Info GB (_AemultB_02__isle_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isle_int64)
 (
     GrB_Matrix C,
@@ -33773,7 +31325,6 @@ GrB_Info GB (_AemultB_03__isle_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isle_int64)
 (
     GrB_Matrix C,
@@ -33789,6 +31340,7 @@ GrB_Info GB (_AemultB_bitmap__isle_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isle_int64)
 (
     GB_void *Cx_output,
@@ -33798,21 +31350,6 @@ GrB_Info GB (_bind1st__isle_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isle_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isle_int64)
 (
     GrB_Matrix C,
@@ -33823,9 +31360,15 @@ GrB_Info GB (_bind1st_tran__isle_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isle_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isle_int64)
 (
     GrB_Matrix C,
@@ -33872,7 +31415,6 @@ GrB_Info GB (_Cdense_accumb__isle_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isle_uint8)
 (
     GrB_Matrix C,
@@ -33880,7 +31422,6 @@ GrB_Info GB (_AxD__isle_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isle_uint8)
 (
     GrB_Matrix C,
@@ -33888,7 +31429,6 @@ GrB_Info GB (_DxB__isle_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isle_uint8)
@@ -33910,6 +31450,7 @@ GrB_Info GB (_AaddB__isle_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isle_uint8)
 (
     GrB_Matrix C,
@@ -33928,7 +31469,6 @@ GrB_Info GB (_AemultB_01__isle_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isle_uint8)
 (
     GrB_Matrix C,
@@ -33941,7 +31481,6 @@ GrB_Info GB (_AemultB_02__isle_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isle_uint8)
 (
     GrB_Matrix C,
@@ -33952,7 +31491,6 @@ GrB_Info GB (_AemultB_03__isle_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isle_uint8)
 (
     GrB_Matrix C,
@@ -33968,6 +31506,7 @@ GrB_Info GB (_AemultB_bitmap__isle_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isle_uint8)
 (
     GB_void *Cx_output,
@@ -33977,21 +31516,6 @@ GrB_Info GB (_bind1st__isle_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isle_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isle_uint8)
 (
     GrB_Matrix C,
@@ -34002,9 +31526,15 @@ GrB_Info GB (_bind1st_tran__isle_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isle_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isle_uint8)
 (
     GrB_Matrix C,
@@ -34051,7 +31581,6 @@ GrB_Info GB (_Cdense_accumb__isle_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isle_uint16)
 (
     GrB_Matrix C,
@@ -34059,7 +31588,6 @@ GrB_Info GB (_AxD__isle_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isle_uint16)
 (
     GrB_Matrix C,
@@ -34067,7 +31595,6 @@ GrB_Info GB (_DxB__isle_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isle_uint16)
@@ -34089,6 +31616,7 @@ GrB_Info GB (_AaddB__isle_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isle_uint16)
 (
     GrB_Matrix C,
@@ -34107,7 +31635,6 @@ GrB_Info GB (_AemultB_01__isle_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isle_uint16)
 (
     GrB_Matrix C,
@@ -34120,7 +31647,6 @@ GrB_Info GB (_AemultB_02__isle_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isle_uint16)
 (
     GrB_Matrix C,
@@ -34131,7 +31657,6 @@ GrB_Info GB (_AemultB_03__isle_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isle_uint16)
 (
     GrB_Matrix C,
@@ -34147,6 +31672,7 @@ GrB_Info GB (_AemultB_bitmap__isle_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isle_uint16)
 (
     GB_void *Cx_output,
@@ -34156,21 +31682,6 @@ GrB_Info GB (_bind1st__isle_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isle_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isle_uint16)
 (
     GrB_Matrix C,
@@ -34181,9 +31692,15 @@ GrB_Info GB (_bind1st_tran__isle_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isle_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isle_uint16)
 (
     GrB_Matrix C,
@@ -34230,7 +31747,6 @@ GrB_Info GB (_Cdense_accumb__isle_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isle_uint32)
 (
     GrB_Matrix C,
@@ -34238,7 +31754,6 @@ GrB_Info GB (_AxD__isle_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isle_uint32)
 (
     GrB_Matrix C,
@@ -34246,7 +31761,6 @@ GrB_Info GB (_DxB__isle_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isle_uint32)
@@ -34268,6 +31782,7 @@ GrB_Info GB (_AaddB__isle_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isle_uint32)
 (
     GrB_Matrix C,
@@ -34286,7 +31801,6 @@ GrB_Info GB (_AemultB_01__isle_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isle_uint32)
 (
     GrB_Matrix C,
@@ -34299,7 +31813,6 @@ GrB_Info GB (_AemultB_02__isle_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isle_uint32)
 (
     GrB_Matrix C,
@@ -34310,7 +31823,6 @@ GrB_Info GB (_AemultB_03__isle_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isle_uint32)
 (
     GrB_Matrix C,
@@ -34326,6 +31838,7 @@ GrB_Info GB (_AemultB_bitmap__isle_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isle_uint32)
 (
     GB_void *Cx_output,
@@ -34335,21 +31848,6 @@ GrB_Info GB (_bind1st__isle_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isle_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isle_uint32)
 (
     GrB_Matrix C,
@@ -34360,9 +31858,15 @@ GrB_Info GB (_bind1st_tran__isle_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isle_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isle_uint32)
 (
     GrB_Matrix C,
@@ -34409,7 +31913,6 @@ GrB_Info GB (_Cdense_accumb__isle_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isle_uint64)
 (
     GrB_Matrix C,
@@ -34417,7 +31920,6 @@ GrB_Info GB (_AxD__isle_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isle_uint64)
 (
     GrB_Matrix C,
@@ -34425,7 +31927,6 @@ GrB_Info GB (_DxB__isle_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isle_uint64)
@@ -34447,6 +31948,7 @@ GrB_Info GB (_AaddB__isle_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isle_uint64)
 (
     GrB_Matrix C,
@@ -34465,7 +31967,6 @@ GrB_Info GB (_AemultB_01__isle_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isle_uint64)
 (
     GrB_Matrix C,
@@ -34478,7 +31979,6 @@ GrB_Info GB (_AemultB_02__isle_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isle_uint64)
 (
     GrB_Matrix C,
@@ -34489,7 +31989,6 @@ GrB_Info GB (_AemultB_03__isle_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isle_uint64)
 (
     GrB_Matrix C,
@@ -34505,6 +32004,7 @@ GrB_Info GB (_AemultB_bitmap__isle_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isle_uint64)
 (
     GB_void *Cx_output,
@@ -34514,21 +32014,6 @@ GrB_Info GB (_bind1st__isle_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isle_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isle_uint64)
 (
     GrB_Matrix C,
@@ -34539,9 +32024,15 @@ GrB_Info GB (_bind1st_tran__isle_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isle_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isle_uint64)
 (
     GrB_Matrix C,
@@ -34588,7 +32079,6 @@ GrB_Info GB (_Cdense_accumb__isle_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isle_fp32)
 (
     GrB_Matrix C,
@@ -34596,7 +32086,6 @@ GrB_Info GB (_AxD__isle_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isle_fp32)
 (
     GrB_Matrix C,
@@ -34604,7 +32093,6 @@ GrB_Info GB (_DxB__isle_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isle_fp32)
@@ -34626,6 +32114,7 @@ GrB_Info GB (_AaddB__isle_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isle_fp32)
 (
     GrB_Matrix C,
@@ -34644,7 +32133,6 @@ GrB_Info GB (_AemultB_01__isle_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isle_fp32)
 (
     GrB_Matrix C,
@@ -34657,7 +32145,6 @@ GrB_Info GB (_AemultB_02__isle_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isle_fp32)
 (
     GrB_Matrix C,
@@ -34668,7 +32155,6 @@ GrB_Info GB (_AemultB_03__isle_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isle_fp32)
 (
     GrB_Matrix C,
@@ -34684,6 +32170,7 @@ GrB_Info GB (_AemultB_bitmap__isle_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isle_fp32)
 (
     GB_void *Cx_output,
@@ -34693,21 +32180,6 @@ GrB_Info GB (_bind1st__isle_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isle_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isle_fp32)
 (
     GrB_Matrix C,
@@ -34718,9 +32190,15 @@ GrB_Info GB (_bind1st_tran__isle_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isle_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isle_fp32)
 (
     GrB_Matrix C,
@@ -34767,7 +32245,6 @@ GrB_Info GB (_Cdense_accumb__isle_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__isle_fp64)
 (
     GrB_Matrix C,
@@ -34775,7 +32252,6 @@ GrB_Info GB (_AxD__isle_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__isle_fp64)
 (
     GrB_Matrix C,
@@ -34783,7 +32259,6 @@ GrB_Info GB (_DxB__isle_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__isle_fp64)
@@ -34805,6 +32280,7 @@ GrB_Info GB (_AaddB__isle_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__isle_fp64)
 (
     GrB_Matrix C,
@@ -34823,7 +32299,6 @@ GrB_Info GB (_AemultB_01__isle_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__isle_fp64)
 (
     GrB_Matrix C,
@@ -34836,7 +32311,6 @@ GrB_Info GB (_AemultB_02__isle_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__isle_fp64)
 (
     GrB_Matrix C,
@@ -34847,7 +32321,6 @@ GrB_Info GB (_AemultB_03__isle_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__isle_fp64)
 (
     GrB_Matrix C,
@@ -34863,6 +32336,7 @@ GrB_Info GB (_AemultB_bitmap__isle_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__isle_fp64)
 (
     GB_void *Cx_output,
@@ -34872,21 +32346,6 @@ GrB_Info GB (_bind1st__isle_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__isle_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__isle_fp64)
 (
     GrB_Matrix C,
@@ -34897,9 +32356,15 @@ GrB_Info GB (_bind1st_tran__isle_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__isle_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__isle_fp64)
 (
     GrB_Matrix C,
@@ -34946,7 +32411,6 @@ GrB_Info GB (_Cdense_accumb__eq_bool)
 ) ;
 
 
-
 GrB_Info GB (_AxD__eq_bool)
 (
     GrB_Matrix C,
@@ -34954,7 +32418,6 @@ GrB_Info GB (_AxD__eq_bool)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__eq_bool)
 (
     GrB_Matrix C,
@@ -34962,7 +32425,6 @@ GrB_Info GB (_DxB__eq_bool)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__eq_bool)
@@ -34984,6 +32446,7 @@ GrB_Info GB (_AaddB__eq_bool)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_bool)
 (
     GrB_Matrix C,
@@ -35002,7 +32465,6 @@ GrB_Info GB (_AemultB_01__eq_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_bool)
 (
     GrB_Matrix C,
@@ -35015,7 +32477,6 @@ GrB_Info GB (_AemultB_02__eq_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_bool)
 (
     GrB_Matrix C,
@@ -35026,7 +32487,6 @@ GrB_Info GB (_AemultB_03__eq_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_bool)
 (
     GrB_Matrix C,
@@ -35042,6 +32502,7 @@ GrB_Info GB (_AemultB_bitmap__eq_bool)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_bool)
 (
     GB_void *Cx_output,
@@ -35051,21 +32512,6 @@ GrB_Info GB (_bind1st__eq_bool)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_bool)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_bool)
 (
     GrB_Matrix C,
@@ -35076,9 +32522,15 @@ GrB_Info GB (_bind1st_tran__eq_bool)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_bool)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_bool)
 (
     GrB_Matrix C,
@@ -35125,7 +32577,6 @@ GrB_Info GB (_Cdense_accumb__eq_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__eq_int8)
 (
     GrB_Matrix C,
@@ -35133,7 +32584,6 @@ GrB_Info GB (_AxD__eq_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__eq_int8)
 (
     GrB_Matrix C,
@@ -35141,7 +32591,6 @@ GrB_Info GB (_DxB__eq_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__eq_int8)
@@ -35163,6 +32612,7 @@ GrB_Info GB (_AaddB__eq_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_int8)
 (
     GrB_Matrix C,
@@ -35181,7 +32631,6 @@ GrB_Info GB (_AemultB_01__eq_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_int8)
 (
     GrB_Matrix C,
@@ -35194,7 +32643,6 @@ GrB_Info GB (_AemultB_02__eq_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_int8)
 (
     GrB_Matrix C,
@@ -35205,7 +32653,6 @@ GrB_Info GB (_AemultB_03__eq_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_int8)
 (
     GrB_Matrix C,
@@ -35221,6 +32668,7 @@ GrB_Info GB (_AemultB_bitmap__eq_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_int8)
 (
     GB_void *Cx_output,
@@ -35230,21 +32678,6 @@ GrB_Info GB (_bind1st__eq_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_int8)
 (
     GrB_Matrix C,
@@ -35255,9 +32688,15 @@ GrB_Info GB (_bind1st_tran__eq_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_int8)
 (
     GrB_Matrix C,
@@ -35304,7 +32743,6 @@ GrB_Info GB (_Cdense_accumb__eq_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__eq_int16)
 (
     GrB_Matrix C,
@@ -35312,7 +32750,6 @@ GrB_Info GB (_AxD__eq_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__eq_int16)
 (
     GrB_Matrix C,
@@ -35320,7 +32757,6 @@ GrB_Info GB (_DxB__eq_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__eq_int16)
@@ -35342,6 +32778,7 @@ GrB_Info GB (_AaddB__eq_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_int16)
 (
     GrB_Matrix C,
@@ -35360,7 +32797,6 @@ GrB_Info GB (_AemultB_01__eq_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_int16)
 (
     GrB_Matrix C,
@@ -35373,7 +32809,6 @@ GrB_Info GB (_AemultB_02__eq_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_int16)
 (
     GrB_Matrix C,
@@ -35384,7 +32819,6 @@ GrB_Info GB (_AemultB_03__eq_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_int16)
 (
     GrB_Matrix C,
@@ -35400,6 +32834,7 @@ GrB_Info GB (_AemultB_bitmap__eq_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_int16)
 (
     GB_void *Cx_output,
@@ -35409,21 +32844,6 @@ GrB_Info GB (_bind1st__eq_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_int16)
 (
     GrB_Matrix C,
@@ -35434,9 +32854,15 @@ GrB_Info GB (_bind1st_tran__eq_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_int16)
 (
     GrB_Matrix C,
@@ -35483,7 +32909,6 @@ GrB_Info GB (_Cdense_accumb__eq_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__eq_int32)
 (
     GrB_Matrix C,
@@ -35491,7 +32916,6 @@ GrB_Info GB (_AxD__eq_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__eq_int32)
 (
     GrB_Matrix C,
@@ -35499,7 +32923,6 @@ GrB_Info GB (_DxB__eq_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__eq_int32)
@@ -35521,6 +32944,7 @@ GrB_Info GB (_AaddB__eq_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_int32)
 (
     GrB_Matrix C,
@@ -35539,7 +32963,6 @@ GrB_Info GB (_AemultB_01__eq_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_int32)
 (
     GrB_Matrix C,
@@ -35552,7 +32975,6 @@ GrB_Info GB (_AemultB_02__eq_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_int32)
 (
     GrB_Matrix C,
@@ -35563,7 +32985,6 @@ GrB_Info GB (_AemultB_03__eq_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_int32)
 (
     GrB_Matrix C,
@@ -35579,6 +33000,7 @@ GrB_Info GB (_AemultB_bitmap__eq_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_int32)
 (
     GB_void *Cx_output,
@@ -35588,21 +33010,6 @@ GrB_Info GB (_bind1st__eq_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_int32)
 (
     GrB_Matrix C,
@@ -35613,9 +33020,15 @@ GrB_Info GB (_bind1st_tran__eq_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_int32)
 (
     GrB_Matrix C,
@@ -35662,7 +33075,6 @@ GrB_Info GB (_Cdense_accumb__eq_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__eq_int64)
 (
     GrB_Matrix C,
@@ -35670,7 +33082,6 @@ GrB_Info GB (_AxD__eq_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__eq_int64)
 (
     GrB_Matrix C,
@@ -35678,7 +33089,6 @@ GrB_Info GB (_DxB__eq_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__eq_int64)
@@ -35700,6 +33110,7 @@ GrB_Info GB (_AaddB__eq_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_int64)
 (
     GrB_Matrix C,
@@ -35718,7 +33129,6 @@ GrB_Info GB (_AemultB_01__eq_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_int64)
 (
     GrB_Matrix C,
@@ -35731,7 +33141,6 @@ GrB_Info GB (_AemultB_02__eq_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_int64)
 (
     GrB_Matrix C,
@@ -35742,7 +33151,6 @@ GrB_Info GB (_AemultB_03__eq_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_int64)
 (
     GrB_Matrix C,
@@ -35758,6 +33166,7 @@ GrB_Info GB (_AemultB_bitmap__eq_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_int64)
 (
     GB_void *Cx_output,
@@ -35767,21 +33176,6 @@ GrB_Info GB (_bind1st__eq_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_int64)
 (
     GrB_Matrix C,
@@ -35792,9 +33186,15 @@ GrB_Info GB (_bind1st_tran__eq_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_int64)
 (
     GrB_Matrix C,
@@ -35841,7 +33241,6 @@ GrB_Info GB (_Cdense_accumb__eq_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__eq_uint8)
 (
     GrB_Matrix C,
@@ -35849,7 +33248,6 @@ GrB_Info GB (_AxD__eq_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__eq_uint8)
 (
     GrB_Matrix C,
@@ -35857,7 +33255,6 @@ GrB_Info GB (_DxB__eq_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__eq_uint8)
@@ -35879,6 +33276,7 @@ GrB_Info GB (_AaddB__eq_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_uint8)
 (
     GrB_Matrix C,
@@ -35897,7 +33295,6 @@ GrB_Info GB (_AemultB_01__eq_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_uint8)
 (
     GrB_Matrix C,
@@ -35910,7 +33307,6 @@ GrB_Info GB (_AemultB_02__eq_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_uint8)
 (
     GrB_Matrix C,
@@ -35921,7 +33317,6 @@ GrB_Info GB (_AemultB_03__eq_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_uint8)
 (
     GrB_Matrix C,
@@ -35937,6 +33332,7 @@ GrB_Info GB (_AemultB_bitmap__eq_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_uint8)
 (
     GB_void *Cx_output,
@@ -35946,21 +33342,6 @@ GrB_Info GB (_bind1st__eq_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_uint8)
 (
     GrB_Matrix C,
@@ -35971,9 +33352,15 @@ GrB_Info GB (_bind1st_tran__eq_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_uint8)
 (
     GrB_Matrix C,
@@ -36020,7 +33407,6 @@ GrB_Info GB (_Cdense_accumb__eq_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__eq_uint16)
 (
     GrB_Matrix C,
@@ -36028,7 +33414,6 @@ GrB_Info GB (_AxD__eq_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__eq_uint16)
 (
     GrB_Matrix C,
@@ -36036,7 +33421,6 @@ GrB_Info GB (_DxB__eq_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__eq_uint16)
@@ -36058,6 +33442,7 @@ GrB_Info GB (_AaddB__eq_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_uint16)
 (
     GrB_Matrix C,
@@ -36076,7 +33461,6 @@ GrB_Info GB (_AemultB_01__eq_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_uint16)
 (
     GrB_Matrix C,
@@ -36089,7 +33473,6 @@ GrB_Info GB (_AemultB_02__eq_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_uint16)
 (
     GrB_Matrix C,
@@ -36100,7 +33483,6 @@ GrB_Info GB (_AemultB_03__eq_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_uint16)
 (
     GrB_Matrix C,
@@ -36116,6 +33498,7 @@ GrB_Info GB (_AemultB_bitmap__eq_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_uint16)
 (
     GB_void *Cx_output,
@@ -36125,21 +33508,6 @@ GrB_Info GB (_bind1st__eq_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_uint16)
 (
     GrB_Matrix C,
@@ -36150,9 +33518,15 @@ GrB_Info GB (_bind1st_tran__eq_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_uint16)
 (
     GrB_Matrix C,
@@ -36199,7 +33573,6 @@ GrB_Info GB (_Cdense_accumb__eq_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__eq_uint32)
 (
     GrB_Matrix C,
@@ -36207,7 +33580,6 @@ GrB_Info GB (_AxD__eq_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__eq_uint32)
 (
     GrB_Matrix C,
@@ -36215,7 +33587,6 @@ GrB_Info GB (_DxB__eq_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__eq_uint32)
@@ -36237,6 +33608,7 @@ GrB_Info GB (_AaddB__eq_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_uint32)
 (
     GrB_Matrix C,
@@ -36255,7 +33627,6 @@ GrB_Info GB (_AemultB_01__eq_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_uint32)
 (
     GrB_Matrix C,
@@ -36268,7 +33639,6 @@ GrB_Info GB (_AemultB_02__eq_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_uint32)
 (
     GrB_Matrix C,
@@ -36279,7 +33649,6 @@ GrB_Info GB (_AemultB_03__eq_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_uint32)
 (
     GrB_Matrix C,
@@ -36295,6 +33664,7 @@ GrB_Info GB (_AemultB_bitmap__eq_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_uint32)
 (
     GB_void *Cx_output,
@@ -36304,21 +33674,6 @@ GrB_Info GB (_bind1st__eq_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_uint32)
 (
     GrB_Matrix C,
@@ -36329,9 +33684,15 @@ GrB_Info GB (_bind1st_tran__eq_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_uint32)
 (
     GrB_Matrix C,
@@ -36378,7 +33739,6 @@ GrB_Info GB (_Cdense_accumb__eq_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__eq_uint64)
 (
     GrB_Matrix C,
@@ -36386,7 +33746,6 @@ GrB_Info GB (_AxD__eq_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__eq_uint64)
 (
     GrB_Matrix C,
@@ -36394,7 +33753,6 @@ GrB_Info GB (_DxB__eq_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__eq_uint64)
@@ -36416,6 +33774,7 @@ GrB_Info GB (_AaddB__eq_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_uint64)
 (
     GrB_Matrix C,
@@ -36434,7 +33793,6 @@ GrB_Info GB (_AemultB_01__eq_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_uint64)
 (
     GrB_Matrix C,
@@ -36447,7 +33805,6 @@ GrB_Info GB (_AemultB_02__eq_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_uint64)
 (
     GrB_Matrix C,
@@ -36458,7 +33815,6 @@ GrB_Info GB (_AemultB_03__eq_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_uint64)
 (
     GrB_Matrix C,
@@ -36474,6 +33830,7 @@ GrB_Info GB (_AemultB_bitmap__eq_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_uint64)
 (
     GB_void *Cx_output,
@@ -36483,21 +33840,6 @@ GrB_Info GB (_bind1st__eq_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_uint64)
 (
     GrB_Matrix C,
@@ -36508,9 +33850,15 @@ GrB_Info GB (_bind1st_tran__eq_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_uint64)
 (
     GrB_Matrix C,
@@ -36557,7 +33905,6 @@ GrB_Info GB (_Cdense_accumb__eq_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__eq_fp32)
 (
     GrB_Matrix C,
@@ -36565,7 +33912,6 @@ GrB_Info GB (_AxD__eq_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__eq_fp32)
 (
     GrB_Matrix C,
@@ -36573,7 +33919,6 @@ GrB_Info GB (_DxB__eq_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__eq_fp32)
@@ -36595,6 +33940,7 @@ GrB_Info GB (_AaddB__eq_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_fp32)
 (
     GrB_Matrix C,
@@ -36613,7 +33959,6 @@ GrB_Info GB (_AemultB_01__eq_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_fp32)
 (
     GrB_Matrix C,
@@ -36626,7 +33971,6 @@ GrB_Info GB (_AemultB_02__eq_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_fp32)
 (
     GrB_Matrix C,
@@ -36637,7 +33981,6 @@ GrB_Info GB (_AemultB_03__eq_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_fp32)
 (
     GrB_Matrix C,
@@ -36653,6 +33996,7 @@ GrB_Info GB (_AemultB_bitmap__eq_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_fp32)
 (
     GB_void *Cx_output,
@@ -36662,21 +34006,6 @@ GrB_Info GB (_bind1st__eq_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_fp32)
 (
     GrB_Matrix C,
@@ -36687,9 +34016,15 @@ GrB_Info GB (_bind1st_tran__eq_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_fp32)
 (
     GrB_Matrix C,
@@ -36736,7 +34071,6 @@ GrB_Info GB (_Cdense_accumb__eq_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__eq_fp64)
 (
     GrB_Matrix C,
@@ -36744,7 +34078,6 @@ GrB_Info GB (_AxD__eq_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__eq_fp64)
 (
     GrB_Matrix C,
@@ -36752,7 +34085,6 @@ GrB_Info GB (_DxB__eq_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__eq_fp64)
@@ -36774,6 +34106,7 @@ GrB_Info GB (_AaddB__eq_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_fp64)
 (
     GrB_Matrix C,
@@ -36792,7 +34125,6 @@ GrB_Info GB (_AemultB_01__eq_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_fp64)
 (
     GrB_Matrix C,
@@ -36805,7 +34137,6 @@ GrB_Info GB (_AemultB_02__eq_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_fp64)
 (
     GrB_Matrix C,
@@ -36816,7 +34147,6 @@ GrB_Info GB (_AemultB_03__eq_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_fp64)
 (
     GrB_Matrix C,
@@ -36832,6 +34162,7 @@ GrB_Info GB (_AemultB_bitmap__eq_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_fp64)
 (
     GB_void *Cx_output,
@@ -36841,21 +34172,6 @@ GrB_Info GB (_bind1st__eq_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_fp64)
 (
     GrB_Matrix C,
@@ -36866,9 +34182,15 @@ GrB_Info GB (_bind1st_tran__eq_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_fp64)
 (
     GrB_Matrix C,
@@ -36915,7 +34237,6 @@ GrB_Info GB (_Cdense_accumb__eq_fc32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -36923,15 +34244,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__eq_fc32)
@@ -36953,6 +34272,7 @@ GrB_Info GB (_AaddB__eq_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_fc32)
 (
     GrB_Matrix C,
@@ -36971,7 +34291,6 @@ GrB_Info GB (_AemultB_01__eq_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_fc32)
 (
     GrB_Matrix C,
@@ -36984,7 +34303,6 @@ GrB_Info GB (_AemultB_02__eq_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_fc32)
 (
     GrB_Matrix C,
@@ -36995,7 +34313,6 @@ GrB_Info GB (_AemultB_03__eq_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_fc32)
 (
     GrB_Matrix C,
@@ -37011,6 +34328,7 @@ GrB_Info GB (_AemultB_bitmap__eq_fc32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_fc32)
 (
     GB_void *Cx_output,
@@ -37020,21 +34338,6 @@ GrB_Info GB (_bind1st__eq_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_fc32)
 (
     GrB_Matrix C,
@@ -37045,9 +34348,15 @@ GrB_Info GB (_bind1st_tran__eq_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_fc32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_fc32)
 (
     GrB_Matrix C,
@@ -37094,7 +34403,6 @@ GrB_Info GB (_Cdense_accumb__eq_fc64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -37102,15 +34410,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__eq_fc64)
@@ -37132,6 +34438,7 @@ GrB_Info GB (_AaddB__eq_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__eq_fc64)
 (
     GrB_Matrix C,
@@ -37150,7 +34457,6 @@ GrB_Info GB (_AemultB_01__eq_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__eq_fc64)
 (
     GrB_Matrix C,
@@ -37163,7 +34469,6 @@ GrB_Info GB (_AemultB_02__eq_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__eq_fc64)
 (
     GrB_Matrix C,
@@ -37174,7 +34479,6 @@ GrB_Info GB (_AemultB_03__eq_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__eq_fc64)
 (
     GrB_Matrix C,
@@ -37190,6 +34494,7 @@ GrB_Info GB (_AemultB_bitmap__eq_fc64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__eq_fc64)
 (
     GB_void *Cx_output,
@@ -37199,21 +34504,6 @@ GrB_Info GB (_bind1st__eq_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__eq_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__eq_fc64)
 (
     GrB_Matrix C,
@@ -37224,9 +34514,15 @@ GrB_Info GB (_bind1st_tran__eq_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__eq_fc64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__eq_fc64)
 (
     GrB_Matrix C,
@@ -37273,7 +34569,6 @@ GrB_Info GB (_Cdense_accumb__ne_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ne_int8)
 (
     GrB_Matrix C,
@@ -37281,7 +34576,6 @@ GrB_Info GB (_AxD__ne_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ne_int8)
 (
     GrB_Matrix C,
@@ -37289,7 +34583,6 @@ GrB_Info GB (_DxB__ne_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ne_int8)
@@ -37311,6 +34604,7 @@ GrB_Info GB (_AaddB__ne_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_int8)
 (
     GrB_Matrix C,
@@ -37329,7 +34623,6 @@ GrB_Info GB (_AemultB_01__ne_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_int8)
 (
     GrB_Matrix C,
@@ -37342,7 +34635,6 @@ GrB_Info GB (_AemultB_02__ne_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_int8)
 (
     GrB_Matrix C,
@@ -37353,7 +34645,6 @@ GrB_Info GB (_AemultB_03__ne_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_int8)
 (
     GrB_Matrix C,
@@ -37369,6 +34660,7 @@ GrB_Info GB (_AemultB_bitmap__ne_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_int8)
 (
     GB_void *Cx_output,
@@ -37378,21 +34670,6 @@ GrB_Info GB (_bind1st__ne_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_int8)
 (
     GrB_Matrix C,
@@ -37403,9 +34680,15 @@ GrB_Info GB (_bind1st_tran__ne_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_int8)
 (
     GrB_Matrix C,
@@ -37452,7 +34735,6 @@ GrB_Info GB (_Cdense_accumb__ne_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ne_int16)
 (
     GrB_Matrix C,
@@ -37460,7 +34742,6 @@ GrB_Info GB (_AxD__ne_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ne_int16)
 (
     GrB_Matrix C,
@@ -37468,7 +34749,6 @@ GrB_Info GB (_DxB__ne_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ne_int16)
@@ -37490,6 +34770,7 @@ GrB_Info GB (_AaddB__ne_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_int16)
 (
     GrB_Matrix C,
@@ -37508,7 +34789,6 @@ GrB_Info GB (_AemultB_01__ne_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_int16)
 (
     GrB_Matrix C,
@@ -37521,7 +34801,6 @@ GrB_Info GB (_AemultB_02__ne_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_int16)
 (
     GrB_Matrix C,
@@ -37532,7 +34811,6 @@ GrB_Info GB (_AemultB_03__ne_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_int16)
 (
     GrB_Matrix C,
@@ -37548,6 +34826,7 @@ GrB_Info GB (_AemultB_bitmap__ne_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_int16)
 (
     GB_void *Cx_output,
@@ -37557,21 +34836,6 @@ GrB_Info GB (_bind1st__ne_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_int16)
 (
     GrB_Matrix C,
@@ -37582,9 +34846,15 @@ GrB_Info GB (_bind1st_tran__ne_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_int16)
 (
     GrB_Matrix C,
@@ -37631,7 +34901,6 @@ GrB_Info GB (_Cdense_accumb__ne_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ne_int32)
 (
     GrB_Matrix C,
@@ -37639,7 +34908,6 @@ GrB_Info GB (_AxD__ne_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ne_int32)
 (
     GrB_Matrix C,
@@ -37647,7 +34915,6 @@ GrB_Info GB (_DxB__ne_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ne_int32)
@@ -37669,6 +34936,7 @@ GrB_Info GB (_AaddB__ne_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_int32)
 (
     GrB_Matrix C,
@@ -37687,7 +34955,6 @@ GrB_Info GB (_AemultB_01__ne_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_int32)
 (
     GrB_Matrix C,
@@ -37700,7 +34967,6 @@ GrB_Info GB (_AemultB_02__ne_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_int32)
 (
     GrB_Matrix C,
@@ -37711,7 +34977,6 @@ GrB_Info GB (_AemultB_03__ne_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_int32)
 (
     GrB_Matrix C,
@@ -37727,6 +34992,7 @@ GrB_Info GB (_AemultB_bitmap__ne_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_int32)
 (
     GB_void *Cx_output,
@@ -37736,21 +35002,6 @@ GrB_Info GB (_bind1st__ne_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_int32)
 (
     GrB_Matrix C,
@@ -37761,9 +35012,15 @@ GrB_Info GB (_bind1st_tran__ne_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_int32)
 (
     GrB_Matrix C,
@@ -37810,7 +35067,6 @@ GrB_Info GB (_Cdense_accumb__ne_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ne_int64)
 (
     GrB_Matrix C,
@@ -37818,7 +35074,6 @@ GrB_Info GB (_AxD__ne_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ne_int64)
 (
     GrB_Matrix C,
@@ -37826,7 +35081,6 @@ GrB_Info GB (_DxB__ne_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ne_int64)
@@ -37848,6 +35102,7 @@ GrB_Info GB (_AaddB__ne_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_int64)
 (
     GrB_Matrix C,
@@ -37866,7 +35121,6 @@ GrB_Info GB (_AemultB_01__ne_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_int64)
 (
     GrB_Matrix C,
@@ -37879,7 +35133,6 @@ GrB_Info GB (_AemultB_02__ne_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_int64)
 (
     GrB_Matrix C,
@@ -37890,7 +35143,6 @@ GrB_Info GB (_AemultB_03__ne_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_int64)
 (
     GrB_Matrix C,
@@ -37906,6 +35158,7 @@ GrB_Info GB (_AemultB_bitmap__ne_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_int64)
 (
     GB_void *Cx_output,
@@ -37915,21 +35168,6 @@ GrB_Info GB (_bind1st__ne_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_int64)
 (
     GrB_Matrix C,
@@ -37940,9 +35178,15 @@ GrB_Info GB (_bind1st_tran__ne_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_int64)
 (
     GrB_Matrix C,
@@ -37989,7 +35233,6 @@ GrB_Info GB (_Cdense_accumb__ne_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ne_uint8)
 (
     GrB_Matrix C,
@@ -37997,7 +35240,6 @@ GrB_Info GB (_AxD__ne_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ne_uint8)
 (
     GrB_Matrix C,
@@ -38005,7 +35247,6 @@ GrB_Info GB (_DxB__ne_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ne_uint8)
@@ -38027,6 +35268,7 @@ GrB_Info GB (_AaddB__ne_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_uint8)
 (
     GrB_Matrix C,
@@ -38045,7 +35287,6 @@ GrB_Info GB (_AemultB_01__ne_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_uint8)
 (
     GrB_Matrix C,
@@ -38058,7 +35299,6 @@ GrB_Info GB (_AemultB_02__ne_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_uint8)
 (
     GrB_Matrix C,
@@ -38069,7 +35309,6 @@ GrB_Info GB (_AemultB_03__ne_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_uint8)
 (
     GrB_Matrix C,
@@ -38085,6 +35324,7 @@ GrB_Info GB (_AemultB_bitmap__ne_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_uint8)
 (
     GB_void *Cx_output,
@@ -38094,21 +35334,6 @@ GrB_Info GB (_bind1st__ne_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_uint8)
 (
     GrB_Matrix C,
@@ -38119,9 +35344,15 @@ GrB_Info GB (_bind1st_tran__ne_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_uint8)
 (
     GrB_Matrix C,
@@ -38168,7 +35399,6 @@ GrB_Info GB (_Cdense_accumb__ne_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ne_uint16)
 (
     GrB_Matrix C,
@@ -38176,7 +35406,6 @@ GrB_Info GB (_AxD__ne_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ne_uint16)
 (
     GrB_Matrix C,
@@ -38184,7 +35413,6 @@ GrB_Info GB (_DxB__ne_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ne_uint16)
@@ -38206,6 +35434,7 @@ GrB_Info GB (_AaddB__ne_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_uint16)
 (
     GrB_Matrix C,
@@ -38224,7 +35453,6 @@ GrB_Info GB (_AemultB_01__ne_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_uint16)
 (
     GrB_Matrix C,
@@ -38237,7 +35465,6 @@ GrB_Info GB (_AemultB_02__ne_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_uint16)
 (
     GrB_Matrix C,
@@ -38248,7 +35475,6 @@ GrB_Info GB (_AemultB_03__ne_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_uint16)
 (
     GrB_Matrix C,
@@ -38264,6 +35490,7 @@ GrB_Info GB (_AemultB_bitmap__ne_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_uint16)
 (
     GB_void *Cx_output,
@@ -38273,21 +35500,6 @@ GrB_Info GB (_bind1st__ne_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_uint16)
 (
     GrB_Matrix C,
@@ -38298,9 +35510,15 @@ GrB_Info GB (_bind1st_tran__ne_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_uint16)
 (
     GrB_Matrix C,
@@ -38347,7 +35565,6 @@ GrB_Info GB (_Cdense_accumb__ne_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ne_uint32)
 (
     GrB_Matrix C,
@@ -38355,7 +35572,6 @@ GrB_Info GB (_AxD__ne_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ne_uint32)
 (
     GrB_Matrix C,
@@ -38363,7 +35579,6 @@ GrB_Info GB (_DxB__ne_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ne_uint32)
@@ -38385,6 +35600,7 @@ GrB_Info GB (_AaddB__ne_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_uint32)
 (
     GrB_Matrix C,
@@ -38403,7 +35619,6 @@ GrB_Info GB (_AemultB_01__ne_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_uint32)
 (
     GrB_Matrix C,
@@ -38416,7 +35631,6 @@ GrB_Info GB (_AemultB_02__ne_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_uint32)
 (
     GrB_Matrix C,
@@ -38427,7 +35641,6 @@ GrB_Info GB (_AemultB_03__ne_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_uint32)
 (
     GrB_Matrix C,
@@ -38443,6 +35656,7 @@ GrB_Info GB (_AemultB_bitmap__ne_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_uint32)
 (
     GB_void *Cx_output,
@@ -38452,21 +35666,6 @@ GrB_Info GB (_bind1st__ne_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_uint32)
 (
     GrB_Matrix C,
@@ -38477,9 +35676,15 @@ GrB_Info GB (_bind1st_tran__ne_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_uint32)
 (
     GrB_Matrix C,
@@ -38526,7 +35731,6 @@ GrB_Info GB (_Cdense_accumb__ne_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ne_uint64)
 (
     GrB_Matrix C,
@@ -38534,7 +35738,6 @@ GrB_Info GB (_AxD__ne_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ne_uint64)
 (
     GrB_Matrix C,
@@ -38542,7 +35745,6 @@ GrB_Info GB (_DxB__ne_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ne_uint64)
@@ -38564,6 +35766,7 @@ GrB_Info GB (_AaddB__ne_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_uint64)
 (
     GrB_Matrix C,
@@ -38582,7 +35785,6 @@ GrB_Info GB (_AemultB_01__ne_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_uint64)
 (
     GrB_Matrix C,
@@ -38595,7 +35797,6 @@ GrB_Info GB (_AemultB_02__ne_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_uint64)
 (
     GrB_Matrix C,
@@ -38606,7 +35807,6 @@ GrB_Info GB (_AemultB_03__ne_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_uint64)
 (
     GrB_Matrix C,
@@ -38622,6 +35822,7 @@ GrB_Info GB (_AemultB_bitmap__ne_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_uint64)
 (
     GB_void *Cx_output,
@@ -38631,21 +35832,6 @@ GrB_Info GB (_bind1st__ne_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_uint64)
 (
     GrB_Matrix C,
@@ -38656,9 +35842,15 @@ GrB_Info GB (_bind1st_tran__ne_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_uint64)
 (
     GrB_Matrix C,
@@ -38705,7 +35897,6 @@ GrB_Info GB (_Cdense_accumb__ne_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ne_fp32)
 (
     GrB_Matrix C,
@@ -38713,7 +35904,6 @@ GrB_Info GB (_AxD__ne_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ne_fp32)
 (
     GrB_Matrix C,
@@ -38721,7 +35911,6 @@ GrB_Info GB (_DxB__ne_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ne_fp32)
@@ -38743,6 +35932,7 @@ GrB_Info GB (_AaddB__ne_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_fp32)
 (
     GrB_Matrix C,
@@ -38761,7 +35951,6 @@ GrB_Info GB (_AemultB_01__ne_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_fp32)
 (
     GrB_Matrix C,
@@ -38774,7 +35963,6 @@ GrB_Info GB (_AemultB_02__ne_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_fp32)
 (
     GrB_Matrix C,
@@ -38785,7 +35973,6 @@ GrB_Info GB (_AemultB_03__ne_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_fp32)
 (
     GrB_Matrix C,
@@ -38801,6 +35988,7 @@ GrB_Info GB (_AemultB_bitmap__ne_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_fp32)
 (
     GB_void *Cx_output,
@@ -38810,21 +35998,6 @@ GrB_Info GB (_bind1st__ne_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_fp32)
 (
     GrB_Matrix C,
@@ -38835,9 +36008,15 @@ GrB_Info GB (_bind1st_tran__ne_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_fp32)
 (
     GrB_Matrix C,
@@ -38884,7 +36063,6 @@ GrB_Info GB (_Cdense_accumb__ne_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ne_fp64)
 (
     GrB_Matrix C,
@@ -38892,7 +36070,6 @@ GrB_Info GB (_AxD__ne_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ne_fp64)
 (
     GrB_Matrix C,
@@ -38900,7 +36077,6 @@ GrB_Info GB (_DxB__ne_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ne_fp64)
@@ -38922,6 +36098,7 @@ GrB_Info GB (_AaddB__ne_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_fp64)
 (
     GrB_Matrix C,
@@ -38940,7 +36117,6 @@ GrB_Info GB (_AemultB_01__ne_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_fp64)
 (
     GrB_Matrix C,
@@ -38953,7 +36129,6 @@ GrB_Info GB (_AemultB_02__ne_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_fp64)
 (
     GrB_Matrix C,
@@ -38964,7 +36139,6 @@ GrB_Info GB (_AemultB_03__ne_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_fp64)
 (
     GrB_Matrix C,
@@ -38980,6 +36154,7 @@ GrB_Info GB (_AemultB_bitmap__ne_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_fp64)
 (
     GB_void *Cx_output,
@@ -38989,21 +36164,6 @@ GrB_Info GB (_bind1st__ne_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_fp64)
 (
     GrB_Matrix C,
@@ -39014,9 +36174,15 @@ GrB_Info GB (_bind1st_tran__ne_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_fp64)
 (
     GrB_Matrix C,
@@ -39063,7 +36229,6 @@ GrB_Info GB (_Cdense_accumb__ne_fc32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -39071,15 +36236,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__ne_fc32)
@@ -39101,6 +36264,7 @@ GrB_Info GB (_AaddB__ne_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_fc32)
 (
     GrB_Matrix C,
@@ -39119,7 +36283,6 @@ GrB_Info GB (_AemultB_01__ne_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_fc32)
 (
     GrB_Matrix C,
@@ -39132,7 +36295,6 @@ GrB_Info GB (_AemultB_02__ne_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_fc32)
 (
     GrB_Matrix C,
@@ -39143,7 +36305,6 @@ GrB_Info GB (_AemultB_03__ne_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_fc32)
 (
     GrB_Matrix C,
@@ -39159,6 +36320,7 @@ GrB_Info GB (_AemultB_bitmap__ne_fc32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_fc32)
 (
     GB_void *Cx_output,
@@ -39168,21 +36330,6 @@ GrB_Info GB (_bind1st__ne_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_fc32)
 (
     GrB_Matrix C,
@@ -39193,9 +36340,15 @@ GrB_Info GB (_bind1st_tran__ne_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_fc32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_fc32)
 (
     GrB_Matrix C,
@@ -39242,7 +36395,6 @@ GrB_Info GB (_Cdense_accumb__ne_fc64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -39250,15 +36402,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__ne_fc64)
@@ -39280,6 +36430,7 @@ GrB_Info GB (_AaddB__ne_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ne_fc64)
 (
     GrB_Matrix C,
@@ -39298,7 +36449,6 @@ GrB_Info GB (_AemultB_01__ne_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ne_fc64)
 (
     GrB_Matrix C,
@@ -39311,7 +36461,6 @@ GrB_Info GB (_AemultB_02__ne_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ne_fc64)
 (
     GrB_Matrix C,
@@ -39322,7 +36471,6 @@ GrB_Info GB (_AemultB_03__ne_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ne_fc64)
 (
     GrB_Matrix C,
@@ -39338,6 +36486,7 @@ GrB_Info GB (_AemultB_bitmap__ne_fc64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ne_fc64)
 (
     GB_void *Cx_output,
@@ -39347,21 +36496,6 @@ GrB_Info GB (_bind1st__ne_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ne_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ne_fc64)
 (
     GrB_Matrix C,
@@ -39372,9 +36506,15 @@ GrB_Info GB (_bind1st_tran__ne_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ne_fc64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ne_fc64)
 (
     GrB_Matrix C,
@@ -39421,7 +36561,6 @@ GrB_Info GB (_Cdense_accumb__gt_bool)
 ) ;
 
 
-
 GrB_Info GB (_AxD__gt_bool)
 (
     GrB_Matrix C,
@@ -39429,7 +36568,6 @@ GrB_Info GB (_AxD__gt_bool)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__gt_bool)
 (
     GrB_Matrix C,
@@ -39437,7 +36575,6 @@ GrB_Info GB (_DxB__gt_bool)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__gt_bool)
@@ -39459,6 +36596,7 @@ GrB_Info GB (_AaddB__gt_bool)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__gt_bool)
 (
     GrB_Matrix C,
@@ -39477,7 +36615,6 @@ GrB_Info GB (_AemultB_01__gt_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__gt_bool)
 (
     GrB_Matrix C,
@@ -39490,7 +36627,6 @@ GrB_Info GB (_AemultB_02__gt_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__gt_bool)
 (
     GrB_Matrix C,
@@ -39501,7 +36637,6 @@ GrB_Info GB (_AemultB_03__gt_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__gt_bool)
 (
     GrB_Matrix C,
@@ -39517,6 +36652,7 @@ GrB_Info GB (_AemultB_bitmap__gt_bool)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__gt_bool)
 (
     GB_void *Cx_output,
@@ -39526,21 +36662,6 @@ GrB_Info GB (_bind1st__gt_bool)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__gt_bool)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__gt_bool)
 (
     GrB_Matrix C,
@@ -39551,9 +36672,15 @@ GrB_Info GB (_bind1st_tran__gt_bool)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__gt_bool)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__gt_bool)
 (
     GrB_Matrix C,
@@ -39600,7 +36727,6 @@ GrB_Info GB (_Cdense_accumb__gt_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__gt_int8)
 (
     GrB_Matrix C,
@@ -39608,7 +36734,6 @@ GrB_Info GB (_AxD__gt_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__gt_int8)
 (
     GrB_Matrix C,
@@ -39616,7 +36741,6 @@ GrB_Info GB (_DxB__gt_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__gt_int8)
@@ -39638,6 +36762,7 @@ GrB_Info GB (_AaddB__gt_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__gt_int8)
 (
     GrB_Matrix C,
@@ -39656,7 +36781,6 @@ GrB_Info GB (_AemultB_01__gt_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__gt_int8)
 (
     GrB_Matrix C,
@@ -39669,7 +36793,6 @@ GrB_Info GB (_AemultB_02__gt_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__gt_int8)
 (
     GrB_Matrix C,
@@ -39680,7 +36803,6 @@ GrB_Info GB (_AemultB_03__gt_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__gt_int8)
 (
     GrB_Matrix C,
@@ -39696,6 +36818,7 @@ GrB_Info GB (_AemultB_bitmap__gt_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__gt_int8)
 (
     GB_void *Cx_output,
@@ -39705,21 +36828,6 @@ GrB_Info GB (_bind1st__gt_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__gt_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__gt_int8)
 (
     GrB_Matrix C,
@@ -39730,9 +36838,15 @@ GrB_Info GB (_bind1st_tran__gt_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__gt_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__gt_int8)
 (
     GrB_Matrix C,
@@ -39779,7 +36893,6 @@ GrB_Info GB (_Cdense_accumb__gt_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__gt_int16)
 (
     GrB_Matrix C,
@@ -39787,7 +36900,6 @@ GrB_Info GB (_AxD__gt_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__gt_int16)
 (
     GrB_Matrix C,
@@ -39795,7 +36907,6 @@ GrB_Info GB (_DxB__gt_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__gt_int16)
@@ -39817,6 +36928,7 @@ GrB_Info GB (_AaddB__gt_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__gt_int16)
 (
     GrB_Matrix C,
@@ -39835,7 +36947,6 @@ GrB_Info GB (_AemultB_01__gt_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__gt_int16)
 (
     GrB_Matrix C,
@@ -39848,7 +36959,6 @@ GrB_Info GB (_AemultB_02__gt_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__gt_int16)
 (
     GrB_Matrix C,
@@ -39859,7 +36969,6 @@ GrB_Info GB (_AemultB_03__gt_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__gt_int16)
 (
     GrB_Matrix C,
@@ -39875,6 +36984,7 @@ GrB_Info GB (_AemultB_bitmap__gt_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__gt_int16)
 (
     GB_void *Cx_output,
@@ -39884,21 +36994,6 @@ GrB_Info GB (_bind1st__gt_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__gt_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__gt_int16)
 (
     GrB_Matrix C,
@@ -39909,9 +37004,15 @@ GrB_Info GB (_bind1st_tran__gt_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__gt_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__gt_int16)
 (
     GrB_Matrix C,
@@ -39958,7 +37059,6 @@ GrB_Info GB (_Cdense_accumb__gt_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__gt_int32)
 (
     GrB_Matrix C,
@@ -39966,7 +37066,6 @@ GrB_Info GB (_AxD__gt_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__gt_int32)
 (
     GrB_Matrix C,
@@ -39974,7 +37073,6 @@ GrB_Info GB (_DxB__gt_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__gt_int32)
@@ -39996,6 +37094,7 @@ GrB_Info GB (_AaddB__gt_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__gt_int32)
 (
     GrB_Matrix C,
@@ -40014,7 +37113,6 @@ GrB_Info GB (_AemultB_01__gt_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__gt_int32)
 (
     GrB_Matrix C,
@@ -40027,7 +37125,6 @@ GrB_Info GB (_AemultB_02__gt_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__gt_int32)
 (
     GrB_Matrix C,
@@ -40038,7 +37135,6 @@ GrB_Info GB (_AemultB_03__gt_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__gt_int32)
 (
     GrB_Matrix C,
@@ -40054,6 +37150,7 @@ GrB_Info GB (_AemultB_bitmap__gt_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__gt_int32)
 (
     GB_void *Cx_output,
@@ -40063,21 +37160,6 @@ GrB_Info GB (_bind1st__gt_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__gt_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__gt_int32)
 (
     GrB_Matrix C,
@@ -40088,9 +37170,15 @@ GrB_Info GB (_bind1st_tran__gt_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__gt_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__gt_int32)
 (
     GrB_Matrix C,
@@ -40137,7 +37225,6 @@ GrB_Info GB (_Cdense_accumb__gt_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__gt_int64)
 (
     GrB_Matrix C,
@@ -40145,7 +37232,6 @@ GrB_Info GB (_AxD__gt_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__gt_int64)
 (
     GrB_Matrix C,
@@ -40153,7 +37239,6 @@ GrB_Info GB (_DxB__gt_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__gt_int64)
@@ -40175,6 +37260,7 @@ GrB_Info GB (_AaddB__gt_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__gt_int64)
 (
     GrB_Matrix C,
@@ -40193,7 +37279,6 @@ GrB_Info GB (_AemultB_01__gt_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__gt_int64)
 (
     GrB_Matrix C,
@@ -40206,7 +37291,6 @@ GrB_Info GB (_AemultB_02__gt_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__gt_int64)
 (
     GrB_Matrix C,
@@ -40217,7 +37301,6 @@ GrB_Info GB (_AemultB_03__gt_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__gt_int64)
 (
     GrB_Matrix C,
@@ -40233,6 +37316,7 @@ GrB_Info GB (_AemultB_bitmap__gt_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__gt_int64)
 (
     GB_void *Cx_output,
@@ -40242,21 +37326,6 @@ GrB_Info GB (_bind1st__gt_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__gt_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__gt_int64)
 (
     GrB_Matrix C,
@@ -40267,9 +37336,15 @@ GrB_Info GB (_bind1st_tran__gt_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__gt_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__gt_int64)
 (
     GrB_Matrix C,
@@ -40316,7 +37391,6 @@ GrB_Info GB (_Cdense_accumb__gt_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__gt_uint8)
 (
     GrB_Matrix C,
@@ -40324,7 +37398,6 @@ GrB_Info GB (_AxD__gt_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__gt_uint8)
 (
     GrB_Matrix C,
@@ -40332,7 +37405,6 @@ GrB_Info GB (_DxB__gt_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__gt_uint8)
@@ -40354,6 +37426,7 @@ GrB_Info GB (_AaddB__gt_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__gt_uint8)
 (
     GrB_Matrix C,
@@ -40372,7 +37445,6 @@ GrB_Info GB (_AemultB_01__gt_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__gt_uint8)
 (
     GrB_Matrix C,
@@ -40385,7 +37457,6 @@ GrB_Info GB (_AemultB_02__gt_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__gt_uint8)
 (
     GrB_Matrix C,
@@ -40396,7 +37467,6 @@ GrB_Info GB (_AemultB_03__gt_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__gt_uint8)
 (
     GrB_Matrix C,
@@ -40412,6 +37482,7 @@ GrB_Info GB (_AemultB_bitmap__gt_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__gt_uint8)
 (
     GB_void *Cx_output,
@@ -40421,21 +37492,6 @@ GrB_Info GB (_bind1st__gt_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__gt_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__gt_uint8)
 (
     GrB_Matrix C,
@@ -40446,9 +37502,15 @@ GrB_Info GB (_bind1st_tran__gt_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__gt_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__gt_uint8)
 (
     GrB_Matrix C,
@@ -40495,7 +37557,6 @@ GrB_Info GB (_Cdense_accumb__gt_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__gt_uint16)
 (
     GrB_Matrix C,
@@ -40503,7 +37564,6 @@ GrB_Info GB (_AxD__gt_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__gt_uint16)
 (
     GrB_Matrix C,
@@ -40511,7 +37571,6 @@ GrB_Info GB (_DxB__gt_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__gt_uint16)
@@ -40533,6 +37592,7 @@ GrB_Info GB (_AaddB__gt_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__gt_uint16)
 (
     GrB_Matrix C,
@@ -40551,7 +37611,6 @@ GrB_Info GB (_AemultB_01__gt_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__gt_uint16)
 (
     GrB_Matrix C,
@@ -40564,7 +37623,6 @@ GrB_Info GB (_AemultB_02__gt_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__gt_uint16)
 (
     GrB_Matrix C,
@@ -40575,7 +37633,6 @@ GrB_Info GB (_AemultB_03__gt_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__gt_uint16)
 (
     GrB_Matrix C,
@@ -40591,6 +37648,7 @@ GrB_Info GB (_AemultB_bitmap__gt_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__gt_uint16)
 (
     GB_void *Cx_output,
@@ -40600,21 +37658,6 @@ GrB_Info GB (_bind1st__gt_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__gt_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__gt_uint16)
 (
     GrB_Matrix C,
@@ -40625,9 +37668,15 @@ GrB_Info GB (_bind1st_tran__gt_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__gt_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__gt_uint16)
 (
     GrB_Matrix C,
@@ -40674,7 +37723,6 @@ GrB_Info GB (_Cdense_accumb__gt_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__gt_uint32)
 (
     GrB_Matrix C,
@@ -40682,7 +37730,6 @@ GrB_Info GB (_AxD__gt_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__gt_uint32)
 (
     GrB_Matrix C,
@@ -40690,7 +37737,6 @@ GrB_Info GB (_DxB__gt_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__gt_uint32)
@@ -40712,6 +37758,7 @@ GrB_Info GB (_AaddB__gt_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__gt_uint32)
 (
     GrB_Matrix C,
@@ -40730,7 +37777,6 @@ GrB_Info GB (_AemultB_01__gt_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__gt_uint32)
 (
     GrB_Matrix C,
@@ -40743,7 +37789,6 @@ GrB_Info GB (_AemultB_02__gt_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__gt_uint32)
 (
     GrB_Matrix C,
@@ -40754,7 +37799,6 @@ GrB_Info GB (_AemultB_03__gt_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__gt_uint32)
 (
     GrB_Matrix C,
@@ -40770,6 +37814,7 @@ GrB_Info GB (_AemultB_bitmap__gt_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__gt_uint32)
 (
     GB_void *Cx_output,
@@ -40779,21 +37824,6 @@ GrB_Info GB (_bind1st__gt_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__gt_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__gt_uint32)
 (
     GrB_Matrix C,
@@ -40804,9 +37834,15 @@ GrB_Info GB (_bind1st_tran__gt_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__gt_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__gt_uint32)
 (
     GrB_Matrix C,
@@ -40853,7 +37889,6 @@ GrB_Info GB (_Cdense_accumb__gt_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__gt_uint64)
 (
     GrB_Matrix C,
@@ -40861,7 +37896,6 @@ GrB_Info GB (_AxD__gt_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__gt_uint64)
 (
     GrB_Matrix C,
@@ -40869,7 +37903,6 @@ GrB_Info GB (_DxB__gt_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__gt_uint64)
@@ -40891,6 +37924,7 @@ GrB_Info GB (_AaddB__gt_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__gt_uint64)
 (
     GrB_Matrix C,
@@ -40909,7 +37943,6 @@ GrB_Info GB (_AemultB_01__gt_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__gt_uint64)
 (
     GrB_Matrix C,
@@ -40922,7 +37955,6 @@ GrB_Info GB (_AemultB_02__gt_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__gt_uint64)
 (
     GrB_Matrix C,
@@ -40933,7 +37965,6 @@ GrB_Info GB (_AemultB_03__gt_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__gt_uint64)
 (
     GrB_Matrix C,
@@ -40949,6 +37980,7 @@ GrB_Info GB (_AemultB_bitmap__gt_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__gt_uint64)
 (
     GB_void *Cx_output,
@@ -40958,21 +37990,6 @@ GrB_Info GB (_bind1st__gt_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__gt_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__gt_uint64)
 (
     GrB_Matrix C,
@@ -40983,9 +38000,15 @@ GrB_Info GB (_bind1st_tran__gt_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__gt_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__gt_uint64)
 (
     GrB_Matrix C,
@@ -41032,7 +38055,6 @@ GrB_Info GB (_Cdense_accumb__gt_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__gt_fp32)
 (
     GrB_Matrix C,
@@ -41040,7 +38062,6 @@ GrB_Info GB (_AxD__gt_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__gt_fp32)
 (
     GrB_Matrix C,
@@ -41048,7 +38069,6 @@ GrB_Info GB (_DxB__gt_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__gt_fp32)
@@ -41070,6 +38090,7 @@ GrB_Info GB (_AaddB__gt_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__gt_fp32)
 (
     GrB_Matrix C,
@@ -41088,7 +38109,6 @@ GrB_Info GB (_AemultB_01__gt_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__gt_fp32)
 (
     GrB_Matrix C,
@@ -41101,7 +38121,6 @@ GrB_Info GB (_AemultB_02__gt_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__gt_fp32)
 (
     GrB_Matrix C,
@@ -41112,7 +38131,6 @@ GrB_Info GB (_AemultB_03__gt_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__gt_fp32)
 (
     GrB_Matrix C,
@@ -41128,6 +38146,7 @@ GrB_Info GB (_AemultB_bitmap__gt_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__gt_fp32)
 (
     GB_void *Cx_output,
@@ -41137,21 +38156,6 @@ GrB_Info GB (_bind1st__gt_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__gt_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__gt_fp32)
 (
     GrB_Matrix C,
@@ -41162,9 +38166,15 @@ GrB_Info GB (_bind1st_tran__gt_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__gt_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__gt_fp32)
 (
     GrB_Matrix C,
@@ -41211,7 +38221,6 @@ GrB_Info GB (_Cdense_accumb__gt_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__gt_fp64)
 (
     GrB_Matrix C,
@@ -41219,7 +38228,6 @@ GrB_Info GB (_AxD__gt_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__gt_fp64)
 (
     GrB_Matrix C,
@@ -41227,7 +38235,6 @@ GrB_Info GB (_DxB__gt_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__gt_fp64)
@@ -41249,6 +38256,7 @@ GrB_Info GB (_AaddB__gt_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__gt_fp64)
 (
     GrB_Matrix C,
@@ -41267,7 +38275,6 @@ GrB_Info GB (_AemultB_01__gt_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__gt_fp64)
 (
     GrB_Matrix C,
@@ -41280,7 +38287,6 @@ GrB_Info GB (_AemultB_02__gt_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__gt_fp64)
 (
     GrB_Matrix C,
@@ -41291,7 +38297,6 @@ GrB_Info GB (_AemultB_03__gt_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__gt_fp64)
 (
     GrB_Matrix C,
@@ -41307,6 +38312,7 @@ GrB_Info GB (_AemultB_bitmap__gt_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__gt_fp64)
 (
     GB_void *Cx_output,
@@ -41316,21 +38322,6 @@ GrB_Info GB (_bind1st__gt_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__gt_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__gt_fp64)
 (
     GrB_Matrix C,
@@ -41341,9 +38332,15 @@ GrB_Info GB (_bind1st_tran__gt_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__gt_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__gt_fp64)
 (
     GrB_Matrix C,
@@ -41390,7 +38387,6 @@ GrB_Info GB (_Cdense_accumb__lt_bool)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lt_bool)
 (
     GrB_Matrix C,
@@ -41398,7 +38394,6 @@ GrB_Info GB (_AxD__lt_bool)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lt_bool)
 (
     GrB_Matrix C,
@@ -41406,7 +38401,6 @@ GrB_Info GB (_DxB__lt_bool)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lt_bool)
@@ -41428,6 +38422,7 @@ GrB_Info GB (_AaddB__lt_bool)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lt_bool)
 (
     GrB_Matrix C,
@@ -41446,7 +38441,6 @@ GrB_Info GB (_AemultB_01__lt_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lt_bool)
 (
     GrB_Matrix C,
@@ -41459,7 +38453,6 @@ GrB_Info GB (_AemultB_02__lt_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lt_bool)
 (
     GrB_Matrix C,
@@ -41470,7 +38463,6 @@ GrB_Info GB (_AemultB_03__lt_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lt_bool)
 (
     GrB_Matrix C,
@@ -41486,6 +38478,7 @@ GrB_Info GB (_AemultB_bitmap__lt_bool)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lt_bool)
 (
     GB_void *Cx_output,
@@ -41495,21 +38488,6 @@ GrB_Info GB (_bind1st__lt_bool)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lt_bool)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lt_bool)
 (
     GrB_Matrix C,
@@ -41520,9 +38498,15 @@ GrB_Info GB (_bind1st_tran__lt_bool)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lt_bool)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lt_bool)
 (
     GrB_Matrix C,
@@ -41569,7 +38553,6 @@ GrB_Info GB (_Cdense_accumb__lt_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lt_int8)
 (
     GrB_Matrix C,
@@ -41577,7 +38560,6 @@ GrB_Info GB (_AxD__lt_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lt_int8)
 (
     GrB_Matrix C,
@@ -41585,7 +38567,6 @@ GrB_Info GB (_DxB__lt_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lt_int8)
@@ -41607,6 +38588,7 @@ GrB_Info GB (_AaddB__lt_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lt_int8)
 (
     GrB_Matrix C,
@@ -41625,7 +38607,6 @@ GrB_Info GB (_AemultB_01__lt_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lt_int8)
 (
     GrB_Matrix C,
@@ -41638,7 +38619,6 @@ GrB_Info GB (_AemultB_02__lt_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lt_int8)
 (
     GrB_Matrix C,
@@ -41649,7 +38629,6 @@ GrB_Info GB (_AemultB_03__lt_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lt_int8)
 (
     GrB_Matrix C,
@@ -41665,6 +38644,7 @@ GrB_Info GB (_AemultB_bitmap__lt_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lt_int8)
 (
     GB_void *Cx_output,
@@ -41674,21 +38654,6 @@ GrB_Info GB (_bind1st__lt_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lt_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lt_int8)
 (
     GrB_Matrix C,
@@ -41699,9 +38664,15 @@ GrB_Info GB (_bind1st_tran__lt_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lt_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lt_int8)
 (
     GrB_Matrix C,
@@ -41748,7 +38719,6 @@ GrB_Info GB (_Cdense_accumb__lt_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lt_int16)
 (
     GrB_Matrix C,
@@ -41756,7 +38726,6 @@ GrB_Info GB (_AxD__lt_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lt_int16)
 (
     GrB_Matrix C,
@@ -41764,7 +38733,6 @@ GrB_Info GB (_DxB__lt_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lt_int16)
@@ -41786,6 +38754,7 @@ GrB_Info GB (_AaddB__lt_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lt_int16)
 (
     GrB_Matrix C,
@@ -41804,7 +38773,6 @@ GrB_Info GB (_AemultB_01__lt_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lt_int16)
 (
     GrB_Matrix C,
@@ -41817,7 +38785,6 @@ GrB_Info GB (_AemultB_02__lt_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lt_int16)
 (
     GrB_Matrix C,
@@ -41828,7 +38795,6 @@ GrB_Info GB (_AemultB_03__lt_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lt_int16)
 (
     GrB_Matrix C,
@@ -41844,6 +38810,7 @@ GrB_Info GB (_AemultB_bitmap__lt_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lt_int16)
 (
     GB_void *Cx_output,
@@ -41853,21 +38820,6 @@ GrB_Info GB (_bind1st__lt_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lt_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lt_int16)
 (
     GrB_Matrix C,
@@ -41878,9 +38830,15 @@ GrB_Info GB (_bind1st_tran__lt_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lt_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lt_int16)
 (
     GrB_Matrix C,
@@ -41927,7 +38885,6 @@ GrB_Info GB (_Cdense_accumb__lt_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lt_int32)
 (
     GrB_Matrix C,
@@ -41935,7 +38892,6 @@ GrB_Info GB (_AxD__lt_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lt_int32)
 (
     GrB_Matrix C,
@@ -41943,7 +38899,6 @@ GrB_Info GB (_DxB__lt_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lt_int32)
@@ -41965,6 +38920,7 @@ GrB_Info GB (_AaddB__lt_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lt_int32)
 (
     GrB_Matrix C,
@@ -41983,7 +38939,6 @@ GrB_Info GB (_AemultB_01__lt_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lt_int32)
 (
     GrB_Matrix C,
@@ -41996,7 +38951,6 @@ GrB_Info GB (_AemultB_02__lt_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lt_int32)
 (
     GrB_Matrix C,
@@ -42007,7 +38961,6 @@ GrB_Info GB (_AemultB_03__lt_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lt_int32)
 (
     GrB_Matrix C,
@@ -42023,6 +38976,7 @@ GrB_Info GB (_AemultB_bitmap__lt_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lt_int32)
 (
     GB_void *Cx_output,
@@ -42032,21 +38986,6 @@ GrB_Info GB (_bind1st__lt_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lt_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lt_int32)
 (
     GrB_Matrix C,
@@ -42057,9 +38996,15 @@ GrB_Info GB (_bind1st_tran__lt_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lt_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lt_int32)
 (
     GrB_Matrix C,
@@ -42106,7 +39051,6 @@ GrB_Info GB (_Cdense_accumb__lt_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lt_int64)
 (
     GrB_Matrix C,
@@ -42114,7 +39058,6 @@ GrB_Info GB (_AxD__lt_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lt_int64)
 (
     GrB_Matrix C,
@@ -42122,7 +39065,6 @@ GrB_Info GB (_DxB__lt_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lt_int64)
@@ -42144,6 +39086,7 @@ GrB_Info GB (_AaddB__lt_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lt_int64)
 (
     GrB_Matrix C,
@@ -42162,7 +39105,6 @@ GrB_Info GB (_AemultB_01__lt_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lt_int64)
 (
     GrB_Matrix C,
@@ -42175,7 +39117,6 @@ GrB_Info GB (_AemultB_02__lt_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lt_int64)
 (
     GrB_Matrix C,
@@ -42186,7 +39127,6 @@ GrB_Info GB (_AemultB_03__lt_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lt_int64)
 (
     GrB_Matrix C,
@@ -42202,6 +39142,7 @@ GrB_Info GB (_AemultB_bitmap__lt_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lt_int64)
 (
     GB_void *Cx_output,
@@ -42211,21 +39152,6 @@ GrB_Info GB (_bind1st__lt_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lt_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lt_int64)
 (
     GrB_Matrix C,
@@ -42236,9 +39162,15 @@ GrB_Info GB (_bind1st_tran__lt_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lt_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lt_int64)
 (
     GrB_Matrix C,
@@ -42285,7 +39217,6 @@ GrB_Info GB (_Cdense_accumb__lt_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lt_uint8)
 (
     GrB_Matrix C,
@@ -42293,7 +39224,6 @@ GrB_Info GB (_AxD__lt_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lt_uint8)
 (
     GrB_Matrix C,
@@ -42301,7 +39231,6 @@ GrB_Info GB (_DxB__lt_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lt_uint8)
@@ -42323,6 +39252,7 @@ GrB_Info GB (_AaddB__lt_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lt_uint8)
 (
     GrB_Matrix C,
@@ -42341,7 +39271,6 @@ GrB_Info GB (_AemultB_01__lt_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lt_uint8)
 (
     GrB_Matrix C,
@@ -42354,7 +39283,6 @@ GrB_Info GB (_AemultB_02__lt_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lt_uint8)
 (
     GrB_Matrix C,
@@ -42365,7 +39293,6 @@ GrB_Info GB (_AemultB_03__lt_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lt_uint8)
 (
     GrB_Matrix C,
@@ -42381,6 +39308,7 @@ GrB_Info GB (_AemultB_bitmap__lt_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lt_uint8)
 (
     GB_void *Cx_output,
@@ -42390,21 +39318,6 @@ GrB_Info GB (_bind1st__lt_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lt_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lt_uint8)
 (
     GrB_Matrix C,
@@ -42415,9 +39328,15 @@ GrB_Info GB (_bind1st_tran__lt_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lt_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lt_uint8)
 (
     GrB_Matrix C,
@@ -42464,7 +39383,6 @@ GrB_Info GB (_Cdense_accumb__lt_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lt_uint16)
 (
     GrB_Matrix C,
@@ -42472,7 +39390,6 @@ GrB_Info GB (_AxD__lt_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lt_uint16)
 (
     GrB_Matrix C,
@@ -42480,7 +39397,6 @@ GrB_Info GB (_DxB__lt_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lt_uint16)
@@ -42502,6 +39418,7 @@ GrB_Info GB (_AaddB__lt_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lt_uint16)
 (
     GrB_Matrix C,
@@ -42520,7 +39437,6 @@ GrB_Info GB (_AemultB_01__lt_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lt_uint16)
 (
     GrB_Matrix C,
@@ -42533,7 +39449,6 @@ GrB_Info GB (_AemultB_02__lt_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lt_uint16)
 (
     GrB_Matrix C,
@@ -42544,7 +39459,6 @@ GrB_Info GB (_AemultB_03__lt_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lt_uint16)
 (
     GrB_Matrix C,
@@ -42560,6 +39474,7 @@ GrB_Info GB (_AemultB_bitmap__lt_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lt_uint16)
 (
     GB_void *Cx_output,
@@ -42569,21 +39484,6 @@ GrB_Info GB (_bind1st__lt_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lt_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lt_uint16)
 (
     GrB_Matrix C,
@@ -42594,9 +39494,15 @@ GrB_Info GB (_bind1st_tran__lt_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lt_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lt_uint16)
 (
     GrB_Matrix C,
@@ -42643,7 +39549,6 @@ GrB_Info GB (_Cdense_accumb__lt_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lt_uint32)
 (
     GrB_Matrix C,
@@ -42651,7 +39556,6 @@ GrB_Info GB (_AxD__lt_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lt_uint32)
 (
     GrB_Matrix C,
@@ -42659,7 +39563,6 @@ GrB_Info GB (_DxB__lt_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lt_uint32)
@@ -42681,6 +39584,7 @@ GrB_Info GB (_AaddB__lt_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lt_uint32)
 (
     GrB_Matrix C,
@@ -42699,7 +39603,6 @@ GrB_Info GB (_AemultB_01__lt_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lt_uint32)
 (
     GrB_Matrix C,
@@ -42712,7 +39615,6 @@ GrB_Info GB (_AemultB_02__lt_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lt_uint32)
 (
     GrB_Matrix C,
@@ -42723,7 +39625,6 @@ GrB_Info GB (_AemultB_03__lt_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lt_uint32)
 (
     GrB_Matrix C,
@@ -42739,6 +39640,7 @@ GrB_Info GB (_AemultB_bitmap__lt_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lt_uint32)
 (
     GB_void *Cx_output,
@@ -42748,21 +39650,6 @@ GrB_Info GB (_bind1st__lt_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lt_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lt_uint32)
 (
     GrB_Matrix C,
@@ -42773,9 +39660,15 @@ GrB_Info GB (_bind1st_tran__lt_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lt_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lt_uint32)
 (
     GrB_Matrix C,
@@ -42822,7 +39715,6 @@ GrB_Info GB (_Cdense_accumb__lt_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lt_uint64)
 (
     GrB_Matrix C,
@@ -42830,7 +39722,6 @@ GrB_Info GB (_AxD__lt_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lt_uint64)
 (
     GrB_Matrix C,
@@ -42838,7 +39729,6 @@ GrB_Info GB (_DxB__lt_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lt_uint64)
@@ -42860,6 +39750,7 @@ GrB_Info GB (_AaddB__lt_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lt_uint64)
 (
     GrB_Matrix C,
@@ -42878,7 +39769,6 @@ GrB_Info GB (_AemultB_01__lt_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lt_uint64)
 (
     GrB_Matrix C,
@@ -42891,7 +39781,6 @@ GrB_Info GB (_AemultB_02__lt_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lt_uint64)
 (
     GrB_Matrix C,
@@ -42902,7 +39791,6 @@ GrB_Info GB (_AemultB_03__lt_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lt_uint64)
 (
     GrB_Matrix C,
@@ -42918,6 +39806,7 @@ GrB_Info GB (_AemultB_bitmap__lt_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lt_uint64)
 (
     GB_void *Cx_output,
@@ -42927,21 +39816,6 @@ GrB_Info GB (_bind1st__lt_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lt_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lt_uint64)
 (
     GrB_Matrix C,
@@ -42952,9 +39826,15 @@ GrB_Info GB (_bind1st_tran__lt_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lt_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lt_uint64)
 (
     GrB_Matrix C,
@@ -43001,7 +39881,6 @@ GrB_Info GB (_Cdense_accumb__lt_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lt_fp32)
 (
     GrB_Matrix C,
@@ -43009,7 +39888,6 @@ GrB_Info GB (_AxD__lt_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lt_fp32)
 (
     GrB_Matrix C,
@@ -43017,7 +39895,6 @@ GrB_Info GB (_DxB__lt_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lt_fp32)
@@ -43039,6 +39916,7 @@ GrB_Info GB (_AaddB__lt_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lt_fp32)
 (
     GrB_Matrix C,
@@ -43057,7 +39935,6 @@ GrB_Info GB (_AemultB_01__lt_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lt_fp32)
 (
     GrB_Matrix C,
@@ -43070,7 +39947,6 @@ GrB_Info GB (_AemultB_02__lt_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lt_fp32)
 (
     GrB_Matrix C,
@@ -43081,7 +39957,6 @@ GrB_Info GB (_AemultB_03__lt_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lt_fp32)
 (
     GrB_Matrix C,
@@ -43097,6 +39972,7 @@ GrB_Info GB (_AemultB_bitmap__lt_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lt_fp32)
 (
     GB_void *Cx_output,
@@ -43106,21 +39982,6 @@ GrB_Info GB (_bind1st__lt_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lt_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lt_fp32)
 (
     GrB_Matrix C,
@@ -43131,9 +39992,15 @@ GrB_Info GB (_bind1st_tran__lt_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lt_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lt_fp32)
 (
     GrB_Matrix C,
@@ -43180,7 +40047,6 @@ GrB_Info GB (_Cdense_accumb__lt_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lt_fp64)
 (
     GrB_Matrix C,
@@ -43188,7 +40054,6 @@ GrB_Info GB (_AxD__lt_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lt_fp64)
 (
     GrB_Matrix C,
@@ -43196,7 +40061,6 @@ GrB_Info GB (_DxB__lt_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lt_fp64)
@@ -43218,6 +40082,7 @@ GrB_Info GB (_AaddB__lt_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lt_fp64)
 (
     GrB_Matrix C,
@@ -43236,7 +40101,6 @@ GrB_Info GB (_AemultB_01__lt_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lt_fp64)
 (
     GrB_Matrix C,
@@ -43249,7 +40113,6 @@ GrB_Info GB (_AemultB_02__lt_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lt_fp64)
 (
     GrB_Matrix C,
@@ -43260,7 +40123,6 @@ GrB_Info GB (_AemultB_03__lt_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lt_fp64)
 (
     GrB_Matrix C,
@@ -43276,6 +40138,7 @@ GrB_Info GB (_AemultB_bitmap__lt_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lt_fp64)
 (
     GB_void *Cx_output,
@@ -43285,21 +40148,6 @@ GrB_Info GB (_bind1st__lt_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lt_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lt_fp64)
 (
     GrB_Matrix C,
@@ -43310,9 +40158,15 @@ GrB_Info GB (_bind1st_tran__lt_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lt_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lt_fp64)
 (
     GrB_Matrix C,
@@ -43359,7 +40213,6 @@ GrB_Info GB (_Cdense_accumb__ge_bool)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ge_bool)
 (
     GrB_Matrix C,
@@ -43367,7 +40220,6 @@ GrB_Info GB (_AxD__ge_bool)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ge_bool)
 (
     GrB_Matrix C,
@@ -43375,7 +40227,6 @@ GrB_Info GB (_DxB__ge_bool)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ge_bool)
@@ -43397,6 +40248,7 @@ GrB_Info GB (_AaddB__ge_bool)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ge_bool)
 (
     GrB_Matrix C,
@@ -43415,7 +40267,6 @@ GrB_Info GB (_AemultB_01__ge_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ge_bool)
 (
     GrB_Matrix C,
@@ -43428,7 +40279,6 @@ GrB_Info GB (_AemultB_02__ge_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ge_bool)
 (
     GrB_Matrix C,
@@ -43439,7 +40289,6 @@ GrB_Info GB (_AemultB_03__ge_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ge_bool)
 (
     GrB_Matrix C,
@@ -43455,6 +40304,7 @@ GrB_Info GB (_AemultB_bitmap__ge_bool)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ge_bool)
 (
     GB_void *Cx_output,
@@ -43464,21 +40314,6 @@ GrB_Info GB (_bind1st__ge_bool)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ge_bool)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ge_bool)
 (
     GrB_Matrix C,
@@ -43489,9 +40324,15 @@ GrB_Info GB (_bind1st_tran__ge_bool)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ge_bool)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ge_bool)
 (
     GrB_Matrix C,
@@ -43538,7 +40379,6 @@ GrB_Info GB (_Cdense_accumb__ge_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ge_int8)
 (
     GrB_Matrix C,
@@ -43546,7 +40386,6 @@ GrB_Info GB (_AxD__ge_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ge_int8)
 (
     GrB_Matrix C,
@@ -43554,7 +40393,6 @@ GrB_Info GB (_DxB__ge_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ge_int8)
@@ -43576,6 +40414,7 @@ GrB_Info GB (_AaddB__ge_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ge_int8)
 (
     GrB_Matrix C,
@@ -43594,7 +40433,6 @@ GrB_Info GB (_AemultB_01__ge_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ge_int8)
 (
     GrB_Matrix C,
@@ -43607,7 +40445,6 @@ GrB_Info GB (_AemultB_02__ge_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ge_int8)
 (
     GrB_Matrix C,
@@ -43618,7 +40455,6 @@ GrB_Info GB (_AemultB_03__ge_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ge_int8)
 (
     GrB_Matrix C,
@@ -43634,6 +40470,7 @@ GrB_Info GB (_AemultB_bitmap__ge_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ge_int8)
 (
     GB_void *Cx_output,
@@ -43643,21 +40480,6 @@ GrB_Info GB (_bind1st__ge_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ge_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ge_int8)
 (
     GrB_Matrix C,
@@ -43668,9 +40490,15 @@ GrB_Info GB (_bind1st_tran__ge_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ge_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ge_int8)
 (
     GrB_Matrix C,
@@ -43717,7 +40545,6 @@ GrB_Info GB (_Cdense_accumb__ge_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ge_int16)
 (
     GrB_Matrix C,
@@ -43725,7 +40552,6 @@ GrB_Info GB (_AxD__ge_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ge_int16)
 (
     GrB_Matrix C,
@@ -43733,7 +40559,6 @@ GrB_Info GB (_DxB__ge_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ge_int16)
@@ -43755,6 +40580,7 @@ GrB_Info GB (_AaddB__ge_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ge_int16)
 (
     GrB_Matrix C,
@@ -43773,7 +40599,6 @@ GrB_Info GB (_AemultB_01__ge_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ge_int16)
 (
     GrB_Matrix C,
@@ -43786,7 +40611,6 @@ GrB_Info GB (_AemultB_02__ge_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ge_int16)
 (
     GrB_Matrix C,
@@ -43797,7 +40621,6 @@ GrB_Info GB (_AemultB_03__ge_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ge_int16)
 (
     GrB_Matrix C,
@@ -43813,6 +40636,7 @@ GrB_Info GB (_AemultB_bitmap__ge_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ge_int16)
 (
     GB_void *Cx_output,
@@ -43822,21 +40646,6 @@ GrB_Info GB (_bind1st__ge_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ge_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ge_int16)
 (
     GrB_Matrix C,
@@ -43847,9 +40656,15 @@ GrB_Info GB (_bind1st_tran__ge_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ge_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ge_int16)
 (
     GrB_Matrix C,
@@ -43896,7 +40711,6 @@ GrB_Info GB (_Cdense_accumb__ge_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ge_int32)
 (
     GrB_Matrix C,
@@ -43904,7 +40718,6 @@ GrB_Info GB (_AxD__ge_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ge_int32)
 (
     GrB_Matrix C,
@@ -43912,7 +40725,6 @@ GrB_Info GB (_DxB__ge_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ge_int32)
@@ -43934,6 +40746,7 @@ GrB_Info GB (_AaddB__ge_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ge_int32)
 (
     GrB_Matrix C,
@@ -43952,7 +40765,6 @@ GrB_Info GB (_AemultB_01__ge_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ge_int32)
 (
     GrB_Matrix C,
@@ -43965,7 +40777,6 @@ GrB_Info GB (_AemultB_02__ge_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ge_int32)
 (
     GrB_Matrix C,
@@ -43976,7 +40787,6 @@ GrB_Info GB (_AemultB_03__ge_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ge_int32)
 (
     GrB_Matrix C,
@@ -43992,6 +40802,7 @@ GrB_Info GB (_AemultB_bitmap__ge_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ge_int32)
 (
     GB_void *Cx_output,
@@ -44001,21 +40812,6 @@ GrB_Info GB (_bind1st__ge_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ge_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ge_int32)
 (
     GrB_Matrix C,
@@ -44026,9 +40822,15 @@ GrB_Info GB (_bind1st_tran__ge_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ge_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ge_int32)
 (
     GrB_Matrix C,
@@ -44075,7 +40877,6 @@ GrB_Info GB (_Cdense_accumb__ge_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ge_int64)
 (
     GrB_Matrix C,
@@ -44083,7 +40884,6 @@ GrB_Info GB (_AxD__ge_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ge_int64)
 (
     GrB_Matrix C,
@@ -44091,7 +40891,6 @@ GrB_Info GB (_DxB__ge_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ge_int64)
@@ -44113,6 +40912,7 @@ GrB_Info GB (_AaddB__ge_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ge_int64)
 (
     GrB_Matrix C,
@@ -44131,7 +40931,6 @@ GrB_Info GB (_AemultB_01__ge_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ge_int64)
 (
     GrB_Matrix C,
@@ -44144,7 +40943,6 @@ GrB_Info GB (_AemultB_02__ge_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ge_int64)
 (
     GrB_Matrix C,
@@ -44155,7 +40953,6 @@ GrB_Info GB (_AemultB_03__ge_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ge_int64)
 (
     GrB_Matrix C,
@@ -44171,6 +40968,7 @@ GrB_Info GB (_AemultB_bitmap__ge_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ge_int64)
 (
     GB_void *Cx_output,
@@ -44180,21 +40978,6 @@ GrB_Info GB (_bind1st__ge_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ge_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ge_int64)
 (
     GrB_Matrix C,
@@ -44205,9 +40988,15 @@ GrB_Info GB (_bind1st_tran__ge_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ge_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ge_int64)
 (
     GrB_Matrix C,
@@ -44254,7 +41043,6 @@ GrB_Info GB (_Cdense_accumb__ge_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ge_uint8)
 (
     GrB_Matrix C,
@@ -44262,7 +41050,6 @@ GrB_Info GB (_AxD__ge_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ge_uint8)
 (
     GrB_Matrix C,
@@ -44270,7 +41057,6 @@ GrB_Info GB (_DxB__ge_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ge_uint8)
@@ -44292,6 +41078,7 @@ GrB_Info GB (_AaddB__ge_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ge_uint8)
 (
     GrB_Matrix C,
@@ -44310,7 +41097,6 @@ GrB_Info GB (_AemultB_01__ge_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ge_uint8)
 (
     GrB_Matrix C,
@@ -44323,7 +41109,6 @@ GrB_Info GB (_AemultB_02__ge_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ge_uint8)
 (
     GrB_Matrix C,
@@ -44334,7 +41119,6 @@ GrB_Info GB (_AemultB_03__ge_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ge_uint8)
 (
     GrB_Matrix C,
@@ -44350,6 +41134,7 @@ GrB_Info GB (_AemultB_bitmap__ge_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ge_uint8)
 (
     GB_void *Cx_output,
@@ -44359,21 +41144,6 @@ GrB_Info GB (_bind1st__ge_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ge_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ge_uint8)
 (
     GrB_Matrix C,
@@ -44384,9 +41154,15 @@ GrB_Info GB (_bind1st_tran__ge_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ge_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ge_uint8)
 (
     GrB_Matrix C,
@@ -44433,7 +41209,6 @@ GrB_Info GB (_Cdense_accumb__ge_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ge_uint16)
 (
     GrB_Matrix C,
@@ -44441,7 +41216,6 @@ GrB_Info GB (_AxD__ge_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ge_uint16)
 (
     GrB_Matrix C,
@@ -44449,7 +41223,6 @@ GrB_Info GB (_DxB__ge_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ge_uint16)
@@ -44471,6 +41244,7 @@ GrB_Info GB (_AaddB__ge_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ge_uint16)
 (
     GrB_Matrix C,
@@ -44489,7 +41263,6 @@ GrB_Info GB (_AemultB_01__ge_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ge_uint16)
 (
     GrB_Matrix C,
@@ -44502,7 +41275,6 @@ GrB_Info GB (_AemultB_02__ge_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ge_uint16)
 (
     GrB_Matrix C,
@@ -44513,7 +41285,6 @@ GrB_Info GB (_AemultB_03__ge_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ge_uint16)
 (
     GrB_Matrix C,
@@ -44529,6 +41300,7 @@ GrB_Info GB (_AemultB_bitmap__ge_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ge_uint16)
 (
     GB_void *Cx_output,
@@ -44538,21 +41310,6 @@ GrB_Info GB (_bind1st__ge_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ge_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ge_uint16)
 (
     GrB_Matrix C,
@@ -44563,9 +41320,15 @@ GrB_Info GB (_bind1st_tran__ge_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ge_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ge_uint16)
 (
     GrB_Matrix C,
@@ -44612,7 +41375,6 @@ GrB_Info GB (_Cdense_accumb__ge_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ge_uint32)
 (
     GrB_Matrix C,
@@ -44620,7 +41382,6 @@ GrB_Info GB (_AxD__ge_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ge_uint32)
 (
     GrB_Matrix C,
@@ -44628,7 +41389,6 @@ GrB_Info GB (_DxB__ge_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ge_uint32)
@@ -44650,6 +41410,7 @@ GrB_Info GB (_AaddB__ge_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ge_uint32)
 (
     GrB_Matrix C,
@@ -44668,7 +41429,6 @@ GrB_Info GB (_AemultB_01__ge_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ge_uint32)
 (
     GrB_Matrix C,
@@ -44681,7 +41441,6 @@ GrB_Info GB (_AemultB_02__ge_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ge_uint32)
 (
     GrB_Matrix C,
@@ -44692,7 +41451,6 @@ GrB_Info GB (_AemultB_03__ge_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ge_uint32)
 (
     GrB_Matrix C,
@@ -44708,6 +41466,7 @@ GrB_Info GB (_AemultB_bitmap__ge_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ge_uint32)
 (
     GB_void *Cx_output,
@@ -44717,21 +41476,6 @@ GrB_Info GB (_bind1st__ge_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ge_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ge_uint32)
 (
     GrB_Matrix C,
@@ -44742,9 +41486,15 @@ GrB_Info GB (_bind1st_tran__ge_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ge_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ge_uint32)
 (
     GrB_Matrix C,
@@ -44791,7 +41541,6 @@ GrB_Info GB (_Cdense_accumb__ge_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ge_uint64)
 (
     GrB_Matrix C,
@@ -44799,7 +41548,6 @@ GrB_Info GB (_AxD__ge_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ge_uint64)
 (
     GrB_Matrix C,
@@ -44807,7 +41555,6 @@ GrB_Info GB (_DxB__ge_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ge_uint64)
@@ -44829,6 +41576,7 @@ GrB_Info GB (_AaddB__ge_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ge_uint64)
 (
     GrB_Matrix C,
@@ -44847,7 +41595,6 @@ GrB_Info GB (_AemultB_01__ge_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ge_uint64)
 (
     GrB_Matrix C,
@@ -44860,7 +41607,6 @@ GrB_Info GB (_AemultB_02__ge_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ge_uint64)
 (
     GrB_Matrix C,
@@ -44871,7 +41617,6 @@ GrB_Info GB (_AemultB_03__ge_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ge_uint64)
 (
     GrB_Matrix C,
@@ -44887,6 +41632,7 @@ GrB_Info GB (_AemultB_bitmap__ge_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ge_uint64)
 (
     GB_void *Cx_output,
@@ -44896,21 +41642,6 @@ GrB_Info GB (_bind1st__ge_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ge_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ge_uint64)
 (
     GrB_Matrix C,
@@ -44921,9 +41652,15 @@ GrB_Info GB (_bind1st_tran__ge_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ge_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ge_uint64)
 (
     GrB_Matrix C,
@@ -44970,7 +41707,6 @@ GrB_Info GB (_Cdense_accumb__ge_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ge_fp32)
 (
     GrB_Matrix C,
@@ -44978,7 +41714,6 @@ GrB_Info GB (_AxD__ge_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ge_fp32)
 (
     GrB_Matrix C,
@@ -44986,7 +41721,6 @@ GrB_Info GB (_DxB__ge_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ge_fp32)
@@ -45008,6 +41742,7 @@ GrB_Info GB (_AaddB__ge_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ge_fp32)
 (
     GrB_Matrix C,
@@ -45026,7 +41761,6 @@ GrB_Info GB (_AemultB_01__ge_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ge_fp32)
 (
     GrB_Matrix C,
@@ -45039,7 +41773,6 @@ GrB_Info GB (_AemultB_02__ge_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ge_fp32)
 (
     GrB_Matrix C,
@@ -45050,7 +41783,6 @@ GrB_Info GB (_AemultB_03__ge_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ge_fp32)
 (
     GrB_Matrix C,
@@ -45066,6 +41798,7 @@ GrB_Info GB (_AemultB_bitmap__ge_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ge_fp32)
 (
     GB_void *Cx_output,
@@ -45075,21 +41808,6 @@ GrB_Info GB (_bind1st__ge_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ge_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ge_fp32)
 (
     GrB_Matrix C,
@@ -45100,9 +41818,15 @@ GrB_Info GB (_bind1st_tran__ge_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ge_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ge_fp32)
 (
     GrB_Matrix C,
@@ -45149,7 +41873,6 @@ GrB_Info GB (_Cdense_accumb__ge_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__ge_fp64)
 (
     GrB_Matrix C,
@@ -45157,7 +41880,6 @@ GrB_Info GB (_AxD__ge_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__ge_fp64)
 (
     GrB_Matrix C,
@@ -45165,7 +41887,6 @@ GrB_Info GB (_DxB__ge_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__ge_fp64)
@@ -45187,6 +41908,7 @@ GrB_Info GB (_AaddB__ge_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ge_fp64)
 (
     GrB_Matrix C,
@@ -45205,7 +41927,6 @@ GrB_Info GB (_AemultB_01__ge_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ge_fp64)
 (
     GrB_Matrix C,
@@ -45218,7 +41939,6 @@ GrB_Info GB (_AemultB_02__ge_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ge_fp64)
 (
     GrB_Matrix C,
@@ -45229,7 +41949,6 @@ GrB_Info GB (_AemultB_03__ge_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ge_fp64)
 (
     GrB_Matrix C,
@@ -45245,6 +41964,7 @@ GrB_Info GB (_AemultB_bitmap__ge_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ge_fp64)
 (
     GB_void *Cx_output,
@@ -45254,21 +41974,6 @@ GrB_Info GB (_bind1st__ge_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ge_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ge_fp64)
 (
     GrB_Matrix C,
@@ -45279,9 +41984,15 @@ GrB_Info GB (_bind1st_tran__ge_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ge_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ge_fp64)
 (
     GrB_Matrix C,
@@ -45328,7 +42039,6 @@ GrB_Info GB (_Cdense_accumb__le_bool)
 ) ;
 
 
-
 GrB_Info GB (_AxD__le_bool)
 (
     GrB_Matrix C,
@@ -45336,7 +42046,6 @@ GrB_Info GB (_AxD__le_bool)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__le_bool)
 (
     GrB_Matrix C,
@@ -45344,7 +42053,6 @@ GrB_Info GB (_DxB__le_bool)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__le_bool)
@@ -45366,6 +42074,7 @@ GrB_Info GB (_AaddB__le_bool)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__le_bool)
 (
     GrB_Matrix C,
@@ -45384,7 +42093,6 @@ GrB_Info GB (_AemultB_01__le_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__le_bool)
 (
     GrB_Matrix C,
@@ -45397,7 +42105,6 @@ GrB_Info GB (_AemultB_02__le_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__le_bool)
 (
     GrB_Matrix C,
@@ -45408,7 +42115,6 @@ GrB_Info GB (_AemultB_03__le_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__le_bool)
 (
     GrB_Matrix C,
@@ -45424,6 +42130,7 @@ GrB_Info GB (_AemultB_bitmap__le_bool)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__le_bool)
 (
     GB_void *Cx_output,
@@ -45433,21 +42140,6 @@ GrB_Info GB (_bind1st__le_bool)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__le_bool)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__le_bool)
 (
     GrB_Matrix C,
@@ -45458,9 +42150,15 @@ GrB_Info GB (_bind1st_tran__le_bool)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__le_bool)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__le_bool)
 (
     GrB_Matrix C,
@@ -45507,7 +42205,6 @@ GrB_Info GB (_Cdense_accumb__le_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__le_int8)
 (
     GrB_Matrix C,
@@ -45515,7 +42212,6 @@ GrB_Info GB (_AxD__le_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__le_int8)
 (
     GrB_Matrix C,
@@ -45523,7 +42219,6 @@ GrB_Info GB (_DxB__le_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__le_int8)
@@ -45545,6 +42240,7 @@ GrB_Info GB (_AaddB__le_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__le_int8)
 (
     GrB_Matrix C,
@@ -45563,7 +42259,6 @@ GrB_Info GB (_AemultB_01__le_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__le_int8)
 (
     GrB_Matrix C,
@@ -45576,7 +42271,6 @@ GrB_Info GB (_AemultB_02__le_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__le_int8)
 (
     GrB_Matrix C,
@@ -45587,7 +42281,6 @@ GrB_Info GB (_AemultB_03__le_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__le_int8)
 (
     GrB_Matrix C,
@@ -45603,6 +42296,7 @@ GrB_Info GB (_AemultB_bitmap__le_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__le_int8)
 (
     GB_void *Cx_output,
@@ -45612,21 +42306,6 @@ GrB_Info GB (_bind1st__le_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__le_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__le_int8)
 (
     GrB_Matrix C,
@@ -45637,9 +42316,15 @@ GrB_Info GB (_bind1st_tran__le_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__le_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__le_int8)
 (
     GrB_Matrix C,
@@ -45686,7 +42371,6 @@ GrB_Info GB (_Cdense_accumb__le_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__le_int16)
 (
     GrB_Matrix C,
@@ -45694,7 +42378,6 @@ GrB_Info GB (_AxD__le_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__le_int16)
 (
     GrB_Matrix C,
@@ -45702,7 +42385,6 @@ GrB_Info GB (_DxB__le_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__le_int16)
@@ -45724,6 +42406,7 @@ GrB_Info GB (_AaddB__le_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__le_int16)
 (
     GrB_Matrix C,
@@ -45742,7 +42425,6 @@ GrB_Info GB (_AemultB_01__le_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__le_int16)
 (
     GrB_Matrix C,
@@ -45755,7 +42437,6 @@ GrB_Info GB (_AemultB_02__le_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__le_int16)
 (
     GrB_Matrix C,
@@ -45766,7 +42447,6 @@ GrB_Info GB (_AemultB_03__le_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__le_int16)
 (
     GrB_Matrix C,
@@ -45782,6 +42462,7 @@ GrB_Info GB (_AemultB_bitmap__le_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__le_int16)
 (
     GB_void *Cx_output,
@@ -45791,21 +42472,6 @@ GrB_Info GB (_bind1st__le_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__le_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__le_int16)
 (
     GrB_Matrix C,
@@ -45816,9 +42482,15 @@ GrB_Info GB (_bind1st_tran__le_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__le_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__le_int16)
 (
     GrB_Matrix C,
@@ -45865,7 +42537,6 @@ GrB_Info GB (_Cdense_accumb__le_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__le_int32)
 (
     GrB_Matrix C,
@@ -45873,7 +42544,6 @@ GrB_Info GB (_AxD__le_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__le_int32)
 (
     GrB_Matrix C,
@@ -45881,7 +42551,6 @@ GrB_Info GB (_DxB__le_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__le_int32)
@@ -45903,6 +42572,7 @@ GrB_Info GB (_AaddB__le_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__le_int32)
 (
     GrB_Matrix C,
@@ -45921,7 +42591,6 @@ GrB_Info GB (_AemultB_01__le_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__le_int32)
 (
     GrB_Matrix C,
@@ -45934,7 +42603,6 @@ GrB_Info GB (_AemultB_02__le_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__le_int32)
 (
     GrB_Matrix C,
@@ -45945,7 +42613,6 @@ GrB_Info GB (_AemultB_03__le_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__le_int32)
 (
     GrB_Matrix C,
@@ -45961,6 +42628,7 @@ GrB_Info GB (_AemultB_bitmap__le_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__le_int32)
 (
     GB_void *Cx_output,
@@ -45970,21 +42638,6 @@ GrB_Info GB (_bind1st__le_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__le_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__le_int32)
 (
     GrB_Matrix C,
@@ -45995,9 +42648,15 @@ GrB_Info GB (_bind1st_tran__le_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__le_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__le_int32)
 (
     GrB_Matrix C,
@@ -46044,7 +42703,6 @@ GrB_Info GB (_Cdense_accumb__le_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__le_int64)
 (
     GrB_Matrix C,
@@ -46052,7 +42710,6 @@ GrB_Info GB (_AxD__le_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__le_int64)
 (
     GrB_Matrix C,
@@ -46060,7 +42717,6 @@ GrB_Info GB (_DxB__le_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__le_int64)
@@ -46082,6 +42738,7 @@ GrB_Info GB (_AaddB__le_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__le_int64)
 (
     GrB_Matrix C,
@@ -46100,7 +42757,6 @@ GrB_Info GB (_AemultB_01__le_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__le_int64)
 (
     GrB_Matrix C,
@@ -46113,7 +42769,6 @@ GrB_Info GB (_AemultB_02__le_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__le_int64)
 (
     GrB_Matrix C,
@@ -46124,7 +42779,6 @@ GrB_Info GB (_AemultB_03__le_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__le_int64)
 (
     GrB_Matrix C,
@@ -46140,6 +42794,7 @@ GrB_Info GB (_AemultB_bitmap__le_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__le_int64)
 (
     GB_void *Cx_output,
@@ -46149,21 +42804,6 @@ GrB_Info GB (_bind1st__le_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__le_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__le_int64)
 (
     GrB_Matrix C,
@@ -46174,9 +42814,15 @@ GrB_Info GB (_bind1st_tran__le_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__le_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__le_int64)
 (
     GrB_Matrix C,
@@ -46223,7 +42869,6 @@ GrB_Info GB (_Cdense_accumb__le_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__le_uint8)
 (
     GrB_Matrix C,
@@ -46231,7 +42876,6 @@ GrB_Info GB (_AxD__le_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__le_uint8)
 (
     GrB_Matrix C,
@@ -46239,7 +42883,6 @@ GrB_Info GB (_DxB__le_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__le_uint8)
@@ -46261,6 +42904,7 @@ GrB_Info GB (_AaddB__le_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__le_uint8)
 (
     GrB_Matrix C,
@@ -46279,7 +42923,6 @@ GrB_Info GB (_AemultB_01__le_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__le_uint8)
 (
     GrB_Matrix C,
@@ -46292,7 +42935,6 @@ GrB_Info GB (_AemultB_02__le_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__le_uint8)
 (
     GrB_Matrix C,
@@ -46303,7 +42945,6 @@ GrB_Info GB (_AemultB_03__le_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__le_uint8)
 (
     GrB_Matrix C,
@@ -46319,6 +42960,7 @@ GrB_Info GB (_AemultB_bitmap__le_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__le_uint8)
 (
     GB_void *Cx_output,
@@ -46328,21 +42970,6 @@ GrB_Info GB (_bind1st__le_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__le_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__le_uint8)
 (
     GrB_Matrix C,
@@ -46353,9 +42980,15 @@ GrB_Info GB (_bind1st_tran__le_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__le_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__le_uint8)
 (
     GrB_Matrix C,
@@ -46402,7 +43035,6 @@ GrB_Info GB (_Cdense_accumb__le_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__le_uint16)
 (
     GrB_Matrix C,
@@ -46410,7 +43042,6 @@ GrB_Info GB (_AxD__le_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__le_uint16)
 (
     GrB_Matrix C,
@@ -46418,7 +43049,6 @@ GrB_Info GB (_DxB__le_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__le_uint16)
@@ -46440,6 +43070,7 @@ GrB_Info GB (_AaddB__le_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__le_uint16)
 (
     GrB_Matrix C,
@@ -46458,7 +43089,6 @@ GrB_Info GB (_AemultB_01__le_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__le_uint16)
 (
     GrB_Matrix C,
@@ -46471,7 +43101,6 @@ GrB_Info GB (_AemultB_02__le_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__le_uint16)
 (
     GrB_Matrix C,
@@ -46482,7 +43111,6 @@ GrB_Info GB (_AemultB_03__le_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__le_uint16)
 (
     GrB_Matrix C,
@@ -46498,6 +43126,7 @@ GrB_Info GB (_AemultB_bitmap__le_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__le_uint16)
 (
     GB_void *Cx_output,
@@ -46507,21 +43136,6 @@ GrB_Info GB (_bind1st__le_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__le_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__le_uint16)
 (
     GrB_Matrix C,
@@ -46532,9 +43146,15 @@ GrB_Info GB (_bind1st_tran__le_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__le_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__le_uint16)
 (
     GrB_Matrix C,
@@ -46581,7 +43201,6 @@ GrB_Info GB (_Cdense_accumb__le_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__le_uint32)
 (
     GrB_Matrix C,
@@ -46589,7 +43208,6 @@ GrB_Info GB (_AxD__le_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__le_uint32)
 (
     GrB_Matrix C,
@@ -46597,7 +43215,6 @@ GrB_Info GB (_DxB__le_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__le_uint32)
@@ -46619,6 +43236,7 @@ GrB_Info GB (_AaddB__le_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__le_uint32)
 (
     GrB_Matrix C,
@@ -46637,7 +43255,6 @@ GrB_Info GB (_AemultB_01__le_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__le_uint32)
 (
     GrB_Matrix C,
@@ -46650,7 +43267,6 @@ GrB_Info GB (_AemultB_02__le_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__le_uint32)
 (
     GrB_Matrix C,
@@ -46661,7 +43277,6 @@ GrB_Info GB (_AemultB_03__le_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__le_uint32)
 (
     GrB_Matrix C,
@@ -46677,6 +43292,7 @@ GrB_Info GB (_AemultB_bitmap__le_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__le_uint32)
 (
     GB_void *Cx_output,
@@ -46686,21 +43302,6 @@ GrB_Info GB (_bind1st__le_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__le_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__le_uint32)
 (
     GrB_Matrix C,
@@ -46711,9 +43312,15 @@ GrB_Info GB (_bind1st_tran__le_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__le_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__le_uint32)
 (
     GrB_Matrix C,
@@ -46760,7 +43367,6 @@ GrB_Info GB (_Cdense_accumb__le_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__le_uint64)
 (
     GrB_Matrix C,
@@ -46768,7 +43374,6 @@ GrB_Info GB (_AxD__le_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__le_uint64)
 (
     GrB_Matrix C,
@@ -46776,7 +43381,6 @@ GrB_Info GB (_DxB__le_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__le_uint64)
@@ -46798,6 +43402,7 @@ GrB_Info GB (_AaddB__le_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__le_uint64)
 (
     GrB_Matrix C,
@@ -46816,7 +43421,6 @@ GrB_Info GB (_AemultB_01__le_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__le_uint64)
 (
     GrB_Matrix C,
@@ -46829,7 +43433,6 @@ GrB_Info GB (_AemultB_02__le_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__le_uint64)
 (
     GrB_Matrix C,
@@ -46840,7 +43443,6 @@ GrB_Info GB (_AemultB_03__le_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__le_uint64)
 (
     GrB_Matrix C,
@@ -46856,6 +43458,7 @@ GrB_Info GB (_AemultB_bitmap__le_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__le_uint64)
 (
     GB_void *Cx_output,
@@ -46865,21 +43468,6 @@ GrB_Info GB (_bind1st__le_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__le_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__le_uint64)
 (
     GrB_Matrix C,
@@ -46890,9 +43478,15 @@ GrB_Info GB (_bind1st_tran__le_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__le_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__le_uint64)
 (
     GrB_Matrix C,
@@ -46939,7 +43533,6 @@ GrB_Info GB (_Cdense_accumb__le_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__le_fp32)
 (
     GrB_Matrix C,
@@ -46947,7 +43540,6 @@ GrB_Info GB (_AxD__le_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__le_fp32)
 (
     GrB_Matrix C,
@@ -46955,7 +43547,6 @@ GrB_Info GB (_DxB__le_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__le_fp32)
@@ -46977,6 +43568,7 @@ GrB_Info GB (_AaddB__le_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__le_fp32)
 (
     GrB_Matrix C,
@@ -46995,7 +43587,6 @@ GrB_Info GB (_AemultB_01__le_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__le_fp32)
 (
     GrB_Matrix C,
@@ -47008,7 +43599,6 @@ GrB_Info GB (_AemultB_02__le_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__le_fp32)
 (
     GrB_Matrix C,
@@ -47019,7 +43609,6 @@ GrB_Info GB (_AemultB_03__le_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__le_fp32)
 (
     GrB_Matrix C,
@@ -47035,6 +43624,7 @@ GrB_Info GB (_AemultB_bitmap__le_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__le_fp32)
 (
     GB_void *Cx_output,
@@ -47044,21 +43634,6 @@ GrB_Info GB (_bind1st__le_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__le_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__le_fp32)
 (
     GrB_Matrix C,
@@ -47069,9 +43644,15 @@ GrB_Info GB (_bind1st_tran__le_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__le_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__le_fp32)
 (
     GrB_Matrix C,
@@ -47118,7 +43699,6 @@ GrB_Info GB (_Cdense_accumb__le_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__le_fp64)
 (
     GrB_Matrix C,
@@ -47126,7 +43706,6 @@ GrB_Info GB (_AxD__le_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__le_fp64)
 (
     GrB_Matrix C,
@@ -47134,7 +43713,6 @@ GrB_Info GB (_DxB__le_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__le_fp64)
@@ -47156,6 +43734,7 @@ GrB_Info GB (_AaddB__le_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__le_fp64)
 (
     GrB_Matrix C,
@@ -47174,7 +43753,6 @@ GrB_Info GB (_AemultB_01__le_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__le_fp64)
 (
     GrB_Matrix C,
@@ -47187,7 +43765,6 @@ GrB_Info GB (_AemultB_02__le_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__le_fp64)
 (
     GrB_Matrix C,
@@ -47198,7 +43775,6 @@ GrB_Info GB (_AemultB_03__le_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__le_fp64)
 (
     GrB_Matrix C,
@@ -47214,6 +43790,7 @@ GrB_Info GB (_AemultB_bitmap__le_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__le_fp64)
 (
     GB_void *Cx_output,
@@ -47223,21 +43800,6 @@ GrB_Info GB (_bind1st__le_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__le_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__le_fp64)
 (
     GrB_Matrix C,
@@ -47248,9 +43810,15 @@ GrB_Info GB (_bind1st_tran__le_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__le_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__le_fp64)
 (
     GrB_Matrix C,
@@ -47297,7 +43865,6 @@ GrB_Info GB (_Cdense_accumb__lor_bool)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lor_bool)
 (
     GrB_Matrix C,
@@ -47305,7 +43872,6 @@ GrB_Info GB (_AxD__lor_bool)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lor_bool)
 (
     GrB_Matrix C,
@@ -47313,7 +43879,6 @@ GrB_Info GB (_DxB__lor_bool)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lor_bool)
@@ -47335,6 +43900,7 @@ GrB_Info GB (_AaddB__lor_bool)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lor_bool)
 (
     GrB_Matrix C,
@@ -47353,7 +43919,6 @@ GrB_Info GB (_AemultB_01__lor_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lor_bool)
 (
     GrB_Matrix C,
@@ -47366,7 +43931,6 @@ GrB_Info GB (_AemultB_02__lor_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lor_bool)
 (
     GrB_Matrix C,
@@ -47377,7 +43941,6 @@ GrB_Info GB (_AemultB_03__lor_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lor_bool)
 (
     GrB_Matrix C,
@@ -47393,6 +43956,7 @@ GrB_Info GB (_AemultB_bitmap__lor_bool)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lor_bool)
 (
     GB_void *Cx_output,
@@ -47402,21 +43966,6 @@ GrB_Info GB (_bind1st__lor_bool)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lor_bool)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lor_bool)
 (
     GrB_Matrix C,
@@ -47427,9 +43976,15 @@ GrB_Info GB (_bind1st_tran__lor_bool)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lor_bool)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lor_bool)
 (
     GrB_Matrix C,
@@ -47476,7 +44031,6 @@ GrB_Info GB (_Cdense_accumb__lor_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lor_int8)
 (
     GrB_Matrix C,
@@ -47484,7 +44038,6 @@ GrB_Info GB (_AxD__lor_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lor_int8)
 (
     GrB_Matrix C,
@@ -47492,7 +44045,6 @@ GrB_Info GB (_DxB__lor_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lor_int8)
@@ -47514,6 +44066,7 @@ GrB_Info GB (_AaddB__lor_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lor_int8)
 (
     GrB_Matrix C,
@@ -47532,7 +44085,6 @@ GrB_Info GB (_AemultB_01__lor_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lor_int8)
 (
     GrB_Matrix C,
@@ -47545,7 +44097,6 @@ GrB_Info GB (_AemultB_02__lor_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lor_int8)
 (
     GrB_Matrix C,
@@ -47556,7 +44107,6 @@ GrB_Info GB (_AemultB_03__lor_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lor_int8)
 (
     GrB_Matrix C,
@@ -47572,6 +44122,7 @@ GrB_Info GB (_AemultB_bitmap__lor_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lor_int8)
 (
     GB_void *Cx_output,
@@ -47581,21 +44132,6 @@ GrB_Info GB (_bind1st__lor_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lor_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lor_int8)
 (
     GrB_Matrix C,
@@ -47606,9 +44142,15 @@ GrB_Info GB (_bind1st_tran__lor_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lor_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lor_int8)
 (
     GrB_Matrix C,
@@ -47655,7 +44197,6 @@ GrB_Info GB (_Cdense_accumb__lor_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lor_int16)
 (
     GrB_Matrix C,
@@ -47663,7 +44204,6 @@ GrB_Info GB (_AxD__lor_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lor_int16)
 (
     GrB_Matrix C,
@@ -47671,7 +44211,6 @@ GrB_Info GB (_DxB__lor_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lor_int16)
@@ -47693,6 +44232,7 @@ GrB_Info GB (_AaddB__lor_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lor_int16)
 (
     GrB_Matrix C,
@@ -47711,7 +44251,6 @@ GrB_Info GB (_AemultB_01__lor_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lor_int16)
 (
     GrB_Matrix C,
@@ -47724,7 +44263,6 @@ GrB_Info GB (_AemultB_02__lor_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lor_int16)
 (
     GrB_Matrix C,
@@ -47735,7 +44273,6 @@ GrB_Info GB (_AemultB_03__lor_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lor_int16)
 (
     GrB_Matrix C,
@@ -47751,6 +44288,7 @@ GrB_Info GB (_AemultB_bitmap__lor_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lor_int16)
 (
     GB_void *Cx_output,
@@ -47760,21 +44298,6 @@ GrB_Info GB (_bind1st__lor_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lor_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lor_int16)
 (
     GrB_Matrix C,
@@ -47785,9 +44308,15 @@ GrB_Info GB (_bind1st_tran__lor_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lor_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lor_int16)
 (
     GrB_Matrix C,
@@ -47834,7 +44363,6 @@ GrB_Info GB (_Cdense_accumb__lor_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lor_int32)
 (
     GrB_Matrix C,
@@ -47842,7 +44370,6 @@ GrB_Info GB (_AxD__lor_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lor_int32)
 (
     GrB_Matrix C,
@@ -47850,7 +44377,6 @@ GrB_Info GB (_DxB__lor_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lor_int32)
@@ -47872,6 +44398,7 @@ GrB_Info GB (_AaddB__lor_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lor_int32)
 (
     GrB_Matrix C,
@@ -47890,7 +44417,6 @@ GrB_Info GB (_AemultB_01__lor_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lor_int32)
 (
     GrB_Matrix C,
@@ -47903,7 +44429,6 @@ GrB_Info GB (_AemultB_02__lor_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lor_int32)
 (
     GrB_Matrix C,
@@ -47914,7 +44439,6 @@ GrB_Info GB (_AemultB_03__lor_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lor_int32)
 (
     GrB_Matrix C,
@@ -47930,6 +44454,7 @@ GrB_Info GB (_AemultB_bitmap__lor_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lor_int32)
 (
     GB_void *Cx_output,
@@ -47939,21 +44464,6 @@ GrB_Info GB (_bind1st__lor_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lor_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lor_int32)
 (
     GrB_Matrix C,
@@ -47964,9 +44474,15 @@ GrB_Info GB (_bind1st_tran__lor_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lor_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lor_int32)
 (
     GrB_Matrix C,
@@ -48013,7 +44529,6 @@ GrB_Info GB (_Cdense_accumb__lor_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lor_int64)
 (
     GrB_Matrix C,
@@ -48021,7 +44536,6 @@ GrB_Info GB (_AxD__lor_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lor_int64)
 (
     GrB_Matrix C,
@@ -48029,7 +44543,6 @@ GrB_Info GB (_DxB__lor_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lor_int64)
@@ -48051,6 +44564,7 @@ GrB_Info GB (_AaddB__lor_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lor_int64)
 (
     GrB_Matrix C,
@@ -48069,7 +44583,6 @@ GrB_Info GB (_AemultB_01__lor_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lor_int64)
 (
     GrB_Matrix C,
@@ -48082,7 +44595,6 @@ GrB_Info GB (_AemultB_02__lor_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lor_int64)
 (
     GrB_Matrix C,
@@ -48093,7 +44605,6 @@ GrB_Info GB (_AemultB_03__lor_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lor_int64)
 (
     GrB_Matrix C,
@@ -48109,6 +44620,7 @@ GrB_Info GB (_AemultB_bitmap__lor_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lor_int64)
 (
     GB_void *Cx_output,
@@ -48118,21 +44630,6 @@ GrB_Info GB (_bind1st__lor_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lor_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lor_int64)
 (
     GrB_Matrix C,
@@ -48143,9 +44640,15 @@ GrB_Info GB (_bind1st_tran__lor_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lor_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lor_int64)
 (
     GrB_Matrix C,
@@ -48192,7 +44695,6 @@ GrB_Info GB (_Cdense_accumb__lor_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lor_uint8)
 (
     GrB_Matrix C,
@@ -48200,7 +44702,6 @@ GrB_Info GB (_AxD__lor_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lor_uint8)
 (
     GrB_Matrix C,
@@ -48208,7 +44709,6 @@ GrB_Info GB (_DxB__lor_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lor_uint8)
@@ -48230,6 +44730,7 @@ GrB_Info GB (_AaddB__lor_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lor_uint8)
 (
     GrB_Matrix C,
@@ -48248,7 +44749,6 @@ GrB_Info GB (_AemultB_01__lor_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lor_uint8)
 (
     GrB_Matrix C,
@@ -48261,7 +44761,6 @@ GrB_Info GB (_AemultB_02__lor_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lor_uint8)
 (
     GrB_Matrix C,
@@ -48272,7 +44771,6 @@ GrB_Info GB (_AemultB_03__lor_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lor_uint8)
 (
     GrB_Matrix C,
@@ -48288,6 +44786,7 @@ GrB_Info GB (_AemultB_bitmap__lor_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lor_uint8)
 (
     GB_void *Cx_output,
@@ -48297,21 +44796,6 @@ GrB_Info GB (_bind1st__lor_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lor_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lor_uint8)
 (
     GrB_Matrix C,
@@ -48322,9 +44806,15 @@ GrB_Info GB (_bind1st_tran__lor_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lor_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lor_uint8)
 (
     GrB_Matrix C,
@@ -48371,7 +44861,6 @@ GrB_Info GB (_Cdense_accumb__lor_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lor_uint16)
 (
     GrB_Matrix C,
@@ -48379,7 +44868,6 @@ GrB_Info GB (_AxD__lor_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lor_uint16)
 (
     GrB_Matrix C,
@@ -48387,7 +44875,6 @@ GrB_Info GB (_DxB__lor_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lor_uint16)
@@ -48409,6 +44896,7 @@ GrB_Info GB (_AaddB__lor_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lor_uint16)
 (
     GrB_Matrix C,
@@ -48427,7 +44915,6 @@ GrB_Info GB (_AemultB_01__lor_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lor_uint16)
 (
     GrB_Matrix C,
@@ -48440,7 +44927,6 @@ GrB_Info GB (_AemultB_02__lor_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lor_uint16)
 (
     GrB_Matrix C,
@@ -48451,7 +44937,6 @@ GrB_Info GB (_AemultB_03__lor_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lor_uint16)
 (
     GrB_Matrix C,
@@ -48467,6 +44952,7 @@ GrB_Info GB (_AemultB_bitmap__lor_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lor_uint16)
 (
     GB_void *Cx_output,
@@ -48476,21 +44962,6 @@ GrB_Info GB (_bind1st__lor_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lor_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lor_uint16)
 (
     GrB_Matrix C,
@@ -48501,9 +44972,15 @@ GrB_Info GB (_bind1st_tran__lor_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lor_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lor_uint16)
 (
     GrB_Matrix C,
@@ -48550,7 +45027,6 @@ GrB_Info GB (_Cdense_accumb__lor_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lor_uint32)
 (
     GrB_Matrix C,
@@ -48558,7 +45034,6 @@ GrB_Info GB (_AxD__lor_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lor_uint32)
 (
     GrB_Matrix C,
@@ -48566,7 +45041,6 @@ GrB_Info GB (_DxB__lor_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lor_uint32)
@@ -48588,6 +45062,7 @@ GrB_Info GB (_AaddB__lor_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lor_uint32)
 (
     GrB_Matrix C,
@@ -48606,7 +45081,6 @@ GrB_Info GB (_AemultB_01__lor_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lor_uint32)
 (
     GrB_Matrix C,
@@ -48619,7 +45093,6 @@ GrB_Info GB (_AemultB_02__lor_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lor_uint32)
 (
     GrB_Matrix C,
@@ -48630,7 +45103,6 @@ GrB_Info GB (_AemultB_03__lor_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lor_uint32)
 (
     GrB_Matrix C,
@@ -48646,6 +45118,7 @@ GrB_Info GB (_AemultB_bitmap__lor_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lor_uint32)
 (
     GB_void *Cx_output,
@@ -48655,21 +45128,6 @@ GrB_Info GB (_bind1st__lor_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lor_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lor_uint32)
 (
     GrB_Matrix C,
@@ -48680,9 +45138,15 @@ GrB_Info GB (_bind1st_tran__lor_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lor_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lor_uint32)
 (
     GrB_Matrix C,
@@ -48729,7 +45193,6 @@ GrB_Info GB (_Cdense_accumb__lor_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lor_uint64)
 (
     GrB_Matrix C,
@@ -48737,7 +45200,6 @@ GrB_Info GB (_AxD__lor_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lor_uint64)
 (
     GrB_Matrix C,
@@ -48745,7 +45207,6 @@ GrB_Info GB (_DxB__lor_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lor_uint64)
@@ -48767,6 +45228,7 @@ GrB_Info GB (_AaddB__lor_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lor_uint64)
 (
     GrB_Matrix C,
@@ -48785,7 +45247,6 @@ GrB_Info GB (_AemultB_01__lor_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lor_uint64)
 (
     GrB_Matrix C,
@@ -48798,7 +45259,6 @@ GrB_Info GB (_AemultB_02__lor_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lor_uint64)
 (
     GrB_Matrix C,
@@ -48809,7 +45269,6 @@ GrB_Info GB (_AemultB_03__lor_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lor_uint64)
 (
     GrB_Matrix C,
@@ -48825,6 +45284,7 @@ GrB_Info GB (_AemultB_bitmap__lor_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lor_uint64)
 (
     GB_void *Cx_output,
@@ -48834,21 +45294,6 @@ GrB_Info GB (_bind1st__lor_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lor_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lor_uint64)
 (
     GrB_Matrix C,
@@ -48859,9 +45304,15 @@ GrB_Info GB (_bind1st_tran__lor_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lor_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lor_uint64)
 (
     GrB_Matrix C,
@@ -48908,7 +45359,6 @@ GrB_Info GB (_Cdense_accumb__lor_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lor_fp32)
 (
     GrB_Matrix C,
@@ -48916,7 +45366,6 @@ GrB_Info GB (_AxD__lor_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lor_fp32)
 (
     GrB_Matrix C,
@@ -48924,7 +45373,6 @@ GrB_Info GB (_DxB__lor_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lor_fp32)
@@ -48946,6 +45394,7 @@ GrB_Info GB (_AaddB__lor_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lor_fp32)
 (
     GrB_Matrix C,
@@ -48964,7 +45413,6 @@ GrB_Info GB (_AemultB_01__lor_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lor_fp32)
 (
     GrB_Matrix C,
@@ -48977,7 +45425,6 @@ GrB_Info GB (_AemultB_02__lor_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lor_fp32)
 (
     GrB_Matrix C,
@@ -48988,7 +45435,6 @@ GrB_Info GB (_AemultB_03__lor_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lor_fp32)
 (
     GrB_Matrix C,
@@ -49004,6 +45450,7 @@ GrB_Info GB (_AemultB_bitmap__lor_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lor_fp32)
 (
     GB_void *Cx_output,
@@ -49013,21 +45460,6 @@ GrB_Info GB (_bind1st__lor_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lor_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lor_fp32)
 (
     GrB_Matrix C,
@@ -49038,9 +45470,15 @@ GrB_Info GB (_bind1st_tran__lor_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lor_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lor_fp32)
 (
     GrB_Matrix C,
@@ -49087,7 +45525,6 @@ GrB_Info GB (_Cdense_accumb__lor_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lor_fp64)
 (
     GrB_Matrix C,
@@ -49095,7 +45532,6 @@ GrB_Info GB (_AxD__lor_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lor_fp64)
 (
     GrB_Matrix C,
@@ -49103,7 +45539,6 @@ GrB_Info GB (_DxB__lor_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lor_fp64)
@@ -49125,6 +45560,7 @@ GrB_Info GB (_AaddB__lor_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lor_fp64)
 (
     GrB_Matrix C,
@@ -49143,7 +45579,6 @@ GrB_Info GB (_AemultB_01__lor_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lor_fp64)
 (
     GrB_Matrix C,
@@ -49156,7 +45591,6 @@ GrB_Info GB (_AemultB_02__lor_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lor_fp64)
 (
     GrB_Matrix C,
@@ -49167,7 +45601,6 @@ GrB_Info GB (_AemultB_03__lor_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lor_fp64)
 (
     GrB_Matrix C,
@@ -49183,6 +45616,7 @@ GrB_Info GB (_AemultB_bitmap__lor_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lor_fp64)
 (
     GB_void *Cx_output,
@@ -49192,21 +45626,6 @@ GrB_Info GB (_bind1st__lor_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lor_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lor_fp64)
 (
     GrB_Matrix C,
@@ -49217,9 +45636,15 @@ GrB_Info GB (_bind1st_tran__lor_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lor_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lor_fp64)
 (
     GrB_Matrix C,
@@ -49266,7 +45691,6 @@ GrB_Info GB (_Cdense_accumb__land_bool)
 ) ;
 
 
-
 GrB_Info GB (_AxD__land_bool)
 (
     GrB_Matrix C,
@@ -49274,7 +45698,6 @@ GrB_Info GB (_AxD__land_bool)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__land_bool)
 (
     GrB_Matrix C,
@@ -49282,7 +45705,6 @@ GrB_Info GB (_DxB__land_bool)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__land_bool)
@@ -49304,6 +45726,7 @@ GrB_Info GB (_AaddB__land_bool)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__land_bool)
 (
     GrB_Matrix C,
@@ -49322,7 +45745,6 @@ GrB_Info GB (_AemultB_01__land_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__land_bool)
 (
     GrB_Matrix C,
@@ -49335,7 +45757,6 @@ GrB_Info GB (_AemultB_02__land_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__land_bool)
 (
     GrB_Matrix C,
@@ -49346,7 +45767,6 @@ GrB_Info GB (_AemultB_03__land_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__land_bool)
 (
     GrB_Matrix C,
@@ -49362,6 +45782,7 @@ GrB_Info GB (_AemultB_bitmap__land_bool)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__land_bool)
 (
     GB_void *Cx_output,
@@ -49371,21 +45792,6 @@ GrB_Info GB (_bind1st__land_bool)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__land_bool)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__land_bool)
 (
     GrB_Matrix C,
@@ -49396,9 +45802,15 @@ GrB_Info GB (_bind1st_tran__land_bool)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__land_bool)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__land_bool)
 (
     GrB_Matrix C,
@@ -49445,7 +45857,6 @@ GrB_Info GB (_Cdense_accumb__land_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__land_int8)
 (
     GrB_Matrix C,
@@ -49453,7 +45864,6 @@ GrB_Info GB (_AxD__land_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__land_int8)
 (
     GrB_Matrix C,
@@ -49461,7 +45871,6 @@ GrB_Info GB (_DxB__land_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__land_int8)
@@ -49483,6 +45892,7 @@ GrB_Info GB (_AaddB__land_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__land_int8)
 (
     GrB_Matrix C,
@@ -49501,7 +45911,6 @@ GrB_Info GB (_AemultB_01__land_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__land_int8)
 (
     GrB_Matrix C,
@@ -49514,7 +45923,6 @@ GrB_Info GB (_AemultB_02__land_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__land_int8)
 (
     GrB_Matrix C,
@@ -49525,7 +45933,6 @@ GrB_Info GB (_AemultB_03__land_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__land_int8)
 (
     GrB_Matrix C,
@@ -49541,6 +45948,7 @@ GrB_Info GB (_AemultB_bitmap__land_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__land_int8)
 (
     GB_void *Cx_output,
@@ -49550,21 +45958,6 @@ GrB_Info GB (_bind1st__land_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__land_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__land_int8)
 (
     GrB_Matrix C,
@@ -49575,9 +45968,15 @@ GrB_Info GB (_bind1st_tran__land_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__land_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__land_int8)
 (
     GrB_Matrix C,
@@ -49624,7 +46023,6 @@ GrB_Info GB (_Cdense_accumb__land_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__land_int16)
 (
     GrB_Matrix C,
@@ -49632,7 +46030,6 @@ GrB_Info GB (_AxD__land_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__land_int16)
 (
     GrB_Matrix C,
@@ -49640,7 +46037,6 @@ GrB_Info GB (_DxB__land_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__land_int16)
@@ -49662,6 +46058,7 @@ GrB_Info GB (_AaddB__land_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__land_int16)
 (
     GrB_Matrix C,
@@ -49680,7 +46077,6 @@ GrB_Info GB (_AemultB_01__land_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__land_int16)
 (
     GrB_Matrix C,
@@ -49693,7 +46089,6 @@ GrB_Info GB (_AemultB_02__land_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__land_int16)
 (
     GrB_Matrix C,
@@ -49704,7 +46099,6 @@ GrB_Info GB (_AemultB_03__land_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__land_int16)
 (
     GrB_Matrix C,
@@ -49720,6 +46114,7 @@ GrB_Info GB (_AemultB_bitmap__land_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__land_int16)
 (
     GB_void *Cx_output,
@@ -49729,21 +46124,6 @@ GrB_Info GB (_bind1st__land_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__land_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__land_int16)
 (
     GrB_Matrix C,
@@ -49754,9 +46134,15 @@ GrB_Info GB (_bind1st_tran__land_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__land_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__land_int16)
 (
     GrB_Matrix C,
@@ -49803,7 +46189,6 @@ GrB_Info GB (_Cdense_accumb__land_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__land_int32)
 (
     GrB_Matrix C,
@@ -49811,7 +46196,6 @@ GrB_Info GB (_AxD__land_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__land_int32)
 (
     GrB_Matrix C,
@@ -49819,7 +46203,6 @@ GrB_Info GB (_DxB__land_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__land_int32)
@@ -49841,6 +46224,7 @@ GrB_Info GB (_AaddB__land_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__land_int32)
 (
     GrB_Matrix C,
@@ -49859,7 +46243,6 @@ GrB_Info GB (_AemultB_01__land_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__land_int32)
 (
     GrB_Matrix C,
@@ -49872,7 +46255,6 @@ GrB_Info GB (_AemultB_02__land_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__land_int32)
 (
     GrB_Matrix C,
@@ -49883,7 +46265,6 @@ GrB_Info GB (_AemultB_03__land_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__land_int32)
 (
     GrB_Matrix C,
@@ -49899,6 +46280,7 @@ GrB_Info GB (_AemultB_bitmap__land_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__land_int32)
 (
     GB_void *Cx_output,
@@ -49908,21 +46290,6 @@ GrB_Info GB (_bind1st__land_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__land_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__land_int32)
 (
     GrB_Matrix C,
@@ -49933,9 +46300,15 @@ GrB_Info GB (_bind1st_tran__land_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__land_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__land_int32)
 (
     GrB_Matrix C,
@@ -49982,7 +46355,6 @@ GrB_Info GB (_Cdense_accumb__land_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__land_int64)
 (
     GrB_Matrix C,
@@ -49990,7 +46362,6 @@ GrB_Info GB (_AxD__land_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__land_int64)
 (
     GrB_Matrix C,
@@ -49998,7 +46369,6 @@ GrB_Info GB (_DxB__land_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__land_int64)
@@ -50020,6 +46390,7 @@ GrB_Info GB (_AaddB__land_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__land_int64)
 (
     GrB_Matrix C,
@@ -50038,7 +46409,6 @@ GrB_Info GB (_AemultB_01__land_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__land_int64)
 (
     GrB_Matrix C,
@@ -50051,7 +46421,6 @@ GrB_Info GB (_AemultB_02__land_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__land_int64)
 (
     GrB_Matrix C,
@@ -50062,7 +46431,6 @@ GrB_Info GB (_AemultB_03__land_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__land_int64)
 (
     GrB_Matrix C,
@@ -50078,6 +46446,7 @@ GrB_Info GB (_AemultB_bitmap__land_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__land_int64)
 (
     GB_void *Cx_output,
@@ -50087,21 +46456,6 @@ GrB_Info GB (_bind1st__land_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__land_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__land_int64)
 (
     GrB_Matrix C,
@@ -50112,9 +46466,15 @@ GrB_Info GB (_bind1st_tran__land_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__land_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__land_int64)
 (
     GrB_Matrix C,
@@ -50161,7 +46521,6 @@ GrB_Info GB (_Cdense_accumb__land_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__land_uint8)
 (
     GrB_Matrix C,
@@ -50169,7 +46528,6 @@ GrB_Info GB (_AxD__land_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__land_uint8)
 (
     GrB_Matrix C,
@@ -50177,7 +46535,6 @@ GrB_Info GB (_DxB__land_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__land_uint8)
@@ -50199,6 +46556,7 @@ GrB_Info GB (_AaddB__land_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__land_uint8)
 (
     GrB_Matrix C,
@@ -50217,7 +46575,6 @@ GrB_Info GB (_AemultB_01__land_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__land_uint8)
 (
     GrB_Matrix C,
@@ -50230,7 +46587,6 @@ GrB_Info GB (_AemultB_02__land_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__land_uint8)
 (
     GrB_Matrix C,
@@ -50241,7 +46597,6 @@ GrB_Info GB (_AemultB_03__land_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__land_uint8)
 (
     GrB_Matrix C,
@@ -50257,6 +46612,7 @@ GrB_Info GB (_AemultB_bitmap__land_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__land_uint8)
 (
     GB_void *Cx_output,
@@ -50266,21 +46622,6 @@ GrB_Info GB (_bind1st__land_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__land_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__land_uint8)
 (
     GrB_Matrix C,
@@ -50291,9 +46632,15 @@ GrB_Info GB (_bind1st_tran__land_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__land_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__land_uint8)
 (
     GrB_Matrix C,
@@ -50340,7 +46687,6 @@ GrB_Info GB (_Cdense_accumb__land_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__land_uint16)
 (
     GrB_Matrix C,
@@ -50348,7 +46694,6 @@ GrB_Info GB (_AxD__land_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__land_uint16)
 (
     GrB_Matrix C,
@@ -50356,7 +46701,6 @@ GrB_Info GB (_DxB__land_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__land_uint16)
@@ -50378,6 +46722,7 @@ GrB_Info GB (_AaddB__land_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__land_uint16)
 (
     GrB_Matrix C,
@@ -50396,7 +46741,6 @@ GrB_Info GB (_AemultB_01__land_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__land_uint16)
 (
     GrB_Matrix C,
@@ -50409,7 +46753,6 @@ GrB_Info GB (_AemultB_02__land_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__land_uint16)
 (
     GrB_Matrix C,
@@ -50420,7 +46763,6 @@ GrB_Info GB (_AemultB_03__land_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__land_uint16)
 (
     GrB_Matrix C,
@@ -50436,6 +46778,7 @@ GrB_Info GB (_AemultB_bitmap__land_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__land_uint16)
 (
     GB_void *Cx_output,
@@ -50445,21 +46788,6 @@ GrB_Info GB (_bind1st__land_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__land_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__land_uint16)
 (
     GrB_Matrix C,
@@ -50470,9 +46798,15 @@ GrB_Info GB (_bind1st_tran__land_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__land_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__land_uint16)
 (
     GrB_Matrix C,
@@ -50519,7 +46853,6 @@ GrB_Info GB (_Cdense_accumb__land_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__land_uint32)
 (
     GrB_Matrix C,
@@ -50527,7 +46860,6 @@ GrB_Info GB (_AxD__land_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__land_uint32)
 (
     GrB_Matrix C,
@@ -50535,7 +46867,6 @@ GrB_Info GB (_DxB__land_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__land_uint32)
@@ -50557,6 +46888,7 @@ GrB_Info GB (_AaddB__land_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__land_uint32)
 (
     GrB_Matrix C,
@@ -50575,7 +46907,6 @@ GrB_Info GB (_AemultB_01__land_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__land_uint32)
 (
     GrB_Matrix C,
@@ -50588,7 +46919,6 @@ GrB_Info GB (_AemultB_02__land_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__land_uint32)
 (
     GrB_Matrix C,
@@ -50599,7 +46929,6 @@ GrB_Info GB (_AemultB_03__land_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__land_uint32)
 (
     GrB_Matrix C,
@@ -50615,6 +46944,7 @@ GrB_Info GB (_AemultB_bitmap__land_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__land_uint32)
 (
     GB_void *Cx_output,
@@ -50624,21 +46954,6 @@ GrB_Info GB (_bind1st__land_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__land_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__land_uint32)
 (
     GrB_Matrix C,
@@ -50649,9 +46964,15 @@ GrB_Info GB (_bind1st_tran__land_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__land_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__land_uint32)
 (
     GrB_Matrix C,
@@ -50698,7 +47019,6 @@ GrB_Info GB (_Cdense_accumb__land_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__land_uint64)
 (
     GrB_Matrix C,
@@ -50706,7 +47026,6 @@ GrB_Info GB (_AxD__land_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__land_uint64)
 (
     GrB_Matrix C,
@@ -50714,7 +47033,6 @@ GrB_Info GB (_DxB__land_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__land_uint64)
@@ -50736,6 +47054,7 @@ GrB_Info GB (_AaddB__land_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__land_uint64)
 (
     GrB_Matrix C,
@@ -50754,7 +47073,6 @@ GrB_Info GB (_AemultB_01__land_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__land_uint64)
 (
     GrB_Matrix C,
@@ -50767,7 +47085,6 @@ GrB_Info GB (_AemultB_02__land_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__land_uint64)
 (
     GrB_Matrix C,
@@ -50778,7 +47095,6 @@ GrB_Info GB (_AemultB_03__land_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__land_uint64)
 (
     GrB_Matrix C,
@@ -50794,6 +47110,7 @@ GrB_Info GB (_AemultB_bitmap__land_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__land_uint64)
 (
     GB_void *Cx_output,
@@ -50803,21 +47120,6 @@ GrB_Info GB (_bind1st__land_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__land_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__land_uint64)
 (
     GrB_Matrix C,
@@ -50828,9 +47130,15 @@ GrB_Info GB (_bind1st_tran__land_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__land_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__land_uint64)
 (
     GrB_Matrix C,
@@ -50877,7 +47185,6 @@ GrB_Info GB (_Cdense_accumb__land_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__land_fp32)
 (
     GrB_Matrix C,
@@ -50885,7 +47192,6 @@ GrB_Info GB (_AxD__land_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__land_fp32)
 (
     GrB_Matrix C,
@@ -50893,7 +47199,6 @@ GrB_Info GB (_DxB__land_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__land_fp32)
@@ -50915,6 +47220,7 @@ GrB_Info GB (_AaddB__land_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__land_fp32)
 (
     GrB_Matrix C,
@@ -50933,7 +47239,6 @@ GrB_Info GB (_AemultB_01__land_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__land_fp32)
 (
     GrB_Matrix C,
@@ -50946,7 +47251,6 @@ GrB_Info GB (_AemultB_02__land_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__land_fp32)
 (
     GrB_Matrix C,
@@ -50957,7 +47261,6 @@ GrB_Info GB (_AemultB_03__land_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__land_fp32)
 (
     GrB_Matrix C,
@@ -50973,6 +47276,7 @@ GrB_Info GB (_AemultB_bitmap__land_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__land_fp32)
 (
     GB_void *Cx_output,
@@ -50982,21 +47286,6 @@ GrB_Info GB (_bind1st__land_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__land_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__land_fp32)
 (
     GrB_Matrix C,
@@ -51007,9 +47296,15 @@ GrB_Info GB (_bind1st_tran__land_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__land_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__land_fp32)
 (
     GrB_Matrix C,
@@ -51056,7 +47351,6 @@ GrB_Info GB (_Cdense_accumb__land_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__land_fp64)
 (
     GrB_Matrix C,
@@ -51064,7 +47358,6 @@ GrB_Info GB (_AxD__land_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__land_fp64)
 (
     GrB_Matrix C,
@@ -51072,7 +47365,6 @@ GrB_Info GB (_DxB__land_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__land_fp64)
@@ -51094,6 +47386,7 @@ GrB_Info GB (_AaddB__land_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__land_fp64)
 (
     GrB_Matrix C,
@@ -51112,7 +47405,6 @@ GrB_Info GB (_AemultB_01__land_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__land_fp64)
 (
     GrB_Matrix C,
@@ -51125,7 +47417,6 @@ GrB_Info GB (_AemultB_02__land_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__land_fp64)
 (
     GrB_Matrix C,
@@ -51136,7 +47427,6 @@ GrB_Info GB (_AemultB_03__land_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__land_fp64)
 (
     GrB_Matrix C,
@@ -51152,6 +47442,7 @@ GrB_Info GB (_AemultB_bitmap__land_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__land_fp64)
 (
     GB_void *Cx_output,
@@ -51161,21 +47452,6 @@ GrB_Info GB (_bind1st__land_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__land_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__land_fp64)
 (
     GrB_Matrix C,
@@ -51186,9 +47462,15 @@ GrB_Info GB (_bind1st_tran__land_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__land_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__land_fp64)
 (
     GrB_Matrix C,
@@ -51235,7 +47517,6 @@ GrB_Info GB (_Cdense_accumb__lxor_bool)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lxor_bool)
 (
     GrB_Matrix C,
@@ -51243,7 +47524,6 @@ GrB_Info GB (_AxD__lxor_bool)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lxor_bool)
 (
     GrB_Matrix C,
@@ -51251,7 +47531,6 @@ GrB_Info GB (_DxB__lxor_bool)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lxor_bool)
@@ -51273,6 +47552,7 @@ GrB_Info GB (_AaddB__lxor_bool)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lxor_bool)
 (
     GrB_Matrix C,
@@ -51291,7 +47571,6 @@ GrB_Info GB (_AemultB_01__lxor_bool)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lxor_bool)
 (
     GrB_Matrix C,
@@ -51304,7 +47583,6 @@ GrB_Info GB (_AemultB_02__lxor_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lxor_bool)
 (
     GrB_Matrix C,
@@ -51315,7 +47593,6 @@ GrB_Info GB (_AemultB_03__lxor_bool)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lxor_bool)
 (
     GrB_Matrix C,
@@ -51331,6 +47608,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_bool)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lxor_bool)
 (
     GB_void *Cx_output,
@@ -51340,21 +47618,6 @@ GrB_Info GB (_bind1st__lxor_bool)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lxor_bool)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lxor_bool)
 (
     GrB_Matrix C,
@@ -51365,9 +47628,15 @@ GrB_Info GB (_bind1st_tran__lxor_bool)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lxor_bool)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lxor_bool)
 (
     GrB_Matrix C,
@@ -51414,7 +47683,6 @@ GrB_Info GB (_Cdense_accumb__lxor_int8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lxor_int8)
 (
     GrB_Matrix C,
@@ -51422,7 +47690,6 @@ GrB_Info GB (_AxD__lxor_int8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lxor_int8)
 (
     GrB_Matrix C,
@@ -51430,7 +47697,6 @@ GrB_Info GB (_DxB__lxor_int8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lxor_int8)
@@ -51452,6 +47718,7 @@ GrB_Info GB (_AaddB__lxor_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lxor_int8)
 (
     GrB_Matrix C,
@@ -51470,7 +47737,6 @@ GrB_Info GB (_AemultB_01__lxor_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lxor_int8)
 (
     GrB_Matrix C,
@@ -51483,7 +47749,6 @@ GrB_Info GB (_AemultB_02__lxor_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lxor_int8)
 (
     GrB_Matrix C,
@@ -51494,7 +47759,6 @@ GrB_Info GB (_AemultB_03__lxor_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lxor_int8)
 (
     GrB_Matrix C,
@@ -51510,6 +47774,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lxor_int8)
 (
     GB_void *Cx_output,
@@ -51519,21 +47784,6 @@ GrB_Info GB (_bind1st__lxor_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lxor_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lxor_int8)
 (
     GrB_Matrix C,
@@ -51544,9 +47794,15 @@ GrB_Info GB (_bind1st_tran__lxor_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lxor_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lxor_int8)
 (
     GrB_Matrix C,
@@ -51593,7 +47849,6 @@ GrB_Info GB (_Cdense_accumb__lxor_int16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lxor_int16)
 (
     GrB_Matrix C,
@@ -51601,7 +47856,6 @@ GrB_Info GB (_AxD__lxor_int16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lxor_int16)
 (
     GrB_Matrix C,
@@ -51609,7 +47863,6 @@ GrB_Info GB (_DxB__lxor_int16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lxor_int16)
@@ -51631,6 +47884,7 @@ GrB_Info GB (_AaddB__lxor_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lxor_int16)
 (
     GrB_Matrix C,
@@ -51649,7 +47903,6 @@ GrB_Info GB (_AemultB_01__lxor_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lxor_int16)
 (
     GrB_Matrix C,
@@ -51662,7 +47915,6 @@ GrB_Info GB (_AemultB_02__lxor_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lxor_int16)
 (
     GrB_Matrix C,
@@ -51673,7 +47925,6 @@ GrB_Info GB (_AemultB_03__lxor_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lxor_int16)
 (
     GrB_Matrix C,
@@ -51689,6 +47940,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lxor_int16)
 (
     GB_void *Cx_output,
@@ -51698,21 +47950,6 @@ GrB_Info GB (_bind1st__lxor_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lxor_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lxor_int16)
 (
     GrB_Matrix C,
@@ -51723,9 +47960,15 @@ GrB_Info GB (_bind1st_tran__lxor_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lxor_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lxor_int16)
 (
     GrB_Matrix C,
@@ -51772,7 +48015,6 @@ GrB_Info GB (_Cdense_accumb__lxor_int32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lxor_int32)
 (
     GrB_Matrix C,
@@ -51780,7 +48022,6 @@ GrB_Info GB (_AxD__lxor_int32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lxor_int32)
 (
     GrB_Matrix C,
@@ -51788,7 +48029,6 @@ GrB_Info GB (_DxB__lxor_int32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lxor_int32)
@@ -51810,6 +48050,7 @@ GrB_Info GB (_AaddB__lxor_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lxor_int32)
 (
     GrB_Matrix C,
@@ -51828,7 +48069,6 @@ GrB_Info GB (_AemultB_01__lxor_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lxor_int32)
 (
     GrB_Matrix C,
@@ -51841,7 +48081,6 @@ GrB_Info GB (_AemultB_02__lxor_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lxor_int32)
 (
     GrB_Matrix C,
@@ -51852,7 +48091,6 @@ GrB_Info GB (_AemultB_03__lxor_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lxor_int32)
 (
     GrB_Matrix C,
@@ -51868,6 +48106,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lxor_int32)
 (
     GB_void *Cx_output,
@@ -51877,21 +48116,6 @@ GrB_Info GB (_bind1st__lxor_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lxor_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lxor_int32)
 (
     GrB_Matrix C,
@@ -51902,9 +48126,15 @@ GrB_Info GB (_bind1st_tran__lxor_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lxor_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lxor_int32)
 (
     GrB_Matrix C,
@@ -51951,7 +48181,6 @@ GrB_Info GB (_Cdense_accumb__lxor_int64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lxor_int64)
 (
     GrB_Matrix C,
@@ -51959,7 +48188,6 @@ GrB_Info GB (_AxD__lxor_int64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lxor_int64)
 (
     GrB_Matrix C,
@@ -51967,7 +48195,6 @@ GrB_Info GB (_DxB__lxor_int64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lxor_int64)
@@ -51989,6 +48216,7 @@ GrB_Info GB (_AaddB__lxor_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lxor_int64)
 (
     GrB_Matrix C,
@@ -52007,7 +48235,6 @@ GrB_Info GB (_AemultB_01__lxor_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lxor_int64)
 (
     GrB_Matrix C,
@@ -52020,7 +48247,6 @@ GrB_Info GB (_AemultB_02__lxor_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lxor_int64)
 (
     GrB_Matrix C,
@@ -52031,7 +48257,6 @@ GrB_Info GB (_AemultB_03__lxor_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lxor_int64)
 (
     GrB_Matrix C,
@@ -52047,6 +48272,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lxor_int64)
 (
     GB_void *Cx_output,
@@ -52056,21 +48282,6 @@ GrB_Info GB (_bind1st__lxor_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lxor_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lxor_int64)
 (
     GrB_Matrix C,
@@ -52081,9 +48292,15 @@ GrB_Info GB (_bind1st_tran__lxor_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lxor_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lxor_int64)
 (
     GrB_Matrix C,
@@ -52130,7 +48347,6 @@ GrB_Info GB (_Cdense_accumb__lxor_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lxor_uint8)
 (
     GrB_Matrix C,
@@ -52138,7 +48354,6 @@ GrB_Info GB (_AxD__lxor_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lxor_uint8)
 (
     GrB_Matrix C,
@@ -52146,7 +48361,6 @@ GrB_Info GB (_DxB__lxor_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lxor_uint8)
@@ -52168,6 +48382,7 @@ GrB_Info GB (_AaddB__lxor_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lxor_uint8)
 (
     GrB_Matrix C,
@@ -52186,7 +48401,6 @@ GrB_Info GB (_AemultB_01__lxor_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lxor_uint8)
 (
     GrB_Matrix C,
@@ -52199,7 +48413,6 @@ GrB_Info GB (_AemultB_02__lxor_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lxor_uint8)
 (
     GrB_Matrix C,
@@ -52210,7 +48423,6 @@ GrB_Info GB (_AemultB_03__lxor_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lxor_uint8)
 (
     GrB_Matrix C,
@@ -52226,6 +48438,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lxor_uint8)
 (
     GB_void *Cx_output,
@@ -52235,21 +48448,6 @@ GrB_Info GB (_bind1st__lxor_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lxor_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lxor_uint8)
 (
     GrB_Matrix C,
@@ -52260,9 +48458,15 @@ GrB_Info GB (_bind1st_tran__lxor_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lxor_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lxor_uint8)
 (
     GrB_Matrix C,
@@ -52309,7 +48513,6 @@ GrB_Info GB (_Cdense_accumb__lxor_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lxor_uint16)
 (
     GrB_Matrix C,
@@ -52317,7 +48520,6 @@ GrB_Info GB (_AxD__lxor_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lxor_uint16)
 (
     GrB_Matrix C,
@@ -52325,7 +48527,6 @@ GrB_Info GB (_DxB__lxor_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lxor_uint16)
@@ -52347,6 +48548,7 @@ GrB_Info GB (_AaddB__lxor_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lxor_uint16)
 (
     GrB_Matrix C,
@@ -52365,7 +48567,6 @@ GrB_Info GB (_AemultB_01__lxor_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lxor_uint16)
 (
     GrB_Matrix C,
@@ -52378,7 +48579,6 @@ GrB_Info GB (_AemultB_02__lxor_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lxor_uint16)
 (
     GrB_Matrix C,
@@ -52389,7 +48589,6 @@ GrB_Info GB (_AemultB_03__lxor_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lxor_uint16)
 (
     GrB_Matrix C,
@@ -52405,6 +48604,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lxor_uint16)
 (
     GB_void *Cx_output,
@@ -52414,21 +48614,6 @@ GrB_Info GB (_bind1st__lxor_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lxor_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lxor_uint16)
 (
     GrB_Matrix C,
@@ -52439,9 +48624,15 @@ GrB_Info GB (_bind1st_tran__lxor_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lxor_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lxor_uint16)
 (
     GrB_Matrix C,
@@ -52488,7 +48679,6 @@ GrB_Info GB (_Cdense_accumb__lxor_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lxor_uint32)
 (
     GrB_Matrix C,
@@ -52496,7 +48686,6 @@ GrB_Info GB (_AxD__lxor_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lxor_uint32)
 (
     GrB_Matrix C,
@@ -52504,7 +48693,6 @@ GrB_Info GB (_DxB__lxor_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lxor_uint32)
@@ -52526,6 +48714,7 @@ GrB_Info GB (_AaddB__lxor_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lxor_uint32)
 (
     GrB_Matrix C,
@@ -52544,7 +48733,6 @@ GrB_Info GB (_AemultB_01__lxor_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lxor_uint32)
 (
     GrB_Matrix C,
@@ -52557,7 +48745,6 @@ GrB_Info GB (_AemultB_02__lxor_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lxor_uint32)
 (
     GrB_Matrix C,
@@ -52568,7 +48755,6 @@ GrB_Info GB (_AemultB_03__lxor_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lxor_uint32)
 (
     GrB_Matrix C,
@@ -52584,6 +48770,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lxor_uint32)
 (
     GB_void *Cx_output,
@@ -52593,21 +48780,6 @@ GrB_Info GB (_bind1st__lxor_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lxor_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lxor_uint32)
 (
     GrB_Matrix C,
@@ -52618,9 +48790,15 @@ GrB_Info GB (_bind1st_tran__lxor_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lxor_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lxor_uint32)
 (
     GrB_Matrix C,
@@ -52667,7 +48845,6 @@ GrB_Info GB (_Cdense_accumb__lxor_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lxor_uint64)
 (
     GrB_Matrix C,
@@ -52675,7 +48852,6 @@ GrB_Info GB (_AxD__lxor_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lxor_uint64)
 (
     GrB_Matrix C,
@@ -52683,7 +48859,6 @@ GrB_Info GB (_DxB__lxor_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lxor_uint64)
@@ -52705,6 +48880,7 @@ GrB_Info GB (_AaddB__lxor_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lxor_uint64)
 (
     GrB_Matrix C,
@@ -52723,7 +48899,6 @@ GrB_Info GB (_AemultB_01__lxor_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lxor_uint64)
 (
     GrB_Matrix C,
@@ -52736,7 +48911,6 @@ GrB_Info GB (_AemultB_02__lxor_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lxor_uint64)
 (
     GrB_Matrix C,
@@ -52747,7 +48921,6 @@ GrB_Info GB (_AemultB_03__lxor_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lxor_uint64)
 (
     GrB_Matrix C,
@@ -52763,6 +48936,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lxor_uint64)
 (
     GB_void *Cx_output,
@@ -52772,21 +48946,6 @@ GrB_Info GB (_bind1st__lxor_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lxor_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lxor_uint64)
 (
     GrB_Matrix C,
@@ -52797,9 +48956,15 @@ GrB_Info GB (_bind1st_tran__lxor_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lxor_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lxor_uint64)
 (
     GrB_Matrix C,
@@ -52846,7 +49011,6 @@ GrB_Info GB (_Cdense_accumb__lxor_fp32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lxor_fp32)
 (
     GrB_Matrix C,
@@ -52854,7 +49018,6 @@ GrB_Info GB (_AxD__lxor_fp32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lxor_fp32)
 (
     GrB_Matrix C,
@@ -52862,7 +49025,6 @@ GrB_Info GB (_DxB__lxor_fp32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lxor_fp32)
@@ -52884,6 +49046,7 @@ GrB_Info GB (_AaddB__lxor_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lxor_fp32)
 (
     GrB_Matrix C,
@@ -52902,7 +49065,6 @@ GrB_Info GB (_AemultB_01__lxor_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lxor_fp32)
 (
     GrB_Matrix C,
@@ -52915,7 +49077,6 @@ GrB_Info GB (_AemultB_02__lxor_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lxor_fp32)
 (
     GrB_Matrix C,
@@ -52926,7 +49087,6 @@ GrB_Info GB (_AemultB_03__lxor_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lxor_fp32)
 (
     GrB_Matrix C,
@@ -52942,6 +49102,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lxor_fp32)
 (
     GB_void *Cx_output,
@@ -52951,21 +49112,6 @@ GrB_Info GB (_bind1st__lxor_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lxor_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lxor_fp32)
 (
     GrB_Matrix C,
@@ -52976,9 +49122,15 @@ GrB_Info GB (_bind1st_tran__lxor_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lxor_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lxor_fp32)
 (
     GrB_Matrix C,
@@ -53025,7 +49177,6 @@ GrB_Info GB (_Cdense_accumb__lxor_fp64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__lxor_fp64)
 (
     GrB_Matrix C,
@@ -53033,7 +49184,6 @@ GrB_Info GB (_AxD__lxor_fp64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__lxor_fp64)
 (
     GrB_Matrix C,
@@ -53041,7 +49191,6 @@ GrB_Info GB (_DxB__lxor_fp64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__lxor_fp64)
@@ -53063,6 +49212,7 @@ GrB_Info GB (_AaddB__lxor_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__lxor_fp64)
 (
     GrB_Matrix C,
@@ -53081,7 +49231,6 @@ GrB_Info GB (_AemultB_01__lxor_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__lxor_fp64)
 (
     GrB_Matrix C,
@@ -53094,7 +49243,6 @@ GrB_Info GB (_AemultB_02__lxor_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__lxor_fp64)
 (
     GrB_Matrix C,
@@ -53105,7 +49253,6 @@ GrB_Info GB (_AemultB_03__lxor_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__lxor_fp64)
 (
     GrB_Matrix C,
@@ -53121,6 +49268,7 @@ GrB_Info GB (_AemultB_bitmap__lxor_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__lxor_fp64)
 (
     GB_void *Cx_output,
@@ -53130,21 +49278,6 @@ GrB_Info GB (_bind1st__lxor_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__lxor_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__lxor_fp64)
 (
     GrB_Matrix C,
@@ -53155,9 +49288,15 @@ GrB_Info GB (_bind1st_tran__lxor_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__lxor_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__lxor_fp64)
 (
     GrB_Matrix C,
@@ -53204,7 +49343,6 @@ GrB_Info GB (_Cdense_accumb__atan2_fp32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -53212,15 +49350,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__atan2_fp32)
@@ -53242,6 +49378,7 @@ GrB_Info GB (_AaddB__atan2_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__atan2_fp32)
 (
     GrB_Matrix C,
@@ -53260,7 +49397,6 @@ GrB_Info GB (_AemultB_01__atan2_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__atan2_fp32)
 (
     GrB_Matrix C,
@@ -53273,7 +49409,6 @@ GrB_Info GB (_AemultB_02__atan2_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__atan2_fp32)
 (
     GrB_Matrix C,
@@ -53284,7 +49419,6 @@ GrB_Info GB (_AemultB_03__atan2_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__atan2_fp32)
 (
     GrB_Matrix C,
@@ -53300,6 +49434,7 @@ GrB_Info GB (_AemultB_bitmap__atan2_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__atan2_fp32)
 (
     GB_void *Cx_output,
@@ -53309,21 +49444,6 @@ GrB_Info GB (_bind1st__atan2_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__atan2_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__atan2_fp32)
 (
     GrB_Matrix C,
@@ -53334,9 +49454,15 @@ GrB_Info GB (_bind1st_tran__atan2_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__atan2_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__atan2_fp32)
 (
     GrB_Matrix C,
@@ -53383,7 +49509,6 @@ GrB_Info GB (_Cdense_accumb__atan2_fp64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -53391,15 +49516,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__atan2_fp64)
@@ -53421,6 +49544,7 @@ GrB_Info GB (_AaddB__atan2_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__atan2_fp64)
 (
     GrB_Matrix C,
@@ -53439,7 +49563,6 @@ GrB_Info GB (_AemultB_01__atan2_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__atan2_fp64)
 (
     GrB_Matrix C,
@@ -53452,7 +49575,6 @@ GrB_Info GB (_AemultB_02__atan2_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__atan2_fp64)
 (
     GrB_Matrix C,
@@ -53463,7 +49585,6 @@ GrB_Info GB (_AemultB_03__atan2_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__atan2_fp64)
 (
     GrB_Matrix C,
@@ -53479,6 +49600,7 @@ GrB_Info GB (_AemultB_bitmap__atan2_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__atan2_fp64)
 (
     GB_void *Cx_output,
@@ -53488,21 +49610,6 @@ GrB_Info GB (_bind1st__atan2_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__atan2_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__atan2_fp64)
 (
     GrB_Matrix C,
@@ -53513,9 +49620,15 @@ GrB_Info GB (_bind1st_tran__atan2_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__atan2_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__atan2_fp64)
 (
     GrB_Matrix C,
@@ -53562,7 +49675,6 @@ GrB_Info GB (_Cdense_accumb__hypot_fp32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -53570,15 +49682,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__hypot_fp32)
@@ -53600,6 +49710,7 @@ GrB_Info GB (_AaddB__hypot_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__hypot_fp32)
 (
     GrB_Matrix C,
@@ -53618,7 +49729,6 @@ GrB_Info GB (_AemultB_01__hypot_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__hypot_fp32)
 (
     GrB_Matrix C,
@@ -53631,7 +49741,6 @@ GrB_Info GB (_AemultB_02__hypot_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__hypot_fp32)
 (
     GrB_Matrix C,
@@ -53642,7 +49751,6 @@ GrB_Info GB (_AemultB_03__hypot_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__hypot_fp32)
 (
     GrB_Matrix C,
@@ -53658,6 +49766,7 @@ GrB_Info GB (_AemultB_bitmap__hypot_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__hypot_fp32)
 (
     GB_void *Cx_output,
@@ -53667,21 +49776,6 @@ GrB_Info GB (_bind1st__hypot_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__hypot_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__hypot_fp32)
 (
     GrB_Matrix C,
@@ -53692,9 +49786,15 @@ GrB_Info GB (_bind1st_tran__hypot_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__hypot_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__hypot_fp32)
 (
     GrB_Matrix C,
@@ -53741,7 +49841,6 @@ GrB_Info GB (_Cdense_accumb__hypot_fp64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -53749,15 +49848,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__hypot_fp64)
@@ -53779,6 +49876,7 @@ GrB_Info GB (_AaddB__hypot_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__hypot_fp64)
 (
     GrB_Matrix C,
@@ -53797,7 +49895,6 @@ GrB_Info GB (_AemultB_01__hypot_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__hypot_fp64)
 (
     GrB_Matrix C,
@@ -53810,7 +49907,6 @@ GrB_Info GB (_AemultB_02__hypot_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__hypot_fp64)
 (
     GrB_Matrix C,
@@ -53821,7 +49917,6 @@ GrB_Info GB (_AemultB_03__hypot_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__hypot_fp64)
 (
     GrB_Matrix C,
@@ -53837,6 +49932,7 @@ GrB_Info GB (_AemultB_bitmap__hypot_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__hypot_fp64)
 (
     GB_void *Cx_output,
@@ -53846,21 +49942,6 @@ GrB_Info GB (_bind1st__hypot_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__hypot_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__hypot_fp64)
 (
     GrB_Matrix C,
@@ -53871,9 +49952,15 @@ GrB_Info GB (_bind1st_tran__hypot_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__hypot_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__hypot_fp64)
 (
     GrB_Matrix C,
@@ -53920,7 +50007,6 @@ GrB_Info GB (_Cdense_accumb__fmod_fp32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -53928,15 +50014,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__fmod_fp32)
@@ -53958,6 +50042,7 @@ GrB_Info GB (_AaddB__fmod_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__fmod_fp32)
 (
     GrB_Matrix C,
@@ -53976,7 +50061,6 @@ GrB_Info GB (_AemultB_01__fmod_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__fmod_fp32)
 (
     GrB_Matrix C,
@@ -53989,7 +50073,6 @@ GrB_Info GB (_AemultB_02__fmod_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__fmod_fp32)
 (
     GrB_Matrix C,
@@ -54000,7 +50083,6 @@ GrB_Info GB (_AemultB_03__fmod_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__fmod_fp32)
 (
     GrB_Matrix C,
@@ -54016,6 +50098,7 @@ GrB_Info GB (_AemultB_bitmap__fmod_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__fmod_fp32)
 (
     GB_void *Cx_output,
@@ -54025,21 +50108,6 @@ GrB_Info GB (_bind1st__fmod_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__fmod_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__fmod_fp32)
 (
     GrB_Matrix C,
@@ -54050,9 +50118,15 @@ GrB_Info GB (_bind1st_tran__fmod_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__fmod_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__fmod_fp32)
 (
     GrB_Matrix C,
@@ -54099,7 +50173,6 @@ GrB_Info GB (_Cdense_accumb__fmod_fp64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -54107,15 +50180,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__fmod_fp64)
@@ -54137,6 +50208,7 @@ GrB_Info GB (_AaddB__fmod_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__fmod_fp64)
 (
     GrB_Matrix C,
@@ -54155,7 +50227,6 @@ GrB_Info GB (_AemultB_01__fmod_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__fmod_fp64)
 (
     GrB_Matrix C,
@@ -54168,7 +50239,6 @@ GrB_Info GB (_AemultB_02__fmod_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__fmod_fp64)
 (
     GrB_Matrix C,
@@ -54179,7 +50249,6 @@ GrB_Info GB (_AemultB_03__fmod_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__fmod_fp64)
 (
     GrB_Matrix C,
@@ -54195,6 +50264,7 @@ GrB_Info GB (_AemultB_bitmap__fmod_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__fmod_fp64)
 (
     GB_void *Cx_output,
@@ -54204,21 +50274,6 @@ GrB_Info GB (_bind1st__fmod_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__fmod_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__fmod_fp64)
 (
     GrB_Matrix C,
@@ -54229,9 +50284,15 @@ GrB_Info GB (_bind1st_tran__fmod_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__fmod_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__fmod_fp64)
 (
     GrB_Matrix C,
@@ -54278,7 +50339,6 @@ GrB_Info GB (_Cdense_accumb__remainder_fp32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -54286,15 +50346,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__remainder_fp32)
@@ -54316,6 +50374,7 @@ GrB_Info GB (_AaddB__remainder_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__remainder_fp32)
 (
     GrB_Matrix C,
@@ -54334,7 +50393,6 @@ GrB_Info GB (_AemultB_01__remainder_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__remainder_fp32)
 (
     GrB_Matrix C,
@@ -54347,7 +50405,6 @@ GrB_Info GB (_AemultB_02__remainder_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__remainder_fp32)
 (
     GrB_Matrix C,
@@ -54358,7 +50415,6 @@ GrB_Info GB (_AemultB_03__remainder_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__remainder_fp32)
 (
     GrB_Matrix C,
@@ -54374,6 +50430,7 @@ GrB_Info GB (_AemultB_bitmap__remainder_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__remainder_fp32)
 (
     GB_void *Cx_output,
@@ -54383,21 +50440,6 @@ GrB_Info GB (_bind1st__remainder_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__remainder_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__remainder_fp32)
 (
     GrB_Matrix C,
@@ -54408,9 +50450,15 @@ GrB_Info GB (_bind1st_tran__remainder_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__remainder_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__remainder_fp32)
 (
     GrB_Matrix C,
@@ -54457,7 +50505,6 @@ GrB_Info GB (_Cdense_accumb__remainder_fp64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -54465,15 +50512,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__remainder_fp64)
@@ -54495,6 +50540,7 @@ GrB_Info GB (_AaddB__remainder_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__remainder_fp64)
 (
     GrB_Matrix C,
@@ -54513,7 +50559,6 @@ GrB_Info GB (_AemultB_01__remainder_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__remainder_fp64)
 (
     GrB_Matrix C,
@@ -54526,7 +50571,6 @@ GrB_Info GB (_AemultB_02__remainder_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__remainder_fp64)
 (
     GrB_Matrix C,
@@ -54537,7 +50581,6 @@ GrB_Info GB (_AemultB_03__remainder_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__remainder_fp64)
 (
     GrB_Matrix C,
@@ -54553,6 +50596,7 @@ GrB_Info GB (_AemultB_bitmap__remainder_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__remainder_fp64)
 (
     GB_void *Cx_output,
@@ -54562,21 +50606,6 @@ GrB_Info GB (_bind1st__remainder_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__remainder_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__remainder_fp64)
 (
     GrB_Matrix C,
@@ -54587,9 +50616,15 @@ GrB_Info GB (_bind1st_tran__remainder_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__remainder_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__remainder_fp64)
 (
     GrB_Matrix C,
@@ -54636,7 +50671,6 @@ GrB_Info GB (_Cdense_accumb__copysign_fp32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -54644,15 +50678,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__copysign_fp32)
@@ -54674,6 +50706,7 @@ GrB_Info GB (_AaddB__copysign_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__copysign_fp32)
 (
     GrB_Matrix C,
@@ -54692,7 +50725,6 @@ GrB_Info GB (_AemultB_01__copysign_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__copysign_fp32)
 (
     GrB_Matrix C,
@@ -54705,7 +50737,6 @@ GrB_Info GB (_AemultB_02__copysign_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__copysign_fp32)
 (
     GrB_Matrix C,
@@ -54716,7 +50747,6 @@ GrB_Info GB (_AemultB_03__copysign_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__copysign_fp32)
 (
     GrB_Matrix C,
@@ -54732,6 +50762,7 @@ GrB_Info GB (_AemultB_bitmap__copysign_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__copysign_fp32)
 (
     GB_void *Cx_output,
@@ -54741,21 +50772,6 @@ GrB_Info GB (_bind1st__copysign_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__copysign_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__copysign_fp32)
 (
     GrB_Matrix C,
@@ -54766,9 +50782,15 @@ GrB_Info GB (_bind1st_tran__copysign_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__copysign_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__copysign_fp32)
 (
     GrB_Matrix C,
@@ -54815,7 +50837,6 @@ GrB_Info GB (_Cdense_accumb__copysign_fp64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -54823,15 +50844,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__copysign_fp64)
@@ -54853,6 +50872,7 @@ GrB_Info GB (_AaddB__copysign_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__copysign_fp64)
 (
     GrB_Matrix C,
@@ -54871,7 +50891,6 @@ GrB_Info GB (_AemultB_01__copysign_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__copysign_fp64)
 (
     GrB_Matrix C,
@@ -54884,7 +50903,6 @@ GrB_Info GB (_AemultB_02__copysign_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__copysign_fp64)
 (
     GrB_Matrix C,
@@ -54895,7 +50913,6 @@ GrB_Info GB (_AemultB_03__copysign_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__copysign_fp64)
 (
     GrB_Matrix C,
@@ -54911,6 +50928,7 @@ GrB_Info GB (_AemultB_bitmap__copysign_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__copysign_fp64)
 (
     GB_void *Cx_output,
@@ -54920,21 +50938,6 @@ GrB_Info GB (_bind1st__copysign_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__copysign_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__copysign_fp64)
 (
     GrB_Matrix C,
@@ -54945,9 +50948,15 @@ GrB_Info GB (_bind1st_tran__copysign_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__copysign_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__copysign_fp64)
 (
     GrB_Matrix C,
@@ -54994,7 +51003,6 @@ GrB_Info GB (_Cdense_accumb__ldexp_fp32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -55002,15 +51010,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__ldexp_fp32)
@@ -55032,6 +51038,7 @@ GrB_Info GB (_AaddB__ldexp_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ldexp_fp32)
 (
     GrB_Matrix C,
@@ -55050,7 +51057,6 @@ GrB_Info GB (_AemultB_01__ldexp_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ldexp_fp32)
 (
     GrB_Matrix C,
@@ -55063,7 +51069,6 @@ GrB_Info GB (_AemultB_02__ldexp_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ldexp_fp32)
 (
     GrB_Matrix C,
@@ -55074,7 +51079,6 @@ GrB_Info GB (_AemultB_03__ldexp_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ldexp_fp32)
 (
     GrB_Matrix C,
@@ -55090,6 +51094,7 @@ GrB_Info GB (_AemultB_bitmap__ldexp_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ldexp_fp32)
 (
     GB_void *Cx_output,
@@ -55099,21 +51104,6 @@ GrB_Info GB (_bind1st__ldexp_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ldexp_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ldexp_fp32)
 (
     GrB_Matrix C,
@@ -55124,9 +51114,15 @@ GrB_Info GB (_bind1st_tran__ldexp_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ldexp_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ldexp_fp32)
 (
     GrB_Matrix C,
@@ -55173,7 +51169,6 @@ GrB_Info GB (_Cdense_accumb__ldexp_fp64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -55181,15 +51176,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__ldexp_fp64)
@@ -55211,6 +51204,7 @@ GrB_Info GB (_AaddB__ldexp_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__ldexp_fp64)
 (
     GrB_Matrix C,
@@ -55229,7 +51223,6 @@ GrB_Info GB (_AemultB_01__ldexp_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__ldexp_fp64)
 (
     GrB_Matrix C,
@@ -55242,7 +51235,6 @@ GrB_Info GB (_AemultB_02__ldexp_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__ldexp_fp64)
 (
     GrB_Matrix C,
@@ -55253,7 +51245,6 @@ GrB_Info GB (_AemultB_03__ldexp_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__ldexp_fp64)
 (
     GrB_Matrix C,
@@ -55269,6 +51260,7 @@ GrB_Info GB (_AemultB_bitmap__ldexp_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__ldexp_fp64)
 (
     GB_void *Cx_output,
@@ -55278,21 +51270,6 @@ GrB_Info GB (_bind1st__ldexp_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__ldexp_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__ldexp_fp64)
 (
     GrB_Matrix C,
@@ -55303,9 +51280,15 @@ GrB_Info GB (_bind1st_tran__ldexp_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__ldexp_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__ldexp_fp64)
 (
     GrB_Matrix C,
@@ -55352,7 +51335,6 @@ GrB_Info GB (_Cdense_accumb__cmplx_fp32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -55360,15 +51342,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__cmplx_fp32)
@@ -55390,6 +51370,7 @@ GrB_Info GB (_AaddB__cmplx_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__cmplx_fp32)
 (
     GrB_Matrix C,
@@ -55408,7 +51389,6 @@ GrB_Info GB (_AemultB_01__cmplx_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__cmplx_fp32)
 (
     GrB_Matrix C,
@@ -55421,7 +51401,6 @@ GrB_Info GB (_AemultB_02__cmplx_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__cmplx_fp32)
 (
     GrB_Matrix C,
@@ -55432,7 +51411,6 @@ GrB_Info GB (_AemultB_03__cmplx_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__cmplx_fp32)
 (
     GrB_Matrix C,
@@ -55448,6 +51426,7 @@ GrB_Info GB (_AemultB_bitmap__cmplx_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__cmplx_fp32)
 (
     GB_void *Cx_output,
@@ -55457,21 +51436,6 @@ GrB_Info GB (_bind1st__cmplx_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__cmplx_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__cmplx_fp32)
 (
     GrB_Matrix C,
@@ -55482,9 +51446,15 @@ GrB_Info GB (_bind1st_tran__cmplx_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__cmplx_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__cmplx_fp32)
 (
     GrB_Matrix C,
@@ -55531,7 +51501,6 @@ GrB_Info GB (_Cdense_accumb__cmplx_fp64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -55539,15 +51508,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__cmplx_fp64)
@@ -55569,6 +51536,7 @@ GrB_Info GB (_AaddB__cmplx_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__cmplx_fp64)
 (
     GrB_Matrix C,
@@ -55587,7 +51555,6 @@ GrB_Info GB (_AemultB_01__cmplx_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__cmplx_fp64)
 (
     GrB_Matrix C,
@@ -55600,7 +51567,6 @@ GrB_Info GB (_AemultB_02__cmplx_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__cmplx_fp64)
 (
     GrB_Matrix C,
@@ -55611,7 +51577,6 @@ GrB_Info GB (_AemultB_03__cmplx_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__cmplx_fp64)
 (
     GrB_Matrix C,
@@ -55627,6 +51592,7 @@ GrB_Info GB (_AemultB_bitmap__cmplx_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__cmplx_fp64)
 (
     GB_void *Cx_output,
@@ -55636,21 +51602,6 @@ GrB_Info GB (_bind1st__cmplx_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__cmplx_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__cmplx_fp64)
 (
     GrB_Matrix C,
@@ -55661,9 +51612,15 @@ GrB_Info GB (_bind1st_tran__cmplx_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__cmplx_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__cmplx_fp64)
 (
     GrB_Matrix C,
@@ -55710,7 +51667,6 @@ GrB_Info GB (_Cdense_accumb__bor_int8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -55718,15 +51674,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bor_int8)
@@ -55748,6 +51702,7 @@ GrB_Info GB (_AaddB__bor_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bor_int8)
 (
     GrB_Matrix C,
@@ -55766,7 +51721,6 @@ GrB_Info GB (_AemultB_01__bor_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bor_int8)
 (
     GrB_Matrix C,
@@ -55779,7 +51733,6 @@ GrB_Info GB (_AemultB_02__bor_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bor_int8)
 (
     GrB_Matrix C,
@@ -55790,7 +51743,6 @@ GrB_Info GB (_AemultB_03__bor_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bor_int8)
 (
     GrB_Matrix C,
@@ -55806,6 +51758,7 @@ GrB_Info GB (_AemultB_bitmap__bor_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bor_int8)
 (
     GB_void *Cx_output,
@@ -55815,21 +51768,6 @@ GrB_Info GB (_bind1st__bor_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bor_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bor_int8)
 (
     GrB_Matrix C,
@@ -55840,9 +51778,15 @@ GrB_Info GB (_bind1st_tran__bor_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bor_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bor_int8)
 (
     GrB_Matrix C,
@@ -55889,7 +51833,6 @@ GrB_Info GB (_Cdense_accumb__bor_int16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -55897,15 +51840,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bor_int16)
@@ -55927,6 +51868,7 @@ GrB_Info GB (_AaddB__bor_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bor_int16)
 (
     GrB_Matrix C,
@@ -55945,7 +51887,6 @@ GrB_Info GB (_AemultB_01__bor_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bor_int16)
 (
     GrB_Matrix C,
@@ -55958,7 +51899,6 @@ GrB_Info GB (_AemultB_02__bor_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bor_int16)
 (
     GrB_Matrix C,
@@ -55969,7 +51909,6 @@ GrB_Info GB (_AemultB_03__bor_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bor_int16)
 (
     GrB_Matrix C,
@@ -55985,6 +51924,7 @@ GrB_Info GB (_AemultB_bitmap__bor_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bor_int16)
 (
     GB_void *Cx_output,
@@ -55994,21 +51934,6 @@ GrB_Info GB (_bind1st__bor_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bor_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bor_int16)
 (
     GrB_Matrix C,
@@ -56019,9 +51944,15 @@ GrB_Info GB (_bind1st_tran__bor_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bor_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bor_int16)
 (
     GrB_Matrix C,
@@ -56068,7 +51999,6 @@ GrB_Info GB (_Cdense_accumb__bor_int32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -56076,15 +52006,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bor_int32)
@@ -56106,6 +52034,7 @@ GrB_Info GB (_AaddB__bor_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bor_int32)
 (
     GrB_Matrix C,
@@ -56124,7 +52053,6 @@ GrB_Info GB (_AemultB_01__bor_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bor_int32)
 (
     GrB_Matrix C,
@@ -56137,7 +52065,6 @@ GrB_Info GB (_AemultB_02__bor_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bor_int32)
 (
     GrB_Matrix C,
@@ -56148,7 +52075,6 @@ GrB_Info GB (_AemultB_03__bor_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bor_int32)
 (
     GrB_Matrix C,
@@ -56164,6 +52090,7 @@ GrB_Info GB (_AemultB_bitmap__bor_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bor_int32)
 (
     GB_void *Cx_output,
@@ -56173,21 +52100,6 @@ GrB_Info GB (_bind1st__bor_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bor_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bor_int32)
 (
     GrB_Matrix C,
@@ -56198,9 +52110,15 @@ GrB_Info GB (_bind1st_tran__bor_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bor_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bor_int32)
 (
     GrB_Matrix C,
@@ -56247,7 +52165,6 @@ GrB_Info GB (_Cdense_accumb__bor_int64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -56255,15 +52172,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bor_int64)
@@ -56285,6 +52200,7 @@ GrB_Info GB (_AaddB__bor_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bor_int64)
 (
     GrB_Matrix C,
@@ -56303,7 +52219,6 @@ GrB_Info GB (_AemultB_01__bor_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bor_int64)
 (
     GrB_Matrix C,
@@ -56316,7 +52231,6 @@ GrB_Info GB (_AemultB_02__bor_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bor_int64)
 (
     GrB_Matrix C,
@@ -56327,7 +52241,6 @@ GrB_Info GB (_AemultB_03__bor_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bor_int64)
 (
     GrB_Matrix C,
@@ -56343,6 +52256,7 @@ GrB_Info GB (_AemultB_bitmap__bor_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bor_int64)
 (
     GB_void *Cx_output,
@@ -56352,21 +52266,6 @@ GrB_Info GB (_bind1st__bor_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bor_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bor_int64)
 (
     GrB_Matrix C,
@@ -56377,9 +52276,15 @@ GrB_Info GB (_bind1st_tran__bor_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bor_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bor_int64)
 (
     GrB_Matrix C,
@@ -56426,7 +52331,6 @@ GrB_Info GB (_Cdense_accumb__bor_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bor_uint8)
 (
     GrB_Matrix C,
@@ -56434,7 +52338,6 @@ GrB_Info GB (_AxD__bor_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bor_uint8)
 (
     GrB_Matrix C,
@@ -56442,7 +52345,6 @@ GrB_Info GB (_DxB__bor_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bor_uint8)
@@ -56464,6 +52366,7 @@ GrB_Info GB (_AaddB__bor_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bor_uint8)
 (
     GrB_Matrix C,
@@ -56482,7 +52385,6 @@ GrB_Info GB (_AemultB_01__bor_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bor_uint8)
 (
     GrB_Matrix C,
@@ -56495,7 +52397,6 @@ GrB_Info GB (_AemultB_02__bor_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bor_uint8)
 (
     GrB_Matrix C,
@@ -56506,7 +52407,6 @@ GrB_Info GB (_AemultB_03__bor_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bor_uint8)
 (
     GrB_Matrix C,
@@ -56522,6 +52422,7 @@ GrB_Info GB (_AemultB_bitmap__bor_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bor_uint8)
 (
     GB_void *Cx_output,
@@ -56531,21 +52432,6 @@ GrB_Info GB (_bind1st__bor_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bor_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bor_uint8)
 (
     GrB_Matrix C,
@@ -56556,9 +52442,15 @@ GrB_Info GB (_bind1st_tran__bor_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bor_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bor_uint8)
 (
     GrB_Matrix C,
@@ -56605,7 +52497,6 @@ GrB_Info GB (_Cdense_accumb__bor_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bor_uint16)
 (
     GrB_Matrix C,
@@ -56613,7 +52504,6 @@ GrB_Info GB (_AxD__bor_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bor_uint16)
 (
     GrB_Matrix C,
@@ -56621,7 +52511,6 @@ GrB_Info GB (_DxB__bor_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bor_uint16)
@@ -56643,6 +52532,7 @@ GrB_Info GB (_AaddB__bor_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bor_uint16)
 (
     GrB_Matrix C,
@@ -56661,7 +52551,6 @@ GrB_Info GB (_AemultB_01__bor_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bor_uint16)
 (
     GrB_Matrix C,
@@ -56674,7 +52563,6 @@ GrB_Info GB (_AemultB_02__bor_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bor_uint16)
 (
     GrB_Matrix C,
@@ -56685,7 +52573,6 @@ GrB_Info GB (_AemultB_03__bor_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bor_uint16)
 (
     GrB_Matrix C,
@@ -56701,6 +52588,7 @@ GrB_Info GB (_AemultB_bitmap__bor_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bor_uint16)
 (
     GB_void *Cx_output,
@@ -56710,21 +52598,6 @@ GrB_Info GB (_bind1st__bor_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bor_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bor_uint16)
 (
     GrB_Matrix C,
@@ -56735,9 +52608,15 @@ GrB_Info GB (_bind1st_tran__bor_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bor_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bor_uint16)
 (
     GrB_Matrix C,
@@ -56784,7 +52663,6 @@ GrB_Info GB (_Cdense_accumb__bor_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bor_uint32)
 (
     GrB_Matrix C,
@@ -56792,7 +52670,6 @@ GrB_Info GB (_AxD__bor_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bor_uint32)
 (
     GrB_Matrix C,
@@ -56800,7 +52677,6 @@ GrB_Info GB (_DxB__bor_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bor_uint32)
@@ -56822,6 +52698,7 @@ GrB_Info GB (_AaddB__bor_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bor_uint32)
 (
     GrB_Matrix C,
@@ -56840,7 +52717,6 @@ GrB_Info GB (_AemultB_01__bor_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bor_uint32)
 (
     GrB_Matrix C,
@@ -56853,7 +52729,6 @@ GrB_Info GB (_AemultB_02__bor_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bor_uint32)
 (
     GrB_Matrix C,
@@ -56864,7 +52739,6 @@ GrB_Info GB (_AemultB_03__bor_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bor_uint32)
 (
     GrB_Matrix C,
@@ -56880,6 +52754,7 @@ GrB_Info GB (_AemultB_bitmap__bor_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bor_uint32)
 (
     GB_void *Cx_output,
@@ -56889,21 +52764,6 @@ GrB_Info GB (_bind1st__bor_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bor_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bor_uint32)
 (
     GrB_Matrix C,
@@ -56914,9 +52774,15 @@ GrB_Info GB (_bind1st_tran__bor_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bor_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bor_uint32)
 (
     GrB_Matrix C,
@@ -56963,7 +52829,6 @@ GrB_Info GB (_Cdense_accumb__bor_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bor_uint64)
 (
     GrB_Matrix C,
@@ -56971,7 +52836,6 @@ GrB_Info GB (_AxD__bor_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bor_uint64)
 (
     GrB_Matrix C,
@@ -56979,7 +52843,6 @@ GrB_Info GB (_DxB__bor_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bor_uint64)
@@ -57001,6 +52864,7 @@ GrB_Info GB (_AaddB__bor_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bor_uint64)
 (
     GrB_Matrix C,
@@ -57019,7 +52883,6 @@ GrB_Info GB (_AemultB_01__bor_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bor_uint64)
 (
     GrB_Matrix C,
@@ -57032,7 +52895,6 @@ GrB_Info GB (_AemultB_02__bor_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bor_uint64)
 (
     GrB_Matrix C,
@@ -57043,7 +52905,6 @@ GrB_Info GB (_AemultB_03__bor_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bor_uint64)
 (
     GrB_Matrix C,
@@ -57059,6 +52920,7 @@ GrB_Info GB (_AemultB_bitmap__bor_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bor_uint64)
 (
     GB_void *Cx_output,
@@ -57068,21 +52930,6 @@ GrB_Info GB (_bind1st__bor_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bor_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bor_uint64)
 (
     GrB_Matrix C,
@@ -57093,9 +52940,15 @@ GrB_Info GB (_bind1st_tran__bor_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bor_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bor_uint64)
 (
     GrB_Matrix C,
@@ -57142,7 +52995,6 @@ GrB_Info GB (_Cdense_accumb__band_int8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -57150,15 +53002,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__band_int8)
@@ -57180,6 +53030,7 @@ GrB_Info GB (_AaddB__band_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__band_int8)
 (
     GrB_Matrix C,
@@ -57198,7 +53049,6 @@ GrB_Info GB (_AemultB_01__band_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__band_int8)
 (
     GrB_Matrix C,
@@ -57211,7 +53061,6 @@ GrB_Info GB (_AemultB_02__band_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__band_int8)
 (
     GrB_Matrix C,
@@ -57222,7 +53071,6 @@ GrB_Info GB (_AemultB_03__band_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__band_int8)
 (
     GrB_Matrix C,
@@ -57238,6 +53086,7 @@ GrB_Info GB (_AemultB_bitmap__band_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__band_int8)
 (
     GB_void *Cx_output,
@@ -57247,21 +53096,6 @@ GrB_Info GB (_bind1st__band_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__band_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__band_int8)
 (
     GrB_Matrix C,
@@ -57272,9 +53106,15 @@ GrB_Info GB (_bind1st_tran__band_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__band_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__band_int8)
 (
     GrB_Matrix C,
@@ -57321,7 +53161,6 @@ GrB_Info GB (_Cdense_accumb__band_int16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -57329,15 +53168,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__band_int16)
@@ -57359,6 +53196,7 @@ GrB_Info GB (_AaddB__band_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__band_int16)
 (
     GrB_Matrix C,
@@ -57377,7 +53215,6 @@ GrB_Info GB (_AemultB_01__band_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__band_int16)
 (
     GrB_Matrix C,
@@ -57390,7 +53227,6 @@ GrB_Info GB (_AemultB_02__band_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__band_int16)
 (
     GrB_Matrix C,
@@ -57401,7 +53237,6 @@ GrB_Info GB (_AemultB_03__band_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__band_int16)
 (
     GrB_Matrix C,
@@ -57417,6 +53252,7 @@ GrB_Info GB (_AemultB_bitmap__band_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__band_int16)
 (
     GB_void *Cx_output,
@@ -57426,21 +53262,6 @@ GrB_Info GB (_bind1st__band_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__band_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__band_int16)
 (
     GrB_Matrix C,
@@ -57451,9 +53272,15 @@ GrB_Info GB (_bind1st_tran__band_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__band_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__band_int16)
 (
     GrB_Matrix C,
@@ -57500,7 +53327,6 @@ GrB_Info GB (_Cdense_accumb__band_int32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -57508,15 +53334,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__band_int32)
@@ -57538,6 +53362,7 @@ GrB_Info GB (_AaddB__band_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__band_int32)
 (
     GrB_Matrix C,
@@ -57556,7 +53381,6 @@ GrB_Info GB (_AemultB_01__band_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__band_int32)
 (
     GrB_Matrix C,
@@ -57569,7 +53393,6 @@ GrB_Info GB (_AemultB_02__band_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__band_int32)
 (
     GrB_Matrix C,
@@ -57580,7 +53403,6 @@ GrB_Info GB (_AemultB_03__band_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__band_int32)
 (
     GrB_Matrix C,
@@ -57596,6 +53418,7 @@ GrB_Info GB (_AemultB_bitmap__band_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__band_int32)
 (
     GB_void *Cx_output,
@@ -57605,21 +53428,6 @@ GrB_Info GB (_bind1st__band_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__band_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__band_int32)
 (
     GrB_Matrix C,
@@ -57630,9 +53438,15 @@ GrB_Info GB (_bind1st_tran__band_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__band_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__band_int32)
 (
     GrB_Matrix C,
@@ -57679,7 +53493,6 @@ GrB_Info GB (_Cdense_accumb__band_int64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -57687,15 +53500,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__band_int64)
@@ -57717,6 +53528,7 @@ GrB_Info GB (_AaddB__band_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__band_int64)
 (
     GrB_Matrix C,
@@ -57735,7 +53547,6 @@ GrB_Info GB (_AemultB_01__band_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__band_int64)
 (
     GrB_Matrix C,
@@ -57748,7 +53559,6 @@ GrB_Info GB (_AemultB_02__band_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__band_int64)
 (
     GrB_Matrix C,
@@ -57759,7 +53569,6 @@ GrB_Info GB (_AemultB_03__band_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__band_int64)
 (
     GrB_Matrix C,
@@ -57775,6 +53584,7 @@ GrB_Info GB (_AemultB_bitmap__band_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__band_int64)
 (
     GB_void *Cx_output,
@@ -57784,21 +53594,6 @@ GrB_Info GB (_bind1st__band_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__band_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__band_int64)
 (
     GrB_Matrix C,
@@ -57809,9 +53604,15 @@ GrB_Info GB (_bind1st_tran__band_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__band_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__band_int64)
 (
     GrB_Matrix C,
@@ -57858,7 +53659,6 @@ GrB_Info GB (_Cdense_accumb__band_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__band_uint8)
 (
     GrB_Matrix C,
@@ -57866,7 +53666,6 @@ GrB_Info GB (_AxD__band_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__band_uint8)
 (
     GrB_Matrix C,
@@ -57874,7 +53673,6 @@ GrB_Info GB (_DxB__band_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__band_uint8)
@@ -57896,6 +53694,7 @@ GrB_Info GB (_AaddB__band_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__band_uint8)
 (
     GrB_Matrix C,
@@ -57914,7 +53713,6 @@ GrB_Info GB (_AemultB_01__band_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__band_uint8)
 (
     GrB_Matrix C,
@@ -57927,7 +53725,6 @@ GrB_Info GB (_AemultB_02__band_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__band_uint8)
 (
     GrB_Matrix C,
@@ -57938,7 +53735,6 @@ GrB_Info GB (_AemultB_03__band_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__band_uint8)
 (
     GrB_Matrix C,
@@ -57954,6 +53750,7 @@ GrB_Info GB (_AemultB_bitmap__band_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__band_uint8)
 (
     GB_void *Cx_output,
@@ -57963,21 +53760,6 @@ GrB_Info GB (_bind1st__band_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__band_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__band_uint8)
 (
     GrB_Matrix C,
@@ -57988,9 +53770,15 @@ GrB_Info GB (_bind1st_tran__band_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__band_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__band_uint8)
 (
     GrB_Matrix C,
@@ -58037,7 +53825,6 @@ GrB_Info GB (_Cdense_accumb__band_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__band_uint16)
 (
     GrB_Matrix C,
@@ -58045,7 +53832,6 @@ GrB_Info GB (_AxD__band_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__band_uint16)
 (
     GrB_Matrix C,
@@ -58053,7 +53839,6 @@ GrB_Info GB (_DxB__band_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__band_uint16)
@@ -58075,6 +53860,7 @@ GrB_Info GB (_AaddB__band_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__band_uint16)
 (
     GrB_Matrix C,
@@ -58093,7 +53879,6 @@ GrB_Info GB (_AemultB_01__band_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__band_uint16)
 (
     GrB_Matrix C,
@@ -58106,7 +53891,6 @@ GrB_Info GB (_AemultB_02__band_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__band_uint16)
 (
     GrB_Matrix C,
@@ -58117,7 +53901,6 @@ GrB_Info GB (_AemultB_03__band_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__band_uint16)
 (
     GrB_Matrix C,
@@ -58133,6 +53916,7 @@ GrB_Info GB (_AemultB_bitmap__band_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__band_uint16)
 (
     GB_void *Cx_output,
@@ -58142,21 +53926,6 @@ GrB_Info GB (_bind1st__band_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__band_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__band_uint16)
 (
     GrB_Matrix C,
@@ -58167,9 +53936,15 @@ GrB_Info GB (_bind1st_tran__band_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__band_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__band_uint16)
 (
     GrB_Matrix C,
@@ -58216,7 +53991,6 @@ GrB_Info GB (_Cdense_accumb__band_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__band_uint32)
 (
     GrB_Matrix C,
@@ -58224,7 +53998,6 @@ GrB_Info GB (_AxD__band_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__band_uint32)
 (
     GrB_Matrix C,
@@ -58232,7 +54005,6 @@ GrB_Info GB (_DxB__band_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__band_uint32)
@@ -58254,6 +54026,7 @@ GrB_Info GB (_AaddB__band_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__band_uint32)
 (
     GrB_Matrix C,
@@ -58272,7 +54045,6 @@ GrB_Info GB (_AemultB_01__band_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__band_uint32)
 (
     GrB_Matrix C,
@@ -58285,7 +54057,6 @@ GrB_Info GB (_AemultB_02__band_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__band_uint32)
 (
     GrB_Matrix C,
@@ -58296,7 +54067,6 @@ GrB_Info GB (_AemultB_03__band_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__band_uint32)
 (
     GrB_Matrix C,
@@ -58312,6 +54082,7 @@ GrB_Info GB (_AemultB_bitmap__band_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__band_uint32)
 (
     GB_void *Cx_output,
@@ -58321,21 +54092,6 @@ GrB_Info GB (_bind1st__band_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__band_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__band_uint32)
 (
     GrB_Matrix C,
@@ -58346,9 +54102,15 @@ GrB_Info GB (_bind1st_tran__band_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__band_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__band_uint32)
 (
     GrB_Matrix C,
@@ -58395,7 +54157,6 @@ GrB_Info GB (_Cdense_accumb__band_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__band_uint64)
 (
     GrB_Matrix C,
@@ -58403,7 +54164,6 @@ GrB_Info GB (_AxD__band_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__band_uint64)
 (
     GrB_Matrix C,
@@ -58411,7 +54171,6 @@ GrB_Info GB (_DxB__band_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__band_uint64)
@@ -58433,6 +54192,7 @@ GrB_Info GB (_AaddB__band_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__band_uint64)
 (
     GrB_Matrix C,
@@ -58451,7 +54211,6 @@ GrB_Info GB (_AemultB_01__band_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__band_uint64)
 (
     GrB_Matrix C,
@@ -58464,7 +54223,6 @@ GrB_Info GB (_AemultB_02__band_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__band_uint64)
 (
     GrB_Matrix C,
@@ -58475,7 +54233,6 @@ GrB_Info GB (_AemultB_03__band_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__band_uint64)
 (
     GrB_Matrix C,
@@ -58491,6 +54248,7 @@ GrB_Info GB (_AemultB_bitmap__band_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__band_uint64)
 (
     GB_void *Cx_output,
@@ -58500,21 +54258,6 @@ GrB_Info GB (_bind1st__band_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__band_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__band_uint64)
 (
     GrB_Matrix C,
@@ -58525,9 +54268,15 @@ GrB_Info GB (_bind1st_tran__band_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__band_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__band_uint64)
 (
     GrB_Matrix C,
@@ -58574,7 +54323,6 @@ GrB_Info GB (_Cdense_accumb__bxor_int8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -58582,15 +54330,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bxor_int8)
@@ -58612,6 +54358,7 @@ GrB_Info GB (_AaddB__bxor_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxor_int8)
 (
     GrB_Matrix C,
@@ -58630,7 +54377,6 @@ GrB_Info GB (_AemultB_01__bxor_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxor_int8)
 (
     GrB_Matrix C,
@@ -58643,7 +54389,6 @@ GrB_Info GB (_AemultB_02__bxor_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxor_int8)
 (
     GrB_Matrix C,
@@ -58654,7 +54399,6 @@ GrB_Info GB (_AemultB_03__bxor_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxor_int8)
 (
     GrB_Matrix C,
@@ -58670,6 +54414,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxor_int8)
 (
     GB_void *Cx_output,
@@ -58679,21 +54424,6 @@ GrB_Info GB (_bind1st__bxor_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxor_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxor_int8)
 (
     GrB_Matrix C,
@@ -58704,9 +54434,15 @@ GrB_Info GB (_bind1st_tran__bxor_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxor_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxor_int8)
 (
     GrB_Matrix C,
@@ -58753,7 +54489,6 @@ GrB_Info GB (_Cdense_accumb__bxor_int16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -58761,15 +54496,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bxor_int16)
@@ -58791,6 +54524,7 @@ GrB_Info GB (_AaddB__bxor_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxor_int16)
 (
     GrB_Matrix C,
@@ -58809,7 +54543,6 @@ GrB_Info GB (_AemultB_01__bxor_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxor_int16)
 (
     GrB_Matrix C,
@@ -58822,7 +54555,6 @@ GrB_Info GB (_AemultB_02__bxor_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxor_int16)
 (
     GrB_Matrix C,
@@ -58833,7 +54565,6 @@ GrB_Info GB (_AemultB_03__bxor_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxor_int16)
 (
     GrB_Matrix C,
@@ -58849,6 +54580,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxor_int16)
 (
     GB_void *Cx_output,
@@ -58858,21 +54590,6 @@ GrB_Info GB (_bind1st__bxor_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxor_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxor_int16)
 (
     GrB_Matrix C,
@@ -58883,9 +54600,15 @@ GrB_Info GB (_bind1st_tran__bxor_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxor_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxor_int16)
 (
     GrB_Matrix C,
@@ -58932,7 +54655,6 @@ GrB_Info GB (_Cdense_accumb__bxor_int32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -58940,15 +54662,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bxor_int32)
@@ -58970,6 +54690,7 @@ GrB_Info GB (_AaddB__bxor_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxor_int32)
 (
     GrB_Matrix C,
@@ -58988,7 +54709,6 @@ GrB_Info GB (_AemultB_01__bxor_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxor_int32)
 (
     GrB_Matrix C,
@@ -59001,7 +54721,6 @@ GrB_Info GB (_AemultB_02__bxor_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxor_int32)
 (
     GrB_Matrix C,
@@ -59012,7 +54731,6 @@ GrB_Info GB (_AemultB_03__bxor_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxor_int32)
 (
     GrB_Matrix C,
@@ -59028,6 +54746,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxor_int32)
 (
     GB_void *Cx_output,
@@ -59037,21 +54756,6 @@ GrB_Info GB (_bind1st__bxor_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxor_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxor_int32)
 (
     GrB_Matrix C,
@@ -59062,9 +54766,15 @@ GrB_Info GB (_bind1st_tran__bxor_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxor_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxor_int32)
 (
     GrB_Matrix C,
@@ -59111,7 +54821,6 @@ GrB_Info GB (_Cdense_accumb__bxor_int64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -59119,15 +54828,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bxor_int64)
@@ -59149,6 +54856,7 @@ GrB_Info GB (_AaddB__bxor_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxor_int64)
 (
     GrB_Matrix C,
@@ -59167,7 +54875,6 @@ GrB_Info GB (_AemultB_01__bxor_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxor_int64)
 (
     GrB_Matrix C,
@@ -59180,7 +54887,6 @@ GrB_Info GB (_AemultB_02__bxor_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxor_int64)
 (
     GrB_Matrix C,
@@ -59191,7 +54897,6 @@ GrB_Info GB (_AemultB_03__bxor_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxor_int64)
 (
     GrB_Matrix C,
@@ -59207,6 +54912,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxor_int64)
 (
     GB_void *Cx_output,
@@ -59216,21 +54922,6 @@ GrB_Info GB (_bind1st__bxor_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxor_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxor_int64)
 (
     GrB_Matrix C,
@@ -59241,9 +54932,15 @@ GrB_Info GB (_bind1st_tran__bxor_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxor_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxor_int64)
 (
     GrB_Matrix C,
@@ -59290,7 +54987,6 @@ GrB_Info GB (_Cdense_accumb__bxor_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bxor_uint8)
 (
     GrB_Matrix C,
@@ -59298,7 +54994,6 @@ GrB_Info GB (_AxD__bxor_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bxor_uint8)
 (
     GrB_Matrix C,
@@ -59306,7 +55001,6 @@ GrB_Info GB (_DxB__bxor_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bxor_uint8)
@@ -59328,6 +55022,7 @@ GrB_Info GB (_AaddB__bxor_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxor_uint8)
 (
     GrB_Matrix C,
@@ -59346,7 +55041,6 @@ GrB_Info GB (_AemultB_01__bxor_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxor_uint8)
 (
     GrB_Matrix C,
@@ -59359,7 +55053,6 @@ GrB_Info GB (_AemultB_02__bxor_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxor_uint8)
 (
     GrB_Matrix C,
@@ -59370,7 +55063,6 @@ GrB_Info GB (_AemultB_03__bxor_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxor_uint8)
 (
     GrB_Matrix C,
@@ -59386,6 +55078,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxor_uint8)
 (
     GB_void *Cx_output,
@@ -59395,21 +55088,6 @@ GrB_Info GB (_bind1st__bxor_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxor_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxor_uint8)
 (
     GrB_Matrix C,
@@ -59420,9 +55098,15 @@ GrB_Info GB (_bind1st_tran__bxor_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxor_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxor_uint8)
 (
     GrB_Matrix C,
@@ -59469,7 +55153,6 @@ GrB_Info GB (_Cdense_accumb__bxor_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bxor_uint16)
 (
     GrB_Matrix C,
@@ -59477,7 +55160,6 @@ GrB_Info GB (_AxD__bxor_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bxor_uint16)
 (
     GrB_Matrix C,
@@ -59485,7 +55167,6 @@ GrB_Info GB (_DxB__bxor_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bxor_uint16)
@@ -59507,6 +55188,7 @@ GrB_Info GB (_AaddB__bxor_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxor_uint16)
 (
     GrB_Matrix C,
@@ -59525,7 +55207,6 @@ GrB_Info GB (_AemultB_01__bxor_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxor_uint16)
 (
     GrB_Matrix C,
@@ -59538,7 +55219,6 @@ GrB_Info GB (_AemultB_02__bxor_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxor_uint16)
 (
     GrB_Matrix C,
@@ -59549,7 +55229,6 @@ GrB_Info GB (_AemultB_03__bxor_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxor_uint16)
 (
     GrB_Matrix C,
@@ -59565,6 +55244,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxor_uint16)
 (
     GB_void *Cx_output,
@@ -59574,21 +55254,6 @@ GrB_Info GB (_bind1st__bxor_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxor_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxor_uint16)
 (
     GrB_Matrix C,
@@ -59599,9 +55264,15 @@ GrB_Info GB (_bind1st_tran__bxor_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxor_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxor_uint16)
 (
     GrB_Matrix C,
@@ -59648,7 +55319,6 @@ GrB_Info GB (_Cdense_accumb__bxor_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bxor_uint32)
 (
     GrB_Matrix C,
@@ -59656,7 +55326,6 @@ GrB_Info GB (_AxD__bxor_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bxor_uint32)
 (
     GrB_Matrix C,
@@ -59664,7 +55333,6 @@ GrB_Info GB (_DxB__bxor_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bxor_uint32)
@@ -59686,6 +55354,7 @@ GrB_Info GB (_AaddB__bxor_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxor_uint32)
 (
     GrB_Matrix C,
@@ -59704,7 +55373,6 @@ GrB_Info GB (_AemultB_01__bxor_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxor_uint32)
 (
     GrB_Matrix C,
@@ -59717,7 +55385,6 @@ GrB_Info GB (_AemultB_02__bxor_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxor_uint32)
 (
     GrB_Matrix C,
@@ -59728,7 +55395,6 @@ GrB_Info GB (_AemultB_03__bxor_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxor_uint32)
 (
     GrB_Matrix C,
@@ -59744,6 +55410,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxor_uint32)
 (
     GB_void *Cx_output,
@@ -59753,21 +55420,6 @@ GrB_Info GB (_bind1st__bxor_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxor_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxor_uint32)
 (
     GrB_Matrix C,
@@ -59778,9 +55430,15 @@ GrB_Info GB (_bind1st_tran__bxor_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxor_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxor_uint32)
 (
     GrB_Matrix C,
@@ -59827,7 +55485,6 @@ GrB_Info GB (_Cdense_accumb__bxor_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bxor_uint64)
 (
     GrB_Matrix C,
@@ -59835,7 +55492,6 @@ GrB_Info GB (_AxD__bxor_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bxor_uint64)
 (
     GrB_Matrix C,
@@ -59843,7 +55499,6 @@ GrB_Info GB (_DxB__bxor_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bxor_uint64)
@@ -59865,6 +55520,7 @@ GrB_Info GB (_AaddB__bxor_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxor_uint64)
 (
     GrB_Matrix C,
@@ -59883,7 +55539,6 @@ GrB_Info GB (_AemultB_01__bxor_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxor_uint64)
 (
     GrB_Matrix C,
@@ -59896,7 +55551,6 @@ GrB_Info GB (_AemultB_02__bxor_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxor_uint64)
 (
     GrB_Matrix C,
@@ -59907,7 +55561,6 @@ GrB_Info GB (_AemultB_03__bxor_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxor_uint64)
 (
     GrB_Matrix C,
@@ -59923,6 +55576,7 @@ GrB_Info GB (_AemultB_bitmap__bxor_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxor_uint64)
 (
     GB_void *Cx_output,
@@ -59932,21 +55586,6 @@ GrB_Info GB (_bind1st__bxor_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxor_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxor_uint64)
 (
     GrB_Matrix C,
@@ -59957,9 +55596,15 @@ GrB_Info GB (_bind1st_tran__bxor_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxor_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxor_uint64)
 (
     GrB_Matrix C,
@@ -60006,7 +55651,6 @@ GrB_Info GB (_Cdense_accumb__bxnor_int8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -60014,15 +55658,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bxnor_int8)
@@ -60044,6 +55686,7 @@ GrB_Info GB (_AaddB__bxnor_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxnor_int8)
 (
     GrB_Matrix C,
@@ -60062,7 +55705,6 @@ GrB_Info GB (_AemultB_01__bxnor_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxnor_int8)
 (
     GrB_Matrix C,
@@ -60075,7 +55717,6 @@ GrB_Info GB (_AemultB_02__bxnor_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxnor_int8)
 (
     GrB_Matrix C,
@@ -60086,7 +55727,6 @@ GrB_Info GB (_AemultB_03__bxnor_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxnor_int8)
 (
     GrB_Matrix C,
@@ -60102,6 +55742,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxnor_int8)
 (
     GB_void *Cx_output,
@@ -60111,21 +55752,6 @@ GrB_Info GB (_bind1st__bxnor_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxnor_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxnor_int8)
 (
     GrB_Matrix C,
@@ -60136,9 +55762,15 @@ GrB_Info GB (_bind1st_tran__bxnor_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxnor_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxnor_int8)
 (
     GrB_Matrix C,
@@ -60185,7 +55817,6 @@ GrB_Info GB (_Cdense_accumb__bxnor_int16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -60193,15 +55824,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bxnor_int16)
@@ -60223,6 +55852,7 @@ GrB_Info GB (_AaddB__bxnor_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxnor_int16)
 (
     GrB_Matrix C,
@@ -60241,7 +55871,6 @@ GrB_Info GB (_AemultB_01__bxnor_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxnor_int16)
 (
     GrB_Matrix C,
@@ -60254,7 +55883,6 @@ GrB_Info GB (_AemultB_02__bxnor_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxnor_int16)
 (
     GrB_Matrix C,
@@ -60265,7 +55893,6 @@ GrB_Info GB (_AemultB_03__bxnor_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxnor_int16)
 (
     GrB_Matrix C,
@@ -60281,6 +55908,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxnor_int16)
 (
     GB_void *Cx_output,
@@ -60290,21 +55918,6 @@ GrB_Info GB (_bind1st__bxnor_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxnor_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxnor_int16)
 (
     GrB_Matrix C,
@@ -60315,9 +55928,15 @@ GrB_Info GB (_bind1st_tran__bxnor_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxnor_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxnor_int16)
 (
     GrB_Matrix C,
@@ -60364,7 +55983,6 @@ GrB_Info GB (_Cdense_accumb__bxnor_int32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -60372,15 +55990,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bxnor_int32)
@@ -60402,6 +56018,7 @@ GrB_Info GB (_AaddB__bxnor_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxnor_int32)
 (
     GrB_Matrix C,
@@ -60420,7 +56037,6 @@ GrB_Info GB (_AemultB_01__bxnor_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxnor_int32)
 (
     GrB_Matrix C,
@@ -60433,7 +56049,6 @@ GrB_Info GB (_AemultB_02__bxnor_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxnor_int32)
 (
     GrB_Matrix C,
@@ -60444,7 +56059,6 @@ GrB_Info GB (_AemultB_03__bxnor_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxnor_int32)
 (
     GrB_Matrix C,
@@ -60460,6 +56074,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxnor_int32)
 (
     GB_void *Cx_output,
@@ -60469,21 +56084,6 @@ GrB_Info GB (_bind1st__bxnor_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxnor_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxnor_int32)
 (
     GrB_Matrix C,
@@ -60494,9 +56094,15 @@ GrB_Info GB (_bind1st_tran__bxnor_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxnor_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxnor_int32)
 (
     GrB_Matrix C,
@@ -60543,7 +56149,6 @@ GrB_Info GB (_Cdense_accumb__bxnor_int64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -60551,15 +56156,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bxnor_int64)
@@ -60581,6 +56184,7 @@ GrB_Info GB (_AaddB__bxnor_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxnor_int64)
 (
     GrB_Matrix C,
@@ -60599,7 +56203,6 @@ GrB_Info GB (_AemultB_01__bxnor_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxnor_int64)
 (
     GrB_Matrix C,
@@ -60612,7 +56215,6 @@ GrB_Info GB (_AemultB_02__bxnor_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxnor_int64)
 (
     GrB_Matrix C,
@@ -60623,7 +56225,6 @@ GrB_Info GB (_AemultB_03__bxnor_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxnor_int64)
 (
     GrB_Matrix C,
@@ -60639,6 +56240,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxnor_int64)
 (
     GB_void *Cx_output,
@@ -60648,21 +56250,6 @@ GrB_Info GB (_bind1st__bxnor_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxnor_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxnor_int64)
 (
     GrB_Matrix C,
@@ -60673,9 +56260,15 @@ GrB_Info GB (_bind1st_tran__bxnor_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxnor_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxnor_int64)
 (
     GrB_Matrix C,
@@ -60722,7 +56315,6 @@ GrB_Info GB (_Cdense_accumb__bxnor_uint8)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bxnor_uint8)
 (
     GrB_Matrix C,
@@ -60730,7 +56322,6 @@ GrB_Info GB (_AxD__bxnor_uint8)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bxnor_uint8)
 (
     GrB_Matrix C,
@@ -60738,7 +56329,6 @@ GrB_Info GB (_DxB__bxnor_uint8)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bxnor_uint8)
@@ -60760,6 +56350,7 @@ GrB_Info GB (_AaddB__bxnor_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxnor_uint8)
 (
     GrB_Matrix C,
@@ -60778,7 +56369,6 @@ GrB_Info GB (_AemultB_01__bxnor_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxnor_uint8)
 (
     GrB_Matrix C,
@@ -60791,7 +56381,6 @@ GrB_Info GB (_AemultB_02__bxnor_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxnor_uint8)
 (
     GrB_Matrix C,
@@ -60802,7 +56391,6 @@ GrB_Info GB (_AemultB_03__bxnor_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxnor_uint8)
 (
     GrB_Matrix C,
@@ -60818,6 +56406,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxnor_uint8)
 (
     GB_void *Cx_output,
@@ -60827,21 +56416,6 @@ GrB_Info GB (_bind1st__bxnor_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxnor_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxnor_uint8)
 (
     GrB_Matrix C,
@@ -60852,9 +56426,15 @@ GrB_Info GB (_bind1st_tran__bxnor_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxnor_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxnor_uint8)
 (
     GrB_Matrix C,
@@ -60901,7 +56481,6 @@ GrB_Info GB (_Cdense_accumb__bxnor_uint16)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bxnor_uint16)
 (
     GrB_Matrix C,
@@ -60909,7 +56488,6 @@ GrB_Info GB (_AxD__bxnor_uint16)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bxnor_uint16)
 (
     GrB_Matrix C,
@@ -60917,7 +56495,6 @@ GrB_Info GB (_DxB__bxnor_uint16)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bxnor_uint16)
@@ -60939,6 +56516,7 @@ GrB_Info GB (_AaddB__bxnor_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxnor_uint16)
 (
     GrB_Matrix C,
@@ -60957,7 +56535,6 @@ GrB_Info GB (_AemultB_01__bxnor_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxnor_uint16)
 (
     GrB_Matrix C,
@@ -60970,7 +56547,6 @@ GrB_Info GB (_AemultB_02__bxnor_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxnor_uint16)
 (
     GrB_Matrix C,
@@ -60981,7 +56557,6 @@ GrB_Info GB (_AemultB_03__bxnor_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxnor_uint16)
 (
     GrB_Matrix C,
@@ -60997,6 +56572,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxnor_uint16)
 (
     GB_void *Cx_output,
@@ -61006,21 +56582,6 @@ GrB_Info GB (_bind1st__bxnor_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxnor_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxnor_uint16)
 (
     GrB_Matrix C,
@@ -61031,9 +56592,15 @@ GrB_Info GB (_bind1st_tran__bxnor_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxnor_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxnor_uint16)
 (
     GrB_Matrix C,
@@ -61080,7 +56647,6 @@ GrB_Info GB (_Cdense_accumb__bxnor_uint32)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bxnor_uint32)
 (
     GrB_Matrix C,
@@ -61088,7 +56654,6 @@ GrB_Info GB (_AxD__bxnor_uint32)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bxnor_uint32)
 (
     GrB_Matrix C,
@@ -61096,7 +56661,6 @@ GrB_Info GB (_DxB__bxnor_uint32)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bxnor_uint32)
@@ -61118,6 +56682,7 @@ GrB_Info GB (_AaddB__bxnor_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxnor_uint32)
 (
     GrB_Matrix C,
@@ -61136,7 +56701,6 @@ GrB_Info GB (_AemultB_01__bxnor_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxnor_uint32)
 (
     GrB_Matrix C,
@@ -61149,7 +56713,6 @@ GrB_Info GB (_AemultB_02__bxnor_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxnor_uint32)
 (
     GrB_Matrix C,
@@ -61160,7 +56723,6 @@ GrB_Info GB (_AemultB_03__bxnor_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxnor_uint32)
 (
     GrB_Matrix C,
@@ -61176,6 +56738,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxnor_uint32)
 (
     GB_void *Cx_output,
@@ -61185,21 +56748,6 @@ GrB_Info GB (_bind1st__bxnor_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxnor_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxnor_uint32)
 (
     GrB_Matrix C,
@@ -61210,9 +56758,15 @@ GrB_Info GB (_bind1st_tran__bxnor_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxnor_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxnor_uint32)
 (
     GrB_Matrix C,
@@ -61259,7 +56813,6 @@ GrB_Info GB (_Cdense_accumb__bxnor_uint64)
 ) ;
 
 
-
 GrB_Info GB (_AxD__bxnor_uint64)
 (
     GrB_Matrix C,
@@ -61267,7 +56820,6 @@ GrB_Info GB (_AxD__bxnor_uint64)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB__bxnor_uint64)
 (
     GrB_Matrix C,
@@ -61275,7 +56827,6 @@ GrB_Info GB (_DxB__bxnor_uint64)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 
 
 GrB_Info GB (_AaddB__bxnor_uint64)
@@ -61297,6 +56848,7 @@ GrB_Info GB (_AaddB__bxnor_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bxnor_uint64)
 (
     GrB_Matrix C,
@@ -61315,7 +56867,6 @@ GrB_Info GB (_AemultB_01__bxnor_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bxnor_uint64)
 (
     GrB_Matrix C,
@@ -61328,7 +56879,6 @@ GrB_Info GB (_AemultB_02__bxnor_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bxnor_uint64)
 (
     GrB_Matrix C,
@@ -61339,7 +56889,6 @@ GrB_Info GB (_AemultB_03__bxnor_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bxnor_uint64)
 (
     GrB_Matrix C,
@@ -61355,6 +56904,7 @@ GrB_Info GB (_AemultB_bitmap__bxnor_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bxnor_uint64)
 (
     GB_void *Cx_output,
@@ -61364,21 +56914,6 @@ GrB_Info GB (_bind1st__bxnor_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bxnor_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bxnor_uint64)
 (
     GrB_Matrix C,
@@ -61389,9 +56924,15 @@ GrB_Info GB (_bind1st_tran__bxnor_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bxnor_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bxnor_uint64)
 (
     GrB_Matrix C,
@@ -61438,7 +56979,6 @@ GrB_Info GB (_Cdense_accumb__bget_int8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -61446,15 +56986,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bget_int8)
@@ -61476,6 +57014,7 @@ GrB_Info GB (_AaddB__bget_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bget_int8)
 (
     GrB_Matrix C,
@@ -61494,7 +57033,6 @@ GrB_Info GB (_AemultB_01__bget_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bget_int8)
 (
     GrB_Matrix C,
@@ -61507,7 +57045,6 @@ GrB_Info GB (_AemultB_02__bget_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bget_int8)
 (
     GrB_Matrix C,
@@ -61518,7 +57055,6 @@ GrB_Info GB (_AemultB_03__bget_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bget_int8)
 (
     GrB_Matrix C,
@@ -61534,6 +57070,7 @@ GrB_Info GB (_AemultB_bitmap__bget_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bget_int8)
 (
     GB_void *Cx_output,
@@ -61543,21 +57080,6 @@ GrB_Info GB (_bind1st__bget_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bget_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bget_int8)
 (
     GrB_Matrix C,
@@ -61568,9 +57090,15 @@ GrB_Info GB (_bind1st_tran__bget_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bget_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bget_int8)
 (
     GrB_Matrix C,
@@ -61617,7 +57145,6 @@ GrB_Info GB (_Cdense_accumb__bget_int16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -61625,15 +57152,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bget_int16)
@@ -61655,6 +57180,7 @@ GrB_Info GB (_AaddB__bget_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bget_int16)
 (
     GrB_Matrix C,
@@ -61673,7 +57199,6 @@ GrB_Info GB (_AemultB_01__bget_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bget_int16)
 (
     GrB_Matrix C,
@@ -61686,7 +57211,6 @@ GrB_Info GB (_AemultB_02__bget_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bget_int16)
 (
     GrB_Matrix C,
@@ -61697,7 +57221,6 @@ GrB_Info GB (_AemultB_03__bget_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bget_int16)
 (
     GrB_Matrix C,
@@ -61713,6 +57236,7 @@ GrB_Info GB (_AemultB_bitmap__bget_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bget_int16)
 (
     GB_void *Cx_output,
@@ -61722,21 +57246,6 @@ GrB_Info GB (_bind1st__bget_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bget_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bget_int16)
 (
     GrB_Matrix C,
@@ -61747,9 +57256,15 @@ GrB_Info GB (_bind1st_tran__bget_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bget_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bget_int16)
 (
     GrB_Matrix C,
@@ -61796,7 +57311,6 @@ GrB_Info GB (_Cdense_accumb__bget_int32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -61804,15 +57318,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bget_int32)
@@ -61834,6 +57346,7 @@ GrB_Info GB (_AaddB__bget_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bget_int32)
 (
     GrB_Matrix C,
@@ -61852,7 +57365,6 @@ GrB_Info GB (_AemultB_01__bget_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bget_int32)
 (
     GrB_Matrix C,
@@ -61865,7 +57377,6 @@ GrB_Info GB (_AemultB_02__bget_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bget_int32)
 (
     GrB_Matrix C,
@@ -61876,7 +57387,6 @@ GrB_Info GB (_AemultB_03__bget_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bget_int32)
 (
     GrB_Matrix C,
@@ -61892,6 +57402,7 @@ GrB_Info GB (_AemultB_bitmap__bget_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bget_int32)
 (
     GB_void *Cx_output,
@@ -61901,21 +57412,6 @@ GrB_Info GB (_bind1st__bget_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bget_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bget_int32)
 (
     GrB_Matrix C,
@@ -61926,9 +57422,15 @@ GrB_Info GB (_bind1st_tran__bget_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bget_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bget_int32)
 (
     GrB_Matrix C,
@@ -61975,7 +57477,6 @@ GrB_Info GB (_Cdense_accumb__bget_int64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -61983,15 +57484,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bget_int64)
@@ -62013,6 +57512,7 @@ GrB_Info GB (_AaddB__bget_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bget_int64)
 (
     GrB_Matrix C,
@@ -62031,7 +57531,6 @@ GrB_Info GB (_AemultB_01__bget_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bget_int64)
 (
     GrB_Matrix C,
@@ -62044,7 +57543,6 @@ GrB_Info GB (_AemultB_02__bget_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bget_int64)
 (
     GrB_Matrix C,
@@ -62055,7 +57553,6 @@ GrB_Info GB (_AemultB_03__bget_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bget_int64)
 (
     GrB_Matrix C,
@@ -62071,6 +57568,7 @@ GrB_Info GB (_AemultB_bitmap__bget_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bget_int64)
 (
     GB_void *Cx_output,
@@ -62080,21 +57578,6 @@ GrB_Info GB (_bind1st__bget_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bget_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bget_int64)
 (
     GrB_Matrix C,
@@ -62105,9 +57588,15 @@ GrB_Info GB (_bind1st_tran__bget_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bget_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bget_int64)
 (
     GrB_Matrix C,
@@ -62154,7 +57643,6 @@ GrB_Info GB (_Cdense_accumb__bget_uint8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -62162,15 +57650,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bget_uint8)
@@ -62192,6 +57678,7 @@ GrB_Info GB (_AaddB__bget_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bget_uint8)
 (
     GrB_Matrix C,
@@ -62210,7 +57697,6 @@ GrB_Info GB (_AemultB_01__bget_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bget_uint8)
 (
     GrB_Matrix C,
@@ -62223,7 +57709,6 @@ GrB_Info GB (_AemultB_02__bget_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bget_uint8)
 (
     GrB_Matrix C,
@@ -62234,7 +57719,6 @@ GrB_Info GB (_AemultB_03__bget_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bget_uint8)
 (
     GrB_Matrix C,
@@ -62250,6 +57734,7 @@ GrB_Info GB (_AemultB_bitmap__bget_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bget_uint8)
 (
     GB_void *Cx_output,
@@ -62259,21 +57744,6 @@ GrB_Info GB (_bind1st__bget_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bget_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bget_uint8)
 (
     GrB_Matrix C,
@@ -62284,9 +57754,15 @@ GrB_Info GB (_bind1st_tran__bget_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bget_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bget_uint8)
 (
     GrB_Matrix C,
@@ -62333,7 +57809,6 @@ GrB_Info GB (_Cdense_accumb__bget_uint16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -62341,15 +57816,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bget_uint16)
@@ -62371,6 +57844,7 @@ GrB_Info GB (_AaddB__bget_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bget_uint16)
 (
     GrB_Matrix C,
@@ -62389,7 +57863,6 @@ GrB_Info GB (_AemultB_01__bget_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bget_uint16)
 (
     GrB_Matrix C,
@@ -62402,7 +57875,6 @@ GrB_Info GB (_AemultB_02__bget_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bget_uint16)
 (
     GrB_Matrix C,
@@ -62413,7 +57885,6 @@ GrB_Info GB (_AemultB_03__bget_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bget_uint16)
 (
     GrB_Matrix C,
@@ -62429,6 +57900,7 @@ GrB_Info GB (_AemultB_bitmap__bget_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bget_uint16)
 (
     GB_void *Cx_output,
@@ -62438,21 +57910,6 @@ GrB_Info GB (_bind1st__bget_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bget_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bget_uint16)
 (
     GrB_Matrix C,
@@ -62463,9 +57920,15 @@ GrB_Info GB (_bind1st_tran__bget_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bget_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bget_uint16)
 (
     GrB_Matrix C,
@@ -62512,7 +57975,6 @@ GrB_Info GB (_Cdense_accumb__bget_uint32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -62520,15 +57982,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bget_uint32)
@@ -62550,6 +58010,7 @@ GrB_Info GB (_AaddB__bget_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bget_uint32)
 (
     GrB_Matrix C,
@@ -62568,7 +58029,6 @@ GrB_Info GB (_AemultB_01__bget_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bget_uint32)
 (
     GrB_Matrix C,
@@ -62581,7 +58041,6 @@ GrB_Info GB (_AemultB_02__bget_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bget_uint32)
 (
     GrB_Matrix C,
@@ -62592,7 +58051,6 @@ GrB_Info GB (_AemultB_03__bget_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bget_uint32)
 (
     GrB_Matrix C,
@@ -62608,6 +58066,7 @@ GrB_Info GB (_AemultB_bitmap__bget_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bget_uint32)
 (
     GB_void *Cx_output,
@@ -62617,21 +58076,6 @@ GrB_Info GB (_bind1st__bget_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bget_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bget_uint32)
 (
     GrB_Matrix C,
@@ -62642,9 +58086,15 @@ GrB_Info GB (_bind1st_tran__bget_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bget_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bget_uint32)
 (
     GrB_Matrix C,
@@ -62691,7 +58141,6 @@ GrB_Info GB (_Cdense_accumb__bget_uint64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -62699,15 +58148,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bget_uint64)
@@ -62729,6 +58176,7 @@ GrB_Info GB (_AaddB__bget_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bget_uint64)
 (
     GrB_Matrix C,
@@ -62747,7 +58195,6 @@ GrB_Info GB (_AemultB_01__bget_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bget_uint64)
 (
     GrB_Matrix C,
@@ -62760,7 +58207,6 @@ GrB_Info GB (_AemultB_02__bget_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bget_uint64)
 (
     GrB_Matrix C,
@@ -62771,7 +58217,6 @@ GrB_Info GB (_AemultB_03__bget_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bget_uint64)
 (
     GrB_Matrix C,
@@ -62787,6 +58232,7 @@ GrB_Info GB (_AemultB_bitmap__bget_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bget_uint64)
 (
     GB_void *Cx_output,
@@ -62796,21 +58242,6 @@ GrB_Info GB (_bind1st__bget_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bget_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bget_uint64)
 (
     GrB_Matrix C,
@@ -62821,9 +58252,15 @@ GrB_Info GB (_bind1st_tran__bget_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bget_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bget_uint64)
 (
     GrB_Matrix C,
@@ -62870,7 +58307,6 @@ GrB_Info GB (_Cdense_accumb__bset_int8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -62878,15 +58314,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bset_int8)
@@ -62908,6 +58342,7 @@ GrB_Info GB (_AaddB__bset_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bset_int8)
 (
     GrB_Matrix C,
@@ -62926,7 +58361,6 @@ GrB_Info GB (_AemultB_01__bset_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bset_int8)
 (
     GrB_Matrix C,
@@ -62939,7 +58373,6 @@ GrB_Info GB (_AemultB_02__bset_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bset_int8)
 (
     GrB_Matrix C,
@@ -62950,7 +58383,6 @@ GrB_Info GB (_AemultB_03__bset_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bset_int8)
 (
     GrB_Matrix C,
@@ -62966,6 +58398,7 @@ GrB_Info GB (_AemultB_bitmap__bset_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bset_int8)
 (
     GB_void *Cx_output,
@@ -62975,21 +58408,6 @@ GrB_Info GB (_bind1st__bset_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bset_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bset_int8)
 (
     GrB_Matrix C,
@@ -63000,9 +58418,15 @@ GrB_Info GB (_bind1st_tran__bset_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bset_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bset_int8)
 (
     GrB_Matrix C,
@@ -63049,7 +58473,6 @@ GrB_Info GB (_Cdense_accumb__bset_int16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -63057,15 +58480,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bset_int16)
@@ -63087,6 +58508,7 @@ GrB_Info GB (_AaddB__bset_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bset_int16)
 (
     GrB_Matrix C,
@@ -63105,7 +58527,6 @@ GrB_Info GB (_AemultB_01__bset_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bset_int16)
 (
     GrB_Matrix C,
@@ -63118,7 +58539,6 @@ GrB_Info GB (_AemultB_02__bset_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bset_int16)
 (
     GrB_Matrix C,
@@ -63129,7 +58549,6 @@ GrB_Info GB (_AemultB_03__bset_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bset_int16)
 (
     GrB_Matrix C,
@@ -63145,6 +58564,7 @@ GrB_Info GB (_AemultB_bitmap__bset_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bset_int16)
 (
     GB_void *Cx_output,
@@ -63154,21 +58574,6 @@ GrB_Info GB (_bind1st__bset_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bset_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bset_int16)
 (
     GrB_Matrix C,
@@ -63179,9 +58584,15 @@ GrB_Info GB (_bind1st_tran__bset_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bset_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bset_int16)
 (
     GrB_Matrix C,
@@ -63228,7 +58639,6 @@ GrB_Info GB (_Cdense_accumb__bset_int32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -63236,15 +58646,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bset_int32)
@@ -63266,6 +58674,7 @@ GrB_Info GB (_AaddB__bset_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bset_int32)
 (
     GrB_Matrix C,
@@ -63284,7 +58693,6 @@ GrB_Info GB (_AemultB_01__bset_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bset_int32)
 (
     GrB_Matrix C,
@@ -63297,7 +58705,6 @@ GrB_Info GB (_AemultB_02__bset_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bset_int32)
 (
     GrB_Matrix C,
@@ -63308,7 +58715,6 @@ GrB_Info GB (_AemultB_03__bset_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bset_int32)
 (
     GrB_Matrix C,
@@ -63324,6 +58730,7 @@ GrB_Info GB (_AemultB_bitmap__bset_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bset_int32)
 (
     GB_void *Cx_output,
@@ -63333,21 +58740,6 @@ GrB_Info GB (_bind1st__bset_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bset_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bset_int32)
 (
     GrB_Matrix C,
@@ -63358,9 +58750,15 @@ GrB_Info GB (_bind1st_tran__bset_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bset_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bset_int32)
 (
     GrB_Matrix C,
@@ -63407,7 +58805,6 @@ GrB_Info GB (_Cdense_accumb__bset_int64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -63415,15 +58812,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bset_int64)
@@ -63445,6 +58840,7 @@ GrB_Info GB (_AaddB__bset_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bset_int64)
 (
     GrB_Matrix C,
@@ -63463,7 +58859,6 @@ GrB_Info GB (_AemultB_01__bset_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bset_int64)
 (
     GrB_Matrix C,
@@ -63476,7 +58871,6 @@ GrB_Info GB (_AemultB_02__bset_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bset_int64)
 (
     GrB_Matrix C,
@@ -63487,7 +58881,6 @@ GrB_Info GB (_AemultB_03__bset_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bset_int64)
 (
     GrB_Matrix C,
@@ -63503,6 +58896,7 @@ GrB_Info GB (_AemultB_bitmap__bset_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bset_int64)
 (
     GB_void *Cx_output,
@@ -63512,21 +58906,6 @@ GrB_Info GB (_bind1st__bset_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bset_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bset_int64)
 (
     GrB_Matrix C,
@@ -63537,9 +58916,15 @@ GrB_Info GB (_bind1st_tran__bset_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bset_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bset_int64)
 (
     GrB_Matrix C,
@@ -63586,7 +58971,6 @@ GrB_Info GB (_Cdense_accumb__bset_uint8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -63594,15 +58978,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bset_uint8)
@@ -63624,6 +59006,7 @@ GrB_Info GB (_AaddB__bset_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bset_uint8)
 (
     GrB_Matrix C,
@@ -63642,7 +59025,6 @@ GrB_Info GB (_AemultB_01__bset_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bset_uint8)
 (
     GrB_Matrix C,
@@ -63655,7 +59037,6 @@ GrB_Info GB (_AemultB_02__bset_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bset_uint8)
 (
     GrB_Matrix C,
@@ -63666,7 +59047,6 @@ GrB_Info GB (_AemultB_03__bset_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bset_uint8)
 (
     GrB_Matrix C,
@@ -63682,6 +59062,7 @@ GrB_Info GB (_AemultB_bitmap__bset_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bset_uint8)
 (
     GB_void *Cx_output,
@@ -63691,21 +59072,6 @@ GrB_Info GB (_bind1st__bset_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bset_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bset_uint8)
 (
     GrB_Matrix C,
@@ -63716,9 +59082,15 @@ GrB_Info GB (_bind1st_tran__bset_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bset_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bset_uint8)
 (
     GrB_Matrix C,
@@ -63765,7 +59137,6 @@ GrB_Info GB (_Cdense_accumb__bset_uint16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -63773,15 +59144,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bset_uint16)
@@ -63803,6 +59172,7 @@ GrB_Info GB (_AaddB__bset_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bset_uint16)
 (
     GrB_Matrix C,
@@ -63821,7 +59191,6 @@ GrB_Info GB (_AemultB_01__bset_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bset_uint16)
 (
     GrB_Matrix C,
@@ -63834,7 +59203,6 @@ GrB_Info GB (_AemultB_02__bset_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bset_uint16)
 (
     GrB_Matrix C,
@@ -63845,7 +59213,6 @@ GrB_Info GB (_AemultB_03__bset_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bset_uint16)
 (
     GrB_Matrix C,
@@ -63861,6 +59228,7 @@ GrB_Info GB (_AemultB_bitmap__bset_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bset_uint16)
 (
     GB_void *Cx_output,
@@ -63870,21 +59238,6 @@ GrB_Info GB (_bind1st__bset_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bset_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bset_uint16)
 (
     GrB_Matrix C,
@@ -63895,9 +59248,15 @@ GrB_Info GB (_bind1st_tran__bset_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bset_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bset_uint16)
 (
     GrB_Matrix C,
@@ -63944,7 +59303,6 @@ GrB_Info GB (_Cdense_accumb__bset_uint32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -63952,15 +59310,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bset_uint32)
@@ -63982,6 +59338,7 @@ GrB_Info GB (_AaddB__bset_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bset_uint32)
 (
     GrB_Matrix C,
@@ -64000,7 +59357,6 @@ GrB_Info GB (_AemultB_01__bset_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bset_uint32)
 (
     GrB_Matrix C,
@@ -64013,7 +59369,6 @@ GrB_Info GB (_AemultB_02__bset_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bset_uint32)
 (
     GrB_Matrix C,
@@ -64024,7 +59379,6 @@ GrB_Info GB (_AemultB_03__bset_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bset_uint32)
 (
     GrB_Matrix C,
@@ -64040,6 +59394,7 @@ GrB_Info GB (_AemultB_bitmap__bset_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bset_uint32)
 (
     GB_void *Cx_output,
@@ -64049,21 +59404,6 @@ GrB_Info GB (_bind1st__bset_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bset_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bset_uint32)
 (
     GrB_Matrix C,
@@ -64074,9 +59414,15 @@ GrB_Info GB (_bind1st_tran__bset_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bset_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bset_uint32)
 (
     GrB_Matrix C,
@@ -64123,7 +59469,6 @@ GrB_Info GB (_Cdense_accumb__bset_uint64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -64131,15 +59476,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bset_uint64)
@@ -64161,6 +59504,7 @@ GrB_Info GB (_AaddB__bset_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bset_uint64)
 (
     GrB_Matrix C,
@@ -64179,7 +59523,6 @@ GrB_Info GB (_AemultB_01__bset_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bset_uint64)
 (
     GrB_Matrix C,
@@ -64192,7 +59535,6 @@ GrB_Info GB (_AemultB_02__bset_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bset_uint64)
 (
     GrB_Matrix C,
@@ -64203,7 +59545,6 @@ GrB_Info GB (_AemultB_03__bset_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bset_uint64)
 (
     GrB_Matrix C,
@@ -64219,6 +59560,7 @@ GrB_Info GB (_AemultB_bitmap__bset_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bset_uint64)
 (
     GB_void *Cx_output,
@@ -64228,21 +59570,6 @@ GrB_Info GB (_bind1st__bset_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bset_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bset_uint64)
 (
     GrB_Matrix C,
@@ -64253,9 +59580,15 @@ GrB_Info GB (_bind1st_tran__bset_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bset_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bset_uint64)
 (
     GrB_Matrix C,
@@ -64302,7 +59635,6 @@ GrB_Info GB (_Cdense_accumb__bclr_int8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -64310,15 +59642,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bclr_int8)
@@ -64340,6 +59670,7 @@ GrB_Info GB (_AaddB__bclr_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bclr_int8)
 (
     GrB_Matrix C,
@@ -64358,7 +59689,6 @@ GrB_Info GB (_AemultB_01__bclr_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bclr_int8)
 (
     GrB_Matrix C,
@@ -64371,7 +59701,6 @@ GrB_Info GB (_AemultB_02__bclr_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bclr_int8)
 (
     GrB_Matrix C,
@@ -64382,7 +59711,6 @@ GrB_Info GB (_AemultB_03__bclr_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bclr_int8)
 (
     GrB_Matrix C,
@@ -64398,6 +59726,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bclr_int8)
 (
     GB_void *Cx_output,
@@ -64407,21 +59736,6 @@ GrB_Info GB (_bind1st__bclr_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bclr_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bclr_int8)
 (
     GrB_Matrix C,
@@ -64432,9 +59746,15 @@ GrB_Info GB (_bind1st_tran__bclr_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bclr_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bclr_int8)
 (
     GrB_Matrix C,
@@ -64481,7 +59801,6 @@ GrB_Info GB (_Cdense_accumb__bclr_int16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -64489,15 +59808,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bclr_int16)
@@ -64519,6 +59836,7 @@ GrB_Info GB (_AaddB__bclr_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bclr_int16)
 (
     GrB_Matrix C,
@@ -64537,7 +59855,6 @@ GrB_Info GB (_AemultB_01__bclr_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bclr_int16)
 (
     GrB_Matrix C,
@@ -64550,7 +59867,6 @@ GrB_Info GB (_AemultB_02__bclr_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bclr_int16)
 (
     GrB_Matrix C,
@@ -64561,7 +59877,6 @@ GrB_Info GB (_AemultB_03__bclr_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bclr_int16)
 (
     GrB_Matrix C,
@@ -64577,6 +59892,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bclr_int16)
 (
     GB_void *Cx_output,
@@ -64586,21 +59902,6 @@ GrB_Info GB (_bind1st__bclr_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bclr_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bclr_int16)
 (
     GrB_Matrix C,
@@ -64611,9 +59912,15 @@ GrB_Info GB (_bind1st_tran__bclr_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bclr_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bclr_int16)
 (
     GrB_Matrix C,
@@ -64660,7 +59967,6 @@ GrB_Info GB (_Cdense_accumb__bclr_int32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -64668,15 +59974,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bclr_int32)
@@ -64698,6 +60002,7 @@ GrB_Info GB (_AaddB__bclr_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bclr_int32)
 (
     GrB_Matrix C,
@@ -64716,7 +60021,6 @@ GrB_Info GB (_AemultB_01__bclr_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bclr_int32)
 (
     GrB_Matrix C,
@@ -64729,7 +60033,6 @@ GrB_Info GB (_AemultB_02__bclr_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bclr_int32)
 (
     GrB_Matrix C,
@@ -64740,7 +60043,6 @@ GrB_Info GB (_AemultB_03__bclr_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bclr_int32)
 (
     GrB_Matrix C,
@@ -64756,6 +60058,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bclr_int32)
 (
     GB_void *Cx_output,
@@ -64765,21 +60068,6 @@ GrB_Info GB (_bind1st__bclr_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bclr_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bclr_int32)
 (
     GrB_Matrix C,
@@ -64790,9 +60078,15 @@ GrB_Info GB (_bind1st_tran__bclr_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bclr_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bclr_int32)
 (
     GrB_Matrix C,
@@ -64839,7 +60133,6 @@ GrB_Info GB (_Cdense_accumb__bclr_int64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -64847,15 +60140,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bclr_int64)
@@ -64877,6 +60168,7 @@ GrB_Info GB (_AaddB__bclr_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bclr_int64)
 (
     GrB_Matrix C,
@@ -64895,7 +60187,6 @@ GrB_Info GB (_AemultB_01__bclr_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bclr_int64)
 (
     GrB_Matrix C,
@@ -64908,7 +60199,6 @@ GrB_Info GB (_AemultB_02__bclr_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bclr_int64)
 (
     GrB_Matrix C,
@@ -64919,7 +60209,6 @@ GrB_Info GB (_AemultB_03__bclr_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bclr_int64)
 (
     GrB_Matrix C,
@@ -64935,6 +60224,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bclr_int64)
 (
     GB_void *Cx_output,
@@ -64944,21 +60234,6 @@ GrB_Info GB (_bind1st__bclr_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bclr_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bclr_int64)
 (
     GrB_Matrix C,
@@ -64969,9 +60244,15 @@ GrB_Info GB (_bind1st_tran__bclr_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bclr_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bclr_int64)
 (
     GrB_Matrix C,
@@ -65018,7 +60299,6 @@ GrB_Info GB (_Cdense_accumb__bclr_uint8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -65026,15 +60306,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bclr_uint8)
@@ -65056,6 +60334,7 @@ GrB_Info GB (_AaddB__bclr_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bclr_uint8)
 (
     GrB_Matrix C,
@@ -65074,7 +60353,6 @@ GrB_Info GB (_AemultB_01__bclr_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bclr_uint8)
 (
     GrB_Matrix C,
@@ -65087,7 +60365,6 @@ GrB_Info GB (_AemultB_02__bclr_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bclr_uint8)
 (
     GrB_Matrix C,
@@ -65098,7 +60375,6 @@ GrB_Info GB (_AemultB_03__bclr_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bclr_uint8)
 (
     GrB_Matrix C,
@@ -65114,6 +60390,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bclr_uint8)
 (
     GB_void *Cx_output,
@@ -65123,21 +60400,6 @@ GrB_Info GB (_bind1st__bclr_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bclr_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bclr_uint8)
 (
     GrB_Matrix C,
@@ -65148,9 +60410,15 @@ GrB_Info GB (_bind1st_tran__bclr_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bclr_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bclr_uint8)
 (
     GrB_Matrix C,
@@ -65197,7 +60465,6 @@ GrB_Info GB (_Cdense_accumb__bclr_uint16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -65205,15 +60472,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bclr_uint16)
@@ -65235,6 +60500,7 @@ GrB_Info GB (_AaddB__bclr_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bclr_uint16)
 (
     GrB_Matrix C,
@@ -65253,7 +60519,6 @@ GrB_Info GB (_AemultB_01__bclr_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bclr_uint16)
 (
     GrB_Matrix C,
@@ -65266,7 +60531,6 @@ GrB_Info GB (_AemultB_02__bclr_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bclr_uint16)
 (
     GrB_Matrix C,
@@ -65277,7 +60541,6 @@ GrB_Info GB (_AemultB_03__bclr_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bclr_uint16)
 (
     GrB_Matrix C,
@@ -65293,6 +60556,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bclr_uint16)
 (
     GB_void *Cx_output,
@@ -65302,21 +60566,6 @@ GrB_Info GB (_bind1st__bclr_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bclr_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bclr_uint16)
 (
     GrB_Matrix C,
@@ -65327,9 +60576,15 @@ GrB_Info GB (_bind1st_tran__bclr_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bclr_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bclr_uint16)
 (
     GrB_Matrix C,
@@ -65376,7 +60631,6 @@ GrB_Info GB (_Cdense_accumb__bclr_uint32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -65384,15 +60638,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bclr_uint32)
@@ -65414,6 +60666,7 @@ GrB_Info GB (_AaddB__bclr_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bclr_uint32)
 (
     GrB_Matrix C,
@@ -65432,7 +60685,6 @@ GrB_Info GB (_AemultB_01__bclr_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bclr_uint32)
 (
     GrB_Matrix C,
@@ -65445,7 +60697,6 @@ GrB_Info GB (_AemultB_02__bclr_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bclr_uint32)
 (
     GrB_Matrix C,
@@ -65456,7 +60707,6 @@ GrB_Info GB (_AemultB_03__bclr_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bclr_uint32)
 (
     GrB_Matrix C,
@@ -65472,6 +60722,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bclr_uint32)
 (
     GB_void *Cx_output,
@@ -65481,21 +60732,6 @@ GrB_Info GB (_bind1st__bclr_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bclr_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bclr_uint32)
 (
     GrB_Matrix C,
@@ -65506,9 +60742,15 @@ GrB_Info GB (_bind1st_tran__bclr_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bclr_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bclr_uint32)
 (
     GrB_Matrix C,
@@ -65555,7 +60797,6 @@ GrB_Info GB (_Cdense_accumb__bclr_uint64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -65563,15 +60804,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bclr_uint64)
@@ -65593,6 +60832,7 @@ GrB_Info GB (_AaddB__bclr_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bclr_uint64)
 (
     GrB_Matrix C,
@@ -65611,7 +60851,6 @@ GrB_Info GB (_AemultB_01__bclr_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bclr_uint64)
 (
     GrB_Matrix C,
@@ -65624,7 +60863,6 @@ GrB_Info GB (_AemultB_02__bclr_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bclr_uint64)
 (
     GrB_Matrix C,
@@ -65635,7 +60873,6 @@ GrB_Info GB (_AemultB_03__bclr_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bclr_uint64)
 (
     GrB_Matrix C,
@@ -65651,6 +60888,7 @@ GrB_Info GB (_AemultB_bitmap__bclr_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bclr_uint64)
 (
     GB_void *Cx_output,
@@ -65660,21 +60898,6 @@ GrB_Info GB (_bind1st__bclr_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bclr_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bclr_uint64)
 (
     GrB_Matrix C,
@@ -65685,9 +60908,15 @@ GrB_Info GB (_bind1st_tran__bclr_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bclr_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bclr_uint64)
 (
     GrB_Matrix C,
@@ -65734,7 +60963,6 @@ GrB_Info GB (_Cdense_accumb__bshift_int8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -65742,15 +60970,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bshift_int8)
@@ -65772,6 +60998,7 @@ GrB_Info GB (_AaddB__bshift_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bshift_int8)
 (
     GrB_Matrix C,
@@ -65790,7 +61017,6 @@ GrB_Info GB (_AemultB_01__bshift_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bshift_int8)
 (
     GrB_Matrix C,
@@ -65803,7 +61029,6 @@ GrB_Info GB (_AemultB_02__bshift_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bshift_int8)
 (
     GrB_Matrix C,
@@ -65814,7 +61039,6 @@ GrB_Info GB (_AemultB_03__bshift_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bshift_int8)
 (
     GrB_Matrix C,
@@ -65830,6 +61054,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bshift_int8)
 (
     GB_void *Cx_output,
@@ -65839,21 +61064,6 @@ GrB_Info GB (_bind1st__bshift_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bshift_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bshift_int8)
 (
     GrB_Matrix C,
@@ -65864,9 +61074,15 @@ GrB_Info GB (_bind1st_tran__bshift_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bshift_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bshift_int8)
 (
     GrB_Matrix C,
@@ -65913,7 +61129,6 @@ GrB_Info GB (_Cdense_accumb__bshift_int16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -65921,15 +61136,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bshift_int16)
@@ -65951,6 +61164,7 @@ GrB_Info GB (_AaddB__bshift_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bshift_int16)
 (
     GrB_Matrix C,
@@ -65969,7 +61183,6 @@ GrB_Info GB (_AemultB_01__bshift_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bshift_int16)
 (
     GrB_Matrix C,
@@ -65982,7 +61195,6 @@ GrB_Info GB (_AemultB_02__bshift_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bshift_int16)
 (
     GrB_Matrix C,
@@ -65993,7 +61205,6 @@ GrB_Info GB (_AemultB_03__bshift_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bshift_int16)
 (
     GrB_Matrix C,
@@ -66009,6 +61220,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bshift_int16)
 (
     GB_void *Cx_output,
@@ -66018,21 +61230,6 @@ GrB_Info GB (_bind1st__bshift_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bshift_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bshift_int16)
 (
     GrB_Matrix C,
@@ -66043,9 +61240,15 @@ GrB_Info GB (_bind1st_tran__bshift_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bshift_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bshift_int16)
 (
     GrB_Matrix C,
@@ -66092,7 +61295,6 @@ GrB_Info GB (_Cdense_accumb__bshift_int32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -66100,15 +61302,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bshift_int32)
@@ -66130,6 +61330,7 @@ GrB_Info GB (_AaddB__bshift_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bshift_int32)
 (
     GrB_Matrix C,
@@ -66148,7 +61349,6 @@ GrB_Info GB (_AemultB_01__bshift_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bshift_int32)
 (
     GrB_Matrix C,
@@ -66161,7 +61361,6 @@ GrB_Info GB (_AemultB_02__bshift_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bshift_int32)
 (
     GrB_Matrix C,
@@ -66172,7 +61371,6 @@ GrB_Info GB (_AemultB_03__bshift_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bshift_int32)
 (
     GrB_Matrix C,
@@ -66188,6 +61386,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bshift_int32)
 (
     GB_void *Cx_output,
@@ -66197,21 +61396,6 @@ GrB_Info GB (_bind1st__bshift_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bshift_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bshift_int32)
 (
     GrB_Matrix C,
@@ -66222,9 +61406,15 @@ GrB_Info GB (_bind1st_tran__bshift_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bshift_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bshift_int32)
 (
     GrB_Matrix C,
@@ -66271,7 +61461,6 @@ GrB_Info GB (_Cdense_accumb__bshift_int64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -66279,15 +61468,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bshift_int64)
@@ -66309,6 +61496,7 @@ GrB_Info GB (_AaddB__bshift_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bshift_int64)
 (
     GrB_Matrix C,
@@ -66327,7 +61515,6 @@ GrB_Info GB (_AemultB_01__bshift_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bshift_int64)
 (
     GrB_Matrix C,
@@ -66340,7 +61527,6 @@ GrB_Info GB (_AemultB_02__bshift_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bshift_int64)
 (
     GrB_Matrix C,
@@ -66351,7 +61537,6 @@ GrB_Info GB (_AemultB_03__bshift_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bshift_int64)
 (
     GrB_Matrix C,
@@ -66367,6 +61552,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bshift_int64)
 (
     GB_void *Cx_output,
@@ -66376,21 +61562,6 @@ GrB_Info GB (_bind1st__bshift_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bshift_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bshift_int64)
 (
     GrB_Matrix C,
@@ -66401,9 +61572,15 @@ GrB_Info GB (_bind1st_tran__bshift_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bshift_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bshift_int64)
 (
     GrB_Matrix C,
@@ -66450,7 +61627,6 @@ GrB_Info GB (_Cdense_accumb__bshift_uint8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -66458,15 +61634,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bshift_uint8)
@@ -66488,6 +61662,7 @@ GrB_Info GB (_AaddB__bshift_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bshift_uint8)
 (
     GrB_Matrix C,
@@ -66506,7 +61681,6 @@ GrB_Info GB (_AemultB_01__bshift_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bshift_uint8)
 (
     GrB_Matrix C,
@@ -66519,7 +61693,6 @@ GrB_Info GB (_AemultB_02__bshift_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bshift_uint8)
 (
     GrB_Matrix C,
@@ -66530,7 +61703,6 @@ GrB_Info GB (_AemultB_03__bshift_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bshift_uint8)
 (
     GrB_Matrix C,
@@ -66546,6 +61718,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bshift_uint8)
 (
     GB_void *Cx_output,
@@ -66555,21 +61728,6 @@ GrB_Info GB (_bind1st__bshift_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bshift_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bshift_uint8)
 (
     GrB_Matrix C,
@@ -66580,9 +61738,15 @@ GrB_Info GB (_bind1st_tran__bshift_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bshift_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bshift_uint8)
 (
     GrB_Matrix C,
@@ -66629,7 +61793,6 @@ GrB_Info GB (_Cdense_accumb__bshift_uint16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -66637,15 +61800,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bshift_uint16)
@@ -66667,6 +61828,7 @@ GrB_Info GB (_AaddB__bshift_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bshift_uint16)
 (
     GrB_Matrix C,
@@ -66685,7 +61847,6 @@ GrB_Info GB (_AemultB_01__bshift_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bshift_uint16)
 (
     GrB_Matrix C,
@@ -66698,7 +61859,6 @@ GrB_Info GB (_AemultB_02__bshift_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bshift_uint16)
 (
     GrB_Matrix C,
@@ -66709,7 +61869,6 @@ GrB_Info GB (_AemultB_03__bshift_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bshift_uint16)
 (
     GrB_Matrix C,
@@ -66725,6 +61884,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bshift_uint16)
 (
     GB_void *Cx_output,
@@ -66734,21 +61894,6 @@ GrB_Info GB (_bind1st__bshift_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bshift_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bshift_uint16)
 (
     GrB_Matrix C,
@@ -66759,9 +61904,15 @@ GrB_Info GB (_bind1st_tran__bshift_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bshift_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bshift_uint16)
 (
     GrB_Matrix C,
@@ -66808,7 +61959,6 @@ GrB_Info GB (_Cdense_accumb__bshift_uint32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -66816,15 +61966,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bshift_uint32)
@@ -66846,6 +61994,7 @@ GrB_Info GB (_AaddB__bshift_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bshift_uint32)
 (
     GrB_Matrix C,
@@ -66864,7 +62013,6 @@ GrB_Info GB (_AemultB_01__bshift_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bshift_uint32)
 (
     GrB_Matrix C,
@@ -66877,7 +62025,6 @@ GrB_Info GB (_AemultB_02__bshift_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bshift_uint32)
 (
     GrB_Matrix C,
@@ -66888,7 +62035,6 @@ GrB_Info GB (_AemultB_03__bshift_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bshift_uint32)
 (
     GrB_Matrix C,
@@ -66904,6 +62050,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bshift_uint32)
 (
     GB_void *Cx_output,
@@ -66913,21 +62060,6 @@ GrB_Info GB (_bind1st__bshift_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bshift_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bshift_uint32)
 (
     GrB_Matrix C,
@@ -66938,9 +62070,15 @@ GrB_Info GB (_bind1st_tran__bshift_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bshift_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bshift_uint32)
 (
     GrB_Matrix C,
@@ -66987,7 +62125,6 @@ GrB_Info GB (_Cdense_accumb__bshift_uint64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -66995,15 +62132,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__bshift_uint64)
@@ -67025,6 +62160,7 @@ GrB_Info GB (_AaddB__bshift_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__bshift_uint64)
 (
     GrB_Matrix C,
@@ -67043,7 +62179,6 @@ GrB_Info GB (_AemultB_01__bshift_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__bshift_uint64)
 (
     GrB_Matrix C,
@@ -67056,7 +62191,6 @@ GrB_Info GB (_AemultB_02__bshift_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__bshift_uint64)
 (
     GrB_Matrix C,
@@ -67067,7 +62201,6 @@ GrB_Info GB (_AemultB_03__bshift_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__bshift_uint64)
 (
     GrB_Matrix C,
@@ -67083,6 +62216,7 @@ GrB_Info GB (_AemultB_bitmap__bshift_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__bshift_uint64)
 (
     GB_void *Cx_output,
@@ -67092,21 +62226,6 @@ GrB_Info GB (_bind1st__bshift_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__bshift_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__bshift_uint64)
 (
     GrB_Matrix C,
@@ -67117,9 +62236,15 @@ GrB_Info GB (_bind1st_tran__bshift_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__bshift_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__bshift_uint64)
 (
     GrB_Matrix C,
@@ -67166,7 +62291,6 @@ GrB_Info GB (_Cdense_accumb__pow_int8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -67174,15 +62298,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_int8)
@@ -67204,6 +62326,7 @@ GrB_Info GB (_AaddB__pow_int8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_int8)
 (
     GrB_Matrix C,
@@ -67222,7 +62345,6 @@ GrB_Info GB (_AemultB_01__pow_int8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_int8)
 (
     GrB_Matrix C,
@@ -67235,7 +62357,6 @@ GrB_Info GB (_AemultB_02__pow_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_int8)
 (
     GrB_Matrix C,
@@ -67246,7 +62367,6 @@ GrB_Info GB (_AemultB_03__pow_int8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_int8)
 (
     GrB_Matrix C,
@@ -67262,6 +62382,7 @@ GrB_Info GB (_AemultB_bitmap__pow_int8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_int8)
 (
     GB_void *Cx_output,
@@ -67271,21 +62392,6 @@ GrB_Info GB (_bind1st__pow_int8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_int8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_int8)
 (
     GrB_Matrix C,
@@ -67296,9 +62402,15 @@ GrB_Info GB (_bind1st_tran__pow_int8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_int8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_int8)
 (
     GrB_Matrix C,
@@ -67345,7 +62457,6 @@ GrB_Info GB (_Cdense_accumb__pow_int16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -67353,15 +62464,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_int16)
@@ -67383,6 +62492,7 @@ GrB_Info GB (_AaddB__pow_int16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_int16)
 (
     GrB_Matrix C,
@@ -67401,7 +62511,6 @@ GrB_Info GB (_AemultB_01__pow_int16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_int16)
 (
     GrB_Matrix C,
@@ -67414,7 +62523,6 @@ GrB_Info GB (_AemultB_02__pow_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_int16)
 (
     GrB_Matrix C,
@@ -67425,7 +62533,6 @@ GrB_Info GB (_AemultB_03__pow_int16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_int16)
 (
     GrB_Matrix C,
@@ -67441,6 +62548,7 @@ GrB_Info GB (_AemultB_bitmap__pow_int16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_int16)
 (
     GB_void *Cx_output,
@@ -67450,21 +62558,6 @@ GrB_Info GB (_bind1st__pow_int16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_int16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_int16)
 (
     GrB_Matrix C,
@@ -67475,9 +62568,15 @@ GrB_Info GB (_bind1st_tran__pow_int16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_int16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_int16)
 (
     GrB_Matrix C,
@@ -67524,7 +62623,6 @@ GrB_Info GB (_Cdense_accumb__pow_int32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -67532,15 +62630,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_int32)
@@ -67562,6 +62658,7 @@ GrB_Info GB (_AaddB__pow_int32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_int32)
 (
     GrB_Matrix C,
@@ -67580,7 +62677,6 @@ GrB_Info GB (_AemultB_01__pow_int32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_int32)
 (
     GrB_Matrix C,
@@ -67593,7 +62689,6 @@ GrB_Info GB (_AemultB_02__pow_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_int32)
 (
     GrB_Matrix C,
@@ -67604,7 +62699,6 @@ GrB_Info GB (_AemultB_03__pow_int32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_int32)
 (
     GrB_Matrix C,
@@ -67620,6 +62714,7 @@ GrB_Info GB (_AemultB_bitmap__pow_int32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_int32)
 (
     GB_void *Cx_output,
@@ -67629,21 +62724,6 @@ GrB_Info GB (_bind1st__pow_int32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_int32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_int32)
 (
     GrB_Matrix C,
@@ -67654,9 +62734,15 @@ GrB_Info GB (_bind1st_tran__pow_int32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_int32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_int32)
 (
     GrB_Matrix C,
@@ -67703,7 +62789,6 @@ GrB_Info GB (_Cdense_accumb__pow_int64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -67711,15 +62796,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_int64)
@@ -67741,6 +62824,7 @@ GrB_Info GB (_AaddB__pow_int64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_int64)
 (
     GrB_Matrix C,
@@ -67759,7 +62843,6 @@ GrB_Info GB (_AemultB_01__pow_int64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_int64)
 (
     GrB_Matrix C,
@@ -67772,7 +62855,6 @@ GrB_Info GB (_AemultB_02__pow_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_int64)
 (
     GrB_Matrix C,
@@ -67783,7 +62865,6 @@ GrB_Info GB (_AemultB_03__pow_int64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_int64)
 (
     GrB_Matrix C,
@@ -67799,6 +62880,7 @@ GrB_Info GB (_AemultB_bitmap__pow_int64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_int64)
 (
     GB_void *Cx_output,
@@ -67808,21 +62890,6 @@ GrB_Info GB (_bind1st__pow_int64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_int64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_int64)
 (
     GrB_Matrix C,
@@ -67833,9 +62900,15 @@ GrB_Info GB (_bind1st_tran__pow_int64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_int64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_int64)
 (
     GrB_Matrix C,
@@ -67882,7 +62955,6 @@ GrB_Info GB (_Cdense_accumb__pow_uint8)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -67890,15 +62962,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_uint8)
@@ -67920,6 +62990,7 @@ GrB_Info GB (_AaddB__pow_uint8)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_uint8)
 (
     GrB_Matrix C,
@@ -67938,7 +63009,6 @@ GrB_Info GB (_AemultB_01__pow_uint8)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_uint8)
 (
     GrB_Matrix C,
@@ -67951,7 +63021,6 @@ GrB_Info GB (_AemultB_02__pow_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_uint8)
 (
     GrB_Matrix C,
@@ -67962,7 +63031,6 @@ GrB_Info GB (_AemultB_03__pow_uint8)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_uint8)
 (
     GrB_Matrix C,
@@ -67978,6 +63046,7 @@ GrB_Info GB (_AemultB_bitmap__pow_uint8)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_uint8)
 (
     GB_void *Cx_output,
@@ -67987,21 +63056,6 @@ GrB_Info GB (_bind1st__pow_uint8)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_uint8)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_uint8)
 (
     GrB_Matrix C,
@@ -68012,9 +63066,15 @@ GrB_Info GB (_bind1st_tran__pow_uint8)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_uint8)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_uint8)
 (
     GrB_Matrix C,
@@ -68061,7 +63121,6 @@ GrB_Info GB (_Cdense_accumb__pow_uint16)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -68069,15 +63128,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_uint16)
@@ -68099,6 +63156,7 @@ GrB_Info GB (_AaddB__pow_uint16)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_uint16)
 (
     GrB_Matrix C,
@@ -68117,7 +63175,6 @@ GrB_Info GB (_AemultB_01__pow_uint16)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_uint16)
 (
     GrB_Matrix C,
@@ -68130,7 +63187,6 @@ GrB_Info GB (_AemultB_02__pow_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_uint16)
 (
     GrB_Matrix C,
@@ -68141,7 +63197,6 @@ GrB_Info GB (_AemultB_03__pow_uint16)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_uint16)
 (
     GrB_Matrix C,
@@ -68157,6 +63212,7 @@ GrB_Info GB (_AemultB_bitmap__pow_uint16)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_uint16)
 (
     GB_void *Cx_output,
@@ -68166,21 +63222,6 @@ GrB_Info GB (_bind1st__pow_uint16)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_uint16)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_uint16)
 (
     GrB_Matrix C,
@@ -68191,9 +63232,15 @@ GrB_Info GB (_bind1st_tran__pow_uint16)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_uint16)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_uint16)
 (
     GrB_Matrix C,
@@ -68240,7 +63287,6 @@ GrB_Info GB (_Cdense_accumb__pow_uint32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -68248,15 +63294,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_uint32)
@@ -68278,6 +63322,7 @@ GrB_Info GB (_AaddB__pow_uint32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_uint32)
 (
     GrB_Matrix C,
@@ -68296,7 +63341,6 @@ GrB_Info GB (_AemultB_01__pow_uint32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_uint32)
 (
     GrB_Matrix C,
@@ -68309,7 +63353,6 @@ GrB_Info GB (_AemultB_02__pow_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_uint32)
 (
     GrB_Matrix C,
@@ -68320,7 +63363,6 @@ GrB_Info GB (_AemultB_03__pow_uint32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_uint32)
 (
     GrB_Matrix C,
@@ -68336,6 +63378,7 @@ GrB_Info GB (_AemultB_bitmap__pow_uint32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_uint32)
 (
     GB_void *Cx_output,
@@ -68345,21 +63388,6 @@ GrB_Info GB (_bind1st__pow_uint32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_uint32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_uint32)
 (
     GrB_Matrix C,
@@ -68370,9 +63398,15 @@ GrB_Info GB (_bind1st_tran__pow_uint32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_uint32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_uint32)
 (
     GrB_Matrix C,
@@ -68419,7 +63453,6 @@ GrB_Info GB (_Cdense_accumb__pow_uint64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -68427,15 +63460,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_uint64)
@@ -68457,6 +63488,7 @@ GrB_Info GB (_AaddB__pow_uint64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_uint64)
 (
     GrB_Matrix C,
@@ -68475,7 +63507,6 @@ GrB_Info GB (_AemultB_01__pow_uint64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_uint64)
 (
     GrB_Matrix C,
@@ -68488,7 +63519,6 @@ GrB_Info GB (_AemultB_02__pow_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_uint64)
 (
     GrB_Matrix C,
@@ -68499,7 +63529,6 @@ GrB_Info GB (_AemultB_03__pow_uint64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_uint64)
 (
     GrB_Matrix C,
@@ -68515,6 +63544,7 @@ GrB_Info GB (_AemultB_bitmap__pow_uint64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_uint64)
 (
     GB_void *Cx_output,
@@ -68524,21 +63554,6 @@ GrB_Info GB (_bind1st__pow_uint64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_uint64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_uint64)
 (
     GrB_Matrix C,
@@ -68549,9 +63564,15 @@ GrB_Info GB (_bind1st_tran__pow_uint64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_uint64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_uint64)
 (
     GrB_Matrix C,
@@ -68598,7 +63619,6 @@ GrB_Info GB (_Cdense_accumb__pow_fp32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -68606,15 +63626,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_fp32)
@@ -68636,6 +63654,7 @@ GrB_Info GB (_AaddB__pow_fp32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_fp32)
 (
     GrB_Matrix C,
@@ -68654,7 +63673,6 @@ GrB_Info GB (_AemultB_01__pow_fp32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_fp32)
 (
     GrB_Matrix C,
@@ -68667,7 +63685,6 @@ GrB_Info GB (_AemultB_02__pow_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_fp32)
 (
     GrB_Matrix C,
@@ -68678,7 +63695,6 @@ GrB_Info GB (_AemultB_03__pow_fp32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_fp32)
 (
     GrB_Matrix C,
@@ -68694,6 +63710,7 @@ GrB_Info GB (_AemultB_bitmap__pow_fp32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_fp32)
 (
     GB_void *Cx_output,
@@ -68703,21 +63720,6 @@ GrB_Info GB (_bind1st__pow_fp32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_fp32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_fp32)
 (
     GrB_Matrix C,
@@ -68728,9 +63730,15 @@ GrB_Info GB (_bind1st_tran__pow_fp32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_fp32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_fp32)
 (
     GrB_Matrix C,
@@ -68777,7 +63785,6 @@ GrB_Info GB (_Cdense_accumb__pow_fp64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -68785,15 +63792,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_fp64)
@@ -68815,6 +63820,7 @@ GrB_Info GB (_AaddB__pow_fp64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_fp64)
 (
     GrB_Matrix C,
@@ -68833,7 +63839,6 @@ GrB_Info GB (_AemultB_01__pow_fp64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_fp64)
 (
     GrB_Matrix C,
@@ -68846,7 +63851,6 @@ GrB_Info GB (_AemultB_02__pow_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_fp64)
 (
     GrB_Matrix C,
@@ -68857,7 +63861,6 @@ GrB_Info GB (_AemultB_03__pow_fp64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_fp64)
 (
     GrB_Matrix C,
@@ -68873,6 +63876,7 @@ GrB_Info GB (_AemultB_bitmap__pow_fp64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_fp64)
 (
     GB_void *Cx_output,
@@ -68882,21 +63886,6 @@ GrB_Info GB (_bind1st__pow_fp64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_fp64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_fp64)
 (
     GrB_Matrix C,
@@ -68907,9 +63896,15 @@ GrB_Info GB (_bind1st_tran__pow_fp64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_fp64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_fp64)
 (
     GrB_Matrix C,
@@ -68956,7 +63951,6 @@ GrB_Info GB (_Cdense_accumb__pow_fc32)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -68964,15 +63958,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_fc32)
@@ -68994,6 +63986,7 @@ GrB_Info GB (_AaddB__pow_fc32)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_fc32)
 (
     GrB_Matrix C,
@@ -69012,7 +64005,6 @@ GrB_Info GB (_AemultB_01__pow_fc32)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_fc32)
 (
     GrB_Matrix C,
@@ -69025,7 +64017,6 @@ GrB_Info GB (_AemultB_02__pow_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_fc32)
 (
     GrB_Matrix C,
@@ -69036,7 +64027,6 @@ GrB_Info GB (_AemultB_03__pow_fc32)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_fc32)
 (
     GrB_Matrix C,
@@ -69052,6 +64042,7 @@ GrB_Info GB (_AemultB_bitmap__pow_fc32)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_fc32)
 (
     GB_void *Cx_output,
@@ -69061,21 +64052,6 @@ GrB_Info GB (_bind1st__pow_fc32)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_fc32)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_fc32)
 (
     GrB_Matrix C,
@@ -69086,9 +64062,15 @@ GrB_Info GB (_bind1st_tran__pow_fc32)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_fc32)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_fc32)
 (
     GrB_Matrix C,
@@ -69135,7 +64117,6 @@ GrB_Info GB (_Cdense_accumb__pow_fc64)
 ) ;
 
 #if 0
-
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
@@ -69143,15 +64124,13 @@ GrB_Info GB ((none))
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
-GrB_Info GB ((node))
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 #endif
 
 GrB_Info GB (_AaddB__pow_fc64)
@@ -69173,6 +64152,7 @@ GrB_Info GB (_AaddB__pow_fc64)
     GB_Context Context
 ) ;
 
+
 GrB_Info GB (_AemultB_01__pow_fc64)
 (
     GrB_Matrix C,
@@ -69191,7 +64171,6 @@ GrB_Info GB (_AemultB_01__pow_fc64)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02__pow_fc64)
 (
     GrB_Matrix C,
@@ -69204,7 +64183,6 @@ GrB_Info GB (_AemultB_02__pow_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03__pow_fc64)
 (
     GrB_Matrix C,
@@ -69215,7 +64193,6 @@ GrB_Info GB (_AemultB_03__pow_fc64)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap__pow_fc64)
 (
     GrB_Matrix C,
@@ -69231,6 +64208,7 @@ GrB_Info GB (_AemultB_bitmap__pow_fc64)
 ) ;
 
 
+
 GrB_Info GB (_bind1st__pow_fc64)
 (
     GB_void *Cx_output,
@@ -69240,21 +64218,6 @@ GrB_Info GB (_bind1st__pow_fc64)
     int64_t bnz,
     int nthreads
 ) ;
-
-
-
-GrB_Info GB (_bind2nd__pow_fc64)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-
-
-
 GrB_Info GB (_bind1st_tran__pow_fc64)
 (
     GrB_Matrix C,
@@ -69265,9 +64228,15 @@ GrB_Info GB (_bind1st_tran__pow_fc64)
     int nworkspaces,
     int nthreads
 ) ;
-
-
-
+GrB_Info GB (_bind2nd__pow_fc64)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran__pow_fc64)
 (
     GrB_Matrix C,

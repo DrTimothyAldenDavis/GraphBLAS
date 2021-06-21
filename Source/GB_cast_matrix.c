@@ -60,6 +60,7 @@ void GB_cast_matrix         // copy or typecast the values from A into C
         }
         else
         { 
+            // copy all the values, no typecast
             GB_memcpy (C->x, A->x, anz * C->type->size, nthreads) ;
         }
 
@@ -78,9 +79,10 @@ void GB_cast_matrix         // copy or typecast the values from A into C
         }
         else
         { 
+            // typecast all the values from A->x to C->x
             ASSERT (GB_IMPLIES (anz > 0, C->x != NULL)) ;
             GB_cast_array ((GB_void *) C->x, C->type->code, (GB_void *) A->x,
-                A->type->code, A->b, A->type->size, anz, nthreads) ;
+                A->type->code, A->b, anz, nthreads) ;
         }
     }
 }

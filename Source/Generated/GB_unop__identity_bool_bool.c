@@ -17,7 +17,7 @@
 
 // C=unop(A) is defined by the following types and operators:
 
-// op(A)  function:  GB (_unop_apply__identity_bool_bool)
+// op(A)  function:  GB (_unop_apply__(none))
 // op(A') function:  GB (_unop_tran__identity_bool_bool)
 
 // C type:   bool
@@ -55,10 +55,6 @@
     Cx [pC] = z ;        \
 }
 
-// true if operator is the identity op with no typecasting
-#define GB_OP_IS_IDENTITY_WITH_NO_TYPECAST \
-    1
-
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_IDENTITY || GxB_NO_BOOL)
@@ -67,7 +63,8 @@
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_unop_apply__identity_bool_bool)
+#if 0
+GrB_Info GB (_unop_apply__(none))
 (
     bool *Cx,       // Cx and Ax may be aliased
     const bool *Ax,
@@ -80,20 +77,15 @@ GrB_Info GB (_unop_apply__identity_bool_bool)
     return (GrB_NO_VALUE) ;
     #else
     int64_t p ;
-
     if (Ab == NULL)
     { 
-        #if ( GB_OP_IS_IDENTITY_WITH_NO_TYPECAST )
-            GB_memcpy (Cx, Ax, anz * sizeof (bool), nthreads) ;
-        #else
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (p = 0 ; p < anz ; p++)
-            {
-                bool aij = Ax [p] ;
-                bool z = aij ;
-                Cx [p] = z ;
-            }
-        #endif
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (p = 0 ; p < anz ; p++)
+        {
+            bool aij = Ax [p] ;
+            bool z = aij ;
+            Cx [p] = z ;
+        }
     }
     else
     { 
@@ -110,6 +102,7 @@ GrB_Info GB (_unop_apply__identity_bool_bool)
     return (GrB_SUCCESS) ;
     #endif
 }
+#endif
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator

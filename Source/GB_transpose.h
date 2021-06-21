@@ -20,7 +20,6 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
     GB_Context Context
 ) ;
 
-GB_PUBLIC
 GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 (
     GrB_Matrix C,               // output matrix C, possibly modified in-place
@@ -36,6 +35,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     GB_Context Context
 ) ;
 
+GB_PUBLIC
 GrB_Info GB_transpose_in_place   // C=A', no change of type, no operators
 (
     GrB_Matrix C,               // output matrix C, possibly modified in-place

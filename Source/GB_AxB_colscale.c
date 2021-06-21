@@ -148,7 +148,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
                 default:  ;
             }
         }
-        GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO, op1,   // postional op
+        GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO, op1,   // positional op
             NULL, NULL, false, A, Context)) ;
         ASSERT_MATRIX_OK (C, "colscale positional: C = A*D output", GB0) ;
 

@@ -12,6 +12,7 @@
 // GB_apply does the work for GrB_*_apply, including the binary op variants.
 
 #include "GB_apply.h"
+#include "GB_binop.h"
 #include "GB_transpose.h"
 #include "GB_accum_mask.h"
 
@@ -177,55 +178,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     // rename first, second, any, and pair operators
     //--------------------------------------------------------------------------
 
-    if (op2 != NULL)
-    {
-
-        // first(A,x) and second(y,A) become identity(A)
-        if ((opcode == GB_FIRST_opcode  && !binop_bind1st) ||
-            (opcode == GB_SECOND_opcode &&  binop_bind1st))
-        { 
-            switch (op2->xtype->code)
-            {
-                default              :
-                case GB_BOOL_code    : op1 = GrB_IDENTITY_BOOL   ; break ;
-                case GB_INT8_code    : op1 = GrB_IDENTITY_INT8   ; break ;
-                case GB_INT16_code   : op1 = GrB_IDENTITY_INT16  ; break ;
-                case GB_INT32_code   : op1 = GrB_IDENTITY_INT32  ; break ;
-                case GB_INT64_code   : op1 = GrB_IDENTITY_INT64  ; break ;
-                case GB_UINT8_code   : op1 = GrB_IDENTITY_UINT8  ; break ;
-                case GB_UINT16_code  : op1 = GrB_IDENTITY_UINT16 ; break ;
-                case GB_UINT32_code  : op1 = GrB_IDENTITY_UINT32 ; break ;
-                case GB_UINT64_code  : op1 = GrB_IDENTITY_UINT64 ; break ;
-                case GB_FP32_code    : op1 = GrB_IDENTITY_FP32   ; break ;
-                case GB_FP64_code    : op1 = GrB_IDENTITY_FP64   ; break ;
-                case GB_FC32_code    : op1 = GxB_IDENTITY_FC32   ; break ;
-                case GB_FC64_code    : op1 = GxB_IDENTITY_FC64   ; break ;
-            }
-            op2 = NULL ;
-        }
-        else if (opcode == GB_PAIR_opcode)
-        { 
-            // pair (...) becomes one(A)
-            switch (op2->xtype->code)
-            {
-                default              :
-                case GB_BOOL_code    : op1 = GxB_ONE_BOOL   ; break ;
-                case GB_INT8_code    : op1 = GxB_ONE_INT8   ; break ;
-                case GB_INT16_code   : op1 = GxB_ONE_INT16  ; break ;
-                case GB_INT32_code   : op1 = GxB_ONE_INT32  ; break ;
-                case GB_INT64_code   : op1 = GxB_ONE_INT64  ; break ;
-                case GB_UINT8_code   : op1 = GxB_ONE_UINT8  ; break ;
-                case GB_UINT16_code  : op1 = GxB_ONE_UINT16 ; break ;
-                case GB_UINT32_code  : op1 = GxB_ONE_UINT32 ; break ;
-                case GB_UINT64_code  : op1 = GxB_ONE_UINT64 ; break ;
-                case GB_FP32_code    : op1 = GxB_ONE_FP32   ; break ;
-                case GB_FP64_code    : op1 = GxB_ONE_FP64   ; break ;
-                case GB_FC32_code    : op1 = GxB_ONE_FC32   ; break ;
-                case GB_FC64_code    : op1 = GxB_ONE_FC64   ; break ;
-            }
-            op2 = NULL ;
-        }
-    }
+    GB_binop_rename (&op1, &op2, binop_bind1st) ;
 
     //--------------------------------------------------------------------------
     // T = op(A) or op(A')
@@ -270,7 +223,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         // C = op (C), operating on the values in-place, with no typecasting
         // of the output of the operator with the matrix C.
         // No work to do if the op is identity.
-        // FUTURE::: also handle C += op(C), with accum.
         if (opcode != GB_IDENTITY_opcode)
         {
             // the output Cx is aliased with C->x in GB_apply_op.

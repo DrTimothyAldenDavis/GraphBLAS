@@ -22,7 +22,7 @@
 // C=binop(A,B) is defined by the following types and operators:
 
 // A+B function (eWiseAdd):         GB (_AaddB__second_fp64)
-// A.*B function (eWiseMult):       GB (_AemultB)
+// A.*B function (eWiseMult):       GB (_AemultB_01__second_fp64)
 // A.*B function (eWiseMult):       GB (_AemultB_02__second_fp64)
 // A.*B function (eWiseMult):       GB (_AemultB_03__second_fp64)
 // A.*B function (eWiseMult):       GB (_AemultB_bitmap__second_fp64)
@@ -34,8 +34,8 @@
 // C=A+B function (dense ewise3):   GB (_Cdense_ewise3_noaccum__second_fp64)
 // C=scalar+B                       GB ((none))
 // C=scalar+B'                      GB ((none))
-// C=A+scalar                       GB (_bind2nd__second_fp64)
-// C=A'+scalar                      GB (_bind2nd_tran__second_fp64)
+// C=A+scalar                       GB ((none))
+// C=A'+scalar                      GB ((none))
 
 // C type:   double
 // A type:   double
@@ -286,6 +286,8 @@ GrB_Info GB (_AaddB__second_fp64)
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
+
+
 GrB_Info GB (_AemultB_01__second_fp64)
 (
     GrB_Matrix C,
@@ -313,9 +315,13 @@ GrB_Info GB (_AemultB_01__second_fp64)
     #endif
 }
 
+
+
 //------------------------------------------------------------------------------
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB (_AemultB_02__second_fp64)
 (
@@ -361,9 +367,13 @@ GrB_Info GB (_AemultB_02__second_fp64)
     #endif
 }
 
+
+
 //------------------------------------------------------------------------------
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB (_AemultB_03__second_fp64)
 (
@@ -384,9 +394,13 @@ GrB_Info GB (_AemultB_03__second_fp64)
     #endif
 }
 
+
+
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB (_AemultB_bitmap__second_fp64)
 (
@@ -409,6 +423,8 @@ GrB_Info GB (_AemultB_bitmap__second_fp64)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+
 
 //------------------------------------------------------------------------------
 // Cx = op (x,Bx):  apply a binary operator to a matrix with scalar bind1st
@@ -450,9 +466,9 @@ GrB_Info GB ((none))
 // Cx = op (Ax,y):  apply a binary operator to a matrix with scalar bind2nd
 //------------------------------------------------------------------------------
 
+#if 0
 
-
-GrB_Info GB (_bind2nd__second_fp64)
+GrB_Info GB ((none))
 (
     GB_void *Cx_output,         // Cx and Ax may be aliased
     const GB_void *Ax_input,
@@ -480,7 +496,7 @@ GrB_Info GB (_bind2nd__second_fp64)
     #endif
 }
 
-
+#endif
 
 //------------------------------------------------------------------------------
 // C = op (x, A'): transpose and apply a binary operator
@@ -530,7 +546,7 @@ GrB_Info GB ((none))
 // C = op (A', y): transpose and apply a binary operator
 //------------------------------------------------------------------------------
 
-
+#if 0
 
 // cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
@@ -540,7 +556,7 @@ GrB_Info GB ((none))
     Cx [pC] = y ;        \
 }
 
-GrB_Info GB (_bind2nd_tran__second_fp64)
+GrB_Info GB ((none))
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -560,7 +576,7 @@ GrB_Info GB (_bind2nd_tran__second_fp64)
     #endif
 }
 
-
+#endif
 
 #endif
 

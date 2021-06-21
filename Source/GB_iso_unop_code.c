@@ -60,9 +60,9 @@ GB_iso_code GB_iso_unop_code
     // C = op2 (scalar,A) or op2 (A,scalar)
     //--------------------------------------------------------------------------
 
-    if ((opcode == GB_FIRST_opcode && binop_bind1st)        // C = first(x,A)
-        || (opcode == GB_SECOND_opcode && !binop_bind1st)   // C = second(A,y)
-        || (opcode == GB_ANY_opcode))                       // C = any(...)
+    if ((opcode == GB_ANY_opcode) ||                        // C = any(...)
+        (opcode == GB_FIRST_opcode  &&  binop_bind1st) ||   // C = first(x,A)
+        (opcode == GB_SECOND_opcode && !binop_bind1st))     // C = second(A,y)
     { 
         // if op2 is FIRST and binop_bind1st is true, or if op2 is SECOND and
         // binop_bind1st is false, or if op2 is ANY, then C is iso, with a

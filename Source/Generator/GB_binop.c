@@ -22,7 +22,7 @@
 // C=binop(A,B) is defined by the following types and operators:
 
 // A+B function (eWiseAdd):         GB (_AaddB)
-// A.*B function (eWiseMult):       GB (_AemultB)
+// A.*B function (eWiseMult):       GB (_AemultB_01)
 // A.*B function (eWiseMult):       GB (_AemultB_02)
 // A.*B function (eWiseMult):       GB (_AemultB_03)
 // A.*B function (eWiseMult):       GB (_AemultB_bitmap)
@@ -286,6 +286,8 @@ GrB_Info GB (_AaddB)
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
+if_binop_emult_is_enabled
+
 GrB_Info GB (_AemultB_01)
 (
     GrB_Matrix C,
@@ -313,9 +315,13 @@ GrB_Info GB (_AemultB_01)
     #endif
 }
 
+endif_binop_emult_is_enabled
+
 //------------------------------------------------------------------------------
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
+
+if_binop_emult_is_enabled
 
 GrB_Info GB (_AemultB_02)
 (
@@ -361,9 +367,13 @@ GrB_Info GB (_AemultB_02)
     #endif
 }
 
+endif_binop_emult_is_enabled
+
 //------------------------------------------------------------------------------
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
+
+if_binop_emult_is_enabled
 
 GrB_Info GB (_AemultB_03)
 (
@@ -384,9 +394,13 @@ GrB_Info GB (_AemultB_03)
     #endif
 }
 
+endif_binop_emult_is_enabled
+
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
+
+if_binop_emult_is_enabled
 
 GrB_Info GB (_AemultB_bitmap)
 (
@@ -410,11 +424,13 @@ GrB_Info GB (_AemultB_bitmap)
     #endif
 }
 
+endif_binop_emult_is_enabled
+
 //------------------------------------------------------------------------------
 // Cx = op (x,Bx):  apply a binary operator to a matrix with scalar bind1st
 //------------------------------------------------------------------------------
 
-if_binop_bind1st_is_enabled
+if_binop_bind_is_enabled
 
 GrB_Info GB (_bind1st)
 (
@@ -444,13 +460,13 @@ GrB_Info GB (_bind1st)
     #endif
 }
 
-endif_binop_bind1st_is_enabled
+endif_binop_bind_is_enabled
 
 //------------------------------------------------------------------------------
 // Cx = op (Ax,y):  apply a binary operator to a matrix with scalar bind2nd
 //------------------------------------------------------------------------------
 
-if_binop_bind2nd_is_enabled
+if_binop_bind_is_enabled
 
 GrB_Info GB (_bind2nd)
 (
@@ -480,13 +496,13 @@ GrB_Info GB (_bind2nd)
     #endif
 }
 
-endif_binop_bind2nd_is_enabled
+endif_binop_bind_is_enabled
 
 //------------------------------------------------------------------------------
 // C = op (x, A'): transpose and apply a binary operator
 //------------------------------------------------------------------------------
 
-if_binop_bind1st_is_enabled
+if_binop_bind_is_enabled
 
 // cij = op (x, aij), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
@@ -524,13 +540,13 @@ GrB_Info GB (_bind1st_tran)
     GB_atype
 }
 
-endif_binop_bind1st_is_enabled
+endif_binop_bind_is_enabled
 
 //------------------------------------------------------------------------------
 // C = op (A', y): transpose and apply a binary operator
 //------------------------------------------------------------------------------
 
-if_binop_bind2nd_is_enabled
+if_binop_bind_is_enabled
 
 // cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
@@ -560,7 +576,7 @@ GrB_Info GB (_bind2nd_tran)
     #endif
 }
 
-endif_binop_bind2nd_is_enabled
+endif_binop_bind_is_enabled
 
 #endif
 

@@ -17,10 +17,7 @@ name = sprintf ('%s_%s', binop, fname) ;
 
 % function names
 fprintf (f, 'define(`_AaddB'', `_AaddB__%s'')\n', name) ;
-fprintf (f, 'define(`_AemultB_01'', `_AemultB_01__%s'')\n', name) ;
-fprintf (f, 'define(`_AemultB_02'', `_AemultB_02__%s'')\n', name) ;
-fprintf (f, 'define(`_AemultB_03'', `_AemultB_03__%s'')\n', name) ;
-fprintf (f, 'define(`_AemultB_bitmap'', `_AemultB_bitmap__%s'')\n', name) ;
+
 fprintf (f, 'define(`_Cdense_accumB'', `_Cdense_accumB__%s'')\n', name) ;
 fprintf (f, 'define(`_Cdense_accumb'', `_Cdense_accumb__%s'')\n', name) ;
 fprintf (f, 'define(`_Cdense_ewise3_noaccum'', `_Cdense_ewise3_noaccum__%s'')\n', name) ;
@@ -62,37 +59,47 @@ if (binop_is_semiring_multiplier)
     fprintf (f, 'define(`endif_binop_is_semiring_multiplier'', `'')\n') ;
 else
     fprintf (f, 'define(`_AxD'', `(none)'')\n') ;
-    fprintf (f, 'define(`_DxB'', `(node)'')\n') ;
+    fprintf (f, 'define(`_DxB'', `(none)'')\n') ;
     fprintf (f, 'define(`if_binop_is_semiring_multiplier'', `#if 0'')\n') ;
     fprintf (f, 'define(`endif_binop_is_semiring_multiplier'', `#endif'')\n') ;
 end
 
 % subset of operators for GB_apply
 switch (binop)
-    case { 'first', 'any', 'pair' }
-        % no bind2nd for these operators
-        fprintf (f, 'define(`_bind2nd'', `(none)'')\n', name) ;
-        fprintf (f, 'define(`_bind2nd_tran'', `(none)'')\n', name) ;
-        fprintf (f, 'define(`if_binop_bind2nd_is_enabled'', `#if 0'')\n') ;
-        fprintf (f, 'define(`endif_binop_bind2nd_is_enabled'', `#endif'')\n') ;
-    otherwise
-        fprintf (f, 'define(`_bind2nd'', `_bind2nd__%s'')\n', name) ;
-        fprintf (f, 'define(`_bind2nd_tran'', `_bind2nd_tran__%s'')\n', name) ;
-        fprintf (f, 'define(`if_binop_bind2nd_is_enabled'', `'')\n') ;
-        fprintf (f, 'define(`endif_binop_bind2nd_is_enabled'', `'')\n') ;
-end
-switch (binop)
-    case { 'second', 'any', 'pair' }
-        % no bind1st for these operators
+    case { 'first', 'second', 'any', 'pair' }
+        % no bind1st or bind2nd for these operators
         fprintf (f, 'define(`_bind1st'', `(none)'')\n', name) ;
         fprintf (f, 'define(`_bind1st_tran'', `(none)'')\n', name) ;
-        fprintf (f, 'define(`if_binop_bind1st_is_enabled'', `#if 0'')\n') ;
-        fprintf (f, 'define(`endif_binop_bind1st_is_enabled'', `#endif'')\n') ;
+        fprintf (f, 'define(`_bind2nd'', `(none)'')\n', name) ;
+        fprintf (f, 'define(`_bind2nd_tran'', `(none)'')\n', name) ;
+        fprintf (f, 'define(`if_binop_bind_is_enabled'', `#if 0'')\n') ;
+        fprintf (f, 'define(`endif_binop_bind_is_enabled'', `#endif'')\n') ;
     otherwise
         fprintf (f, 'define(`_bind1st'', `_bind1st__%s'')\n', name) ;
         fprintf (f, 'define(`_bind1st_tran'', `_bind1st_tran__%s'')\n', name) ;
-        fprintf (f, 'define(`if_binop_bind1st_is_enabled'', `'')\n') ;
-        fprintf (f, 'define(`endif_binop_bind1st_is_enabled'', `'')\n') ;
+        fprintf (f, 'define(`_bind2nd'', `_bind2nd__%s'')\n', name) ;
+        fprintf (f, 'define(`_bind2nd_tran'', `_bind2nd_tran__%s'')\n', name) ;
+        fprintf (f, 'define(`if_binop_bind_is_enabled'', `'')\n') ;
+        fprintf (f, 'define(`endif_binop_bind_is_enabled'', `'')\n') ;
+end
+
+% subset of operators for GB_emult
+switch (binop)
+    case { 'pair' }
+        % no emult for these operators
+        fprintf (f, 'define(`_AemultB_01'', `(none)'')\n') ;
+        fprintf (f, 'define(`_AemultB_02'', `(none)'')\n') ;
+        fprintf (f, 'define(`_AemultB_03'', `(none)'')\n') ;
+        fprintf (f, 'define(`_AemultB_bitmap'', `(none)'')\n') ;
+        fprintf (f, 'define(`if_binop_emult_is_enabled'', `#if 0'')\n') ;
+        fprintf (f, 'define(`endif_binop_emult_is_enabled'', `#endif'')\n') ;
+    otherwise
+        fprintf (f, 'define(`_AemultB_01'', `_AemultB_01__%s'')\n', name) ;
+        fprintf (f, 'define(`_AemultB_02'', `_AemultB_02__%s'')\n', name) ;
+        fprintf (f, 'define(`_AemultB_03'', `_AemultB_03__%s'')\n', name) ;
+        fprintf (f, 'define(`_AemultB_bitmap'', `_AemultB_bitmap__%s'')\n', name) ;
+        fprintf (f, 'define(`if_binop_emult_is_enabled'', `'')\n') ;
+        fprintf (f, 'define(`endif_binop_emult_is_enabled'', `'')\n') ;
 end
 
 if (isequal (binop, 'second'))

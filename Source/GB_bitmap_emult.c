@@ -243,6 +243,7 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
                 GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
                 op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
             { 
+                #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
             }
 

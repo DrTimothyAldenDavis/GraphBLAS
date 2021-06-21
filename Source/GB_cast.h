@@ -65,14 +65,13 @@ static inline void GB_cast_one  // z = 1 with typecasting zcode
 
 //------------------------------------------------------------------------------
 
-void GB_cast_array              // typecast an array
+void GB_cast_array              // typecast an array (not user-defined type)
 (
     GB_void *Cx,                // output array
     const GB_Type_code code1,   // type code for Cx
     GB_void *Ax,                // input array
-    const GB_Type_code code2,   // type code for Ax
+    const GB_Type_code code2,   // type code for Ax (code1 != code2)
     const int8_t *restrict Ab,  // bitmap for Ax
-    const size_t user_size,     // size of Ax and Cx if user-defined
     const int64_t anz,          // number of entries in Cx and Ax
     const int nthreads          // number of threads to use
 ) ;

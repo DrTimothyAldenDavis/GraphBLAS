@@ -317,6 +317,7 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
                 GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
                 op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
             { 
+                #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
             }
 

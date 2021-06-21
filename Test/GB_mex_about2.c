@@ -432,30 +432,6 @@ void mexFunction
     GrB_Vector_free (&victor) ;
 
     //--------------------------------------------------------------------------
-    // vector transpose
-    //--------------------------------------------------------------------------
-
-#if 0
-    #define FREE_ALL ;
-    #define GET_DEEP_COPY ;
-    #define FREE_DEEP_COPY ;
-    OK (GrB_Matrix_new (&C, GrB_FP32, 100, 1)) ;
-    OK (GrB_Matrix_setElement_FP32 (C, (double) 3, 0, 0)) ;
-    OK (GrB_Matrix_wait (&C)) ;
-    X = NULL ;
-    METHOD (GB_transpose (X, NULL, true, C, NULL, NULL, NULL, false, NULL)) ;
-    OK (GxB_Matrix_fprint (X, "row", GxB_SHORT, NULL)) ;
-    GrB_Matrix Z = NULL ;
-    OK (GrB_Matrix_dup (&Z, X)) ;
-    GrB_Matrix_free (&C) ;
-    METHOD (GB_transpose (C, NULL, true, Z, NULL, NULL, NULL, false, NULL)) ;
-    OK (GxB_Matrix_fprint (C, "col", GxB_SHORT, NULL)) ;
-    GrB_Matrix_free (&Z) ;
-    GrB_Matrix_free (&X) ;
-    GrB_Matrix_free (&C) ;
-#endif
-
-    //--------------------------------------------------------------------------
     // split/concat for user-defined types
     //--------------------------------------------------------------------------
 

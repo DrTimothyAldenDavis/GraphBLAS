@@ -111,8 +111,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
-        if ((Atype == op1->xtype)
-            || (opcode == GB_IDENTITY_opcode))
+        if (Atype == op1->xtype || opcode == GB_IDENTITY_opcode)
         { 
 
             // The switch factory is used if the op1 is IDENTITY, or if no
@@ -140,7 +139,6 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
 
             #include "GB_unop_factory.c"
         }
-
         #endif
 
         //----------------------------------------------------------------------
@@ -182,16 +180,16 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     {
 
         //----------------------------------------------------------------------
-        // binary operator
+        // apply a binary operator (bound to a scalar)
         //----------------------------------------------------------------------
 
         ASSERT_BINARYOP_OK (op2, "op2 for transpose", GB0) ;
 
         GB_Type_code xcode, ycode, zcode ;
-        bool op_is_first  = (opcode == GB_FIRST_opcode) ;
-        bool op_is_second = (opcode == GB_SECOND_opcode) ;
-        bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
-        bool op_is_any    = (opcode == GB_ANY_opcode) ;
+        ASSERT (opcode != GB_FIRST_opcode) ;
+        ASSERT (opcode != GB_SECOND_opcode) ;
+        ASSERT (opcode != GB_PAIR_opcode) ;
+        ASSERT (opcode != GB_ANY_opcode) ;
 
         size_t asize = Atype->size ;
         size_t ssize = scalar->type->size ;
@@ -204,24 +202,21 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         ycode = op2->ytype->code ;
 
         // typecast the scalar to the operator input
-        bool ignore_scalar = false ;
         size_t ssize_cast ;
         GB_Type_code scode_cast ;
         if (binop_bind1st)
         { 
             ssize_cast = xsize ;
             scode_cast = xcode ;
-            ignore_scalar = op_is_second || op_is_pair ;
         }
         else
         { 
             ssize_cast = ysize ;
             scode_cast = ycode ;
-            ignore_scalar = op_is_first  || op_is_pair ;
         }
         GB_void swork [GB_VLA(ssize_cast)] ;
         GB_void *scalarx = (GB_void *) scalar->x ;
-        if (scode_cast != scode && !ignore_scalar)
+        if (scode_cast != scode)
         { 
             // typecast the scalar to the operator input, in swork
             GB_cast_function cast_s = GB_cast_factory (scode_cast, scode) ;
@@ -233,24 +228,6 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         GxB_binary_function fop = op2->function ;
         GB_cast_function cast_A_to_Y = GB_cast_factory (ycode, acode) ;
         GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
-
-        #define GB_CAST_OP_BIND_1ST(pC,pA)                              \
-        {                                                               \
-            /* ywork = (ytype) Ax [pA] */                               \
-            GB_void ywork [GB_VLA(ysize)] ;                             \
-            cast_A_to_Y (ywork, Ax +(pA)*asize, asize) ;                \
-            /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
-            fop (Cx +((pC)*zsize), scalarx, ywork) ;                    \
-        }
-
-        #define GB_CAST_OP_BIND_2ND(pC,pA)                              \
-        {                                                               \
-            /* xwork = (xtype) Ax [pA] */                               \
-            GB_void xwork [GB_VLA(xsize)] ;                             \
-            cast_A_to_X (xwork, Ax +(pA)*asize, asize) ;                \
-            /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
-            fop (Cx +(pC*zsize), xwork, scalarx) ;                      \
-        }
 
         //----------------------------------------------------------------------
         // transpose the matrix; apply the binary op to all values if non-iso
@@ -264,9 +241,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             // C = op(scalar,A')
             //------------------------------------------------------------------
 
-            if (GB_binop_builtin (
-                op2->xtype, ignore_scalar,
-                Atype,      op_is_first  || op_is_pair,
+            if (GB_binop_builtin (op2->xtype, false, Atype, false,
                 op2, false, &opcode, &xcode, &ycode, &zcode))
             { 
 
@@ -289,6 +264,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
                 // launch the switch factory
                 //--------------------------------------------------------------
 
+                #define GB_NO_FIRST
                 #define GB_NO_SECOND
                 #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
@@ -301,9 +277,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             // C = op(A',scalar)
             //------------------------------------------------------------------
 
-            if (GB_binop_builtin (
-                Atype,      op_is_second || op_is_pair,
-                op2->ytype, ignore_scalar,
+            if (GB_binop_builtin (Atype, false, op2->ytype, false,
                 op2, false, &opcode, &xcode, &ycode, &zcode))
             { 
 
@@ -327,6 +301,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
                 //--------------------------------------------------------------
 
                 #define GB_NO_FIRST
+                #define GB_NO_SECOND
                 #define GB_NO_PAIR
                 #include "GB_binop_factory.c"
             }
@@ -338,6 +313,24 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         //----------------------------------------------------------------------
 
         GB_BURBLE_MATRIX (A, "(generic transpose: %s) ", op2->name) ;
+
+        #define GB_CAST_OP_BIND_1ST(pC,pA)                              \
+        {                                                               \
+            /* ywork = (ytype) Ax [pA] */                               \
+            GB_void ywork [GB_VLA(ysize)] ;                             \
+            cast_A_to_Y (ywork, Ax +(pA)*asize, asize) ;                \
+            /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
+            fop (Cx +((pC)*zsize), scalarx, ywork) ;                    \
+        }
+
+        #define GB_CAST_OP_BIND_2ND(pC,pA)                              \
+        {                                                               \
+            /* xwork = (xtype) Ax [pA] */                               \
+            GB_void xwork [GB_VLA(xsize)] ;                             \
+            cast_A_to_X (xwork, Ax +(pA)*asize, asize) ;                \
+            /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
+            fop (Cx +(pC*zsize), xwork, scalarx) ;                      \
+        }
 
         if (binop_bind1st)
         { 
@@ -351,7 +344,6 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             // Cx [pC] = op (cast (Ax [pA]), cast (scalar))
             #undef  GB_CAST_OP
             #define GB_CAST_OP(pC,pA) GB_CAST_OP_BIND_2ND(pC,pA)
-
             #include "GB_unop_transpose.c"
         }
     }
