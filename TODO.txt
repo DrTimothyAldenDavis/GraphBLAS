@@ -6,8 +6,5 @@ FIXME: after non-iso GrB*build, check if matrix is iso
 
 FIXME: pack/unpack
 
-FIXME: use GB_blob16 for all GB_16BYTE cases
-
 FIXME: if no typecasting, replace GB_type* methods with GB_1BYTE ... GB_16BYTE
-    cases
 

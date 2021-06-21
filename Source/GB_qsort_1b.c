@@ -213,7 +213,6 @@ void GB_qsort_1b_size16 // GB_qsort_1b with A_1 with sizeof = 16
     const int64_t n
 )
 { 
-    ASSERT (sizeof (GB_blob16) == GB_16BYTE) ;
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }

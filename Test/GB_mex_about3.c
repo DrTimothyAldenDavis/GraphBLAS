@@ -311,6 +311,8 @@ void mexFunction
     // split a user-defined matrix
     //--------------------------------------------------------------------------
 
+    CHECK (sizeof (GB_blob16) == 2 * sizeof (uint64_t)) ;
+
     typedef struct
     {
         int64_t blob [4] ;

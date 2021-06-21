@@ -17,7 +17,7 @@
 #define GB_2BYTE  (sizeof (uint16_t))
 #define GB_4BYTE  (sizeof (uint32_t))
 #define GB_8BYTE  (sizeof (uint64_t))
-#define GB_16BYTE (2*(sizeof (uint64_t)))
+#define GB_16BYTE (sizeof (GB_blob16))
 
 typedef struct
 {
