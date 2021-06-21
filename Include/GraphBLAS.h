@@ -8185,59 +8185,61 @@ GrB_Info GxB_Scalar_fprint          // print and check a GxB_Scalar
 #endif
 
 //==============================================================================
-// GxB_import* and GxB_export*: Matrix and vector import/export
+// Matrix and vector import/export/pack/unpack
 //==============================================================================
 
-// The import/export functions allow the user application to create a
-// GrB_Matrix or GrB_Vector object, and to extract its contents, faster and
+// The import/export/pack/unpack functions allow the user application to create
+// a GrB_Matrix or GrB_Vector object, and to extract its contents, faster and
 // with less memory overhead than the GrB_*_build and GrB_*_extractTuples
 // functions.
 
-// The semantics of import/export are the same as the "move constructor" in
-// C++.  On import, the user provides a set of arrays that have been previously
-// allocated via the ANSI C malloc function.  The arrays define the content of
-// the matrix or vector.  Unlike GrB_*_build, the GraphBLAS library then takes
-// ownership of the user's input arrays and may either (a) incorporate them
-// into its internal data structure for the new GrB_Matrix or GrB_Vector,
-// potentially creating the GrB_Matrix or GrB_Vector in constant time with no
-// memory copying performed, or (b) if the library does not support the import
-// format directly, then it may convert the input to its internal format, and
-// then free the user's input arrays.  GraphBLAS may also choose to use a mix
-// of the two strategies.  In either case, the input arrays are no longer
-// "owned" by the user application.  If A is a GrB_Matrix created by an import,
-// the user input arrays are freed no later than GrB_free (&A), and may be
-// freed earlier, at the discretion of the GraphBLAS library.  The data
-// structure of the GrB_Matrix and GrB_Vector remain opaque.
+// The semantics of import/export/pack/unpack are the same as the "move
+// constructor" in C++.  On import, the user provides a set of arrays that have
+// been previously allocated via the ANSI C malloc function.  The arrays define
+// the content of the matrix or vector.  Unlike GrB_*_build, the GraphBLAS
+// library then takes ownership of the user's input arrays and may either (a)
+// incorporate them into its internal data structure for the new GrB_Matrix or
+// GrB_Vector, potentially creating the GrB_Matrix or GrB_Vector in constant
+// time with no memory copying performed, or (b) if the library does not
+// support the import format directly, then it may convert the input to its
+// internal format, and then free the user's input arrays.  GraphBLAS may also
+// choose to use a mix of the two strategies.  In either case, the input arrays
+// are no longer "owned" by the user application.  If A is a GrB_Matrix created
+// by an import/pack, the user input arrays are freed no later than GrB_free
+// (&A), and may be freed earlier, at the discretion of the GraphBLAS library.
+// The data structure of the GrB_Matrix and GrB_Vector remain opaque.
 
-// The export of a GrB_Matrix or GrB_Vector is symmetric with the import
-// operation.  It is a destructive export, where the GrB_Matrix or GrB_Vector
-// no longer exists when the export completes, and instead the user is returned
-// several arrays that contain the matrix or vector in the requested format.
-// Ownership of these arrays is given to the user application, which is then
-// responsible for freeing them via the ANSI C free function.  If the output
-// format is supported by the GraphBLAS library, then these arrays may be
-// returned to the user application in O(1) time and with no memory copying
-// performed.  Otherwise, the GraphBLAS library will create the output arrays
-// for the user (via the ANSI C malloc function), fill them with the GrB_Matrix
-// or GrB_Vector data, and then return the newly allocated arrays to the user.
+// The export/unpack of a GrB_Matrix or GrB_Vector is symmetric with the import
+// operation.  The export is destructive, where the GrB_Matrix or GrB_Vector no
+// longer exists when the export completes.  The GrB_Matrix or GrB_Vector
+// exists after an unpack operation, just with no entries.  In both export and
+// unpack, the user is returned several arrays that contain the matrix or
+// vector in the requested format.  Ownership of these arrays is given to the
+// user application, which is then responsible for freeing them via the ANSI C
+// free function.  If the output format is supported by the GraphBLAS library,
+// then these arrays may be returned to the user application in O(1) time and
+// with no memory copying performed.  Otherwise, the GraphBLAS library will
+// create the output arrays for the user (via the ANSI C malloc function), fill
+// them with the GrB_Matrix or GrB_Vector data, and then return the newly
+// allocated arrays to the user.
 
 // Eight different formats are provided for import/export.  For each format,
 // the Ax array has a C-type <type> corresponding to one of the 13 built-in
 // types in GraphBLAS (bool, int*_t, uint*_t, float, double, float complex, or
 // double complex), or a user-defined type.
 
-// On import, the required user arrays Ah, Ap, Ab, Ai, Aj, and/or Ax must be
-// non-NULL pointers to memory space allocated by the ANSI C malloc (or calloc,
-// or realloc), unless nzmax is zero (in which case the Ab, Ai, Aj, Ax, vb, vi,
-// and vx arrays may all be NULL).  Just like GrB_*_new, the GrB_Matrix A (or
-// GrB_Vector v) is undefined on input.  If the import is successful, the
-// GrB_Matrix A or GrB_Vector v is created, and the pointers to the user input
-// arrays have been set to NULL.  These user arrays have either been
-// incorporated directly into the GrB_Matrix A or GrB_Vector v, in which case
-// the user input arrays will eventually be freed by GrB_free (&A), or their
-// contents have been copied and the arrays freed.  This decision is made by
-// the GraphBLAS library itself, and the user application has no control over
-// this decision.
+// On import/pack, the required user arrays Ah, Ap, Ab, Ai, Aj, and/or Ax must
+// be non-NULL pointers to memory space allocated by the ANSI C malloc (or
+// calloc, or realloc), unless nzmax is zero (in which case the Ab, Ai, Aj, Ax,
+// vb, vi, and vx arrays may all be NULL).  For the import, A (or GrB_Vector v)
+// is undefined on input, just like GrB_*_new, the GrB_Matrix.  If the import
+// is successful, the GrB_Matrix A or GrB_Vector v is created, and the pointers
+// to the user input arrays have been set to NULL.  These user arrays have
+// either been incorporated directly into the GrB_Matrix A or GrB_Vector v, in
+// which case the user input arrays will eventually be freed by GrB_free (&A),
+// or their contents have been copied and the arrays freed.  This decision is
+// made by the GraphBLAS library itself, and the user application has no
+// control over this decision.
 
 // If any of the arrays Ab, Aj, Ai, Ax, vb, vi, or vx have zero size (with
 // nzmax of zero), they are allowed to be be NULL pointers on input.
@@ -8264,7 +8266,7 @@ GrB_Info GxB_Scalar_fprint          // print and check a GxB_Scalar
 // neither modified nor freed.  They are still owned by the user application.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_CSR: import a CSR matrix
+// GxB_Matrix_import_CSR and GxB_Matrix_pack_CSR: import/pack a CSR matrix
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8274,6 +8276,22 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
+    GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)* sizeof(int64_t)
+    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A) * sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Aj_size,  // size of Aj in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    bool jumbled,       // if true, indices in each row may be unsorted
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_pack_CSR      // pack a CSR matrix
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
     GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)* sizeof(int64_t)
     GrB_Index **Aj,     // column indices, Aj_size >= nvals(A) * sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A) * (type size)
@@ -8303,7 +8321,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     //      NULL.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_CSC: import a CSC matrix
+// GxB_Matrix_import_CSC and GxB_Matrix_pack_CSC: import/pack a CSC matrix
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8313,6 +8331,22 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
+    GrB_Index **Ap,     // col "pointers", Ap_size >= (ncols+1)*sizeof(int64_t)
+    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Ai_size,  // size of Ai in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    bool jumbled,       // if true, indices in each column may be unsorted
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_pack_CSC      // pack a CSC matrix
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
     GrB_Index **Ap,     // col "pointers", Ap_size >= (ncols+1)*sizeof(int64_t)
     GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A) * (type size)
@@ -8342,7 +8376,8 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     //      NULL.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_HyperCSR: import a hypersparse CSR matrix
+// GxB_Matrix_import_HyperCSR, GxB_Matrix_pack_HyperCSR: import/pack a
+// hypersparse CSR matrix
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8352,6 +8387,25 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
+    GrB_Index **Ap,     // row "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
+    GrB_Index **Ah,     // row indices, Ah_size >= nvec*sizeof(int64_t)
+    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Ah_size,  // size of Ah in bytes
+    GrB_Index Aj_size,  // size of Aj in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    GrB_Index nvec,     // number of rows that appear in Ah
+    bool jumbled,       // if true, indices in each row may be unsorted
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
     GrB_Index **Ap,     // row "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
     GrB_Index **Ah,     // row indices, Ah_size >= nvec*sizeof(int64_t)
     GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
@@ -8391,7 +8445,8 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     //      the Aj and Ax arrays need not be present and can be NULL.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_HyperCSC: import a hypersparse CSC matrix
+// GxB_Matrix_import_HyperCSC and GxB_Matrix_pack_HyperCSC: import/pack
+// a hypersparse CSC matrix
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8401,6 +8456,25 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
+    GrB_Index **Ap,     // col "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
+    GrB_Index **Ah,     // column indices, Ah_size >= nvec*sizeof(int64_t)
+    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
+    void **Ax,          // values, Ax_size >= nvals(A)*(type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ap_size,  // size of Ap in bytes
+    GrB_Index Ah_size,  // size of Ah in bytes
+    GrB_Index Ai_size,  // size of Ai in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    GrB_Index nvec,     // number of columns that appear in Ah
+    bool jumbled,       // if true, indices in each column may be unsorted
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
     GrB_Index **Ap,     // col "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
     GrB_Index **Ah,     // column indices, Ah_size >= nvec*sizeof(int64_t)
     GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
@@ -8441,7 +8515,8 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
     //      can be NULL.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_BitmapR: import a bitmap matrix, held by row
+// GxB_Matrix_import_BitmapR and GxB_Matrix_pack_BitmapR: import/pack a bitmap
+// matrix, held by row
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8451,6 +8526,20 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
+    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ab_size,  // size of Ab in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    GrB_Index nvals,    // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_pack_BitmapR  // pack a bitmap matrix, held by row
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
     int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
                         // or Ax_size >= (type size), if iso is true
@@ -8472,7 +8561,8 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     //      array.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_BitmapC: import a bitmap matrix, held by column
+// GxB_Matrix_import_BitmapC and GxB_Matrix_pack_BitmapC: import/pack a bitmap
+// matrix, held by column
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8482,6 +8572,20 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     GrB_Type type,      // type of matrix to create
     GrB_Index nrows,    // number of rows of the matrix
     GrB_Index ncols,    // number of columns of the matrix
+    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ab_size,  // size of Ab in bytes
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    GrB_Index nvals,    // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_pack_BitmapC  // pack a bitmap matrix, held by column
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
     int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
                         // or Ax_size >= (type size), if iso is true
@@ -8503,7 +8607,8 @@ GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
     //      array.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_FullR:  import a full matrix, held by row
+// GxB_Matrix_import_FullR and GxB_Matrix_pack_FullR:  import/pack a full
+// matrix, held by row
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8520,6 +8625,17 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     const GrB_Descriptor desc
 ) ;
 
+GB_PUBLIC
+GrB_Info GxB_Matrix_pack_FullR  // pack a full matrix, held by row
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    const GrB_Descriptor desc
+) ;
+
     // FullR: an nrows-by-ncols full matrix held in row-major order:
     //
     //  <type> Ax [nrows*ncols] ;
@@ -8528,7 +8644,8 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     //      Ax [i*ncols+j].  All entries in A are present.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_FullC: import a full matrix, held by column
+// GxB_Matrix_import_FullC and GxB_Matrix_pack_FullC: import/pack a full
+// matrix, held by column
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8545,6 +8662,17 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
     const GrB_Descriptor desc
 ) ;
 
+GB_PUBLIC
+GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
+(
+    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
+    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
+                        // or Ax_size >= (type size), if iso is true
+    GrB_Index Ax_size,  // size of Ax in bytes
+    bool iso,           // if true, A is iso
+    const GrB_Descriptor desc
+) ;
+
     // FullC: an nrows-by-ncols full matrix held in column-major order:
     //
     //  <type> Ax [nrows*ncols] ;
@@ -8553,7 +8681,8 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
     //      Ax [i+j*nrows].  All entries in A are present.
 
 //------------------------------------------------------------------------------
-// GxB_Vector_import_CSC: import a vector in CSC format
+// GxB_Vector_import_CSC and GxB_Vector_pack_CSC: import/pack a vector in CSC
+// format
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8573,12 +8702,28 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     const GrB_Descriptor desc
 ) ;
 
+GB_PUBLIC
+GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
+(
+    GrB_Vector v,       // vector to create (type and length unchanged)
+    GrB_Index **vi,     // indices, vi_size >= nvals(v) * sizeof(int64_t)
+    void **vx,          // values, vx_size >= nvals(v) * (type size)
+                        // or vx_size >= (type size), if iso is true
+    GrB_Index vi_size,  // size of vi in bytes
+    GrB_Index vx_size,  // size of vx in bytes
+    bool iso,           // if true, v is iso
+    GrB_Index nvals,    // # of entries in vector
+    bool jumbled,       // if true, indices may be unsorted
+    const GrB_Descriptor desc
+) ;
+
     // The GrB_Vector is treated as if it was a single column of an n-by-1
     // matrix in CSC format, except that no vp array is required.  If nvals is
     // zero, then the vi and vx arrays need not be present and can be NULL.
 
 //------------------------------------------------------------------------------
-// GxB_Vector_import_Bitmap: import a vector in bitmap format
+// GxB_Vector_import_Bitmap and GxB_Vector_pack_Bitmap: import/pack a vector in
+// bitmap format
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8597,11 +8742,26 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     const GrB_Descriptor desc
 ) ;
 
+GB_PUBLIC
+GrB_Info GxB_Vector_pack_Bitmap // pack a bitmap vector
+(
+    GrB_Vector v,       // vector to create (type and length unchanged)
+    int8_t **vb,        // bitmap, vb_size >= n
+    void **vx,          // values, vx_size >= n * (type size)
+                        // or vx_size >= (type size), if iso is true
+    GrB_Index vb_size,  // size of vb in bytes
+    GrB_Index vx_size,  // size of vx in bytes
+    bool iso,           // if true, v is iso
+    GrB_Index nvals,    // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+
     // The GrB_Vector is treated as if it was a single column of an n-by-1
     // matrix in BitmapC format.
 
 //------------------------------------------------------------------------------
-// GxB_Vector_import_Full: import a vector in full format
+// GxB_Vector_import_Full and GxB_Vector_pack_Full: import/pack a vector in
+// full format
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -8617,31 +8777,54 @@ GrB_Info GxB_Vector_import_Full // import a full vector
     const GrB_Descriptor desc
 ) ;
 
+GB_PUBLIC
+GrB_Info GxB_Vector_pack_Full // pack a full vector
+(
+    GrB_Vector v,       // vector to create (type and length unchanged)
+    void **vx,          // values, vx_size >= nvals(v) * (type size)
+                        // or vx_size >= (type size), if iso is true
+    GrB_Index vx_size,  // size of vx in bytes
+    bool iso,           // if true, v is iso
+    const GrB_Descriptor desc
+) ;
+
     // The GrB_Vector is treated as if it was a single column of an n-by-1
     // matrix in FullC format.
 
 //------------------------------------------------------------------------------
 
-// The GxB_*_export functions are symmetric with the GxB_*_import functions.
-// GxB_*export* functions force completion of any pending operations, prior to
-// the export, except if the only pending operation is to unjumble the matrix.
+// The GxB_*_export/unpack functions are symmetric with the GxB_*_import/pack
+// functions.  The export/unpack functions force completion of any pending
+// operations, prior to the export, except if the only pending operation is to
+// unjumble the matrix.
 //
-// If there are no entries in the matrix or vector, then the index arrays
-// (Ai, Aj, or vi) and value arrays (Ax or vx) are returned as NULL.  This is
-// not an error condition.
+// If there are no entries in the matrix or vector, then the index arrays (Ai,
+// Aj, or vi) and value arrays (Ax or vx) are returned as NULL.  This is not an
+// error condition.
 //
-// GxB_Matrix_export:
+// A GrB_Matrix may be exported/unpacked in any one of four different formats.
+// On successful export, the input GrB_Matrix A is freed, and the output arrays
+// Ah, Ap, Ai, Aj, and/or Ax are returned to the user application as arrays
+// allocated by the ANSI C malloc function.  The four formats are the same as
+// the import formats for GrB_Matrix_import/pack.
 //
-//      A GrB_Matrix may be exported in any one of four different formats.  On
-//      successful export, the input GrB_Matrix A is freed, and the output
-//      arrays Ah, Ap, Ai, Aj, and/or Ax are returned to the user application
-//      as arrays allocated by the ANSI C malloc function.  The four formats
-//      are the same as the import formats for GrB_Matrix_import_*.
+// If jumbled is NULL on input, this indicates to GxB_*export/unpack* that the
+// exported/unpacked matrix cannot be returned in a jumbled format.  In this
+// case, if the matrix is jumbled, it is sorted before exporting it to the
+// caller.
 //
-//      If jumbled is NULL on input, this indicates to GxB_*export* that the
-//      exported matrix cannot be returned in a jumbled format.  In this case,
-//      if the matrix is jumbled, it is sorted before exporting it to the
-//      caller.
+// If iso is NULL on input, this indicates to the export/unpack methods that
+// the exported/unpacked matrix cannot be returned in a iso format, with an Ax
+// array with just one entry.  In this case, if the matrix is iso, it is
+// expanded before exporting/unpacking it to the caller.
+//
+// For the export/unpack*Full* methods, all entries in the matrix or must be
+// present.  That is, GrB_*_nvals must report nvals equal to nrows*ncols or a
+// matrix.  If this condition does not hold, the matrix/vector is not exported,
+// and GrB_INVALID_VALUE is returned.
+//
+// If the export/unpack is not successful, the export/unpack functions do not
+// modify matrix or vector and the user arrays are returned as NULL.
 
 GB_PUBLIC
 GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
@@ -8650,6 +8833,21 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
+    GrB_Index **Ap,     // row "pointers"
+    GrB_Index **Aj,     // column indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Aj_size, // size of Aj in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    bool *jumbled,      // if true, indices in each row may be unsorted
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_unpack_CSR  // unpack a CSR matrix
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
     GrB_Index **Ap,     // row "pointers"
     GrB_Index **Aj,     // column indices
     void **Ax,          // values
@@ -8680,12 +8878,45 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    GrB_Index **Ap,     // column "pointers"
+    GrB_Index **Ai,     // row indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Ai_size, // size of Ai in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    bool *jumbled,      // if true, indices in each column may be unsorted
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
+    GrB_Index **Ap,     // row "pointers"
+    GrB_Index **Ah,     // row indices
+    GrB_Index **Aj,     // column indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Ah_size, // size of Ah in bytes
+    GrB_Index *Aj_size, // size of Aj in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    GrB_Index *nvec,    // number of rows that appear in Ah
+    bool *jumbled,      // if true, indices in each row may be unsorted
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
     GrB_Index **Ap,     // row "pointers"
     GrB_Index **Ah,     // row indices
     GrB_Index **Aj,     // column indices
@@ -8722,12 +8953,43 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Matrix_unpack_HyperCSC  // unpack a hypersparse CSC matrix
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    GrB_Index **Ap,     // column "pointers"
+    GrB_Index **Ah,     // column indices
+    GrB_Index **Ai,     // row indices
+    void **Ax,          // values
+    GrB_Index *Ap_size, // size of Ap in bytes
+    GrB_Index *Ah_size, // size of Ah in bytes
+    GrB_Index *Ai_size, // size of Ai in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    GrB_Index *nvec,    // number of columns that appear in Ah
+    bool *jumbled,      // if true, indices in each column may be unsorted
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
+    int8_t **Ab,        // bitmap
+    void **Ax,          // values
+    GrB_Index *Ab_size, // size of Ab in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    GrB_Index *nvals,   // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_unpack_BitmapR  // unpack a bitmap matrix, by row
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
     int8_t **Ab,        // bitmap
     void **Ax,          // values
     GrB_Index *Ab_size, // size of Ab in bytes
@@ -8754,12 +9016,35 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Matrix_unpack_BitmapC  // unpack a bitmap matrix, by col
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    int8_t **Ab,        // bitmap
+    void **Ax,          // values
+    GrB_Index *Ab_size, // size of Ab in bytes
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    GrB_Index *nvals,   // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
     GrB_Index *nrows,   // number of rows of the matrix
     GrB_Index *ncols,   // number of columns of the matrix
+    void **Ax,          // values
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_unpack_FullR  // unpack a full matrix, by row
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
     void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
     bool *iso,          // if true, A is iso
@@ -8779,10 +9064,15 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     const GrB_Descriptor desc
 ) ;
 
-    // For GxB_Matrix_export_Full*, all entries in A must be present.  That is,
-    // GrB_Matrix_nvals must report nvals equal to nrows*ncols.  If this
-    // condition does not hold, the matrix is not exported, and
-    // GrB_INVALID_VALUE is returned.
+GB_PUBLIC
+GrB_Info GxB_Matrix_unpack_FullC  // unpack a full matrix, by column
+(
+    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
+    void **Ax,          // values
+    GrB_Index *Ax_size, // size of Ax in bytes
+    bool *iso,          // if true, A is iso
+    const GrB_Descriptor desc
+) ;
 
 GB_PUBLIC
 GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
@@ -8790,6 +9080,20 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
     GrB_Index *n,       // length of the vector
+    GrB_Index **vi,     // indices
+    void **vx,          // values
+    GrB_Index *vi_size, // size of vi in bytes
+    GrB_Index *vx_size, // size of vx in bytes
+    bool *iso,          // if true, v is iso
+    GrB_Index *nvals,   // # of entries in vector
+    bool *jumbled,      // if true, indices may be unsorted
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_unpack_CSC  // unpack a CSC vector
+(
+    GrB_Vector v,       // vector to unpack (type and length unchanged)
     GrB_Index **vi,     // indices
     void **vx,          // values
     GrB_Index *vi_size, // size of vi in bytes
@@ -8816,6 +9120,19 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Vector_unpack_Bitmap   // unpack a bitmap vector
+(
+    GrB_Vector v,       // vector to unpack (type and length unchanged)
+    int8_t **vb,        // bitmap
+    void **vx,          // values
+    GrB_Index *vb_size, // size of vb in bytes
+    GrB_Index *vx_size, // size of vx in bytes
+    bool *iso,          // if true, v is iso
+    GrB_Index *nvals,    // # of entries in bitmap
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Vector_export_Full   // export and free a full vector
 (
     GrB_Vector *v,      // handle of vector to export and free
@@ -8827,9 +9144,15 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     const GrB_Descriptor desc
 ) ;
 
-// If the export is not successful, the GxB_Matrix_export_* functions do not
-// modify A, the GxB_Vector_export does not modify v, and the user arrays are
-// returned as NULL.
+GB_PUBLIC
+GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
+(
+    GrB_Vector v,       // vector to unpack (type and length unchanged)
+    void **vx,          // values
+    GrB_Index *vx_size, // size of vx in bytes
+    bool *iso,          // if true, v is iso
+    const GrB_Descriptor desc
+) ;
 
 #endif
 

@@ -103,7 +103,6 @@
                     }
                     else if (hf == mark1)
                     { 
-GOTCHA = true ; // GB_GOTCHA ; FIXME
                         // C(i,j) += A(i,k) * B(k,j)
                         GB_MULT_A_ik_B_kj ;     // t =A(i,k)*B(k,j)
                         GB_HX_UPDATE (i, t) ;   // Hx [i] += t

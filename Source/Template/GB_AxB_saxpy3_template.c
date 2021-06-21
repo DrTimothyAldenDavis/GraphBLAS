@@ -87,8 +87,6 @@
     // Coarse tasks: nothing to do in phase2.
     // Fine tasks: compute nnz (C(:,j)), and values in Hx via atomics.
 
-bool GOTCHA = false ;   // FIXME
-
     int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < nfine ; taskid++)
@@ -290,8 +288,6 @@ bool GOTCHA = false ;   // FIXME
             #endif
         }
     }
-
-if (GOTCHA) { GB_GOTCHA ; } ;       // FIXME: coarseGus_notM_phase5
 
 // ttt = omp_get_wtime ( ) - ttt ;
 // GB_Global_timing_add (9, ttt) ;
