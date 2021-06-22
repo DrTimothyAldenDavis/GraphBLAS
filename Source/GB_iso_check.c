@@ -81,7 +81,7 @@ bool GB_iso_check               // return true if A is iso, false otherwise
         #define GB_GET_FIRST_VALUE(atype_t, a, Ax)                      \
             const atype_t a = Ax [0]
         #define GB_COMPARE_WITH_FIRST_VALUE(my_iso, a, Ax, p)           \
-            my_iso = my_iso && (a == Ax [p])
+            my_iso = my_iso & (a == Ax [p])
 
         switch (asize)
         {
@@ -114,8 +114,8 @@ bool GB_iso_check               // return true if A is iso, false otherwise
                     const atype_t a ## 1 = Ax [1] ;
                 #undef  GB_COMPARE_WITH_FIRST_VALUE
                 #define GB_COMPARE_WITH_FIRST_VALUE(my_iso, a, Ax, p)   \
-                    my_iso = my_iso && (a ## 0 == Ax [2*p  ])           \
-                                    && (a ## 1 == Ax [2*p+1])
+                    my_iso = my_iso & (a ## 0 == Ax [2*p  ])            \
+                                    & (a ## 1 == Ax [2*p+1])
                 #include "GB_iso_check_template.c"
                 break ;
 
@@ -134,7 +134,7 @@ bool GB_iso_check               // return true if A is iso, false otherwise
             memcpy (a, Ax, asize) ;
         #undef  GB_COMPARE_WITH_FIRST_VALUE
         #define GB_COMPARE_WITH_FIRST_VALUE(my_iso, a, Ax, p)           \
-            my_iso = my_iso && (memcmp (a, Ax + (p)*asize, asize) == 0)
+            my_iso = my_iso & (memcmp (a, Ax + (p)*asize, asize) == 0)
         #include "GB_iso_check_template.c"
     }
 
