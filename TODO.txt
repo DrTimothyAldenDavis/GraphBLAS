@@ -4,10 +4,10 @@ This is a beta release.  It works fine on Linux and has reached
 100% test coverage.  It might not compile on Windows or the Mac;
 that will be checked shortly.  Here's what's left to do:
 
-FIXME: check Windows port,
 FIXME: check alternative/Makefile
-FIXME: check R2021a port
 FIXME: check Octave port
-FIXME: check Mac por
+FIXME: check R2021a port
+FIXME: check Mac port
+FIXME: check Windows port
 FIXME: alternative/Makefile with C++
 
