@@ -37,6 +37,7 @@ int myflush (void)
 
 typedef int (* printf_func_t) (const char *restrict format, ...) ;
 typedef int (* flush_func_t)  (void) ;
+typedef struct { int64_t blob [4] ; } myblob_struct ;
 
 void mexFunction
 (
@@ -313,12 +314,6 @@ void mexFunction
 
     CHECK (sizeof (GB_blob16) == 2 * sizeof (uint64_t)) ;
 
-    typedef struct
-    {
-        int64_t blob [4] ;
-    }
-    myblob_struct ;
-
     OK (GrB_Type_new (&myblob, sizeof (myblob_struct))) ;
     OK (GxB_Type_fprint (myblob, "myblob", GxB_COMPLETE, NULL)) ;
     myblob_struct blob_scalar ;
@@ -442,7 +437,6 @@ void mexFunction
     OK (GB_convert_any_to_non_iso (C, true, NULL)) ;
     OK (GxB_Matrix_fprint (C, "C blob non iso", GxB_COMPLETE, NULL)) ;
     GrB_Matrix_free_(&C) ;
-    GrB_Type_free_(&myblob) ;
 
     //--------------------------------------------------------------------------
     // setElement
@@ -635,9 +629,42 @@ void mexFunction
     CHECK (GB_unop_one (GB_UDT_code) == NULL) ;
 
     //--------------------------------------------------------------------------
+    // GB_iso_check
+    //--------------------------------------------------------------------------
+
+    CHECK (!GB_iso_check (NULL, NULL)) ;
+    OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
+    OK (GrB_Matrix_assign_FP32 (C, NULL, NULL, 1, GrB_ALL, 4, GrB_ALL, 4,
+        NULL)) ;
+    OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    OK (GrB_Matrix_wait_(&C)) ;
+    CHECK (GB_iso_check (C, NULL)) ;
+    GrB_Matrix_free_(&C) ;
+
+    OK (GrB_Matrix_new (&C, myblob, 10, 10)) ;
+    OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    blob_scalar.blob [0] = 1 ;
+    blob_scalar.blob [1] = 2 ;
+    blob_scalar.blob [2] = 3 ;
+    blob_scalar.blob [3] = 4 ;
+    OK (GrB_Matrix_setElement_UDT (C, &blob_scalar, 3, 2)) ;
+    OK (GrB_Matrix_setElement_UDT (C, &blob_scalar, 0, 0)) ;
+    CHECK (!GB_iso_check (C, NULL)) ;
+    OK (GrB_Matrix_wait_(&C)) ;
+    CHECK (GB_iso_check (C, NULL)) ;
+
+    blob_scalar.blob [0] = 4 ;
+    OK (GrB_Matrix_setElement_UDT (C, &blob_scalar, 4, 4)) ;
+    CHECK (!GB_iso_check (C, NULL)) ;
+    OK (GrB_Matrix_wait_(&C)) ;
+    CHECK (!GB_iso_check (C, NULL)) ;
+    GrB_Matrix_free_(&C) ;
+
+    //--------------------------------------------------------------------------
     // wrapup
     //--------------------------------------------------------------------------
 
+    GrB_Type_free_(&myblob) ;
     GB_mx_put_global (true) ;   
     fclose (f) ;
     printf ("\nGB_mex_about3: all tests passed\n\n") ;

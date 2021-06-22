@@ -69,6 +69,7 @@ void GB_iso_expand          // expand an iso scalar into an entire array
     GB_Context Context
 ) ;
 
+GB_PUBLIC
 bool GB_iso_check               // return true if A is iso, false otherwise
 (
     const GrB_Matrix A,         // matrix to reduce
