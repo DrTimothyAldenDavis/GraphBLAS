@@ -106,6 +106,45 @@ bool GB_cuda_get_device_properties
     GB_cuda_device *prop
 ) ;
 
+void GB_stringify_semiring     // build a semiring (name and code)
+(
+    // output: (all of size at least GB_CUDA_STRLEN+1)
+    char *semiring_macros,  // List of types and macro defs
+    // input:
+    GrB_Semiring semiring,  // the semiring to stringify
+    bool flipxy,            // multiplier is: mult(a,b) or mult(b,a)
+    GrB_Type ctype,         // the type of C
+    GrB_Type mtype,         // the type of M, or NULL if no mask
+    GrB_Type atype,         // the type of A
+    GrB_Type btype,         // the type of B
+    bool Mask_struct,       // mask is structural
+    bool Mask_comp,         // mask is complemented
+    int C_sparsity,         // sparsity structure of C
+    int M_sparsity,         // sparsity structure of M
+    int A_sparsity,         // sparsity structure of A
+    int B_sparsity          // sparsity structure of B
+);
+
+void GB_enumify_semiring   // enumerate a semiring
+(
+    // output:
+    uint64_t *scode,        // unique encoding of the entire semiring
+    // input:
+    GrB_Semiring semiring,  // the semiring to enumify
+    bool flipxy,            // multiplier is: mult(a,b) or mult(b,a)
+    GrB_Type ctype,         // the type of C
+    GrB_Type mtype,         // the type of M, or NULL if no mask
+    GrB_Type atype,         // the type of A
+    GrB_Type btype,         // the type of B
+    bool Mask_struct,       // mask is structural
+    bool Mask_comp,         // mask is complemented
+    int C_sparsity,         // sparsity structure of C
+    int M_sparsity,         // sparsity structure of M
+    int A_sparsity,         // sparsity structure of A
+    int B_sparsity          // sparsity structure of B
+);
+
+
 bool GB_reduce_to_scalar_cuda_branch 
 (
     const GrB_Monoid reduce,        // monoid to do the reduction
