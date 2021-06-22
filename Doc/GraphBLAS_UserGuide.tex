@@ -1059,14 +1059,14 @@ GraphBLAS matrices.  Some of these may be added in future releases.
 \label{python}
 
 See Michel Pelletier's Python interface at
-\href{https://github.com/michelp/pygraphblas}{https://github.com/michelp/pygraphblas};
+\url{https://github.com/michelp/pygraphblas};
 it also appears at
-\href{https://anaconda.org/conda-forge/pygraphblas}{https://anaconda.org/conda-forge/pygraphblas}.
+\url{https://anaconda.org/conda-forge/pygraphblas}.
 
 See Jim Kitchen and Erik Welch's (both from Anaconda, Inc.) Python interface at
-\href{https://github.com/metagraph-dev/grblas}{https://github.com/metagraph-dev/grblas}.
+\url{https://github.com/metagraph-dev/grblas}.
 See also \\
-\href{https://anaconda.org/conda-forge/graphblas}{https://anaconda.org/conda-forge/graphblas}.
+\url{https://anaconda.org/conda-forge/graphblas}.
 
 %===============================================================================
 \subsection{Julia Interface}
@@ -1074,10 +1074,10 @@ See also \\
 \label{julia}
 
 Will Kimmerer is developing a Julia interface for GraphBLAS; see \newline
-\href{https://github.com/JuliaSparse/SuiteSparseGraphBLAS.jl}{https://github.com/JuliaSparse/SuiteSparseGraphBLAS.jl}.
+\url{https://github.com/JuliaSparse/SuiteSparseGraphBLAS.jl}.
 
 See also Abhinav Mehndiratta's Julia interface at \\
-\href{https://github.com/abhinavmehndiratta/SuiteSparseGraphBLAS.jl}{https://github.com/abhinavmehndiratta/SuiteSparseGraphBLAS.jl}.
+\url{https://github.com/abhinavmehndiratta/SuiteSparseGraphBLAS.jl}.
 
 %===============================================================================
 \subsection{Java Interface}
@@ -1086,7 +1086,7 @@ See also Abhinav Mehndiratta's Julia interface at \\
 
 Fabian Murariu is working on a Java interface.
 See \newline
-\href{https://github.com/fabianmurariu/graphblas-java-native}{https://github.com/fabianmurariu/graphblas-java-native}.
+\url{https://github.com/fabianmurariu/graphblas-java-native}.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7242,6 +7242,8 @@ GrB_Desc_Value ;
 
 \end{itemize}
 
+The next sections describe the methods for a \verb'GrB_Descriptor':
+
 \vspace{0.2in}
 {\footnotesize
 \begin{tabular}{lll}
@@ -7257,6 +7259,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \end{tabular}
 }
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Descriptor\_new:}  create a new descriptor}
 %-------------------------------------------------------------------------------
@@ -7277,7 +7280,6 @@ is valued not structural, neither input matrix is transposed, the method
 used in \verb'C=A*B' is selected automatically, and \verb'GrB_mxm' leaves
 the final sort as pending work).
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Descriptor\_wait:} wait for a descriptor}
 %-------------------------------------------------------------------------------
@@ -7299,6 +7301,7 @@ exploit non-blocking mode to delay its creation.
 SuiteSparse:GraphBLAS currently does nothing for
 \verb'GrB_Descriptor_wait(&d)', except to ensure that \verb'd' is valid.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Descriptor\_set:}  set a parameter in a descriptor}
 %-------------------------------------------------------------------------------
@@ -7686,14 +7689,7 @@ on the amount of time or memory taken.
 
 \begin{itemize}
 
-\item \verb'GxB_set (field, value)' provides hints to
-    SuiteSparse:GraphBLAS on how it should store all matrices created after
-    calling this function:  by row, by column.  It provides hints as to when to
-    use {\em hypersparse} \cite{BulucGilbert08,BulucGilbert12} or {\em bitmap}
-    formats.  These are global options that modify all matrices created after
-    calling this method.  The global settings also control the number of
-    threads used, and the heuristic for selecting the number of threads for
-    small problems (the ``chunk'').
+\item \verb'GxB_set (field, value)' sets global options.
 
 {\footnotesize
 \begin{tabular}{lll}
@@ -7712,6 +7708,7 @@ field                       & value         & description \\
 \verb'GxB_FLUSH'            & see below     & diagnostic output \\
 \verb'GxB_MEMORY_POOL'      & \verb'int64_t [64]' & memory pool control \\
 \verb'GxB_PRINT_1BASED'     & \verb'int'    & for printing matrices/vectors \\
+\hline
 \end{tabular}
 }
 
@@ -7727,6 +7724,7 @@ field                       & value         & description \\
 \verb'GxB_FORMAT'           & \verb'int'    & \verb'GxB_BY_ROW'
                                               or \verb'GxB_BY_COL' \\
 \verb'GxB_SPARSITY_CONTROL' & \verb'int'    & 0 to 15 \\
+\hline
 \end{tabular}
 }
 
@@ -7739,6 +7737,7 @@ field                       & value         & description \\
 \hline
 \verb'GxB_BITMAP_SWITCH'    & \verb'double' & bitmap control (0 to 1) \\
 \verb'GxB_SPARSITY_CONTROL' & \verb'int'    & 0 to 15 \\
+\hline
 \end{tabular}
 }
 
@@ -7759,18 +7758,18 @@ field                       & value         & description \\
 \verb'GxB_CHUNK'                & \verb'double' & chunk size \\
 \verb'GxB_AxB_METHOD'           & \verb'int' & method for matrix multiply \\
 \verb'GxB_SORT'                 & \verb'int' & lazy vs aggressive sort \\
+\hline
 \end{tabular}
 }
 
 \end{itemize}
 
-The \verb'GxB_get' method queries a \verb'GrB_Descriptor', a \verb'GrB_Matrix',
+\verb'GxB_get' queries a \verb'GrB_Descriptor', a \verb'GrB_Matrix',
 a \verb'GrB_Vector', or the global options.
 
 \begin{itemize}
 
-\item \verb'GxB_get (field, &value)' retrieves the value of
-    a global option.
+\item \verb'GxB_get (field, &value)' retrieves the value of a global option.
 
 {\footnotesize
 \begin{tabular}{lll}
@@ -7778,8 +7777,7 @@ field                       & value         & description \\
 \hline
 \verb'GxB_HYPER_SWITCH'     & \verb'double' & hypersparsity control (0 to 1) \\
 \verb'GxB_BITMAP_SWITCH'    & \verb'double [8]' & bitmap control \\
-\verb'GxB_FORMAT'           & \verb'int'    & \verb'GxB_BY_ROW'
-                                              or \verb'GxB_BY_COL' \\
+\verb'GxB_FORMAT'           & \verb'int'    & \verb'GxB_BY_ROW' or \verb'GxB_BY_COL' \\
 \verb'GxB_GLOBAL_NTHREADS'  & \verb'int'    & number of threads to use \\
 \verb'GxB_NTHREADS'         & \verb'int'    & number of threads to use \\
 \verb'GxB_GLOBAL_CHUNK'     & \verb'double' & chunk size \\
@@ -7789,7 +7787,6 @@ field                       & value         & description \\
 \verb'GxB_FLUSH'            & see below     & diagnostic output \\
 \verb'GxB_MEMORY_POOL'      & \verb'int64_t [64]' & memory pool control \\
 \verb'GxB_PRINT_1BASED'     & \verb'int'    & for printing matrices/vectors \\
-\hline
 \verb'GxB_MODE'                 & \verb'int'    & blocking/non-blocking \\
 \verb'GxB_LIBRARY_NAME'         & \verb'char *' & name of library \\
 \verb'GxB_LIBRARY_VERSION'      & \verb'int [3]' & library version \\
@@ -7803,6 +7800,7 @@ field                       & value         & description \\
 \verb'GxB_API_DATE'             & \verb'char *' & C API date \\
 \verb'GxB_API_ABOUT'            & \verb'char *' & about the C API \\
 \verb'GxB_API_URL'              & \verb'char *' & \verb'http://graphblas.org' \\
+\hline
 \end{tabular}
 }
 
@@ -7819,6 +7817,7 @@ field                       & value         & description \\
                                               or \verb'GxB_BY_COL' \\
 \verb'GxB_SPARSITY_CONTROL' & \verb'int'    & 0 to 15 \\
 \verb'GxB_SPARSITY_STATUS'  & \verb'int'    & 1, 2, 4, or 8 \\
+\hline
 \end{tabular}
 }
 
@@ -7834,6 +7833,7 @@ field                       & value         & description \\
                                               or \verb'GxB_BY_COL' \\
 \verb'GxB_SPARSITY_CONTROL' & \verb'int'    & 0 to 15 \\
 \verb'GxB_SPARSITY_STATUS'  & \verb'int'    & 1, 2, 4, or 8 \\
+\hline
 \end{tabular}
 }
 
@@ -7854,6 +7854,7 @@ field                       & value         & description \\
 \verb'GxB_CHUNK'                & \verb'double' & chunk size \\
 \verb'GxB_AxB_METHOD'           & \verb'int' & method for matrix multiply \\
 \verb'GxB_SORT'                 & \verb'int' & lazy vs aggressive sort \\
+\hline
 \end{tabular}
 }
 
@@ -12400,7 +12401,7 @@ matrices and vectors.  A non-iso matrix/vector is constructed first, and then
 the entries are checked to see if they are all equal.  The resulting iso-valued
 matrix/vector will be efficient to use and will use less memory than a non-iso
 matrix/vector.  However, constructing an iso matrix/vector with
-\verb'GrB_Matrix_build' and \verb'GrB_Vector_build' will take take more time
+\verb'GrB_Matrix_build' and \verb'GrB_Vector_build' will take more time
 and memory than constructing the matrix/vector with
 \verb'GxB_Matrix_build_Scalar' or \verb'GxB_Vector_build_Scalar'.
 
@@ -13032,6 +13033,11 @@ user-defined types, operators, monoids, and semirings.  It creates a semiring
 for the entire PageRank computation.  It terminates if the 2-norm of the change
 in the rank vector \verb'r' is below a threshold.
 
+LAGraph contains a much faster pagerank method, as \\
+\verb'LAGraph_VertexCentrality_PageRankGAP', which can be used for the
+GAP benchmarks of Scott Beamer.  Do {\bf not} benchmark the pagerank
+methods in the \verb'GraphBLAS/Demo' folder.
+
 \newpage
 %-------------------------------------------------------------------------------
 \subsection{User-defined types and operators}
@@ -13142,10 +13148,11 @@ instead.
 
 \begin{alert}
 {\bf NOTE:} icc is generally an excellent compiler, but it will generate slower
-code than gcc for SuiteSparse:GraphBLAS v3.2.0 and later.  This is because of
-how the two compilers treat \verb'#pragma omp atomic' The use of gcc for
-SuiteSparse:GraphBLAS v3.2.0 and later is recommended.  Atomics are slower in
-icc as compared to gcc.
+code than gcc for SuiteSparse:GraphBLAS.  This is because of how the two
+compilers treat \verb'#pragma omp atomic'. The use of gcc is strongly
+recommended.  Atomics are far slower in icc as compared to gcc.
+Intel has a new \verb'icx' compiler that has much better performance for
+atomics, but I have not tested it with GraphBLAS.
 \end{alert}
 
 To compile SuiteSparse:GraphBLAS, simply type \verb'make'
