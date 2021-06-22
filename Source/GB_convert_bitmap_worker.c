@@ -7,8 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// If A is iso and Ax_new is not NULL, the iso scalar is expanded into Ax_new.
-// Otherwise, if Ax_new is NULL then no values are extracted.
+// If A is iso and Ax_new is not NULL, the iso scalar is expanded into the
+// non-iso array Ax_new.  Otherwise, if Ax_new and Ax are NULL then no values
+// are extracted.
 
 // TODO allow this function to do typecasting.  Create 169 different versions
 // for all 13x13 versions.  Use this as part of Method 24, C=A assignment.
@@ -150,6 +151,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
 
     const GB_void *restrict Ax = (GB_void *) (A->x) ;
     const bool A_iso = A->iso ;
+    const bool numeric = (Ax_new != NULL && Ax != NULL) ;
 
     if (by_vector)
     {
@@ -173,7 +175,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
                     // A(i,j) is in the bitmap
                     if (Ai != NULL) Ai [pnew] = i ;
                     if (Aj != NULL) Aj [pnew] = j ;
-                    if (Ax_new != NULL)
+                    if (numeric)
                     { 
                         // Ax_new [pnew] = Ax [p])
                         memcpy (Ax_new +(pnew)*asize,
@@ -214,7 +216,7 @@ GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
                         // A(i,j) is in the bitmap
                         if (Ai != NULL) Ai [pnew] = i ;
                         if (Aj != NULL) Aj [pnew] = j ;
-                        if (Ax_new != NULL)
+                        if (numeric)
                         { 
                             // Ax_new [pnew] = Ax [p] ;
                             memcpy (Ax_new +(pnew)*asize,

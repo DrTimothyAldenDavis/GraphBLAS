@@ -82,7 +82,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         GBURBLE ("A:") ;
         // set A2->iso = A->iso     OK: no need for burble
         GB_OK (GB_dup_worker (&A2, A->iso, A, true, NULL, Context)) ;
+        ASSERT_MATRIX_OK (A2, "dup A2 for kron (A,B)", GB0) ;
         GB_OK (GB_convert_bitmap_to_sparse (A2, Context)) ;
+        ASSERT_MATRIX_OK (A2, "to sparse, A2 for kron (A,B)", GB0) ;
         A = A2 ;
     }
 
@@ -92,7 +94,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         GBURBLE ("B:") ;
         // set B2->iso = B->iso     OK: no need for burble
         GB_OK (GB_dup_worker (&B2, B->iso, B, true, NULL, Context)) ;
+        ASSERT_MATRIX_OK (B2, "dup B2 for kron (A,B)", GB0) ;
         GB_OK (GB_convert_bitmap_to_sparse (B2, Context)) ;
+        ASSERT_MATRIX_OK (B2, "to sparse, A2 for kron (A,B)", GB0) ;
         B = B2 ;
     }
 

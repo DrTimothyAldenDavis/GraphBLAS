@@ -13,7 +13,7 @@
 {                                       \
     GB_FREE (&Ap, Ap_size) ;            \
     GB_FREE (&Ai, Ai_size) ;            \
-    GB_FREE (&Ax_new, Ax_size) ;        \
+    GB_FREE (&Ax, Ax_size) ;            \
 }
 
 GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
@@ -49,8 +49,7 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     const size_t asize = A->type->size ;
     int64_t *restrict Ap = NULL ; size_t Ap_size = 0 ;
     int64_t *restrict Ai = NULL ; size_t Ai_size = 0 ;
-    GB_void *restrict Ax = NULL ;
-    GB_void *restrict Ax_new = NULL ; size_t Ax_size = 0 ;
+    GB_void *restrict Ax = NULL ; size_t Ax_size = 0 ;
     Ap = GB_MALLOC (avdim+1, int64_t, &Ap_size) ; 
     Ai = GB_MALLOC (anzmax, int64_t, &Ai_size) ;
     if (Ap == NULL || Ai == NULL)
@@ -64,7 +63,9 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     const bool A_iso = A->iso ;
     if (A_iso)
     { 
-        // remove A->x from the matrix so it is not freed by GB_phbix_free
+        // A is iso.  Remove A->x from the matrix so it is not freed by
+        // GB_phbix_free.  It is not modified by GB_convert_bitmap_worker, and
+        // is transplanted back into A, below.
         Ax = A->x ;
         Ax_shallow = A->x_shallow ;
         Ax_size = A->x_size ;
@@ -72,43 +73,39 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     }
     else
     {
-        Ax_new = GB_MALLOC (anzmax * asize, GB_void, &Ax_size) ;
+        // A is not iso.  Allocate new space for Ax, which is filled by
+        // GB_convert_bitmap_worker.
+        Ax = GB_MALLOC (anzmax * asize, GB_void, &Ax_size) ;
         Ax_shallow = false ;
-        if (Ax_new == NULL)
+        if (Ax == NULL)
         { 
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        Ax = Ax_new ;
     }
 
     //--------------------------------------------------------------------------
-    // convert to sparse format (Ap, Ai, and Ax_new)
+    // convert to sparse format (Ap, Ai, and Ax)
     //--------------------------------------------------------------------------
 
-    // the value are not converted if A is iso
-    GB_OK (GB_convert_bitmap_worker (Ap, Ai, NULL, Ax_new, &anvec_nonempty, A,
-        Context)) ;
+    // the values are not converted if A is iso
+    GB_OK (GB_convert_bitmap_worker (Ap, Ai, NULL, (A_iso) ? NULL : Ax,
+        &anvec_nonempty, A, Context)) ;
 
     //--------------------------------------------------------------------------
     // free prior content of A and transplant the new content
     //--------------------------------------------------------------------------
 
     GB_phbix_free (A) ;
-
     A->p = Ap ; A->p_size = Ap_size ; A->p_shallow = false ;
     A->i = Ai ; A->i_size = Ai_size ; A->i_shallow = false ;
     A->x = Ax ; A->x_size = Ax_size ; A->x_shallow = Ax_shallow ;
-
     A->iso = A_iso ;            // OK: convert_bitmap_to_sparse, keep iso
-
     A->nvals = 0 ;              // only used when A is bitmap
-
     A->plen = avdim ;
     A->nvec = avdim ;
     A->nvec_nonempty = anvec_nonempty ;
-
     A->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

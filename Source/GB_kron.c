@@ -137,7 +137,6 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
 
     bool A_is_pattern, B_is_pattern ;
     GB_binop_pattern (&A_is_pattern, &B_is_pattern, false, op->opcode) ;
-
     if (A_transpose)
     { 
         // AT = A' and typecast to op->xtype

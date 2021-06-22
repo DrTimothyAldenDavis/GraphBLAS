@@ -35,6 +35,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    ASSERT_MATRIX_OK (A, "A to duplicate", GB0) ;
     ASSERT (Chandle != NULL) ;
     ASSERT (!GB_PENDING (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
