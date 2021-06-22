@@ -2479,10 +2479,6 @@ type $T$ to Boolean and returning a value of type $T$ that is 1 for true or
 zero for false.  The set of \verb'GxB_L*_'$T$ operators are useful since they
 can be combined with non-Boolean monoids in a semiring.
 
-\begin{alert}
-{\bf SPEC:} The definition of integer division by zero is an extension to the spec.
-\end{alert}
-
 Floating-point operations follow the IEEE 754 standard.  Thus, computing $x/0$
 for a floating-point $x$ results in \verb'+Inf' if $x$ is positive, \verb'-Inf'
 if $x$ is negative, and \verb'NaN' if $x$ is zero.  The application is not
