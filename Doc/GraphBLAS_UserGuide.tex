@@ -139,7 +139,7 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 5.1.0 (FIXME: date)
+\item Version 5.1.0 BETA1 (June 22, 2021)    % FIXME
 
     \begin{packed_itemize}
     \item iso matrices added:  these are matrices and vectors whose
@@ -12501,19 +12501,16 @@ The LAGraph project is a community-wide effort to create graph algorithms based
 on GraphBLAS (any implementation of the API, not just SuiteSparse: GraphBLAS).
 Some of the algorithms and utilities in LAGraph are listed in the table below.
 Many additional algorithms are planned.  Refer to
-\url{https://github.com/GraphBLAS/LAGraph} for a current list of algorithms
-(the one below will soon be out of date).  Most of the functions in the
-\verb'Demo/' folder in SuiteSparse:GraphBLAS will eventually be translated into
-algorithms or utilities for LAGraph.
+\url{https://github.com/GraphBLAS/LAGraph} for a current list of algorithms. All
+functions in the \verb'Demo/' folder in SuiteSparse:GraphBLAS will eventually
+be translated into algorithms or utilities for LAGraph, and then removed
+from \verb'GraphBLAS/Demo'.
 
 To use LAGraph with SuiteSparse:GraphBLAS, place the two folders \verb'LAGraph'
 and \verb'GraphBLAS' in the same parent directory.  This allows the
 \verb'cmake' script in LAGraph to find the copy of GraphBLAS.  Alternatively,
 the GraphBLAS source could be placed anywhere, as long as
 \verb'sudo make install' is performed.
-
-Build \verb'GraphBLAS' first, then the \verb'LAGraph' library, and then the
-tests in \verb'LAGraph/Test'.
 
 %-------------------------------------------------------------------------------
 \subsection{Maximal independent set}

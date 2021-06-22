@@ -1,9 +1,11 @@
-Version 5.1.0, (FIXME: DATE), 2021
+Version 5.1.0, June 22, 2021 (BETA1)
 
     * iso matrices and vectors added
     * GxB_*_build_Scalar added: builds an iso matrix or vector
+    * import/export: can now import/export iso matrices and vectors
     * GxB_*_pack/unpack methods added
     * GrB.argmin/argmax: added to @GrB interface
+    * GxB_PRINT_1BASED: added to the global settings
 
 Version 5.0.6, May 24, 2021
 
@@ -367,7 +369,7 @@ Version 2.2.0 (BETA2), Nov 15, 2018
 
     * added additional pagerank example in Demo/
     * beta bug fix: GxB_Monoid_define: bug fix for C struct types.  bug first
-        appears in Version 2.2.0 (BETA1), not in any non-BETA final release. 
+        appears in Version 2.2.0 (BETA1), not in any non-BETA final release.
 
 Version 2.2.0 (BETA1), Nov 2, 2018
 
@@ -496,7 +498,7 @@ Version 0.5.0: Nov 13, 2017
 Version 0.4.0: Oct 24, 2017
 
     * SPEC: SuiteSparse:GraphBLAS 0.4.0 fully conforms to 1.1.0 of the spec
-    * GrB_assign functions added; all now conform to the 1.1.0 spec 
+    * GrB_assign functions added; all now conform to the 1.1.0 spec
     * renamed all prior GrB_*_assign functions to GrB_*_subassign
 
 Version 0.3.0: Oct 14, 2017
@@ -541,7 +543,7 @@ Version 0.1.2: Aug 30, 2017
     * changes for GraphBLAS spec 1.0.2 (Aug 10, 2017 version):
         * GrB_Vector_reduce_Monoid renamed to GrB_Matrix_reduce_Monoid
         * GrB_Vector_reduce_BinaryOp renamed to GrB_Matrix_reduce_BinaryOp
-        * GrB_Row_extract was renamed in the spec to GrB_Col_extract, but 
+        * GrB_Row_extract was renamed in the spec to GrB_Col_extract, but
             this version keeps the name GrB_Column_extract since it parallels
             the name GrB_Column_assign.
 
