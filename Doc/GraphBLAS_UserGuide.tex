@@ -407,9 +407,7 @@ case that they cause a serious conflict with future methods.
 The only methods that have been fully deprecated and removed are the no-input
 \verb'GrB_wait' and \verb'GrB_error' methods, which are incompatible with the
 new 1-input \verb'GrB_wait' and 2-input \verb'GrB_error' methods defined in
-the latest version of the C API Specification, and the
-\verb'GrB_Matrix_reduce_BinaryOp' function, which is limited to binary
-operators that correspond to built-in monoids.
+the latest version of the C API Specification.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -995,7 +993,6 @@ The Octave/MATLAB interface to SuiteSparse:GraphBLAS is included with this
 distribution, described in Section~\ref{octave}.
 It is fully polished, and fully tested, but does have
 some limitations that will be addressed in future releases.
-
 A beta version of a Python interface is now available, as is a
 Julia interface.  These are not part of the SuiteSparse:GraphBLAS distribution.
 See the links below (see Sections \ref{python} and \ref{julia}).
@@ -1032,26 +1029,16 @@ Some features for Octave/MATLAB sparse matrices are not yet available for
 GraphBLAS matrices.  Some of these may be added in future releases.
 
 \begin{packed_itemize}
-    \item If you save a GrB matrix object using one version
-        of SuiteSparse:GraphBLAS, you can load it back in in that version or in
-        a later version.  You cannot go backwards, and save in v5.x and load in
-        v4.x, for example.
     \item \verb'GrB' matrices with dimension larger than \verb'2^53' do not
-        display properly in the \verb'whos' command.  Ocatve/MATLAB gets this
-        information from \verb'size(A)', which returns a correct result, but
-        rounds it to double before displaying it.  The size is displayed
+        display properly in the \verb'whos' command.  The size is displayed
         correctly with \verb'disp' or \verb'display'.
     \item Non-blocking mode is not exploited; this would require
         a Octave/MATLAB mexFunction to modify its inputs, which is
         technically possible but not permitted by the Octave/MATLAB API.
         This can have significant impact on performance, if an
-        m-file makes many repeated tiny changes to a matrix.  This kind of
-        computation can often be done with good performance in the C API,
-        but will be very slow in Octave/MATLAB.
-    \item Linear indexing, or \verb'A(:)' for a 2D matrix, and
-        a single output of \verb'I=find(A)'.
-    \item The second output for \verb'min' and \verb'max',
-        and the \verb'includenan' option.
+        m-file makes many repeated tiny changes to a matrix.  This 
+        can be done in the C API but not Octave/MATLAB.
+    \item Linear indexing: \verb'A(:)' for a 2D matrix, and \verb'I=find(A)'.
     \item Singleton expansion.
     \item Dynamically growing arrays, where \verb'C(i)=x' can increase
         the size of \verb'C'.
@@ -1061,9 +1048,6 @@ GraphBLAS matrices.  Some of these may be added in future releases.
         a monoid for \verb'C=A*B', and thus MATLAB does not support
         matrix-matrix multiplication with \verb'uint8' matrices.
         In GraphBLAS, \verb'uint8' addition acts in a modulo fashion.
-        Saturating binary operators could be added in the future,
-        so that \verb"GrB.eadd (A, '+saturate', B)" could return the
-        MATLAB result.
     \item Solvers, so that \verb'x=A\b' could return a GF(2) solution,
         for example.
     \item Sparse matrices with dimension higher than 2.
@@ -1081,7 +1065,7 @@ it also appears at
 
 See Jim Kitchen and Erik Welch's (both from Anaconda, Inc.) Python interface at
 \href{https://github.com/metagraph-dev/grblas}{https://github.com/metagraph-dev/grblas}.
-See also
+See also \\
 \href{https://anaconda.org/conda-forge/graphblas}{https://anaconda.org/conda-forge/graphblas}.
 
 %===============================================================================
@@ -1089,7 +1073,10 @@ See also
 %===============================================================================
 \label{julia}
 
-See Abhinav Mehndiratta's Julia interface at  \\
+Will Kimmerer is developing a Julia interface for GraphBLAS; see \newline
+\href{https://github.com/JuliaSparse/SuiteSparseGraphBLAS.jl}{https://github.com/JuliaSparse/SuiteSparseGraphBLAS.jl}.
+
+See also Abhinav Mehndiratta's Julia interface at \\
 \href{https://github.com/abhinavmehndiratta/SuiteSparseGraphBLAS.jl}{https://github.com/abhinavmehndiratta/SuiteSparseGraphBLAS.jl}.
 
 %===============================================================================
@@ -1222,6 +1209,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_init'      & start up GraphBLAS with different \verb'malloc' & \ref{xinit} \\
 \verb'GrB_Info'      & status code returned by GraphBLAS functions  & \ref{info} \\
 \verb'GrB_error'     & get more details on the last error           & \ref{error} \\
+\verb'GrB_wait'      & finish all pending work                      & \ref{wait_all} \\
 \verb'GrB_finalize'  & finish GraphBLAS                             & \ref{finalize} \\
 \hline
 \end{tabular}
@@ -1778,7 +1766,6 @@ methods for the \verb'GrB_Type' object:
 }
 \vspace{0.2in}
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Type\_new:} create a user-defined type}
 %-------------------------------------------------------------------------------
@@ -1889,7 +1876,6 @@ This function acts just like \verb'sizeof(type)' in the C language.  For
 example \verb'GxB_Type_size (&s, GrB_INT32)' sets \verb's' to 4, the same as
 \verb'sizeof(int32_t)'.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Type\_free:} free a user-defined type}
 %-------------------------------------------------------------------------------
@@ -2121,13 +2107,14 @@ object:
 
 \vspace{0.1in}
 {\footnotesize
-\begin{tabular}{ll}
+\begin{tabular}{lll}
+GraphBLAS function   & purpose                                      & Section \\
 \hline
-\verb'GrB_UnaryOp_new'   & create a user-defined unary operator  \\
-\verb'GrB_UnaryOp_wait'  & wait for a user-defined unary operator \\
-\verb'GxB_UnaryOp_ztype' & return the type of the output $z$ for $z=f(x)$\\
-\verb'GxB_UnaryOp_xtype' & return the type of the input $x$ for $z=f(x)$\\
-\verb'GrB_UnaryOp_free'  & free a user-defined unary operator  \\
+\verb'GrB_UnaryOp_new'   & create a user-defined unary operator         & \ref{unaryop_new} \\
+\verb'GrB_UnaryOp_wait'  & wait for a user-defined unary operator       & \ref{unaryop_wait} \\
+\verb'GxB_UnaryOp_ztype' & return the type of the output $z$ for $z=f(x)$   & \ref{unaryop_ztype} \\
+\verb'GxB_UnaryOp_xtype' & return the type of the input $x$ for $z=f(x)$    & \ref{unaryop_xtype} \\
+\verb'GrB_UnaryOp_free'  & free a user-defined unary operator   & \ref{unaryop_free} \\
 \hline
 \end{tabular}
 }
@@ -2184,6 +2171,7 @@ aliased to each other.
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_UnaryOp\_wait:} wait for a unary operator}
 %-------------------------------------------------------------------------------
+\label{unaryop_wait}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -2566,14 +2554,15 @@ object:
 
 \vspace{0.2in}
 {\footnotesize
-\begin{tabular}{ll}
+\begin{tabular}{lll}
+GraphBLAS function   & purpose                                      & Section \\
 \hline
-\verb'GrB_BinaryOp_new'   & create a user-defined binary operator \\
-\verb'GrB_BinaryOp_wait'  & wait for a user-defined binary operator \\
-\verb'GxB_BinaryOp_ztype' & return the type of the output $z$ for $z=f(x,y)$\\
-\verb'GxB_BinaryOp_xtype' & return the type of the input $x$ for $z=f(x,y)$\\
-\verb'GxB_BinaryOp_ytype' & return the type of the input $y$ for $z=f(x,y)$\\
-\verb'GrB_BinaryOp_free'  & free a user-defined binary operator \\
+\verb'GrB_BinaryOp_new'   & create a user-defined binary operator   & \ref{binaryop_new} \\
+\verb'GrB_BinaryOp_wait'  & wait for a user-defined binary operator & \ref{binaryop_wait} \\
+\verb'GxB_BinaryOp_ztype' & return the type of the output $z$ for $z=f(x,y)$    & \ref{binaryop_ztype} \\
+\verb'GxB_BinaryOp_xtype' & return the type of the input $x$ for $z=f(x,y)$     & \ref{binaryop_xtype} \\
+\verb'GxB_BinaryOp_ytype' & return the type of the input $y$ for $z=f(x,y)$     & \ref{binaryop_ytype} \\
+\verb'GrB_BinaryOp_free'  & free a user-defined binary operator     & \ref{binaryop_free} \\
 \hline
 \end{tabular}
 }
@@ -2629,6 +2618,7 @@ should be computed.  Future versions may use additional pointer aliasing.
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_BinaryOp\_wait:} wait for a binary operator}
 %-------------------------------------------------------------------------------
+\label{binaryop_wait}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -2790,13 +2780,6 @@ the non-deterministic nature of intra-thread synchronization.
 %===============================================================================
 \label{selectop}
 
-\begin{alert}
-NOTE: the API for the select function has changed in v4.0.1 of
-SuiteSparse:GraphBLAS.  The former function signature (in v3.3.3 and earlier)
-included the dimensions of the matrix.  These are not needed since they can be
-passed in as part of the \verb'thunk', if needed.
-\end{alert}
-
 A select operator is a scalar function of the form
 $z=f(i,j,a_{ij},\mbox{thunk})$ that is applied to the entries $a_{ij}$ of
 an $m$-by-$n$ matrix.  The domain (type) of $z$ is always boolean.  The domain
@@ -2821,9 +2804,11 @@ bool f                      // returns true if A(i,j) is kept
 
 Operators can be used on any type, including user-defined types, except that
 the comparators \verb'GT', \verb'GE', \verb'LT', and \verb'LE' can only be used
-with built-in types.  User-defined select operators can also be created.
+with real built-in types (they cannot be used for built-in complex types).
+User-defined select operators can also be created.
 
 \vspace{0.2in}
+\noindent
 {\footnotesize
 \begin{tabular}{lll}
 \hline
@@ -2858,19 +2843,19 @@ The following methods operate on the \verb'GxB_SelectOp' object:
 
 \vspace{0.1in}
 {\footnotesize
-\begin{tabular}{ll}
+\begin{tabular}{lll}
+GraphBLAS function   & purpose                                      & Section \\
 \hline
-\verb'GxB_SelectOp_new'   & create a user-defined select operator  \\
-\verb'GxB_SelectOp_wait'  & wait for a user-defined select operator \\
-\verb'GxB_SelectOp_xtype' & return the type of the input $x$ \\
-\verb'GxB_SelectOp_ttype' & return the type of the input {\em thunk} \\
-\verb'GxB_SelectOp_free'  & free a user-defined select operator  \\
+\verb'GxB_SelectOp_new'   & create a user-defined select operator   & \ref{selectop_new} \\
+\verb'GxB_SelectOp_wait'  & wait for a user-defined select operator & \ref{selectop_wait} \\
+\verb'GxB_SelectOp_xtype' & return the type of the input $x$        & \ref{selectop_xtype} \\
+\verb'GxB_SelectOp_ttype' & return the type of the input {\em thunk}& \ref{selectop_ttype} \\
+\verb'GxB_SelectOp_free'  & free a user-defined select operator     & \ref{selectop_free} \\
 \hline
 \end{tabular}
 }
 \vspace{0.1in}
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_SelectOp\_new:} create a user-defined select operator}
 %-------------------------------------------------------------------------------
@@ -2911,9 +2896,11 @@ or user-defined, or it may even be \verb'GrB_NULL'.  If the \verb'ttype' is
 The \verb'const void *thunk' parameter on input to the user \verb'function'
 will be passed as \verb'NULL'.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GB\_SelectOp\_wait:} wait for a select operator}
 %-------------------------------------------------------------------------------
+\label{selectop_wait}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -3110,15 +3097,16 @@ object:
 
 \vspace{0.2in}
 {\footnotesize
-\begin{tabular}{ll}
+\begin{tabular}{lll}
+GraphBLAS function   & purpose                                      & Section \\
 \hline
-\verb'GrB_Monoid_new'       & create a user-defined monoid \\
-\verb'GrB_Monoid_wait'      & wait for a user-defined monoid \\
-\verb'GxB_Monoid_terminal_new'  & create a monoid that has a terminal value\\
-\verb'GxB_Monoid_operator'  & return the monoid operator \\
-\verb'GxB_Monoid_identity'  & return the monoid identity value \\
-\verb'GxB_Monoid_terminal'  & return the monoid terminal value (if any) \\
-\verb'GrB_Monoid_free'      & free a monoid \\
+\verb'GrB_Monoid_new'       & create a user-defined monoid                  & \ref{monoid_new} \\
+\verb'GrB_Monoid_wait'      & wait for a user-defined monoid                & \ref{monoid_wait} \\
+\verb'GxB_Monoid_terminal_new'  & create a monoid that has a terminal value & \ref{monoid_terminal_new} \\
+\verb'GxB_Monoid_operator'  & return the monoid operator                    & \ref{monoid_operator} \\
+\verb'GxB_Monoid_identity'  & return the monoid identity value              & \ref{monoid_identity} \\
+\verb'GxB_Monoid_terminal'  & return the monoid terminal value (if any)     & \ref{monoid_terminal} \\
+\verb'GrB_Monoid_free'      & free a monoid                                 & \ref{monoid_free} \\
 \hline
 \end{tabular}
 }
@@ -3161,6 +3149,7 @@ instead.
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Monoid\_wait:} wait for a monoid}
 %-------------------------------------------------------------------------------
+\label{monoid_wait}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -3264,6 +3253,7 @@ GrB_Info GxB_Monoid_operator        // return the monoid operator
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Monoid\_identity:} return the monoid identity}
 %-------------------------------------------------------------------------------
+\label{monoid_identity}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -3287,6 +3277,7 @@ the \verb'ztype', followed by \verb'GxB_Type_size' to get its size.
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Monoid\_terminal:} return the monoid terminal value}
 %-------------------------------------------------------------------------------
+\label{monoid_terminal}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -3356,13 +3347,14 @@ built-in semirings.  The next sections define the following methods for the
 
 \vspace{0.2in}
 {\footnotesize
-\begin{tabular}{ll}
+\begin{tabular}{lll}
+GraphBLAS function   & purpose                                      & Section \\
 \hline
-\verb'GrB_Semiring_new'       & create a user-defined semiring \\
-\verb'GrB_Semiring_wait'      & wait for a user-defined semiring \\
-\verb'GxB_Semiring_add'       & return the additive monoid of a semiring \\
-\verb'GxB_Semiring_multiply'  & return the binary operator of a semiring \\
-\verb'GrB_Semiring_free'      & free a semiring \\
+\verb'GrB_Semiring_new'       & create a user-defined semiring           & \ref{semiring_new} \\
+\verb'GrB_Semiring_wait'      & wait for a user-defined semiring         & \ref{semiring_wait} \\
+\verb'GxB_Semiring_add'       & return the additive monoid of a semiring & \ref{semiring_add} \\
+\verb'GxB_Semiring_multiply'  & return the binary operator of a semiring & \ref{semiring_multiply} \\
+\verb'GrB_Semiring_free'      & free a semiring                          & \ref{semiring_free} \\
 \hline
 \end{tabular}
 }
@@ -3496,6 +3488,7 @@ use is preferred, for portability to other GraphBLAS implementations.
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Semiring\_wait:} wait for a semiring}
 %-------------------------------------------------------------------------------
+\label{semiring_wait}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -3590,18 +3583,19 @@ and destroy a SuiteSparse:GraphBLAS scalar, \verb'GxB_Scalar':
 
 \vspace{0.2in}
 {\footnotesize
-\begin{tabular}{ll}
+\begin{tabular}{lll}
+GraphBLAS function   & purpose                                      & Section \\
 \hline
-\verb'GxB_Scalar_new'            & create a scalar \\
-\verb'GxB_Scalar_wait'           & wait for a scalar \\
-\verb'GxB_Scalar_dup'            & copy a scalar \\
-\verb'GxB_Scalar_clear'          & clear a scalar of its entry \\
+\verb'GxB_Scalar_new'            & create a scalar                      & \ref{scalar_new} \\
+\verb'GxB_Scalar_wait'           & wait for a scalar                    & \ref{scalar_wait} \\
+\verb'GxB_Scalar_dup'            & copy a scalar                        & \ref{scalar_dup} \\
+\verb'GxB_Scalar_clear'          & clear a scalar of its entry          & \ref{scalar_clear} \\
 \verb'GxB_Scalar_nvals'          & return the number of entries in a
-                                   scalar (0 or 1) \\
-\verb'GxB_Scalar_type'           & return the type of a scalar \\
-\verb'GxB_Scalar_setElement'     & set the single entry of a scalar \\
-\verb'GxB_Scalar_extractElement' & get the single entry from a scalar \\
-\verb'GxB_Scalar_free'           & free a scalar \\
+                                   scalar                               & \ref{scalar_nvals}  \\
+\verb'GxB_Scalar_type'           & return the type of a scalar          & \ref{scalar_type} \\
+\verb'GxB_Scalar_setElement'     & set the single entry of a scalar     & \ref{scalar_setElement} \\
+\verb'GxB_Scalar_extractElement' & get the single entry from a scalar   & \ref{scalar_extractElement} \\
+\verb'GxB_Scalar_free'           & free a scalar                        & \ref{scalar_free} \\
 \hline
 \end{tabular}
 }
@@ -3630,6 +3624,7 @@ type.  The pattern of the new scalar is empty.
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Scalar\_wait:} wait for a scalar}
 %-------------------------------------------------------------------------------
+\label{scalar_wait}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -3831,37 +3826,37 @@ and destroy a GraphBLAS sparse vector, \verb'GrB_Vector':
 
 \vspace{0.2in}
 \noindent
+\hspace{-0.75in}
 {\footnotesize
-\begin{tabular}{ll}
+\begin{tabular}{lll}
+GraphBLAS function   & purpose                                      & Section \\
 \hline
-\verb'GrB_Vector_new'            & create a vector \\
-\verb'GrB_Vector_wait'           & wait for a vector \\
-\verb'GrB_Vector_dup'            & copy a vector \\
-\verb'GrB_Vector_clear'          & clear a vector of all entries \\
-\verb'GrB_Vector_size'           & size of a vector \\
-\verb'GrB_Vector_nvals'          & number of entries in a vector \\
-\verb'GxB_Vector_type'           & type of a vector \\
-\verb'GrB_Vector_build'          & build a vector from tuples \\
-\verb'GxB_Vector_build_Scalar'   & build a vector from tuples \\
-\verb'GrB_Vector_setElement'     & add an entry to a vector \\
-\verb'GrB_Vector_extractElement' & get an entry from a vector \\
-\verb'GrB_Vector_removeElement'  & remove an entry from a vector \\
-\verb'GrB_Vector_extractTuples'  & get all entries from a vector \\
-\verb'GrB_Vector_resize'         & resize a vector \\
-% new in v5:------------
-\verb'GxB_Vector_diag'           & extract a diagonal from a matrix \\
-%-----------------------
-\verb'GrB_Vector_free'           & free a vector \\
+\verb'GrB_Vector_new'            & create a vector                  & \ref{vector_new} \\
+\verb'GrB_Vector_wait'           & wait for a vector                & \ref{vector_wait} \\
+\verb'GrB_Vector_dup'            & copy a vector                    & \ref{vector_dup} \\
+\verb'GrB_Vector_clear'          & clear a vector of all entries    & \ref{vector_clear} \\
+\verb'GrB_Vector_size'           & size of a vector                 & \ref{vector_size} \\
+\verb'GrB_Vector_nvals'          & number of entries in a vector    & \ref{vector_nvals} \\
+\verb'GxB_Vector_type'           & type of a vector                 & \ref{vector_type} \\
+\verb'GrB_Vector_build'          & build a vector from tuples       & \ref{vector_build} \\
+\verb'GxB_Vector_build_Scalar'   & build a vector from tuples       & \ref{vector_build_Scalar} \\
+\verb'GrB_Vector_setElement'     & add an entry to a vector         & \ref{vector_setElement} \\
+\verb'GrB_Vector_extractElement' & get an entry from a vector       & \ref{vector_extractElement} \\
+\verb'GrB_Vector_removeElement'  & remove an entry from a vector    & \ref{vector_removeElement} \\
+\verb'GrB_Vector_extractTuples'  & get all entries from a vector    & \ref{vector_extractTuples} \\
+\verb'GrB_Vector_resize'         & resize a vector                  & \ref{vector_resize} \\
+\verb'GxB_Vector_diag'           & extract a diagonal from a matrix & \ref{vector_diag} \\
+\verb'GrB_Vector_free'           & free a vector                    & \ref{vector_free} \\
 \hline
 \hline
-\verb'GxB_Vector_import_CSC',    \verb'GxB_Vector_pack_CSC'         & import a vector in CSC format \\
-\verb'GxB_Vector_export_CSC',    \verb'GxB_Vector_unpack_CSC'       & export a vector in CSC format \\
+\verb'GxB_Vector_import_CSC',    \verb'GxB_Vector_pack_CSC'         & import in CSC format    & \ref{vector_import_csc}, \ref{vector_pack_csc} \\
+\verb'GxB_Vector_export_CSC',    \verb'GxB_Vector_unpack_CSC'       & export in CSC format    & \ref{vector_export_csc}, \ref{vector_unpack_csc} \\
 \hline
-\verb'GxB_Vector_import_Bitmap', \verb'GxB_Vector_pack_Bitmap'      & import a vector in bitmap format \\
-\verb'GxB_Vector_export_Bitmap', \verb'GxB_Vector_unpack_Bitmap'    & export a vector in bitmap format \\
+\verb'GxB_Vector_import_Bitmap', \verb'GxB_Vector_pack_Bitmap'      & import in bitmap format & \ref{vector_import_bitmap}, \ref{vector_pack_bitmap} \\
+\verb'GxB_Vector_export_Bitmap', \verb'GxB_Vector_unpack_Bitmap'    & export in bitmap format & \ref{vector_export_bitmap}, \ref{vector_unpack_bitmap} \\
 \hline
-\verb'GxB_Vector_import_Full',   \verb'GxB_Vector_pack_Full'        & import a vector in full format \\
-\verb'GxB_Vector_export_Full',   \verb'GxB_Vector_unpack_Full'      & export a vector in full format \\
+\verb'GxB_Vector_import_Full',   \verb'GxB_Vector_pack_Full'        & import in full format   & \ref{vector_import_full}, \ref{vector_pack_full} \\
+\verb'GxB_Vector_export_Full',   \verb'GxB_Vector_unpack_Full'      & export in full format   & \ref{vector_export_full}, \ref{vector_unpack_full} \\
 \hline
 \end{tabular}
 }
@@ -3896,6 +3891,7 @@ type.  The pattern of the new vector is empty.
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_wait:} wait for a vector}
 %-------------------------------------------------------------------------------
+\label{vector_wait}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -4069,13 +4065,13 @@ in \verb'GrB_Matrix_build' is implicitly a vector of length \verb'nvals' all
 equal to zero.  Otherwise the methods are identical.
 
 \begin{alert}
-{\bf SPEC:} As an extension to the spec, results are defined even if \verb'dup' is non-associative.
+{\bf SPEC:} Results are defined even if \verb'dup' is non-associative.
 \end{alert}
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_build\_Scalar:} build a vector from a set of tuples}
 %-------------------------------------------------------------------------------
-\label{vector_build_scalar}
+\label{vector_build_Scalar}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -4122,6 +4118,7 @@ matrix, \verb'A(i,0) = x', where the column index for a vector is implicitly
 \verb'GrB_Matrix_setElement' in Section~\ref{matrix_setElement}.
 If an error occurs, \verb'GrB_error(&err,w)' returns details about the error.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_extractElement:} get an entry from a vector}
 %-------------------------------------------------------------------------------
@@ -4144,9 +4141,9 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 method are discussed in Section~\ref{matrix_extractElement}, which discusses
 \verb'GrB_Matrix_extractElement'.  In this case, the column index is implicitly
 \verb'j=0'.
-{\bf NOTE: }  if no entry is present at \verb'v(i)', then
-\verb'x' is not modified, and the return value of
-\verb'GrB_Vector_extractElement' is \verb'GrB_NO_VALUE'.
+If \verb'v(i)' is not present, then
+\verb'x' is not modified, and 
+\verb'GrB_Vector_extractElement' returns \verb'GrB_NO_VALUE'.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_removeElement:} remove an entry from a vector}
@@ -4289,62 +4286,61 @@ and destroy a GraphBLAS sparse matrix, \verb'GrB_Matrix':
 
 \vspace{0.2in}
 \noindent
+\hspace{-0.75in}
 {\footnotesize
-\begin{tabular}{ll}
+\begin{tabular}{lll}
+GraphBLAS function   & purpose                                      & Section \\
 \hline
-\verb'GrB_Matrix_new'           & create a matrix \\
-\verb'GrB_Matrix_wait'          & wait for a matrix \\
-\verb'GrB_Matrix_dup'           & copy a matrix \\
-\verb'GrB_Matrix_clear'         & clear a matrix of all entries \\
-\verb'GrB_Matrix_nrows'         & number of rows of a matrix \\
-\verb'GrB_Matrix_ncols'         & number of columns of a matrix \\
-\verb'GrB_Matrix_nvals'         & number of entries in a matrix \\
-\verb'GxB_Matrix_type'          & type of a matrix \\
-\verb'GrB_Matrix_build'         & build a matrix from tuples \\
-\verb'GxB_Matrix_build_Scalar'  & build a matrix from tuples \\
-\verb'GrB_Matrix_setElement'    & add an entry to a matrix \\
-\verb'GrB_Matrix_extractElement'& get an entry from a matrix \\
-\verb'GrB_Matrix_removeElement' & remove an entry from a matrix \\
-\verb'GrB_Matrix_extractTuples' & get all entries from a matrix \\
-\verb'GrB_Matrix_resize'        & resize a matrix \\
-% new in v5:------------
-\verb'GxB_Matrix_concat'        & concatenate matrices into a matrix \\
-\verb'GxB_Matrix_split'         & split a matrix into matrices \\
-\verb'GxB_Matrix_diag'          & diagonal matrix from vector \\
-%-----------------------
-\verb'GrB_Matrix_free'          & free a matrix \\
+\verb'GrB_Matrix_new'           & create a matrix                       & \ref{matrix_new} \\
+\verb'GrB_Matrix_wait'          & wait for a matrix                     & \ref{matrix_wait} \\
+\verb'GrB_Matrix_dup'           & copy a matrix                         & \ref{matrix_dup} \\
+\verb'GrB_Matrix_clear'         & clear a matrix of all entries         & \ref{matrix_clear} \\
+\verb'GrB_Matrix_nrows'         & number of rows of a matrix            & \ref{matrix_nrows} \\
+\verb'GrB_Matrix_ncols'         & number of columns of a matrix         & \ref{matrix_ncols} \\
+\verb'GrB_Matrix_nvals'         & number of entries in a matrix         & \ref{matrix_nvals} \\
+\verb'GxB_Matrix_type'          & type of a matrix                      & \ref{matrix_type} \\
+\verb'GrB_Matrix_build'         & build a matrix from tuples            & \ref{matrix_build} \\
+\verb'GxB_Matrix_build_Scalar'  & build a matrix from tuples            & \ref{matrix_build_Scalar} \\
+\verb'GrB_Matrix_setElement'    & add an entry to a matrix              & \ref{matrix_setElement} \\
+\verb'GrB_Matrix_extractElement'& get an entry from a matrix            & \ref{matrix_extractElement} \\
+\verb'GrB_Matrix_removeElement' & remove an entry from a matrix         & \ref{matrix_removeElement} \\
+\verb'GrB_Matrix_extractTuples' & get all entries from a matrix         & \ref{matrix_extractTuples} \\
+\verb'GrB_Matrix_resize'        & resize a matrix                       & \ref{matrix_resize} \\
+\verb'GxB_Matrix_concat'        & concatenate matrices                  & \ref{matrix_concat} \\
+\verb'GxB_Matrix_split'         & split a matrix into matrices          & \ref{matrix_split} \\
+\verb'GxB_Matrix_diag'          & diagonal matrix from vector           & \ref{matrix_diag} \\
+\verb'GrB_Matrix_free'          & free a matrix                         & \ref{matrix_free} \\
 \hline
 \hline
-\verb'GxB_Matrix_import_CSR',      \verb'GxB_Matrix_import_CSR'      & import a matrix in CSR form \\
-\verb'GxB_Matrix_export_CSR',      \verb'GxB_Matrix_export_CSR'      & export a matrix in CSR form \\
+\verb'GxB_Matrix_import_CSR',      \verb'GxB_Matrix_import_CSR'      & import in CSR form          & \ref{matrix_import_csr}, \ref{matrix_pack_csr} \\
+\verb'GxB_Matrix_export_CSR',      \verb'GxB_Matrix_export_CSR'      & export in CSR form          & \ref{matrix_export_csr}, \ref{matrix_unpack_csr} \\
 \hline
-\verb'GxB_Matrix_import_CSC',      \verb'GxB_Matrix_import_CSC'      & import a matrix in CSC form \\
-\verb'GxB_Matrix_export_CSC',      \verb'GxB_Matrix_export_CSC'      & export a matrix in CSC form \\
+\verb'GxB_Matrix_import_CSC',      \verb'GxB_Matrix_import_CSC'      & import in CSC form          & \ref{matrix_import_csc}, \ref{matrix_pack_csc} \\
+\verb'GxB_Matrix_export_CSC',      \verb'GxB_Matrix_export_CSC'      & export in CSC form          & \ref{matrix_export_csc}, \ref{matrix_unpack_csc} \\
 \hline
-\verb'GxB_Matrix_import_HyperCSR', \verb'GxB_Matrix_import_HyperCSR' & import a matrix in HyperCSR form \\
-\verb'GxB_Matrix_export_HyperCSR', \verb'GxB_Matrix_export_HyperCSR' & export a matrix in HyperCSR form \\
+\verb'GxB_Matrix_import_HyperCSR', \verb'GxB_Matrix_import_HyperCSR' & import in HyperCSR form     & \ref{matrix_import_hypercsr}, \ref{matrix_pack_hypercsr} \\
+\verb'GxB_Matrix_export_HyperCSR', \verb'GxB_Matrix_export_HyperCSR' & export in HyperCSR form     & \ref{matrix_export_hypercsr}, \ref{matrix_unpack_hypercsr} \\
 \hline
-\verb'GxB_Matrix_import_HyperCSC', \verb'GxB_Matrix_import_HyperCSC' & import a matrix in HyperCSC form \\
-\verb'GxB_Matrix_export_HyperCSC', \verb'GxB_Matrix_export_HyperCSC' & export a matrix in HyperCSC form \\
+\verb'GxB_Matrix_import_HyperCSC', \verb'GxB_Matrix_import_HyperCSC' & import in HyperCSC form     & \ref{matrix_import_hypercsc}, \ref{matrix_pack_hypercsc} \\
+\verb'GxB_Matrix_export_HyperCSC', \verb'GxB_Matrix_export_HyperCSC' & export in HyperCSC form     & \ref{matrix_export_hypercsc}, \ref{matrix_unpack_hypercsc} \\
 \hline
-\verb'GxB_Matrix_import_BitmapR',  \verb'GxB_Matrix_import_BitmapR'  & import a matrix in BitmapR form \\
-\verb'GxB_Matrix_export_BitmapR',  \verb'GxB_Matrix_export_BitmapR'  & export a matrix in BitmapR form \\
+\verb'GxB_Matrix_import_BitmapR',  \verb'GxB_Matrix_import_BitmapR'  & import in BitmapR form      & \ref{matrix_import_bitmapr}, \ref{matrix_pack_bitmapr} \\
+\verb'GxB_Matrix_export_BitmapR',  \verb'GxB_Matrix_export_BitmapR'  & export in BitmapR form      & \ref{matrix_export_bitmapr}, \ref{matrix_unpack_bitmapr} \\
 \hline
-\verb'GxB_Matrix_import_BitmapC',  \verb'GxB_Matrix_import_BitmapC'  & import a matrix in BitmapC form \\
-\verb'GxB_Matrix_export_BitmapC',  \verb'GxB_Matrix_export_BitmapC'  & export a matrix in BitmapC form \\
+\verb'GxB_Matrix_import_BitmapC',  \verb'GxB_Matrix_import_BitmapC'  & import in BitmapC form      & \ref{matrix_import_bitmapc}, \ref{matrix_pack_bitmapc} \\
+\verb'GxB_Matrix_export_BitmapC',  \verb'GxB_Matrix_export_BitmapC'  & export in BitmapC form      & \ref{matrix_export_bitmapc}, \ref{matrix_unpack_bitmapc} \\
 \hline
-\verb'GxB_Matrix_import_FullR',    \verb'GxB_Matrix_import_FullR'    & import a matrix in FullR form \\
-\verb'GxB_Matrix_export_FullR',    \verb'GxB_Matrix_export_FullR'    & export a matrix in FullR form \\
+\verb'GxB_Matrix_import_FullR',    \verb'GxB_Matrix_import_FullR'    & import in FullR form        & \ref{matrix_import_fullr}, \ref{matrix_pack_fullr} \\
+\verb'GxB_Matrix_export_FullR',    \verb'GxB_Matrix_export_FullR'    & export in FullR form        & \ref{matrix_export_fullr}, \ref{matrix_unpack_fullr} \\
 \hline
-\verb'GxB_Matrix_import_FullC',    \verb'GxB_Matrix_import_FullC'    & import a matrix in FullC form \\
-\verb'GxB_Matrix_export_FullC',    \verb'GxB_Matrix_export_FullC'    & export a matrix in FullC form \\
+\verb'GxB_Matrix_import_FullC',    \verb'GxB_Matrix_import_FullC'    & import in FullC form        & \ref{matrix_import_fullc}, \ref{matrix_pack_fullc} \\
+\verb'GxB_Matrix_export_FullC',    \verb'GxB_Matrix_export_FullC'    & export in FullC form        & \ref{matrix_export_fullc}, \ref{matrix_unpack_fullc} \\
 \hline
 \end{tabular}
 }
 \vspace{0.2in}
 
-Refer to Section~\ref{import_export} for a discussion the
-import/export/pack/unpack methods.
+Refer to Section~\ref{import_export} for a discussion of import/export/pack/unpack.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -4372,6 +4368,7 @@ sparse matrices of any type.
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_wait:} wait for a matrix}
 %-------------------------------------------------------------------------------
+\label{matrix_wait}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -4631,7 +4628,7 @@ complex, and logical sparse matrices.
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_build\_Scalar:} build a matrix from a set of tuples}
 %-------------------------------------------------------------------------------
-\label{matrix_build_scalar}
+\label{matrix_build_Scalar}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -4733,7 +4730,6 @@ See Section~\ref{random} for an example of how to use
 \verb'GrB_Matrix_setElement'.
 If an error occurs, \verb'GrB_error(&err,C)' returns details about the error.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_extractElement:} get an entry from a matrix}
 %-------------------------------------------------------------------------------
@@ -4788,7 +4784,6 @@ function should not be arbitrarily intermixed with calls to these other two
 functions.  Everything will work correctly and results will be predictable, it
 will just be slow.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_removeElement:} remove an entry from a matrix}
 %-------------------------------------------------------------------------------
@@ -5066,7 +5061,6 @@ GraphBLAS library.  The data structure of the \verb'GrB_Matrix' and
 
 The export/unpack of a \verb'GrB_Matrix' or \verb'GrB_Vector' is symmetric with the
 import/pack operation.  The export/unpack changes the ownership of the arrays, which are
-
 returned to the user and which contain the
 matrix or vector in the requested format.  Ownership of these arrays is given
 to the user application, which is then responsible for freeing them via the
@@ -7248,6 +7242,21 @@ GrB_Desc_Value ;
 
 \end{itemize}
 
+\vspace{0.2in}
+{\footnotesize
+\begin{tabular}{lll}
+GraphBLAS function   & purpose                                      & Section \\
+\hline
+\verb'GrB_Descriptor_new'        & create a descriptor                  & \ref{descriptor_new} \\
+\verb'GrB_Descriptor_wait'       & wait for a descriptor                & \ref{descriptor_wait} \\
+\verb'GrB_Descriptor_set'        & set a parameter in a descriptor      & \ref{descriptor_set} \\
+\verb'GxB_Desc_set'              & set a parameter in a descriptor      & \ref{desc_set}  \\
+\verb'GxB_Desc_get'              & get a parameter from a descriptor    & \ref{desc_get}  \\
+\verb'GrB_Descriptor_free'       & free a descriptor                    & \ref{descriptor_free} \\
+\hline
+\end{tabular}
+}
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Descriptor\_new:}  create a new descriptor}
 %-------------------------------------------------------------------------------
@@ -7268,9 +7277,11 @@ is valued not structural, neither input matrix is transposed, the method
 used in \verb'C=A*B' is selected automatically, and \verb'GrB_mxm' leaves
 the final sort as pending work).
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Descriptor\_wait:} wait for a descriptor}
 %-------------------------------------------------------------------------------
+\label{descriptor_wait}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -7288,7 +7299,6 @@ exploit non-blocking mode to delay its creation.
 SuiteSparse:GraphBLAS currently does nothing for
 \verb'GrB_Descriptor_wait(&d)', except to ensure that \verb'd' is valid.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Descriptor\_set:}  set a parameter in a descriptor}
 %-------------------------------------------------------------------------------
