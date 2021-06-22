@@ -315,13 +315,13 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
             if (flipxy)
             { 
                 #define GB_BINOP(z,x,y,i,j) fmult (z,y,x)
-                #include "GB_AxB_rowscale_meta.c"
+                #include "GB_AxB_rowscale_template.c"
                 #undef GB_BINOP
             }
             else
             { 
                 #define GB_BINOP(z,x,y,i,j) fmult (z,x,y)
-                #include "GB_AxB_rowscale_meta.c"
+                #include "GB_AxB_rowscale_template.c"
                 #undef GB_BINOP
             }
         }

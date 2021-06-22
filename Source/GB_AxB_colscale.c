@@ -331,13 +331,13 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
             if (flipxy)
             { 
                 #define GB_BINOP(z,x,y,i,j) fmult (z,y,x)
-                #include "GB_AxB_colscale_meta.c"
+                #include "GB_AxB_colscale_template.c"
                 #undef GB_BINOP
             }
             else
             { 
                 #define GB_BINOP(z,x,y,i,j) fmult (z,x,y)
-                #include "GB_AxB_colscale_meta.c"
+                #include "GB_AxB_colscale_template.c"
                 #undef GB_BINOP
             }
         }

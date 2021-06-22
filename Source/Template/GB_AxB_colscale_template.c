@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_colscale_meta: C=A*D where D is a square diagonal matrix
+// GB_AxB_colscale_template: C=A*D where D is a square diagonal matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -12,8 +12,6 @@
 
 // A and C can be jumbled.  D cannot, but it is a diagonal matrix so it is
 // never jumbled.
-
-// TODO: rename this GB_AxB_colscale_template.c, also rowscale
 
 {
 
