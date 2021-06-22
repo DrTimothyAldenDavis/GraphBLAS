@@ -200,7 +200,7 @@ GrB_Info GB_selector
     }
 
     //--------------------------------------------------------------------------
-    // handle the packed case (bitmap, full, or all entries present)
+    // handle the bitmap/as-if-full case
     //--------------------------------------------------------------------------
 
     bool use_bitmap_selector ;
@@ -222,12 +222,12 @@ GrB_Info GB_selector
     }
     else
     { 
-        // For bitmap, full, or packed matrices (sparse/hypersparse with all
-        // entries present, not jumbled, no zombies, and no pending tuples),
-        // use the bitmap selector for all other operators (TRIL, TRIU,
-        // OFFDIAG, NONZERO, EQ*, GT*, GE*, LT*, LE*, and user-defined
+        // For bitmap, full, or as-if-full matrices (sparse/hypersparse with
+        // all entries present, not jumbled, no zombies, and no pending
+        // tuples), use the bitmap selector for all other operators (TRIL,
+        // TRIU, OFFDIAG, NONZERO, EQ*, GT*, GE*, LT*, LE*, and user-defined
         // operators).
-        use_bitmap_selector = GB_is_packed (A) ;
+        use_bitmap_selector = GB_IS_BITMAP (A) || GB_as_if_full (A) ;
     }
 
     //--------------------------------------------------------------------------

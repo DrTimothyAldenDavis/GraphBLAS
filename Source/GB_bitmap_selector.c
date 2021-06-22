@@ -32,7 +32,7 @@ GrB_Info GB_bitmap_selector
 
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A for bitmap selector", GB0) ;
-    ASSERT (GB_is_packed (A)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
     ASSERT (opcode != GB_RESIZE_opcode) ;
     ASSERT (opcode != GB_NONZOMBIE_opcode) ;
     ASSERT (C != NULL && C->static_header) ;

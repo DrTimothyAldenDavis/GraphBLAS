@@ -34,7 +34,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     #if ( !GB_NO_MASK )
     const GrB_Matrix M,         // mask matrix M
     const bool Mask_struct,     // M structural, or not
-    const bool M_packed_in_place,
+    const bool M_in_place,
     #endif
     const GrB_Matrix A,         // A matrix; only the pattern is accessed
     const GrB_Matrix B,         // B matrix; only the pattern is accessed
@@ -161,14 +161,14 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                     }
 
                 }
-                else if (!M_packed_in_place)
+                else if (!M_in_place)
                 {
 
                     //----------------------------------------------------------
                     // phase1: fine hash task, C<M>=A*B or C<!M>=A*B
                     //----------------------------------------------------------
 
-                    // If M_packed_in_place is true, this is skipped.  The mask
+                    // If M_in_place is true, this is skipped.  The mask
                     // M is dense, and is used in-place.
 
                     // The least significant 2 bits of Hf [hash] is the flag f,
@@ -278,7 +278,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                     // phase1: coarse hash task, C<M>=A*B
                     //----------------------------------------------------------
 
-                    if (M_packed_in_place)
+                    if (M_in_place)
                     { 
 
                         //------------------------------------------------------
@@ -353,7 +353,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                     // phase1: coarse hash task, C<!M>=A*B
                     //----------------------------------------------------------
 
-                    if (M_packed_in_place)
+                    if (M_in_place)
                     {
 
                         //------------------------------------------------------
@@ -470,7 +470,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                 }
                 ASSERT (mjcount == mjcount2) ;
             }
-            else if (!M_packed_in_place)
+            else if (!M_in_place)
             {
                 // phase1: fine hash task, C<M>=A*B or C<!M>=A*B
                 // h == 0,   f == 0: unoccupied and unlocked

@@ -1,6 +1,1 @@
-
-FIXME: after non-iso GrB*build, check if matrix is iso
-
-FIXME: pack/unpack
-
 FIXME: check Windows port, alternative/Makefile, R2021a, Octave

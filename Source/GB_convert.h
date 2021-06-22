@@ -257,26 +257,6 @@ static inline bool GB_as_if_full
 }
 
 //------------------------------------------------------------------------------
-// GB_is_packed
-//------------------------------------------------------------------------------
-
-static inline bool GB_is_packed
-(
-    const GrB_Matrix A
-)
-{
-    // check if A is a packed matrix.  A is packed if it is bitmap or full.  If
-    // A is hypersparse or sparse, it is packed if it is not jumbled, all
-    // entries are present, and it has no zombies or pending tuples. 
-    // If A is sparse or hypersparse, it can be converted to full via
-    // GB_convert_any_to_full, by deleting A->p, A->h, and A->i.  If bitmap,
-    // it cannot be converted to full unless GB_is_dense (A) is also true
-    // (it must have all entries present).
-
-    return (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
-}
-
-//------------------------------------------------------------------------------
 
 GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
 (
@@ -307,7 +287,7 @@ static inline const char *GB_sparsity_char_matrix (GrB_Matrix A)
     ASSERT (0) ;               return ("?") ;
 }
 
-GrB_Matrix GB_hyper_pack            // return C
+GrB_Matrix GB_hyper_shallow         // return C
 (
     GrB_Matrix C,                   // output matrix
     const GrB_Matrix A              // input matrix

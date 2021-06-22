@@ -11,9 +11,12 @@
 #define GB_EXPORT_H
 #include "GB_transpose.h"
 
-GrB_Info GB_import      // import a matrix in any format
+
+GrB_Info GB_import      // import/pack a matrix in any format
 (
-    GrB_Matrix *A,      // handle of matrix to create
+    bool packing,       // pack if true, create and import false
+
+    GrB_Matrix *A,      // handle of matrix to create, or pack
     GrB_Type type,      // type of matrix to create
     GrB_Index vlen,     // vector length
     GrB_Index vdim,     // vector dimension
@@ -49,9 +52,11 @@ GrB_Info GB_import      // import a matrix in any format
     GB_Context Context
 ) ;
 
-GrB_Info GB_export      // export a matrix in any format
+GrB_Info GB_export      // export/unpack a matrix in any format
 (
-    GrB_Matrix *A,      // handle of matrix to export and free
+    bool unpacking,     // unpack if true, export and free if false
+
+    GrB_Matrix *A,      // handle of matrix to export and free, or unpack
     GrB_Type *type,     // type of matrix to export
     GrB_Index *vlen,    // vector length
     GrB_Index *vdim,    // vector dimension

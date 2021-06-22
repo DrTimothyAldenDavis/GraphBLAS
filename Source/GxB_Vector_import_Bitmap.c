@@ -39,7 +39,7 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
     // import the vector
     //--------------------------------------------------------------------------
 
-    info = GB_import ((GrB_Matrix *) v, type, n, 1, false,
+    info = GB_import (false, (GrB_Matrix *) v, type, n, 1, false,
         NULL, 0,        // Ap
         NULL, 0,        // Ah
         vb,   vb_size,  // Ab

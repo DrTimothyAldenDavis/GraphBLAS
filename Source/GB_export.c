@@ -13,11 +13,17 @@
 
 #include "GB_export.h"
 
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_FREE (&Ap_new, Ap_new_size) ;    \
+    GB_FREE (&Ah_new, Ah_new_size) ;    \
+}
 
-GrB_Info GB_export      // export a matrix in any format
+GrB_Info GB_export      // export/unpack a matrix in any format
 (
-    GrB_Matrix *A,      // handle of matrix to export and free
+    bool unpacking,     // unpack if true, export and free if false
+
+    GrB_Matrix *A,      // handle of matrix to export and free, or unpack
     GrB_Type *type,     // type of matrix to export
     GrB_Index *vlen,    // vector length
     GrB_Index *vdim,    // vector dimension
@@ -58,6 +64,8 @@ GrB_Info GB_export      // export a matrix in any format
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    int64_t *Ap_new = NULL ; size_t Ap_new_size = 0 ;
+    int64_t *Ah_new = NULL ; size_t Ah_new_size = 0 ;
     ASSERT (A != NULL) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
     ASSERT_MATRIX_OK (*A, "A to export", GB0) ;
@@ -102,11 +110,35 @@ GrB_Info GB_export      // export a matrix in any format
     }
 
     //--------------------------------------------------------------------------
+    // allocate new space for Ap and Ah if unpacking
+    //--------------------------------------------------------------------------
+
+    int64_t avdim = (*A)->vdim ;
+    int64_t plen_new, nvec_new ;
+    if (unpacking)
+    {
+        plen_new = (avdim == 0) ? 0 : 1 ;
+        nvec_new = (avdim == 1) ? 1 : 0 ;
+        Ap_new = GB_CALLOC (plen_new+1, int64_t, &(Ap_new_size)) ;
+        if (avdim > 1)
+        { 
+            // A is sparse if avdim <= 1, hypersparse if avdim > 1
+            Ah_new = GB_CALLOC (1, int64_t, &(Ah_new_size)) ;
+        }
+        if (Ap_new == NULL || (avdim > 1 && Ah_new == NULL))
+        { 
+            // out of memory
+            GB_FREE_ALL ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // ensure A is non-iso if requested, or export A as-is
     //--------------------------------------------------------------------------
 
     if (iso == NULL)
-    { 
+    {
         // ensure A is non-iso
         // set A->iso = false   OK
         if ((*A)->iso)
@@ -114,6 +146,7 @@ GrB_Info GB_export      // export a matrix in any format
             GBURBLE ("(iso to non-iso export) ") ;
         }
         GB_OK (GB_convert_any_to_non_iso (*A, true, Context)) ;
+        ASSERT (!((*A)->iso)) ;
     }
     else
     {
@@ -131,7 +164,7 @@ GrB_Info GB_export      // export a matrix in any format
 
     (*type) = (*A)->type ;
     (*vlen) = (*A)->vlen ;
-    (*vdim) = (*A)->vdim ;
+    (*vdim) = avdim ;
 
     // export A->x
     #ifdef GB_DEBUG
@@ -220,12 +253,28 @@ GrB_Info GB_export      // export a matrix in any format
     }
 
     //--------------------------------------------------------------------------
-    // free the GrB_Matrix
+    // free or clear the GrB_Matrix
     //--------------------------------------------------------------------------
 
-    // frees the header of A, and A->p if A is a sparse GrB_Vector
-    GB_Matrix_free (A) ;
-    ASSERT ((*A) == NULL) ;
+    if (unpacking)
+    { 
+        // unpack: clear the matrix, leaving it hypersparse (or sparse if
+        // it is a vector (vdim of 1) or has vdim of zero)
+        GB_phbix_free (*A) ;
+        (*A)->plen = plen_new ;
+        (*A)->nvec = nvec_new ;
+        (*A)->p = Ap_new ; (*A)->p_size = Ap_new_size ;
+        (*A)->h = Ah_new ; (*A)->h_size = Ah_new_size ;
+        (*A)->magic = GB_MAGIC ;
+        ASSERT_MATRIX_OK (*A, "A unpacked", GB0) ;
+    }
+    else
+    { 
+        // export: free the header of A, and A->p if A is a sparse GrB_Vector
+        GB_Matrix_free (A) ;
+        ASSERT ((*A) == NULL) ;
+    }
+
     return (GrB_SUCCESS) ;
 }
 

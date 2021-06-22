@@ -167,9 +167,9 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
         // sparse/hyper, not bitmap.   TODO: give the user control over this
         // decision.
 
-        // TODO:  for bitmap*hyper and hyper*bitmap, create a packed version
-        // of the hyper matrix (like dot does), and construct C as bitmap.
-        // Then expand into C into hyper.
+        // TODO:  for bitmap*hyper and hyper*bitmap, create a hyper_shallow
+        // version of the hyper matrix (like dot does), and construct C as
+        // bitmap.  Then expand into C into hyper.
 
         switch (B_sparsity)
         {

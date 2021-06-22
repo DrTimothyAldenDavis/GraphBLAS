@@ -199,7 +199,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     GB_saxpy3task_struct **SaxpyTasks_handle,
     size_t *SaxpyTasks_size_handle,
     bool *apply_mask,               // if true, apply M during sapxy3
-    bool *M_packed_in_place,        // if true, use M in-place
+    bool *M_in_place,               // if true, use M in-place
     int *ntasks,                    // # of tasks created (coarse and fine)
     int *nfine,                     // # of fine tasks created
     int *nthreads,                  // # of threads to use
@@ -214,7 +214,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     GrB_Info info ;
 
     (*apply_mask) = false ;
-    (*M_packed_in_place) = false ;
+    (*M_in_place) = false ;
     (*ntasks) = 0 ;
     (*nfine) = 0 ;
     (*nthreads) = 0 ;
@@ -302,7 +302,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         (*apply_mask) = false ;
 
     }
-    else if (GB_is_packed (M))
+    else if (GB_IS_BITMAP (M) || GB_as_if_full (M))
     {
 
         //----------------------------------------------------------------------
@@ -339,8 +339,8 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
             // Do not scatter the mask into the Hf hash workspace.  The work
             // for the mask is not accounted for in Bflops, so the hash tables
             // can be small.
-            (*M_packed_in_place) = true ;
-            GBURBLE ("(use packed mask in-place) ") ;
+            (*M_in_place) = true ;
+            GBURBLE ("(use mask in-place) ") ;
         }
         else
         {
@@ -356,7 +356,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                 Bflops [kk] += cvlen * (kk+1) ;
             }
             total_flops = Bflops [bnvec] ;
-            GBURBLE ("(use packed mask) ") ;
+            GBURBLE ("(use mask) ") ;
         }
 
     }

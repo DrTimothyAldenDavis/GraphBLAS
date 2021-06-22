@@ -92,6 +92,7 @@
 // The input arrays I, J, and X are not modified.
 
 #include "GB_build.h"
+#define GB_FREE_ALL GB_phbix_free (T) ;
 
 GrB_Info GB_build               // build matrix
 (
@@ -112,6 +113,7 @@ GrB_Info GB_build               // build matrix
     //--------------------------------------------------------------------------
 
     // check C
+    GrB_Info info ;
     ASSERT (C != NULL) ;
     if (GB_nnz (C) > 0 || GB_PENDING (C))
     { 
@@ -128,8 +130,7 @@ GrB_Info GB_build               // build matrix
     GB_RETURN_IF_NULL (I) ;
     if (I == GrB_ALL)
     { 
-        GB_ERROR (GrB_INVALID_VALUE, "List of row indices cannot be %s",
-            "GrB_ALL") ;
+        GB_ERROR (GrB_INVALID_VALUE, "Row indices cannot be %s", "GrB_ALL") ;
     }
 
     // check J
@@ -138,7 +139,7 @@ GrB_Info GB_build               // build matrix
         GB_RETURN_IF_NULL (J) ;
         if (J == GrB_ALL)
         { 
-            GB_ERROR (GrB_INVALID_VALUE, "List of column indices cannot be %s",
+            GB_ERROR (GrB_INVALID_VALUE, "Column indices cannot be %s",
                 "GrB_ALL") ;
         }
     }
@@ -160,9 +161,8 @@ GrB_Info GB_build               // build matrix
     if (nvals > GxB_INDEX_MAX)
     { 
         // problem too large
-        GB_ERROR (GrB_INVALID_VALUE,
-            "Problem too large: nvals " GBu " exceeds " GBu,
-            nvals, GxB_INDEX_MAX) ;
+        GB_ERROR (GrB_INVALID_VALUE, "Problem too large: nvals " GBu
+            " exceeds " GBu, nvals, GxB_INDEX_MAX) ;
     }
 
     //--------------------------------------------------------------------------
@@ -258,7 +258,7 @@ GrB_Info GB_build               // build matrix
     GrB_Matrix T = GB_clear_static_header (&T_header) ;
     GrB_Type ttype = X_iso ? xtype : dup->ztype ;
 
-    GrB_Info info = GB_builder (
+    GB_OK (GB_builder (
         T,              // create T using a static header
         ttype,          // the type of T
         C->vlen,        // T->vlen = C->vlen
@@ -282,12 +282,27 @@ GrB_Info GB_build               // build matrix
         dup,            // operator to assemble duplicates
         xtype,          // type of the X array
         Context
-    ) ;
+    )) ;
 
-    if (info != GrB_SUCCESS)
+    //--------------------------------------------------------------------------
+    // determine if T is iso, for non-iso build
+    //--------------------------------------------------------------------------
+
+    // GxB_Matrix_build_Scalar and GxB_Vector_build_Scalar always build an iso
+    // matrix T, so this test is skipped (X_iso is true in that case).
+    // GrB_Matrix_build_[TYPE] and GrB_Vector_build_[TYPE] may have just
+    // created an iso-valued matrix T, but this is not yet known.  X_iso is
+    // false for these methods.  Since it has not yet been conformed to its
+    // final sparsity structure, the matrix T is hypersparse, not bitmap.  It
+    // has no zombies or pending tuples, so GB_iso_check does need to handle
+    // those cases.  T->x [0] is the new iso value of T.
+
+    if (!X_iso && GB_iso_check (T, Context))
     { 
-        // out of memory
-        return (info) ;
+        // All entries in T are the same; convert T to iso
+        GBURBLE ("(post iso) ") ;
+        T->iso = true ;
+        GB_OK (GB_convert_any_to_iso (T, NULL, true, Context)) ;
     }
 
     //--------------------------------------------------------------------------

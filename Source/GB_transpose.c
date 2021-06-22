@@ -127,7 +127,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     GB_Type_code acode = atype->code ;
 
     bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    bool A_is_packed = GB_is_packed (A) ;
     bool A_is_hyper  = GB_IS_HYPERSPARSE (A) ;
 
     int64_t anz = GB_nnz (A) ;
@@ -253,16 +252,16 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             true, A_hyper_switch, 1, 1, true, false, Context)) ;
 
     }
-    else if (A_is_packed)
+    else if (A_is_bitmap || GB_as_if_full (A))
     {
 
         //----------------------------------------------------------------------
-        // transpose a packed matrix or vector
+        // transpose a bitmap/as-if-full matrix or vector
         //----------------------------------------------------------------------
 
-        // A is packed if it is either bitmap or as-is-full (full, or sparse or
-        // hypersparse with all entries present, no zombies, no pending tuples,
-        // and not jumbled).  T = A' is either bitmap or full.
+        // A is either bitmap or as-is-full (full, or sparse or hypersparse
+        // with all entries present, no zombies, no pending tuples, and not
+        // jumbled).  T = A' is either bitmap or full.
 
         int T_sparsity = (A_is_bitmap) ? GxB_BITMAP : GxB_FULL ;
         bool T_cheap =                  // T can be done quickly if:

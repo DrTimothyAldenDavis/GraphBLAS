@@ -17,12 +17,12 @@
 // A:           matrix, and aliased to M
 // S:           none
 
-// C must be a packed matrix.  No entries are deleted and thus no zombies are
-// introduced into C.  C can be hypersparse, sparse, bitmap, or full, and its
-// sparsity structure does not change.  If C is hypersparse, sparse, or full,
-// then the pattern does not change (all entries are present, and this does not
-// change), and these cases can all be treated the same (as if full).  If C is
-// bitmap, new entries can be inserted into the bitmap C->b.
+// C must be bitmap or as-if-full.  No entries are deleted and thus no zombies
+// are introduced into C.  C can be hypersparse, sparse, bitmap, or full, and
+// its sparsity structure does not change.  If C is hypersparse, sparse, or
+// full, then the pattern does not change (all entries are present, and this
+// does not change), and these cases can all be treated the same (as if full).
+// If C is bitmap, new entries can be inserted into the bitmap C->b.
 
 // C and A can have any sparsity structure.
 
@@ -59,7 +59,7 @@ GrB_Info GB_dense_subassign_06d
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
-    ASSERT (GB_is_packed (C)) ;
+    ASSERT (GB_IS_BITMAP (C) || GB_as_if_full (C)) ;
     ASSERT (!GB_aliased (C, A)) ;   // NO ALIAS of C==A
 
     ASSERT_MATRIX_OK (A, "A for subassign method_06d", GB0) ;

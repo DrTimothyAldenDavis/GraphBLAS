@@ -17,12 +17,15 @@
 // uniform valued.  If the matrix is uniform-valued, the x array is only
 // large enough to hold a single entry.
 
+// GraphBLASv5 and GraphBLASv5_1 are identical, except that s [9] is present
+// but always false for GraphBLASv5.
+
 #include "gb_interface.h"
 
 // for hypersparse, sparse, or full matrices
 static const char *MatrixFields [6] =
 {
-    "GraphBLASv5",      // 0: "logical", "int8", ... "double",
+    "GraphBLASv5_1",    // 0: "logical", "int8", ... "double",
                         //    "single complex", or "double complex"
     "s",                // 1: all scalar info goes here
     "x",                // 2: array of uint8, size (sizeof(type)*nzmax), or
@@ -35,7 +38,7 @@ static const char *MatrixFields [6] =
 // for bitmap matrices only
 static const char *Bitmap_MatrixFields [4] =
 {
-    "GraphBLASv5",      // 0: "logical", "int8", ... "double",
+    "GraphBLASv5_1",    // 0: "logical", "int8", ... "double",
                         //    "single complex", or "double complex"
     "s",                // 1: all scalar info goes here
     "x",                // 2: array of uint8, size (sizeof(type)*nzmax), or

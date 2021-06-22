@@ -24,8 +24,8 @@ GrB_Info GB_EVAL3 (prefix, _Vector_build_, T) /* build a vector from tuples*/ \
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;  /* check now so w->type can be done */ \
     GB_RETURN_IF_NULL_OR_FAULTY (dup) ;                                       \
     ASSERT (GB_VECTOR_OK (w)) ;                                               \
-    GrB_Info info = GB_build ((GrB_Matrix) w, I, NULL, X, nvals, dup, xtype,  \
-        /* is_matrix: */ false, Context) ;                                    \
+    GrB_Info info = GB_build ((GrB_Matrix) w, I, NULL, X, nvals, dup,         \
+        xtype, false, Context) ;                                              \
     GB_BURBLE_END ;                                                           \
     return (info) ;                                                           \
 }

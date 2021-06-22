@@ -46,8 +46,8 @@
     //--------------------------------------------------------------------------
 
     // A and B are never hypersparse.  If they are hypersparse on input, they
-    // are converted to packed sparse form first, and the C matrix has smaller
-    // dimensions.  The C bitmap matrix is unpacked into a sparse or
+    // are converted to hyper_shallow form first, and the C matrix has smaller
+    // dimensions.  The C bitmap matrix is converted back into a sparse or
     // hypersparse matrix when done.
 
     int64_t cnvals = 0 ;

@@ -218,9 +218,9 @@
                 //--------------------------------------------------------------
 
                 GB_GET_M_j ;                // get M(:,j)
-                if (M_packed_in_place)
+                if (M_in_place)
                 {
-                    // M(:,j) is packed, and thus not scattered into Hf
+                    // M is bitmap/as-if-full, thus not scattered into Hf
                     if (M_is_bitmap && Mask_struct)
                     { 
                         // M is bitmap and structural
@@ -256,9 +256,9 @@
                 //--------------------------------------------------------------
 
                 GB_GET_M_j ;                // get M(:,j)
-                if (M_packed_in_place)
+                if (M_in_place)
                 {
-                    // M(:,j) is packed, and thus not scattered into Hf
+                    // M is bitmap/as-if-full, thus not scattered into Hf
                     if (M_is_bitmap && Mask_struct)
                     { 
                         // M is bitmap and structural
@@ -496,9 +496,9 @@
                     // phase5: coarse hash task, C<M>=A*B
                     //----------------------------------------------------------
 
-                    if (M_packed_in_place)
+                    if (M_in_place)
                     {
-                        // M is packed, and thus not scattered into Hf
+                        // M is bitmap/as-if-full, thus not scattered into Hf
                         if (M_is_bitmap && Mask_struct)
                         { 
                             // M is bitmap and structural
@@ -532,9 +532,10 @@
                     //----------------------------------------------------------
                     // phase5: coarse hash task, C<!M>=A*B
                     //---------------------------------------------------------- 
-                    if (M_packed_in_place)
+
+                    if (M_in_place)
                     {
-                        // M is packed, and thus not scattered into Hf
+                        // M is bitmap/as-if-full, thus not scattered into Hf
                         if (M_is_bitmap && Mask_struct)
                         { 
                             // M is bitmap and structural

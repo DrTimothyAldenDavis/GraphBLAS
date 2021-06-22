@@ -76,7 +76,7 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     int sparsity ;
     bool is_csc ;
 
-    info = GB_export (A, type, ncols, nrows, false,
+    info = GB_export (false, A, type, ncols, nrows, false,
         NULL, NULL,     // Ap
         NULL, NULL,     // Ah
         NULL, NULL,     // Ab

@@ -96,7 +96,8 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
-logstat ('test223',t) ; % test test matrix multiply, C<!M>=A*B
+logstat ('test224',t) ; % test unpack/pack
+logstat ('test223',t) ; % test matrix multiply, C<!M>=A*B
 logstat ('test222',t) ; % test user selectop for iso matrices
 logstat ('test221',t) ; % test C += A where C is bitmap and A is full
 logstat ('test220',t) ; % test mask C<M>=Z, iso case

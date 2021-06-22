@@ -100,7 +100,7 @@ static inline bool GB_removeElement
         bool is_zombie ;
         if (cknz == cvlen)
         { 
-            // C(:,k) is packed so no binary search is needed to find C(i,k)
+            // C(:,k) is as-if-full so no binary search needed to find C(i,k)
             pleft = pleft + i ;
             ASSERT (GB_UNFLIP (Ci [pleft]) == i) ;
             found = true ;

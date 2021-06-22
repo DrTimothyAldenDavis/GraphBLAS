@@ -9,9 +9,11 @@
 
 #include "GB_export.h"
 
-GrB_Info GB_import      // import a matrix in any format
+GrB_Info GB_import      // import/pack a matrix in any format
 (
-    GrB_Matrix *A,      // handle of matrix to create
+    bool packing,       // pack if true, create and import false
+
+    GrB_Matrix *A,      // handle of matrix to create, or pack
     GrB_Type type,      // type of matrix to create
     GrB_Index vlen,     // vector length
     GrB_Index vdim,     // vector dimension
@@ -53,7 +55,12 @@ GrB_Info GB_import      // import a matrix in any format
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (A) ;
-    (*A) = NULL ;
+
+    if (!packing)
+    { 
+        (*A) = NULL ;
+    }
+
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
     if (vlen  > GxB_INDEX_MAX || vdim > GxB_INDEX_MAX ||
         nvals > GxB_INDEX_MAX || nvec > GxB_INDEX_MAX ||
@@ -161,7 +168,7 @@ GrB_Info GB_import      // import a matrix in any format
 
     // check the size of Ax
     if (iso)
-    { 
+    {
         // A is iso: Ax must be non-NULL and large enough to hold a single entry
         GBURBLE ("(iso import) ") ;
         if (*Ax == NULL || Ax_size < type->size)
@@ -181,17 +188,22 @@ GrB_Info GB_import      // import a matrix in any format
     }
 
     //--------------------------------------------------------------------------
-    // allocate just the header of the matrix, not the content
+    // allocate/reuse the header of the matrix
     //--------------------------------------------------------------------------
+
+    if (packing)
+    { 
+        // clear the content and reuse the header
+        GB_phbix_free (*A) ;
+    }
 
     // also create A->p if this is a sparse GrB_Vector
     GrB_Info info = GB_new (A, false, // any sparsity, new user header
-        type, vlen, vdim, is_sparse_vector ? GB_Ap_calloc : GB_Ap_null, is_csc,
-        sparsity, GB_Global_hyper_switch_get ( ), nvec, Context) ;
+        type, vlen, vdim, is_sparse_vector ? GB_Ap_calloc : GB_Ap_null,
+        is_csc, sparsity, GB_Global_hyper_switch_get ( ), nvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        ASSERT ((*A) == NULL) ;
         return (info) ;
     }
 

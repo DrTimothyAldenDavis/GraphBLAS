@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_hyper_pack: create a sparse shallow copy of a hypersparse matrix
+// GB_hyper_shallow: create a sparse shallow copy of a hypersparse matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -9,13 +9,13 @@
 
 // The header of C itself is assumed to be statically allocated.  On input C
 // must exist but the content of the C header is uninitialized.  No memory is
-// allocated to construct C as the hyperpacked version of A.  C is purely
+// allocated to construct C as the hyper_shallow version of A.  C is purely
 // shallow.  If A is iso then so is C.
 
 #include "GB.h"
 #include "GB_convert.h"
 
-GrB_Matrix GB_hyper_pack            // return C
+GrB_Matrix GB_hyper_shallow         // return C
 (
     GrB_Matrix C,                   // output matrix
     const GrB_Matrix A              // input matrix, not modified.
@@ -26,7 +26,7 @@ GrB_Matrix GB_hyper_pack            // return C
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "hyperpack input", GB0) ;
+    ASSERT_MATRIX_OK (A, "hyper_shallow input", GB0) ;
     ASSERT (C != NULL) ;
     ASSERT (GB_IS_HYPERSPARSE (A)) ;
 
@@ -58,7 +58,7 @@ GrB_Matrix GB_hyper_pack            // return C
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "hyperpack output", GB0) ;
+    ASSERT_MATRIX_OK (C, "hyper_shallow output", GB0) ;
     ASSERT (GB_IS_SPARSE (C)) ;
     return (C) ;
 }

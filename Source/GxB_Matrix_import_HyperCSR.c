@@ -46,7 +46,7 @@ GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
     // import the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (A, type, ncols, nrows, false,
+    info = GB_import (false, A, type, ncols, nrows, false,
         Ap,   Ap_size,  // Ap
         Ah,   Ah_size,  // Ah
         NULL, 0,        // Ab

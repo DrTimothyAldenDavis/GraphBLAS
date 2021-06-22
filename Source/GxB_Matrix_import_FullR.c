@@ -37,7 +37,7 @@ GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
     // import the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (A, type, ncols, nrows, false,
+    info = GB_import (false, A, type, ncols, nrows, false,
         NULL, 0,        // Ap
         NULL, 0,        // Ah
         NULL, 0,        // Ab

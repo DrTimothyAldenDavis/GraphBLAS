@@ -40,7 +40,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     // import the vector
     //--------------------------------------------------------------------------
 
-    info = GB_import ((GrB_Matrix *) v, type, n, 1, true,
+    info = GB_import (false, (GrB_Matrix *) v, type, n, 1, true,
         NULL, 0,        // Ap
         NULL, 0,        // Ah
         NULL, 0,        // Ab

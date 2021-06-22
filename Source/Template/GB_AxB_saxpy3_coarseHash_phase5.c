@@ -28,8 +28,7 @@
 
         #ifdef GB_CHECK_MASK_ij
 
-            // The mask M is packed (full, bitmap, or sparse/hyper and not
-            // jumbled with all entries present in the entire matrix).
+            // The mask M is bitmap or as-if-full
             GB_GET_M_j                  // get M(:,j)
             #ifdef GB_MASK_IS_BITMAP_AND_STRUCTURAL
             // Mjb is the M(:,j) vector, if M is bitmap and structural

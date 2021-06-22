@@ -97,10 +97,10 @@ GrB_Info GB_dense_subassign_23      // C += B; C is dense, B is sparse or dense
     GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
     int B_ntasks, B_nthreads ;
 
-    if (GB_is_packed (B))
+    if (GB_IS_BITMAP (B) || GB_as_if_full (B))
     { 
-        // C is dense and B is either dense or bitmap
-        GBURBLE ("(Z packed) ") ;
+        // C is dense and B is bitmap or as-if-full
+        GBURBLE ("(Z bitmap/as-if-full) ") ;
         int64_t bnvec = B->nvec ;
         int64_t bnz = GB_nnz_held (B) ;
         B_nthreads = GB_nthreads (bnz + bnvec, chunk, nthreads_max) ;

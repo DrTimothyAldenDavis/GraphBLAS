@@ -140,7 +140,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
         Mp = M->p ;
         mnvec = M->nvec ;
         mvlen = M->vlen ;
-        M_is_dense = GB_is_packed (M) ;
+        M_is_dense = GB_IS_BITMAP (M) || GB_as_if_full (M) ;
     }
 
     //--------------------------------------------------------------------------

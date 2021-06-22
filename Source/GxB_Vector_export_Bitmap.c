@@ -66,7 +66,7 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     bool is_csc ;
     GrB_Index vdim ;
 
-    info = GB_export ((GrB_Matrix *) v, type, n, &vdim, false,
+    info = GB_export (false, (GrB_Matrix *) v, type, n, &vdim, false,
         NULL, NULL,     // Ap
         NULL, NULL,     // Ah
         vb,   vb_size,  // Ab

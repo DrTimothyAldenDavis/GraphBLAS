@@ -17,7 +17,8 @@
 // as Cin or the Mask.
 
 // For v4, iso is false, and the s component has length 9.
-// For v5, iso may be true, and the s component has length 10.
+// For v5, iso is present but false, and the s component has length 10.
+// For v5_1, iso is true/false, and the s component has length 10.
 
 #include "gb_interface.h"
 
@@ -65,7 +66,12 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         bool GraphBLASv3 = false ;
 
         // get the type
-        mxArray *mx_type = mxGetField (X, 0, "GraphBLASv5") ;
+        mxArray *mx_type = mxGetField (X, 0, "GraphBLASv5_1") ;
+        if (mx_type == NULL)
+        {
+            // check if it is a GraphBLASv5 struct
+            mx_type = mxGetField (X, 0, "GraphBLASv5") ;
+        }
         if (mx_type == NULL)
         {
             // check if it is a GraphBLASv4 struct
@@ -132,7 +138,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
             }
             else
             {
-                // GraphBLASv5: iso is present as s [9]
+                // GraphBLASv5 and GraphBLASv5_1: iso is present as s [9]
+                // GraphBLASv5: iso is present as s [9] but always false
                 iso = (bool) s [9] ;
             }
         }

@@ -73,7 +73,7 @@ static inline bool GB_removeElement
         bool is_zombie ;
         if (vnz == V->vlen)
         { 
-            // V(:) is packed so no binary search is needed to find V(i)
+            // V(:) is as-if-full so no binary search is needed to find V(i)
             pleft = i ;
             ASSERT (GB_UNFLIP (Vi [pleft]) == i) ;
             found = true ;

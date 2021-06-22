@@ -43,8 +43,8 @@ GrB_Info GxB_Matrix_build_Scalar
     // build the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_build (C, I, J, scalar->x, nvals, /* dup: */ NULL,
-        scalar->type, /* is_matrix: */ true, Context) ;
+    GrB_Info info = GB_build (C, I, J, scalar->x, nvals, NULL,
+        scalar->type, true, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

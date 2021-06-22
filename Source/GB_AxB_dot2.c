@@ -106,12 +106,12 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     // If A_in is hypersparse, a new sparse matrix A is constructed with
-    // A->vdim = A_in->nvec and the same vlen as A_in, and then the packed
-    // C->vlen will equal A->vdim < cvlen_final.
+    // A->vdim = A_in->nvec and the same vlen as A_in, and then the
+    // hyper_shallow C->vlen will equal A->vdim < cvlen_final.
 
     // If B_in is hypersparse, a new sparse matrix B is constructed with
-    // B->vdim = B_in->nvec and the same vlen as B_in, and then the packed
-    // C->vdim will equal B->vdim < cvdim_final.
+    // B->vdim = B_in->nvec and the same vlen as B_in, and then the
+    // hyper_shallow C->vdim will equal B->vdim < cvdim_final.
 
     int64_t cvlen_final = A_in->vdim ;
     int64_t cvdim_final = B_in->vdim ;
@@ -121,8 +121,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GrB_Index *restrict Ah = (GrB_Index *) A_in->h ;
     GrB_Index *restrict Bh = (GrB_Index *) B_in->h ;
     struct GB_Matrix_opaque A_header, B_header ;
-    GrB_Matrix A = (A_is_hyper) ? GB_hyper_pack (&A_header, A_in) : A_in ;
-    GrB_Matrix B = (B_is_hyper) ? GB_hyper_pack (&B_header, B_in) : B_in ;
+    GrB_Matrix A = (A_is_hyper) ? GB_hyper_shallow (&A_header, A_in) : A_in ;
+    GrB_Matrix B = (B_is_hyper) ? GB_hyper_shallow (&B_header, B_in) : B_in ;
     ASSERT (!GB_IS_HYPERSPARSE (A)) ;
     ASSERT (!GB_IS_HYPERSPARSE (B)) ;
 
@@ -364,18 +364,18 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT (!GB_ZOMBIES (C)) ;
 
     //--------------------------------------------------------------------------
-    // unpack C if A or B are hypersparse
+    // convert C to sparse/hyper if A or B are hypersparse on input
     //--------------------------------------------------------------------------
 
     if (A_or_B_hyper)
     {
 
         //----------------------------------------------------------------------
-        // unpack C from bitmap to sparse/hyper
+        // convert C from bitmap to sparse/hyper
         //----------------------------------------------------------------------
 
         // C is currently A_in->nvec by B_in->nvec, in bitmap form.  It must be
-        // unpacked into sparse/hypersparse form, with zombies.
+        // converted back into sparse/hypersparse form, with zombies.
 
         //----------------------------------------------------------------------
         // allocate the sparse/hypersparse structure of the final C
@@ -473,7 +473,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         GB_FREE ((&C->b), C->b_size) ;
 
         // C is now sparse or hypersparse
-        ASSERT_MATRIX_OK (C, "dot2: unpacked C", GB0) ;
+        ASSERT_MATRIX_OK (C, "dot2: converted back from bitmap C", GB0) ;
         ASSERT (GB_ZOMBIES_OK (C)) ;
     }
 
