@@ -4,10 +4,12 @@ This is a beta release.  It works fine on Linux and has reached
 100% test coverage.  It might not compile on Windows or the Mac;
 that will be checked shortly.  Here's what's left to do:
 
-FIXME: check alternative/Makefile
+FIXME: GAP benchmarks (do this before releasing v5.1.0.BETA1)
+
+do this after BETA1:
 FIXME: check Octave port
 FIXME: check R2021a port
 FIXME: check Mac port
 FIXME: check Windows port
-FIXME: alternative/Makefile with C++
+FIXME: reduce the test cov time (start with test77)
 

@@ -213,7 +213,6 @@ logstat ('test84',t) ;  % GrB_assign (row and column with C in CSR/CSC format)
 logstat ('test130',t) ; % GrB_apply, hypersparse cases
 logstat ('test19b',t) ; % GrB_assign, many pending operators
 logstat ('test19b',s);  % GrB_assign, many pending operators
-logstat ('test101',t) ; % import and export
 logstat ('test133',t) ; % test mask operations (GB_masker)
 logstat ('test72',t) ;  % several special cases
 logstat ('test80',t) ;  % test GrB_mxm on all semirings (different matrix)
@@ -368,6 +367,7 @@ logstat ('test97',t) ;     %    0 % GB_mex_assign, scalar expansion and zombies
 logstat ('test98',t) ;     %      % GB_mex_mxm, typecast on the fly
 logstat ('test99',t) ;     %   20 % GB_mex_transpose w/ explicit 0s in the Mask
 
+logstat ('test101',t) ;    %    1 % import and export
 logstat ('test102',t);     %    1 % GB_AxB_saxpy3_flopcount
 logstat ('test103',t) ;    %      % GrB_transpose aliases
 logstat ('test105',t) ;    %    2 % eWiseAdd for hypersparse
