@@ -10,7 +10,7 @@
 #include "GB.h"
 #include "GB_binop.h"
 
-GrB_Monoid *GB_binop_to_monoid      // return the corresponding monoid, or NULL
+GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
 (
     const GrB_BinaryOp op_in        // binary op to convert
 )

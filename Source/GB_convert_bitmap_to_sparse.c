@@ -66,7 +66,7 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
         // A is iso.  Remove A->x from the matrix so it is not freed by
         // GB_phbix_free.  It is not modified by GB_convert_bitmap_worker, and
         // is transplanted back into A, below.
-        Ax = A->x ;
+        Ax = (GB_void *) A->x ;
         Ax_shallow = A->x_shallow ;
         Ax_size = A->x_size ;
         A->x = NULL ;

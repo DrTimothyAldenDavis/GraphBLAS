@@ -155,7 +155,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         }
         else
         { 
-            GB_OK (GB_convert_any_to_iso (C, scalar, true, Context)) ;
+            GB_OK (GB_convert_any_to_iso (C, (GB_void *) scalar, true,
+                Context)) ;
         }
     }
 

@@ -55,7 +55,7 @@ GrB_Info GxB_Col_subassign          // C(Rows,col)<M> = accum (C(Rows,col),u)
 
     info = GB_subassign (
         C, C_replace,                   // C matrix and its descriptor
-        M_in, Mask_comp, Mask_struct,   // mask and its descriptor
+        M, Mask_comp, Mask_struct,      // mask and its descriptor
         false,                          // do not transpose the mask
         accum,                          // for accum (C(Rows,col),u)
         (GrB_Matrix) u, false,          // u as a matrix; never transposed

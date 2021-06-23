@@ -82,7 +82,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     int64_t full_size = 0, Ax_size_for_non_iso ;
     if (sparsity == GxB_BITMAP || sparsity == GxB_FULL)
     {
-        ok = GB_Index_multiply (&full_size, vlen, vdim) ;
+        ok = GB_Index_multiply ((GrB_Index *) &full_size, vlen, vdim) ;
         if (!ok) full_size = INT64_MAX ;
     }
 

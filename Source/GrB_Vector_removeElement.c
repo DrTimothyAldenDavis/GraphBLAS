@@ -165,7 +165,7 @@ GrB_Info GrB_Vector_removeElement
 
     // if V is sparse, it may have pending tuples
     bool V_is_pending = GB_PENDING (V) ; 
-    if (GB_nnz (V) == 0 && !V_is_pending)
+    if (GB_nnz ((GrB_Matrix) V) == 0 && !V_is_pending)
     { 
         // quick return
         return (GrB_SUCCESS) ;

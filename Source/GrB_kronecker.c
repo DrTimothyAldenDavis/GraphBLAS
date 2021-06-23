@@ -88,7 +88,7 @@ GrB_Info GrB_Matrix_kronecker_Monoid  // C<M> = accum (C, kron(A,B))
         A_tran, B_tran, xx, xx7) ;
 
     // get the mask
-    GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
+    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // C = kron(A,B)
@@ -138,7 +138,7 @@ GrB_Info GrB_Matrix_kronecker_Semiring  // C<M> = accum (C, kron(A,B))
         A_tran, B_tran, xx, xx7) ;
 
     // get the mask
-    GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
+    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // C = kron(A,B)

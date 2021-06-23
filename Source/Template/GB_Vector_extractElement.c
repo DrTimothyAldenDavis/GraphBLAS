@@ -58,7 +58,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
         return (GrB_DOMAIN_MISMATCH) ;
     }
 
-    if (GB_nnz (V) == 0)
+    if (GB_nnz ((GrB_Matrix) V) == 0)
     { 
         // quick return
         return (GrB_NO_VALUE) ;

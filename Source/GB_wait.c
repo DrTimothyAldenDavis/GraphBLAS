@@ -146,7 +146,7 @@ GrB_Info GB_wait                // finish all pending computations
         // z=accum(x,y) operator can have any types, and it does not have to be
         // associative.  T is constructed as iso if A is iso.
 
-        GB_void *S_input = (A_iso) ? A->x : NULL ;
+        GB_void *S_input = (A_iso) ? ((GB_void *) A->x) : NULL ;
         GrB_Type stype = (A_iso) ? A->type : A->Pending->type ;
 
         info = GB_builder (

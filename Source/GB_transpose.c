@@ -752,7 +752,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
             if ((op1 != NULL || op2 != NULL) && !C_iso)
             { 
-                Swork = GB_XALLOC (C_iso, anz, csize, &Swork_size) ;
+                Swork = (GB_void *) GB_XALLOC (C_iso, anz, csize, &Swork_size) ;
                 ok = ok && (Swork != NULL) ;
             }
 
@@ -813,7 +813,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 // modified.
                 ASSERT (!C_iso) ;
                 ASSERT (!A->iso) ;
-                S_input = A->x ;        // S_input is used instead of Swork
+                S_input = (GB_void *) A->x ; // S_input is used instead of Swork
                 Swork = NULL ;
                 stype = atype ;
             }

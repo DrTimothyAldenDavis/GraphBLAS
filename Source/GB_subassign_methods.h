@@ -1914,7 +1914,7 @@ GrB_Info GB_subassign_08n_slice
     Pending->n += nnew ;                                                    \
     Pending->sorted = pending_sorted ;                                      \
     GB_FREE_ALL ;                                                           \
-    ASSERT_MATRIX_OK (C, "C with pending tuples :"__FILE__, GB_FLIP (GB0)) ;\
+    ASSERT_MATRIX_OK (C, "C with pending tuples :" __FILE__, GB_FLIP (GB0)) ;\
     return (GrB_SUCCESS) ;
 
 #endif

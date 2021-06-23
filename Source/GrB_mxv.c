@@ -47,7 +47,7 @@ GrB_Info GrB_mxv                    // w<M> = accum (w, A*u)
         A_transpose, xx, AxB_method, do_sort) ;
 
     // get the mask
-    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
+    GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // w<M> = accum (w,A*u) and variations, using the mxm kernel

@@ -256,6 +256,8 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
         // both A and B are iso
         //----------------------------------------------------------------------
 
+        GB_void *Ax = (GB_void *) A->x ;
+        GB_void *Bx = (GB_void *) B->x ;
         if (nice_monoid)
         {
 
@@ -265,7 +267,7 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
 
             if (c != NULL)
             { 
-                GB_iso_mult (c, A->x, acode, asize, B->x, bcode, bsize,
+                GB_iso_mult (c, Ax, acode, asize, Bx, bcode, bsize,
                     fmult, flipxy, xcode, xsize, ycode, ysize, zcode, zsize) ;
             }
             return (true) ;
@@ -289,7 +291,7 @@ bool GB_iso_AxB             // C = A*B, return true if C is iso
             { 
                 // t = A(i,k)*B(k,j)
                 GB_void t [GB_VLA(zsize)] ;
-                GB_iso_mult (t, A->x, acode, asize, B->x, bcode, bsize,
+                GB_iso_mult (t, Ax, acode, asize, Bx, bcode, bsize,
                     fmult, flipxy, xcode, xsize, ycode, ysize, zcode, zsize) ;
 
                 // reduce n copies of t to the single scalar c, in O(log(n))

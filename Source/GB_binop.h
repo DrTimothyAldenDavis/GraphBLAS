@@ -60,14 +60,14 @@ void GB_binop_new
     const GB_Opcode opcode          // opcode for the function
 ) ;
 
-GrB_Monoid *GB_binop_to_monoid      // return the corresponding monoid, or NULL
+GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
 (
     const GrB_BinaryOp op_in        // binary op to convert
 ) ;
 
 void GB_binop_rename            // rename a bound binary op
 (
-    GrB_BinaryOp *op1,          // set to new unary op, if op2 is renamed
+    GrB_UnaryOp *op1,           // set to new unary op, if op2 is renamed
     GrB_BinaryOp *op2,          // set to NULL if op2 is renamed
     bool binop_bind1st
 ) ;

@@ -75,7 +75,7 @@ void *GB_xalloc_memory      // return the newly-allocated space
     int64_t n,              // # of entries to allocate if non iso
     size_t type_size,       // size of each entry
     // output
-    int64_t *size,          // resulting size
+    size_t *size,           // resulting size
     GB_Context Context
 ) ;
 

@@ -53,7 +53,7 @@ GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
 
     info = GB_apply (
         (GrB_Matrix) w, C_replace,  // w and its descriptor
-        M_in, Mask_comp, Mask_struct, // mask and its descriptor
+        M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(w,T)
         op,                         // operator op(.) to apply to the entries
         NULL, NULL, false,          // no binary operator
@@ -108,7 +108,7 @@ static inline GrB_Info GB_1st       // w<mask> = accum (w, op(x,u))
 
     info = GB_apply (
         (GrB_Matrix) w, C_replace,  // w and its descriptor
-        M_in, Mask_comp, Mask_struct, // mask and its descriptor
+        M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(w,T)
         NULL,                       // no unary operator
         op, x, true,                // operator op(x,.) to apply to the entries

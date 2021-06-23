@@ -370,7 +370,7 @@ GrB_Info GB_selector
     cnz = Cp [anvec] ;
     cnz = GB_IMAX (cnz, 1) ;
     Ci = GB_MALLOC (cnz, int64_t, &Ci_size) ;
-    Cx = GB_XALLOC (C_iso, cnz, asize, &Cx_size) ;
+    Cx = (GB_void *) GB_XALLOC (C_iso, cnz, asize, &Cx_size) ;
     if (Ci == NULL || Cx == NULL)
     { 
         // out of memory
