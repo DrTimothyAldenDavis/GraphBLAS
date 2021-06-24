@@ -1315,7 +1315,7 @@ void *GB_Global_allocate_function (size_t *size)
         }
     }
     #ifdef GB_DEBUG
-    GB_Global_memtable_add (p, size) ;
+    GB_Global_memtable_add (p, *size) ;
     #endif
     return (p) ;
 }
