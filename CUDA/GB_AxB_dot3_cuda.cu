@@ -52,14 +52,14 @@ const std::vector<std::string> header_names ={};
 #define GB_FREE_WORK                                                    \
 {                                                                       \
     /* free any dynamic headers allocated by GB_do_dynamic_header */    \
-    if (M_input_static) GB_Matrix_free (&M) ;                           \
-    if (A_input_static) GB_Matrix_free (&A) ;                           \
-    if (B_input_static) GB_Matrix_free (&B) ;                           \
-    cudaFree (Nanobuckets) ;    Nanobuckets = NULL ;                    \
-    cudaFree (Blockbucket) ;    Blockbucket = NULL ;                    \
-    cudaFree (Bucket);          Bucket      = NULL;                     \
-    cudaFree (Bucketp);         Bucketp     = NULL;                     \
-    cudaFree (offset);          offset      = NULL;                     \
+    GB_undo_dynamic_header (&M, M_input, Context) ;                     \
+    GB_undo_dynamic_header (&A, A_input, Context) ;                     \
+    GB_undo_dynamic_header (&B, B_input, Context) ;                     \
+    if (Nanobuckets != NULL) cudaFree (Nanobuckets) ; Nanobuckets = NULL ; \
+    if (Blockbucket != NULL) cudaFree (Blockbucket) ; Blockbucket = NULL ; \
+    if (Bucket      != NULL) cudaFree (Bucket);       Bucket      = NULL ; \
+    if (Bucketp     != NULL) cudaFree (Bucketp);      Bucketp     = NULL ; \
+    if (offset      != NULL) cudaFree (offset);       offset      = NULL ; \
 }
 
 #define GB_FREE_ALL                                                     \
@@ -119,9 +119,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     int64_t *Bucket = NULL;
     int64_t *Bucketp = NULL;
     int64_t *offset = NULL;
-    bool M_input_static = false ;
-    bool A_input_static = false ;
-    bool B_input_static = false ;
 
     // just in case M is jumbled and we don't handle it yet (TODO)
     GB_MATRIX_WAIT (M_input) ;
@@ -702,7 +699,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     }
     printf("num_triangles = %d\n",  num_triangles );
 
-    cudaFree( block_sum ); 
+    if (block_sum != NULL) cudaFree( block_sum );  block_sum = NULL ;
     //cudaMemPrefetchAsync( C->p, (mnvec+1) * sizeof (int64_t), cudaCpuDeviceId, NULL) ; //stream_data ) ;
     //cudaMemPrefetchAsync( C->i, cnz * sizeof (int64_t), cudaCpuDeviceId, NULL ) ; //stream_data ) ;
     //cudaMemPrefetchAsync( C->x, cnz * sizeof (int32_t), cudaCpuDeviceId, NULL ) ; //stream_data ) ;
