@@ -1325,9 +1325,11 @@ void GB_Global_deallocate_function (void *p, size_t size)
     if (GB_Global.pmr_deallocate_function != NULL)
     {
         // use the PMR resource to deallocate memory
+        printf ("hi pmr let's deallocate %p size %ld\n", p, size) ;
         GB_Global.pmr_deallocate_function (p, size) ;
+        printf ("did it pmr\n") ;
     }
-    if (GB_Global.malloc_is_thread_safe)
+    else if (GB_Global.malloc_is_thread_safe)
     {
         // use a thread-safe ANSI C11-compatible free() to deallocate memory
         GB_Global.free_function (p) ;
