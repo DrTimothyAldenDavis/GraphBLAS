@@ -283,7 +283,7 @@ int main (int argc, char **argv)
     FREE_ALL ;
     GrB_finalize ( ) ;
     
-    rmm_destroy_handle( rmmH);
+    rmm_destroy_handle( &rmmH);
     printf ("\n") ;
     fprintf (stderr, "\n") ;
 }
