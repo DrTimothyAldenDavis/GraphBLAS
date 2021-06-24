@@ -1315,7 +1315,13 @@ void *GB_Global_allocate_function (size_t *size)
     if (GB_Global.pmr_allocate_function != NULL)
     {
         // use the PMR resource to allocate memory
+        #ifdef GB_MEMUMP
+        printf ("calling pmr_allocate_function (%lu)\n", *size) ;
+        #endif
         p = GB_Global.pmr_allocate_function (size) ;
+        #ifdef GB_MEMUMP
+        printf ("did pmr_allocate_function (%p, newsize: %lu)\n", p, *size) ;
+        #endif
     }
     else if (GB_Global.malloc_is_thread_safe)
     {
@@ -1341,9 +1347,13 @@ void GB_Global_deallocate_function (void *p, size_t size)
     if (GB_Global.pmr_deallocate_function != NULL)
     {
         // use the PMR resource to deallocate memory
-        printf ("hi pmr let's deallocate %p size %ld\n", p, size) ;
+        #ifdef GB_MEMUMP
+        printf ("calling pmr_deallocate_function (%p, %lu)\n", p, size) ;
+        #endif
         GB_Global.pmr_deallocate_function (p, size) ;
-        printf ("did it pmr\n") ;
+        #ifdef GB_MEMUMP
+        printf ("did pmr_deallocate_function\n") ;
+        #endif
     }
     else if (GB_Global.malloc_is_thread_safe)
     {
