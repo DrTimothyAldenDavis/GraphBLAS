@@ -36,7 +36,7 @@ extern "C"
 #include "GB_jit_launcher.h"
 //#include "GB_cuda_global.hpp" //<- contains callback wrapper and ptr
 
-GB_cuda_stringifier  SR_callback_ptr;
+GB_cuda_stringifier  *SR_callback_ptr;
 
 std::istream* callback_wrapper
 (
@@ -44,7 +44,7 @@ std::istream* callback_wrapper
     std::iostream& file_stream  // the I/O stream for the "file" contents
 )
 {
-    return SR_callback_ptr.callback (file_name, file_stream) ;
+    return SR_callback_ptr->callback (file_name, file_stream) ;
 }
 
 const std::vector<std::string> header_names ={};
@@ -88,9 +88,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     GrB_Info info ;
     ASSERT (C_static != NULL && C_static->static_header) ;
 
-    ASSERT_MATRIX_OK (M_input, "M for dot3 cuda A'*B", GB0) ;
-    ASSERT_MATRIX_OK (A_input, "A for dot3 cuda A'*B", GB0) ;
-    ASSERT_MATRIX_OK (B_input, "B for dot3 cuda A'*B", GB0) ;
+    ASSERT_MATRIX_OK (M_input, "M for dot3 cuda A'*B", GB2) ;
+    ASSERT_MATRIX_OK (A_input, "A for dot3 cuda A'*B", GB2) ;
+    ASSERT_MATRIX_OK (B_input, "B for dot3 cuda A'*B", GB2) ;
 
     ASSERT (!GB_PENDING (M_input)) ;
     ASSERT (GB_JUMBLED_OK (M_input)) ;
@@ -104,7 +104,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     ASSERT (!GB_ZOMBIES (B_input)) ;
     ASSERT (!GB_JUMBLED (B_input)) ;
 
-    ASSERT_SEMIRING_OK (semiring, "semiring for dot3 numeric A'*B", GB0) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for dot3 numeric A'*B", GB2) ;
 
     ASSERT (A_input->vlen == B_input->vlen) ;
     GBURBLE ("(GPU dot3) ") ;
@@ -139,11 +139,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // get M
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Mp = M->p ;
-    const int64_t *restrict Mh = M->h ;
-    // const int64_t *restrict Mi = M->i ;
-    // const GB_void *restrict Mx = M->x ;
-    // const size_t msize = M->type->size ;
     const int64_t mvlen = M->vlen ;
     const int64_t mvdim = M->vdim ;
     const int64_t mnz = GB_NNZ (M) ;
@@ -190,10 +185,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     cudaMemAdvise( C->i, cnz * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, device); 
     cudaMemAdvise( C->x, cnz * C->type->size , cudaMemAdviseSetPreferredLocation, device); 
 
-    int64_t *restrict Cp = M->p ;
-    int64_t *restrict Ch = M->h ;
-    // int64_t *restrict Ci = C->i ;
-    // use C->i as workspace
 
     //--------------------------------------------------------------------------
     // copy Mp and Mh into C
@@ -213,21 +204,15 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // stringify the semiring and the mask
     //--------------------------------------------------------------------------
 
-    char semiring_name [GB_CUDA_STRLEN+2] ;
-    char semiring_code [GB_CUDA_STRLEN+2] ;
-    char mask_name [GB_CUDA_STRLEN+2] ;
-
     GB_cuda_stringifier mysemiring =  GB_cuda_stringifier();
-    uint64_t sr_code;
 
-    mysemiring.enumify_semiring ( &sr_code, semiring, flipxy,
+    mysemiring.enumify_semiring ( semiring, flipxy,
         ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
         false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
 
-    const char *header_name = (const char *)"mySemiRing.h";
-    mysemiring.load_string(header_name, semiring_code ) ;
+    mysemiring.macrofy_semiring ( ) ;
 
-    SR_callback_ptr = mysemiring;
+    SR_callback_ptr = &mysemiring;
 
     GBURBLE ("(GPU stringified) ") ;
     //--------------------------------------------------------------------------
@@ -379,7 +364,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     std::string Opname = "phase1_" ;
     
     jitify::experimental::KernelLauncher phase1Kernel =
-    jit::launcher( base_name + Opname + mask_name,
+    jit::launcher( base_name + Opname + mysemiring.semiring_name, 
                    templates_GB_jit_AxB_dot3_phase1_cu,
                    header_names,
                    compiler_flags,
@@ -629,7 +614,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
         std::cout<< "Kernel name =" <<Opname<<std::endl; 
         GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
-        jit::launcher( base_name + kernel_name + Opname + "_" + semiring_name,
+        jit::launcher( base_name + kernel_name + Opname + "_" + mysemiring.semiring_name,
                        jit_template,
                        header_names,
                        compiler_flags,
@@ -675,7 +660,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     cudaMallocManaged ((void**) &block_sum, (num_reduce_blocks)*sizeof(int32_t)) ;
 
     GBURBLE ("(GPU reduce launch nblocks,blocksize= %d,%d )\n", num_reduce_blocks, red_blocksz) ;
-    jit::launcher( reduce_kernel_name + "_" + semiring_name,
+    jit::launcher( reduce_kernel_name + "_" + mysemiring.semiring_name,
                    jit_template,
                    header_names,
                    compiler_flags,
