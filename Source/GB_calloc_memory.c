@@ -38,7 +38,9 @@ static inline void *GB_calloc_helper
         // round up the size to the nearest power of two
         (*size) = ((size_t) 1) << k ;
         p = GB_Global_free_pool_get (k) ;
+        #ifdef GB_MEMDUMP
         if (p != NULL) printf ("calloc from pool: %p %ld\n", p, *size) ;
+        #endif
     }
 
     if (p == NULL)
@@ -50,10 +52,14 @@ static inline void *GB_calloc_helper
             // success
             GB_Global_nmalloc_increment ( ) ;
         }
+        #ifdef GB_MEMDUMP
         printf ("hard calloc %p %ld\n", p, *size) ;
+        #endif
     }
 
+    #ifdef GB_MEMDUMP
     GB_Global_free_pool_dump (2) ; GB_Global_memtable_dump ( ) ;
+    #endif
 
     if (p != NULL)
     {

@@ -39,7 +39,9 @@ void GB_dealloc_memory      // free memory, return to free_pool or free it
             int k = GB_CEIL_LOG2 (size_allocated) ;
             if (GB_Global_free_pool_limit_get (k) > 0)
             {
+                #ifdef GB_MEMDUMP
                 printf ("put to free pool %p %d\n", *p, k) ;
+                #endif
                 returned_to_free_pool = GB_Global_free_pool_put (*p, k) ;
             }
         }
@@ -54,7 +56,9 @@ void GB_dealloc_memory      // free memory, return to free_pool or free it
             GB_free_memory (p, size_allocated) ;
         }
 
+        #ifdef GB_MEMDUMP
         GB_Global_free_pool_dump (2) ; GB_Global_memtable_dump ( ) ;
+        #endif
 
         (*p) = NULL ;
     }
