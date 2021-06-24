@@ -18,6 +18,7 @@ GrB_Info GrB_finalize ( )
 { 
     // free all memory pools
     GB_free_pool_finalize ( ) ;
+    printf ("Hi GrB_finalize is done yay!\n") ;
     return (GrB_SUCCESS) ;
 }
 
