@@ -8,8 +8,13 @@ FIXME: GAP benchmarks (do this before releasing v5.1.0.BETA1)
 
 do this after BETA1:
 FIXME: check Octave port
-FIXME: check R2021a port
+FIXME: check R2021a port:
+    gbtest (OK; but double free at end of test ???)
+    gbcov (in progress)
+    Test (not yet)
 FIXME: check Mac port
 FIXME: check Windows port
 FIXME: reduce the test cov time (start with test77)
+FIXME: MATLAB test coverage for @GrB
 
+FIXME: reduce compile time when GBCOMPACT is enabled

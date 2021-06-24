@@ -48,6 +48,8 @@ fclose (f) ;
 % use -R2018a for the new interleaved complex API
 flags = '-g -R2018a -DGBCOV' ;
 
+need_rename = ~verLessThan ('matlab', '9.10') ;
+
 try
     if (strncmp (computer, 'GLNX', 4))
         % remove -ansi from CFLAGS and replace it with -std=c11
@@ -70,7 +72,18 @@ try
 catch
 end
 
-libraries = '-L../../../../../../build -L. -L/usr/local/lib -lgraphblas' ;
+if (need_rename)
+    fprintf ('R2021a and later include an earlier version of\n') ;
+    fprintf ('GraphBLAS, as a built-in library.  This interface to the\n') ;
+    fprintf ('latest version of GraphBLAS links against a library with\n') ;
+    fprintf ('with renamed symbols, to avoid a library conflict.\n') ;
+    flags = [flags ' -DGBRENAME=1 ' ] ;
+    inc = [inc ' -I../../rename ' ] ;
+    libraries = '-L../../../../../build -L. -L/usr/local/lib -lgraphblas_renamed' ;
+else
+    libraries = '-L../../../../../../build -L. -L/usr/local/lib -lgraphblas' ;
+end
+
 
 if (~ismac && isunix)
     flags = [ flags   ' CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;

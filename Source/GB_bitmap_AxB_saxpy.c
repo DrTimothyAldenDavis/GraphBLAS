@@ -106,7 +106,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
 
         GBURBLE ("(iso bitmap saxpy) ") ;
         memcpy (C->x, cscalar, ctype->size) ;
-        info = GB__AsaxbitB__any_pair_iso (C, M, Mask_comp, Mask_struct, A,
+        info = GB (_AsaxbitB__any_pair_iso) (C, M, Mask_comp, Mask_struct, A,
             true, B, true, Context) ;
 
     }

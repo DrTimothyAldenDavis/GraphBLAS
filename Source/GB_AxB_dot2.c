@@ -292,8 +292,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         //----------------------------------------------------------------------
 
         memcpy (C->x, cscalar, ctype->size) ;
-        info = GB__Adot2B__any_pair_iso (C, M, Mask_comp, Mask_struct, A, true,
-            A_slice, B, true, B_slice, nthreads, naslice, nbslice) ;
+        info = GB (_Adot2B__any_pair_iso) (C, M, Mask_comp, Mask_struct, A,
+            true, A_slice, B, true, B_slice, nthreads, naslice, nbslice) ;
         ASSERT (info != GrB_NO_VALUE) ;
 
     }

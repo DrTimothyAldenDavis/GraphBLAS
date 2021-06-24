@@ -94,21 +94,16 @@ void mexFunction
     OK (GrB_Matrix_nrows (&nrows, C)) ;
     OK (GrB_Matrix_ncols (&ncols, C)) ;
 
-// printf ("\n GBLOGASSIGN: =========================================== G\n");
-// GxB_print (C, 3) ;
-
     //--------------------------------------------------------------------------
     // get M
     //--------------------------------------------------------------------------
 
     // make M boolean, sparse/hyper, stored by column, and drop explicit zeros
     GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
-// printf ("M_input\n") ; GxB_print (M_input, 3) ;
     GrB_Matrix M = gb_new (GrB_BOOL, nrows, ncols, GxB_BY_COL,
         GxB_SPARSE + GxB_HYPERSPARSE) ;
     OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
         NULL, NULL)) ;
-// printf ("M\n") ; GxB_print (M, 3) ;
 
     OK (GrB_Matrix_free (&M_input)) ;
     GrB_Index mnz ;
@@ -119,7 +114,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A_input = gb_get_shallow (pargin [2]) ;
-// printf ("A_input\n") ; GxB_print (A_input, 3) ;
     GrB_Matrix A = A_input ;
     GrB_Type atype ;
     GrB_Index anrows, ancols, anz ;
@@ -135,8 +129,6 @@ void mexFunction
     GrB_Matrix A_copy = NULL ;
     GrB_Matrix A_copy2 = NULL ;
 
-// printf ("anz = %ld\n", anz) ;
-
     // make sure A is not bitmap; it can be sparse, hypersparse, or full
     if (A_sparsity == GxB_BITMAP)
     {
@@ -145,7 +137,6 @@ void mexFunction
             GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
         A = A_copy2 ;
     }
-// printf ("A not bitmap\n") ; GxB_print (A, 3) ;
 
     // make sure A is a vector of the right size
     if (mnz == 0)
@@ -220,59 +211,73 @@ void mexFunction
 
     if (A->iso)
     {
+GB_GOTCHA ;
         // build S as an iso matrix
         GxB_Scalar s = NULL ;
         OK (GxB_Scalar_new (&s, atype)) ;
         if (atype == GrB_BOOL)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_BOOL (s, (* ((bool *) Ax)))) ;
         }
         else if (atype == GrB_INT8)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_INT8 (s, (* ((int8_t *) Ax)))) ;
         }
         else if (atype == GrB_INT16)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_INT16 (s, (* ((int16_t *) Ax)))) ;
         }
         else if (atype == GrB_INT32)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_INT32 (s, (* ((int32_t *) Ax)))) ;
         }
         else if (atype == GrB_INT64)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_INT64 (s, (* ((int64_t *) Ax)))) ;
         }
         else if (atype == GrB_UINT8)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_UINT8 (s, (* ((uint8_t *) Ax)))) ;
         }
         else if (atype == GrB_UINT16)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_UINT16 (s, (* ((uint16_t *) Ax)))) ;
         }
         else if (atype == GrB_UINT32)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_UINT32 (s, (* ((uint32_t *) Ax)))) ;
         }
         else if (atype == GrB_UINT64)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_UINT64 (s, (* ((uint64_t *) Ax)))) ;
         }
         else if (atype == GrB_FP32)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_FP32 (s, (* ((float *) Ax)))) ;
         }
         else if (atype == GrB_FP64)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_FP64 (s, (* ((double *) Ax)))) ;
         }
         else if (atype == GxB_FC32)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_FC32 (s, (* ((GxB_FC32_t *) Ax)))) ;
         }
         else if (atype == GxB_FC64)
         { 
+GB_GOTCHA ;
             OK1 (s, GxB_Scalar_setElement_FC64 (s, (* ((GxB_FC64_t *) Ax)))) ;
         }
         else
@@ -345,12 +350,8 @@ void mexFunction
     // C<M> = S
     //--------------------------------------------------------------------------
 
-// printf ("C for subassign (input): \n") ; GxB_print (C, 3) ;
-// printf ("M for subassign: \n") ; GxB_print (M, 3) ;
-// printf ("S for subassign: \n") ; GxB_print (S, 3) ;
     OK1 (C, GxB_Matrix_subassign (C, M, NULL,
         S, GrB_ALL, nrows, GrB_ALL, ncols, NULL)) ;
-// printf ("C for subassign (output): \n") ; GxB_print (C, 3) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies and temporary matrices

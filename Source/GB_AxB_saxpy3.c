@@ -609,7 +609,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         //----------------------------------------------------------------------
 
         GBURBLE ("(iso sparse saxpy) ") ;
-        info = GB__Asaxpy3B__any_pair_iso (C, M, Mask_comp, Mask_struct,
+        info = GB (_Asaxpy3B__any_pair_iso) (C, M, Mask_comp, Mask_struct,
             M_in_place, A, true, B, true, SaxpyTasks, ntasks, nfine,
             nthreads, do_sort, Context) ;
         if (info == GrB_SUCCESS)

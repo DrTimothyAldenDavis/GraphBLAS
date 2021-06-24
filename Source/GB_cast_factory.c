@@ -12,8 +12,7 @@
 // s is the size for user-defined types, which can only be copied.
 
 // This function returns one of ((13*13) + 1) pointers to a typecasting/copy
-// function.  13*13 is the set of functions named GB__cast_ZTYPE_XTYPE, for
-// each pair of built-in types (ZTYPE, XTYPE).  The last pointer is the
+// function, defined by GB_casting.c.  The last function pointer is the
 // function GB_copy_user_user.
 
 #include "GB.h"

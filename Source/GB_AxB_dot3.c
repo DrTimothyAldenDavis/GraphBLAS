@@ -247,8 +247,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         //----------------------------------------------------------------------
 
         memcpy (C->x, cscalar, ctype->size) ;
-        GB_OK (GB__Adot3B__any_pair_iso (C, M, Mask_struct, A, true, B, true,
-            TaskList, ntasks, nthreads)) ;
+        GB_OK (GB (_Adot3B__any_pair_iso) (C, M, Mask_struct, A, true, B,
+            true, TaskList, ntasks, nthreads)) ;
 
     }
     else
