@@ -555,7 +555,7 @@ void GB_Global_memtable_add (void *p, size_t size)
     ASSERT ((p == NULL) == (size == 0)) ;
     if (p == NULL) return ;
     bool fail = false ;
-    // printf ("memtable add %p size %ld\n", p, size) ;
+    printf ("memtable add %p size %ld\n", p, size) ;
     #pragma omp critical(GB_memtable)
     {
         int n = GB_Global.nmemtable  ;
@@ -582,7 +582,7 @@ void GB_Global_memtable_add (void *p, size_t size)
         }
     }
     ASSERT (!fail) ;
-    // GB_Global_memtable_dump ( ) ;
+    GB_Global_memtable_dump ( ) ;
     #endif
 }
 
@@ -647,7 +647,7 @@ void GB_Global_memtable_remove (void *p)
     #ifdef GB_DEBUG
     if (p == NULL) return ;
     bool found = false ;
-    // printf ("memtable remove %p ", p) ;
+    printf ("memtable remove %p ", p) ;
     #pragma omp critical(GB_memtable)
     {
         int n = GB_Global.nmemtable  ;
@@ -656,7 +656,7 @@ void GB_Global_memtable_remove (void *p)
             if (p == GB_Global.memtable_p [i])
             {
                 // found p in the table; remove it
-                // printf ("size %ld\n", GB_Global.memtable_s [i]) ;
+                printf ("size %ld\n", GB_Global.memtable_s [i]) ;
                 GB_Global.memtable_p [i] = GB_Global.memtable_p [n-1] ;
                 GB_Global.memtable_s [i] = GB_Global.memtable_s [n-1] ;
                 GB_Global.nmemtable -- ;
@@ -671,7 +671,7 @@ void GB_Global_memtable_remove (void *p)
         GB_Global_memtable_dump ( ) ;
     }
     ASSERT (found) ;
-    // GB_Global_memtable_dump ( ) ;
+    GB_Global_memtable_dump ( ) ;
     #endif
 }
 
@@ -1151,11 +1151,11 @@ void *GB_Global_free_pool_get (int k)
     { 
         // clear the next pointer inside the block, since the block needs
         // to be all zero
-        // printf ("got %p k %d\n", p, k) ;
+        printf ("got %p k %d\n", p, k) ;
         #ifdef GB_DEBUG
         GB_Global_free_pool_check (p, k, "get") ;
         #endif
-        // GB_Global_free_pool_dump (2) ; printf ("\ndid get\n\n") ;
+        GB_Global_free_pool_dump (2) ; printf ("\ndid get\n\n") ;
     }
     return (p) ;
 }
@@ -1175,13 +1175,13 @@ bool GB_Global_free_pool_put (void *p, int k)
         if (returned_to_pool)
         {
             // add the block to the head of the free_pool list
-            // printf ("put %p k %d\n", p, k) ;
+            printf ("put %p k %d\n", p, k) ;
             GB_Global.free_pool_nblocks [k]++ ;
             GB_NEXT (p) = GB_Global.free_pool [k] ;
             GB_Global.free_pool [k] = p ;
         }
     }
-    // GB_Global_free_pool_dump (2) ; printf ("\ndid put\n\n") ;
+    GB_Global_free_pool_dump (2) ; printf ("\ndid put\n\n") ;
     return (returned_to_pool) ;
 }
 
