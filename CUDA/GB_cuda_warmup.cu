@@ -36,7 +36,7 @@ bool GB_cuda_warmup (int device)
         return (false) ;
     }
     printf ("oooo nice block of memory of size %lu\n", size) ;
-    GB_free_memory (&p, size) ;
+    GB_free_memory ( &p, size) ;
     printf ("be free, block of memory of size %lu\n", size) ;
 
     printf ("good ol' cudaMalloc just to be sure\n");

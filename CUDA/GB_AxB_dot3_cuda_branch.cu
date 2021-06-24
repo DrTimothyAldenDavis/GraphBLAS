@@ -33,7 +33,7 @@ bool GB_AxB_dot3_cuda_branch
         // that are not built-in, but consist solely of built-in types and
         // operators (such as BOR_BSHIFT on INT32 inputs).
 
-        int ngpus_to_use = GB_ngpus_to_use (work) ;
+        int ngpus_to_use = 1 ; //GB_ngpus_to_use (work) ;
         GBURBLE (" work:%g gpus:%d ", work, ngpus_to_use) ;
         if (ngpus_to_use > 0
             && (semiring->header_size == 0)     // semiring is built-in

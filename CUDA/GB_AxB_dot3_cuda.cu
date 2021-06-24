@@ -206,11 +206,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GB_cuda_stringifier mysemiring =  GB_cuda_stringifier();
 
-    mysemiring.enumify_semiring ( semiring, flipxy,
+    mysemiring.stringify_semiring ( semiring, flipxy,
         ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
         false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
-
-    mysemiring.macrofy_semiring ( ) ;
 
     SR_callback_ptr = &mysemiring;
 

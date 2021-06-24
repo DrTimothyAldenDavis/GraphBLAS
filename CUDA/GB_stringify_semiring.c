@@ -42,6 +42,7 @@ void GB_stringify_semiring     // build a semiring (name and code)
         semiring, flipxy, 
         ctype, mtype, atype, btype, Mask_struct, Mask_comp,
         C_sparsity, M_sparsity, A_sparsity, B_sparsity) ;
+
     GB_macrofy_semiring (semiring_macros, scode) ;
 }
 
@@ -286,6 +287,7 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     bool A_is_pattern = (acode == 0) ;
     bool B_is_pattern = (bcode == 0) ;
 
+    printf("stringify loaders \n");
     char acast_macro [GB_CUDA_STRLEN+1] ;
     char bcast_macro [GB_CUDA_STRLEN+1] ;
     GB_stringify_load (acast_macro, "GB_GETA", A_is_pattern) ;
@@ -295,6 +297,7 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     // construct macros for the multiply
     //--------------------------------------------------------------------------
 
+    printf("stringify mult \n");
     char s [GB_CUDA_STRLEN+1] ;
     char mult_macro [GB_CUDA_STRLEN+1] ;
     GB_charify_binop (&s, mult_ecode) ;
@@ -304,6 +307,7 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     // construct the monoid macros
     //--------------------------------------------------------------------------
 
+    printf("stringify monoid \n");
     char add_macro [GB_CUDA_STRLEN+1] ;
     char identity_macro [GB_CUDA_STRLEN+1] ;
     char terminal_expression_macro [GB_CUDA_STRLEN+1] ;
@@ -327,17 +331,18 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------
 
-    const char *mask_macros = "" ;
+    const char *mask_macros = " " ;
     GB_macrofy_mask (&mask_macros, mask_ecode) ;
 
     //--------------------------------------------------------------------------
     // determine the sparsity formats of C, M, A, and B
     //--------------------------------------------------------------------------
 
-    const char *csparsity_macros = "" ;
-    const char *msparsity_macros = "" ;
-    const char *asparsity_macros = "" ;
-    const char *bsparsity_macros = "" ;
+    printf("stringify sparsity \n");
+    const char *csparsity_macros = " " ;
+    const char *msparsity_macros = " " ;
+    const char *asparsity_macros = " " ;
+    const char *bsparsity_macros = " " ;
     GB_macrofy_sparsity (&csparsity_macros, "C", csparsity) ;
     GB_macrofy_sparsity (&msparsity_macros, "M", csparsity) ;
     GB_macrofy_sparsity (&asparsity_macros, "A", csparsity) ;
@@ -347,12 +352,13 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     // build the final string that defines all semiring macros
     //--------------------------------------------------------------------------
 
+    printf("stringify to buffer \n");
     snprintf (semiring_macros, GB_CUDA_STRLEN,
-        "%s\n" "%s\n" "%s\n" "%s\n" "%s\n" "%s\n" "%s\n" "%s\n" "%s\n" "%s\n"
-        "%s\n" "%s\n" "%s\n",
+        "%s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n",
         acast_macro, bcast_macro, mult_macro, add_macro, identity_macro,
         terminal_expression_macro, terminal_statement_macro, ccast_macro,
         mask_macros, csparsity_macros, msparsity_macros, asparsity_macros,
         bsparsity_macros) ;
+    printf("done with stringify semiring \n");
 }
 
