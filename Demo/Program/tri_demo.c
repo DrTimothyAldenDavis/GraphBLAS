@@ -51,7 +51,19 @@ int main (int argc, char **argv)
     GxB_Scalar Thunk = NULL ;
     GrB_Info info ;
     double tic [2], r1, r2 ;
-    OK (GrB_init (GrB_NONBLOCKING)) ;
+//  OK (GrB_init (GrB_NONBLOCKING)) ;
+
+    size_t rmm_handle_size = 256;
+    RMM_Handle *rmmH ;
+    rmm_create_handle( &rmmH);
+    size_t init_size = (1ULL<<10)*(1ULL<<8);
+    size_t max_size =  (1ULL<<20)*(1ULL<<8);
+    printf(" Hello before rmm_initialize %lu %lu\n", init_size, max_size);
+    rmm_initialize( rmmH, rmm_managed, init_size, max_size );
+    printf(" Hello after rmm_initialize\n");
+
+    OK (GxB_pmr_init (GrB_NONBLOCKING, rmm_allocate, rmm_deallocate)) ;
+    OK (GxB_set (GxB_BURBLE, true) ) ;
     int nthreads ;
     OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads)) ;
     fprintf (stderr, "tri_demo: nthreads %d\n", nthreads) ;
@@ -270,6 +282,8 @@ int main (int argc, char **argv)
 
     FREE_ALL ;
     GrB_finalize ( ) ;
+    
+    rmm_destroy_handle( rmmH);
     printf ("\n") ;
     fprintf (stderr, "\n") ;
 }
