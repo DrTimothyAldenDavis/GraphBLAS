@@ -76,11 +76,19 @@ for trial = 1:40
             assert (gbtest_eq (C1, C3)) ;
             assert (gbtest_eq (C1, C4)) ;
 
+            % test assignment with A iso 
+            G = spones (GrB (A)) ;
+            A = double (G) ;
+            C1 = C ;
+            C1 (M) = A (M) ;%#ok<*SPRIX> % C1(M) builtin, A(M) is built-in
+            C2 = GrB (C) ;
+            C2 (M) = G (M) ;
+            assert (gbtest_eq (C1, C2)) ;
+
             % also try with a GrB mask matrix M
             M = GrB (M) ;
             C5 = GrB (C) ;
             C5 (M) = G (M) ;
-
             assert (gbtest_eq (C1, C5)) ;
 
             % test scalar assigment with logical indexing
@@ -90,7 +98,6 @@ for trial = 1:40
             C3 (M) = GrB (pi) ;
             C4 (K) = GrB (pi) ;
             C5 (M) = pi ;
-
             assert (gbtest_eq (C1, C2)) ;
             assert (gbtest_eq (C1, C3)) ;
             assert (gbtest_eq (C1, C4)) ;

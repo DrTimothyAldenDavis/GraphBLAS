@@ -132,6 +132,9 @@ gbtest99  % test performance of C=A'*B and C=A'
 gbtest100 % test GrB.ver and GrB.version
 gbtest101 % test loading of v3 GraphBLAS objects
 gbtest102 % test horzcat, vertcat, cat, cell2mat
+gbtest103 % test iso matrices
+gbtest104 % test formats
+gbtest105 % test logical assignment with iso matrices
 gbtest96  % test GrB.optype
 gbtest00  % test GrB.bfs and plot (graph (G))
 

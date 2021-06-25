@@ -106,6 +106,9 @@
 %  gbtest100 - test GrB.ver and GrB.version
 %  gbtest101 - test loading of v3 GraphBLAS objects
 %  gbtest102 - test horzcat, vertcat, cat, cell2mat, mat2cell, num2cell
+%  gbtest103 - test iso matrices
+%  gbtest104 - test formats
+%  gbtest105 - test logical assignment with iso matrices
 %
 % Utilities and other tests:
 %
