@@ -109,6 +109,7 @@
 %  gbtest103 - test iso matrices
 %  gbtest104 - test formats
 %  gbtest105 - test logical assignment with iso matrices
+%  gbtest106 - test build
 %
 % Utilities and other tests:
 %

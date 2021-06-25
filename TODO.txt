@@ -7,16 +7,15 @@ that will be checked shortly.  Here's what's left to do:
 FIXME: GAP benchmarks (do this before releasing v5.1.0.BETA1),
     create iso matrices for all but sssp demos
 
-do this after BETA1:
 FIXME: check R2021a port:
-    gbtest (OK; but double free at end of test ???)
-    gbcov (in progress)
+    gbtest (done)
+    gbcov (done)
     Test (not yet)
+    Tcov (not yet)
 
 FIXME: check Octave port
 FIXME: check Mac port
 FIXME: check Windows port
 FIXME: reduce the test cov time (start with test77)
-FIXME: MATLAB test coverage for @GrB
-
 FIXME: reduce compile time when GBCOMPACT is enabled
+

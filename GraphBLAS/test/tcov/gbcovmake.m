@@ -72,15 +72,18 @@ try
 catch
 end
 
+here = pwd ;
+
 if (need_rename)
     fprintf ('R2021a and later include an earlier version of\n') ;
     fprintf ('GraphBLAS, as a built-in library.  This interface to the\n') ;
     fprintf ('latest version of GraphBLAS links against a library with\n') ;
     fprintf ('with renamed symbols, to avoid a library conflict.\n') ;
     flags = [flags ' -DGBRENAME=1 ' ] ;
-    inc = [inc ' -I../../rename ' ] ;
+    inc = sprintf ('-I%s/../../rename ', here) ;
     libraries = '-L../../../../../build -L. -L/usr/local/lib -lgraphblas_renamed' ;
 else
+    inc = [' '] ;
     libraries = '-L../../../../../../build -L. -L/usr/local/lib -lgraphblas' ;
 end
 
@@ -91,10 +94,8 @@ if (~ismac && isunix)
     flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp -fPIC" '] ;
 end
 
-inc = ...
-'-I. -I../util -I../../../../../../Include -I../../../../../../Source -I../../../../../../Source/Template' ;
+inc = [ inc '-I. -I../util -I../../../../../../Include -I../../../../../../Source -I../../../../../../Source/Template' ] ;
 
-here = pwd ;
 cd tmp/@GrB/private
 try
 
@@ -111,7 +112,8 @@ try
         objlist = [ objlist ' ' objfile ] ; %#ok<*AGROW>
         % compile the cfile
         mexcmd = sprintf ('mex -c %s -silent %s %s', flags, inc, cfile) ;
-        fprintf ('%s\n', cfile) ;
+        fprintf ('.') ;
+        % fprintf ('%s\n', cfile) ;
         % fprintf ('%s\n', mexcmd) ;
         eval (mexcmd) ;
     end
@@ -128,10 +130,12 @@ try
         % compile the mexFunction
         mexcmd = sprintf ('mex -silent %s %s %s %s %s', ...
             flags, inc, mexfunction, objlist, libraries) ;
-        fprintf ('%s\n', mexfunction) ;
+        fprintf (':') ;
+        % fprintf ('%s\n', mexfunction) ;
         % fprintf ('%s\n', mexcmd) ;
         eval (mexcmd) ;
     end
+    fprintf ('\n') ;
 
 catch me
     disp (me.message)

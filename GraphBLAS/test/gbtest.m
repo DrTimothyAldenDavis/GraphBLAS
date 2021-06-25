@@ -135,6 +135,7 @@ gbtest102 % test horzcat, vertcat, cat, cell2mat
 gbtest103 % test iso matrices
 gbtest104 % test formats
 gbtest105 % test logical assignment with iso matrices
+gbtest106 % test build
 gbtest96  % test GrB.optype
 gbtest00  % test GrB.bfs and plot (graph (G))
 
