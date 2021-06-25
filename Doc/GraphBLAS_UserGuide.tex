@@ -139,7 +139,7 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 5.1.0 BETA1 (June 22, 2021)    % FIXME
+\item Version 5.1.0 BETA1 (June 25, 2021)   % FIXME
 
     \begin{packed_itemize}
     \item iso matrices added:  these are matrices and vectors whose
@@ -8347,7 +8347,6 @@ current implementation.  For all of these, \verb'GxB_get' returns a string
 these, \verb'GxB_get' returns a string (\verb'char *'), except for
 \verb'GxB_API_VERSION', which takes as input an \verb'int' array of size three.  
 
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Global\_Option\_set:} set a global option}
 %===============================================================================
@@ -8399,6 +8398,7 @@ of size $2^k$ that are kept in the pool.  Passing in a \verb'NULL' pointer
 sets the defaults.  Passing in an array of size 64 whose entries are all zero
 disables the memory pool entirely.
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Matrix\_Option\_set:} set a matrix option}
 %===============================================================================
@@ -8466,10 +8466,8 @@ consistent with the other usages of this generic function.  Unlike
 \verb'GrB_Descriptor_set', the \verb'field' may also be \verb'GxB_NTHREADS',
 \verb'GxB_CHUNK', or \verb'GxB_SORT'.  Refer to
 Sections~\ref{descriptor_set}~and~\ref{desc_set} for details.
-
 If an error occurs, \verb'GrB_error(&err,desc)' returns details about the error.
 
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Global\_Option\_get:} retrieve a global option}
 %===============================================================================
@@ -8580,7 +8578,6 @@ For example:
     GxB_get (GxB_LIBRARY_VERSION, ver) ;
     printf ("Library %s, version %d.%d.%d\n", name, ver [0], ver [1], ver [2]) ; \end{verbatim} }
 
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Matrix\_Option\_get:} retrieve a matrix option}
 %===============================================================================
