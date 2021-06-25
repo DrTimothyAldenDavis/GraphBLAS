@@ -151,10 +151,10 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     // if C is iso on input: get the iso scalar and convert C to non-iso
     //--------------------------------------------------------------------------
 
-    size_t csize = C->type->size ; 
+    const size_t csize = C->type->size ;
     GB_void cinput [GB_VLA(csize)] ;
     memset (cinput, 0, csize) ;
-    bool C_in_iso = C->iso ;
+    const bool C_in_iso = C->iso ;
     if (C->iso)
     { 
         memcpy (cinput, C->x, csize) ;

@@ -21,33 +21,10 @@
 #undef  GB_DOT
 #define GB_DOT(k,pA,pB)                                                 \
 {                                                                       \
-    if (!cij_updated)                                                   \
-    {                                                                   \
-        /* get the value of C(i,j) on input (may be the iso scalar) */  \
-        cij_updated = true ;                                            \
-        GB_GET4C (cij, pC) ;                /* cij = Cx [pC] */         \
-    }                                                                   \
+    GB_DOT_TERMINAL (cij) ;         /* break if cij == terminal */      \
     GB_GETA (aki, Ax, pA, A_iso) ;          /* aki = A(k,i) */          \
     GB_GETB (bkj, Bx, pB, B_iso) ;          /* bkj = B(k,j) */          \
     GB_MULTADD (cij, aki, bkj, i, k, j) ;   /* cij += aki * bkj */      \
-    GB_DOT_TERMINAL (cij) ;         /* break if cij == terminal */      \
-}
-
-// C(i,j) = cij
-#undef  GB_DOT_ALWAYS_SAVE_CIJ
-#define GB_DOT_ALWAYS_SAVE_CIJ  \
-{                               \
-    GB_PUTC (cij, pC) ;         \
-}
-
-// save C(i,j) if it has been updated
-#undef  GB_DOT_SAVE_CIJ
-#define GB_DOT_SAVE_CIJ             \
-{                                   \
-    if (cij_updated || C_in_iso)    \
-    {                               \
-        GB_PUTC (cij, pC) ;         \
-    }                               \
 }
 
 { 
@@ -96,8 +73,7 @@
     #include "GB_meta16_factory.c"
 }
 
-#undef GB_DOT_ALWAYS_SAVE_CIJ
-#undef GB_DOT_SAVE_CIJ
+#undef GB_DOT
 
 #undef GB_DOT4
 
