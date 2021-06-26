@@ -14,6 +14,7 @@ for trial = 1:10
         for n = 1:nmax
             A = sprand (m, n, 0.5) ;
 
+            skew = false ;
             if (m == n)
                 if (mod (trial, 10) == 1)
                     % make A symmetric
@@ -21,6 +22,7 @@ for trial = 1:10
                 elseif (mod (trial, 10) == 2)
                     % make A skew symmetric
                     A = A - A' ;
+                    skew = true ;
                 end
             end
 
@@ -30,7 +32,7 @@ for trial = 1:10
                 C = A*A' ;
             end
 
-            if (rand < 0.1)
+            if (~skew & rand < 0.1)
                 A = logical (A) ;
                 C = logical (C) ;
             end
