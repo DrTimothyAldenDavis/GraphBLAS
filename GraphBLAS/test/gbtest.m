@@ -5,6 +5,10 @@ function gbtest
 % compile GraphBLAS.  Use 'make JOBS=40' to compile in parallel (replace '40'
 % with the number of cores in your system).  Next, do the following:
 %
+% This test has been ported to Octave 7, as of SuiteSparse:GraphBLAS v5.1.
+% A few features differ between Octave and MATLAB, so those tests are skipped
+% for Octave.
+%
 % Example:
 %
 %   cd GraphBLAS/GraphBLAS
@@ -36,6 +40,7 @@ gbtest0   % test GrB.clear
 gbtest1   % test GrB
 gbtest2   % list all binary operators
 if (~have_octave)
+    % octave fails in dnn_builtin, unsure why
     gbtest3   % test dnn
 end
 gbtest4   % list all possible semirings
@@ -125,6 +130,7 @@ end
 gbtest76  % test trig functions
 gbtest77  % test error handling
 if (~have_octave)
+    % octave: bit index must be in proper range
     gbtest78  % test integer operations
 end
 gbtest79  % test power
@@ -166,6 +172,7 @@ end
 % restore default # of threads
 have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 if (~have_octave)
+    % octave does not have the maxNumCompThreads function
     maxNumCompThreads ('automatic') ;
 end
 GrB.clear

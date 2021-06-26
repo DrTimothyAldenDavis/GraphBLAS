@@ -79,8 +79,7 @@ for trial = 1:21
     assert (gbtest_eq (C1, C4)) ;
 
     if (~have_octave)
-        % in octave7, sparse(0).^sparse(1) is wrong; it gives 1 but
-        % should be 0.
+        % octave7: sparse(0).^sparse(1) is wrong; it gives 1 but should be 0.
         if (~islogical (MA))
             C1 = (MA .^ MB) ;
             C2 = (GA .^ GB) ;

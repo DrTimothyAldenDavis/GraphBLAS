@@ -49,6 +49,7 @@ for k = 1:length (types)
     end
     I = GrB ([1 2], type) ;
     if (have_octave)
+        % octave: indices into built-in matrices cannot be objects
         I = int64 (I) ;
     end
     C1 = A (I,I) ;
@@ -61,6 +62,7 @@ for k = 1:length (types)
 end
 
 if (~have_octave)
+    % octave: indices into built-in matrices cannot be objects
     I1 = [1 2 ; 3 4] ;
     I2 = GrB (I1) ;
     C1 = A (I1,I1) ;

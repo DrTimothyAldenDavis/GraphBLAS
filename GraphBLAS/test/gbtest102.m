@@ -18,6 +18,7 @@ C2 = [double(A) ; double(B)] ;
 assert (isequal (C1, C2)) ;
 
 if (~have_octave)
+    % num2cell works differently in octave
     S1 = num2cell (C1) ;
     S2 = num2cell (C2) ;
     assert (isequal (S1, S2)) ;

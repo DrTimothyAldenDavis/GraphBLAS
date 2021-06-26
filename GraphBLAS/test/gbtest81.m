@@ -82,6 +82,7 @@ for m = [1 5 10 ]
                     % log1p and expm1 are not accurate in GraphBLAS
                     % for the complex case
                     if (~have_octave)
+                        % octave fails here, unsure why
                         assert (err < 1e-5)
                     end
                 else

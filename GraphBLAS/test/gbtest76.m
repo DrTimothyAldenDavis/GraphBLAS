@@ -324,6 +324,7 @@ function gbtest76b (A, B, G, H, tol)
     assert (err < tol) ;
 
     if (~have_octave)
+        % octave fails here; unsure why
         C1 = log1p (A) ;
         C2 = log1p (G) ;
         err = norm (C1-C2, 1) ;
@@ -418,6 +419,7 @@ function gbtest76b (A, B, G, H, tol)
     J = GrB ([3 1 2]) ;
 
     if (~have_octave)
+        % octave does not allow indexing built-in matrices with objects
         C1 = A (I,J) ;
         C2 = G (I,J) ;
         err = norm (C1-C2, 1) ;
