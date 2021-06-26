@@ -72,6 +72,7 @@ for trial = 1:40
             % this uses the built-in subasgn, after typecasting G(M) from
             % class GrB to class double, using GrB/double:
             if (~have_octave)
+                C4 = C ;
                 C4 (M) = G (M) ;
                 assert (gbtest_eq (C1, C4)) ;
             end
