@@ -32,9 +32,11 @@ for trial = 1:10
                 C = A*A' ;
             end
 
-            if (~skew & rand < 0.1)
-                A = logical (A) ;
-                C = logical (C) ;
+            if (~skew)
+                if (rand < 0.1)
+                    A = logical (A) ;
+                    C = logical (C) ;
+                end
             end
 
             L = tril (A) ;

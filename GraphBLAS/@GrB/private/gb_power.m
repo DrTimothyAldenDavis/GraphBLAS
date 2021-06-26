@@ -84,7 +84,7 @@ else
             C = gbapply2 (op, A, B) ;
         end
     else
-        % both A and B are matrices.  0.^0 is NaN, so C is full.
+        % both A and B are matrices.  0.^0 is 1, so C is full.
         C = gbemult (op, gbfull (A, ctype), B) ;
     end
 

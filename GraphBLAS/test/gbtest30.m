@@ -40,6 +40,7 @@ assert (gbtest_eq (x, y)) ;
 % GraphBLAS can construct huge-by-huge matrices
 tic
 [c, huge] = computer %#ok<*ASGLU>
+huge = 2^48 ;
 H = GrB (huge, huge)
 I = sort (randperm (huge, 4)) ;
 M = magic (4)

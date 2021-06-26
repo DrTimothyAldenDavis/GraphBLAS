@@ -28,7 +28,8 @@ assert (isequal (d, d2)) ;
 
 n = 2 * flintmax ;
 G = GrB (n, n) ;
-I = sort (randperm (flintmax-1, 8)) ;
+m = flintmax / 2 ;
+I = sort (randperm (m, 8)) ;
 A = magic (8) ;
 G (I,I) = A ;
 x1 = nonzeros (A) ;

@@ -25,6 +25,8 @@ demo_folder = fullfile (fileparts (mfilename ('fullpath')), '../demo') ;
 addpath (demo_folder) ;
 rng ('default') ;
 
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+
 try
     GrB.init
 catch
@@ -33,7 +35,9 @@ end
 gbtest0   % test GrB.clear
 gbtest1   % test GrB
 gbtest2   % list all binary operators
-gbtest3   % test dnn
+if (~have_octave)
+    gbtest3   % test dnn
+end
 gbtest4   % list all possible semirings
 gbtest5   % test GrB.descriptorinfo
 gbtest6   % test GrB.mxm
@@ -91,24 +95,38 @@ gbtest57  % test fprintf and sprintf
 gbtest58  % test uplus
 gbtest59  % test end
 gbtest60  % test issigned
-gbtest61  % test GrB.laplacian
+if (~have_octave)
+    % the Graph and DiGraph methods do not appear in octave
+    gbtest61  % test GrB.laplacian
+end
 gbtest62  % test ldivide, rdivide, mldivide, mrdivide
-gbtest63  % test GrB.incidence
-gbtest64  % test GrB.pagerank
+if (~have_octave)
+    % the Graph and DiGraph methods do not appear in octave
+    gbtest63  % test GrB.incidence
+    gbtest64  % test GrB.pagerank
+end
 gbtest65  % test GrB.mis
-gbtest66  % test graph
-gbtest67  % test digraph
+if (~have_octave)
+    % the Graph and DiGraph methods do not appear in octave
+    gbtest66  % test graph
+    gbtest67  % test digraph
+end
 gbtest68  % test isequal
 gbtest69  % test flip
 gbtest70  % test GrB.random
 gbtest71  % test GrB.selectopinfo
 gbtest72  % test any-pair semiring
 gbtest73  % test GrB.normdiff
-gbtest74  % test bitwise operators
-gbtest75  % test bitshift
+if (~have_octave)
+    % octave returns double, MATLAB returns integer
+    gbtest74  % test bitwise operators
+    gbtest75  % test bitshift
+end
 gbtest76  % test trig functions
 gbtest77  % test error handling
-gbtest78  % test integer operations
+if (~have_octave)
+    gbtest78  % test integer operations
+end
 gbtest79  % test power
 gbtest80  % test complex division and power
 gbtest81  % test complex operators
@@ -130,14 +148,20 @@ gbtest97  % test GrB.apply2
 gbtest98  % test row/col degree for hypersparse matrices
 gbtest99  % test performance of C=A'*B and C=A'
 gbtest100 % test GrB.ver and GrB.version
-gbtest101 % test loading of v3 GraphBLAS objects
+if (~have_octave)
+    % octave cannot load the mat file from MATLAB with a v3 @GrB object
+    gbtest101 % test loading of v3 GraphBLAS objects
+end
 gbtest102 % test horzcat, vertcat, cat, cell2mat
 gbtest103 % test iso matrices
 gbtest104 % test formats
 gbtest105 % test logical assignment with iso matrices
 gbtest106 % test build
 gbtest96  % test GrB.optype
-gbtest00  % test GrB.bfs and plot (graph (G))
+if (~have_octave)
+    % the Graph and DiGraph methods do not appear in octave
+    gbtest00  % test GrB.bfs and plot (graph (G))
+end
 
 % restore default # of threads
 have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;

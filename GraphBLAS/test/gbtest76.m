@@ -5,6 +5,7 @@ function gbtest76
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 fprintf ('\ngbtest76: testing trig and special functions\n') ;
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 
 rng ('default') ;
 
@@ -13,6 +14,10 @@ types = { 'single', 'double', ...
 
 for k = 1:length (types)
     type = types {k} ;
+
+    if (have_octave && isequal (type, 'single complex'))
+        continue ;
+    end
 
     fprintf ('%s\n', type) ;
 
@@ -67,6 +72,8 @@ fprintf ('\ngbtest76: all tests passed\n') ;
 end
 
 function gbtest76b (A, B, G, H, tol)
+
+    have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 
     A (1,1) = 0 ;
     G (1,1) = 0 ;
@@ -316,10 +323,12 @@ function gbtest76b (A, B, G, H, tol)
     err = norm (C1-C2, 1) ;
     assert (err < tol) ;
 
-    C1 = log1p (A) ;
-    C2 = log1p (G) ;
-    err = norm (C1-C2, 1) ;
-    assert (err < tol) ;
+    if (~have_octave)
+        C1 = log1p (A) ;
+        C2 = log1p (G) ;
+        err = norm (C1-C2, 1) ;
+        assert (err < tol) ;
+    end
 
     C1 = log2 (A) ;
     C2 = log2 (G) ;
@@ -408,10 +417,12 @@ function gbtest76b (A, B, G, H, tol)
     I = GrB ([1 2 3]) ;
     J = GrB ([3 1 2]) ;
 
-    C1 = A (I,J) ;
-    C2 = G (I,J) ;
-    err = norm (C1-C2, 1) ;
-    assert (err == 0) ;
+    if (~have_octave)
+        C1 = A (I,J) ;
+        C2 = G (I,J) ;
+        err = norm (C1-C2, 1) ;
+        assert (err == 0) ;
+    end
 
     C1 = A.^1 ;
     C2 = G.^1 ;

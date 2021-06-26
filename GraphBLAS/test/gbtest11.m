@@ -81,10 +81,18 @@ assert (gbtest_eq (X, uint64 (full (G))))
 B = 100 * rand (4) ;
 B (1,[1 3]) = 0 ;
 
+
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 X = complex (A)
 G = GrB (X)
-assert (gbtest_eq (X, full (complex (G))))
-assert (gbtest_eq (X, complex (full (G))))
+if (have_octave)
+    % the octave7, full(...) function converts its result to real if the
+    % imaginary part is zero, but MATLAB and GraphBLAS return as complex.
+    assert (gbtest_eq (X, G)) ;
+else
+    assert (gbtest_eq (X, full (complex (G))))
+    assert (gbtest_eq (X, complex (full (G))))
+end
 
 X = complex (A,B)
 G = GrB (X)

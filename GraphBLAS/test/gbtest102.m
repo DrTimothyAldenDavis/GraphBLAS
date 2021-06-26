@@ -4,6 +4,8 @@ function gbtest102
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+
 rng ('default') ;
 A = GrB (rand (2)) ;
 B = GrB (speye (2)) ;
@@ -15,25 +17,27 @@ C1 = [A ; B]  ;
 C2 = [double(A) ; double(B)] ;
 assert (isequal (C1, C2)) ;
 
-S1 = num2cell (C1) ;
-S2 = num2cell (C2) ;
-assert (isequal (S1, S2)) ;
+if (~have_octave)
+    S1 = num2cell (C1) ;
+    S2 = num2cell (C2) ;
+    assert (isequal (S1, S2)) ;
 
-S1 = num2cell (C1, 1) ;
-S2 = num2cell (C2, 1) ;
-assert (isequal (S1, S2)) ;
+    S1 = num2cell (C1, 1) ;
+    S2 = num2cell (C2, 1) ;
+    assert (isequal (S1, S2)) ;
 
-S1 = num2cell (C1, 2) ;
-S2 = num2cell (C2, 2) ;
-assert (isequal (S1, S2)) ;
+    S1 = num2cell (C1, 2) ;
+    S2 = num2cell (C2, 2) ;
+    assert (isequal (S1, S2)) ;
 
-S1 = num2cell (C1, [1 2]) ;
-S2 = num2cell (C2, [1 2]) ;
-assert (isequal (S1, S2)) ;
+    S1 = num2cell (C1, [1 2]) ;
+    S2 = num2cell (C2, [1 2]) ;
+    assert (isequal (S1, S2)) ;
 
-S1 = num2cell (C1, [2 1]) ;
-S2 = num2cell (C2, [2 1]) ;
-assert (isequal (S1, S2)) ;
+    S1 = num2cell (C1, [2 1]) ;
+    S2 = num2cell (C2, [2 1]) ;
+    assert (isequal (S1, S2)) ;
+end
 
 for n = 100:100:1000
     fprintf ('.') ;

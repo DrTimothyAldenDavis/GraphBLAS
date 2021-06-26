@@ -5,6 +5,7 @@ function gbtest29
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 rng ('default') ;
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 
 types = gbtest_types ;
 for k = 1:length (types)
@@ -65,16 +66,15 @@ for trial = 1:40
 
             C3 = GrB (C) ;
             C3 (M) = G (M) ;        % C3(M) is GrB, and G(M) is GrB
+            assert (gbtest_eq (C1, C2)) ;
+            assert (gbtest_eq (C1, C3)) ;
 
             % this uses the built-in subasgn, after typecasting G(M) from
             % class GrB to class double, using GrB/double:
-
-            C4 = C ;
-            C4 (M) = G (M) ;
-
-            assert (gbtest_eq (C1, C2)) ;
-            assert (gbtest_eq (C1, C3)) ;
-            assert (gbtest_eq (C1, C4)) ;
+            if (~have_octave)
+                C4 (M) = G (M) ;
+                assert (gbtest_eq (C1, C4)) ;
+            end
 
             % test assignment with A iso 
             G = spones (GrB (A)) ;
@@ -96,11 +96,13 @@ for trial = 1:40
             C1 (K) = pi ;
             C2 (M) = pi ;
             C3 (M) = GrB (pi) ;
-            C4 (K) = GrB (pi) ;
+            if (~have_octave)
+                C4 (K) = GrB (pi) ;
+                assert (gbtest_eq (C1, C4)) ;
+            end
             C5 (M) = pi ;
             assert (gbtest_eq (C1, C2)) ;
             assert (gbtest_eq (C1, C3)) ;
-            assert (gbtest_eq (C1, C4)) ;
             assert (gbtest_eq (C1, C5)) ;
 
         end

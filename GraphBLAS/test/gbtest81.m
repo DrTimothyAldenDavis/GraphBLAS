@@ -6,6 +6,7 @@ function gbtest81
 
 fprintf ('gbtest81: test complex operators\n') ;
 rng ('default')
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 
 % min and max for complex matrices are not supported in GraphBLAS:
 % a = min (GrB (complex(1)), 1i, 1)  ;
@@ -80,7 +81,9 @@ for m = [1 5 10 ]
                     (isequal (op, 'expm1') || isequal (op, 'log1p')))
                     % log1p and expm1 are not accurate in GraphBLAS
                     % for the complex case
-                    assert (err < 1e-5)
+                    if (~have_octave)
+                        assert (err < 1e-5)
+                    end
                 else
                     assert (err < 1e-13)
                 end
@@ -145,7 +148,12 @@ for m = [1 5 10 ]
                         otherwise
                             error ('unknown') ;
                     end
-                    assert (gbtest_err (C1, C2) < 1e-12)
+                    if (have_octave && isequal (op, 'pow'))
+                        % skip the error check for octave; it has
+                        % different cases for NaNs
+                    else
+                        assert (gbtest_err (C1, C2) < 1e-12)
+                    end
                 end
 
                 % test complex(A,B)

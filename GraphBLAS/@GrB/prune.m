@@ -14,12 +14,13 @@ else
     id = gb_get_scalar (id) ;
 end
 
-if (builtin ('issparse', G) && id == 0)
-    % a built-in sparse matrix 'never' contains explicit zeros,
-    % so no need to prune.  C should be returned as a GraphBLAS
+% if (builtin ('issparse', G) && id == 0)
+    % a built-in MATLAB sparse matrix 'never' contains explicit zeros,
+    % so no need to prune.  An octave sparse matrix may contain
+    % explicit zeros, however.  C should be returned as a GraphBLAS
     % matrix, however.
-    C = GrB (G) ;
-else
+%   C = GrB (G) ;
+% else
     if (isobject (G))
         % extract the contents of a GraphBLAS matrix
         G = G.opaque ;
@@ -29,5 +30,5 @@ else
     else
         C = GrB (gbselect (G, '~=', id)) ;
     end
-end
+% end
 
