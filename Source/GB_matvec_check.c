@@ -275,7 +275,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // count the allocated blocks
     //--------------------------------------------------------------------------
 
-    int nallocs ;
+    int64_t nallocs ;
     size_t mem_deep, mem_shallow, memsize ;
     GrB_Info info = GB_memorySize (&nallocs, &mem_deep, &mem_shallow, A) ;
     if (info != GrB_SUCCESS)
@@ -297,7 +297,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         {
             GBPR ("  header %p", A) ;
         }
-        GBPR (" number of memory blocks: %d\n", nallocs) ;
+        GBPR (" number of memory blocks: " GBd "\n", nallocs) ;
         GBPR ("  deep: " GBu " shallow: " GBu " total: " GBu "\n",
             mem_deep, mem_shallow, mem_deep + mem_shallow) ;
     }
@@ -425,7 +425,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR (", memory: " GBu " bytes\n", memsize) ;
     }
     else if (memsize < K*K)
-    {
+    { 
         double s = ((double) memsize) / ((double) K) ;
         GBPR (", memory: %.1f KB\n", s) ;
     }

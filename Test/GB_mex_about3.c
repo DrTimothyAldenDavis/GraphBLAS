@@ -721,6 +721,19 @@ void mexFunction
     GrB_Vector_free_(&w) ;
     GxB_Scalar_free_(&scalar) ;
 
+    GB_Global_print_mem_shallow_set (true) ;
+    CHECK (GB_Global_print_mem_shallow_get ( )) ;
+
+    GB_Global_print_mem_shallow_set (false) ;
+    CHECK (!GB_Global_print_mem_shallow_get ( )) ;
+
+    int64_t nallocs ;
+    size_t mem_deep, mem_shallow ;
+    OK (GB_memorySize (&nallocs, &mem_deep, &mem_shallow, NULL)) ;
+    CHECK (nallocs == 0) ;
+    CHECK (mem_deep == 0) ;
+    CHECK (mem_shallow == 0) ;
+
     //--------------------------------------------------------------------------
     // wrapup
     //--------------------------------------------------------------------------
