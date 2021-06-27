@@ -68,9 +68,18 @@ to computations on graphs.  GraphBLAS provides a powerful and expressive
 framework for creating high-performance graph algorithms based on the elegant
 mathematics of sparse matrix operations on a semiring.
 
-\vspace{1in}
-SuiteSparse:GraphBLAS is under the Apache-2.0 license, except for
-the \verb'@GrB' Octave/MATLAB interface, which is licensed under the GNU GPLv3 (or
+When compared with MATLAB R2021a, some methods in GraphBLAS are up to
+a million times faster than MATLAB, even when using the same syntax.
+Typical speedups are in the range 2x to 30x, with a few 1000x speedups.
+The statement \verb'C(M)=A' when using MATLAB sparse matrices takes
+$O(e^2)$ time where $e$ is the number of entries in \verb'C'.  GraphBLAS
+can perform the same computation with the exact same syntax, but
+in $O(e \log e)$ time (or $O(e)$ in some cases), and in practice that
+means GraphBLAS can compute \verb'C(M)=A' for a large problem in under
+a second, while MATLAB takes about 4 to 5 days.
+
+SuiteSparse:GraphBLAS is under the Apache-2.0 license, except for the
+\verb'@GrB' Octave/MATLAB interface, which is licensed under the GNU GPLv3 (or
 later).  Refer to the SPDX license identifier in each file for details.  Note
 that all of the compiled \verb'libgraphblas.so' is under the Apache-2.0
 license.
@@ -154,6 +163,7 @@ are extensions to the v1.3 GraphBLAS C API.
     \item added \verb'GxB_*_pack/unpack' methods as alternatives to
         import/export.
     \item added \verb'GxB_PRINT_1BASED' to the global settings.
+    \item added \verb'GxB_*_memoryUsage'
     \end{packed_itemize}
 
 \item Version 5.0.6 (May 24, 2021)
@@ -1087,6 +1097,40 @@ See also Abhinav Mehndiratta's Julia interface at \\
 Fabian Murariu is working on a Java interface.
 See \newline
 \url{https://github.com/fabianmurariu/graphblas-java-native}.
+
+%===============================================================================
+\section{Performance of MATLAB versus GraphBLAS}
+%===============================================================================
+\label{matlab_performance}
+
+MATLAB R2021a includes v3.3 of SuiteSparse:GraphBLAS as a built-in library, but
+uses it only for \verb'C=A*B' when both \verb'A' and \verb'B' are sparse.  In
+prior versions of MATLAB, \verb'C=A*B' relied on the \verb'SFMULT' and
+\verb'SSMULT' packages in SuiteSparse, which are single-threaded (also written
+by this author).  The GraphBLAS \verb'GrB_mxm' is up to 30x faster on a 20-core
+Intel Xeon, compared with \verb'C=A*B' in MATLAB R2020b and earlier.  With
+MATLAB R2021a and later, the performance of \verb'C=A*B' when using MATLAB
+sparse matrices is identical to the performance for GraphBLAS matrices, since
+the same code is being used by both (\verb'GrB_mxm').
+
+Other methods in GraphBLAS are also faster, some absurdly so.  In particular,
+the statement \verb'C(M)=A' (where \verb'M' is a logical matrix) takes under a
+second for a large sparse problem when using GraphBLAS via its \verb'@GrB'
+interface.  By stark contrast, MATLAB R2021a would take about 4 or 5 days, a
+speedup of about 500,000x.  For a smaller problem, GraphBLAS takes 0.4 seconds
+while MATLAB takes 28 hours (a speedup of about 250,000x).  Both cases use the
+same statement with the same syntax (\verb'C(M)=A') and compute exactly the
+same result.
+
+The assignment \verb'C(I,J)=A' in MATLAB, when using \verb'@GrB' objects, is up
+to 1000x faster than the same statement with the same syntax, when using MATLAB
+sparse matrices instead.
+
+Matrix concatenation \verb'C = [A B]' is about 17 times faster in GraphBLAS, on
+a 20-core Intel Xeon.
+
+For more details, see the \verb'GraphBLAS/GraphBLAS/demo' folder and its
+contents.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
