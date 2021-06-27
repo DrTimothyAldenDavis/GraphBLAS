@@ -22,11 +22,17 @@ assert (isequal (i1, double (i2))) ;
 [x1, i1] = min (A (:)) ;
 [x2, i2] = GrB.argmin (G, 0) ;
 assert (isequal (x1, x2)) ;
-assert (isequal (i1, sub2ind (size (G), i2 (1), i2 (2)))) ;
+s = double (size (G)) ;
+i = double (i2 (1)) ;
+j = double (i2 (2)) ;
+assert (isequal (i1, sub2ind (s, i, j))) ;
 
 [x2, i2] = GrB.argmin (G) ;
 assert (isequal (x1, x2)) ;
-assert (isequal (i1, sub2ind (size (G), i2 (1), i2 (2)))) ;
+s = double (size (G)) ;
+i = double (i2 (1)) ;
+j = double (i2 (2)) ;
+assert (isequal (i1, sub2ind (s, i, j))) ;
 
 % min and GrB.argmin differ since A has an empty row and column
 A = -A ;

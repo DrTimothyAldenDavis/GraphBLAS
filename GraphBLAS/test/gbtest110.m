@@ -22,11 +22,17 @@ assert (isequal (i1, double (i2))) ;
 [x1, i1] = max (A (:)) ;
 [x2, i2] = GrB.argmax (G, 0) ;
 assert (isequal (x1, x2)) ;
-assert (isequal (i1, sub2ind (size (G), i2 (1), i2 (2)))) ;
+s = double (size (G)) ;
+i = double (i2 (1)) ;
+j = double (i2 (2)) ;
+assert (isequal (i1, sub2ind (s, i, j))) ;
 
 [x2, i2] = GrB.argmax (G) ;
 assert (isequal (x1, x2)) ;
-assert (isequal (i1, sub2ind (size (G), i2 (1), i2 (2)))) ;
+s = double (size (G)) ;
+i = double (i2 (1)) ;
+j = double (i2 (2)) ;
+assert (isequal (i1, sub2ind (s, i, j))) ;
 
 % max and GrB.argmax differ since A has an empty row and column
 A (:,1) = 0 ;
