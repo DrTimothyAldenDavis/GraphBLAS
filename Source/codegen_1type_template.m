@@ -33,13 +33,13 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_type.c | m4 | tail -n +7 > Generated/GB_type__%s.c', ...
+'cat control.m4 Generator/GB_type.c | m4 | tail -n +7 > Generated2/GB_type__%s.c', ...
 fname) ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_type.h | m4 | tail -n +7 >> Generated/GB_type__include.h') ;
+'cat control.m4 Generator/GB_type.h | m4 | tail -n +7 >> Generated2/GB_type__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

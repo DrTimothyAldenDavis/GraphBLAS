@@ -2,7 +2,8 @@ function codegen_axb
 %CODEGEN_AXB create all C=A*B functions for all semirings
 %
 % This function creates all files of the form GB_AxB__*.[ch], including all
-% built-in semirings (GB_AxB__*.c) and one include file, GB_AxB__include.h.
+% built-in semirings (GB_AxB__*.c) and two include files,
+% Generated1/GB_AxB__include1.h and Generated2/GB_AxB__include2.h.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -13,16 +14,19 @@ function codegen_axb
 
 fprintf ('\nsemirings:\n') ;
 
-f = fopen ('Generated/GB_AxB__include.h', 'w') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '// GB_AxB__include.h: definitions for GB_AxB__*.c\n') ;
-fprintf (f, '//------------------------------------------------------------------------------\n') ;
-fprintf (f, '\n') ;
-fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.\n') ;
-fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
-fprintf (f, '// This file has been automatically generated from Generator/GB_AxB.h') ;
-fprintf (f, '\n\n') ;
-fclose (f) ;
+for k = 1:2
+    filename = sprintf ('Generated%d/GB_AxB__include%d.h', k, k) ;
+    f = fopen (filename, 'w') ;
+    fprintf (f, '//------------------------------------------------------------------------------\n') ;
+    fprintf (f, '// GB_AxB__include%d.h: definitions for Generated%d/GB_AxB__*.c\n', k, k) ;
+    fprintf (f, '//------------------------------------------------------------------------------\n') ;
+    fprintf (f, '\n') ;
+    fprintf (f, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.\n') ;
+    fprintf (f, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
+    fprintf (f, '// This file has been automatically generated from Generator/GB_AxB.h') ;
+    fprintf (f, '\n\n') ;
+    fclose (f) ;
+end
 
 % codegen_axb_template (multop, bmult, imult, fmult, dmult, fcmult, dcmult)
 

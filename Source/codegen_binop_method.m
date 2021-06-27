@@ -233,14 +233,14 @@ trim = 41 ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.c | m4 | tail -n +%d > Generated/GB_binop__%s.c', ...
+'cat control.m4 Generator/GB_binop.c | m4 | tail -n +%d > Generated2/GB_binop__%s.c', ...
 trim, name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.h | m4 | tail -n +%d >> Generated/GB_binop__include.h', trim) ;
+'cat control.m4 Generator/GB_binop.h | m4 | tail -n +%d >> Generated2/GB_binop__include.h', trim) ;
 system (cmd) ;
 
 delete ('control.m4') ;

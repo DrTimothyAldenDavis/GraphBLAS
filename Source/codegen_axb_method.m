@@ -762,14 +762,22 @@ fclose (f) ;
 
 nprune = 72 ;
 
+if (is_any_pair)
+    % the ANY_PAIR_ISO semiring goes in Generated1
+    k = 1 ;
+else
+    % all other semirings go in Generated2
+    k = 2 ;
+end
+
 % construct the *.c file for the semiring
-cmd = sprintf ('cat control.m4 Generator/GB_AxB.c | m4 | tail -n +%d > Generated/GB_AxB__%s.c', nprune, name) ;
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.c | m4 | tail -n +%d > Generated%d/GB_AxB__%s.c', nprune, k, name) ;
 system (cmd) ;
 
 fprintf ('.') ;
 
 % append to the *.h file
-cmd = sprintf ('cat control.m4 Generator/GB_AxB.h | m4 | tail -n +%d >> Generated/GB_AxB__include.h', nprune) ;
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.h | m4 | tail -n +%d >> Generated%d/GB_AxB__include%d.h', nprune, k, k) ;
 system (cmd) ;
 
 delete ('control.m4') ;

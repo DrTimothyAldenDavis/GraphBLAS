@@ -9,7 +9,7 @@ function codegen_red
 
 fprintf ('\nreduction operators:\n') ;
 
-f = fopen ('Generated/GB_red__include.h', 'w') ;
+f = fopen ('Generated2/GB_red__include.h', 'w') ;
 fprintf (f, '//------------------------------------------------------------------------------\n') ;
 fprintf (f, '// GB_red__include.h: definitions for GB_red__*.c\n') ;
 fprintf (f, '//------------------------------------------------------------------------------\n') ;

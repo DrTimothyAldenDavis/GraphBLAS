@@ -18,8 +18,9 @@
 #include "GB_mxm.h"
 #include "GB_binop.h"
 #include "GB_unused.h"
+#include "GB_AxB__include1.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__include.h"
+#include "GB_AxB__include2.h"
 #endif
 
 #define GB_FREE_WORK                    \

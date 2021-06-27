@@ -7,7 +7,8 @@ leave A as-is
 Matrix from file:
 
   3x3 GraphBLAS bool matrix, bitmap by row
-  *A_output, 3 entries, iso value:   1
+  *A_output, 3 entries, memory: 280 bytes
+  iso value:   1
 
     (0,0)   1
     (1,1)   1
@@ -28,7 +29,8 @@ leave A as-is
 Matrix from file:
 
   4x4 GraphBLAS bool matrix, bitmap by row
-  *A_output, 8 entries, iso value:   1
+  *A_output, 8 entries, memory: 280 bytes
+  iso value:   1
 
     (0,0)   1
     (0,1)   1
@@ -55,7 +57,8 @@ leave A as-is
 Matrix from file:
 
   4x4 GraphBLAS bool matrix, bitmap by row
-  *A_output, 10 entries, iso value:   1
+  *A_output, 10 entries, memory: 280 bytes
+  iso value:   1
 
     (0,0)   1
     (0,2)   1
@@ -84,7 +87,8 @@ leave A as-is
 Matrix from file:
 
   48x48 GraphBLAS bool matrix, sparse by row
-  *A_output, 224 entries, iso value:   1
+  *A_output, 224 entries, memory: 2.8 KB
+  iso value:   1
 
     (0,0)   1
     (1,1)   1
@@ -177,7 +181,8 @@ leave A as-is
 Matrix from file:
 
   4884x4884 GraphBLAS bool matrix, sparse by row
-  *A_output, 147631 entries, iso value:   1
+  *A_output, 147631 entries, memory: 1.2 MB
+  iso value:   1
 
     (0,0)   1
     (1,0)   1
@@ -5106,7 +5111,7 @@ leave A as-is
 Matrix from file:
 
   183x183 GraphBLAS bool matrix, sparse by row
-  *A_output, 1069 entries
+  *A_output, 1069 entries, memory: 20.2 KB
 
     (0,0)   1
     (0,1)   1
@@ -5334,7 +5339,8 @@ leave A as-is
 Matrix from file:
 
   67x67 GraphBLAS bool matrix, sparse by row
-  *A_output, 294 entries, iso value:   1
+  *A_output, 294 entries, memory: 5.3 KB
+  iso value:   1
 
     (0,7)   1
     (0,12)   1

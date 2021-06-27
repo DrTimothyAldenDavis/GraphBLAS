@@ -7,13 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// This template is used in GB_builder and the Generated/GB_red__* workers.
+// This template is used in GB_builder and the Generated2/GB_red__* workers.
 // This is the same for both vectors and matrices, since this step is agnostic
 // about which vectors the entries appear.
 
 // Sx and Tx are either both iso or both non-iso.  For the iso case,
 // GB_ISO_BUILD is defined, and K_work is NULL.  The iso case is not handled by
-// the Generated/ GB_red__* workers, since it doesn't access the values at all.
+// the Generated2/ GB_red__* workers, since it doesn't access the values at all.
 
 {
 

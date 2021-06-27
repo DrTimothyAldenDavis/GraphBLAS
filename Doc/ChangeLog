@@ -1,4 +1,4 @@
-Version 5.1.0, June 26, 2021 (BETA1)
+Version 5.1.0, June 28, 2021
 
     * iso matrices and vectors added
     * GxB_*_build_Scalar added: builds an iso matrix or vector
@@ -6,7 +6,9 @@ Version 5.1.0, June 26, 2021 (BETA1)
     * GxB_*_pack/unpack methods added
     * GrB.argmin/argmax: added to @GrB interface
     * GxB_PRINT_1BASED: added to the global settings
-    * GxB_*_memorySize added
+    * GxB_*_memoryUsage added
+    * Source/Generated: split into Source/Generated1 and Source/Generated2
+        for faster compilation when GBCOMPACT is enabled
 
 Version 5.0.6, May 24, 2021
 

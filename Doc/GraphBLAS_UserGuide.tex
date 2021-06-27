@@ -139,7 +139,7 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 5.1.0 BETA1 (June 25, 2021)   % FIXME
+\item Version 5.1.0 (June 28, 2021)
 
     \begin{packed_itemize}
     \item iso matrices added:  these are matrices and vectors whose
@@ -3591,7 +3591,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Scalar_type'           & return the type of a scalar          & \ref{scalar_type} \\
 \verb'GxB_Scalar_setElement'     & set the single entry of a scalar     & \ref{scalar_setElement} \\
 \verb'GxB_Scalar_extractElement' & get the single entry from a scalar   & \ref{scalar_extractElement} \\
-\verb'GxB_Scalar_memorySize'     & memory used by a scalar              & \ref{scalar_memsize} \\
+\verb'GxB_Scalar_memoryUsage'     & memory used by a scalar              & \ref{scalar_memusage} \\
 \verb'GxB_Scalar_free'           & free a scalar                        & \ref{scalar_free} \\
 \hline
 \end{tabular}
@@ -3786,14 +3786,14 @@ scalar \verb's', then \verb'x' is not modified, and the return value of
 \verb'GxB_Scalar_extractElement' is \verb'GrB_NO_VALUE'.
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Scalar\_memorySize:} memory used by a scalar}
+\subsubsection{{\sf GxB\_Scalar\_memoryUsage:} memory used by a scalar}
 %-------------------------------------------------------------------------------
-\label{scalar_memsize}
+\label{scalar_memusage}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_Scalar_memorySize  // return # of bytes used for a scalar
+GrB_Info GxB_Scalar_memoryUsage  // return # of bytes used for a scalar
 (
     size_t *size,           // # of bytes used by the scalar s
     const GxB_Scalar s      // GxB_Scalar to query
@@ -3860,7 +3860,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Vector_extractTuples'  & get all entries from a vector    & \ref{vector_extractTuples} \\
 \verb'GrB_Vector_resize'         & resize a vector                  & \ref{vector_resize} \\
 \verb'GxB_Vector_diag'           & extract a diagonal from a matrix & \ref{vector_diag} \\
-\verb'GxB_Vector_memorySize'     & memory used by a vector          & \ref{vector_memsize} \\
+\verb'GxB_Vector_memoryUsage'     & memory used by a vector          & \ref{vector_memusage} \\
 \verb'GrB_Vector_free'           & free a vector                    & \ref{vector_free} \\
 \hline
 \hline
@@ -4264,14 +4264,14 @@ unchanged.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Vector\_memorySize:} memory used by a vector}
+\subsubsection{{\sf GxB\_Vector\_memoryUsage:} memory used by a vector}
 %-------------------------------------------------------------------------------
-\label{vector_memsize}
+\label{vector_memusage}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_Vector_memorySize  // return # of bytes used for a vector
+GrB_Info GxB_Vector_memoryUsage  // return # of bytes used for a vector
 (
     size_t *size,           // # of bytes used by the vector v
     const GrB_Vector v      // vector to query
@@ -4341,7 +4341,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Matrix_concat'        & concatenate matrices                  & \ref{matrix_concat} \\
 \verb'GxB_Matrix_split'         & split a matrix into matrices          & \ref{matrix_split} \\
 \verb'GxB_Matrix_diag'          & diagonal matrix from vector           & \ref{matrix_diag} \\
-\verb'GxB_Matrix_memorySize'    & memory used by a matrix               & \ref{matrix_memsize} \\
+\verb'GxB_Matrix_memoryUsage'    & memory used by a matrix               & \ref{matrix_memusage} \\
 \verb'GrB_Matrix_free'          & free a matrix                         & \ref{matrix_free} \\
 \hline
 \hline
@@ -5025,14 +5025,14 @@ the type of \verb'C'.  Any settings made to \verb'C' by
 switch, and sparsity control) are unchanged.
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_memorySize:} memory used by a matrix}
+\subsubsection{{\sf GxB\_Matrix\_memoryUsage:} memory used by a matrix}
 %-------------------------------------------------------------------------------
-\label{matrix_memsize}
+\label{matrix_memusage}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_Matrix_memorySize  // return # of bytes used for a matrix
+GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
 (
     size_t *size,           // # of bytes used by the matrix A
     const GrB_Matrix A      // matrix to query
@@ -8349,10 +8349,10 @@ controlled via \verb'GrB.burble(b)' in the Octave/MATLAB interface.
 If enabled, SuiteSparse:GraphBLAS reports which internal kernels it uses, and
 how much time is spent.  If you see the word \verb'generic', it means that
 SuiteSparse:GraphBLAS was unable to use is faster kernels in
-\verb'Source/Generated', but used a generic kernel that relies on function
+\verb'Source/Generated2', but used a generic kernel that relies on function
 pointers.  This is done for user-defined types and operators, and when
 typecasting is performed, and it is typically slower than the kernels in
-\verb'Source/Generated'.
+\verb'Source/Generated2'.
 
 If you see a lot of \verb'wait' statements, it may mean that a lot of time is
 spent finishing a matrix or vector.  This may be the result of an inefficient

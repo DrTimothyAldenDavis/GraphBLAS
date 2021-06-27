@@ -9,7 +9,7 @@ function codegen_sel
 
 fprintf ('\nselection operators:\n') ;
 
-f = fopen ('Generated/GB_sel__include.h', 'w') ;
+f = fopen ('Generated1/GB_sel__include.h', 'w') ;
 fprintf (f, '//------------------------------------------------------------------------------\n') ;
 fprintf (f, '// GB_sel__include.h: definitions for GB_sel__*.c\n') ;
 fprintf (f, '//------------------------------------------------------------------------------\n') ;

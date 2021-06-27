@@ -24,7 +24,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "June 26, 2021 (BETA1)")
+set ( GraphBLAS_DATE "June 28, 2021")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 1 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -67,6 +67,9 @@ if ( BUILD_GRB_STATIC_LIBRARY )
 else ( )
     message ( STATUS "Building dynamic GraphBLAS library" )
 endif ( )
+
+# Uncomment this line for for development only, not for end-users:
+# set ( GBCOMPACT true )
 
 if ( GBCOMPACT )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCOMPACT=1 " )
@@ -169,7 +172,11 @@ message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-include_directories ( Source/Template Source Source/Generated Source/Generator Include Demo/Include )
+if ( GBCOMPACT )
+    include_directories ( Source/Template Source Include Source/Generated1 Demo/Include )
+else ( )
+    include_directories ( Source/Template Source Include Source/Generated1 Source/Generated2 Demo/Include )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # compiler options
@@ -263,7 +270,11 @@ set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_CUDA_FLAG}" )
 #   - a public enum is extended (by adding a new item at the end, but without
 #       changing the already existing items)
 
-file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Generated/*.c" )
+if ( GBCOMPACT )
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Generated1/*.c" )
+else ( )
+    file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Generated1/*.c" "Source/Generated2/*.c" )
+endif ( )
 
 add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )
 SET_TARGET_PROPERTIES ( graphblas PROPERTIES

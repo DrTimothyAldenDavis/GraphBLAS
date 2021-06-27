@@ -277,7 +277,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     int64_t nallocs ;
     size_t mem_deep, mem_shallow, memsize ;
-    GrB_Info info = GB_memorySize (&nallocs, &mem_deep, &mem_shallow, A) ;
+    GrB_Info info = GB_memoryUsage (&nallocs, &mem_deep, &mem_shallow, A) ;
     if (info != GrB_SUCCESS)
     {
         GBPR0 ("  internal memory error\n") ;

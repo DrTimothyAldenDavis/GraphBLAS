@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated/ folder, do not edit it (auto-generated).
+// If this file is in the Generated1/ or Generated2/ folder, do not edit it
+// (it is auto-generated from Generator/*).
 
 #include "GB_dev.h"
 
@@ -19,7 +20,11 @@ ifndef_compact
 #include "GB_sort.h"
 #include "GB_atomics.h"
 #include "GB_AxB_saxpy.h"
-#include "GB_AxB__include.h"
+if_not_any_pair_semiring
+#include "GB_AxB__include2.h"
+#else
+#include "GB_AxB__include1.h"
+#endif
 #include "GB_unused.h"
 #include "GB_bitmap_assign_methods.h"
 #include "GB_ek_slice_search.c"

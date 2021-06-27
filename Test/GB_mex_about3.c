@@ -670,16 +670,16 @@ void mexFunction
 
     size_t size ;
     OK (GxB_Matrix_fprint (C, "empty C for size", GxB_COMPLETE, NULL)) ;
-    OK (GxB_Matrix_memorySize (&size, C)) ;
+    OK (GxB_Matrix_memoryUsage (&size, C)) ;
     printf ("size of C: %lu bytes\n", size) ;
 
     OK (GxB_Vector_fprint (w, "empty w for size", GxB_COMPLETE, NULL)) ;
-    OK (GxB_Vector_memorySize (&size, w)) ;
+    OK (GxB_Vector_memoryUsage (&size, w)) ;
     printf ("size of w: %lu bytes\n", size) ;
 
     OK (GxB_Scalar_fprint (scalar, "empty scalar for size",
         GxB_COMPLETE, NULL)) ;
-    OK (GxB_Scalar_memorySize (&size, scalar)) ;
+    OK (GxB_Scalar_memoryUsage (&size, scalar)) ;
     printf ("size of scalar: %lu bytes\n", size) ;
 
     for (int k = 0 ; k < 8 ; k++)
@@ -691,17 +691,17 @@ void mexFunction
 
     OK (GxB_Matrix_fprint (C, "non-empty C for size (with pending)",
         GxB_COMPLETE, NULL)) ;
-    OK (GxB_Matrix_memorySize (&size, C)) ;
+    OK (GxB_Matrix_memoryUsage (&size, C)) ;
     printf ("size of C: %lu bytes\n", size) ;
 
     OK (GxB_Vector_fprint (w, "non-empty w for size (with pending)",
         GxB_COMPLETE, NULL)) ;
-    OK (GxB_Vector_memorySize (&size, w)) ;
+    OK (GxB_Vector_memoryUsage (&size, w)) ;
     printf ("size of w: %lu bytes\n", size) ;
 
     OK (GxB_Scalar_fprint (scalar, "non-empty scalar for size",
         GxB_COMPLETE, NULL)) ;
-    OK (GxB_Scalar_memorySize (&size, scalar)) ;
+    OK (GxB_Scalar_memoryUsage (&size, scalar)) ;
     printf ("size of scalar: %lu bytes\n", size) ;
 
     OK (GrB_Matrix_wait (&C)) ;
@@ -709,12 +709,12 @@ void mexFunction
 
     OK (GxB_Matrix_fprint (C, "non-empty C for size (no pending)",
         GxB_COMPLETE, NULL)) ;
-    OK (GxB_Matrix_memorySize (&size, C)) ;
+    OK (GxB_Matrix_memoryUsage (&size, C)) ;
     printf ("size of C: %lu bytes\n", size) ;
 
     OK (GxB_Vector_fprint (w, "non-empty w for size (no pending)",
         GxB_COMPLETE, NULL)) ;
-    OK (GxB_Vector_memorySize (&size, w)) ;
+    OK (GxB_Vector_memoryUsage (&size, w)) ;
     printf ("size of w: %lu bytes\n", size) ;
 
     GrB_Matrix_free_(&C) ;
@@ -729,7 +729,7 @@ void mexFunction
 
     int64_t nallocs ;
     size_t mem_deep, mem_shallow ;
-    OK (GB_memorySize (&nallocs, &mem_deep, &mem_shallow, NULL)) ;
+    OK (GB_memoryUsage (&nallocs, &mem_deep, &mem_shallow, NULL)) ;
     CHECK (nallocs == 0) ;
     CHECK (mem_deep == 0) ;
     CHECK (mem_shallow == 0) ;

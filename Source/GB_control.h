@@ -9,7 +9,7 @@
 
 // The installer of SuiteSparse:GraphBLAS can edit this file to reduce the code
 // size of the compiled library, by disabling the corresonding hard-coded
-// functions in Source/Generated.  For example, if SuiteSparse:GraphBLAS is
+// functions in Source/Generated2.  For example, if SuiteSparse:GraphBLAS is
 // integrated into an application that makes no use of the GrB_INT16 data type,
 // or just occassional use where performance is not a concern, then uncomment
 // the line "#define GxB_NO_INT16 1".  Alternatively, SuiteSparse:GraphBLAS can
@@ -25,7 +25,7 @@
 // Enabling the "#define GBCOMPACT" option is the same as uncommenting this
 // entire file.  This file provides a more concise control over which
 // types, operators, and semirings are given fast hard-coded versions in
-// Source/Generated, and which use the slower generic methods.
+// Source/Generated2, and which use the slower generic methods.
 
 // However, the code size can be reduced significantly.  Uncommenting all of
 // the options below cuts the code from 55MB to under 2.7MB, on a MacBook Pro
@@ -76,7 +76,9 @@
 // GxB_NO_LAND_DIV_BOOL.
 
 // Note that there are no macros that disable the hard-coded functions for
-// GxB_select (Generated/GB_sel__*), since they have no generic equivalents.
+// GxB_select (Generated1/GB_sel__*), since they have no generic equivalents.
+// The ANY_PAIR semirings appear in Generated1/GB_AxB__any_pair_iso.c and
+// cannot be disabled.
 
 // In this version of SuiteSparse:GraphBLAS, some of the fast hard-coded
 // semirings have been disabled below.  They still work, but are now slower

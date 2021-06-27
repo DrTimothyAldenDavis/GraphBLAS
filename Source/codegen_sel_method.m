@@ -112,14 +112,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_sel.c | m4 | tail -n +15 > Generated/GB_sel__%s.c', ...
+'cat control.m4 Generator/GB_sel.c | m4 | tail -n +15 > Generated1/GB_sel__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_sel.h | m4 | tail -n +15 >> Generated/GB_sel__include.h') ;
+'cat control.m4 Generator/GB_sel.h | m4 | tail -n +15 >> Generated1/GB_sel__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

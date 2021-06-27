@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated/ folder, do not edit it (auto-generated).
+// If this file is in the Generated1/ folder, do not edit it
+// (it is auto-generated from Generator/*).
 
 #include "GB_select.h"
 #include "GB_ek_slice.h"

@@ -8,7 +8,10 @@
 //------------------------------------------------------------------------------
 
 #include "GB_bitmap_AxB_saxpy.h"
-#include "GB_AxB__include.h"
+#include "GB_AxB__include1.h"
+#ifndef GBCOMPACT
+#include "GB_AxB__include2.h"
+#endif
 
 #define GB_FREE_ALL GB_phbix_free (C) ;
 

@@ -9,7 +9,7 @@ function codegen_unop
 
 fprintf ('\nunary operators:\n') ;
 
-f = fopen ('Generated/GB_unop__include.h', 'w') ;
+f = fopen ('Generated2/GB_unop__include.h', 'w') ;
 fprintf (f, '//------------------------------------------------------------------------------\n') ;
 fprintf (f, '// GB_unop__include.h: definitions for GB_unop__*.c\n') ;
 fprintf (f, '//------------------------------------------------------------------------------\n') ;

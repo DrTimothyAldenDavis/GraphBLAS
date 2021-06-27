@@ -32,8 +32,8 @@ VER3 = 0
 # CC = icc -mp1
 # CC = c++
 
-SRC = ../Source/*.c ../Source/Generated/*.c
-INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h ../Source/Generator/*.h 
+SRC = ../Source/*.c ../Source/Generated1/*.c ../Source/Generated2/*.c
+INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated1/*.h ../Source/Generated2/*.h
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
 LDFLAGS = -fopenmp -lm
@@ -45,7 +45,7 @@ ifneq ($(CC),c++)
     # comment this out if using c++:
     CFLAGS += -std=c11 
 endif
-CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated -I../Source/Generator
+CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated1 -I../Source/Generated2
 SO_OPTS = $(LDFLAGS)
 CFLAGS += -Wno-pragmas
 
@@ -73,7 +73,10 @@ endif
 %.o: ../Source/%.c $(INC)
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $(notdir $@)
 
-%.o: ../Source/Generated/%.c $(INC)
+%.o: ../Source/Generated1/%.c $(INC)
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $(notdir $@)
+
+%.o: ../Source/Generated2/%.c $(INC)
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $(notdir $@)
 
 library: $(SO_NAME)

@@ -22,7 +22,10 @@
 #include "GB_subref.h"
 #include "GB_ek_slice.h"
 #include "GB_bitmap_assign_methods.h"
-#include "GB_AxB__include.h"
+#include "GB_AxB__include1.h"
+#ifndef GBCOMPACT
+#include "GB_AxB__include2.h"
+#endif
 
 #define GB_FREE_ALL                         \
 {                                           \

@@ -28,7 +28,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "June 26, 2021 (BETA1)")
+set ( GraphBLAS_DATE "June 28, 2021")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 1 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -74,13 +74,24 @@ endif ( )
 message ( STATUS "CMAKE compiler ID:         " ${CMAKE_C_COMPILER_ID} )
 message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 
+# Uncomment this line for for development only, not for end-users:
+# set ( GBCOMPACT true )
+
+if ( GBCOMPACT )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCOMPACT=1 " )
+endif ( )
+
 #-------------------------------------------------------------------------------
 # include directories
 #-------------------------------------------------------------------------------
 
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-include_directories ( ../Source/Template ../Source ../Source/Generated ../Source/Generator ../Include rename )
+if ( GBCOMPACT )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 )
+else ( )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../Source/Generated2 )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # compiler options:
@@ -119,7 +130,11 @@ endif ( )
 # dynamic graphblas_renamed library properties
 #-------------------------------------------------------------------------------
 
-file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Generated/*.c" )
+if ( GBCOMPACT )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Generated1/*.c" )
+else ( )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Generated1/*.c" "../Source/Generated2/*.c" )
+endif ( )
 
 add_library ( graphblas_renamed SHARED ${GRAPHBLAS_SOURCES} )
 SET_TARGET_PROPERTIES ( graphblas_renamed PROPERTIES
