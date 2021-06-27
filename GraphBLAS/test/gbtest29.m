@@ -52,7 +52,7 @@ for trial = 1:40
             M = sprand (m, n, 0.5) ~= 0 ;
             G = GrB (A) ;
 
-            x1 = A (M) ;
+            x1 = A (M) ; %#ok<*NASGU>
             x2 = G (M) ;
 
             % With built-in vectors, if A and M are row vectors then A(M)

@@ -44,7 +44,7 @@ else
     k = gb_get_scalar (k) ;
 end
 
-[am, an, atype] = gbsize (A) ;
+[am, an, ~] = gbsize (A) ;
 a_is_vector = (am == 1) || (an == 1) ;
 
 if (a_is_vector)
@@ -52,12 +52,6 @@ if (a_is_vector)
     % ensure A is a column vector
     if (am == 1)
         A = gbtrans (A) ;
-    end
-
-    % ensure A is not hypersparse
-    [~, s] = gbformat (A) ;
-    if (isequal (s, 'hypersparse'))
-        A = gbnew (A, 'sparse') ;
     end
 
     % C = diag (v,k) where v is a column vector and C is a matrix

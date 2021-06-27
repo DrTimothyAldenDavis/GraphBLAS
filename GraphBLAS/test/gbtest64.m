@@ -5,7 +5,7 @@ function gbtest64
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 % load west0479 ; %#ok<*LOAD>
-load west0479_correct ;
+load west0479_correct ; %#ok<*LOAD>
 west0479 = Problem.A ;
 W = abs (west0479) ;
 W (1,:) = 0 ;

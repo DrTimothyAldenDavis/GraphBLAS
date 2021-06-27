@@ -4,12 +4,12 @@ function gbtest101
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-load gbtestv3
+load gbtestv3 %#ok<LOAD>
 whos
 
 G
 fprintf ('================== v3 sparse struct:\n') ;
-G_struct = struct (G)
+G_struct = struct (G) %#ok<*NOPRT>
 G2 = GrB (G, 'sparse') ;
 fprintf ('================== v5_1 sparse struct:\n') ;
 G2_struct = struct (G2)
@@ -79,7 +79,7 @@ assert (isfield (struct (X), 'GraphBLAS')) ;
 assert (isfield (struct (X2), 'GraphBLASv5_1')) ;
 
 fprintf ('================== v3 dense struct (held in sparse format):\n') ;
-X_struct = struct (X)
+X_struct = struct (X) %#ok<*NASGU>
 fprintf ('================== v5_1 dense struct (no integers in struct):\n') ;
 X2_struct = struct (X2)
 

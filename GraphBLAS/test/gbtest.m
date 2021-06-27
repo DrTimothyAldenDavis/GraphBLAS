@@ -1,5 +1,5 @@
 function gbtest
-%GBTEST test GraphBLAS
+%GBTEST test GraphBLAS interface
 % First compile the GraphBLAS library by typing 'make' in the top-level
 % GraphBLAS folder, in your system shell.  That statement will use cmake to
 % compile GraphBLAS.  Use 'make JOBS=40' to compile in parallel (replace '40'
@@ -163,6 +163,13 @@ gbtest103 % test iso matrices
 gbtest104 % test formats
 gbtest105 % test logical assignment with iso matrices
 gbtest106 % test build
+gbtest107 % test cell2mat error handling
+gbtest108 % test mat2cell
+gbtest109 % test num2cell
+gbtest110 % test argmax
+gbtest111 % test argmin
+gbtest112 % test load and save
+gbtest113 % test ones and eq
 gbtest96  % test GrB.optype
 if (~have_octave)
     % the Graph and DiGraph methods do not appear in octave
@@ -178,4 +185,5 @@ end
 GrB.clear
 
 fprintf ('\ngbtest: all tests passed\n') ;
+
 

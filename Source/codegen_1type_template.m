@@ -1,7 +1,7 @@
-function codegen_1type_method (xtype)
-%CODEGEN_1TYPE_METHOD create a function to compute over a given type
+function codegen_1type_template (xtype)
+%CODEGEN_1TYPE_TEMPLATE create a function to compute over a given type
 %
-% codegen_1type_method (xtype)
+% codegen_1type_template (xtype)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

@@ -6,8 +6,8 @@ function gbtest106
 
 rng ('default') ;
 
-A = GrB.build (1:5, 1:5, true, 5, 5, 'xor')
+A = GrB.build (1:5, 1:5, true, 5, 5, 'xor') ;
 assert (isequal (A, logical (speye (5)))) ;
 
-fprintf ('\ngbtest105: all tests passed\n') ;
+fprintf ('\ngbtest106: all tests passed\n') ;
 

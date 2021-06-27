@@ -11,7 +11,7 @@ rng ('default') ;
 % The correct version is in the HB/west0479 matrix at sparse.tamu.edu.
 
 % load west0479 ; %#ok<*LOAD>
-load west0479_correct ;
+load west0479_correct ; %#ok<*LOAD>
 west0479 = Problem.A ;
 
 A = GrB.offdiag (west0479) ;

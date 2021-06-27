@@ -53,7 +53,7 @@
 %  gbtest48  - test GrB.apply
 %  gbtest49  - test GrB.prune
 %  gbtest50  - test GrB.ktruss and GrB.tricount
-%  gbtest51  - test GrB.tricount
+%  gbtest51  - test GrB.tricount and concatenate
 %  gbtest52  - test GrB.format
 %  gbtest53  - test GrB.monoidinfo
 %  gbtest54  - test GrB.compact
@@ -110,6 +110,13 @@
 %  gbtest104 - test formats
 %  gbtest105 - test logical assignment with iso matrices
 %  gbtest106 - test build
+%  gbtest107 - test cell2mat error handling
+%  gbtest108 - test mat2cell
+%  gbtest109 - test num2cell
+%  gbtest110 - test argmax
+%  gbtest111 - test argmin
+%  gbtest112 - test load and save
+%  gbtest113 - test ones and eq
 %
 % Utilities and other tests:
 %
@@ -121,6 +128,7 @@
 %  gbtest_cast    - cast a built-in matrix to another type.
 %  gbtest_complex - return list of complex operators
 %  gbtest_err     - compare two matrices
+%  gb_contains    - same as contains (text, pattern)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later

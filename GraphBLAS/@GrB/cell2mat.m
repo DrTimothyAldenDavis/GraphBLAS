@@ -61,7 +61,7 @@ function C = cell2mat (A)
 if (~iscell (A))
     error ('input must be a cell array') ;
 end
-if (ndims (A) > 2)
+if (ndims (A) > 2) %#ok<ISMAT>
     error ('only 2D cell arrays are supported') ;
 end
 

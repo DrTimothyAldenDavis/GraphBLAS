@@ -26,7 +26,7 @@ for trial = 1:2
     else
         % load west0479 ; %#ok<*LOAD>
         % W = west0479 ;
-        load west0479_correct ;
+        load west0479_correct ; %#ok<*LOAD>
         W = Problem.A ;
     end
 

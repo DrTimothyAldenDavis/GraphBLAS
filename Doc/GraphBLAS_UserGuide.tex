@@ -1113,24 +1113,45 @@ MATLAB R2021a and later, the performance of \verb'C=A*B' when using MATLAB
 sparse matrices is identical to the performance for GraphBLAS matrices, since
 the same code is being used by both (\verb'GrB_mxm').
 
-Other methods in GraphBLAS are also faster, some absurdly so.  In particular,
-the statement \verb'C(M)=A' (where \verb'M' is a logical matrix) takes under a
-second for a large sparse problem when using GraphBLAS via its \verb'@GrB'
-interface.  By stark contrast, MATLAB R2021a would take about 4 or 5 days, a
-speedup of about 500,000x.  For a smaller problem, GraphBLAS takes 0.4 seconds
-while MATLAB takes 28 hours (a speedup of about 250,000x).  Both cases use the
-same statement with the same syntax (\verb'C(M)=A') and compute exactly the
-same result.
+Other methods in GraphBLAS are also faster, some {\em extremely} so.  In
+particular, the statement \verb'C(M)=A' (where \verb'M' is a logical matrix)
+takes under a second for a large sparse problem when using GraphBLAS via its
+\verb'@GrB' interface.  By stark contrast, MATLAB would take about 4 or
+5 days, a speedup of about 500,000x.  For a smaller problem, GraphBLAS takes
+0.4 seconds while MATLAB takes 28 hours (a speedup of about 250,000x).  Both
+cases use the same statement with the same syntax (\verb'C(M)=A') and compute
+exactly the same result.  Below are the results for \verb'n'-by-\verb'n'
+matrices in GraphBLAS v5.0.6 and MATLAB R2020a, on a Dell XPS13 laptop
+(16GB RAM, Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz with 4 hardware cores).
+GraphBLAS is using 4 threads.
+
+\vspace{0.10in}
+{\scriptsize
+\begin{tabular}{rrr|rrr}
+\hline
+\verb'n'    & \verb'nnz(C)' & \verb'nnz(M)' & GraphBLAS (sec) & MATLAB (sec) & speedup \\
+\hline
+2,048        & 20,432         & 2,048          & 0.005     & 0.024     & 4.7 \\
+4,096        & 40,908         & 4,096          & 0.003     & 0.115     & 39 \\
+8,192        & 81,876         & 8,191          & 0.009     & 0.594     & 68 \\
+16,384       & 163,789        & 16,384         & 0.009     & 2.53      & 273 \\
+32,768       & 327,633        & 32,767         & 0.014     & 12.4      & 864 \\
+65,536       & 655,309        & 65,536         & 0.025     & 65.9      & 2,617 \\
+131,072      & 1,310,677      & 131,070        & 0.055     & 276.2     & 4,986 \\
+262,144      & 2,621,396      & 262,142        & 0.071     & 1,077     & 15,172 \\
+524,288      & 5,242,830      & 524,288        & 0.114     & 5,855     & 51,274 \\
+1,048,576    & 10,485,713     & 1,048,576      & 0.197     & 27,196    & 137,776 \\
+2,097,152    & 20,971,475     & 2,097,152      & 0.406     & 100,799   & 248,200 \\
+4,194,304    & 41,942,995     & 4,194,304      & 0.855  & 4 to 5 days? & 500,000?\\
+\hline
+\end{tabular}}
+\vspace{0.10in}
 
 The assignment \verb'C(I,J)=A' in MATLAB, when using \verb'@GrB' objects, is up
 to 1000x faster than the same statement with the same syntax, when using MATLAB
-sparse matrices instead.
-
-Matrix concatenation \verb'C = [A B]' is about 17 times faster in GraphBLAS, on
-a 20-core Intel Xeon.
-
-For more details, see the \verb'GraphBLAS/GraphBLAS/demo' folder and its
-contents.
+sparse matrices instead.  Matrix concatenation \verb'C = [A B]' is about 17
+times faster in GraphBLAS, on a 20-core Intel Xeon.  For more details, see the
+\verb'GraphBLAS/GraphBLAS/demo' folder and its contents.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10965,7 +10986,7 @@ Submatrix assignment in SuiteSparse:GraphBLAS is extremely efficient, even
 without considering the advantages of non-blocking mode discussed in
 Section~\ref{compare_assign}.  It can be up to 500x faster than MATLAB R2019b,
 or even higher depending on the kind of matrix assignment.  MATLAB logical
-indexing (the mask of GraphBLAS) is absurdly faster with GraphBLAS as compared
+indexing (the mask of GraphBLAS) is extremely faster with GraphBLAS as compared
 in MATLAB R2019b; differences of up to 250,000x have been observed (0.4 seconds
 in GraphBLAS versus 28 hours in MATLAB).
 
