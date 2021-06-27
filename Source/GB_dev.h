@@ -69,7 +69,5 @@
 //      the operator.  Do this after WAIT on the inputs, since that may change
 //      the iso property.
 
-// FUTURE: reduce compile time when GBCOMPACT is enabled
-
 #endif
 
