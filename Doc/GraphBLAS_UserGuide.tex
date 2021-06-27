@@ -3591,6 +3591,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Scalar_type'           & return the type of a scalar          & \ref{scalar_type} \\
 \verb'GxB_Scalar_setElement'     & set the single entry of a scalar     & \ref{scalar_setElement} \\
 \verb'GxB_Scalar_extractElement' & get the single entry from a scalar   & \ref{scalar_extractElement} \\
+\verb'GxB_Scalar_memorySize'     & memory used by a scalar              & \ref{scalar_memsize} \\
 \verb'GxB_Scalar_free'           & free a scalar                        & \ref{scalar_free} \\
 \hline
 \end{tabular}
@@ -3784,6 +3785,24 @@ discussed in Section~\ref{matrix_extractElement}, which discusses
 scalar \verb's', then \verb'x' is not modified, and the return value of
 \verb'GxB_Scalar_extractElement' is \verb'GrB_NO_VALUE'.
 
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Scalar\_memorySize:} memory used by a scalar}
+%-------------------------------------------------------------------------------
+\label{scalar_memsize}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Scalar_memorySize  // return # of bytes used for a scalar
+(
+    size_t *size,           // # of bytes used by the scalar s
+    const GxB_Scalar s      // GxB_Scalar to query
+) ;
+\end{verbatim} } \end{mdframed}
+
+Returns the memory space required for a scalar, in bytes.
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Scalar\_free:} free a scalar}
 %-------------------------------------------------------------------------------
@@ -3842,6 +3861,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Vector_extractTuples'  & get all entries from a vector    & \ref{vector_extractTuples} \\
 \verb'GrB_Vector_resize'         & resize a vector                  & \ref{vector_resize} \\
 \verb'GxB_Vector_diag'           & extract a diagonal from a matrix & \ref{vector_diag} \\
+\verb'GxB_Vector_memorySize'     & memory used by a vector          & \ref{vector_memsize} \\
 \verb'GrB_Vector_free'           & free a vector                    & \ref{vector_free} \\
 \hline
 \hline
@@ -4245,6 +4265,23 @@ unchanged.
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_memorySize:} memory used by a vector}
+%-------------------------------------------------------------------------------
+\label{vector_memsize}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_memorySize  // return # of bytes used for a vector
+(
+    size_t *size,           // # of bytes used by the vector v
+    const GrB_Vector v      // vector to query
+) ;
+\end{verbatim} } \end{mdframed}
+
+Returns the memory space required for a vector, in bytes.
+
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_free:}          free a vector}
 %-------------------------------------------------------------------------------
 \label{vector_free}
@@ -4305,6 +4342,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Matrix_concat'        & concatenate matrices                  & \ref{matrix_concat} \\
 \verb'GxB_Matrix_split'         & split a matrix into matrices          & \ref{matrix_split} \\
 \verb'GxB_Matrix_diag'          & diagonal matrix from vector           & \ref{matrix_diag} \\
+\verb'GxB_Matrix_memorySize'    & memory used by a matrix               & \ref{matrix_memsize} \\
 \verb'GrB_Matrix_free'          & free a matrix                         & \ref{matrix_free} \\
 \hline
 \hline
@@ -4986,6 +5024,23 @@ if the type of \verb'C' and \verb'v' differ, the entries are typecasted into
 the type of \verb'C'.  Any settings made to \verb'C' by
 \verb'GxB_Matrix_Option_set' (format by row or by column, bitmap switch, hyper
 switch, and sparsity control) are unchanged.
+
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_memorySize:} memory used by a matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_memsize}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_memorySize  // return # of bytes used for a matrix
+(
+    size_t *size,           // # of bytes used by the matrix A
+    const GrB_Matrix A      // matrix to query
+) ;
+\end{verbatim} } \end{mdframed}
+
+Returns the memory space required for a matrix, in bytes.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_free:} free a matrix}

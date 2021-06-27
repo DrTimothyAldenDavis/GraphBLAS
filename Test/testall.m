@@ -153,7 +153,6 @@ logstat ('test136',s) ; % subassignment special cases
 logstat ('test02',t) ;  % matrix copy and dup tests
 logstat ('test109',t) ; % terminal monoid with user-defined type
 logstat ('test109',s);  % terminal monoid with user-defined type
-logstat ('test110',t) ; % binary search of M(:,j) in accum/mask
 logstat ('test04',t) ;  % simple mask and transpose test
 
 %----------------------------------------
@@ -374,6 +373,7 @@ logstat ('test103',t) ;    %      % GrB_transpose aliases
 logstat ('test105',t) ;    %    2 % eWiseAdd for hypersparse
 logstat ('test106',t) ;    %    4 % GxB_subassign with alias
 
+logstat ('test110',t) ;    %    0 % binary search of M(:,j) in accum/mask
 logstat ('test111',t) ;    %      % performance test for eWiseAdd
 logstat ('test112',t) ;    %      % test row/col scale
 logstat ('test113',t) ;    %      % performance tests for GrB_kron
