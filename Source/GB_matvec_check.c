@@ -53,6 +53,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     bool pr_complete = (pr == GxB_COMPLETE || pr == GxB_COMPLETE_VERBOSE) ;
     bool pr_short    = (pr == GxB_SHORT    || pr == GxB_SHORT_VERBOSE   ) ;
     bool one_based = GB_Global_print_one_based_get ( ) ;
+    bool pr_mem_shallow = GB_Global_print_mem_shallow_get ( ) ;
     int64_t offset = (one_based) ? 1 : 0 ;
     #if GB_DEVELOPER
     int pr_type = pr ;
@@ -274,91 +275,16 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // count the allocated blocks
     //--------------------------------------------------------------------------
 
-    GB_Pending Pending = A->Pending ;
-
-    // a matrix contains 0 to 10 dynamically malloc'd blocks
-    int64_t nallocs = 0 ;
-    bool ok = true ;
-
-    if (!A->static_header)
-    { 
-        nallocs++ ;
-        #ifdef GB_DEBUG
-        ok = ok && (A->header_size == GB_Global_memtable_size (A)) ;
-        #endif
+    int nallocs ;
+    size_t mem_deep, mem_shallow, memsize ;
+    GrB_Info info = GB_memorySize (&nallocs, &mem_deep, &mem_shallow, A) ;
+    if (info != GrB_SUCCESS)
+    {
+        GBPR0 ("  internal memory error\n") ;
+        return (info) ;
     }
 
-    if (A->p != NULL && !A->p_shallow)
-    { 
-        nallocs++ ;
-        #ifdef GB_DEBUG
-        ok = ok && (A->p_size == GB_Global_memtable_size (A->p)) ;
-        #endif
-    }
-
-    if (A->h != NULL && !A->h_shallow)
-    { 
-        nallocs++ ;
-        #ifdef GB_DEBUG
-        ok = ok && (A->h_size == GB_Global_memtable_size (A->h)) ;
-        #endif
-    }
-
-    if (A->b != NULL && !A->b_shallow)
-    { 
-        nallocs++ ;
-        #ifdef GB_DEBUG
-        ok = ok && (A->b_size == GB_Global_memtable_size (A->b)) ;
-        #endif
-    }
-
-    if (A->i != NULL && !A->i_shallow)
-    { 
-        nallocs++ ;
-        #ifdef GB_DEBUG
-        ok = ok && (A->i_size == GB_Global_memtable_size (A->i)) ;
-        #endif
-    }
-
-    if (A->x != NULL && !A->x_shallow)
-    { 
-        nallocs++ ;
-        #ifdef GB_DEBUG
-        ok = ok && (A->x_size == GB_Global_memtable_size (A->x)) ;
-        #endif
-    }
-
-    if (Pending != NULL)
-    { 
-        nallocs++ ;
-        #ifdef GB_DEBUG
-        ok = ok && (Pending->header_size == GB_Global_memtable_size (Pending)) ;
-        #endif
-    }
-
-    if (Pending != NULL && Pending->i != NULL)
-    { 
-        nallocs++ ;
-        #ifdef GB_DEBUG
-        ok = ok && (Pending->i_size == GB_Global_memtable_size (Pending->i)) ;
-        #endif
-    }
-
-    if (Pending != NULL && Pending->j != NULL)
-    { 
-        nallocs++ ;
-        #ifdef GB_DEBUG
-        ok = ok && (Pending->j_size == GB_Global_memtable_size (Pending->j)) ;
-        #endif
-    }
-
-    if (Pending != NULL && Pending->x != NULL)
-    { 
-        nallocs++ ;
-        #ifdef GB_DEBUG
-        ok = ok && (Pending->x_size == GB_Global_memtable_size (Pending->x)) ;
-        #endif
-    }
+    memsize = mem_deep + (pr_mem_shallow ? mem_shallow : 0) ;
 
     #if GB_DEVELOPER
     if (pr_short || pr_complete)
@@ -371,21 +297,17 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         {
             GBPR ("  header %p", A) ;
         }
-        GBPR (" number of memory blocks: " GBd "\n", nallocs) ;
+        GBPR (" number of memory blocks: %d\n", nallocs) ;
+        GBPR ("  deep: " GBu " shallow: " GBu " total: " GBu "\n",
+            mem_deep, mem_shallow, mem_deep + mem_shallow) ;
     }
     #endif
-
-    if (!ok)
-    {
-        GBPR0 ("  internal memory error\n") ;
-        return (GrB_INVALID_OBJECT) ;
-    }
 
     //--------------------------------------------------------------------------
     // check the type
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_Type_check (A->type, "", pr_type, f) ;
+    info = GB_Type_check (A->type, "", pr_type, f) ;
     if (info != GrB_SUCCESS)
     { 
         GBPR0 ("  %s has an invalid type\n", kind) ;
@@ -494,6 +416,31 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
 
     //--------------------------------------------------------------------------
+    // print the memory size
+    //--------------------------------------------------------------------------
+
+    #define K (1024L)
+    if (memsize < K)
+    { 
+        GBPR (", memory: " GBu " bytes\n", memsize) ;
+    }
+    else if (memsize < K*K)
+    {
+        double s = ((double) memsize) / ((double) K) ;
+        GBPR (", memory: %.1f KB\n", s) ;
+    }
+    else if (memsize < K*K*K)
+    {
+        double s = ((double) memsize) / ((double) K*K) ;
+        GBPR (", memory: %.1f MB\n", s) ;
+    }
+    else
+    {
+        double s = ((double) memsize) / ((double) K*K*K) ;
+        GBPR (", memory: %.1f GB\n", s) ;
+    }
+
+    //--------------------------------------------------------------------------
     // print the iso value
     //--------------------------------------------------------------------------
 
@@ -504,19 +451,20 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             GBPR0 ("  invalid iso matrix\n") ;
             return (GrB_INVALID_OBJECT) ;
         }
-        GBPR0 (", iso value: ") ;
+        GBPR0 ("  iso value: ") ;
         if (pr > 0)
         { 
             info = GB_entry_check (A->type, A->x, pr, f) ;
             if (info != GrB_SUCCESS) return (info) ;
         }
+        GBPR0 ("\n") ;
     }
-
-    GBPR0 ("\n") ;
 
     //--------------------------------------------------------------------------
     // report the number of pending tuples and zombies
     //--------------------------------------------------------------------------
+
+    GB_Pending Pending = A->Pending ;
 
     if (Pending != NULL || A->nzombies != 0)
     { 

@@ -14,6 +14,14 @@
 // memory management
 //------------------------------------------------------------------------------
 
+GrB_Info GB_memorySize      // count # allocated blocks and their sizes
+(
+    int64_t *nallocs,       // # of allocated memory blocks
+    size_t *mem_deep,       // # of bytes in blocks owned by this matrix
+    size_t *mem_shallow,    // # of bytes in blocks owned by another matrix
+    const GrB_Matrix A      // matrix to query
+) ;
+
 GB_PUBLIC
 void *GB_calloc_memory      // pointer to allocated block of memory
 (

@@ -99,6 +99,8 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     C->h_shallow = (A->h != NULL) ;     // C->h not freed when freeing C
     C->p = A->p ;                       // C->p is of size A->plen + 1
     C->h = A->h ;                       // C->h is of size A->plen
+    C->p_size = A->p_size ;
+    C->h_size = A->h_size ;
     C->plen = A->plen ;                 // C and A have the same hyperlist sizes
     C->nvec = A->nvec ;
     C->nvec_nonempty = A->nvec_nonempty ;

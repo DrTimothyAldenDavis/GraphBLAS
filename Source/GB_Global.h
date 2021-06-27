@@ -86,6 +86,9 @@ GB_PUBLIC bool     GB_Global_burble_get (void) ;
 GB_PUBLIC void     GB_Global_print_one_based_set (bool onebased) ;
 GB_PUBLIC bool     GB_Global_print_one_based_get (void) ;
 
+GB_PUBLIC void     GB_Global_print_mem_shallow_set (bool mem_shallow) ;
+GB_PUBLIC bool     GB_Global_print_mem_shallow_get (void) ;
+
           void     GB_Global_gpu_control_set (GrB_Desc_Value value) ;
           GrB_Desc_Value GB_Global_gpu_control_get (void);
           void     GB_Global_gpu_chunk_set (double gpu_chunk) ;

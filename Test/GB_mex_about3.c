@@ -661,6 +661,67 @@ void mexFunction
     GrB_Matrix_free_(&C) ;
 
     //--------------------------------------------------------------------------
+    // memory size
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
+    OK (GrB_Vector_new (&w, GrB_FP32, 100)) ;
+    OK (GxB_Scalar_new (&scalar, GrB_FP32)) ;
+
+    size_t size ;
+    OK (GxB_Matrix_fprint (C, "empty C for size", GxB_COMPLETE, NULL)) ;
+    OK (GxB_Matrix_memorySize (&size, C)) ;
+    printf ("size of C: %lu bytes\n", size) ;
+
+    OK (GxB_Vector_fprint (w, "empty w for size", GxB_COMPLETE, NULL)) ;
+    OK (GxB_Vector_memorySize (&size, w)) ;
+    printf ("size of w: %lu bytes\n", size) ;
+
+    OK (GxB_Scalar_fprint (scalar, "empty scalar for size",
+        GxB_COMPLETE, NULL)) ;
+    OK (GxB_Scalar_memorySize (&size, scalar)) ;
+    printf ("size of scalar: %lu bytes\n", size) ;
+
+    for (int k = 0 ; k < 8 ; k++)
+    {
+        OK (GrB_Matrix_setElement_FP32 (C, (double) k, k, k+1)) ;
+        OK (GrB_Vector_setElement_FP32 (w, (double) k, k)) ;
+    }
+    OK (GxB_Scalar_setElement_FP32 (scalar, 3.0)) ;
+
+    OK (GxB_Matrix_fprint (C, "non-empty C for size (with pending)",
+        GxB_COMPLETE, NULL)) ;
+    OK (GxB_Matrix_memorySize (&size, C)) ;
+    printf ("size of C: %lu bytes\n", size) ;
+
+    OK (GxB_Vector_fprint (w, "non-empty w for size (with pending)",
+        GxB_COMPLETE, NULL)) ;
+    OK (GxB_Vector_memorySize (&size, w)) ;
+    printf ("size of w: %lu bytes\n", size) ;
+
+    OK (GxB_Scalar_fprint (scalar, "non-empty scalar for size",
+        GxB_COMPLETE, NULL)) ;
+    OK (GxB_Scalar_memorySize (&size, scalar)) ;
+    printf ("size of scalar: %lu bytes\n", size) ;
+
+    OK (GrB_Matrix_wait (&C)) ;
+    OK (GrB_Vector_wait (&w)) ;
+
+    OK (GxB_Matrix_fprint (C, "non-empty C for size (no pending)",
+        GxB_COMPLETE, NULL)) ;
+    OK (GxB_Matrix_memorySize (&size, C)) ;
+    printf ("size of C: %lu bytes\n", size) ;
+
+    OK (GxB_Vector_fprint (w, "non-empty w for size (no pending)",
+        GxB_COMPLETE, NULL)) ;
+    OK (GxB_Vector_memorySize (&size, w)) ;
+    printf ("size of w: %lu bytes\n", size) ;
+
+    GrB_Matrix_free_(&C) ;
+    GrB_Vector_free_(&w) ;
+    GxB_Scalar_free_(&scalar) ;
+
+    //--------------------------------------------------------------------------
     // wrapup
     //--------------------------------------------------------------------------
 

@@ -46,13 +46,14 @@ if (is_any_pair)
     terminal = 'break' ;
     omp_atomic = 1 ;
     omp_microsoft_atomic = 0 ;
+    % the any_pair_iso semiring is never disabled by GBCOMPACT
     fprintf (f, 'define(`ifndef_compact'', `#if 1'')\n') ;
     fprintf (f, 'define(`if_not_any_pair_semiring'', `#if 0'')\n') ;
 else
+    % all other semirings are disabled by GBCOMPACT
     fprintf (f, 'define(`ifndef_compact'', `#ifndef GBCOMPACT'')\n') ;
     fprintf (f, 'define(`if_not_any_pair_semiring'', `#if 1'')\n') ;
 end
-fprintf (f, 'define(`endif_compact'', `#endif'')\n') ;
 
 ztype_is_real = ~codegen_contains (ztype, 'FC') ;
 is_any_complex = is_any && ~ztype_is_real ;
@@ -157,8 +158,7 @@ fprintf (f, 'define(`_Asaxpy3B_M'', `_Asaxpy3B_M__%s'')\n', name) ;
 fprintf (f, 'define(`_Asaxpy3B_noM'', `_Asaxpy3B_noM__%s'')\n', name) ;
 fprintf (f, 'define(`_Asaxpy3B_notM'', `_Asaxpy3B_notM__%s'')\n', name) ;
 fprintf (f, 'define(`_AsaxbitB'', `_AsaxbitB__%s'')\n', name) ;
-fprintf (f, 'define(`GB_AxB_defs'', `GB_AxB_defs__%s'')\n', name) ;
-fprintf (f, 'define(`GB_AxB_defs_include'', `#include "GB_AxB_defs__%s.h"'')\n', name) ;
+fprintf (f, 'define(`GB_AxB'', `GB_AxB__%s'')\n', name) ;
 
 % type of C, A, and B
 fprintf (f, 'define(`GB_ctype'', `%s'')\n', ztype) ;
@@ -760,29 +760,16 @@ end
 
 fclose (f) ;
 
-nprune = 74 ;
+nprune = 72 ;
 
-% construct the *.c and *.h files for the semiring
-fmt = 'cat control.m4 Generator/%s.%s | m4 | tail -n +%d > Generated/%s__%s.%s' ;
-base = { 'GB_Adot2B', 'GB_Adot3B', 'GB_Adot4B', 'GB_AsaxbitB', ...
-    'GB_Asaxpy3B', 'GB_Asaxpy3B_noM', 'GB_Asaxpy3B_M', 'GB_Asaxpy3B_notM',  ...
-    'GB_AxB_defs' } ;
-suffix = { 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'h' } ;
-
-for k = 1:length (base)
-    if (is_any_pair && isequal (base {k}, 'GB_Adot4B'))
-        % do not create the any_pair iso semiring for dot4
-        continue ;
-    end
-    cmd = sprintf (fmt, base {k}, suffix {k}, nprune, base {k}, name, suffix {k}) ;
-    system (cmd) ;
-end
+% construct the *.c file for the semiring
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.c | m4 | tail -n +%d > Generated/GB_AxB__%s.c', nprune, name) ;
+system (cmd) ;
 
 fprintf ('.') ;
 
 % append to the *.h file
-cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +%d >> Generated/GB_AxB__include.h', nprune) ;
+cmd = sprintf ('cat control.m4 Generator/GB_AxB.h | m4 | tail -n +%d >> Generated/GB_AxB__include.h', nprune) ;
 system (cmd) ;
 
 delete ('control.m4') ;

@@ -54,6 +54,9 @@ void gb_usage       // check usage and make sure GrB.init has been called
 
         // for debug only
         GB_Global_abort_function_set (gb_abort) ;   // TODO:: add as GxB_set/get
+
+        // for printing memory sizes of matrices
+        GB_Global_print_mem_shallow_set (true) ;
     }
 
     //--------------------------------------------------------------------------

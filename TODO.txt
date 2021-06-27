@@ -8,3 +8,12 @@ FIXME: Mac port fails (argument list too long in cmake)
 FIXME: check Windows port
 FIXME: delete this file
 
+FIXME: move GB_sel* and GB_AxB__any_pair_iso.c to another folder.
+
+    Source/*.[ch]               required files
+    Source/Template/*.[ch]      required files
+    Source/Generated1/*.[ch]    required files, cannot be disabled
+    Source/Generated2/*.[ch]    optional, can be disabled by GBCOMPACT
+                                or GB_control.h
+
+

@@ -396,6 +396,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
                 // shallow copy of A->h or A->i, from GB_transpose.
                 ASSERT (A1 == AT) ;
                 T->h_shallow = AT->h_shallow ;
+                T->h_size = AT->h_size ;
                 AT->h_shallow = true ;
             }
             else if (B_transpose && T->h == B1->h)
@@ -404,6 +405,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
                 // shallow copy of B->h or B->i, from GB_transpose.
                 ASSERT (B1 == BT) ;
                 T->h_shallow = BT->h_shallow ;
+                T->h_size = BT->h_size ;
                 BT->h_shallow = true ;
             }
             else if (M_transpose && T->h == M1->h)
@@ -412,6 +414,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
                 // shallow copy of M->h or M->i, from GB_transpose.
                 ASSERT (M1 == MT) ;
                 T->h_shallow = MT->h_shallow ;
+                T->h_size = MT->h_size ;
                 MT->h_shallow = true ;
             }
 

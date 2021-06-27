@@ -98,8 +98,7 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     { 
         // keep the existing A->x
         Ax = (GB_void *) A->x ;
-        Ax_shallow = A->x_shallow ;
-        Ax_size = A->x_size ;
+        Ax_shallow = A->x_shallow ; Ax_size = A->x_size ;
     }
     else
     {
@@ -232,12 +231,10 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     GB_phbix_free (A) ;
     A->iso = A_iso ;        // OK: convert_sparse_to_bitmap, keep iso
 
-    A->b = Ab ; A->b_size = Ab_size ;
-    A->b_shallow = false ;
+    A->b = Ab ; A->b_size = Ab_size ; A->b_shallow = false ;
     Ab = NULL ;
 
-    A->x = Ax ; A->x_size = Ax_size ;
-    A->x_shallow = Ax_shallow ;
+    A->x = Ax ; A->x_size = Ax_size ; A->x_shallow = Ax_shallow ;
 
     A->nvals = anz - nzombies ;
     ASSERT (A->nzombies == 0) ;

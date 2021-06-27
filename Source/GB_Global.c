@@ -102,12 +102,8 @@ typedef struct
     bool burble ;                   // controls GBURBLE output
     GB_printf_function_t printf_func ;  // pointer to printf
     GB_flush_function_t flush_func ;   // pointer to flush
-
-    //--------------------------------------------------------------------------
-    // for @GrB interface only
-    //--------------------------------------------------------------------------
-
     bool print_one_based ;          // if true, print 1-based indices
+    bool print_mem_shallow ;        // if true, print # shallow bytes
 
     //--------------------------------------------------------------------------
     // timing: for code development only
@@ -215,9 +211,8 @@ GB_Global_struct GB_Global =
     .burble = false,
     .printf_func = NULL,
     .flush_func = NULL,
-
-    // for @GrB interface only
     .print_one_based = false,   // if true, print 1-based indices
+    .print_mem_shallow = false, // for @GrB interface only
 
     .timing = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -928,7 +923,7 @@ void GB_Global_flush_set (GB_flush_function_t fl_func)
 }
 
 //------------------------------------------------------------------------------
-// for @GrB interface only
+// for printing matrices in 1-based index notation (@GrB and Julia)
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -941,6 +936,22 @@ GB_PUBLIC
 bool GB_Global_print_one_based_get (void)
 { 
     return (GB_Global.print_one_based) ;
+}
+
+//------------------------------------------------------------------------------
+// for printing matrix in @GrB interface
+//------------------------------------------------------------------------------
+
+GB_PUBLIC
+void GB_Global_print_mem_shallow_set (bool mem_shallow)
+{ 
+    GB_Global.print_mem_shallow = mem_shallow ;
+}
+
+GB_PUBLIC
+bool GB_Global_print_mem_shallow_get (void)
+{ 
+    return (GB_Global.print_mem_shallow) ;
 }
 
 //------------------------------------------------------------------------------

@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "June 25, 2021 (BETA1)"
+#define GxB_IMPLEMENTATION_DATE "June 26, 2021 (BETA1)"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 1
 #define GxB_IMPLEMENTATION_SUB   0
@@ -1940,6 +1940,13 @@ GrB_Info GxB_Scalar_type    // get the type of a GxB_Scalar
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Scalar_memorySize  // return # of bytes used for a scalar
+(
+    size_t *size,           // # of bytes used by the scalar s
+    const GxB_Scalar s      // GxB_Scalar to query
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_Scalar_free    // free a GxB_Scalar
 (
     GxB_Scalar *s           // handle of GxB_Scalar to free
@@ -2241,6 +2248,13 @@ GB_PUBLIC
 GrB_Info GxB_Vector_type    // get the type of a vector
 (
     GrB_Type *type,         // returns the type of the vector
+    const GrB_Vector v      // vector to query
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_memorySize  // return # of bytes used for a vector
+(
+    size_t *size,           // # of bytes used by the vector v
     const GrB_Vector v      // vector to query
 ) ;
 
@@ -2932,6 +2946,13 @@ GB_PUBLIC
 GrB_Info GxB_Matrix_type    // get the type of a matrix
 (
     GrB_Type *type,         // returns the type of the matrix
+    const GrB_Matrix A      // matrix to query
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_memorySize  // return # of bytes used for a matrix
+(
+    size_t *size,           // # of bytes used by the matrix A
     const GrB_Matrix A      // matrix to query
 ) ;
 

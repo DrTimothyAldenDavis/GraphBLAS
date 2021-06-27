@@ -65,6 +65,9 @@ void mexFunction
     // print 1-based indices
     OK (GxB_Global_Option_set (GxB_PRINT_1BASED, true)) ;
 
+    // print sizes of shallow components
+    GB_Global_print_mem_shallow_set (true) ;
+
     GrB_Matrix C = gb_get_shallow (pargin [0]) ;
     OK (GxB_Matrix_fprint (C, s, level, NULL)) ;
     OK (GrB_Matrix_free (&C)) ;
