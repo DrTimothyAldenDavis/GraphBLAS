@@ -1781,6 +1781,7 @@
 #define GxB_Matrix_import_FullR GxM_Matrix_import_FullR
 #define GxB_Matrix_import_HyperCSC GxM_Matrix_import_HyperCSC
 #define GxB_Matrix_import_HyperCSR GxM_Matrix_import_HyperCSR
+#define GxB_Matrix_memoryUsage GxM_Matrix_memoryUsage
 #define GxB_Matrix_Option_get GxM_Matrix_Option_get
 #define GxB_Matrix_Option_set GxM_Matrix_Option_set
 #define GxB_Matrix_pack_BitmapC GxM_Matrix_pack_BitmapC
@@ -2651,6 +2652,7 @@
 #define GxB_Scalar_extractElement_UINT8 GxM_Scalar_extractElement_UINT8
 #define GxB_Scalar_fprint GxM_Scalar_fprint
 #define GxB_Scalar_free GxM_Scalar_free
+#define GxB_Scalar_memoryUsage GxM_Scalar_memoryUsage
 #define GxB_Scalar_new GxM_Scalar_new
 #define GxB_Scalar_nvals GxM_Scalar_nvals
 #define GxB_Scalar_setElement_BOOL GxM_Scalar_setElement_BOOL
@@ -2996,6 +2998,7 @@
 #define GxB_Vector_import_Bitmap GxM_Vector_import_Bitmap
 #define GxB_Vector_import_CSC GxM_Vector_import_CSC
 #define GxB_Vector_import_Full GxM_Vector_import_Full
+#define GxB_Vector_memoryUsage GxM_Vector_memoryUsage
 #define GxB_Vector_Option_get GxM_Vector_Option_get
 #define GxB_Vector_Option_set GxM_Vector_Option_set
 #define GxB_Vector_pack_Bitmap GxM_Vector_pack_Bitmap
@@ -3338,6 +3341,8 @@
 #define GB_Global_omp_get_max_threads GM_Global_omp_get_max_threads
 #define GB_Global_printf_get GM_Global_printf_get
 #define GB_Global_printf_set GM_Global_printf_set
+#define GB_Global_print_mem_shallow_get GM_Global_print_mem_shallow_get
+#define GB_Global_print_mem_shallow_set GM_Global_print_mem_shallow_set
 #define GB_Global_print_one_based_get GM_Global_print_one_based_get
 #define GB_Global_print_one_based_set GM_Global_print_one_based_set
 #define GB_Global_realloc_function GM_Global_realloc_function
@@ -3394,6 +3399,7 @@
 #define GB_matvec_check GM_matvec_check
 #define GB_matvec_type GM_matvec_type
 #define GB_memcpy GM_memcpy
+#define GB_memoryUsage GM_memoryUsage
 #define GB_memset GM_memset
 #define GB_Monoid_check GM_Monoid_check
 #define GB_Monoid_new GM_Monoid_new
