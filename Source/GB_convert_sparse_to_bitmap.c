@@ -35,7 +35,6 @@ GrB_Info GB_convert_sparse_to_bitmap    // convert sparse/hypersparse to bitmap
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     int8_t  *restrict Ab     = NULL ; size_t Ab_size = 0 ;
     GB_void *restrict Ax     = NULL ; size_t Ax_size = 0 ;

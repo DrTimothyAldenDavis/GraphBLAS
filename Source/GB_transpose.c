@@ -58,7 +58,6 @@
 // GB_transpose
 //------------------------------------------------------------------------------
 
-GB_PUBLIC
 GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 (
     GrB_Matrix C,               // output matrix C, possibly modified in-place
