@@ -28,7 +28,7 @@ GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
     // get the memory size taken by the matrix
     //--------------------------------------------------------------------------
 
-    int nallocs ;
+    int64_t nallocs ;
     size_t mem_shallow ;
     return (GB_memoryUsage (&nallocs, size, &mem_shallow, A)) ;
 }

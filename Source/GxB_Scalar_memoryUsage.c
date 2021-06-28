@@ -28,7 +28,7 @@ GrB_Info GxB_Scalar_memoryUsage  // return # of bytes used for a scalar
     // get the memory size taken by the scalar
     //--------------------------------------------------------------------------
 
-    int nallocs ;
+    int64_t nallocs ;
     size_t mem_shallow ;
     return (GB_memoryUsage (&nallocs, size, &mem_shallow, (GrB_Matrix) s)) ;
 }
