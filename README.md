@@ -153,7 +153,7 @@ are no plans to change this.
 However, just because this code is free to use doesn't make it zero-cost to
 create.  If you are using GraphBLAS in a commercial closed-source product and
 are not supporting its development, please consider supporting this project
-to ensure that it will continued to be developed and enhanced in the future.
+to ensure that it will continue to be developed and enhanced in the future.
 
 The Octave/MATLAB interface is now licensed under the GNU GPLv3.0 (or later)
 license, so if any code from the GraphBLAS/GraphBLAS folder is needed in a
