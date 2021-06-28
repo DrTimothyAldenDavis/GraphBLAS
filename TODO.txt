@@ -1,5 +1,1 @@
-v5.1.0.BETA1 (June 28, 2021)
-
-FIXME: Mac port fails (argument list too long in cmake)
 FIXME: check Windows port
-FIXME: delete this file

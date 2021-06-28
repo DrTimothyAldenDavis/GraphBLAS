@@ -9,6 +9,8 @@ Version 5.1.0, June 28, 2021
     * GxB_*_memoryUsage added
     * Source/Generated: split into Source/Generated1 and Source/Generated2
         for faster compilation when GBCOMPACT is enabled
+    * port to Octave:  gbmake and gbtest work in Octave7 to build and test
+        the @GrB interface to GraphBLAS.  Octave 7.0.0 is required.
 
 Version 5.0.6, May 24, 2021
 
