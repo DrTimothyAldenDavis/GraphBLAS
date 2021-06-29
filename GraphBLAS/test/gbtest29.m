@@ -72,6 +72,9 @@ for trial = 1:40
             % this uses the built-in subasgn, after typecasting G(M) from
             % class GrB to class double, using GrB/double:
             if (~have_octave)
+                % MATLAB does the automatic typecasting of G(M), since it
+                % sees that GrB has a "double" method.  Octave does not do
+                % the auto typecast.
                 C4 = C ;
                 C4 (M) = G (M) ;
                 assert (gbtest_eq (C1, C4)) ;
@@ -98,6 +101,7 @@ for trial = 1:40
             C2 (M) = pi ;
             C3 (M) = GrB (pi) ;
             if (~have_octave)
+                % See above for the octave vs MATLAB difference in casting.
                 C4 (K) = GrB (pi) ;
                 assert (gbtest_eq (C1, C4)) ;
             end

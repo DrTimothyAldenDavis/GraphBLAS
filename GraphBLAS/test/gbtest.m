@@ -5,9 +5,9 @@ function gbtest
 % compile GraphBLAS.  Use 'make JOBS=40' to compile in parallel (replace '40'
 % with the number of cores in your system).  Next, do the following:
 %
-% This test has been ported to Octave 7, as of SuiteSparse:GraphBLAS v5.1.
-% A few features differ between Octave and MATLAB, so those tests are skipped
-% for Octave.
+% This test has been ported to Octave 7, as of SuiteSparse:GraphBLAS v5.1.  A
+% few features differ between Octave and MATLAB, so those tests are skipped for
+% Octave.  Octave passes all of the essential tests below.
 %
 % Example:
 %
@@ -39,10 +39,7 @@ end
 gbtest0   % test GrB.clear
 gbtest1   % test GrB
 gbtest2   % list all binary operators
-if (~have_octave)
-    % octave fails in dnn_builtin, unsure why
-    gbtest3   % test dnn
-end
+gbtest3   % test dnn
 gbtest4   % list all possible semirings
 gbtest5   % test GrB.descriptorinfo
 gbtest6   % test GrB.mxm
@@ -123,14 +120,17 @@ gbtest71  % test GrB.selectopinfo
 gbtest72  % test any-pair semiring
 gbtest73  % test GrB.normdiff
 if (~have_octave)
-    % octave returns double, MATLAB returns integer
+    % octave returns double, MATLAB returns integer.
+    % This would be easy to fix but the tests are skipped for octave.
     gbtest74  % test bitwise operators
     gbtest75  % test bitshift
 end
 gbtest76  % test trig functions
 gbtest77  % test error handling
 if (~have_octave)
-    % octave: bit index must be in proper range
+    % octave: bit index must be in proper range.
+    % MATLAB: bit indices outside the size of the integer are ignored.
+    % This would be easy to fix but the tests are skipped for octave.
     gbtest78  % test integer operations
 end
 gbtest79  % test power
