@@ -20,7 +20,7 @@
 // A is required.  See GrB.m for more details.
 // If accum or M is used, then Cin must appear.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 #include "GB_ij.h"
 
 #define USAGE "usage: C = GrB.extract (Cin, M, accum, A, I, J, desc)"
@@ -183,7 +183,7 @@ void mexFunction
     if (J_allocated) gb_mxfree (&J) ;
 
     //--------------------------------------------------------------------------
-    // export the output matrix C back to MATLAB
+    // export the output matrix C
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;

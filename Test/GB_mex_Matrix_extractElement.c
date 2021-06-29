@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_Matrix_extractElement: MATLAB interface for x = A(i,j)
+// GB_mex_Matrix_extractElement: interface for x = A(i,j)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.

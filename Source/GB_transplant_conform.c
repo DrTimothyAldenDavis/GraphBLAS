@@ -9,7 +9,8 @@
 
 // C = (type) T, then conform C to its desired sparsity structure.  T is freed.
 // All prior content of C is cleared; zombies and pending tuples are abandoned
-// in C.  C and T can have any sparsity structure on input.
+// in C.  C and T can have any sparsity structure on input.  If T is iso, then
+// so is C.
 
 #include "GB.h"
 

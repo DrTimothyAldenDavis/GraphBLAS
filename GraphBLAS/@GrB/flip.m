@@ -5,7 +5,7 @@ function C = flip (A, dim)
 % so that flip (A,1) and flip (A) are the same thing, and flip (A,2) flips
 % the columns so that C = A (:,end:-1,1).
 %
-% To use this function on a MATLAB matrix, use C = flip (A, GrB (dim)).
+% To use this function on a built-in matrix, use C = flip (A, GrB (dim)).
 %
 % See also GrB/transpose.
 

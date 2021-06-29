@@ -3,13 +3,12 @@
 #-------------------------------------------------------------------------------
 
 # SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
-# The @GrB MATLAB interface is under the GNU GPLv3 (or later) license.
+# The @GrB interface is under the GNU GPLv3 (or later) license.
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# CMakeLists.txt: instructions for cmake to build GraphBLAS for use in MATLAB.
-# This method is required for MATLAB R2021a and following, since that
-# version of MATLAB includes v3.3.3 of GraphBLAS, used by the built-in C=A*B.
-# Using this version of GraphBLAS causes a naming conflict, which this
+# CMakeLists.txt: instructions for cmake to build GraphBLAS for use in MATLAB
+# R2021a and following, includes v3.3.3 of GraphBLAS, used by the built-in
+# C=A*B.  Using this version of GraphBLAS causes a naming conflict, which this
 # cmake handles.
 
 #-------------------------------------------------------------------------------
@@ -29,10 +28,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "May 24, 2021")
+set ( GraphBLAS_DATE "June 28, 2021")
 set ( GraphBLAS_VERSION_MAJOR 5 )
-set ( GraphBLAS_VERSION_MINOR 0 )
-set ( GraphBLAS_VERSION_SUB   6 )
+set ( GraphBLAS_VERSION_MINOR 1 )
+set ( GraphBLAS_VERSION_SUB   0 )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "Sept 25, 2019" )
@@ -75,16 +74,27 @@ endif ( )
 message ( STATUS "CMAKE compiler ID:         " ${CMAKE_C_COMPILER_ID} )
 message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 
+# Uncomment this line for for development only, not for end-users:
+# set ( GBCOMPACT true )
+
+if ( GBCOMPACT )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCOMPACT=1 " )
+endif ( )
+
 #-------------------------------------------------------------------------------
 # include directories
 #-------------------------------------------------------------------------------
 
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-include_directories ( ../Source/Template ../Source ../Source/Generated ../Source/Generator ../Include rename )
+if ( GBCOMPACT )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 )
+else ( )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../Source/Generated2 )
+endif ( )
 
 #-------------------------------------------------------------------------------
-# compiler options: MATLAB only supports gcc and MS Visual Studio
+# compiler options:
 #-------------------------------------------------------------------------------
 
 # check which compiler is being used.  If you need to make
@@ -120,7 +130,11 @@ endif ( )
 # dynamic graphblas_renamed library properties
 #-------------------------------------------------------------------------------
 
-file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Generated/*.c" )
+if ( GBCOMPACT )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Generated1/*.c" )
+else ( )
+    file ( GLOB GRAPHBLAS_SOURCES "../Source/*.c" "../Source/Generated1/*.c" "../Source/Generated2/*.c" )
+endif ( )
 
 add_library ( graphblas_renamed SHARED ${GRAPHBLAS_SOURCES} )
 SET_TARGET_PROPERTIES ( graphblas_renamed PROPERTIES

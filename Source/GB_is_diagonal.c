@@ -57,7 +57,7 @@ bool GB_is_diagonal             // true if A is diagonal
         return (false) ;
     }
 
-    int64_t anz  = GB_NNZ (A) ;
+    int64_t anz  = GB_nnz (A) ;
     int64_t nvec = A->nvec ;
 
     if (n != anz || n != nvec)

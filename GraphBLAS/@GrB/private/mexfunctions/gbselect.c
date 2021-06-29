@@ -36,7 +36,7 @@
 // The 'tril', 'triu', 'diag', 'offdiag', and 2-input operators all require
 // the b scalar.  The b scalar must not appear for the '*0' operators.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.select (Cin, M, accum, op, A, b, desc)"
 
@@ -362,7 +362,7 @@ void mexFunction
     OK (GrB_BinaryOp_free (&nan_test)) ;
 
     //--------------------------------------------------------------------------
-    // export the output matrix C back to MATLAB
+    // export the output matrix C
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;

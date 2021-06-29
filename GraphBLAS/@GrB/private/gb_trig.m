@@ -7,7 +7,7 @@ function C = gb_trig (op, G)
 
 type = gbtype (G) ;
 
-if (~contains (type, 'complex'))
+if (~gb_contains (type, 'complex'))
 
     % determine if any entries are outside the domain for the real case
     noutside = 0 ;  % default if no switch cases apply

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 double gb_norm              // compute norm (A,kind)
 (

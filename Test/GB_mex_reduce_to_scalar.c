@@ -173,7 +173,7 @@ void mexFunction
         }
     }
 
-    // return C to MATLAB as a scalar
+    // return C as a scalar
     pargout [0] = GB_mx_create_full (1, 1, ctype) ;
     GB_void *p = mxGetData (pargout [0]) ;
     memcpy (p, c, ctype->size) ;

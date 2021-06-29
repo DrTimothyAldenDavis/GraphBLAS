@@ -55,18 +55,8 @@
 
 #include "GraphBLAS.h"
 #include "simple_rand.h"
-#include "simple_timer.h"
 #include "usercomplex.h"
 #include "prand.h"
-
-#ifdef MATLAB_MEX_FILE
-#include "mex.h"
-#include "matrix.h"
-#define malloc  mxMalloc
-#define free    mxFree
-#define calloc  mxCalloc
-#define realloc mxRealloc
-#endif
 
 #undef MIN
 #undef MAX

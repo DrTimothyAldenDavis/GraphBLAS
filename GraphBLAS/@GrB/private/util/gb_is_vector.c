@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 bool gb_is_vector               // true if A is a row or column vector
 (

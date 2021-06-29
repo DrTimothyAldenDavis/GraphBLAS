@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Set a single entry in a matrix, C(row,col) = x in MATLAB notation,
+// Set a single entry in a matrix, C(row,col) = x,
 // typecasting from the type of x to the type of C, as needed.
 
 #include "GB.h"

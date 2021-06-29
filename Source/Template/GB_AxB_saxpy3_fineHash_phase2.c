@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_fineHash_phase2: C=A*B (or with M packed), fine Hash, phase2
+// GB_AxB_saxpy3_fineHash_phase2: C=A*B (or with M in-place), fine Hash, phase2
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.

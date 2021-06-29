@@ -39,7 +39,7 @@
 #define GB_FREE_ALL                         \
 {                                           \
     GB_FREE_WORK ;                          \
-    GB_phbix_free (C) ;                   \
+    GB_phbix_free (C) ;                     \
 }
 
 GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
@@ -105,11 +105,19 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     const int64_t vlen = M->vlen ;
     const int64_t vdim = M->vdim ;
     const int64_t nvec = M->nvec ;
-    const int64_t mnz = GB_NNZ (M) ;
+    const int64_t mnz = GB_nnz (M) ;
     const size_t  msize = M->type->size ;
 
     const int8_t *restrict Ab = A->b ;
     const int8_t *restrict Bb = B->b ;
+
+    //--------------------------------------------------------------------------
+    // check if C is iso and compute its iso value if it is
+    //--------------------------------------------------------------------------
+
+    const size_t csize = ctype->size ;
+    GB_void cscalar [GB_VLA(csize)] ;
+    bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
 
     //--------------------------------------------------------------------------
     // allocate C->p and C->h
@@ -209,7 +217,8 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     //--------------------------------------------------------------------------
 
     int64_t cnz = Cp [nvec] ;
-    GB_OK (GB_bix_alloc (C, cnz, false, false, true, true, Context)) ;
+    // set C->iso = C_iso   OK
+    GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso, Context)) ;
 
     //--------------------------------------------------------------------------
     // copy pattern into C
@@ -218,7 +227,7 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // TODO: could make these components of C shallow instead
 
     if (GB_IS_HYPERSPARSE (M))
-    {
+    { 
         // copy M->h into C->h
         GB_memcpy (C->h, Mh, nvec * sizeof (int64_t), M_nthreads) ;
     }
@@ -256,49 +265,76 @@ GrB_Info GB_emult_03        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
-    bool done = false ;
+    #define GB_PHASE_2_OF_2
 
-    #ifndef GBCOMPACT
-
-        //----------------------------------------------------------------------
-        // define the worker for the switch factory
-        //----------------------------------------------------------------------
-
-        #define GB_AemultB_03(mult,xname) GB (_AemultB_03_ ## mult ## xname)
-
-        #define GB_BINOP_WORKER(mult,xname)                                 \
-        {                                                                   \
-            info = GB_AemultB_03(mult,xname) (C, M, Mask_struct, A, B,      \
-                Cp_kfirst, M_ek_slicing, M_ntasks, M_nthreads) ;            \
-            done = (info != GrB_NO_VALUE) ;                                 \
-        }                                                                   \
-        break ;
-
-        //----------------------------------------------------------------------
-        // launch the switch factory
-        //----------------------------------------------------------------------
-
-        GB_Type_code xcode, ycode, zcode ;
-        if (!op_is_positional &&
-            GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
-            op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
-        { 
-            #include "GB_binop_factory.c"
-        }
-
-    #endif
-
-    //--------------------------------------------------------------------------
-    // generic worker
-    //--------------------------------------------------------------------------
-
-    if (!done)
+    if (C_iso)
     { 
-        GB_BURBLE_MATRIX (C, "(generic emult_03: %s) ", op->name) ;
-        GB_ewise_generic (C, op, NULL, 0, 0,
-            NULL, NULL, NULL, C_sparsity, GB_EMULT_METHOD_03, Cp_kfirst,
-            M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
-            M, Mask_struct, false, A, B, Context) ;
+
+        //----------------------------------------------------------------------
+        // C is iso
+        //----------------------------------------------------------------------
+
+        // Cx [0] = cscalar = op (A,B)
+        GB_BURBLE_MATRIX (C, "(iso emult) ") ;
+        memcpy (C->x, cscalar, csize) ;
+
+        // pattern of C = set intersection of pattern of A and B
+        #define GB_ISO_EMULT
+        #include "GB_emult_03_template.c"
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // C is non-iso
+        //----------------------------------------------------------------------
+
+        bool done = false ;
+
+        #ifndef GBCOMPACT
+
+            //------------------------------------------------------------------
+            // define the worker for the switch factory
+            //------------------------------------------------------------------
+
+            #define GB_AemultB_03(mult,xname) GB (_AemultB_03_ ## mult ## xname)
+
+            #define GB_BINOP_WORKER(mult,xname)                             \
+            {                                                               \
+                info = GB_AemultB_03(mult,xname) (C, M, Mask_struct, A, B,  \
+                    Cp_kfirst, M_ek_slicing, M_ntasks, M_nthreads) ;        \
+                done = (info != GrB_NO_VALUE) ;                             \
+            }                                                               \
+            break ;
+
+            //------------------------------------------------------------------
+            // launch the switch factory
+            //------------------------------------------------------------------
+
+            GB_Type_code xcode, ycode, zcode ;
+            if (!op_is_positional &&
+                GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
+                op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
+            { 
+                #define GB_NO_PAIR
+                #include "GB_binop_factory.c"
+            }
+
+        #endif
+
+        //----------------------------------------------------------------------
+        // generic worker
+        //----------------------------------------------------------------------
+
+        if (!done)
+        { 
+            GB_BURBLE_MATRIX (C, "(generic emult_03: %s) ", op->name) ;
+            GB_ewise_generic (C, op, NULL, 0, 0,
+                NULL, NULL, NULL, C_sparsity, GB_EMULT_METHOD_03, Cp_kfirst,
+                M_ek_slicing, M_ntasks, M_nthreads, NULL, 0, 0, NULL, 0, 0,
+                M, Mask_struct, false, A, B, Context) ;
+        }
     }
 
     //--------------------------------------------------------------------------

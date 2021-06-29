@@ -60,9 +60,9 @@ for k1 = 1:length(types)
                 assert (isvector (G) == (m == 1 | n == 1)) ;
                 assert (isscalar (G) == (m == 1 & n == 1)) ;
 
-                isfl = contains (type, 'double') | contains (type, 'single') ;
+                isfl = gb_contains (type, 'double') | gb_contains (type, 'single') ;
                 assert (isfloat (G) == isfl) ;
-                assert (isreal (G) == (~contains (type, 'complex'))) ;
+                assert (isreal (G) == (~gb_contains (type, 'complex'))) ;
                 isint = isequal (type (1:3), 'int') | ...
                         isequal (type (2:4), 'int') ;
                 assert (isinteger (G) == isint) ;

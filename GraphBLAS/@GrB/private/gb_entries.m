@@ -38,7 +38,7 @@ if (isequal (dim, 'all'))
 else
 
     % get the row or column degree
-    result = gbdegree (A, dim) ;
+    result = gbdegree (A, dim) ;    % dim is 'row' or 'col'
 
     switch kind
         case 'count'

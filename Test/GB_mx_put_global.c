@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mx_put_global: put the GraphBLAS status in MATLAB workspace
+// GB_mx_put_global: put the GraphBLAS status in global workspace
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -20,12 +20,6 @@ void GB_mx_put_global
     //--------------------------------------------------------------------------
 
     Complex_finalize ( ) ;
-
-    //--------------------------------------------------------------------------
-    // return the time to MATLAB, if it was computed
-    //--------------------------------------------------------------------------
-
-    GB_mx_put_time ( ) ;
 
     //--------------------------------------------------------------------------
     // log the statement coverage

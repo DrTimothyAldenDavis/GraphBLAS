@@ -33,6 +33,20 @@ for d = [1e-4 0.01 0.2 0.8 inf]
                         GB_spec_compare (C1 {i,j}, C2 {i,j}) ;
                     end
                 end
+
+                if (nnz (A.matrix) > 0)
+                    % also try the iso case
+                    B = A ;
+                    B.matrix = spones (A.matrix) * pi ;
+                    B.iso = true ;
+                    C2 = GB_spec_split (B, ms, ns) ;
+                    C1 = GB_mex_split  (B, ms, ns) ;
+                    for i = 1:length(ms)
+                        for j = 1:length(ns)
+                            GB_spec_compare (C1 {i,j}, C2 {i,j}) ;
+                        end
+                    end
+                end
             end
         end
     end

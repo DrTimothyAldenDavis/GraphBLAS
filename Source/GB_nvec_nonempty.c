@@ -12,7 +12,7 @@
 
 #include "GB.h"
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 int64_t GB_nvec_nonempty        // return # of non-empty vectors
 (
     const GrB_Matrix A,         // input matrix to examine
@@ -39,7 +39,7 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
         return ((A->vlen == 0) ? 0 : A->vdim) ;
     }
 
-    if (GB_NNZ (A) == 0)
+    if (GB_nnz (A) == 0)
     { 
         // A is sparse or hypersparse, with no entries
         return (0) ;

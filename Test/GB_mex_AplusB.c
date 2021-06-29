@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// This is for testing only.  See GrB_eWiseAdd instead.  Returns a plain MATLAB
-// matrix, in double.
+// This is for testing only.  See GrB_eWiseAdd instead.  Returns a plain
+// built-in matrix, in double.
 
 #include "GB_mex.h"
 
@@ -74,7 +74,7 @@ void mexFunction
     METHOD (GB_add (C, A->type, true, NULL, false, false, &ignore, A, B, op,
         Context)) ;
 
-    // return C to MATLAB as a plain sparse matrix
+    // return C as a plain sparse matrix
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AplusB result", false) ;
 
     FREE_ALL ;

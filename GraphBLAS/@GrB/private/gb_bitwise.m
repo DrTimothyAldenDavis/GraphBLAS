@@ -15,7 +15,7 @@ end
 atype = gbtype (A) ;
 btype = gbtype (B) ;
 
-if (contains (atype, 'complex') || contains (btype, 'complex'))
+if (gb_contains (atype, 'complex') || gb_contains (btype, 'complex'))
     error ('inputs must be real') ;
 end
 
@@ -23,7 +23,7 @@ if (isequal (atype, 'logical') || isequal (btype, 'logical'))
     error ('inputs must not be logical') ;
 end
 
-if (~contains (assumedtype, 'int'))
+if (~gb_contains (assumedtype, 'int'))
     error ('assumedtype must be an integer type') ;
 end
 

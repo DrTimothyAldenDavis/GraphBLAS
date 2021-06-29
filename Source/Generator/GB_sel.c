@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated/ folder, do not edit it (auto-generated).
+// If this file is in the Generated1/ folder, do not edit it
+// (it is auto-generated from Generator/*).
 
 #include "GB_select.h"
 #include "GB_ek_slice.h"
@@ -22,6 +23,9 @@
 
 // A type: GB_atype
 
+#define GB_ISO_SELECT \
+    GB_iso_select
+
 // kind
 GB_kind
 
@@ -30,7 +34,7 @@ GB_kind
 
 // test value of Ax [p]
 #define GB_TEST_VALUE_OF_ENTRY(p)                       \
-    GB_test_value_of_entry(p)
+    GB_test_value_of_entry
 
 // get the vector index (user select operators only)
 #define GB_GET_J                                        \

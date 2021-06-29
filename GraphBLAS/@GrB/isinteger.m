@@ -10,5 +10,5 @@ function s = isinteger (G)
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 G = G.opaque ;
-s = contains (gbtype (G), 'int') ;
+s = gb_contains (gbtype (G), 'int') ;
 

@@ -12,7 +12,7 @@
 //  void *p = mxMalloc ( ... ) ;
 //  gb_mxfree (&p) ;                // frees p and sets p to NULL
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 void gb_mxfree              // mxFree wrapper
 (

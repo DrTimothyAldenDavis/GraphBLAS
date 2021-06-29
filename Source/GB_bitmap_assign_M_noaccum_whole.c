@@ -319,8 +319,8 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                 #include "GB_bitmap_assign_C_whole_template.c"
 
             }
-            else if (GB_NNZ (A) == 0)
-            {
+            else if (GB_nnz (A) == 0)
+            { 
 
                 //--------------------------------------------------------------
                 // C<M> = A where A is sparse or hyper, with no entries

@@ -9,7 +9,7 @@
 
 // v = gbver
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: v = gbver"
 
@@ -31,7 +31,7 @@ void mexFunction
     gb_usage (nargin == 0 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
-    // get the version and date information and return it as a MATLAB struct
+    // get the version and date information and return it as a struct
     //--------------------------------------------------------------------------
 
     int version [3] ;

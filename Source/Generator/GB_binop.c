@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated/ folder, do not edit it (auto-generated).
+// If this file is in the Generated2/ folder, do not edit it
+// (it is auto-generated from Generator/*).
 
 #include "GB.h"
 #ifndef GBCOMPACT
@@ -22,7 +23,7 @@
 // C=binop(A,B) is defined by the following types and operators:
 
 // A+B function (eWiseAdd):         GB (_AaddB)
-// A.*B function (eWiseMult):       GB (_AemultB)
+// A.*B function (eWiseMult):       GB (_AemultB_01)
 // A.*B function (eWiseMult):       GB (_AemultB_02)
 // A.*B function (eWiseMult):       GB (_AemultB_03)
 // A.*B function (eWiseMult):       GB (_AemultB_bitmap)
@@ -64,30 +65,30 @@
     GB_ctype_is_btype
 
 // aij = Ax [pA]
-#define GB_GETA(aij,Ax,pA)  \
-    GB_geta(aij,Ax,pA)
+#define GB_GETA(aij,Ax,pA,A_iso)  \
+    GB_geta(aij,Ax,pA,A_iso)
 
 // bij = Bx [pB]
-#define GB_GETB(bij,Bx,pB)  \
-    GB_getb(bij,Bx,pB)
+#define GB_GETB(bij,Bx,pB,B_iso)  \
+    GB_getb(bij,Bx,pB,B_iso)
 
 // declare scalar of the same type as C
 #define GB_CTYPE_SCALAR(t)  \
     GB_ctype t
 
 // cij = Ax [pA]
-#define GB_COPY_A_TO_C(cij,Ax,pA) \
-    GB_copy_a_to_c(cij,Ax,pA)
+#define GB_COPY_A_TO_C(cij,Ax,pA,A_iso) \
+    GB_copy_a_to_c(cij,Ax,pA,A_iso)
 
 // cij = Bx [pB]
-#define GB_COPY_B_TO_C(cij,Bx,pB) \
-    GB_copy_b_to_c(cij,Bx,pB)
+#define GB_COPY_B_TO_C(cij,Bx,pB,B_iso) \
+    GB_copy_b_to_c(cij,Bx,pB,B_iso)
 
 #define GB_CX(p) Cx [p]
 
 // binary operator
-#define GB_BINOP(z, x, y, i, j) \
-    GB_binaryop(z, x, y, i, j) ;
+#define GB_BINOP(z,x,y,i,j) \
+    GB_binaryop(z,x,y,i,j) ;
 
 // true if the binop must be flipped
 #define GB_BINOP_FLIP \
@@ -215,7 +216,7 @@ GrB_Info GB (_AxD)
     return (GrB_NO_VALUE) ;
     #else
     GB_ctype *restrict Cx = (GB_ctype *) C->x ;
-    #include "GB_AxB_colscale_meta.c"
+    #include "GB_AxB_colscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -240,7 +241,7 @@ GrB_Info GB (_DxB)
     return (GrB_NO_VALUE) ;
     #else
     GB_ctype *restrict Cx = (GB_ctype *) C->x ;
-    #include "GB_AxB_rowscale_meta.c"
+    #include "GB_AxB_rowscale_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -286,6 +287,8 @@ GrB_Info GB (_AaddB)
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
+if_binop_emult_is_enabled
+
 GrB_Info GB (_AemultB_01)
 (
     GrB_Matrix C,
@@ -313,9 +316,13 @@ GrB_Info GB (_AemultB_01)
     #endif
 }
 
+endif_binop_emult_is_enabled
+
 //------------------------------------------------------------------------------
 // eWiseMult: C<#> = A.*B when A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
+
+if_binop_emult_is_enabled
 
 GrB_Info GB (_AemultB_02)
 (
@@ -361,9 +368,13 @@ GrB_Info GB (_AemultB_02)
     #endif
 }
 
+endif_binop_emult_is_enabled
+
 //------------------------------------------------------------------------------
 // eWiseMult: C<M> = A.*B, M sparse/hyper, A and B bitmap/full
 //------------------------------------------------------------------------------
+
+if_binop_emult_is_enabled
 
 GrB_Info GB (_AemultB_03)
 (
@@ -384,9 +395,13 @@ GrB_Info GB (_AemultB_03)
     #endif
 }
 
+endif_binop_emult_is_enabled
+
 //------------------------------------------------------------------------------
 // eWiseMult: C=A.*B, C<M>=A.*B, C<!M>=A.*B where C is bitmap
 //------------------------------------------------------------------------------
+
+if_binop_emult_is_enabled
 
 GrB_Info GB (_AemultB_bitmap)
 (
@@ -410,11 +425,13 @@ GrB_Info GB (_AemultB_bitmap)
     #endif
 }
 
+endif_binop_emult_is_enabled
+
 //------------------------------------------------------------------------------
 // Cx = op (x,Bx):  apply a binary operator to a matrix with scalar bind1st
 //------------------------------------------------------------------------------
 
-if_binop_bind1st_is_enabled
+if_binop_bind_is_enabled
 
 GrB_Info GB (_bind1st)
 (
@@ -422,7 +439,7 @@ GrB_Info GB (_bind1st)
     const GB_void *x_input,
     const GB_void *Bx_input,
     const int8_t *restrict Bb,
-    int64_t anz,
+    int64_t bnz,
     int nthreads
 )
 { 
@@ -434,23 +451,23 @@ GrB_Info GB (_bind1st)
     GB_btype *Bx = (GB_btype *) Bx_input ;
     int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (p = 0 ; p < anz ; p++)
+    for (p = 0 ; p < bnz ; p++)
     {
         if (!GBB (Bb, p)) continue ;
-        GB_getb(bij, Bx, p) ;
+        GB_getb(bij, Bx, p, false) ;
         GB_binaryop(Cx [p], x, bij, 0, 0) ;
     }
     return (GrB_SUCCESS) ;
     #endif
 }
 
-endif_binop_bind1st_is_enabled
+endif_binop_bind_is_enabled
 
 //------------------------------------------------------------------------------
 // Cx = op (Ax,y):  apply a binary operator to a matrix with scalar bind2nd
 //------------------------------------------------------------------------------
 
-if_binop_bind2nd_is_enabled
+if_binop_bind_is_enabled
 
 GrB_Info GB (_bind2nd)
 (
@@ -473,26 +490,26 @@ GrB_Info GB (_bind2nd)
     for (p = 0 ; p < anz ; p++)
     {
         if (!GBB (Ab, p)) continue ;
-        GB_geta(aij, Ax, p) ;
+        GB_geta(aij, Ax, p, false) ;
         GB_binaryop(Cx [p], aij, y, 0, 0) ;
     }
     return (GrB_SUCCESS) ;
     #endif
 }
 
-endif_binop_bind2nd_is_enabled
+endif_binop_bind_is_enabled
 
 //------------------------------------------------------------------------------
 // C = op (x, A'): transpose and apply a binary operator
 //------------------------------------------------------------------------------
 
-if_binop_bind1st_is_enabled
+if_binop_bind_is_enabled
 
 // cij = op (x, aij), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
-    GB_getb(aij, Ax, pA) ;                      \
+    GB_getb(aij, Ax, pA, false) ;               \
     GB_binaryop(Cx [pC], x, aij, 0, 0) ;        \
 }
 
@@ -524,19 +541,19 @@ GrB_Info GB (_bind1st_tran)
     GB_atype
 }
 
-endif_binop_bind1st_is_enabled
+endif_binop_bind_is_enabled
 
 //------------------------------------------------------------------------------
 // C = op (A', y): transpose and apply a binary operator
 //------------------------------------------------------------------------------
 
-if_binop_bind2nd_is_enabled
+if_binop_bind_is_enabled
 
 // cij = op (aij, y), no typecasting (in spite of the macro name)
 #undef  GB_CAST_OP
 #define GB_CAST_OP(pC,pA)                       \
 {                                               \
-    GB_geta(aij, Ax, pA) ;                      \
+    GB_geta(aij, Ax, pA, false) ;               \
     GB_binaryop(Cx [pC], aij, y, 0, 0) ;        \
 }
 
@@ -560,7 +577,7 @@ GrB_Info GB (_bind2nd_tran)
     #endif
 }
 
-endif_binop_bind2nd_is_enabled
+endif_binop_bind_is_enabled
 
 #endif
 

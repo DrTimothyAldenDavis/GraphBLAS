@@ -26,7 +26,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     GB_Type_code *zcode             // type code for z output
 ) ;
 
-GB_Opcode GB_binop_flip     // flipped opcode, or -1 on error
+GB_Opcode GB_flip_opcode    // flipped opcode, or -1 on error
 (
     GB_Opcode opcode,       // opcode to flip
     bool *handled           // true if opcode is handled by flipping the opcode
@@ -38,7 +38,7 @@ GrB_BinaryOp GB_flip_op     // flip a binary operator, or NULL on error
     bool *handled           // true if operator is handled
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 GB_Opcode GB_boolean_rename     // renamed opcode
 (
     const GB_Opcode opcode      // opcode to rename
@@ -60,9 +60,27 @@ void GB_binop_new
     const GB_Opcode opcode          // opcode for the function
 ) ;
 
-GrB_Monoid *GB_binop_to_monoid      // return the corresponding monoid, or NULL
+GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
 (
     const GrB_BinaryOp op_in        // binary op to convert
+) ;
+
+void GB_binop_rename            // rename a bound binary op
+(
+    GrB_UnaryOp *op1,           // set to new unary op, if op2 is renamed
+    GrB_BinaryOp *op2,          // set to NULL if op2 is renamed
+    bool binop_bind1st
+) ;
+
+void GB_binop_pattern
+(
+    // outputs:
+    bool *A_is_pattern,     // true if A is pattern-only, because of the op
+    bool *B_is_pattern,     // true if B is pattern-only, because of the op
+    // inputs:
+    const bool flipxy,      // if true,  z = op (b,a) will be computed
+                            // if false, z = op (a,b) will be computed
+    const GB_Opcode opcode  // opcode of binary op
 ) ;
 
 #endif

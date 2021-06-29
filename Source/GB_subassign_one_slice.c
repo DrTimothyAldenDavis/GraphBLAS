@@ -99,7 +99,7 @@ GrB_Info GB_subassign_one_slice
     const int64_t *restrict Mh = M->h ;
 //  const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mi = M->i ;
-    const int64_t mnz = GB_NNZ_HELD (M) ;
+    const int64_t mnz = GB_nnz_held (M) ;
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
 

@@ -22,6 +22,8 @@
 // This function either frees Rp and Rh, or transplants then into R, as R->p
 // and R->h.  Either way, the caller must not free them.
 
+// R is iso if both C and Z are iso and zij == cij.
+
 #include "GB_mask.h"
 #include "GB_ek_slice.h"
 #include "GB_unused.h"
@@ -38,6 +40,11 @@
 {                                           \
     GB_FREE_WORK ;                          \
     GB_phbix_free (R) ;                     \
+}
+
+static inline bool GB_iso_masker (GrB_Matrix C, GrB_Matrix Z)
+{
+    return (C->iso && Z->iso && (memcmp (C->x, Z->x, C->type->size) == 0)) ;
 }
 
 GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
@@ -116,10 +123,13 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 
     int64_t rnz = (R_is_sparse_or_hyper) ? Rp [Rnvec] : C->vlen*C->vdim ;
 
+    bool R_iso = GB_iso_masker (C, Z) ;
+
     // allocate the result R (but do not allocate R->p or R->h)
+    // set R->iso = R_iso   OK
     GrB_Info info = GB_new_bix (&R, true, // any sparsity, static header
         C->type, C->vlen, C->vdim, GB_Ap_null, R_is_csc,
-        R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, Context) ;
+        R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, R_iso, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free R_to_M, R_to_C, R_to_Z
@@ -154,7 +164,17 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     //--------------------------------------------------------------------------
 
     #define GB_PHASE_2_OF_2
-    #include "GB_masker_template.c"
+    if (R_iso)
+    { 
+        GBURBLE ("(iso mask) ") ;
+        #define GB_ISO_MASKER
+        memcpy (R->x, C->x, C->type->size) ;
+        #include "GB_masker_template.c"
+    }
+    else
+    { 
+        #include "GB_masker_template.c"
+    }
 
     //--------------------------------------------------------------------------
     // prune empty vectors from Rh

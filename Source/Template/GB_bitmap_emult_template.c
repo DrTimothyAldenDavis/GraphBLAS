@@ -22,11 +22,21 @@
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A) || GB_as_if_full (A)) ;
     ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (A) || GB_as_if_full (B)) ;
 
+    const bool A_iso = A->iso ;
+    const bool B_iso = B->iso ;
+
+    int8_t *restrict Cb = C->b ;
+    const int64_t cnz = GB_nnz_held (C) ;
+
+    #ifdef GB_ISO_EMULT
+    ASSERT (C->iso) ;
+    #else
+    ASSERT (!C->iso) ;
+    ASSERT (!(A_iso && B_iso)) ;    // one of A or B can be iso, but not both
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
-          int8_t   *restrict Cb = C->b ;
           GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
-    const int64_t cnz = GB_NNZ_HELD (C) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // C=A.*B, C<M>=A.*B, or C<!M>=A.*B: C is bitmap
@@ -62,9 +72,11 @@
                 if (GBB (Ab, p) && GBB (Bb,p))
                 { 
                     // C (i,j) = A (i,j) + B (i,j)
-                    GB_GETA (aij, Ax, p) ;
-                    GB_GETB (bij, Bx, p) ;
+                    #ifndef GB_ISO_EMULT
+                    GB_GETA (aij, Ax, p, A_iso) ;
+                    GB_GETB (bij, Bx, p, B_iso) ;
                     GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
+                    #endif
                     Cb [p] = 1 ;
                     task_cnvals++ ;
                 }
@@ -74,7 +86,7 @@
 
     }
     else if (ewise_method == GB_EMULT_METHOD_06)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // C is bitmap, !M is sparse or hyper
@@ -123,9 +135,11 @@
                     if (GBB (Ab, p) && GBB (Bb, p))
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
-                        GB_GETA (aij, Ax, p) ;
-                        GB_GETB (bij, Bx, p) ;
+                        #ifndef GB_ISO_EMULT
+                        GB_GETA (aij, Ax, p, A_iso) ;
+                        GB_GETB (bij, Bx, p, B_iso) ;
                         GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
+                        #endif
                         Cb [p] = 1 ;
                         task_cnvals++ ;
                     }
@@ -200,17 +214,19 @@
                 {
                     // M(i,j) is true, so C(i,j) can be computed
                     if (GBB (Ab, p) && GBB (Bb, p))
-                    {
+                    { 
                         // C (i,j) = A (i,j) + B (i,j)
-                        GB_GETA (aij, Ax, p) ;
-                        GB_GETB (bij, Bx, p) ;
+                        #ifndef GB_ISO_EMULT
+                        GB_GETA (aij, Ax, p, A_iso) ;
+                        GB_GETB (bij, Bx, p, B_iso) ;
                         GB_BINOP (GB_CX (p), aij, bij, p % vlen, p / vlen) ;
+                        #endif
                         Cb [p] = 1 ;
                         task_cnvals++ ;
                     }
                 }
                 else
-                {
+                { 
                     // M(i,j) == 1, so C(i,j) is not computed
                     Cb [p] = 0 ;
                 }

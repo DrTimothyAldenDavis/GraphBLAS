@@ -23,7 +23,7 @@ void GB_Matrix_free             // free a matrix
     {
         GrB_Matrix A = *Ahandle ;
         if (A != NULL && (A->magic == GB_MAGIC || A->magic == GB_MAGIC2))
-        { 
+        {
             // free all content of A
             size_t header_size = A->header_size ;
             GB_phbix_free (A) ;

@@ -5,5 +5,5 @@ function s = gb_isfloat (type)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-s = contains (type, 'double') || contains (type, 'single') ;
+s = gb_contains (type, 'double') || gb_contains (type, 'single') ;
 

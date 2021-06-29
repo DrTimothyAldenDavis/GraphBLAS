@@ -15,7 +15,7 @@
 // optional step ensures that C has no empty columns, which speeds up the
 // subsequent PageRank computation.
 
-/* MATLAB equivalent (excluding the addition of I):
+/* equivalent as an *.m function (excluding the addition of I):
 
     function C = rowscale (A)
     %ROWSCALE row scale an adjacency matrix by out-degree

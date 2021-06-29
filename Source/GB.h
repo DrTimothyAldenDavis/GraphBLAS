@@ -15,9 +15,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_warnings.h"
-#ifndef MATLAB_MEX_FILE
 #define GB_LIBRARY
-#endif
 
 //------------------------------------------------------------------------------
 // user-visible GraphBLAS.h
@@ -31,6 +29,7 @@
 
 #include "GB_prefix.h"
 #include "GB_dev.h"
+#include "GB_bytes.h"
 #include "GB_defaults.h"
 #include "GB_compiler.h"
 #include "GB_coverage.h"
@@ -53,6 +52,7 @@
 #include "GB_memory.h"
 #include "GB_werk.h"
 #include "GB_log2.h"
+#include "GB_iso.h"
 
 //------------------------------------------------------------------------------
 // more internal definitions
@@ -103,7 +103,7 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 // more restrictive.
 
 // GB_aliased also checks the content of A and B
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 bool GB_aliased             // determine if A and B are aliased
 (
     GrB_Matrix A,           // input A matrix
@@ -111,7 +111,7 @@ bool GB_aliased             // determine if A and B are aliased
 ) ;
 
 // matrices returned to the user are never shallow; internal matrices may be
-GB_PUBLIC                       // used by the MATLAB interface
+GB_PUBLIC
 bool GB_is_shallow              // true if any component of A is shallow
 (
     GrB_Matrix A                // matrix to query
@@ -145,7 +145,7 @@ typedef enum                    // input parameter to GB_new and GB_new_bix
 }
 GB_Ap_code ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_new                 // create matrix, except for indices & values
 (
     GrB_Matrix *Ahandle,        // handle of matrix to create
@@ -166,7 +166,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
 GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 (
     GrB_Matrix *Ahandle,        // output matrix to create
-    const bool A_static_header, // true if Ahandle is statically allocated
+    const bool A_static_header, // true if Ahandle is statically allocated.
     const GrB_Type type,        // type of output matrix
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
@@ -176,8 +176,10 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
     const float hyper_switch,   // A->hyper_switch, unless auto
     const int64_t plen,         // size of A->p and A->h, if hypersparse
-    const int64_t anz,          // number of nonzeros the matrix must hold
+    const int64_t nzmax,        // number of nonzeros the matrix must hold;
+                                // ignored if A is iso and full
     const bool numeric,         // if true, allocate A->x, else A->x is NULL
+    const bool iso,             // if true, allocate A as iso
     GB_Context Context
 ) ;
 
@@ -201,11 +203,14 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     GB_Context Context
 ) ;
 
-GrB_Info GB_dup2            // make an exact copy of a matrix
+GrB_Info GB_dup_worker      // make an exact copy of a matrix
 (
-    GrB_Matrix *Chandle,    // handle of output matrix to create
+    GrB_Matrix *Chandle,    // output matrix, NULL or existing static/dynamic
+    const bool C_iso,       // if true, construct C as iso
     const GrB_Matrix A,     // input matrix to copy
-    const bool numeric,     // if true, duplicate the numeric values
+    const bool numeric,     // if true, duplicate the numeric values; if A is
+                            // iso, only the first entry is copied, regardless
+                            // of C_iso on input
     const GrB_Type ctype,   // type of C, if numeric is false
     GB_Context Context
 ) ;
@@ -240,41 +245,34 @@ GrB_Info GB_matvec_type            // get the type of a matrix
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
 (
     GrB_Matrix A,           // matrix to allocate space for
-    const GrB_Index nzmax,  // number of entries the matrix can hold
-    const bool is_bitmap,   // if true, allocate A->b, otherwise A->b is NULL
+    const GrB_Index nzmax,  // number of entries the matrix can hold;
+                            // ignored if A is iso and full
+    const int sparsity,     // sparse (=hyper/auto) / bitmap / full
     const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
-    const bool is_sparse,   // if true, allocate A->i, otherwise A->i is NULL
     const bool numeric,     // if true, allocate A->x, otherwise A->x is NULL
+    const bool iso,         // if true, allocate A as iso
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_ix_realloc      // reallocate space in a matrix
 (
     GrB_Matrix A,               // matrix to allocate space for
     const int64_t nzmax_new,    // new number of entries the matrix can hold
-    const bool numeric,         // if true, reallocate A->x, else A->x is NULL
     GB_Context Context
 ) ;
 
-GrB_Info GB_ix_resize       // resize a matrix
-(
-    GrB_Matrix A,           // matrix to resize (sparse/hyper, not full/bitmap)
-    const int64_t anz_new,  // required new nnz(A)
-    GB_Context Context
-) ;
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_bix_free                // free A->b, A->i, and A->x of a matrix
 (
     GrB_Matrix A                // matrix with content to free
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_ph_free                 // free A->p and A->h of a matrix
 (
     GrB_Matrix A                // matrix with content to free
@@ -285,7 +283,7 @@ void GB_phbix_free              // free all content of a matrix
     GrB_Matrix A                // matrix with content to free
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 bool GB_Type_compatible             // check if two types can be typecast
 (
     const GrB_Type atype,
@@ -374,8 +372,8 @@ GB_task_struct ;
         bool ok ;                                                           \
         int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;               \
         int nnew = 2 * (ntasks) + 1 ;                                       \
-        GB_REALLOC_WERK (TaskList, nnew, nold, GB_task_struct,              \
-            &TaskList_size, &ok, NULL) ;                                    \
+        GB_REALLOC_WERK (TaskList, nnew, GB_task_struct,  &TaskList_size,   \
+            &ok, NULL) ;                                                    \
         if (!ok)                                                            \
         {                                                                   \
             /* out of memory */                                             \
@@ -421,7 +419,7 @@ GrB_Info GB_ewise_slice
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_slice_vector
 (
     // output: return i, pA, and pB
@@ -491,7 +489,7 @@ GrB_Info GB_transplant_conform      // transplant and conform hypersparsity
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 size_t GB_code_size             // return the size of a type, given its code
 (
     const GB_Type_code code,    // input code of the type to find the size of
@@ -505,14 +503,14 @@ void GB_Matrix_free             // free a matrix
 
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Type GB_code_type           // return the GrB_Type corresponding to the code
 (
     const GB_Type_code code,    // type code to convert
     const GrB_Type type         // user type if code is GB_UDT_code
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_pslice                      // slice Ap
 (
     int64_t *restrict Slice,     // size ntasks+1
@@ -531,7 +529,7 @@ void GB_eslice
     const int ntasks        // # of tasks
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void GB_cumsum                      // cumulative sum of an array
 (
     int64_t *restrict count,     // size n+1, input/output
@@ -541,7 +539,7 @@ void GB_cumsum                      // cumulative sum of an array
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_Descriptor_get      // get the contents of a descriptor
 (
     const GrB_Descriptor desc,  // descriptor to query, may be NULL
@@ -586,7 +584,7 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB interface only
+GB_PUBLIC
 bool GB_Index_multiply      // true if ok, false if overflow
 (
     GrB_Index *restrict c,  // c = a*b, or zero if overflow occurs
@@ -594,7 +592,7 @@ bool GB_Index_multiply      // true if ok, false if overflow
     const int64_t b
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 bool GB_size_t_multiply     // true if ok, false if overflow
 (
     size_t *c,              // c = a*b, or zero if overflow occurs
@@ -651,14 +649,14 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_block   // apply all pending computations if blocking mode enabled
 (
     GrB_Matrix A,
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 bool GB_op_is_second    // return true if op is SECOND, of the right type
 (
     GrB_BinaryOp op,
@@ -668,7 +666,7 @@ bool GB_op_is_second    // return true if op is SECOND, of the right type
 
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 char *GB_code_string            // return a static string for a type name
 (
     const GB_Type_code code     // code to convert to string
@@ -682,7 +680,7 @@ GrB_Info GB_resize              // change the size of a matrix
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 int64_t GB_nvec_nonempty        // return # of non-empty vectors
 (
     const GrB_Matrix A,         // input matrix to examine
@@ -714,18 +712,7 @@ GrB_Info GB_hypermatrix_prune
     GB_Context Context
 ) ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-void GB_cast_array              // typecast an array
-(
-    GB_void *Cx,                // output array
-    const GB_Type_code code1,   // type code for Cx
-    GB_void *Ax,                // input array
-    const GB_Type_code code2,   // type code for Ax
-    const int8_t *restrict Ab,   // bitmap for Ax
-    const size_t user_size,     // size of Ax and Cx if user-defined
-    const int64_t anz,          // number of entries in Cx and Ax
-    const int nthreads          // number of threads to use
-) ;
+GrB_UnaryOp GB_unop_one (GB_Type_code xcode) ;
 
 //------------------------------------------------------------------------------
 // boiler plate macros for checking inputs and returning if an error occurs
@@ -814,79 +801,12 @@ void GB_cast_array              // typecast an array
 // GB_MASK_VERY_SPARSE is true if C<M>=A+B, C<M>=A.*B or C<M>=accum(C,T) is
 // being computed, and the mask M is very sparse compared with A and B.
 #define GB_MASK_VERY_SPARSE(alpha,M,A,B) \
-    ((alpha) * GB_NNZ (M) < GB_NNZ (A) + GB_NNZ (B))
-
-//------------------------------------------------------------------------------
-// Pending upddate and zombies
-//------------------------------------------------------------------------------
-
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
-GrB_Info GB_Matrix_wait         // finish all pending computations
-(
-    GrB_Matrix A,               // matrix with pending computations
-    const char *name,           // name of the matrix
-    GB_Context Context
-) ;
-
-GrB_Info GB_unjumble        // unjumble a matrix
-(
-    GrB_Matrix A,           // matrix to unjumble
-    GB_Context Context
-) ;
-
-// true if a matrix has pending tuples
-#define GB_PENDING(A) ((A) != NULL && (A)->Pending != NULL)
-
-// true if a matrix is allowed to have pending tuples
-#define GB_PENDING_OK(A) (GB_PENDING (A) || !GB_PENDING (A))
-
-// true if a matrix has zombies
-#define GB_ZOMBIES(A) ((A) != NULL && (A)->nzombies > 0)
-
-// true if a matrix is allowed to have zombies
-#define GB_ZOMBIES_OK(A) (((A) == NULL) || ((A) != NULL && (A)->nzombies >= 0))
-
-// true if a matrix has pending tuples or zombies
-#define GB_PENDING_OR_ZOMBIES(A) (GB_PENDING (A) || GB_ZOMBIES (A))
-
-// true if a matrix is jumbled
-#define GB_JUMBLED(A) ((A) != NULL && (A)->jumbled)
-
-// true if a matrix is allowed to be jumbled
-#define GB_JUMBLED_OK(A) (GB_JUMBLED (A) || !GB_JUMBLED (A))
-
-// true if a matrix has pending tuples, zombies, or is jumbled
-#define GB_ANY_PENDING_WORK(A) \
-    (GB_PENDING (A) || GB_ZOMBIES (A) || GB_JUMBLED (A))
-
-// wait if condition holds
-#define GB_WAIT_IF(condition,A,name)                                    \
-{                                                                       \
-    if (condition)                                                      \
-    {                                                                   \
-        GrB_Info info ;                                                 \
-        GB_OK (GB_Matrix_wait ((GrB_Matrix) A, name, Context)) ;        \
-    }                                                                   \
-}
-
-// do all pending work:  zombies, pending tuples, and unjumble
-#define GB_MATRIX_WAIT(A) GB_WAIT_IF (GB_ANY_PENDING_WORK (A), A, GB_STR (A))
-
-// do all pending work if pending tuples; zombies and jumbled are OK
-#define GB_MATRIX_WAIT_IF_PENDING(A) GB_WAIT_IF (GB_PENDING (A), A, GB_STR (A))
-
-// delete zombies and assemble any pending tuples; jumbled is O
-#define GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES(A)                         \
-    GB_WAIT_IF (GB_PENDING_OR_ZOMBIES (A), A, GB_STR (A))
-
-// ensure A is not jumbled
-#define GB_MATRIX_WAIT_IF_JUMBLED(A) GB_WAIT_IF (GB_JUMBLED (A), A, GB_STR (A))
-
-// true if a matrix has no entries; zombies OK
-#define GB_IS_EMPTY(A) ((GB_NNZ (A) == 0) && !GB_PENDING (A))
+    ((alpha) * GB_nnz (M) < GB_nnz (A) + GB_nnz (B))
 
 //------------------------------------------------------------------------------
 
+#include "GB_cast.h"
+#include "GB_wait.h"
 #include "GB_convert.h"
 #include "GB_ops.h"
 

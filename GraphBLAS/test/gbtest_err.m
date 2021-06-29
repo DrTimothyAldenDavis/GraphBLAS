@@ -9,7 +9,7 @@ function [err, errnan] = gbtest_err (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-err = 0 ;
+err = 0 ; %#ok<*NASGU>
 errnan = false ;
 
 X = isnan (A) ;
@@ -38,7 +38,5 @@ end
 
 A (~isfinite (A)) = 0 ;
 B (~isfinite (B)) = 0 ;
-if (err == 0)
-    err = GrB.normdiff (A, B, 1) ;
-end
+err = GrB.normdiff (A, B, 1) ;
 

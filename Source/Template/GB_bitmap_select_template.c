@@ -13,6 +13,8 @@
 // TODO: If done in-place, Cx can be passed as NULL.  Then if A is not bitmap,
 // C->b needs to be allocated, but not C->x.
 
+// TODO: use a single GB_memcpy for the values, regardless of selectop
+
 // the following macro is awkward but currently needed for the user_select op:
 #undef  GBI
 #define GBI(Ai,p,avlen) i
@@ -50,12 +52,11 @@
         #endif
         Cb [pA] = cb ;
         cnvals += cb ;
-        // if (Cx != NULL)
         { 
             // Cx [pA] = Ax [pA]
             GB_SELECT_ENTRY (Cx, pA, Ax, pA) ;
         }
     }
-    (*cnvals_handle)= cnvals ;
+    (*cnvals_handle) = cnvals ;
 }
 

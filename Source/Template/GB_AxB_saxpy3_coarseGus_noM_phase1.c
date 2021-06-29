@@ -21,13 +21,13 @@
 
         #if ( GB_B_IS_SPARSE || GB_B_IS_HYPER )
         if (bjnz == 0)
-        {
+        { 
             Cp [kk] = 0 ;               // C(:,j) is empty
             continue ;
         }
         #if ( GB_A_IS_SPARSE )
         if (bjnz == 1)
-        {
+        { 
             GB_GET_B_kj_INDEX ;         // get index k of entry B(k,j)
             GB_GET_A_k ;                // get A(:,k)
             Cp [kk] = aknz ;            // nnz (C (:,j)) = nnz (A (:,k))

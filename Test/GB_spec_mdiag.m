@@ -1,5 +1,5 @@
 function C = GB_spec_mdiag (v, k, ctype)
-%GB_SPEC_MDIAG a MATLAB mimic of GxB_Matrix_diag
+%GB_SPEC_MDIAG a mimic of GxB_Matrix_diag
 %
 % Usage:
 % C = GB_spec_mdiag (v, k, ctype)

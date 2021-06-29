@@ -24,8 +24,10 @@ for trial = 1:2
         2 7 ] ;
         W = sparse (ij (:,1), ij (:,2), ones (12,1), 8, 8) ;
     else
-        load west0479 ; %#ok<*LOAD>
-        W = west0479 ;
+        % load west0479 ; %#ok<*LOAD>
+        % W = west0479 ;
+        load west0479_correct ; %#ok<*LOAD>
+        W = Problem.A ;
     end
 
     W = spones (GrB.offdiag (W)) ;

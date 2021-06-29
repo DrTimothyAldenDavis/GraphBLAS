@@ -28,7 +28,7 @@
 // implicitly expanded into a matrix the same size as C(I,J), but this occurs
 // inside GxB_*subassign, not here.
 
-// This function does the same thing as the MATLAB mimic GB_spec_subassign.m.
+// This function does the same thing as the mimic GB_spec_subassign.m.
 
 //------------------------------------------------------------------------------
 
@@ -138,10 +138,9 @@ GrB_Info assign (GB_Context Context)
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for mex assign", pr) ;
     ASSERT_MATRIX_OK (A, "A for mex assign", pr) ;
 
-    if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_NNZ (A) == 1)
+    if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_nnz (A) == 1)
     {
-        // scalar expansion to matrix or vector
-        GB_void *Ax = A->x ;
+        GB_void *Ax = A->x ; // OK: A is a scalar with exactly one entry
 
         if (ni == 1 && nj == 1 && M == NULL && I != GrB_ALL && J != GrB_ALL
             && GB_op_is_second (accum, C->type) && A->type->code <= GB_FC64_code
@@ -734,7 +733,7 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // return C to MATLAB as a struct
+    // return C as a struct
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;

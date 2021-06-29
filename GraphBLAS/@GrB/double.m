@@ -1,6 +1,6 @@
 function C = double (G)
-%DOUBLE cast a GraphBLAS matrix to a MATLAB double matrix.
-% C = double (G) typecasts the GraphBLAS matrix G into a MATLAB
+%DOUBLE cast a GraphBLAS matrix to a built-in double matrix.
+% C = double (G) typecasts the GraphBLAS matrix G into a built-in
 % double matrix C, either real or complex.  C is full if all
 % entries in G are present, and sparse otherwise.
 %
@@ -16,9 +16,9 @@ function C = double (G)
 
 G = G.opaque ;
 
-if (contains (gbtype (G), 'complex'))
-    C = gbmatlab (G, 'double complex') ;
+if (gb_contains (gbtype (G), 'complex'))
+    C = gbbuiltin (G, 'double complex') ;
 else
-    C = gbmatlab (G, 'double') ;
+    C = gbbuiltin (G, 'double') ;
 end
 

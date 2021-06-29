@@ -10,7 +10,7 @@ function C = imag (G)
 G = G.opaque ;
 [m, n, type] = gbsize (G) ;
 
-if (contains (type, 'complex'))
+if (gb_contains (type, 'complex'))
     % C = imag (G) where G is complex
     C = GrB (gbapply ('cimag', G)) ;
 else

@@ -9,6 +9,7 @@
 
 #include "GB_apply.h"
 #include "GB_scalar.h"
+#include "GB_get_mask.h"
 
 //------------------------------------------------------------------------------
 // GrB_Vector_apply: apply a unary operator to a vector
@@ -17,7 +18,7 @@
 GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
 (
     GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector M,             // optional mask for w, unused if NULL
+    const GrB_Vector M_in,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_UnaryOp op,           // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
@@ -32,16 +33,19 @@ GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
     GB_WHERE (w, "GrB_Vector_apply (w, M, accum, op, u, desc)") ;
     GB_BURBLE_START ("GrB_apply") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
-    GB_RETURN_IF_FAULTY (M) ;
+    GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
 
     ASSERT (GB_VECTOR_OK (w)) ;
-    ASSERT (M == NULL || GB_VECTOR_OK (M)) ;
+    ASSERT (M_in == NULL || GB_VECTOR_OK (M_in)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         xx1, xx2, xx3, xx7) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // apply the operator; do not transpose
@@ -49,7 +53,7 @@ GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
 
     info = GB_apply (
         (GrB_Matrix) w, C_replace,  // w and its descriptor
-        (GrB_Matrix) M, Mask_comp, Mask_struct, // mask and its descriptor
+        M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(w,T)
         op,                         // operator op(.) to apply to the entries
         NULL, NULL, false,          // no binary operator
@@ -67,7 +71,7 @@ GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
 static inline GrB_Info GB_1st       // w<mask> = accum (w, op(x,u))
 (
     GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector M,             // optional mask for w, unused if NULL
+    const GrB_Vector M_in,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_BinaryOp op,          // operator to apply to the entries
     const GxB_Scalar x,             // first input:  scalar x
@@ -83,17 +87,20 @@ static inline GrB_Info GB_1st       // w<mask> = accum (w, op(x,u))
 
     GB_BURBLE_START ("GrB_apply") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
-    GB_RETURN_IF_FAULTY (M) ;
+    GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (x) ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
 
     ASSERT (GB_VECTOR_OK (w)) ;
-    ASSERT (M == NULL || GB_VECTOR_OK (M)) ;
+    ASSERT (M_in == NULL || GB_VECTOR_OK (M_in)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         xx1, xx2, xx3, xx7) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // apply the operator; do not transpose
@@ -101,7 +108,7 @@ static inline GrB_Info GB_1st       // w<mask> = accum (w, op(x,u))
 
     info = GB_apply (
         (GrB_Matrix) w, C_replace,  // w and its descriptor
-        (GrB_Matrix) M, Mask_comp, Mask_struct, // mask and its descriptor
+        M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(w,T)
         NULL,                       // no unary operator
         op, x, true,                // operator op(x,.) to apply to the entries
@@ -119,7 +126,7 @@ static inline GrB_Info GB_1st       // w<mask> = accum (w, op(x,u))
 static inline GrB_Info GB_2nd       // w<mask> = accum (w, op(u,y))
 (
     GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector M,             // optional mask for w, unused if NULL
+    const GrB_Vector M_in,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_BinaryOp op,          // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
@@ -135,17 +142,20 @@ static inline GrB_Info GB_2nd       // w<mask> = accum (w, op(u,y))
 
     GB_BURBLE_START ("GrB_apply") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
-    GB_RETURN_IF_FAULTY (M) ;
+    GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
     GB_RETURN_IF_NULL_OR_FAULTY (y) ;
 
     ASSERT (GB_VECTOR_OK (w)) ;
-    ASSERT (M == NULL || GB_VECTOR_OK (M)) ;
+    ASSERT (M_in == NULL || GB_VECTOR_OK (M_in)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         xx1, xx2, xx3, xx7) ;
+
+    // get the mask
+    GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // apply the operator; do not transpose
@@ -153,7 +163,7 @@ static inline GrB_Info GB_2nd       // w<mask> = accum (w, op(u,y))
 
     info = GB_apply (
         (GrB_Matrix) w, C_replace,  // w and its descriptor
-        (GrB_Matrix) M, Mask_comp, Mask_struct, // mask and its descriptor
+        M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(w,T)
         NULL,                       // no unary operator
         op, y, false,               // operator op(.,y) to apply to the entries

@@ -32,7 +32,6 @@ GrB_Info GB (_Cdense_accumb)
 ) ;
 
 if_binop_is_semiring_multiplier
-
 GrB_Info GB (_AxD)
 (
     GrB_Matrix C,
@@ -40,7 +39,6 @@ GrB_Info GB (_AxD)
     const GrB_Matrix D, bool D_is_pattern,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_DxB)
 (
     GrB_Matrix C,
@@ -48,7 +46,6 @@ GrB_Info GB (_DxB)
     const GrB_Matrix B, bool B_is_pattern,
     int nthreads
 ) ;
-
 endif_binop_is_semiring_multiplier
 
 GrB_Info GB (_AaddB)
@@ -70,6 +67,7 @@ GrB_Info GB (_AaddB)
     GB_Context Context
 ) ;
 
+if_binop_emult_is_enabled
 GrB_Info GB (_AemultB_01)
 (
     GrB_Matrix C,
@@ -88,7 +86,6 @@ GrB_Info GB (_AemultB_01)
     const int C_nthreads,
     GB_Context Context
 ) ;
-
 GrB_Info GB (_AemultB_02)
 (
     GrB_Matrix C,
@@ -101,7 +98,6 @@ GrB_Info GB (_AemultB_02)
     const int64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_03)
 (
     GrB_Matrix C,
@@ -112,7 +108,6 @@ GrB_Info GB (_AemultB_03)
     const int64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads
 ) ;
-
 GrB_Info GB (_AemultB_bitmap)
 (
     GrB_Matrix C,
@@ -126,32 +121,18 @@ GrB_Info GB (_AemultB_bitmap)
     const int C_nthreads,
     GB_Context Context
 ) ;
+endif_binop_emult_is_enabled
 
-if_binop_bind1st_is_enabled
+if_binop_bind_is_enabled
 GrB_Info GB (_bind1st)
 (
     GB_void *Cx_output,
     const GB_void *x_input,
     const GB_void *Bx_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
+    const int8_t *restrict Bb,
+    int64_t bnz,
     int nthreads
 ) ;
-endif_binop_bind1st_is_enabled
-
-if_binop_bind2nd_is_enabled
-GrB_Info GB (_bind2nd)
-(
-    GB_void *Cx_output,
-    const GB_void *Ax_input,
-    const GB_void *y_input,
-    const int8_t *restrict Ab,
-    int64_t anz,
-    int nthreads
-) ;
-endif_binop_bind2nd_is_enabled
-
-if_binop_bind1st_is_enabled
 GrB_Info GB (_bind1st_tran)
 (
     GrB_Matrix C,
@@ -162,9 +143,15 @@ GrB_Info GB (_bind1st_tran)
     int nworkspaces,
     int nthreads
 ) ;
-endif_binop_bind1st_is_enabled
-
-if_binop_bind2nd_is_enabled
+GrB_Info GB (_bind2nd)
+(
+    GB_void *Cx_output,
+    const GB_void *Ax_input,
+    const GB_void *y_input,
+    const int8_t *restrict Ab,
+    int64_t anz,
+    int nthreads
+) ;
 GrB_Info GB (_bind2nd_tran)
 (
     GrB_Matrix C,
@@ -175,5 +162,5 @@ GrB_Info GB (_bind2nd_tran)
     int nworkspaces,
     int nthreads
 ) ;
-endif_binop_bind2nd_is_enabled
+endif_binop_bind_is_enabled
 

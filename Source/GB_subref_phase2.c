@@ -39,6 +39,9 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     const int64_t nI,
     const int64_t Icolon [3],
     const int64_t nJ,
+    // from GB_subref:
+    const bool C_iso,           // if true, C is iso
+    const GB_void *cscalar,     // iso value of C
     // original input:
     const bool C_is_csc,        // format of output matrix C
     const GrB_Matrix A,
@@ -66,16 +69,15 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     //--------------------------------------------------------------------------
 
     int64_t cnz = Cp [Cnvec] ;
-
     bool C_is_hyper = (Ch != NULL) ;
-
     GrB_Type ctype = (symbolic) ? GrB_INT64 : A->type ;
 
     // allocate the result C (but do not allocate C->p or C->h)
     int sparsity = C_is_hyper ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    // set C->iso = C_iso       OK
     GrB_Info info = GB_new_bix (&C, true, // sparse or hyper, static header
         ctype, nI, nJ, GB_Ap_null, C_is_csc,
-        sparsity, true, A->hyper_switch, Cnvec, cnz, true, Context) ;
+        sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -108,17 +110,71 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     //--------------------------------------------------------------------------
 
     #define GB_PHASE_2_OF_2
+    int64_t *restrict Ci = C->i ;
+    int64_t *restrict Cx = (int64_t *) C->x ;
+
     if (symbolic)
     { 
+
+        //----------------------------------------------------------------------
+        // symbolic subref
+        //----------------------------------------------------------------------
+
+        ASSERT (!C_iso) ;
+
+        // symbolic subref must handle zombies
+        const int64_t nzombies = A->nzombies ;
+
+        // symbolic copy: Cx is int64_t; the values of A ignored
+        #define GB_COPY_RANGE(pC,pA,len)            \
+            for (int64_t k = 0 ; k < (len) ; k++)   \
+            {                                       \
+                Cx [(pC) + k] = (pA) + k ;          \
+            }
+        #define GB_COPY_ENTRY(pC,pA) Cx [pC] = (pA) ;
+        #define GB_CSIZE1 1
+        #define GB_CSIZE2 (sizeof (int64_t))
         #define GB_SYMBOLIC
         #include "GB_subref_template.c"
-        #undef  GB_SYMBOLIC
+
+    }
+    else if (C_iso)
+    { 
+
+        //----------------------------------------------------------------------
+        // iso numeric subref
+        //----------------------------------------------------------------------
+
+        // C is iso; no numeric values to extract; just set the iso value
+        memcpy (Cx, cscalar, A->type->size) ;
+        #define GB_COPY_RANGE(pC,pA,len) ;
+        #define GB_COPY_ENTRY(pC,pA) ;
+        #define GB_ISO_SUBREF
+        #include "GB_subref_template.c"
+
     }
     else
     { 
-        #define GB_NUMERIC
+
+        //----------------------------------------------------------------------
+        // non-iso numeric subref
+        //----------------------------------------------------------------------
+
+        // TODO: create versions for asize = 1, 2, 4, 8, 16, and other
+
+        ASSERT (C->type = A->type) ;
+        const int64_t asize = A->type->size ;
+        const GB_void *restrict Ax = (GB_void *) A->x ;
+              GB_void *restrict Cx = (GB_void *) C->x ;
+
+        // C and A have the same type
+        #define GB_COPY_RANGE(pC,pA,len)                                \
+            memcpy (Cx + (pC)*asize, Ax + (pA)*asize, (len) * asize) ;
+        #define GB_COPY_ENTRY(pC,pA)                                    \
+            memcpy (Cx + (pC)*asize, Ax + (pA)*asize, asize) ;
+        #define GB_CSIZE1 asize
+        #define GB_CSIZE2 asize
         #include "GB_subref_template.c"
-        #undef  GB_NUMERIC
     }
 
     //--------------------------------------------------------------------------

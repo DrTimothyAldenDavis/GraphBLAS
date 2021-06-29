@@ -19,21 +19,23 @@ GrB_Info GB (_Adot3B)
     const int nthreads
 ) ;
 
+if_not_any_pair_semiring
 GrB_Info GB (_Adot4B)
 (
-    GrB_Matrix C,
+    GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A, bool A_is_pattern,
     int64_t *restrict A_slice, int naslice,
     const GrB_Matrix B, bool B_is_pattern,
     int64_t *restrict B_slice, int nbslice,
     const int nthreads
 ) ;
+#endif
 
 GrB_Info GB (_Asaxpy3B)
 (
     GrB_Matrix C,   // C<any M>=A*B, C sparse or hypersparse
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
-    const bool M_packed_in_place,
+    const bool M_in_place,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     GB_saxpy3task_struct *restrict SaxpyTasks,
@@ -55,7 +57,7 @@ GrB_Info GB (_Asaxpy3B_noM)
 GrB_Info GB (_Asaxpy3B_M)
 (
     GrB_Matrix C,   // C<M>=A*B, C sparse or hypersparse
-    const GrB_Matrix M, const bool Mask_struct, const bool M_packed_in_place,
+    const GrB_Matrix M, const bool Mask_struct, const bool M_in_place,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     GB_saxpy3task_struct *restrict SaxpyTasks,
@@ -67,7 +69,7 @@ GrB_Info GB (_Asaxpy3B_M)
 GrB_Info GB (_Asaxpy3B_notM)
 (
     GrB_Matrix C,   // C<!M>=A*B, C sparse or hypersparse
-    const GrB_Matrix M, const bool Mask_struct, const bool M_packed_in_place,
+    const GrB_Matrix M, const bool Mask_struct, const bool M_in_place,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     GB_saxpy3task_struct *restrict SaxpyTasks,

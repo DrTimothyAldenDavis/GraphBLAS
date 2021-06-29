@@ -10,7 +10,7 @@
 // All Global storage is declared, initialized, and accessed here.  The
 // contents of the GB_Global struct are only accessible to functions in this
 // file.  Global storage is used to keep track of the GraphBLAS mode (blocking
-// or non-blocking), for pointers to malloc/calloc/realloc/free functions,
+// or non-blocking), for pointers to malloc/realloc/free functions,
 // global matrix options, and other settings.
 
 #include "GB_atomics.h"
@@ -51,14 +51,13 @@ typedef struct
     void (* abort_function ) (void) ;
 
     //--------------------------------------------------------------------------
-    // malloc/calloc/realloc/free: memory management functions
+    // malloc/realloc/free: memory management functions
     //--------------------------------------------------------------------------
 
-    // All threads must use the same malloc/calloc/realloc/free functions.
+    // All threads must use the same malloc/realloc/free functions.
     // They default to the ANSI C11 functions, but can be defined by GxB_init.
 
     void * (* malloc_function  ) (size_t)         ;     // required
-//  void * (* calloc_function  ) (size_t, size_t) ;     // no longer used
     void * (* realloc_function ) (void *, size_t) ;     // may be NULL
     void   (* free_function    ) (void *)         ;     // required
     bool malloc_is_thread_safe ;   // default is true
@@ -103,12 +102,8 @@ typedef struct
     bool burble ;                   // controls GBURBLE output
     GB_printf_function_t printf_func ;  // pointer to printf
     GB_flush_function_t flush_func ;   // pointer to flush
-
-    //--------------------------------------------------------------------------
-    // for MATLAB interface only
-    //--------------------------------------------------------------------------
-
     bool print_one_based ;          // if true, print 1-based indices
+    bool print_mem_shallow ;        // if true, print # shallow bytes
 
     //--------------------------------------------------------------------------
     // timing: for code development only
@@ -197,9 +192,8 @@ GB_Global_struct GB_Global =
     // abort function for debugging only
     .abort_function   = abort,
 
-    // malloc/calloc/realloc/free functions: default to ANSI C11 functions
+    // malloc/realloc/free functions: default to ANSI C11 functions
     .malloc_function  = malloc,
-//  .calloc_function  = NULL,   // no longer used
     .realloc_function = realloc,
     .free_function    = free,
     .malloc_is_thread_safe = true,
@@ -217,9 +211,8 @@ GB_Global_struct GB_Global =
     .burble = false,
     .printf_func = NULL,
     .flush_func = NULL,
-
-    // for MATLAB interface only
     .print_one_based = false,   // if true, print 1-based indices
+    .print_mem_shallow = false, // for @GrB interface only
 
     .timing = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -463,7 +456,7 @@ float GB_Global_bitmap_switch_matrix_get (int64_t vlen, int64_t vdim)
 
 GB_PUBLIC
 void GB_Global_bitmap_switch_default (void)
-{
+{ 
     GB_Global.bitmap_switch [0] = GB_BITSWITCH_1 ;
     GB_Global.bitmap_switch [1] = GB_BITSWITCH_2 ;
     GB_Global.bitmap_switch [2] = GB_BITSWITCH_3_to_4 ;
@@ -546,7 +539,9 @@ void GB_Global_memtable_add (void *p, size_t size)
     ASSERT ((p == NULL) == (size == 0)) ;
     if (p == NULL) return ;
     bool fail = false ;
-    // printf ("memtable add %p size %ld\n", p, size) ;
+    #ifdef GB_MEMDUMP
+    printf ("memtable add %p size %ld\n", p, size) ;
+    #endif
     #pragma omp critical(GB_memtable)
     {
         int n = GB_Global.nmemtable  ;
@@ -573,7 +568,9 @@ void GB_Global_memtable_add (void *p, size_t size)
         }
     }
     ASSERT (!fail) ;
-    // GB_Global_memtable_dump ( ) ;
+    #ifdef GB_MEMDUMP
+    GB_Global_memtable_dump ( ) ;
+    #endif
     #endif
 }
 
@@ -638,7 +635,9 @@ void GB_Global_memtable_remove (void *p)
     #ifdef GB_DEBUG
     if (p == NULL) return ;
     bool found = false ;
-    // printf ("memtable remove %p ", p) ;
+    #ifdef GB_MEMDUMP
+    printf ("memtable remove %p ", p) ;
+    #endif
     #pragma omp critical(GB_memtable)
     {
         int n = GB_Global.nmemtable  ;
@@ -647,7 +646,6 @@ void GB_Global_memtable_remove (void *p)
             if (p == GB_Global.memtable_p [i])
             {
                 // found p in the table; remove it
-                // printf ("size %ld\n", GB_Global.memtable_s [i]) ;
                 GB_Global.memtable_p [i] = GB_Global.memtable_p [n-1] ;
                 GB_Global.memtable_s [i] = GB_Global.memtable_s [n-1] ;
                 GB_Global.nmemtable -- ;
@@ -662,7 +660,9 @@ void GB_Global_memtable_remove (void *p)
         GB_Global_memtable_dump ( ) ;
     }
     ASSERT (found) ;
-    // GB_Global_memtable_dump ( ) ;
+    #ifdef GB_MEMDUMP
+    GB_Global_memtable_dump ( ) ;
+    #endif
     #endif
 }
 
@@ -694,40 +694,6 @@ void * GB_Global_malloc_function (size_t size)
     #endif
     return (p) ;
 }
-
-//------------------------------------------------------------------------------
-// calloc_function: no longer used
-//------------------------------------------------------------------------------
-
-//  void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
-//  { 
-//      GB_Global.calloc_function = calloc_function ;
-//  }
-
-//  bool GB_Global_have_calloc_function (void)
-//  { 
-//      return (GB_Global.calloc_function != NULL) ;
-//  }
-
-//  void * GB_Global_calloc_function (size_t count, size_t size)
-//  { 
-//      void *p = NULL ;
-//      if (GB_Global.malloc_is_thread_safe)
-//      {
-//          p = GB_Global.calloc_function (count, size) ;
-//      }
-//      else
-//      {
-//          #pragma omp critical(GB_malloc_protection)
-//          {
-//              p = GB_Global.calloc_function (count, size) ;
-//          }
-//      }
-//      #ifdef GB_DEBUG
-//      GB_Global_memtable_add (p, count * size) ;
-//      #endif
-//      return (p) ;
-//  }
 
 //------------------------------------------------------------------------------
 // realloc_function
@@ -934,30 +900,30 @@ bool GB_Global_burble_get (void)
 
 GB_PUBLIC
 GB_printf_function_t GB_Global_printf_get ( )
-{
+{ 
     return (GB_Global.printf_func) ;
 }
 
 GB_PUBLIC
 GB_flush_function_t GB_Global_flush_get ( )
-{
+{ 
     return (GB_Global.flush_func) ;
 }
 
 GB_PUBLIC
 void GB_Global_printf_set (GB_printf_function_t pr_func)
-{
+{ 
     GB_Global.printf_func = pr_func ;
 }
 
 GB_PUBLIC
 void GB_Global_flush_set (GB_flush_function_t fl_func)
-{
+{ 
     GB_Global.flush_func = fl_func ;
 }
 
 //------------------------------------------------------------------------------
-// for MATLAB interface only
+// for printing matrices in 1-based index notation (@GrB and Julia)
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
@@ -970,6 +936,22 @@ GB_PUBLIC
 bool GB_Global_print_one_based_get (void)
 { 
     return (GB_Global.print_one_based) ;
+}
+
+//------------------------------------------------------------------------------
+// for printing matrix in @GrB interface
+//------------------------------------------------------------------------------
+
+GB_PUBLIC
+void GB_Global_print_mem_shallow_set (bool mem_shallow)
+{ 
+    GB_Global.print_mem_shallow = mem_shallow ;
+}
+
+GB_PUBLIC
+bool GB_Global_print_mem_shallow_get (void)
+{ 
+    return (GB_Global.print_mem_shallow) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1019,7 +1001,7 @@ double GB_Global_gpu_chunk_get (void)
 }
 
 bool GB_Global_gpu_count_set (bool enable_cuda)
-{
+{ 
     // set the # of GPUs in the system;
     // this function is only called once, by GB_init.
     #if defined ( GBCUDA )
@@ -1037,7 +1019,7 @@ bool GB_Global_gpu_count_set (bool enable_cuda)
 }
 
 int GB_Global_gpu_count_get (void)
-{
+{ 
     // get the # of GPUs in the system
     return (GB_Global.gpu_count) ;
 }
@@ -1184,7 +1166,6 @@ void GB_Global_free_pool_init (bool clear)
 static inline void GB_Global_free_pool_check (void *p, int k, char *where)
 {
     // check the size of the block
-    // printf ("check %p\n", p) ;
     ASSERT (k >= 3 && k < 64) ;
     ASSERT (p != NULL) ;
     size_t size = GB_Global_memtable_size (p) ;
@@ -1212,11 +1193,9 @@ void *GB_Global_free_pool_get (int k)
     { 
         // clear the next pointer inside the block, since the block needs
         // to be all zero
-        // printf ("got %p k %d\n", p, k) ;
         #ifdef GB_DEBUG
         GB_Global_free_pool_check (p, k, "get") ;
         #endif
-        // GB_Global_free_pool_dump (2) ; printf ("\ndid get\n\n") ;
     }
     return (p) ;
 }
@@ -1236,13 +1215,11 @@ bool GB_Global_free_pool_put (void *p, int k)
         if (returned_to_pool)
         {
             // add the block to the head of the free_pool list
-            // printf ("put %p k %d\n", p, k) ;
             GB_Global.free_pool_nblocks [k]++ ;
             GB_NEXT (p) = GB_Global.free_pool [k] ;
             GB_Global.free_pool [k] = p ;
         }
     }
-    // GB_Global_free_pool_dump (2) ; printf ("\ndid put\n\n") ;
     return (returned_to_pool) ;
 }
 

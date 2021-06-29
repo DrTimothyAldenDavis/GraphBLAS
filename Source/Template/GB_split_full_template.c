@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// This method is not used when the matrices are iso.
+
 {
 
     //--------------------------------------------------------------------------
@@ -15,11 +17,12 @@
 
     const GB_CTYPE *restrict Ax = (GB_CTYPE *) A->x ;
     GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    ASSERT (!A->iso) ;
 
     int64_t pC ;
     #pragma omp parallel for num_threads(C_nthreads) schedule(static)
     for (pC = 0 ; pC < cnz ; pC++)
-    {
+    { 
         int64_t i = pC % cvlen ;
         int64_t j = pC / cvlen ;
         int64_t iA = aistart + i ;

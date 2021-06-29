@@ -33,7 +33,7 @@
 
 #define GB_FREE_ALL             \
 {                               \
-    GB_phbix_free (C) ;       \
+    GB_phbix_free (C) ;         \
 }
 
 GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
@@ -119,15 +119,24 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
             GB_Type_compatible (B->type, op->ytype))) ;
 
     //--------------------------------------------------------------------------
+    // check if C is iso and compute its iso value if it is
+    //--------------------------------------------------------------------------
+
+    const size_t csize = ctype->size ;
+    GB_void cscalar [GB_VLA(csize)] ;
+    bool C_iso = GB_iso_emult (cscalar, ctype, A, B, op) ;
+
+    //--------------------------------------------------------------------------
     // allocate the output matrix C
     //--------------------------------------------------------------------------
 
-    int64_t cnz = (C_is_sparse_or_hyper) ? Cp [Cnvec] : (A->vlen*A->vdim) ;
+    int64_t cnz = (C_is_sparse_or_hyper) ? Cp [Cnvec] : GB_nnz_full (A) ;
 
     // allocate the result C (but do not allocate C->p or C->h)
+    // set C->iso = C_iso   OK
     GrB_Info info = GB_new_bix (&C, true, // any sparsity, static header
         ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, Context) ;
+        C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso, Context) ;
     if (info != GrB_SUCCESS)
     {
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
@@ -176,39 +185,63 @@ GrB_Info GB_emult_01_phase2             // C=A.*B or C<M>=A.*B
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
+    #define GB_PHASE_2_OF_2
+
     bool done = false ;
 
-    #ifndef GBCOMPACT
+    if (C_iso)
+    { 
 
         //----------------------------------------------------------------------
-        // define the worker for the switch factory
+        // C is iso
         //----------------------------------------------------------------------
 
-        #define GB_AemultB_01(mult,xname) GB (_AemultB_01_ ## mult ## xname)
+        // Cx [0] = cscalar = op (A,B)
+        GB_BURBLE_MATRIX (C, "(iso emult) ") ;
+        memcpy (C->x, cscalar, csize) ;
 
-        #define GB_BINOP_WORKER(mult,xname)                                 \
-        {                                                                   \
-            info = GB_AemultB_01(mult,xname) (C, C_sparsity, ewise_method,  \
-                M, Mask_struct, Mask_comp,                                  \
-                A, B, C_to_M, C_to_A, C_to_B,                               \
-                TaskList, C_ntasks, C_nthreads, Context) ;                  \
-            done = (info != GrB_NO_VALUE) ;                                 \
-        }                                                                   \
-        break ;
+        // pattern of C = set intersection of pattern of A and B
+        #define GB_ISO_EMULT
+        #include "GB_emult_01_meta.c"
+        done = true ;
 
-        //----------------------------------------------------------------------
-        // launch the switch factory
-        //----------------------------------------------------------------------
+    }
+    else
+    {
 
-        GB_Type_code xcode, ycode, zcode ;
-        if (!op_is_positional &&
-            GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
-            op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
-        { 
-            #include "GB_binop_factory.c"
-        }
+        #ifndef GBCOMPACT
 
-    #endif
+            //------------------------------------------------------------------
+            // define the worker for the switch factory
+            //------------------------------------------------------------------
+
+            #define GB_AemultB_01(mult,xname) GB (_AemultB_01_ ## mult ## xname)
+
+            #define GB_BINOP_WORKER(mult,xname)                             \
+            {                                                               \
+                info = GB_AemultB_01(mult,xname) (C, C_sparsity,            \
+                    ewise_method, M, Mask_struct, Mask_comp,                \
+                    A, B, C_to_M, C_to_A, C_to_B,                           \
+                    TaskList, C_ntasks, C_nthreads, Context) ;              \
+                done = (info != GrB_NO_VALUE) ;                             \
+            }                                                               \
+            break ;
+
+            //------------------------------------------------------------------
+            // launch the switch factory
+            //------------------------------------------------------------------
+
+            GB_Type_code xcode, ycode, zcode ;
+            if (!op_is_positional &&
+                GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
+                op, false, &opcode, &xcode, &ycode, &zcode) && ccode == zcode)
+            { 
+                #define GB_NO_PAIR
+                #include "GB_binop_factory.c"
+            }
+
+        #endif
+    }
 
     //--------------------------------------------------------------------------
     // generic worker

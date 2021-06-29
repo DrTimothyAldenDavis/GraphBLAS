@@ -18,6 +18,8 @@
 
 // C: not bitmap
 
+// C->iso is not affected.
+
 #include "GB_subassign_methods.h"
 
 #undef  GB_FREE_ALL
@@ -77,7 +79,7 @@ GrB_Info GB_subassign_zombie
     // All entries in C(I,J) are deleted.  The result does not depend on A or
     // the scalar.
 
-    int64_t snz = GB_NNZ (S) ;
+    int64_t snz = GB_nnz (S) ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (snz, chunk, nthreads_max) ;

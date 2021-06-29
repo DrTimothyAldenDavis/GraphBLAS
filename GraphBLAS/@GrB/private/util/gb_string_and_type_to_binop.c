@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
-// op_name: a MATLAB string defining the operator name:
+// op_name: a built-in string defining the operator name:
 //  1st, 2nd, pair, min, max, +, -, rminus, *, /, \
 //  iseq, isne, isgt, islt, isge, isle,
 //  ==, ~=, >, <, >=, <=,

@@ -15,6 +15,8 @@ GB_PUBLIC                           // for testing only
 GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
 (
     GrB_Matrix C,                   // output matrix, static header
+    const bool C_iso,               // true if C is iso
+    const GB_void *cscalar,         // iso value of C
     const int C_sparsity,
     const GrB_Matrix M,             // optional mask matrix
     const bool Mask_comp,           // if true, use !M

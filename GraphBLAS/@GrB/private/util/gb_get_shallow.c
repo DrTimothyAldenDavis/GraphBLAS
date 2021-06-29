@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_get_shallow: create a shallow copy of a MATLAB sparse matrix
+// gb_get_shallow: create a shallow copy of a built-in sparse matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,24 +7,25 @@
 
 //------------------------------------------------------------------------------
 
-// A = gb_get_shallow (X) constructs a shallow GrB_Matrix from a MATLAB
-// mxArray, which can either be a MATLAB sparse matrix (double, complex, or
-// logical) or a MATLAB struct that contains a GraphBLAS matrix.
+// A = gb_get_shallow (X) constructs a shallow GrB_Matrix from a built-in
+// mxArray, which can either be a built-in sparse matrix (double, complex, or
+// logical) or a built-in struct that contains a GraphBLAS matrix.
 
 // X must not be NULL, but it can be an empty matrix, as X = [ ] or even X = ''
 // (the empty string).  In this case, A is returned as NULL.  This is not an
 // error here, since the caller might be getting an optional input matrix, such
 // as Cin or the Mask.
 
-// For v4, is_uniform is false, and the s component has length 9.
-// For v5, is_uniform may be true, and the s component has length 10.
+// For v4, iso is false, and the s component has length 9.
+// For v5, iso is present but false, and the s component has length 10.
+// For v5_1, iso is true/false, and the s component has length 10.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define IF(error,message) \
     CHECK_ERROR (error, "invalid GraphBLAS struct (" message ")" ) ;
 
-GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
+GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
 (
     const mxArray *X
 )
@@ -49,8 +50,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         // matrix is empty
         //----------------------------------------------------------------------
 
-        // X is a 0-by-0 MATLAB matrix.  Create a new 0-by-0 matrix of the same
-        // type as X, with the default format.
+        // X is a 0-by-0 built-in matrix.  Create a new 0-by-0 matrix of the
+        // same type as X, with the default format.
         OK (GrB_Matrix_new (&A, gb_mxarray_type (X), 0, 0)) ;
 
     }
@@ -58,14 +59,19 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     { 
 
         //----------------------------------------------------------------------
-        // construct a shallow GrB_Matrix copy from a MATLAB struct
+        // construct a shallow GrB_Matrix copy from a built-in struct
         //----------------------------------------------------------------------
 
         bool GraphBLASv4 = false ;
         bool GraphBLASv3 = false ;
 
         // get the type
-        mxArray *mx_type = mxGetField (X, 0, "GraphBLASv5") ;
+        mxArray *mx_type = mxGetField (X, 0, "GraphBLASv5_1") ;
+        if (mx_type == NULL)
+        {
+            // check if it is a GraphBLASv5 struct
+            mx_type = mxGetField (X, 0, "GraphBLASv5") ;
+        }
         if (mx_type == NULL)
         {
             // check if it is a GraphBLASv4 struct
@@ -112,13 +118,13 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 
         int sparsity_status, sparsity_control ;
         int64_t nvals ;
-        bool is_uniform ;
+        bool iso ;
         if (GraphBLASv3)
         {
             // GraphBLASv3 struct: sparse or hypersparse only
             sparsity_control = GxB_AUTO_SPARSITY ;
             nvals            = 0 ;
-            is_uniform       = false ;
+            iso              = false ;
         }
         else
         {
@@ -127,13 +133,14 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             nvals            = s [8] ;
             if (GraphBLASv4)
             {
-                // GraphBLASv4: is_uniform is always false
-                is_uniform = false ;
+                // GraphBLASv4: iso is always false
+                iso = false ;
             }
             else
             {
-                // GraphBLASv5: is_uniform is present as s [9]
-                is_uniform = (bool) s [9] ;
+                // GraphBLASv5 and GraphBLASv5_1: iso is present as s [9]
+                // GraphBLASv5: iso is present as s [9] but always false
+                iso = (bool) s [9] ;
             }
         }
 
@@ -241,12 +248,12 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 if (by_col)
                 {
                     OK (GxB_Matrix_import_FullC (&A, type, nrows, ncols,
-                        &Ax, Ax_size, is_uniform, NULL)) ;
+                        &Ax, Ax_size, iso, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_FullR (&A, type, nrows, ncols,
-                        &Ax, Ax_size, is_uniform, NULL)) ;
+                        &Ax, Ax_size, iso, NULL)) ;
                 }
                 break ;
 
@@ -254,13 +261,13 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 if (by_col)
                 {
                     OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols,
-                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, is_uniform,
+                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, iso,
                         false, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_CSR (&A, type, nrows, ncols,
-                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, is_uniform,
+                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, iso,
                         false, NULL)) ;
                 }
                 break ;
@@ -270,14 +277,14 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 {
                     OK (GxB_Matrix_import_HyperCSC (&A, type, nrows, ncols,
                         &Ap, &Ah, &Ai, &Ax,
-                        Ap_size, Ah_size, Ai_size, Ax_size, is_uniform,
+                        Ap_size, Ah_size, Ai_size, Ax_size, iso,
                         nvec, false, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_HyperCSR (&A, type, nrows, ncols,
                         &Ap, &Ah, &Ai, &Ax,
-                        Ap_size, Ah_size, Ai_size, Ax_size, is_uniform,
+                        Ap_size, Ah_size, Ai_size, Ax_size, iso,
                         nvec, false, NULL)) ;
                 }
                 break ;
@@ -286,12 +293,12 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 if (by_col)
                 {
                     OK (GxB_Matrix_import_BitmapC (&A, type, nrows, ncols,
-                        &Ab, &Ax, Ab_size, Ax_size, is_uniform, nvals, NULL)) ;
+                        &Ab, &Ax, Ab_size, Ax_size, iso, nvals, NULL)) ;
                 }
                 else
                 {
                     OK (GxB_Matrix_import_BitmapR (&A, type, nrows, ncols,
-                        &Ab, &Ax, Ab_size, Ax_size, is_uniform, nvals, NULL)) ;
+                        &Ab, &Ax, Ab_size, Ax_size, iso, nvals, NULL)) ;
                 }
                 break ;
 
@@ -303,7 +310,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     {
 
         //----------------------------------------------------------------------
-        // construct a shallow GrB_Matrix copy of a MATLAB matrix
+        // construct a shallow GrB_Matrix copy of a built-in matrix
         //----------------------------------------------------------------------
 
         // get the type and dimensions
@@ -317,14 +324,14 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         GrB_Index *Xp, *Xi, nzmax ;
         if (X_is_sparse)
         { 
-            // get the nzmax, Xp, and Xi from the MATLAB sparse matrix X
+            // get the nzmax, Xp, and Xi from the built-in sparse matrix X
             nzmax = (GrB_Index) mxGetNzmax (X) ;
             Xp = (GrB_Index *) mxGetJc (X) ;
             Xi = (GrB_Index *) mxGetIr (X) ;
         }
         else
         { 
-            // X is a MATLAB full matrix; so is the GrB_Matrix
+            // X is a built-in full matrix; so is the GrB_Matrix
             nzmax = nrows * ncols ;
             Xp = NULL ;
             Xi = NULL ;
@@ -335,25 +342,25 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         size_t type_size = 0 ;
         if (type == GrB_FP64)
         { 
-            // MATLAB sparse or full double matrix
+            // built-in sparse or full double matrix
             Xx = mxGetDoubles (X) ;
             type_size = sizeof (double) ;
         }
         else if (type == GxB_FC64)
         { 
-            // MATLAB sparse or full double complex matrix
+            // built-in sparse or full double complex matrix
             Xx = mxGetComplexDoubles (X) ;
             type_size = 2 * sizeof (double) ;
         }
         else if (type == GrB_BOOL)
         { 
-            // MATLAB sparse or full logical matrix
+            // built-in sparse or full logical matrix
             Xx = mxGetData (X) ;
             type_size = sizeof (bool) ;
         }
         else if (X_is_sparse)
         {
-            // MATLAB does not support any other kinds of sparse matrices
+            // Built-in sparse matrices do not support any other kinds
             ERROR ("unsupported type") ;
         }
         else if (type == GrB_INT8)
@@ -424,7 +431,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         if (X_is_sparse)
         { 
             // import the matrix in CSC format.  This sets Xp, Xi, and Xx to
-            // NULL, but it does not change the MATLAB matrix they came from.
+            // NULL, but it does not change the built-in matrix they came from.
             OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, &Xp, &Xi, &Xx,
                 (ncols+1) * sizeof (int64_t),
                 nzmax * sizeof (int64_t),
@@ -448,13 +455,15 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     A->b_shallow = (A->b != NULL) ;
     A->i_shallow = (A->i != NULL) ;
     A->x_shallow = (A->x != NULL) ;
-    #ifdef GB_DEBUG
+    #ifdef GB_MEMDUMP
+    printf ("remove from memtable: p:%p h:%p b:%p i:%p x:%p\n",
+        A->p, A->h, A->b, A->i, A->x) ;
+    #endif
     if (A->p != NULL) GB_Global_memtable_remove (A->p) ;
     if (A->h != NULL) GB_Global_memtable_remove (A->h) ;
     if (A->b != NULL) GB_Global_memtable_remove (A->b) ;
     if (A->i != NULL) GB_Global_memtable_remove (A->i) ;
     if (A->x != NULL) GB_Global_memtable_remove (A->x) ;
-    #endif
 
     //--------------------------------------------------------------------------
     // return the result

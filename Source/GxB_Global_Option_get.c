@@ -317,6 +317,17 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             }
             break ;
 
+        case GxB_PRINT_1BASED : 
+
+            {
+                va_start (ap, field) ;
+                bool *onebased = va_arg (ap, bool *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (onebased) ;
+                (*onebased) = GB_Global_print_one_based_get ( ) ;
+            }
+            break ;
+
         //----------------------------------------------------------------------
         // CUDA (DRAFT: in progress, do not use)
         //----------------------------------------------------------------------

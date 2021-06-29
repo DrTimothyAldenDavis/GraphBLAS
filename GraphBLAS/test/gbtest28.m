@@ -51,13 +51,13 @@ fprintf ('%12.4f sec : A = sparse (i, j, x, m, n) ;\n', t) ;
 tic
 A3 = GrB.build (i, j, x, m, n) ;
 t = toc ;
-fprintf ('%12.4f sec : A = GrB.build (...), same inputs as MATLAB\n', t) ;
+fprintf ('%12.4f sec : A = GrB.build (...), same inputs as built-in\n', t) ;
 assert (gbtest_eq (A1, A3)) ;
 
 tic
 A4 = GrB.build (i, j, x, m, n, d) ;
 t = toc ;
-fprintf ('%12.4f sec : A = GrB.build (...), same inputs/outputs as MATLAB\n',t);
+fprintf ('%12.4f sec : A = GrB.build (...), same inputs/outputs as built-in\n',t);
 assert (gbtest_eq (A1, A4)) ;
 
 tic
@@ -82,13 +82,13 @@ fprintf ('%12.4f sec : A = sparse (i, j, x, m, n) ;\n', t) ;
 tic
 A3 = GrB.build (i, j, x, m, n) ;
 t = toc ;
-fprintf ('%12.4f sec : A = GrB.build (...), same inputs as MATLAB\n', t) ;
+fprintf ('%12.4f sec : A = GrB.build (...), same inputs as built-in\n', t) ;
 assert (gbtest_eq (A1, A3)) ;
 
 tic
 A4 = GrB.build (i, j, x, m, n, d) ;
 t = toc ;
-fprintf ('%12.4f sec : A = GrB.build (...), same inputs/outputs as MATLAB\n',t);
+fprintf ('%12.4f sec : A = GrB.build (...), same inputs/outputs as built-in\n',t);
 assert (gbtest_eq (A1, A4)) ;
 
 tic

@@ -13,7 +13,7 @@
 
 //  result = gbisequal (A,B)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: s = GrB.isequal (A, B)"
 

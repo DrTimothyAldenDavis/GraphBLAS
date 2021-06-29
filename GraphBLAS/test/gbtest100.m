@@ -6,10 +6,6 @@ function gbtest100
 
 GrB.MATLAB_vs_GrB ;
 
-fprintf ('v = ver (''matlab'')\n') ;
-v = ver ('matlab') ;
-display (v) ;
-
 fprintf ('v = GrB.ver\n') ;
 v = GrB.ver ;
 display (v) ;

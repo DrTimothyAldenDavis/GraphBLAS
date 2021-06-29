@@ -11,7 +11,7 @@
 
 // X = gbextractvalues (A)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: X = GrB.extractvalues (A)"
 

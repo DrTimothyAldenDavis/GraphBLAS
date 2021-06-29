@@ -73,7 +73,7 @@
         {                                                                   \
             /* ----[. A 1]-------------------------------------- */         \
             /* [. A 1]: action: ( insert )                       */         \
-            GB_PENDING_INSERT (Ax +(pA*asize)) ;                            \
+            GB_PENDING_INSERT_aij ;                                         \
         }                                                                   \
     }                                                                       \
 }
@@ -163,7 +163,7 @@ GrB_Info GB_subassign_08n
 
     int64_t Znvec ;
     const int64_t *restrict Zh_shallow = NULL ;
-    GB_OK (GB_subassign_emult_slice (
+    GB_OK (GB_subassign_08n_slice (
         &TaskList, &TaskList_size, &ntasks, &nthreads,
         &Znvec, &Zh_shallow, &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size,
         C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,

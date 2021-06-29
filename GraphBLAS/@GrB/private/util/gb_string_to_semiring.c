@@ -9,7 +9,7 @@
 
 // Only built-in GraphBLAS types and operators are supported.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 GrB_Semiring gb_string_to_semiring      // return a semiring from a string
 (

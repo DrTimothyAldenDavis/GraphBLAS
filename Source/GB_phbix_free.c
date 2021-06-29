@@ -17,10 +17,10 @@ void GB_phbix_free              // free all content of a matrix
 (
     GrB_Matrix A                // handle of matrix with content to free
 )
-{ 
+{
 
     if (A != NULL)
-    {
+    { 
         GB_ph_free (A) ;            // free A->p and A->h
         GB_bix_free (A) ;           // free A->b, A->i, and A->x
         GB_FREE (&(A->logger), A->logger_size) ;        // free the error logger

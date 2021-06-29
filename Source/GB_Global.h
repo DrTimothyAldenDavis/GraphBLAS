@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_Global.h: definitions for global variables
+// GB_Global.h: definitions for global data
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -50,15 +50,10 @@ GB_PUBLIC void     GB_Global_abort_function (void) ;
           void     GB_Global_malloc_function_set
                         (void * (* malloc_function) (size_t)) ;
           void  *  GB_Global_malloc_function (size_t size) ;
-// calloc: no longer used
-//        void     GB_Global_calloc_function_set
-//                      (void * (* calloc_function) (size_t, size_t)) ;
-//        void  *  GB_Global_calloc_function (size_t count, size_t size) ;
           void     GB_Global_realloc_function_set
                         (void * (* realloc_function) (void *, size_t)) ;
           void  *  GB_Global_realloc_function (void *p, size_t size) ;
           bool     GB_Global_have_realloc_function (void) ;
-//        bool     GB_Global_have_calloc_function (void) ;
           void     GB_Global_free_function_set
                         (void (* free_function) (void *)) ;
           void     GB_Global_free_function (void *p) ;
@@ -90,6 +85,9 @@ GB_PUBLIC bool     GB_Global_burble_get (void) ;
 
 GB_PUBLIC void     GB_Global_print_one_based_set (bool onebased) ;
 GB_PUBLIC bool     GB_Global_print_one_based_get (void) ;
+
+GB_PUBLIC void     GB_Global_print_mem_shallow_set (bool mem_shallow) ;
+GB_PUBLIC bool     GB_Global_print_mem_shallow_get (void) ;
 
           void     GB_Global_gpu_control_set (GrB_Desc_Value value) ;
           GrB_Desc_Value GB_Global_gpu_control_get (void);

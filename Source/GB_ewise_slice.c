@@ -7,10 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// Constructs a set of tasks to compute C, for an element-wise operation
-// (GB_add, GB_emult, and GB_mask) that operates on two input matrices,
-// C=op(A,B).  The mask is ignored for computing where to slice the work, but
-// it is sliced once the location has been found.
+// Constructs a set of tasks to compute C, for an element-wise operation that
+// operates on two input matrices, C=op(A,B).  These include:
+// GB_add, GB_emult, and GB_masker, and many GB_subassign_* methods
+// (02, 04, 06s_and_14, 08n, 08s_and_16, 09, 10_and_18, 11, 12_and_20).
+
+// The mask is ignored for computing where to slice the work, but it is sliced
+// once the location has been found.
 
 // M, A, B: any sparsity structure (hypersparse, sparse, bitmap, or full).
 // C: constructed as sparse or hypersparse in the caller.

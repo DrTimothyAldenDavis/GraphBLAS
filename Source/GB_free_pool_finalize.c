@@ -10,7 +10,7 @@
 #include "GB.h"
 
 void GB_free_pool_finalize (void)
-{ 
+{
 
     //--------------------------------------------------------------------------
     // free all memory pools
@@ -20,7 +20,7 @@ void GB_free_pool_finalize (void)
     {
         size_t size = (((size_t) 1) << k) ;
         while (1)
-        {
+        { 
             // get a block from the kth free_pool and free it
             void *p = GB_Global_free_pool_get (k) ;
             if (p == NULL) break ;

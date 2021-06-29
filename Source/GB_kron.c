@@ -94,7 +94,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     GrB_Index cnrows, cncols, cnz = 0 ;
     bool ok = GB_Index_multiply (&cnrows, anrows,  bnrows) ;
     ok = ok && GB_Index_multiply (&cncols, ancols,  bncols) ;
-    ok = ok && GB_Index_multiply (&cnz, GB_NNZ (A), GB_NNZ (B)) ;
+    ok = ok && GB_Index_multiply (&cnz, GB_nnz (A), GB_nnz (B)) ;
     if (!ok || GB_NROWS (C) != cnrows || GB_NCOLS (C) != cncols)
     { 
         GB_ERROR (GrB_DIMENSION_MISMATCH, "%s:\n"
@@ -103,8 +103,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
             "second input is " GBd "-by-" GBd "%s with " GBd " entries",
             ok ? "Dimensions not compatible:" : "Problem too large:",
             GB_NROWS (C), GB_NCOLS (C), cnrows, cncols,
-            anrows, ancols, A_transpose ? " (transposed)" : "", GB_NNZ (A),
-            bnrows, bncols, B_transpose ? " (transposed)" : "", GB_NNZ (B)) ;
+            anrows, ancols, A_transpose ? " (transposed)" : "", GB_nnz (A),
+            bnrows, bncols, B_transpose ? " (transposed)" : "", GB_nnz (B)) ;
     }
 
     // quick return if an empty mask is complemented
@@ -127,7 +127,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     }
 
     if (!T_is_csc)
-    { 
+    {
         if (GB_OP_IS_POSITIONAL (op))
         { 
             // positional ops must be flipped, with i and j swapped
@@ -135,30 +135,23 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
         }
     }
 
-    // TODO: if A, B are pattern: do not compute values of AT=A', BT=B'
     bool A_is_pattern, B_is_pattern ;
-    GB_AxB_pattern (&A_is_pattern, &B_is_pattern, false, op->opcode) ;
-
+    GB_binop_pattern (&A_is_pattern, &B_is_pattern, false, op->opcode) ;
     if (A_transpose)
-    {
+    { 
         // AT = A' and typecast to op->xtype
-        // transpose: typecast, no op, not in-place
         GBURBLE ("(A transpose) ") ;
-        GB_OK (GB_transpose (&AT,   // AT static
-            A_is_pattern ? A->type : op->xtype, T_is_csc,
-            A, NULL, NULL, NULL, false, Context)) ;
-        ASSERT_MATRIX_OK (A , "A after AT kron", GB0) ;
+        GB_OK (GB_transpose_cast (AT, op->xtype, T_is_csc, A, A_is_pattern,
+            Context)) ;
         ASSERT_MATRIX_OK (AT, "AT kron", GB0) ;
     }
 
     if (B_transpose)
-    {
+    { 
         // BT = B' and typecast to op->ytype
-        // transpose: typecast, no op, not in-place
         GBURBLE ("(B transpose) ") ;
-        GB_OK (GB_transpose (&BT,   // BT static
-            B_is_pattern ? B->type : op->ytype, T_is_csc,
-            B, NULL, NULL, NULL, false, Context)) ;
+        GB_OK (GB_transpose_cast (BT, op->ytype, T_is_csc, B, B_is_pattern,
+            Context)) ;
         ASSERT_MATRIX_OK (BT, "BT kron", GB0) ;
     }
 

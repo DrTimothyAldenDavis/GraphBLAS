@@ -20,7 +20,7 @@
 // desc.base = 'default':       'one-based', unless max(size(A)) > flintmax,
 //                              in which case 'one-based int' is used.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: [I,J,X] = GrB.extracttuples (A, desc)"
 
@@ -266,7 +266,7 @@ void mexFunction
         if (extract_I)
         { 
             double *I_double = mxMalloc (s * sizeof (double)) ;
-            GB_matlab_helper1 (I_double, I, (int64_t) nvals) ;
+            GB_helper1 (I_double, I, (int64_t) nvals) ;
             gb_mxfree (&I) ;
             pargout [0] = gb_export_to_mxfull (&I_double, nvals, 1, GrB_FP64) ;
         }
@@ -274,7 +274,7 @@ void mexFunction
         if (extract_J)
         { 
             double *J_double = mxMalloc (s * sizeof (double)) ;
-            GB_matlab_helper1 (J_double, J, (int64_t) nvals) ;
+            GB_helper1 (J_double, J, (int64_t) nvals) ;
             gb_mxfree (&J) ;
             pargout [1] = gb_export_to_mxfull (&J_double, nvals, 1, GrB_FP64) ;
         }
@@ -289,13 +289,13 @@ void mexFunction
 
         if (extract_I)
         { 
-            GB_matlab_helper1i ((int64_t *) I, (int64_t) nvals) ;
+            GB_helper1i ((int64_t *) I, (int64_t) nvals) ;
             pargout [0] = gb_export_to_mxfull (&I, nvals, 1, GrB_INT64) ;
         }
 
         if (extract_J)
         { 
-            GB_matlab_helper1i ((int64_t *) J, (int64_t) nvals) ;
+            GB_helper1i ((int64_t *) J, (int64_t) nvals) ;
             pargout [1] = gb_export_to_mxfull (&J, nvals, 1, GrB_INT64) ;
         }
     }

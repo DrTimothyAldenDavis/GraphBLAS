@@ -11,7 +11,7 @@
 
 // optype = gboptype (atype, btype)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: c = GrB.optype (atype, btype)"
 

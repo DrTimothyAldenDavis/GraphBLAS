@@ -23,7 +23,7 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
 #define GB_SCALAR_WRAP(scalar,T,ampersand,bare,stype)                       \
     struct GB_Scalar_opaque scalar ## _header ;                             \
     size_t ssize = (stype == NULL) ? 1 : (stype->size) ;                    \
-    GB_void Sx [GB_VLA (ssize)] ;                                           \
+    GB_void Sx [GB_VLA(ssize)] ;                                            \
     GxB_Scalar scalar = GB_Scalar_wrap (& scalar ## _header, stype, Sx) ;   \
     memcpy (Sx, ampersand bare, ssize) ;
 

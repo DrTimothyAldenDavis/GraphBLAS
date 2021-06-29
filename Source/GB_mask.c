@@ -16,7 +16,7 @@
 
 // Nearly all GraphBLAS operations take a mask, which controls how the result
 // of the computations, Z, are copied into the result matrix C.  The following
-// working MATLAB script, GB_spec_mask, defines how this is done.  In the
+// working script, GB_spec_mask.m, defines how this is done.  In the
 // comments, C(i,j) is shorthand for the index i in the jth vector, and
 // likewise for M, Z, and R.  If the matrices are all CSC, then this is row i
 // and column j.  If the matrices are all CSR, then it is row j and column i.
@@ -26,7 +26,7 @@
 /*
 
     function R = GB_spec_mask (C, M, Z, C_replace, Mask_comp,identity)
-    %GB_SPEC_MASK: a pure MATLAB implementation of GB_mask
+    %GB_SPEC_MASK: an implementation of GB_mask
     %
     % Computes C<M> = Z, in GraphBLAS notation.
     %
@@ -269,12 +269,11 @@ GrB_Info GB_mask                // C<M> = Z
                 // created, which is what C_result would look like if cleared.
                 // C_result is left unchanged since changing it would change M.
                 // The C0 matrix is created as hypersparse.
-                int sparsity = GxB_HYPERSPARSE ;  
-                GB_OK (
-                GB_new_bix (&C0, true, // sparse or hyper, static header
+                // set C0->iso = false  OK
+                GB_OK (GB_new_bix (&C0, true, // sparse or hyper, static header
                     C_result->type, vlen, vdim, GB_Ap_calloc, R_is_csc,
-                    sparsity, true, C_result->hyper_switch, 0, 0, true,
-                    Context)) ;
+                    GxB_HYPERSPARSE, true, C_result->hyper_switch, 0, 0,
+                    true, false, Context)) ;
                 C = C0 ;
                 ASSERT (C->static_header) ;
             }
@@ -282,10 +281,10 @@ GrB_Info GB_mask                // C<M> = Z
             { 
                 // Clear all entries from C_result, and ensure C is hypersparse
                 // by temporarily changing the sparsity control
-                int save = C_result->sparsity ;         // save control
-                C_result->sparsity = GxB_HYPERSPARSE ;
+                int save = C_result->sparsity_control ;     // save control
+                C_result->sparsity_control = GxB_HYPERSPARSE ;
                 GB_OK (GB_clear (C_result, Context)) ;
-                C_result->sparsity = save ;             // restore control
+                C_result->sparsity_control = save ;         // restore control
                 C = C_result ;  // C must have a dynamic header
                 ASSERT (!C->static_header) ;
             }

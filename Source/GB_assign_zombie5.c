@@ -15,6 +15,8 @@
 
 // C must be sparse or hypersparse.
 
+// C->iso is not affected.
+
 #include "GB_assign.h"
 #include "GB_assign_zombie.h"
 #include "GB_subassign_methods.h"

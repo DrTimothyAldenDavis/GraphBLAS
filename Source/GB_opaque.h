@@ -26,7 +26,7 @@ typedef enum
 {
     // the 14 scalar types: 13 built-in types, and one user-defined type code
     GB_ignore_code  = 0,
-    GB_BOOL_code    = 1,        // 'logical' in MATLAB
+    GB_BOOL_code    = 1,        // 'logical' in @GrB interface
     GB_INT8_code    = 2,
     GB_UINT8_code   = 3,
     GB_INT16_code   = 4,
@@ -35,9 +35,9 @@ typedef enum
     GB_UINT32_code  = 7,
     GB_INT64_code   = 8,
     GB_UINT64_code  = 9,
-    GB_FP32_code    = 10,       // float ('single' in MATLAB)
+    GB_FP32_code    = 10,       // float ('single' in @GrB interface)
     GB_FP64_code    = 11,       // double
-    GB_FC32_code    = 12,       // float complex ('single complex' in MATLAB)
+    GB_FC32_code    = 12,       // float complex ('single complex' in @GrB)
     GB_FC64_code    = 13,       // double complex
     GB_UDT_code     = 14        // void *, user-defined type
 }
@@ -469,7 +469,7 @@ static inline GrB_Matrix GB_clear_static_header // clear a static header
 #define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
 #define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
 #define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
-// #define GBX(...)     TODO: constant-valued matrices
+#define GBX(Ax,p,A_iso) (Ax [(A_iso) ? 0 : (p)])
 
 #endif
 

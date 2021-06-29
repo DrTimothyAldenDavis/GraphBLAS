@@ -15,7 +15,7 @@
 
 // If the op is NULL, then it is the implicit GrB_SECOND_[A_type] operator.
 // This is a built-in operator for built-in types.  This feature is only used
-// by GB_Matrix_wait.
+// by GB_wait.
 
 // This function is not used by the CUDA jitified kernels, since they can
 // typecast the entries in the matrices A and B to the types of x and y of the
@@ -143,7 +143,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
         // versions (DIV vs RDIV, ...).  Flipping the operator does not handle
         // ATAN2, BGET, and other built-in operators, but these do not
         // correspond to built-in semirings.
-        (*opcode) = GB_binop_flip (*opcode, &handled) ; // for any opcode
+        (*opcode) = GB_flip_opcode (*opcode, &handled) ; // for any opcode
     }
 
     return (handled) ;

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 // 'fro':       Frobenius norm
 // 1:           1-norm

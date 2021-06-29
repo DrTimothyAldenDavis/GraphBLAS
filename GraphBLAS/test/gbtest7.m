@@ -43,9 +43,14 @@ assert (isequal (speye (3), G)) ;
 types = gbtest_types ;
 for k = 1: length(types)
     type = types {k} ;
-    X = full (gbtest_cast (1, type)) ;
+    X = gbtest_cast (1, type) ;
     G = GrB.build (1:3, 1:3, X) ;
     S = gbtest_cast (eye (3, 3), type) ;
+    assert (gbtest_eq (S, G)) ;
+    assert (isequal (GrB.type (G), type)) ;
+
+    % build an iso matrix
+    G = GrB.build (1:3, 1:3, X, 3, 3, '1st') ;
     assert (gbtest_eq (S, G)) ;
     assert (isequal (GrB.type (G), type)) ;
 end

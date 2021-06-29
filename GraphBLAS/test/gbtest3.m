@@ -18,10 +18,14 @@ end
 
 Y0 = sprandn (nfeatures, nneurons, 0.5) ;
 
-Y1 = dnn_matlab (W, bias, Y0) ;
+tic
+Y1 = dnn_builtin (W, bias, Y0) ;
+toc
 
-[W, bias, Y0] = dnn_mat2gb (W, bias, Y0) ;
+[W, bias, Y0] = dnn_builtin2gb (W, bias, Y0) ;
+tic
 Y2 = GrB.dnn (W, bias, Y0) ;
+toc
 
 err = norm (Y1-Y2,1) ;
 assert (err < 1e-5) ;

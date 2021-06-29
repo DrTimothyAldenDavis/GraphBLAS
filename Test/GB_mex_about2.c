@@ -17,7 +17,7 @@
 
 typedef struct
 {
-    int gunk [16] ;
+    int stuff [16] ;
 }
 wild ;
 
@@ -158,13 +158,13 @@ void mexFunction
     OK (GxB_Matrix_fprint (A, "valid matrix", GxB_SHORT, NULL)) ;
     // mangle the matrix
     GB_FREE (&(A->p), A->p_size) ;
-    GB_FREE (&(A->x), A->x_size) ;
+    GB_FREE (&(A->x), A->x_size) ;  // OK
     expected = GrB_INVALID_OBJECT ;
     ERR (GxB_Matrix_fprint (A, "invalid sparse matrix", GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&A) ;
 
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
-    A->sparsity = 999 ;
+    A->sparsity_control = 999 ;
     ERR (GxB_Matrix_fprint (A, "invalid sparsity control", GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&A) ;
 
@@ -186,7 +186,7 @@ void mexFunction
     ERR (GxB_Matrix_fprint (A, "full matrix cannot have zombies",
         GxB_SHORT, NULL)) ;
     A->nzombies = 0 ;
-    CHECK (GB_Pending_alloc (&(A->Pending), GrB_INT32, NULL, true, 4)) ;
+    CHECK (GB_Pending_alloc (&(A->Pending), false, GrB_INT32, NULL, true, 4)) ;
     ERR (GxB_Matrix_fprint (A, "full matrix cannot have pending tuples",
         GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&A) ;
@@ -351,7 +351,7 @@ void mexFunction
 
     wild ww, w2 ;
     n = 3 ;
-    memset (ww.gunk, 13, 16 * sizeof (int)) ;
+    memset (ww.stuff, 13, 16 * sizeof (int)) ;
     OK (GrB_Type_new (&Wild, sizeof (wild))) ;
     OK (GrB_Matrix_new (&C, Wild, n, n)) ;
     OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
@@ -379,10 +379,10 @@ void mexFunction
     bool ok = false ;
     int *p = GB_malloc_memory (4, sizeof (int), &nbytes) ;
     CHECK (p != NULL) ;
-    p = GB_realloc_memory (1024*1024, 4, sizeof (int), p, &nbytes, &ok, NULL) ;
+    p = GB_realloc_memory (1024*1024, sizeof (int), p, &nbytes, &ok, NULL) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
-    p = GB_realloc_memory (4, 4, GxB_INDEX_MAX + 1, p, &nbytes, &ok, NULL) ;
+    p = GB_realloc_memory (4, GxB_INDEX_MAX + 1, p, &nbytes, &ok, NULL) ;
     CHECK (!ok) ;
     GB_free_memory (&p, nbytes) ;
 
@@ -405,8 +405,6 @@ void mexFunction
     if (info != GrB_SUCCESS) mexErrMsgTxt ("huge fail2") ;
     info = GxB_Matrix_Option_set_(X, GxB_SPARSITY_CONTROL, GxB_BITMAP) ;
     if (info != GrB_OUT_OF_MEMORY) mexErrMsgTxt ("huge fail3") ;
-    info = GB_convert_to_full (X) ;
-    if (info != GrB_OUT_OF_MEMORY) mexErrMsgTxt ("huge fail4") ;
     GrB_Matrix_free (&X) ;
 
     //--------------------------------------------------------------------------
@@ -432,28 +430,6 @@ void mexFunction
     OK (GxB_Vector_Option_get (victor, GxB_BITMAP_SWITCH, &bitmap_switch)) ;
     CHECK (bitmap_switch == 4.5) ;
     GrB_Vector_free (&victor) ;
-
-    //--------------------------------------------------------------------------
-    // vector transpose
-    //--------------------------------------------------------------------------
-
-    #define FREE_ALL ;
-    #define GET_DEEP_COPY ;
-    #define FREE_DEEP_COPY ;
-    OK (GrB_Matrix_new (&C, GrB_FP32, 100, 1)) ;
-    OK (GrB_Matrix_setElement_FP32 (C, (double) 3, 0, 0)) ;
-    OK (GrB_Matrix_wait (&C)) ;
-    X = NULL ;
-    METHOD (GB_transpose (&X, NULL, true, C, NULL, NULL, NULL, false, NULL)) ;
-    OK (GxB_Matrix_fprint (X, "row", GxB_SHORT, NULL)) ;
-    GrB_Matrix Z = NULL ;
-    OK (GrB_Matrix_dup (&Z, X)) ;
-    GrB_Matrix_free (&C) ;
-    METHOD (GB_transpose (&C, NULL, true, Z, NULL, NULL, NULL, false, NULL)) ;
-    OK (GxB_Matrix_fprint (C, "col", GxB_SHORT, NULL)) ;
-    GrB_Matrix_free (&Z) ;
-    GrB_Matrix_free (&X) ;
-    GrB_Matrix_free (&C) ;
 
     //--------------------------------------------------------------------------
     // split/concat for user-defined types
@@ -512,7 +488,7 @@ void mexFunction
                     {
                         for (int kk = 0 ; kk < 16 ; kk++)
                         {
-                            CHECK (wc.gunk [kk] == wx.gunk [kk]) ;
+                            CHECK (wc.stuff [kk] == wx.stuff [kk]) ;
                         }
                     }
                 }
@@ -538,7 +514,7 @@ void mexFunction
             GrB_Matrix_free (&(Tiles [3])) ;
             OK (GrB_Matrix_new (&(Tiles [3]), Wild, 15, 100)) ;
             ERR (GxB_Matrix_concat (X, Tiles, 2, 2, NULL)) ;
-            GxB_print (X, 3) ;
+            // GxB_print (X, 3) ;
             OK (GrB_Matrix_error (&err, X)) ;
             printf ("expected error: %s\n", err) ;
             GrB_Matrix_free (&(Tiles [3])) ;
@@ -589,11 +565,11 @@ void mexFunction
     printf ("\n\ntesting C<C,struct> = scalar for user-defined type:\n") ;
     OK (GxB_Global_Option_set (GxB_BURBLE, true)) ;
     OK (GrB_Matrix_new (&C, Wild, n, n)) ;
-    memset (ww.gunk,  0, 16 * sizeof (int)) ;
-    memset (w2.gunk,  1, 16 * sizeof (int)) ;
+    memset (ww.stuff,  0, 16 * sizeof (int)) ;
+    memset (w2.stuff,  1, 16 * sizeof (int)) ;
     for (int64_t kk = 0 ; kk < 16 ; kk++)
     {
-        w2.gunk [kk] = kk ;
+        w2.stuff [kk] = kk ;
     }
     for (int64_t kk = 0 ; kk < 20 ; kk++)
     {
@@ -606,12 +582,12 @@ void mexFunction
 
     for (int64_t kk = 0 ; kk < 20 ; kk++)
     {
-        memset (w3.gunk,  9, 16 * sizeof (int)) ;
+        memset (w3.stuff,  9, 16 * sizeof (int)) ;
         info = (GrB_Matrix_extractElement_UDT (&w3, C, kk, kk)) ;
         CHECK (info == GrB_SUCCESS) ;
         for (int64_t t = 0 ; t < 16 ; t++)
         {
-            CHECK (w3.gunk [t] == t) ;
+            CHECK (w3.stuff [t] == t) ;
         }
     }
     GrB_Matrix_free (&C) ;

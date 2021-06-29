@@ -1,15 +1,20 @@
-% Run the DNN benchmarks in MATLAB.
+% Run the DNN benchmarks
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 % reset to the default number of threads
 clear all
-maxNumCompThreads ('automatic') ;
 GrB.clear ;
 
-rootdir = '/raid/hyper/GraphChallenge/dnn_data/MATLAB' ;
-ncores = maxNumCompThreads ;
+rootdir = '/raid/hyper/GraphChallenge/dnn_data/stuff' ;
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+if (~have_octave)
+    maxNumCompThreads ('automatic') ;
+    ncores = maxNumCompThreads ;
+else
+    ncores = nproc ;
+end
 fprintf ('# of cores :  %d\n', ncores) ;
 GrB.format ('by row') ;
 
@@ -36,7 +41,7 @@ for id = 1:12
 
     % convert to GraphBLAS
     tic ;
-    [W, bias, Y0] = dnn_mat2gb (W, bias, Y0) ;
+    [W, bias, Y0] = dnn_builtin2gb (W, bias, Y0) ;
     tsetup = toc ;
     fprintf ('total convert time: %14.2f sec\n', tsetup) ;
     t1 = 0 ;

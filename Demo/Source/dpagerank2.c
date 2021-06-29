@@ -111,7 +111,7 @@ void init_page (pagerank_type *z, const double *x)
 // PageRank semiring
 //------------------------------------------------------------------------------
 
-// In MATLAB notation, the new rank is computed with:
+// The new rank is computed with:
 // newrank = PAGERANK_DAMPING * (rank * D * A) + pagerank_teleport
 
 // where A is a square binary matrix of the original graph, and A(i,j)=1 if
@@ -202,7 +202,7 @@ void pagerank_diff
 }
 
 //------------------------------------------------------------------------------
-// comparison function for qsort
+// comparator for qsort
 //------------------------------------------------------------------------------
 
 int pagerank_compar (const void *x, const void *y)

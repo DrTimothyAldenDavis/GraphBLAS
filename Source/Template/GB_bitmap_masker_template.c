@@ -79,7 +79,9 @@
                 int64_t pR = pR_start + i ;
                 Rb [pR] = 1 ;
                 rnvals++ ;
-                memcpy (Rx + (pR)*rsize, Cx +(pC)*rsize, rsize) ;
+                #ifndef GB_ISO_MASKER
+                memcpy (Rx + (pR)*rsize, Cx + (C_iso? 0:(pC)*rsize), rsize) ;
+                #endif
             }
         }
     }
@@ -176,7 +178,9 @@
                     if (z)
                     { 
                         // R(i,j) = Z(i,j), insert new value
-                        memcpy (Rx +(p)*rsize, Zx +(p)*rsize, rsize) ;
+                        #ifndef GB_ISO_MASKER
+                        memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize);
+                        #endif
                         Rb [p] = 1 ;
                         rnvals++ ;
                     }
@@ -186,7 +190,9 @@
                     if (z)
                     { 
                         // R(i,j) = Z(i,j), update prior value
-                        memcpy (Rx +(p)*rsize, Zx +(p)*rsize, rsize) ;
+                        #ifndef GB_ISO_MASKER
+                        memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize);
+                        #endif
                     }
                     else
                     { 
@@ -263,7 +269,9 @@
                     if (z)
                     { 
                         // R(i,j) = Z(i,j), update, no change to rnvals
-                        memcpy (Rx +(p)*rsize, Zx +(p)*rsize, rsize) ;
+                        #ifndef GB_ISO_MASKER
+                        memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize);
+                        #endif
                     }
                     else
                     { 
@@ -275,7 +283,9 @@
                 else if (z)
                 { 
                     // R(i,j) = Z(i,j), new entry
-                    memcpy (Rx +(p)*rsize, Zx +(p)*rsize, rsize) ;
+                    #ifndef GB_ISO_MASKER
+                    memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize) ;
+                    #endif
                     Rb [p] = 1 ;
                     rnvals++ ;
                 }

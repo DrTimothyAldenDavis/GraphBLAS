@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_mxarray_type: return the GraphBLAS type of a MATLAB matrix
+// gb_mxarray_type: return the GraphBLAS type of a built-in matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
-GrB_Type gb_mxarray_type        // return the GrB_Type of a MATLAB matrix
+GrB_Type gb_mxarray_type        // return the GrB_Type of a built-in matrix
 (
     const mxArray *X
 )

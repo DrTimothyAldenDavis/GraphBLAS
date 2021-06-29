@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 // The string has the form op_name.op_type.  For example '+.double' is the
 // GrB_PLUS_FP64 operator.  The type is optional.  If not present in the

@@ -11,7 +11,7 @@
 // if the pattern of A and B are identical, and if the result of C = op(A,B) is
 // true for all entries in C.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 bool gb_is_all              // true if op (A,B) is all true, false otherwise
 (

@@ -10,6 +10,7 @@ fprintf ('test194 ----------- V = diag (A,k)\n') ;
 types = types.all ;
 
 rng ('default') ;
+GB_builtin_complex_set (true) ;
 
 ms = [10 20] ;
 ns = [4 10] ;

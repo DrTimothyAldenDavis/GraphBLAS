@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // This method construct a shallow statically-defined scalar, with no memory
-// allocations.  The scalar is full, with a single entry.
+// allocations.  The scalar is iso full, with a single entry.
 
 #include "GB.h"
 #include "GB_scalar.h"
@@ -48,9 +48,8 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
     s->h = NULL ; s->h_size = 0 ; s->h_shallow = false ;
     s->b = NULL ; s->b_size = 0 ; s->b_shallow = false ;
     s->i = NULL ; s->i_size = 0 ; s->i_shallow = false ;
-    s->x = Sx   ; s->x_size = 0 ; s->x_shallow = true ;
+    s->x = Sx   ; s->x_size = type->size ; s->x_shallow = true ;
 
-    s->nzmax = 1 ;
     s->nvals = 0 ;
 
     s->Pending = NULL ;
@@ -58,12 +57,13 @@ GxB_Scalar GB_Scalar_wrap   // create a new GxB_Scalar with one entry
 
     s->hyper_switch  = GxB_NEVER_HYPER ;
     s->bitmap_switch = 0.5 ;
-    s->sparsity = GxB_FULL ;
+    s->sparsity_control = GxB_FULL ;
 
     s->static_header = true ;
 
     s->is_csc = true ;
     s->jumbled = false ;
+    s->iso = true ;         // OK: scalar wrap with a single entry
 
     //--------------------------------------------------------------------------
     // return result

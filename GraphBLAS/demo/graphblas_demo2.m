@@ -5,7 +5,10 @@
 
 % reset to the default number of threads
 clear all
-maxNumCompThreads ('automatic') ;
+have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+if (~have_octave)
+    maxNumCompThreads ('automatic') ;
+end
 GrB.clear ;
 
 gbdemo2

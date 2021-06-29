@@ -25,13 +25,13 @@ end
 atype = gbtype (A) ;
 btype = gbtype (B) ;
 
-if (contains (atype, 'complex'))
+if (gb_contains (atype, 'complex'))
     A = gbapply ('abs', A) ;
 elseif (~gb_isfloat (atype))
     A = gbnew (A, 'double') ;
 end
 
-if (contains (btype, 'complex'))
+if (gb_contains (btype, 'complex'))
     B = gbapply ('abs', B) ;
 elseif (~gb_isfloat (btype))
     B = gbnew (B, 'double') ;

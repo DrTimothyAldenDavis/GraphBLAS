@@ -89,8 +89,9 @@
 
 #include "GB_mxm.h"
 #include "GB_control.h"
+#include "GB_AxB__include1.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__include.h"
+#include "GB_AxB__include2.h"
 #endif
 
 #define GB_FREE_WORK                                \
@@ -114,6 +115,8 @@
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
     GrB_Matrix C,                   // output, static header, not in-place
+    const bool C_iso,               // true if C is iso
+    const GB_void *cscalar,         // iso value of C
     int C_sparsity,                 // construct C as sparse or hypersparse
     const GrB_Matrix M_input,       // optional mask matrix
     const bool Mask_comp_input,     // if true, use !M
@@ -187,115 +190,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GrB_Monoid add = semiring->add ;
     ASSERT (mult->ztype == add->op->ztype) ;
     bool A_is_pattern, B_is_pattern ;
-    GB_AxB_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
+    GB_binop_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
 
     GB_Opcode mult_opcode, add_opcode ;
     GB_Type_code xcode, ycode, zcode ;
     bool builtin_semiring = GB_AxB_semiring_builtin (A, A_is_pattern, B,
         B_is_pattern, semiring, flipxy, &mult_opcode, &add_opcode, &xcode,
         &ycode, &zcode) ;
-
-    //--------------------------------------------------------------------------
-    // determine if this is an enabled built-in ANY_PAIR semiring
-    //--------------------------------------------------------------------------
-
-    #ifdef GBCOMPACT
-    // no semiring is built-in; all use GB_AxB_saxpy_generic
-    bool is_any_pair_semiring = false ;
-    #else
-    bool is_any_pair_semiring = builtin_semiring
-        && (add_opcode == GB_ANY_opcode)
-        && (mult_opcode == GB_PAIR_opcode) ;
-    if (is_any_pair_semiring)
-    {
-        // check if the ANY_PAIR_[type] semiring is disabled
-        switch (xcode)
-        {
-
-            case GB_BOOL_code   : 
-                #if GxB_NO_ANY_PAIR_BOOL
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_INT8_code   : 
-                #if GxB_NO_ANY_PAIR_INT8
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_INT16_code  : 
-                #if GxB_NO_ANY_PAIR_INT16
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_INT32_code  : 
-                #if GxB_NO_ANY_PAIR_INT32
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_INT64_code  : 
-                #if GxB_NO_ANY_PAIR_INT64
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_UINT8_code  : 
-                #if GxB_NO_ANY_PAIR_UINT8
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_UINT16_code : 
-                #if GxB_NO_ANY_PAIR_UINT16
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_UINT32_code : 
-                #if GxB_NO_ANY_PAIR_UINT32
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_UINT64_code : 
-                #if GxB_NO_ANY_PAIR_UINT64
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_FP32_code   : 
-                #if GxB_NO_ANY_PAIR_FP32
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_FP64_code   : 
-                #if GxB_NO_ANY_PAIR_FP64
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_FC32_code   : 
-                // this is now disabled by default
-                #if GxB_NO_ANY_PAIR_FC32
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            case GB_FC64_code   : 
-                // this is now disabled by default
-                #if GxB_NO_ANY_PAIR_FC64
-                is_any_pair_semiring = false ;
-                #endif
-                break ;
-
-            default: ;
-        }
-    }
-    #endif
 
     //--------------------------------------------------------------------------
     // get A, and B
@@ -312,10 +213,14 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
     const int64_t bvdim = B->vdim ;
-    const int64_t bnz = GB_NNZ_HELD (B) ;
+    const int64_t bnz = GB_nnz_held (B) ;
     const int64_t bnvec = B->nvec ;
     const int64_t bvlen = B->vlen ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
+
+    //--------------------------------------------------------------------------
+    // C = D*B, row scale, via built-in binary operators
+    //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
     // allocate C (just C->p and C->h, but not C->i or C->x)
@@ -336,6 +241,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         GB_FREE_ALL ;
         return (info) ;
     }
+
+    C->iso = C_iso ;    // OK
 
     int64_t *restrict Cp = C->p ;
     int64_t *restrict Ch = C->h ;
@@ -362,10 +269,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //==========================================================================
 
     int nthreads, ntasks, nfine ;
-    bool M_packed_in_place = false ;
+    bool M_in_place = false ;
 
     if (nthreads_max == 1 && M == NULL && (AxB_method != GxB_AxB_HASH) &&
-        GB_IMIN (GB_NNZ (A), GB_NNZ (B)) > cvlen)
+        GB_IMIN (GB_nnz (A), GB_nnz (B)) > cvlen)
     { 
         // Skip the flopcount analysis if only a single thread is being used,
         // no mask is present, the min # of entries in A and B is > cvlen, and
@@ -383,7 +290,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // the general case.  This may select a single task for a single thread
         // anyway, but this decision would be based on the analysis.
         info = GB_AxB_saxpy3_slice_balanced (C, M, Mask_comp, A, B, AxB_method,
-            &SaxpyTasks, &SaxpyTasks_size, &apply_mask, &M_packed_in_place,
+            &SaxpyTasks, &SaxpyTasks_size, &apply_mask, &M_in_place,
             &ntasks, &nfine, &nthreads, Context) ;
     }
 
@@ -465,7 +372,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     for (int taskid = 1 ; taskid < ntasks ; taskid++)
     {
         if (taskid == SaxpyTasks [taskid].leader)
-        {
+        { 
             hx_pad = GB_ICEIL (64, csize) ;
             hi_pad = 64 / sizeof (int64_t) ;
             break ;
@@ -499,12 +406,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         {
             // fine task
             if (use_Gustavson)
-            {
+            { 
                 // fine Gustavson task
                 nfine_gus++ ;
             }
             else
-            {
+            { 
                 // fine hash task
                 nfine_hash++ ;
             }
@@ -513,12 +420,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         {
             // coarse task
             if (use_Gustavson)
-            {
+            { 
                 // coarse Gustavson task
                 ncoarse_gus++ ;
             }
             else
-            {
+            { 
                 // coarse hash task
                 ncoarse_hash++ ;
             }
@@ -556,7 +463,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             Hi_size_total += hi_size ;
         }
         // all tasks use an Hx array of size hash_size
-        if (!is_any_pair_semiring)
+        if (!C_iso)
         { 
             // except that the ANY_PAIR semiring does not use Hx
             Hx_size_total += hx_size ;
@@ -649,9 +556,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             Hi_part += hi_size ;
         }
         // all tasks use an Hx array of size hash_size
-        if (!is_any_pair_semiring)
+        if (!C_iso)
         { 
-            // except that the ANY_PAIR semiring does not use Hx
+            // except that the ANY_PAIR iso semiring does not use Hx
             Hx_part += hx_size * csize ;
         }
     }
@@ -684,7 +591,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 // GB_Global_timing_add (5, ttt) ;
 // ttt = omp_get_wtime ( ) ;
 
-    GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_packed_in_place,
+    GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_in_place,
         A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
 
 // the above phase takes 1.6 seconds for 64 trials of the web graph.
@@ -694,52 +601,78 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 // ttt = omp_get_wtime ( ) ;
 
     //==========================================================================
-    // C = A*B, via saxpy3 method and built-in semiring
+    // C = A*B, via saxpy3 method, phases 2 to 5
     //==========================================================================
 
-    bool done = false ;
-
-    #ifndef GBCOMPACT
-
-        //----------------------------------------------------------------------
-        // define the worker for the switch factory
-        //----------------------------------------------------------------------
-
-        #define GB_Asaxpy3B(add,mult,xname) \
-            GB (_Asaxpy3B_ ## add ## mult ## xname)
-
-        #define GB_AxB_WORKER(add,mult,xname)                                  \
-        {                                                                      \
-            info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp, Mask_struct, \
-                M_packed_in_place, A, A_is_pattern, B, B_is_pattern,           \
-                SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context) ;       \
-            done = (info != GrB_NO_VALUE) ;                                    \
-        }                                                                      \
-        break ;
+    if (C_iso)
+    {
 
         //----------------------------------------------------------------------
-        // launch the switch factory
+        // C is iso; compute the pattern of C<#>=A*B with the any_pair semiring
         //----------------------------------------------------------------------
 
-        if (builtin_semiring)
+        GBURBLE ("(iso sparse saxpy) ") ;
+        info = GB (_Asaxpy3B__any_pair_iso) (C, M, Mask_comp, Mask_struct,
+            M_in_place, A, true, B, true, SaxpyTasks, ntasks, nfine,
+            nthreads, do_sort, Context) ;
+        if (info == GrB_SUCCESS)
         { 
-            #include "GB_AxB_factory.c"
+            memcpy (C->x, cscalar, csize) ;
         }
 
-    #endif
+    }
+    else
+    {
 
-    //--------------------------------------------------------------------------
-    // generic saxpy3 method
-    //--------------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // C is non-iso
+        //----------------------------------------------------------------------
 
-    if (!done)
-    { 
-        ASSERT (!is_any_pair_semiring) ;
-        info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
-            M_packed_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
-            flipxy, GB_SAXPY_METHOD_3,
-            SaxpyTasks, ntasks, nfine, nthreads, do_sort,
-            Context) ;
+        GBURBLE ("(sparse saxpy) ") ;
+        bool done = false ;
+
+        #ifndef GBCOMPACT
+
+            //------------------------------------------------------------------
+            // define the worker for the switch factory
+            //------------------------------------------------------------------
+
+            #define GB_Asaxpy3B(add,mult,xname) \
+                GB (_Asaxpy3B_ ## add ## mult ## xname)
+
+            #define GB_AxB_WORKER(add,mult,xname)                           \
+            {                                                               \
+                info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,       \
+                    Mask_struct, M_in_place, A, A_is_pattern, B,            \
+                    B_is_pattern, SaxpyTasks, ntasks, nfine, nthreads,      \
+                    do_sort, Context) ;                                     \
+                done = (info != GrB_NO_VALUE) ;                             \
+            }                                                               \
+            break ;
+
+            //------------------------------------------------------------------
+            // launch the switch factory
+            //------------------------------------------------------------------
+
+            if (builtin_semiring)
+            { 
+                #include "GB_AxB_factory.c"
+            }
+
+        #endif
+
+        //----------------------------------------------------------------------
+        // generic saxpy3 method
+        //----------------------------------------------------------------------
+
+        if (!done)
+        { 
+            info = GB_AxB_saxpy_generic (C, M, Mask_comp, Mask_struct,
+                M_in_place, A, A_is_pattern, B, B_is_pattern, semiring,
+                flipxy, GB_SAXPY_METHOD_3,
+                SaxpyTasks, ntasks, nfine, nthreads, do_sort,
+                Context) ;
+        }
     }
 
     if (info != GrB_SUCCESS)

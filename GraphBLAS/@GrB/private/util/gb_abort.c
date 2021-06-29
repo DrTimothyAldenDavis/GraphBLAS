@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 void gb_abort ( void )      // failure
 {

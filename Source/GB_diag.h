@@ -14,7 +14,7 @@
 GrB_Info GB_Matrix_diag     // construct a diagonal matrix from a vector
 (
     GrB_Matrix C,                   // output matrix
-    const GrB_Matrix V,             // input vector (as an n-by-1 matrix)
+    const GrB_Matrix V_input,       // input vector (as an n-by-1 matrix)
     int64_t k,
     GB_Context Context
 ) ;

@@ -7,15 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// Extracts all tuples from a matrix, like [I,J,X] = find (A) in MATLAB.  If
-// any parameter I, J and/or X is NULL, then that component is not extracted.
-// The size of the I, J, and X arrays (those that are not NULL) is given by
-// nvals, which must be at least as large as GrB_nvals (&nvals, A).  The values
-// in the matrix are typecasted to the type of X, as needed.
+// Extracts all tuples from a matrix, like [I,J,X] = find (A).  If any
+// parameter I, J and/or X is NULL, then that component is not extracted.  The
+// size of the I, J, and X arrays (those that are not NULL) is given by nvals,
+// which must be at least as large as GrB_nvals (&nvals, A).  The values in the
+// matrix are typecasted to the type of X, as needed.
 
 // If any parameter I, J, and/or X is NULL, that component is not extracted.
 // So to extract just the row and col indices, pass I and J as non-NULL,
 // and X as NULL.  This is like [I,J,~] = find (A).
+
+// If A is iso and X is not NULL, the iso scalar Ax [0] is expanded into X.
 
 #include "GB.h"
 

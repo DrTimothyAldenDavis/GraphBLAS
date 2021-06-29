@@ -59,7 +59,7 @@ GrB_Info GB_AxB_saxpy_generic
     const GrB_Matrix M,
     bool Mask_comp,
     const bool Mask_struct,
-    const bool M_packed_in_place,   // ignored if C is bitmap
+    const bool M_in_place,          // ignored if C is bitmap
     const GrB_Matrix A,
     bool A_is_pattern,
     const GrB_Matrix B,
@@ -82,6 +82,7 @@ GrB_Info GB_AxB_saxpy_generic
 
 #define GB_SAXPY_METHOD_3 3
 #define GB_SAXPY_METHOD_BITMAP 5
+#define GB_SAXPY_METHOD_ISO_FULL 6
 
 #endif
 

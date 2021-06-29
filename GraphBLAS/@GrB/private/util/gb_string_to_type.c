@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 GrB_Type gb_string_to_type      // return the GrB_Type from a string
 (

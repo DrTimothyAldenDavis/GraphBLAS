@@ -121,7 +121,7 @@ void mexFunction
     // C<M> = accum(C,A+B)
     METHOD (GrB_Matrix_eWiseAdd_BinaryOp_(C, M, accum, add, A, B, desc)) ;
 
-    // return C to MATLAB as a struct and free the GraphBLAS C
+    // return C as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
 
     FREE_ALL ;

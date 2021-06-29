@@ -97,7 +97,7 @@ void mexFunction
 
     // printf ("result %g\n", c) ;
 
-    // return C to MATLAB as a scalar
+    // return C as a scalar
     pargout [0] = mxCreateDoubleScalar (c) ;
 
     FREE_ALL ;

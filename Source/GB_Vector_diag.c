@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #define GB_FREE_WORK        \
-    GB_Matrix_free (&T) ;
+    GB_phbix_free (T) ;
 
 #define GB_FREE_ALL         \
     GB_FREE_WORK ;          \
@@ -98,6 +98,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     // extract the kth diagonal of A into the temporary hypersparse matrix T
     //--------------------------------------------------------------------------
 
+    // FUTURE: if A is bitmap or full, do not use GB_selector
     GB_OK (GB_selector (T, GB_DIAG_opcode, NULL, false, A, k, NULL, Context)) ;
     GB_OK (GB_convert_any_to_hyper (T, Context)) ;
     GB_MATRIX_WAIT (T) ;
@@ -107,16 +108,22 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     // transplant the pattern of T into the sparse vector V
     //--------------------------------------------------------------------------
 
-    int64_t vnz = GB_NNZ (T) ;
+    int64_t vnz = GB_nnz (T) ;
     float bitmap_switch = V->bitmap_switch ;
-    int sparsity_control = V->sparsity ;
+    int sparsity_control = V->sparsity_control ;
     bool static_header = V->static_header ;
 
     GB_OK (GB_new (&V, static_header,   // prior static or dynamic header
         vtype, n, 1, GB_Ap_malloc, true, GxB_SPARSE,
         GxB_NEVER_HYPER, 1, Context)) ;
-    V->sparsity = sparsity_control ;
+
+    V->sparsity_control = sparsity_control ;
     V->bitmap_switch = bitmap_switch ;
+    V->iso = T->iso ;       // OK
+    if (V->iso)
+    { 
+        GBURBLE ("(iso diag) ") ;
+    }
 
     V->p [0] = 0 ;
     V->p [1] = vnz ;
@@ -151,26 +158,20 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     else
     {
         // V->x = (vtype) T->x
-        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-        int nthreads = GB_nthreads (vnz, chunk, nthreads_max) ;
-        size_t vsize = vtype->size ;
-        size_t asize = atype->size ;
-        V->x = GB_MALLOC (vnz * vsize, GB_void, &(V->x_size)) ;
+        V->x = GB_XALLOC (V->iso, vnz, vtype->size, &(V->x_size)) ;
         if (V->x == NULL)
         { 
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_cast_array ((GB_void *) V->x, vcode, (GB_void *) T->x, acode,
-            NULL, asize, vnz, nthreads) ;
+        GB_cast_matrix (V, T, Context) ;
     }
 
     //--------------------------------------------------------------------------
     // finalize the vector V
     //--------------------------------------------------------------------------
 
-    V->nzmax = T->nzmax ;
     V->jumbled = T->jumbled ;
     V->nvec_nonempty = (vnz == 0) ? 0 : 1 ;
     V->magic = GB_MAGIC ;

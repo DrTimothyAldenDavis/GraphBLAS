@@ -31,7 +31,7 @@ else
         B = B.opaque ;
     end
     type = gboptype (atype, gbtype (B)) ;
-    if (contains (type, 'single'))
+    if (gb_contains (type, 'single'))
         type = 'single' ;
     else
         type = 'double' ;

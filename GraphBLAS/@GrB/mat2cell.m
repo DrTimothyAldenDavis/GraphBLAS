@@ -29,9 +29,10 @@ function C = mat2cell (A, m, n)
 if (isobject (A))
     A = A.opaque ;
     if (nargin < 3)
-        [ignore, n] = gbsize (A) ;
+        [~, n] = gbsize (A) ;
     end
 else
+    m = double (m) ;
     if (nargin < 3)
         n = size (A, 2) ;
     end

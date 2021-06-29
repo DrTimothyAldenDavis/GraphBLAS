@@ -20,7 +20,8 @@
 // If just A(i,j) is present but not B(i,j), or
 // if just B(i,j) is present but not A(i,j), then C(i,j) is not present.
 
-// ctype is the type of matrix C, and currently it is always op->ztype.
+// ctype is the type of matrix C, and currently it is always op->ztype,
+// but this might change in the future.
 
 // The pattern of C is the intersection of A and B, and also intersection with
 // M if present and not complemented.

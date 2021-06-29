@@ -9,7 +9,7 @@ function C = ctranspose (G)
 
 G = G.opaque ;
 
-if (contains (gbtype (G), 'complex'))
+if (gb_contains (gbtype (G), 'complex'))
     desc.in0 = 'transpose' ;
     C = GrB (gbapply ('conj', G, desc)) ;
 else

@@ -38,7 +38,7 @@ for k1 = 1:length(types)
         crange = 1 ;
     end
 
-    is_float = contains (atype, 'single') || contains (atype, 'double') ;
+    is_float = test_contains (atype, 'single') || test_contains (atype, 'double') ;
 
     for A_is_hyper = 0:1
     for A_is_csc   = 0:1
@@ -51,9 +51,9 @@ for k1 = 1:length(types)
 
         if (isequal (op, 'any'))
             tol = [ ] ;
-        elseif (contains (atype, 'single'))
+        elseif (test_contains (atype, 'single'))
             tol = 1e-5 ;
-        elseif (contains (atype, 'double'))
+        elseif (test_contains (atype, 'double'))
             tol = 1e-12 ;
         else
             tol = 0 ;

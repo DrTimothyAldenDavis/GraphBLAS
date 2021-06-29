@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // This demo illustrates the creation and use of a user-defined type for double
-// complex matrices and vectors.  Run the output of this program in MATLAB
+// complex matrices and vectors.  Run the *.m output of this program
 // to check the results.
 
 #include "graphblas_demos.h"
@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------
 
 // when printed, 1 is added to all row indices so the results can be
-// checked in MATLAB
+// checked later with the *.m file
 
 void print_complex_matrix (GrB_Matrix A, char *name)
 {
@@ -109,7 +109,7 @@ int main (int argc, char **argv)
     GxB_Matrix_fprint (C, "C", GxB_SHORT, stderr) ;
 
     // print the results
-    printf ("\n%% run this output of this program as a script in MATLAB:\n") ;
+    printf ("\n%% run this output of this program as a script:\n") ;
     print_complex_matrix (A, "A") ;
     print_complex_matrix (B, "B") ;
     print_complex_matrix (C, "C") ;

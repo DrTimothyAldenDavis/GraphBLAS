@@ -100,7 +100,7 @@ static inline bool GB_removeElement
         bool is_zombie ;
         if (cknz == cvlen)
         { 
-            // C(:,k) is packed so no binary search is needed to find C(i,k)
+            // C(:,k) is as-if-full so no binary search needed to find C(i,k)
             pleft = pleft + i ;
             ASSERT (GB_UNFLIP (Ci [pleft]) == i) ;
             found = true ;
@@ -161,7 +161,7 @@ GrB_Info GrB_Matrix_removeElement
         else
         { 
             // C is sparse or hypersparse, and jumbled
-            GB_OK (GB_Matrix_wait (C, "C", Context)) ;
+            GB_OK (GB_wait (C, "C (removeElement:jumbled)", Context)) ;
         }
         ASSERT (!GB_IS_FULL (C)) ;
         ASSERT (!GB_ZOMBIES (C)) ;
@@ -217,7 +217,7 @@ GrB_Info GrB_Matrix_removeElement
 
     // if C is sparse or hyper, it may have pending tuples
     bool C_is_pending = GB_PENDING (C) ;
-    if (C->nzmax == 0 && !C_is_pending)
+    if (GB_nnz (C) == 0 && !C_is_pending)
     { 
         // quick return
         return (GrB_SUCCESS) ;
@@ -236,7 +236,7 @@ GrB_Info GrB_Matrix_removeElement
         GrB_Info info ;
         GB_WHERE (C, GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Matrix_removeElement") ;
-        GB_OK (GB_Matrix_wait (C, "C", Context)) ;
+        GB_OK (GB_wait (C, "C (removeElement:pending tuples)", Context)) ;
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_JUMBLED (C)) ;
         ASSERT (!GB_PENDING (C)) ;

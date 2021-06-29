@@ -1,8 +1,7 @@
 function C = int64 (G)
-%INT64 cast a GraphBLAS matrix to MATLAB full int64 matrix.
-% C = int64 (G) typecasts the GrB matrix G to a MATLAB full int64 matrix.
-% The result C is full since MATLAB does not support sparse int64
-% matrices.
+%INT64 cast a GraphBLAS matrix to built-in full int64 matrix.
+% C = int64 (G) typecasts the GrB matrix G to a full int64 matrix.  The
+% result C is full since sparse int64 matrices are not built-in.
 %
 % To typecast the matrix G to a GraphBLAS sparse int64 matrix instead,
 % use C = GrB (G, 'int64').
@@ -15,5 +14,5 @@ function C = int64 (G)
 
 G = G.opaque ;
 desc.kind = 'full' ;
-C = gbfull (G, 'int64', int64 (0), desc) ;      % export as a MATLAB full matrix
+C = gbfull (G, 'int64', int64 (0), desc) ;      % export as a full matrix
 

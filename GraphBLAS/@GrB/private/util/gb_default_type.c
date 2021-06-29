@@ -13,7 +13,7 @@
 // If A or B are boolean, the type is taken from the other operand.
 // If either A or B are signed, then the type is signed.
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 GrB_Type gb_default_type        // return the default type to use
 (

@@ -41,8 +41,8 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
 
     double m = (double) A->vlen ;
     double n = (double) B->vdim ;
-    double anz = (double) GB_NNZ_HELD (A) ;
-    double bnz = (double) GB_NNZ_HELD (B) ;
+    double anz = (double) GB_nnz_held (A) ;
+    double bnz = (double) GB_nnz_held (B) ;
 
     int M_sparsity = (M == NULL) ? 0 : GB_sparsity (M) ;
     int B_sparsity = GB_sparsity (B) ;
@@ -167,9 +167,9 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
         // sparse/hyper, not bitmap.   TODO: give the user control over this
         // decision.
 
-        // TODO:  for bitmap*hyper and hyper*bitmap, create a packed version
-        // of the hyper matrix (like dot does), and construct C as bitmap.
-        // Then expand into C into hyper.
+        // TODO:  for bitmap*hyper and hyper*bitmap, create a hyper_shallow
+        // version of the hyper matrix (like dot does), and construct C as
+        // bitmap.  Then expand into C into hyper.
 
         switch (B_sparsity)
         {
@@ -199,7 +199,6 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
                 break ;
 
             case GxB_BITMAP : 
-
             case GxB_FULL : 
 
                 switch (A_sparsity)

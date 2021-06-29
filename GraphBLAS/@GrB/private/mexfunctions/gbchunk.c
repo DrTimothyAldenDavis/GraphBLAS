@@ -12,7 +12,7 @@
 // chunk = gbchunk ;
 // chunk = gbchunk (chunk) ;
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: c = GrB.chunk ; or GrB.chunk (c)"
 

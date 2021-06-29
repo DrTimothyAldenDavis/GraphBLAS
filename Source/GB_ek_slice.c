@@ -50,7 +50,7 @@ void GB_ek_slice            // slice a matrix
 
     int64_t anvec = A->nvec ;
     int64_t avlen = A->vlen ;
-    int64_t anz = GB_NNZ_HELD (A) ;
+    int64_t anz = GB_nnz_held (A) ;
     const int64_t *Ap = A->p ;      // NULL if bitmap or full
 
     //--------------------------------------------------------------------------

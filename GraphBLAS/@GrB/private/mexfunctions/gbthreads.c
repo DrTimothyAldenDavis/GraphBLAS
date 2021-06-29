@@ -12,7 +12,7 @@
 // nthreads = gbthreads
 // nthreads = gbthreads (nthreads)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: nthreads = GrB.threads ; or GrB.threads (nthreads)"
 

@@ -17,7 +17,6 @@ function C = bitcmp (A, assumedtype)
 %   C = bitcmp (A)
 %   fprintf ('\nA: ') ; fprintf ('%3x ', A) ; fprintf ('\n') ;
 %   fprintf ('\nC: ') ; fprintf ('%3x ', C) ; fprintf ('\n') ;
-%   % in MATLAB:
 %   C2 = bitcmp (uint8 (A))
 %   isequal (C2, C)
 %
@@ -37,7 +36,7 @@ end
 
 atype = gbtype (A) ;
 
-if (contains (atype, 'complex'))
+if (gb_contains (atype, 'complex'))
     error ('inputs must be real') ;
 end
 
@@ -45,7 +44,7 @@ if (isequal (atype, 'logical'))
     error ('inputs must not be logical') ;
 end
 
-if (~contains (assumedtype, 'int'))
+if (~gb_contains (assumedtype, 'int'))
     error ('assumedtype must be an integer type') ;
 end
 

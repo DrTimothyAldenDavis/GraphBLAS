@@ -12,7 +12,7 @@
 // gbsemiringinfo (semiring_string)
 // gbsemiringinfo (semiring_string, type)
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: GrB.semiringinfo (s) or GrB.semiringinfo (s,type)"
 

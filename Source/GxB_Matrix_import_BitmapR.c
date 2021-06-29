@@ -20,7 +20,7 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     void **Ax,          // values
     GrB_Index Ab_size,  // size of Ab in bytes
     GrB_Index Ax_size,  // size of Ax in bytes
-    bool is_uniform,    // if true, A has uniform values (TODO:::unsupported)
+    bool iso,           // if true, A is iso
 
     GrB_Index nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
@@ -32,7 +32,7 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     //--------------------------------------------------------------------------
 
     GB_WHERE1 ("GxB_Matrix_import_BitmapR (&A, type, nrows, ncols, "
-        "&Ab, &Ax, Ab_size, Ax_size, is_uniform, nvals, desc)") ;
+        "&Ab, &Ax, Ab_size, Ax_size, iso, nvals, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_import_BitmapR") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
@@ -40,15 +40,15 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     // import the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (A, type, ncols, nrows, false,
+    info = GB_import (false, A, type, ncols, nrows, false,
         NULL, 0,        // Ap
         NULL, 0,        // Ah
         Ab,   Ab_size,  // Ab
         NULL, 0,        // Ai
         Ax,   Ax_size,  // Ax
         nvals, false, 0,                    // nvals for bitmap
-        GxB_BITMAP, false,
-        is_uniform, Context) ;              // bitmap by row
+        GxB_BITMAP, false,                  // bitmap by row
+        iso, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

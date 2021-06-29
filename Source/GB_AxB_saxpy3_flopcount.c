@@ -42,8 +42,7 @@
 // max (first and last) row indices in A and M (if M is present).  If A and M
 // are not hypersparse, the time taken is O(nnz(B)+n).  If all matrices are
 // hypersparse, the time is O(nnz(B)*log(h)) where h = max # of vectors present
-// in A and M.  In pseudo-MATLAB, and assuming B is in standard (not
-// hypersparse) form:
+// in A and M.  Assuming B is in standard (not hypersparse) form:
 
 /*
     [m n] = size (B) ;
@@ -77,7 +76,7 @@
     GB_WERK_POP (B_ek_slicing, int64_t) ;   \
 }
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_AxB_saxpy3_flopcount
 (
     int64_t *Mwork,             // amount of work to handle the mask M
@@ -141,7 +140,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
         Mp = M->p ;
         mnvec = M->nvec ;
         mvlen = M->vlen ;
-        M_is_dense = GB_is_packed (M) ;
+        M_is_dense = GB_IS_BITMAP (M) || GB_as_if_full (M) ;
     }
 
     //--------------------------------------------------------------------------

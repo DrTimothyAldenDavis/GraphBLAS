@@ -15,7 +15,7 @@ function C = gb_union_op (op, A, B)
 % only to the set intersection, this function applies the operator to the
 % set union of A and B.
 %
-% The inputs are MATLAB matrices or GraphBLAS structs.  The output
+% The inputs are built-in matrices or GraphBLAS structs.  The output
 % is a GraphBLAS struct.
 %
 % See also GrB/lt, GrB/min, GrB/max, GrB/ne, GrB/pow2, GrB/atan2,

@@ -15,6 +15,7 @@
 GrB_Info GB_bitmap_selector
 (
     GrB_Matrix C,               // output matrix, static header
+    const bool C_iso,           // if true, C is iso
     GB_Select_Opcode opcode,    // selector opcode
     const GxB_select_function user_select,      // user select function
     const bool flipij,          // if true, flip i and j for user operator
@@ -31,7 +32,7 @@ GrB_Info GB_bitmap_selector
 
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A for bitmap selector", GB0) ;
-    ASSERT (GB_is_packed (A)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
     ASSERT (opcode != GB_RESIZE_opcode) ;
     ASSERT (opcode != GB_NONZOMBIE_opcode) ;
     ASSERT (C != NULL && C->static_header) ;
@@ -40,17 +41,19 @@ GrB_Info GB_bitmap_selector
     // get A
     //--------------------------------------------------------------------------
 
-    int64_t anz = GB_NNZ_HELD (A) ;
-    const GB_Type_code typecode = A->type->code ;
+    int64_t anz = GB_nnz_held (A) ;
+    const size_t asize = A->type->size ;
+    const GB_Type_code acode = A->type->code ;
 
     //--------------------------------------------------------------------------
     // allocate C
     //--------------------------------------------------------------------------
 
     // C->b and C->x are malloc'd, not calloc'd
+    // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, true, // always bitmap, static header
         A->type, A->vlen, A->vdim, GB_Ap_calloc, true,
-        GxB_BITMAP, false, A->hyper_switch, -1, anz, true, Context)) ;
+        GxB_BITMAP, false, A->hyper_switch, -1, anz, true, C_iso, Context)) ;
     int64_t cnvals ;
 
     //--------------------------------------------------------------------------
@@ -61,13 +64,12 @@ GrB_Info GB_bitmap_selector
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
-    // clear C for the EQ_ZERO opcode
+    // set the iso value of C
     //--------------------------------------------------------------------------
 
-    // All other opcodes set C->x in the worker below
-    if (opcode == GB_EQ_ZERO_opcode)
+    if (C_iso)
     { 
-        GB_memset (C->x, 0, anz * A->type->size, nthreads_max) ;
+        GB_iso_select (C->x, opcode, xthunk, A->x, acode, asize) ;
     }
 
     //--------------------------------------------------------------------------
@@ -82,6 +84,8 @@ GrB_Info GB_bitmap_selector
             flipij, ithunk, (atype *) xthunk, user_select, nthreads) ;  \
     }                                                                   \
     break ;
+
+    const GB_Type_code typecode = (A->iso) ? GB_ignore_code : acode ;
     #include "GB_select_factory.c"
 
     //--------------------------------------------------------------------------

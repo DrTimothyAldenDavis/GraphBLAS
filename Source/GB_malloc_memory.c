@@ -36,7 +36,9 @@ static inline void *GB_malloc_helper
         // round up the size to the nearest power of two
         (*size) = ((size_t) 1) << k ;
         p = GB_Global_free_pool_get (k) ;
-//      if (p != NULL) printf ("malloc from pool: %p %ld\n", p, *size) ;
+        #ifdef GB_MEMDUMP
+        if (p != NULL) printf ("malloc from pool: %p %ld\n", p, *size) ;
+        #endif
     }
 
     if (p == NULL)
@@ -57,9 +59,13 @@ static inline void *GB_malloc_helper
             // success
             GB_Global_nmalloc_increment ( ) ;
         }
-//      printf ("hard malloc %p %ld\n", p, *size) ;
+        #ifdef GB_MEMDUMP
+        printf ("hard malloc %p %ld\n", p, *size) ;
+        #endif
     }
-//  GB_Global_free_pool_dump (2) ; GB_Global_memtable_dump ( ) ;
+    #ifdef GB_MEMDUMP
+    GB_Global_free_pool_dump (2) ; GB_Global_memtable_dump ( ) ;
+    #endif
 
     return (p) ;
 }
@@ -68,7 +74,7 @@ static inline void *GB_malloc_helper
 // GB_malloc_memory
 //------------------------------------------------------------------------------
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 void *GB_malloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
@@ -146,7 +152,6 @@ void *GB_malloc_memory      // pointer to allocated block of memory
 
     (*size_allocated) = (p == NULL) ? 0 : size ;
     ASSERT (GB_IMPLIES (p != NULL, size == GB_Global_memtable_size (p))) ;
-//  GB_Global_free_pool_dump (2) ;
     return (p) ;
 }
 

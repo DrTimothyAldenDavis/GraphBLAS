@@ -27,7 +27,7 @@
 //      // or use this (but not both):
 //      GxB_init (mode, malloc, calloc, realloc, free, true) ;
 //
-// To use GraphBLAS from within a MATLAB mexFunction:
+// To use GraphBLAS from within a mexFunction:
 //
 //      #include "mex.h"
 //      GxB_init (mode, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ;

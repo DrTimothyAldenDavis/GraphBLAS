@@ -18,8 +18,8 @@
 #define GB_EMULT_METHOD_02A 2       /* use GB_emult_02 (A,B) */
 #define GB_EMULT_METHOD_02B (-2)    /* use GB_emult_02 (B,A, flipxy true) */
 #define GB_EMULT_METHOD_03  3       /* use GB_emult_03 */
-#define GB_EMULT_METHOD_04A 4       /* use GB_emult_04 (M,A,B) */
-#define GB_EMULT_METHOD_04B (-4)    /* use GB_emult_04 (M,B,A, flipxy true) */
+#define GB_EMULT_METHOD_04A 4       /* use GB_emult_04 (A,B) */
+#define GB_EMULT_METHOD_04B (-4)    /* use GB_emult_04 (B,A, flipxy true) */
 #define GB_EMULT_METHOD_05  5       /* use GB_emult_bitmap method 05 */
 #define GB_EMULT_METHOD_06  6       /* use GB_emult_bitmap method 06 */
 #define GB_EMULT_METHOD_07  7       /* use GB_emult_bitmap method 07 */
@@ -171,6 +171,17 @@ GrB_Info GB_bitmap_emult    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     const GrB_Matrix B,     // input B matrix (bitmap/full)
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     GB_Context Context
+) ;
+
+bool GB_iso_emult           // c = op(a,b), return true if C is iso
+(
+    // output
+    GB_void *restrict c,    // output scalar of iso array
+    // input
+    GrB_Type ctype,         // type of c
+    GrB_Matrix A,           // input matrix
+    GrB_Matrix B,           // input matrix
+    GrB_BinaryOp op         // binary operator
 ) ;
 
 #endif

@@ -12,7 +12,7 @@
 // b = gbburble ;
 // b = gbburble (b) ;
 
-#include "gb_matlab.h"
+#include "gb_interface.h"
 
 #define USAGE "usage: b = GrB.burble ; or GrB.burble (b)"
 

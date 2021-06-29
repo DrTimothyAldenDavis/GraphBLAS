@@ -14,8 +14,9 @@
 
 #include "GB_mxm.h"
 #include "GB_binop.h"
+#include "GB_AxB__include1.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__include.h"
+#include "GB_AxB__include2.h"
 #endif
 
 #define GB_FREE_WORK                            \
@@ -26,13 +27,15 @@
 #define GB_FREE_ALL                             \
 {                                               \
     GB_FREE_WORK ;                              \
-    GB_phbix_free (C) ;                       \
+    GB_phbix_free (C) ;                         \
 }
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
+GB_PUBLIC
 GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 (
     GrB_Matrix C,                   // output matrix, static header
+    const bool C_iso,               // true if C is iso
+    const GB_void *cscalar,         // iso value of C
     const GrB_Matrix M,             // mask matrix
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix
@@ -125,7 +128,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const size_t msize = M->type->size ;
     const int64_t mvlen = M->vlen ;
     const int64_t mvdim = M->vdim ;
-    const int64_t mnz = GB_NNZ (M) ;
+    const int64_t mnz = GB_nnz (M) ;
     const int64_t mnvec = M->nvec ;
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
@@ -159,17 +162,12 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int C_sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
 
     // C is sparse or hypersparse, not full or bitmap
-    info = GB_new_bix (&C, true, // sparse or hyper (from M), static header
+    // set C->iso = C_iso   OK
+    GB_OK (GB_new_bix (&C, true, // sparse or hyper (from M), static header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
         C_sparsity, true, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
-        true, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+        true, C_iso, Context)) ;
 
     int64_t *restrict Cp = C->p ;
     int64_t *restrict Ch = C->h ;
@@ -185,9 +183,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // copy Mp and Mh into C
     //--------------------------------------------------------------------------
 
-    nthreads = GB_nthreads (cnvec, chunk, nthreads_max) ;
-
     // M is sparse or hypersparse; C is the same as M
+    nthreads = GB_nthreads (cnvec, chunk, nthreads_max) ;
     GB_memcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), nthreads) ;
     if (M_is_hyper)
     { 
@@ -245,48 +242,70 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // C<M> = A'*B, via masked dot product method and built-in semiring
     //--------------------------------------------------------------------------
 
-    bool done = false ;
-
-    #ifndef GBCOMPACT
-
-        //----------------------------------------------------------------------
-        // define the worker for the switch factory
-        //----------------------------------------------------------------------
-
-        #define GB_Adot3B(add,mult,xname) GB (_Adot3B_ ## add ## mult ## xname)
-
-        #define GB_AxB_WORKER(add,mult,xname)                               \
-        {                                                                   \
-            info = GB_Adot3B (add,mult,xname) (C, M, Mask_struct,           \
-                A, A_is_pattern, B, B_is_pattern,                           \
-                TaskList, ntasks, nthreads) ;                               \
-            done = (info != GrB_NO_VALUE) ;                                 \
-        }                                                                   \
-        break ;
-
-        //----------------------------------------------------------------------
-        // launch the switch factory
-        //----------------------------------------------------------------------
-
-        GB_Opcode mult_opcode, add_opcode ;
-        GB_Type_code xcode, ycode, zcode ;
-        if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern, semiring,
-            flipxy, &mult_opcode, &add_opcode, &xcode, &ycode, &zcode))
-        { 
-            #include "GB_AxB_factory.c"
-        }
-
-    #endif
-
-    //--------------------------------------------------------------------------
-    // C<M> = A'*B, via masked dot product method and typecasting
-    //--------------------------------------------------------------------------
-
-    if (!done)
+    if (C_iso)
     { 
-        #define GB_DOT3_GENERIC
-        GB_BURBLE_MATRIX (C, "(generic C<M>=A'*B) ") ;
-        #include "GB_AxB_dot_generic.c"
+
+        //----------------------------------------------------------------------
+        // C is iso; compute the pattern of C<M>=A'*B with the any_pair semiring
+        //----------------------------------------------------------------------
+
+        memcpy (C->x, cscalar, ctype->size) ;
+        GB_OK (GB (_Adot3B__any_pair_iso) (C, M, Mask_struct, A, true, B,
+            true, TaskList, ntasks, nthreads)) ;
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // C is non-iso
+        //----------------------------------------------------------------------
+
+        bool done = false ;
+
+        #ifndef GBCOMPACT
+
+            //------------------------------------------------------------------
+            // define the worker for the switch factory
+            //------------------------------------------------------------------
+
+            #define GB_Adot3B(add,mult,xname) \
+                GB (_Adot3B_ ## add ## mult ## xname)
+
+            #define GB_AxB_WORKER(add,mult,xname)                           \
+            {                                                               \
+                info = GB_Adot3B (add,mult,xname) (C, M, Mask_struct,       \
+                    A, A_is_pattern, B, B_is_pattern,                       \
+                    TaskList, ntasks, nthreads) ;                           \
+                done = (info != GrB_NO_VALUE) ;                             \
+            }                                                               \
+            break ;
+
+            //------------------------------------------------------------------
+            // launch the switch factory
+            //------------------------------------------------------------------
+
+            GB_Opcode mult_opcode, add_opcode ;
+            GB_Type_code xcode, ycode, zcode ;
+            if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern,
+                semiring, flipxy, &mult_opcode, &add_opcode, &xcode, &ycode,
+                &zcode))
+            { 
+                #include "GB_AxB_factory.c"
+            }
+
+        #endif
+
+        //----------------------------------------------------------------------
+        // C<M> = A'*B, via masked dot product method and typecasting
+        //----------------------------------------------------------------------
+
+        if (!done)
+        { 
+            #define GB_DOT3_GENERIC
+            GB_BURBLE_MATRIX (C, "(generic C<M>=A'*B) ") ;
+            #include "GB_AxB_dot_generic.c"
+        }
     }
 
     //--------------------------------------------------------------------------

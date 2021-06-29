@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// These methods are now only used by GB_Matrix_wait.
+// These methods are now only used by GB_wait.
 
 #ifndef GB_JAPPEND_H
 #define GB_JAPPEND_H

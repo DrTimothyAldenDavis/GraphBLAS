@@ -56,7 +56,7 @@ void GB_binop_new
     //--------------------------------------------------------------------------
 
     if (name != NULL)
-    { 
+    {
         // see if the typecast "(GxB_binary_function)" appears in the name
         char *p = NULL ;
         p = strstr ((char *) name, "GxB_binary_function") ;

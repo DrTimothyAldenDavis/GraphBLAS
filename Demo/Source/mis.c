@@ -14,8 +14,7 @@
 // No copyright claim is made for this particular file; the above copyright
 // applies to all of SuiteSparse:GraphBLAS, not this file.
 
-// This method has been updated as of Version 2.2 of SuiteSparse:GraphBLAS.  It
-// now uses GrB_vxm instead of GrB_mxv.
+// FUTURE: revise this method and add it to LAGraph
 
 #include "GraphBLAS.h"
 #undef GB_PUBLIC
@@ -35,7 +34,8 @@
 // should be uninitialized on input.)
 
 // The graph cannot have any self edges, and it must be symmetric.  These
-// conditions are not checked.  Self-edges will cause the method to stall.
+// conditions are not checked.  Self-edges (diagonal entries) will cause the
+// method to stall.
 
 // Singletons require special treatment.  Since they have no neighbors, their
 // prob is never greater than the max of their neighbors, so they never get
@@ -50,6 +50,9 @@ GrB_Info mis                    // compute a maximal independent set
     int64_t seed                // random number seed
 )
 {
+    printf ("MIS demo: this code old, and slower than it will be once the\n") ;
+    printf ("TODOs are fixed below.  MIS will be added to LAGraph and\n") ;
+    printf ("removed from the GraphBLAS/Demo folder.\n") ;
 
     GrB_Vector iset = NULL ;
     GrB_Vector prob = NULL ;            // random probability for each node
@@ -88,15 +91,18 @@ GrB_Info mis                    // compute a maximal independent set
 
     // compute the degree of each nodes
     GrB_Vector_new (&degrees, GrB_FP64, n) ;
+    // TODO: use GrB_mxv with v iso full, semiring GrB_PLUS_PAIR_FP64
     GrB_Matrix_reduce_Monoid (degrees, NULL, NULL, GrB_PLUS_MONOID_FP64,
         A, NULL) ;
 
     // singletons are not candidates; they are added to iset first instead
     // candidates[degree != 0] = 1
+    // TODO: use GrB_DESC_S
     GrB_Vector_assign_BOOL (candidates, degrees, NULL, true, GrB_ALL, n, NULL); 
 
     // add all singletons to iset
     // iset[degree == 0] = 1
+    // TODO: use GrB_DESC_RSC, but only do this if nvals(degree) < n
     GrB_Vector_assign_BOOL (iset, degrees, NULL, true, GrB_ALL, n, GrB_DESC_RC);
 
     // Iterate while there are candidates to check.
@@ -108,18 +114,19 @@ GrB_Info mis                    // compute a maximal independent set
     while (nvals > 0)
     {
         // sparsify the random number seeds (just keep it for each candidate) 
-        GrB_Vector_assign (Seed, candidates, NULL, Seed, GrB_ALL, n, GrB_DESC_R) ;
+        GrB_Vector_assign (Seed, candidates, NULL, Seed, GrB_ALL, n,
+            GrB_DESC_R) ;
 
         // compute a random probability scaled by inverse of degree
         // GrB_Vector_apply (prob, candidates, NULL, set_random, degrees,
         //      GrB_DESC_R) ;
         prand_xget (X, Seed) ;
         GrB_Vector_eWiseMult_BinaryOp (prob, candidates, NULL, set_random,
-            degrees, X, GrB_DESC_R) ;
+            degrees, X, GrB_DESC_R) ;   // TODO: use GrB_DESC_RS
 
         // compute the max probability of all neighbors
         GrB_vxm (neighbor_max, candidates, NULL, maxSelect1st,
-            prob, A, GrB_DESC_R) ;
+            prob, A, GrB_DESC_R) ;      // TODO: use GrB_DESC_RS
 
         // select node if its probability is > than all its active neighbors
         GrB_Vector_eWiseAdd_BinaryOp (new_members, NULL, NULL, GrB_GT_FP64,
@@ -132,17 +139,18 @@ GrB_Info mis                    // compute a maximal independent set
         // remove new members from set of candidates
         // candidates<!new_members> = candidates
         GrB_Vector_apply (candidates, new_members, NULL, GrB_IDENTITY_BOOL,
-            candidates, GrB_DESC_RC) ;
+            candidates, GrB_DESC_RC) ;      // TODO: use GrB_DESC_RSC
 
         GrB_Vector_nvals (&nvals, candidates) ;
         if (nvals == 0) { break ; }                  // early exit condition
 
         // Neighbors of new members can also be removed from candidates
+        // TODO: use ANY_PAIR?
         GrB_vxm (new_neighbors, candidates, NULL, GrB_LOR_LAND_SEMIRING_BOOL,
-            new_members, A, NULL) ;
+            new_members, A, NULL) ;         // TODO: use GrB_DESC_S
         // candidates<!new_neighbors> = candidates
         GrB_Vector_apply (candidates, new_neighbors, NULL, GrB_IDENTITY_BOOL,
-            candidates, GrB_DESC_RC) ;
+            candidates, GrB_DESC_RC) ;      // TODO: use GrB_DESC_RSC?
 
         GrB_Vector_nvals (&nvals, candidates) ;
 

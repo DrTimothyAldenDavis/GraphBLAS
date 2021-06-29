@@ -10,7 +10,8 @@
 // GB_add computes C=A+B, C<M>=A+B, or C<!M>=A+B using the given operator
 // element-wise on the matrices A and B.  The result is typecasted as needed.
 // The pattern of C is the union of the pattern of A and B, intersection with
-// the mask M, if present.
+// the mask M, if present.  On input, the contents of C are undefined; it is
+// an output-only matrix in a static header.
 
 // Let the op be z=f(x,y) where x, y, and z have type xtype, ytype, and ztype.
 // If both A(i,j) and B(i,j) are present, then:
@@ -28,10 +29,10 @@
 // ctype is the type of matrix C.  The pattern of C is the union of A and B.
 
 // op may be NULL.  In this case, the intersection of A and B must be empty.
-// This is used by GB_Matrix_wait only, for merging the pending tuple matrix T
-// into A.  In this case, the result C is always sparse or hypersparse, not
-// bitmap or full.  Any duplicate pending tuples have already been summed in T,
-// so the intersection of T and A is always empty.
+// This is used by GB_wait only, for merging the pending tuple matrix T into A.
+// In this case, the result C is always sparse or hypersparse, not bitmap or
+// full.  Any duplicate pending tuples have already been summed in T, so the
+// intersection of T and A is always empty.
 
 // Some methods should not exploit the mask, but leave it for later.
 // See GB_ewise and GB_accum_mask: the only places where this function is
@@ -39,11 +40,17 @@
 // mask being applied later.  GB_add_sparsity determines whether or not the
 // mask should be applied now, or later.
 
+// If A and B are iso, the op is not positional, and op(A,B) == A == B, then C
+// is iso.  If A and B are known to be disjoint, then op(A,B) is ignored when
+// determining if C is iso.
+
+// C on input is empty, see GB_add_phase2.c.
+
+
 #include "GB_add.h"
 
 #define GB_FREE_ALL ;
 
-GB_PUBLIC   // accessed by the MATLAB tests in GraphBLAS/Test only
 GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
     GrB_Matrix C,           // output matrix, static header

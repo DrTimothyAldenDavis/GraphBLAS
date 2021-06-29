@@ -1,6 +1,6 @@
 % GraphBLAS/GraphBLAS/test/tcov/Contents.m:
 %
-% The gbcov script compiles the MATLAB interface with statement coverage
+% The gbcov script compiles the interface with statement coverage
 % enabled, and then runs the full test suite (../gbtest).  Next, it uses
 % gbcovshow to create the statement coverage report in tmp/cover (one for
 % each file).  To remove all temporary files, use 'make distclean' or
@@ -10,7 +10,7 @@
 %
 % Utilities:
 %
-%   gbcovmake  - compile the MATLAB interface for statement coverage testing
+%   gbcovmake  - compile the interface for statement coverage testing
 %   gbcovshow  - report GraphBLAS statement coverage
 %   gbcov_edit - create a version of GraphBLAS for statement coverage tests
 
