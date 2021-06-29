@@ -1,3 +1,8 @@
+Version 5.1.1, June 29, 2021
+
+    * (27) bug fix: v5.1.0 had a wrong version of a file (GB_ops.c,
+        which wouldn't compile) posted by mistake.
+
 Version 5.1.0, June 28, 2021
 
     * iso matrices and vectors added

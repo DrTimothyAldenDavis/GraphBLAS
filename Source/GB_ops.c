@@ -33,7 +33,7 @@ GB_OPAQUE (FC32)   = {GB_MAGIC, 0, sizeof (GxB_FC32_t), GB_FC32_code  , "float c
 GB_OPAQUE (FC64)   = {GB_MAGIC, 0, sizeof (GxB_FC64_t), GB_FC64_code  , "double complex"} ;
 
 // extern predefined types (handles to opaque types)
-GB_PUBLIC GrB_Type
+GrB_Type
     GrB_BOOL   = & GB_OPAQUE (BOOL)   ,
     GrB_INT8   = & GB_OPAQUE (INT8)   ,
     GrB_UINT8  = & GB_OPAQUE (UINT8)  ,
@@ -67,7 +67,6 @@ GB_PUBLIC GrB_Type
         o, o,                   /* default: axb, #threads */            \
         0                       /* no sort */                           \
     } ;                                                                 \
-    GB_PUBLIC                                                           \
     GrB_Descriptor GRB (DESC_ ## name) = & GB_OPAQUE (desc_ ## name) ;
 
 //       name     outp         structure     complement  in0       in1
@@ -150,18 +149,18 @@ GB_PRAGMA (warning (disable : 4146 ))
 
 #define GRB_OP1z(op,str,z_t,ztype)                                          \
     GB_OP1zx (op, str, z_t, ztype, GB_TYPE, GB_XTYPE)                       \
-    GB_PUBLIC GrB_UnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_UnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
 
 #define GRB_OP1(op,str) GRB_OP1z (op, str, GB_TYPE, GB_XTYPE)
 
 #define GXB_OP1z(op,str,z_t,ztype)                                          \
     GB_OP1zx (op, str, z_t, ztype, GB_TYPE, GB_XTYPE)                       \
-    GB_PUBLIC GrB_UnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_UnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
 
 #define GXB_OP1(op,str) GXB_OP1z (op, str, GB_TYPE, GB_XTYPE)
 
 #define GXB_OP1_RENAME(op)                                                  \
-    GB_PUBLIC GrB_UnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_UnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
 
 // helper macros to define binary operators
 #define GB_OP2zxy(op,str,z_t,ztype,x_t,xtype,y_t,ytype)                     \
@@ -179,19 +178,19 @@ GB_PRAGMA (warning (disable : 4146 ))
 
 #define GRB_OP2z(op,str,z_t,ztype)                                          \
     GB_OP2zxy (op, str, z_t, ztype, GB_TYPE, GB_XTYPE, GB_TYPE, GB_XTYPE)   \
-    GB_PUBLIC GrB_BinaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_BinaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
 
 #define GRB_OP2(op,str) GRB_OP2z (op, str, GB_TYPE, GB_XTYPE)
 
 #define GXB_OP2z(op,str,z_t,ztype)                                          \
     GB_OP2zxy (op, str, z_t, ztype, GB_TYPE, GB_XTYPE, GB_TYPE, GB_XTYPE)   \
-    GB_PUBLIC GrB_BinaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_BinaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
 
 #define GXB_OP2(op,str) GXB_OP2z (op, str, GB_TYPE, GB_XTYPE)
 
 #define GXB_OP2shift(op,str) \
     GB_OP2zxy (op, str, GB_TYPE, GB_XTYPE, GB_TYPE, GB_XTYPE, int8_t, INT8) \
-    GB_PUBLIC GrB_BinaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+    GrB_BinaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
 
 #define GB_TYPE             bool
 #define GB_XTYPE            BOOL
@@ -270,11 +269,11 @@ GB_PRAGMA (warning (disable : 4146 ))
 // 5 special cases:
 // purely boolean operators: these do not have _BOOL in their name
 // They are not created by the templates above.
-GB_PUBLIC GrB_UnaryOp  GrB_LNOT  = & GB_OPAQUE (LNOT_BOOL) ;
-GB_PUBLIC GrB_BinaryOp GrB_LOR   = & GB_OPAQUE (LOR_BOOL) ;
-GB_PUBLIC GrB_BinaryOp GrB_LAND  = & GB_OPAQUE (LAND_BOOL) ;
-GB_PUBLIC GrB_BinaryOp GrB_LXOR  = & GB_OPAQUE (LXOR_BOOL) ;
-GB_PUBLIC GrB_BinaryOp GrB_LXNOR = & GB_OPAQUE (EQ_BOOL) ;
+GrB_UnaryOp  GrB_LNOT  = & GB_OPAQUE (LNOT_BOOL) ;
+GrB_BinaryOp GrB_LOR   = & GB_OPAQUE (LOR_BOOL) ;
+GrB_BinaryOp GrB_LAND  = & GB_OPAQUE (LAND_BOOL) ;
+GrB_BinaryOp GrB_LXOR  = & GB_OPAQUE (LXOR_BOOL) ;
+GrB_BinaryOp GrB_LXNOR = & GB_OPAQUE (EQ_BOOL) ;
 
 //------------------------------------------------------------------------------
 // positional unary and binary operators
@@ -295,7 +294,7 @@ GB_PUBLIC GrB_BinaryOp GrB_LXNOR = & GB_OPAQUE (EQ_BOOL) ;
         str,                                                                \
         GB_ ## op ## _opcode                                                \
     } ;                                                                     \
-    GB_PUBLIC GrB_UnaryOp GXB (op ## _ ## type) = & GB_OPAQUE (op ## _ ## type) ;
+    GrB_UnaryOp GXB (op ## _ ## type) = & GB_OPAQUE (op ## _ ## type) ;
 
 // helper macros to define positional binary operators
 #define GXB_OP2_POS(op,str,type)                                            \
@@ -309,7 +308,7 @@ GB_PUBLIC GrB_BinaryOp GrB_LXNOR = & GB_OPAQUE (EQ_BOOL) ;
         str,                                                                \
         GB_ ## op ## _opcode                                                \
     } ;                                                                     \
-    GB_PUBLIC GrB_BinaryOp GXB (op ## _ ## type) = & GB_OPAQUE (op ## _ ## type) ;
+    GrB_BinaryOp GXB (op ## _ ## type) = & GB_OPAQUE (op ## _ ## type) ;
 
 GXB_OP1_POS (POSITIONI , "positioni" , INT32) ;
 GXB_OP1_POS (POSITIONI , "positioni" , INT64) ;
@@ -359,24 +358,24 @@ struct GB_SelectOp_opaque GB_OPAQUE (GE_THUNK) = { GB_MAGIC, 0, NULL, NULL, NULL
 struct GB_SelectOp_opaque GB_OPAQUE (LT_THUNK) = { GB_MAGIC, 0, NULL, NULL, NULL, "lt_thunk", GB_LT_THUNK_opcode } ;
 struct GB_SelectOp_opaque GB_OPAQUE (LE_THUNK) = { GB_MAGIC, 0, NULL, NULL, NULL, "le_thunk", GB_LE_THUNK_opcode } ;
 
-GB_PUBLIC GxB_SelectOp GxB_TRIL     = & GB_OPAQUE (TRIL) ;
-GB_PUBLIC GxB_SelectOp GxB_TRIU     = & GB_OPAQUE (TRIU) ;
-GB_PUBLIC GxB_SelectOp GxB_DIAG     = & GB_OPAQUE (DIAG) ;
-GB_PUBLIC GxB_SelectOp GxB_OFFDIAG  = & GB_OPAQUE (OFFDIAG) ;
+GxB_SelectOp GxB_TRIL     = & GB_OPAQUE (TRIL) ;
+GxB_SelectOp GxB_TRIU     = & GB_OPAQUE (TRIU) ;
+GxB_SelectOp GxB_DIAG     = & GB_OPAQUE (DIAG) ;
+GxB_SelectOp GxB_OFFDIAG  = & GB_OPAQUE (OFFDIAG) ;
 
-GB_PUBLIC GxB_SelectOp GxB_NONZERO  = & GB_OPAQUE (NONZERO) ;
-GB_PUBLIC GxB_SelectOp GxB_EQ_ZERO  = & GB_OPAQUE (EQ_ZERO) ;
-GB_PUBLIC GxB_SelectOp GxB_GT_ZERO  = & GB_OPAQUE (GT_ZERO) ;
-GB_PUBLIC GxB_SelectOp GxB_GE_ZERO  = & GB_OPAQUE (GE_ZERO) ;
-GB_PUBLIC GxB_SelectOp GxB_LT_ZERO  = & GB_OPAQUE (LT_ZERO) ;
-GB_PUBLIC GxB_SelectOp GxB_LE_ZERO  = & GB_OPAQUE (LE_ZERO) ;
+GxB_SelectOp GxB_NONZERO  = & GB_OPAQUE (NONZERO) ;
+GxB_SelectOp GxB_EQ_ZERO  = & GB_OPAQUE (EQ_ZERO) ;
+GxB_SelectOp GxB_GT_ZERO  = & GB_OPAQUE (GT_ZERO) ;
+GxB_SelectOp GxB_GE_ZERO  = & GB_OPAQUE (GE_ZERO) ;
+GxB_SelectOp GxB_LT_ZERO  = & GB_OPAQUE (LT_ZERO) ;
+GxB_SelectOp GxB_LE_ZERO  = & GB_OPAQUE (LE_ZERO) ;
 
-GB_PUBLIC GxB_SelectOp GxB_NE_THUNK = & GB_OPAQUE (NE_THUNK) ;
-GB_PUBLIC GxB_SelectOp GxB_EQ_THUNK = & GB_OPAQUE (EQ_THUNK) ;
-GB_PUBLIC GxB_SelectOp GxB_GT_THUNK = & GB_OPAQUE (GT_THUNK) ;
-GB_PUBLIC GxB_SelectOp GxB_GE_THUNK = & GB_OPAQUE (GE_THUNK) ;
-GB_PUBLIC GxB_SelectOp GxB_LT_THUNK = & GB_OPAQUE (LT_THUNK) ;
-GB_PUBLIC GxB_SelectOp GxB_LE_THUNK = & GB_OPAQUE (LE_THUNK) ;
+GxB_SelectOp GxB_NE_THUNK = & GB_OPAQUE (NE_THUNK) ;
+GxB_SelectOp GxB_EQ_THUNK = & GB_OPAQUE (EQ_THUNK) ;
+GxB_SelectOp GxB_GT_THUNK = & GB_OPAQUE (GT_THUNK) ;
+GxB_SelectOp GxB_GE_THUNK = & GB_OPAQUE (GE_THUNK) ;
+GxB_SelectOp GxB_LT_THUNK = & GB_OPAQUE (LT_THUNK) ;
+GxB_SelectOp GxB_LE_THUNK = & GB_OPAQUE (LE_THUNK) ;
 
 //------------------------------------------------------------------------------
 // GrB_ALL
@@ -386,16 +385,16 @@ GB_PUBLIC GxB_SelectOp GxB_LE_THUNK = & GB_OPAQUE (LE_THUNK) ;
 // indicate that all indices are to be used, as in the colon in C = A(:,j).
 
 GrB_Index GB_OPAQUE (ALL) = 0 ;
-GB_PUBLIC const GrB_Index *GrB_ALL = & GB_OPAQUE (ALL) ;
+const GrB_Index *GrB_ALL = & GB_OPAQUE (ALL) ;
 
 // the default hyper_switch is defined in GB_defaults.h
-GB_PUBLIC const double GxB_HYPER_DEFAULT = GB_HYPER_SWITCH_DEFAULT ;
+const double GxB_HYPER_DEFAULT = GB_HYPER_SWITCH_DEFAULT ;
 
 // set GxB_HYPER_SWITCH to either of these to ensure matrix is always, or never,
 // stored in hypersparse format, respectively.
-GB_PUBLIC const double GxB_ALWAYS_HYPER = GB_ALWAYS_HYPER ;
-GB_PUBLIC const double GxB_NEVER_HYPER  = GB_NEVER_HYPER ;
-GB_PUBLIC const GxB_Format_Value GxB_FORMAT_DEFAULT = GB_FORMAT_DEFAULT ;
+const double GxB_ALWAYS_HYPER = GB_ALWAYS_HYPER ;
+const double GxB_NEVER_HYPER  = GB_NEVER_HYPER ;
+const GxB_Format_Value GxB_FORMAT_DEFAULT = GB_FORMAT_DEFAULT ;
 
 //------------------------------------------------------------------------------
 // predefined built-in monoids
@@ -424,7 +423,7 @@ GB_PUBLIC const GxB_Format_Value GxB_FORMAT_DEFAULT = GB_FORMAT_DEFAULT ;
         NULL,                                                               \
         0, 0                                                                \
     } ;                                                                     \
-    GB_PUBLIC GrB_Monoid GXB (GB_EVAL2 (op, _MONOID)) =                     \
+    GrB_Monoid GXB (GB_EVAL2 (op, _MONOID)) =                               \
         & GB_OPAQUE (GB_EVAL2 (op, _MONOID)) ;
 
 // helper macro to define built-in monoids (with terminal value)
@@ -439,7 +438,7 @@ GB_PUBLIC const GxB_Format_Value GxB_FORMAT_DEFAULT = GB_FORMAT_DEFAULT ;
         & GB_OPAQUE (GB_EVAL2 (terminal_, op)),                             \
         0, 0                                                                \
     } ;                                                                     \
-    GB_PUBLIC GrB_Monoid GXB (GB_EVAL2 (op, _MONOID)) =                     \
+    GrB_Monoid GXB (GB_EVAL2 (op, _MONOID)) =                               \
         & GB_OPAQUE (GB_EVAL2 (op, _MONOID)) ;
 
 // macro to construct GrB_* monoids in the updated specification
@@ -610,7 +609,7 @@ GB_MONOID_DEF  ( BXNOR_UINT64 , uint64_t  , 0xFFFFFFFFFFFFFFFF )
         & GB_OPAQUE (GB_EVAL4 (add, _, GB_XTYPE, _MONOID)),                 \
         & GB_OPAQUE (GB_EVAL3 (mult, _, GB_XTYPE)),                         \
     } ;                                                                     \
-    GB_PUBLIC GrB_Semiring GXB (GB_SEMIRING_NAME (add, mult)) =             \
+    GrB_Semiring GXB (GB_SEMIRING_NAME (add, mult)) =                       \
          & GB_OPAQUE (GB_SEMIRING_NAME (add, mult)) ;
 
 // helper macro to define semirings: x,y types the same, z boolean
@@ -624,7 +623,7 @@ GB_MONOID_DEF  ( BXNOR_UINT64 , uint64_t  , 0xFFFFFFFFFFFFFFFF )
 
 #define GXB_SEMIRING_COMPARE(add,mult)                                      \
     GB_SEMIRING_COMPARE_DEFINE (add, mult)                                  \
-    GB_PUBLIC GrB_Semiring GXB (GB_SEMIRING_NAME (add, mult)) =             \
+    GrB_Semiring GXB (GB_SEMIRING_NAME (add, mult)) =                       \
          & GB_OPAQUE (GB_SEMIRING_NAME (add, mult)) ;
 
 #define GB_XTYPE    BOOL
@@ -684,7 +683,6 @@ GB_MONOID_DEF  ( BXNOR_UINT64 , uint64_t  , 0xFFFFFFFFFFFFFFFF )
 // GrB_LXNOR_LOR_SEMIRING_BOOL, which is identical to GxB_EQ_LOR_BOOL.
 
 #define GRB_SEMIRING(add,mult,xtype)                                \
-GB_PUBLIC                                                           \
 GrB_Semiring GRB (GB_EVAL5 (add, _, mult, _SEMIRING_, xtype)) =     \
     & GB_OPAQUE (GB_EVAL5 (add, _, mult, _, xtype)) ;
 
