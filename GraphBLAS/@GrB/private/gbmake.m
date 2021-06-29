@@ -38,12 +38,6 @@ else
     need_rename = ~verLessThan ('matlab', '9.10') ;
 end
 
-% finish GraphBLAS
-try
-    GrB.finalize
-catch
-end
-
 if (nargin < 1)
     what = '' ;
 end
@@ -223,12 +217,6 @@ for k = 1:length (mexfunctions)
 end
 
 fprintf ('\n') ;
-
-% start GraphBLAS
-try
-    GrB.init
-catch
-end
 
 fprintf ('Compilation of the @GrB interface to GraphBLAS is complete.\n') ;
 fprintf ('Add the following commands to your startup.m file:\n\n') ;
