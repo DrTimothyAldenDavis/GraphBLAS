@@ -1,3 +1,7 @@
+Version 5.1.2, June 30, 2021
+
+    * (28) bug fix: kron(A,B) with iso input matrices A and B fixed
+
 Version 5.1.1, June 29, 2021
 
     * (27) bug fix: v5.1.0 had a wrong version of a file (GB_ops.c,

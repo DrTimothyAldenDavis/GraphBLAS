@@ -170,6 +170,7 @@ gbtest110 % test argmax
 gbtest111 % test argmin
 gbtest112 % test load and save
 gbtest113 % test ones and eq
+gbtest114 % test kron with iso matrices
 gbtest96  % test GrB.optype
 if (~have_octave)
     % the Graph and DiGraph methods do not appear in octave
