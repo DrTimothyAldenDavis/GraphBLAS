@@ -1,7 +1,13 @@
+Version 5.1.2, June 30, 2021
+
+    * (28) bug fix: kron(A,B) with iso input matrices A and B fixed.
+        Caught by Michel Pelletier, Graphegon.
+
 Version 5.1.1, June 29, 2021
 
     * (27) bug fix: v5.1.0 had a wrong version of a file (GB_ops.c,
         which wouldn't compile) posted by mistake.
+        Caught by Michel Pelletier, Graphegon.
 
 Version 5.1.0, June 28, 2021
 

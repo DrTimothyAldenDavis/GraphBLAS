@@ -268,6 +268,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // C = kron (A,B)
     //--------------------------------------------------------------------------
 
+    const bool A_iso = A->iso ;
+    const bool B_iso = B->iso ;
+
     #pragma omp parallel for num_threads(nthreads) schedule(guided)
     for (kC = 0 ; kC < cnvec ; kC++)
     {
@@ -281,6 +284,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         int64_t bknz = pB_start - pB_end ;
         if (bknz == 0) continue ;
         GB_void bwork [GB_VLA(bsize)] ;
+        if (!B_is_pattern && B_iso)
+        { 
+            cast_B (bwork, Bx, bsize) ;
+        }
 
         // get C(:,jC), the (kC)th vector of C
         // int64_t kC = kA * bnvec + kB ;
@@ -291,18 +298,28 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         int64_t pA_start = GBP (Ap, kA, avlen) ;
         int64_t pA_end   = GBP (Ap, kA+1, avlen) ;
         GB_void awork [GB_VLA(asize)] ;
+        if (!A_is_pattern && A_iso)
+        { 
+            cast_A (awork, Ax, asize) ;
+        }
 
         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
         {
             // awork = A(iA,jA), typecasted to op->xtype
             int64_t iA = GBI (Ai, pA, avlen) ;
             int64_t iAblock = iA * bvlen ;
-            if (!A_is_pattern) cast_A (awork, Ax +(pA*asize), asize) ;
+            if (!A_is_pattern && !A_iso)
+            { 
+                cast_A (awork, Ax + (pA*asize), asize) ;
+            }
             for (int64_t pB = pB_start ; pB < pB_end ; pB++)
             {
                 // bwork = B(iB,jB), typecasted to op->ytype
                 int64_t iB = GBI (Bi, pB, bvlen) ;
-                if (!B_is_pattern) cast_B (bwork, Bx +(pB*bsize), bsize) ;
+                if (!B_is_pattern && !B_iso)
+                { 
+                    cast_B (bwork, Bx +(pB*bsize), bsize) ;
+                }
                 // C(iC,jC) = A(iA,jA) * B(iB,jB)
                 if (!C_is_full)
                 { 
