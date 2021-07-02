@@ -96,6 +96,7 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test227',t) ; % test kron
 logstat ('test226',t) ; % test kron with iso matrices
 logstat ('test225',t) ; % test mask operations (GB_masker)
 logstat ('test224',t) ; % test unpack/pack
@@ -117,7 +118,6 @@ logstat ('test209',t) ; % test iso build
 logstat ('test208',t) ; % test iso apply, bind 1st and 2nd
 logstat ('test207',t) ; % test iso subref
 logstat ('test206',t) ; % test iso select
-logstat ('test205',t) ; % test iso kron
 logstat ('test204',t) ; % test iso diag
 logstat ('test203',t) ; % test iso subref
 logstat ('test202',t) ; % test iso add and emult
@@ -242,7 +242,7 @@ logstat ('test69',t) ;  % assign and subassign with alias
 logstat ('test135',t) ; % reduce to scalar
 logstat ('test17',t) ;  % quick test of GrB_*_extractElement
 logstat ('test53',t) ;  % quick test of GB_mex_Matrix_extract
-logstat ('test77',t) ;  % quick tests of GrB_kronecker
+
 logstat ('test19',t) ;  % GxB_subassign, many pending operators
 
 %----------------------------------------
@@ -351,6 +351,7 @@ logstat ('test68',t) ;
 
 logstat ('test73',t) ;     %      % performance of C = A*B, with mask
 logstat ('test75',t) ;     %      % test GrB_mxm A'*B on all semirings
+logstat ('test77',t) ;     %  450 % long tests of GrB_kronecker
 logstat ('test78',t) ;     %    1 % quick test of hypersparse subref
 logstat ('test79',t) ;     %      % run all in SuiteSparse Collection
 
@@ -397,8 +398,8 @@ logstat ('test149',t) ;           % test fine hash tasks for C<!M>=A*B
 
 logstat ('test168',t) ;           % test C=A+B with C and B full, A bitmap
 logstat ('test171',t) ;    %    1 % test conversion and GB_memset
-
 logstat ('test190',t) ;    %   .3 % test dense matrix for C<!M>=A*B
+logstat ('test205',t) ;    %    0 % test iso kron
 
 % tested via test16:
 logstat ('testc1',t) ;     %      % test complex operators
