@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3_fineHash_notM_phase: C<!M>=A*B, fine Hash, phase2
+// GB_AxB_saxpy3_fineHash_notM_phase2: C<!M>=A*B, fine Hash, phase2
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
