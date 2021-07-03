@@ -40,7 +40,7 @@ GrB_Info GxB_Matrix_pack_CSC      // pack a CSC matrix
     // pack the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (true, &A, A->type, A->vlen, A->vdim, false,
+    info = GB_import (true, &A, A->type, GB_NROWS (A), GB_NCOLS (A), false,
         Ap,   Ap_size,  // Ap
         NULL, 0,        // Ah
         NULL, 0,        // Ab

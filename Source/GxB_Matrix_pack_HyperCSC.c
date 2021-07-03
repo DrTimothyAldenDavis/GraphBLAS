@@ -43,7 +43,7 @@ GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
     // pack the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (true, &A, A->type, A->vlen, A->vdim, false,
+    info = GB_import (true, &A, A->type, GB_NROWS (A), GB_NCOLS (A), false,
         Ap,   Ap_size,  // Ap
         Ah,   Ah_size,  // Ah
         NULL, 0,        // Ab

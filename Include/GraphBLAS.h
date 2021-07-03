@@ -204,10 +204,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "June 30, 2021"
+#define GxB_IMPLEMENTATION_DATE "July 3, 2021 (BETA)"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 1
-#define GxB_IMPLEMENTATION_SUB   2
+#define GxB_IMPLEMENTATION_SUB   3
 #define GxB_SPEC_DATE "Sept 25, 2019"
 #define GxB_SPEC_MAJOR 1
 #define GxB_SPEC_MINOR 3
@@ -2259,6 +2259,13 @@ GrB_Info GxB_Vector_memoryUsage  // return # of bytes used for a vector
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_Vector_iso     // return iso status of a vector
+(
+    bool *iso,              // true if the vector is iso-valued
+    const GrB_Vector v      // vector to query
+) ;
+
+GB_PUBLIC
 GrB_Info GrB_Vector_free    // free a vector
 (
     GrB_Vector *v           // handle of vector to free
@@ -2953,6 +2960,13 @@ GB_PUBLIC
 GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
 (
     size_t *size,           // # of bytes used by the matrix A
+    const GrB_Matrix A      // matrix to query
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_iso     // return iso status of a matrix
+(
+    bool *iso,              // true if the matrix is iso-valued
     const GrB_Matrix A      // matrix to query
 ) ;
 

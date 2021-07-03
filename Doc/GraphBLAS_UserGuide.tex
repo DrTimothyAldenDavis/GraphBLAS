@@ -148,6 +148,23 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 5.1.3 (July 3, 2021)
+
+    \begin{packed_itemize}
+
+    \item added \verb'GxB_Matrix_iso' and \verb'GxB_Vector_iso':
+        to query if a matrix or vector is held as iso-valued
+    \item (29) bug fix: \verb'Matrix_pack_*R' into a matrix previously held by
+        column, or \verb'Matrix_pack*C' into a matrix by row, would flip the
+        dimensions.
+        Caught by Erik Welch, Anaconda.
+    \item (28) bug fix: \verb'kron(A,B)' with iso input matrices
+        \verb'A' and \verb'B' fixed.
+        Caught by Michel Pelletier, Graphegon.
+    \item (27) bug fix: v5.1.0 had a wrong version of a file; posted by mistake.
+        Caught by Michel Pelletier, Graphegon.
+    \end{packed_itemize}
+
 \item Version 5.1.2 (June 30, 2021)
 
     \begin{packed_itemize}
