@@ -34,7 +34,7 @@ GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
     // pack the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (true, &A, A->type, A->vlen, A->vdim, false,
+    info = GB_import (true, &A, A->type, GB_NROWS (A), GB_NCOLS (A), false,
         NULL, 0,        // Ap
         NULL, 0,        // Ah
         NULL, 0,        // Ab

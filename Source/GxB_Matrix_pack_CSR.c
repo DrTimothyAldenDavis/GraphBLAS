@@ -40,7 +40,7 @@ GrB_Info GxB_Matrix_pack_CSR      // pack a CSR matrix
     // pack the matrix
     //--------------------------------------------------------------------------
 
-    info = GB_import (true, &A, A->type, A->vlen, A->vdim, false,
+    info = GB_import (true, &A, A->type, GB_NCOLS (A), GB_NROWS (A), false,
         Ap,   Ap_size,  // Ap
         NULL, 0,        // Ah
         NULL, 0,        // Ab
