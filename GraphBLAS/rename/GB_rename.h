@@ -1781,6 +1781,7 @@
 #define GxB_Matrix_import_FullR GxM_Matrix_import_FullR
 #define GxB_Matrix_import_HyperCSC GxM_Matrix_import_HyperCSC
 #define GxB_Matrix_import_HyperCSR GxM_Matrix_import_HyperCSR
+#define GxB_Matrix_iso GxM_Matrix_iso
 #define GxB_Matrix_memoryUsage GxM_Matrix_memoryUsage
 #define GxB_Matrix_Option_get GxM_Matrix_Option_get
 #define GxB_Matrix_Option_set GxM_Matrix_Option_set
@@ -2998,6 +2999,7 @@
 #define GxB_Vector_import_Bitmap GxM_Vector_import_Bitmap
 #define GxB_Vector_import_CSC GxM_Vector_import_CSC
 #define GxB_Vector_import_Full GxM_Vector_import_Full
+#define GxB_Vector_iso GxM_Vector_iso
 #define GxB_Vector_memoryUsage GxM_Vector_memoryUsage
 #define GxB_Vector_Option_get GxM_Vector_Option_get
 #define GxB_Vector_Option_set GxM_Vector_Option_set

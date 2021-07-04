@@ -3945,7 +3945,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Vector_extractTuples'  & get all entries from a vector    & \ref{vector_extractTuples} \\
 \verb'GrB_Vector_resize'         & resize a vector                  & \ref{vector_resize} \\
 \verb'GxB_Vector_diag'           & extract a diagonal from a matrix & \ref{vector_diag} \\
-\verb'GxB_Vector_memoryUsage'     & memory used by a vector          & \ref{vector_memusage} \\
+\verb'GxB_Vector_iso'            & query iso status                 & \ref{vector_iso} \\
+\verb'GxB_Vector_memoryUsage'    & memory used by a vector          & \ref{vector_memusage} \\
 \verb'GrB_Vector_free'           & free a vector                    & \ref{vector_free} \\
 \hline
 \hline
@@ -4349,6 +4350,23 @@ unchanged.
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_iso:} query iso status of a vector}
+%-------------------------------------------------------------------------------
+\label{vector_iso}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_iso     // return iso status of a vector
+(
+    bool *iso,              // true if the vector is iso-valued
+    const GrB_Vector v      // vector to query
+) ;
+\end{verbatim} } \end{mdframed}
+
+Returns the true if the vector is iso-valued, false otherwise.
+
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_memoryUsage:} memory used by a vector}
 %-------------------------------------------------------------------------------
 \label{vector_memusage}
@@ -4426,7 +4444,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Matrix_concat'        & concatenate matrices                  & \ref{matrix_concat} \\
 \verb'GxB_Matrix_split'         & split a matrix into matrices          & \ref{matrix_split} \\
 \verb'GxB_Matrix_diag'          & diagonal matrix from vector           & \ref{matrix_diag} \\
-\verb'GxB_Matrix_memoryUsage'    & memory used by a matrix               & \ref{matrix_memusage} \\
+\verb'GxB_Matrix_iso'           & query iso status                      & \ref{matrix_iso} \\
+\verb'GxB_Matrix_memoryUsage'   & memory used by a matrix               & \ref{matrix_memusage} \\
 \verb'GrB_Matrix_free'          & free a matrix                         & \ref{matrix_free} \\
 \hline
 \hline
@@ -5110,6 +5129,24 @@ the type of \verb'C'.  Any settings made to \verb'C' by
 switch, and sparsity control) are unchanged.
 
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_iso:} query iso status of a matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_iso}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_iso     // return iso status of a matrix
+(
+    bool *iso,              // true if the matrix is iso-valued
+    const GrB_Matrix A      // matrix to query
+) ;
+\end{verbatim} } \end{mdframed}
+
+Returns the true if the matrix is iso-valued, false otherwise.
+
+\newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_memoryUsage:} memory used by a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_memusage}
@@ -5126,7 +5163,6 @@ GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
 
 Returns the memory space required for a matrix, in bytes.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_free:} free a matrix}
 %-------------------------------------------------------------------------------
