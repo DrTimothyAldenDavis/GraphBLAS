@@ -54,62 +54,62 @@ mxArray *gb_export_to_mxfull    // return exported built-in full matrix F
     else if (type == GrB_FP32)
     { 
         F = mxCreateNumericMatrix (0, 0, mxSINGLE_CLASS, mxREAL) ;
-        mxSetSingles (F, X) ;
+        mxSetData (F, X) ;
     }
     else if (type == GrB_FP64)
     { 
         F = mxCreateNumericMatrix (0, 0, mxDOUBLE_CLASS, mxREAL) ;
-        mxSetDoubles (F, X) ;
+        mxSetData (F, X) ;
     }
     else if (type == GrB_INT8)
     { 
         F = mxCreateNumericMatrix (0, 0, mxINT8_CLASS, mxREAL) ;
-        mxSetInt8s (F, X) ;
+        mxSetData (F, X) ;
     }
     else if (type == GrB_INT16)
     { 
         F = mxCreateNumericMatrix (0, 0, mxINT16_CLASS, mxREAL) ;
-        mxSetInt16s (F, X) ;
+        mxSetData (F, X) ;
     }
     else if (type == GrB_INT32)
     { 
         F = mxCreateNumericMatrix (0, 0, mxINT32_CLASS, mxREAL) ;
-        mxSetInt32s (F, X) ;
+        mxSetData (F, X) ;
     }
     else if (type == GrB_INT64)
     { 
         F = mxCreateNumericMatrix (0, 0, mxINT64_CLASS, mxREAL) ;
-        mxSetInt64s (F, X) ;
+        mxSetData (F, X) ;
     }
     else if (type == GrB_UINT8)
     { 
         F = mxCreateNumericMatrix (0, 0, mxUINT8_CLASS, mxREAL) ;
-        mxSetUint8s (F, X) ;
+        mxSetData (F, X) ;
     }
     else if (type == GrB_UINT16)
     { 
         F = mxCreateNumericMatrix (0, 0, mxUINT16_CLASS, mxREAL) ;
-        mxSetUint16s (F, X) ;
+        mxSetData (F, X) ;
     }
     else if (type == GrB_UINT32)
     { 
         F = mxCreateNumericMatrix (0, 0, mxUINT32_CLASS, mxREAL) ;
-        mxSetUint32s (F, X) ;
+        mxSetData (F, X) ;
     }
     else if (type == GrB_UINT64)
     { 
         F = mxCreateNumericMatrix (0, 0, mxUINT64_CLASS, mxREAL) ;
-        mxSetUint64s (F, X) ;
+        mxSetData (F, X) ;
     }
     else if (type == GxB_FC32)
     {
         F = mxCreateNumericMatrix (0, 0, mxSINGLE_CLASS, mxCOMPLEX) ;
-        mxSetComplexSingles (F, X) ;
+        mxSetData (F, X) ;
     }
     else if (type == GxB_FC64)
     {
         F = mxCreateNumericMatrix (0, 0, mxDOUBLE_CLASS, mxCOMPLEX) ;
-        mxSetComplexDoubles (F, X) ;
+        mxSetData (F, X) ;
     }
     else
     {

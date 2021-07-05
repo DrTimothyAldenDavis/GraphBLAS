@@ -31,17 +31,17 @@ static inline GrB_Index *gb_get_tilesizes (mxArray *mxList, GrB_Index *len)
     GrB_Index *List = mxMalloc (n * sizeof (GrB_Index)) ;
     if (class == mxINT64_CLASS)
     {
-        int64_t *p = mxGetInt64s (mxList) ;
+        int64_t *p = (int64_t *) mxGetData (mxList) ;
         memcpy (List, p, n * sizeof (int64_t)) ;
     }
     else if (class == mxUINT64_CLASS)
     {
-        int64_t *p = mxGetUint64s (mxList) ;
-        memcpy (List, p, n * sizeof (int64_t)) ;
+        uint64_t *p = (uint64_t *) mxGetData (mxList) ;
+        memcpy (List, p, n * sizeof (uint64_t)) ;
     }
     else if (class == mxDOUBLE_CLASS)
     {
-        double *p = mxGetDoubles (mxList) ;
+        double *p = (double *) mxGetData (mxList) ;
         for (int64_t k = 0 ; k < n ; k++)
         {
             List [k] = (GrB_Index) p [k] ;

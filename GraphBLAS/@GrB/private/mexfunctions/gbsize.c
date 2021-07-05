@@ -70,7 +70,7 @@ void mexFunction
         // get the scalar info
         mxArray *opaque = mxGetField (pargin [0], 0, "s") ;
         CHECK_ERROR (opaque == NULL, "invalid GraphBLAS struct") ;
-        int64_t *s = mxGetInt64s (opaque) ;
+        int64_t *s = (int64_t *) mxGetData (opaque) ;
         int64_t vlen = s [1] ;
         int64_t vdim = s [2] ;
         bool is_csc = (bool) (s [6]) ;
@@ -120,10 +120,10 @@ void mexFunction
         // output is int64 to avoid flint overflow
         int64_t *p ;
         pargout [0] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
-        p = mxGetInt64s (pargout [0]) ;
+        p = (int64_t *) mxGetData (pargout [0]) ;
         p [0] = (int64_t) nrows ;
         pargout [1] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
-        p = mxGetInt64s (pargout [1]) ;
+        p = (int64_t *) mxGetData (pargout [1]) ;
         p [0] = (int64_t) ncols ;
     }
     else

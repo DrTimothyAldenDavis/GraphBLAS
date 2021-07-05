@@ -3293,6 +3293,7 @@
 #define GB_Global_free_pool_limit_set GM_Global_free_pool_limit_set
 #define GB_Global_free_pool_nblocks_total GM_Global_free_pool_nblocks_total
 #define GB_Global_free_pool_put GM_Global_free_pool_put
+#define GB_Global_get_wtime GM_Global_get_wtime
 #define GB_Global_gpu_chunk_get GM_Global_gpu_chunk_get
 #define GB_Global_gpu_chunk_set GM_Global_gpu_chunk_set
 #define GB_Global_gpu_control_get GM_Global_gpu_control_get

@@ -6,7 +6,7 @@ function gbtest81
 
 fprintf ('gbtest81: test complex operators\n') ;
 rng ('default')
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+have_octave = gb_octave ;
 
 % min and max for complex matrices are not supported in GraphBLAS:
 % a = min (GrB (complex(1)), 1i, 1)  ;

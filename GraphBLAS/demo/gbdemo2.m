@@ -39,12 +39,8 @@ function gbdemo2 (bnz)
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 % reset to the default number of threads
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
-if (~have_octave)
-    maxNumCompThreads ('automatic') ;
-end
+ncores = demo_nproc ;
 GrB.clear ;
-
 nthreads = GrB.threads ;
 help gbdemo2
 fprintf ('\n# of threads used in GraphBLAS: %d\n\n', nthreads) ;

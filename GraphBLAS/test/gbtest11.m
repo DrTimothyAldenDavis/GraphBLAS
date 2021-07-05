@@ -81,8 +81,7 @@ assert (gbtest_eq (X, uint64 (full (G))))
 B = 100 * rand (4) ;
 B (1,[1 3]) = 0 ;
 
-
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+have_octave = gb_octave ;
 X = complex (A)
 G = GrB (X)
 if (have_octave)

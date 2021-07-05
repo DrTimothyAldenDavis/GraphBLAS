@@ -56,13 +56,13 @@ int64_t *gb_mxarray_to_list     // return List of integers
     { 
         // input list is int64; just return a shallow pointer
         (*allocated) = false ;
-        return ((int64_t *) mxGetInt64s (mxList)) ;
+        return ((int64_t *) mxGetData (mxList)) ;
     }
     else if (class == mxUINT64_CLASS && zerobased)
     { 
         // input list is uint64; just return a shallow pointer
         (*allocated) = false ;
-        return ((int64_t *) mxGetUint64s (mxList)) ;
+        return ((int64_t *) mxGetData (mxList)) ;
     }
     else if (class == mxINT64_CLASS || class == mxUINT64_CLASS ||
              class == mxDOUBLE_CLASS)
@@ -73,7 +73,7 @@ int64_t *gb_mxarray_to_list     // return List of integers
         if (class == mxDOUBLE_CLASS)
         { 
             // input list is 1-based double
-            double *List_double = mxGetDoubles (mxList) ;
+            double *List_double = (double *) mxGetData (mxList) ;
             CHECK_ERROR (List_double == NULL, "index list must be integer") ;
             bool ok = GB_helper3 (List, List_double, (*len), List_max) ;
             CHECK_ERROR (!ok, "index must be integer") ;
@@ -81,13 +81,13 @@ int64_t *gb_mxarray_to_list     // return List of integers
         else if (class == mxINT64_CLASS)
         { 
             // input list is 1-based int64
-            int64_t *List_int64 = (int64_t *) mxGetInt64s (mxList) ;
+            int64_t *List_int64 = (int64_t *) mxGetData (mxList) ;
             GB_helper3i (List, List_int64, (*len), List_max) ;
         }
         else // if (class == mxUINT64_CLASS)
         { 
             // input list is 1-based uint64
-            int64_t *List_int64 = (int64_t *) mxGetUint64s (mxList) ;
+            int64_t *List_int64 = (int64_t *) mxGetData (mxList) ;
             GB_helper3i (List, List_int64, (*len), List_max) ;
         }
         return (List) ;

@@ -7,13 +7,7 @@ function mxm_demo
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 % reset to the default number of threads
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
-if (~have_octave)
-    maxNumCompThreads ('automatic') ;
-    ncores = feature ('numcores') ;
-else
-    ncores = nproc ;
-end
+ncores = demo_nproc ;
 GrB.clear ;
 
 rng ('default') ;
@@ -42,9 +36,7 @@ end
 for nth = thread_list
 
     % tell built-in method and GraphBLAS to use nth threads:
-    if (~have_octave)
-        maxNumCompThreads (nth) ;
-    end
+    demo_nproc (nth) ;
     GrB.threads (nth) ;
 
     fprintf ('\n-------------------------------------------------\n') ;
@@ -169,8 +161,6 @@ for nth = thread_list
 end
 
 % restore # of threads to their defaults
-if (~have_octave)
-    maxNumCompThreads ('automatic') ;
-end
+ncores = demo_nproc ;
 GrB.clear ;
 
