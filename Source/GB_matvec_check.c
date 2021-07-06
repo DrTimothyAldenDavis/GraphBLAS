@@ -735,8 +735,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         {
             int64_t i = Pending->i [k] ;
             int64_t j = (A->vdim <= 1) ? 0 : (Pending->j [k]) ;
-            int64_t row = A->is_csc ? i : j ;
-            int64_t col = A->is_csc ? j : i ;
+            int64_t row = (A->is_csc ? i : j) + offset ;
+            int64_t col = (A->is_csc ? j : i) + offset ;
 
             // print the tuple
             if ((pr_short && k < GB_NZBRIEF) || pr_complete)

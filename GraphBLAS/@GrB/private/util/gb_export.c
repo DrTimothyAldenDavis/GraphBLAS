@@ -104,5 +104,7 @@ mxArray *gb_export              // return the exported built-in matrix or struct
 
         // No typecasting is needed since the built-in struct can hold all of
         // the opaque content of the GrB_Matrix.
-        return (gb_export_to_mxstruct (C_handle)) ; } }
+        return (gb_export_to_mxstruct (C_handle)) ;
+    }
+}
 

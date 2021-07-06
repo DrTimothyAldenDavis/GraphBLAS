@@ -20,6 +20,10 @@
 // For v5, iso is present but false, and the s component has length 10.
 // For v5_1, iso is true/false, and the s component has length 10.
 
+// mxGetData is used instead of the MATLAB-recommended mxGetDoubles, etc,
+// because mxGetData works best for Octave, and it works fine for MATLAB
+// since GraphBLAS requires R2018a with the interleaved complex data type.
+
 #include "gb_interface.h"
 
 #define IF(error,message) \
@@ -107,7 +111,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         {
             IF (s_size != 10, ".s wrong size") ;
         }
-        int64_t *s = mxGetInt64s (opaque) ;
+        int64_t *s = (int64_t *) mxGetData (opaque) ;
         int64_t plen          = s [0] ;
         int64_t vlen          = s [1] ;
         int64_t vdim          = s [2] ;
@@ -190,7 +194,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
             mxArray *Ap_mx = mxGetField (X, 0, "p") ;
             IF (Ap_mx == NULL, ".p missing") ;
             IF (mxGetM (Ap_mx) != 1, ".p wrong size") ;
-            Ap = mxGetInt64s (Ap_mx) ;
+            Ap = (int64_t *) mxGetData (Ap_mx) ;
             IF (Ap == NULL, ".p wrong type") ;
             Ap_size = mxGetN (Ap_mx) * sizeof (int64_t) ;
 
@@ -199,7 +203,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
             IF (Ai_mx == NULL, ".i missing") ;
             IF (mxGetM (Ai_mx) != 1, ".i wrong size") ;
             Ai_size = mxGetN (Ai_mx) * sizeof (int64_t) ;
-            Ai = (Ai_size == 0) ? NULL : mxGetInt64s (Ai_mx) ;
+            Ai = (Ai_size == 0) ? NULL : ((int64_t *) mxGetData (Ai_mx)) ;
             IF (Ai == NULL && Ai_size > 0, ".i wrong type") ;
         }
 
@@ -208,7 +212,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         IF (Ax_mx == NULL, ".x missing") ;
         IF (mxGetM (Ax_mx) != 1, ".x wrong size") ;
         Ax_size = mxGetN (Ax_mx) ;
-        Ax = (Ax_size == 0) ? NULL : ((void *) mxGetUint8s (Ax_mx)) ;
+        Ax = (Ax_size == 0) ? NULL : ((void *) mxGetData (Ax_mx)) ;
         IF (Ax == NULL && Ax_size > 0, ".x wrong type") ;
 
         if (sparsity_status == GxB_HYPERSPARSE)
@@ -219,7 +223,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
             IF (Ah_mx == NULL, ".h missing") ;
             IF (mxGetM (Ah_mx) != 1, ".h wrong size") ;
             Ah_size = mxGetN (Ah_mx) * sizeof (int64_t) ;
-            Ah = (Ah_size == 0) ? NULL : ((int64_t *) mxGetInt64s (Ah_mx)) ;
+            Ah = (Ah_size == 0) ? NULL : ((int64_t *) mxGetData (Ah_mx)) ;
             IF (Ah == NULL && Ah_size > 0, ".h wrong type") ;
         }
 
@@ -231,7 +235,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
             IF (Ab_mx == NULL, ".b missing") ;
             IF (mxGetM (Ab_mx) != 1, ".b wrong size") ;
             Ab_size = mxGetN (Ab_mx) ;
-            Ab = (Ab_size == 0) ? NULL : ((int8_t *) mxGetInt8s (Ab_mx)) ;
+            Ab = (Ab_size == 0) ? NULL : ((int8_t *) mxGetData (Ab_mx)) ;
             IF (Ab == NULL && Ab_size > 0, ".b wrong type") ;
         }
 
@@ -343,13 +347,13 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         if (type == GrB_FP64)
         { 
             // built-in sparse or full double matrix
-            Xx = mxGetDoubles (X) ;
+            Xx = mxGetData (X) ;
             type_size = sizeof (double) ;
         }
         else if (type == GxB_FC64)
         { 
             // built-in sparse or full double complex matrix
-            Xx = mxGetComplexDoubles (X) ;
+            Xx = mxGetData (X) ;
             type_size = 2 * sizeof (double) ;
         }
         else if (type == GrB_BOOL)
@@ -366,61 +370,61 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         else if (type == GrB_INT8)
         { 
             // full int8 matrix
-            Xx = mxGetInt8s (X) ;
+            Xx = mxGetData (X) ;
             type_size = sizeof (int8_t) ;
         }
         else if (type == GrB_INT16)
         { 
             // full int16 matrix
-            Xx = mxGetInt16s (X) ;
+            Xx = mxGetData (X) ;
             type_size = sizeof (int16_t) ;
         }
         else if (type == GrB_INT32)
         { 
             // full int32 matrix
-            Xx = mxGetInt32s (X) ;
+            Xx = mxGetData (X) ;
             type_size = sizeof (int32_t) ;
         }
         else if (type == GrB_INT64)
         { 
             // full int64 matrix
-            Xx = mxGetInt64s (X) ;
+            Xx = mxGetData (X) ;
             type_size = sizeof (int64_t) ;
         }
         else if (type == GrB_UINT8)
         { 
             // full uint8 matrix
-            Xx = mxGetUint8s (X) ;
+            Xx = mxGetData (X) ;
             type_size = sizeof (uint8_t) ;
         }
         else if (type == GrB_UINT16)
         { 
             // full uint16 matrix
-            Xx = mxGetUint16s (X) ;
+            Xx = mxGetData (X) ;
             type_size = sizeof (uint16_t) ;
         }
         else if (type == GrB_UINT32)
         { 
             // full uint32 matrix
-            Xx = mxGetUint32s (X) ;
+            Xx = mxGetData (X) ;
             type_size = sizeof (uint32_t) ;
         }
         else if (type == GrB_UINT64)
         { 
             // full uint64 matrix
-            Xx = mxGetUint64s (X) ;
+            Xx = mxGetData (X) ;
             type_size = sizeof (uint64_t) ;
         }
         else if (type == GrB_FP32)
         { 
             // full single matrix
-            Xx = mxGetSingles (X) ;
+            Xx = mxGetData (X) ;
             type_size = sizeof (float) ;
         }
         else if (type == GxB_FC32)
         { 
             // full single complex matrix
-            Xx = mxGetComplexSingles (X) ;
+            Xx = mxGetData (X) ;
             type_size = 2 * sizeof (float) ;
         }
         else

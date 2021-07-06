@@ -27,10 +27,7 @@
 
 % reset to the default number of threads
 clear all
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
-if (~have_octave)
-    maxNumCompThreads ('automatic') ;
-end
+ncores = demo_nproc ;
 GrB.clear ;
 fprintf ('\n# of threads used by GraphBLAS: %d\n', GrB.threads) ;
 
@@ -59,7 +56,6 @@ end
 % MATLAB.  The following test is unfair, since it compares computing
 % X*X with MATLAB in double precision and with GraphBLAS in single
 % precision.  You would naturally expect GraphBLAS to be faster. 
-
 %
 % CAVEAT:  MATLAB R2021a uses SuiteSparse:GraphBLAS v3.3.3 for C=A*B,
 % so on that version of MATLAB, we're comparing 2 versions of GraphBLAS
@@ -77,9 +73,9 @@ tic
 X2 = X*X ;
 builtin_time = toc ;
 fprintf ('\nGraphBLAS time: %g sec (in single)\n', gb_time) ;
-fprintf ('MATLAB time:    %g sec (in double)\n', builtin_time) ;
-fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
-    builtin_time / gb_time) ;
+fprintf ('%s time:    %g sec (in double)\n', builtin_time, demo_whoami) ;
+fprintf ('Speedup of GraphBLAS over %s: %g\n', ...
+    demo_whoami, builtin_time / gb_time) ;
 fprintf ('\n# of threads used by GraphBLAS: %d\n', GrB.threads) ;
 
 %% Mixing MATLAB and GraphBLAS matrices
@@ -104,9 +100,9 @@ G2 = G*G ;
 gb_time = toc ;
 err = norm (X2 - G2, 1) / norm (X2,1)
 fprintf ('\nGraphBLAS time: %g sec (in double)\n', gb_time) ;
-fprintf ('MATLAB time:    %g sec (in double)\n', builtin_time) ;
-fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
-    builtin_time / gb_time) ;
+fprintf ('%s time:    %g sec (in double)\n', builtin_time, demo_whoami) ;
+fprintf ('Speedup of GraphBLAS over %s: %g\n', ...
+    demo_whoami, builtin_time / gb_time) ;
 fprintf ('\n# of threads used by GraphBLAS: %d\n', GrB.threads) ;
 
 %% A wide range of semirings
@@ -396,7 +392,7 @@ err = norm (H-G,1)
 % vectors, but not huge matrices (when n is huge).
 
 clear
-[c, huge] = computer ;
+huge = 2^48 ;
 C = sparse (huge, 1)    % MATLAB can create a huge-by-1 sparse column
 try
     C = sparse (huge, huge)     % but this fails
@@ -409,7 +405,7 @@ end
 % O(nnz(A)) space.  The difference can be huge if nnz (A) << n.
 
 clear
-[c, huge] = computer ;
+huge = 2^48 ;
 G = GrB (huge, 1)            % no problem for GraphBLAS
 H = GrB (huge, huge)         % this works in GraphBLAS too
 
@@ -580,9 +576,9 @@ fprintf ('total time in GraphBLAS: %g sec\n', gb_time) ;
 tic
 Y2 = dnn_builtin (W, bias, Y0) ;
 builtin_time = toc ;
-fprintf ('total time in MATLAB:    %g sec\n', builtin_time) ;
-fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
-    builtin_time / gb_time) ;
+fprintf ('total time in %s:    %g sec\n', demo_whoami, builtin_time) ;
+fprintf ('Speedup of GraphBLAS over %s: %g\n', ...
+    demo_whoami, builtin_time / gb_time) ;
 fprintf ('\n# of threads used by GraphBLAS: %d\n', GrB.threads) ;
 
 err = norm (Y1-Y2,1)
@@ -635,16 +631,22 @@ end
 %% Iterative solvers work as-is
 % Many built-in functions work with GraphBLAS matrices unmodified.
 
-A = sparse (rand (4)) ;
-b = sparse (rand (4,1)) ;
-x = gmres (A,b)
-norm (A*x-b)
-x = gmres (GrB(A), GrB(b))
-norm (A*x-b)
+if (~demo_octave)
+    % Octave7: gmres does not yet work for @GrB input matrices
+    A = sparse (rand (4)) ;
+    b = sparse (rand (4,1)) ;
+    x = gmres (A,b)
+    norm (A*x-b)
+    x = gmres (GrB(A), GrB(b))
+    norm (A*x-b)
+end
 
 %% ... even in single precision
-x = gmres (GrB(A,'single'), GrB(b,'single'))
-norm (A*x-b)
+if (~demo_octave)
+    % Octave7: gmres does not yet work for @GrB input matrices
+    x = gmres (GrB(A,'single'), GrB(b,'single'))
+    norm (A*x-b)
+end
 
 %%
 % Both of the following uses of minres (A,b) fail to converge because A
@@ -652,17 +654,21 @@ norm (A*x-b)
 % reported, and both the MATLAB version and the GraphBLAS version return
 % the same incorrect vector x.
 
-x = minres (A, b)
-x = minres (GrB(A), GrB(b))
+if (exist ('minres'))
+    x = minres (A, b)
+    x = minres (GrB(A), GrB(b))
+end
 
 %%
 % With a proper symmetric matrix
 
-A = A+A' ;
-x = minres (A, b)
-norm (A*x-b)
-x = minres (GrB(A), GrB(b))
-norm (A*x-b)
+if (exist ('minres'))
+    A = A+A' ;
+    x = minres (A, b)
+    norm (A*x-b)
+    x = minres (GrB(A), GrB(b))
+    norm (A*x-b)
+end
 
 %% Extreme performance differences between GraphBLAS and MATLAB.
 % The GraphBLAS operations used so far are perhaps 2x to 50x faster than
@@ -740,15 +746,40 @@ builtin_time = toc ;
 fprintf ('\nGraphBLAS time: %g sec (GrB.assign)\n', gb_time) ;
 fprintf ('GraphBLAS time: %g sec (overloading)\n', gb_time2) ;
 fprintf ('MATLAB time:    %g sec\n', builtin_time) ;
-fprintf ('Speedup of GraphBLAS (overloading) over MATLAB: %g\n', ...
-    builtin_time / gb_time2) ;
-fprintf ('Speedup of GraphBLAS (GrB.assign)  over MATLAB: %g\n', ...
-    builtin_time / gb_time) ;
+fprintf ('Speedup of GraphBLAS (overloading) over %s: %g\n', ...
+    demo_whoami, builtin_time / gb_time2) ;
+fprintf ('Speedup of GraphBLAS (GrB.assign)  over %s: %g\n', ...
+    demo_whoami, builtin_time / gb_time) ;
 fprintf ('\n# of threads used by GraphBLAS: %d\n', GrB.threads) ;
 
 assert (isequal (C1, C))
 assert (isequal (C2, C))
-fprintf ('Results of GrB and MATLAB match perfectly.\n')
+fprintf ('Results of GrB and %s match perfectly.\n', demo_whoami)
+
+%% Even more extreme performance differences for C(M)=A(M)
+%
+% See the tmask script in this GraphBLAS/demo folder for a test comparing
+% C(M)=A(M) for a sequence of large matrices.  The test takes far to long
+% to run in this demo, because MATLAB is exceedingly slow.  Below are
+% the results on a 4-core Dell laptop:
+%
+%         n      nnz(C)     nnz(M)  GraphBLAS  MATLAB    speedup
+%                                   (sec)      (sec)
+%     2,048      20,432      2,048  0.005         0.024     4.7
+%     4,096      40,908      4,096  0.003         0.115     39
+%     8,192      81,876      8,191  0.009         0.594     68
+%    16,384     163,789     16,384  0.009         2.53     273
+%    32,768     327,633     32,767  0.014        12.4      864
+%    65,536     655,309     65,536  0.025        65.9    2,617
+%   131,072   1,310,677    131,070  0.055       276.2    4,986
+%   262,144   2,621,396    262,142  0.071     1,077.    15,172
+%   524,288   5,242,830    524,288  0.114     5,855.    51,274
+% 1,048,576  10,485,713  1,048,576  0.197    27,196.   137,776
+% 2,097,152  20,971,475  2,097,152  0.406   100,799.   248,200
+% 4,194,304  41,942,995  4,194,304  0.855   ~4 days?   500,000?
+%
+% The last run for MATLAB never finished but I estimate it would
+% take about 4 to 5 days.
 
 %% Limitations and their future solutions
 % The MATLAB interface for SuiteSparse:GraphBLAS is a work-in-progress.
@@ -804,8 +835,8 @@ A = GrB (A) ;
 tic
 c2 = istril (A) ;
 gb_time = toc ;
-fprintf ('\nMATLAB: %g sec, GraphBLAS: %g sec\n', ...
-    builtin_time, gb_time) ;
+fprintf ('\n%s: %g sec, GraphBLAS: %g sec\n', ...
+    demo_whoami, builtin_time, gb_time) ;
 if (gb_time > builtin_time)
     fprintf ('GraphBLAS is slower by a factor of %g\n', ...
         gb_time / builtin_time) ;

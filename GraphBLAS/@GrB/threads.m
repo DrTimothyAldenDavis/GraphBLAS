@@ -20,7 +20,7 @@ function nthreads = threads (nthreads)
 %
 %   GrB.threads (8) ;  % GraphBLAS will use at most 8 threads
 %
-% See also feature, maxNumCompThreads, GrB.chunk.
+% See also GrB.chunk.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later

@@ -1307,3 +1307,13 @@ int64_t GB_Global_free_pool_nblocks_total (void)
     return (nblocks) ;
 }
 
+//------------------------------------------------------------------------------
+// get_wtime: return current wallclock time
+//------------------------------------------------------------------------------
+
+GB_PUBLIC
+double GB_Global_get_wtime (void)
+{ 
+    return (GB_OPENMP_GET_WTIME) ;
+}
+

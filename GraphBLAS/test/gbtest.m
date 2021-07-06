@@ -29,12 +29,7 @@ demo_folder = fullfile (fileparts (mfilename ('fullpath')), '../demo') ;
 addpath (demo_folder) ;
 rng ('default') ;
 
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
-
-try
-    GrB.init
-catch
-end
+have_octave = gb_octave ;
 
 gbtest0   % test GrB.clear
 gbtest1   % test GrB
@@ -97,42 +92,42 @@ gbtest57  % test fprintf and sprintf
 gbtest58  % test uplus
 gbtest59  % test end
 gbtest60  % test issigned
+gbtest62  % test ldivide, rdivide, mldivide, mrdivide
+gbtest65  % test GrB.mis
+
 if (~have_octave)
     % the Graph and DiGraph methods do not appear in octave
     gbtest61  % test GrB.laplacian
-end
-gbtest62  % test ldivide, rdivide, mldivide, mrdivide
-if (~have_octave)
-    % the Graph and DiGraph methods do not appear in octave
     gbtest63  % test GrB.incidence
     gbtest64  % test GrB.pagerank
-end
-gbtest65  % test GrB.mis
-if (~have_octave)
-    % the Graph and DiGraph methods do not appear in octave
     gbtest66  % test graph
     gbtest67  % test digraph
 end
+
 gbtest68  % test isequal
 gbtest69  % test flip
 gbtest70  % test GrB.random
 gbtest71  % test GrB.selectopinfo
 gbtest72  % test any-pair semiring
 gbtest73  % test GrB.normdiff
+
 if (~have_octave)
     % octave returns double, MATLAB returns integer.
     % This would be easy to fix but the tests are skipped for octave.
     gbtest74  % test bitwise operators
     gbtest75  % test bitshift
 end
+
 gbtest76  % test trig functions
 gbtest77  % test error handling
+
 if (~have_octave)
     % octave: bit index must be in proper range.
     % MATLAB: bit indices outside the size of the integer are ignored.
     % This would be easy to fix but the tests are skipped for octave.
     gbtest78  % test integer operations
 end
+
 gbtest79  % test power
 gbtest80  % test complex division and power
 gbtest81  % test complex operators
@@ -172,19 +167,15 @@ gbtest112 % test load and save
 gbtest113 % test ones and eq
 gbtest114 % test kron with iso matrices
 gbtest96  % test GrB.optype
+
 if (~have_octave)
     % the Graph and DiGraph methods do not appear in octave
     gbtest00  % test GrB.bfs and plot (graph (G))
 end
 
 % restore default # of threads
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
-if (~have_octave)
-    % octave does not have the maxNumCompThreads function
-    maxNumCompThreads ('automatic') ;
-end
+demo_nproc ;
 GrB.clear
 
 fprintf ('\ngbtest: all tests passed\n') ;
-
 

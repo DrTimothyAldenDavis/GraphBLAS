@@ -5,7 +5,6 @@ function gbtest76
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 fprintf ('\ngbtest76: testing trig and special functions\n') ;
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 
 rng ('default') ;
 
@@ -14,10 +13,6 @@ types = { 'single', 'double', ...
 
 for k = 1:length (types)
     type = types {k} ;
-
-    if (have_octave && isequal (type, 'single complex'))
-        continue ;
-    end
 
     fprintf ('%s\n', type) ;
 
@@ -73,7 +68,7 @@ end
 
 function gbtest76b (A, B, G, H, tol)
 
-    have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+    have_octave = gb_octave ;
 
     A (1,1) = 0 ;
     G (1,1) = 0 ;
@@ -323,8 +318,9 @@ function gbtest76b (A, B, G, H, tol)
     err = norm (C1-C2, 1) ;
     assert (err < tol) ;
 
-    if (~have_octave)
-        % octave fails here; unsure why
+    if (~have_octave || isreal (A))
+        % octave7: log1p(0) is 0 which is correct, but log1p(0+0i) is
+        % (0+1.5708i), even though log(complex(1)) is 0.
         C1 = log1p (A) ;
         C2 = log1p (G) ;
         err = norm (C1-C2, 1) ;
@@ -399,7 +395,7 @@ function gbtest76b (A, B, G, H, tol)
     assert (err == 0) ;
 
     if (isfloat (G))
-        C1 = eps (A) ;
+        C1 = eps (abs (A)) ;
         C2 = eps (G) ;
         err = norm (C1-C2, 1) ;
         assert (err < tol) ;
@@ -418,13 +414,17 @@ function gbtest76b (A, B, G, H, tol)
     I = GrB ([1 2 3]) ;
     J = GrB ([3 1 2]) ;
 
-    if (~have_octave)
-        % octave does not allow indexing built-in matrices with objects
+    if (have_octave)
+        % Octave does not allow indexing built-in matrices with objects.
+        C1 = A (double (I), double (J)) ;
+        C2 = G (double (I), double (J)) ;
+    else
+        % MATLAB sees the GrB/double method and does the typecasting itself.
         C1 = A (I,J) ;
         C2 = G (I,J) ;
-        err = norm (C1-C2, 1) ;
-        assert (err == 0) ;
     end
+    err = norm (C1-C2, 1) ;
+    assert (err == 0) ;
 
     C1 = A.^1 ;
     C2 = G.^1 ;

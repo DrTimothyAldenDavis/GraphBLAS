@@ -91,8 +91,9 @@ void mexFunction
     // get X
     //--------------------------------------------------------------------------
 
-    GrB_Type xtype = gb_mxarray_type (pargin [2]) ;
-    GrB_Index nx = mxGetNumberOfElements (pargin [2]) ;
+    const mxArray *Xm = pargin [2] ;
+    GrB_Type xtype = gb_mxarray_type (Xm) ;
+    GrB_Index nx = mxGetNumberOfElements (Xm) ;
 
     //--------------------------------------------------------------------------
     // check the sizes of I, J, and X, and the type of X
@@ -108,9 +109,9 @@ void mexFunction
         ERROR ("I, J, and X must have the same length") ;
     }
 
-    CHECK_ERROR (!(mxIsNumeric (pargin [2]) || mxIsLogical (pargin [2])),
+    CHECK_ERROR (!(mxIsNumeric (Xm) || mxIsLogical (Xm)),
         "X must be a numeric or logical array") ;
-    CHECK_ERROR (mxIsSparse (pargin [2]), "X cannot be sparse") ;
+    CHECK_ERROR (mxIsSparse (Xm), "X cannot be sparse") ;
 
     //--------------------------------------------------------------------------
     // expand any scalars in I and J (but not X)
@@ -250,17 +251,21 @@ void mexFunction
     bool X_is_scalar = (nx == 1 && nx < nvals) ;
     bool iso_build = X_is_scalar && nice_iso_dup ;
 
+    // mxGetData is used instead of the MATLAB-recommended mxGetDoubles, etc,
+    // because mxGetData works best for Octave, and it works fine for MATLAB
+    // since GraphBLAS requires R2018a with the interleaved complex data type.
+
     if (iso_build)
     {
         // build an iso matrix, with no dup operator needed
-        GxB_Scalar x_scalar = (GxB_Scalar) gb_get_shallow (pargin [2]) ;
+        GxB_Scalar x_scalar = (GxB_Scalar) gb_get_shallow (Xm) ;
         OK1 (A, GxB_Matrix_build_Scalar (A, I, J, x_scalar, nvals)) ;
         OK (GxB_Scalar_free (&x_scalar)) ;
     }
     else if (xtype == GrB_BOOL)
     { 
         bool empty = 0 ;
-        bool *X = (nvals == 0) ? &empty : mxGetData (pargin [2]) ;
+        bool *X = (nvals == 0) ? &empty : ((bool *) mxGetData (Xm)) ;
         if (dup == NULL) dup = GrB_LOR ;
         if (X_is_scalar)
         { 
@@ -273,7 +278,7 @@ void mexFunction
     else if (xtype == GrB_INT8)
     { 
         int8_t empty = 0 ;
-        int8_t *X = (nvals == 0) ? &empty : mxGetInt8s (pargin [2]) ;
+        int8_t *X = (nvals == 0) ? &empty : ((int8_t *) mxGetData (Xm)) ;
         if (dup == NULL) dup = GrB_PLUS_INT8 ;
         if (X_is_scalar)
         { 
@@ -286,7 +291,7 @@ void mexFunction
     else if (xtype == GrB_INT16)
     { 
         int16_t empty = 0 ;
-        int16_t *X = (nvals == 0) ? &empty : mxGetInt16s (pargin [2]) ;
+        int16_t *X = (nvals == 0) ? &empty : ((int16_t *) mxGetData (Xm)) ;
         if (dup == NULL) dup = GrB_PLUS_INT16 ;
         if (X_is_scalar)
         { 
@@ -299,7 +304,7 @@ void mexFunction
     else if (xtype == GrB_INT32)
     { 
         int32_t empty = 0 ;
-        int32_t *X = (nvals == 0) ? &empty : mxGetInt32s (pargin [2]) ;
+        int32_t *X = (nvals == 0) ? &empty : ((int32_t *) mxGetData (Xm)) ;
         if (dup == NULL) dup = GrB_PLUS_INT32 ;
         if (X_is_scalar)
         { 
@@ -312,7 +317,7 @@ void mexFunction
     else if (xtype == GrB_INT64)
     { 
         int64_t empty = 0 ;
-        int64_t *X = (nvals == 0) ? &empty : mxGetInt64s (pargin [2]) ;
+        int64_t *X = (nvals == 0) ? &empty : ((int64_t *) mxGetData (Xm)) ;
         if (dup == NULL) dup = GrB_PLUS_INT64 ;
         if (X_is_scalar)
         { 
@@ -325,7 +330,7 @@ void mexFunction
     else if (xtype == GrB_UINT8)
     { 
         uint8_t empty = 0 ;
-        uint8_t *X = (nvals == 0) ? &empty : mxGetUint8s (pargin [2]) ;
+        uint8_t *X = (nvals == 0) ? &empty : ((uint8_t *) mxGetData (Xm)) ;
         if (dup == NULL) dup = GrB_PLUS_UINT8 ;
         if (X_is_scalar)
         { 
@@ -338,7 +343,7 @@ void mexFunction
     else if (xtype == GrB_UINT16)
     { 
         uint16_t empty = 0 ;
-        uint16_t *X = (nvals == 0) ? &empty : mxGetUint16s (pargin [2]) ;
+        uint16_t *X = (nvals == 0) ? &empty : ((uint16_t *) mxGetData (Xm)) ;
         if (dup == NULL) dup = GrB_PLUS_UINT16 ;
         if (X_is_scalar)
         { 
@@ -351,7 +356,7 @@ void mexFunction
     else if (xtype == GrB_UINT32)
     { 
         uint32_t empty = 0 ;
-        uint32_t *X = (nvals == 0) ? &empty : mxGetUint32s (pargin [2]) ;
+        uint32_t *X = (nvals == 0) ? &empty : ((uint32_t *) mxGetData (Xm)) ;
         if (dup == NULL) dup = GrB_PLUS_UINT32 ;
         if (X_is_scalar)
         { 
@@ -364,7 +369,7 @@ void mexFunction
     else if (xtype == GrB_UINT64)
     { 
         uint64_t empty = 0 ;
-        uint64_t *X = (nvals == 0) ? &empty : mxGetUint64s (pargin [2]) ;
+        uint64_t *X = (nvals == 0) ? &empty : ((uint64_t *) mxGetData (Xm)) ;
         if (dup == NULL) dup = GrB_PLUS_UINT64 ;
         if (X_is_scalar)
         { 
@@ -377,7 +382,7 @@ void mexFunction
     else if (xtype == GrB_FP32)
     { 
         float empty = 0 ;
-        float *X = (nvals == 0) ? &empty : mxGetSingles (pargin [2]) ;
+        float *X = (nvals == 0) ? &empty : ((float *) mxGetData (Xm)) ;
         if (dup == NULL) dup = GrB_PLUS_FP32 ;
         if (X_is_scalar)
         { 
@@ -390,7 +395,7 @@ void mexFunction
     else if (xtype == GrB_FP64)
     { 
         double empty = 0 ;
-        double *X = (nvals == 0) ? &empty : mxGetDoubles (pargin [2]) ;
+        double *X = (nvals == 0) ? &empty : ((double *) mxGetData (Xm)) ;
         if (dup == NULL) dup = GrB_PLUS_FP64 ;
         if (X_is_scalar)
         { 
@@ -404,7 +409,7 @@ void mexFunction
     { 
         GxB_FC32_t empty = GxB_CMPLXF (0,0) ;
         GxB_FC32_t *X = &empty ;
-        if (nvals > 0) X = (GxB_FC32_t *) mxGetComplexSingles (pargin [2]) ;
+        if (nvals > 0) X = (GxB_FC32_t *) mxGetData (Xm) ;
         if (dup == NULL) dup = GxB_PLUS_FC32 ;
         if (X_is_scalar)
         { 
@@ -419,7 +424,7 @@ void mexFunction
     { 
         GxB_FC64_t empty = GxB_CMPLX (0,0) ;
         GxB_FC64_t *X = &empty ;
-        if (nvals > 0) X = (GxB_FC64_t *) mxGetComplexDoubles (pargin [2]) ;
+        if (nvals > 0) X = (GxB_FC64_t *) mxGetData (Xm) ;
         if (dup == NULL) dup = GxB_PLUS_FC64 ;
         if (X_is_scalar)
         { 

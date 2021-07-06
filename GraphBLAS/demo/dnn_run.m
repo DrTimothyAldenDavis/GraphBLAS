@@ -8,13 +8,8 @@ clear all
 GrB.clear ;
 
 rootdir = '/raid/hyper/GraphChallenge/dnn_data/stuff' ;
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
-if (~have_octave)
-    maxNumCompThreads ('automatic') ;
-    ncores = maxNumCompThreads ;
-else
-    ncores = nproc ;
-end
+ncores = demo_nproc ;
+
 fprintf ('# of cores :  %d\n', ncores) ;
 GrB.format ('by row') ;
 
@@ -81,3 +76,4 @@ end
 
 % restore the default # of threads
 GrB.clear ;
+

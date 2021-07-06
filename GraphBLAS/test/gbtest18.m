@@ -4,7 +4,7 @@ function gbtest18
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+have_octave = gb_octave ;
 tol = 1e-14 ;
 rng ('default') ;
 for trial = 1:21

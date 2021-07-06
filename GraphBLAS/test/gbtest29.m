@@ -5,7 +5,7 @@ function gbtest29
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 rng ('default') ;
-have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
+have_octave = gb_octave ;
 
 types = gbtest_types ;
 for k = 1:length (types)
@@ -69,16 +69,19 @@ for trial = 1:40
             assert (gbtest_eq (C1, C2)) ;
             assert (gbtest_eq (C1, C3)) ;
 
-            % this uses the built-in subasgn, after typecasting G(M) from
-            % class GrB to class double, using GrB/double:
-            if (~have_octave)
-                % MATLAB does the automatic typecasting of G(M), since it
-                % sees that GrB has a "double" method.  Octave does not do
-                % the auto typecast.
-                C4 = C ;
+            % using the built-in subsasgn
+            C4 = C ;
+            if (have_octave)
+                % Octave does not do the auto typecast.
+                C4 (M) = double (G (M)) ;
+            else
+                % This uses the built-in subsasgn, after typecasting G(M) from
+                % class GrB to class double, using GrB/double.  MATLAB does the
+                % automatic typecasting of G(M), since it sees that GrB has a
+                % "double" method.
                 C4 (M) = G (M) ;
-                assert (gbtest_eq (C1, C4)) ;
             end
+            assert (gbtest_eq (C1, C4)) ;
 
             % test assignment with A iso 
             G = spones (GrB (A)) ;
@@ -100,16 +103,17 @@ for trial = 1:40
             C1 (K) = pi ;
             C2 (M) = pi ;
             C3 (M) = GrB (pi) ;
-            if (~have_octave)
-                % See above for the octave vs MATLAB difference in casting.
+            if (have_octave)
+                % See above for the Octave vs MATLAB difference in casting.
+                C4 (K) = double (GrB (pi)) ;
+            else
                 C4 (K) = GrB (pi) ;
-                assert (gbtest_eq (C1, C4)) ;
             end
+            assert (gbtest_eq (C1, C4)) ;
             C5 (M) = pi ;
             assert (gbtest_eq (C1, C2)) ;
             assert (gbtest_eq (C1, C3)) ;
             assert (gbtest_eq (C1, C5)) ;
-
         end
     end
 end

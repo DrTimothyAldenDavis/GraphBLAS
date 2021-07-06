@@ -20,6 +20,11 @@
 // GraphBLASv5 and GraphBLASv5_1 are identical, except that s [9] is present
 // but always false for GraphBLASv5.
 
+// mxGetData and mxSetData are used instead of the MATLAB-recommended
+// mxGetDoubles, etc, because mxGetData and mxSetData work best for Octave, and
+// they work fine for MATLAB since GraphBLAS requires R2018a with the
+// interleaved complex data type.
+
 #include "gb_interface.h"
 
 // for hypersparse, sparse, or full matrices
@@ -219,7 +224,7 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
 
     // export the scalar content
     mxArray *opaque = mxCreateNumericMatrix (1, 10, mxINT64_CLASS, mxREAL) ;
-    int64_t *s = mxGetInt64s (opaque) ;
+    int64_t *s = (int64_t *) mxGetData (opaque) ;
     s [0] = plen ;
     s [1] = (by_col) ? nrows : ncols ;  // was A->vlen ;
     s [2] = (by_col) ? ncols : nrows ;  // was A->vdim ;
@@ -241,8 +246,8 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
         // export the pointers
         mxArray *Ap_mx = mxCreateNumericMatrix (1, 0, mxINT64_CLASS, mxREAL) ;
         mxSetN (Ap_mx, Ap_size / sizeof (int64_t)) ;
-        void *p = mxGetInt64s (Ap_mx) ; gb_mxfree (&p) ;
-        mxSetInt64s (Ap_mx, Ap) ;
+        void *p = (void *) mxGetData (Ap_mx) ; gb_mxfree (&p) ;
+        mxSetData (Ap_mx, Ap) ;
         mxSetFieldByNumber (G, 0, 3, Ap_mx) ;
 
         // export the indices
@@ -250,8 +255,8 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
         if (Ai_size > 0)
         { 
             mxSetN (Ai_mx, Ai_size / sizeof (int64_t)) ;
-            p = mxGetInt64s (Ai_mx) ; gb_mxfree (&p) ;
-            mxSetInt64s (Ai_mx, Ai) ;
+            p = (void *) mxGetData (Ai_mx) ; gb_mxfree (&p) ;
+            mxSetData (Ai_mx, Ai) ;
         }
         mxSetFieldByNumber (G, 0, 4, Ai_mx) ;
     }
@@ -261,8 +266,8 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     if (Ax_size > 0)
     { 
         mxSetN (Ax_mx, Ax_size) ;
-        void *p = mxGetUint8s (Ax_mx) ; gb_mxfree (&p) ;
-        mxSetUint8s (Ax_mx, Ax) ;
+        void *p = mxGetData (Ax_mx) ; gb_mxfree (&p) ;
+        mxSetData (Ax_mx, Ax) ;
     }
     mxSetFieldByNumber (G, 0, 2, Ax_mx) ;
 
@@ -277,8 +282,8 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
         if (Ah_size > 0)
         { 
             mxSetN (Ah_mx, Ah_size / sizeof (int64_t)) ;
-            void *p = mxGetInt64s (Ah_mx) ; gb_mxfree (&p) ;
-            mxSetInt64s (Ah_mx, Ah) ;
+            void *p = (void *) mxGetData (Ah_mx) ; gb_mxfree (&p) ;
+            mxSetData (Ah_mx, Ah) ;
         }
         mxSetFieldByNumber (G, 0, 5, Ah_mx) ;
     }
@@ -290,8 +295,8 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
         if (Ab_size > 0)
         { 
             mxSetN (Ab_mx, Ab_size) ;
-            void *p = mxGetInt8s (Ab_mx) ; gb_mxfree (&p) ;
-            mxSetInt8s (Ab_mx, Ab) ;
+            void *p = (void *) mxGetData (Ab_mx) ; gb_mxfree (&p) ;
+            mxSetData (Ab_mx, Ab) ;
         }
         mxSetFieldByNumber (G, 0, 3, Ab_mx) ;
     }

@@ -189,21 +189,9 @@ mxArray *gb_export_to_mxsparse  // return exported built-in sparse matrix S
         mxSetIr (S, Ti) ;
 
         // set the values
-        if (type == GrB_BOOL)
-        { 
-            p = mxGetData (S) ; gb_mxfree (&p) ;
-            mxSetData (S, Tx) ;
-        }
-        else if (type == GxB_FC64)
-        { 
-            p = mxGetComplexDoubles (S) ; gb_mxfree (&p) ;
-            mxSetComplexDoubles (S, Tx) ;
-        }
-        else // type == GrB_FP64
-        { 
-            p = mxGetDoubles (S) ; gb_mxfree (&p) ;
-            mxSetDoubles (S, Tx) ;
-        }
+        // use mxGetData and mxSetData (best for Octave, fine for MATLAB)
+        p = mxGetData (S) ; gb_mxfree (&p) ;
+        mxSetData (S, Tx) ;
     }
 
     //--------------------------------------------------------------------------

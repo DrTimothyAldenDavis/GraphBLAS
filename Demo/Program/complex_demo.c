@@ -77,6 +77,9 @@ int main (int argc, char **argv)
     GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads) ;
     fprintf (stderr, "complex_demo: nthreads: %d\n", nthreads) ;
 
+    // print in 1-based notation
+    GxB_Global_Option_set (GxB_PRINT_1BASED, true) ;
+
     bool predefined = (argc > 1) ;
     if (predefined)
     {
@@ -99,8 +102,8 @@ int main (int argc, char **argv)
     random_matrix (&A, false, false, m, k, 6, 0, true) ;
     random_matrix (&B, false, false, k, n, 8, 0, true) ;
 
-    GxB_Matrix_fprint (A, "C", GxB_SHORT, stderr) ;
-    GxB_Matrix_fprint (B, "C", GxB_SHORT, stderr) ;
+    GxB_Matrix_fprint (A, "A", GxB_SHORT, stderr) ;
+    GxB_Matrix_fprint (B, "B", GxB_SHORT, stderr) ;
 
     // C = A*B
     GrB_Matrix_new (&C, Complex, m, n) ;
