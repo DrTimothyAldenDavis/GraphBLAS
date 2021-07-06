@@ -189,6 +189,7 @@ mxArray *gb_export_to_mxsparse  // return exported built-in sparse matrix S
         mxSetIr (S, Ti) ;
 
         // set the values
+        // use mxGetData and mxSetData (best for Octave, fine for MATLAB)
         p = mxGetData (S) ; gb_mxfree (&p) ;
         mxSetData (S, Tx) ;
     }

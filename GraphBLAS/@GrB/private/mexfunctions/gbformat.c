@@ -98,6 +98,7 @@ void mexFunction
             // get the row/column format of the input matrix G
             mxArray *opaque = mxGetField (pargin [0], 0, "s") ;
             CHECK_ERROR (opaque == NULL, "invalid GraphBLAS struct") ;
+            // use mxGetData (best for Octave, fine for MATLAB)
             int64_t *s = (int64_t *) mxGetData (opaque) ;
             bool is_csc = (bool) (s [6]) ;
             fmt = (is_csc) ? GxB_BY_COL : GxB_BY_ROW ;

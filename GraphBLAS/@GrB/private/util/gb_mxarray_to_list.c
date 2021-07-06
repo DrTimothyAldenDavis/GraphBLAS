@@ -11,6 +11,10 @@
 // int64, a new integer list is created, and the 1-based input list is
 // converted to the 0-based integer list.
 
+// mxGetData is used instead of the MATLAB-recommended mxGetDoubles, etc,
+// because mxGetData works best for Octave, and it works fine for MATLAB
+// since GraphBLAS requires R2018a with the interleaved complex data type.
+
 #include "gb_interface.h"
 
 int64_t *gb_mxarray_to_list     // return List of integers

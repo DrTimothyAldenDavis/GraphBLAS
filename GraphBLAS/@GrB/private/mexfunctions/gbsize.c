@@ -70,6 +70,7 @@ void mexFunction
         // get the scalar info
         mxArray *opaque = mxGetField (pargin [0], 0, "s") ;
         CHECK_ERROR (opaque == NULL, "invalid GraphBLAS struct") ;
+        // use mxGetData (best for Octave, fine for MATLAB)
         int64_t *s = (int64_t *) mxGetData (opaque) ;
         int64_t vlen = s [1] ;
         int64_t vdim = s [2] ;
@@ -120,6 +121,7 @@ void mexFunction
         // output is int64 to avoid flint overflow
         int64_t *p ;
         pargout [0] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
+        // use mxGetData (best for Octave, fine for MATLAB)
         p = (int64_t *) mxGetData (pargout [0]) ;
         p [0] = (int64_t) nrows ;
         pargout [1] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;

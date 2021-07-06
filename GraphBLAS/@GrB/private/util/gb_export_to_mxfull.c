@@ -13,6 +13,10 @@
 // must ensure that the input X is deep.  The output is a standard built-in full
 // matrix as an mxArray.  No typecasting is done.
 
+// mxSetData is used instead of the MATLAB-recommended mxSetDoubles, etc,
+// because mxSetData works best for Octave, and it works fine for MATLAB
+// since GraphBLAS requires R2018a with the interleaved complex data type.
+
 #include "gb_interface.h"
 
 mxArray *gb_export_to_mxfull    // return exported built-in full matrix F
@@ -49,72 +53,62 @@ mxArray *gb_export_to_mxfull    // return exported built-in full matrix F
     if (type == GrB_BOOL)
     { 
         F = mxCreateLogicalMatrix (0, 0) ;
-        mxSetData (F, X) ;
     }
     else if (type == GrB_FP32)
     { 
         F = mxCreateNumericMatrix (0, 0, mxSINGLE_CLASS, mxREAL) ;
-        mxSetData (F, X) ;
     }
     else if (type == GrB_FP64)
     { 
         F = mxCreateNumericMatrix (0, 0, mxDOUBLE_CLASS, mxREAL) ;
-        mxSetData (F, X) ;
     }
     else if (type == GrB_INT8)
     { 
         F = mxCreateNumericMatrix (0, 0, mxINT8_CLASS, mxREAL) ;
-        mxSetData (F, X) ;
     }
     else if (type == GrB_INT16)
     { 
         F = mxCreateNumericMatrix (0, 0, mxINT16_CLASS, mxREAL) ;
-        mxSetData (F, X) ;
     }
     else if (type == GrB_INT32)
     { 
         F = mxCreateNumericMatrix (0, 0, mxINT32_CLASS, mxREAL) ;
-        mxSetData (F, X) ;
     }
     else if (type == GrB_INT64)
     { 
         F = mxCreateNumericMatrix (0, 0, mxINT64_CLASS, mxREAL) ;
-        mxSetData (F, X) ;
     }
     else if (type == GrB_UINT8)
     { 
         F = mxCreateNumericMatrix (0, 0, mxUINT8_CLASS, mxREAL) ;
-        mxSetData (F, X) ;
     }
     else if (type == GrB_UINT16)
     { 
         F = mxCreateNumericMatrix (0, 0, mxUINT16_CLASS, mxREAL) ;
-        mxSetData (F, X) ;
     }
     else if (type == GrB_UINT32)
     { 
         F = mxCreateNumericMatrix (0, 0, mxUINT32_CLASS, mxREAL) ;
-        mxSetData (F, X) ;
     }
     else if (type == GrB_UINT64)
     { 
         F = mxCreateNumericMatrix (0, 0, mxUINT64_CLASS, mxREAL) ;
-        mxSetData (F, X) ;
     }
     else if (type == GxB_FC32)
     {
         F = mxCreateNumericMatrix (0, 0, mxSINGLE_CLASS, mxCOMPLEX) ;
-        mxSetData (F, X) ;
     }
     else if (type == GxB_FC64)
     {
         F = mxCreateNumericMatrix (0, 0, mxDOUBLE_CLASS, mxCOMPLEX) ;
-        mxSetData (F, X) ;
     }
     else
     {
         ERROR ("unsupported type") ;
     }
+
+    // set the data
+    mxSetData (F, X) ;
 
     // set the size
     mxSetM (F, nrows) ;

@@ -20,6 +20,11 @@
 // GraphBLASv5 and GraphBLASv5_1 are identical, except that s [9] is present
 // but always false for GraphBLASv5.
 
+// mxGetData and mxSetData are used instead of the MATLAB-recommended
+// mxGetDoubles, etc, because mxGetData and mxSetData work best for Octave, and
+// they work fine for MATLAB since GraphBLAS requires R2018a with the
+// interleaved complex data type.
+
 #include "gb_interface.h"
 
 // for hypersparse, sparse, or full matrices

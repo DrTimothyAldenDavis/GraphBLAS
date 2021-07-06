@@ -251,6 +251,10 @@ void mexFunction
     bool X_is_scalar = (nx == 1 && nx < nvals) ;
     bool iso_build = X_is_scalar && nice_iso_dup ;
 
+    // mxGetData is used instead of the MATLAB-recommended mxGetDoubles, etc,
+    // because mxGetData works best for Octave, and it works fine for MATLAB
+    // since GraphBLAS requires R2018a with the interleaved complex data type.
+
     if (iso_build)
     {
         // build an iso matrix, with no dup operator needed

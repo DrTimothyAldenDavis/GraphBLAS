@@ -23,6 +23,10 @@
 // array is empty in the workspace, or if it doesn't exist, it is created with
 // the correct size.  Then the internal gbcov array is copied into it.
 
+// mxGetData is used instead of the MATLAB-recommended mxGetDoubles, etc,
+// because mxGetData works best for Octave, and it works fine for MATLAB
+// since GraphBLAS requires R2018a with the interleaved complex data type.
+
 void gbcov_get ( )
 {
 

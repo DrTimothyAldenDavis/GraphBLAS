@@ -20,6 +20,10 @@
 // For v5, iso is present but false, and the s component has length 10.
 // For v5_1, iso is true/false, and the s component has length 10.
 
+// mxGetData is used instead of the MATLAB-recommended mxGetDoubles, etc,
+// because mxGetData works best for Octave, and it works fine for MATLAB
+// since GraphBLAS requires R2018a with the interleaved complex data type.
+
 #include "gb_interface.h"
 
 #define IF(error,message) \

@@ -29,6 +29,7 @@ static inline GrB_Index *gb_get_tilesizes (mxArray *mxList, GrB_Index *len)
     (*len) = (GrB_Index) n ;
     mxClassID class = mxGetClassID (mxList) ;
     GrB_Index *List = mxMalloc (n * sizeof (GrB_Index)) ;
+    // use mxGetData (best for Octave, fine for MATLAB)
     if (class == mxINT64_CLASS)
     {
         int64_t *p = (int64_t *) mxGetData (mxList) ;

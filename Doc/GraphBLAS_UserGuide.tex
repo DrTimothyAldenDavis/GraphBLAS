@@ -148,10 +148,12 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 5.1.4 (July, 2021)    % FIXME
+\item Version 5.1.4 (July 6, 2021)
 
     \begin{packed_itemize}
     \item faster Octave interface.  Octave v7 or later is required.
+    \item (30) bug fix: 1-based printing not enabled for pending tuples.
+        Caught by Will Kimmerer, while working on the Julia interface.
     \end{packed_itemize}
 
 \item Version 5.1.3 (July 3, 2021)
@@ -1103,16 +1105,22 @@ See Jim Kitchen and Erik Welch's (both from Anaconda, Inc.) Python interface at
 See also \\
 \url{https://anaconda.org/conda-forge/graphblas}.
 
+Both of them allow for pending work to be left pending in a \verb'GrB_Matrix'.
+
 %===============================================================================
 \subsection{Julia Interface}
 %===============================================================================
 \label{julia}
 
-Will Kimmerer is developing a Julia interface for GraphBLAS; see \newline
-\url{https://github.com/JuliaSparse/SuiteSparseGraphBLAS.jl}.
-
-See also Abhinav Mehndiratta's Julia interface at \\
-\url{https://github.com/abhinavmehndiratta/SuiteSparseGraphBLAS.jl}.
+The Julia interface is at
+\url{https://github.com/JuliaSparse/SuiteSparseGraphBLAS.jl}, developed by Will
+Kimmerer, Abhinav Mehndiratta, and Viral Shah.  Unlike the Octave/MATLAB
+interface (and like the Python interfaces) the Julia interface can keep pending
+work (zombies, pending tuples, jumbled state) in a \verb'GrB_Matrix'.
+This makes Python and Julia the best high-level interfaces for
+SuiteSparse:GraphBLAS.  MATLAB is not as well suited, since it does not
+allow inputs to a function or mexFunction to be modified, so any pending
+work must be finished before a matrix can be used as input.
 
 %===============================================================================
 \subsection{Java Interface}
