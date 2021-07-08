@@ -192,14 +192,39 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // stringify the semiring and the mask
     //--------------------------------------------------------------------------
 
-    GB_cuda_stringifier mysemiring =  GB_cuda_stringifier();
-    std::string file_stem = "GB_AxB_dot3_cuda";
+    GB_cuda_semiring_factory mysemiring = GB_cuda_semiring_factory ( ) ;
+
+//  GB_cuda_stringifier mysemiring =  GB_cuda_stringifier();
+    mysemiring.semiring_factory ( semiring, flipxy,
+/       ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
+        false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
+
+#if hackit
+    std::string file_stem = "GB_semiring_";
     //mysemiring.open( file_stem);
-    mysemiring.stringify_semiring ( semiring, flipxy,
+//  mysemiring.stringify_semiring ( semiring, flipxy,
+//      ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
+//      false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
+
+
+    // (1) get srcode
+    mysemiring.enumify_semiring ( semiring, flipxy,
         ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
         false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
 
+    // (2) ask the jitifier if "GB_semiring_[srcode].h" exists
+
+    if (jitifier does not know "GB_semiring_[srcdo].h" exists)
+    {
+        check if the file exists and unlocked
+        if does not exist
+            mysemiring.open ("GB_semiring[werwr9230928300.h") ; locking it
+            mysemiring.macrofy_semiring ( ) ;
+            mysemiring.close ( ) ; unlock
+            tell jitified (cache) that it exists
+    }
     
+#endif
 
     GBURBLE ("(GPU stringified) ") ;
     //--------------------------------------------------------------------------
