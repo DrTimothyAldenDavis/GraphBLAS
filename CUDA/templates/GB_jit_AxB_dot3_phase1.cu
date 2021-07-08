@@ -13,7 +13,6 @@
 #include "matrix.h"
 #include "GB_cuda_buckets.h"
 #include "local_cub/block/block_scan.cuh"
-#include "mySemiRing.h"
 
 //------------------------------------------------------------------------------
 // GB_bucket_assignment

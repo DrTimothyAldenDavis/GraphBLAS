@@ -73,7 +73,7 @@ class GB_cuda_stringifier {
 	    A_sparsity,    // sparsity structure of A
 	    B_sparsity     // sparsity structure of B
        ) ;
-       snprintf( this->semiring_name, 256, "GB_semiring_%0x.16", this->sr_code );
+       snprintf( this->semiring_name, 256, "GB_semiring_%0lx.16", this->sr_code );
 
        std::cout<<" returned from  stringify semiring"<< std::endl; 
         

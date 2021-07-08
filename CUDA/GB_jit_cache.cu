@@ -32,10 +32,11 @@ namespace jit {
 std::string get_user_home_cache_dir() {
   auto home_dir = std::getenv("HOME");
   if (home_dir != nullptr) {
+    std::string Major_ver = "5";
+    std::string Minor_ver = "1";
+    std::string Imple_sub = "4";
     return std::string(home_dir) + "/.SuiteSparse/GraphBLAS/" 
-                                 + GxB_IMPLEMENTATION_MAJOR+"."
-                                 + GxB_IMPLEMENTATION_MINOR+"."
-                                 + GxB_IMPLEMENTATION_SUB ;
+                                 + Major_ver+"."+Minor_ver+"."+Imple_sub;
   } else {
     return std::string();
   }
