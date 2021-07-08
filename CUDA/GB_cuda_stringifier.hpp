@@ -26,7 +26,7 @@ class GB_cuda_stringifier {
 
     const char *include_filename = "";
     uint64_t sr_code;
-    char semiring_name[256];
+    char semiring_name[256];    // GB_semiring_0238402984398AC0DE.h where the numbers are the sr_code
 
     // file ptr 
     FILE *fp;
