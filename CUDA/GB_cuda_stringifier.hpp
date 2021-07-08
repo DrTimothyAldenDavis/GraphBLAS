@@ -24,28 +24,20 @@ class GB_cuda_stringifier {
 
     public:
 
-    const char *include_filename = "mySemiRing.h";
-    char callback_buffer[4096];
+    const char *include_filename = "";
     uint64_t sr_code;
     char semiring_name[256];
 
-//------------------------------------------------------------------------------
-// callback: return string as if it was read from a file 
-// this is a pointed to by a global function pointer
-//------------------------------------------------------------------------------
+    // file ptr 
+    FILE *fp;
 
-    std::istream* callback( std::string filename, std::iostream& tmp_stream) 
+    void open( const char *path_and_file)
     {
-        if ( filename == std::string(this->include_filename) )
-        {
-           tmp_stream << &this->callback_buffer; 
-           return &tmp_stream;
-        }
-        else 
-        {
-           return nullptr;
-        }
+        std::cout<< "opening "<< path_and_file<<" for write"<< std::endl;  
+        const char mode = 'w';
+        fp = fopen( path_and_file, &mode);
     }
+
 
     void stringify_semiring 
     (  
@@ -66,9 +58,7 @@ class GB_cuda_stringifier {
     )
     {
        std::cout<<" calling stringify semiring"<< std::endl; 
-       GB_stringify_semiring (
-	    // output:
-	    &this->callback_buffer[0],      // unique encoding of the entire semiring
+       enumify_semiring (
 	    // input:
 	    semiring,      // the semiring to enumify
 	    flipxy,        // multiplier is: mult(a,b) or mult(b,a)
@@ -83,9 +73,9 @@ class GB_cuda_stringifier {
 	    A_sparsity,    // sparsity structure of A
 	    B_sparsity     // sparsity structure of B
        ) ;
+       snprintf( this->semiring_name, 256, "GB_semiring_%0x.16", this->sr_code );
 
        std::cout<<" returned from  stringify semiring"<< std::endl; 
-
         
     }
 //------------------------------------------------------------------------------
@@ -147,9 +137,8 @@ class GB_cuda_stringifier {
     {
        std::cout<<" calling macrofy semiring"<< std::endl; 
        GB_macrofy_semiring (
-	    // output:
-	    &this->callback_buffer[0],  // all macros that define the semiring
-
+	    // output to file :
+	    fp, 
 	    // input:
 	    this->sr_code  
        ) ;

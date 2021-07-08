@@ -23,6 +23,7 @@
 #include <sys/types.h>
 
 #include "GB_jit_cache.h"
+#include "GraphBLAS.h"
 
 namespace jit {
 
@@ -31,7 +32,10 @@ namespace jit {
 std::string get_user_home_cache_dir() {
   auto home_dir = std::getenv("HOME");
   if (home_dir != nullptr) {
-    return std::string(home_dir) + "/.GraphBLAS/";
+    return std::string(home_dir) + "/.SuiteSparse/GraphBLAS/" 
+                                 + GxB_IMPLEMENTATION_MAJOR+"."
+                                 + GxB_IMPLEMENTATION_MINOR+"."
+                                 + GxB_IMPLEMENTATION_SUB ;
   } else {
     return std::string();
   }

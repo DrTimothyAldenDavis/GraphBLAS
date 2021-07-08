@@ -28,9 +28,8 @@ void GB_stringify_terminal         // return strings to check terminal
 (
     // outputs:
     bool *is_monoid_terminal,           // true if monoid is terminal
-    char *terminal_expression_macro,    // #define for terminal expression macro
-    char *terminal_statement_macro,     // #define for terminal statement macro
     // inputs:
+    FILE *fp,                           // File to write macros, assumed open
     const char *terminal_expression_macro_name,     // name of expression macro
     const char *terminal_statement_macro_name,      // name of statement macro
     GB_Opcode opcode,    // must be a built-in binary operator from a monoid
@@ -55,9 +54,9 @@ void GB_stringify_terminal         // return strings to check terminal
         terminal_value, is_monoid_terminal, ecode) ;
 
     // convert strings to macros
-    GB_macrofy_terminal_expression (terminal_expression_macro,
+    GB_macrofy_terminal_expression ( fp,
         terminal_expression_macro_name, terminal_expression) ;
-    GB_macrofy_terminal_statement (terminal_statement_macro,
+    GB_macrofy_terminal_statement ( fp,
         terminal_statement_macro_name, terminal_statement) ;
 }
 
@@ -266,16 +265,15 @@ void GB_charify_terminal_statement // string for terminal statement
 
 void GB_macrofy_terminal_expression    // macro for terminal expression
 (
-    // output:
-    char *terminal_expression_macro,
     // intput:
+    FILE *fp,                          // File to write macros, assumed open
     const char *terminal_expression_macro_name,
     const char *terminal_expression
 )
 {
 
-    snprintf (terminal_expression_macro, GB_CUDA_STRLEN,
-        "#define %s(cij) %s",
+    fprintf ( fp,
+        "#define %s(cij) %s\n",
         terminal_expression_macro_name, terminal_expression) ;
 }
 
@@ -285,16 +283,15 @@ void GB_macrofy_terminal_expression    // macro for terminal expression
 
 void GB_macrofy_terminal_statement     // macro for terminal statement
 (
-    // output:
-    char *terminal_statement_macro,
     // intput:
+    FILE *fp,                          // File to write macro, assumed open
     const char *terminal_statement_macro_name,
     const char *terminal_statement
 )
 {
 
-    snprintf (terminal_statement_macro, GB_CUDA_STRLEN,
-        "#define %s %s",
+    fprintf ( fp,
+        "#define %s %s\n",
         terminal_statement_macro_name, terminal_statement) ;
 }
 

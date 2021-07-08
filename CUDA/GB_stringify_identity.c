@@ -16,9 +16,8 @@
 
 void GB_stringify_identity     // return string for identity value
 (
-    // output:
-    char *identity_macro,   // string with the #define macro
     // input:
+    FILE *fp,               // File to write macros, assumed open already
     GB_Opcode opcode,       // must be a built-in binary operator from a monoid
     GB_Type_code zcode      // type code of the binary operator
 )
@@ -34,7 +33,7 @@ void GB_stringify_identity     // return string for identity value
     GB_charify_identity_or_terminal (&identity_value, ecode) ;
 
     // convert string to macro
-    GB_macrofy_identity (identity_macro, identity_value) ;
+    GB_macrofy_identity ( fp, identity_value) ;
 }
 
 //------------------------------------------------------------------------------
@@ -189,13 +188,11 @@ void GB_charify_identity_or_terminal
 
 void GB_macrofy_identity
 (
-    // output:
-    char *identity_macro,        // string with #define macro
     // input:
+    FILE *fp,                   // File to write macros, assumed open already
     const char *value_string    // string defining the identity value
 )
 {
-    snprintf (identity_macro, GB_CUDA_STRLEN, "#define GB_IDENTITY (%s)",
-        value_string) ;
+    fprintf ( fp, "#define GB_IDENTITY (%s)\n", value_string) ;
 }
 

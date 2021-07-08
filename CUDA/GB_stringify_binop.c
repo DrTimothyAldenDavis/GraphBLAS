@@ -21,9 +21,8 @@
 
 void GB_stringify_binop
 (
-    // output:
-    char * restrict binop_macro,  // string with the #define macro
     // input:
+    FILE *fp,                 // File to write macros, assumed open already
     const char *macro_name,   // name of macro to construct
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code xcode, // op->xtype->code of the operator
@@ -42,7 +41,7 @@ void GB_stringify_binop
     GB_charify_binop (&op_string, ecode) ;
 
     // convert string to macro
-    GB_macrofy_binop (binop_macro, macro_name, op_string, flipxy) ;
+    GB_macrofy_binop ( fp, macro_name, op_string, flipxy) ;
 }
 
 //------------------------------------------------------------------------------
@@ -792,9 +791,8 @@ void GB_charify_binop
 
 void GB_macrofy_binop
 (
-    // output:
-    char * restrict binop_macro,          // string with the #define macro
     // input:
+    FILE *fp,                   // File to write macros, assumed open already
     const char *macro_name,     // name of macro to construct
     const char *op_string,            // string defining the operator
     bool flipxy                 // if true, use mult(y,x) else mult(x,y)
@@ -803,14 +801,14 @@ void GB_macrofy_binop
     if (flipxy)
     {
         // reverse the x and y arguments to flip the operator
-        snprintf (binop_macro, GB_CUDA_STRLEN,
-            "#define %s(y,x) (%s)", macro_name, op_string) ;
+        fprintf ( fp,
+            "#define %s(y,x) (%s)\n", macro_name, op_string) ;
     }
     else
     {
         // operator is not flipped
-        snprintf (binop_macro, GB_CUDA_STRLEN,
-            "#define %s(x,y) (%s)", macro_name, op_string) ;
+        fprintf ( fp, 
+            "#define %s(x,y) (%s)\n", macro_name, op_string) ;
     }
 }
 
