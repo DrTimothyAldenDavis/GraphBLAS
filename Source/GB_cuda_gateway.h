@@ -146,4 +146,3 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
 #endif
 
-
