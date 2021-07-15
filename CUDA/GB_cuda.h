@@ -33,12 +33,11 @@ extern "C"
 // definitions.  Thus, this #include comes first.
 #include "GB_cuda_gateway.h"
 
-#include "GB_cuda_global.h"
-
 // Finally, include the CUDA definitions
 #include "cuda.h"
 #include "cuda_runtime.h"
 #include "jitify.hpp"
+#include "GB_cuda_semiring_factory.hpp"
 
 #include <cassert>
 #include <cmath>

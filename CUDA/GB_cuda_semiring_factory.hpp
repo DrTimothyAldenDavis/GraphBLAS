@@ -19,8 +19,8 @@ extern "C"
 // Define function pointer we will use later
 //std::istream* (*file_callback)(std::string, std::iostream&);
 
-// Define a factory class for building any buffer of text
-class GB_cuda_stringifier {
+// Define a factory class for building any semiring text definitions
+class GB_cuda_semiring_factory {
 
     public:
 
@@ -38,8 +38,13 @@ class GB_cuda_stringifier {
         fp = fopen( path_and_file, &mode);
     }
 
+    void close( )
+    {
+        fclose( fp );
+    }
 
-    void stringify_semiring 
+
+    void semiring_factory 
     (  
         // input:
         GrB_Semiring semiring,  // the semiring to enumify
@@ -147,5 +152,5 @@ class GB_cuda_stringifier {
     }
 
 
-}; // GB_cuda_stringifier
+}; // GB_cuda_semiring_factory
 

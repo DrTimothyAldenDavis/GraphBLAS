@@ -68,11 +68,11 @@ JIT_TEMP := $(patsubst %.cu, %.cu.jit, $(TEMPLATES))
 %.cu: %.cutmp
 	cp $? $@
 
-%.cu.jit: %.cu 
-	./stringify $? > $@
-
-stringify: stringify.cpp
-	$(GXX) -o $@ $< -O3 -Wall
+#%.cu.jit: %.cu 
+#	./stringify $? > $@
+#
+#stringify: stringify.cpp
+#	$(GXX) -o $@ $< -O3 -Wall
 
     
 doc: jitify.hpp Doxyfile
@@ -85,14 +85,14 @@ test: $(cOBJ)
 $(cppOBJ): %.o: %.cpp 
 	$(GXX) $(I) -fPIC -o $@ -c $< -O2 -Wall
 
-$(cOBJ): %.o: %.c GB_stringify.h 
+$(cOBJ): %.o: %.c 
 	$(GCC) $(I) -fPIC -o $@ -c $< -O2 -Wall
 
 $(SO_NAME): $(OBJ) $(cOBJ) $(cppOBJ) $(JIT_TEMP) GB_AxB_dot3_cuda.o
 	echo $(OBJ)
 	nvcc $(SO_OPTS) $(LIBS) $(OBJ) $(cOBJ) -o $@
 
-GB_AxB_dot3_cuda.o: $(JIT_TEMP) GB_cuda_stringifier.hpp matrix.h
+GB_AxB_dot3_cuda.o: $(JIT_TEMP) GB_cuda_semiring_factory.hpp matrix.h
 %.o: %.cu
 	nvcc -c $(I) $(CUDA_OPTS) -o $@ $< $(LIBS)
 

@@ -34,7 +34,9 @@ extern "C"
 #include "templates/reduceNonZombiesWarp.cu.jit"
 
 #include "GB_jit_launcher.h"
-
+std::istream* dummy_callback( std::string fname, std::iostream& tmp_stream){
+   return 0;
+}
 const std::vector<std::string> header_names ={};
 
 #define GB_FREE_WORK                                                    \
@@ -196,7 +198,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
 //  GB_cuda_stringifier mysemiring =  GB_cuda_stringifier();
     mysemiring.semiring_factory ( semiring, flipxy,
-/       ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
+        ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
         false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
 
 #if hackit
@@ -362,7 +364,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // as the pth entry in C.
     
 
-    //cudaStream_t stream_AxB;
+    cudaStream_t stream_AxB = NULL;
     //cudaStreamCreate ( &stream_AxB);
     //----------------------------------------------------------------------
     // phase1: assign each C(i,j) to a bucket, and count them
@@ -374,14 +376,19 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     std::string base_name = "GB_jit_AxB_dot3_";
     std::string Opname = "phase1_" ;
+
+    const char *phase1_program = R"(phase1_program
+    #include semiring_def.h
+    #include GB_jit_AxB_dot3_phase1.cu
+    )";
     
     jitify::experimental::KernelLauncher phase1Kernel =
     jit::launcher( base_name + Opname + mysemiring.semiring_name, 
-                   templates_GB_jit_AxB_dot3_phase1_cu,
+                   phase1_program,
                    header_names,
                    compiler_flags,
-                   callback_wrapper) //,
-                   //stream_AxB)
+                   dummy_callback,
+                   stream_AxB)
                .set_kernel_inst("GB_AxB_cuda_dot3_phase1",
                                 {M->type->name})
                .configure(grid, block); 
@@ -391,12 +398,16 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //----------------------------------------------------------------------
     base_name = "GB_jit_AxB_dot3_";
     Opname = "phase2";
+    const char *phase2_program = R"(phase2_program
+    #include semiring_def.h
+    #include GB_jit_AxB_dot3_phase2.cu
+    )";
     jitify::experimental::KernelLauncher phase2Kernel =
     jit::launcher( base_name + Opname,
-                   templates_GB_jit_AxB_dot3_phase2_cu,
+                   phase2_program,
                    header_names,
                    compiler_flags,
-                   callback_wrapper) //,
+                   dummy_callback) 
                    //stream_AxB)
                .set_kernel_inst("GB_AxB_dot3_phase2",
                                 {})
@@ -406,10 +417,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     Opname = "phase2";
     jitify::experimental::KernelLauncher phase2endKernel =
     jit::launcher( base_name + Opname,
-                   templates_GB_jit_AxB_dot3_phase2_cu,
+                   phase2_program,
                    header_names,
                    compiler_flags,
-                   callback_wrapper) //,
+                   dummy_callback)
                    //stream_AxB)
                .set_kernel_inst("GB_AxB_dot3_phase2end",
                                 {})
@@ -493,6 +504,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     base_name = "GB_jit_";
     std::string kernel_name = "AxB_dot3_phase3_";
+    const char *phase3_program; // to be specified by buckets
+
     C->nzombies = Bucketp[1];  //set pre-zombie counts
 
     for ( int bucket = 1 ; bucket < NBUCKETS; ++bucket)
@@ -534,6 +547,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             case GB_BUCKET_DNDN :
                 Opname = "dndn" ;
                 jit_template = templates_GB_jit_AxB_dot3_phase3_dndn_cu;
+                phase3_program = R"(phase3_program
+    #include semiring_def.h
+    #include GB_jit_AxB_dot3_phase3_dndn.cu
+    )";
                 blocksz = 32;
                 gridsz = ( Cnz -1 + blocksz)/blocksz;
                 break ;
@@ -549,6 +566,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                 sz = 64 ;
                 Opname = "spdn" ;
                 jit_template = templates_GB_jit_AxB_dot3_phase3_spdn_cu;
+                phase3_program = R"(phase3_program
+    #include semiring_def.h
+    #include GB_jit_AxB_dot3_phase3_spdn.cu
+    )";
                 blocksz = 32;
                 gridsz = ( Cnz -1 + blocksz)/blocksz;
                 break ;
@@ -560,6 +581,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                 sz = 256 ;
                 Opname = "spdn" ;
                 jit_template = templates_GB_jit_AxB_dot3_phase3_spdn_cu;
+                phase3_program = R"(phase3_program
+    #include semiring_def.h
+    #include GB_jit_AxB_dot3_phase3_spdn.cu
+    )";
                 blocksz = 32;
                 gridsz = ( Cnz -1 + blocksz)/blocksz;
                 break ;
@@ -572,6 +597,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             case GB_BUCKET_VSSP :
                 Opname = "vssp" ;
                 jit_template = templates_GB_jit_AxB_dot3_phase3_vssp_cu;
+                phase3_program = R"(phase3_program
+    #include semiring_def.h
+    #include GB_jit_AxB_dot3_phase3_vssp.cu
+    )";
                 blocksz = 32;
                 gridsz = ( Cnz -1 + blocksz)/blocksz;
                 break ;
@@ -588,6 +617,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             case GB_BUCKET_VSVS_4 :   sz += 4      ;
                 Opname = "vsvs" ;
                 jit_template = templates_GB_jit_AxB_dot3_phase3_vsvs_cu;
+                phase3_program = R"(phase3_program
+    #include semiring_def.h
+    #include GB_jit_AxB_dot3_phase3_vsvs.cu
+    )";
                 blocksz = 1024;
                 gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + blocksz -1 )/blocksz);
                 gridsz =  ( Cnz  + blocksz -1 )/blocksz;
@@ -606,6 +639,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             case GB_BUCKET_MERGEPATH :
                 Opname = "mp" ;
                 jit_template = templates_GB_jit_AxB_dot3_phase3_mp_cu;
+                phase3_program = R"(phase3_program
+    #include semiring_def.h
+    #include GB_jit_AxB_dot3_phase3_mp.cu
+    )";
                 blocksz = 32;
                 gridsz = ( Cnz -1 + blocksz)/blocksz;
                 break ;
@@ -613,6 +650,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             case GB_BUCKET_WARP_IX :   sz = 32      ;
                 Opname = "warpix" ;
                 jit_template = templates_GB_jit_AxB_dot3_phase3_warpix_cu;
+                phase3_program = R"(phase3_program
+    #include semiring_def.h
+    #include GB_jit_AxB_dot3_phase3_warpix.cu
+    )";
                 blocksz = 32;
                 gridsz =  GB_IMIN( (mnvec+15)/16, 256*number_of_sms);
                 break ;
@@ -627,10 +668,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         std::cout<< "Kernel name =" <<Opname<<std::endl; 
         GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
         jit::launcher( base_name + kernel_name + Opname + "_" + mysemiring.semiring_name,
-                       jit_template,
+                       phase3_program,
                        header_names,
-                       compiler_flags,
-                       callback_wrapper)
+                       compiler_flags, 
+                       dummy_callback)
                    .set_kernel_inst(kernel_name + Opname,
                                     { ctype->name,
                                       A->type->name,
@@ -659,6 +700,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // transplant C into C_static, and free C
     GB_undo_dynamic_header (&C_static, C, Context) ;
     ASSERT (C == NULL) ;
+    /*
 
     std::string reduce_kernel_name = "reduceNonZombiesWarp";
     const char*  jit_template;
@@ -697,6 +739,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     printf("num_triangles = %d\n",  num_triangles );
 
     if (block_sum != NULL) cudaFree( block_sum );  block_sum = NULL ;
+    */
+
     //cudaMemPrefetchAsync( C->p, (mnvec+1) * sizeof (int64_t), cudaCpuDeviceId, NULL) ; //stream_data ) ;
     //cudaMemPrefetchAsync( C->i, cnz * sizeof (int64_t), cudaCpuDeviceId, NULL ) ; //stream_data ) ;
     //cudaMemPrefetchAsync( C->x, cnz * sizeof (int32_t), cudaCpuDeviceId, NULL ) ; //stream_data ) ;
@@ -707,9 +751,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     GB_cuda_free( C->x);
     C->i = Citemp;
     C->x = Cxtemp;
-    */
 
     cudaDeviceSynchronize();
+    */
 
     GB_FREE_WORK ;
     return GrB_SUCCESS; 
