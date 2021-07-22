@@ -17,7 +17,7 @@ CUDA_DIR ?= /usr/local/cuda
 CXXFLAGS += -pthread
 
 ifeq ($(CXX11),1)
-	CXXFLAGS += -std=c++14
+	CXXFLAGS += -std=c++11
 endif
 
 EMBED_BEGIN = -rdynamic -Wl,-b,binary,
@@ -55,7 +55,7 @@ LIBS = -L/usr/local/cuda/lib64 -lcudadevrt -lcudart
 
 CUDA_OPTS = -O2 --cudart=shared --gpu-architecture=compute_75 \
         --relocatable-device-code true \
-        --std=c++14 -Xcompiler -fPIC
+        --std=c++11 -Xcompiler -fPIC
 
 library: $(SO_NAME) 
 
@@ -68,11 +68,11 @@ JIT_TEMP := $(patsubst %.cu, %.cu.jit, $(TEMPLATES))
 %.cu: %.cutmp
 	cp $? $@
 
-#%.cu.jit: %.cu 
-#	./stringify $? > $@
-#
-#stringify: stringify.cpp
-#	$(GXX) -o $@ $< -O3 -Wall
+%.cu.jit: %.cu 
+	./stringify $? > $@
+
+stringify: stringify.cpp
+	$(GXX) -o $@ $< -O3 -Wall
 
     
 doc: jitify.hpp Doxyfile

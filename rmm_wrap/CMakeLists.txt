@@ -9,7 +9,7 @@ configure_file(RMM_WrapConfig.h.in RMM_WrapConfig.h)
 
 add_executable(RMM_Wrap_Test rmm_wrap_test.c)
 
-list(APPEND EXTRA_INCLUDES /home/jeaton/lib/include /usr/local/cuda)
+list(APPEND EXTRA_INCLUDES $CONDA_PREFIX/include /usr/local/cuda)
 
 target_link_libraries(RMM_Wrap_Test PUBLIC  ${EXTRA_LIBS})
 
