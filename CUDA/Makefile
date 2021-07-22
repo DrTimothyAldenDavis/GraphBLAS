@@ -17,7 +17,7 @@ CUDA_DIR ?= /usr/local/cuda
 CXXFLAGS += -pthread
 
 ifeq ($(CXX11),1)
-	CXXFLAGS += -std=c++11
+	CXXFLAGS += -std=c++14
 endif
 
 EMBED_BEGIN = -rdynamic -Wl,-b,binary,
@@ -55,7 +55,7 @@ LIBS = -L/usr/local/cuda/lib64 -lcudadevrt -lcudart
 
 CUDA_OPTS = -O2 --cudart=shared --gpu-architecture=compute_75 \
         --relocatable-device-code true \
-        --std=c++11 -Xcompiler -fPIC
+        --std=c++14 -Xcompiler -fPIC
 
 library: $(SO_NAME) 
 
