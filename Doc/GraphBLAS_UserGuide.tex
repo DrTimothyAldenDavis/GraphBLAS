@@ -148,6 +148,13 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 5.1.6 (July 31, 2021)
+
+    \begin{packed_itemize}
+    \item one-line change to \verb'C=A*B': faster symbolic analysis when a
+        vector \verb'C(:,j)' is dense (for CSC) or \verb'C(i,:)' for CSR.
+    \end{packed_itemize}
+
 \item Version 5.1.5 (July 15, 2021)
 
     \begin{packed_itemize}

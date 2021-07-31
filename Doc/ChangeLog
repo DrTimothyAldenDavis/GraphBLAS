@@ -1,3 +1,8 @@
+Version 5.1.6, July 31, 2021
+
+    * one-line change to C=A*B: faster symbolic analysis when a vector
+        C(:,j) is dense (for CSC) or C(i,:) for CSR.
+
 Version 5.1.5, July 15, 2021
 
     * ACM TOMS submission: rename some functions to simplify discussion

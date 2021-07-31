@@ -56,6 +56,7 @@
                     cjnz++ ;            // C(i,j) is a new entry
                 }
             }
+            if (cjnz == cvlen) break ;  // C(:,j) is completely dense
         }
         Cp [kk] = cjnz ;                // save count of entries in C(:,j)
     }
