@@ -1,0 +1,27 @@
+
+LAGraph agenda, Aug 11, 2021
+
+    testing status:
+        added a libgraphblas_test.so (OK?), so it can be used in
+            src/test, src/benchmark, experimental/test,
+            experimental/benchmark, etc.
+        tests done for Triangle Count (TC), BFS, SSSP, CC.
+        need tests for Betweeness Centrality (BC), PageRank (Pr)
+        need tests for LAGraph_DeleteDiag
+
+    added utility: LAGraph_DeleteDiag (G, msg)
+
+    lots of todo's in CC method, some in SSSP
+    some TODOs in src/test, src/utility
+
+    need to select a consist set of error return values (-1000, -1001, ...)
+
+    top-level Makefile: why not?  julia has one
+        ("make" could do "mkdir build ; cd build ; cmake .. ; make", etc)
+
+    LAGraph binary read/write
+        SuiteSparse-specific?
+        general binary format, based on the draft 2.0 spec
+            for import/export formats?
+
+
