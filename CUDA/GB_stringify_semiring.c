@@ -337,18 +337,5 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     GB_macrofy_sparsity (fp, "A", asparsity) ;
     GB_macrofy_sparsity (fp, "B", bsparsity) ;
 
-    //--------------------------------------------------------------------------
-    // build the final string that defines all semiring macros
-    //--------------------------------------------------------------------------
-
- // printf("stringify to buffer \n");
- // 
- // fprintf (fp, semiring_macros, GB_CUDA_STRLEN,
- //     "%s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n",
- //     acast_macro, bcast_macro, mult_macro, add_macro, identity_macro,
- //     terminal_expression_macro, terminal_statement_macro, ccast_macro,
- //     mask_macros, csparsity_macros, msparsity_macros, asparsity_macros,
- //     bsparsity_macros) ;
- // printf("done with stringify semiring \n");
 }
 
