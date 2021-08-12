@@ -210,7 +210,11 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             mysemiring.macrofy_semiring ( ) ;
             mysemiring.close ( ) ; unlock
             tell jitified (cache) that it exists
+        unlock
     }
+
+    // (3) ask the jitifier if GB_dot3_[srcode].cu has been compilied,
+        // if not compile it.
 
     GBURBLE ("(GPU stringified) ") ;
     //--------------------------------------------------------------------------
