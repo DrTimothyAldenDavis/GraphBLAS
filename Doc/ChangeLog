@@ -1,3 +1,9 @@
+Version 5.1.6, Aug 16, 2021
+
+    * one-line change to C=A*B: faster symbolic analysis when a vector
+        C(:,j) is dense (for CSC) or C(i,:) for CSR.
+    * port to MacOSx 11.3.1 (Big Sur): cmake 3.13 or later now required.
+
 Version 5.1.5, July 15, 2021
 
     * ACM TOMS submission: rename some functions to simplify discussion
