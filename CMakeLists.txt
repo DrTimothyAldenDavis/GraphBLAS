@@ -99,7 +99,7 @@ configure_file (
 
 include ( FindOpenMP  )
 
-# enable_language ( CUDA )
+enable_language ( CUDA )
 # for nvcc, add -DGBCUDA
 set ( CMAKE_CUDA on )
 #set ( CMAKE_CUDA off )
