@@ -23,22 +23,11 @@ find_package(rmm 21.8)
 add_library(rmm_wrap rmm_wrap.cpp rmm_wrap.hpp rmm_wrap.h)
 add_executable(rmm_wrap_test rmm_wrap_test.c rmm_wrap.cpp rmm_wrap.hpp rmm_wrap.h)
 
-target_link_libraries(rmm_wrap PUBLIC
-		${EXTRA_LIBS}
-		Thrust
-		rmm::rmm)
+set(RMM_WRAP_LIBS ${EXTRA_LIBS} Thrust rmm::rmm)
+set(RMM_WRAP_INCLUDES "${PROJECT_BINARY_DIR}" "${CONDA_PREFIX}/include" "${PROJECT_SOURCE_DIR}/include")
 
-target_include_directories(rmm_wrap PUBLIC
-		"${PROJECT_BINARY_DIR}"
-		$CONDA_PREFIX/include
-		"${PROJECT_SOURCE_DIR}/include")
+target_link_libraries(rmm_wrap PUBLIC ${RMM_WRAP_LIBS})
+target_include_directories(rmm_wrap_test PUBLIC "${RMM_WRAP_INCLUDES}")
 
-target_link_libraries(rmm_wrap_test PUBLIC
-  	    ${EXTRA_LIBS}
-		rmm::rmm
-		Thrust)
-
-target_include_directories(rmm_wrap_test PUBLIC
-		"${PROJECT_BINARY_DIR}"
-		$CONDA_PREFIX/include
-		"${PROJECT_SOURCE_DIR}/include")
+target_link_libraries(rmm_wrap_test PUBLIC ${RMM_WRAP_LIBS})
+target_include_directories(rmm_wrap_test PUBLIC "${RMM_WRAP_INCLUDES}")
