@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20.1)
-
 project(rmm_wrap VERSION 0.1)
+
+# This build depends upon having RMM cmake installed from https://github.com/rapidsai/rmm.git
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 99)
