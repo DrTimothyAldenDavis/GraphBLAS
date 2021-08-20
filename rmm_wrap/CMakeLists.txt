@@ -6,9 +6,7 @@ project(rmm_wrap VERSION 0.1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 99)
 
-
 find_package(CUDA REQUIRED)
-
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
 execute_process(

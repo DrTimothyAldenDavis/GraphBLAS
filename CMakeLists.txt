@@ -97,21 +97,22 @@ configure_file (
 # determine what user threading model to use
 #-------------------------------------------------------------------------------
 
-include ( FindOpenMP  )
+include ( FindOpenMP )
 
 enable_language ( CUDA )
+
 # for nvcc, add -DGBCUDA
 set ( CMAKE_CUDA on )
-#set ( CMAKE_CUDA off )
-
-# LIBS = -L/usr/local/cuda/lib64 -lcudadevrt -lcudart
-# LIB += -ldl -L$(CUDA_LIB_DIR) -lcuda -lcudart -lnvrtc
+set ( RMM_WRAP on )
 
 if ( CMAKE_CUDA )
+    find_package(CUDA REQUIRED)
     message ( STATUS "CUDA enabled" )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
     set ( GB_CUDA graphblascuda  cuda cudadevrt cudart nvrtc )
-    link_directories ( "CUDA" "/usr/local/cuda/lib64" "/usr/local/cuda/lib64/stubs" )
+    link_directories ( "CUDA" ${CUDA_LIBRARIES} "/usr/local/cuda/lib64/stubs" )
+
+    # TODO: Need to be able to enable this. For now, use make already in ${REPO_ROOT}/CUDA
     #add_subdirectory("CUDA")
 else ( )
     message ( STATUS "CUDA not enabled" )
@@ -119,14 +120,14 @@ else ( )
     set ( GB_CUDA )
 endif ( )
 
-set ( RMM_WRAP on )
-
+# TODO: Eventually this should be nested under CMAKE_CUDA conditional(?)
 if ( RMM_WRAP )
     message ( STATUS "RMM enabled" )
     set ( CMAKE_RMM_FLAG " -DGBRMM" )
-    set ( GB_RMM rmm_wrap cuda cudart stdc++ )
-    include_directories ( "rmm_wrap" "/usr/local/cuda/include")
-    link_directories ( "CUDA" "/usr/local/cuda/lib64" "/usr/local/cuda/lib64/stubs" "rmm_wrap"  )
+    set ( GB_RMM rmm_wrap ${CUDA_LIBRARIES} stdc++ )
+    add_subdirectory(rmm_wrap)
+    include_directories ( "rmm_wrap" ${CUDA_INCLUDE_DIRS})
+    link_directories ( "CUDA" "${CUDA_LIBRARIES}" "/usr/local/cuda/lib64/stubs" "rmm_wrap"  )
 else ( )
     message ( STATUS "RMM not enabled" )
     set ( CMAKE_RMM_FLAG " " )
