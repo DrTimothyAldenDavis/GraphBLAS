@@ -256,9 +256,10 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     // multiplier
     int mult_ecode  = RSHIFT (scode, 37, 8) ;
     bool flipxy     = RSHIFT (scode, 36, 1) ;
-    int zcode       = RSHIFT (scode, 32, 4) ;
-    int xcode       = RSHIFT (scode, 28, 4) ;
-    int ycode       = RSHIFT (scode, 24, 4) ;
+//  x,y,z types are not needed here for macrofy:
+//  int zcode       = RSHIFT (scode, 32, 4) ;
+//  int xcode       = RSHIFT (scode, 28, 4) ;
+//  int ycode       = RSHIFT (scode, 24, 4) ;
 
     // mask
     int mask_ecode  = RSHIFT (scode, 20, 4) ;
@@ -266,7 +267,8 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     // types of C, A, and B
     int acode       = RSHIFT (scode, 16, 4) ;
     int bcode       = RSHIFT (scode, 12, 4) ;
-    int ccode       = RSHIFT (scode,  8, 4) ;
+//  C type is not needed here for macrofy:
+//  int ccode       = RSHIFT (scode,  8, 4) ;
 
     // formats of C, A, and B
     int csparsity   = RSHIFT (scode,  6, 2) ;

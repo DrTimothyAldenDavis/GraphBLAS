@@ -53,6 +53,7 @@ struct RMM_Handle
     RMM_MODE mode;
     std::shared_ptr<rmm::mr::device_memory_resource>   resource; 
     std::shared_ptr<std::pmr::memory_resource>         host_resource;
+    // add a hash table
 };
 
 void rmm_create_handle( RMM_Handle **handle)
@@ -96,6 +97,30 @@ void rmm_initialize(RMM_Handle *handle, RMM_MODE mode,  std::size_t init_pool_si
     }
 }
 
+
+#if 0
+void *rmm_malloc (std::size_t size)
+{
+    size_t *p = (size_t *) rmm_allocate (&size) ;
+    hash_insert (p, size) ;
+    return (p) ;
+}
+
+void *rmm_calloc (std::size_t n, std::size_t size)
+{
+    // ...
+}
+
+void *rmm_realloc (...std::size_t size)
+{
+}
+
+void rmm_free (void *p)
+{
+    size_t size = hash_lookup (p)
+    rmm_deallocate (p, size) ;
+}
+#endif
 
 void *rmm_allocate( std::size_t *size)
 {

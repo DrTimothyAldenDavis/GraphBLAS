@@ -8,6 +8,7 @@
 #pragma once
 #include <iostream>
 #include <cstdint>
+#include "GB_jit_cache.h"
 
 extern "C" 
 {
@@ -20,13 +21,13 @@ extern "C"
 //std::istream* (*file_callback)(std::string, std::iostream&);
 
 // Define a factory class for building any semiring text definitions
-class GB_cuda_semiring_factory {
+class GB_cuda_semiring_factory:public File_Desc {
 
     public:
 
     const char *include_filename = "";
     uint64_t sr_code;
-    char semiring_name[256];    // GB_semiring_0238402984398AC0DE.h where the numbers are the sr_code
+    char filename[256];    // GB_semiring_0238402984398AC0DE.h where the numbers are the sr_code
 
     // file ptr 
     FILE *fp;
@@ -87,7 +88,7 @@ class GB_cuda_semiring_factory {
 	    B_sparsity     // sparsity structure of B
        ) ;
        this->sr_code = scode;
-       snprintf( this->semiring_name, 256, "GB_semiring_%016lx.h",
+       snprintf( this->filename, 256, "GB_semiring_%016lx.h",
         this->sr_code );
        std::cout<<" returned from  stringify semiring"<< std::endl; 
     }
@@ -97,7 +98,7 @@ class GB_cuda_semiring_factory {
 // operators, datatypes, sparsity formats and produces a character buffer. 
 //------------------------------------------------------------------------------
 
-    void macrofy_semiring ( )
+    void macrofy ( )
     {
        std::cout<<" calling macrofy semiring"<< std::endl; 
        GB_macrofy_semiring (

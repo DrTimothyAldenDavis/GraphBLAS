@@ -24,6 +24,10 @@
 
 #include "GB_jit_cache.h"
 #include "GraphBLAS.h"
+// in GraphBLAS.h
+// #define GxB_IMPLEMENTATION_MAJOR 5
+// #define GxB_IMPLEMENTATION_MINOR 0
+// #define GxB_IMPLEMENTATION_SUB   3
 
 namespace jit {
 

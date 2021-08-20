@@ -111,10 +111,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     int64_t *Bucketp = NULL;
     int64_t *offset = NULL;
 
-    // just in case M is jumbled and we don't handle it yet (future)
-    GB_MATRIX_WAIT (M_input) ;
-    ASSERT (!GB_JUMBLED (M_input)) ;
-
     // note that this appears after the wait on M_input:
     GB_OK (GB_do_dynamic_header (&M, M_input, Context)) ;
     GB_OK (GB_do_dynamic_header (&A, A_input, Context)) ;
@@ -200,21 +196,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
         false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
 
-    // (2) ask the jitifier if "GB_semiring_[srcode].h" exists
-
-    if (jitifier does not know "GB_semiring_[srcdo].h" exists)
-    {
-        check if the file exists and unlocked
-        if does not exist
-            mysemiring.open ("GB_semiring[werwr9230928300.h") ; locking it
-            mysemiring.macrofy_semiring ( ) ;
-            mysemiring.close ( ) ; unlock
-            tell jitified (cache) that it exists
-        unlock
-    }
-
-    // (3) ask the jitifier if GB_dot3_[srcode].cu has been compilied,
-        // if not compile it.
+    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
+    jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
+    filecache.getFile (mysemiring) ;
 
     GBURBLE ("(GPU stringified) ") ;
     //--------------------------------------------------------------------------
@@ -365,14 +349,27 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     std::string base_name = "GB_jit_AxB_dot3_";
     std::string Opname = "phase1_" ;
 
-    const char *phase1_program = R"(phase1_program
-    #include semiring_def.h
-    #include GB_jit_AxB_dot3_phase1.cu
-    )";
-    
+    // create a single string of 4 lines, containining the following, for some
+    // semiring code.  Note that R "eats" the left and right parentheses.
+    /*
+        phase1_program
+        #include "GB_semiring_23030928029.h"
+        #include "GB_jit_AxB_dot3_phase1.cu"
+    */
+    // where GB_semiring_23030928029.h is mysemiring.filename
+
+    std::stringstream phase1_program ;
+    phase1_program <<
+    R"(phase1_program
+    #include ")" << mysemiring.filename << R"("
+    #include "GB_jit_AxB_dot3_phase1.cu"
+    )" ;
+    // dump it:
+    std::cout << phase1_program.str() ;
+
     jitify::experimental::KernelLauncher phase1Kernel =
-    jit::launcher( base_name + Opname + mysemiring.semiring_name, 
-                   phase1_program,
+    jit::launcher( base_name + Opname + mysemiring.filename, 
+                   phase1_program.str(),
                    header_names,
                    compiler_flags,
                    dummy_callback,
@@ -384,15 +381,21 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //----------------------------------------------------------------------
     // phase2: cumsum across the blockbuckets, propagate to thread level
     //----------------------------------------------------------------------
-    base_name = "GB_jit_AxB_dot3_";
+
     Opname = "phase2";
-    const char *phase2_program = R"(phase2_program
-    #include semiring_def.h
-    #include GB_jit_AxB_dot3_phase2.cu
-    )";
+
+    std::stringstream phase2_program ;
+    phase2_program <<
+    R"(phase2_program
+    #include ")" << mysemiring.filename << R"("
+    #include "GB_jit_AxB_dot3_phase2.cu"
+    )" ;
+    // dump it:
+    std::cout << phase2_program.str() ;
+
     jitify::experimental::KernelLauncher phase2Kernel =
-    jit::launcher( base_name + Opname,
-                   phase2_program,
+    jit::launcher( base_name + Opname + mysemiring.filename,
+                   phase2_program.str(),
                    header_names,
                    compiler_flags,
                    dummy_callback) 
@@ -401,11 +404,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                                 {})
                .configure(p2grid, block);
 
-    base_name = "GB_jit_AxB_dot3_";
     Opname = "phase2";
     jitify::experimental::KernelLauncher phase2endKernel =
-    jit::launcher( base_name + Opname,
-                   phase2_program,
+    jit::launcher( base_name + Opname + mysemiring.filename,
+                   phase2_program.str(),
                    header_names,
                    compiler_flags,
                    dummy_callback)
@@ -490,18 +492,13 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // phase3: do the numerical work
     //----------------------------------------------------------------------
 
-    base_name = "GB_jit_";
-    std::string kernel_name = "AxB_dot3_phase3_";
     const char *phase3_program; // to be specified by buckets
 
     C->nzombies = Bucketp[1];  //set pre-zombie counts
 
     for ( int bucket = 1 ; bucket < NBUCKETS; ++bucket)
     {
-        std::string Opname = "";
         int sz = 0 ;
-
-        const char*  jit_template;
 
         int64_t start = Bucketp[bucket];
         int64_t end = Bucketp[bucket+1];
@@ -516,6 +513,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         if ( Cnz == 0 ) continue;
 
         GBURBLE ("\n\n(GPU phase3 bucket,bucketsize= %d,%ld) ",bucket,Cnz) ;
+        std::stringstream phase3_program ;
 
         switch (bucket)
         {
@@ -533,12 +531,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
             // both A(:,i) and B(:,j) are dense
             case GB_BUCKET_DNDN :
-                Opname = "dndn" ;
-                jit_template = templates_GB_jit_AxB_dot3_phase3_dndn_cu;
-                phase3_program = R"(phase3_program
-    #include semiring_def.h
-    #include GB_jit_AxB_dot3_phase3_dndn.cu
-    )";
+                Opname = "phase3_dndn" ;
+
                 blocksz = 32;
                 gridsz = ( Cnz -1 + blocksz)/blocksz;
                 break ;
@@ -552,12 +546,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             // A(:,i) is very sparse (< 256 entries) and B(:,j) is dense
             case GB_BUCKET_VSDN :
                 sz = 64 ;
-                Opname = "spdn" ;
-                jit_template = templates_GB_jit_AxB_dot3_phase3_spdn_cu;
-                phase3_program = R"(phase3_program
-    #include semiring_def.h
-    #include GB_jit_AxB_dot3_phase3_spdn.cu
-    )";
+                Opname = "phase3_spdn" ;
                 blocksz = 32;
                 gridsz = ( Cnz -1 + blocksz)/blocksz;
                 break ;
@@ -567,12 +556,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             // A(:,i) is sparse (>= 256 entries) and B(:,j) is dense
             case GB_BUCKET_SPDN :
                 sz = 256 ;
-                Opname = "spdn" ;
-                jit_template = templates_GB_jit_AxB_dot3_phase3_spdn_cu;
-                phase3_program = R"(phase3_program
-    #include semiring_def.h
-    #include GB_jit_AxB_dot3_phase3_spdn.cu
-    )";
+                Opname = "phase3_spdn" ;
                 blocksz = 32;
                 gridsz = ( Cnz -1 + blocksz)/blocksz;
                 break ;
@@ -583,12 +567,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
             // A(:,i) is very sparse compared to B(:,j), or visa versa
             case GB_BUCKET_VSSP :
-                Opname = "vssp" ;
-                jit_template = templates_GB_jit_AxB_dot3_phase3_vssp_cu;
-                phase3_program = R"(phase3_program
-    #include semiring_def.h
-    #include GB_jit_AxB_dot3_phase3_vssp.cu
-    )";
+                Opname = "phase3_vssp" ;
                 blocksz = 32;
                 gridsz = ( Cnz -1 + blocksz)/blocksz;
                 break ;
@@ -603,21 +582,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             case GB_BUCKET_VSVS_64 :  sz += 64-16  ;
             case GB_BUCKET_VSVS_16 :  sz += 16-4   ;
             case GB_BUCKET_VSVS_4 :   sz += 4      ;
-                Opname = "vsvs" ;
-                jit_template = templates_GB_jit_AxB_dot3_phase3_vsvs_cu;
-                phase3_program = R"(phase3_program
-    #include semiring_def.h
-    #include GB_jit_AxB_dot3_phase3_vsvs.cu
-    )";
+                Opname = "phase3_vsvs" ;
                 blocksz = 1024;
                 gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + blocksz -1 )/blocksz);
                 gridsz =  ( Cnz  + blocksz -1 )/blocksz;
-                /*
-                Opname = "warpix" ;
-                jit_template = templates_GB_jit_AxB_dot3_phase3_warpix_cu;
-                blocksz = 32;
-                gridsz =  GB_IMIN( (mnvec+15)/16, 256*number_of_sms);
-                */
                 break ;
             
             //--------------------------------------------------------------
@@ -625,23 +593,13 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             //--------------------------------------------------------------
 
             case GB_BUCKET_MERGEPATH :
-                Opname = "mp" ;
-                jit_template = templates_GB_jit_AxB_dot3_phase3_mp_cu;
-                phase3_program = R"(phase3_program
-    #include semiring_def.h
-    #include GB_jit_AxB_dot3_phase3_mp.cu
-    )";
+                Opname = "phase3_mp" ;
                 blocksz = 32;
                 gridsz = ( Cnz -1 + blocksz)/blocksz;
                 break ;
 
             case GB_BUCKET_WARP_IX :   sz = 32      ;
-                Opname = "warpix" ;
-                jit_template = templates_GB_jit_AxB_dot3_phase3_warpix_cu;
-                phase3_program = R"(phase3_program
-    #include semiring_def.h
-    #include GB_jit_AxB_dot3_phase3_warpix.cu
-    )";
+                Opname = "phase3_warpix" ;
                 blocksz = 32;
                 gridsz =  GB_IMIN( (mnvec+15)/16, 256*number_of_sms);
                 break ;
@@ -650,15 +608,23 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                 break ;
         }
 
+        phase3_program <<
+        R"(phase3_program
+        #include ")" << mysemiring.filename << R"("
+        #include "GB_jit_AxB_dot3_)" << Opname << R"(.cu"
+        )" ;
+
         dim3 grid(gridsz);
         dim3 block(blocksz);
 
+        std::string kernel_name = "AxB_dot3_" ;
+
         std::cout<< "Kernel name =" <<Opname<<std::endl; 
         GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
-        jit::launcher( base_name + kernel_name + Opname + "_" + mysemiring.semiring_name,
-                       phase3_program,
+        jit::launcher( base_name + Opname + "_" + mysemiring.filename,
+                       phase3_program.str(),
                        header_names,
-                       compiler_flags, 
+                       compiler_flags,
                        dummy_callback)
                    .set_kernel_inst(kernel_name + Opname,
                                     { ctype->name,
@@ -678,22 +644,26 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                             A,                 // A matrix
                             B,                 // B matrix
                             sz                 // only used for sparse-sparse cases
-
                         );
 
         cudaDeviceSynchronize();
     }
     GBURBLE ("(GPU phase3 done) ") ;
 
-    // transplant C into C_static, and free C
-    GB_undo_dynamic_header (&C_static, C, Context) ;
-    ASSERT (C == NULL) ;
-    /*
+    //----------------------------------------------------------------------
+    // reduce C to a scalar, just for testing:
+    //----------------------------------------------------------------------
+
+    std::stringstream reduce_program ;
+    reduce_program <<
+    R"(reduce_program
+    #include ")" << mysemiring.filename << R"("
+    #include "reduceNonZombiesWarp.cu"
+    )" ;
 
     std::string reduce_kernel_name = "reduceNonZombiesWarp";
-    const char*  jit_template;
     #define red_blocksz 1024
-    jit_template = templates_reduceNonZombiesWarp_cu;
+
     int num_reduce_blocks = GB_IMIN( 32*number_of_sms, (cnz + red_blocksz -1)/ red_blocksz  ) ;
     dim3 red_grid( num_reduce_blocks ) ; 
     dim3 red_block( red_blocksz ) ;
@@ -702,18 +672,18 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     cudaMallocManaged ((void**) &block_sum, (num_reduce_blocks)*sizeof(int32_t)) ;
 
     GBURBLE ("(GPU reduce launch nblocks,blocksize= %d,%d )\n", num_reduce_blocks, red_blocksz) ;
-    jit::launcher( reduce_kernel_name + "_" + mysemiring.semiring_name,
-                   jit_template,
+    jit::launcher( reduce_kernel_name + "_" + mysemiring.filename,
+                   reduce_program.str(),
                    header_names,
                    compiler_flags,
                    callback_wrapper)
                    .set_kernel_inst( reduce_kernel_name , { ctype->name })
                    .configure(red_grid, red_block) //if commented, use implicit 1D configure in launch
                    .launch(
-                            C_static->i,   // index vector, only sum up values >= 0
-                            C_static->x,   // input pointer to vector to reduce, with zombies
-                            block_sum,             // Block sums on return 
-                            (unsigned int)cnz      // length of vector to reduce to scalar
+                            C->i,               // index vector, only sum up values >= 0
+                            C->x,               // input pointer to vector to reduce, with zombies
+                            block_sum,          // Block sums on return 
+                            (unsigned int)cnz   // length of vector to reduce to scalar
 
                         );
 
@@ -727,21 +697,13 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     printf("num_triangles = %d\n",  num_triangles );
 
     if (block_sum != NULL) cudaFree( block_sum );  block_sum = NULL ;
-    */
 
-    //cudaMemPrefetchAsync( C->p, (mnvec+1) * sizeof (int64_t), cudaCpuDeviceId, NULL) ; //stream_data ) ;
-    //cudaMemPrefetchAsync( C->i, cnz * sizeof (int64_t), cudaCpuDeviceId, NULL ) ; //stream_data ) ;
-    //cudaMemPrefetchAsync( C->x, cnz * sizeof (int32_t), cudaCpuDeviceId, NULL ) ; //stream_data ) ;
-    /*
-    cudaMemcpy( Citemp, C->i, cnz * sizeof( int64_t), cudaMemcpyDefault );    
-    cudaMemcpy( Cxtemp, C->x, cnz * C->type->size, cudaMemcpyDefault );    
-    GB_cuda_free( C->i);
-    GB_cuda_free( C->x);
-    C->i = Citemp;
-    C->x = Cxtemp;
+    //----------------------------------------------------------------------
+    // transplant C into C_static, and free C
+    //----------------------------------------------------------------------
 
-    cudaDeviceSynchronize();
-    */
+    GB_undo_dynamic_header (&C_static, C, Context) ;
+    ASSERT (C == NULL) ;
 
     GB_FREE_WORK ;
     return GrB_SUCCESS; 
