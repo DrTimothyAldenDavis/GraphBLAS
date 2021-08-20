@@ -34,6 +34,7 @@ extern "C"
 #include "templates/reduceNonZombiesWarp.cu.jit"
 
 #include "GB_jit_launcher.h"
+#include "GB_jit_cache.h"
 std::istream* dummy_callback( std::string fname, std::iostream& tmp_stream){
    return 0;
 }
@@ -110,7 +111,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     int64_t *Bucketp = NULL;
     int64_t *offset = NULL;
 
-    // just in case M is jumbled and we don't handle it yet (TODO)
+    // just in case M is jumbled and we don't handle it yet (future)
     GB_MATRIX_WAIT (M_input) ;
     ASSERT (!GB_JUMBLED (M_input)) ;
 
@@ -152,8 +153,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     int64_t cnz = mnz ;
     int64_t cnvec = mnvec ;
 
-    // TODO tell GB_CREATE where to put the data: CPU or GPU (via
-    // cudaMemAdvise), but this works as-is.
     int sparsity_M = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     info = GB_new_bix (&C, false, // sparse or hyper (from M), dynamic header
         ctype, cvlen, cvdim, GB_Ap_malloc, true,
@@ -196,21 +195,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GB_cuda_semiring_factory mysemiring = GB_cuda_semiring_factory ( ) ;
 
-//  GB_cuda_stringifier mysemiring =  GB_cuda_stringifier();
+    // (1) create the semiring code and name
     mysemiring.semiring_factory ( semiring, flipxy,
-        ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
-        false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
-
-#if hackit
-    std::string file_stem = "GB_semiring_";
-    //mysemiring.open( file_stem);
-//  mysemiring.stringify_semiring ( semiring, flipxy,
-//      ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
-//      false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
-
-
-    // (1) get srcode
-    mysemiring.enumify_semiring ( semiring, flipxy,
         ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
         false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
 
@@ -224,9 +210,11 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             mysemiring.macrofy_semiring ( ) ;
             mysemiring.close ( ) ; unlock
             tell jitified (cache) that it exists
+        unlock
     }
-    
-#endif
+
+    // (3) ask the jitifier if GB_dot3_[srcode].cu has been compilied,
+        // if not compile it.
 
     GBURBLE ("(GPU stringified) ") ;
     //--------------------------------------------------------------------------

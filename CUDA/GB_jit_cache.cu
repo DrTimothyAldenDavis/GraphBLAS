@@ -90,6 +90,16 @@ GBJitCache::~GBJitCache() { }
 std::mutex GBJitCache::_kernel_cache_mutex;
 std::mutex GBJitCache::_program_cache_mutex;
 
+std::string GBJitCache::getFile( 
+    File_Desc file_object )
+{
+    // Lock for thread safety
+    std::lock_guard<std::mutex> lock(_program_cache_mutex);
+
+    return std::get<1>( getCachedFile( file_object.file_name, file_map ) );
+
+}
+
 named_prog<jitify::experimental::Program> GBJitCache::getProgram(
     std::string const& prog_name, 
     std::string const& cuda_source,
