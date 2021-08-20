@@ -1,2 +1,0 @@
-#define RMM_Wrap VERSION_MAJOR 0
-#define RMM_Wrap VERSION_MINOR 1

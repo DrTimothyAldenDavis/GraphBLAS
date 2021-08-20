@@ -1,7 +1,7 @@
 #include "stddef.h"
-#include <rmm/cuda_stream.hpp>
-#include <rmm/device_buffer.hpp>
-#include <rmm/detail/aligned.hpp>
+//#include <rmm/cuda_stream.hpp>
+//#include <rmm/device_buffer.hpp>
+//#include <rmm/detail/aligned.hpp>
 #include <rmm/mr/host/host_memory_resource.hpp>
 #include <rmm/mr/host/new_delete_resource.hpp>
 #include <rmm/mr/host/pinned_memory_resource.hpp>

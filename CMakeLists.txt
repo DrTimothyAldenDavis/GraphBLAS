@@ -99,7 +99,7 @@ configure_file (
 
 include ( FindOpenMP  )
 
-# enable_language ( CUDA )
+enable_language ( CUDA )
 # for nvcc, add -DGBCUDA
 set ( CMAKE_CUDA on )
 #set ( CMAKE_CUDA off )
@@ -112,6 +112,7 @@ if ( CMAKE_CUDA )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
     set ( GB_CUDA graphblascuda  cuda cudadevrt cudart nvrtc )
     link_directories ( "CUDA" "/usr/local/cuda/lib64" "/usr/local/cuda/lib64/stubs" )
+    #add_subdirectory("CUDA")
 else ( )
     message ( STATUS "CUDA not enabled" )
     set ( CMAKE_CUDA_FLAG " " )

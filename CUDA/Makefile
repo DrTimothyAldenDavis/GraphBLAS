@@ -68,11 +68,11 @@ JIT_TEMP := $(patsubst %.cu, %.cu.jit, $(TEMPLATES))
 %.cu: %.cutmp
 	cp $? $@
 
-#%.cu.jit: %.cu 
-#	./stringify $? > $@
-#
-#stringify: stringify.cpp
-#	$(GXX) -o $@ $< -O3 -Wall
+%.cu.jit: %.cu 
+	./stringify $? > $@
+
+stringify: stringify.cpp
+	$(GXX) -o $@ $< -O3 -Wall
 
     
 doc: jitify.hpp Doxyfile
