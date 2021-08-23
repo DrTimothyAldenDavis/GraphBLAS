@@ -148,7 +148,15 @@ are extensions to the v1.3 GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 5.1.6 (July 31, 2021)
+\item Version 5.1.7 (Aug 23, 2021)
+
+    \begin{packed_itemize}
+    \item (30) bug fix:  \verb'GrB_apply', when done in-place and matrix starts
+        non-iso and becomes iso, gave the wrong iso result.
+        Caught by Fabian Murariu.
+    \end{packed_itemize}
+
+\item Version 5.1.6 (Aug 16, 2021)
 
     \begin{packed_itemize}
     \item one-line change to \verb'C=A*B': faster symbolic analysis when a
