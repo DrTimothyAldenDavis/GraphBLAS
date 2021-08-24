@@ -1,3 +1,9 @@
+Version 5.1.7, Aug 23, 2021
+
+    * (30) bug fix:  GrB_apply, when done in-place and matrix starts
+        non-iso and becomes iso, gave the wrong iso result.
+        Caught by Fabian Murariu.
+
 Version 5.1.6, Aug 16, 2021
 
     * one-line change to C=A*B: faster symbolic analysis when a vector
