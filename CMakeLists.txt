@@ -169,9 +169,9 @@ message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 if ( GBCOMPACT )
-    include_directories ( Source/Template Source Include Source/Generated1 Demo/Include )
+    include_directories ( Source/Template Source Include Source/Generated1 lz4 Demo/Include )
 else ( )
-    include_directories ( Source/Template Source Include Source/Generated1 Source/Generated2 Demo/Include )
+    include_directories ( Source/Template Source Include Source/Generated1 lz4 Source/Generated2 Demo/Include )
 endif ( )
 
 #-------------------------------------------------------------------------------

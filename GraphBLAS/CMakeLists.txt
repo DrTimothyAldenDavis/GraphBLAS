@@ -50,7 +50,8 @@ project ( graphblas_renamed
 include ( GNUInstallDirs )
 
 # Uncomment this line for for development only, not for end-users:
-# set ( CMAKE_BUILD_TYPE Debug )
+# FIXME
+set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
     set ( CMAKE_BUILD_TYPE Release )
@@ -85,9 +86,9 @@ endif ( )
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 if ( GBCOMPACT )
-    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 )
 else ( )
-    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../Source/Generated2 )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 ../Source/Generated2 )
 endif ( )
 
 #-------------------------------------------------------------------------------
