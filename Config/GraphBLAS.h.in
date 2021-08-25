@@ -9238,7 +9238,7 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 (
     // output:
     void **blob_handle,             // the blob, allocated on output
-    size_t **blob_size_handle,      // size of the blob
+    size_t *blob_size_handle,       // size of the blob
     // input:
     const GrB_Matrix A,             // matrix to serialize
     const GrB_Descriptor desc       // descriptor to select compression method
