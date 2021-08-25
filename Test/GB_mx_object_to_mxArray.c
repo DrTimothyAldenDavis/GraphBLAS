@@ -28,6 +28,12 @@
 
 #include "GB_mex.h"
 
+#define GB_AS_IF_FREE(p)                \
+{                                       \
+    GB_Global_memtable_remove (p) ;     \
+    (p) = NULL ;                        \
+}
+
 static const char *MatrixFields [ ] = { "matrix", "class", "iso", "values" } ;
 
 mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray

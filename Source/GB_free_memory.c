@@ -26,11 +26,6 @@ void GB_free_memory         // free memory, bypassing the free_pool
 
     if (p != NULL && (*p) != NULL)
     {
-        if (GB_Global_malloc_tracking_get ( ))
-        {
-            // for memory usage testing only
-            GB_Global_nmalloc_decrement ( ) ;
-        }
         ASSERT (size_allocated == GB_Global_memtable_size (*p)) ;
         #ifdef GB_MEMDUMP
         printf ("\nhard free %p %ld\n", *p, size_allocated) ;

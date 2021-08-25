@@ -985,6 +985,7 @@ methods (Static)
     clear ;
     [C, I, J] = compact (A, id) ;
     descriptorinfo (d) ;
+    C = deserialize (blob) ;
     Y = dnn (W, bias, Y0) ;                     % uses GrB matrices
     C = eadd (Cin, M, accum, op, A, B, desc) ;
     C = empty (arg1, arg2) ;
@@ -1021,6 +1022,7 @@ methods (Static)
     C = select (Cin, M, accum, selectop, A, b, desc) ;
     selectopinfo (op) ;
     semiringinfo (s, type) ;
+    blob = serialize (A) ;
     C = speye (m, n, type) ;
     C = subassign (Cin, M, accum, A, I, J, desc) ;
     nthreads = threads (nthreads) ;

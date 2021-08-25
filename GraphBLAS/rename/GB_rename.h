@@ -3336,9 +3336,7 @@
 #define GB_Global_mode_get GM_Global_mode_get
 #define GB_Global_mode_set GM_Global_mode_set
 #define GB_Global_nmalloc_clear GM_Global_nmalloc_clear
-#define GB_Global_nmalloc_decrement GM_Global_nmalloc_decrement
 #define GB_Global_nmalloc_get GM_Global_nmalloc_get
-#define GB_Global_nmalloc_increment GM_Global_nmalloc_increment
 #define GB_Global_nthreads_max_get GM_Global_nthreads_max_get
 #define GB_Global_nthreads_max_set GM_Global_nthreads_max_set
 #define GB_Global_omp_get_max_threads GM_Global_omp_get_max_threads

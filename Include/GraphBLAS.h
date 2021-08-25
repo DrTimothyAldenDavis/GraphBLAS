@@ -9189,5 +9189,74 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
     const GrB_Descriptor desc
 ) ;
 
+//------------------------------------------------------------------------------
+// serialize/deserialize
+//------------------------------------------------------------------------------
+
+// GxB_Matrix_serialize copies the contents of a GrB_Matrix into a single array
+// of bytes (the "blob").  The contents of the blob are implementation
+// dependent.  The blob can be saved to a file, or sent across a communication
+// channel, and then a GrB_Matrix can be reconstructed from the blob, even on
+// another process or another machine, using the same version of
+// SuiteSparse:GraphBLAS (v5.2.0 or later).  The goal is that future versions
+// of SuiteSparse:GraphBLAS should be able to read in the blob as well, and
+// reconstruct a matrix.  The matrix can be reconstructed from the blob using
+// GxB_Matrix_deserialize.  The blob is compressed, by default, and
+// uncompressed by GxB_Matrix_deserialize.  The blob is allocated by
+// GxB_Matrix_serialize, and must be freed by GxB_serialize_free (which calls
+// the ANSI C11 free if GrB_init was used).
+
+// Example usage:
+
+/*
+    // Given a GrB_Matrix A: assuming a user-defined type:
+    void *blob ;                // note, not allocated by the user
+    size_t blob_size ;
+    GxB_Matrix_serialize (&blob, &blob_size, A, NULL) ;
+    FILE *f = fopen ("myblob", "w") ;
+    fwrite (blob_size, sizeof (size_t), 1, f) ;
+    fwrite (blob, blob_size, sizeof (uint8_t), f) ;
+    fclose (f) ;
+    GrB_Matrix_free (&A) ;
+    // B is a copy of A
+    GxB_Matrix_deserialize (&B, blob, blob_size, user_type, NULL) ;
+    GrB_Matrix_free (&B) ;
+    free (blob) ;               // note, freed by the user, not GraphBLAS
+    GrB_finalize ( ) ;
+
+    // --- in another process, to recreate the GrB_Matrix A:
+    GrB_init (GrB_NONBLOCKING) ;    // using ANSI C11 malloc/calloc/realloc/free
+    FILE *f = fopen ("myblob", "r") ;
+    fread (&blob_size, sizeof (size_t), 1, f) ;
+    blob = malloc (blob_size) ; // note, allocated by the user this time
+    fread (&blob, sizeof (uint8_t), 1, f) ;
+    GxB_Matrix_deserialize (&A, blob, blob_size, user_type, NULL) ;
+    free (blob) ;               // note, freed by the user, not GraphBLAS
+*/
+
+GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
+(
+    // output:
+    void **blob_handle,             // the blob, allocated on output
+    size_t **blob_size_handle,      // size of the blob
+    // input:
+    const GrB_Matrix A,             // matrix to serialize
+    const GrB_Descriptor desc       // descriptor to select compression method
+                                    // and to control # of threads used
+) ;
+
+GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
+(
+    // output:
+    GrB_Matrix *C,                  // output matrix created from the blob
+    // input:
+    const void *blob,               // the blob
+    size_t blob_size,               // size of the blob
+    GrB_Type user_type,             // type of the matrix, if a user-defined
+                                    // type.  Ignored if matrix has a built-in
+                                    // type.
+    const GrB_Descriptor desc
+) ;
+
 #endif
 

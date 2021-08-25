@@ -95,10 +95,12 @@ GrB_Info GB_deserialize_from_blob
     // decompress the blocks from the blob
     //--------------------------------------------------------------------------
 
+    printf ("\nDECOMPRESSION: s = %ld\n", s) ;
+
     int blockid ;
     bool ok = true ;
-//  #pragma omp parallel for num_threads(nthreads) schedule(dynamic) \
-//      reduction(&&:ok)
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic) \
+        reduction(&&:ok)
     for (blockid = 0 ; blockid < nblocks ; blockid++)
     {
         // get the scalar info from the 3 arrays:
@@ -108,27 +110,10 @@ GrB_Info GB_deserialize_from_blob
         int64_t s_end   = Sblock [blockid] ;
         size_t s_size   = s_end - s_start ;
         GxB_Compression method = (GxB_Compression) Method [blockid] ;
-
-#if 0
-        printf ("\n------------ Block: %d\n", blockid) ;
-        printf ("u_start %ld\n", u_start) ;
-        printf ("u_end   %ld\n", u_end  ) ;
-        printf ("s_start %ld\n", s_start) ;
-        printf ("s_end   %ld\n", s_end  ) ;
-        printf ("s_size  %ld\n", s_size  ) ;
-
-        printf ("%d\n", u_start < 0) ;
-        printf ("%d\n", u_end < 0) ;
-        printf ("%d\n", s_start < 0) ;
-        printf ("%d\n", s_end < 0 ) ;
-        printf ("%d\n", u_start >= u_end) ;
-        printf ("%d\n", s_start >= s_end) ;
-        printf ("%d\n", s + s_start > blob_size ) ;
-        printf ("%d\n", s + s_end > blob_size) ;
-        printf ("%d\n", u_start > X_size) ;
-        printf ("%d\n", u_end > X_size) ;
-        printf ("X_size %ld\n", X_size) ;
-#endif
+//      printf ("decompress block %d "
+//      "s(%ld,%ld) s_size: %ld "
+//      "u(%ld,%ld) u_size: %ld\n", blockid,
+//          s+s_start, s+s_end, s_size, u_start, u_end, u_end - u_start) ;
 
         // ensure s_start, s_end, u_start, and u_end are all valid,
         // to avoid accessing arrays out of bounds, if input is corrupted.
@@ -138,7 +123,7 @@ GrB_Info GB_deserialize_from_blob
             u_start > X_size || u_end > X_size)
         { 
             // blob is invalid
-            printf ("Yeeks %d\n", __LINE__) ;
+            printf ("BAD Yeeks %d\n", __LINE__) ;
             ok = false ;
         }
         else
@@ -146,6 +131,7 @@ GrB_Info GB_deserialize_from_blob
             // uncompress the compressed block of size s_size
             // from blob [s + s_start:s_end-1] into X [u_start:u_end-1]
             const char *src = (const char *) (blob + s + s_start) ;
+
             char *dst = (char *) (X + u_start) ;
             int src_size = (int) s_size ;
             int dst_size = (int) (u_end - u_start) ;
@@ -154,7 +140,7 @@ GrB_Info GB_deserialize_from_blob
                 // no compression
                 if (src_size != dst_size)
                 { 
-                    printf ("Yeeks %d\n", __LINE__) ;
+                    printf ("BAD TOO Yeeks %d\n", __LINE__) ;
                     ok = false ;
                 }
                 else
@@ -166,9 +152,14 @@ GrB_Info GB_deserialize_from_blob
             { 
                 // LZ4 compression
                 int u ;
+                // dump_blob (src, src_size) ;
                 u = LZ4_decompress_safe (src, dst, src_size, dst_size) ;
-                if (u <= 0) ok = false ;
-                if (!ok) printf ("Yeeks %d %d\n", __LINE__, u) ;
+                // printf ("block %d u %d\n", blockid, u) ;
+                if (u <= 0)
+                {
+                    ok = false ;
+                    printf ("ARG Yeeks %d %d\n", __LINE__, u) ;
+                }
             }
         }
     }

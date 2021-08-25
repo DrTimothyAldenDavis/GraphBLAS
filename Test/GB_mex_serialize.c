@@ -67,12 +67,10 @@ void mexFunction
 
     // copy C with the same type as A, with default sparsity
     GxB_Matrix_serialize (&blob, &blob_size, A, NULL) ;
-    int info = GxB_Matrix_deserialize (&C, blob, atype, NULL) ;
+    int info = GxB_Matrix_deserialize (&C, blob, blob_size, atype, NULL) ;
     printf ("got C: %d\n", info) ;
     GxB_Matrix_fprint (C, "got C", 2, stdout) ;
     printf ("blob %p\n", blob) ;
-    GB_AS_IF_FREE (blob) ;
-    mxFree (blob) ;
 
     size_t asize, csize ;
     GxB_Matrix_memoryUsage (&asize, A) ;

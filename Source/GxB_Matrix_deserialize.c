@@ -9,6 +9,8 @@
 
 // deserialize: create a GrB_Matrix from a blob of bytes
 
+// FIXME: deserialize requires a blob_size input.
+
 #include "GB.h"
 #include "GB_serialize.h"
 
@@ -18,6 +20,7 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     GrB_Matrix *C,                  // output matrix created from the blob
     // input:
     const void *blob,               // the blob
+    size_t blob_size,               // size of the blob
     GrB_Type user_type,             // type of the matrix, if a user-defined
                                     // type.  Ignored if matrix has a built-in
                                     // type.
@@ -33,7 +36,6 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     GB_BURBLE_START ("GxB_Matrix_deserialize") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (C) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (user_type) ;
 
     // get the descriptor: TODO
 
@@ -41,8 +43,7 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     // deserialize the blob into a matrix
     //--------------------------------------------------------------------------
 
-    // printf ("deserialize the blob: %p\n", blob) ;
-    GrB_Info info = GB_deserialize (C, blob, user_type, Context) ;
+    GrB_Info info = GB_deserialize (C, blob, blob_size, user_type, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

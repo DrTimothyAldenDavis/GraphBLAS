@@ -25,6 +25,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     GrB_Matrix *Chandle,            // output matrix created from the blob
     // input:
     const GB_void *blob,            // serialized matrix 
+    size_t blob_size,               // size of the blob
     GrB_Type user_type,             // type of matrix, if user-defined
     GB_Context Context
 )
@@ -45,8 +46,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
     GB_blob_header *header = (GB_blob_header *) blob ;
     size_t s = sizeof (GB_blob_header) ;
-    size_t blob_size = header->blob_size ;
-    if (blob_size < sizeof (GB_blob_header))
+    if (blob_size != header->blob_size || blob_size < s)
     {
         // blob is invalid
         printf ("yikes! %d\n", __LINE__) ;

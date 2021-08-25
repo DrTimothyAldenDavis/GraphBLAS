@@ -64,6 +64,8 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     size_t Ai_blocks_size = 0 ;
     size_t Ax_blocks_size = 0 ;
 
+    // method = GxB_COMPRESSION_NONE ;
+
     //--------------------------------------------------------------------------
     // ensure all pending work is finished
     //--------------------------------------------------------------------------
@@ -80,11 +82,9 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // get the content of the matrix and fill the header
     //--------------------------------------------------------------------------
 
+    // FIXME: do not use a struct for the header.  Just write individual
+    // integers and floats and such, to avoid compiler-dependent packing.
     GB_blob_header header ;
-    // printf ("blob header %ld\n", sizeof (GB_blob_header)) ;
-    // printf ("block %ld\n", sizeof (GB_blocks)) ;
-    // ASSERT (sizeof (GB_blob_header) == 64 + 16 + 8) ;
-    // ASSERT (sizeof (GB_blocks) == 4*8 + 4) ;
 
     header.version = GxB_IMPLEMENTATION ;
     header.vlen = A->vlen ;
@@ -150,6 +150,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // compress each array (Ap, Ah, Ab, Ai, and Ax)
     //--------------------------------------------------------------------------
 
+// printf ("Serializing:\n") ;
     GB_OK (GB_serialize_array (&Ap_blocks, &Ap_blocks_size, &Ap_nblocks,
         (GB_void *) A->p, Ap_usage, method, Context)) ;
     GB_OK (GB_serialize_array (&Ah_blocks, &Ah_blocks_size, &Ah_nblocks,
@@ -158,6 +159,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         (GB_void *) A->b, Ab_usage, method, Context)) ;
     GB_OK (GB_serialize_array (&Ai_blocks, &Ai_blocks_size, &Ai_nblocks,
         (GB_void *) A->i, Ai_usage, method, Context)) ;
+// printf ("Serializing Ax:\n") ;
     GB_OK (GB_serialize_array (&Ax_blocks, &Ax_blocks_size, &Ax_nblocks,
         (GB_void *) A->x, Ax_usage, method, Context)) ;
 
@@ -177,7 +179,14 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         + (sizeof (int64_t)) * nblocks      /* Ublock array */          \
         + (sizeof (int64_t)) * nblocks      /* Sblock array */          \
         + (sizeof (int32_t)) * nblocks      /* Method array */          \
-        + Blocks [nblocks].compressed       /* compressed block */
+        + Blocks [nblocks].compressed       /* compressed blocks */
+
+    // size of Ap, Ah, Ab, Ai, and Ax in the blob
+//  if (Ap_nblocks > 0) printf ("Ap size %ld\n", BSIZE (Ap_blocks, Ap_nblocks));
+//  if (Ah_nblocks > 0) printf ("Ah size %ld\n", BSIZE (Ah_blocks, Ah_nblocks));
+//  if (Ab_nblocks > 0) printf ("Ab size %ld\n", BSIZE (Ab_blocks, Ab_nblocks));
+//  if (Ai_nblocks > 0) printf ("Ai size %ld\n", BSIZE (Ai_blocks, Ai_nblocks));
+//  if (Ax_nblocks > 0) printf ("Ax size %ld\n", BSIZE (Ax_blocks, Ax_nblocks));
 
     // size of Ap, Ah, Ab, Ai, and Ax in the blob
     if (Ap_nblocks > 0) s += BSIZE (Ap_blocks, Ap_nblocks) ;
@@ -212,6 +221,8 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         s += GB_LEN ;
     }
 
+    // printf ("\nHeader: ") ;dump_blob (blob, (int) s) ;
+
     //--------------------------------------------------------------------------
     // copy the compressed arrays into the blob
     //--------------------------------------------------------------------------
@@ -227,9 +238,17 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     ASSERT (s <= blob_size) ;
     if (s < blob_size) memset (blob + s, 0, blob_size - s) ;
 
+    // printf ("\nHeader: ") ;dump_blob (blob, (int) s) ;
+
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
+
+    // giving the blob to the user; remove it from the list of malloc'd blocks
+    #ifdef GB_MEMDUMP
+    printf ("removing blob %p size %ld from memtable\n", blob, blob_size) ;
+    #endif
+    GB_Global_memtable_remove (blob) ;
 
     GB_FREE_WORK ;
     (*blob_handle) = blob ;

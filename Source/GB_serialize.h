@@ -10,6 +10,23 @@
 #ifndef GB_SERIALIZE_H
 #define GB_SERIALIZE_H
 
+#if 0
+static inline void dump_blob
+(
+    GB_void *blob,
+    int len
+)
+{
+    printf ("Dump blob %p of size %d bytes\n", blob, len) ;
+    for (int k = 0 ; k < len ; k++)
+    {
+        printf ("%3d ", (int) blob [k]) ;
+        if (k % 16 == 32) printf ("\n") ;
+    }
+    printf ("\n") ;
+}
+#endif
+
 typedef enum
 {
     GxB_COMPRESSION_NONE = 0,           // no compression
@@ -43,6 +60,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     GrB_Matrix *Chandle,            // output matrix created from the blob
     // input:
     const GB_void *blob,            // serialized matrix 
+    size_t blob_size,               // size of the blob
     GrB_Type user_type,             // type of matrix, if user-defined
     GB_Context Context
 ) ;

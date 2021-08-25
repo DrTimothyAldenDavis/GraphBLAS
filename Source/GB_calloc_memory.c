@@ -21,7 +21,6 @@ static inline void *GB_calloc_helper
     size_t *size,           // on input: # of bytes requested
                             // on output: # of bytes actually allocated
     // input:
-    bool malloc_tracking,
     GB_Context Context
 )
 {
@@ -66,11 +65,6 @@ static inline void *GB_calloc_helper
             }
             // memset is required if the block comes from malloc
             do_memset = (p != NULL) ;
-        }
-        if (p != NULL && malloc_tracking)
-        { 
-            // success
-            GB_Global_nmalloc_increment ( ) ;
         }
         #ifdef GB_MEMDUMP
         printf ("hard calloc %p %ld\n", p, *size) ;
@@ -154,7 +148,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         }
         else
         { 
-            p = GB_calloc_helper (&size, true, Context) ;
+            p = GB_calloc_helper (&size, Context) ;
         }
 
     }
@@ -165,7 +159,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         // normal use, in production
         //----------------------------------------------------------------------
 
-        p = GB_calloc_helper (&size, false, Context) ;
+        p = GB_calloc_helper (&size, Context) ;
     }
 
     //--------------------------------------------------------------------------

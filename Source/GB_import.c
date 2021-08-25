@@ -223,12 +223,10 @@ GrB_Info GB_import      // import/pack a matrix in any format
             // import A->h, then fall through to sparse case
             (*A)->h = (int64_t *) (*Ah) ; (*Ah) = NULL ;
             (*A)->h_size = Ah_size ;
-            #ifdef GB_DEBUG
             #ifdef GB_MEMDUMP
             printf ("import A->h to memtable: %p\n", (*A)->h) ;
             #endif
             GB_Global_memtable_add ((*A)->h, (*A)->h_size) ;
-            #endif
 
         case GxB_SPARSE : 
             (*A)->jumbled = jumbled ;   // import jumbled status
@@ -244,23 +242,19 @@ GrB_Info GB_import      // import/pack a matrix in any format
                 // import A->p, unless already created for a sparse CSC vector
                 (*A)->p = (int64_t *) (*Ap) ; (*Ap) = NULL ;
                 (*A)->p_size = Ap_size ;
-                #ifdef GB_DEBUG
                 #ifdef GB_MEMDUMP
                 printf ("import A->p to memtable: %p\n", (*A)->p) ;
                 #endif
                 GB_Global_memtable_add ((*A)->p, (*A)->p_size) ;
-                #endif
             }
 
             // import A->i
             (*A)->i = (int64_t *) (*Ai) ; (*Ai) = NULL ;
             (*A)->i_size = Ai_size ;
-            #ifdef GB_DEBUG
             #ifdef GB_MEMDUMP
             printf ("import A->i to memtable: %p\n", (*A)->i) ;
             #endif
             GB_Global_memtable_add ((*A)->i, (*A)->i_size) ;
-            #endif
             break ;
 
         case GxB_BITMAP : 
@@ -269,12 +263,10 @@ GrB_Info GB_import      // import/pack a matrix in any format
             // import A->b
             (*A)->b = (*Ab) ; (*Ab) = NULL ;
             (*A)->b_size = Ab_size ;
-            #ifdef GB_DEBUG
             #ifdef GB_MEMDUMP
             printf ("import A->b to memtable: %p\n", (*A)->b) ;
             #endif
             GB_Global_memtable_add ((*A)->b, (*A)->b_size) ;
-            #endif
             break ;
 
         case GxB_FULL : 
@@ -288,12 +280,10 @@ GrB_Info GB_import      // import/pack a matrix in any format
         // import A->x
         (*A)->x = (*Ax) ; (*Ax) = NULL ;
         (*A)->x_size = Ax_size ;
-        #ifdef GB_DEBUG
         #ifdef GB_MEMDUMP
         printf ("import A->x to memtable: %p\n", (*A)->x) ;
         #endif
         GB_Global_memtable_add ((*A)->x, (*A)->x_size) ;
-        #endif
     }
 
     //--------------------------------------------------------------------------

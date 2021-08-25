@@ -289,27 +289,6 @@ GrB_Info GB_mx_random_matrix      // create a random double-precision matrix
 
 //------------------------------------------------------------------------------
 
-// remove a block that had been allocated from within GraphBLAS and then
-// exported.
-#define REMOVE(p)                                       \
-{                                                       \
-    if ((p) != NULL)                                    \
-    {                                                   \
-        GB_Global_nmalloc_decrement ( ) ;               \
-        if (GB_Global_memtable_find (p))                \
-        {                                               \
-            GB_Global_memtable_remove (p) ;             \
-        }                                               \
-    }                                                   \
-}
-
-#define GB_AS_IF_FREE(p)                \
-{                                       \
-    GB_Global_nmalloc_decrement ( ) ;   \
-    GB_Global_memtable_remove (p) ;     \
-    (p) = NULL ;                        \
-}
-
 #ifdef GB_PRINT_MALLOC
 
 #define METHOD_START(OP) \

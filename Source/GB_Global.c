@@ -537,9 +537,14 @@ void GB_Global_memtable_clear (void)
 GB_PUBLIC
 void GB_Global_memtable_add (void *p, size_t size)
 {
+    if (p == NULL) return ;
+    if (GB_Global.malloc_tracking)
+    {
+        GB_ATOMIC_UPDATE
+        GB_Global.nmalloc++ ;
+    }
     #ifdef GB_DEBUG
     ASSERT ((p == NULL) == (size == 0)) ;
-    if (p == NULL) return ;
     bool fail = false ;
     #ifdef GB_MEMDUMP
     printf ("memtable add %p size %ld\n", p, size) ;
@@ -634,8 +639,13 @@ bool GB_Global_memtable_find (void *p)
 GB_PUBLIC
 void GB_Global_memtable_remove (void *p)
 {
-    #ifdef GB_DEBUG
     if (p == NULL) return ;
+    if (GB_Global.malloc_tracking)
+    {
+        GB_ATOMIC_UPDATE
+        GB_Global.nmalloc-- ;
+    }
+    #ifdef GB_DEBUG
     bool found = false ;
     #ifdef GB_MEMDUMP
     printf ("memtable remove %p ", p) ;
@@ -691,9 +701,7 @@ void * GB_Global_malloc_function (size_t size)
             p = GB_Global.malloc_function (size) ;
         }
     }
-    #ifdef GB_DEBUG
     GB_Global_memtable_add (p, size) ;
-    #endif
     return (p) ;
 }
 
@@ -728,13 +736,11 @@ void * GB_Global_realloc_function (void *p, size_t size)
             pnew = GB_Global.realloc_function (p, size) ;
         }
     }
-    #ifdef GB_DEBUG
     if (pnew != NULL)
     {
         GB_Global_memtable_remove (p) ;
         GB_Global_memtable_add (pnew, size) ;
     }
-    #endif
     return (pnew) ;
 }
 
@@ -760,9 +766,7 @@ void GB_Global_free_function (void *p)
             GB_Global.free_function (p) ;
         }
     }
-    #ifdef GB_DEBUG
     GB_Global_memtable_remove (p) ;
-    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -813,19 +817,6 @@ int64_t GB_Global_nmalloc_get (void)
     GB_ATOMIC_READ
     nmalloc = GB_Global.nmalloc ;
     return (nmalloc) ;
-}
-
-void GB_Global_nmalloc_increment (void)
-{ 
-    GB_ATOMIC_UPDATE
-    GB_Global.nmalloc++ ;
-}
-
-GB_PUBLIC
-void GB_Global_nmalloc_decrement (void)
-{ 
-    GB_ATOMIC_UPDATE
-    GB_Global.nmalloc-- ;
 }
 
 //------------------------------------------------------------------------------

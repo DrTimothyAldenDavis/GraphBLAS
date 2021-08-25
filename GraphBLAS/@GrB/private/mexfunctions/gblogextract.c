@@ -165,7 +165,8 @@ void mexFunction
     #ifdef GB_MEMDUMP
     printf ("remove G->x from memtable: %p\n", G->x) ;
     #endif
-    GB_Global_memtable_remove (G->x) ; G->x = NULL ; G->x_size = 0 ;
+    GB_Global_memtable_remove (G->x) ;
+    G->x = NULL ; G->x_size = 0 ;
     bool G_iso = G->iso  ;            	
 
     //--------------------------------------------------------------------------
@@ -228,7 +229,8 @@ void mexFunction
     #ifdef GB_MEMDUMP
     printf ("remove T->x from memtable: %p\n", T->x) ;
     #endif
-    GB_Global_memtable_remove (T->x) ; T->x = NULL ; T->x_size = 0 ;
+    GB_Global_memtable_remove (T->x) ;
+    T->x = NULL ; T->x_size = 0 ;
 
     // gnvals and tnvals are identical, by construction
     CHECK_ERROR (gnvals != tnvals, "internal error 1") ;
@@ -249,8 +251,10 @@ void mexFunction
     printf ("remove V->i from memtable: %p\n", V->i) ;
     printf ("remove V->x from memtable: %p\n", V->x) ;
     #endif
-    GB_Global_memtable_remove (V->i) ; gb_mxfree (&V->i) ;
-    GB_Global_memtable_remove (V->x) ; gb_mxfree (&V->x) ;
+    GB_Global_memtable_remove (V->i) ;
+    gb_mxfree (&V->i) ;
+    GB_Global_memtable_remove (V->x) ;
+    gb_mxfree (&V->x) ;
 
     // transplant values of T as the row indices of V
     V->i = (int64_t *) Tx ;

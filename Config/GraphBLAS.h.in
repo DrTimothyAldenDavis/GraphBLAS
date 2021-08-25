@@ -9219,7 +9219,7 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
     fclose (f) ;
     GrB_Matrix_free (&A) ;
     // B is a copy of A
-    GxB_Matrix_deserialize (&B, blob, user_type, NULL) ;
+    GxB_Matrix_deserialize (&B, blob, blob_size, user_type, NULL) ;
     GrB_Matrix_free (&B) ;
     free (blob) ;               // note, freed by the user, not GraphBLAS
     GrB_finalize ( ) ;
@@ -9230,7 +9230,7 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
     fread (&blob_size, sizeof (size_t), 1, f) ;
     blob = malloc (blob_size) ; // note, allocated by the user this time
     fread (&blob, sizeof (uint8_t), 1, f) ;
-    GxB_Matrix_deserialize (&A, blob, user_type, NULL) ;
+    GxB_Matrix_deserialize (&A, blob, blob_size, user_type, NULL) ;
     free (blob) ;               // note, freed by the user, not GraphBLAS
 */
 
@@ -9251,6 +9251,7 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     GrB_Matrix *C,                  // output matrix created from the blob
     // input:
     const void *blob,               // the blob
+    size_t blob_size,               // size of the blob
     GrB_Type user_type,             // type of the matrix, if a user-defined
                                     // type.  Ignored if matrix has a built-in
                                     // type.

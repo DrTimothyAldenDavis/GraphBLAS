@@ -65,27 +65,28 @@ void GB_serialize_to_blob
     // followed by three arrays
     int64_t *Ublock = blob + s ; s += sizeof (int64_t) * nblocks ;
     int64_t *Sblock = blob + s ; s += sizeof (int64_t) * nblocks ;
-    int64_t *Method = blob + s ; s += sizeof (int32_t) * nblocks ;
+    int32_t *Method = blob + s ; s += sizeof (int32_t) * nblocks ;
 
     //--------------------------------------------------------------------------
     // copy the blocks into the blob
     //--------------------------------------------------------------------------
 
     int blockid ;
-//  #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
-//  printf ("nblocks %d\n", nblocks) ;
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
     for (blockid = 0 ; blockid < nblocks ; blockid++)
     {
         // copy the scalar info into the 3 arrays:
         Ublock [blockid] = (int64_t) Blocks [blockid+1].uncompressed ;
         Sblock [blockid] = (int64_t) Blocks [blockid+1].compressed ;
         Method [blockid] = (int32_t) Blocks [blockid].method ;
+
         // copy the compressed block itself, of size s_size
         size_t s_start = Blocks [blockid].compressed ;
         size_t s_end   = Blocks [blockid+1].compressed ;
         size_t s_size  = s_end - s_start ;
+        // printf ("Copy blob to serilize: ") ;
+//      dump_blob (Blocks [blockid].p, s_size) ;
         memcpy (blob + s + s_start, Blocks [blockid].p, s_size) ;
-        // printf ("Ublock [%d] = %ld\n", blockid, Ublock [blockid]) ;
     }
 
     s += Blocks [nblocks].compressed ;
