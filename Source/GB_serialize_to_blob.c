@@ -16,9 +16,9 @@ void GB_serialize_to_blob
     GB_void *blob,          // blocks are appended to the blob
     size_t *s_handle,       // location to append into the blob
     // input:
-    GB_blocks *Blocks,      // Blocks: array of size nblocks
+    GB_blocks *Blocks,      // Blocks: array of size nblocks+1
+    int64_t *Sblock,        // array of size nblocks
     int32_t nblocks,        // # of blocks
-    int32_t method_used,    // compression method used
     int nthreads_max        // # of threads to use
 )
 {
@@ -51,46 +51,22 @@ void GB_serialize_to_blob
     int nthreads = GB_IMIN (nthreads_max, nblocks) ;
 
     //--------------------------------------------------------------------------
-    // get the current position for these Blocks in the blob
-    //--------------------------------------------------------------------------
-
-    size_t s = (*s_handle) ;
-
-    //--------------------------------------------------------------------------
-    // copy the Blocks array into the blob, # of blocks, and compression method
-    //--------------------------------------------------------------------------
-
-    // FIXME: make the block header a multiple of 64 in size
-
-    // copy the # of blocks into the blob: a single int32_t scalar
-    memcpy (blob + s, &nblocks, sizeof (int32_t)) ; s += sizeof (int32_t) ;
-
-    // copy the method used into the blob: a single int32_t scalar
-    memcpy (blob + s, &method_used, sizeof (int32_t)) ; s += sizeof (int32_t) ;
-
-    // followed by three arrays
-    int64_t *Ublock = blob + s ; s += sizeof (int64_t) * nblocks ;
-    int64_t *Sblock = blob + s ; s += sizeof (int64_t) * nblocks ;
-
-    //--------------------------------------------------------------------------
     // copy the blocks into the blob
     //--------------------------------------------------------------------------
 
+    size_t s = (*s_handle) ;
     int blockid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
     for (blockid = 0 ; blockid < nblocks ; blockid++)
     {
-        // copy the scalar info into the 3 arrays:
-        Ublock [blockid] = (int64_t) Blocks [blockid+1].uncompressed ;
-        Sblock [blockid] = (int64_t) Blocks [blockid+1].compressed ;
         // copy the compressed block itself, of size s_size
-        size_t s_start = Blocks [blockid].compressed ;
-        size_t s_end   = Blocks [blockid+1].compressed ;
+        size_t s_start = (blockid == 0) ? 0 : Sblock [blockid-1] ;
+        size_t s_end   = Sblock [blockid] ;
         size_t s_size  = s_end - s_start ;
         memcpy (blob + s + s_start, Blocks [blockid].p, s_size) ;
     }
 
-    s += Blocks [nblocks].compressed ;
+    s += Sblock [nblocks-1] ;
 
     //--------------------------------------------------------------------------
     // return the updated index into the blob

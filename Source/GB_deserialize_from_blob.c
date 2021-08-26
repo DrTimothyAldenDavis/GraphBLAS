@@ -13,7 +13,6 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_FREE (&X64, X64_size) ;          \
     GB_FREE (&X, *X_size_handle) ;      \
 }
 
@@ -21,10 +20,15 @@ GrB_Info GB_deserialize_from_blob
 (
     // output:
     GB_void **X_handle,         // uncompressed output array
-    size_t *X_size_handle,      // size of X
+    size_t *X_size_handle,      // size of X as allocated
     // input:
+    int64_t X_len,              // size of X in bytes
     const GB_void *blob,
     size_t blob_size,
+    int64_t *Ublock,            // array of size nblocks
+    int64_t *Sblock,            // array of size nblocks
+    int32_t nblocks,
+    int32_t method_used,
     // input/output:
     size_t *s_handle,           // location to write into the blob
     GB_Context Context
@@ -42,50 +46,14 @@ GrB_Info GB_deserialize_from_blob
     ASSERT (X_size_handle != NULL) ;
     (*X_handle) = NULL ;
     (*X_size_handle) = 0 ;
-    uint64_t *X64 = NULL ;
-    size_t X64_size = 0 ;
-
-    //--------------------------------------------------------------------------
-    // get the current position for these blocks in the blob for this array X
-    //--------------------------------------------------------------------------
-
-    size_t s = (*s_handle) ;
-
-    //--------------------------------------------------------------------------
-    // get the # of blocks for this array, and their sizes
-    //--------------------------------------------------------------------------
-
-    // copy the # of blocks from the blob: a single int32_t scalar
-    int32_t nblocks ;
-    memcpy (&nblocks, blob + s, sizeof (int32_t)) ; s += sizeof (int32_t) ;
-    if (nblocks < 0)
-    {
-        // blob is invalid
-        printf ("yeeeks! %d\n", __LINE__) ;
-        return (GrB_PANIC) ;
-    }
-
-    // copy the compression method used from blob: a single int32_t scalar
-    int32_t method_used ;
-    memcpy (&method_used, blob + s, sizeof (int32_t)) ; s += sizeof (int32_t) ;
-
-    // followed by two arrays: Ublock and Sblock
-    int64_t *Ublock = blob + s ; s += sizeof (int64_t) * nblocks ;
-    int64_t *Sblock = blob + s ; s += sizeof (int64_t) * nblocks ;
-
-    if (s > blob_size)
-    {
-        // blob is invalid
-        printf ("yeeeks! %d\n", __LINE__) ;
-        return (GrB_PANIC) ;
-    }
 
     //--------------------------------------------------------------------------
     // allocate the output array
     //--------------------------------------------------------------------------
 
     int64_t X_size = Ublock [nblocks-1] ;
-    GB_void *X = GB_MALLOC (X_size, GB_void, X_size_handle) ;
+    ASSERT (X_size == X_len) ;
+    GB_void *X = GB_MALLOC (X_len, GB_void, X_size_handle) ;
     if (X == NULL)
     {
         // out of memory
@@ -104,6 +72,7 @@ GrB_Info GB_deserialize_from_blob
     // decompress the blocks from the blob
     //--------------------------------------------------------------------------
 
+    size_t s = (*s_handle) ;
     int blockid ;
     bool ok = true ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic) \
@@ -113,6 +82,12 @@ GrB_Info GB_deserialize_from_blob
         // get the scalar info from the 3 arrays:
         int64_t u_start = (blockid == 0) ? 0 : Ublock [blockid-1] ;
         int64_t u_end   = Ublock [blockid] ;
+
+        int64_t kstart, kend ;
+        GB_PARTITION (kstart, kend, X_len, blockid, nblocks) ;
+        ASSERT (kstart == u_start) ;
+        ASSERT (kend == u_end) ;
+
         int64_t s_start = (blockid == 0) ? 0 : Sblock [blockid-1] ;
         int64_t s_end   = Sblock [blockid] ;
         size_t s_size   = s_end - s_start ;
@@ -122,7 +97,7 @@ GrB_Info GB_deserialize_from_blob
         if (u_start < 0 || u_end < 0 || s_start < 0 || s_end < 0 ||
             u_start >= u_end || s_start >= s_end ||
             s + s_start > blob_size || s + s_end > blob_size ||
-            u_start > X_size || u_end > X_size)
+            u_start > X_len || u_end > X_len)
         { 
             // blob is invalid
             printf ("BAD Yeeks %d\n", __LINE__) ;

@@ -29,7 +29,7 @@ GrB_Info GB_serialize_array
     int32_t *method_used,               // method used
     // input:
     GB_void *X,                         // input array of size len
-    size_t len,                         // size of X, in bytes
+    int64_t len,                        // size of X, in bytes
     int32_t method,                     // compression method requested
     GB_Context Context
 )
@@ -111,14 +111,13 @@ GrB_Info GB_serialize_array
 
     // ensure the blocksize does not exceed the LZ4 maximum
     ASSERT (LZ4_MAX_INPUT_SIZE < INT32_MAX) ;
-    blocksize = GB_IMIN (blocksize, LZ4_MAX_INPUT_SIZE) ;
+    blocksize = GB_IMIN (blocksize, LZ4_MAX_INPUT_SIZE/2) ;
 
     // ensure the blocksize is not too small
     blocksize = GB_IMAX (blocksize, (64*1024)) ;
 
     // determine the final # of blocks
     nblocks = GB_ICEIL (len, blocksize) ;
-    blocksize = GB_ICEIL (len, nblocks) ;
     nthreads = GB_IMIN (nthreads, nblocks) ;
 
     // allocate the output Blocks: one per block plus the sentinel block
@@ -136,9 +135,12 @@ GrB_Info GB_serialize_array
     for (blockid = 0 ; blockid < nblocks && ok ; blockid++)
     {
         // allocate a single block for the compression of X [kstart:kend-1]
-        int64_t kstart = blockid * blocksize ;
-        int64_t kend = (blockid+1) * blocksize ;
-        kend = GB_IMIN (kend, len) ;
+        int64_t kstart, kend ;
+        // kstart = blockid * blocksize ;
+        // kend = (blockid+1) * blocksize ;
+        // kend = GB_IMIN (kend, len) ;
+        GB_PARTITION (kstart, kend, len, blockid, nblocks) ;
+
         size_t uncompressed = kend - kstart ;
         ASSERT (uncompressed < INT32_MAX) ;
         ASSERT (uncompressed > 0) ;
@@ -169,9 +171,12 @@ GrB_Info GB_serialize_array
     for (blockid = 0 ; blockid < nblocks ; blockid++)
     {
         // compress X [kstart:kend-1] into Blocks [blockid].p
-        int64_t kstart = blockid * blocksize ;
-        int64_t kend = (blockid+1) * blocksize ;
-        kend = GB_IMIN (kend, len) ;
+        int64_t kstart, kend ;
+        // kstart = blockid * blocksize ;
+        // kend = (blockid+1) * blocksize ;
+        // kend = GB_IMIN (kend, len) ;
+        GB_PARTITION (kstart, kend, len, blockid, nblocks) ;
+
         const char *src = (const char *) (X + kstart) ;     // source
         char *dst = (char *) Blocks [blockid].p ;           // destination
         int srcSize = (int) (kend - kstart) ;               // size of source

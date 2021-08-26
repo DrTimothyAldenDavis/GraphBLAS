@@ -53,7 +53,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("A failed") ;
     }
-    GxB_Matrix_fprint (A, "got A", 2, stdout) ;
 
     // get the type of A
     GrB_Type atype ;
@@ -68,9 +67,6 @@ void mexFunction
     // copy C with the same type as A, with default sparsity
     GxB_Matrix_serialize (&blob, &blob_size, A, NULL) ;
     int info = GxB_Matrix_deserialize (&C, blob, blob_size, atype, NULL) ;
-    printf ("got C: %d\n", info) ;
-    GxB_Matrix_fprint (C, "got C", 2, stdout) ;
-    printf ("blob %p\n", blob) ;
 
     size_t asize, csize ;
     GxB_Matrix_memoryUsage (&asize, A) ;
@@ -78,17 +74,17 @@ void mexFunction
     size_t adeep, ashallow ;
     GB_memoryUsage (&nallocs, &adeep, &ashallow, A) ;
 
+/*
     GxB_Matrix_memoryUsage (&csize, C) ;
     printf ("A memory usage:    %ld (shallow %ld, deep %ld, tot %ld)\n", asize,
         adeep, ashallow, adeep+ashallow) ;
     printf ("C memory usage:    %ld\n", csize) ;
     printf ("blob memory usage: %ld (%8.2f%%)\n", blob_size,
         100 * (double) blob_size / (double) csize) ;
+*/
 
     // return C as a struct and free the GraphBLAS C
-    printf ("return C\n") ;
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
-    printf ("bye C\n") ;
 
     FREE_ALL ;
 }
