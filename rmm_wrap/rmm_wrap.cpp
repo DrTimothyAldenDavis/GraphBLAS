@@ -97,48 +97,191 @@ void rmm_initialize(RMM_Handle *handle, RMM_MODE mode,  std::size_t init_pool_si
     }
 }
 
+/*
+    GrB_init (mode) ;       // ANSI C11 malloc/calloc/realloc/free, no PMR
+    GxB_init (mode, mymalloc, mycalloc, myrealloc, myfree)
 
-#if 0
+    GxB_init (mode, mymalloc, NULL, NULL, myfree)
+
+    GxB_init (mode, mxMalloc, NULL, NULL, mxFree)
+    GxB_init (mode, pymalloc, pycalloc, pyrealloc, pyfree)
+    GxB_init (mode, jl_malloc, jl_calloc, jl_realloc, jl_free)
+    GxB_init (mode, RedisModule_malloc, RedisModule_calloc, RedisModule_realloc, RedisModule_realloc)
+
+    GxB_init (mode, rmm_malloc, rmm_calloc, rmm_realloc, rmm_free)
+
+    void *GxB_Memory_malloc (size_t ) ;
+    void  GxB_Memory_free (void *) ;
+    void *GxB_Memory_calloc (size_t, size_t) ;      // OK if no calloc
+    void *GxB_Memory_realloc (void *, size_t) ;     // NULL if no realloc
+*/
+#include "pmr_malloc.h"
+
+//------------------------------------------------------------------------------
+// rmm_malloc
+//------------------------------------------------------------------------------
+
 void *rmm_malloc (std::size_t size)
 {
-    size_t *p = (size_t *) rmm_allocate (&size) ;
-    hash_insert (p, size) ;
-    return (p) ;
+    return (rmm_allocate (&size)) ;
 }
+
+//------------------------------------------------------------------------------
+// rmm_calloc
+//------------------------------------------------------------------------------
 
 void *rmm_calloc (std::size_t n, std::size_t size)
 {
-    // ...
+    std::size_t s = n * size ;
+    void *p = rmm_allocate (&s) ;
+    // NOTE: single-threaded on the CPU.  If you want
+    // a faster method, malloc the space and use cudaMemset
+    // for the GPU or GB_memset on the CPU.
+    memset (p, 0, s) ;
+    return (p) ;
 }
 
-void *rmm_realloc (...std::size_t size)
+//------------------------------------------------------------------------------
+// rmm_realloc
+//------------------------------------------------------------------------------
+
+void *rmm_realloc (void *p, std::size_t newsize)
 {
+    if (p == NULL)
+    {
+        // allocate a new block.  This is OK.
+        return (rmm_allocate (&newsize)) ;
+    }
+
+    if (newsize == 0)
+    {
+        // free the block.  This OK.
+        rmm_deallocate (p, 0) ;
+        return (NULL) ;
+    }
+
+    std::size_t oldsize = hash_lookup (p) ;
+
+    if (oldsize == 0)
+    {
+        // the block is not in the hashmap; cannot realloc it.
+        // This is a failure.
+        return (NULL) ;
+    }
+
+    // check for quick return
+    if (newsize >= oldsize/2 && newsize <= oldsize)
+    { 
+        // Be lazy. If the block does not change, or is shrinking but only by a
+        // small amount, then leave the block as-is.
+        return (p) ;
+    }
+
+    // allocate the new space
+    void *pnew = rmm_allocate (&newsize) ;
+    if (pnew == NULL)
+    {
+        // old block is not modified.  This is a failure, but the old block is
+        // still in the hashmap.
+        return (NULL) ;
+    }
+
+    // copy the old space into the new space
+    std::size_t s = (oldsize < newsize) ? oldsize : newsize ;
+    // NOTE: single-thread CPU, not GPU.
+    // FIXME: query the pointer if it's on the GPU.
+    memcpy (pnew, p, s) ;
+
+    // free the old space
+    rmm_deallocate (p, oldsize) ;
+
+    // return the new space
+    return (pnew) ;
 }
+
+//------------------------------------------------------------------------------
+// rmm_free
+//------------------------------------------------------------------------------
 
 void rmm_free (void *p)
 {
-    size_t size = hash_lookup (p)
-    rmm_deallocate (p, size) ;
+    rmm_deallocate (p, 0) ;
 }
-#endif
+
+//------------------------------------------------------------------------------
+// rmm_allocate
+//------------------------------------------------------------------------------
 
 void *rmm_allocate( std::size_t *size)
 {
-
-    std::size_t aligned = (*size) % 256;
+    // ensure size is nonzero
+    if (*size == 0) *size = 256 ;
+    // round-up the allocation to a multiple of 256
+    std::size_t aligned = (*size) % 256 ;
     if (aligned > 0)
     {
-        *size += (256 -aligned);
+        *size += (256 - aligned) ;
     }
     printf(" rmm_alloc %ld bytes\n",*size);
-    rmm::mr::device_memory_resource *mr=  rmm::mr::get_current_device_resource();
-    return mr->allocate( *size );
+    rmm::mr::device_memory_resource *mr = rmm::mr::get_current_device_resource();
+    void *p = mr->allocate( *size );
+    if (p == NULL)
+    {
+        *size = 0 ;
+        return (NULL) ;
+    }
+
+    // insert p into the hashmap
+    hash_insert (p, *size) ;
 }
+
+//------------------------------------------------------------------------------
+// rmm_allocate
+//------------------------------------------------------------------------------
 
 void rmm_deallocate( void *p, std::size_t size)
 {
     //printf("dealloc %ld bytes\n", size); 
-    rmm::mr::device_memory_resource *mr=  rmm::mr::get_current_device_resource();
-    mr->deallocate( p, size );
+
+    // Note: there are 3 PANIC cases below.  The API of rmm_deallocate does not
+    // allow an error condition to be returned.  These PANICs could be logged,
+    // or they could terminate the program if debug mode enabled, etc.
+    // In production, all we can do is ignore the PANIC.
+
+    if (p == NULL)
+    {
+        // nothing to do; ignore a double-free
+        if (size > 0)
+        {
+            // PANIC!  Why does a NULL pointer have a nonzero size??
+        }
+        return ;
+    }
+
+
+    // check the size given.  If the input size is zero, then the
+    // size is unknown (say rmm_free(p)).  In that case, just trust the
+    // hashmap.  Otherwise, double-check to make sure the size is correct.
+    size_t actual_size = hash_lookup (p) ;
+    if (actual_size == 0)
+    {
+        // PANIC!  oops, p is not in the hashmap.  Ignore it.  TODO: could add
+        // a printf here, write to a log file, etc.  if debug mode, abort, etc.
+        return ;
+    }
+
+    if (size > 0 && size != actual_size)
+    {
+        // PANIC!  oops, invalid old size.  Ignore the input size, and free p
+        // anyway.  TODO: could add a printf here, write to a log file, etc.
+        // if debug mode, abort, etc.
+    }
+
+    // remove p from the hashmap
+    hash_remove (p)
+
+    // deallocate the block of memory
+    rmm::mr::device_memory_resource *mr = rmm::mr::get_current_device_resource();
+    mr->deallocate( p, actual_size );
 }
 
