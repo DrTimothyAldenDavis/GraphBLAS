@@ -26,10 +26,11 @@ GrB_Info GB_serialize_array
     GB_blocks **Blocks_handle,          // Blocks: array of size nblocks+1
     size_t *Blocks_size_handle,         // size of Blocks
     int32_t *nblocks_handle,            // # of blocks
+    int32_t *method_used,               // method used
     // input:
     GB_void *X,                         // input array of size len
     size_t len,                         // size of X, in bytes
-    GxB_Compression method,             // compression method
+    int32_t method,                     // compression method requested
     GB_Context Context
 )
 {
@@ -42,6 +43,7 @@ GrB_Info GB_serialize_array
     ASSERT (Blocks_handle != NULL) ;
     ASSERT (Blocks_size_handle != NULL) ;
     ASSERT (nblocks_handle != NULL) ;
+    ASSERT (method_used != NULL) ;
     GB_blocks *Blocks = NULL ;
     size_t Blocks_size = 0 ;
     int32_t nblocks = 0 ;
@@ -53,13 +55,12 @@ GrB_Info GB_serialize_array
     (*Blocks_handle) = NULL ;
     (*Blocks_size_handle) = 0 ;
     (*nblocks_handle) = 0 ;
+    (*method_used) = GxB_COMPRESSION_NONE ;
     if (X == NULL || len == 0)
     {
         // input array is empty
         return (GrB_SUCCESS) ;
     }
-
-    // printf ("\nX len: %ld\n", len) ;
 
     //--------------------------------------------------------------------------
     // check for no compression
@@ -80,19 +81,19 @@ GrB_Info GB_serialize_array
         Blocks [0].p_size = 0 ;     // denotes that p is a shallow copy of X
         Blocks [0].uncompressed = 0 ;
         Blocks [0].compressed = 0 ;
-        Blocks [0].method = GxB_COMPRESSION_NONE ;
 
         Blocks [1].p = NULL ;       // 2nd block is the final sentinel
         Blocks [1].p_size = 0 ;
         Blocks [1].uncompressed = len ; // cumulative sum: just the first block
         Blocks [1].compressed = len ;   // ditto
-        Blocks [1].method = GxB_COMPRESSION_NONE ;
 
         (*Blocks_handle) = Blocks ;
         (*Blocks_size_handle) = Blocks_size ;
         (*nblocks_handle) = 1 ;
         return (GrB_SUCCESS) ;
     }
+
+    (*method_used) = method ;
 
     //--------------------------------------------------------------------------
     // determine # of threads to use
@@ -150,7 +151,6 @@ GrB_Info GB_serialize_array
         Blocks [blockid].p_size = p_size ;
         Blocks [blockid].uncompressed = uncompressed ;
         Blocks [blockid].compressed = 0 ;  // not yet computed
-        Blocks [blockid].method = GxB_COMPRESSION_NONE ;  // not yet performed
     }
 
     if (!ok)
@@ -177,16 +177,10 @@ GrB_Info GB_serialize_array
         int srcSize = (int) (kend - kstart) ;               // size of source
         size_t dsize = Blocks [blockid].p_size ;            // size of dest
         int dstCapacity = GB_IMIN (dsize, INT32_MAX) ;
-//      printf ("\n======================================================\n") ;
-//      printf ("compress block %d kstart %ld kend %ld srcSize %d dsize %ld"
-//          " dcap %ld\n",
-//          blockid, kstart, kend, srcSize, dsize, dstCapacity) ;
         int s = LZ4_compress_default (src, dst, srcSize, dstCapacity) ;
         ok = ok && (s > 0) ;
         // compressed block is now in dst [0:s-1], of size s
         Blocks [blockid].compressed = (size_t) s ;
-        Blocks [blockid].method = GxB_COMPRESSION_LZ4 ;
-//      dump_blob (dst, s) ;
     }
 
     if (!ok)
@@ -209,17 +203,6 @@ GrB_Info GB_serialize_array
         size_t compressed   = Blocks [blockid].compressed ;
         size_t uncompressed = Blocks [blockid].uncompressed ;
 
-        // report the results
-        #if 0
-        if (blockid < nblocks)
-        {
-            double orig = (double) uncompressed ;
-            double comp = (double) compressed ;
-            printf ("Block %4d: orig: %ld compress: %ld (%g %%)\n",
-                blockid, uncompressed, compressed, 100 * comp/orig) ;
-        }
-        #endif
-
         // overwrite both with their cumulative sums
         Blocks [blockid].compressed   = total_compressed ;
         Blocks [blockid].uncompressed = total_uncompressed ;
@@ -229,16 +212,17 @@ GrB_Info GB_serialize_array
         total_uncompressed += uncompressed ;
     }
 
-    // report total compression
     ASSERT (total_uncompressed == len) ;
     ASSERT (Blocks [nblocks].uncompressed == len) ;
-    double orig = (double) len ;
-    double comp = (double) Blocks [nblocks].compressed ;
-    printf ("Serialize nblocks %d orig: %ld compress: %ld (%g %%)\n",
-        nblocks, len, Blocks [nblocks].compressed, 100 * comp/orig) ;
+
+//  // report total compression
+//  double orig = (double) len ;
+//  double comp = (double) Blocks [nblocks].compressed ;
+//  printf ("Serialize nblocks %d orig: %ld compress: %ld (%g %%)\n",
+//      nblocks, len, Blocks [nblocks].compressed, 100 * comp/orig) ;
 
     //--------------------------------------------------------------------------
-    // return result
+    // free workspace return result
     //--------------------------------------------------------------------------
 
     (*Blocks_handle) = Blocks ;

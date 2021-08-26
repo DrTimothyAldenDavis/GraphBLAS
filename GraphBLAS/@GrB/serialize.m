@@ -1,4 +1,4 @@
-function blob = serialize (G)
+function blob = serialize (G, method)
 %GRB.SERIALIZE convert a matrix to a serialized blob
 % blob = GrB.serialize (G) returns a uint8 array containing the contents
 % of the matrix G, which may be a MATLAB or @GrB matrix.  The array may
@@ -28,5 +28,10 @@ if (isobject (G))
 end
 
 % serialize the matrix into a uint8 blob
-blob = gbserialize (G) ;
+if (nargin == 1)
+    % use the default compression method
+    blob = gbserialize (G) ;
+else
+    blob = gbserialize (G, method) ;
+end
 

@@ -9234,6 +9234,17 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
     free (blob) ;               // note, freed by the user, not GraphBLAS
 */
 
+#define GxB_COMPRESSION_NONE 0  // no compression
+#define GxB_COMPRESSION_LZ4  1  // LZ4, with defaults
+// not yet implemented:
+//  GxB_COMPRESSION_LZ4HC_1 = 1001,     // LZ4, high compression, level 1
+//  GxB_COMPRESSION_LZ4HC_2 = 1002,     // LZ4, high compression, level 2
+    // ...
+//  GxB_COMPRESSION_LZ4HC_14 = 1014,    // LZ4, high compression, level 14
+//  GxB_COMPRESSION_IPPS_LZ4 = 2,       // Intel IPPS LZ4
+//  GxB_COMPRESSION_BLOSC2 = 4,
+// ... etc
+
 GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 (
     // output:

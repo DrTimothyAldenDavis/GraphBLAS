@@ -36,7 +36,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     size_t *blob_size_handle,       // size of the blob
     // input:
     const GrB_Matrix A,             // matrix to serialize
-    GxB_Compression method,         // method to use
+    int32_t method,                 // method to use
     GB_Context Context
 )
 {
@@ -87,8 +87,10 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     GB_blob_header header ;
 
     header.version = GxB_IMPLEMENTATION ;
-    header.vlen = A->vlen ;
-    header.vdim = A->vdim ;
+    int64_t vlen = A->vlen ;
+    int64_t vdim = A->vdim ;
+    header.vlen = vlen ;
+    header.vdim = vdim ;
     int64_t nvec = A->nvec ;
     header.nvec = nvec ;
     if (A->nvec_nonempty < 0) A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
@@ -150,18 +152,23 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // compress each array (Ap, Ah, Ab, Ai, and Ax)
     //--------------------------------------------------------------------------
 
-// printf ("Serializing:\n") ;
+    int32_t Ap_method, Ah_method, Ai_method, Ab_method, Ax_method ;
+
+    // uint64
     GB_OK (GB_serialize_array (&Ap_blocks, &Ap_blocks_size, &Ap_nblocks,
-        (GB_void *) A->p, Ap_usage, method, Context)) ;
+        &Ap_method, (GB_void *) A->p, Ap_usage, method, Context)) ;
     GB_OK (GB_serialize_array (&Ah_blocks, &Ah_blocks_size, &Ah_nblocks,
-        (GB_void *) A->h, Ah_usage, method, Context)) ;
-    GB_OK (GB_serialize_array (&Ab_blocks, &Ab_blocks_size, &Ab_nblocks,
-        (GB_void *) A->b, Ab_usage, method, Context)) ;
+        &Ah_method, (GB_void *) A->h, Ah_usage, method, Context)) ;
     GB_OK (GB_serialize_array (&Ai_blocks, &Ai_blocks_size, &Ai_nblocks,
-        (GB_void *) A->i, Ai_usage, method, Context)) ;
-// printf ("Serializing Ax:\n") ;
+        &Ai_method, (GB_void *) A->i, Ai_usage, method, Context)) ;
+
+    // uint8
+    GB_OK (GB_serialize_array (&Ab_blocks, &Ab_blocks_size, &Ab_nblocks,
+        &Ab_method, (GB_void *) A->b, Ab_usage, method, Context)) ;
+
+    // size depends on the matrix type
     GB_OK (GB_serialize_array (&Ax_blocks, &Ax_blocks_size, &Ax_nblocks,
-        (GB_void *) A->x, Ax_usage, method, Context)) ;
+        &Ax_method, (GB_void *) A->x, Ax_usage, method, Context)) ;
 
     //--------------------------------------------------------------------------
     // determine the size of the blob and allocate it
@@ -176,17 +183,10 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // size of a compressed array:
     #define BSIZE(Blocks,nblocks)                                       \
         sizeof (int32_t)                    /* nblocks */               \
+        + sizeof (int32_t)                  /* method used */           \
         + (sizeof (int64_t)) * nblocks      /* Ublock array */          \
         + (sizeof (int64_t)) * nblocks      /* Sblock array */          \
-        + (sizeof (int32_t)) * nblocks      /* Method array */          \
         + Blocks [nblocks].compressed       /* compressed blocks */
-
-    // size of Ap, Ah, Ab, Ai, and Ax in the blob
-//  if (Ap_nblocks > 0) printf ("Ap size %ld\n", BSIZE (Ap_blocks, Ap_nblocks));
-//  if (Ah_nblocks > 0) printf ("Ah size %ld\n", BSIZE (Ah_blocks, Ah_nblocks));
-//  if (Ab_nblocks > 0) printf ("Ab size %ld\n", BSIZE (Ab_blocks, Ab_nblocks));
-//  if (Ai_nblocks > 0) printf ("Ai size %ld\n", BSIZE (Ai_blocks, Ai_nblocks));
-//  if (Ax_nblocks > 0) printf ("Ax size %ld\n", BSIZE (Ax_blocks, Ax_nblocks));
 
     // size of Ap, Ah, Ab, Ai, and Ax in the blob
     if (Ap_nblocks > 0) s += BSIZE (Ap_blocks, Ap_nblocks) ;
@@ -221,24 +221,28 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         s += GB_LEN ;
     }
 
-    // printf ("\nHeader: ") ;dump_blob (blob, (int) s) ;
-
     //--------------------------------------------------------------------------
     // copy the compressed arrays into the blob
     //--------------------------------------------------------------------------
 
-    GB_serialize_to_blob (blob, &s, Ap_blocks, Ap_nblocks, nthreads_max) ;
-    GB_serialize_to_blob (blob, &s, Ah_blocks, Ah_nblocks, nthreads_max) ;
-    GB_serialize_to_blob (blob, &s, Ab_blocks, Ab_nblocks, nthreads_max) ;
-    GB_serialize_to_blob (blob, &s, Ai_blocks, Ai_nblocks, nthreads_max) ;
-    GB_serialize_to_blob (blob, &s, Ax_blocks, Ax_nblocks, nthreads_max) ;
+    // FIXME: round up each of the 5 arrays to a multiple of 64 bytes,
+    // or each internal block.
+
+    GB_serialize_to_blob (blob, &s, Ap_blocks, Ap_nblocks, Ap_method,
+        nthreads_max) ;
+    GB_serialize_to_blob (blob, &s, Ah_blocks, Ah_nblocks, Ah_method,
+        nthreads_max) ;
+    GB_serialize_to_blob (blob, &s, Ai_blocks, Ai_nblocks, Ai_method,
+        nthreads_max) ;
+    GB_serialize_to_blob (blob, &s, Ab_blocks, Ab_nblocks, Ab_method,
+        nthreads_max) ;
+    GB_serialize_to_blob (blob, &s, Ax_blocks, Ax_nblocks, Ax_method,
+        nthreads_max) ;
 
     // the blob is at least of size s, but might be slightly larger,
     // so zero out any unused bytes
     ASSERT (s <= blob_size) ;
     if (s < blob_size) memset (blob + s, 0, blob_size - s) ;
-
-    // printf ("\nHeader: ") ;dump_blob (blob, (int) s) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

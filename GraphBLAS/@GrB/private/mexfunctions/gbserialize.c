@@ -11,11 +11,11 @@
 
 // Usage:
 
-// blob = gbserialize (A)
+// blob = gbserialize (A, method)
 
 #include "gb_interface.h"
 
-#define USAGE "usage: blob = GrB.serialize (A)"
+#define USAGE "usage: blob = GrB.serialize (A, method)"
 
 void mexFunction
 (
@@ -30,14 +30,14 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 1, USAGE) ;
+    gb_usage ((nargin == 1 || nargin == 2) && nargout <= 1, USAGE) ;
     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
+
+    // TODO: get compression method from an input string
 
     //--------------------------------------------------------------------------
     // serialize the matrix into the blob
     //--------------------------------------------------------------------------
-
-    // TODO: get compression method from an input string
 
     void *blob = NULL ;
     size_t blob_size ;

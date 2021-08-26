@@ -10,39 +10,6 @@
 #ifndef GB_SERIALIZE_H
 #define GB_SERIALIZE_H
 
-#if 0
-static inline void dump_blob
-(
-    GB_void *blob,
-    int len
-)
-{
-    printf ("Dump blob %p of size %d bytes\n", blob, len) ;
-    for (int k = 0 ; k < len ; k++)
-    {
-        printf ("%3d ", (int) blob [k]) ;
-        if (k % 16 == 32) printf ("\n") ;
-    }
-    printf ("\n") ;
-}
-#endif
-
-typedef enum
-{
-    GxB_COMPRESSION_NONE = 0,           // no compression
-    GxB_COMPRESSION_LZ4 = 1,            // LZ4, with defaults
-    // not yet implemented:
-//  GxB_COMPRESSION_LZ4HC_1 = 1001,     // LZ4, high compression, level 1
-//  GxB_COMPRESSION_LZ4HC_2 = 1002,     // LZ4, high compression, level 2
-    // ...
-//  GxB_COMPRESSION_LZ4HC_14 = 1014,    // LZ4, high compression, level 14
-//  GxB_COMPRESSION_IPPS_LZ4 = 2,       // Intel IPPS LZ4
-//  GxB_COMPRESSION_BLOSC2 = 4,
-// ... etc
-
-}
-GxB_Compression ;
-
 GrB_Info GB_serialize               // serialize a matrix into a blob
 (
     // output:
@@ -50,7 +17,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     size_t *blob_size_handle,       // size of the blob
     // input:
     const GrB_Matrix A,             // matrix to serialize
-    GxB_Compression method,         // method to use
+    int32_t method,                 // method to use
     GB_Context Context
 ) ;
 
@@ -76,15 +43,15 @@ typedef struct
     int64_t nvals ;                 // # of values if bitmap
     size_t typesize ;               // size of the type
 
-    // 4x4 = 16 bytes
+    // 5x4 = 20 bytes
     int32_t version ;               // SuiteSparse:GraphBLAS version
     GB_Type_code typecode ;         // matrix type code
     float hyper_switch ;            // hyper-switch control
     float bitmap_switch ;           // bitmap-switch control
-    int sparsity_control ;          // sparsity control
+    int32_t sparsity_control ;      // sparsity control
 
     // 8 bytes
-    int sparsity ;                  // hyper/sparse/bitmap/full
+    int32_t sparsity ;              // hyper/sparse/bitmap/full
     bool iso ;                      // true if matrix is iso
     bool is_csc ;                   // true if by column, false if by row
     bool unused1, unused2 ;
@@ -96,13 +63,10 @@ typedef struct
     void *p ;                       // pointer to the compressed block
     size_t p_size ;                 // size of compressed block, or zero
                                     // if p is not malloc'ed
-
     // after the blocks are compressed, these 2 terms are overwritten with
     // their cumulative sum:
     size_t uncompressed ;           // original size of the block
     size_t compressed ;             // size of the block when compressed
-
-    GxB_Compression method ;        // compression method used for this block
 }
 GB_blocks ;
 
@@ -112,10 +76,11 @@ GrB_Info GB_serialize_array
     GB_blocks **Blocks_handle,          // Blocks: array of size nblocks+1
     size_t *Blocks_size_handle,         // size of Blocks
     int32_t *nblocks_handle,            // # of blocks
+    int32_t *method_used,               // method used
     // input:
     GB_void *X,                         // input array of size len
     size_t len,                         // size of X, in bytes
-    GxB_Compression method,             // compression method
+    int32_t method,                     // compression method requested
     GB_Context Context
 ) ;
 
@@ -135,6 +100,7 @@ void GB_serialize_to_blob
     // input:
     GB_blocks *Blocks,      // Blocks: array of size nblocks
     int32_t nblocks,        // # of blocks
+    int32_t method_used,    // compression method used
     int nthreads_max        // # of threads to use
 ) ;
 
