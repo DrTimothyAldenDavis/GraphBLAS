@@ -9,8 +9,6 @@
 
 // deserialize: create a GrB_Matrix from a blob of bytes
 
-// FIXME: deserialize requires a blob_size input.
-
 #include "GB.h"
 #include "GB_serialize.h"
 

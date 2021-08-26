@@ -14,13 +14,18 @@
 #include "GB.h"
 #include "GB_serialize.h"
 
-#define GB_FREE_WORK                        \
-{                                           \
-    GB_serialize_free_blocks (&Ap_blocks, Ap_blocks_size, Ap_nblocks, Context);\
-    GB_serialize_free_blocks (&Ah_blocks, Ah_blocks_size, Ah_nblocks, Context);\
-    GB_serialize_free_blocks (&Ab_blocks, Ab_blocks_size, Ab_nblocks, Context);\
-    GB_serialize_free_blocks (&Ai_blocks, Ai_blocks_size, Ai_nblocks, Context);\
-    GB_serialize_free_blocks (&Ax_blocks, Ax_blocks_size, Ax_nblocks, Context);\
+#define GB_FREE_WORK                            \
+{                                               \
+    GB_FREE (&Ap_Sblocks, Ap_Sblocks_size) ;    \
+    GB_FREE (&Ah_Sblocks, Ah_Sblocks_size) ;    \
+    GB_FREE (&Ab_Sblocks, Ab_Sblocks_size) ;    \
+    GB_FREE (&Ai_Sblocks, Ai_Sblocks_size) ;    \
+    GB_FREE (&Ax_Sblocks, Ax_Sblocks_size) ;    \
+    GB_serialize_free_blocks (&Ap_Blocks, Ap_Blocks_size, Ap_nblocks, Context);\
+    GB_serialize_free_blocks (&Ah_Blocks, Ah_Blocks_size, Ah_nblocks, Context);\
+    GB_serialize_free_blocks (&Ab_Blocks, Ab_Blocks_size, Ab_nblocks, Context);\
+    GB_serialize_free_blocks (&Ai_Blocks, Ai_Blocks_size, Ai_nblocks, Context);\
+    GB_serialize_free_blocks (&Ax_Blocks, Ax_Blocks_size, Ax_nblocks, Context);\
 }
 
 #define GB_FREE_ALL                         \
@@ -51,18 +56,22 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     (*blob_handle) = NULL ;
     (*blob_size_handle) = 0 ;
 
-    GB_void *blob = NULL ;
-    size_t blob_size = 0 ;
-    GB_blocks *Ap_blocks = NULL ; int32_t Ap_nblocks = 0 ;
-    GB_blocks *Ah_blocks = NULL ; int32_t Ah_nblocks = 0 ;
-    GB_blocks *Ab_blocks = NULL ; int32_t Ab_nblocks = 0 ;
-    GB_blocks *Ai_blocks = NULL ; int32_t Ai_nblocks = 0 ;
-    GB_blocks *Ax_blocks = NULL ; int32_t Ax_nblocks = 0 ;
-    size_t Ap_blocks_size = 0 ;
-    size_t Ah_blocks_size = 0 ;
-    size_t Ab_blocks_size = 0 ;
-    size_t Ai_blocks_size = 0 ;
-    size_t Ax_blocks_size = 0 ;
+    GB_void *blob = NULL ; size_t blob_size = 0 ;
+    GB_blocks *Ap_Blocks = NULL ; size_t Ap_Blocks_size = 0 ;
+    GB_blocks *Ah_Blocks = NULL ; size_t Ah_Blocks_size = 0 ;
+    GB_blocks *Ab_Blocks = NULL ; size_t Ab_Blocks_size = 0 ;
+    GB_blocks *Ai_Blocks = NULL ; size_t Ai_Blocks_size = 0 ;
+    GB_blocks *Ax_Blocks = NULL ; size_t Ax_Blocks_size = 0 ;
+    int64_t *Ap_Sblocks = NULL ; size_t Ap_Sblocks_size = 0 ;
+    int64_t *Ah_Sblocks = NULL ; size_t Ah_Sblocks_size = 0 ;
+    int64_t *Ab_Sblocks = NULL ; size_t Ab_Sblocks_size = 0 ;
+    int64_t *Ai_Sblocks = NULL ; size_t Ai_Sblocks_size = 0 ;
+    int64_t *Ax_Sblocks = NULL ; size_t Ax_Sblocks_size = 0 ;
+    int32_t Ap_nblocks = 0 ;
+    int32_t Ah_nblocks = 0 ;
+    int32_t Ab_nblocks = 0 ;
+    int32_t Ai_nblocks = 0 ;
+    int32_t Ax_nblocks = 0 ;
 
     // method = GxB_COMPRESSION_NONE ;
 
@@ -87,6 +96,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     int64_t vdim = A->vdim ;
     int64_t nvec = A->nvec ;
     int64_t nvals = A->nvals ;
+    // FIXME: nvec_nonempty not threadsafe
     if (A->nvec_nonempty < 0) A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
     int64_t nvec_nonempty = A->nvec_nonempty ;
     int32_t sparsity = GB_sparsity (A) ;
@@ -131,23 +141,22 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // compress each array (Ap, Ah, Ab, Ai, and Ax)
     //--------------------------------------------------------------------------
 
-    int32_t Ap_method, Ah_method, Ai_method, Ab_method, Ax_method ;
-
-    // uint64
-    GB_OK (GB_serialize_array (&Ap_blocks, &Ap_blocks_size, &Ap_nblocks,
-        &Ap_method, (GB_void *) A->p, Ap_len, method, Context)) ;
-    GB_OK (GB_serialize_array (&Ah_blocks, &Ah_blocks_size, &Ah_nblocks,
-        &Ah_method, (GB_void *) A->h, Ah_len, method, Context)) ;
-    GB_OK (GB_serialize_array (&Ai_blocks, &Ai_blocks_size, &Ai_nblocks,
-        &Ai_method, (GB_void *) A->i, Ai_len, method, Context)) ;
-
-    // uint8
-    GB_OK (GB_serialize_array (&Ab_blocks, &Ab_blocks_size, &Ab_nblocks,
-        &Ab_method, (GB_void *) A->b, Ab_len, method, Context)) ;
-
-    // size depends on the matrix type
-    GB_OK (GB_serialize_array (&Ax_blocks, &Ax_blocks_size, &Ax_nblocks,
-        &Ax_method, (GB_void *) A->x, Ax_len, method, Context)) ;
+    int32_t Ap_method, Ah_method, Ab_method, Ai_method, Ax_method ;
+    GB_OK (GB_serialize_array (&Ap_Blocks, &Ap_Blocks_size,
+        &Ap_Sblocks, &Ap_Sblocks_size, &Ap_nblocks, &Ap_method,
+        (GB_void *) A->p, Ap_len, method, Context)) ;
+    GB_OK (GB_serialize_array (&Ah_Blocks, &Ah_Blocks_size,
+        &Ah_Sblocks, &Ah_Sblocks_size, &Ah_nblocks, &Ah_method,
+        (GB_void *) A->h, Ah_len, method, Context)) ;
+    GB_OK (GB_serialize_array (&Ab_Blocks, &Ab_Blocks_size,
+        &Ab_Sblocks, &Ab_Sblocks_size, &Ab_nblocks, &Ab_method,
+        (GB_void *) A->b, Ab_len, method, Context)) ;
+    GB_OK (GB_serialize_array (&Ai_Blocks, &Ai_Blocks_size,
+        &Ai_Sblocks, &Ai_Sblocks_size, &Ai_nblocks, &Ai_method,
+        (GB_void *) A->i, Ai_len, method, Context)) ;
+    GB_OK (GB_serialize_array (&Ax_Blocks, &Ax_Blocks_size,
+        &Ax_Sblocks, &Ax_Sblocks_size, &Ax_nblocks, &Ax_method,
+        (GB_void *) A->x, Ax_len, method, Context)) ;
 
     //--------------------------------------------------------------------------
     // determine the size of the blob and allocate it
@@ -155,25 +164,28 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
 
     size_t s =
         // header information
-        sizeof (size_t) + 11 * sizeof (int64_t)
-        + 4 * sizeof (int32_t)
-        + 2 * sizeof (float)
-        + 10 * sizeof (int32_t)
+        sizeof (size_t)             // blob_size
+        + 11 * sizeof (int64_t)     // vlen, vdim, nvec, nvec_nonempty, nvals,
+                                    // typesize, A[phbix]_len
+        + 4 * sizeof (int32_t)      // version, typecode, sparsity_control,
+                                    // sparsity_iso_csc
+        + 2 * sizeof (float)        // hyper_switch, bitmap_switch
+        + 10 * sizeof (int32_t)     // A[phbix]_nblocks, A[phbix]_method
+        // Sblocks for each array
+        + Ap_nblocks * sizeof (int64_t)     // Ap_Sblocks [1:Ap_nblocks]
+        + Ah_nblocks * sizeof (int64_t)     // Ah_Sblocks [1:Ah_nblocks]
+        + Ab_nblocks * sizeof (int64_t)     // Ab_Sblocks [1:Ab_nblocks]
+        + Ai_nblocks * sizeof (int64_t)     // Ai_Sblocks [1:Ai_nblocks]
+        + Ax_nblocks * sizeof (int64_t)     // Ax_Sblocks [1:Ax_nblocks]
         // typename for user-defined types
         + ((typecode == GB_UDT_code) ? GB_LEN : 0) ;
 
-    // size of a compressed array:
-    #define BSIZE(Blocks,nblocks)                                       \
-        + (sizeof (int64_t)) * nblocks      /* Ublock array */          \
-        + (sizeof (int64_t)) * nblocks      /* Sblock array */          \
-        + Blocks [nblocks].compressed       /* compressed blocks */
-
-    // size of Ap, Ah, Ab, Ai, and Ax in the blob
-    if (Ap_nblocks > 0) s += BSIZE (Ap_blocks, Ap_nblocks) ;
-    if (Ah_nblocks > 0) s += BSIZE (Ah_blocks, Ah_nblocks) ;
-    if (Ab_nblocks > 0) s += BSIZE (Ab_blocks, Ab_nblocks) ;
-    if (Ai_nblocks > 0) s += BSIZE (Ai_blocks, Ai_nblocks) ;
-    if (Ax_nblocks > 0) s += BSIZE (Ax_blocks, Ax_nblocks) ;
+    // size of compressed arrays Ap, Ah, Ab, Ai, and Ax in the blob
+    if (Ap_nblocks > 0) s += Ap_Sblocks [Ap_nblocks] ;
+    if (Ah_nblocks > 0) s += Ah_Sblocks [Ah_nblocks] ;
+    if (Ab_nblocks > 0) s += Ab_Sblocks [Ab_nblocks] ;
+    if (Ai_nblocks > 0) s += Ai_Sblocks [Ai_nblocks] ;
+    if (Ax_nblocks > 0) s += Ax_Sblocks [Ax_nblocks] ;
 
     // GB_MALLOC may decide to increase the blob from size s bytes to blob_size
     blob = GB_MALLOC (s, GB_void, &blob_size) ;
@@ -194,7 +206,6 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         memcpy (blob + s, &(x), sizeof (type)) ; s += sizeof (type) ;
 
     s = 0 ;
-
     int32_t sparsity_iso_csc = (4 * sparsity) + (iso ? 2 : 0) +
         (A->is_csc ? 1 : 0) ;
 
@@ -207,13 +218,11 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     MEMWRITE (nvals, int64_t) ;
     MEMWRITE (typesize, int64_t) ;
 
-    // TODO: use phbix order throughout
-
     // 5x8 = 40 bytes (5 int64)
     MEMWRITE (Ap_len, int64_t) ;
     MEMWRITE (Ah_len, int64_t) ;
-    MEMWRITE (Ai_len, int64_t) ;
     MEMWRITE (Ab_len, int64_t) ;
+    MEMWRITE (Ai_len, int64_t) ;
     MEMWRITE (Ax_len, int64_t) ;
 
     // 6x4 = 24 bytes
@@ -224,8 +233,8 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // 10x4 = 40 bytes
     MEMWRITE (Ap_nblocks, int32_t) ; MEMWRITE (Ap_method, int32_t) ;
     MEMWRITE (Ah_nblocks, int32_t) ; MEMWRITE (Ah_method, int32_t) ;
-    MEMWRITE (Ai_nblocks, int32_t) ; MEMWRITE (Ai_method, int32_t) ;
     MEMWRITE (Ab_nblocks, int32_t) ; MEMWRITE (Ab_method, int32_t) ;
+    MEMWRITE (Ai_nblocks, int32_t) ; MEMWRITE (Ai_method, int32_t) ;
     MEMWRITE (Ax_nblocks, int32_t) ; MEMWRITE (Ax_method, int32_t) ;
 
     // 128 bytes, if present
@@ -241,33 +250,36 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // copy the compressed arrays into the blob
     //--------------------------------------------------------------------------
 
+    #define MEMWRITES(S,n) \
+        if (n > 0)                                              \
+        {                                                       \
+            memcpy (blob + s, S + 1, n * sizeof (int64_t)) ;    \
+            s += n * sizeof (int64_t) ;                         \
+        }
+
+    // 8 * (# blocks for Ap, Ah, Ab, Ai, Ax)
+    MEMWRITES (Ap_Sblocks, Ap_nblocks) ;
+    MEMWRITES (Ah_Sblocks, Ah_nblocks) ;
+    MEMWRITES (Ab_Sblocks, Ab_nblocks) ;
+    MEMWRITES (Ai_Sblocks, Ai_nblocks) ;
+    MEMWRITES (Ax_Sblocks, Ax_nblocks) ;
+
     // FIXME: round up each of the 5 arrays to a multiple of 64 bytes,
-    // or each internal block.
+    // or each internal compressed block.
 
-    int64_t *Ap_Ublock, *Ap_Sblock ;
-    int64_t *Ah_Ublock, *Ah_Sblock ;
-    int64_t *Ai_Ublock, *Ai_Sblock ;
-    int64_t *Ab_Ublock, *Ab_Sblock ;
-    int64_t *Ax_Ublock, *Ax_Sblock ;
+    GB_serialize_to_blob (blob, &s, Ap_Blocks, Ap_Sblocks+1, Ap_nblocks,
+        nthreads_max) ;
+    GB_serialize_to_blob (blob, &s, Ah_Blocks, Ah_Sblocks+1, Ah_nblocks,
+        nthreads_max) ;
+    GB_serialize_to_blob (blob, &s, Ab_Blocks, Ab_Sblocks+1, Ab_nblocks,
+        nthreads_max) ;
+    GB_serialize_to_blob (blob, &s, Ai_Blocks, Ai_Sblocks+1, Ai_nblocks,
+        nthreads_max) ;
+    GB_serialize_to_blob (blob, &s, Ax_Blocks, Ax_Sblocks+1, Ax_nblocks,
+        nthreads_max) ;
 
-    // 16 * (blocks for Ap, Ah, Ai, Ab, Ax)
-    GB_serialize_blocksizes_to_blob (&Ap_Ublock, &Ap_Sblock, blob, &s, Ap_blocks, Ap_nblocks) ;
-    GB_serialize_blocksizes_to_blob (&Ah_Ublock, &Ah_Sblock, blob, &s, Ah_blocks, Ah_nblocks) ;
-    GB_serialize_blocksizes_to_blob (&Ai_Ublock, &Ai_Sblock, blob, &s, Ai_blocks, Ai_nblocks) ;
-    GB_serialize_blocksizes_to_blob (&Ab_Ublock, &Ab_Sblock, blob, &s, Ab_blocks, Ab_nblocks) ;
-    GB_serialize_blocksizes_to_blob (&Ax_Ublock, &Ax_Sblock, blob, &s, Ax_blocks, Ax_nblocks) ;
-
-    printf (" s %lu  (%d %d %d %d %d)\n", s,
-        Ap_nblocks, Ah_nblocks, Ai_nblocks, Ab_nblocks, Ax_nblocks) ;
-
-    GB_serialize_to_blob (blob, &s, Ap_blocks, Ap_Sblock, Ap_nblocks, nthreads_max) ;
-    GB_serialize_to_blob (blob, &s, Ah_blocks, Ah_Sblock, Ah_nblocks, nthreads_max) ;
-    GB_serialize_to_blob (blob, &s, Ai_blocks, Ai_Sblock, Ai_nblocks, nthreads_max) ;
-    GB_serialize_to_blob (blob, &s, Ab_blocks, Ab_Sblock, Ab_nblocks, nthreads_max) ;
-    GB_serialize_to_blob (blob, &s, Ax_blocks, Ax_Sblock, Ax_nblocks, nthreads_max) ;
-
-    // the blob is at least of size s, but might be slightly larger,
-    // so zero out any unused bytes
+    // the blob is at least of size s, but might be slightly larger, as
+    // determined by GB_MALLOC, so zero out any unused bytes
     ASSERT (s <= blob_size) ;
     if (s < blob_size) memset (blob + s, 0, blob_size - s) ;
 
@@ -280,7 +292,6 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     printf ("removing blob %p size %ld from memtable\n", blob, blob_size) ;
     #endif
     GB_Global_memtable_remove (blob) ;
-
     GB_FREE_WORK ;
     (*blob_handle) = blob ;
     (*blob_size_handle) = blob_size ;

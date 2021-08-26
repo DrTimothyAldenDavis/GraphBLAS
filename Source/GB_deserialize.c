@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_deserialize: uncompress and deserialize a blob into a GrB_Matrix
+// GB_deserialize: decompress and deserialize a blob into a GrB_Matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,9 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// A parallel compression method for a GrB_Matrix.  The input matrix may have
-// shallow components; the output is unaffected.  The output blob is allocated
-// on output, with size given by blob_size.
+// A parallel decompression of a serialized blob into a GrB_Matrix.
 
 #include "GB.h"
 #include "GB_serialize.h"
@@ -36,12 +34,12 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (blob != NULL && Chandle != NULL) ;
+    ASSERT (blob != NULL && Chandle != NULL && blob_size > 0) ;
     (*Chandle) = NULL ;
     GrB_Matrix C = NULL ;
 
     //--------------------------------------------------------------------------
-    // read the content of the header
+    // read the content of the header (160 bytes)
     //--------------------------------------------------------------------------
 
     #define MEMREAD(x,type) \
@@ -61,8 +59,8 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // 5x8 = 40 bytes
     MEMREAD (Cp_len, int64_t) ;
     MEMREAD (Ch_len, int64_t) ;
-    MEMREAD (Ci_len, int64_t) ;
     MEMREAD (Cb_len, int64_t) ;
+    MEMREAD (Ci_len, int64_t) ;
     MEMREAD (Cx_len, int64_t) ;
 
     // 6x4 = 24 bytes
@@ -73,8 +71,8 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // 10x4 = 40 bytes
     MEMREAD (Cp_nblocks, int32_t) ; MEMREAD (Cp_method, int32_t) ;
     MEMREAD (Ch_nblocks, int32_t) ; MEMREAD (Ch_method, int32_t) ;
-    MEMREAD (Ci_nblocks, int32_t) ; MEMREAD (Ci_method, int32_t) ;
     MEMREAD (Cb_nblocks, int32_t) ; MEMREAD (Cb_method, int32_t) ;
+    MEMREAD (Ci_nblocks, int32_t) ; MEMREAD (Ci_method, int32_t) ;
     MEMREAD (Cx_nblocks, int32_t) ; MEMREAD (Cx_method, int32_t) ;
 
     int32_t sparsity = sparsity_iso_csc / 4 ;
@@ -84,8 +82,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     if (blob_size != blob_size2 || blob_size < s)
     {
         // blob is invalid
-        printf ("yikes! %d\n", __LINE__) ;
-        return (GrB_PANIC) ;
+        return (GrB_INVALID_VALUE) ;
     }
 
     //--------------------------------------------------------------------------
@@ -99,8 +96,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     if (ctype == NULL || ctype->size != typesize)
     {
         // blob is invalid
-        printf ("yikes! %d\n", __LINE__) ;
-        return (GrB_PANIC) ;
+        return (GrB_INVALID_VALUE) ;
     }
 
     // 128 bytes, if present
@@ -111,30 +107,22 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
             (strncmp (blob + s, ctype->name, GB_LEN) != 0))
         {
             // blob is invalid
-            printf ("yikes! %d\n", __LINE__) ;
-            return (GrB_PANIC) ;
+            return (GrB_INVALID_VALUE) ;
         }
         s += GB_LEN ;
     }
 
     //--------------------------------------------------------------------------
-    // get the block sizes from the blob
+    // get the compressed block sizes from the blob for each array
     //--------------------------------------------------------------------------
 
-    int64_t *Cp_Ublock = (int64_t *) (blob + s) ; s += sizeof (int64_t) * Cp_nblocks ;
-    int64_t *Cp_Sblock = (int64_t *) (blob + s) ; s += sizeof (int64_t) * Cp_nblocks ;
-
-    int64_t *Ch_Ublock = (int64_t *) (blob + s) ; s += sizeof (int64_t) * Ch_nblocks ;
-    int64_t *Ch_Sblock = (int64_t *) (blob + s) ; s += sizeof (int64_t) * Ch_nblocks ;
-
-    int64_t *Ci_Ublock = (int64_t *) (blob + s) ; s += sizeof (int64_t) * Ci_nblocks ;
-    int64_t *Ci_Sblock = (int64_t *) (blob + s) ; s += sizeof (int64_t) * Ci_nblocks ;
-
-    int64_t *Cb_Ublock = (int64_t *) (blob + s) ; s += sizeof (int64_t) * Cb_nblocks ;
-    int64_t *Cb_Sblock = (int64_t *) (blob + s) ; s += sizeof (int64_t) * Cb_nblocks ;
-
-    int64_t *Cx_Ublock = (int64_t *) (blob + s) ; s += sizeof (int64_t) * Cx_nblocks ;
-    int64_t *Cx_Sblock = (int64_t *) (blob + s) ; s += sizeof (int64_t) * Cx_nblocks ;
+    #define MEMREADS(S,n) \
+        int64_t *S = (int64_t *) (blob + s) ; s += n * sizeof (int64_t) ;
+    MEMREADS (Cp_Sblocks, Cp_nblocks) ;
+    MEMREADS (Ch_Sblocks, Ch_nblocks) ;
+    MEMREADS (Cb_Sblocks, Cb_nblocks) ;
+    MEMREADS (Ci_Sblocks, Ci_nblocks) ;
+    MEMREADS (Cx_Sblocks, Cx_nblocks) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C
@@ -167,13 +155,13 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
             // decompress Cp, Ch, and Ci
             GB_OK (GB_deserialize_from_blob (&(C->p), &(C->p_size), Cp_len,
-                blob, blob_size, Cp_Ublock, Cp_Sblock, Cp_nblocks, Cp_method,
+                blob, blob_size, Cp_Sblocks, Cp_nblocks, Cp_method,
                 &s, Context)) ;
             GB_OK (GB_deserialize_from_blob (&(C->h), &(C->h_size), Ch_len,
-                blob, blob_size, Ch_Ublock, Ch_Sblock, Ch_nblocks, Ch_method,
+                blob, blob_size, Ch_Sblocks, Ch_nblocks, Ch_method,
                 &s, Context)) ;
             GB_OK (GB_deserialize_from_blob (&(C->i), &(C->i_size), Ci_len,
-                blob, blob_size, Ci_Ublock, Ci_Sblock, Ci_nblocks, Ci_method,
+                blob, blob_size, Ci_Sblocks, Ci_nblocks, Ci_method,
                 &s, Context)) ;
             break ;
 
@@ -181,10 +169,10 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
             // decompress Cp and Ci
             GB_OK (GB_deserialize_from_blob (&(C->p), &(C->p_size), Cp_len,
-                blob, blob_size, Cp_Ublock, Cp_Sblock, Cp_nblocks, Cp_method,
+                blob, blob_size, Cp_Sblocks, Cp_nblocks, Cp_method,
                 &s, Context)) ;
             GB_OK (GB_deserialize_from_blob (&(C->i), &(C->i_size), Ci_len,
-                blob, blob_size, Ci_Ublock, Ci_Sblock, Ci_nblocks, Ci_method,
+                blob, blob_size, Ci_Sblocks, Ci_nblocks, Ci_method,
                 &s, Context)) ;
             break ;
 
@@ -192,7 +180,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
             // decompress Cb
             GB_OK (GB_deserialize_from_blob (&(C->b), &(C->b_size), Cb_len,
-                blob, blob_size, Cb_Ublock, Cb_Sblock, Cb_nblocks, Cb_method,
+                blob, blob_size, Cb_Sblocks, Cb_nblocks, Cb_method,
                 &s, Context)) ;
             break ;
 
@@ -203,8 +191,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
     // decompress Cx
     GB_OK (GB_deserialize_from_blob (&(C->x), &(C->x_size), Cx_len,
-        blob, blob_size, Cx_Ublock, Cx_Sblock, Cx_nblocks, Cx_method,
-        &s, Context)) ;
+        blob, blob_size, Cx_Sblocks, Cx_nblocks, Cx_method, &s, Context)) ;
 
     //--------------------------------------------------------------------------
     // finalize matrix return result

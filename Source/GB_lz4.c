@@ -12,6 +12,8 @@
 // the default), and configured to use the SuiteSparse:GraphBLAS functions
 // in place of malloc/calloc/free.
 
+// TODO: add lz4hc
+
 #include "GB.h"
 #include "GB_serialize.h"
 #include "GB_lz4.h"

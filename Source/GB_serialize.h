@@ -34,13 +34,8 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
 typedef struct
 {
-    void *p ;                       // pointer to the compressed block
-    size_t p_size ;                 // size of compressed block, or zero
-                                    // if p is not malloc'ed
-    // after the blocks are compressed, these 2 terms are overwritten with
-    // their cumulative sum:
-    size_t uncompressed ;           // original size of the block
-    size_t compressed ;             // size of the block when compressed
+    void *p ;           // pointer to the compressed block
+    size_t p_size ;     // size of compressed block, or zero if p NULL
 }
 GB_blocks ;
 
@@ -49,6 +44,8 @@ GrB_Info GB_serialize_array
     // output:
     GB_blocks **Blocks_handle,          // Blocks: array of size nblocks+1
     size_t *Blocks_size_handle,         // size of Blocks
+    int64_t **Sblocks_handle,           // Sblocks: array of size nblocks+1
+    size_t *Sblocks_size_handle,        // size of Sblocks
     int32_t *nblocks_handle,            // # of blocks
     int32_t *method_used,               // method used
     // input:
@@ -73,22 +70,9 @@ void GB_serialize_to_blob
     size_t *s_handle,       // location to append into the blob
     // input:
     GB_blocks *Blocks,      // Blocks: array of size nblocks+1
-    int64_t *Sblock,        // array of size nblocks
+    int64_t *Sblocks,       // array of size nblocks
     int32_t nblocks,        // # of blocks
     int nthreads_max        // # of threads to use
-) ;
-
-void GB_serialize_blocksizes_to_blob
-(
-    // output
-    int64_t **Ublock_handle,    // location of the Ublock array
-    int64_t **Sblock_handle,    // location of the Sblock array
-    // input/output
-    GB_void *blob,          // blocks are appended to the blob
-    size_t *s_handle,       // location to append into the blob
-    // input:
-    GB_blocks *Blocks,      // Blocks: array of size nblocks
-    int32_t nblocks         // # of blocks
 ) ;
 
 GrB_Info GB_deserialize_from_blob
@@ -98,12 +82,11 @@ GrB_Info GB_deserialize_from_blob
     size_t *X_size_handle,      // size of X as allocated
     // input:
     int64_t X_len,              // size of X in bytes
-    const GB_void *blob,
+    const GB_void *blob,        // serialized blob of size blob_size
     size_t blob_size,
-    int64_t *Ublock,            // array of size nblocks
-    int64_t *Sblock,            // array of size nblocks
-    int32_t nblocks,
-    int32_t method_used,
+    int64_t *Sblocks,           // array of size nblocks
+    int32_t nblocks,            // # of compressed blocks for this array
+    int32_t method_used,        // compression method used for each block
     // input/output:
     size_t *s_handle,           // location to write into the blob
     GB_Context Context

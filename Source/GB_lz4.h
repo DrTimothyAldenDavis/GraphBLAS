@@ -12,6 +12,8 @@
 // avoid any conflict between multiple copies of the LZ4 library, all global
 // symbols LZ4_* are renamed GBLZ4 (LZ4_*), via #define.
 
+// TODO: add LZ4HC
+
 #ifndef GB_LZ4_H 
 #define GB_LZ4_H 
 
