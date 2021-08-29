@@ -74,7 +74,7 @@ GrB_Info GB_serialize_array
     // check for no compression
     //--------------------------------------------------------------------------
 
-    if (method == GxB_COMPRESSION_NONE || len < 16)
+    if (method <= GxB_COMPRESSION_NONE || len < 16)
     {
         // no compression, return result as a single block (plus the sentinel)
         Blocks = GB_MALLOC (2, GB_blocks, &Blocks_size) ;
@@ -200,18 +200,6 @@ GrB_Info GB_serialize_array
     //--------------------------------------------------------------------------
 
     GB_cumsum (Sblocks, nblocks, NULL, 1, Context) ;
-    #if 0
-    size_t total_compressed = 0 ;
-    for (blockid = 0 ; blockid <= nblocks ; blockid++)
-    {
-        // get the size of the comressed block
-        size_t compressed = Sblocks [blockid] ;
-        // overwrite both with their cumulative sums
-        Sblocks [blockid] = total_compressed ;
-        // sum up the total compressed sizes
-        total_compressed += compressed ;
-    }
-    #endif
 
     //--------------------------------------------------------------------------
     // free workspace return result

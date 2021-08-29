@@ -6,9 +6,14 @@ function blob = serialize (G, method)
 % of this MATLAB/Octave interface to GraphBLAS.  It may also be used to
 % reconstruct a @GrB matrix with G = GrB.deserialize (blob).
 %
+% blob = GrB.serialize (G,method) specifies the compression method used,
+% as a string: "none": no compression, "default" or "lz4": LZ4 compression,
+% ... FIXME (add more compression methods here).  The default is "lz4",
+% if the method parameter is omitted.
+%
 % Example:
 %   G = GrB (magic (5))
-%   blob = GrB.serialize (G) ;
+%   blob = GrB.serialize (G) ;      % compressed via LZ4
 %   f = fopen ('G.bin', 'wb') ;
 %   fwrite (f, blob) ;
 %   fclose (f)

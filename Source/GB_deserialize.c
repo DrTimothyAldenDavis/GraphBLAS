@@ -34,7 +34,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (blob != NULL && Chandle != NULL && blob_size > 0) ;
+    ASSERT (blob != NULL && Chandle != NULL) ;
     (*Chandle) = NULL ;
     GrB_Matrix C = NULL ;
 
@@ -42,48 +42,51 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // read the content of the header (160 bytes)
     //--------------------------------------------------------------------------
 
-    #define MEMREAD(x,type) \
-        type x ; memcpy (&x, blob + s, sizeof (type)) ; s += sizeof (type) ;
-
     size_t s = 0 ;
 
-    // 7x8 = 56 bytes
-    MEMREAD (blob_size2, size_t) ;
-    MEMREAD (vlen, int64_t) ;
-    MEMREAD (vdim, int64_t) ;
-    MEMREAD (nvec, int64_t) ;
-    MEMREAD (nvec_nonempty, int64_t) ;
-    MEMREAD (nvals, int64_t) ;
-    MEMREAD (typesize, int64_t) ;
+    if (blob_size < GB_BLOB_HEADER_SIZE)
+    { 
+        // blob is invalid
+        return (GrB_INVALID_VALUE) ;
+    }
 
-    // 5x8 = 40 bytes
-    MEMREAD (Cp_len, int64_t) ;
-    MEMREAD (Ch_len, int64_t) ;
-    MEMREAD (Cb_len, int64_t) ;
-    MEMREAD (Ci_len, int64_t) ;
-    MEMREAD (Cx_len, int64_t) ;
+    GB_BLOB_READ (blob_size2, size_t) ;
+    GB_BLOB_READ (typecode, int32_t) ;
 
-    // 6x4 = 24 bytes
-    MEMREAD (version, int32_t) ;          MEMREAD (typecode, int32_t) ;
-    MEMREAD (hyper_switch, float) ;       MEMREAD (bitmap_switch, float) ;
-    MEMREAD (sparsity_control, int32_t) ; MEMREAD (sparsity_iso_csc, int32_t) ;
+    if (blob_size != blob_size2
+        || typecode < GB_BOOL_code || typecode > GB_UDT_code
+        || (typecode == GB_UDT_code &&
+            blob_size < GB_BLOB_HEADER_SIZE + GxB_MAX_NAME_LEN))
+    { 
+        // blob is invalid
+        return (GrB_INVALID_VALUE) ;
+    }
 
-    // 10x4 = 40 bytes
-    MEMREAD (Cp_nblocks, int32_t) ; MEMREAD (Cp_method, int32_t) ;
-    MEMREAD (Ch_nblocks, int32_t) ; MEMREAD (Ch_method, int32_t) ;
-    MEMREAD (Cb_nblocks, int32_t) ; MEMREAD (Cb_method, int32_t) ;
-    MEMREAD (Ci_nblocks, int32_t) ; MEMREAD (Ci_method, int32_t) ;
-    MEMREAD (Cx_nblocks, int32_t) ; MEMREAD (Cx_method, int32_t) ;
+    GB_BLOB_READ (version, int32_t) ;
+    GB_BLOB_READ (vlen, int64_t) ;
+    GB_BLOB_READ (vdim, int64_t) ;
+    GB_BLOB_READ (nvec, int64_t) ;
+    GB_BLOB_READ (nvec_nonempty, int64_t) ;     ASSERT (nvec_nonempty >= 0) ;
+    GB_BLOB_READ (nvals, int64_t) ;
+    GB_BLOB_READ (typesize, int64_t) ;
+    GB_BLOB_READ (Cp_len, int64_t) ;
+    GB_BLOB_READ (Ch_len, int64_t) ;
+    GB_BLOB_READ (Cb_len, int64_t) ;
+    GB_BLOB_READ (Ci_len, int64_t) ;
+    GB_BLOB_READ (Cx_len, int64_t) ;
+    GB_BLOB_READ (hyper_switch, float) ;
+    GB_BLOB_READ (bitmap_switch, float) ;
+    GB_BLOB_READ (sparsity_control, int32_t) ;
+    GB_BLOB_READ (sparsity_iso_csc, int32_t) ;
+    GB_BLOB_READ (Cp_nblocks, int32_t) ; GB_BLOB_READ (Cp_method, int32_t) ;
+    GB_BLOB_READ (Ch_nblocks, int32_t) ; GB_BLOB_READ (Ch_method, int32_t) ;
+    GB_BLOB_READ (Cb_nblocks, int32_t) ; GB_BLOB_READ (Cb_method, int32_t) ;
+    GB_BLOB_READ (Ci_nblocks, int32_t) ; GB_BLOB_READ (Ci_method, int32_t) ;
+    GB_BLOB_READ (Cx_nblocks, int32_t) ; GB_BLOB_READ (Cx_method, int32_t) ;
 
     int32_t sparsity = sparsity_iso_csc / 4 ;
     bool iso = ((sparsity_iso_csc & 2) == 1) ;
     bool is_csc = ((sparsity_iso_csc & 1) == 1) ;
-
-    if (blob_size != blob_size2 || blob_size < s)
-    {
-        // blob is invalid
-        return (GrB_INVALID_VALUE) ;
-    }
 
     //--------------------------------------------------------------------------
     // determine the matrix type
@@ -94,35 +97,32 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
     // ensure the type has the right size
     if (ctype == NULL || ctype->size != typesize)
-    {
+    { 
         // blob is invalid
         return (GrB_INVALID_VALUE) ;
     }
 
     // 128 bytes, if present
     if (ccode == GB_UDT_code)
-    {
+    { 
         // ensure the user-defined type has the right name
-        if ((blob_size < s + GB_LEN) ||
-            (strncmp (blob + s, ctype->name, GB_LEN) != 0))
+        if (strncmp (blob + s, ctype->name, GxB_MAX_NAME_LEN) != 0)
         {
             // blob is invalid
             return (GrB_INVALID_VALUE) ;
         }
-        s += GB_LEN ;
+        s += GxB_MAX_NAME_LEN ;
     }
 
     //--------------------------------------------------------------------------
     // get the compressed block sizes from the blob for each array
     //--------------------------------------------------------------------------
 
-    #define MEMREADS(S,n) \
-        int64_t *S = (int64_t *) (blob + s) ; s += n * sizeof (int64_t) ;
-    MEMREADS (Cp_Sblocks, Cp_nblocks) ;
-    MEMREADS (Ch_Sblocks, Ch_nblocks) ;
-    MEMREADS (Cb_Sblocks, Cb_nblocks) ;
-    MEMREADS (Ci_Sblocks, Ci_nblocks) ;
-    MEMREADS (Cx_Sblocks, Cx_nblocks) ;
+    GB_BLOB_READS (Cp_Sblocks, Cp_nblocks) ;
+    GB_BLOB_READS (Ch_Sblocks, Ch_nblocks) ;
+    GB_BLOB_READS (Cb_Sblocks, Cb_nblocks) ;
+    GB_BLOB_READS (Ci_Sblocks, Ci_nblocks) ;
+    GB_BLOB_READS (Cx_Sblocks, Cx_nblocks) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C

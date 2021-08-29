@@ -57,7 +57,7 @@ GrB_Info GB_SelectOp_new        // create a new user-defined select operator
     op->ttype = ttype ;
     op->function = function ;
     op->opcode = GB_USER_SELECT_opcode ;
-    op->name [0] = '\0' ;
+    memset (op->name, 0, GxB_MAX_NAME_LEN) ;
 
     //--------------------------------------------------------------------------
     // find the name of the operator
@@ -75,12 +75,12 @@ GrB_Info GB_SelectOp_new        // create a new user-defined select operator
             while (isspace (*p)) p++ ;
             if (*p == ')') p++ ;
             while (isspace (*p)) p++ ;
-            strncpy (op->name, p, GB_LEN-1) ;
+            strncpy (op->name, p, GxB_MAX_NAME_LEN-1) ;
         }
         else
         { 
             // copy the entire name as-is
-            strncpy (op->name, name, GB_LEN-1) ;
+            strncpy (op->name, name, GxB_MAX_NAME_LEN-1) ;
         }
     }
 

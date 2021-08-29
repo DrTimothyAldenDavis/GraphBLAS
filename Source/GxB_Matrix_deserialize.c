@@ -35,8 +35,6 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (C) ;
 
-    // get the descriptor: TODO
-
     //--------------------------------------------------------------------------
     // deserialize the blob into a matrix
     //--------------------------------------------------------------------------

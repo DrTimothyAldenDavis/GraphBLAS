@@ -102,7 +102,7 @@ GrB_Info GB_deserialize_from_blob
             char *dst = (char *) (X + kstart) ;
             int src_size = (int) s_size ;
             int dst_size = (int) (kend - kstart) ;
-            if (method_used == GxB_COMPRESSION_NONE)
+            if (method_used <= GxB_COMPRESSION_NONE)
             {
                 // no compression
                 if (src_size != dst_size)

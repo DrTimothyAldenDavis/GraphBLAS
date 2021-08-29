@@ -15,7 +15,7 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: blob = GrB.serialize (A, method)"
+#define USAGE "usage: blob = GrB.serialize (A, method, level)"
 
 void mexFunction
 (
@@ -30,10 +30,85 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage ((nargin == 1 || nargin == 2) && nargout <= 1, USAGE) ;
+    gb_usage ((nargin >= 1 && nargin <= 3) && nargout <= 1, USAGE) ;
     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
 
-    // TODO: get compression method from an input string
+    GrB_Descriptor desc = NULL ;
+    if (nargin > 1)
+    {
+        // create the descriptor
+        OK (GrB_Descriptor_new (&desc)) ;
+        // get the method
+        int method = GxB_COMPRESSION_DEFAULT ;
+        int level = 0 ;     // use whatever is the default for the method
+        #define LEN 64
+        char method_name [LEN+2] ;
+        gb_mxstring_to_string (method_name, LEN, pargin [1], "method") ;
+        if (MATCH (method_name, "none"))
+        {
+            method = GxB_COMPRESSION_NONE ;
+        }
+        else if (MATCH (method_name, "default") || MATCH (method_name, "lz4"))
+        { 
+            method = GxB_COMPRESSION_LZ4 ;
+        }
+        else if (MATCH (method_name, "lz4hc"))
+        { 
+            method = GxB_COMPRESSION_LZ4HC ;
+        }
+        else if (MATCH (method_name, "zlib"))
+        {
+            method = GxB_COMPRESSION_ZLIB ;
+        }
+        else if (MATCH (method_name, "lzo"))
+        {
+            method = GxB_COMPRESSION_LZO ;
+        }
+        else if (MATCH (method_name, "bzip2"))
+        {
+            method = GxB_COMPRESSION_BZIP2 ;
+        }
+        else if (MATCH (method_name, "lzss"))
+        {
+            method = GxB_COMPRESSION_LZSS ;
+        }
+        else if (MATCH (method_name, "intel:lz4"))
+        { 
+            method = GxB_COMPRESSION_INTEL + GxB_COMPRESSION_LZ4 ;
+        }
+        else if (MATCH (method_name, "intel:lz4hc"))
+        { 
+            method = GxB_COMPRESSION_INTEL + GxB_COMPRESSION_LZ4HC ;
+        }
+        else if (MATCH (method_name, "intel:zlib"))
+        {
+            method = GxB_COMPRESSION_INTEL + GxB_COMPRESSION_ZLIB ;
+        }
+        else if (MATCH (method_name, "intel:lzo"))
+        {
+            method = GxB_COMPRESSION_INTEL + GxB_COMPRESSION_LZO ;
+        }
+        else if (MATCH (method_name, "intel:bzip2"))
+        {
+            method = GxB_COMPRESSION_INTEL + GxB_COMPRESSION_BZIP2 ;
+        }
+        else if (MATCH (method_name, "intel:lzss"))
+        {
+            method = GxB_COMPRESSION_INTEL + GxB_COMPRESSION_LZSS ;
+        }
+        else
+        { 
+            ERROR ("unknown method") ;
+        }
+        // get the method level
+        if (nargin > 2)
+        {
+            level = (int) mxGetScalar (pargin [2]) ;
+        }
+        // set the descriptor
+        // printf ("method %d level %d\n", method, level) ;
+        OK (GxB_Desc_set (desc, GxB_COMPRESSION, method + level)) ;
+    }
 
     //--------------------------------------------------------------------------
     // serialize the matrix into the blob
@@ -41,7 +116,8 @@ void mexFunction
 
     void *blob = NULL ;
     size_t blob_size ;
-    OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
+    OK (GxB_Matrix_serialize (&blob, &blob_size, A, desc)) ;
+    OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------
     // free the shallow matrix A

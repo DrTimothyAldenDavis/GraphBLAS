@@ -251,7 +251,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     bool M_is_sparse_or_hyper = (M != NULL) &&
         (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     GrB_Type ctype = add->op->ztype ;
-    // set C->iso = C_iso   OK
+    // set C->iso = C_iso
     GB_OK (GB_new_bix (&C, true, // bitmap, static header
         ctype, cvlen, cvdim, GB_Ap_malloc, true, GxB_BITMAP,
         M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso,
@@ -487,6 +487,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
+    ASSERT (C->nvec_nonempty >= 0) ;
     return (GrB_SUCCESS) ;
 }
 

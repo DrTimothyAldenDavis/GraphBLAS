@@ -34,14 +34,17 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     GB_RETURN_IF_NULL (blob_size_handle) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
-    // get the descriptor: TODO
+    // get the method from the descriptor
+    int method = (desc == NULL) ? GxB_DEFAULT : desc->compression ;
+
+//  printf ("\nGxB_Matrix_serialize method: %d\n", method) ;
 
     //--------------------------------------------------------------------------
     // serialize the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_serialize (blob_handle, blob_size_handle, A,
-        GxB_COMPRESSION_LZ4, Context) ;
+    GrB_Info info = GB_serialize (blob_handle, blob_size_handle, A, method,
+        Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

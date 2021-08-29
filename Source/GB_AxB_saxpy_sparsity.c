@@ -36,7 +36,11 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
     // determine the sparsity of C
     //--------------------------------------------------------------------------
 
-    if (B->nvec_nonempty < 0) B->nvec_nonempty = GB_nvec_nonempty (B, Context) ;
+    if (B->nvec_nonempty < 0)
+    { 
+        // B->nvec_nonempty is used to select the method
+        B->nvec_nonempty = GB_nvec_nonempty (B, Context) ;
+    }
     double bnvec = B->nvec_nonempty ;
 
     double m = (double) A->vlen ;

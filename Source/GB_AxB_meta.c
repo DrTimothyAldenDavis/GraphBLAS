@@ -328,7 +328,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     #if GB_BURBLE
     const char *M_str = (M == NULL) ? "" : (Mask_comp ?  "<!M>" : "<M>") ;
-    #define GB_PROP_LEN (GB_LEN+128)
+    #define GB_PROP_LEN (GxB_MAX_NAME_LEN+128)
     char A_str [GB_PROP_LEN+1] ;
     char B_str [GB_PROP_LEN+1] ;
     if (GB_Global_burble_get ( ))

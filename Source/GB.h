@@ -245,6 +245,14 @@ GrB_Info GB_matvec_type            // get the type of a matrix
     GB_Context Context
 ) ;
 
+GrB_Info GB_matvec_type_name  // return the name of the type of a matrix
+(
+    char *type_name,        // name of the type (char array of size at least
+                            // GxB_MAX_NAME_LEN, owned by the user application).
+    const GrB_Matrix A,     // matrix to query
+    GB_Context Context
+) ;
+
 GB_PUBLIC
 GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
 (

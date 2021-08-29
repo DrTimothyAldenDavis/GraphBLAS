@@ -204,10 +204,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Aug 23, 2021"
+#define GxB_IMPLEMENTATION_DATE "Aug 26, 2021"
 #define GxB_IMPLEMENTATION_MAJOR 5
-#define GxB_IMPLEMENTATION_MINOR 1
-#define GxB_IMPLEMENTATION_SUB   7
+#define GxB_IMPLEMENTATION_MINOR 2
+#define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "Sept 25, 2019"
 #define GxB_SPEC_MAJOR 1
 #define GxB_SPEC_MINOR 3
@@ -440,6 +440,9 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 //      the resulting matrix C (but not always; this is just a hint).  If
 //      GrB_init is called with GrB_BLOCKING mode, the sort will always be
 //      done, and this setting has no effect.
+//
+// GxB_COMPRESSION: compression method for GxB_Matrix_serialize.  The default
+//      is LZ4.
 
 // The following are enumerated values in both the GrB_Desc_Field and the
 // GxB_Option_Field for global options.  They are defined with the same integer
@@ -470,7 +473,8 @@ typedef enum
     GxB_DESCRIPTOR_GPU_CHUNK   = GxB_GPU_CHUNK,
 
     GxB_AxB_METHOD = 1000,  // descriptor for selecting C=A*B algorithm
-    GxB_SORT = 35           // control sort in GrB_mxm
+    GxB_SORT = 35,          // control sort in GrB_mxm
+    GxB_COMPRESSION = 36,
 }
 GrB_Desc_Field ;
 
@@ -674,7 +678,7 @@ GB_PUBLIC GrB_Type
 // GrB_Type_new is implemented both as a macro and a function.  Both are
 // user-callable.  The default is to use the macro, since this allows the name
 // of the type to be saved as a string, for subsequent error reporting by
-// GrB_error.
+// GrB_error, and for G*B_Matrix_serialize.
 
 #undef GrB_Type_new
 #undef GrM_Type_new
@@ -692,25 +696,62 @@ GrB_Info GRB (Type_new)         // create a new GraphBLAS type
 #define GB_STR(x) #x
 
 // GrB_Type_new as a user-callable macro, which allows the name of the ctype
-// to be added to the new type.
+// to be added to the new type.  The type_defn is unknown.
 #define GrB_Type_new(utype, sizeof_ctype) \
-    GB_Type_new (utype, sizeof_ctype, GB_STR(sizeof_ctype))
+    GxB_Type_new (utype, sizeof_ctype, GB_STR(sizeof_ctype), NULL)
 #define GrM_Type_new(utype, sizeof_ctype) \
-    GM_Type_new (utype, sizeof_ctype, GB_STR(sizeof_ctype))
+    GxB_Type_new (utype, sizeof_ctype, GB_STR(sizeof_ctype), NULL)
+
+// GxB_Type_new creates a type with a name and definition that are known to
+// GraphBLAS, as strings.  The type_name is any valid string (max length of 128
+// characters, including the required null-terminating character) that may
+// appear as the name of a C type created by a C "typedef" statement.  It must
+// not contain any white-space characters.  If type_name and type_defn are
+// provided, then the following printf statement shall create a valid C typedef
+// statement:
+//
+//      printf ("typedef %s %s ;\n", type_defn, type_name) ;
+//
+// Example, creating a type of size 16*4+1 = 65 bytes, containing a 4-by-4
+// dense float array and a 32-bit integer:
+//
+//      typedef struct { float x [4][4] ; int color ; } myquaternion ;
+//      GrB_Type MyQtype ;
+//      GxB_Type_new (&MyQtype, sizeof (myquaternion),
+//          "myquaternion", "struct { float x [4][4] ; int color ; }") ;
+//
+// The type_name and type_defn are both null-terminated strings.  Currently,
+// type_defn is unused, but it will be required for best performance when a JIT
+// is implemented in SuiteSparse:GraphBLAS (both on the CPU and GPU).  User
+// defined types created by GrB_Type_new will not work with a JIT.
+//
+// At most GxB_MAX_NAME_LEN characters are accessed in type_name; characters
+// beyond that limit are silently ignored.
+
+#define GxB_MAX_NAME_LEN 128
 
 GB_PUBLIC
-GrB_Info GB_Type_new            // not user-callable; use GrB_Type_new instead
+GrB_Info GxB_Type_new           // create a new named GraphBLAS type
 (
     GrB_Type *type,             // handle of user type to create
-    size_t sizeof_ctype,        // size of the user type
-    const char *name            // name of the type, as "sizeof (ctype)"
+    size_t sizeof_ctype,        // size = sizeof (ctype) of the C type
+    const char *type_name,      // name of the type (max 128 characters)
+    const char *type_defn       // typedef for the type (no max length)
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Type_name      // return the name of a GraphBLAS type
+(
+    char *type_name,        // name of the type (char array of size at least
+                            // GxB_MAX_NAME_LEN, owned by the user application).
+    const GrB_Type type
 ) ;
 
 GB_PUBLIC
 GrB_Info GxB_Type_size          // determine the size of the type
 (
     size_t *size,               // the sizeof the type
-    GrB_Type type               // type to determine the sizeof
+    const GrB_Type type         // type to determine the sizeof
 ) ;
 
 GB_PUBLIC
@@ -1932,10 +1973,19 @@ GrB_Info GxB_Scalar_nvals   // get the number of entries in a GxB_Scalar
     const GxB_Scalar s      // GxB_Scalar to query
 ) ;
 
+// NOTE: GxB_Scalar_type is historical.  Use GxB_Scalar_type_name instead.
 GB_PUBLIC
 GrB_Info GxB_Scalar_type    // get the type of a GxB_Scalar
 (
     GrB_Type *type,         // returns the type of the GxB_Scalar
+    const GxB_Scalar s      // GxB_Scalar to query
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Scalar_type_name      // return the name of the type of a scalar
+(
+    char *type_name,        // name of the type (char array of size at least
+                            // GxB_MAX_NAME_LEN, owned by the user application).
     const GxB_Scalar s      // GxB_Scalar to query
 ) ;
 
@@ -2244,10 +2294,19 @@ GrB_Info GrB_Vector_nvals   // get the number of entries in a vector
     const GrB_Vector v      // vector to query
 ) ;
 
+// NOTE: GxB_Vector_type is historical.  Use GxB_Vector_type_name instead.
 GB_PUBLIC
 GrB_Info GxB_Vector_type    // get the type of a vector
 (
     GrB_Type *type,         // returns the type of the vector
+    const GrB_Vector v      // vector to query
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_type_name      // return the name of the type of a vector
+(
+    char *type_name,        // name of the type (char array of size at least
+                            // GxB_MAX_NAME_LEN, owned by the user application).
     const GrB_Vector v      // vector to query
 ) ;
 
@@ -2949,10 +3008,19 @@ GrB_Info GrB_Matrix_nvals   // get the number of entries in a matrix
     const GrB_Matrix A      // matrix to query
 ) ;
 
+// NOTE: GxB_Matrix_type is historical.  Use GxB_Matrix_type_name instead.
 GB_PUBLIC
 GrB_Info GxB_Matrix_type    // get the type of a matrix
 (
     GrB_Type *type,         // returns the type of the matrix
+    const GrB_Matrix A      // matrix to query
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_type_name      // return the name of the type of a vector
+(
+    char *type_name,        // name of the type (char array of size at least
+                            // GxB_MAX_NAME_LEN, owned by the user application).
     const GrB_Matrix A      // matrix to query
 ) ;
 
@@ -4142,8 +4210,11 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GrB_Descriptor d, GxB_CHUNK, double chunk) ;
 //      GxB_get (GrB_Descriptor d, GxB_CHUNK, double *chunk) ;
 //
-//      GxB_set (GrB_Descriptor d, GxB_SORT, sort) ;
+//      GxB_set (GrB_Descriptor d, GxB_SORT, int sort) ;
 //      GxB_get (GrB_Descriptor d, GxB_SORT, int *sort) ;
+//
+//      GxB_set (GrB_Descriptor d, GxB_COMPRESSION, int method) ;
+//      GxB_get (GrB_Descriptor d, GxB_COMPRESSION, int *method) ;
 
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_set(arg1,...)                                   \
@@ -9219,7 +9290,7 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
     fclose (f) ;
     GrB_Matrix_free (&A) ;
     // B is a copy of A
-    GxB_Matrix_deserialize (&B, blob, blob_size, user_type, NULL) ;
+    GxB_Matrix_deserialize (&B, blob, blob_size, MyQtype, NULL) ;
     GrB_Matrix_free (&B) ;
     free (blob) ;               // note, freed by the user, not GraphBLAS
     GrB_finalize ( ) ;
@@ -9230,21 +9301,61 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
     fread (&blob_size, sizeof (size_t), 1, f) ;
     blob = malloc (blob_size) ; // note, allocated by the user this time
     fread (&blob, sizeof (uint8_t), 1, f) ;
+    char type_name [GxB_MAX_NAME_LEN] ;
+    GxB_deserialize_type_name (type_name, blob, blob_size) ;
+    printf ("blob type is: %s\n", type_name) ;
+    GrB_Type user_type = NULL ;
+    if (strncmp (type_name, "myquaternion", GxB_MAX_NAME_LEN))
+        user_type = MyQtype ;
     GxB_Matrix_deserialize (&A, blob, blob_size, user_type, NULL) ;
     free (blob) ;               // note, freed by the user, not GraphBLAS
 */
 
-#define GxB_COMPRESSION_NONE 0  // no compression
-#define GxB_COMPRESSION_LZ4  1  // LZ4, with defaults
-// not yet implemented:
-//  GxB_COMPRESSION_LZ4HC_1 = 1001,     // LZ4, high compression, level 1
-//  GxB_COMPRESSION_LZ4HC_2 = 1002,     // LZ4, high compression, level 2
-    // ...
-//  GxB_COMPRESSION_LZ4HC_14 = 1014,    // LZ4, high compression, level 14
-//  GxB_COMPRESSION_IPPS_LZ4 = 2,       // Intel IPPS LZ4
-//  GxB_COMPRESSION_BLOSC2 = 4,
-// ... etc
+#define GxB_COMPRESSION_NONE -1     // no compression
+#define GxB_COMPRESSION_DEFAULT 0   // LZ4
 
+#define GxB_COMPRESSION_LZ4   1000  // LZ4
+#define GxB_COMPRESSION_LZ4HC 2000  // LZ4HC, with default level 9
+#define GxB_COMPRESSION_ZLIB  3000  // ZLIB, with default level 6
+#define GxB_COMPRESSION_LZO   4000  // LZO, with default level 2
+#define GxB_COMPRESSION_BZIP2 5000  // BZIP2, with default level 9
+#define GxB_COMPRESSION_LZSS  6000  // LZSS
+
+// using the Intel IPP versions, if available:
+#define GxB_COMPRESSION_INTEL   1000000
+
+// Most of the above methods have a level parameter that controls the tradeoff
+// between run time and the amount of compression obtained.  Higher levels
+// result in a more compact result, at the cost of higher run time:
+
+//  LZ4     no level setting
+//  LZ4HC   1: fast, 9: default, 12: max
+//  ZLIB    1: fast, 6: default, 9: max
+//  LZO     1: fast (X1ST), 2: default (XST)
+//  BZIP2   1: fast, 9: default, 9: max
+//  LZSS    no level setting
+
+// For all methods, a level of zero results in the default level setting (9 for
+// LZ4HC, 6 for ZLIB, etc).  These settings are added, so to use LZ4HC at level
+// 5, use method = GxB_COMPRESSION_LZ4HC + 5.
+
+// If the Intel IPPS compression methods are available, they can be selected
+// by adding GxB_COMPRESSION_INTEL.  For example, to use the Intel IPPS
+// implementation of ZLIB at level 9, use method = GxB_COMPRESSION_INTEL +
+// GxB_COMPRESSION_ZLIB + 9 = 1,003,009.  If the Intel methods are requested
+// but not available, this setting is ignored and the non-Intel methods are
+// used instead.
+
+// If the level setting is out of range, the default is used for that method.
+// If the method is negative, no compression is performed.  If the method is
+// positive but unrecognized, the default is used (GxB_COMPRESSION_LZ4, with no
+// level setting, and the non-Intel version).
+
+// If a method is not implemented, LZ4 is used instead, and the level setting
+// is ignored.  Currently, only LZ4 is implemented, with no level setting and
+// no Intel IPPS.
+
+GB_PUBLIC
 GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 (
     // output:
@@ -9256,6 +9367,7 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
                                     // and to control # of threads used
 ) ;
 
+GB_PUBLIC
 GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 (
     // output:
@@ -9263,10 +9375,28 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     // input:
     const void *blob,               // the blob
     size_t blob_size,               // size of the blob
-    GrB_Type user_type,             // type of the matrix, if a user-defined
-                                    // type.  Ignored if matrix has a built-in
-                                    // type.
+    GrB_Type user_type,             // type of the matrix.  Required if the
+                                    // blob has a user-defined type.  May be
+                                    // NULL if it has a built-in type.
     const GrB_Descriptor desc
+) ;
+
+// GxB_deserialize_type_name extracts the type_name of the GrB_Type of the
+// GrB_Matrix or GrB_Vector held in a serialized blob.  On input, type_name
+// must point to a user-owned char array of size at least GxB_MAX_NAME_LEN (it
+// must not point into the blob itself).  On output, type_name will contain a
+// null-terminated string with the corresponding C type name.  If the blob
+// holds a matrix of a built-in type, the name is returned as "bool" for
+// GrB_BOOL, "uint8_t" for GrB_UINT8, "float complex" for GxB_FC32, etc.
+GB_PUBLIC
+GrB_Info GxB_deserialize_type_name  // return the type name of a blob
+(
+    // output:
+    char *type_name,        // name of the type (char array of size at least
+                            // GxB_MAX_NAME_LEN, owned by the user application).
+    // input, not modified:
+    const void *blob,       // the blob
+    size_t blob_size        // size of the blob
 ) ;
 
 #endif

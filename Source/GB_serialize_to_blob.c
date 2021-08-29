@@ -45,25 +45,30 @@ void GB_serialize_to_blob
     }
 
     //--------------------------------------------------------------------------
-    // determine # of threads to use
-    //--------------------------------------------------------------------------
-
-    int nthreads = GB_IMIN (nthreads_max, nblocks) ;
-
-    //--------------------------------------------------------------------------
     // copy the blocks into the blob
     //--------------------------------------------------------------------------
 
     size_t s = (*s_handle) ;
-    int32_t blockid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
-    for (blockid = 0 ; blockid < nblocks ; blockid++)
+
+    if (nblocks == 1)
     {
-        // copy the compressed block itself, of size s_size
-        size_t s_start = (blockid == 0) ? 0 : Sblocks [blockid-1] ;
-        size_t s_end   = Sblocks [blockid] ;
-        size_t s_size  = s_end - s_start ;
-        memcpy (blob + s + s_start, Blocks [blockid].p, s_size) ;
+        // copy a single block into the blob in parallel
+        GB_memcpy (blob + s, Blocks [0].p, Sblocks [0], nthreads_max) ;
+    }
+    else
+    {
+        // copy each block with a single task
+        int nthreads = GB_IMIN (nthreads_max, nblocks) ;
+        int32_t blockid ;
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+        for (blockid = 0 ; blockid < nblocks ; blockid++)
+        {
+            // copy the compressed block of size s_size into the blob
+            size_t s_start = (blockid == 0) ? 0 : Sblocks [blockid-1] ;
+            size_t s_end   = Sblocks [blockid] ;
+            size_t s_size  = s_end - s_start ;
+            memcpy (blob + s + s_start, Blocks [blockid].p, s_size) ;
+        }
     }
 
     //--------------------------------------------------------------------------

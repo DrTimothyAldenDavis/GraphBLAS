@@ -446,7 +446,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         }
         T->p [anz] = anz ;
 
-        T->iso = C_iso ;    // OK
+        T->iso = C_iso ;
         T->magic = GB_MAGIC ;
 
     }

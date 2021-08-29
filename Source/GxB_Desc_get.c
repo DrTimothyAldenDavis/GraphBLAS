@@ -122,6 +122,18 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
             }
             break ;
 
+        case GxB_COMPRESSION : 
+
+            {
+                va_start (ap, field) ;
+                int *compression = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (compression) ;
+                int s = (desc == NULL) ? GxB_DEFAULT : desc->compression ;
+                (*compression) = s ;
+            }
+            break ;
+
         default : 
 
             return (GrB_INVALID_VALUE) ;

@@ -1,5 +1,14 @@
 Version 5.2.0, FIXME
 
+    * GxB_SelectOp_new2: FIXME: add this
+    * GxB_BinaryOp_new: FIXME: add this
+    * GxB_UnaryOp_new: FIXME: add this
+    * GxB_Type_new: to provide a type name and definition, as strings
+    * GxB_Type_name: to query the name of a type
+    * GxB_Matrix_type_name, GxB_Vector_type_name, GxB_Scalar_type_name,
+        GxB_deserialize_type_name: query type name, returning a string
+    * GxB_Matrix_type, GxB_Vector_type, GxB_Scalar_type: declared historical;
+        will be kept but no longer recommended (use *type_name methods).
     * GxB_Matrix_serialize/deserialize: with compression
     * added LZ4: compression library, http://www.lz4.org (BSD 2),
         Copyright (c) 2011-2016, Yann Collet.

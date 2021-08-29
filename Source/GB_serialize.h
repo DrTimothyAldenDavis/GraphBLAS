@@ -21,6 +21,16 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     GB_Context Context
 ) ;
 
+void GB_serialize_method
+(
+    // output
+    bool *intel,                    // if true, use Intel IPPS (if available)
+    int32_t *algo,                  // algorithm to use
+    int32_t *level,                 // compression level
+    // input
+    int32_t method
+) ;
+
 GrB_Info GB_deserialize             // deserialize a matrix from a blob
 (
     // output:
@@ -91,6 +101,35 @@ GrB_Info GB_deserialize_from_blob
     size_t *s_handle,           // location to write into the blob
     GB_Context Context
 ) ;
+
+#define GB_BLOB_HEADER_SIZE \
+    sizeof (size_t)             /* blob_size                            */ \
+    + 11 * sizeof (int64_t)     /* vlen, vdim, nvec, nvec_nonempty,     */ \
+                                /* nvals, typesize, A[phbix]_len        */ \
+    + 14 * sizeof (int32_t)     /* version, typecode, sparsity_control, */ \
+                                /* A[phbix]_nblocks, A[phbix]_method,   */ \
+                                /* sparsity_iso_csc                     */ \
+    + 2 * sizeof (float)        /* hyper_switch, bitmap_switch          */
+
+// write a scalar to the blob
+#define GB_BLOB_WRITE(x,type) \
+    memcpy (blob + s, &(x), sizeof (type)) ; s += sizeof (type) ;
+
+// write an int64_t array to the blob
+#define GB_BLOB_WRITES(S,n) \
+    if (n > 0)                                              \
+    {                                                       \
+        memcpy (blob + s, S + 1, n * sizeof (int64_t)) ;    \
+        s += n * sizeof (int64_t) ;                         \
+    }
+
+// read a scalar from the blob
+#define GB_BLOB_READ(x,type) \
+    type x ; memcpy (&x, blob + s, sizeof (type)) ; s += sizeof (type) ;
+
+// get an int64_t pointer to an array in the blob
+#define GB_BLOB_READS(S,n) \
+    int64_t *S = (int64_t *) (blob + s) ; s += n * sizeof (int64_t) ;
 
 #endif
 

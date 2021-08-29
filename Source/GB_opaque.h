@@ -322,16 +322,14 @@ GB_Select_Opcode ;
 // when A->p array is allocated but not initialized.
 #define GB_MAGIC2 0x7265745f786f62ULL
 
-// string length for names of opaque objects
-#define GB_LEN 128
-
 struct GB_Type_opaque       // content of GrB_Type
 {
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
     size_t size ;           // size of the type
     GB_Type_code code ;     // the type code
-    char name [GB_LEN] ;    // name of the type
+    char name [GxB_MAX_NAME_LEN] ;       // name of the type
+    char *defn ;            // type definition (currently unused)
 } ;
 
 struct GB_UnaryOp_opaque    // content of GrB_UnaryOp
@@ -341,8 +339,9 @@ struct GB_UnaryOp_opaque    // content of GrB_UnaryOp
     GrB_Type xtype ;        // type of x
     GrB_Type ztype ;        // type of z
     GxB_unary_function function ;        // a pointer to the unary function
-    char name [GB_LEN] ;    // name of the unary operator
+    char name [GxB_MAX_NAME_LEN] ;       // name of the unary operator
     GB_Opcode opcode ;      // operator opcode
+    char *defn ;            // function definition (currently unused)
 } ;
 
 struct GB_BinaryOp_opaque   // content of GrB_BinaryOp
@@ -353,8 +352,9 @@ struct GB_BinaryOp_opaque   // content of GrB_BinaryOp
     GrB_Type ytype ;        // type of y
     GrB_Type ztype ;        // type of z
     GxB_binary_function function ;        // a pointer to the binary function
-    char name [GB_LEN] ;    // name of the binary operator
+    char name [GxB_MAX_NAME_LEN] ;        // name of the binary operator
     GB_Opcode opcode ;      // operator opcode
+    char *defn ;            // function definition (currently unused)
 } ;
 
 struct GB_SelectOp_opaque   // content of GxB_SelectOp
@@ -364,8 +364,9 @@ struct GB_SelectOp_opaque   // content of GxB_SelectOp
     GrB_Type xtype ;        // type of x, or NULL if generic
     GrB_Type ttype ;        // type of thunk, or NULL if not used or generic
     GxB_select_function function ;        // a pointer to the select function
-    char name [GB_LEN] ;    // name of the select operator
+    char name [GxB_MAX_NAME_LEN] ;        // name of the select operator
     GB_Select_Opcode opcode ;   // operator opcode
+    char *defn ;            // function definition (currently unused)
 } ;
 
 struct GB_Monoid_opaque     // content of GrB_Monoid
@@ -402,6 +403,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     GrB_Desc_Value in1 ;    // second input descriptor (B for C=A*B)
     GrB_Desc_Value axb ;    // for selecting the method for C=A*B
     int nthreads_max ;      // max # threads to use in this call to GraphBLAS
+    int compression ;       // compression method for GxB_Matrix_serialize
     bool do_sort ;          // if nonzero, do the sort in GrB_mxm
 } ;
 
