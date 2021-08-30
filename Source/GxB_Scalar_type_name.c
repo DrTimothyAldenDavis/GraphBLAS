@@ -15,7 +15,7 @@ GrB_Info GxB_Scalar_type_name      // return the name of the type of a scalar
                             // GxB_MAX_NAME_LEN, owned by the user application).
     const GxB_Scalar s
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

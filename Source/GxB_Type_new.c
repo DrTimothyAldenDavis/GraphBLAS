@@ -83,7 +83,7 @@ GrB_Info GxB_Type_new
     //--------------------------------------------------------------------------
 
     if (type_name != NULL)
-    { 
+    {
         // copy the type_name into the working name
         char working [GxB_MAX_NAME_LEN] ;
         memset (working, 0, GxB_MAX_NAME_LEN) ;
@@ -109,17 +109,20 @@ GrB_Info GxB_Type_new
             strncpy (t->name, p, GxB_MAX_NAME_LEN-1) ;
         }
         else
-        {
+        { 
             // "sizeof" does not appear, take the input type_name as-is
             memcpy (t->name, working, GxB_MAX_NAME_LEN) ;
         }
     }
     else
-    {
+    { 
         // no type name, so give it a generic name, with the typesize only
         snprintf (t->name, GxB_MAX_NAME_LEN-1, "user_type_of_size_%lu",
             sizeof_ctype) ;
     }
+
+    // ensure t->name is null-terminated
+    t->name [GxB_MAX_NAME_LEN-1] = '\0' ;
 
     //--------------------------------------------------------------------------
     // get the typedef (TODO)
@@ -131,6 +134,7 @@ GrB_Info GxB_Type_new
     // return result
     //--------------------------------------------------------------------------
 
+    ASSERT_TYPE_OK (t, "new user-defined type", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

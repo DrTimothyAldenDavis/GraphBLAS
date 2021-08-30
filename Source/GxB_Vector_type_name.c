@@ -15,7 +15,7 @@ GrB_Info GxB_Vector_type_name      // return the name of the type of a vector
                             // GxB_MAX_NAME_LEN, owned by the user application).
     const GrB_Vector v
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

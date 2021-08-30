@@ -12,8 +12,6 @@
 // the default), and configured to use the SuiteSparse:GraphBLAS functions
 // in place of malloc/calloc/free.
 
-// TODO: add lz4hc
-
 #include "GB.h"
 #include "GB_serialize.h"
 #include "GB_lz4.h"
@@ -43,8 +41,11 @@ void LZ4_free (void *p)
 // LZ4 uses switch statements with no default case.
 #pragma GCC diagnostic ignored "-Wswitch-default"
 
-// Include the unmodified lz4.c source code, version 1.9.3.  This allows the
-// LZ4_* functions to be renamed via GB_lz4.h, and avoids any conflict with
-// the original -llz4, which might be linked in by the user application.
+// Include the unmodified lz4.c and lz4hc.c source code, version 1.9.3.  This
+// allows the LZ4_* functions to be renamed via GB_lz4.h, and avoids any
+// conflict with the original -llz4, which might be linked in by the user
+// application.
+
 #include "lz4.c"
+#include "lz4hc.c"
 

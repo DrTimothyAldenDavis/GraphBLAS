@@ -39,7 +39,7 @@ void GB_serialize_to_blob
     //--------------------------------------------------------------------------
 
     if (nblocks == 0)
-    {
+    { 
         // no blocks for this array
         return ;
     }
@@ -51,7 +51,7 @@ void GB_serialize_to_blob
     size_t s = (*s_handle) ;
 
     if (nblocks == 1)
-    {
+    { 
         // copy a single block into the blob in parallel
         GB_memcpy (blob + s, Blocks [0].p, Sblocks [0], nthreads_max) ;
     }
@@ -62,7 +62,7 @@ void GB_serialize_to_blob
         int32_t blockid ;
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
         for (blockid = 0 ; blockid < nblocks ; blockid++)
-        {
+        { 
             // copy the compressed block of size s_size into the blob
             size_t s_start = (blockid == 0) ? 0 : Sblocks [blockid-1] ;
             size_t s_end   = Sblocks [blockid] ;

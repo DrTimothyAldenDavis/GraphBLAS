@@ -86,7 +86,6 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     return (GB_init
         (mode,                          // blocking or non-blocking mode
         user_malloc_function,           // user-defined malloc, required
-        NULL,                           // user-defined calloc, ignored
         user_realloc_function,          // user-defined realloc, may be NULL
         user_free_function,             // user-defined free, required
         user_malloc_is_thread_safe,     // true if all functions are thread-safe

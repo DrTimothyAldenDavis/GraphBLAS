@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// NOTE: this function is historical.  Use GxB_SelectOp_xtype_name instead.
+
 #include "GB.h"
 
 GrB_Info GxB_SelectOp_xtype         // return the type of x or NULL if generic

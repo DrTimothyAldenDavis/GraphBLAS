@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_SelectOp_new: create a new select operator
+// GxB_SelectOp_new2: create a new select operator
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -13,15 +13,15 @@
 //              const void *x, const void *thunk) ;
 
 #include "GB.h"
-#include <ctype.h>
 
-GrB_Info GB_SelectOp_new        // create a new user-defined select operator
+GrB_Info GxB_SelectOp_new2      // create a new user-defined select operator
 (
     GxB_SelectOp *selectop,     // handle for the new select operator
     GxB_select_function function,// pointer to the select function
     GrB_Type xtype,             // type of input x
-    GrB_Type ttype,             // type of input thunk
-    const char *name            // name of the function
+    GrB_Type ttype,             // type of input thunk, or NULL if not used
+    const char *selectop_name,  // name of the user function
+    const char *selectop_defn   // definition of the user function
 )
 {
 
@@ -29,7 +29,7 @@ GrB_Info GB_SelectOp_new        // create a new user-defined select operator
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_SelectOp_new (selectop, function, xtype)") ;
+    GB_WHERE1 ("GxB_SelectOp_new2 (selectop, function, xtype, name, defn)") ;
     GB_RETURN_IF_NULL (selectop) ;
     (*selectop) = NULL ;
     GB_RETURN_IF_NULL (function) ;
@@ -57,32 +57,9 @@ GrB_Info GB_SelectOp_new        // create a new user-defined select operator
     op->ttype = ttype ;
     op->function = function ;
     op->opcode = GB_USER_SELECT_opcode ;
-    memset (op->name, 0, GxB_MAX_NAME_LEN) ;
-
-    //--------------------------------------------------------------------------
-    // find the name of the operator
-    //--------------------------------------------------------------------------
-
-    if (name != NULL)
-    {
-        // see if the typecast "(GxB_select_function)" appears in the name
-        char *p = NULL ;
-        p = strstr ((char *) name, "GxB_select_function") ;
-        if (p != NULL)
-        { 
-            // skip past the typecast, the left parenthesis, and any whitespace
-            p += 19 ;
-            while (isspace (*p)) p++ ;
-            if (*p == ')') p++ ;
-            while (isspace (*p)) p++ ;
-            strncpy (op->name, p, GxB_MAX_NAME_LEN-1) ;
-        }
-        else
-        { 
-            // copy the entire name as-is
-            strncpy (op->name, name, GxB_MAX_NAME_LEN-1) ;
-        }
-    }
+    // get the unary op name and defn
+    GB_op_name_and_defn (op->name, &(op->defn), selectop_name, selectop_defn,
+        "GxB_select_function", 19) ;
 
     //--------------------------------------------------------------------------
     // return result

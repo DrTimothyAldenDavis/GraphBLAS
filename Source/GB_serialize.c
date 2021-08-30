@@ -13,6 +13,7 @@
 
 #include "GB.h"
 #include "GB_serialize.h"
+#include <ipps.h>
 
 #define GB_FREE_WORK                            \
 {                                               \
@@ -153,19 +154,19 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     int32_t Ap_method, Ah_method, Ab_method, Ai_method, Ax_method ;
     GB_OK (GB_serialize_array (&Ap_Blocks, &Ap_Blocks_size,
         &Ap_Sblocks, &Ap_Sblocks_size, &Ap_nblocks, &Ap_method,
-        (GB_void *) A->p, Ap_len, method, Context)) ;
+        (GB_void *) A->p, Ap_len, method, intel, algo, level, Context)) ;
     GB_OK (GB_serialize_array (&Ah_Blocks, &Ah_Blocks_size,
         &Ah_Sblocks, &Ah_Sblocks_size, &Ah_nblocks, &Ah_method,
-        (GB_void *) A->h, Ah_len, method, Context)) ;
+        (GB_void *) A->h, Ah_len, method, intel, algo, level, Context)) ;
     GB_OK (GB_serialize_array (&Ab_Blocks, &Ab_Blocks_size,
         &Ab_Sblocks, &Ab_Sblocks_size, &Ab_nblocks, &Ab_method,
-        (GB_void *) A->b, Ab_len, method, Context)) ;
+        (GB_void *) A->b, Ab_len, method, intel, algo, level, Context)) ;
     GB_OK (GB_serialize_array (&Ai_Blocks, &Ai_Blocks_size,
         &Ai_Sblocks, &Ai_Sblocks_size, &Ai_nblocks, &Ai_method,
-        (GB_void *) A->i, Ai_len, method, Context)) ;
+        (GB_void *) A->i, Ai_len, method, intel, algo, level, Context)) ;
     GB_OK (GB_serialize_array (&Ax_Blocks, &Ax_Blocks_size,
         &Ax_Sblocks, &Ax_Sblocks_size, &Ax_nblocks, &Ax_method,
-        (GB_void *) A->x, Ax_len, method, Context)) ;
+        (GB_void *) A->x, Ax_len, method, intel, algo, level, Context)) ;
 
     //--------------------------------------------------------------------------
     // determine the size of the blob and allocate it
@@ -193,7 +194,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // GB_MALLOC may decide to increase the blob from size s bytes to blob_size
     blob = GB_MALLOC (s, GB_void, &blob_size) ;
     if (blob == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
@@ -235,7 +236,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
 
     // 128 bytes, if present
     if (typecode == GB_UDT_code)
-    {
+    { 
         // only copy the type_name for user-defined types
         memset (blob + s, 0, GxB_MAX_NAME_LEN) ;
         strncpy (blob + s, atype->name, GxB_MAX_NAME_LEN-1) ;
@@ -252,9 +253,6 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     GB_BLOB_WRITES (Ab_Sblocks, Ab_nblocks) ;
     GB_BLOB_WRITES (Ai_Sblocks, Ai_nblocks) ;
     GB_BLOB_WRITES (Ax_Sblocks, Ax_nblocks) ;
-
-    // FIXME: round up each of the 5 arrays to a multiple of 64 bytes,
-    // or each internal compressed block.
 
     GB_serialize_to_blob (blob, &s, Ap_Blocks, Ap_Sblocks+1, Ap_nblocks,
         nthreads_max) ;

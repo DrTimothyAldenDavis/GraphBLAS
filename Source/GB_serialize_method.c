@@ -27,7 +27,6 @@ void GB_serialize_method
         (*intel) = false ;
         (*algo) = GxB_COMPRESSION_NONE ;
         (*level) = 0 ;
-//      printf ("intel: %d algo: %d level: %d\n", (*intel), (*algo), (*level)) ;
         return ;
     }
 
@@ -47,7 +46,6 @@ void GB_serialize_method
     // means that default level for that method is used.
     (*algo) = 1000 * (method / 1000) ;
     (*level) = method % 1000 ;
-//  printf ("intel: %d algo: %d level: %d\n", (*intel), (*algo), (*level)) ;
 
     switch (*algo)
     {
@@ -62,12 +60,17 @@ void GB_serialize_method
             (*level) = 0 ;              // level is ignored
             break ;
 
-//      These cases will be uncommented when the methods are implemented:
+        case GxB_COMPRESSION_LZ4HC : 
+            // level 1 to 9, with a default of 9.  Note that LZ4HC supports
+            // levels 10, 11, and 12, but these are very slow and do not
+            // provide much benefit over level 9.  Level 10 often results in
+            // a larger blob than level 9.  Level 12 is typically just a tiny
+            // bit more compact than level 9, but can be 10x slower, or worse,
+            // as compared to level 9.
+            if ((*level) <= 0 || (*level) > 9) (*level) = 9 ;
+            break ;
 
-//      case GxB_COMPRESSION_LZ4HC : 
-//          // level 1 to 12, with a default of 9
-//          if ((*level) <= 0 || (*level) > 12) (*level) = 9 ;
-//          break ;
+//      These cases will be uncommented when the methods are implemented:
 
 //      case GxB_COMPRESSION_ZLIB : 
 //          // level 1 to 9, with a default of 6
@@ -87,9 +90,7 @@ void GB_serialize_method
 //      case GxB_COMPRESSION_LZSS : 
 //          (*level) = 0 ;              // level is ignored
 //          break ;
-    }
 
-//  printf ("intel: %d algo: %d level: %d (final)\n",
-//      (*intel), (*algo), (*level)) ;
+    }
 }
 

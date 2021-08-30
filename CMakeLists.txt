@@ -92,11 +92,14 @@ configure_file (
 )
 
 #-------------------------------------------------------------------------------
-# determine what user threading model to use
+# find packages
 #-------------------------------------------------------------------------------
 
 # include ( FindOpenMP  )
 find_package ( OpenMP )
+
+# Intel(R) IPP not yet supported
+# find_package ( IPP )
 
 # enable_language ( CUDA )
 # for nvcc, add -DGBCUDA
@@ -181,7 +184,7 @@ endif ( )
 # check which compiler is being used.  If you need to make
 # compiler-specific modifications, here is the place to do it.
 if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-    # The -g option is useful for the Intel VTune tool, but it should be
+    # The -g option is useful for the Intel(R) VTune tool, but it should be
     # removed in production.  Comment this line out if not in use:
     # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
     # cmake 2.8 workaround: gcc needs to be told to do ANSI C11.
@@ -321,7 +324,7 @@ if ( BUILD_GRB_STATIC_LIBRARY )
 endif ( )
 
 #-------------------------------------------------------------------------------
-# add the OpenMP, CUDA, BLAS, ... libraries
+# add the OpenMP, IPP, CUDA, BLAS, etc libraries
 #-------------------------------------------------------------------------------
 
 if ( USE_OPENMP )
@@ -331,9 +334,23 @@ if ( USE_OPENMP )
     if ( BUILD_GRB_STATIC_LIBRARY )
         target_link_libraries ( graphblas_static PUBLIC ${OpenMP_C_LIBRARIES} )
     endif ( )
+    message ( STATUS "CMAKE OpenMP C flags:      " ${OpenMP_C_FLAGS} )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} " )
     include_directories ( ${OpenMP_C_INCLUDE_DIRS} )
 endif ( )
+
+# Intel(R) IPP not yet supported
+#   message ( STATUS "CMAKE have IPP:            " ${IPP_FOUND} )
+#   if ( IPP_FOUND )
+#       message ( STATUS "Intel(R) IPP variant:      " ${IPP_TL_VARIANT} )
+#       message ( STATUS "Intel(R) IPP arch:         " ${IPP_ARCH} )
+#       message ( STATUS "Intel(R) IPP version:      " ${IPP_VERSION} )
+#       set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAVE_IPP=1 " )
+#       target_link_libraries ( graphblas PUBLIC ippdc ippcore )
+#       if ( BUILD_GRB_STATIC_LIBRARY )
+#           target_link_libraries ( graphblas_static PUBLIC ippdc ippcore )
+#       endif ( )
+#   endif ( )
 
 if ( CMAKE_CUDA )
     target_link_libraries ( graphblas PUBLIC ${GB_CUDA} )
@@ -452,3 +469,17 @@ else ( )
 
 endif ( )
 
+#-------------------------------------------------------------------------------
+# dump all variables, for debugging only
+#-------------------------------------------------------------------------------
+
+# uncomment this line to dump all cmake variables:
+# set ( DUMP true )
+
+if ( DUMP )
+    get_cmake_property(_variableNames VARIABLES)
+    list (SORT _variableNames)
+    foreach (_variableName ${_variableNames})
+        message(STATUS "${_variableName}=${${_variableName}}")
+    endforeach()
+endif ( )

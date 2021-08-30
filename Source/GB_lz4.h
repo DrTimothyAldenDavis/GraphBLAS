@@ -10,9 +10,7 @@
 // It's possible that the user application has its own copy of the LZ4 library,
 // which wouldn't be using the SuiteSparse:GraphBLAS memory allocator.  To
 // avoid any conflict between multiple copies of the LZ4 library, all global
-// symbols LZ4_* are renamed GBLZ4 (LZ4_*), via #define.
-
-// TODO: add LZ4HC
+// symbols LZ4_* are renamed GBLZ4 (LZ4_*), via #defines below.
 
 #ifndef GB_LZ4_H 
 #define GB_LZ4_H 
@@ -52,6 +50,11 @@
 // decompression fails.
 #define LZ4_decompress_safe     GBLZ4 (LZ4_decompress_safe)
 
+// int LZ4_compress_HC (const char *src, char *dst, int srcSize, int dstCaop,
+// int level) : same arguments as LZ4_compress_default, except with the added
+// level parameter.
+#define LZ4_compress_HC         GBLZ4 (LZ4_compress_HC)
+
 //------------------------------------------------------------------------------
 // ensure that LZ4_malloc, LZ4_calloc, and LZ4_free are used.
 //------------------------------------------------------------------------------
@@ -72,6 +75,7 @@ void  LZ4_free (void *p) ;
 // methods not directly used, or not used at all by GraphBLAS
 //------------------------------------------------------------------------------
 
+// LZ4 methods:
 #define LZ4_attach_dictionary                   \
  GBLZ4 (LZ4_attach_dictionary)
 #define LZ4_compress                            \
@@ -157,6 +161,74 @@ void  LZ4_free (void *p) ;
 #define LZ4_versionString                       \
  GBLZ4 (LZ4_versionString)
 
+// LZ4HC methods:
+#define LZ4_attach_HC_dictionary                    \
+ GBLZ4 (LZ4_attach_HC_dictionary)
+#define LZ4_compressHC                              \
+ GBLZ4 (LZ4_compressHC)
+#define LZ4_compressHC2                             \
+ GBLZ4 (LZ4_compressHC2)
+#define LZ4_compressHC2_continue                    \
+ GBLZ4 (LZ4_compressHC2_continue)
+#define LZ4_compressHC2_limitedOutput               \
+ GBLZ4 (LZ4_compressHC2_limitedOutput)
+#define LZ4_compressHC2_limitedOutput_continue      \
+ GBLZ4 (LZ4_compressHC2_limitedOutput_continue)
+#define LZ4_compressHC2_limitedOutput_withStateHC   \
+ GBLZ4 (LZ4_compressHC2_limitedOutput_withStateHC)
+#define LZ4_compressHC2_withStateHC                 \
+ GBLZ4 (LZ4_compressHC2_withStateHC)
+#define LZ4_compress_HC_continue                    \
+ GBLZ4 (LZ4_compress_HC_continue)
+#define LZ4_compressHC_continue                     \
+ GBLZ4 (LZ4_compressHC_continue)
+#define LZ4_compress_HC_continue_destSize           \
+ GBLZ4 (LZ4_compress_HC_continue_destSize)
+#define LZ4_compress_HC_destSize                    \
+ GBLZ4 (LZ4_compress_HC_destSize)
+#define LZ4_compress_HC_extStateHC                  \
+ GBLZ4 (LZ4_compress_HC_extStateHC)
+#define LZ4_compress_HC_extStateHC_fastReset        \
+ GBLZ4 (LZ4_compress_HC_extStateHC_fastReset)
+#define LZ4_compressHC_limitedOutput                \
+ GBLZ4 (LZ4_compressHC_limitedOutput)
+#define LZ4_compressHC_limitedOutput_continue       \
+ GBLZ4 (LZ4_compressHC_limitedOutput_continue)
+#define LZ4_compressHC_limitedOutput_withStateHC    \
+ GBLZ4 (LZ4_compressHC_limitedOutput_withStateHC)
+#define LZ4_compressHC_withStateHC                  \
+ GBLZ4 (LZ4_compressHC_withStateHC)
+#define LZ4_createHC                                \
+ GBLZ4 (LZ4_createHC)
+#define LZ4_createStreamHC                          \
+ GBLZ4 (LZ4_createStreamHC)
+#define LZ4_favorDecompressionSpeed                 \
+ GBLZ4 (LZ4_favorDecompressionSpeed)
+#define LZ4_freeHC                                  \
+ GBLZ4 (LZ4_freeHC)
+#define LZ4_freeStreamHC                            \
+ GBLZ4 (LZ4_freeStreamHC)
+#define LZ4_initStreamHC                            \
+ GBLZ4 (LZ4_initStreamHC)
+#define LZ4_loadDictHC                              \
+ GBLZ4 (LZ4_loadDictHC)
+#define LZ4_resetStreamHC                           \
+ GBLZ4 (LZ4_resetStreamHC)
+#define LZ4_resetStreamHC_fast                      \
+ GBLZ4 (LZ4_resetStreamHC_fast)
+#define LZ4_resetStreamStateHC                      \
+ GBLZ4 (LZ4_resetStreamStateHC)
+#define LZ4_saveDictHC                              \
+ GBLZ4 (LZ4_saveDictHC)
+#define LZ4_setCompressionLevel                     \
+ GBLZ4 (LZ4_setCompressionLevel)
+#define LZ4_sizeofStateHC                           \
+ GBLZ4 (LZ4_sizeofStateHC)
+#define LZ4_sizeofStreamStateHC                     \
+ GBLZ4 (LZ4_sizeofStreamStateHC)
+#define LZ4_slideInputBufferHC                      \
+ GBLZ4 (LZ4_slideInputBufferHC)
+
 //------------------------------------------------------------------------------
 // disable LZ4 deprecation warnings and include all LZ4 definitions  
 //------------------------------------------------------------------------------
@@ -164,6 +236,7 @@ void  LZ4_free (void *p) ;
 // GraphBLAS does not use deprecated functions, but the warnings pop up anyway
 // when GraphBLAS is built, so silence them with this #define:
 #define LZ4_DISABLE_DEPRECATE_WARNINGS
-#include "lz4.h"
+// #include "lz4.h"
+#include "lz4hc.h"
 #endif
 

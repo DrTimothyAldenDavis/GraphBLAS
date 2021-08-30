@@ -56,6 +56,8 @@ void mexFunction
         { 
             method = GxB_COMPRESSION_LZ4HC ;
         }
+        #if 0
+        // these methods are not yet supported:
         else if (MATCH (method_name, "zlib"))
         {
             method = GxB_COMPRESSION_ZLIB ;
@@ -96,6 +98,7 @@ void mexFunction
         {
             method = GxB_COMPRESSION_INTEL + GxB_COMPRESSION_LZSS ;
         }
+        #endif
         else
         { 
             ERROR ("unknown method") ;
@@ -105,6 +108,7 @@ void mexFunction
         {
             level = (int) mxGetScalar (pargin [2]) ;
         }
+        if (level < 0 || level > 9) level = 0 ;
         // set the descriptor
         // printf ("method %d level %d\n", method, level) ;
         OK (GxB_Desc_set (desc, GxB_COMPRESSION, method + level)) ;

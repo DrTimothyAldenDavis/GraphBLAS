@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_BinaryOp_ytype: return the type of y for z=f(x,y)
+// GxB_BinaryOp_ytype_name: return the type_name of y for z=f(x,y)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,14 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// NOTE: this function is historical.  Use GxB_BinaryOp_ytype_name instead.
-
 #include "GB.h"
 
-GrB_Info GxB_BinaryOp_ytype         // type of y
+GrB_Info GxB_BinaryOp_ytype_name    // return the name of the type of x
 (
-    GrB_Type *ytype,                // return type of input y
-    GrB_BinaryOp binaryop           // binary operator to query
+    char *type_name,        // name of the type (char array of size at least
+                            // GxB_MAX_NAME_LEN, owned by the user application).
+    const GrB_BinaryOp binaryop
 )
 { 
 
@@ -22,16 +21,16 @@ GrB_Info GxB_BinaryOp_ytype         // type of y
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_BinaryOp_ytype (&ytype, binaryop)") ;
-    GB_RETURN_IF_NULL (ytype) ;
+    GB_WHERE1 ("GxB_BinaryOp_ytype_name (type_name, op)") ;
+    GB_RETURN_IF_NULL (type_name) ;
     GB_RETURN_IF_NULL_OR_FAULTY (binaryop) ;
-    ASSERT_BINARYOP_OK (binaryop, "binaryop for ytype", GB0) ;
+    ASSERT_BINARYOP_OK (binaryop, "binaryop for ytype_name", GB0) ;
 
     //--------------------------------------------------------------------------
-    // return the ytype
+    // get the type_name
     //--------------------------------------------------------------------------
 
-    (*ytype) = binaryop->ytype ;
+    memcpy (type_name, binaryop->ytype->name, GxB_MAX_NAME_LEN) ;
     return (GrB_SUCCESS) ;
 }
 

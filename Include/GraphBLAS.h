@@ -952,9 +952,10 @@ GB_PUBLIC GrB_UnaryOp
 
 typedef void (*GxB_unary_function)  (void *, const void *) ;
 
+// GrB_UnaryOp_new creates a user-defined unary op, with an automatic
+// detection of the operator name.
 #undef GrB_UnaryOp_new
 #undef GrM_UnaryOp_new
-
 GB_PUBLIC
 GrB_Info GRB (UnaryOp_new)           // create a new user-defined unary operator
 (
@@ -963,32 +964,47 @@ GrB_Info GRB (UnaryOp_new)           // create a new user-defined unary operator
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype                  // type of input x
 ) ;
+#define GrB_UnaryOp_new(op,f,z,x) GxB_UnaryOp_new (op,f,z,x, GB_STR(f), NULL)
+#define GrM_UnaryOp_new(op,f,z,x) GxM_UnaryOp_new (op,f,z,x, GB_STR(f), NULL)
 
-#define GrB_UnaryOp_new(op,f,z,x) GB_UnaryOp_new (op,f,z,x, GB_STR(f))
-#define GrM_UnaryOp_new(op,f,z,x) GM_UnaryOp_new (op,f,z,x, GB_STR(f))
-
+// GxB_UnaryOp_new creates a named user-defined unary op.
 GB_PUBLIC
-GrB_Info GB_UnaryOp_new             // not user-callable; use GrB_UnaryOp_new
+GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
 (
     GrB_UnaryOp *unaryop,           // handle for the new unary operator
     GxB_unary_function function,    // pointer to the unary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x
-    const char *name                // name of the underlying function
+    const char *unop_name,          // name of the user function
+    const char *unop_defn           // definition of the user function
 ) ;
 
+// NOTE: GxB_UnaryOp_ztype is historical.  Use GxB_UnaryOp_ztype_name instead.
 GB_PUBLIC
 GrB_Info GxB_UnaryOp_ztype          // return the type of z
 (
     GrB_Type *ztype,                // return type of output z
     GrB_UnaryOp unaryop             // unary operator
 ) ;
+GB_PUBLIC
+GrB_Info GxB_UnaryOp_ztype_name     // return the type_name of z
+(
+    char *type_name,                // user array of size GxB_MAX_NAME_LEN
+    const GrB_UnaryOp unaryop       // unary operator
+) ;
 
+// NOTE: GxB_UnaryOp_xtype is historical.  Use GxB_UnaryOp_xtype_name instead.
 GB_PUBLIC
 GrB_Info GxB_UnaryOp_xtype          // return the type of x
 (
     GrB_Type *xtype,                // return type of input x
     GrB_UnaryOp unaryop             // unary operator
+) ;
+GB_PUBLIC
+GrB_Info GxB_UnaryOp_xtype_name     // return the type_name of x
+(
+    char *type_name,                // user array of size GxB_MAX_NAME_LEN
+    const GrB_UnaryOp unaryop       // unary operator
 ) ;
 
 GB_PUBLIC
@@ -1387,9 +1403,10 @@ GB_PUBLIC GrB_UnaryOp
 
 typedef void (*GxB_binary_function) (void *, const void *, const void *) ;
 
+// GrB_BinaryOp_new creates a user-defined binary op, with an automatic
+// detection of the operator name.
 #undef GrB_BinaryOp_new
 #undef GrM_BinaryOp_new
-
 GB_PUBLIC
 GrB_Info GRB (BinaryOp_new)
 (
@@ -1399,40 +1416,62 @@ GrB_Info GRB (BinaryOp_new)
     GrB_Type xtype,                 // type of input x
     GrB_Type ytype                  // type of input y
 ) ;
+#define GrB_BinaryOp_new(op,f,z,x,y) GxB_BinaryOp_new(op,f,z,x,y,GB_STR(f),NULL)
+#define GrM_BinaryOp_new(op,f,z,x,y) GxM_BinaryOp_new(op,f,z,x,y,GB_STR(f),NULL)
 
-#define GrB_BinaryOp_new(op,f,z,x,y) GB_BinaryOp_new (op,f,z,x,y, GB_STR(f))
-#define GrM_BinaryOp_new(op,f,z,x,y) GM_BinaryOp_new (op,f,z,x,y, GB_STR(f))
-
+// GxB_BinaryOp_new creates a named user-defined binary op.
 GB_PUBLIC
-GrB_Info GB_BinaryOp_new            // not user-callable; use GrB_BinaryOp_new
+GrB_Info GxB_BinaryOp_new
 (
-    GrB_BinaryOp *binaryop,         // handle for the new binary operator
+    GrB_BinaryOp *op,               // handle for the new binary operator
     GxB_binary_function function,   // pointer to the binary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x
     GrB_Type ytype,                 // type of input y
-    const char *name                // name of the underlying function
+    const char *binop_name,         // name of the user function
+    const char *binop_defn          // definition of the user function
 ) ;
 
+// NOTE: GxB_BinaryOp_ztype is historical.  Use GxB_BinaryOp_ztype_name instead.
 GB_PUBLIC
 GrB_Info GxB_BinaryOp_ztype         // return the type of z
 (
     GrB_Type *ztype,                // return type of output z
     GrB_BinaryOp binaryop           // binary operator to query
 ) ;
+GB_PUBLIC
+GrB_Info GxB_BinaryOp_ztype_name    // return the type_name of z
+(
+    char *type_name,                // user array of size GxB_MAX_NAME_LEN
+    const GrB_BinaryOp binaryop     // binary operator to query
+) ;
 
+// NOTE: GxB_BinaryOp_xtype is historical.  Use GxB_BinaryOp_xtype_name instead.
 GB_PUBLIC
 GrB_Info GxB_BinaryOp_xtype         // return the type of x
 (
     GrB_Type *xtype,                // return type of input x
     GrB_BinaryOp binaryop           // binary operator to query
 ) ;
+GB_PUBLIC
+GrB_Info GxB_BinaryOp_xtype_name    // return the type_name of x
+(
+    char *type_name,                // user array of size GxB_MAX_NAME_LEN
+    const GrB_BinaryOp binaryop     // binary operator to query
+) ;
 
+// NOTE: GxB_BinaryOp_ytype is historical.  Use GxB_BinaryOp_ytype_name instead.
 GB_PUBLIC
 GrB_Info GxB_BinaryOp_ytype         // return the type of y
 (
     GrB_Type *ytype,                // return type of input y
     GrB_BinaryOp binaryop           // binary operator to query
+) ;
+GB_PUBLIC
+GrB_Info GxB_BinaryOp_ytype_name    // return the type_name of y
+(
+    char *type_name,                // user array of size GxB_MAX_NAME_LEN
+    const GrB_BinaryOp binaryop     // binary operator to query
 ) ;
 
 GB_PUBLIC
@@ -1536,9 +1575,10 @@ typedef bool (*GxB_select_function)      // return true if A(i,j) is kept
     const void *thunk           // optional input for select function
 ) ;
 
+// GxB_SelectOp_new creates a user-defined select op, with an automatic
+// detection of the operator name.
 #undef GxB_SelectOp_new
 #undef GxM_SelectOp_new
-
 GB_PUBLIC
 GrB_Info GXB (SelectOp_new)     // create a new user-defined select operator
 (
@@ -1547,32 +1587,47 @@ GrB_Info GXB (SelectOp_new)     // create a new user-defined select operator
     GrB_Type xtype,             // type of input x, or NULL if type-generic
     GrB_Type ttype              // type of thunk, or NULL if not used
 ) ;
+#define GxB_SelectOp_new(op,f,x,t) GxB_SelectOp_new2(op,f,x,t,GB_STR(f),NULL)
+#define GxM_SelectOp_new(op,f,x,t) GxM_SelectOp_new2(op,f,x,t,GB_STR(f),NULL)
 
-#define GxB_SelectOp_new(op,f,x,t) GB_SelectOp_new (op,f,x,t, GB_STR(f))
-#define GxM_SelectOp_new(op,f,x,t) GM_SelectOp_new (op,f,x,t, GB_STR(f))
-
+// GxB_SelectOp_new2 creates a named user-defined select op.
 GB_PUBLIC
-GrB_Info GB_SelectOp_new        // not user-callable; use GxB_SelectOp_new
+GrB_Info GxB_SelectOp_new2      // create a named user-defined select operator
 (
     GxB_SelectOp *selectop,     // handle for the new select operator
     GxB_select_function function,// pointer to the select function
     GrB_Type xtype,             // type of input x
     GrB_Type ttype,             // type of thunk, or NULL if not used
-    const char *name            // name of the underlying function
+    const char *selectop_name,  // name of the user function
+    const char *selectop_defn   // definition of the user function
 ) ;
 
+// NOTE: GxB_SelectOp_xtype is historical.  Use GxB_SelectOp_xtype_name instead.
 GB_PUBLIC
 GrB_Info GxB_SelectOp_xtype     // return the type of x
 (
     GrB_Type *xtype,            // return type of input x
     GxB_SelectOp selectop       // select operator
 ) ;
+GB_PUBLIC
+GrB_Info GxB_SelectOp_xtype_name    // return the type_name of x
+(
+    char *type_name,                // user array of size GxB_MAX_NAME_LEN
+    const GxB_SelectOp selectop     // select operator
+) ;
 
+// NOTE: GxB_SelectOp_ttype is historical.  Use GxB_SelectOp_ttype_name instead.
 GB_PUBLIC
 GrB_Info GxB_SelectOp_ttype     // return the type of thunk
 (
     GrB_Type *ttype,            // return type of input thunk
     GxB_SelectOp selectop       // select operator
+) ;
+GB_PUBLIC
+GrB_Info GxB_SelectOp_ttype_name    // return the type_name of thunk
+(
+    char *type_name,                // user array of size GxB_MAX_NAME_LEN
+    const GxB_SelectOp selectop     // select operator
 ) ;
 
 GB_PUBLIC
@@ -1980,7 +2035,6 @@ GrB_Info GxB_Scalar_type    // get the type of a GxB_Scalar
     GrB_Type *type,         // returns the type of the GxB_Scalar
     const GxB_Scalar s      // GxB_Scalar to query
 ) ;
-
 GB_PUBLIC
 GrB_Info GxB_Scalar_type_name      // return the name of the type of a scalar
 (
@@ -2301,7 +2355,6 @@ GrB_Info GxB_Vector_type    // get the type of a vector
     GrB_Type *type,         // returns the type of the vector
     const GrB_Vector v      // vector to query
 ) ;
-
 GB_PUBLIC
 GrB_Info GxB_Vector_type_name      // return the name of the type of a vector
 (
@@ -3015,7 +3068,6 @@ GrB_Info GxB_Matrix_type    // get the type of a matrix
     GrB_Type *type,         // returns the type of the matrix
     const GrB_Matrix A      // matrix to query
 ) ;
-
 GB_PUBLIC
 GrB_Info GxB_Matrix_type_name      // return the name of the type of a vector
 (
@@ -9313,15 +9365,16 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 
 #define GxB_COMPRESSION_NONE -1     // no compression
 #define GxB_COMPRESSION_DEFAULT 0   // LZ4
-
 #define GxB_COMPRESSION_LZ4   1000  // LZ4
 #define GxB_COMPRESSION_LZ4HC 2000  // LZ4HC, with default level 9
-#define GxB_COMPRESSION_ZLIB  3000  // ZLIB, with default level 6
-#define GxB_COMPRESSION_LZO   4000  // LZO, with default level 2
-#define GxB_COMPRESSION_BZIP2 5000  // BZIP2, with default level 9
-#define GxB_COMPRESSION_LZSS  6000  // LZSS
 
-// using the Intel IPP versions, if available:
+// possible future methods to support:
+// #define GxB_COMPRESSION_ZLIB  3000  // ZLIB, with default level 6
+// #define GxB_COMPRESSION_LZO   4000  // LZO, with default level 2
+// #define GxB_COMPRESSION_BZIP2 5000  // BZIP2, with default level 9
+// #define GxB_COMPRESSION_LZSS  6000  // LZSS
+
+// using the Intel IPP versions, if available (not yet supported);
 #define GxB_COMPRESSION_INTEL   1000000
 
 // Most of the above methods have a level parameter that controls the tradeoff
@@ -9329,20 +9382,22 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 // result in a more compact result, at the cost of higher run time:
 
 //  LZ4     no level setting
-//  LZ4HC   1: fast, 9: default, 12: max
+//  LZ4HC   1: fast, 9: default, 9: max
+
+//  these methos are not yet supported but may be added in the future:
 //  ZLIB    1: fast, 6: default, 9: max
 //  LZO     1: fast (X1ST), 2: default (XST)
 //  BZIP2   1: fast, 9: default, 9: max
 //  LZSS    no level setting
 
-// For all methods, a level of zero results in the default level setting (9 for
-// LZ4HC, 6 for ZLIB, etc).  These settings are added, so to use LZ4HC at level
-// 5, use method = GxB_COMPRESSION_LZ4HC + 5.
+// For all methods, a level of zero results in the default level setting.
+// These settings can be added, so to use LZ4HC at level 5, use method =
+// GxB_COMPRESSION_LZ4HC + 5.
 
 // If the Intel IPPS compression methods are available, they can be selected
 // by adding GxB_COMPRESSION_INTEL.  For example, to use the Intel IPPS
-// implementation of ZLIB at level 9, use method = GxB_COMPRESSION_INTEL +
-// GxB_COMPRESSION_ZLIB + 9 = 1,003,009.  If the Intel methods are requested
+// implementation of LZ4HC at level 9, use method = GxB_COMPRESSION_INTEL +
+// GxB_COMPRESSION_LZ4HC + 9 = 1,002,009.  If the Intel methods are requested
 // but not available, this setting is ignored and the non-Intel methods are
 // used instead.
 

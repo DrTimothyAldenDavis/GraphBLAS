@@ -56,7 +56,8 @@ void GB_binop_new
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x
     GrB_Type ytype,                 // type of input y
-    const char *name,               // name of the function (may be NULL)
+    const char *binop_name,         // name of the user function
+    const char *binop_defn,         // definition of the user function
     const GB_Opcode opcode          // opcode for the function
 ) ;
 

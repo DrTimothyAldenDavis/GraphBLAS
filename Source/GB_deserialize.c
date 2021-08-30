@@ -104,10 +104,10 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
     // 128 bytes, if present
     if (ccode == GB_UDT_code)
-    { 
+    {
         // ensure the user-defined type has the right name
         if (strncmp (blob + s, ctype->name, GxB_MAX_NAME_LEN) != 0)
-        {
+        { 
             // blob is invalid
             return (GrB_INVALID_VALUE) ;
         }

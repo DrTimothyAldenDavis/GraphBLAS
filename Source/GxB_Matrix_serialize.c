@@ -37,8 +37,6 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // get the method from the descriptor
     int method = (desc == NULL) ? GxB_DEFAULT : desc->compression ;
 
-//  printf ("\nGxB_Matrix_serialize method: %d\n", method) ;
-
     //--------------------------------------------------------------------------
     // serialize the matrix
     //--------------------------------------------------------------------------

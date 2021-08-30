@@ -1,17 +1,25 @@
 Version 5.2.0, FIXME
 
-    * GxB_SelectOp_new2: FIXME: add this
-    * GxB_BinaryOp_new: FIXME: add this
-    * GxB_UnaryOp_new: FIXME: add this
-    * GxB_Type_new: to provide a type name and definition, as strings
+    * GxB_SelectOp_new2: create a named selectop
+    * GxB_BinaryOp_new: create a named binary operator
+    * GxB_UnaryOp_new: create a named unary operator
+    * GxB_Type_new: to create a named type and definition, as strings
     * GxB_Type_name: to query the name of a type
-    * GxB_Matrix_type_name, GxB_Vector_type_name, GxB_Scalar_type_name,
-        GxB_deserialize_type_name: query type name, returning a string
-    * GxB_Matrix_type, GxB_Vector_type, GxB_Scalar_type: declared historical;
-        will be kept but no longer recommended (use *type_name methods).
+    * added GxB_BinaryOp_xtype_name, GxB_BinaryOp_ytype_name,
+        GxB_BinaryOp_ztype_name, GxB_deserialize_type_name,
+        GxB_Matrix_type_name, GxB_Scalar_type_name,
+        GxB_SelectOp_ttype_name, GxB_SelectOp_xtype_name,
+        GxB_UnaryOp_xtype_name, GxB_UnaryOp_ztype_name,
+        GxB_Vector_type_name: to query the name of a type as a string
+    * GxB_BinaryOp_xtype, GxB_BinaryOp_ytype, GxB_BinaryOp_ztype,
+        GxB_Matrix_type, GxB_Scalar_type, GxB_SelectOp_ttype,
+        GxB_SelectOp_xtype, GxB_UnaryOp_xtype, GxB_UnaryOp_ztype,
+        GxB_Vector_type: declared historical; will be kept but not
+        recommended (use *type_name methods).
     * GxB_Matrix_serialize/deserialize: with compression
-    * added LZ4: compression library, http://www.lz4.org (BSD 2),
-        Copyright (c) 2011-2016, Yann Collet.
+    * GxB_Vector_serialize/deserialize: FIXME 
+    * added LZ4/LZ4HC: compression library, http://www.lz4.org (BSD 2),
+        v1.9.3, Copyright (c) 2011-2016, Yann Collet, All Rights Reserved.
 
 Version 5.1.7, Aug 23, 2021
 

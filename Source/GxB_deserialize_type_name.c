@@ -43,7 +43,10 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
         return (GrB_INVALID_VALUE) ;
     }
 
+    //--------------------------------------------------------------------------
     // get the blob header
+    //--------------------------------------------------------------------------
+
     size_t s = 0 ;
     GB_BLOB_READ (blob_size2, size_t) ;
     GB_BLOB_READ (typecode, int32_t) ;
@@ -53,6 +56,10 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
         // blob is invalid
         return (GrB_INVALID_VALUE) ;
     }
+
+    //--------------------------------------------------------------------------
+    // get the type_name from the built-in type or the blob
+    //--------------------------------------------------------------------------
 
     if (typecode >= GB_BOOL_code && typecode < GB_UDT_code)
     { 
@@ -77,6 +84,13 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
         // blob is invalid
         return (GrB_INVALID_VALUE) ;
     }
+
+    // this should already be in the blob, but set it to null just in case
+    type_name [GxB_MAX_NAME_LEN-1] = '\0' ;
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
 
     return (GrB_SUCCESS) ;
 }

@@ -1,5 +1,5 @@
 function G = deserialize (blob)
-%GRB.DESERIALIZE convert a serialized blob into a matrix
+%GRB.DESERIALIZE convert a serialized blob into a matrix.
 % G = GrB.deserialize (blob) returns a @GrB matrix constructed from the
 % uint8 array blob constructed by GrB.serialize.
 %

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// NOTE: this function is historical.  Use GxB_SelectOp_ttype_name instead.
+
 #include "GB.h"
 
 GrB_Info GxB_SelectOp_ttype         // return type of thunk or NULL if generic

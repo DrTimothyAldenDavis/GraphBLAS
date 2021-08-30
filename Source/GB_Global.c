@@ -239,6 +239,8 @@ GB_Global_struct GB_Global =
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 
+    // FIXME: RMM wrap rounds up the size to 256 bytes
+
     // default limits on the number of free blocks in each list:
     .free_pool_limit = {
         0,      // size 2^0 = 1 byte   none
@@ -261,10 +263,10 @@ GB_Global_struct GB_Global =
         256,    // size 2^14 = 16 KB   (2^8  blocks * 2^14 = 4 MB total)
         128,    // size 2^15 = 32 KB   (2^7  blocks * 2^15 = 4 MB total)
 
-        64,     // size 2^16 = 64 KB   (2^6  blocks * 2^16 = 4 MB total)
-        32,     // size 2^17 = 128 KB  (2^5  blocks * 2^17 = 4 MB total)
-        16,     // size 2^18 = 256 KB  (2^4  blocks * 2^18 = 4 MB total)
-        8,      // size 2^19 = 512 KB  (2^3  blocks * 2^19 = 4 MB total)
+        0,      // size 2^16 = 64 KB
+        0,      // size 2^17 = 128 KB
+        0,      // size 2^18 = 256 KB
+        0,      // size 2^19 = 512 KB
 
         // maximum total size = about 52 MB
         // by default, no blocks larger than 512 KB are kept in the free_pool

@@ -54,6 +54,11 @@
 #include "GB_log2.h"
 #include "GB_iso.h"
 
+#if defined ( GB_HAVE_IPP )
+// Intel(R) IPP, not yet supported
+#include <ipp.h>
+#endif
+
 //------------------------------------------------------------------------------
 // more internal definitions
 //------------------------------------------------------------------------------
@@ -127,7 +132,6 @@ GrB_Info GB_init            // start up GraphBLAS
 
     // pointers to memory management functions
     void * (* malloc_function  ) (size_t),
-    void * (* calloc_function  ) (size_t, size_t),
     void * (* realloc_function ) (void *, size_t),
     void   (* free_function    ) (void *),
     bool malloc_is_thread_safe,
@@ -671,6 +675,17 @@ bool GB_op_is_second    // return true if op is SECOND, of the right type
     GrB_Type type
 ) ;
 
+void GB_op_name_and_defn
+(
+    // output
+    char *operator_name,        // op->name of the GrB operator struct
+    char **operator_defn,       // op->defn of the GrB operator struct
+    // input
+    const char *input_name,     // user-provided name, may be NULL
+    const char *input_defn,     // user-provided name, may be NULL
+    const char *typecast_name,  // typecast name for function pointer
+    size_t typecast_name_len    // length of typecast_name
+) ;
 
 //------------------------------------------------------------------------------
 

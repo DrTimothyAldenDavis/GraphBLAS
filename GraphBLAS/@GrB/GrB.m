@@ -1022,7 +1022,7 @@ methods (Static)
     C = select (Cin, M, accum, selectop, A, b, desc) ;
     selectopinfo (op) ;
     semiringinfo (s, type) ;
-    blob = serialize (A, method) ;
+    blob = serialize (A, method, level) ;
     C = speye (m, n, type) ;
     C = subassign (Cin, M, accum, A, I, J, desc) ;
     nthreads = threads (nthreads) ;

@@ -25,6 +25,6 @@ GrB_Info GXB (SelectOp_new)     // create a new user-defined select operator
     GrB_Type ttype                  // type of input thunk, or NULL if not used
 )
 { 
-    return (GB_SelectOp_new (selectop, function, xtype, ttype, NULL)) ;
+    return (GxB_SelectOp_new2 (selectop, function, xtype, ttype, NULL, NULL)) ;
 }
 

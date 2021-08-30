@@ -34,6 +34,9 @@ GrB_Info GB_serialize_array
     GB_void *X,                         // input array of size len
     int64_t len,                        // size of X, in bytes
     int32_t method,                     // compression method requested
+    bool intel,                         // if true, use Intel IPPS
+    int32_t algo,                       // compression algorithm
+    int32_t level,                      // compression level
     GB_Context Context
 )
 {
@@ -65,7 +68,7 @@ GrB_Info GB_serialize_array
     (*nblocks_handle) = 0 ;
     (*method_used) = GxB_COMPRESSION_NONE ;
     if (X == NULL || len == 0)
-    {
+    { 
         // input array is empty
         return (GrB_SUCCESS) ;
     }
@@ -74,7 +77,7 @@ GrB_Info GB_serialize_array
     // check for no compression
     //--------------------------------------------------------------------------
 
-    if (method <= GxB_COMPRESSION_NONE || len < 16)
+    if (method <= GxB_COMPRESSION_NONE || len < 256)
     {
         // no compression, return result as a single block (plus the sentinel)
         Blocks = GB_MALLOC (2, GB_blocks, &Blocks_size) ;
@@ -160,7 +163,7 @@ GrB_Info GB_serialize_array
     }
 
     if (!ok)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
@@ -182,14 +185,24 @@ GrB_Info GB_serialize_array
         int srcSize = (int) (kend - kstart) ;               // size of source
         size_t dsize = Blocks [blockid].p_size ;            // size of dest
         int dstCapacity = GB_IMIN (dsize, INT32_MAX) ;
-        int s = LZ4_compress_default (src, dst, srcSize, dstCapacity) ;
+        int s ;
+        switch (algo)
+        {
+            default :
+            case GxB_COMPRESSION_LZ4 : 
+                s = LZ4_compress_default (src, dst, srcSize, dstCapacity) ;
+                break ;
+            case GxB_COMPRESSION_LZ4HC : 
+                s = LZ4_compress_HC (src, dst, srcSize, dstCapacity, level) ;
+                break ;
+        }
         ok = ok && (s > 0) ;
         // compressed block is now in dst [0:s-1], of size s
         Sblocks [blockid] = (int64_t) s ;
     }
 
     if (!ok)
-    {
+    { 
         // compression failure
         GB_FREE_ALL ;
         return (GrB_PANIC) ;

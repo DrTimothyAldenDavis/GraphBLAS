@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_UnaryOp_new: create a new unary operator
+// GxB_UnaryOp_new: create a new named unary operator
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -11,18 +11,16 @@
 // void f (void *z, const void *x), and then it must recast its input and
 // output arguments internally as needed.
 
-// This function is not directly user-callable.  Use GrB_UnaryOp_new instead.
-
 #include "GB.h"
-#include <ctype.h>
 
-GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
+GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
 (
     GrB_UnaryOp *unaryop,           // handle for the new unary operator
     GxB_unary_function function,    // pointer to the unary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x
-    const char *name                // name of the function
+    const char *unop_name,          // name of the user function
+    const char *unop_defn           // definition of the user function
 )
 {
 
@@ -30,7 +28,7 @@ GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_UnaryOp_new (unaryop, function, ztype, xtype)") ;
+    GB_WHERE1 ("GxB_UnaryOp_new (unaryop, function, ztype, xtype, name, defn)");
     GB_RETURN_IF_NULL (unaryop) ;
     (*unaryop) = NULL ;
     GB_RETURN_IF_NULL (function) ;
@@ -57,33 +55,10 @@ GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
     op->xtype = xtype ;
     op->ztype = ztype ;
     op->function = function ;
-    op->opcode = GB_USER_opcode ;     // user-defined operator
-    memset (op->name, 0, GxB_MAX_NAME_LEN) ;
-
-    //--------------------------------------------------------------------------
-    // find the name of the operator
-    //--------------------------------------------------------------------------
-
-    if (name != NULL)
-    {
-        // see if the typecast "(GxB_unary_function)" appears in the name
-        char *p = NULL ;
-        p = strstr ((char *) name, "GxB_unary_function") ;
-        if (p != NULL)
-        { 
-            // skip past the typecast, the left parenthesis, and any whitespace
-            p += 19 ;
-            while (isspace (*p)) p++ ;
-            if (*p == ')') p++ ;
-            while (isspace (*p)) p++ ;
-            strncpy (op->name, p, GxB_MAX_NAME_LEN-1) ;
-        }
-        else
-        { 
-            // copy the entire name as-is
-            strncpy (op->name, name, GxB_MAX_NAME_LEN-1) ;
-        }
-    }
+    op->opcode = GB_USER_opcode ;   // user-defined operator
+    // get the unary op name and defn
+    GB_op_name_and_defn (op->name, &(op->defn), unop_name, unop_defn,
+        "GxB_unary_function", 18) ;
 
     //--------------------------------------------------------------------------
     // return result
