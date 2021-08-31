@@ -37,7 +37,7 @@ void GB_op_name_and_defn
 
     memset (operator_name, 0, GxB_MAX_NAME_LEN) ;
     (*operator_defn) = NULL ;               // defn currently unused
-    if (operator_name != NULL)
+    if (input_name != NULL)
     {
         // copy the input_name into the working name
         char working [GxB_MAX_NAME_LEN] ;
