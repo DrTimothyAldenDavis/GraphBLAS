@@ -441,8 +441,8 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 //      GrB_init is called with GrB_BLOCKING mode, the sort will always be
 //      done, and this setting has no effect.
 //
-// GxB_COMPRESSION: compression method for GxB_Matrix_serialize.  The default
-//      is LZ4.
+// GxB_COMPRESSION: compression method for GxB_Matrix_serialize and
+//      GxB_Vector_serialize.  The default is LZ4.
 
 // The following are enumerated values in both the GrB_Desc_Field and the
 // GxB_Option_Field for global options.  They are defined with the same integer
@@ -678,7 +678,7 @@ GB_PUBLIC GrB_Type
 // GrB_Type_new is implemented both as a macro and a function.  Both are
 // user-callable.  The default is to use the macro, since this allows the name
 // of the type to be saved as a string, for subsequent error reporting by
-// GrB_error, and for G*B_Matrix_serialize.
+// GrB_error.
 
 #undef GrB_Type_new
 #undef GrM_Type_new
@@ -9417,23 +9417,127 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     void **blob_handle,             // the blob, allocated on output
     size_t *blob_size_handle,       // size of the blob
     // input:
-    const GrB_Matrix A,             // matrix to serialize
+    GrB_Matrix A,                   // matrix to serialize
     const GrB_Descriptor desc       // descriptor to select compression method
                                     // and to control # of threads used
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
+(
+    // output:
+    void **blob_handle,             // the blob, allocated on output
+    size_t *blob_size_handle,       // size of the blob
+    // input:
+    GrB_Vector u,                   // vector to serialize
+    const GrB_Descriptor desc       // descriptor to select compression method
+                                    // and to control # of threads used
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
+(
+    // output:
+    void *blob,                     // the blob, already allocated in input
+    // input/output:
+    size_t *blob_size_handle,       // size of the blob on input.  On output,
+                                    // the # of bytes used in the blob.
+    // input:
+    GrB_Matrix A                    // matrix to serialize
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_serialize       // serialize a GrB_Vector to a blob
+(
+    // output:
+    void *blob,                     // the blob, already allocated in input
+    // input/output:
+    size_t *blob_size_handle,       // size of the blob on input.  On output,
+                                    // the # of bytes used in the blob.
+    // input:
+    GrB_Vector u                    // vector to serialize
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
+(
+    // output:
+    size_t *blob_size_handle,       // upper bound on the required size of the
+                                    // blob on output.
+    // input:
+    GrB_Matrix A                    // matrix to serialize
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_serializeSize   // estimate the size of a blob
+(
+    // output:
+    size_t *blob_size_handle,       // upper bound on the required size of the
+                                    // blob on output.
+    // input:
+    GrB_Vector u                    // vector to serialize
 ) ;
 
 GB_PUBLIC
 GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 (
     // output:
-    GrB_Matrix *C,                  // output matrix created from the blob
+    GrB_Matrix *C,      // output matrix created from the blob
     // input:
-    const void *blob,               // the blob
-    size_t blob_size,               // size of the blob
-    GrB_Type user_type,             // type of the matrix.  Required if the
-                                    // blob has a user-defined type.  May be
-                                    // NULL if it has a built-in type.
-    const GrB_Descriptor desc
+    const void *blob,   // the blob
+    size_t blob_size,   // size of the blob
+    GrB_Type type,      // type of the matrix C.  Required if the blob holds a
+                        // matrix of user-defined type.  May be NULL if blob
+                        // holds a built-in type.  If not NULL and the blob
+                        // holds a matrix of a built-in type, then C is
+                        // typecasted to this requested type.
+    const GrB_Descriptor desc       // to control # of threads used
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
+(
+    // output:
+    GrB_Vector *w,      // output vector created from the blob
+    // input:
+    const void *blob,   // the blob
+    size_t blob_size,   // size of the blob
+    GrB_Type type,      // type of the vector w.  Required if the blob holds a
+                        // vector of user-defined type.  May be NULL if blob
+                        // holds a built-in type.  If not NULL and the blob
+                        // holds a vector of a built-in type, then w is
+                        // typecasted to this requested type.
+    const GrB_Descriptor desc       // to control # of threads used
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
+(
+    // output:
+    GrB_Matrix *C,      // output matrix created from the blob
+    // input:
+    const void *blob,   // the blob
+    size_t blob_size,   // size of the blob
+    GrB_Type type       // type of the matrix C.  Required if the blob holds a
+                        // matrix of user-defined type.  May be NULL if blob
+                        // holds a built-in type.  If not NULL and the blob
+                        // holds a matrix of a built-in type, then C is
+                        // typecasted to this requested type.
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_deserialize     // deserialize blob into a GrB_Vector
+(
+    // output:
+    GrB_Vector *w,      // output matrix created from the blob
+    // input:
+    const void *blob,   // the blob
+    size_t blob_size,   // size of the blob
+    GrB_Type type       // type of the matrix w.  Required if the blob holds a
+                        // matrix of user-defined type.  May be NULL if blob
+                        // holds a built-in type.  If not NULL and the blob
+                        // holds a matrix of a built-in type, then w is
+                        // typecasted to this requested type.
 ) ;
 
 // GxB_deserialize_type_name extracts the type_name of the GrB_Type of the

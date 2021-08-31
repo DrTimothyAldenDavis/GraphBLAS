@@ -55,7 +55,7 @@ GrB_Info GB_deserialize_from_blob
     bool intel ;
     int32_t algo, level ;
     GB_serialize_method (&intel, &algo, &level, method) ;
-    method = (intel ? GxB_COMPRESSION_INTEL : 0) + (algo) + (level) ;
+    // method = (intel ? GxB_COMPRESSION_INTEL : 0) + (algo) + (level) ;
 
     //--------------------------------------------------------------------------
     // allocate the output array
@@ -74,59 +74,70 @@ GrB_Info GB_deserialize_from_blob
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_IMIN (nthreads_max, nblocks) ;
 
     //--------------------------------------------------------------------------
     // decompress the blocks from the blob
     //--------------------------------------------------------------------------
 
     size_t s = (*s_handle) ;
-    int32_t blockid ;
     bool ok = true ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic) \
-        reduction(&&:ok)
-    for (blockid = 0 ; blockid < nblocks ; blockid++)
+
+    if (algo == GxB_COMPRESSION_NONE)
     {
-        // get the start and end of the compressed and uncompressed blocks
-        int64_t kstart, kend ;
-        GB_PARTITION (kstart, kend, X_len, blockid, nblocks) ;
-        int64_t s_start = (blockid == 0) ? 0 : Sblocks [blockid-1] ;
-        int64_t s_end   = Sblocks [blockid] ;
-        size_t s_size   = s_end - s_start ;
-        // ensure s_start, s_end, kstart, and kend are all valid,
-        // to avoid accessing arrays out of bounds, if input is corrupted.
-        if (kstart < 0 || kend < 0 || s_start < 0 || s_end < 0 ||
-            kstart >= kend || s_start >= s_end ||
-            s + s_start > blob_size || s + s_end > blob_size ||
-            kstart > X_len || kend > X_len)
+
+        //----------------------------------------------------------------------
+        // no compression; the array is held in a single block
+        //----------------------------------------------------------------------
+
+        if (nblocks != 1 || Sblocks [0] != X_len || s + X_len > blob_size)
         { 
             // blob is invalid
             ok = false ;
         }
         else
+        { 
+            GB_memcpy (X, blob + s, X_len, nthreads_max) ;
+        }
+
+    }
+    else if (algo == GxB_COMPRESSION_LZ4 || algo == GxB_COMPRESSION_LZ4HC)
+    {
+
+        //----------------------------------------------------------------------
+        // LZ4 / LZ4HC compression
+        //----------------------------------------------------------------------
+
+        int nthreads = GB_IMIN (nthreads_max, nblocks) ;
+        int32_t blockid ;
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic) \
+            reduction(&&:ok)
+        for (blockid = 0 ; blockid < nblocks ; blockid++)
         {
-            // uncompress the compressed block of size s_size
-            // from blob [s + s_start:s_end-1] into X [kstart:kend-1]
-            const char *src = (const char *) (blob + s + s_start) ;
-            char *dst = (char *) (X + kstart) ;
-            int src_size = (int) s_size ;
-            int dst_size = (int) (kend - kstart) ;
-            if (algo <= GxB_COMPRESSION_NONE)
-            {
-                // no compression
-                if (src_size != dst_size)
-                { 
-                    // blob is invalid
-                    ok = false ;
-                }
-                else
-                { 
-                    memcpy (dst, src, src_size) ;
-                }
-            }
-            else // algo == GxB_COMPRESSION_LZ4 or GxB_COMPRESSION_LZ4HC
+            // get the start and end of the compressed and uncompressed blocks
+            int64_t kstart, kend ;
+            GB_PARTITION (kstart, kend, X_len, blockid, nblocks) ;
+            int64_t s_start = (blockid == 0) ? 0 : Sblocks [blockid-1] ;
+            int64_t s_end   = Sblocks [blockid] ;
+            size_t  s_size  = s_end - s_start ;
+            size_t  d_size  = kend - kstart ;
+            // ensure s_start, s_end, kstart, and kend are all valid,
+            // to avoid accessing arrays out of bounds, if input is corrupted.
+            if (kstart < 0 || kend < 0 || s_start < 0 || s_end < 0 ||
+                kstart >= kend || s_start >= s_end || s_size > INT32_MAX ||
+                s + s_start > blob_size || s + s_end > blob_size ||
+                kstart > X_len || kend > X_len || d_size > INT32_MAX)
             { 
-                // LZ4 or LZ4HC compression
+                // blob is invalid
+                ok = false ;
+            }
+            else
+            {
+                // uncompress the compressed block of size s_size
+                // from blob [s + s_start:s_end-1] into X [kstart:kend-1]
+                const char *src = (const char *) (blob + s + s_start) ;
+                char *dst = (char *) (X + kstart) ;
+                int src_size = (int) s_size ;
+                int dst_size = (int) d_size ;
                 int u = LZ4_decompress_safe (src, dst, src_size, dst_size) ;
                 if (u != dst_size)
                 { 
@@ -135,6 +146,11 @@ GrB_Info GB_deserialize_from_blob
                 }
             }
         }
+    }
+    else
+    {
+        // unknown compression method
+        ok = false ;
     }
 
     if (!ok)

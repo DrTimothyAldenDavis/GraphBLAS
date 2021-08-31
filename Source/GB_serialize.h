@@ -58,7 +58,10 @@ GrB_Info GB_serialize_array
     size_t *Sblocks_size_handle,        // size of Sblocks
     int32_t *nblocks_handle,            // # of blocks
     int32_t *method_used,               // method used
+    size_t *compressed_size,            // size of compressed block, or upper
+                                        // bound if dryrun is true
     // input:
+    bool dryrun,                        // if true, just esimate the size
     GB_void *X,                         // input array of size len
     int64_t len,                        // size of X, in bytes
     int32_t method,                     // compression method requested

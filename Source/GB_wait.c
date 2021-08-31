@@ -110,6 +110,19 @@ GrB_Info GB_wait                // finish all pending computations
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     //--------------------------------------------------------------------------
+    // check if only A->nvec_nonempty is needed
+    //--------------------------------------------------------------------------
+
+    if (npending == 0 && nzombies == 0 && !A->jumbled)
+    {
+        if (A->nvec_nonempty < 0)
+        {
+            A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+        }
+        return (GrB_SUCCESS) ;
+    }
+
+    //--------------------------------------------------------------------------
     // ensure A is not shallow
     //--------------------------------------------------------------------------
 

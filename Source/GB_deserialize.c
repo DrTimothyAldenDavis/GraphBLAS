@@ -14,6 +14,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
+    GB_Matrix_free (&T) ;                   \
     GB_Matrix_free (&C) ;                   \
 }
 
@@ -36,7 +37,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     GrB_Info info ;
     ASSERT (blob != NULL && Chandle != NULL) ;
     (*Chandle) = NULL ;
-    GrB_Matrix C = NULL ;
+    GrB_Matrix C = NULL, T = NULL ;
 
     //--------------------------------------------------------------------------
     // read the content of the header (160 bytes)
@@ -106,6 +107,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     if (ccode == GB_UDT_code)
     {
         // ensure the user-defined type has the right name
+        ASSERT (ctype == user_type) ;
         if (strncmp (blob + s, ctype->name, GxB_MAX_NAME_LEN) != 0)
         { 
             // blob is invalid
@@ -129,10 +131,9 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     //--------------------------------------------------------------------------
 
     // allocate the matrix with info from the header
-    GB_OK (GB_new (Chandle, false, ctype, vlen, vdim, GB_Ap_null, is_csc,
+    GB_OK (GB_new (&C, false, ctype, vlen, vdim, GB_Ap_null, is_csc,
         sparsity, hyper_switch, nvec, Context)) ;
 
-    C = (*Chandle) ;
     C->nvec = nvec ;
     C->nvec_nonempty = nvec_nonempty ;
     C->nvals = nvals ;
@@ -192,13 +193,38 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // decompress Cx
     GB_OK (GB_deserialize_from_blob (&(C->x), &(C->x_size), Cx_len,
         blob, blob_size, Cx_Sblocks, Cx_nblocks, Cx_method, &s, Context)) ;
-
-    //--------------------------------------------------------------------------
-    // finalize matrix return result
-    //--------------------------------------------------------------------------
-
     C->magic = GB_MAGIC ;
-    ASSERT_MATRIX_OK (C, "C from deserialize", GB0) ;
+    ASSERT_MATRIX_OK (C, "C from deserialize (before typecast)", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // typecast if requested user_type differs from ctype
+    //--------------------------------------------------------------------------
+
+    if (ctype != user_type && user_type != NULL)
+    { 
+        printf ("cast the blob from %s to %s:\n",
+            C->type->name, user_type->name) ;
+        // T = empty matrix with the final user_type.  All content except the
+        // header of T itself will be overwritten by C.
+        ASSERT (ccode != GB_UDT_code) ;
+        GB_OK (GB_new (&T, false, user_type, 0, 0, GB_Ap_null, false,
+            GxB_AUTO_SPARSITY, GB_HYPER_SWITCH_DEFAULT, 0, Context)) ;
+        // transplant C into T, and typecast to user_type
+        GB_OK (GB_transplant (T, user_type, &C, Context)) ;
+        ASSERT (C == NULL) ;
+        (*Chandle) = T ;
+    }
+    else
+    { 
+        // return result as-is
+        (*Chandle) = C ;
+    }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    ASSERT_MATRIX_OK (*Chandle, "Final result from deserialize", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

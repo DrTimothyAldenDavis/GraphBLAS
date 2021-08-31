@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_deserialize: create a matrix from a serialized array of bytes
+// GrB_Vector_deserialize: create a vector from a serialized array of bytes
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,27 +7,26 @@
 
 //------------------------------------------------------------------------------
 
-// deserialize: create a GrB_Matrix from a blob of bytes
+// deserialize: create a GrB_Vector from a blob of bytes
 
-// Identical to GrB_Matrix_deserialize, except that this method has
-// a descriptor as the last parameter, to control the # of threads used.
+// Identical to GxB_Vector_deserialize, except that this method does not take
+// a descriptor as the last parameter.
 
 #include "GB.h"
 #include "GB_serialize.h"
 
-GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
+GrB_Info GrB_Vector_deserialize     // deserialize blob into a GrB_Vector
 (
     // output:
-    GrB_Matrix *C,      // output matrix created from the blob
+    GrB_Vector *w,      // output vector created from the blob
     // input:
     const void *blob,   // the blob
     size_t blob_size,   // size of the blob
-    GrB_Type type,      // type of the matrix C.  Required if the blob holds a
-                        // matrix of user-defined type.  May be NULL if blob
+    GrB_Type type       // type of the vector w.  Required if the blob holds a
+                        // vector of user-defined type.  May be NULL if blob
                         // holds a built-in type.  If not NULL and the blob
-                        // holds a matrix of a built-in type, then C is
+                        // holds a vector of a built-in type, then w is
                         // typecasted to this requested type.
-    const GrB_Descriptor desc       // to control # of threads used
 )
 { 
 
@@ -35,17 +34,17 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_deserialize (&blob, &blob_size, A, type, desc)") ;
-    GB_BURBLE_START ("GxB_Matrix_deserialize") ;
+    GB_WHERE1 ("GrB_Vector_deserialize (&blob, &blob_size, A, type, desc)") ;
+    GB_BURBLE_START ("GrB_Vector_deserialize") ;
     GB_RETURN_IF_NULL (blob) ;
-    GB_RETURN_IF_NULL (C) ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
+    GB_RETURN_IF_NULL (w) ;
 
     //--------------------------------------------------------------------------
-    // deserialize the blob into a matrix
+    // deserialize the blob into a vector
     //--------------------------------------------------------------------------
 
-    info = GB_deserialize (C, blob, blob_size, type, Context) ;
+    GrB_Info info = GB_deserialize ((GrB_Matrix *) w, blob, blob_size, type,
+        Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

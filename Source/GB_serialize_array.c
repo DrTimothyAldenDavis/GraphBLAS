@@ -30,7 +30,10 @@ GrB_Info GB_serialize_array
     size_t *Sblocks_size_handle,        // size of Sblocks
     int32_t *nblocks_handle,            // # of blocks
     int32_t *method_used,               // method used
+    size_t *compressed_size,            // size of compressed block, or upper
+                                        // bound if dryrun is true
     // input:
+    bool dryrun,                        // if true, just esimate the size
     GB_void *X,                         // input array of size len
     int64_t len,                        // size of X, in bytes
     int32_t method,                     // compression method requested
@@ -52,6 +55,7 @@ GrB_Info GB_serialize_array
     ASSERT (Sblocks_size_handle != NULL) ;
     ASSERT (nblocks_handle != NULL) ;
     ASSERT (method_used != NULL) ;
+    ASSERT (compressed_size != NULL) ;
     GB_blocks *Blocks = NULL ;
     size_t Blocks_size = 0, Sblocks_size = 0 ;
     int32_t nblocks = 0 ;
@@ -67,6 +71,7 @@ GrB_Info GB_serialize_array
     (*Sblocks_size_handle) = 0 ;
     (*nblocks_handle) = 0 ;
     (*method_used) = GxB_COMPRESSION_NONE ;
+    (*compressed_size) = 0 ;
     if (X == NULL || len == 0)
     { 
         // input array is empty
@@ -80,27 +85,32 @@ GrB_Info GB_serialize_array
     if (method <= GxB_COMPRESSION_NONE || len < 256)
     {
         // no compression, return result as a single block (plus the sentinel)
-        Blocks = GB_MALLOC (2, GB_blocks, &Blocks_size) ;
-        Sblocks = GB_MALLOC (2, int64_t, &Sblocks_size) ;
-        if (Blocks == NULL || Sblocks == NULL)
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (GrB_OUT_OF_MEMORY) ;
+        if (!dryrun)
+        {
+            Blocks = GB_MALLOC (2, GB_blocks, &Blocks_size) ;
+            Sblocks = GB_MALLOC (2, int64_t, &Sblocks_size) ;
+            if (Blocks == NULL || Sblocks == NULL)
+            { 
+                // out of memory
+                GB_FREE_ALL ;
+                return (GrB_OUT_OF_MEMORY) ;
+            }
+
+            Blocks [0].p = X ;          // first block is all of the array X
+            Blocks [0].p_size = 0 ;     // denotes that p is a shallow copy of X
+            Sblocks [0] = 0 ;           // start of first block
+
+            Blocks [1].p = NULL ;       // 2nd block is the final sentinel
+            Blocks [1].p_size = 0 ;
+            Sblocks [1] = len ;         // first block ends at len-1
+
+            (*Blocks_handle) = Blocks ;
+            (*Blocks_size_handle) = Blocks_size ;
+            (*Sblocks_handle) = Sblocks ;
+            (*Sblocks_size_handle) = Sblocks_size ;
         }
 
-        Blocks [0].p = X ;          // first block is all of the array X
-        Blocks [0].p_size = 0 ;     // denotes that p is a shallow copy of X
-        Sblocks [0] = 0 ;           // start of first block
-
-        Blocks [1].p = NULL ;       // 2nd block is the final sentinel
-        Blocks [1].p_size = 0 ;
-        Sblocks [1] = len ;         // first block ends at len-1
-
-        (*Blocks_handle) = Blocks ;
-        (*Blocks_size_handle) = Blocks_size ;
-        (*Sblocks_handle) = Sblocks ;
-        (*Sblocks_size_handle) = Sblocks_size ;
+        (*compressed_size) = len ;
         (*nblocks_handle) = 1 ;
         return (GrB_SUCCESS) ;
     }
@@ -131,15 +141,19 @@ GrB_Info GB_serialize_array
     // determine the final # of blocks
     nblocks = GB_ICEIL (len, blocksize) ;
     nthreads = GB_IMIN (nthreads, nblocks) ;
+    (*nblocks_handle) = nblocks ;
 
     // allocate the output Blocks: one per block plus the sentinel block
-    Blocks = GB_CALLOC (nblocks+1, GB_blocks, &Blocks_size) ;
-    Sblocks = GB_CALLOC (nblocks+1, int64_t, &Sblocks_size) ;
-    if (Blocks == NULL || Sblocks == NULL)
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
+    if (!dryrun)
+    {
+        Blocks = GB_CALLOC (nblocks+1, GB_blocks, &Blocks_size) ;
+        Sblocks = GB_CALLOC (nblocks+1, int64_t, &Sblocks_size) ;
+        if (Blocks == NULL || Sblocks == NULL)
+        { 
+            // out of memory
+            GB_FREE_ALL ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
     }
 
     // allocate the blocks, one at a time
@@ -156,10 +170,28 @@ GrB_Info GB_serialize_array
         size_t s = (size_t) LZ4_compressBound ((int) uncompressed) ;
         ASSERT (s < INT32_MAX) ;
         size_t p_size = 0 ;
-        GB_void *p = GB_MALLOC (s, GB_void, &p_size) ;
-        ok = (p != NULL) ;
-        Blocks [blockid].p = p ;
-        Blocks [blockid].p_size = p_size ;
+        if (dryrun)
+        {
+            // do not allocate the block; just sum up the upper bound sizes
+            (*compressed_size) += s ;
+        }
+        else
+        {
+            // allocate the block
+            GB_void *p = GB_MALLOC (s, GB_void, &p_size) ;
+            ok = (p != NULL) ;
+            Blocks [blockid].p = p ;
+            Blocks [blockid].p_size = p_size ;
+        }
+    }
+
+    if (dryrun)
+    {
+        // GrB_Matrix_serializesize: no more work to do.  (*compressed_size) is
+        // an upper bound of the blob_size required when the matrix is
+        // compressed, and (*nblocks_handle) is the number of blocks to be used.
+        // No space has been allocated.
+        return (GrB_SUCCESS) ;
     }
 
     if (!ok)
@@ -222,7 +254,7 @@ GrB_Info GB_serialize_array
     (*Blocks_size_handle) = Blocks_size ;
     (*Sblocks_handle) = Sblocks ;
     (*Sblocks_size_handle) = Sblocks_size ;
-    (*nblocks_handle) = nblocks ;
+    (*compressed_size) = Sblocks [nblocks] ;    // actual size of the blob
     return (GrB_SUCCESS) ;
 }
 

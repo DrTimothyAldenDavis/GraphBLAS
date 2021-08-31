@@ -32,13 +32,19 @@
 #define GB_FREE_ALL                         \
 {                                           \
     GB_FREE_WORK ;                          \
-    GB_FREE (&blob, blob_size) ;            \
+    if (!preallocated_blob)                 \
+    {                                       \
+        GB_FREE (&blob, blob_size) ;        \
+    }                                       \
 }
 
 GrB_Info GB_serialize               // serialize a matrix into a blob
 (
     // output:
     GB_void **blob_handle,          // serialized matrix, allocated on output
+                                    // for GxB_Matrix_serialize, or provided by
+                                    // GrB_Matrix_serialize.  NULL for
+                                    // GrB_Matrix_serialize_size.
     size_t *blob_size_handle,       // size of the blob
     // input:
     const GrB_Matrix A,             // matrix to serialize
@@ -52,27 +58,58 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (blob_handle != NULL && blob_size_handle != NULL) ;
+    ASSERT (blob_size_handle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for serialize", GB0) ;
-    (*blob_handle) = NULL ;
-    (*blob_size_handle) = 0 ;
+
+    //--------------------------------------------------------------------------
+    // determine what serialization to do
+    //--------------------------------------------------------------------------
 
     GB_void *blob = NULL ; size_t blob_size = 0 ;
+    size_t blob_size_used = 0 ;
+    bool dryrun = false ;
+    bool preallocated_blob = false ;
+    if (blob_handle == NULL)
+    { 
+        // for GrB_Matrix_serializeSize:  the blob is not provided on input,
+        // and not allocated.  Just compute blob_size_used, as an upper bound
+        // only.
+        dryrun = true ;
+    }
+    else if (*blob_handle != NULL)
+    {
+        // for GrB_Matrix_serialize:  the blob is already allocated by the user
+        // and provided on input.  Fill the blob, and return the blob_size_used
+        // as the # of bytes written to the blob.
+        preallocated_blob = true ;
+        blob = (*blob_handle) ;
+        blob_size = (*blob_size_handle) ;
+    }
+    else
+    {
+        // for GxB_Matrix_serialize:  the blob is not allocated yet. Allocate
+        // it and return it below, and return its exact size as blob_size_used.
+        blob = NULL ;
+        blob_size = 0 ;
+    }
+
+    (*blob_size_handle) = 0 ;
+
     GB_blocks *Ap_Blocks = NULL ; size_t Ap_Blocks_size = 0 ;
     GB_blocks *Ah_Blocks = NULL ; size_t Ah_Blocks_size = 0 ;
     GB_blocks *Ab_Blocks = NULL ; size_t Ab_Blocks_size = 0 ;
     GB_blocks *Ai_Blocks = NULL ; size_t Ai_Blocks_size = 0 ;
     GB_blocks *Ax_Blocks = NULL ; size_t Ax_Blocks_size = 0 ;
-    int64_t *Ap_Sblocks = NULL ; size_t Ap_Sblocks_size = 0 ;
-    int64_t *Ah_Sblocks = NULL ; size_t Ah_Sblocks_size = 0 ;
-    int64_t *Ab_Sblocks = NULL ; size_t Ab_Sblocks_size = 0 ;
-    int64_t *Ai_Sblocks = NULL ; size_t Ai_Sblocks_size = 0 ;
-    int64_t *Ax_Sblocks = NULL ; size_t Ax_Sblocks_size = 0 ;
-    int32_t Ap_nblocks = 0 ;
-    int32_t Ah_nblocks = 0 ;
-    int32_t Ab_nblocks = 0 ;
-    int32_t Ai_nblocks = 0 ;
-    int32_t Ax_nblocks = 0 ;
+    int64_t *Ap_Sblocks = NULL  ; size_t Ap_Sblocks_size = 0 ;
+    int64_t *Ah_Sblocks = NULL  ; size_t Ah_Sblocks_size = 0 ;
+    int64_t *Ab_Sblocks = NULL  ; size_t Ab_Sblocks_size = 0 ;
+    int64_t *Ai_Sblocks = NULL  ; size_t Ai_Sblocks_size = 0 ;
+    int64_t *Ax_Sblocks = NULL  ; size_t Ax_Sblocks_size = 0 ;
+    int32_t Ap_nblocks = 0      ; size_t Ap_compressed_size = 0 ;
+    int32_t Ah_nblocks = 0      ; size_t Ah_compressed_size = 0 ;
+    int32_t Ab_nblocks = 0      ; size_t Ab_compressed_size = 0 ;
+    int32_t Ai_nblocks = 0      ; size_t Ai_compressed_size = 0 ;
+    int32_t Ax_nblocks = 0      ; size_t Ax_compressed_size = 0 ;
 
     //--------------------------------------------------------------------------
     // ensure all pending work is finished
@@ -148,28 +185,33 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // compress each array (Ap, Ah, Ab, Ai, and Ax)
     //--------------------------------------------------------------------------
 
-    // TODO: if method is GxB_COMPRESSION_NONE: do not call GB_serialize_array.
-    // Instead, copy the matrix directly into the blob.
+    // For the dryrun case, this just computes A[phbix]_compressed_size as an
+    // upper bound on each array size when compressed, and A[phbix]_nblocks.
 
     int32_t Ap_method, Ah_method, Ab_method, Ai_method, Ax_method ;
     GB_OK (GB_serialize_array (&Ap_Blocks, &Ap_Blocks_size,
         &Ap_Sblocks, &Ap_Sblocks_size, &Ap_nblocks, &Ap_method,
+        &Ap_compressed_size, dryrun,
         (GB_void *) A->p, Ap_len, method, intel, algo, level, Context)) ;
     GB_OK (GB_serialize_array (&Ah_Blocks, &Ah_Blocks_size,
         &Ah_Sblocks, &Ah_Sblocks_size, &Ah_nblocks, &Ah_method,
+        &Ah_compressed_size, dryrun,
         (GB_void *) A->h, Ah_len, method, intel, algo, level, Context)) ;
     GB_OK (GB_serialize_array (&Ab_Blocks, &Ab_Blocks_size,
         &Ab_Sblocks, &Ab_Sblocks_size, &Ab_nblocks, &Ab_method,
+        &Ab_compressed_size, dryrun,
         (GB_void *) A->b, Ab_len, method, intel, algo, level, Context)) ;
     GB_OK (GB_serialize_array (&Ai_Blocks, &Ai_Blocks_size,
         &Ai_Sblocks, &Ai_Sblocks_size, &Ai_nblocks, &Ai_method,
+        &Ai_compressed_size, dryrun,
         (GB_void *) A->i, Ai_len, method, intel, algo, level, Context)) ;
     GB_OK (GB_serialize_array (&Ax_Blocks, &Ax_Blocks_size,
         &Ax_Sblocks, &Ax_Sblocks_size, &Ax_nblocks, &Ax_method,
+        &Ax_compressed_size, dryrun,
         (GB_void *) A->x, Ax_len, method, intel, algo, level, Context)) ;
 
     //--------------------------------------------------------------------------
-    // determine the size of the blob and allocate it
+    // determine the size of the blob
     //--------------------------------------------------------------------------
 
     size_t s =
@@ -185,19 +227,55 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         + ((typecode == GB_UDT_code) ? GxB_MAX_NAME_LEN : 0) ;
 
     // size of compressed arrays Ap, Ah, Ab, Ai, and Ax in the blob
-    if (Ap_nblocks > 0) s += Ap_Sblocks [Ap_nblocks] ;
-    if (Ah_nblocks > 0) s += Ah_Sblocks [Ah_nblocks] ;
-    if (Ab_nblocks > 0) s += Ab_Sblocks [Ab_nblocks] ;
-    if (Ai_nblocks > 0) s += Ai_Sblocks [Ai_nblocks] ;
-    if (Ax_nblocks > 0) s += Ax_Sblocks [Ax_nblocks] ;
+    s += Ap_compressed_size ;
+    s += Ah_compressed_size ;
+    s += Ab_compressed_size ;
+    s += Ai_compressed_size ;
+    s += Ax_compressed_size ;
 
-    // GB_MALLOC may decide to increase the blob from size s bytes to blob_size
-    blob = GB_MALLOC (s, GB_void, &blob_size) ;
-    if (blob == NULL)
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
+    //--------------------------------------------------------------------------
+    // return the upper bound estimate of the blob size, for dryrun
+    //--------------------------------------------------------------------------
+
+    if (dryrun)
+    {
+        // GrB_Matrix_serializeSize: this is an upper bound on the required
+        // size of the blob, not the actual size.
+        (*blob_size_handle) = s ;
+        return (GrB_SUCCESS) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // allocate the blob
+    //--------------------------------------------------------------------------
+
+    if (preallocated_blob)
+    {
+        // GrB_Matrix_serialize passes in a preallocated blob of size blob_size.
+        // Check if it is large enough for the actual blob, of size s.
+        if (blob_size < s)
+        {
+            // blob too small
+            // TODO this blob_size could be returned to the caller by
+            // GrB_Matrix_serialize.
+            GB_FREE_ALL ;
+            return (GrB_INVALID_VALUE) ;
+        }
+        // downsize the preallocated blob_size to be just large enough to hold
+        // the actual bytes required for the blob.
+        blob_size = s ;
+    }
+    else
+    {
+        // GxB_Matrix_serialize: GB_MALLOC may increase the blob from size s
+        // bytes to blob_size.
+        blob = GB_MALLOC (s, GB_void, &blob_size) ;
+        if (blob == NULL)
+        { 
+            // out of memory
+            GB_FREE_ALL ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -274,14 +352,19 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    // giving the blob to the user; remove it from the list of malloc'd blocks
-    #ifdef GB_MEMDUMP
-    printf ("removing blob %p size %ld from memtable\n", blob, blob_size) ;
-    #endif
-    GB_Global_memtable_remove (blob) ;
-    GB_FREE_WORK ;
-    (*blob_handle) = blob ;
+    if (!preallocated_blob)
+    {
+        // GxB_Matrix_serialize: giving the blob to the user; remove it from
+        // the list of malloc'd blocks
+        #ifdef GB_MEMDUMP
+        printf ("removing blob %p size %ld from memtable\n", blob, blob_size) ;
+        #endif
+        GB_Global_memtable_remove (blob) ;
+        (*blob_handle) = blob ;
+    }
+
     (*blob_size_handle) = blob_size ;
+    GB_FREE_WORK ;
     return (GrB_SUCCESS) ;
 }
 

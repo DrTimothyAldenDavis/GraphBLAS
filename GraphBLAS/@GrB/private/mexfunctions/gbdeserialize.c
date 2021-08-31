@@ -42,7 +42,6 @@ void mexFunction
     void *blob = mxGetData (pargin [0]) ;
     size_t blob_size = mxGetM (pargin [0]) ;
     GrB_Type ctype = (nargin > 1) ? gb_mxstring_to_type (pargin [1]) : NULL ;
-    GxB_print (ctype, 3) ;
 
     //--------------------------------------------------------------------------
     // deserialize the blob into a matrix

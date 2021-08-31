@@ -16,21 +16,13 @@ function blob = serialize (G, method, level)
 %            method is not specified.  Very fast with good compression.
 %            For large problems, lz4 can be faster than no compression,
 %            and it cuts the size of the blob by about 3x on average.
-%           
+%
 %   'none'   no compression.
 %
 %   'lz4hc'  LZ4HC, much slower than LZ4 but results in a more compact blob.
 %            The level can be 1 to 9 with 9 the default.  LZ4HC level 1
 %            provides excellent compression compared with LZ4, and higher
 %            levels of LZ4HC only slightly improve compression quality.
-%
-% Serializing/deserializing the first 141 GB of SuiteSparse Collection
-% on a 4-core Dell laptop (from the smallest matrix to the larger ones):
-%
-%   no compression  144.5 GB  time:   83 sec
-%   lz4              44.7 GB  time:   85 sec
-%   lz4hc, level 1   38.6 GB  time:  390 sec, ~5x slower than lz4
-%   lz4hc, level 9   37.1 GB  time: 1279 sec, ~15x slower than lz4
 %
 % Example:
 %   G = GrB (magic (5))

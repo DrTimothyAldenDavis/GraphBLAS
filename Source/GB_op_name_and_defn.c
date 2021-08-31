@@ -39,11 +39,11 @@ void GB_op_name_and_defn
     (*operator_defn) = NULL ;               // defn currently unused
     if (operator_name != NULL)
     {
-        // copy the operator_name into the working name
+        // copy the input_name into the working name
         char working [GxB_MAX_NAME_LEN] ;
         memset (working, 0, GxB_MAX_NAME_LEN) ;
-        strncpy (working, operator_name, GxB_MAX_NAME_LEN-1) ;
-        // see if the typecast appears in the operator_name
+        strncpy (working, input_name, GxB_MAX_NAME_LEN-1) ;
+        // see if the typecast appears in the input_name
         char *p = NULL ;
         p = strstr (working, typecast_name) ;
         if (p != NULL)
