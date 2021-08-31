@@ -25,7 +25,7 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_build_, T) /* build a matrix from tuples */\
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;  /* check now so C->type can be done */ \
     GB_RETURN_IF_NULL_OR_FAULTY (dup) ;                                       \
     GrB_Info info = GB_build (C, I, J, X, nvals, dup,                         \
-        xtype, true, Context) ;                                               \
+        xtype, true, false, Context) ;                                        \
     GB_BURBLE_END ;                                                           \
     return (info) ;                                                           \
 }

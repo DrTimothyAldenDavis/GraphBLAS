@@ -9312,9 +9312,48 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
     const GrB_Descriptor desc
 ) ;
 
-//------------------------------------------------------------------------------
+//==============================================================================
+// GrB import/export
+//==============================================================================
+
+// The GrB_*_import methods copy data from user-provided arrays into an opaque
+// GrB_Matrix or GrB_Vector, and GrB_*_export copies data out, from an opaque
+// GrB_Matrix or GrB_Vector into user-provided arrays.  Unlike the GxB import/
+// export methods, memory is not handed off between the user application and
+// GraphBLAS.
+
+// The GrB C API specification supports 5 formats:
+
+typedef enum
+{
+    GrB_CSR_FORMAT = 0,     // CSR format (equiv to GxB_SPARSE with GxB_BY_ROW)
+    GrB_CSC_FORMAT = 1,     // CSC format (equiv to GxB_SPARSE with GxB_BY_COL)
+    GrB_COO_FORMAT = 2,     // triplet format (like input to GrB*build)
+    GrB_DENSE_ROW_FORMAT = 3, // FullR format (GxB_FULL with GxB_BY_ROW)
+    GrB_DENSE_COL_FORMAT = 4  // FullC format (GxB_FULL with GxB_BY_ROW)
+}
+GrB_Format ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_import  // import a matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const void *Ax,         // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+
+//==============================================================================
 // serialize/deserialize
-//------------------------------------------------------------------------------
+//==============================================================================
 
 // GxB_Matrix_serialize copies the contents of a GrB_Matrix into a single array
 // of bytes (the "blob").  The contents of the blob are implementation

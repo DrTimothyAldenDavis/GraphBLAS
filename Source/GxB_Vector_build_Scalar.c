@@ -45,7 +45,7 @@ GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
     //--------------------------------------------------------------------------
 
     GrB_Info info = GB_build ((GrB_Matrix) w, I, NULL, scalar->x, nvals, NULL,
-        scalar->type, false, Context) ;
+        scalar->type, false, true, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

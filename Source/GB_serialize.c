@@ -255,11 +255,10 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         // Check if it is large enough for the actual blob, of size s.
         if (blob_size < s)
         {
-            // blob too small
-            // TODO this blob_size could be returned to the caller by
-            // GrB_Matrix_serialize.
+            // blob too small, blob_size must be >= s.  The required minimum
+            // size of the blob could be returned to the caller.
             GB_FREE_ALL ;
-            return (GrB_INVALID_VALUE) ;
+            return (GrB_INSUFFICIENT_SPACE) ;
         }
         // downsize the preallocated blob_size to be just large enough to hold
         // the actual bytes required for the blob.

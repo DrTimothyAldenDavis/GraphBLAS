@@ -19,13 +19,16 @@
 // The matrix T is iso on output.  For an iso build, duplicates are discarded
 // without the use of any dup operator.
 
+// For a non-iso build, dup may be NULL, which indicates that duplicates are
+// not expected.  If any duplicates do appear, an error is reported.
+
 // For all of these cases, the tuples must be checked for duplicates.  They
 // might be sorted on input, so this condition is checked and exploited if that
 // condition is found.  All of these conditions are checked in GB_builder.
 
 // GB_build constructs a matrix C from a list of indices and values.  Any
 // duplicate entries with identical indices are assembled using the binary dup
-// operator provided on input, or discarded for an iso build.  All three types
+// operator provided on input, or discarded if dup is NULL.  All three types
 // (x,y,z for z=dup(x,y)) must be identical.  The types of dup, X, and C must
 // all be compatible.
 
@@ -47,11 +50,8 @@
 // < k4, then the following operations will occur in order:
 
 //      T (i,j) = X (k1) ;
-
 //      T (i,j) = dup (T (i,j), X (k2)) ;
-
 //      T (i,j) = dup (T (i,j), X (k3)) ;
-
 //      T (i,j) = dup (T (i,j), X (k4)) ;
 
 // This is a well-defined order but the user should not depend upon it since
@@ -101,9 +101,10 @@ GrB_Info GB_build               // build matrix
     const GrB_Index *J,         // col indices of tuples (NULL for vector)
     const void *X,              // values, size 1 if iso
     const GrB_Index nvals,      // number of tuples
-    const GrB_BinaryOp dup,     // binary op to assemble duplicates
+    const GrB_BinaryOp dup,     // binary op to assemble duplicates (or NULL)
     const GrB_Type xtype,       // type of X array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector
+    const bool X_iso,           // if true the C is iso and X has size 1 entry
     GB_Context Context
 )
 {
@@ -169,29 +170,20 @@ GrB_Info GB_build               // build matrix
     // check the types
     //--------------------------------------------------------------------------
 
-    bool X_iso = GB_iso_build (dup) ;
-
-    if (X_iso)
-    {
-
-        //----------------------------------------------------------------------
-        // C and scalar must be compatible for iso build
-        //----------------------------------------------------------------------
-
-        if (!GB_Type_compatible (xtype, C->type))
-        { 
-            GB_ERROR (GrB_DOMAIN_MISMATCH,
-                "Scalar of type [%s] cannot be typecast to matrix of type"
-                " [%s]\n", xtype->name, C->type->name) ;
-        }
-
+    // C and X must be compatible
+    if (!GB_Type_compatible (xtype, C->type))
+    { 
+        GB_ERROR (GrB_DOMAIN_MISMATCH,
+            "Value(s) of type [%s] cannot be typecast to matrix of type"
+            " [%s]\n", xtype->name, C->type->name) ;
     }
-    else
-    {
 
-        //----------------------------------------------------------------------
-        // check the dup operator for a non-iso build
-        //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // check the dup operator
+    //--------------------------------------------------------------------------
+
+    if (dup != NULL)
+    {
 
         if (GB_OP_IS_POSITIONAL (dup))
         { 
@@ -211,14 +203,6 @@ GrB_Info GB_build               // build matrix
                 "operator for assembling duplicates must be identical.\n"
                 "operator is: [%s] = %s ([%s],[%s])", dup->ztype->name,
                 dup->name, dup->xtype->name, dup->ytype->name) ;
-        }
-
-        // C and X must be compatible
-        if (!GB_Type_compatible (xtype, C->type))
-        { 
-            GB_ERROR (GrB_DOMAIN_MISMATCH,
-                "Array of type [%s] cannot be typecast to matrix of type"
-                " [%s]\n", xtype->name, C->type->name) ;
         }
 
         // the type of C and dup must be compatible
@@ -256,7 +240,7 @@ GrB_Info GB_build               // build matrix
     GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = GB_clear_static_header (&T_header) ;
-    GrB_Type ttype = X_iso ? xtype : dup->ztype ;
+    GrB_Type ttype = (dup == NULL || X_iso) ? xtype : dup->ztype ;
 
     GB_OK (GB_builder (
         T,              // create T using a static header
@@ -279,10 +263,24 @@ GrB_Info GB_build               // build matrix
         (const GB_void *) X,                // values, size nvals or 1 if iso
         X_iso,          // true if X is iso
         nvals,          // number of tuples
-        dup,            // operator to assemble duplicates
+        dup,            // operator to assemble duplicates (may be NULL)
         xtype,          // type of the X array
         Context
     )) ;
+
+    //--------------------------------------------------------------------------
+    // return an error if any duplicates found when they were not expected
+    //--------------------------------------------------------------------------
+
+    if (!X_iso && (dup == NULL) && nvals != GB_nnz (T))
+    {
+        // T has been successfully built by ignoring the duplicate values, via
+        // the implicit SECOND dup operator.  If the # of entries in T does not
+        // match nvals, then duplicates have been detected.  In the v2.0 C API,
+        // this is an error condition.  I could instead return the matrix
+        GB_FREE_ALL ;
+        return (GrB_INVALID_VALUE) ;
+    }
 
     //--------------------------------------------------------------------------
     // determine if T is iso, for non-iso build

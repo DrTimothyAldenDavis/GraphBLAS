@@ -44,7 +44,7 @@ GrB_Info GxB_Matrix_build_Scalar
     //--------------------------------------------------------------------------
 
     GrB_Info info = GB_build (C, I, J, scalar->x, nvals, NULL,
-        scalar->type, true, Context) ;
+        scalar->type, true, true, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }
