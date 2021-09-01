@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <memory>
 #include <memory_resource>
+#include <unordered_map>
 #include "rmm_wrap.h"
 
 typedef rmm::mr::new_delete_resource host_mr;
@@ -28,3 +29,6 @@ typedef rmm::mr::pool_memory_resource<host_mr> host_pool_mr;
 typedef rmm::mr::pool_memory_resource<pinned_mr> host_pinned_pool_mr;
 typedef rmm::mr::pool_memory_resource<device_mr> device_pool_mr;
 typedef rmm::mr::pool_memory_resource<managed_mr> managed_pool_mr;
+
+
+typedef std::unordered_map< std::size_t, std::size_t> alloc_map;

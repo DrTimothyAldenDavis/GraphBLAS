@@ -29,6 +29,16 @@ inline auto make_managed() { return std::make_shared<rmm::mr::managed_memory_res
  //         return resource;
  // }
 
+//alloc_map is an unordered_map of allocation address to size of each allocation
+
+alloc_map*  get_current_alloc_map() 
+{ 
+    if (current_handle == NULL)
+       return alloc_map();
+    else
+       return current_handle->ptr_to_size_map.get();
+}
+
 inline auto make_and_set_device_pool(std::size_t initial_size, std::size_t maximum_size) 
 { 
 	auto resource = rmm::mr::make_owning_wrapper<rmm::mr::pool_memory_resource>
@@ -47,14 +57,15 @@ inline auto make_and_set_managed_pool(std::size_t initial_size, std::size_t maxi
 }
 
 
-
 struct RMM_Handle 
 {
     RMM_MODE mode;
     std::shared_ptr<rmm::mr::device_memory_resource>   resource; 
     std::shared_ptr<std::pmr::memory_resource>         host_resource;
-    // add a hash table
+    std::shared_ptr<alloc_map>                         ptr_to_size_map;
 };
+
+RMM_Handle *current_handle = NULL ;
 
 void rmm_create_handle( RMM_Handle **handle)
 { //place a new RMM pool at this handle in memory
@@ -95,6 +106,11 @@ void rmm_initialize(RMM_Handle *handle, RMM_MODE mode,  std::size_t init_pool_si
     {
         //TODO, handle other cases or an error here      
     }
+    // create size map to lookup size of each allocation 
+    handle->ptr_to_size_map = std::shared_ptr< alloc_map> ( alloc_map() );
+
+    current_handle = handle;
+
 }
 
 /*
@@ -160,7 +176,8 @@ void *rmm_realloc (void *p, std::size_t newsize)
         return (NULL) ;
     }
 
-    std::size_t oldsize = hash_lookup (p) ;
+    alloc_map *am = get_current_alloc_map();
+    std::size_t oldsize = am->at( (std::size_t)(p) ) ;
 
     if (oldsize == 0)
     {
@@ -232,7 +249,13 @@ void *rmm_allocate( std::size_t *size)
     }
 
     // insert p into the hashmap
-    hash_insert (p, *size) ;
+    alloc_map *am = get_current_alloc_map();
+    if (am == NULL)
+    {
+       std::cout<< "Uh oh, can't allocate before initializing RMM"<< std::endl;
+    }
+    else
+       am->emplace ( p, *size) ;
 }
 
 //------------------------------------------------------------------------------
@@ -262,7 +285,17 @@ void rmm_deallocate( void *p, std::size_t size)
     // check the size given.  If the input size is zero, then the
     // size is unknown (say rmm_free(p)).  In that case, just trust the
     // hashmap.  Otherwise, double-check to make sure the size is correct.
-    size_t actual_size = hash_lookup (p) ;
+    alloc_map *am = get_current_alloc_map();
+    size_t actual_size = 0; 
+    if ( am == NULL)
+    {
+       std::cout<< "Uh oh, can't deallocate before initializing RMM"<< std::endl;
+    }
+    else
+    {
+       actual_size = am->at( (std::size_t)(p) )  ;
+    }
+
     if (actual_size == 0)
     {
         // PANIC!  oops, p is not in the hashmap.  Ignore it.  TODO: could add
@@ -278,7 +311,7 @@ void rmm_deallocate( void *p, std::size_t size)
     }
 
     // remove p from the hashmap
-    hash_remove (p)
+    am->erase ( (std::size_t)(p) ) ;
 
     // deallocate the block of memory
     rmm::mr::device_memory_resource *mr = rmm::mr::get_current_device_resource();
