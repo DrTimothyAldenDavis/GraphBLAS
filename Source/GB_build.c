@@ -273,11 +273,13 @@ GrB_Info GB_build               // build matrix
     //--------------------------------------------------------------------------
 
     if (!X_iso && (dup == NULL) && nvals != GB_nnz (T))
-    {
+    { 
         // T has been successfully built by ignoring the duplicate values, via
         // the implicit SECOND dup operator.  If the # of entries in T does not
         // match nvals, then duplicates have been detected.  In the v2.0 C API,
-        // this is an error condition.  I could instead return the matrix
+        // this is an error condition.  I could instead return the matrix,
+        // and the user could compare nvals with GrB_Matrix_nvals(&nvals2,C),
+        // where nduplicates = nvals - nvals2.
         GB_FREE_ALL ;
         return (GrB_INVALID_VALUE) ;
     }

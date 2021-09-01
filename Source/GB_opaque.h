@@ -390,7 +390,7 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
 
 struct GB_Descriptor_opaque // content of GrB_Descriptor
 {
-    // first 4 items exactly match GrB_Matrix, GrB_Vector, GxB_Scalar structs:
+    // first 4 items exactly match GrB_Matrix, GrB_Vector, GrB_Scalar structs:
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
     char *logger ;          // error logger string
@@ -437,7 +437,7 @@ typedef struct GB_Pending_struct *GB_Pending ;
 // scalar, vector, and matrix types
 //------------------------------------------------------------------------------
 
-struct GB_Scalar_opaque     // content of GxB_Scalar: 1-by-1 standard CSC matrix
+struct GB_Scalar_opaque     // content of GrB_Scalar: 1-by-1 standard CSC matrix
 {
     #include "GB_matrix.h"
 } ;

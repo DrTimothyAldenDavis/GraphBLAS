@@ -128,10 +128,10 @@ GrB_Info GB_Vector_check    // check a GraphBLAS vector
     FILE *f                 // file for output
 ) ;
 
-GrB_Info GB_Scalar_check    // check a GraphBLAS GxB_Scalar
+GrB_Info GB_Scalar_check    // check a GraphBLAS GrB_Scalar
 (
-    const GxB_Scalar v,     // GraphBLAS GxB_Scalar to print and check
-    const char *name,       // name of the GxB_Scalar
+    const GrB_Scalar v,     // GraphBLAS GrB_Scalar to print and check
+    const char *name,       // name of the GrB_Scalar
     int pr,                 // print level
     FILE *f                 // file for output
 ) ;

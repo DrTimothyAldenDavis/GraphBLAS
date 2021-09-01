@@ -53,7 +53,7 @@ GrB_Info GrB_Semiring_error (const char **error, const GrB_Semiring semiring)
     return (GrB_SUCCESS) ;
 }
 
-GrB_Info GxB_Scalar_error (const char **error, const GxB_Scalar s)
+GrB_Info GrB_Scalar_error (const char **error, const GrB_Scalar s)
 { 
     GB_RETURN_IF_NULL (error) ;
     (*error) = empty ;
@@ -61,6 +61,12 @@ GrB_Info GxB_Scalar_error (const char **error, const GxB_Scalar s)
     if (s->logger == NULL) return (GrB_SUCCESS) ;
     (*error) = s->logger ;
     return (GrB_SUCCESS) ;
+}
+
+// historical; use GrB_Scalar_error instead.
+GrB_Info GxB_Scalar_error (const char **error, const GrB_Scalar s)
+{
+    return (GrB_Scalar_error (error, s)) ;
 }
 
 GrB_Info GrB_Vector_error (const char **error, const GrB_Vector v)

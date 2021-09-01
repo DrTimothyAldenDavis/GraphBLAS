@@ -21,7 +21,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
         const GrB_UnaryOp op1,          // unary operator to apply
         const GrB_BinaryOp op2,         // binary operator to apply
-        const GxB_Scalar scalar,        // scalar to bind to binary operator
+        const GrB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,             // first input:  matrix A
     bool A_transpose,               // A matrix descriptor
@@ -37,7 +37,7 @@ GrB_Info GB_apply_op                // apply a unary operator, Cx = op (A)
     const GB_iso_code C_code_iso,   // C non-iso, or code to compute C iso value
         const GrB_UnaryOp op1,          // unary operator to apply
         const GrB_BinaryOp op2,         // binary operator to apply
-        const GxB_Scalar scalar,        // scalar to bind to binary operator
+        const GrB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, binop(x,Ax) else binop(Ax,y)
     const GrB_Matrix A,             // input matrix
     GB_Context Context
@@ -50,7 +50,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     const bool C_is_csc,    // desired CSR/CSC format of C
         const GrB_UnaryOp op1,          // unary operator to apply
         const GrB_BinaryOp op2,         // binary operator to apply
-        const GxB_Scalar scalar,        // scalar to bind to binary operator
+        const GrB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,     // input matrix to typecast
     GB_Context Context

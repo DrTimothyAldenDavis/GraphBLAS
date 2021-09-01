@@ -37,7 +37,7 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 (
     // output:
     void **blob_handle,             // the blob, allocated on output
-    size_t *blob_size_handle,       // size of the blob
+    size_t *blob_size_handle,       // size of the blob on output
     // input:
     GrB_Vector u,                   // vector to serialize
     const GrB_Descriptor desc       // descriptor to select compression method

@@ -24,7 +24,7 @@ void GB_iso_unop            // Cx [0] = op1 (A), op2 (s,A) or op2 (A,s)
     GrB_UnaryOp op1,        // unary operator, if present
     GrB_BinaryOp op2,       // binary operator, if present
     GrB_Matrix A,           // input matrix
-    GxB_Scalar scalar       // input scalar (may be NULL)
+    GrB_Scalar scalar       // input scalar (may be NULL)
 )
 {
 

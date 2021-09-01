@@ -3780,9 +3780,13 @@ void mexFunction
     ERR (GB_Type_check (T, "T bad size", G1, ff)) ;
     T->size = sizeof (int) ;
 
-    char *e = GB_code_string (9999) ;
+    const char *e = GB_code_string (9999) ;
     printf ("unknown code: [%s]\n", e) ;
-    CHECK (strcmp (e, "unknown!") == 0) ;
+    CHECK (strcmp (e, "unknown type!") == 0) ;
+
+    e = GB_status_code (9999) ;
+    printf ("unknown info: [%s]\n", e) ;
+    CHECK (strcmp (e, "unknown GrB_Info value!") == 0) ;
 
     OK (GB_Type_check (T, "type ok", G1, ff)) ;
     printf ("\nAll GB_Type_check tests passed (errors expected)\n") ;

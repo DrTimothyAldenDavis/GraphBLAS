@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // GxB_Matrix_build_Scalar builds a matrix C whose values in its sparsity
-// pattern are all equal to a value given by a GxB_Scalar.  Unlike the
+// pattern are all equal to a value given by a GrB_Scalar.  Unlike the
 // GrB_Matrix_build_* methods, there is no binary dup operator.  Instead, any
 // duplicate indices are ignored.  The I and J arrays are of size nvals,
 // just like GrB_Matrix_build_*.
@@ -21,7 +21,7 @@ GrB_Info GxB_Matrix_build_Scalar
     GrB_Matrix C,                   // matrix to build
     const GrB_Index *I,             // array of row indices of tuples
     const GrB_Index *J,             // array of column indices of tuples
-    GxB_Scalar scalar,              // value for all tuples
+    GrB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 )
 { 

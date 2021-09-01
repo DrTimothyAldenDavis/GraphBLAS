@@ -13,7 +13,7 @@ GrB_Info GxB_Scalar_type_name      // return the name of the type of a scalar
 (
     char *type_name,        // name of the type (char array of size at least
                             // GxB_MAX_NAME_LEN, owned by the user application).
-    const GxB_Scalar s
+    const GrB_Scalar s
 )
 { 
 

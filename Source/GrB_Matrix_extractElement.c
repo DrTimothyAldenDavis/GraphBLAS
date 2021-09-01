@@ -90,3 +90,5 @@
 #define GB_XCODE GB_UDT_code
 #include "GB_Matrix_extractElement.c"
 
+
+// FIXME add Matrix_extractElement (GrB_Scalar s, A, i, j)

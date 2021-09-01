@@ -65,7 +65,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         // no operator is applied if both op1 and op2 are NULL
         const GrB_UnaryOp op1,          // unary operator to apply
         const GrB_BinaryOp op2,         // binary operator to apply
-        const GxB_Scalar scalar,        // scalar to bind to binary operator
+        const GrB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const int nworkspaces,      // # of workspaces to use (1, or nthreads)
     const int nthreads,         // # of threads to use

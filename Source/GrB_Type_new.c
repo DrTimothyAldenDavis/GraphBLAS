@@ -17,8 +17,8 @@
 // the linkable SuiteSparse:GraphBLAS library so that it is visible for linking
 // with applications in languages other than ANSI C.  The function version does
 // not allow the name of the ctype to be saved in the new GraphBLAS type,
-// however.  It is given a generic name, "user_type_%d" where "%d" is the
-// size of the type.
+// however.  It is given a generic name, "user_type_of_size_%d" where "%d" is
+// the size of the type.
 
 #include "GB.h"
 

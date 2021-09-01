@@ -43,3 +43,4 @@ GB_SET (GxB, GxB_FC32_t, FC32   , &)
 GB_SET (GxB, GxB_FC64_t, FC64   , &)
 GB_SET (GrB, void *    , UDT    ,  )
 
+// TODO: add GrB_Matrix_setElement_Scalar

@@ -28,7 +28,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
         const GrB_UnaryOp op1_in,       // unary operator to apply
         const GrB_BinaryOp op2_in,      // binary operator to apply
-        const GxB_Scalar scalar,        // scalar to bind to binary operator
+        const GrB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,             // first input:  matrix A
     bool A_transpose,               // A matrix descriptor

@@ -136,7 +136,7 @@ GrB_Info GrB_Matrix_reduce_BinaryOp
     GrB_Monoid monoid = GB_binop_to_monoid (op) ;
     if (monoid == NULL)
     { 
-        GB_ERROR (GrB_DOMAIN_MISMATCH, "Invalid binary operator:"
+        GB_ERROR (GrB_NOT_IMPLEMENTED, "Invalid binary operator:"
             " z=%s(x,y) has no equivalent monoid\n", op->name) ;
     }
 

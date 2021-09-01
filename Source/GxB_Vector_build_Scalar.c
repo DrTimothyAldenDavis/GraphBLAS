@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // GxB_Vector_build_Scalar builds a vector w whose values in its sparsity
-// pattern are all equal to a value given by a GxB_Scalar.  Unlike the
+// pattern are all equal to a value given by a GrB_Scalar.  Unlike the
 // GrB_Vector_build_* methods, there is no binary dup operator.  Instead, any
 // duplicate indices are ignored.  The I array is of size nvals, just like
 // GrB_Vector_build_*.
@@ -20,7 +20,7 @@ GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
 (
     GrB_Vector w,                   // vector to build
     const GrB_Index *I,             // array of row indices of tuples
-    GxB_Scalar scalar,              // value for all tuples
+    GrB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 )
 { 

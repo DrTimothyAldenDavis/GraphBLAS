@@ -39,7 +39,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
     const GB_iso_code C_code_iso,   // C non-iso, or code to compute C iso value
         const GrB_UnaryOp op1,          // unary operator to apply
         const GrB_BinaryOp op2,         // binary operator to apply
-        const GxB_Scalar scalar,        // scalar to bind to binary operator
+        const GrB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, C=op2(s,A) else C=op2(A,s)
     const GrB_Matrix A,             // input matrix
     GB_Context Context

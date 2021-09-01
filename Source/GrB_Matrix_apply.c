@@ -72,7 +72,7 @@ static inline GrB_Info GB_1st       // C<M>=accum(C,op(x,A))
     const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp op,          // operator to apply to the entries
-    const GxB_Scalar x,             // first input:  scalar x
+    const GrB_Scalar x,             // first input:  scalar x
     const GrB_Matrix A,             // second input: matrix A
     const GrB_Descriptor desc,      // descriptor for C, M, and A
     GB_Context Context
@@ -126,7 +126,7 @@ static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp op,          // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const GxB_Scalar y,             // second input: scalar y
+    const GrB_Scalar y,             // second input: scalar y
     const GrB_Descriptor desc,      // descriptor for C, M, and A
     GB_Context Context
 )
@@ -178,7 +178,7 @@ GrB_Info GxB_Matrix_apply_BinaryOp1st           // C<M>=accum(C,op(x,A))
     const GrB_Matrix M,             // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp op,          // operator to apply to the entries
-    const GxB_Scalar x,             // first input:  scalar x
+    const GrB_Scalar x,             // first input:  scalar x
     const GrB_Matrix A,             // second input: matrix A
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
@@ -200,7 +200,7 @@ GrB_Info GxB_Matrix_apply_BinaryOp2nd           // C<M>=accum(C,op(A,y))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp op,          // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const GxB_Scalar y,             // second input: scalar y
+    const GrB_Scalar y,             // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 

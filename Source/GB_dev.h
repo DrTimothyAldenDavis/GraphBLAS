@@ -62,7 +62,7 @@
 //
 //      to compute these for just a vector x, use y as all-zero iso full
 //
-//      GxB_vtxv : inner product of 2 vectors, result is a GxB_Scalar
+//      GxB_vtxv : inner product of 2 vectors, result is a GrB_Scalar
 //      GxB_vxvt : outer product of 2 vectors, result is a GrB_Matrix
 
 // FUTURE: do O(1)-time typecasting for iso matrices, if their types don't match

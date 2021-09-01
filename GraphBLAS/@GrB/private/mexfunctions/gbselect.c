@@ -349,7 +349,7 @@ void mexFunction
     // compute C<M> += select (A, b2)
     //--------------------------------------------------------------------------
 
-    OK1 (C, GxB_Matrix_select (C, M, accum, op, A, (GxB_Scalar) b2, desc)) ;
+    OK1 (C, GxB_Matrix_select (C, M, accum, op, A, (GrB_Scalar) b2, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies

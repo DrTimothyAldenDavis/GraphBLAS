@@ -35,7 +35,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     const bool C_is_csc,    // desired CSR/CSC format of C
         const GrB_UnaryOp op1,          // unary operator to apply
         const GrB_BinaryOp op2,         // binary operator to apply
-        const GxB_Scalar scalar,        // scalar to bind to binary operator
+        const GrB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,     // input matrix to typecast
     GB_Context Context

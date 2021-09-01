@@ -212,51 +212,51 @@ void mexFunction
     if (A->iso)
     {
         // build S as an iso matrix
-        GxB_Scalar s = NULL ;
-        OK (GxB_Scalar_new (&s, atype)) ;
+        GrB_Scalar s = NULL ;
+        OK (GrB_Scalar_new (&s, atype)) ;
         if (atype == GrB_BOOL)
         { 
-            OK1 (s, GxB_Scalar_setElement_BOOL (s, (* ((bool *) Ax)))) ;
+            OK1 (s, GrB_Scalar_setElement_BOOL (s, (* ((bool *) Ax)))) ;
         }
         else if (atype == GrB_INT8)
         { 
-            OK1 (s, GxB_Scalar_setElement_INT8 (s, (* ((int8_t *) Ax)))) ;
+            OK1 (s, GrB_Scalar_setElement_INT8 (s, (* ((int8_t *) Ax)))) ;
         }
         else if (atype == GrB_INT16)
         { 
-            OK1 (s, GxB_Scalar_setElement_INT16 (s, (* ((int16_t *) Ax)))) ;
+            OK1 (s, GrB_Scalar_setElement_INT16 (s, (* ((int16_t *) Ax)))) ;
         }
         else if (atype == GrB_INT32)
         { 
-            OK1 (s, GxB_Scalar_setElement_INT32 (s, (* ((int32_t *) Ax)))) ;
+            OK1 (s, GrB_Scalar_setElement_INT32 (s, (* ((int32_t *) Ax)))) ;
         }
         else if (atype == GrB_INT64)
         { 
-            OK1 (s, GxB_Scalar_setElement_INT64 (s, (* ((int64_t *) Ax)))) ;
+            OK1 (s, GrB_Scalar_setElement_INT64 (s, (* ((int64_t *) Ax)))) ;
         }
         else if (atype == GrB_UINT8)
         { 
-            OK1 (s, GxB_Scalar_setElement_UINT8 (s, (* ((uint8_t *) Ax)))) ;
+            OK1 (s, GrB_Scalar_setElement_UINT8 (s, (* ((uint8_t *) Ax)))) ;
         }
         else if (atype == GrB_UINT16)
         { 
-            OK1 (s, GxB_Scalar_setElement_UINT16 (s, (* ((uint16_t *) Ax)))) ;
+            OK1 (s, GrB_Scalar_setElement_UINT16 (s, (* ((uint16_t *) Ax)))) ;
         }
         else if (atype == GrB_UINT32)
         { 
-            OK1 (s, GxB_Scalar_setElement_UINT32 (s, (* ((uint32_t *) Ax)))) ;
+            OK1 (s, GrB_Scalar_setElement_UINT32 (s, (* ((uint32_t *) Ax)))) ;
         }
         else if (atype == GrB_UINT64)
         { 
-            OK1 (s, GxB_Scalar_setElement_UINT64 (s, (* ((uint64_t *) Ax)))) ;
+            OK1 (s, GrB_Scalar_setElement_UINT64 (s, (* ((uint64_t *) Ax)))) ;
         }
         else if (atype == GrB_FP32)
         { 
-            OK1 (s, GxB_Scalar_setElement_FP32 (s, (* ((float *) Ax)))) ;
+            OK1 (s, GrB_Scalar_setElement_FP32 (s, (* ((float *) Ax)))) ;
         }
         else if (atype == GrB_FP64)
         { 
-            OK1 (s, GxB_Scalar_setElement_FP64 (s, (* ((double *) Ax)))) ;
+            OK1 (s, GrB_Scalar_setElement_FP64 (s, (* ((double *) Ax)))) ;
         }
         else if (atype == GxB_FC32)
         { 
@@ -271,7 +271,7 @@ void mexFunction
             ERROR ("unsupported type") ;
         }
         OK1 (S, GxB_Matrix_build_Scalar (S, Si, Sj, s, anz)) ;
-        OK (GxB_Scalar_free (&s)) ;
+        OK (GrB_Scalar_free (&s)) ;
     }
     else if (atype == GrB_BOOL)
     { 

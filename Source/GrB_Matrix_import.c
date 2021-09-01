@@ -26,7 +26,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
     GrB_Index ncols,        // number of columns of the matrix
     const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
     const GrB_Index *Ai,    // row indices for CSR, CSC
-    const void *Ax,         // values
+    const void *Ax,         // values (must match the GrB_Type type parameter)
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)

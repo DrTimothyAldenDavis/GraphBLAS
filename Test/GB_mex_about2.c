@@ -330,7 +330,7 @@ void mexFunction
     OK (GxB_Vector_Option_get_(victor, GxB_BITMAP_SWITCH, &bswitch)) ;
     printf ("vector bitmap switch: %g\n\n", bswitch) ;
 
-    expected = GrB_DOMAIN_MISMATCH ;
+    expected = GrB_NOT_IMPLEMENTED ;
     ERR (GrB_Matrix_reduce_BinaryOp (victor, NULL, NULL, GxB_FIRSTI_INT32,
         A, NULL)) ;
     OK (GrB_Matrix_error (&message, victor)) ;

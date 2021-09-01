@@ -103,19 +103,19 @@ void mexFunction
     OK (GrB_Matrix_nrows (&bnrows, B)) ;
     OK (GrB_Matrix_ncols (&bncols, B)) ;
 
-    GxB_Scalar scalar = NULL, scalar0 = NULL ;
+    GrB_Scalar scalar = NULL, scalar0 = NULL ;
     bool binop_bind1st ;
     if (anrows == 1 && ancols == 1)
     {
         // A is the scalar and B is the matrix
         binop_bind1st = true ;
-        scalar = (GxB_Scalar) A ;   // NOTE: this is not allowed by the spec
+        scalar = (GrB_Scalar) A ;   // NOTE: this is not allowed by the spec
     }
     else if (bnrows == 1 && bncols == 1)
     {
         // A is the matrix and B is the scalar
         binop_bind1st = false ;
-        scalar = (GxB_Scalar) B ;   // NOTE: this is not allowed by the spec
+        scalar = (GrB_Scalar) B ;   // NOTE: this is not allowed by the spec
     }
     else
     {
@@ -127,14 +127,14 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Index nvals ;
-    OK (GxB_Scalar_nvals (&nvals, scalar)) ;
+    OK (GrB_Scalar_nvals (&nvals, scalar)) ;
     if (nvals == 0)
     {
         // GxB_apply requires at least one entry.  Create a new scalar zero.
-        OK (GxB_Scalar_dup (&scalar0, scalar)) ;
+        OK (GrB_Scalar_dup (&scalar0, scalar)) ;
         // the scalar need not be int32; this will typecast as needed
-        OK (GxB_Scalar_setElement_INT32 (scalar0, 0)) ;
-        OK (GxB_Scalar_wait (&scalar0)) ;
+        OK (GrB_Scalar_setElement_INT32 (scalar0, 0)) ;
+        OK (GrB_Scalar_wait (&scalar0)) ;
         scalar = scalar0 ;
     }
 

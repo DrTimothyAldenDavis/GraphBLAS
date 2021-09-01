@@ -12,7 +12,7 @@
 // the type.  Both are provided as null-terminated strings.
 
 // When the name of the user type is known, it can be returned to the user
-// application when querying the type of a GrB_Matrix, GrB_Vector, GxB_Scalar,
+// application when querying the type of a GrB_Matrix, GrB_Vector, GrB_Scalar,
 // or a serialized blob.
 
 // If GrB_Type_new is used in SuiteSparse:GraphBLAS in its macro form, as

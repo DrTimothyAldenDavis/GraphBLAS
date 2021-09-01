@@ -258,9 +258,9 @@ void mexFunction
     if (iso_build)
     {
         // build an iso matrix, with no dup operator needed
-        GxB_Scalar x_scalar = (GxB_Scalar) gb_get_shallow (Xm) ;
+        GrB_Scalar x_scalar = (GrB_Scalar) gb_get_shallow (Xm) ;
         OK1 (A, GxB_Matrix_build_Scalar (A, I, J, x_scalar, nvals)) ;
-        OK (GxB_Scalar_free (&x_scalar)) ;
+        OK (GrB_Scalar_free (&x_scalar)) ;
     }
     else if (xtype == GrB_BOOL)
     { 

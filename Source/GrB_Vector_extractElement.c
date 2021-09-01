@@ -89,3 +89,4 @@
 #define GB_XCODE GB_UDT_code
 #include "GB_Vector_extractElement.c"
 
+// FIXME add Vector_extractElement (GrB_Scalar s, v, i)

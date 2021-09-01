@@ -68,7 +68,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // no operator is applied if both op1 and op2 are NULL
         const GrB_UnaryOp op1_in,       // unary operator to apply
         const GrB_BinaryOp op2_in,      // binary operator to apply
-        const GxB_Scalar scalar,        // scalar to bind to binary operator
+        const GrB_Scalar scalar,        // scalar to bind to binary operator
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     GB_Context Context
 )

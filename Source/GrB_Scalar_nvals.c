@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Scalar_nvals: number of entries in a sparse GxB_Scalar
+// GrB_Scalar_nvals: number of entries in a sparse GrB_Scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -9,10 +9,10 @@
 
 #include "GB.h"
 
-GrB_Info GxB_Scalar_nvals   // get the number of entries in a GxB_Scalar
+GrB_Info GrB_Scalar_nvals   // get the number of entries in a GrB_Scalar
 (
     GrB_Index *nvals,       // number of entries (1 or 0)
-    const GxB_Scalar s      // GxB_Scalar to query
+    const GrB_Scalar s      // GrB_Scalar to query
 )
 { 
 
@@ -20,7 +20,7 @@ GrB_Info GxB_Scalar_nvals   // get the number of entries in a GxB_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Scalar_nvals (&nvals, s)") ;
+    GB_WHERE1 ("GrB_Scalar_nvals (&nvals, s)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (s) ;
     ASSERT (GB_SCALAR_OK (s)) ;
 
@@ -29,5 +29,18 @@ GrB_Info GxB_Scalar_nvals   // get the number of entries in a GxB_Scalar
     //--------------------------------------------------------------------------
 
     return (GB_nvals (nvals, (GrB_Matrix) s, Context)) ;
+}
+
+//------------------------------------------------------------------------------
+// GxB_Scalar_nvals: number of entries in a sparse GrB_Scalar (historical)
+//------------------------------------------------------------------------------
+
+GrB_Info GxB_Scalar_nvals   // get the number of entries in a GrB_Scalar
+(
+    GrB_Index *nvals,       // number of entries (1 or 0)
+    const GrB_Scalar s      // GrB_Scalar to query
+)
+{ 
+    return (GrB_Scalar_nvals (nvals, s)) ;
 }
 

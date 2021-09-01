@@ -47,7 +47,7 @@ GrB_Info GB_selector
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
     int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
-    const GxB_Scalar Thunk,     // optional input for select operator
+    const GrB_Scalar Thunk,     // optional input for select operator
     GB_Context Context
 )
 {
@@ -147,7 +147,7 @@ GrB_Info GB_selector
 
         // construct a scalar containing the iso scalar
         struct GB_Scalar_opaque S_header ;
-        GxB_Scalar S = GB_Scalar_wrap (&S_header, A->type, A->x) ;
+        GrB_Scalar S = GB_Scalar_wrap (&S_header, A->type, A->x) ;
         S->iso = false ;    // but ensure S is not iso
         ASSERT_SCALAR_OK (S, "iso scalar wrap", GB0) ;
 

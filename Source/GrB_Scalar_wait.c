@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Scalar_wait: wait for a scalar to complete
+// GrB_Scalar_wait: wait for a scalar to complete
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -13,9 +13,9 @@
 
 #define GB_FREE_ALL ;
 
-GrB_Info GxB_Scalar_wait    // finish all work on a scalar
+GrB_Info GrB_Scalar_wait    // finish all work on a scalar
 (
-    GxB_Scalar *s
+    GrB_Scalar *s
 )
 {
 
@@ -24,7 +24,7 @@ GrB_Info GxB_Scalar_wait    // finish all work on a scalar
     //--------------------------------------------------------------------------
 
     #pragma omp flush
-    GB_WHERE ((*s), "GxB_Scalar_wait (&s)") ;
+    GB_WHERE ((*s), "GrB_Scalar_wait (&s)") ;
     GB_RETURN_IF_NULL (s) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*s) ;
 
@@ -35,7 +35,7 @@ GrB_Info GxB_Scalar_wait    // finish all work on a scalar
     if (GB_ANY_PENDING_WORK (*s))
     { 
         GrB_Info info ;
-        GB_BURBLE_START ("GxB_Scalar_wait") ;
+        GB_BURBLE_START ("GrB_Scalar_wait") ;
         GB_OK (GB_wait ((GrB_Matrix) (*s), "scalar", Context)) ;
         GB_BURBLE_END ;
     }
@@ -48,3 +48,14 @@ GrB_Info GxB_Scalar_wait    // finish all work on a scalar
     return (GrB_SUCCESS) ;
 }
 
+//------------------------------------------------------------------------------
+// GxB_Scalar_wait: wait for a scalar to complete (historical)
+//------------------------------------------------------------------------------
+
+GrB_Info GxB_Scalar_wait    // finish all work on a scalar
+(
+    GrB_Scalar *s
+)
+{
+    return (GrB_Scalar_wait (s)) ;
+}
