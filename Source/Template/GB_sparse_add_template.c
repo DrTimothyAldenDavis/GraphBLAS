@@ -52,14 +52,6 @@
 
 {
 
-    #ifdef GB_DEBUG
-    if (M == NULL || M_is_bitmap || M_is_full)
-    {
-        ASSERT (A_is_sparse || A_is_hyper) ;
-        ASSERT (B_is_sparse || B_is_hyper) ;
-    }
-    #endif
-
     //--------------------------------------------------------------------------
     // phase1: count entries in each C(:,j)
     // phase2: compute C

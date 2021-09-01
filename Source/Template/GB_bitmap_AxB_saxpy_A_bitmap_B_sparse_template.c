@@ -32,7 +32,9 @@
     // Each panel of G is GB_PANEL_SIZE-by-avdim, held by column.
     int64_t apanel_size = load_apanel ? (GB_PANEL_SIZE * avdim) : 0 ;
     int64_t afpanel_size = GB_A_IS_BITMAP  ? (apanel_size) : 0 ;
-    int64_t axpanel_size = A_is_pattern ? 0 : (apanel_size * GB_ASIZE) ;
+    // if A is iso or pattern-only, its values are not loaded into the panel
+    bool load_axpanel = load_apanel && (!(A_iso || A_is_pattern)) ;
+    int64_t axpanel_size = load_axpanel ? 0 : (apanel_size * GB_ASIZE) ;
 
     // each panel of H is GB_PANEL_SIZE-by-bnvec, held by column; note that
     // H has bnvec vectors, not bvdim.  The C bitmap has bvdim vectors,
@@ -76,9 +78,7 @@
             // the identity value can be assigned via memset
             GB_memset (Wcx, GB_IDENTITY_BYTE, wcxsize, nthreads_max) ;
         #else
-            // an explicit loop is required to set Hx to identity
-            // TODO: should each task initialize its own Hf and Hx,
-            // and use a static schedule here and for H=G*B?
+            // an explicit loop is required to set Hx to identity.
             GB_CTYPE *restrict Hx = (GB_CTYPE *) Wcx ;
             int64_t pH ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -109,7 +109,7 @@
         // load the metapanel: G = A (iouter:iouter+imeta-1,:)
         //----------------------------------------------------------------------
 
-        if ((GB_A_IS_BITMAP || !A_is_pattern) && load_apanel)
+        if ((GB_A_IS_BITMAP || load_axpanel) && load_apanel)
         {
 
             // Loading the panel into G keeps its storage order.  A is not
@@ -138,15 +138,16 @@
                 GB_PARTITION (kstart, kend, avdim, b_tid, nbslice) ;
                 int8_t   *restrict Gb = Wf  + (a_tid * afpanel_size) ;
                 #if ( !GB_IS_ANY_PAIR_SEMIRING )
-                GB_ATYPE *restrict Gx = (GB_ATYPE *)
-                    (Wax + (a_tid * axpanel_size)) ;
+                GB_ATYPE *restrict Gx = NULL ;
+                if (load_axpanel)
+                { 
+                    Gx = (GB_ATYPE *) (Wax + (a_tid * axpanel_size)) ;
+                }
                 #endif
 
                 //--------------------------------------------------------------
                 // load A for this panel
                 //--------------------------------------------------------------
-
-// TODO::: if A iso, only load a single entry into Gx, and use Gx as iso
 
                 #if ( GB_A_IS_BITMAP )
                 {
@@ -155,7 +156,7 @@
                     // A is bitmap
                     //----------------------------------------------------------
 
-                    if (!A_is_pattern)
+                    if (load_axpanel)
                     {
                         // load Ab and Ax into Gb and Gx
                         for (int64_t k = kstart ; k < kend ; k++)
@@ -207,7 +208,7 @@
                     //----------------------------------------------------------
 
                     #if ( !GB_IS_ANY_PAIR_SEMIRING )
-                    if (!A_is_pattern)
+                    if (load_axpanel)
                     {
                         for (int64_t k = kstart ; k < kend ; k++)
                         {
@@ -262,14 +263,14 @@
 
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
             const GB_ATYPE *restrict Gx ;
-            if (load_apanel)
+            if (load_axpanel)
             { 
-                // A has been loaded into the G panel
+                // values of A have been loaded into the G panel
                 Gx = (GB_ATYPE *) (Wax + (a_tid * axpanel_size)) ;
             }
             else
             { 
-                // use A in-place
+                // use values of A in-place, or A is iso or pattern-only
                 Gx = (GB_ATYPE *) Ax ;
             }
             GB_CTYPE *restrict Hx = (GB_CTYPE *)
@@ -316,7 +317,7 @@
                 #else
                     // t = G(ii,k) * B(k,j)
                     #define GB_MULT_G_iik_B_kj(ii)                          \
-                        GB_GETA (giik, Gx, pG + ii, false) ;                \
+                        GB_GETA (giik, Gx, pG + ii, A_iso) ;                \
                         GB_CIJ_DECLARE (t) ;                                \
                         GB_MULT (t, giik, bkj, istart + ii, k, j)
                 #endif
@@ -344,11 +345,11 @@
                             #if GB_A_IS_BITMAP
                                 GB_BITMAP_MULTADD (
                                     Hf [pH+ii], Hx [pH+ii],
-                                    Gb [pG+ii], Gx [pG+ii], bkj) ;
+                                    Gb [pG+ii], Gx [A_iso ? 0 : (pG+ii)], bkj) ;
                             #else
                                 GB_BITMAP_MULTADD (
                                     Hf [pH+ii], Hx [pH+ii],
-                                    1,          Gx [pG+ii], bkj) ;
+                                    1,          Gx [A_iso ? 0 : (pG+ii)], bkj) ;
                             #endif
                         }
                         #else

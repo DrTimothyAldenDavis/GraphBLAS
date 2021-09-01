@@ -1202,7 +1202,7 @@ GrB_Info GB_assign_prep
 
     if (C_iso_out)
     {
-        GBURBLE ("(iso assign) ") ;
+        GBURBLE ("(C iso assign) ") ;
     }
 
     //--------------------------------------------------------------------------

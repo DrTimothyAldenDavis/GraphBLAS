@@ -15,7 +15,6 @@ Vector_setElement (v, GrB_Scalar s, i)
 Matrix_setElement (A, GrB_Scalar s, i, j)
     if nvals(s) is zero: it becomes a deletion of that entry in v or A,
     like removeElement
-
 Vector_extractElement (GrB_Scalar s, v, i)
 Matrix_extractElement (GrB_Scalar s, A, i, j)
 

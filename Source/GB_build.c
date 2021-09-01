@@ -272,7 +272,8 @@ GrB_Info GB_build               // build matrix
     // return an error if any duplicates found when they were not expected
     //--------------------------------------------------------------------------
 
-    if (!X_iso && (dup == NULL) && nvals != GB_nnz (T))
+    int64_t tnvals = GB_nnz (T) ;
+    if (!X_iso && (dup == NULL) && nvals != tnvals)
     { 
         // T has been successfully built by ignoring the duplicate values, via
         // the implicit SECOND dup operator.  If the # of entries in T does not
@@ -281,7 +282,8 @@ GrB_Info GB_build               // build matrix
         // and the user could compare nvals with GrB_Matrix_nvals(&nvals2,C),
         // where nduplicates = nvals - nvals2.
         GB_FREE_ALL ;
-        return (GrB_INVALID_VALUE) ;
+        GB_ERROR (GrB_INVALID_VALUE, "Duplicates appear (" GBd
+            ") but dup is NULL", ((int64_t) nvals) - tnvals) ;
     }
 
     //--------------------------------------------------------------------------
