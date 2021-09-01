@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// No typecasting is done.  The type of entries in the Ax array must match
+// the GrB_Type type parameter.
+
 #include "GB_export.h"
 #include "GB_build.h"
 
@@ -169,7 +172,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
         case GrB_DENSE_COL_FORMAT : 
             GB_memcpy (Ax_copy, Ax, nvals * typesize          , nthreads_max) ;
             break ;
-        default : // GrB_COO_FORMAT, nothing to coyp
+        default : // GrB_COO_FORMAT, nothing to copy
             break ;
     }
 
