@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Aug 26, 2021"
+#define GxB_IMPLEMENTATION_DATE "Sept 2, 2021"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -2751,7 +2751,7 @@ GrB_Info GrB_Vector_setElement_UDT      // w(i) = x
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Vector_setElement_Scalar   // w(i) = x     FIXME write this
+GrB_Info GrB_Vector_setElement_Scalar   // w(i) = x
 (
     GrB_Vector w,                       // vector to modify
     GrB_Scalar x,                       // scalar to assign to w(i)
@@ -2776,10 +2776,9 @@ GrB_Info GrB_Vector_setElement          // w(i) = x
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_setElement(w,x,i)                        \
     _Generic ((x),                                          \
-        GB_CASES (, GrB, Vector_setElement)                 \
-        /* FIXME: add this: */                              \
-/*      const GrB_Scalar : GrB_Vector_setElement_Scalar, */ \
-/*            GrB_Scalar : GrB_Vector_setElement_Scalar, */ \
+        GB_CASES (, GrB, Vector_setElement),                \
+        const GrB_Scalar : GrB_Vector_setElement_Scalar,    \
+              GrB_Scalar : GrB_Vector_setElement_Scalar     \
         ) (w, x, i)
 #endif
 
@@ -3520,7 +3519,7 @@ GrB_Info GrB_Matrix_setElement_UDT      // C (i,j) = x
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_setElement_Scalar   // C (i,j) = x   FIXME write this
+GrB_Info GrB_Matrix_setElement_Scalar   // C (i,j) = x
 (
     GrB_Matrix C,                       // matrix to modify
     GrB_Scalar x,                       // scalar to assign to C(i,j)
@@ -3547,10 +3546,9 @@ GrB_Info GrB_Matrix_setElement          // C (i,j) = x
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_setElement(C,x,i,j)                      \
     _Generic ((x),                                          \
-        GB_CASES (, GrB, Matrix_setElement)                 \
-        /* FIXME: add this: */                              \
-/*      const GrB_Scalar : GrB_Matrix_setElement_Scalar, */ \
-/*            GrB_Scalar : GrB_Matrix_setElement_Scalar, */ \
+        GB_CASES (, GrB, Matrix_setElement),                \
+        const GrB_Scalar : GrB_Matrix_setElement_Scalar,    \
+              GrB_Scalar : GrB_Matrix_setElement_Scalar     \
         ) (C, x, i, j)
 #endif
 

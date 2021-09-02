@@ -133,6 +133,8 @@ GrB_Info assign ( )
                     (C, x, I [0], J [0])) ;                             \
             } break ;
 
+            // FIXME: add option to test GrB_Scalar version
+
             switch (A->type->code)
             {
                 case GB_BOOL_code   : ASSIGN (GrB_, _BOOL,   bool) ;
@@ -157,8 +159,7 @@ GrB_Info assign ( )
             ASSERT_MATRIX_OK (C, "C after setElement", GB0) ;
 
         }
-
-        if (GB_VECTOR_OK (C) && (Mask == NULL || GB_VECTOR_OK (Mask)))
+        else if (GB_VECTOR_OK (C) && (Mask == NULL || GB_VECTOR_OK (Mask)))
         {
 
             // test GrB_Vector_assign_scalar functions

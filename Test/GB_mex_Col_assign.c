@@ -123,8 +123,7 @@ GrB_Info assign ( )
             ASSERT_MATRIX_OK (C, "C after setElement", GB0) ;
 
         }
-
-        if (C->vdim == 1)
+        else if (C->vdim == 1)
         {
 
             // test GrB_Vector_assign_scalar functions

@@ -1122,6 +1122,8 @@ void mexFunction
     ERR1 (A, GxB_Matrix_setElement_FC64   (A, GxB_CMPLX (0,0), 0, 0)) ;
     GrB_Matrix_error_(&err, A) ; printf ("expected: %s\n", err) ;
 
+    // FIXME: add GrB_Scalar version above
+
     //--------------------------------------------------------------------------
     // GrB_error
     //--------------------------------------------------------------------------

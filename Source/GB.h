@@ -661,6 +661,21 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     GB_Context Context
 ) ;
 
+GrB_Info GB_Vector_removeElement
+(
+    GrB_Vector V,               // vector to remove entry from
+    GrB_Index i,                // index
+    GB_Context Context
+) ;
+
+GrB_Info GB_Matrix_removeElement
+(
+    GrB_Matrix C,               // matrix to remove entry from
+    GrB_Index row,              // row index
+    GrB_Index col,              // column index
+    GB_Context Context
+) ;
+
 GB_PUBLIC
 GrB_Info GB_block   // apply all pending computations if blocking mode enabled
 (

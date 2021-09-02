@@ -12,6 +12,8 @@
 
 // I and J and zero-based
 
+// FIXME add _Scalar version
+
 #include "GB_mex.h"
 
 #define USAGE "A = GB_mex_setElement (A, I, J, X, debug_wait)"

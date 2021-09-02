@@ -179,7 +179,7 @@ GrB_Info assign (GB_Context Context)
             #undef ASSIGN
 
         }
-        if (GB_VECTOR_OK (C) && GB_VECTOR_OK (M))
+        else if (GB_VECTOR_OK (C) && GB_VECTOR_OK (M))
         {
 
             // test GxB_Vector_subassign_scalar functions
