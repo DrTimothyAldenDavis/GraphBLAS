@@ -54,13 +54,15 @@ for m = [1 5 10 100]
             I = double (I0+1) ;
             X = complex (rand (ktuples,1) + 1i*rand(ktuples,1)) ;
 
-            A1 = GB_mex_setElement (A, I0, J0, X)  ;
+            C1 = GB_mex_setElement (A, I0, J0, X)  ;
+            C3 = GB_mex_setElement (A, I0, J0, X, false, true)  ;
 
-            A2 = A ;
+            C2 = A ;
             for k = 1:ktuples
-                A2 (I (k), J (k)) = X (k) ;
+                C2 (I (k), J (k)) = X (k) ;
             end
-            assert (isequal (A1.matrix, A2))
+            assert (isequal (C1.matrix, C2))
+            assert (isequal (C3.matrix, C2))
 
         end
     end

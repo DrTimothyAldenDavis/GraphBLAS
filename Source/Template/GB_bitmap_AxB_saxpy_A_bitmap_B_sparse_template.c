@@ -33,8 +33,8 @@
     int64_t apanel_size = load_apanel ? (GB_PANEL_SIZE * avdim) : 0 ;
     int64_t afpanel_size = GB_A_IS_BITMAP  ? (apanel_size) : 0 ;
     // if A is iso or pattern-only, its values are not loaded into the panel
-    bool load_axpanel = load_apanel && (!(A_iso || A_is_pattern)) ;
-    int64_t axpanel_size = load_axpanel ? 0 : (apanel_size * GB_ASIZE) ;
+    bool load_apanelx = load_apanel && (!(A_iso || A_is_pattern)) ;
+    int64_t axpanel_size = load_apanelx ? (apanel_size * GB_ASIZE) : 0 ;
 
     // each panel of H is GB_PANEL_SIZE-by-bnvec, held by column; note that
     // H has bnvec vectors, not bvdim.  The C bitmap has bvdim vectors,
@@ -109,7 +109,7 @@
         // load the metapanel: G = A (iouter:iouter+imeta-1,:)
         //----------------------------------------------------------------------
 
-        if ((GB_A_IS_BITMAP || load_axpanel) && load_apanel)
+        if ((GB_A_IS_BITMAP || load_apanelx) && load_apanel)
         {
 
             // Loading the panel into G keeps its storage order.  A is not
@@ -139,7 +139,7 @@
                 int8_t   *restrict Gb = Wf  + (a_tid * afpanel_size) ;
                 #if ( !GB_IS_ANY_PAIR_SEMIRING )
                 GB_ATYPE *restrict Gx = NULL ;
-                if (load_axpanel)
+                if (load_apanelx)
                 { 
                     Gx = (GB_ATYPE *) (Wax + (a_tid * axpanel_size)) ;
                 }
@@ -156,7 +156,7 @@
                     // A is bitmap
                     //----------------------------------------------------------
 
-                    if (load_axpanel)
+                    if (load_apanelx)
                     {
                         // load Ab and Ax into Gb and Gx
                         for (int64_t k = kstart ; k < kend ; k++)
@@ -208,7 +208,7 @@
                     //----------------------------------------------------------
 
                     #if ( !GB_IS_ANY_PAIR_SEMIRING )
-                    if (load_axpanel)
+                    if (load_apanelx)
                     {
                         for (int64_t k = kstart ; k < kend ; k++)
                         {
@@ -263,7 +263,7 @@
 
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
             const GB_ATYPE *restrict Gx ;
-            if (load_axpanel)
+            if (load_apanelx)
             { 
                 // values of A have been loaded into the G panel
                 Gx = (GB_ATYPE *) (Wax + (a_tid * axpanel_size)) ;

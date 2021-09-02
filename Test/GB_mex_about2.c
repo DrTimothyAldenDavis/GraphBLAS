@@ -32,7 +32,7 @@ void mexFunction
 
     GrB_Info info ;
     GrB_Matrix A = NULL, B = NULL, C = NULL ;
-    GxB_Scalar scalar = NULL ;
+    GrB_Scalar scalar = NULL ;
     GrB_Vector victor = NULL ;
     GrB_Descriptor desc = NULL ;
     GrB_Type Wild = NULL ;
@@ -53,7 +53,7 @@ void mexFunction
     OK (GrB_Matrix_new (&A, GrB_INT32, 10, 10)) ;
     OK (GrB_Vector_new (&victor, GrB_INT32, 10)) ;
     OK (GxB_Vector_Option_set_(victor, GxB_BITMAP_SWITCH, 2.0)) ;
-    OK (GxB_Scalar_new (&scalar, GrB_INT32)) ;
+    OK (GrB_Scalar_new (&scalar, GrB_INT32)) ;
 
     OK (GxB_Matrix_fprint (A, "A before set", 3, NULL)) ;
     OK (GrB_Matrix_setElement_INT32 (A, 314159, 0, 0)) ;
@@ -76,22 +76,22 @@ void mexFunction
     OK (GxB_Vector_fprint (victor, "victor after set again", 3, NULL)) ;
 
     OK (GxB_Scalar_fprint (scalar, "scalar before set", 3, NULL)) ;
-    OK (GxB_Scalar_setElement_INT32 (scalar, 404)) ;
+    OK (GrB_Scalar_setElement_INT32 (scalar, 404)) ;
     OK (GxB_Scalar_fprint (scalar, "scalar after set", 3, NULL)) ;
     int i = 0 ;
-    OK (GxB_Scalar_extractElement_INT32 (&i, scalar)) ;
+    OK (GrB_Scalar_extractElement_INT32 (&i, scalar)) ;
     CHECK (i == 404) ;
     OK (GxB_Scalar_fprint (scalar, "scalar after extract", 3, NULL)) ;
     OK (GrB_Matrix_removeElement ((GrB_Matrix) scalar, 0, 0)) ;
     OK (GxB_Scalar_fprint (scalar, "scalar after remove", 3, NULL)) ;
     i = 777 ;
     expected = GrB_NO_VALUE ;
-    ERR (GxB_Scalar_extractElement_INT32 (&i, scalar)) ;
+    ERR (GrB_Scalar_extractElement_INT32 (&i, scalar)) ;
     CHECK (i == 777) ;
 
     // force a zombie into the scalar
-    OK (GxB_Scalar_setElement_INT32 (scalar, 707)) ;
-    OK (GxB_Scalar_wait (&scalar)) ;
+    OK (GrB_Scalar_setElement_INT32 (scalar, 707)) ;
+    OK (GrB_Scalar_wait (&scalar)) ;
     OK (GxB_Scalar_fprint (scalar, "scalar after wait", 3, NULL)) ;
     OK (GxB_Matrix_Option_set (scalar, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     CHECK (scalar->i != NULL) ;
@@ -99,13 +99,13 @@ void mexFunction
     scalar->nzombies = 1 ;
     OK (GxB_Scalar_fprint (scalar, "scalar with zombie", 3, NULL)) ;
     expected = GrB_NO_VALUE ;
-    ERR (GxB_Scalar_extractElement_INT32 (&i, scalar)) ;
+    ERR (GrB_Scalar_extractElement_INT32 (&i, scalar)) ;
     OK (GxB_Scalar_fprint (scalar, "scalar after extract", 3, NULL)) ;
     CHECK (i == 777) ;
 
     GrB_Vector_free_(&victor) ;
     GrB_Matrix_free_(&A) ;
-    GxB_Scalar_free_(&scalar) ;
+    GrB_Scalar_free_(&scalar) ;
 
     //--------------------------------------------------------------------------
     // builtin comparators not defined for complex types
@@ -116,14 +116,14 @@ void mexFunction
     OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
 
     OK (GrB_Matrix_new (&C, GxB_FC32, n, n)) ;
-    OK (GxB_Scalar_new (&scalar, GxB_FC32)) ;
+    OK (GrB_Scalar_new (&scalar, GxB_FC32)) ;
     expected = GrB_DOMAIN_MISMATCH ;
     ERR (GxB_Matrix_select (C, NULL, NULL, GxB_LT_THUNK, A, scalar, NULL)) ;
     char *message = NULL ;
     OK (GrB_Matrix_error (&message, C)) ;
     printf ("expected error: %s\n", message) ;
     GrB_Matrix_free_(&C) ;
-    GxB_Scalar_free_(&scalar) ;
+    GrB_Scalar_free_(&scalar) ;
 
     //--------------------------------------------------------------------------
     // GB_pslice
@@ -272,7 +272,7 @@ void mexFunction
     // GrB_apply with empty scalar
     //--------------------------------------------------------------------------
 
-    OK (GxB_Scalar_new (&scalar, GrB_INT32)) ;
+    OK (GrB_Scalar_new (&scalar, GrB_INT32)) ;
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
     OK (GrB_Matrix_new (&C, GrB_INT32, n, n)) ;
     expected = GrB_INVALID_VALUE ;
@@ -282,7 +282,7 @@ void mexFunction
     printf ("expected error: %s\n", message) ;
     GrB_Matrix_free_(&A) ;
     GrB_Matrix_free_(&C) ;
-    GxB_Scalar_free_(&scalar) ;
+    GrB_Scalar_free_(&scalar) ;
 
     //--------------------------------------------------------------------------
     // invalid descriptor

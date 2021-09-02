@@ -60,7 +60,7 @@
     GrB_Descriptor_free_(&dcrud) ;    CHECK (dcrud        == NULL) ;      \
     GxB_SelectOp_free_(&selectop) ;   CHECK (selectop     == NULL) ;      \
     GxB_SelectOp_free_(&selectopcrud) ; CHECK (selectopcrud == NULL) ;    \
-    GxB_Scalar_free_(&a_scalar) ;                                         \
+    GrB_Scalar_free_(&a_scalar) ;                                         \
     GB_mx_put_global (true) ;                                             \
 }
 
@@ -182,7 +182,7 @@ void mexFunction
     GB_void *pp = NULL ;
 
     GxB_SelectOp selectop = NULL, selectopcrud = NULL, sel0 ;
-    GxB_Scalar a_scalar = NULL ;
+    GrB_Scalar a_scalar = NULL ;
 
     char *err ;
 
@@ -812,12 +812,12 @@ void mexFunction
 
     printf ("GrB_Vector---------------------------------------------------\n") ;
 
-    OK (GxB_Scalar_new (&a_scalar, GrB_INT32)) ;
+    OK (GrB_Scalar_new (&a_scalar, GrB_INT32)) ;
     CHECK (a_scalar != NULL) ;
 
     int32_t i_scalar = 33 ;
-    OK (GxB_Scalar_setElement_INT32 (a_scalar, 42)) ;
-    OK (GxB_Scalar_extractElement_INT32_(&i_scalar, a_scalar)) ;
+    OK (GrB_Scalar_setElement_INT32 (a_scalar, 42)) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i_scalar, a_scalar)) ;
     CHECK (i_scalar == 42) ;
     GxB_Scalar_fprint_(a_scalar, 3, NULL) ;
 
@@ -830,27 +830,27 @@ void mexFunction
         a_scalar->nzombies = 1 ;
     }
 
-    info = GxB_Scalar_extractElement_INT32_(&i_scalar, a_scalar) ;
+    info = GrB_Scalar_extractElement_INT32_(&i_scalar, a_scalar) ;
     CHECK (i_scalar == ((scalar_is_full) ? 42 : 33)) ;
     CHECK (info == (scalar_is_full) ? GrB_SUCCESS : GrB_NO_VALUE) ;
 
-    OK (GxB_Scalar_free_(&a_scalar)) ;
+    OK (GrB_Scalar_free_(&a_scalar)) ;
 
     OK (GrB_Type_new (&T, sizeof (int))) ;
 
     i_scalar = 207 ;
     expected = GrB_DOMAIN_MISMATCH ;
-    OK (GxB_Scalar_new (&a_scalar, T)) ;
+    OK (GrB_Scalar_new (&a_scalar, T)) ;
     GxB_Scalar_fprint_(a_scalar, 3, NULL) ;
     GxB_Type_fprint_(T, 3, NULL) ;
-    ERR1 (a_scalar, GxB_Scalar_setElement_INT32 (a_scalar, 42)) ;
-    ERR (GxB_Scalar_extractElement_INT32_(&i_scalar, a_scalar)) ;
+    ERR1 (a_scalar, GrB_Scalar_setElement_INT32 (a_scalar, 42)) ;
+    ERR (GrB_Scalar_extractElement_INT32_(&i_scalar, a_scalar)) ;
     CHECK (i_scalar == 207) ;
 
     printf ("error expected: %d\n", info) ;
 
     OK (GrB_Type_free_(&T)) ;
-    OK (GxB_Scalar_free_(&a_scalar)) ;
+    OK (GrB_Scalar_free_(&a_scalar)) ;
 
     //--------------------------------------------------------------------------
     // basic Vector methods
@@ -3345,9 +3345,9 @@ void mexFunction
 
     double thresh = 42 ;
 
-    GxB_Scalar Thunk = NULL ;
-    OK (GxB_Scalar_new (&Thunk, GrB_FP64)) ;
-    OK (GxB_Scalar_setElement_FP64 (Thunk, thresh)) ;
+    GrB_Scalar Thunk = NULL ;
+    OK (GrB_Scalar_new (&Thunk, GrB_FP64)) ;
+    OK (GrB_Scalar_setElement_FP64 (Thunk, thresh)) ;
 
     o2  = Complex_plus ;
     expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
@@ -3380,7 +3380,7 @@ void mexFunction
 
     ERR1 (A,  GxB_Matrix_select_(A , NULL, NULL, GxB_TRIL, C , NULL, d0)) ;
 
-    OK (GxB_Scalar_free_(&Thunk)) ;
+    OK (GrB_Scalar_free_(&Thunk)) ;
 
     //--------------------------------------------------------------------------
     // reduce to scalar

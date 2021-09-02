@@ -84,8 +84,8 @@
 #define GrB_Scalar_setElement_UINT64_(...)          GrB_Scalar_setElement (__VA_ARGS__)
 #define GrB_Scalar_setElement_FP32_(...)            GrB_Scalar_setElement (__VA_ARGS__)
 #define GrB_Scalar_setElement_FP64_(...)            GrB_Scalar_setElement (__VA_ARGS__)
-#define GrB_Scalar_setElement_FC32_(...)            GrB_Scalar_setElement (__VA_ARGS__)
-#define GrB_Scalar_setElement_FC64_(...)            GrB_Scalar_setElement (__VA_ARGS__)
+#define GxB_Scalar_setElement_FC32_(...)            GrB_Scalar_setElement (__VA_ARGS__)
+#define GxB_Scalar_setElement_FC64_(...)            GrB_Scalar_setElement (__VA_ARGS__)
 #define GrB_Scalar_setElement_UDT_(...)             GrB_Scalar_setElement (__VA_ARGS__)
 
 // GrB_Scalar_extractElement:
@@ -135,7 +135,7 @@
 #define GxB_Vector_setElement_FC32_(...)            GrB_Vector_setElement (__VA_ARGS__)
 #define GxB_Vector_setElement_FC64_(...)            GrB_Vector_setElement (__VA_ARGS__)
 #define GrB_Vector_setElement_UDT_(...)             GrB_Vector_setElement (__VA_ARGS__)
-#define GrB_Vector_setElement_Scalar(...)           GrB_Vector_setElement (__VA_ARGS__)
+#define GrB_Vector_setElement_Scalar_(...)          GrB_Vector_setElement (__VA_ARGS__)
 
 // GrB_Vector_extractElement:
 #define GrB_Vector_extractElement_BOOL_(...)        GrB_Vector_extractElement (__VA_ARGS__)
@@ -468,7 +468,7 @@
 #define GxB_Descriptor_fprint_(o,p,f)               GxB_fprint (o,p,f)
 #define GxB_Matrix_fprint_(o,p,f)                   GxB_fprint (o,p,f)
 #define GxB_Vector_fprint_(o,p,f)                   GxB_fprint (o,p,f)
-#define GrB_Scalar_fprint_(o,p,f)                   GxB_fprint (o,p,f)
+#define GxB_Scalar_fprint_(o,p,f)                   GxB_fprint (o,p,f)
 
 #else
 
@@ -544,8 +544,8 @@
 #define GrB_Scalar_setElement_UINT64_(...)          GrB_Scalar_setElement_UINT64 (__VA_ARGS__)
 #define GrB_Scalar_setElement_FP32_(...)            GrB_Scalar_setElement_FP32 (__VA_ARGS__)
 #define GrB_Scalar_setElement_FP64_(...)            GrB_Scalar_setElement_FP64 (__VA_ARGS__)
-#define GrB_Scalar_setElement_FC32_(...)            GrB_Scalar_setElement_FC32 (__VA_ARGS__)
-#define GrB_Scalar_setElement_FC64_(...)            GrB_Scalar_setElement_FC64 (__VA_ARGS__)
+#define GxB_Scalar_setElement_FC32_(...)            GxB_Scalar_setElement_FC32 (__VA_ARGS__)
+#define GxB_Scalar_setElement_FC64_(...)            GxB_Scalar_setElement_FC64 (__VA_ARGS__)
 #define GrB_Scalar_setElement_UDT_(...)             GrB_Scalar_setElement_UDT (__VA_ARGS__)
 
 // GrB_Scalar_extractElement:
@@ -595,7 +595,7 @@
 #define GxB_Vector_setElement_FC32_(...)            GxB_Vector_setElement_FC32 (__VA_ARGS__)
 #define GxB_Vector_setElement_FC64_(...)            GxB_Vector_setElement_FC64 (__VA_ARGS__)
 #define GrB_Vector_setElement_UDT_(...)             GrB_Vector_setElement_UDT (__VA_ARGS__)
-#define GrB_Vector_setElement_Scalar_(...)          GrB_Vector_setElement_Sclar (__VA_ARGS__)
+#define GrB_Vector_setElement_Scalar_(...)          GrB_Vector_setElement_Scalar (__VA_ARGS__)
 
 // GrB_Vector_extractElement:
 #define GrB_Vector_extractElement_BOOL_(...)        GrB_Vector_extractElement_BOOL (__VA_ARGS__)

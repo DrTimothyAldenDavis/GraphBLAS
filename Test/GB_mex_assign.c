@@ -125,6 +125,7 @@ GrB_Info assign ( )
             && GB_op_is_second (accum, C->type) && A->type->code <= GB_FC64_code
             && desc == NULL)
         {
+
             // test GrB_Matrix_setElement
             #define ASSIGN(prefix,suffix, type)                         \
             {                                                           \
@@ -132,8 +133,6 @@ GrB_Info assign ( )
                 OK (prefix ## Matrix_setElement ## suffix               \
                     (C, x, I [0], J [0])) ;                             \
             } break ;
-
-            // FIXME: add option to test GrB_Scalar version
 
             switch (A->type->code)
             {

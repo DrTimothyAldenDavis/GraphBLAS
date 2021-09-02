@@ -105,7 +105,7 @@ void mexFunction
                 bool *X = (bool *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_BOOL_(&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_BOOL_(&X [k], A)) ;
                 }
                 else
                 {
@@ -121,7 +121,7 @@ void mexFunction
                 int8_t *X = (int8_t *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_INT8_(&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_INT8_(&X [k], A)) ;
                 }
                 else
                 {
@@ -137,7 +137,7 @@ void mexFunction
                 uint8_t *X = (uint8_t *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_UINT8_(&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_UINT8_(&X [k], A)) ;
                 }
                 else
                 {
@@ -153,7 +153,7 @@ void mexFunction
                 int16_t *X = (int16_t *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_INT16_(&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_INT16_(&X [k], A)) ;
                 }
                 else
                 {
@@ -169,7 +169,7 @@ void mexFunction
                 uint16_t *X = (uint16_t *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_UINT16_(&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_UINT16_(&X [k], A)) ;
                 }
                 else
                 {
@@ -185,7 +185,7 @@ void mexFunction
                 int32_t *X = (int32_t *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_INT32_(&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_INT32_(&X [k], A)) ;
                 }
                 else
                 {
@@ -201,7 +201,7 @@ void mexFunction
                 uint32_t *X = (uint32_t *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_UINT32_(&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_UINT32_(&X [k], A)) ;
                 }
                 else
                 {
@@ -217,7 +217,7 @@ void mexFunction
                 int64_t *X = (int64_t *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_INT64_(&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_INT64_(&X [k], A)) ;
                 }
                 else
                 {
@@ -233,7 +233,7 @@ void mexFunction
                 uint64_t *X = (uint64_t *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_UINT64_(&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_UINT64_(&X [k], A)) ;
                 }
                 else
                 {
@@ -249,7 +249,7 @@ void mexFunction
                 float *X = (float *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_FP32_(&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_FP32_(&X [k], A)) ;
                 }
                 else
                 {
@@ -265,7 +265,7 @@ void mexFunction
                 double *X = (double *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_FP64_(&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_FP64_(&X [k], A)) ;
                 }
                 else
                 {
@@ -281,11 +281,11 @@ void mexFunction
                 GxB_FC32_t *X = (void *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_FC32_(&X [k], A)) ;
+                    METHOD (GxB_Scalar_extractElement_FC32 (&X [k], A)) ;
                 }
                 else
                 {
-                    METHOD (GxB_Matrix_extractElement_FC32_(&X [k], A, I [k], J [k])) ;
+                    METHOD (GxB_Matrix_extractElement_FC32 (&X [k], A, I [k], J [k])) ;
                 }
             }
             break;
@@ -297,11 +297,11 @@ void mexFunction
                 GxB_FC64_t *X = (void *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_FC64_(&X [k], A)) ;
+                    METHOD (GxB_Scalar_extractElement_FC64 (&X [k], A)) ;
                 }
                 else
                 {
-                    METHOD (GxB_Matrix_extractElement_FC64_(&X [k], A, I [k], J [k])) ;
+                    METHOD (GxB_Matrix_extractElement_FC64 (&X [k], A, I [k], J [k])) ;
                 }
             }
             break;
@@ -314,7 +314,7 @@ void mexFunction
                 GxB_FC64_t *X = (void *) Y ;
                 if (is_scalar)
                 {
-                    METHOD (GxB_Scalar_extractElement_UDT (&X [k], A)) ;
+                    METHOD (GrB_Scalar_extractElement_UDT (&X [k], A)) ;
                 }
                 else
                 {

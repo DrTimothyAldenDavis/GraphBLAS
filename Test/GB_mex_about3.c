@@ -176,8 +176,8 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Index I [4] = { 1, 2, 3, 4 } ;
-    GxB_Scalar scalar = NULL ;
-    OK (GxB_Scalar_new (&scalar, GrB_FP32)) ;
+    GrB_Scalar scalar = NULL ;
+    OK (GrB_Scalar_new (&scalar, GrB_FP32)) ;
     OK (GxB_Scalar_fprint (scalar, "scalar init", GxB_COMPLETE, NULL)) ;
     OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
     OK (GrB_Vector_new (&w, GrB_FP32, 10)) ;
@@ -198,12 +198,12 @@ void mexFunction
     GrB_Matrix_free_(&C) ;
     OK (GrB_Type_new (&myint, sizeof (int))) ;
     OK (GrB_Matrix_new (&C, myint, 10, 10)) ;
-    OK (GxB_Scalar_setElement_FP32 (scalar, 3.0)) ;
+    OK (GrB_Scalar_setElement_FP32 (scalar, 3.0)) ;
     OK (GxB_Scalar_fprint (scalar, "scalar set", GxB_COMPLETE, NULL)) ;
     OK (GxB_Matrix_Option_set ((GrB_Matrix) scalar, GxB_SPARSITY_CONTROL,
         GxB_SPARSE)) ;
     scalar->jumbled = true ;
-    OK (GxB_Scalar_wait (&scalar)) ;
+    OK (GrB_Scalar_wait (&scalar)) ;
 
     OK (GxB_Scalar_fprint (scalar, "scalar", GxB_COMPLETE, NULL)) ;
 
@@ -216,7 +216,7 @@ void mexFunction
     OK (GrB_error (&s, C)) ;
     printf ("expected error: [%s]\n", s) ;
     GrB_Matrix_free_(&C) ;
-    GxB_Scalar_free_(&scalar) ;
+    GrB_Scalar_free_(&scalar) ;
     GrB_Type_free_(&myint) ;
 
     //--------------------------------------------------------------------------
@@ -668,7 +668,7 @@ void mexFunction
 
     OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
     OK (GrB_Vector_new (&w, GrB_FP32, 100)) ;
-    OK (GxB_Scalar_new (&scalar, GrB_FP32)) ;
+    OK (GrB_Scalar_new (&scalar, GrB_FP32)) ;
 
     size_t size ;
     OK (GxB_Matrix_fprint (C, "empty C for size", GxB_COMPLETE, NULL)) ;
@@ -689,7 +689,7 @@ void mexFunction
         OK (GrB_Matrix_setElement_FP32 (C, (double) k, k, k+1)) ;
         OK (GrB_Vector_setElement_FP32 (w, (double) k, k)) ;
     }
-    OK (GxB_Scalar_setElement_FP32 (scalar, 3.0)) ;
+    OK (GrB_Scalar_setElement_FP32 (scalar, 3.0)) ;
 
     OK (GxB_Matrix_fprint (C, "non-empty C for size (with pending)",
         GxB_COMPLETE, NULL)) ;
@@ -721,7 +721,7 @@ void mexFunction
 
     GrB_Matrix_free_(&C) ;
     GrB_Vector_free_(&w) ;
-    GxB_Scalar_free_(&scalar) ;
+    GrB_Scalar_free_(&scalar) ;
 
     GB_Global_print_mem_shallow_set (true) ;
     CHECK (GB_Global_print_mem_shallow_get ( )) ;

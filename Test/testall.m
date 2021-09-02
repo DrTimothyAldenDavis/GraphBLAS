@@ -75,7 +75,6 @@ GB_mex_hack (hack) ;
 hack (2) = 1 ;
 GB_mex_hack (hack) ;
 
-
 logstat ('test192',t) ; % test C<C,struct>=scalar
 logstat ('test191',t) ; % test split
 logstat ('test188',t) ; % test concat
@@ -96,6 +95,7 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test229',t) ; % test setElement
 logstat ('test227',t) ; % test kron
 logstat ('test226',t) ; % test kron with iso matrices
 logstat ('test225',t) ; % test mask operations (GB_masker)

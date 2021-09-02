@@ -658,26 +658,26 @@ void mexFunction
     OK (GxB_Matrix_fprint_(A, GxB_COMPLETE, NULL)) ;
     OK (GxB_Matrix_fprint_(B, GxB_COMPLETE, NULL)) ;
 
-    GxB_Scalar thunk = NULL ;
-    OK (GxB_Scalar_new (&thunk, user_type)) ;
+    GrB_Scalar thunk = NULL ;
+    OK (GrB_Scalar_new (&thunk, user_type)) ;
     GrB_Type type2 = NULL ;
     OK (GxB_Scalar_type (&type2, thunk)) ;
     CHECK (type2 == user_type) ;
-    OK (GxB_Scalar_fprint_(thunk, GxB_COMPLETE, NULL)) ;
+    OK (GxB_Scalar_fprint (thunk, "thunk", GxB_COMPLETE, NULL)) ;
     OK (GxB_Matrix_select_(A, NULL, NULL, GxB_NE_THUNK, A, thunk, NULL)) ;
 
     value = (int64_t) 4 ;
-    OK (GxB_Scalar_setElement_UDT (thunk, &value)) ;
+    OK (GrB_Scalar_setElement_UDT (thunk, &value)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
     ERR1 (A, GxB_Matrix_select_(A, NULL, NULL, GxB_GE_THUNK, A, thunk, NULL)) ;
     GrB_Matrix_error_(&err, A) ;
     printf ("Expected error: info: %d\n%s\n", info, err) ;
 
-    GxB_Scalar thunk2 = NULL ;
-    OK (GxB_Scalar_new (&thunk2, GrB_INT16)) ;
-    OK (GxB_Scalar_setElement_INT16 (thunk2, 4)) ;
-    OK (GxB_Scalar_wait_(&thunk2)) ;
+    GrB_Scalar thunk2 = NULL ;
+    OK (GrB_Scalar_new (&thunk2, GrB_INT16)) ;
+    OK (GrB_Scalar_setElement_INT16 (thunk2, 4)) ;
+    OK (GrB_Scalar_wait_(&thunk2)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
 
@@ -718,14 +718,14 @@ void mexFunction
 
     GrB_Matrix_free_(&B) ;
     GrB_Matrix_free_(&A) ;
-    GxB_Scalar_free_(&thunk) ;
-    GxB_Scalar_free_(&thunk2) ;
+    GrB_Scalar_free_(&thunk) ;
+    GrB_Scalar_free_(&thunk2) ;
     GrB_Type_free_(&user_type) ;
 
     OK (GrB_Matrix_new (&A, GrB_BOOL, 10, 10)) ;
     OK (GrB_Matrix_new (&B, GrB_BOOL, 10, 10)) ;
-    OK (GxB_Scalar_new (&thunk, GrB_BOOL)) ;
-    OK (GxB_Scalar_setElement_BOOL (thunk, 0)) ;
+    OK (GrB_Scalar_new (&thunk, GrB_BOOL)) ;
+    OK (GrB_Scalar_setElement_BOOL (thunk, 0)) ;
     for (int i = 0 ; i < 10 ; i++)
     {
         OK (GrB_Matrix_setElement_BOOL_(A, (bool) (i % 2), i, i)) ;
@@ -748,7 +748,7 @@ void mexFunction
 
     GrB_Matrix_free_(&B) ;
     GrB_Matrix_free_(&A) ;
-    GxB_Scalar_free_(&thunk) ;
+    GrB_Scalar_free_(&thunk) ;
 
     //--------------------------------------------------------------------------
     // create a test matrix
@@ -858,8 +858,8 @@ void mexFunction
         OK (GrB_Matrix_setElement_FP64 (A, i, i, i)) ;
     }
     OK (GxB_Matrix_fprint_(A, GxB_COMPLETE, NULL)) ;
-    OK (GxB_Scalar_new (&thunk, GrB_FP64)) ;
-    OK (GxB_Scalar_setElement_FP64 (thunk, 4)) ;
+    OK (GrB_Scalar_new (&thunk, GrB_FP64)) ;
+    OK (GrB_Scalar_setElement_FP64 (thunk, 4)) ;
     OK (GxB_Matrix_select_(C, NULL, NULL, selectop, A, thunk, NULL)) ;
 
     printf ("\nprint in one-based, long format:\n") ;
@@ -878,14 +878,14 @@ void mexFunction
     printf ("Error expected: %d\n%s\n", info, err) ;
 
     expected = GrB_INVALID_VALUE ;
-    OK (GxB_Scalar_clear (thunk)) ;
+    OK (GrB_Scalar_clear (thunk)) ;
     ERR1 (C, GxB_Matrix_select_(C, NULL, NULL, selectop, A, thunk, NULL)) ;
     GrB_Matrix_error_(&err, C) ;
     printf ("Error expected: %d\n%s\n", info, err) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
-    GxB_Scalar_free_(&thunk) ;
-    OK (GxB_Scalar_new (&thunk, GrB_FP32)) ;
+    GrB_Scalar_free_(&thunk) ;
+    OK (GrB_Scalar_new (&thunk, GrB_FP32)) ;
     ERR1 (C, GxB_Matrix_select_(C, NULL, NULL, selectop, A, thunk, NULL)) ;
     GrB_Matrix_error_(&err, C) ;
     printf ("Error expected: %d\n%s\n", info, err) ;
@@ -907,24 +907,24 @@ void mexFunction
 
     expected = GrB_UNINITIALIZED_OBJECT ;
     thunk->magic = 0xDEAD ;
-    ERR (GxB_Scalar_fprint_(thunk, GxB_COMPLETE, NULL)) ;
+    ERR (GxB_Scalar_fprint (thunk, "thunk", GxB_COMPLETE, NULL)) ;
     thunk->magic = GB_MAGIC ;
     printf ("Error expected: %d\n", info) ;
 
     GrB_Matrix_free_(&A) ;
     GrB_Matrix_free_(&C) ;
-    GxB_Scalar_free_(&thunk) ;
+    GrB_Scalar_free_(&thunk) ;
     GxB_SelectOp_free_(&selectop) ;
 
     //--------------------------------------------------------------------------
-    // GxB_Scalar
+    // GrB_Scalar
     //--------------------------------------------------------------------------
 
     GrB_Index nvals = 42 ;
-    GxB_Scalar scalar = NULL, scalar2 = NULL ;
-    OK (GxB_Scalar_new (&scalar, GrB_FP64)) ;
-    OK (GxB_Scalar_nvals (&nvals, scalar)) ;
-    OK (GxB_Scalar_wait_(&scalar)) ;
+    GrB_Scalar scalar = NULL, scalar2 = NULL ;
+    OK (GrB_Scalar_new (&scalar, GrB_FP64)) ;
+    OK (GrB_Scalar_nvals (&nvals, scalar)) ;
+    OK (GrB_Scalar_wait_(&scalar)) ;
     CHECK (nvals == 0) ;
 
     bool     b_8 = 0 ;
@@ -939,31 +939,31 @@ void mexFunction
     float    x_32 = 0 ;
     double   x_64 = 0 ;
 
-    OK (GxB_Scalar_setElement_FP64_(scalar, (double) 1.25)) ;
-    OK (GxB_Scalar_nvals (&nvals, scalar)) ;
-    OK (GxB_Scalar_wait_(&scalar)) ;
+    OK (GrB_Scalar_setElement_FP64_(scalar, (double) 1.25)) ;
+    OK (GrB_Scalar_nvals (&nvals, scalar)) ;
+    OK (GrB_Scalar_wait_(&scalar)) ;
     CHECK (nvals == 1) ;
 
-    OK (GxB_Scalar_dup (&scalar2, scalar)) ;
-    OK (GxB_Scalar_fprint_(scalar2, GxB_COMPLETE, NULL)) ;
+    OK (GrB_Scalar_dup (&scalar2, scalar)) ;
+    OK (GxB_Scalar_fprint (scalar2, "scalar2", GxB_COMPLETE, NULL)) ;
 
-    OK (GxB_Scalar_extractElement_BOOL_(&b_8,  scalar)) ; CHECK (b_8 == 1) ;
+    OK (GrB_Scalar_extractElement_BOOL_(&b_8,  scalar)) ; CHECK (b_8 == 1) ;
 
-    OK (GxB_Scalar_extractElement_INT8_ (&i_8,  scalar)) ; CHECK (i_8  == 1) ;
-    OK (GxB_Scalar_extractElement_INT16_(&i_16, scalar)) ; CHECK (i_16 == 1) ;
-    OK (GxB_Scalar_extractElement_INT32_(&i_32, scalar)) ; CHECK (i_32 == 1) ;
-    OK (GxB_Scalar_extractElement_INT64_(&i_64, scalar)) ; CHECK (i_64 == 1) ;
+    OK (GrB_Scalar_extractElement_INT8_ (&i_8,  scalar)) ; CHECK (i_8  == 1) ;
+    OK (GrB_Scalar_extractElement_INT16_(&i_16, scalar)) ; CHECK (i_16 == 1) ;
+    OK (GrB_Scalar_extractElement_INT32_(&i_32, scalar)) ; CHECK (i_32 == 1) ;
+    OK (GrB_Scalar_extractElement_INT64_(&i_64, scalar)) ; CHECK (i_64 == 1) ;
 
-    OK (GxB_Scalar_extractElement_UINT8_ (&u_8,  scalar)) ; CHECK (u_8  == 1) ;
-    OK (GxB_Scalar_extractElement_UINT16_(&u_16, scalar)) ; CHECK (u_16 == 1) ;
-    OK (GxB_Scalar_extractElement_UINT32_(&u_32, scalar)) ; CHECK (u_32 == 1) ;
-    OK (GxB_Scalar_extractElement_UINT64_(&u_64, scalar)) ; CHECK (u_64 == 1) ;
+    OK (GrB_Scalar_extractElement_UINT8_ (&u_8,  scalar)) ; CHECK (u_8  == 1) ;
+    OK (GrB_Scalar_extractElement_UINT16_(&u_16, scalar)) ; CHECK (u_16 == 1) ;
+    OK (GrB_Scalar_extractElement_UINT32_(&u_32, scalar)) ; CHECK (u_32 == 1) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u_64, scalar)) ; CHECK (u_64 == 1) ;
 
-    OK (GxB_Scalar_extractElement_FP32_(&x_32, scalar)) ; CHECK (x_32 == 1.25) ;
-    OK (GxB_Scalar_extractElement_FP64_(&x_64, scalar)) ; CHECK (x_64 == 1.25) ;
+    OK (GrB_Scalar_extractElement_FP32_(&x_32, scalar)) ; CHECK (x_32 == 1.25) ;
+    OK (GrB_Scalar_extractElement_FP64_(&x_64, scalar)) ; CHECK (x_64 == 1.25) ;
 
-    OK (GxB_Scalar_clear (scalar)) ;
-    info = GxB_Scalar_extractElement_FP64_(&x_64, scalar) ;
+    OK (GrB_Scalar_clear (scalar)) ;
+    info = GrB_Scalar_extractElement_FP64_(&x_64, scalar) ;
     CHECK (info == GrB_NO_VALUE) ;
     CHECK (x_64 == 1.25) ;
 
@@ -976,19 +976,19 @@ void mexFunction
     CHECK (x_64 == 1.25) ;
 
     u_64 = 0 ;
-    OK (GxB_Scalar_extractElement_UINT64_(&u_64, scalar2)) ; CHECK (u_64 == 1) ;
-    OK (GxB_Scalar_nvals (&nvals, scalar2)) ;
-    OK (GxB_Scalar_wait_(&scalar2)) ;
+    OK (GrB_Scalar_extractElement_UINT64_(&u_64, scalar2)) ; CHECK (u_64 == 1) ;
+    OK (GrB_Scalar_nvals (&nvals, scalar2)) ;
+    OK (GrB_Scalar_wait_(&scalar2)) ;
     CHECK (nvals == 1) ;
 
     expected = GrB_INVALID_OBJECT ;
     scalar2->vlen = 2 ;
-    ERR (GxB_Scalar_fprint_(scalar2, GxB_COMPLETE, NULL)) ;
+    ERR (GxB_Scalar_fprint (scalar2, "scalar2", GxB_COMPLETE, NULL)) ;
     scalar2->vlen = 1 ;
-    OK (GxB_Scalar_fprint_(scalar2, GxB_COMPLETE, NULL)) ;
+    OK (GxB_Scalar_fprint (scalar2, "scalar2", GxB_COMPLETE, NULL)) ;
 
-    GxB_Scalar_free_(&scalar) ;
-    GxB_Scalar_free_(&scalar2) ;
+    GrB_Scalar_free_(&scalar) ;
+    GrB_Scalar_free_(&scalar2) ;
 
     //--------------------------------------------------------------------------
     // predefined descriptors
@@ -1151,8 +1151,8 @@ void mexFunction
     GrB_Descriptor_error_(&err, GrB_DESC_T0) ;
     CHECK (err != NULL && err [0] == '\0') ;
 
-    OK (GxB_Scalar_new (&scalar, GrB_FP32)) ;
-    GxB_Scalar_error_(&err, scalar) ;
+    OK (GrB_Scalar_new (&scalar, GrB_FP32)) ;
+    GrB_Scalar_error_(&err, scalar) ;
     CHECK (err != NULL && err [0] == '\0') ;
 
     OK (GrB_Vector_new (&victor, GrB_FP32, 10)) ;
@@ -1166,7 +1166,7 @@ void mexFunction
     CHECK (err != NULL && err [0] == '\0') ;
 
     GrB_Vector_free_(&victor) ;
-    GxB_Scalar_free_(&scalar) ;
+    GrB_Scalar_free_(&scalar) ;
     GrB_Type_free_(&user_type) ;
     GrB_Matrix_free_(&A) ;
 
