@@ -271,7 +271,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
                     true,           // A is a GrB_Matrix
                     (int64_t *) (is_csc ? Ai : Ap),     // row/col indices
                     (int64_t *) (is_csc ? Ap : Ai),     // col/row indices
-                    Ax_copy,                            // values
+                    Ax,                                 // values
                     false,          // matrix is not iso
                     nvals,          // number of tuples
                     NULL,           // implicit SECOND operator for duplicates
