@@ -521,22 +521,17 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             // export in COO format, then free C
-            GxB_print (C, 3) ;
             OK (GrB_Matrix_exportSize (&Tp_len, &Ti_len, &Tx_len,
                 GrB_COO_FORMAT, C)) ;
-            printf ("Tp,Ti,Tx len: %ld %ld %ld\n", Tp_len, Ti_len, Tx_len) ;
             Tp = mxMalloc ((Tp_len+1) * sizeof (GrB_Index)) ;
             Ti = mxMalloc ((Ti_len+1) * sizeof (GrB_Index)) ;
             Tx = mxMalloc ((Tx_len+1) * typesize) ;
             info = GrB_Matrix_export (Tp, Ti, Tx, GrB_COO_FORMAT, C) ;
-            printf ("did COO export: %d\n", info) ;
             OK (info) ;
             OK (GrB_Matrix_free (&C)) ;
             // import in COO format, then free Tp, Ti, Tx
             info = (GrB_Matrix_import (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
                 Tp_len, Ti_len, Tx_len, GrB_COO_FORMAT)) ;
-            printf ("did COO import: %d\n", info) ;
-            GxB_print (C, 3) ;
             OK (info) ;
             mxFree (Tp) ;
             mxFree (Ti) ;

@@ -21,9 +21,6 @@ for m = [0 1 5 100]
             fprintf ('.') ;
             for fmt_matrix = fmts
                 for fmt_export = 0:16
-                    A
-                    fmt_matrix
-                    fmt_export
                     try
                         C = GB_mex_export_import (A, fmt_matrix, ...
                             fmt_export) ;

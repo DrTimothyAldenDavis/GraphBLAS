@@ -27,8 +27,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
     GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // number of rows of the matrix
     GrB_Index ncols,        // number of columns of the matrix
-    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
-    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const GrB_Index *Ap,    // pointers for CSR, CSC, row indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC, col indices for COO
     const void *Ax,         // values (must match the GrB_Type type parameter)
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
@@ -269,8 +269,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
                     false,          // known_no_duplicates: not yet known
                     0,              // I_work, J_work, and X_work not used here
                     true,           // A is a GrB_Matrix
-                    (int64_t *) (is_csc ? Ai : Ap),     // row/col indices
-                    (int64_t *) (is_csc ? Ap : Ai),     // col/row indices
+                    (int64_t *) (is_csc ? Ap : Ai),     // row/col indices
+                    (int64_t *) (is_csc ? Ai : Ap),     // col/row indices
                     Ax,                                 // values
                     false,          // matrix is not iso
                     nvals,          // number of tuples
@@ -281,6 +281,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
             }
             break ;
     }
+
+    ASSERT_MATRIX_OK (*A, "A imported", GB0) ;
 
     //--------------------------------------------------------------------------
     // determine if A is iso
@@ -299,6 +301,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
     //--------------------------------------------------------------------------
 
     GB_OK (GB_conform (*A, Context)) ;
+    ASSERT_MATRIX_OK (*A, "final A imported", GB0) ;
     GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }

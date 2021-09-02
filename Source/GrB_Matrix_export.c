@@ -33,8 +33,8 @@
 
 GrB_Info GrB_Matrix_export  // export a matrix
 (
-    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
-    GrB_Index *Ai,          // row indices for CSR, CSC
+    GrB_Index *Ap,          // pointers for CSR, CSC, row indices for COO
+    GrB_Index *Ai,          // row indices for CSR, CSC, col indices for COO
     void *Ax,               // values (must match the type of A_input)
     GrB_Format format,      // export format
     GrB_Matrix A_input      // matrix to export
