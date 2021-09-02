@@ -20,16 +20,22 @@ for m = [0 1 5 100]
             is_sparse = (nz < m*n) ;
             fprintf ('.') ;
             for fmt_matrix = fmts
-                for fmt_export = 0:11
+                for fmt_export = 0:16
+                    A
+                    fmt_matrix
+                    fmt_export
                     try
-                        C = GB_mex_export_import (A, fmt_matrix, fmt_export) ;
+                        C = GB_mex_export_import (A, fmt_matrix, ...
+                            fmt_export) ;
                         GB_spec_compare (C, A) ;
                     catch me
                         % should fail if A is sparse and it is attempted to
                         % be exported as full
                         ok = is_sparse && ...
                             (fmt_export == 6 || fmt_export == 7 || ...
-                             fmt_export == -6 || fmt_export == -7) ;
+                             fmt_export == -6 || fmt_export == -7 || ...
+                             fmt_export == 14 || fmt_export == 15 || ...
+                             fmt_export == -14 || fmt_export == -15) ;
                         if (~ok)
                             % this should not have failed
                             me

@@ -34,7 +34,6 @@ GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
     GrB_Info info ;
     int64_t nvals ;
     GB_OK (GB_nvals (&nvals, A, Context)) ;
-    nvals = GB_IMAX (nvals, 1) ;
     (*Ax_len) = nvals ;
 
     //--------------------------------------------------------------------------
