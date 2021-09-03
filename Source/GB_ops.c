@@ -278,6 +278,14 @@ GrB_BinaryOp GrB_LAND  = & GB_OPAQUE (LAND_BOOL) ;
 GrB_BinaryOp GrB_LXOR  = & GB_OPAQUE (LXOR_BOOL) ;
 GrB_BinaryOp GrB_LXNOR = & GB_OPAQUE (EQ_BOOL) ;
 
+// Special case for GrB_Matrix_build and GrB_Vector_build:  this operator is
+// not valid to use in any other methods.
+struct GB_BinaryOp_opaque GB_OPAQUE (IGNORE_DUP) =
+{
+    GB_MAGIC2, 0, NULL, NULL, NULL, NULL, "ignore_dup", GB_NOP_opcode, NULL
+} ;
+GrB_BinaryOp GxB_IGNORE_DUP = & GB_OPAQUE (IGNORE_DUP) ;
+
 //------------------------------------------------------------------------------
 // positional unary and binary operators
 //------------------------------------------------------------------------------

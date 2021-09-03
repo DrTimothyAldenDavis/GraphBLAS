@@ -7,6 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// If dup is NULL: any duplicates result in an error.
+// If dup is GxB_IGNORE_DUP: duplicates are ignored, which is not an error.
+// If dup is a valid binary operator, it is used to reduce any duplicates to
+// a single value.
+
 #include "GB_build.h"
 
 #define GB_MATRIX_BUILD(prefix,type,T,xtype)                                  \
@@ -23,7 +28,6 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_build_, T) /* build a matrix from tuples */\
     GB_WHERE (C, "GrB_Matrix_build_" GB_STR(T) " (C, I, J, X, nvals, dup)") ; \
     GB_BURBLE_START ("GrB_Matrix_build_" GB_STR(T)) ;                         \
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;  /* check now so C->type can be done */ \
-    GB_RETURN_IF_NULL_OR_FAULTY (dup) ;                                       \
     GrB_Info info = GB_build (C, I, J, X, nvals, dup,                         \
         xtype, true, false, Context) ;                                        \
     GB_BURBLE_END ;                                                           \

@@ -151,6 +151,7 @@ are extensions to the v1.3 GraphBLAS C API.
 \item Version 5.2.0 (FIXME)
 
     \begin{packed_itemize}
+    \item FIXME: many items added here
     \item \verb'GxB_Matrix_serialize/deserialize': with compression
     \item added LZ4: compression library, \url{http://www.lz4.org} (BSD 2),
         Copyright (c) 2011-2016, Yann Collet.
@@ -4208,6 +4209,11 @@ to \verb'GrB_Matrix_build'.  For a vector, the list of column indices \verb'J'
 in \verb'GrB_Matrix_build' is implicitly a vector of length \verb'nvals' all
 equal to zero.  Otherwise the methods are identical.
 
+If \verb'dup' is \verb'NULL', any duplicates result in an error.
+If \verb'dup' is the special binary operator \verb'GxB_IGNORE_DUP', then
+any duplicates are ignored.  If duplicates appear, the last one in the
+list of tuples is taken and the prior ones ignored.  This is not an error.
+
 \begin{alert}
 {\bf SPEC:} Results are defined even if \verb'dup' is non-associative.
 \end{alert}
@@ -4747,6 +4753,11 @@ assembled into a matrix \verb'T' of the same type as \verb'dup', using
 \verb'T(i,j) = dup (T (i,j), X (k))'.  After \verb'T' is constructed, it is
 typecasted into the result \verb'C'.  That is, typecasting does not occur at
 the same time as the assembly of duplicates.
+
+If \verb'dup' is \verb'NULL', any duplicates result in an error.
+If \verb'dup' is the special binary operator \verb'GxB_IGNORE_DUP', then
+any duplicates are ignored.  If duplicates appear, the last one in the
+list of tuples is taken and the prior ones ignored.  This is not an error.
 
 \begin{alert}
 {\bf SPEC:} As an extension to the spec, results are defined even if \verb'dup'

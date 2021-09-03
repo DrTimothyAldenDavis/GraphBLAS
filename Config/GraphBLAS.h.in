@@ -1355,6 +1355,18 @@ GB_PUBLIC GrB_UnaryOp
     GxB_POSITIONJ1_INT32, GxB_POSITIONJ1_INT64 ;// z=position_j1(A(i,j)) == j+1
 
 //==============================================================================
+// special GrB_BinaryOp for build methods only
+//==============================================================================
+
+// In GrB*build* methods, passing dup as NULL means that no duplicates are
+// tolerated.  If duplicates appear, an error is returned.  If dup is a binary
+// operator, it is applied to reduce duplicates to a single value.  The
+// GxB_IGNORE_DUP is a special case.  It is not an operator, but an indication
+// that any duplicates are to be ignored.
+
+GB_PUBLIC GrB_BinaryOp GxB_IGNORE_DUP ;
+
+//==============================================================================
 // About boolean and bitwise binary operators
 //==============================================================================
 

@@ -31,6 +31,12 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         GBPR0 ("NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }
+    else if (op == GxB_IGNORE_DUP)
+    { 
+        // this is a valid dup operator for build
+        GBPR0 ("ignore_dup\n") ;
+        return (GrB_SUCCESS) ;
+    }
 
     //--------------------------------------------------------------------------
     // check object

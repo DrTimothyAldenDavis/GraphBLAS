@@ -10,8 +10,8 @@
 // GxB_Matrix_build_Scalar builds a matrix C whose values in its sparsity
 // pattern are all equal to a value given by a GrB_Scalar.  Unlike the
 // GrB_Matrix_build_* methods, there is no binary dup operator.  Instead, any
-// duplicate indices are ignored.  The I and J arrays are of size nvals,
-// just like GrB_Matrix_build_*.
+// duplicate indices are ignored, which is not an error condition.  The I and J
+// arrays are of size nvals, just like GrB_Matrix_build_*.
 
 #include "GB_build.h"
 #define GB_FREE_ALL ;
@@ -40,10 +40,10 @@ GrB_Info GxB_Matrix_build_Scalar
     }
 
     //--------------------------------------------------------------------------
-    // build the matrix
+    // build the matrix, ignoring duplicates
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_build (C, I, J, scalar->x, nvals, NULL,
+    GrB_Info info = GB_build (C, I, J, scalar->x, nvals, GxB_IGNORE_DUP,
         scalar->type, true, true, Context) ;
     GB_BURBLE_END ;
     return (info) ;

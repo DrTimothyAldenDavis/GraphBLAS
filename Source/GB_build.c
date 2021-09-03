@@ -12,15 +12,18 @@
 // CALLS:     GB_builder
 
 // GrB_Matrix_build_* and GrB_Vector_build_* always build a non-iso matrix.
-// X is non-iso, and dup must be non-NULL, and T is non-iso on output.
-
-// GxB_Matrix_build_Scalar and GxB_Vector_build_Scalar always build an iso
-// matrix:  X is iso, only the first entry X [0] is used, and dup must be NULL.
-// The matrix T is iso on output.  For an iso build, duplicates are discarded
-// without the use of any dup operator.
-
+// X is non-iso, and T is non-iso on output.  dup can be a valid binary
+// operator, NULL, or the special binary operator GxB_IGNORE_DUP.
 // For a non-iso build, dup may be NULL, which indicates that duplicates are
 // not expected.  If any duplicates do appear, an error is reported.
+// If dup is GxB_IGNORE_DUP, then duplicates are discarded.  If (i,j,x1)
+// appears as the (k1)th tuple, and (i,j,x2) as the (k2)th tuple, and
+// k1 < k2, then the first tuple is ignored and C(i,j) is equal to x2.
+
+// GxB_Matrix_build_Scalar and GxB_Vector_build_Scalar always build an iso
+// matrix:  X is iso, only the first entry X [0] is used, and dup does not
+// appear (it is passed here as GxB_IGNORE_DUP).  The matrix T is iso on
+// output.  For an iso build, duplicates are discarded.
 
 // For all of these cases, the tuples must be checked for duplicates.  They
 // might be sorted on input, so this condition is checked and exploited if that
@@ -28,9 +31,9 @@
 
 // GB_build constructs a matrix C from a list of indices and values.  Any
 // duplicate entries with identical indices are assembled using the binary dup
-// operator provided on input, or discarded if dup is NULL.  All three types
-// (x,y,z for z=dup(x,y)) must be identical.  The types of dup, X, and C must
-// all be compatible.
+// operator provided on input, or discarded if dup is NULL or GxB_IGNORE_DUP.
+// All three types (x,y,z for z=dup(x,y)) must be identical.  The types of dup,
+// X, and C must all be compatible.
 
 // Duplicates are assembled using T(i,j) = dup (T (i,j), X (k)) into a
 // temporary matrix T that has the same type as the dup operator.  The
@@ -182,8 +185,28 @@ GrB_Info GB_build               // build matrix
     // check the dup operator
     //--------------------------------------------------------------------------
 
-    if (dup != NULL)
-    {
+    GrB_BinaryOp dup2 ;
+    bool discard_duplicates = (dup == NULL || dup == GxB_IGNORE_DUP) ;
+
+    if (discard_duplicates)
+    { 
+
+        //----------------------------------------------------------------------
+        // discard all duplicates
+        //----------------------------------------------------------------------
+
+        dup2 = NULL ;
+
+    }
+    else
+    { 
+
+        //----------------------------------------------------------------------
+        // "sum" up duplicates using the binary dup operator
+        //----------------------------------------------------------------------
+
+        dup2 = dup ;
+        GB_RETURN_IF_FAULTY (dup) ;
 
         if (GB_OP_IS_POSITIONAL (dup))
         { 
@@ -240,7 +263,7 @@ GrB_Info GB_build               // build matrix
     GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = GB_clear_static_header (&T_header) ;
-    GrB_Type ttype = (dup == NULL || X_iso) ? xtype : dup->ztype ;
+    GrB_Type ttype = (discard_duplicates) ? xtype : dup->ztype ;
 
     GB_OK (GB_builder (
         T,              // create T using a static header
@@ -263,7 +286,7 @@ GrB_Info GB_build               // build matrix
         (const GB_void *) X,                // values, size nvals or 1 if iso
         X_iso,          // true if X is iso
         nvals,          // number of tuples
-        dup,            // operator to assemble duplicates (may be NULL)
+        dup2,           // operator to assemble duplicates (may be NULL)
         xtype,          // type of the X array
         Context
     )) ;
@@ -273,14 +296,14 @@ GrB_Info GB_build               // build matrix
     //--------------------------------------------------------------------------
 
     int64_t tnvals = GB_nnz (T) ;
-    if (!X_iso && (dup == NULL) && nvals != tnvals)
+    if (dup == NULL && nvals != tnvals)
     { 
         // T has been successfully built by ignoring the duplicate values, via
         // the implicit SECOND dup operator.  If the # of entries in T does not
         // match nvals, then duplicates have been detected.  In the v2.0 C API,
-        // this is an error condition.  I could instead return the matrix,
-        // and the user could compare nvals with GrB_Matrix_nvals(&nvals2,C),
-        // where nduplicates = nvals - nvals2.
+        // this is an error condition.  If the user application wants the C
+        // matrix returned with duplicates discarded, use dup = GxB_IGNORE_DUP
+        // instead. 
         GB_FREE_ALL ;
         GB_ERROR (GrB_INVALID_VALUE, "Duplicates appear (" GBd
             ") but dup is NULL", ((int64_t) nvals) - tnvals) ;

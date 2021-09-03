@@ -761,6 +761,11 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
         ||  type_not_given   ) return (GxB_SECONDJ1_INT64 ) ;
 
     }
+    else if (MATCH (op_name, "ignore") || MATCH (op_name, "ignore_dup"))
+    {
+        // valid for build only
+        return (GxB_IGNORE_DUP) ;
+    }
 
     //--------------------------------------------------------------------------
     // unknown type or operator

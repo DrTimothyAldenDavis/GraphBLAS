@@ -30,10 +30,10 @@ GrB_reduce to GrB_Scalar using a binary op: NOT_IMPLEMENTED
 --------------------------------------------------------------------------------
 DRAFTED: need to test them:
 
-Vector_build, Matrix_build when dup is NULL: no duplicates allowed
-
 --------------------------------------------------------------------------------
 DONE:
+
+Vector_build, Matrix_build when dup is NULL: no duplicates allowed
 
 GrB_Matrix_diag (C, v) same as GxB_Matrix_diag (C, v, 0, NULL)
 

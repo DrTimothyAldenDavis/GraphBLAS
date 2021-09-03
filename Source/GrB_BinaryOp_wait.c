@@ -26,6 +26,7 @@ GrB_Info GrB_BinaryOp_wait   // no work, just check if the GrB_BinaryOp is valid
     #pragma omp flush
     GB_WHERE1 ("GrB_BinaryOp_wait (&op)") ;
     GB_RETURN_IF_NULL (op) ;
+    if (*op == GxB_IGNORE_DUP) return (GrB_SUCCESS) ;   // nothing to do
     GB_RETURN_IF_NULL_OR_FAULTY (*op) ;
 
     //--------------------------------------------------------------------------

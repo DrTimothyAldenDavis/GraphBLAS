@@ -8,7 +8,9 @@ Version 5.2.0, FIXME
             get an entry from a matrix or vector,
             writing result to a GrB_Scalar
         * GrB_reduce: reduce matrix or vector to GrB_Scalar FIXME
-        * GrB*build: when dup is NULL FIXME: TEST THIS
+        * GrB*build: when dup is NULL, duplicates result in an error.
+        * GxB_IGNORE_DUP: special operator for build methods only; if dup
+            is this operator, then duplicate are ignored (not an error)
         * GrB import/export: import/export from/to user-provided arrays
         * GrB_EMPTY_OBJECT, GrB_NOT_IMPLEMENTED: error codes added
         * GrB_*_setElement_Scalar: set an entry in a matrix or vector,
