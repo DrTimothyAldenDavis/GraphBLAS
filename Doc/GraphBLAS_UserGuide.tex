@@ -11852,8 +11852,8 @@ more easily identified in the output.  For the type-generic methods
 \verb'GxB_fprint' and \verb'GxB_print', the \verb'name' string is the variable
 name of the object itself.
 
-If the file \verb'f' is \verb'NULL', nothing is printed (\verb'pr' is
-effectively \verb'GxB_SILENT').  If \verb'name' is \verb'NULL', it is treated
+If the file \verb'f' is \verb'NULL', \verb'stdout' is used.
+If \verb'name' is \verb'NULL', it is treated
 as the empty string.  These are not error conditions.
 
 The methods check their input objects carefully and extensively, even when

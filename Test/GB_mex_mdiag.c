@@ -84,7 +84,14 @@ void mexFunction
     GET_DEEP_COPY ;
 
     // C = diag (v,k)
-    METHOD (GxB_Matrix_diag (C, (GrB_Vector) V, k, NULL)) ;
+    if (k == 0)
+    {
+        METHOD (GrB_Matrix_diag (C, (GrB_Vector) V)) ;
+    }
+    else
+    {
+        METHOD (GxB_Matrix_diag (C, (GrB_Vector) V, k, NULL)) ;
+    }
 
     // return C as a struct
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C=diag(v,k)", true) ;

@@ -1,5 +1,21 @@
 Version 5.2.0, FIXME
 
+    * Added for the v2.0 C API Specification:
+        * GrB_IndexUnaryOp: FIXME
+        * GrB_select: FIXME
+        * GrB2_*wait: with mode paramater (GrB_COMPLETE, GrB_MATERIALIZE) FIXME
+        * GrB_*_extractElement_Scalar: FIXME
+            get an entry from a matrix or vector,
+            writing result to a GrB_Scalar
+        * GrB_reduce: reduce matrix or vector to GrB_Scalar FIXME
+        * GrB*build: when dup is NULL FIXME: TEST THIS
+        * GrB import/export: import/export from/to user-provided arrays
+        * GrB_EMPTY_OBJECT, GrB_NOT_IMPLEMENTED: error codes added
+        * GrB_*_setElement_Scalar: set an entry in a matrix or vector,
+            from a GrB_Scalar
+        * GrB_Scalar: replaces GxB_Scalar, GxB_Scalar_* functions
+            renamed to GrB
+        * GrB_Matrix_diag: same as GxB_Matrix_diag (C, v, 0, NULL)
     * GxB_SelectOp_new2: create a named selectop
     * GxB_BinaryOp_new: create a named binary operator
     * GxB_UnaryOp_new: create a named unary operator

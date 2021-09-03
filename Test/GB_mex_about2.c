@@ -275,7 +275,7 @@ void mexFunction
     OK (GrB_Scalar_new (&scalar, GrB_INT32)) ;
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
     OK (GrB_Matrix_new (&C, GrB_INT32, n, n)) ;
-    expected = GrB_INVALID_VALUE ;
+    expected = GrB_EMPTY_OBJECT ;
     ERR (GxB_Matrix_apply_BinaryOp2nd (C, NULL, NULL, GrB_PLUS_INT32, A,
         scalar, NULL)) ;
     OK (GrB_Matrix_error (&message, C)) ;

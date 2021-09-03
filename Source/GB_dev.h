@@ -29,12 +29,12 @@
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
 // (GraphBLAS will be exceedingly slow; this is for development only)
-#define GB_DEBUG
+// #define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1.
 // (GraphBLAS will be exceedingly slow; this is for development only)
-#define GBCOMPACT 1
+// #define GBCOMPACT 1
 
 // to turn on a very verbose memory trace
 // (GraphBLAS will be exceedingly slow; this is for development only)
@@ -45,8 +45,6 @@
 //------------------------------------------------------------------------------
 
 // FUTURE: transpose full or bitmap inputs by changing how they are accessed
-
-// FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
 
 // FUTURE: DIFF1, DIFF2 binary operators, GxB_vxv
 //

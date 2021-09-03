@@ -171,7 +171,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     if (op2 != NULL && GB_nnz ((GrB_Matrix) scalar) != 1)
     { 
         // the scalar entry must be present
-        GB_ERROR (GrB_INVALID_VALUE, "%s", "Scalar must contain an entry") ;
+        GB_ERROR (GrB_EMPTY_OBJECT, "%s", "Scalar must contain an entry") ;
     }
 
     //--------------------------------------------------------------------------

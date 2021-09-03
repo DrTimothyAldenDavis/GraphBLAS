@@ -11,14 +11,6 @@
 
 #include "GB_diag.h"
 
-// HACK
-GrB_Info GrB_Matrix_diag    // construct a diagonal matrix from a vector
-(
-    GrB_Matrix C,                   // output matrix
-    const GrB_Vector v              // input vector
-) ;
-
-
 GrB_Info GrB_Matrix_diag    // construct a diagonal matrix from a vector
 (
     GrB_Matrix C,                   // output matrix

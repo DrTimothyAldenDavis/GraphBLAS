@@ -265,6 +265,7 @@
 #define GrB_Matrix_build_UINT8 GrM_Matrix_build_UINT8
 #define GrB_Matrix_clear GrM_Matrix_clear
 #define GrB_Matrix_deserialize GrM_Matrix_deserialize
+#define GrB_Matrix_diag GrM_Matrix_diag
 #define GrB_Matrix_dup GrM_Matrix_dup
 #define GrB_Matrix_error GrM_Matrix_error
 #define GrB_Matrix_eWiseAdd_BinaryOp GrM_Matrix_eWiseAdd_BinaryOp
@@ -335,6 +336,7 @@
 #define GrB_Matrix_setElement_INT32 GrM_Matrix_setElement_INT32
 #define GrB_Matrix_setElement_INT64 GrM_Matrix_setElement_INT64
 #define GrB_Matrix_setElement_INT8 GrM_Matrix_setElement_INT8
+#define GrB_Matrix_setElement_Scalar GrM_Matrix_setElement_Scalar
 #define GrB_Matrix_setElement_UDT GrM_Matrix_setElement_UDT
 #define GrB_Matrix_setElement_UINT16 GrM_Matrix_setElement_UINT16
 #define GrB_Matrix_setElement_UINT32 GrM_Matrix_setElement_UINT32
@@ -764,6 +766,7 @@
 #define GrB_Vector_setElement_INT32 GrM_Vector_setElement_INT32
 #define GrB_Vector_setElement_INT64 GrM_Vector_setElement_INT64
 #define GrB_Vector_setElement_INT8 GrM_Vector_setElement_INT8
+#define GrB_Vector_setElement_Scalar GrM_Vector_setElement_Scalar
 #define GrB_Vector_setElement_UDT GrM_Vector_setElement_UDT
 #define GrB_Vector_setElement_UINT16 GrM_Vector_setElement_UINT16
 #define GrB_Vector_setElement_UINT32 GrM_Vector_setElement_UINT32
@@ -3290,6 +3293,8 @@
 #define GB_ctruncf GM_ctruncf
 #define GB_cumsum GM_cumsum
 #define GB_dealloc_memory GM_dealloc_memory
+#define GB_dense_ewise3_accum GM_dense_ewise3_accum
+#define GB_dense_ewise3_noaccum GM_dense_ewise3_noaccum
 #define GB_dense_subassign_05d GM_dense_subassign_05d
 #define GB_dense_subassign_06d GM_dense_subassign_06d
 #define GB_dense_subassign_22 GM_dense_subassign_22
@@ -3539,6 +3544,7 @@
 #define GB_Matrix_check GM_Matrix_check
 #define GB_Matrix_diag GM_Matrix_diag
 #define GB_Matrix_free GM_Matrix_free
+#define GB_Matrix_removeElement GM_Matrix_removeElement
 #define GB_matvec_check GM_matvec_check
 #define GB_matvec_type GM_matvec_type
 #define GB_matvec_type_name GM_matvec_type_name
@@ -3673,5 +3679,6 @@
 #define GB_unop_one GM_unop_one
 #define GB_Vector_check GM_Vector_check
 #define GB_Vector_diag GM_Vector_diag
+#define GB_Vector_removeElement GM_Vector_removeElement
 #define GB_wait GM_wait
 #define GB_xalloc_memory GM_xalloc_memory

@@ -286,17 +286,27 @@ typedef enum
     GrB_NO_VALUE = 1,           // A(i,j) requested but not there
 
     //--------------------------------------------------------------------------
-    // API errors: (and their new value in the v2.0 C API):
+    // API errors:
     //--------------------------------------------------------------------------
 
-    GrB_UNINITIALIZED_OBJECT = 2,   // (-1) object has not been initialized
-    GrB_INVALID_OBJECT = 3,         // (-104) object is corrupted
-    GrB_NULL_POINTER = 4,           // (-2) input pointer is NULL
-    GrB_INVALID_VALUE = 5,          // (-3) generic error; some value is bad
-    GrB_INVALID_INDEX = 6,          // (-4) row or column index is out of bounds
-    GrB_DOMAIN_MISMATCH = 7,        // (-5) object domains are not compatible
-    GrB_DIMENSION_MISMATCH = 8,     // (-6) matrix dimensions do not match
-    GrB_OUTPUT_NOT_EMPTY = 9,       // (-7) output matrix already has values
+    #if (GRB_VERSION == 1)
+    GrB_UNINITIALIZED_OBJECT = 2,   // object has not been initialized
+    GrB_NULL_POINTER = 4,           // input pointer is NULL
+    GrB_INVALID_VALUE = 5,          // generic error; some value is bad
+    GrB_INVALID_INDEX = 6,          // row or column index is out of bounds
+    GrB_DOMAIN_MISMATCH = 7,        // object domains are not compatible
+    GrB_DIMENSION_MISMATCH = 8,     // matrix dimensions do not match
+    GrB_OUTPUT_NOT_EMPTY = 9,       // output matrix already has values
+    #else
+    // v2.0 C API Specification, to appear in v6.0 of SuiteSparse:GraphBLAS:
+    GrB_UNINITIALIZED_OBJECT = -1,  // object has not been initialized
+    GrB_NULL_POINTER = -2,          // input pointer is NULL
+    GrB_INVALID_VALUE = -3,         // generic error; some value is bad
+    GrB_INVALID_INDEX = -4,         // row or column index is out of bounds
+    GrB_DOMAIN_MISMATCH = -5,       // object domains are not compatible
+    GrB_DIMENSION_MISMATCH = -6,    // matrix dimensions do not match
+    GrB_OUTPUT_NOT_EMPTY = -7,      // output matrix already has values
+    #endif
 
     GrB_NOT_IMPLEMENTED = -8,       // method not implemented
 
@@ -305,10 +315,21 @@ typedef enum
     //--------------------------------------------------------------------------
 
     GrB_EMPTY_OBJECT = -106,        // an object does not contain a value
-    GrB_OUT_OF_MEMORY = 10,         // (-102) out of memory
-    GrB_INSUFFICIENT_SPACE = 11,    // (-103) output array not large enough
-    GrB_INDEX_OUT_OF_BOUNDS = 12,   // (-105) row or col index out of bounds
-    GrB_PANIC = 13                  // (-101) unknown error
+
+    #if (GRB_VERSION == 1)
+    GrB_INVALID_OBJECT = 3,         // object is corrupted
+    GrB_OUT_OF_MEMORY = 10,         // out of memory
+    GrB_INSUFFICIENT_SPACE = 11,    // output array not large enough
+    GrB_INDEX_OUT_OF_BOUNDS = 12,   // row or col index out of bounds
+    GrB_PANIC = 13                  // unknown error
+    #else
+    // v2.0 C API Specification, to appear in v6.0 of SuiteSparse:GraphBLAS:
+    GrB_INVALID_OBJECT = -104,      // object is corrupted
+    GrB_OUT_OF_MEMORY = -102,       // out of memory
+    GrB_INSUFFICIENT_SPACE = -103,  // output array not large enough
+    GrB_INDEX_OUT_OF_BOUNDS = -105, // row or col index out of bounds
+    GrB_PANIC = -101                // unknown error
+    #endif
 }
 GrB_Info ;
 
@@ -329,8 +350,16 @@ GrB_Info ;
 
 typedef enum
 {
+    #if (GRB_VERSION == 1)
+    // v1.x did not specify the enum values.  These values were used in
+    // v1 to v5 of SuiteSparse:GraphBLAS.
     GrB_NONBLOCKING = 0,    // methods may return with pending computations
     GrB_BLOCKING = 1        // no computations are ever left pending
+    #else
+    // v2.0 C API Specification, to appear in v6.0 of SuiteSparse:GraphBLAS.
+    GrB_NONBLOCKING = 1,    // methods may return with pending computations
+    GrB_BLOCKING = 0        // no computations are ever left pending
+    #endif
 }
 GrB_Mode ;
 
@@ -1651,18 +1680,180 @@ GrB_Info GxB_SelectOp_free      // free a user-created select operator
 ) ;
 
 //==============================================================================
-// GrB_IndexUnaryOp
+// GrB_IndexUnaryOp     FIXME write these
 //==============================================================================
 
-// FIXME
+// FIXME describe the GrB_IndexUnaryOp.
 
 typedef struct GB_IndexUnaryOp_opaque *GrB_IndexUnaryOp ;
+
+typedef void (*GxB_index_unary_function)
+(
+    void *z,            // output value z, of type ztype
+    const void *x,      // input value x of type xtype; value of v(i) or A(i,j)
+    GrB_Index *indices, // index i of v(i) or [i j] of A(i,j)
+    GrB_Index n,        // 1 for vector index, 2 for matrices indices
+    const void *thunk   // input scalar thunk
+) ;
+
+// GrB_IndexUnaryOp_new creates a user-defined unary op, with an automatic
+// detection of the operator name.
+#undef GrB_IndexUnaryOp_new
+#undef GrM_IndexUnaryOp_new
+GB_PUBLIC
+GrB_Info GRB (IndexUnaryOp_new)     // create a new user-defined IndexUnary op
+(
+    GrB_IndexUnaryOp *op,           // handle for the new IndexUnary operator
+    GxB_index_unary_function function,    // pointer to IndexUnary function
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype,                 // type of input x
+    GrB_Type ttype                  // type of input thunk
+) ;
+#define GrB_IndexUnaryOp_new(op,f,z,x,t) GxB_IndexUnaryOp_new (op,f,z,x,t, GB_STR(f), NULL)
+#define GrM_IndexUnaryOp_new(op,f,z,x,t) GxM_IndexUnaryOp_new (op,f,z,x,t, GB_STR(f), NULL)
+
+GB_PUBLIC
+GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
+(
+    GrB_IndexUnaryOp *op,           // handle for the new IndexUnary operator
+    GxB_index_unary_function function,    // pointer to IndexUnary function
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype,                 // type of input x
+    GrB_Type ttype,                 // type of input thunk
+    const char *idxop_name,         // name of the user function
+    const char *idxop_defn          // definition of the user function
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_IndexUnaryOp_ztype_name    // return the type_name of z
+(
+    char *type_name,                    // user array of size GxB_MAX_NAME_LEN
+    const GrB_IndexUnaryOp op           // IndexUnary operator
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_IndexUnaryOp_xtype_name    // return the type_name of x
+(
+    char *type_name,                    // user array of size GxB_MAX_NAME_LEN
+    const GrB_IndexUnaryOp op           // select operator
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_IndexUnaryOp_ttype_name    // return the type_name of thunk
+(
+    char *type_name,                    // user array of size GxB_MAX_NAME_LEN
+    const GrB_IndexUnaryOp op           // select operator
+) ;
 
 GB_PUBLIC
 GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 (
     GrB_IndexUnaryOp *op        // handle of IndexUnary to free
 ) ;
+
+//------------------------------------------------------------------------------
+// built-in IndexUnaryOps
+//------------------------------------------------------------------------------
+
+// For matrices, the indexop has the form z = f(aij, [i j], 2, thunk)
+// where aij is the numerical value of the A(i,j) entry, [i j] are its row
+// and column index, 2 denotes the size of the indices [i j], and thunk is
+// a scalar.
+
+// For vectors, it has the form z = f(vi, [i], 1, thunk).
+
+GB_PUBLIC GrB_IndexUnaryOp
+
+    //--------------------------------------------------------------------------
+    // Result has the integer type INT32, UINT32, INT64, or UINT64:
+    //--------------------------------------------------------------------------
+
+    // These operators work on any data type, including user-defined.
+
+    // ROWINDEX: (i+thunk): row index plus thunk (vectors or matrices)
+    GrB_ROWINDEX_INT32,  GrB_ROWINDEX_INT64,  GrB_ROWINDEX_UINT32,  GrB_ROWINDEX_UINT64,
+
+    // COLINDEX: (j+thunk): col index plus thunk (matrices only)
+    GrB_COLINDEX_INT32,  GrB_COLINDEX_INT64,  GrB_COLINDEX_UINT32,  GrB_COLINDEX_UINT64,
+
+    // DIAGINDEX: (i-j+thunk): diagonal index plus thunk (matrices only)
+    GrB_DIAGINDEX_INT32, GrB_DIAGINDEX_INT64, GrB_DIAGINDEX_UINT32, GrB_DIAGINDEX_UINT64,
+
+    //--------------------------------------------------------------------------
+    // Result is bool, depending only on the indices i,j, and thunk
+    //--------------------------------------------------------------------------
+
+    // These operators work on matrices (not vectors) of any data type, including
+    // user-defined.
+
+    // TRIL: (i < (j+thunk)): lower triangular part (matrices only)
+    GrB_TRIL_INT32,     GrB_TRIL_INT64,    GrB_TRIL_UINT32,    GrB_TRIL_UINT64,
+
+    // TRIU: (j > (i+thunk)): upper triangular part (matrices only)
+    GrB_TRIU_INT32,     GrB_TRIU_INT64,    GrB_TRIU_UINT32,    GrB_TRIU_UINT64,
+
+    // DIAG: (j == (i+thunk)): diagonal (matrices only)
+    GrB_DIAG_INT32,     GrB_DIAG_INT64,    GrB_DIAG_UINT32,    GrB_DIAG_UINT64,
+
+    // OFFDIAG: (j != (i+thunk)): offdiagonal (matrices only)
+    GrB_OFFDIAG_INT32,  GrB_OFFDIAG_INT64, GrB_OFFDIAG_UINT32, GrB_OFFDIAG_UINT64,
+
+    // COLLE: (j <= thunk): columns 0:thunk (matrices only)
+    GrB_COLLE_UINT64,
+
+    // COLGT: (j > thunk): columns thunk+1:ncols-1 (matrices only)
+    GrB_COLGT_UINT64,
+
+    // ROWLE: (i <= thunk): rows 0:thunk (vectors and matrices)
+    GrB_ROWLE_UINT64,
+
+    // ROWGT: (i > thunk): rows thunk+1:nrows-1 (vectors and matrices)
+    GrB_ROWGT_UINT64,
+
+    //--------------------------------------------------------------------------
+    // Result is bool, depending only on the value aij
+    //--------------------------------------------------------------------------
+
+    // These operators work on matrices and vectors of any built-in type.
+
+    // VALUEEQ: (aij == thunk)
+    GrB_VALUEEQ_BOOL,
+    GrB_VALUEEQ_INT8,  GrB_VALUEEQ_INT16,  GrB_VALUEEQ_INT32,  GrB_VALUEEQ_INT64,
+    GrB_VALUEEQ_UINT8, GrB_VALUEEQ_UINT16, GrB_VALUEEQ_UINT32, GrB_VALUEEQ_UINT64,
+    GrB_VALUEEQ_FP32,  GrB_VALUEEQ_FP64,   GxB_VALUEEQ_FC32,   GxB_VALUEEQ_FC64,
+
+    // VALUENE: (aij != thunk)
+    GrB_VALUENE_BOOL,
+    GrB_VALUENE_INT8,  GrB_VALUENE_INT16,  GrB_VALUENE_INT32,  GrB_VALUENE_INT64,
+    GrB_VALUENE_UINT8, GrB_VALUENE_UINT16, GrB_VALUENE_UINT32, GrB_VALUENE_UINT64,
+    GrB_VALUENE_FP32,  GrB_VALUENE_FP64,   GxB_VALUENE_FC32,   GxB_VALUENE_FC64,
+
+    // These operators work on matrices and vectors of any real (non-complex)
+    // built-in type.
+
+    // VALUELT: (aij < thunk)
+    GrB_VALUELT_BOOL,
+    GrB_VALUELT_INT8,  GrB_VALUELT_INT16,  GrB_VALUELT_INT32,  GrB_VALUELT_INT64,
+    GrB_VALUELT_UINT8, GrB_VALUELT_UINT16, GrB_VALUELT_UINT32, GrB_VALUELT_UINT64,
+    GrB_VALUELT_FP32,  GrB_VALUELT_FP64,
+
+    // VALUELE: (aij <= thunk)
+    GrB_VALUELE_BOOL,
+    GrB_VALUELE_INT8,  GrB_VALUELE_INT16,  GrB_VALUELE_INT32,  GrB_VALUELE_INT64,
+    GrB_VALUELE_UINT8, GrB_VALUELE_UINT16, GrB_VALUELE_UINT32, GrB_VALUELE_UINT64,
+    GrB_VALUELE_FP32,  GrB_VALUELE_FP64,
+
+    // VALUEGT: (aij > thunk)
+    GrB_VALUEGT_BOOL,
+    GrB_VALUEGT_INT8,  GrB_VALUEGT_INT16,  GrB_VALUEGT_INT32,  GrB_VALUEGT_INT64,
+    GrB_VALUEGT_UINT8, GrB_VALUEGT_UINT16, GrB_VALUEGT_UINT32, GrB_VALUEGT_UINT64,
+    GrB_VALUEGT_FP32,  GrB_VALUEGT_FP64,
+
+    // VALUEGE: (aij >= thunk)
+    GrB_VALUEGE_BOOL,
+    GrB_VALUEGE_INT8,  GrB_VALUEGE_INT16,  GrB_VALUEGE_INT32,  GrB_VALUEGE_INT64,
+    GrB_VALUEGE_UINT8, GrB_VALUEGE_UINT16, GrB_VALUEGE_UINT32, GrB_VALUEGE_UINT64,
+    GrB_VALUEGE_FP32,  GrB_VALUEGE_FP64 ;
 
 //==============================================================================
 // GrB_Monoid
@@ -4471,84 +4662,99 @@ GrB_WaitMode ;
 
 // Finish all pending work in a specific object.
 
-// v1.3 C API:
-GB_PUBLIC GrB_Info GrB_Type_wait         (GrB_Type       *type    ) ;
-GB_PUBLIC GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    *op      ) ;
-GB_PUBLIC GrB_Info GrB_BinaryOp_wait     (GrB_BinaryOp   *op      ) ;
-GB_PUBLIC GrB_Info GxB_SelectOp_wait     (GxB_SelectOp   *op      ) ;
-GB_PUBLIC GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp *op    ) ;   // FIXME write this
-GB_PUBLIC GrB_Info GrB_Monoid_wait       (GrB_Monoid     *monoid  ) ;
-GB_PUBLIC GrB_Info GrB_Semiring_wait     (GrB_Semiring   *semiring) ;
-GB_PUBLIC GrB_Info GrB_Descriptor_wait   (GrB_Descriptor *desc    ) ;
-GB_PUBLIC GrB_Info GxB_Scalar_wait       (GrB_Scalar     *s       ) ; // historical
-GB_PUBLIC GrB_Info GrB_Scalar_wait       (GrB_Scalar     *s       ) ;
-GB_PUBLIC GrB_Info GrB_Vector_wait       (GrB_Vector     *v       ) ;
-GB_PUBLIC GrB_Info GrB_Matrix_wait       (GrB_Matrix     *A       ) ;
+#if (GRB_VERSION == 1)
 
-// v2.0 API: to appear in SuiteSparse:GraphBLAS v6.0 as GrB*.  The "2" is
-// added to the names below for SuiteSparse:GraphBLAS v5.x to preserve backward
-// compatibility, while at the same time including the new functionality in
-// v5.x.  When the v2.0 API is official, these functions will be renamed
-// GrB_*wait and the GrB_*wait methods above will be removed entirely.
-GB_PUBLIC GrB_Info GxB2_Type_wait         (GrB_Type       type    , GrB_WaitMode waitmode) ;
-GB_PUBLIC GrB_Info GxB2_UnaryOp_wait      (GrB_UnaryOp    op      , GrB_WaitMode waitmode) ;
-GB_PUBLIC GrB_Info GxB2_BinaryOp_wait     (GrB_BinaryOp   op      , GrB_WaitMode waitmode) ;
-GB_PUBLIC GrB_Info GxB2_SelectOp_wait     (GxB_SelectOp   op      , GrB_WaitMode waitmode) ;
-GB_PUBLIC GrB_Info GxB2_IndexUnaryOp_wait (GrB_IndexUnaryOp op    , GrB_WaitMode waitmode) ;  // FIXME write
-GB_PUBLIC GrB_Info GxB2_Monoid_wait       (GrB_Monoid     monoid  , GrB_WaitMode waitmode) ;
-GB_PUBLIC GrB_Info GxB2_Semiring_wait     (GrB_Semiring   semiring, GrB_WaitMode waitmode) ;
-GB_PUBLIC GrB_Info GxB2_Descriptor_wait   (GrB_Descriptor desc    , GrB_WaitMode waitmode) ;
-GB_PUBLIC GrB_Info GxB2_Scalar_wait       (GrB_Scalar     s       , GrB_WaitMode waitmode) ;
-GB_PUBLIC GrB_Info GxB2_Vector_wait       (GrB_Vector     v       , GrB_WaitMode waitmode) ;
-GB_PUBLIC GrB_Info GxB2_Matrix_wait       (GrB_Matrix     A       , GrB_WaitMode waitmode) ;
+    //--------------------------------------------------------------------------
+    // GrB_wait: in the v4 and v5 of SuiteSparse:GraphBLAS
+    //--------------------------------------------------------------------------
 
-// Note that v1.0 of the GraphBLAS C API had a no-input GrB_wait ( ) method,
-// which is now deprecated and no longer supported, since it conflicts with the
-// single-input GrB_wait (&object) method below.  The no-input GrB_wait ( )
-// method has been removed, as of v4.0 of SuiteSparse:GraphBLAS.
+    // v1.x of the C API Specification had a GrB_wait() with no inputs, which
+    // finished all computations on all objects.  This had performance issues,
+    // so in v4.0.x of SuiteSparse:GraphBLAS, it was replaced with a
+    // single-object GrB_wait (&object), which came from an early draft of the
+    // v2.0 C API.  However, in the final v2.0 C API, GrB_wait has taken a
+    // different form: GrB_wait (object, mode).
 
-// GrB_wait (&object) polymorphic function:
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_wait(object)                            \
-    _Generic                                        \
-    (                                               \
-        (object),                                   \
-        GrB_Type         *: GrB_Type_wait       ,   \
-        GrB_UnaryOp      *: GrB_UnaryOp_wait    ,   \
-        GrB_BinaryOp     *: GrB_BinaryOp_wait   ,   \
-        GxB_SelectOp     *: GxB_SelectOp_wait   ,   \
-        /* FIXME: add this: */ \
-/*      GrB_IndexUnaryOp *: GrB_IndexUnaryOp_wait ,*/\
-        GrB_Monoid       *: GrB_Monoid_wait     ,   \
-        GrB_Semiring     *: GrB_Semiring_wait   ,   \
-        GrB_Scalar       *: GrB_Scalar_wait     ,   \
-        GrB_Vector       *: GrB_Vector_wait     ,   \
-        GrB_Matrix       *: GrB_Matrix_wait     ,   \
-        GrB_Descriptor   *: GrB_Descriptor_wait     \
-    )                                               \
-    (object)
-#endif
+    // When the new GrB_*wait is added from the v2.0 C API, these functions
+    // will be removed in SuiteSparse:GraphBLAS v6.0.
 
-// GrB2_wait (object,waitmode) polymorphic function:
-#if GxB_STDC_VERSION >= 201112L
-#define GrB2_wait(object,waitmode)                  \
-    _Generic                                        \
-    (                                               \
-        (object),                                   \
-        GrB_Type         : GrB2_Type_wait         , \
-        GrB_UnaryOp      : GrB2_UnaryOp_wait      , \
-        GrB_BinaryOp     : GrB2_BinaryOp_wait     , \
-        GxB_SelectOp     : GxB2_SelectOp_wait     , \
-        /* FIXME: add this: */ \
-/*      GrB_IndexUnaryOp : GrB2_IndexUnaryOp_wait ,*/\
-        GrB_Monoid       : GrB2_Monoid_wait       , \
-        GrB_Semiring     : GrB2_Semiring_wait     , \
-        GrB_Scalar       : GrB2_Scalar_wait       , \
-        GrB_Vector       : GrB2_Vector_wait       , \
-        GrB_Matrix       : GrB2_Matrix_wait       , \
-        GrB_Descriptor   : GrB2_Descriptor_wait     \
-    )                                               \
-    (object)
+    GB_PUBLIC GrB_Info GrB_Type_wait         (GrB_Type       *type    ) ;
+    GB_PUBLIC GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    *op      ) ;
+    GB_PUBLIC GrB_Info GrB_BinaryOp_wait     (GrB_BinaryOp   *op      ) ;
+    GB_PUBLIC GrB_Info GxB_SelectOp_wait     (GxB_SelectOp   *op      ) ;
+    GB_PUBLIC GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp *op    ) ;   // FIXME write this
+    GB_PUBLIC GrB_Info GrB_Monoid_wait       (GrB_Monoid     *monoid  ) ;
+    GB_PUBLIC GrB_Info GrB_Semiring_wait     (GrB_Semiring   *semiring) ;
+    GB_PUBLIC GrB_Info GrB_Descriptor_wait   (GrB_Descriptor *desc    ) ;
+    GB_PUBLIC GrB_Info GxB_Scalar_wait       (GrB_Scalar     *s       ) ;
+    GB_PUBLIC GrB_Info GrB_Scalar_wait       (GrB_Scalar     *s       ) ;
+    GB_PUBLIC GrB_Info GrB_Vector_wait       (GrB_Vector     *v       ) ;
+    GB_PUBLIC GrB_Info GrB_Matrix_wait       (GrB_Matrix     *A       ) ;
+
+    // GrB_wait (&object) polymorphic function:
+    #if GxB_STDC_VERSION >= 201112L
+    #define GrB_wait(object)                            \
+        _Generic                                        \
+        (                                               \
+            (object),                                   \
+            GrB_Type         *: GrB_Type_wait       ,   \
+            GrB_UnaryOp      *: GrB_UnaryOp_wait    ,   \
+            GrB_BinaryOp     *: GrB_BinaryOp_wait   ,   \
+            GxB_SelectOp     *: GxB_SelectOp_wait   ,   \
+            /* FIXME: add this: */ \
+    /*      GrB_IndexUnaryOp *: GrB_IndexUnaryOp_wait,*/\
+            GrB_Monoid       *: GrB_Monoid_wait     ,   \
+            GrB_Semiring     *: GrB_Semiring_wait   ,   \
+            GrB_Scalar       *: GrB_Scalar_wait     ,   \
+            GrB_Vector       *: GrB_Vector_wait     ,   \
+            GrB_Matrix       *: GrB_Matrix_wait     ,   \
+            GrB_Descriptor   *: GrB_Descriptor_wait     \
+        )                                               \
+        (object)
+    #endif
+
+#else
+
+    //--------------------------------------------------------------------------
+    // GrB_wait: in the v2.0 C API Spec and v6.0 of SuiteSparse:GraphBLAS
+    //--------------------------------------------------------------------------
+
+    // These functions will appear in SuiteSparse:GraphBLAS v6.0.
+
+    GB_PUBLIC GrB_Info GrB_Type_wait         (GrB_Type       type    , GrB_WaitMode waitmode) ;
+    GB_PUBLIC GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    op      , GrB_WaitMode waitmode) ;
+    GB_PUBLIC GrB_Info GrB_BinaryOp_wait     (GrB_BinaryOp   op      , GrB_WaitMode waitmode) ;
+    GB_PUBLIC GrB_Info GxB_SelectOp_wait     (GxB_SelectOp   op      , GrB_WaitMode waitmode) ;
+    GB_PUBLIC GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp op    , GrB_WaitMode waitmode) ;  // FIXME write
+    GB_PUBLIC GrB_Info GrB_Monoid_wait       (GrB_Monoid     monoid  , GrB_WaitMode waitmode) ;
+    GB_PUBLIC GrB_Info GrB_Semiring_wait     (GrB_Semiring   semiring, GrB_WaitMode waitmode) ;
+    GB_PUBLIC GrB_Info GrB_Descriptor_wait   (GrB_Descriptor desc    , GrB_WaitMode waitmode) ;
+    GB_PUBLIC GrB_Info GrB_Scalar_wait       (GrB_Scalar     s       , GrB_WaitMode waitmode) ;
+    GB_PUBLIC GrB_Info GrB_Vector_wait       (GrB_Vector     v       , GrB_WaitMode waitmode) ;
+    GB_PUBLIC GrB_Info GrB_Matrix_wait       (GrB_Matrix     A       , GrB_WaitMode waitmode) ;
+
+    // GrB_wait (object,waitmode) polymorphic function:
+    #if GxB_STDC_VERSION >= 201112L
+    #define GrB_wait(object,waitmode)                   \
+        _Generic                                        \
+        (                                               \
+            (object),                                   \
+            GrB_Type         : GrB_Type_wait         ,  \
+            GrB_UnaryOp      : GrB_UnaryOp_wait      ,  \
+            GrB_BinaryOp     : GrB_BinaryOp_wait     ,  \
+            GxB_SelectOp     : GxB_SelectOp_wait     ,  \
+            /* FIXME: add this: */ \
+    /*      GrB_IndexUnaryOp : GrB_IndexUnaryOp_wait ,*/\
+            GrB_Monoid       : GrB_Monoid_wait       ,  \
+            GrB_Semiring     : GrB_Semiring_wait     ,  \
+            GrB_Scalar       : GrB_Scalar_wait       ,  \
+            GrB_Vector       : GrB_Vector_wait       ,  \
+            GrB_Matrix       : GrB_Matrix_wait       ,  \
+            GrB_Descriptor   : GrB_Descriptor_wait      \
+        )                                               \
+        (object)
+    #endif
+
 #endif
 
 //==============================================================================
@@ -4573,7 +4779,7 @@ GB_PUBLIC GrB_Info GrB_Matrix_error       (const char **error, const GrB_Matrix 
 GB_PUBLIC GrB_Info GrB_Descriptor_error   (const char **error, const GrB_Descriptor   d) ;
 
 // historical:
-GB_PUBLIC GrB_Info GxB_Scalar_error     (const char **error, const GrB_Scalar     s) ;
+GB_PUBLIC GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar       s) ;
 
 // Note that v1.0 of the GraphBLAS C API had a no-input GrB_error ( ) method,
 // which is now deprecated and no longer supported, since it conflicts with the
@@ -6278,6 +6484,7 @@ GrB_Info GrB_Vector_apply_BinaryOp1st_UDT       // w<mask> = accum (w, op(x,u))
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
+
 //-------------------------------------------
 // vector apply: binaryop variants (bind 2nd)
 //-------------------------------------------
@@ -6475,6 +6682,192 @@ GrB_Info GrB_Vector_apply_BinaryOp2nd_UDT       // w<mask> = accum (w, op(u,y))
     const GrB_BinaryOp op,          // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
     const void *y,                  // second input: scalar y
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+//-------------------------------------------
+// vector apply: IndexUnaryOp variants FIXME write these
+//-------------------------------------------
+
+// Apply an IndexUnaryOp to the entries in a vector
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_Scalar    // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    const GrB_Scalar thunk,         // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_BOOL      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    bool thunk,                     // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_INT8      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    int8_t thunk,                   // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_INT16     // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    int16_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_INT32     // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    int32_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_INT64     // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    int64_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_UINT8     // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    uint8_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_UINT16    // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    uint16_t thunk,                 // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_UINT32    // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    uint32_t thunk,                 // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_UINT64    // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    uint64_t thunk,                 // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_FP32      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    float thunk,                    // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_FP64      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    double thunk,                   // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_apply_IndexOp_FC32      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    GxB_FC32_t thunk,               // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_apply_IndexOp_FC64      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    GxB_FC64_t thunk,               // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_apply_IndexOp_UDT       // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    const void *thunk,              // second input: scalar thunk
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6686,7 +7079,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp1st_UDT       // C<M>=accum(C,op(x,A))
 // to a scalar y, C<Mask> = accum (C, op (A,y)), or op(A',y).
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(x,A))    FIXME write this
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(A,y))    FIXME write this
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6699,7 +7092,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(x,A))    FIXM
 
 // historical: identical to GrB_Matrix_apply_BinaryOp2nd_Scalar
 GB_PUBLIC
-GrB_Info GxB_Matrix_apply_BinaryOp2nd           // C<M>=accum(C,op(x,A))
+GrB_Info GxB_Matrix_apply_BinaryOp2nd           // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6711,7 +7104,7 @@ GrB_Info GxB_Matrix_apply_BinaryOp2nd           // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_BOOL      // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_BOOL      // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6723,7 +7116,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_BOOL      // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT8      // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT8      // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6735,7 +7128,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT8      // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT16     // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT16     // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6747,7 +7140,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT16     // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT32     // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT32     // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6759,7 +7152,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT32     // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT64     // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT64     // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6771,7 +7164,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_INT64     // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT8      // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT8      // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6783,7 +7176,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT8      // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT16     // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT16     // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6795,7 +7188,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT16     // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT32     // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT32     // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6807,7 +7200,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT32     // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT64     // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT64     // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6819,7 +7212,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UINT64     // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_FP32      // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_FP32      // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6831,7 +7224,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_FP32      // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_FP64      // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_FP64      // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6843,7 +7236,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_FP64      // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_apply_BinaryOp2nd_FC32      // C<M>=accum(C,op(x,A))
+GrB_Info GxB_Matrix_apply_BinaryOp2nd_FC32      // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6855,7 +7248,7 @@ GrB_Info GxB_Matrix_apply_BinaryOp2nd_FC32      // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_apply_BinaryOp2nd_FC64      // C<M>=accum(C,op(x,A))
+GrB_Info GxB_Matrix_apply_BinaryOp2nd_FC64      // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6867,7 +7260,7 @@ GrB_Info GxB_Matrix_apply_BinaryOp2nd_FC64      // C<M>=accum(C,op(x,A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_UDT       // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_UDT       // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6875,6 +7268,192 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UDT       // C<M>=accum(C,op(x,A))
     const GrB_BinaryOp op,          // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
     const void *y,                  // second input: scalar y
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+//-------------------------------------------
+// matrix apply: IndexUnaryOp variants FIXME write these
+//-------------------------------------------
+
+// Apply an IndexUnaryOp to the entries in a matrix.
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_Scalar    // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Scalar thunk,         // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_BOOL      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    bool thunk,                     // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_INT8      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    int8_t thunk,                   // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_INT16     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    int16_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_INT32     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    int32_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_INT64     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    int64_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_UINT8      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    uint8_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_UINT16     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    uint16_t thunk,                 // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_UINT32     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    uint32_t thunk,                 // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_UINT64     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    uint64_t thunk,                 // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_FP32      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    float thunk,                    // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_FP64      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    double thunk,                   // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_apply_IndexOp_FC32      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    GxB_FC32_t thunk,               // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_apply_IndexOp_FC64      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    GxB_FC64_t thunk,               // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_apply_IndexOp_UDT       // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    const void *thunk,              // second input: scalar thunk
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -6891,10 +7470,12 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UDT       // C<M>=accum(C,op(x,A))
 // GrB_Vector_apply                  (w,m,acc,unop ,u,d)
 // GrB_Vector_apply_BinaryOp1st_TYPE (w,m,acc,binop,x,u,d)
 // GrB_Vector_apply_BinaryOp2nd_TYPE (w,m,acc,binop,u,y,d)
+// GrB_Vector_apply_IndexOp_TYPE     (w,m,acc,idxop,u,t,d)
 
 // GrB_Matrix_apply                  (C,M,acc,unop ,A,d)
 // GrB_Matrix_apply_BinaryOp1st_TYPE (C,M,acc,binop,x,A,d)
 // GrB_Matrix_apply_BinaryOp2nd_TYPE (C,M,acc,binop,A,y,d)
+// GrB_Matrix_apply_IndexOp_TYPE     (C,M,acc,idxop,A,t,d)
 
 #if GxB_STDC_VERSION >= 201112L
 
@@ -6913,6 +7494,14 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UDT       // C<M>=accum(C,op(x,A))
             )                                                               \
     )
 
+#define GB_IDXOP(kind,A,thunk,...)                                          \
+    _Generic                                                                \
+    (                                                                       \
+        (thunk),                                                            \
+        GrB_Scalar: GB_CONCAT ( GrB, _, kind, _apply_IndexOp_Scalar),       \
+        GB_CASES (, GrB, GB_CONCAT ( kind, _apply_IndexOp,, )) ,            \
+    )
+
 #define GrB_apply(C,Mask,accum,op,...)                                      \
     _Generic                                                                \
     (                                                                       \
@@ -6923,6 +7512,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UDT       // C<M>=accum(C,op(x,A))
                 (op),                                                       \
                 GrB_UnaryOp  : GrB_Vector_apply ,                           \
                 GrB_BinaryOp : GB_BIND (Vector, __VA_ARGS__)                \
+/*              GrB_IndexUnaryOp : GB_IDXOP (Vector, __VA_ARGS__)   FIXME*/ \
             ),                                                              \
         GrB_Matrix :                                                        \
             _Generic                                                        \
@@ -6930,10 +7520,406 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UDT       // C<M>=accum(C,op(x,A))
                 (op),                                                       \
                 GrB_UnaryOp  : GrB_Matrix_apply ,                           \
                 GrB_BinaryOp : GB_BIND (Matrix, __VA_ARGS__)                \
+/*              GrB_IndexUnaryOp : GB_IDXOP (Matrix, __VA_ARGS__)   FIXME*/ \
             )                                                               \
     )                                                                       \
     (C, Mask, accum, op, __VA_ARGS__)
 #endif
+
+//==============================================================================
+// GrB_select: matrix and vector selection using an IndexUnaryOp
+//==============================================================================
+
+//-------------------------------------------
+// vector select using an IndexUnaryOp FIXME write these
+//-------------------------------------------
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_Scalar    // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    const GrB_Scalar thunk,         // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_BOOL      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    bool thunk,                     // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_INT8      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    int8_t thunk,                   // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_INT16     // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    int16_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_INT32     // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    int32_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_INT64     // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    int64_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_UINT8     // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    uint8_t thunk,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_UINT16    // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    uint16_t thunk,                 // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_UINT32    // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    uint32_t thunk,                 // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_UINT64    // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    uint64_t thunk,                 // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_FP32      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    float thunk,                    // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_FP64      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    double thunk,                   // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_select_FC32      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    GxB_FC32_t thunk,               // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Vector_select_FC64      // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    GxB_FC64_t thunk,               // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_select_UDT       // w<mask> = accum (w, op(u))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    const void *thunk,              // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+//-------------------------------------------
+// matrix select using an IndexUnaryOp FIXME write these
+//-------------------------------------------
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_Scalar    // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Scalar y,             // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_BOOL      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    bool y,                         // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_INT8      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    int8_t y,                       // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_INT16     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    int16_t y,                      // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_INT32     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    int32_t y,                      // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_INT64     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    int64_t y,                      // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_UINT8      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    uint8_t y,                      // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_UINT16     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    uint16_t y,                     // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_UINT32     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    uint32_t y,                     // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_UINT64     // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    uint64_t y,                     // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_FP32      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    float y,                        // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_FP64      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    double y,                       // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_select_FC32      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    GxB_FC32_t y,                   // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_select_FC64      // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    GxB_FC64_t y,                   // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_select_UDT       // C<M>=accum(C,op(A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    const void *y,                  // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for C, mask, and A
+) ;
+
+// GrB_select is a generic method that applies an IndexUnaryOp to
+// a matrix or vector, using any type of the scalar thunk.
+
+// GrB_Vector_select_TYPE (w,m,acc,idxop,u,t,d)
+// GrB_Matrix_select_TYPE (C,M,acc,idxop,A,t,d)
+
+#define GrB_select(C,Mask,accum,op,x,thunk,d)                               \
+    _Generic                                                                \
+    (                                                                       \
+        (C),                                                                \
+        GrB_Vector :                                                        \
+            _Generic ((thunk),                                              \
+                GB_CASES (, GrB, Vector_select),                            \
+                const GrB_Scalar : GrB_Vector_select_Scalar,                \
+                      GrB_Scalar : GrB_Vector_select_Scalar                 \
+        GrB_Matrix :                                                        \
+            _Generic ((thunk),                                              \
+                GB_CASES (, GrB, Matrix_select),                            \
+                const GrB_Scalar : GrB_Matrix_select_Scalar,                \
+                      GrB_Scalar : GrB_Matrix_select_Scalar                 \
+    )                                                                       \
+    (C, Mask, accum, op, x, thunk, d)
 
 //==============================================================================
 // GxB_select: matrix and vector selection
@@ -8492,10 +9478,10 @@ GrB_Info GxB_Vector_resize      // change the size of a vector (historical)
 // For the type-generic methods GxB_fprint and GxB_print, the name string is
 // the variable name of the object itself.
 //
-// If f is NULL, nothing is printed (pr is effectively GxB_SILENT); this is not
-// an error condition.  If pr is outside the bounds 0 to 3, negative values are
-// treated as GxB_SILENT, and values > 3 are treated as GxB_COMPLETE.  If name
-// is NULL, it is treated as the empty string.
+// If f is NULL, stdout is used; this is not an error condition.  If pr is
+// outside the bounds 0 to 3, negative values are treated as GxB_SILENT, and
+// values > 3 are treated as GxB_COMPLETE.  If name is NULL, it is treated as
+// the empty string.
 //
 // GxB_print (object, GxB_Print_Level pr) is the same as GxB_fprint, except
 // that it prints the contents with printf instead of fprintf to a file f.
