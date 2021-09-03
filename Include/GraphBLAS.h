@@ -307,14 +307,11 @@ typedef enum
     GrB_DIMENSION_MISMATCH = -6,    // matrix dimensions do not match
     GrB_OUTPUT_NOT_EMPTY = -7,      // output matrix already has values
     #endif
-
     GrB_NOT_IMPLEMENTED = -8,       // method not implemented
 
     //--------------------------------------------------------------------------
     // execution errors:
     //--------------------------------------------------------------------------
-
-    GrB_EMPTY_OBJECT = -106,        // an object does not contain a value
 
     #if (GRB_VERSION == 1)
     GrB_INVALID_OBJECT = 3,         // object is corrupted
@@ -328,8 +325,10 @@ typedef enum
     GrB_OUT_OF_MEMORY = -102,       // out of memory
     GrB_INSUFFICIENT_SPACE = -103,  // output array not large enough
     GrB_INDEX_OUT_OF_BOUNDS = -105, // row or col index out of bounds
-    GrB_PANIC = -101                // unknown error
+    GrB_PANIC = -101,               // unknown error
     #endif
+    GrB_EMPTY_OBJECT = -106         // an object does not contain a value
+
 }
 GrB_Info ;
 
@@ -350,16 +349,8 @@ GrB_Info ;
 
 typedef enum
 {
-    #if (GRB_VERSION == 1)
-    // v1.x did not specify the enum values.  These values were used in
-    // v1 to v5 of SuiteSparse:GraphBLAS.
     GrB_NONBLOCKING = 0,    // methods may return with pending computations
     GrB_BLOCKING = 1        // no computations are ever left pending
-    #else
-    // v2.0 C API Specification, to appear in v6.0 of SuiteSparse:GraphBLAS.
-    GrB_NONBLOCKING = 1,    // methods may return with pending computations
-    GrB_BLOCKING = 0        // no computations are ever left pending
-    #endif
 }
 GrB_Mode ;
 
@@ -9478,10 +9469,10 @@ GrB_Info GxB_Vector_resize      // change the size of a vector (historical)
 // For the type-generic methods GxB_fprint and GxB_print, the name string is
 // the variable name of the object itself.
 //
-// If f is NULL, nothing is printed (pr is effectively GxB_SILENT); this is not
-// an error condition.  If pr is outside the bounds 0 to 3, negative values are
-// treated as GxB_SILENT, and values > 3 are treated as GxB_COMPLETE.  If name
-// is NULL, it is treated as the empty string.
+// If f is NULL, stdout is used; this is not an error condition.  If pr is
+// outside the bounds 0 to 3, negative values are treated as GxB_SILENT, and
+// values > 3 are treated as GxB_COMPLETE.  If name is NULL, it is treated as
+// the empty string.
 //
 // GxB_print (object, GxB_Print_Level pr) is the same as GxB_fprint, except
 // that it prints the contents with printf instead of fprintf to a file f.

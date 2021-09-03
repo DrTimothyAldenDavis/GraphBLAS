@@ -307,14 +307,11 @@ typedef enum
     GrB_DIMENSION_MISMATCH = -6,    // matrix dimensions do not match
     GrB_OUTPUT_NOT_EMPTY = -7,      // output matrix already has values
     #endif
-
     GrB_NOT_IMPLEMENTED = -8,       // method not implemented
 
     //--------------------------------------------------------------------------
     // execution errors:
     //--------------------------------------------------------------------------
-
-    GrB_EMPTY_OBJECT = -106,        // an object does not contain a value
 
     #if (GRB_VERSION == 1)
     GrB_INVALID_OBJECT = 3,         // object is corrupted
@@ -328,8 +325,10 @@ typedef enum
     GrB_OUT_OF_MEMORY = -102,       // out of memory
     GrB_INSUFFICIENT_SPACE = -103,  // output array not large enough
     GrB_INDEX_OUT_OF_BOUNDS = -105, // row or col index out of bounds
-    GrB_PANIC = -101                // unknown error
+    GrB_PANIC = -101,               // unknown error
     #endif
+    GrB_EMPTY_OBJECT = -106         // an object does not contain a value
+
 }
 GrB_Info ;
 
@@ -350,16 +349,8 @@ GrB_Info ;
 
 typedef enum
 {
-    #if (GRB_VERSION == 1)
-    // v1.x did not specify the enum values.  These values were used in
-    // v1 to v5 of SuiteSparse:GraphBLAS.
     GrB_NONBLOCKING = 0,    // methods may return with pending computations
     GrB_BLOCKING = 1        // no computations are ever left pending
-    #else
-    // v2.0 C API Specification, to appear in v6.0 of SuiteSparse:GraphBLAS.
-    GrB_NONBLOCKING = 1,    // methods may return with pending computations
-    GrB_BLOCKING = 0        // no computations are ever left pending
-    #endif
 }
 GrB_Mode ;
 
