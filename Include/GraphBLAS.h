@@ -213,6 +213,10 @@
 #define GxB_SPEC_MINOR 3
 #define GxB_SPEC_SUB   0
 
+// compile-time access to the C API Version number of this library.
+#define GRB_VERSION     GxB_SPEC_MAJOR
+#define GRB_SUBVERSION  GxB_SPEC_MINOR
+
 #define GxB_IMPLEMENTATION \
         GxB_VERSION (GxB_IMPLEMENTATION_MAJOR, \
                      GxB_IMPLEMENTATION_MINOR, \
@@ -286,7 +290,7 @@ typedef enum
     GrB_NO_VALUE = 1,           // A(i,j) requested but not there
 
     //--------------------------------------------------------------------------
-    // API errors:
+    // errors:
     //--------------------------------------------------------------------------
 
     #if (GRB_VERSION == 1)
@@ -297,6 +301,13 @@ typedef enum
     GrB_DOMAIN_MISMATCH = 7,        // object domains are not compatible
     GrB_DIMENSION_MISMATCH = 8,     // matrix dimensions do not match
     GrB_OUTPUT_NOT_EMPTY = 9,       // output matrix already has values
+    GrB_NOT_IMPLEMENTED = -8,       // method not implemented
+    GrB_PANIC = 13,                 // unknown error
+    GrB_OUT_OF_MEMORY = 10,         // out of memory
+    GrB_INSUFFICIENT_SPACE = 11,    // output array not large enough
+    GrB_INVALID_OBJECT = 3,         // object is corrupted
+    GrB_INDEX_OUT_OF_BOUNDS = 12,   // row or col index out of bounds
+    GrB_EMPTY_OBJECT = -106         // an object does not contain a value
     #else
     // v2.0 C API Specification, to appear in v6.0 of SuiteSparse:GraphBLAS:
     GrB_UNINITIALIZED_OBJECT = -1,  // object has not been initialized
@@ -306,28 +317,14 @@ typedef enum
     GrB_DOMAIN_MISMATCH = -5,       // object domains are not compatible
     GrB_DIMENSION_MISMATCH = -6,    // matrix dimensions do not match
     GrB_OUTPUT_NOT_EMPTY = -7,      // output matrix already has values
-    #endif
     GrB_NOT_IMPLEMENTED = -8,       // method not implemented
-
-    //--------------------------------------------------------------------------
-    // execution errors:
-    //--------------------------------------------------------------------------
-
-    #if (GRB_VERSION == 1)
-    GrB_INVALID_OBJECT = 3,         // object is corrupted
-    GrB_OUT_OF_MEMORY = 10,         // out of memory
-    GrB_INSUFFICIENT_SPACE = 11,    // output array not large enough
-    GrB_INDEX_OUT_OF_BOUNDS = 12,   // row or col index out of bounds
-    GrB_PANIC = 13                  // unknown error
-    #else
-    // v2.0 C API Specification, to appear in v6.0 of SuiteSparse:GraphBLAS:
-    GrB_INVALID_OBJECT = -104,      // object is corrupted
+    GrB_PANIC = -101,               // unknown error
     GrB_OUT_OF_MEMORY = -102,       // out of memory
     GrB_INSUFFICIENT_SPACE = -103,  // output array not large enough
+    GrB_INVALID_OBJECT = -104,      // object is corrupted
     GrB_INDEX_OUT_OF_BOUNDS = -105, // row or col index out of bounds
-    GrB_PANIC = -101,               // unknown error
-    #endif
     GrB_EMPTY_OBJECT = -106         // an object does not contain a value
+    #endif
 
 }
 GrB_Info ;
@@ -378,10 +375,6 @@ GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 //==============================================================================
 // GrB_getVersion: GraphBLAS C API version
 //==============================================================================
-
-// compile-time access to the C API Version number of this library.
-#define GRB_VERSION     GxB_SPEC_MAJOR
-#define GRB_SUBVERSION  GxB_SPEC_MINOR
 
 // GrB_getVersion provides a runtime access of the C API Version.
 GB_PUBLIC
