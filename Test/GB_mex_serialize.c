@@ -11,7 +11,16 @@
 
 #include "GB_mex.h"
 
-#define USAGE "C = GB_mex_serialize (A, method, sparsity)"
+// method:
+// GxB_COMPRESSION_NONE -1     // no compression
+// GxB_COMPRESSION_DEFAULT 0   // LZ4
+// GxB_COMPRESSION_LZ4   1000  // LZ4
+// GxB_COMPRESSION_LZ4HC 2000  // LZ4HC, with default level 9
+// GxB_COMPRESSION_LZ4HC 2001  // LZ4HC:1
+// ...
+// GxB_COMPRESSION_LZ4HC 2009  // LZ4HC:9
+
+#define USAGE "C = GB_mex_serialize (A, method, mode)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -60,21 +69,31 @@ void mexFunction
 
     // get method
     int GET_SCALAR (1, int, method, 0) ;
+    if (method != 0)
+    {
+        GrB_Descriptor_new (&desc) ;
+        GxB_Desc_set (desc, GxB_COMPRESSION, method) ;
+    }
 
-    // get sparsity
-    int GET_SCALAR (2, int, sparsity, GxB_DEFAULT) ;
+    // get mode: 0:NULL, 1:fast, 502:secure
+    int GET_SCALAR (2, int, mode, GxB_DEFAULT) ;
+    if (mode != GxB_DEFAULT)
+    {
+        if (mode != GxB_SECURE_IMPORT) mode = GxB_FAST_IMPORT ;
+        if (desc == NULL) GrB_Descriptor_new (&desc) ;
+        GrB_Descriptor_set (desc, GxB_IMPORT, mode) ;
+    }
 
-    // copy C with the same type as A, with default sparsity
-    GxB_Matrix_serialize (&blob, &blob_size, A, NULL) ;
-    int info = GxB_Matrix_deserialize (&C, blob, blob_size, atype, NULL) ;
+    // serialize A into the blob and then deserialize into C
+    METHOD (GxB_Matrix_serialize (&blob, &blob_size, A, desc)) ;
+    METHOD (GxB_Matrix_deserialize (&C, blob, blob_size, atype, desc)) ;
 
+/*
     size_t asize, csize ;
     GxB_Matrix_memoryUsage (&asize, A) ;
     int64_t nallocs ;
     size_t adeep, ashallow ;
     GB_memoryUsage (&nallocs, &adeep, &ashallow, A) ;
-
-/*
     GxB_Matrix_memoryUsage (&csize, C) ;
     printf ("A memory usage:    %ld (shallow %ld, deep %ld, tot %ld)\n", asize,
         adeep, ashallow, adeep+ashallow) ;

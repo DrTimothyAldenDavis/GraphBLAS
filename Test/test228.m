@@ -13,24 +13,23 @@ rng ('default') ;
 
 for k1 = 1:length (types)
     atype = types {k1} ;
-    fprintf ('\n%s', atype) ;
+    fprintf ('%s ', atype) ;
     for d = [0.5 inf]
         A = GB_spec_random (10, 10, d, 128, atype) ;
         for A_sparsity = 0:15
-            fprintf ('.') ;
             A.sparsity = A_sparsity ;
-            for C_sparsity = 0:15
-                for method = 0:2
-                    % no typecast, but do change the sparsity
-                    C = GB_mex_serialize (A, method, C_sparsity) ;
-                    GB_spec_compare (A, C) ;
-                end
+            for method = [-1 0 1000 2000:2009]
+                C = GB_mex_serialize (A, method) ;      % default: fast
+                GB_spec_compare (A, C) ;
+                C = GB_mex_serialize (A, method, 0) ;   % fast
+                GB_spec_compare (A, C) ;
+                C = GB_mex_serialize (A, method, 502) ; % secure
+                GB_spec_compare (A, C) ;
             end
         end
     end
 end
 
 fprintf ('\n') ;
-GrB.burble (0) ;
 fprintf ('test228: all tests passed\n') ;
 

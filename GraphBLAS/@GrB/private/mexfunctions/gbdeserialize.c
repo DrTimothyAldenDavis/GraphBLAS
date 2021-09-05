@@ -34,7 +34,7 @@ void mexFunction
 
     gb_usage ((nargin >= 1 || nargin <= 3) && nargout <= 1, USAGE) ;
     CHECK_ERROR (mxGetClassID (pargin [0]) != mxUINT8_CLASS
-        || mxGetN (pargin [0]) != 1, "blob must be uint8 column vector") ;
+        || mxGetN (pargin [0]) != 1, "blob must be a uint8 column vector") ;
 
     //--------------------------------------------------------------------------
     // get the blob and the optional mode and type
@@ -45,12 +45,12 @@ void mexFunction
 
     // get the mode: 'fast' or 'secure'
     GrB_Descriptor desc = NULL ;
-    if (nargin > 2)
+    if (nargin > 1)
     { 
         GrB_Desc_Value import_mode ;
         #define LEN 256
         char mode_string [LEN+1] ;
-        gb_mxstring_to_string (mode_string, LEN, pargin [arg], "mode") ;
+        gb_mxstring_to_string (mode_string, LEN, pargin [1], "mode") ;
         if (MATCH (mode_string, "fast"))
         { 
             import_mode = GxB_FAST_IMPORT ;

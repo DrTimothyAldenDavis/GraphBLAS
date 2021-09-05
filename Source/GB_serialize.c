@@ -132,6 +132,10 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     int32_t algo, level ;
     GB_serialize_method (&intel, &algo, &level, method) ;
     method = (intel ? GxB_COMPRESSION_INTEL : 0) + (algo) + (level) ;
+    GBURBLE ("(compression: %s%s%s%s:%d) ", intel ? "Intel IPP:" : "",
+        (algo == GxB_COMPRESSION_NONE ) ? "none" : "",
+        (algo == GxB_COMPRESSION_LZ4  ) ? "LZ4" : "",
+        (algo == GxB_COMPRESSION_LZ4HC) ? "LZ4HC" : "", level) ;
 
     //--------------------------------------------------------------------------
     // get the content of the matrix
