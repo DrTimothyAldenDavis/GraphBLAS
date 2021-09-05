@@ -7,7 +7,12 @@
 
 //------------------------------------------------------------------------------
 
+// This method takes O(1) time and memory, unless secure is true (used
+// when the input data is not trusted).
+
 #include "GB_export.h"
+
+#define GB_FREE_ALL GB_Matrix_free (A) ;
 
 GrB_Info GB_import      // import/pack a matrix in any format
 (
@@ -46,6 +51,8 @@ GrB_Info GB_import      // import/pack a matrix in any format
     bool is_csc,        // if true then matrix is by-column, else by-row
     bool iso,           // if true then A is iso and only one entry is provided
                         // in Ax, regardless of nvals(A).
+    // fast vs secure import:
+    bool fast_import,   // if true: trust the data, if false: check it
     GB_Context Context
 )
 {
@@ -287,9 +294,55 @@ GrB_Info GB_import      // import/pack a matrix in any format
     }
 
     //--------------------------------------------------------------------------
+    // fast vs secure import
+    //--------------------------------------------------------------------------
+
+    if (!fast_import)
+    { 
+        // Deserialization of untrusted data is a common security problem:
+        // https://cwe.mitre.org/data/definitions/502.html
+        //
+        // If fast_import is true, GB_import trusts its input data, so it can
+        // operate in O(1) time and memory.
+        //
+        // The import may be coming from untrusted data.  To this point in this
+        // function, no kind of mangled data (malicious or inadvertant) can
+        // cause a failure.  However, the content of the A->[phbix] arrays has
+        // not been exhaustively checked.  This check takes time, so a fast
+        // import that trusts the input as valid can skip this check.  The
+        // import is fast by default, but if the import comes from possibily
+        // untrusted sources (a file, say), then the user application should
+        // use the descriptor setting:
+        //
+        //      GxB_set (desc, GxB_IMPORT, GxB_SECURE_IMPORT)
+        //
+        // and use the desc as input to GxB_Matrix_import_*.  The check does
+        // not produce any output to stdout.  It just checks the matrix
+        // exhaustively (and securly) and returns GrB_INVALID_OBJECT if
+        // anything is amiss.  Once this check is passed, the data has been
+        // validated and security is ensured.
+        //
+        // Since it has no descriptor, GrB_Matrix_import assumes that it
+        // cannot trust its input.  The method takes O(nvals(A)) time anyway,
+        // since it must copy the data from input arrays.
+        //
+        // The GxB_Matrix_import_* assumes the data can be trusted, since it
+        // is designed like the move constructor in C++, taking O(1) time by
+        // default.  As a result, the descriptor default is fast, not secure.
+        //
+        // The time for this check is proportional to the size of the 5 input
+        // arrays, far higher than the O(1) time for the fast import.  However,
+        // this check is essential if the input data is not trusted.
+        GBURBLE ("(secure) ") ;
+        GB_OK (GB_matvec_check (*A, "secure import", GxB_SILENT, NULL, "")) ;
+    }
+
+    //--------------------------------------------------------------------------
     // import is successful
     //--------------------------------------------------------------------------
 
+    // If debug is enabled, this check repeats the GB_matvec_check for the
+    // secure import.
     ASSERT_MATRIX_OK (*A, "A imported", GB0) ;
     return (GrB_SUCCESS) ;
 }

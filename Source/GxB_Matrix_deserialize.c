@@ -27,7 +27,8 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
                         // holds a built-in type.  If not NULL and the blob
                         // holds a matrix of a built-in type, then C is
                         // typecasted to this requested type.
-    const GrB_Descriptor desc       // to control # of threads used
+    const GrB_Descriptor desc       // to control # of threads used and
+                        // whether or not the input blob is trusted.
 )
 { 
 
@@ -40,12 +41,13 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (C) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
+    GB_GET_DESCRIPTOR_IMPORT (desc, fast_import) ;
 
     //--------------------------------------------------------------------------
     // deserialize the blob into a matrix
     //--------------------------------------------------------------------------
 
-    info = GB_deserialize (C, blob, blob_size, type, Context) ;
+    info = GB_deserialize (C, blob, blob_size, type, fast_import, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

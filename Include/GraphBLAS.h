@@ -470,6 +470,9 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 //
 // GxB_COMPRESSION: compression method for GxB_Matrix_serialize and
 //      GxB_Vector_serialize.  The default is LZ4.
+//
+// GxB_IMPORT:  GxB_FAST_IMPORT (faster, for trusted input data) or
+//      GxB_SECURE_IMPORT (slower, for untrusted input data).
 
 // The following are enumerated values in both the GrB_Desc_Field and the
 // GxB_Option_Field for global options.  They are defined with the same integer
@@ -502,6 +505,7 @@ typedef enum
     GxB_AxB_METHOD = 1000,  // descriptor for selecting C=A*B algorithm
     GxB_SORT = 35,          // control sort in GrB_mxm
     GxB_COMPRESSION = 36,
+    GxB_IMPORT = 37,
 }
 GrB_Desc_Field ;
 
@@ -529,9 +533,16 @@ typedef enum
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
     GxB_AxB_DOT       = 1003,   // dot product
     GxB_AxB_HASH      = 1004,   // hash-based saxpy method
-    GxB_AxB_SAXPY     = 1005    // saxpy method (any kind)
+    GxB_AxB_SAXPY     = 1005,   // saxpy method (any kind)
+
+    // for GxB_IMPORT only:
+    GxB_SECURE_IMPORT = 502     // GxB import/deserialize do not trust their
+                                // input data.
 }
 GrB_Desc_Value ;
+
+// default for GxB import/deserialize is to trust the input data
+#define GxB_FAST_IMPORT GxB_DEFAULT
 
 typedef struct GB_Descriptor_opaque *GrB_Descriptor ;
 
@@ -4591,6 +4602,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //
 //      GxB_set (GrB_Descriptor d, GxB_COMPRESSION, int method) ;
 //      GxB_get (GrB_Descriptor d, GxB_COMPRESSION, int *method) ;
+//
+//      GxB_set (GrB_Descriptor d, GxB_IMPORT, int method) ;
+//      GxB_get (GrB_Descriptor d, GxB_IMPORT, int *method) ;
 
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_set(arg1,...)                                   \
@@ -9710,6 +9724,13 @@ GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
 // as NULL, GxB_Vector_import returns v as NULL, and the user input arrays are
 // neither modified nor freed.  They are still owned by the user application.
 
+// If the input data is untrusted, use the following descriptor setting for
+// GxB_Matrix_import* and GxB_Matrix_pack*.  The import/pack will be slower,
+// but secure.  GrB_Matrix_import uses the slow, secure method, since it has
+// no descriptor input.
+//
+//      GxB_set (desc, GxB_IMPORT, GxB_SECURE_IMPORT) ;
+
 //------------------------------------------------------------------------------
 // GxB_Matrix_import_CSR and GxB_Matrix_pack_CSR: import/pack a CSR matrix
 //------------------------------------------------------------------------------
@@ -10251,7 +10272,7 @@ GrB_Info GxB_Vector_pack_Full // pack a full vector
 // On successful export, the input GrB_Matrix A is freed, and the output arrays
 // Ah, Ap, Ai, Aj, and/or Ax are returned to the user application as arrays
 // allocated by the ANSI C malloc function.  The four formats are the same as
-// the import formats for GrB_Matrix_import/pack.
+// the import formats for GxB_Matrix_import/pack.
 //
 // If jumbled is NULL on input, this indicates to GxB_*export/unpack* that the
 // exported/unpacked matrix cannot be returned in a jumbled format.  In this
@@ -10609,9 +10630,11 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 // memory is not handed off between the user application and GraphBLAS.
 
 // These methods are much slower than the GxB import/export methods, since they
-// require a copy of the data to be made.  The GxB import takes O(1) time in
-// all cases.  GxB export takes O(1) time unless the matrix is exported in a
-// different format than it currently has.
+// require a copy of the data to be made.  GrB_Matrix_import also must assume
+// its input data cannot be trusted, and so it does extensive checks.  The GxB
+// import takes O(1) time in all cases (unless it is told the input data is
+// untrusted, via the descriptor).  GxB export takes O(1) time unless the
+// matrix is exported in a different format than it currently has.
 
 // The GrB C API specification supports 5 formats:
 
@@ -10693,6 +10716,19 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 // same # of threads to do the work).  Both GrB_Matrix_deserialize and
 // GxB_Matrix_deserialize can deserialize a blob coming from either
 // GrB_Matrix_serialize or GxB_Matrix_serialize.
+
+// GrB_*_deserialize assumes its input data cannot be trusted, and performs a
+// secure deserialization.  GxB_*_deserialize has a descriptor setting that
+// allows it to be told that the data is trusted or untrusted.  By default,
+// GxB_*_deserialize assumes the input is trusted, and is thus faster than
+// GrB_*_deserialize as a result.
+
+// Deserialization of untrusted data is a common security problem; see:
+// https://cwe.mitre.org/data/definitions/502.html
+// If the input is untrusted, use the following descriptor setting for
+// GxB_Matrix_deserialize and GxB_Vector_deserialize; do not pass desc as NULL.
+//
+//      GxB_set (desc, GxB_IMPORT, GxB_SECURE_IMPORT) ;
 
 // Example usage:
 
@@ -10898,7 +10934,8 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
                         // holds a built-in type.  If not NULL and the blob
                         // holds a matrix of a built-in type, then C is
                         // typecasted to this requested type.
-    const GrB_Descriptor desc       // to control # of threads used
+    const GrB_Descriptor desc       // to control # of threads used and
+                        // whether or not the input blob is trusted.
 ) ;
 
 GB_PUBLIC
@@ -10929,7 +10966,8 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
                         // holds a built-in type.  If not NULL and the blob
                         // holds a vector of a built-in type, then w is
                         // typecasted to this requested type.
-    const GrB_Descriptor desc       // to control # of threads used
+    const GrB_Descriptor desc       // to control # of threads used and
+                        // whether or not the input blob is trusted.
 ) ;
 
 GB_PUBLIC

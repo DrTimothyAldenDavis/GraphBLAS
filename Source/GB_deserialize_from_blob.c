@@ -7,7 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// decompress a single array from a set of compressed blocks in the blob
+// Decompress a single array from a set of compressed blocks in the blob.  If
+// the input data is mangled, this method is still safe, since it performs the
+// bare minimum sanity checks to ensure no out-of-bounds indexing of arrays.
+// However, the contents of output array are not fully checked.  This step is
+// done by GB_deserialize, if requested.
 
 #include "GB.h"
 #include "GB_serialize.h"
@@ -91,11 +95,13 @@ GrB_Info GB_deserialize_from_blob
 
         if (nblocks != 1 || Sblocks [0] != X_len || s + X_len > blob_size)
         { 
-            // blob is invalid
+            // blob is invalid: guard against an unsafe memcpy
             ok = false ;
         }
         else
         { 
+            // copy the blob into the array X.  This is now safe and secure.
+            // The contents of X are not yet checked, however.
             GB_memcpy (X, blob + s, X_len, nthreads_max) ;
         }
 
@@ -133,7 +139,10 @@ GrB_Info GB_deserialize_from_blob
             else
             {
                 // uncompress the compressed block of size s_size
-                // from blob [s + s_start:s_end-1] into X [kstart:kend-1]
+                // from blob [s + s_start:s_end-1] into X [kstart:kend-1].
+                // This is safe and secure so far.  The contents of X are
+                // not yet checked, however.  That step is done in
+                // GB_deserialize, if requested.
                 const char *src = (const char *) (blob + s + s_start) ;
                 char *dst = (char *) (X + kstart) ;
                 int src_size = (int) s_size ;

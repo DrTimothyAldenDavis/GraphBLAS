@@ -185,6 +185,19 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
             }
             break ;
 
+        case GxB_IMPORT : 
+
+            {
+                // In case the user application does not check the return value
+                // of this method, an error condition is never returned.
+                va_start (ap, field) ;
+                int s = va_arg (ap, int) ;
+                va_end (ap) ;
+                desc->import =
+                    (s == GxB_DEFAULT) ? GxB_FAST_IMPORT : GxB_SECURE_IMPORT ;
+            }
+            break ;
+
         default : 
 
             GB_ERROR (GrB_INVALID_VALUE,

@@ -10,7 +10,12 @@
 // deserialize: create a GrB_Vector from a blob of bytes
 
 // Identical to GxB_Vector_deserialize, except that this method does not take
-// a descriptor as the last parameter.
+// a descriptor as the last parameter.  Since it has no descriptor, this method
+// cannot be told to trust the input blob, and thus fast_import is false.
+
+// If the input data comes from a trusted source, then use
+// GxB_Vector_deserialize, which assumes (by default) that the input data is
+// trusted.
 
 #include "GB.h"
 #include "GB_serialize.h"
@@ -43,8 +48,9 @@ GrB_Info GrB_Vector_deserialize     // deserialize blob into a GrB_Vector
     // deserialize the blob into a vector
     //--------------------------------------------------------------------------
 
+    bool fast_import = false ;
     GrB_Info info = GB_deserialize ((GrB_Matrix *) w, blob, blob_size, type,
-        Context) ;
+        fast_import, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

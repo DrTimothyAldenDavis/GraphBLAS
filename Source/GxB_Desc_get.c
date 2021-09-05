@@ -134,6 +134,19 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
             }
             break ;
 
+        case GxB_IMPORT : 
+
+            {
+                va_start (ap, field) ;
+                int *method = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (method) ;
+                int s = (desc == NULL) ? GxB_DEFAULT : desc->import ;
+                if (s != GxB_DEFAULT) s = GxB_SECURE_IMPORT ;
+                (*method) = s ;
+            }
+            break ;
+
         default : 
 
             return (GrB_INVALID_VALUE) ;

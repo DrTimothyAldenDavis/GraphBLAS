@@ -42,7 +42,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     // check object
     //--------------------------------------------------------------------------
 
-    GB_CHECK_MAGIC (op, "BinaryOp") ;
+    GB_CHECK_MAGIC (op) ;
 
     GB_Opcode opcode = op->opcode ;
     if (opcode >= GB_USER_opcode)

@@ -20,8 +20,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     const char *name,       // name of the matrix, optional
     int pr,                 // print level; if negative, ignore nzombie
                             // conditions and use GB_FLIP(pr) for diagnostics
-    FILE *f,                // file for output
-    const char *kind        // "matrix" or "vector"
+    FILE *f,                // file for output (or stdout if f is NULL)
+    const char *kind        // "matrix" or "vector" (only for printing diag.)
 )
 {
 
@@ -49,7 +49,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         if (pr == GxB_COMPLETE_VERBOSE) pr = GxB_SHORT_VERBOSE ;
         if (pr == GxB_COMPLETE        ) pr = GxB_SHORT ;
     }
-    bool pr_silent   = (pr == GxB_SILENT) ;
+//  bool pr_silent   = (pr == GxB_SILENT) ;
     bool pr_complete = (pr == GxB_COMPLETE || pr == GxB_COMPLETE_VERBOSE) ;
     bool pr_short    = (pr == GxB_SHORT    || pr == GxB_SHORT_VERBOSE   ) ;
     bool one_based = GB_Global_print_one_based_get ( ) ;
@@ -81,7 +81,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         return (GrB_NULL_POINTER) ;
     }
 
-    GB_CHECK_MAGIC (A, kind) ;
+    GB_CHECK_MAGIC (A) ;
 
     //--------------------------------------------------------------------------
     // print the header

@@ -35,7 +35,7 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
     // check object
     //--------------------------------------------------------------------------
 
-    GB_CHECK_MAGIC (op, "SelectOp") ;
+    GB_CHECK_MAGIC (op) ;
 
     if (op->opcode >= GB_USER_SELECT_opcode)
     { 

@@ -10,7 +10,12 @@
 // deserialize: create a GrB_Matrix from a blob of bytes
 
 // Identical to GxB_Matrix_deserialize, except that this method does not take
-// a descriptor as the last parameter.
+// a descriptor as the last parameter.  Since it has no descriptor, this method
+// cannot be told to trust the input blob, and thus fast_import is false.
+// This method is thus slower than GxB_Matrix_deserialize when the input blob
+// can be trusted.  If the input data comes from a trusted source, then use
+// GxB_Matrix_deserialize, which assumes (by default) that the input data is
+// trusted.
 
 #include "GB.h"
 #include "GB_serialize.h"
@@ -43,7 +48,9 @@ GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     // deserialize the blob into a matrix
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_deserialize (C, blob, blob_size, type, Context) ;
+    bool fast_import = false ;
+    GrB_Info info = GB_deserialize (C, blob, blob_size, type, fast_import,
+        Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

@@ -826,6 +826,15 @@ GrB_UnaryOp GB_unop_one (GB_Type_code xcode) ;
         return (info) ;                                                      \
     }
 
+#define GB_GET_DESCRIPTOR_IMPORT(desc,fast_import)                          \
+    /* default is a fast import, where the data is trusted */               \
+    bool fast_import = true ;                                               \
+    if (desc != NULL && desc->import != GxB_FAST_IMPORT)                    \
+    {                                                                       \
+        /* input data is not trusted */                                     \
+        fast_import = false ;                                               \
+    }
+
 // C<M>=Z ignores Z if an empty mask is complemented, or if M is full,
 // structural and complemented, so return from the method without computing
 // anything.  Clear C if replace option is true.

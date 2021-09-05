@@ -36,6 +36,8 @@ void mexFunction
     // get the inputs 
     //--------------------------------------------------------------------------
 
+    // FIXME: use GrB_Matrix exclusively
+
     GrB_Vector d = NULL, x = NULL ;
     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
     GrB_Index nrows, ncols ;

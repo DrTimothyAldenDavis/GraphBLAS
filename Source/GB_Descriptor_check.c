@@ -118,7 +118,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     // check object
     //--------------------------------------------------------------------------
 
-    GB_CHECK_MAGIC (D, "Descriptor") ;
+    GB_CHECK_MAGIC (D) ;
 
     GBPR0 ("\n") ;
 
@@ -163,6 +163,11 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     if (D->do_sort)
     { 
         GBPR0 ("    d.sort     = true\n") ;
+    }
+
+    if (D->import != GxB_DEFAULT)
+    { 
+        GBPR0 ("    d.import   = secure\n") ;
     }
 
     return (GrB_SUCCESS) ;

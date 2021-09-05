@@ -30,18 +30,21 @@ GrB_reduce to GrB_Scalar using a binary op: NOT_IMPLEMENTED
 --------------------------------------------------------------------------------
 DRAFTED: need to test them:
 
+add serialize/deserialize tests to @GrB/test
+
 --------------------------------------------------------------------------------
 DONE:
+
+G*B_Matrix_serialize
+G*B_Matrix_deserialize
+GrB_Matrix_serializeSize
+    GxB_IMPORT: GxB_FAST_IMPORT or GxB_SECURE_IMPORT
 
 Vector_build, Matrix_build when dup is NULL: no duplicates allowed
 
 GrB_Matrix_diag (C, v) same as GxB_Matrix_diag (C, v, 0, NULL)
 
 apply bind1st and bind2nd: already handle GxB_Scalar, change to GrB_Scalar
-
-GrB_Matrix_deserialize
-GrB_Matrix_serialize
-GrB_Matrix_serializeSize
 
 Vector_setElement (v, GrB_Scalar s, i)
 Matrix_setElement (A, GrB_Scalar s, i, j)

@@ -26,6 +26,9 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     const GB_void *blob,            // serialized matrix 
     size_t blob_size,               // size of the blob
     GrB_Type user_type,             // type of matrix, if user-defined
+    const bool fast_import,         // if true, trust the data, if false,
+                                    // do extensive checks for a secure
+                                    // deserialization
     GB_Context Context
 )
 {
@@ -194,11 +197,27 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     GB_OK (GB_deserialize_from_blob (&(C->x), &(C->x_size), Cx_len,
         blob, blob_size, Cx_Sblocks, Cx_nblocks, Cx_method, &s, Context)) ;
     C->magic = GB_MAGIC ;
-    ASSERT_MATRIX_OK (C, "C from deserialize (before typecast)", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // fast vs secure deserialization
+    //--------------------------------------------------------------------------
+
+    if (!fast_import)
+    { 
+        // See the extensive comments in GB_import.c.  If fast_import is false
+        // then a slower but secure deserialization is performed.  If the data
+        // is mangled (maliciously or inadvertantly) this check will catch it
+        // and safely report an error.
+        // https://cwe.mitre.org/data/definitions/502.html
+        GBURBLE ("(secure) ") ;
+        GB_OK (GB_matvec_check (C, "secure deserialize", GxB_SILENT, NULL, ""));
+    }
 
     //--------------------------------------------------------------------------
     // typecast if requested user_type differs from ctype
     //--------------------------------------------------------------------------
+
+    ASSERT_MATRIX_OK (C, "C from deserialize (before typecast)", GB0) ;
 
     if (ctype != user_type && user_type != NULL)
     { 

@@ -370,7 +370,7 @@ void mexFunction
     // return result
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export ((GrB_Matrix *) &x, KIND_GRB) ;
-    pargout [1] = gb_export ((GrB_Matrix *) &p, KIND_GRB) ;
+    pargout [0] = gb_export (&x, KIND_GRB) ;
+    pargout [1] = gb_export (&p, KIND_GRB) ;
 }
 

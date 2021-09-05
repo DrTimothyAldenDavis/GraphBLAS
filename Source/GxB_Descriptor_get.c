@@ -51,7 +51,11 @@ GrB_Info GxB_Descriptor_get     // get a parameter from a descriptor
 
         case GxB_AxB_METHOD : 
 
-            (*val) = (desc == NULL) ? GxB_DEFAULT : desc->axb  ; break;
+            (*val) = (desc == NULL) ? GxB_DEFAULT : desc->axb  ; break ;
+
+        case GxB_IMPORT : 
+
+            (*val) = (desc == NULL) ? GxB_DEFAULT : desc->import  ; break ;
 
         default : 
 

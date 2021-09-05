@@ -27,7 +27,8 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
                         // holds a built-in type.  If not NULL and the blob
                         // holds a vector of a built-in type, then w is
                         // typecasted to this requested type.
-    const GrB_Descriptor desc       // to control # of threads used
+    const GrB_Descriptor desc       // to control # of threads used and
+                        // whether or not the input blob is trusted.
 )
 { 
 
@@ -40,12 +41,14 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (w) ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
+    GB_GET_DESCRIPTOR_IMPORT (desc, fast_import) ;
 
     //--------------------------------------------------------------------------
     // deserialize the blob into a vector
     //--------------------------------------------------------------------------
 
-    info = GB_deserialize ((GrB_Matrix *) w, blob, blob_size, type, Context) ;
+    info = GB_deserialize ((GrB_Matrix *) w, blob, blob_size, type,
+        fast_import, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

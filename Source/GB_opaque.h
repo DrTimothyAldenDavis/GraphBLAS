@@ -405,6 +405,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     int nthreads_max ;      // max # threads to use in this call to GraphBLAS
     int compression ;       // compression method for GxB_Matrix_serialize
     bool do_sort ;          // if nonzero, do the sort in GrB_mxm
+    int import ;            // if zero (default), trust input data
 } ;
 
 //------------------------------------------------------------------------------

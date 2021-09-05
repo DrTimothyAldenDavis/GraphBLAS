@@ -39,6 +39,9 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     const GB_void *blob,            // serialized matrix 
     size_t blob_size,               // size of the blob
     GrB_Type user_type,             // type of matrix, if user-defined
+    const bool fast_import,         // if true, trust the data, if false,
+                                    // do extensive checks for a secure
+                                    // deserialization
     GB_Context Context
 ) ;
 

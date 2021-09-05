@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // No typecasting is done.  The type of entries in the Ax array must match
-// the GrB_Type type parameter.
+// the GrB_Type type parameter; behavior is undefined otherwise.
 
 #include "GB_export.h"
 #include "GB_build.h"
@@ -49,6 +49,10 @@ GrB_Info GrB_Matrix_import  // import a matrix
     GB_RETURN_IF_NULL (Ax) ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
     ASSERT_TYPE_OK (type, "type for GrB_Matrix_import", GB0) ;
+    GrB_Info info ;
+
+    // GrB_Matrix_import has no descritptor so it only supports a secure import
+    bool fast_import = false ;
 
     if (nrows > GxB_INDEX_MAX || ncols > GxB_INDEX_MAX || Ap_len > GxB_INDEX_MAX
         || Ai_len > GxB_INDEX_MAX || Ax_len > GxB_INDEX_MAX)
@@ -180,8 +184,6 @@ GrB_Info GrB_Matrix_import  // import a matrix
     // import the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
-
     switch (format)
     {
 
@@ -195,7 +197,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 &Ax_copy, Ax_size,  // Ax
                 0, true, 0,         // CSR format may be jumbled
                 GxB_SPARSE, false,  // sparse by row
-                false, Context)) ;  // not iso
+                false,              // not iso
+                fast_import, Context)) ;
             break ;
 
         case GrB_CSC_FORMAT : 
@@ -208,7 +211,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 &Ax_copy, Ax_size,  // Ax
                 0, true, 0,         // CSC format may be jumbled
                 GxB_SPARSE, true,   // sparse by column
-                false, Context)) ;  // not iso
+                false,              // not iso
+                fast_import, Context)) ;
             break ;
 
         case GrB_DENSE_ROW_FORMAT : 
@@ -221,7 +225,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 &Ax_copy, Ax_size,  // Ax
                 0, false, 0,        // cannot be jumbled
                 GxB_FULL, false,    // full by row
-                false, Context)) ;  // not iso
+                false,              // not iso
+                fast_import, Context)) ;
             break ;
 
         case GrB_DENSE_COL_FORMAT : 
@@ -234,7 +239,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 &Ax_copy, Ax_size,  // Ax
                 0, false, 0,        // cannot be jumbled
                 GxB_FULL, true,     // full by column
-                false, Context)) ;  // not iso
+                false,              // not iso
+                fast_import, Context)) ;
             break ;
 
         default : // GrB_COO_FORMAT : 
