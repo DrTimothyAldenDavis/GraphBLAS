@@ -43,7 +43,8 @@ void mexFunction
     void *blob = mxGetData (pargin [0]) ;
     size_t blob_size = mxGetM (pargin [0]) ;
 
-    // get the mode: 'fast' or 'secure'
+    // get the mode: 'fast' or 'secure' (or 'debug' for testing only)
+    bool debug = false ;
     GrB_Descriptor desc = NULL ;
     if (nargin > 1)
     { 
@@ -57,6 +58,12 @@ void mexFunction
         }
         else if (MATCH (mode_string, "secure"))
         { 
+            import_mode = GxB_SECURE_IMPORT ;
+        }
+        else if (MATCH (mode_string, "debug"))
+        {
+            // use GrB_Matrix_deserialize, which does not use the descriptor
+            debug = true ;
             import_mode = GxB_SECURE_IMPORT ;
         }
         else
@@ -75,7 +82,16 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL ;
-    OK (GxB_Matrix_deserialize (&C, blob, blob_size, ctype, desc)) ;
+    if (debug)
+    {
+        // test GrB_Matrix_deserialize (not the default)
+        OK (GrB_Matrix_deserialize (&C, blob, blob_size, ctype)) ;
+    }
+    else
+    {
+        OK (GxB_Matrix_deserialize (&C, blob, blob_size, ctype, desc)) ;
+    }
+
     OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------

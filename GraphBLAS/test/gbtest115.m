@@ -7,8 +7,8 @@ function gbtest115
 rng ('default') ;
 
 types = gbtest_types ;
-modes = { 'fast', 'secure' } ;
-compression_methods = { 'none', 'lz4', 'lz4hc' } ;
+modes = { 'fast', 'secure', 'debug' } ;
+compression_methods = { 'none', 'lz4', 'lz4hc', 'debug' } ;
 
 for k = 1:length(types)
     type = types {k} ;
@@ -19,9 +19,9 @@ for k = 1:length(types)
     B = GrB.deserialize (blob) ;
     assert (isequal (A, B)) ;
 
-    for k1 = 1:2
+    for k1 = 1:3
         mode = modes {k1} ;
-        for k2 = 1:3
+        for k2 = 1:4
             method = compression_methods {k2} ;
 
             % default level

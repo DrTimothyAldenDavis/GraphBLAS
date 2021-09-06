@@ -1,13 +1,23 @@
+Version 6.0.0, FUTURE
+
+    * Fully compliant with the v2.0 C API Specification:  the only
+        changes in v6.0.0 for SuiteSparse:GraphBLAS are the two from the v2.0 C
+        API Spec that require SS:GrB to break backward compatibility with v5.x:
+        GrB_*wait, and the GrB_Info enum values.
+    * GrB_wait (object, mode): was GrB_wait (&object).
+    * GrB_Info: changed enum values
+
 Version 5.2.0, FIXME
 
-    * Added for the v2.0 C API Specification:
-        * GrB_IndexUnaryOp: FIXME
-        * GrB_select: FIXME
-        * GrB2_*wait: with mode paramater (GrB_COMPLETE, GrB_MATERIALIZE) FIXME
-        * GrB_*_extractElement_Scalar: FIXME
-            get an entry from a matrix or vector,
-            writing result to a GrB_Scalar
-        * GrB_reduce: reduce matrix or vector to GrB_Scalar FIXME
+    * Added for the v2.0 C API Specification: only features that are
+        backward compatible with SuiteSparse:GraphBLAS v5.x have been
+        added to v5.2.0.
+        * GrB_IndexUnaryOp: new, free, fprint, wait                 FIXME
+        * GrB_select: selection via GrB_IndexUnaryOp                FIXME
+        * GrB_reduce: reduce matrix or vector to GrB_Scalar         FIXME
+        * GrB_apply: with GrB_IndexUnaryOp                          FIXME
+        * GrB_assign, GrB_subassion: with GrB_Scalar input          FIXME
+        * GrB_*_extractElement_Scalar: get GrB_Scalar from a matrix or vector
         * GrB*build: when dup is NULL, duplicates result in an error.
         * GxB_IGNORE_DUP: special operator for build methods only; if dup
             is this operator, then duplicate are ignored (not an error)
@@ -15,8 +25,7 @@ Version 5.2.0, FIXME
         * GrB_EMPTY_OBJECT, GrB_NOT_IMPLEMENTED: error codes added
         * GrB_*_setElement_Scalar: set an entry in a matrix or vector,
             from a GrB_Scalar
-        * GrB_Scalar: replaces GxB_Scalar, GxB_Scalar_* functions
-            renamed to GrB
+        * GrB_Scalar: replaces GxB_Scalar, GxB_Scalar_* functions renamed GrB
         * GrB_Matrix_diag: same as GxB_Matrix_diag (C, v, 0, NULL)
     * GxB_SelectOp_new2: create a named selectop
     * GxB_BinaryOp_new: create a named binary operator
@@ -34,8 +43,7 @@ Version 5.2.0, FIXME
         GxB_SelectOp_xtype, GxB_UnaryOp_xtype, GxB_UnaryOp_ztype,
         GxB_Vector_type: declared historical; will be kept but not
         recommended (use *type_name methods).
-    * GxB_Matrix_serialize/deserialize: with compression
-    * GxB_Vector_serialize/deserialize: FIXME 
+    * GxB_*_serialize/deserialize: with compression
     * added LZ4/LZ4HC: compression library, http://www.lz4.org (BSD 2),
         v1.9.3, Copyright (c) 2011-2016, Yann Collet, All Rights Reserved.
 

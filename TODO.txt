@@ -1,37 +1,41 @@
 
+--------------------------------------------------------------------------------
+later, for v6.0.0:
+GrB_*_wait: with 2nd parameter: GrB_COMPLETE, GrB_MATERIALIZE
+
+--------------------------------------------------------------------------------
+
 IndexUnaryOp:
     GrB_IndexUnaryOp
     GrB_IndexUnaryOp_new
     GrB_IndexUnaryOp_free
     built-in GrB_IndexUnaryOps (see table 2.8)
-    apply with IndexUnaryOp
+    GrB_select with IndexUnaryOp
+        not the same as my GxB_select, but very similar.
+        uses the GrB_IndexUnaryOp
+    GrB_apply with IndexUnaryOp
 
-GrB_select
-    not the same as my GxB_select, but very similar.
-    uses the GrB_IndexUnaryOp
+GrB_Scalar:
+    GrB_Vector_assign_Scalar with GrB_Scalar
+    GrB_Matrix_assign_Scalar with GrB_Scalar
+    and thus:
+    GxB_Vector_subassign_Scalar with GrB_Scalar
+    GxB_Matrix_subassign_Scalar with GrB_Scalar
 
-GrB_apply with IndexUnaryOp
-
-GrB_*_wait: with 2nd parameter: GrB_COMPLETE, GrB_MATERIALIZE
-
-Vector_extractElement (GrB_Scalar s, v, i)
-Matrix_extractElement (GrB_Scalar s, A, i, j)
-
-GrB_Vector_assign_Scalar with GrB_Scalar
-GrB_Matrix_assign_Scalar with GrB_Scalar
-and thus:
-GxB_Vector_subassign_Scalar with GrB_Scalar
-GxB_Matrix_subassign_Scalar with GrB_Scalar
-
-GrB_reduce to GrB_Scalar using a monoid: do this
-GrB_reduce to GrB_Scalar using a binary op: NOT_IMPLEMENTED
-    for Matrix and Vector
+    GrB_reduce to GrB_Scalar using a monoid: do this
+    GrB_reduce to GrB_Scalar using a binary op: NOT_IMPLEMENTED
+        for Matrix and Vector
 
 --------------------------------------------------------------------------------
 DRAFTED: need to test them:
 
 --------------------------------------------------------------------------------
 DONE:
+
+Vector serialize/deserialize
+
+Vector_extractElement (GrB_Scalar s, v, i)
+Matrix_extractElement (GrB_Scalar s, A, i, j)
 
 G*B_Matrix_serialize
 G*B_Matrix_deserialize

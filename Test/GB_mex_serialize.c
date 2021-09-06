@@ -85,8 +85,18 @@ void mexFunction
     }
 
     // serialize A into the blob and then deserialize into C
-    METHOD (GxB_Matrix_serialize (&blob, &blob_size, A, desc)) ;
-    METHOD (GxB_Matrix_deserialize (&C, blob, blob_size, atype, desc)) ;
+    if (GB_VECTOR_OK (A))
+    {
+        // test the vector methods
+        METHOD (GxB_Vector_serialize (&blob, &blob_size, (GrB_Vector) A, desc)) ;
+        METHOD (GxB_Vector_deserialize ((GrB_Vector *) &C, blob, blob_size, atype, desc)) ;
+    }
+    else
+    {
+        // test the matrix methods
+        METHOD (GxB_Matrix_serialize (&blob, &blob_size, A, desc)) ;
+        METHOD (GxB_Matrix_deserialize (&C, blob, blob_size, atype, desc)) ;
+    }
 
 /*
     size_t asize, csize ;

@@ -120,6 +120,7 @@ GrB_Info GrB_Matrix_extractElement_Scalar   // S = A(i,j)
     bool entry_present = (info == GrB_SUCCESS) ;
     bool no_entry = (info == GrB_NO_VALUE) ;
     S->b [0] = entry_present ;
+    S->nvals = entry_present ? 1 : 0 ;
     return ((entry_present || no_entry) ? GrB_SUCCESS : info) ;
 }
 

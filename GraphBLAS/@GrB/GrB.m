@@ -985,7 +985,7 @@ methods (Static)
     clear ;
     [C, I, J] = compact (A, id) ;
     descriptorinfo (d) ;
-    C = deserialize (blob, mode, arg3) ;
+    C = deserialize (blob, mode, arg3, arg4) ;
     Y = dnn (W, bias, Y0) ;                     % uses GrB matrices
     C = eadd (Cin, M, accum, op, A, B, desc) ;
     C = empty (arg1, arg2) ;

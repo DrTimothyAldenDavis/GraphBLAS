@@ -21,7 +21,8 @@ for m = [1 5 10 100]
             J = double (J0+1) ;
             I = double (I0+1) ;
 
-            x1 = GB_mex_Matrix_extractElement (A, I0, J0)  ;
+            use_scalar = (rand (1) > 0.8) ;
+            x1 = GB_mex_Matrix_extractElement (A, I0, J0, '', use_scalar)  ;
             x2 = complex (zeros (ktuples,1)) ;
             for k = 1:ktuples
                 x2 (k) = A (I (k), J (k)) ;
@@ -29,7 +30,7 @@ for m = [1 5 10 100]
             assert (isequal (x1, x2))
 
             if (n == 1)
-                x1 = GB_mex_Vector_extractElement (A, I0)  ;
+                x1 = GB_mex_Vector_extractElement (A, I0, '', use_scalar)  ;
                 assert (isequal (x1, x2))
             end
         end

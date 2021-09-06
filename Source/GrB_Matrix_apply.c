@@ -167,12 +167,12 @@ static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
 }
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_apply_BinaryOp1st: apply a binary operator: op(x,A)
+// GrB_Matrix_apply_BinaryOp1st_Scalar: apply a binary operator: op(x,A)
 //------------------------------------------------------------------------------
 
 // C<M> = accum(C,op(x,A)) or accum(C,op(x,A'))
 
-GrB_Info GxB_Matrix_apply_BinaryOp1st           // C<M>=accum(C,op(x,A))
+GrB_Info GrB_Matrix_apply_BinaryOp1st_Scalar    // C<M>=accum(C,op(x,A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix M,             // optional mask for C, unused if NULL
@@ -183,17 +183,37 @@ GrB_Info GxB_Matrix_apply_BinaryOp1st           // C<M>=accum(C,op(x,A))
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GxB_Matrix_apply_BinaryOp1st (C, M, accum, op, x, A, desc)") ;
+    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp1st_Scalar (C, M, accum, op, x, A,"
+        " desc)") ;
     return (GB_1st (C, M, accum, op, x, A, desc, Context)) ;
 }
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_apply_BinaryOp2nd: apply a binary operator: op(A,y)
+// GxB_Matrix_apply_BinaryOp1st: historical
+//------------------------------------------------------------------------------
+
+// identical to GrB_Matrix_apply_BinaryOp1st_Scalar
+GrB_Info GxB_Matrix_apply_BinaryOp1st           // C<M>=accum(C,op(x,A))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_BinaryOp op,          // operator to apply to the entries
+    const GrB_Scalar x,             // first input:  scalar x
+    const GrB_Matrix A,             // second input: matrix A
+    const GrB_Descriptor desc       // descriptor for C, M, and A
+)
+{
+    return (GrB_Matrix_apply_BinaryOp1st_Scalar (C, M, accum, op, x, A, desc)) ;
+}
+
+//------------------------------------------------------------------------------
+// GrB_Matrix_apply_BinaryOp2nd_Scalar: apply a binary operator: op(A,y)
 //------------------------------------------------------------------------------
 
 // C<M> = accum(C,op(A,y)) or accum(C,op(A,y'))
 
-GrB_Info GxB_Matrix_apply_BinaryOp2nd           // C<M>=accum(C,op(A,y))
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix M,             // optional mask for C, unused if NULL
@@ -204,8 +224,28 @@ GrB_Info GxB_Matrix_apply_BinaryOp2nd           // C<M>=accum(C,op(A,y))
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GxB_Matrix_apply_BinaryOp2nd (C, M, accum, op, A, y, desc)") ;
+    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp2nd_Scalar (C, M, accum, op, A, y,"
+        " desc)") ;
     return (GB_2nd (C, M, accum, op, A, y, desc, Context)) ;
+}
+
+//------------------------------------------------------------------------------
+// GxB_Matrix_apply_BinaryOp2nd: historical
+//------------------------------------------------------------------------------
+
+// identical to GrB_Matrix_apply_BinaryOp2nd_Scalar
+GrB_Info GxB_Matrix_apply_BinaryOp2nd           // C<M>=accum(C,op(A,y))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_BinaryOp op,          // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Scalar y,             // second input: scalar y
+    const GrB_Descriptor desc       // descriptor for C, M, and A
+)
+{
+    return (GrB_Matrix_apply_BinaryOp2nd_Scalar (C, M, accum, op, A, y, desc)) ;
 }
 
 //------------------------------------------------------------------------------

@@ -127,7 +127,7 @@ GrB_Info apply2 (bool is_matrix)
     }
     else if (is_matrix && how == 0)
     {
-        info = GxB_Matrix_apply_BinaryOp2nd_
+        info = GrB_Matrix_apply_BinaryOp2nd_Scalar_
             (C, Mask, accum, op, A, scalar, desc) ;
     }
     else if (!is_matrix && how == 1)
@@ -219,7 +219,7 @@ GrB_Info apply2 (bool is_matrix)
         GrB_Vector w = (GrB_Vector) C ;
         GrB_Vector m = (GrB_Vector) Mask ;
         GrB_Vector a = (GrB_Vector) A ;
-        info = GxB_Vector_apply_BinaryOp2nd_
+        info = GrB_Vector_apply_BinaryOp2nd_Scalar_
             (w, m, accum, op, a, scalar, desc) ;
     }
 

@@ -40,7 +40,7 @@ GrB_Info GrB_Vector_serialize       // serialize a GrB_Vector to a blob
     // input:
     GrB_Vector u                    // vector to serialize
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

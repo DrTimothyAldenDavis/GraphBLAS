@@ -3100,7 +3100,7 @@ GrB_Info GrB_Vector_extractElement_UDT      // x = v(i)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Vector_extractElement_Scalar   // x = v(i) FIXME write this
+GrB_Info GrB_Vector_extractElement_Scalar   // x = v(i)
 (
     GrB_Scalar x,                   // scalar extracted
     const GrB_Vector v,             // vector to extract an entry from
@@ -3125,10 +3125,9 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_extractElement(x,v,i)                        \
     _Generic ((x),                                              \
-        GB_CASES (*, GrB, Vector_extractElement)                \
-        /* FIXME: add this: */                                  \
-/*      const GrB_Scalar : GrB_Vector_extractElement_Scalar, */ \
-/*            GrB_Scalar : GrB_Vector_extractElement_Scalar, */ \
+        GB_CASES (*, GrB, Vector_extractElement),               \
+        const GrB_Scalar : GrB_Vector_extractElement_Scalar,    \
+              GrB_Scalar : GrB_Vector_extractElement_Scalar     \
         ) (x, v, i)
 #endif
 
@@ -3884,7 +3883,7 @@ GrB_Info GrB_Matrix_extractElement_UDT      // x = A(i,j)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_extractElement_Scalar   // x = A(i,j)   FIXME write this
+GrB_Info GrB_Matrix_extractElement_Scalar   // x = A(i,j)
 (
     GrB_Scalar x,                       // extracted scalar
     const GrB_Matrix A,                 // matrix to extract a scalar from
@@ -3911,10 +3910,9 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_extractElement(x,A,i,j)                      \
     _Generic ((x),                                              \
-        GB_CASES (*, GrB, Matrix_extractElement)                \
-        /* FIXME: add this: */                                  \
-/*      const GrB_Scalar : GrB_Matrix_extractElement_Scalar, */ \
-/*            GrB_Scalar : GrB_Matrix_extractElement_Scalar, */ \
+        GB_CASES (*, GrB, Matrix_extractElement),               \
+        const GrB_Scalar : GrB_Matrix_extractElement_Scalar,    \
+              GrB_Scalar : GrB_Matrix_extractElement_Scalar     \
         ) (x, A, i, j)
 #endif
 
@@ -6297,7 +6295,7 @@ GrB_Info GrB_Matrix_apply           // C<Mask> = accum (C, op(A)) or op(A')
 // input to a scalar x, w<mask> = accum (w, op (x,u)).
 
 GB_PUBLIC
-GrB_Info GrB_Vector_apply_BinaryOp1st_Scalar    // w<mask> = accum (w, op(x,u)) FIXME write this
+GrB_Info GrB_Vector_apply_BinaryOp1st_Scalar    // w<mask> = accum (w, op(x,u))
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -6498,7 +6496,7 @@ GrB_Info GrB_Vector_apply_BinaryOp1st_UDT       // w<mask> = accum (w, op(x,u))
 // input to a scalar y, w<mask> = accum (w, op (u,y)).
 
 GB_PUBLIC
-GrB_Info GrB_Vector_apply_BinaryOp2nd_Scalar    // w<mask> = accum (w, op(u,y))  FIXME write this
+GrB_Info GrB_Vector_apply_BinaryOp2nd_Scalar    // w<mask> = accum (w, op(u,y))
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -7084,7 +7082,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp1st_UDT       // C<M>=accum(C,op(x,A))
 // to a scalar y, C<Mask> = accum (C, op (A,y)), or op(A',y).
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(A,y))    FIXME write this
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7488,13 +7486,15 @@ GrB_Info GrB_Matrix_apply_IndexOp_UDT       // C<M>=accum(C,op(A))
     _Generic                                                                \
     (                                                                       \
         (x),                                                                \
-        GrB_Scalar: GB_CONCAT ( GxB, _, kind, _apply_BinaryOp1st /* add _Scalar, use GrB */)  ,       \
+        const GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar) , \
+              GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar) , \
         GB_CASES (, GrB, GB_CONCAT ( kind, _apply_BinaryOp1st,, )) ,        \
         default :                                                           \
             _Generic                                                        \
             (                                                               \
                 (y),                                                        \
-                default : GB_CONCAT ( GxB, _, kind, _apply_BinaryOp2nd /* add_Scalar use GrB*/ )  , \
+                default :                                                   \
+                    GB_CONCAT ( GrB,_,kind,_apply_BinaryOp2nd_Scalar),      \
                 GB_CASES (, GrB, GB_CONCAT ( kind , _apply_BinaryOp2nd,, )) \
             )                                                               \
     )

@@ -23,7 +23,7 @@ GrB_Info GrB_Vector_serializeSize   // estimate the size of a blob
     // input:
     GrB_Vector u                    // vector to serialize
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
