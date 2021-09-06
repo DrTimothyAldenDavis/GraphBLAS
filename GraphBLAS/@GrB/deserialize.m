@@ -24,7 +24,7 @@ function G = deserialize (blob, mode, arg3)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
-% The type may also be specified, as an optional third input argument;
+% The type may also be specified, as an optional arg3 string:
 % G = GrB.deserialize (blob, 'fast', 'single') for example.  This is
 % feature not documented, and is only intended for testing.  The ANSI C
 % rules for casting floating-point to integers are used (truncation), not
