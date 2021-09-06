@@ -306,6 +306,43 @@ GB_Select_Opcode ;
     ((opcode) >= GB_TRIL_opcode && (opcode) <= GB_OFFDIAG_opcode)
 
 //------------------------------------------------------------------------------
+// IndexUnaryOp opcodes
+//------------------------------------------------------------------------------
+
+// operator codes used in GrB_IndexUnaryOp structures
+typedef enum
+{
+    // Result has the integer type INT32, UINT32, INT64, or UINT64:
+    GB_ROWINDEX_opcode = 0,     // (i+thunk): row index + thunk (vec or mtx)
+    GB_COLINDEX_opcode = 1,     // (j+thunk): col index + thunk (mtx only)
+    GB_DIAGINDEX_opcode = 2,    // (i-j+thunk): diag index + thunk (mtx only)
+
+    // Result is BOOL:  (matrices only):
+    GB_TRIL_1_opcode = 3,       // (i < (j+thunk)): tril (A,thunk-1)
+    GB_TRIU_1_opcode = 4,       // (j > (i+thunk)): triu (A,thunk+1)
+    GB_DIAG_1_opcode = 5,       // (j == (i+thunk)): diag(A,thunk)
+    GB_OFFDIAG_1_opcode = 6,    // (j != (i+thunk)): offdiag(A,thunk)
+    GB_COLLE_opcode = 7,        // (j <= thunk): A (:,0:thunk)
+    GB_COLGT_opcode = 8,        // (j > thunk): A (:,thunk+1:ncols-1)
+
+    // Result is BOOL:  (vectors and matrices):
+    GB_ROWLE_opcode = 9,        // (i <= thunk): A (0:thunk,:)
+    GB_ROWGT_opcode = 10,       // (i > thunk): A (thunk+1:nrows-1,:)
+
+    // Result is bool, depending only on the value aij (vectors or matrices)
+    GB_VALUEEQ_opcode = 11,     // (aij == thunk)
+    GB_VALUENE_opcode = 12,     // (aij != thunk)
+    GB_VALUELT_opcode = 13,     // (aij < thunk)
+    GB_VALUELE_opcode = 14,     // (aij <= thunk)
+    GB_VALUEGT_opcode = 15,     // (aij > thunk)
+    GB_VALUEGE_opcode = 16,     // (aij >= thunk)
+
+    // for all user-defined index_unary operators:
+    GB_USER_INDEXUNARY_opcode = 17
+}
+GB_IndexUnary_Opcode ;
+
+//------------------------------------------------------------------------------
 // opaque content of GraphBLAS objects
 //------------------------------------------------------------------------------
 
@@ -354,6 +391,19 @@ struct GB_BinaryOp_opaque   // content of GrB_BinaryOp
     GxB_binary_function function ;        // a pointer to the binary function
     char name [GxB_MAX_NAME_LEN] ;        // name of the binary operator
     GB_Opcode opcode ;      // operator opcode
+    char *defn ;            // function definition (currently unused)
+} ;
+
+struct GB_IndexUnaryOp_opaque   // content of GrB_IndexUnaryOp
+{
+    int64_t magic ;         // for detecting uninitialized objects
+    size_t header_size ;    // size of the malloc'd block for this struct, or 0
+    GrB_Type xtype ;        // type of x
+    GrB_Type ttype ;        // type of thunk
+    GrB_Type ztype ;        // type of z
+    GxB_index_unary_function function ; // a pointer to the function
+    char name [GxB_MAX_NAME_LEN] ;      // name of the operator
+    GB_IndexUnary_Opcode opcode ;       // operator opcode
     char *defn ;            // function definition (currently unused)
 } ;
 

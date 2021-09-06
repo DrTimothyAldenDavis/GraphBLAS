@@ -30,8 +30,6 @@ GrB_reduce to GrB_Scalar using a binary op: NOT_IMPLEMENTED
 --------------------------------------------------------------------------------
 DRAFTED: need to test them:
 
-add serialize/deserialize tests to @GrB/test
-
 --------------------------------------------------------------------------------
 DONE:
 
@@ -69,5 +67,7 @@ GrB_Format: COO, CSR, CSC, dense by row, dense by col
     COO: also any order (can there be duplicates?)
     DENSE by row or col: what if entries are missing? Error?
 
-enums are specified.  Note GrB_BLOCKING and GrB_NONBLOCKING enums are flipped.
+enums are specified
+
+serialize/deserialize tests to @GrB/test
 

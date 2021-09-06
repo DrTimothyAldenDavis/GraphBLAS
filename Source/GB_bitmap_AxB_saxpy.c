@@ -79,7 +79,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
 
     GrB_Type ctype = semiring->add->op->ztype ;
     int64_t cnzmax = 1 ;
-    (void) GB_Index_multiply ((GrB_Index *) &cnzmax, A->vlen, B->vdim) ;
+    (void) GB_int64_multiply ((GrB_Index *) &cnzmax, A->vlen, B->vdim) ;
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, true, // static header
         ctype, A->vlen, B->vdim, GB_Ap_null, true, C_sparsity, true,

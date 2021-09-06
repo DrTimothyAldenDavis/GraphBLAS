@@ -17,6 +17,8 @@
 
 // If cin is not present then it is implicitly a 1-by-1 matrix with no entries.
 
+// FIXME: use GrB_reduce to GrB_Scalar
+
 #include "gb_interface.h"
 
 #define USAGE "usage: C = GrB.reduce (cin, accum, op, A, desc)"

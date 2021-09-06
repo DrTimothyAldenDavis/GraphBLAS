@@ -173,6 +173,10 @@
 #define GrB_IDENTITY_UINT32 GrM_IDENTITY_UINT32
 #define GrB_IDENTITY_UINT64 GrM_IDENTITY_UINT64
 #define GrB_IDENTITY_UINT8 GrM_IDENTITY_UINT8
+#define GrB_IndexUnaryOp_error GrM_IndexUnaryOp_error
+#define GrB_IndexUnaryOp_free GrM_IndexUnaryOp_free
+#define GrB_IndexUnaryOp_new GrM_IndexUnaryOp_new
+#define GrB_IndexUnaryOp_wait GrM_IndexUnaryOp_wait
 #define GrB_init GrM_init
 #define GrB_INT16 GrM_INT16
 #define GrB_INT32 GrM_INT32
@@ -285,6 +289,7 @@
 #define GrB_Matrix_extractElement_INT32 GrM_Matrix_extractElement_INT32
 #define GrB_Matrix_extractElement_INT64 GrM_Matrix_extractElement_INT64
 #define GrB_Matrix_extractElement_INT8 GrM_Matrix_extractElement_INT8
+#define GrB_Matrix_extractElement_Scalar GrM_Matrix_extractElement_Scalar
 #define GrB_Matrix_extractElement_UDT GrM_Matrix_extractElement_UDT
 #define GrB_Matrix_extractElement_UINT16 GrM_Matrix_extractElement_UINT16
 #define GrB_Matrix_extractElement_UINT32 GrM_Matrix_extractElement_UINT32
@@ -723,6 +728,7 @@
 #define GrB_Vector_extractElement_INT32 GrM_Vector_extractElement_INT32
 #define GrB_Vector_extractElement_INT64 GrM_Vector_extractElement_INT64
 #define GrB_Vector_extractElement_INT8 GrM_Vector_extractElement_INT8
+#define GrB_Vector_extractElement_Scalar GrM_Vector_extractElement_Scalar
 #define GrB_Vector_extractElement_UDT GrM_Vector_extractElement_UDT
 #define GrB_Vector_extractElement_UINT16 GrM_Vector_extractElement_UINT16
 #define GrB_Vector_extractElement_UINT32 GrM_Vector_extractElement_UINT32
@@ -1428,6 +1434,8 @@
 #define GxB_IDENTITY_FC32 GxM_IDENTITY_FC32
 #define GxB_IDENTITY_FC64 GxM_IDENTITY_FC64
 #define GxB_IGNORE_DUP GxM_IGNORE_DUP
+#define GxB_IndexUnaryOp_fprint GxM_IndexUnaryOp_fprint
+#define GxB_IndexUnaryOp_new GxM_IndexUnaryOp_new
 #define GxB_init GxM_init
 #define GxB_ISEQ_BOOL GxM_ISEQ_BOOL
 #define GxB_ISEQ_FC32 GxM_ISEQ_FC32
@@ -3437,8 +3445,9 @@
 #define GB_ijproperties GM_ijproperties
 #define GB_ijsort GM_ijsort
 #define GB_import GM_import
-#define GB_Index_multiply GM_Index_multiply
+#define GB_IndexUnaryOp_check GM_IndexUnaryOp_check
 #define GB_init GM_init
+#define GB_int64_multiply GM_int64_multiply
 #define GB_is_diagonal GM_is_diagonal
 #define GB_iso_add GM_iso_add
 #define GB_iso_AxB GM_iso_AxB

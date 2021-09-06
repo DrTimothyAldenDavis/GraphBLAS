@@ -4758,33 +4758,33 @@ void mexFunction
     Context->where = "GrB_error" ;
 
     n = 1 ;
-    ok = GB_Index_multiply (&n, INT64_MAX, 0) ;
+    ok = GB_int64_multiply (&n, INT64_MAX, 0) ;
     CHECK (ok) ;
     CHECK (n == 0) ;
 
     n = 911 ;
-    ok = GB_Index_multiply (&n, -1, -1) ;
+    ok = GB_int64_multiply (&n, -1, -1) ;
     CHECK (!ok) ;
     CHECK (n == 0) ;
 
     n = 911 ;
-    ok = GB_Index_multiply (&n, 1, GxB_INDEX_MAX+1) ;
+    ok = GB_int64_multiply (&n, 1, GxB_INDEX_MAX+1) ;
     CHECK (!ok) ;
     CHECK (n == 0) ;
 
-    ok = GB_Index_multiply (&n,
+    ok = GB_int64_multiply (&n,
         ((GrB_Index) GxB_INDEX_MAX)+1,
         ((GrB_Index) GxB_INDEX_MAX)+1) ;
     CHECK (!ok) ;
 
-    ok = GB_Index_multiply (&n,
+    ok = GB_int64_multiply (&n,
         ((GrB_Index) GxB_INDEX_MAX),
         ((GrB_Index) GxB_INDEX_MAX)) ;
     CHECK (!ok) ;
 
     a = (GrB_Index) 16777216/2 ;     // (2^24)/2
     b = (GrB_Index) 16777216 ;
-    ok = GB_Index_multiply (&n, a, b) ;
+    ok = GB_int64_multiply (&n, a, b) ;
     // printf ("%lld %lld n\n", n, a*b) ;
     CHECK (ok) ;
     CHECK (n == a*b)

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_Index_multiply:  multiply two integers and guard against overflow
+// GB_int64_multiply:  multiply two integers and guard against overflow
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -12,7 +12,7 @@
 
 #include "GB.h"
 
-bool GB_Index_multiply      // true if ok, false if overflow
+bool GB_int64_multiply      // true if ok, false if overflow
 (
     GrB_Index *restrict c,  // c = a*b, or zero if overflow occurs
     const int64_t a,

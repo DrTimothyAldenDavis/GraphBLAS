@@ -151,10 +151,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     GrB_Index cvlen, cvdim, cnzmax, cnvec ;
 
-    bool ok = GB_Index_multiply (&cvlen, avlen, bvlen) ;
-    ok = ok & GB_Index_multiply (&cvdim, avdim, bvdim) ;
-    ok = ok & GB_Index_multiply (&cnzmax, anz, bnz) ;
-    ok = ok & GB_Index_multiply (&cnvec, anvec, bnvec) ;
+    bool ok = GB_int64_multiply (&cvlen, avlen, bvlen) ;
+    ok = ok & GB_int64_multiply (&cvdim, avdim, bvdim) ;
+    ok = ok & GB_int64_multiply (&cnzmax, anz, bnz) ;
+    ok = ok & GB_int64_multiply (&cnvec, anvec, bnvec) ;
     ASSERT (ok) ;
 
     if (C_iso)

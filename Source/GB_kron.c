@@ -92,9 +92,9 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     int64_t bnrows = (B_transpose) ? GB_NCOLS (B) : GB_NROWS (B) ;
     int64_t bncols = (B_transpose) ? GB_NROWS (B) : GB_NCOLS (B) ;
     GrB_Index cnrows, cncols, cnz = 0 ;
-    bool ok = GB_Index_multiply (&cnrows, anrows,  bnrows) ;
-    ok = ok && GB_Index_multiply (&cncols, ancols,  bncols) ;
-    ok = ok && GB_Index_multiply (&cnz, GB_nnz (A), GB_nnz (B)) ;
+    bool ok = GB_int64_multiply (&cnrows, anrows,  bnrows) ;
+    ok = ok && GB_int64_multiply (&cncols, ancols,  bncols) ;
+    ok = ok && GB_int64_multiply (&cnz, GB_nnz (A), GB_nnz (B)) ;
     if (!ok || GB_NROWS (C) != cnrows || GB_NCOLS (C) != cncols)
     { 
         GB_ERROR (GrB_DIMENSION_MISMATCH, "%s:\n"

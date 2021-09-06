@@ -221,8 +221,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
     if (ctype != user_type && user_type != NULL)
     { 
-        printf ("cast the blob from %s to %s:\n",
-            C->type->name, user_type->name) ;
+        GBURBLE ("(cast %s to %s) ", C->type->name, user_type->name) ;
         // T = empty matrix with the final user_type.  All content except the
         // header of T itself will be overwritten by C.
         ASSERT (ccode != GB_UDT_code) ;

@@ -97,7 +97,7 @@ GrB_Info GB_resize              // change the size of a matrix
 
         // get the old and new dimensions
         int64_t anz_new = 1 ;
-        bool ok = GB_Index_multiply ((GrB_Index *) &anz_new,
+        bool ok = GB_int64_multiply ((GrB_Index *) &anz_new,
             vlen_new, vdim_new) ;
         if (!ok) anz_new = 1 ;
         size_t nzmax_new = GB_IMAX (anz_new, 1) ;

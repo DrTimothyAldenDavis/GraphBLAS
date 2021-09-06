@@ -138,7 +138,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int64_t cvdim = B->vdim ;
 
     int64_t cnz ;
-    bool ok = GB_Index_multiply ((GrB_Index *) (&cnz), cvlen, cvdim) ;
+    bool ok = GB_int64_multiply ((GrB_Index *) (&cnz), cvlen, cvdim) ;
 
     //--------------------------------------------------------------------------
     // extract the submask if A or B are hypersparse 

@@ -96,6 +96,7 @@ hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
 logstat ('test229',t) ; % test setElement
+logstat ('test228',t) ; % test serialize/deserialize
 logstat ('test227',t) ; % test kron
 logstat ('test226',t) ; % test kron with iso matrices
 logstat ('test225',t) ; % test mask operations (GB_masker)

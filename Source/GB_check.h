@@ -46,6 +46,15 @@ GrB_Info GB_Type_check      // check a GraphBLAS Type
 ) ;
 
 GB_PUBLIC
+GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
+(
+    const GrB_UnaryOp op,   // GraphBLAS operator to print and check
+    const char *name,       // name of the operator
+    int pr,                 // print level
+    FILE *f                 // file for output
+) ;
+
+GB_PUBLIC
 GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 (
     const GrB_BinaryOp op,  // GraphBLAS operator to print and check
@@ -55,9 +64,9 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 ) ;
 
 GB_PUBLIC
-GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
+GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
 (
-    const GrB_UnaryOp op,   // GraphBLAS operator to print and check
+    const GrB_IndexUnaryOp op,  // GraphBLAS operator to print and check
     const char *name,       // name of the operator
     int pr,                 // print level
     FILE *f                 // file for output

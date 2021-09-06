@@ -24,6 +24,8 @@
 // The input scalar is held as A(0,0) in a GrB_Matrix A.  If A(0,0) is not
 // present in A, the value zero is used.
 
+// FIXME use GrB_Matrix_assign_Scalar or GxB_Matrix_subassign_Scalar
+
 void gb_matrix_assign_scalar
 (
     GrB_Matrix C,               // C can be of any type

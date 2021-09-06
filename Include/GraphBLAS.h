@@ -1723,7 +1723,7 @@ GB_PUBLIC
 GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
 (
     GrB_IndexUnaryOp *op,           // handle for the new IndexUnary operator
-    GxB_index_unary_function function,    // pointer to IndexUnary function
+    GxB_index_unary_function function,    // pointer to index_unary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x
     GrB_Type ttype,                 // type of input thunk
@@ -2225,7 +2225,7 @@ GrB_Info GrB_Semiring_free          // free a user-created semiring
 // This has become GrB_Scalar. The older name GxB_Scalar is kept as
 // historical, but GrB_Scalar should be used instead.
 
-typedef struct GB_Scalar_opaque *GxB_Scalar ;   // historical
+typedef struct GB_Scalar_opaque *GxB_Scalar ;   // historical: use GrB_Scalar
 typedef struct GB_Scalar_opaque *GrB_Scalar ;   // use this instead
 
 // These methods create, free, copy, and clear a GrB_Scalar.  The nvals,
@@ -4647,8 +4647,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
         GrB_UnaryOp      *: GrB_UnaryOp_free    ,   \
         GrB_BinaryOp     *: GrB_BinaryOp_free   ,   \
         GxB_SelectOp     *: GxB_SelectOp_free   ,   \
-        /* FIXME add this */ \
-/*      GrB_IndexUnaryOp *: GrB_IndexUnaryOp_free,*/ \
+        GrB_IndexUnaryOp *: GrB_IndexUnaryOp_free,  \
         GrB_Monoid       *: GrB_Monoid_free     ,   \
         GrB_Semiring     *: GrB_Semiring_free   ,   \
         GrB_Scalar       *: GrB_Scalar_free     ,   \
@@ -4692,7 +4691,7 @@ GrB_WaitMode ;
     GB_PUBLIC GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    *op      ) ;
     GB_PUBLIC GrB_Info GrB_BinaryOp_wait     (GrB_BinaryOp   *op      ) ;
     GB_PUBLIC GrB_Info GxB_SelectOp_wait     (GxB_SelectOp   *op      ) ;
-    GB_PUBLIC GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp *op    ) ;   // FIXME write this
+    GB_PUBLIC GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp *op    ) ;
     GB_PUBLIC GrB_Info GrB_Monoid_wait       (GrB_Monoid     *monoid  ) ;
     GB_PUBLIC GrB_Info GrB_Semiring_wait     (GrB_Semiring   *semiring) ;
     GB_PUBLIC GrB_Info GrB_Descriptor_wait   (GrB_Descriptor *desc    ) ;
@@ -4707,17 +4706,16 @@ GrB_WaitMode ;
         _Generic                                        \
         (                                               \
             (object),                                   \
-            GrB_Type         *: GrB_Type_wait       ,   \
-            GrB_UnaryOp      *: GrB_UnaryOp_wait    ,   \
-            GrB_BinaryOp     *: GrB_BinaryOp_wait   ,   \
-            GxB_SelectOp     *: GxB_SelectOp_wait   ,   \
-            /* FIXME: add this: */ \
-    /*      GrB_IndexUnaryOp *: GrB_IndexUnaryOp_wait,*/\
-            GrB_Monoid       *: GrB_Monoid_wait     ,   \
-            GrB_Semiring     *: GrB_Semiring_wait   ,   \
-            GrB_Scalar       *: GrB_Scalar_wait     ,   \
-            GrB_Vector       *: GrB_Vector_wait     ,   \
-            GrB_Matrix       *: GrB_Matrix_wait     ,   \
+            GrB_Type         *: GrB_Type_wait         , \
+            GrB_UnaryOp      *: GrB_UnaryOp_wait      , \
+            GrB_BinaryOp     *: GrB_BinaryOp_wait     , \
+            GxB_SelectOp     *: GxB_SelectOp_wait     , \
+            GrB_IndexUnaryOp *: GrB_IndexUnaryOp_wait , \
+            GrB_Monoid       *: GrB_Monoid_wait       , \
+            GrB_Semiring     *: GrB_Semiring_wait     , \
+            GrB_Scalar       *: GrB_Scalar_wait       , \
+            GrB_Vector       *: GrB_Vector_wait       , \
+            GrB_Matrix       *: GrB_Matrix_wait       , \
             GrB_Descriptor   *: GrB_Descriptor_wait     \
         )                                               \
         (object)
@@ -4735,7 +4733,7 @@ GrB_WaitMode ;
     GB_PUBLIC GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    op      , GrB_WaitMode waitmode) ;
     GB_PUBLIC GrB_Info GrB_BinaryOp_wait     (GrB_BinaryOp   op      , GrB_WaitMode waitmode) ;
     GB_PUBLIC GrB_Info GxB_SelectOp_wait     (GxB_SelectOp   op      , GrB_WaitMode waitmode) ;
-    GB_PUBLIC GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp op    , GrB_WaitMode waitmode) ;  // FIXME write
+    GB_PUBLIC GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp op    , GrB_WaitMode waitmode) ;
     GB_PUBLIC GrB_Info GrB_Monoid_wait       (GrB_Monoid     monoid  , GrB_WaitMode waitmode) ;
     GB_PUBLIC GrB_Info GrB_Semiring_wait     (GrB_Semiring   semiring, GrB_WaitMode waitmode) ;
     GB_PUBLIC GrB_Info GrB_Descriptor_wait   (GrB_Descriptor desc    , GrB_WaitMode waitmode) ;
@@ -4753,8 +4751,7 @@ GrB_WaitMode ;
             GrB_UnaryOp      : GrB_UnaryOp_wait      ,  \
             GrB_BinaryOp     : GrB_BinaryOp_wait     ,  \
             GxB_SelectOp     : GxB_SelectOp_wait     ,  \
-            /* FIXME: add this: */ \
-    /*      GrB_IndexUnaryOp : GrB_IndexUnaryOp_wait ,*/\
+            GrB_IndexUnaryOp : GrB_IndexUnaryOp_wait ,  \
             GrB_Monoid       : GrB_Monoid_wait       ,  \
             GrB_Semiring     : GrB_Semiring_wait     ,  \
             GrB_Scalar       : GrB_Scalar_wait       ,  \
@@ -4776,19 +4773,18 @@ GrB_WaitMode ;
 // null-terminated string.  The string returned by GrB_error is owned by
 // the GraphBLAS library and must not be free'd.
 
-GB_PUBLIC GrB_Info GrB_Type_error         (const char **error, const GrB_Type         type) ;
+GB_PUBLIC GrB_Info GrB_Type_error         (const char **error, const GrB_Type       type) ;
 GB_PUBLIC GrB_Info GrB_UnaryOp_error      (const char **error, const GrB_UnaryOp      op) ;
 GB_PUBLIC GrB_Info GrB_BinaryOp_error     (const char **error, const GrB_BinaryOp     op) ;
 GB_PUBLIC GrB_Info GxB_SelectOp_error     (const char **error, const GxB_SelectOp     op) ;
-GB_PUBLIC GrB_Info GrB_IndexUnaryOp_error (const char **error, const GrB_IndexUnaryOp op) ; // FIXME write
-GB_PUBLIC GrB_Info GrB_Monoid_error       (const char **error, const GrB_Monoid       monoid) ;
-GB_PUBLIC GrB_Info GrB_Semiring_error     (const char **error, const GrB_Semiring     semiring) ;
+GB_PUBLIC GrB_Info GrB_IndexUnaryOp_error (const char **error, const GrB_IndexUnaryOp op) ;
+GB_PUBLIC GrB_Info GrB_Monoid_error       (const char **error, const GrB_Monoid     monoid) ;
+GB_PUBLIC GrB_Info GrB_Semiring_error     (const char **error, const GrB_Semiring semiring) ;
 GB_PUBLIC GrB_Info GrB_Scalar_error       (const char **error, const GrB_Scalar       s) ;
 GB_PUBLIC GrB_Info GrB_Vector_error       (const char **error, const GrB_Vector       v) ;
 GB_PUBLIC GrB_Info GrB_Matrix_error       (const char **error, const GrB_Matrix       A) ;
 GB_PUBLIC GrB_Info GrB_Descriptor_error   (const char **error, const GrB_Descriptor   d) ;
-
-// historical:
+// historical: use GrB_Scalar_error instead
 GB_PUBLIC GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar       s) ;
 
 // Note that v1.0 of the GraphBLAS C API had a no-input GrB_error ( ) method,
@@ -4810,9 +4806,8 @@ GB_PUBLIC GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar 
               GrB_BinaryOp     : GrB_BinaryOp_error   ,     \
         const GxB_SelectOp     : GxB_SelectOp_error   ,     \
               GxB_SelectOp     : GxB_SelectOp_error   ,     \
-/* FIXME add this */ \
-/*      const GrB_IndexUnaryOp : GrB_IndexUnaryOp_error, */ \
-/*            GrB_IndexUnaryOp : GrB_IndexUnaryOp_error, */ \
+        const GrB_IndexUnaryOp : GrB_IndexUnaryOp_error,    \
+              GrB_IndexUnaryOp : GrB_IndexUnaryOp_error,    \
         const GrB_Monoid       : GrB_Monoid_error     ,     \
               GrB_Monoid       : GrB_Monoid_error     ,     \
         const GrB_Semiring     : GrB_Semiring_error   ,     \
@@ -9541,6 +9536,15 @@ GrB_Info GxB_BinaryOp_fprint        // print and check a GrB_BinaryOp
 ) ;
 
 GB_PUBLIC
+GrB_Info GxB_IndexUnaryOp_fprint    // print and check a GrB_IndexUnaryOp
+(
+    GrB_IndexUnaryOp op,            // object to print and check
+    const char *name,               // name of the object
+    GxB_Print_Level pr,             // print level
+    FILE *f                         // file for output
+) ;
+
+GB_PUBLIC
 GrB_Info GxB_SelectOp_fprint        // print and check a GxB_SelectOp
 (
     GxB_SelectOp selectop,          // object to print and check
@@ -9604,31 +9608,33 @@ GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
 ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_fprint(object,pr,f)                         \
-    _Generic                                            \
-    (                                                   \
-        (object),                                       \
-        const GrB_Type       : GxB_Type_fprint       ,  \
-              GrB_Type       : GxB_Type_fprint       ,  \
-        const GrB_UnaryOp    : GxB_UnaryOp_fprint    ,  \
-              GrB_UnaryOp    : GxB_UnaryOp_fprint    ,  \
-        const GrB_BinaryOp   : GxB_BinaryOp_fprint   ,  \
-              GrB_BinaryOp   : GxB_BinaryOp_fprint   ,  \
-        const GxB_SelectOp   : GxB_SelectOp_fprint   ,  \
-              GxB_SelectOp   : GxB_SelectOp_fprint   ,  \
-        const GrB_Monoid     : GxB_Monoid_fprint     ,  \
-              GrB_Monoid     : GxB_Monoid_fprint     ,  \
-        const GrB_Semiring   : GxB_Semiring_fprint   ,  \
-              GrB_Semiring   : GxB_Semiring_fprint   ,  \
-        const GrB_Scalar     : GxB_Scalar_fprint     ,  \
-              GrB_Scalar     : GxB_Scalar_fprint     ,  \
-        const GrB_Vector     : GxB_Vector_fprint     ,  \
-              GrB_Vector     : GxB_Vector_fprint     ,  \
-        const GrB_Matrix     : GxB_Matrix_fprint     ,  \
-              GrB_Matrix     : GxB_Matrix_fprint     ,  \
-        const GrB_Descriptor : GxB_Descriptor_fprint ,  \
-              GrB_Descriptor : GxB_Descriptor_fprint    \
-    )                                                   \
+#define GxB_fprint(object,pr,f)                             \
+    _Generic                                                \
+    (                                                       \
+        (object),                                           \
+        const GrB_Type       : GxB_Type_fprint           ,  \
+              GrB_Type       : GxB_Type_fprint           ,  \
+        const GrB_UnaryOp    : GxB_UnaryOp_fprint        ,  \
+              GrB_UnaryOp    : GxB_UnaryOp_fprint        ,  \
+        const GrB_BinaryOp   : GxB_BinaryOp_fprint       ,  \
+              GrB_BinaryOp   : GxB_BinaryOp_fprint       ,  \
+        const GrB_IndexUnaryOp : GxB_IndexUnaryOp_fprint ,  \
+              GrB_IndexUnaryOp : GxB_IndexUnaryOp_fprint ,  \
+        const GxB_SelectOp   : GxB_SelectOp_fprint       ,  \
+              GxB_SelectOp   : GxB_SelectOp_fprint       ,  \
+        const GrB_Monoid     : GxB_Monoid_fprint         ,  \
+              GrB_Monoid     : GxB_Monoid_fprint         ,  \
+        const GrB_Semiring   : GxB_Semiring_fprint       ,  \
+              GrB_Semiring   : GxB_Semiring_fprint       ,  \
+        const GrB_Scalar     : GxB_Scalar_fprint         ,  \
+              GrB_Scalar     : GxB_Scalar_fprint         ,  \
+        const GrB_Vector     : GxB_Vector_fprint         ,  \
+              GrB_Vector     : GxB_Vector_fprint         ,  \
+        const GrB_Matrix     : GxB_Matrix_fprint         ,  \
+              GrB_Matrix     : GxB_Matrix_fprint         ,  \
+        const GrB_Descriptor : GxB_Descriptor_fprint     ,  \
+              GrB_Descriptor : GxB_Descriptor_fprint        \
+    )                                                       \
     (object, GB_STR(object), pr, f)
 #endif
 
