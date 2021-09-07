@@ -83,6 +83,26 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
 }
 
 //------------------------------------------------------------------------------
+// GrB_Matrix_reduce_Scalar: reduce a matrix to a GrB_Scalar
+//------------------------------------------------------------------------------
+
+GrB_Info GrB_Matrix_reduce_Scalar
+(
+    GrB_Scalar S,                   // result scalar
+    const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
+    const GrB_Monoid monoid,        // monoid to do the reduction
+    const GrB_Matrix A,             // matrix to reduce
+    const GrB_Descriptor desc       // descriptor (currently unused)
+)
+{ 
+    GB_WHERE1 ("GrB_Matrix_reduce_Scalar (s, accum, monoid, A, desc)") ;
+    GB_BURBLE_START ("GrB_reduce") ;
+    GrB_Info info = GB_Scalar_reduce (S, accum, monoid, A, Context) ;
+    GB_BURBLE_END ;
+    return (info) ;
+}
+
+//------------------------------------------------------------------------------
 // GrB_Matrix_reduce_Monoid: reduce a matrix to a vector via a monoid
 //------------------------------------------------------------------------------
 

@@ -327,6 +327,7 @@
 #define GrB_Matrix_reduce_INT64 GrM_Matrix_reduce_INT64
 #define GrB_Matrix_reduce_INT8 GrM_Matrix_reduce_INT8
 #define GrB_Matrix_reduce_Monoid GrM_Matrix_reduce_Monoid
+#define GrB_Matrix_reduce_Scalar GrM_Matrix_reduce_Scalar
 #define GrB_Matrix_reduce_UDT GrM_Matrix_reduce_UDT
 #define GrB_Matrix_reduce_UINT16 GrM_Matrix_reduce_UINT16
 #define GrB_Matrix_reduce_UINT32 GrM_Matrix_reduce_UINT32
@@ -760,6 +761,7 @@
 #define GrB_Vector_reduce_INT32 GrM_Vector_reduce_INT32
 #define GrB_Vector_reduce_INT64 GrM_Vector_reduce_INT64
 #define GrB_Vector_reduce_INT8 GrM_Vector_reduce_INT8
+#define GrB_Vector_reduce_Scalar GrM_Vector_reduce_Scalar
 #define GrB_Vector_reduce_UDT GrM_Vector_reduce_UDT
 #define GrB_Vector_reduce_UINT16 GrM_Vector_reduce_UINT16
 #define GrB_Vector_reduce_UINT32 GrM_Vector_reduce_UINT32
@@ -3618,6 +3620,7 @@
 #define GB_reduce_to_vector GM_reduce_to_vector
 #define GB_resize GM_resize
 #define GB_Scalar_check GM_Scalar_check
+#define GB_Scalar_reduce GM_Scalar_reduce
 #define GB_Scalar_wrap GM_Scalar_wrap
 #define GB_select GM_select
 #define GB_SelectOp_check GM_SelectOp_check

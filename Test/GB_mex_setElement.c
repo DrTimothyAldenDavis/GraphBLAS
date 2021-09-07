@@ -45,7 +45,10 @@ GrB_Info set_ ## name                                                       \
     if (do_scalar)                                                          \
     {                                                                       \
         info = GrB_Scalar_new (&Scalar, xtype) ;                            \
-        if (info != GrB_SUCCESS) Return (info) ;                            \
+        if (info != GrB_SUCCESS)                                            \
+        {                                                                   \
+            Return (info) ;                                                 \
+        }                                                                   \
     }                                                                       \
     for (int64_t k = 0 ; k < ni ; k++)                                      \
     {                                                                       \
@@ -53,16 +56,22 @@ GrB_Info set_ ## name                                                       \
         {                                                                   \
             info = prefix ## Scalar_setElement_ ## name                     \
                 (Scalar, AMPERSAND (X [k])) ;                               \
-            if (info != GrB_SUCCESS) Return (info) ;                        \
-            GrB_Info info = GrB_Matrix_setElement_Scalar                    \
+            if (info != GrB_SUCCESS)                                        \
+            {                                                               \
+                Return (info) ;                                             \
+            }                                                               \
+            info = GrB_Matrix_setElement_Scalar                             \
                 (A, Scalar, I [k], J [k]) ;                                 \
         }                                                                   \
         else                                                                \
         {                                                                   \
-            GrB_Info info = prefix ## Matrix_setElement_ ## name            \
+            info = prefix ## Matrix_setElement_ ## name                     \
                 (A, AMPERSAND (X [k]), I [k], J [k]) ;                      \
         }                                                                   \
-        if (info != GrB_SUCCESS) Return (info) ;                            \
+        if (info != GrB_SUCCESS)                                            \
+        {                                                                   \
+            Return (info) ;                                                 \
+        }                                                                   \
     }                                                                       \
     if (debug_wait)                                                         \
     {                                                                       \

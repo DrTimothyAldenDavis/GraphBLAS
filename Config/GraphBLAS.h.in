@@ -8172,7 +8172,7 @@ GrB_Info GrB_Vector_reduce_UDT      // c = accum (c, reduce_to_scalar (u))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Vector_reduce_Scalar   // c = accum (c, reduce_to_scalar (u))   FIXME write this
+GrB_Info GrB_Vector_reduce_Scalar   // c = accum (c, reduce_to_scalar (u))
 (
     GrB_Scalar c,                   // result scalar
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
@@ -8328,7 +8328,7 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_reduce_Scalar   // c = accum (c, reduce_to_scalar (A))  FIXME write this
+GrB_Info GrB_Matrix_reduce_Scalar   // c = accum (c, reduce_to_scalar (A))
 (
     GrB_Scalar c,                   // result scalar
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
@@ -8356,6 +8356,8 @@ GrB_Info GrB_Matrix_reduce_Scalar   // c = accum (c, reduce_to_scalar (A))  FIXM
     _Generic                                                        \
     (                                                               \
         (c),                                                        \
+        const GrB_Scalar : GB_CONCAT (GrB,_,kind,_reduce_Scalar),   \
+              GrB_Scalar : GB_CONCAT (GrB,_,kind,_reduce_Scalar),   \
         GB_CASES (*, GrB, GB_CONCAT ( kind, _reduce,, )),           \
         default: GB_CONCAT ( GrB, _, kind, _reduce_UDT )            \
     )

@@ -2,7 +2,6 @@
 --------------------------------------------------------------------------------
 later, for v6.0.0:
 GrB_*_wait: with 2nd parameter: GrB_COMPLETE, GrB_MATERIALIZE
-
 --------------------------------------------------------------------------------
 
 IndexUnaryOp:
@@ -18,19 +17,16 @@ IndexUnaryOp:
 GrB_Scalar:
     GrB_Vector_assign_Scalar with GrB_Scalar
     GrB_Matrix_assign_Scalar with GrB_Scalar
-    and thus:
     GxB_Vector_subassign_Scalar with GrB_Scalar
     GxB_Matrix_subassign_Scalar with GrB_Scalar
-
-    GrB_reduce to GrB_Scalar using a monoid: do this
-    GrB_reduce to GrB_Scalar using a binary op: NOT_IMPLEMENTED
-        for Matrix and Vector
 
 --------------------------------------------------------------------------------
 DRAFTED: need to test them:
 
 --------------------------------------------------------------------------------
 DONE:
+
+GrB_reduce to GrB_Scalar using a monoid
 
 Vector serialize/deserialize
 
