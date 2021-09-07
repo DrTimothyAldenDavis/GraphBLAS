@@ -45,7 +45,7 @@ GrB_Info GxB_Vector_import_Full // import a full vector
         vx,   vx_size,  // Ax
         0, false, 0,
         GxB_FULL, true,                     // full by col
-        iso, fast_import, Context) ;
+        iso, fast_import, true, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

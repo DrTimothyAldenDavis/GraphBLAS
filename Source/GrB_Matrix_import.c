@@ -124,6 +124,10 @@ GrB_Info GrB_Matrix_import  // import a matrix
     GB_void   *Ax_copy = NULL ; size_t Ax_size = 0 ;
     size_t typesize = type->size ;
 
+    // Ap_copy, Ai_copy, Ax_copy are GB_MALLOC'ed so they are already in the
+    // debug memtable.  Thus, GB_import does not add them again to the
+    // memtable (with add_to_memtable set to false).
+
     switch (format)
     {
         case GrB_CSR_FORMAT : 
@@ -150,11 +154,6 @@ GrB_Info GrB_Matrix_import  // import a matrix
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-
-    // for debugging only: these arrays will be re-added by GB_import
-    GB_Global_memtable_remove (Ap_copy) ;
-    GB_Global_memtable_remove (Ai_copy) ;
-    GB_Global_memtable_remove (Ax_copy) ;
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use
@@ -198,7 +197,9 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 0, true, 0,         // CSR format may be jumbled
                 GxB_SPARSE, false,  // sparse by row
                 false,              // not iso
-                fast_import, Context)) ;
+                fast_import,
+                false,              // do not add to memtable
+                Context)) ;
             break ;
 
         case GrB_CSC_FORMAT : 
@@ -212,7 +213,9 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 0, true, 0,         // CSC format may be jumbled
                 GxB_SPARSE, true,   // sparse by column
                 false,              // not iso
-                fast_import, Context)) ;
+                fast_import,
+                false,              // do not add to memtable
+                Context)) ;
             break ;
 
         case GrB_DENSE_ROW_FORMAT : 
@@ -226,7 +229,9 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 0, false, 0,        // cannot be jumbled
                 GxB_FULL, false,    // full by row
                 false,              // not iso
-                fast_import, Context)) ;
+                fast_import,
+                false,              // do not add to memtable
+                Context)) ;
             break ;
 
         case GrB_DENSE_COL_FORMAT : 
@@ -240,7 +245,9 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 0, false, 0,        // cannot be jumbled
                 GxB_FULL, true,     // full by column
                 false,              // not iso
-                fast_import, Context)) ;
+                fast_import,
+                false,              // do not add to memtable
+                Context)) ;
             break ;
 
         default : // GrB_COO_FORMAT : 

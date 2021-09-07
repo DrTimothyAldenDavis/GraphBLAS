@@ -55,7 +55,7 @@ GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
         Ax,   Ax_size,  // Ax
         0, jumbled, nvec,                   // jumbled or not
         GxB_HYPERSPARSE, true,              // hypersparse by col
-        iso, fast_import, Context) ;
+        iso, fast_import, true, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

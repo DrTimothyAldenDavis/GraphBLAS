@@ -43,7 +43,7 @@ GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
         Ax,   Ax_size,  // Ax
         0, false, 0,
         GxB_FULL, true,                     // full by col
-        iso, fast_import, Context) ;
+        iso, fast_import, true, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

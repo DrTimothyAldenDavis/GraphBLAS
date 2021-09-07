@@ -46,7 +46,7 @@ GrB_Info GxB_Matrix_pack_BitmapC  // pack a bitmap matrix, held by column
         Ax,   Ax_size,  // Ax
         nvals, false, 0,                    // nvals for bitmap
         GxB_BITMAP, true,                   // bitmap by col
-        iso, fast_import, Context) ;
+        iso, fast_import, true, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

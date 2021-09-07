@@ -52,7 +52,7 @@ GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
         Ax,   Ax_size,  // Ax
         0, jumbled, nvec,                   // jumbled or not
         GxB_HYPERSPARSE, false,             // hypersparse by row
-        iso, fast_import, Context) ;
+        iso, fast_import, true, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

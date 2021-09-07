@@ -49,7 +49,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
         vx,   vx_size,  // Ax
         nvals, jumbled, 0,                  // jumbled or not
         GxB_SPARSE, true,                   // sparse by col
-        iso, fast_import, Context) ;
+        iso, fast_import, true, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

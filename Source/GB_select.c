@@ -192,7 +192,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
             }
             if (nz_thunk != 1)
             { 
-                GB_ERROR (GrB_INVALID_VALUE,
+                GB_ERROR (GrB_EMPTY_OBJECT,
                     "User-defined operator %s(A,Thunk) has a Thunk input,\n"
                     "which must not be empty", op->name) ;
             }

@@ -49,7 +49,7 @@ GrB_Info GxB_Matrix_pack_CSC      // pack a CSC matrix
         Ax,   Ax_size,  // Ax
         0, jumbled, 0,                      // jumbled or not
         GxB_SPARSE, true,                   // sparse by col
-        iso, fast_import, Context) ;
+        iso, fast_import, true, Context) ;
 
     GB_BURBLE_END ;
     return (info) ;

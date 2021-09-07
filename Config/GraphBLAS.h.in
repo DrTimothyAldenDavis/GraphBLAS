@@ -5473,6 +5473,18 @@ GrB_Info GxB_Vector_subassign_UDT      // w(I)<mask> = accum (w(I),x)
     const GrB_Descriptor desc       // descriptor for w(I) and mask
 ) ;
 
+GB_PUBLIC
+GrB_Info GxB_Vector_subassign_Scalar   // w(I)<mask> = accum (w(I),x)
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
+    GrB_Scalar x,                   // scalar to assign to w(I)
+    const GrB_Index *I,             // row indices
+    GrB_Index ni,                   // number of row indices
+    const GrB_Descriptor desc       // descriptor for w(I) and mask
+) ;
+
 //------------------------------------------------------------------------------
 // GxB_Matrix_subassign_[SCALAR]:  scalar expansion assignment to submatrix
 //------------------------------------------------------------------------------
@@ -5677,6 +5689,20 @@ GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
     const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
 ) ;
 
+GB_PUBLIC
+GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<Mask> = accum (C(I,J),x)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
+    GrB_Scalar x,                   // scalar to assign to C(I,J)
+    const GrB_Index *I,             // row indices
+    GrB_Index ni,                   // number of row indices
+    const GrB_Index *J,             // column indices
+    GrB_Index nj,                   // number of column indices
+    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
+) ;
+
 //------------------------------------------------------------------------------
 // GxB_subassign: generic submatrix/subvector assignment
 //------------------------------------------------------------------------------
@@ -5692,41 +5718,45 @@ GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
 // GxB_Matrix_subassign_T (C,M,acc,x,I,ni,J,nj,d) // C(I,J)<M>  = acc(C(I,J),x)
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_subassign(arg1,Mask,accum,arg4,arg5,...)               \
-    _Generic                                                       \
-    (                                                              \
-        (arg1),                                                    \
-        GrB_Vector :                                               \
-            _Generic                                               \
-            (                                                      \
-                (arg4),                                            \
-                GB_CASES (, GxB, Vector_subassign) ,               \
-                default : GxB_Vector_subassign                     \
-            ),                                                     \
-        default :                                                  \
-            _Generic                                               \
-            (                                                      \
-                (arg4),                                            \
-                GB_CASES (, GxB, Matrix_subassign) ,               \
-                const GrB_Vector :                                 \
-                    _Generic                                       \
-                    (                                              \
-                        (arg5),                                    \
-                        const GrB_Index *: GxB_Col_subassign ,     \
-                              GrB_Index *: GxB_Col_subassign ,     \
-                        default          : GxB_Row_subassign       \
-                    ),                                             \
-                GrB_Vector :                                       \
-                    _Generic                                       \
-                    (                                              \
-                        (arg5),                                    \
-                        const GrB_Index *: GxB_Col_subassign ,     \
-                              GrB_Index *: GxB_Col_subassign ,     \
-                        default          : GxB_Row_subassign       \
-                    ),                                             \
-                default    : GxB_Matrix_subassign                  \
-            )                                                      \
-    )                                                              \
+#define GxB_subassign(arg1,Mask,accum,arg4,arg5,...)            \
+    _Generic                                                    \
+    (                                                           \
+        (arg1),                                                 \
+        GrB_Vector :                                            \
+            _Generic                                            \
+            (                                                   \
+                (arg4),                                         \
+                GB_CASES (, GxB, Vector_subassign) ,            \
+                const GrB_Scalar : GxB_Vector_assign_Scalar ,   \
+                      GrB_Scalar : GxB_Vector_assign_Scalar ,   \
+                default : GxB_Vector_subassign                  \
+            ),                                                  \
+        default :                                               \
+            _Generic                                            \
+            (                                                   \
+                (arg4),                                         \
+                GB_CASES (, GxB, Matrix_subassign) ,            \
+                const GrB_Scalar : GrB_Matrix_assign_Scalar ,   \
+                      GrB_Scalar : GrB_Matrix_assign_Scalar ,   \
+                const GrB_Vector :                              \
+                    _Generic                                    \
+                    (                                           \
+                        (arg5),                                 \
+                        const GrB_Index *: GxB_Col_subassign ,  \
+                              GrB_Index *: GxB_Col_subassign ,  \
+                        default          : GxB_Row_subassign    \
+                    ),                                          \
+                GrB_Vector :                                    \
+                    _Generic                                    \
+                    (                                           \
+                        (arg5),                                 \
+                        const GrB_Index *: GxB_Col_subassign ,  \
+                              GrB_Index *: GxB_Col_subassign ,  \
+                        default          : GxB_Row_subassign    \
+                    ),                                          \
+                default    : GxB_Matrix_subassign               \
+            )                                                   \
+    )                                                           \
     (arg1, Mask, accum, arg4, arg5, __VA_ARGS__)
 #endif
 
@@ -5966,7 +5996,7 @@ GrB_Info GrB_Vector_assign_UDT      // w<mask>(I) = accum (w(I),x)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Vector_assign_Scalar   // w<mask>(I) = accum (w(I),x) FIXME write  this
+GrB_Info GrB_Vector_assign_Scalar   // w<mask>(I) = accum (w(I),x)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -6182,7 +6212,7 @@ GrB_Info GrB_Matrix_assign_UDT      // C<Mask>(I,J) = accum (C(I,J),x)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)  FIXME write this
+GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -6220,9 +6250,8 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)  FIXME wr
             (                                                   \
                 (arg4),                                         \
                 GB_CASES (, GrB, Vector_assign) ,               \
-                /* FIXME add GrB_Vector_assign_Scalar here */ \
-/*              const GrB_Scalar : GrB_Vector_assign_Scalar , */ \
-/*                    GrB_Scalar : GrB_Vector_assign_Scalar , */ \
+                const GrB_Scalar : GrB_Vector_assign_Scalar ,   \
+                      GrB_Scalar : GrB_Vector_assign_Scalar ,   \
                 default : GrB_Vector_assign                     \
             ),                                                  \
         default :                                               \
@@ -6230,9 +6259,8 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)  FIXME wr
             (                                                   \
                 (arg4),                                         \
                 GB_CASES (, GrB, Matrix_assign) ,               \
-                /* FIXME add GrB_Matrix_assign_Scalar here */ \
-/*              const GrB_Scalar : GrB_Matrix_assign_Scalar , */ \
-/*                    GrB_Scalar : GrB_Matrix_assign_Scalar , */ \
+                const GrB_Scalar : GrB_Matrix_assign_Scalar ,   \
+                      GrB_Scalar : GrB_Matrix_assign_Scalar ,   \
                 const GrB_Vector :                              \
                     _Generic                                    \
                     (                                           \
@@ -6882,7 +6910,7 @@ GrB_Info GrB_Vector_apply_IndexOp_UDT       // w<mask> = accum (w, op(u))
 // to a scalar x, C<Mask> = accum (C, op (x,A)), or op(x,A').
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_apply_BinaryOp1st_Scalar    // C<M>=accum(C,op(x,A))    FIXME write this
+GrB_Info GrB_Matrix_apply_BinaryOp1st_Scalar    // C<M>=accum(C,op(x,A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7486,8 +7514,8 @@ GrB_Info GrB_Matrix_apply_IndexOp_UDT       // C<M>=accum(C,op(A))
     _Generic                                                                \
     (                                                                       \
         (x),                                                                \
-        const GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar) , \
-              GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar) , \
+        const GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar),\
+              GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar),\
         GB_CASES (, GrB, GB_CONCAT ( kind, _apply_BinaryOp1st,, )) ,        \
         default :                                                           \
             _Generic                                                        \
