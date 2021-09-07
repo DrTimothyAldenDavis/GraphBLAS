@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// gbreduce is an interface to GrB_Matrix_reduce_[TYPE].
+// gbreduce is an interface to GrB_Matrix_reduce_Scalar.
 
 // Usage:
 
@@ -16,8 +16,6 @@
 //  cout = gbreduce (cin, accum, op, A, desc)
 
 // If cin is not present then it is implicitly a 1-by-1 matrix with no entries.
-
-// FIXME: use GrB_reduce to GrB_Scalar
 
 #include "gb_interface.h"
 
@@ -116,7 +114,7 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // ensure C is 1-by-1 with a single entry
+    // ensure C is 1-by-1
     //--------------------------------------------------------------------------
 
     GrB_Index cnrows, cncols ;
@@ -127,114 +125,11 @@ void mexFunction
         ERROR ("cin must be a scalar") ;
     }
 
-    GrB_Index nvals ;
-    OK (GrB_Matrix_nvals (&nvals, C)) ;
-    if (nvals == 0)
-    { 
-        // set C(0,0) to zero
-        OK (GrB_Matrix_nvals (&nvals, C)) ;
-        OK1 (C, GrB_Matrix_setElement_BOOL (C, 0, 0, 0)) ;
-    }
-
     //--------------------------------------------------------------------------
-    // compute C<M> += reduce(A)
+    // compute C += reduce(A)
     //--------------------------------------------------------------------------
 
-    if (ctype == GrB_BOOL)
-    { 
-        bool c = false ;
-        OK (GrB_Matrix_extractElement_BOOL (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_BOOL (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GrB_Matrix_setElement_BOOL (C, c, 0, 0)) ;
-    }
-    else if (ctype == GrB_INT8)
-    { 
-        int8_t c = 0 ;
-        OK (GrB_Matrix_extractElement_INT8 (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_INT8 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GrB_Matrix_setElement_INT8 (C, c, 0, 0)) ;
-    }
-    else if (ctype == GrB_INT16)
-    { 
-        int16_t c = 0 ;
-        OK (GrB_Matrix_extractElement_INT16 (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_INT16 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GrB_Matrix_setElement_INT16 (C, c, 0, 0)) ;
-    }
-    else if (ctype == GrB_INT32)
-    { 
-        int32_t c = 0 ;
-        OK (GrB_Matrix_extractElement_INT32 (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_INT32 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GrB_Matrix_setElement_INT32 (C, c, 0, 0)) ;
-    }
-    else if (ctype == GrB_INT64)
-    { 
-        int64_t c = 0 ;
-        OK (GrB_Matrix_extractElement_INT64 (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_INT64 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GrB_Matrix_setElement_INT64 (C, c, 0, 0)) ;
-    }
-    else if (ctype == GrB_UINT8)
-    { 
-        uint8_t c = 0 ;
-        OK (GrB_Matrix_extractElement_UINT8 (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_UINT8 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GrB_Matrix_setElement_UINT8 (C, c, 0, 0)) ;
-    }
-    else if (ctype == GrB_UINT16)
-    { 
-        uint16_t c = 0 ;
-        OK (GrB_Matrix_extractElement_UINT16 (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_UINT16 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GrB_Matrix_setElement_UINT16 (C, c, 0, 0)) ;
-    }
-    else if (ctype == GrB_UINT32)
-    { 
-        uint32_t c = 0 ;
-        OK (GrB_Matrix_extractElement_UINT32 (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_UINT32 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GrB_Matrix_setElement_UINT32 (C, c, 0, 0)) ;
-    }
-    else if (ctype == GrB_UINT64)
-    { 
-        uint64_t c = 0 ;
-        OK (GrB_Matrix_extractElement_UINT64 (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_UINT64 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GrB_Matrix_setElement_UINT64 (C, c, 0, 0)) ;
-    }
-    else if (ctype == GrB_FP32)
-    { 
-        float c = 0 ;
-        OK (GrB_Matrix_extractElement_FP32 (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_FP32 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GrB_Matrix_setElement_FP32 (C, c, 0, 0)) ;
-    }
-    else if (ctype == GrB_FP64)
-    { 
-        double c = 0 ;
-        OK (GrB_Matrix_extractElement_FP64 (&c, C, 0, 0)) ;
-        OK (GrB_Matrix_reduce_FP64 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GrB_Matrix_setElement_FP64 (C, c, 0, 0)) ;
-    }
-    else if (ctype == GxB_FC32)
-    { 
-        GxB_FC32_t c = GxB_CMPLXF (0,0) ;
-        OK (GxB_Matrix_extractElement_FC32 (&c, C, 0, 0)) ;
-        OK (GxB_Matrix_reduce_FC32 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GxB_Matrix_setElement_FC32 (C, c, 0, 0)) ;
-    }
-    else if (ctype == GxB_FC64)
-    { 
-        GxB_FC64_t c = GxB_CMPLX (0,0) ;
-        OK (GxB_Matrix_extractElement_FC64 (&c, C, 0, 0)) ;
-        OK (GxB_Matrix_reduce_FC64 (&c, accum, monoid, A, desc)) ;
-        OK1 (C, GxB_Matrix_setElement_FC64 (C, c, 0, 0)) ;
-    }
-    else
-    {
-        ERROR ("unsupported type") ;
-    }
+    OK (GrB_Matrix_reduce_Scalar ((GrB_Scalar) C, accum, monoid, A, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies
