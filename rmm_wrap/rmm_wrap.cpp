@@ -169,7 +169,7 @@ int rmm_wrap_initialize(RMM_MODE mode,  std::size_t init_pool_size, std::size_t 
         return (-1) ;
     }
 
-    return (0) :
+    return (0) ;
 }
 
 //------------------------------------------------------------------------------
@@ -309,8 +309,12 @@ void *rmm_wrap_allocate( std::size_t *size)
        std::cout<< "Uh oh, can't allocate before initializing RMM"<< std::endl;
     }
     else
-       am->emplace ( p, *size) ;
+    {
+       am->emplace ( (std::size_t)p, (std::size_t)(*size) ) ;
+    }
+    return p ;
 }
+
 
 //------------------------------------------------------------------------------
 // rmm_wrap_allocate
