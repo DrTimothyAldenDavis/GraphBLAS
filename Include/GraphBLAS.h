@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Sept 2, 2021"
+#define GxB_IMPLEMENTATION_DATE "Sept 7, 2021"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -5727,8 +5727,8 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<Mask> = accum (C(I,J),x)
             (                                                   \
                 (arg4),                                         \
                 GB_CASES (, GxB, Vector_subassign) ,            \
-                const GrB_Scalar : GxB_Vector_assign_Scalar ,   \
-                      GrB_Scalar : GxB_Vector_assign_Scalar ,   \
+                const GrB_Scalar : GxB_Vector_subassign_Scalar, \
+                      GrB_Scalar : GxB_Vector_subassign_Scalar, \
                 default : GxB_Vector_subassign                  \
             ),                                                  \
         default :                                               \
@@ -5736,8 +5736,8 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<Mask> = accum (C(I,J),x)
             (                                                   \
                 (arg4),                                         \
                 GB_CASES (, GxB, Matrix_subassign) ,            \
-                const GrB_Scalar : GrB_Matrix_assign_Scalar ,   \
-                      GrB_Scalar : GrB_Matrix_assign_Scalar ,   \
+                const GrB_Scalar : GxB_Matrix_subassign_Scalar, \
+                      GrB_Scalar : GxB_Matrix_subassign_Scalar, \
                 const GrB_Vector :                              \
                     _Generic                                    \
                     (                                           \
@@ -6234,7 +6234,6 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)
 
 // GrB_Vector_assign_T (w,m,acc,x,I,ni,d)      // w<m>(I)    = acc(w(I),x)
 // GrB_Vector_assign   (w,m,acc,u,I,ni,d)      // w<m>(I)    = acc(w(I),u)
-
 // GrB_Matrix_assign_T (C,M,acc,x,I,ni,J,nj,d) // C<M>(I,J)  = acc(C(I,J),x)
 // GrB_Col_assign      (C,m,acc,u,I,ni,j,d)    // C<m>(I,j)  = acc(C(I,j),u)
 // GrB_Row_assign      (C,m,acc,u,i,J,nj,d)    // C<m'>(i,J) = acc(C(i,J),u')

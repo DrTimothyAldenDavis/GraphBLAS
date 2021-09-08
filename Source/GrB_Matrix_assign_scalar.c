@@ -75,7 +75,7 @@ GB_ASSIGN_SCALAR (GrB, void *    , UDT    ,  )
 //  GrB_Matrix_assign (C, M, accum, S, Rows, nRows, Cols, nCols, desc) ;
 //  GrB_Matrix_free (&S) ;
 
-#define GB_FREE_ALL GB_phbix_free (&S) ;
+#define GB_FREE_ALL GB_phbix_free (S) ;
 
 GB_PUBLIC
 GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),s)
@@ -118,7 +118,7 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),s)
     GrB_Index nvals ;
     GB_OK (GB_nvals (&nvals, (GrB_Matrix) scalar, Context)) ;
     if (nvals == 1)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // the opaque GrB_Scalar has a single entry
@@ -142,7 +142,7 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),s)
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // the opaque GrB_Scalar has no entry

@@ -391,20 +391,6 @@ bool gb_mxstring_to_format      // true if a valid format is found
     int *sparsity
 ) ;
 
-void gb_matrix_assign_scalar
-(
-    GrB_Matrix C,               // C can be of any type
-    const GrB_Matrix M,
-    const GrB_BinaryOp accum,
-    const GrB_Matrix A,
-    const GrB_Index *I,
-    const GrB_Index ni,
-    const GrB_Index *J,
-    const GrB_Index nj,
-    const GrB_Descriptor desc,
-    bool do_subassign           // true: use GxB_subassign, false: GrB_assign
-) ;
-
 void gb_assign                  // gbassign or gbsubassign mexFunctions
 (
     int nargout,                // # output arguments for mexFunction

@@ -13,7 +13,6 @@
 
 #include "GB.h"
 #include "GB_serialize.h"
-#include <ipps.h>
 
 #define GB_FREE_WORK                            \
 {                                               \

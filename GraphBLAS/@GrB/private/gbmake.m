@@ -50,7 +50,7 @@ if (have_octave)
     % mex command doesn't handle compiler options the same way.
     flags = '-O -R2018a -std=c11 -fopenmp -fPIC -Wno-pragmas' ;
 else
-    flags = '-O -R2018a' ;
+    flags = '-g -R2018a' ;  % FIXME TODO
     try
         if (strncmp (computer, 'GLNX', 4))
             % remove -ansi from CFLAGS and replace it with -std=c11
