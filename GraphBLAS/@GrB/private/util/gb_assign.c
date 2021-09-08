@@ -153,14 +153,14 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         if (do_subassign)
         {
             // C(I,J)<M> += scalar
-            OK1 (C, GxB_Matrix_subassign_Scalar (C, M, op, (GrB_Scalar) A,
-                I, ni, J, nj, d)) ;
+            OK1 (C, GxB_Matrix_subassign_Scalar (C, M, accum, (GrB_Scalar) A,
+                I, ni, J, nj, desc)) ;
         }
         else
         {
             // C<M>(I,J) += scalar
-            OK1 (C, GrB_Matrix_assign_Scalar (C, M, op, (GrB_Scalar) A,
-                I, ni, J, nj, d)) ;
+            OK1 (C, GrB_Matrix_assign_Scalar (C, M, accum, (GrB_Scalar) A,
+                I, ni, J, nj, desc)) ;
         }
     }
     else
