@@ -14,8 +14,8 @@ Version 5.2.0, FIXME
         added to v5.2.0.
         * GrB_IndexUnaryOp: new, free, fprint, wait                 FIXME
         * GrB_select: selection via GrB_IndexUnaryOp                FIXME
-        * GrB_reduce: reduce matrix or vector to GrB_Scalar         FIXME
         * GrB_apply: with GrB_IndexUnaryOp                          FIXME
+        * GrB_reduce: reduce matrix or vector to GrB_Scalar
         * GrB_assign, GrB_subassion: with GrB_Scalar input
         * GrB_*_extractElement_Scalar: get GrB_Scalar from a matrix or vector
         * GrB*build: when dup is NULL, duplicates result in an error.
