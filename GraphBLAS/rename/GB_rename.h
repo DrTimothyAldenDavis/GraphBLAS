@@ -252,6 +252,7 @@
 #define GrB_Matrix_assign_INT32 GrM_Matrix_assign_INT32
 #define GrB_Matrix_assign_INT64 GrM_Matrix_assign_INT64
 #define GrB_Matrix_assign_INT8 GrM_Matrix_assign_INT8
+#define GrB_Matrix_assign_Scalar GrM_Matrix_assign_Scalar
 #define GrB_Matrix_assign_UDT GrM_Matrix_assign_UDT
 #define GrB_Matrix_assign_UINT16 GrM_Matrix_assign_UINT16
 #define GrB_Matrix_assign_UINT32 GrM_Matrix_assign_UINT32
@@ -698,6 +699,7 @@
 #define GrB_Vector_assign_INT32 GrM_Vector_assign_INT32
 #define GrB_Vector_assign_INT64 GrM_Vector_assign_INT64
 #define GrB_Vector_assign_INT8 GrM_Vector_assign_INT8
+#define GrB_Vector_assign_Scalar GrM_Vector_assign_Scalar
 #define GrB_Vector_assign_UDT GrM_Vector_assign_UDT
 #define GrB_Vector_assign_UINT16 GrM_Vector_assign_UINT16
 #define GrB_Vector_assign_UINT32 GrM_Vector_assign_UINT32
@@ -1876,6 +1878,7 @@
 #define GxB_Matrix_subassign_INT32 GxM_Matrix_subassign_INT32
 #define GxB_Matrix_subassign_INT64 GxM_Matrix_subassign_INT64
 #define GxB_Matrix_subassign_INT8 GxM_Matrix_subassign_INT8
+#define GxB_Matrix_subassign_Scalar GxM_Matrix_subassign_Scalar
 #define GxB_Matrix_subassign_UDT GxM_Matrix_subassign_UDT
 #define GxB_Matrix_subassign_UINT16 GxM_Matrix_subassign_UINT16
 #define GxB_Matrix_subassign_UINT32 GxM_Matrix_subassign_UINT32
@@ -3100,6 +3103,7 @@
 #define GxB_Vector_subassign_INT32 GxM_Vector_subassign_INT32
 #define GxB_Vector_subassign_INT64 GxM_Vector_subassign_INT64
 #define GxB_Vector_subassign_INT8 GxM_Vector_subassign_INT8
+#define GxB_Vector_subassign_Scalar GxM_Vector_subassign_Scalar
 #define GxB_Vector_subassign_UDT GxM_Vector_subassign_UDT
 #define GxB_Vector_subassign_UINT16 GxM_Vector_subassign_UINT16
 #define GxB_Vector_subassign_UINT32 GxM_Vector_subassign_UINT32
