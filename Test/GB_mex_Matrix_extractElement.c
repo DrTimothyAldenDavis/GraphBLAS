@@ -392,7 +392,7 @@ void mexFunction
                 else if (use_scalar)
                 {
                     METHOD (GrB_Matrix_extractElement_Scalar_(S, A, I [k], J [k])) ;
-                    METHOD (GrB_Scalar_extractElement_UDT_(&X [k], S)) ;
+                    METHOD (GrB_Scalar_extractElement_UDT (&X [k], S)) ;
                 }
                 else
                 {

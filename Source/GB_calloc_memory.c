@@ -24,7 +24,6 @@ static inline void *GB_calloc_helper
     GB_Context Context
 )
 {
-    bool do_memset = false ;
     void *p = NULL ;
 
     // determine the next higher power of 2
@@ -38,8 +37,6 @@ static inline void *GB_calloc_helper
         // round up the size to the nearest power of two
         (*size) = ((size_t) 1) << k ;
         p = GB_Global_free_pool_get (k) ;
-        // memset is required if the block comes from the free_pool
-        do_memset = (p != NULL) ;
         #ifdef GB_MEMDUMP
         if (p != NULL) printf ("calloc from pool: %p %ld\n", p, *size) ;
         #endif
@@ -48,24 +45,7 @@ static inline void *GB_calloc_helper
     if (p == NULL)
     {
         // no block in the free_pool, so allocate it
-//      if (GB_Global_have_calloc_function ( ))
-//      {
-//          p = GB_Global_calloc_function (*size, 1) ;
-//      }
-//      else
-        {
-
-//          if (GB_Global_rmm_get ( ))
-//          {
-//              p = GB_rmm_alloc (size) ;
-//          }
-//          else
-            {
-                p = GB_Global_malloc_function (*size) ;
-            }
-            // memset is required if the block comes from malloc
-            do_memset = (p != NULL) ;
-        }
+        p = GB_Global_malloc_function (*size) ;
         #ifdef GB_MEMDUMP
         printf ("hard calloc %p %ld\n", p, *size) ;
         #endif
@@ -75,7 +55,7 @@ static inline void *GB_calloc_helper
     GB_Global_free_pool_dump (2) ; GB_Global_memtable_dump ( ) ;
     #endif
 
-    if (do_memset)
+    if (p != NULL)
     { 
         // clear the block of memory with a parallel memset
         GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;

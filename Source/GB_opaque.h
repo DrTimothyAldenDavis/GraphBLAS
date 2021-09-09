@@ -142,13 +142,44 @@ typedef enum
     GB_ISFINITE_opcode  = 45,   // z = isfinite (x)
 
     //--------------------------------------------------------------------------
-    // positional unary operators: z is int64, x is ignored
+    // positional unary operators: z is int32 or int64, x is ignored
     //--------------------------------------------------------------------------
 
     GB_POSITIONI_opcode     = 46,   // z = position_i(A(i,j)) == i
     GB_POSITIONI1_opcode    = 47,   // z = position_i1(A(i,j)) == i+1
     GB_POSITIONJ_opcode     = 48,   // z = position_j(A(i,j)) == j
     GB_POSITIONJ1_opcode    = 49,   // z = position_j1(A(i,j)) == j+1
+
+    //==========================================================================
+    // index_unary operators
+    //==========================================================================
+
+    // operator codes used in GrB_IndexUnaryOp structures
+
+    // Result has the integer type INT32 or INT64:
+    GB_ROWINDEX_idxopcode  = 50,   // (i+thunk): row index + thunk
+    GB_COLINDEX_idxopcode  = 51,   // (j+thunk): col index + thunk
+    GB_DIAGINDEX_idxopcode = 52,   // (i-j+thunk): diag index + thunk
+
+    // Result is BOOL:
+    GB_TRIL_idxopcode      = 53,   // (j < (i+thunk)): tril (A,thunk-1)
+    GB_TRIU_idxopcode      = 54,   // (j > (i+thunk)): triu (A,thunk+1)
+    GB_DIAG_idxopcode      = 55,   // (j == (i+thunk)): diag(A,thunk)
+    GB_OFFDIAG_idxopcode   = 56,   // (j != (i+thunk)): offdiag(A,thunk)
+    GB_COLLE_idxopcode     = 57,   // (j <= thunk): A (:,0:thunk)
+    GB_COLGT_idxopcode     = 58,   // (j > thunk): A (:,thunk+1:ncols-1)
+
+    // Result is BOOL:
+    GB_ROWLE_idxopcode     = 59,   // (i <= thunk): A (0:thunk,:)
+    GB_ROWGT_idxopcode     = 60,   // (i > thunk): A (thunk+1:nrows-1,:)
+
+    // Result is bool, depending only on the value aij
+    GB_VALUEEQ_idxopcode   = 61,   // (aij == thunk)
+    GB_VALUENE_idxopcode   = 62,   // (aij != thunk)
+    GB_VALUELT_idxopcode   = 63,   // (aij < thunk)
+    GB_VALUELE_idxopcode   = 64,   // (aij <= thunk)
+    GB_VALUEGT_idxopcode   = 65,   // (aij > thunk)
+    GB_VALUEGE_idxopcode   = 66,   // (aij >= thunk)
 
     //==========================================================================
     // binary operators
@@ -158,93 +189,93 @@ typedef enum
     // binary operators z=f(x,y) that return the same type as their inputs
     //--------------------------------------------------------------------------
 
-    GB_FIRST_opcode     = 50,   // z = x
-    GB_SECOND_opcode    = 51,   // z = y
-    GB_ANY_opcode       = 52,   // z = x or y, selected arbitrarily
-    GB_PAIR_opcode      = 53,   // z = 1
-    GB_MIN_opcode       = 54,   // z = min(x,y)
-    GB_MAX_opcode       = 55,   // z = max(x,y)
-    GB_PLUS_opcode      = 56,   // z = x + y
-    GB_MINUS_opcode     = 57,   // z = x - y
-    GB_RMINUS_opcode    = 58,   // z = y - x
-    GB_TIMES_opcode     = 59,   // z = x * y
-    GB_DIV_opcode       = 60,   // z = x / y ; special cases for bool and ints
-    GB_RDIV_opcode      = 61,   // z = y / x ; special cases for bool and ints
-    GB_POW_opcode       = 62,   // z = pow (x,y)
+    GB_FIRST_opcode     = 67,   // z = x
+    GB_SECOND_opcode    = 68,   // z = y
+    GB_ANY_opcode       = 69,   // z = x or y, selected arbitrarily
+    GB_PAIR_opcode      = 70,   // z = 1
+    GB_MIN_opcode       = 71,   // z = min(x,y)
+    GB_MAX_opcode       = 72,   // z = max(x,y)
+    GB_PLUS_opcode      = 73,   // z = x + y
+    GB_MINUS_opcode     = 74,   // z = x - y
+    GB_RMINUS_opcode    = 75,   // z = y - x
+    GB_TIMES_opcode     = 76,   // z = x * y
+    GB_DIV_opcode       = 77,   // z = x / y ; special cases for bool and ints
+    GB_RDIV_opcode      = 78,   // z = y / x ; special cases for bool and ints
+    GB_POW_opcode       = 79,   // z = pow (x,y)
 
-    GB_ISEQ_opcode      = 63,   // z = (x == y)
-    GB_ISNE_opcode      = 64,   // z = (x != y)
-    GB_ISGT_opcode      = 65,   // z = (x >  y)
-    GB_ISLT_opcode      = 66,   // z = (x <  y)
-    GB_ISGE_opcode      = 67,   // z = (x >= y)
-    GB_ISLE_opcode      = 68,   // z = (x <= y)
+    GB_ISEQ_opcode      = 80,   // z = (x == y)
+    GB_ISNE_opcode      = 81,   // z = (x != y)
+    GB_ISGT_opcode      = 82,   // z = (x >  y)
+    GB_ISLT_opcode      = 83,   // z = (x <  y)
+    GB_ISGE_opcode      = 84,   // z = (x >= y)
+    GB_ISLE_opcode      = 85,   // z = (x <= y)
 
-    GB_LOR_opcode       = 69,   // z = (x != 0) || (y != 0)
-    GB_LAND_opcode      = 70,   // z = (x != 0) && (y != 0)
-    GB_LXOR_opcode      = 71,   // z = (x != 0) != (y != 0)
+    GB_LOR_opcode       = 86,   // z = (x != 0) || (y != 0)
+    GB_LAND_opcode      = 87,   // z = (x != 0) && (y != 0)
+    GB_LXOR_opcode      = 88,   // z = (x != 0) != (y != 0)
 
-    GB_BOR_opcode       = 72,   // z = (x | y), bitwise or
-    GB_BAND_opcode      = 73,   // z = (x & y), bitwise and
-    GB_BXOR_opcode      = 74,   // z = (x ^ y), bitwise xor
-    GB_BXNOR_opcode     = 75,   // z = ~(x ^ y), bitwise xnor
-    GB_BGET_opcode      = 76,   // z = bitget (x,y)
-    GB_BSET_opcode      = 77,   // z = bitset (x,y)
-    GB_BCLR_opcode      = 78,   // z = bitclr (x,y)
-    GB_BSHIFT_opcode    = 79,   // z = bitshift (x,y)
+    GB_BOR_opcode       = 89,   // z = (x | y), bitwise or
+    GB_BAND_opcode      = 90,   // z = (x & y), bitwise and
+    GB_BXOR_opcode      = 91,   // z = (x ^ y), bitwise xor
+    GB_BXNOR_opcode     = 92,   // z = ~(x ^ y), bitwise xnor
+    GB_BGET_opcode      = 93,   // z = bitget (x,y)
+    GB_BSET_opcode      = 94,   // z = bitset (x,y)
+    GB_BCLR_opcode      = 95,   // z = bitclr (x,y)
+    GB_BSHIFT_opcode    = 96,   // z = bitshift (x,y)
 
     //--------------------------------------------------------------------------
     // binary operators z=f(x,y) that return bool (TxT -> bool)
     //--------------------------------------------------------------------------
 
-    GB_EQ_opcode        = 80,   // z = (x == y), same as LXNOR operator for bool
-    GB_NE_opcode        = 81,   // z = (x != y)
-    GB_GT_opcode        = 82,   // z = (x >  y)
-    GB_LT_opcode        = 83,   // z = (x <  y)
-    GB_GE_opcode        = 84,   // z = (x >= y)
-    GB_LE_opcode        = 85,   // z = (x <= y)
+    GB_EQ_opcode        = 97,   // z = (x == y), same as LXNOR operator for bool
+    GB_NE_opcode        = 98,   // z = (x != y)
+    GB_GT_opcode        = 99,   // z = (x >  y)
+    GB_LT_opcode        = 100,  // z = (x <  y)
+    GB_GE_opcode        = 101,  // z = (x >= y)
+    GB_LE_opcode        = 102,  // z = (x <= y)
 
     //--------------------------------------------------------------------------
     // binary operators for real floating-point types (TxT -> T)
     //--------------------------------------------------------------------------
 
-    GB_ATAN2_opcode     = 86,   // z = atan2 (x,y)
-    GB_HYPOT_opcode     = 87,   // z = hypot (x,y)
-    GB_FMOD_opcode      = 88,   // z = fmod (x,y)
-    GB_REMAINDER_opcode = 89,   // z = remainder (x,y)
-    GB_COPYSIGN_opcode  = 90,   // z = copysign (x,y)
-    GB_LDEXP_opcode     = 91,   // z = ldexp (x,y)
+    GB_ATAN2_opcode     = 103,  // z = atan2 (x,y)
+    GB_HYPOT_opcode     = 104,  // z = hypot (x,y)
+    GB_FMOD_opcode      = 105,  // z = fmod (x,y)
+    GB_REMAINDER_opcode = 106,  // z = remainder (x,y)
+    GB_COPYSIGN_opcode  = 107,  // z = copysign (x,y)
+    GB_LDEXP_opcode     = 108,  // z = ldexp (x,y)
 
     //--------------------------------------------------------------------------
     // binary operator z=f(x,y) where z is complex, x,y real:
     //--------------------------------------------------------------------------
 
-    GB_CMPLX_opcode     = 92,   // z = cmplx (x,y)
+    GB_CMPLX_opcode     = 109,  // z = cmplx (x,y)
 
     //--------------------------------------------------------------------------
     // positional binary operators: z is int64, x and y are ignored
     //--------------------------------------------------------------------------
 
-    GB_FIRSTI_opcode    = 93,   // z = first_i(A(i,j),y) == i
-    GB_FIRSTI1_opcode   = 94,   // z = first_i1(A(i,j),y) == i+1
-    GB_FIRSTJ_opcode    = 95,   // z = first_j(A(i,j),y) == j
-    GB_FIRSTJ1_opcode   = 96,   // z = first_j1(A(i,j),y) == j+1
+    GB_FIRSTI_opcode    = 110,  // z = first_i(A(i,j),y) == i
+    GB_FIRSTI1_opcode   = 111,  // z = first_i1(A(i,j),y) == i+1
+    GB_FIRSTJ_opcode    = 112,  // z = first_j(A(i,j),y) == j
+    GB_FIRSTJ1_opcode   = 113,  // z = first_j1(A(i,j),y) == j+1
 
-    GB_SECONDI_opcode   = 97,   // z = second_i(x,B(i,j)) == i
-    GB_SECONDI1_opcode  = 98,   // z = second_i1(x,B(i,j)) == i+1
-    GB_SECONDJ_opcode   = 99,   // z = second_j(x,B(i,j)) == j
-    GB_SECONDJ1_opcode  = 100,  // z = second_j1(x,B(i,j)) == j+1
+    GB_SECONDI_opcode   = 114,  // z = second_i(x,B(i,j)) == i
+    GB_SECONDI1_opcode  = 115,  // z = second_i1(x,B(i,j)) == i+1
+    GB_SECONDJ_opcode   = 116,  // z = second_j(x,B(i,j)) == j
+    GB_SECONDJ1_opcode  = 117,  // z = second_j1(x,B(i,j)) == j+1
 
     //==========================================================================
-    // user-defined: unary and binary operators
+    // user-defined: unary, index_unary, and binary operators
     //==========================================================================
 
-    GB_USER_opcode = 101        // user-defined operator (unary or binary)
+    GB_USER_opcode = 118    // user-defined op (unary, index_unary or binary)
 }
 GB_Opcode ;
 
-// true if the opcode is for a unary or binary positional operator
+// true if the opcode is for a unary, index_unary or binary positional operator
 #define GB_OPCODE_IS_POSITIONAL(opcode) \
-    (((opcode) >= GB_POSITIONI_opcode && (opcode) <= GB_POSITIONJ1_opcode) \
+    (((opcode) >= GB_POSITIONI_opcode && (opcode) <= GB_ROWGT_idxopcode) \
     || ((opcode) >= GB_FIRSTI_opcode && (opcode) <= GB_SECONDJ1_opcode))
 
 // true if the op is a unary or binary positional operator
@@ -306,43 +337,6 @@ GB_Select_Opcode ;
     ((opcode) >= GB_TRIL_opcode && (opcode) <= GB_OFFDIAG_opcode)
 
 //------------------------------------------------------------------------------
-// IndexUnaryOp opcodes
-//------------------------------------------------------------------------------
-
-// operator codes used in GrB_IndexUnaryOp structures
-typedef enum
-{
-    // Result has the integer type INT32, UINT32, INT64, or UINT64:
-    GB_ROWINDEX_opcode = 0,     // (i+thunk): row index + thunk (vec or mtx)
-    GB_COLINDEX_opcode = 1,     // (j+thunk): col index + thunk (mtx only)
-    GB_DIAGINDEX_opcode = 2,    // (i-j+thunk): diag index + thunk (mtx only)
-
-    // Result is BOOL:  (matrices only):
-    GB_TRIL_1_opcode = 3,       // (i < (j+thunk)): tril (A,thunk-1)
-    GB_TRIU_1_opcode = 4,       // (j > (i+thunk)): triu (A,thunk+1)
-    GB_DIAG_1_opcode = 5,       // (j == (i+thunk)): diag(A,thunk)
-    GB_OFFDIAG_1_opcode = 6,    // (j != (i+thunk)): offdiag(A,thunk)
-    GB_COLLE_opcode = 7,        // (j <= thunk): A (:,0:thunk)
-    GB_COLGT_opcode = 8,        // (j > thunk): A (:,thunk+1:ncols-1)
-
-    // Result is BOOL:  (vectors and matrices):
-    GB_ROWLE_opcode = 9,        // (i <= thunk): A (0:thunk,:)
-    GB_ROWGT_opcode = 10,       // (i > thunk): A (thunk+1:nrows-1,:)
-
-    // Result is bool, depending only on the value aij (vectors or matrices)
-    GB_VALUEEQ_opcode = 11,     // (aij == thunk)
-    GB_VALUENE_opcode = 12,     // (aij != thunk)
-    GB_VALUELT_opcode = 13,     // (aij < thunk)
-    GB_VALUELE_opcode = 14,     // (aij <= thunk)
-    GB_VALUEGT_opcode = 15,     // (aij > thunk)
-    GB_VALUEGE_opcode = 16,     // (aij >= thunk)
-
-    // for all user-defined index_unary operators:
-    GB_USER_INDEXUNARY_opcode = 17
-}
-GB_IndexUnary_Opcode ;
-
-//------------------------------------------------------------------------------
 // opaque content of GraphBLAS objects
 //------------------------------------------------------------------------------
 
@@ -371,6 +365,7 @@ struct GB_Type_opaque       // content of GrB_Type
 
 struct GB_UnaryOp_opaque    // content of GrB_UnaryOp
 {
+
     int64_t magic ;         // for detecting uninitialized objects
     size_t header_size ;    // size of the malloc'd block for this struct, or 0
     GrB_Type xtype ;        // type of x
@@ -379,19 +374,7 @@ struct GB_UnaryOp_opaque    // content of GrB_UnaryOp
     char name [GxB_MAX_NAME_LEN] ;       // name of the unary operator
     GB_Opcode opcode ;      // operator opcode
     char *defn ;            // function definition (currently unused)
-} ;
 
-struct GB_BinaryOp_opaque   // content of GrB_BinaryOp
-{
-    int64_t magic ;         // for detecting uninitialized objects
-    size_t header_size ;    // size of the malloc'd block for this struct, or 0
-    GrB_Type xtype ;        // type of x
-    GrB_Type ytype ;        // type of y
-    GrB_Type ztype ;        // type of z
-    GxB_binary_function function ;        // a pointer to the binary function
-    char name [GxB_MAX_NAME_LEN] ;        // name of the binary operator
-    GB_Opcode opcode ;      // operator opcode
-    char *defn ;            // function definition (currently unused)
 } ;
 
 struct GB_IndexUnaryOp_opaque   // content of GrB_IndexUnaryOp
@@ -403,8 +386,23 @@ struct GB_IndexUnaryOp_opaque   // content of GrB_IndexUnaryOp
     GrB_Type ztype ;        // type of z
     GxB_index_unary_function function ; // a pointer to the function
     char name [GxB_MAX_NAME_LEN] ;      // name of the operator
-    GB_IndexUnary_Opcode opcode ;       // operator opcode
+    GB_Opcode opcode ;      // operator opcode
     char *defn ;            // function definition (currently unused)
+} ;
+
+struct GB_BinaryOp_opaque   // content of GrB_BinaryOp
+{
+
+    int64_t magic ;         // for detecting uninitialized objects
+    size_t header_size ;    // size of the malloc'd block for this struct, or 0
+    GrB_Type xtype ;        // type of x
+    GrB_Type ytype ;        // type of y
+    GrB_Type ztype ;        // type of z
+    GxB_binary_function function ;        // a pointer to the binary function
+    char name [GxB_MAX_NAME_LEN] ;        // name of the binary operator
+    GB_Opcode opcode ;      // operator opcode
+    char *defn ;            // function definition (currently unused)
+
 } ;
 
 struct GB_SelectOp_opaque   // content of GxB_SelectOp

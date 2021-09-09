@@ -877,7 +877,7 @@ void mexFunction
     GrB_Matrix_error_(&err, C) ;
     printf ("Error expected: %d\n%s\n", info, err) ;
 
-    expected = GrB_INVALID_VALUE ;
+    expected = GrB_EMPTY_OBJECT ;
     OK (GrB_Scalar_clear (thunk)) ;
     ERR1 (C, GxB_Matrix_select_(C, NULL, NULL, selectop, A, thunk, NULL)) ;
     GrB_Matrix_error_(&err, C) ;

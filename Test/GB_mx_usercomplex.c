@@ -303,7 +303,8 @@ GrB_Info Complex_init (bool builtin_complex)
     {
         // create the user-defined type
         #if GxB_STDC_VERSION >= 201112L
-        OK (GrB_Type_new (&Complex, sizeof (GxB_FC64_t))) ;
+        OK (GxB_Type_new (&Complex, sizeof (GxB_FC64_t),
+            "user_complex_64", NULL));
         #endif
     }
 

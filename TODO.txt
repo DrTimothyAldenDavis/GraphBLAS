@@ -1,7 +1,10 @@
 
 --------------------------------------------------------------------------------
 later, for v6.0.0:
-GrB_*_wait: with 2nd parameter: GrB_COMPLETE, GrB_MATERIALIZE
+
+    GrB_*_wait: with 2nd parameter: GrB_COMPLETE, GrB_MATERIALIZE
+    GxB_init: remove last parameter
+
 --------------------------------------------------------------------------------
 
 IndexUnaryOp:

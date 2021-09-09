@@ -35,7 +35,7 @@
     {
         // This is not yet an error.  It means that A has a user-defined type.
         if ((strcmp (atype_name, "myfirsttype")) == 0) atype = MyType1 ;
-        else if ((strcmp (atype_name, "myquaterion")) == 0) atype = MyQType ;
+        else if ((strcmp (atype_name, "myquaternion")) == 0) atype = MyQType ;
         else { ... this is now an error ... the type of A is unknown.  }
         }
     }

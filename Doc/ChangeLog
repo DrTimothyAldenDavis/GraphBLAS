@@ -6,12 +6,16 @@ Version 6.0.0, FUTURE
         GrB_*wait, and the GrB_Info enum values.
     * GrB_wait (object, mode): was GrB_wait (&object).
     * GrB_Info: changed enum values
+    * GxB_init (mode, malloc, calloc, realloc, free, is_thread_safe): the last
+        parameter, is_thread_safe, will be deleted.
+        The malloc/calloc/realloc /free functions must be thread-safe.
 
 Version 5.2.0, FIXME
 
     * Added for the v2.0 C API Specification: only features that are
         backward compatible with SuiteSparse:GraphBLAS v5.x have been
         added to v5.2.0.
+        * GrB_Scalar: replaces GxB_Scalar, GxB_Scalar_* functions renamed GrB
         * GrB_IndexUnaryOp: new, free, fprint, wait                 FIXME
         * GrB_select: selection via GrB_IndexUnaryOp                FIXME
         * GrB_apply: with GrB_IndexUnaryOp                          FIXME
@@ -25,7 +29,6 @@ Version 5.2.0, FIXME
         * GrB_EMPTY_OBJECT, GrB_NOT_IMPLEMENTED: error codes added
         * GrB_*_setElement_Scalar: set an entry in a matrix or vector,
             from a GrB_Scalar
-        * GrB_Scalar: replaces GxB_Scalar, GxB_Scalar_* functions renamed GrB
         * GrB_Matrix_diag: same as GxB_Matrix_diag (C, v, 0, NULL)
     * GxB_SelectOp_new2: create a named selectop
     * GxB_BinaryOp_new: create a named binary operator

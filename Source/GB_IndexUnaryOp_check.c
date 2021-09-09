@@ -38,7 +38,7 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
     GB_CHECK_MAGIC (op) ;
 
     GB_Opcode opcode = op->opcode ;
-    if (opcode >= GB_USER_INDEXUNARY_opcode)
+    if (opcode >= GB_USER_opcode)
     { 
         GBPR0 ("(user-defined) ") ;
     }
@@ -55,10 +55,13 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
-    if (opcode < GB_ROWINDEX_opcode || opcode > GB_USER_INDEXUNARY_opcode)
-    { 
-        GBPR0 ("    IndexUnaryOp has an invalid opcode\n") ;
-        return (GrB_INVALID_OBJECT) ;
+    if (opcode != GB_USER_opcode)
+    {
+        if (opcode < GB_ROWINDEX_idxopcode || opcode > GB_VALUEGE_idxopcode)
+        { 
+            GBPR0 ("    invalid opcode\n") ;
+            return (GrB_INVALID_OBJECT) ;
+        }
     }
 
     GrB_Info info ;

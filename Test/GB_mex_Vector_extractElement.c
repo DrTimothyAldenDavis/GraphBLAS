@@ -270,6 +270,7 @@ void mexFunction
             for (int64_t k = 0 ; k < ni ; k++)
             {
                 GxB_FC32_t *X = (void *) Y ;
+
                 if (use_scalar)
                 {
                     METHOD (GrB_Vector_extractElement_Scalar_(S, v, I [k])) ;
@@ -279,6 +280,7 @@ void mexFunction
                 {
                     METHOD (GxB_Vector_extractElement_FC32_(&X [k], v, I [k])) ;
                 }
+
             }
             break;
 
@@ -308,7 +310,7 @@ void mexFunction
                 if (use_scalar)
                 {
                     METHOD (GrB_Vector_extractElement_Scalar_(S, v, I [k])) ;
-                    METHOD (GrB_Scalar_extractElement_UDT_(&X [k], S)) ;
+                    METHOD (GrB_Scalar_extractElement_UDT (&X [k], S)) ;
                 }
                 else
                 {

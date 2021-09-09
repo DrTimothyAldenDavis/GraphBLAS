@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Sept 7, 2021"
+#define GxB_IMPLEMENTATION_DATE "Sept 9, 2021 (alpha)"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -1546,7 +1546,7 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 
 // The optional Thunk parameter to GxB_select is a GrB_Scalar.  For built-in
 // select operators (TRIL, TRIU, DIAG, and OFFDIAG), Thunk must have any
-// built-in type, and thunk = (int64_t) Thunk is used to specific the diagonal
+// built-in type, and thunk = (int64_t) Thunk is used to specify the diagonal
 // for these operators.  Thunk may be NULL, in which case its value is treated
 // as zero, if it has a built-in type. The value of Thunk (if present) is not
 // modified by any built-in select operator.
@@ -1560,6 +1560,10 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 
 //      bool f (GrB_Index i, GrB_Index j,
 //              const void *x, const void *thunk) ;
+
+// The values of i and j are guaranteed to be in the range 0 to GxB_INDEX_MAX,
+// and they can be safely typecasted to int64_t then negated, if desired,
+// without any risk of integer overflow.
 
 // NOTE: GxB_SelectOp has changed in v4.  In v3.3.3 it had this syntax:
 
@@ -1694,12 +1698,20 @@ GrB_Info GxB_SelectOp_free      // free a user-created select operator
 
 typedef struct GB_IndexUnaryOp_opaque *GrB_IndexUnaryOp ;
 
+// Note that the indices array in the GxB_index_unary_function is int64_t, so
+// the indices can be used in integer computations requiring negation.  The
+// indices array is always passed as an array of size 2.  When applied to
+// GrB_Vectors, the 2nd entry is zero.
+
+// FIXME: indices array should be int64_t, and always of size 2.
+// The value of n is not required: why not just pass in [i 0] for GrB_Vectors?
+
 typedef void (*GxB_index_unary_function)
 (
     void *z,            // output value z, of type ztype
     const void *x,      // input value x of type xtype; value of v(i) or A(i,j)
-    GrB_Index *indices, // index i of v(i) or [i j] of A(i,j)
-    GrB_Index n,        // 1 for vector index, 2 for matrices indices
+    const int64_t *indices,   // [i 0] for v(i) or [i j] of A(i,j)
+    GrB_Index n,        // 1 for vector index, 2 for matrix indices
     const void *thunk   // input scalar thunk
 ) ;
 
@@ -1767,61 +1779,65 @@ GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 // and column index, 2 denotes the size of the indices [i j], and thunk is
 // a scalar.
 
-// For vectors, it has the form z = f(vi, [i], 1, thunk).
+// For vectors, it has the form z = f(vi, [i 0], 1, thunk).
+
+// To facilitate computations with negative integers, the indices i and j are
+// of type int64_t.  The scalar thunk has the type corresponding to the suffix
+// of the name of the operator.
 
 GB_PUBLIC GrB_IndexUnaryOp
 
     //--------------------------------------------------------------------------
-    // Result has the integer type INT32, UINT32, INT64, or UINT64:
+    // Result has the integer type INT32 or INT64:
     //--------------------------------------------------------------------------
 
     // These operators work on any data type, including user-defined.
 
-    // ROWINDEX: (i+thunk): row index plus thunk (vectors or matrices)
-    GrB_ROWINDEX_INT32,  GrB_ROWINDEX_INT64,  GrB_ROWINDEX_UINT32,  GrB_ROWINDEX_UINT64,
+    // ROWINDEX: (i+thunk): row index plus thunk
+    GrB_ROWINDEX_INT32,  GrB_ROWINDEX_INT64,
 
-    // COLINDEX: (j+thunk): col index plus thunk (matrices only)
-    GrB_COLINDEX_INT32,  GrB_COLINDEX_INT64,  GrB_COLINDEX_UINT32,  GrB_COLINDEX_UINT64,
+    // COLINDEX: (j+thunk): col index plus thunk
+    GrB_COLINDEX_INT32,  GrB_COLINDEX_INT64,
 
-    // DIAGINDEX: (i-j+thunk): diagonal index plus thunk (matrices only)
-    GrB_DIAGINDEX_INT32, GrB_DIAGINDEX_INT64, GrB_DIAGINDEX_UINT32, GrB_DIAGINDEX_UINT64,
+    // DIAGINDEX: (j-(i+thunk)): diagonal index plus thunk
+    GrB_DIAGINDEX_INT32, GrB_DIAGINDEX_INT64,
 
     //--------------------------------------------------------------------------
     // Result is bool, depending only on the indices i,j, and thunk
     //--------------------------------------------------------------------------
 
-    // These operators work on matrices (not vectors) of any data type, including
-    // user-defined.
+    // These operators work on any data type, including user-defined.
 
     // TRIL: (i < (j+thunk)): lower triangular part (matrices only)
-    GrB_TRIL_INT32,     GrB_TRIL_INT64,    GrB_TRIL_UINT32,    GrB_TRIL_UINT64,
+    GrB_TRIL_INT32,     GrB_TRIL_INT64,
 
     // TRIU: (j > (i+thunk)): upper triangular part (matrices only)
-    GrB_TRIU_INT32,     GrB_TRIU_INT64,    GrB_TRIU_UINT32,    GrB_TRIU_UINT64,
+    GrB_TRIU_INT32,     GrB_TRIU_INT64,
 
-    // DIAG: (j == (i+thunk)): diagonal (matrices only)
-    GrB_DIAG_INT32,     GrB_DIAG_INT64,    GrB_DIAG_UINT32,    GrB_DIAG_UINT64,
+    // DIAG: (j == (i+thunk)): diagonal
+    GrB_DIAG_INT32,     GrB_DIAG_INT64,
 
-    // OFFDIAG: (j != (i+thunk)): offdiagonal (matrices only)
-    GrB_OFFDIAG_INT32,  GrB_OFFDIAG_INT64, GrB_OFFDIAG_UINT32, GrB_OFFDIAG_UINT64,
+    // OFFDIAG: (j != (i+thunk)): offdiagonal
+    GrB_OFFDIAG_INT32,  GrB_OFFDIAG_INT64,
 
-    // COLLE: (j <= thunk): columns 0:thunk (matrices only)
-    GrB_COLLE_UINT64,
+    // COLLE: (j <= thunk): columns 0:thunk
+    GrB_COLLE_INT64,
 
     // COLGT: (j > thunk): columns thunk+1:ncols-1 (matrices only)
-    GrB_COLGT_UINT64,
+    GrB_COLGT_INT64,
 
     // ROWLE: (i <= thunk): rows 0:thunk (vectors and matrices)
-    GrB_ROWLE_UINT64,
+    GrB_ROWLE_INT64,
 
     // ROWGT: (i > thunk): rows thunk+1:nrows-1 (vectors and matrices)
-    GrB_ROWGT_UINT64,
+    GrB_ROWGT_INT64,
 
     //--------------------------------------------------------------------------
     // Result is bool, depending only on the value aij
     //--------------------------------------------------------------------------
 
-    // These operators work on matrices and vectors of any built-in type.
+    // These operators work on matrices and vectors of any built-in type,
+    // including complex types.
 
     // VALUEEQ: (aij == thunk)
     GrB_VALUEEQ_BOOL,

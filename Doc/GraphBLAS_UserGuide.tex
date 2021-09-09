@@ -2931,6 +2931,8 @@ Operators can be used on any type, including user-defined types, except that
 the comparators \verb'GT', \verb'GE', \verb'LT', and \verb'LE' can only be used
 with real built-in types (they cannot be used for built-in complex types).
 User-defined select operators can also be created.
+In the table below, \verb'j-i' is computed by first converting the
+indices to \verb'int64_t'.
 
 \vspace{0.2in}
 \noindent
@@ -3023,7 +3025,7 @@ will be passed as \verb'NULL'.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GB\_SelectOp\_wait:} wait for a select operator}
+\subsubsection{{\sf GxB\_SelectOp\_wait:} wait for a select operator}
 %-------------------------------------------------------------------------------
 \label{selectop_wait}
 
