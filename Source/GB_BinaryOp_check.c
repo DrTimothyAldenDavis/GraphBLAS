@@ -44,7 +44,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 
     GB_CHECK_MAGIC (op) ;
 
-    GBPR0 ("z=%s(x,y)\n", op->name) ;
+    GBPR0 ("z=%s(x,y), ", op->name) ;
 
     GB_Opcode opcode = op->opcode ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;

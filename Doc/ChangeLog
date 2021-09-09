@@ -8,7 +8,7 @@ Version 6.0.0, FUTURE
     * GrB_Info: changed enum values
     * GxB_init (mode, malloc, calloc, realloc, free, is_thread_safe): the last
         parameter, is_thread_safe, will be deleted.
-        The malloc/calloc/realloc /free functions must be thread-safe.
+        The malloc/calloc/realloc/free functions must be thread-safe.
 
 Version 5.2.0, FIXME
 

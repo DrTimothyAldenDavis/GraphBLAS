@@ -49,7 +49,6 @@ GrB_Info GB_init            // start up GraphBLAS
     void * (* malloc_function  ) (size_t),          // required
     void * (* realloc_function ) (void *, size_t),  // optional, can be NULL
     void   (* free_function    ) (void *),          // required
-    bool malloc_is_thread_safe,
 
     bool caller_is_GxB_cuda_init,       // true for GxB_cuda_init only
 
@@ -104,7 +103,7 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_malloc_function_set  (malloc_function ) ; // cannot be NULL
     GB_Global_realloc_function_set (realloc_function) ; // ok if NULL
     GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
-    GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
+    GB_Global_malloc_is_thread_safe_set (true) ; // malloc must be thread-safe
     GB_Global_memtable_clear ( ) ;
     GB_Global_free_pool_init (true) ;
 

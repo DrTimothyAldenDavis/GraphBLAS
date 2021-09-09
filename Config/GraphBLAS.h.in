@@ -365,8 +365,11 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void * (* user_malloc_function  ) (size_t),
     void * (* user_calloc_function  ) (size_t, size_t),
     void * (* user_realloc_function ) (void *, size_t),
-    void   (* user_free_function    ) (void *),
-    bool user_malloc_is_thread_safe     // ADDED in V3.0: thread_safe arg
+    void   (* user_free_function    ) (void *)
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
+    // parameter added in v3.0, unused in this v5.2.0, to be removed in v6.0
+    , bool ignored
+    #endif
 ) ;
 
 GB_PUBLIC

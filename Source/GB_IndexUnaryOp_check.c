@@ -37,32 +37,28 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
 
     GB_CHECK_MAGIC (op) ;
 
+    GBPR0 ("z=%s(x,y), ", op->name) ;
+
     GB_Opcode opcode = op->opcode ;
     if (opcode == GB_USER_idxunop_code)
     { 
-        GBPR0 ("(user-defined) ") ;
+        GBPR0 ("(user-defined)\n") ;
     }
     else
     { 
-        GBPR0 ("(built-in) ") ;
-    }
-
-    GBPR0 ("z=%s(x,y)\n", op->name) ;
-
-    if (op->idxunop_function == NULL)
-    { 
-        GBPR0 ("    IndexUnaryOp has a NULL function pointer\n") ;
-        return (GrB_INVALID_OBJECT) ;
-    }
-
-    if (opcode != GB_USER_idxunop_code)
-    {
+        GBPR0 ("(built-in)\n") ;
         if (opcode < GB_ROWINDEX_idxunop_code
          || opcode > GB_VALUEGE_idxunop_code)
         { 
             GBPR0 ("    invalid opcode\n") ;
             return (GrB_INVALID_OBJECT) ;
         }
+    }
+
+    if (op->idxunop_function == NULL)
+    { 
+        GBPR0 ("    IndexUnaryOp has a NULL function pointer\n") ;
+        return (GrB_INVALID_OBJECT) ;
     }
 
     GrB_Info info ;

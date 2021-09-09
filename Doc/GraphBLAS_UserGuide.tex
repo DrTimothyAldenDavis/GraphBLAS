@@ -1501,7 +1501,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void * (* user_calloc_function  ) (size_t, size_t),
     void * (* user_realloc_function ) (void *, size_t),
     void   (* user_free_function    ) (void *),
-    bool user_malloc_is_thread_safe
+    bool ignored            // unused parameter to be removed in v6.0
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -1509,50 +1509,25 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 \verb'GxB_init' is identical to \verb'GrB_init', except that it also redefines
 the memory management functions that SuiteSparse:GraphBLAS will use.  Giving
 the user application control over this is particularly important when using the
-\verb'GxB_*import', \verb'GxB_*export', \verb'GxB_*pack', and
-\verb'GxB_*unpack' functions described in Section~\ref{import_export},
-since they require the user application and GraphBLAS to use
-the same memory manager.
+\verb'GxB_*import', \verb'GxB_*export', \verb'GxB_*pack',
+\verb'GxB_*unpack', and \verb'GxB_*serialize' functions described in
+Section~\ref{import_export}, since they require the user application and
+GraphBLAS to use the same memory manager.
 
 \verb'user_calloc_function' and \verb'user_realloc_function' are optional, and
 may be \verb'NULL'.  If \verb'NULL', then the \verb'user_malloc_function' is
 relied on instead, for all memory allocations.
 
-These
-functions can only be set once, when GraphBLAS starts.   Either \verb'GrB_init'
-or \verb'GxB_init' must be called before any other GraphBLAS operation, but
-not both.  The last argument to \verb'GxB_init' informs GraphBLAS as to
-whether or not the functions are thread-safe.  The ANSI C and Intel TBB
-functions are thread-safe, but the MATLAB \verb'mxMalloc' and related
-functions are not thread-safe.  If not thread-safe, GraphBLAS calls
-the functions from inside an OpenMP critical section.
+These functions can only be set once, when GraphBLAS starts.   Either
+\verb'GrB_init' or \verb'GxB_init' must be called before any other GraphBLAS
+operation, but not both.  The functions passed to \verb'GxB_init' must be
+thread-safe.
 
 The following usage is identical to \verb'GrB_init(mode)':
 
     {\footnotesize
     \begin{verbatim}
     GxB_init (mode, malloc, calloc, realloc, free, true) ; \end{verbatim}}
-
-SuiteSparse:GraphBLAS can be compiled as normal (outside of MATLAB) and then
-linked into a MATLAB \verb'mexFunction'.  However, a \verb'mexFunction' should
-use the MATLAB memory managers.  To do this, use the following instead of
-\verb'GrB_init(mode)' in a MATLAB \verb'mexFunction', with the flag
-\verb'false' since these functions are not thread-safe:
-
-    {\footnotesize
-    \begin{verbatim}
-    #include "mex.h"
-    #include "GraphBLAS.h"
-    ...
-    GxB_init (mode, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ; \end{verbatim}}
-
-Passing in the last parameter as \verb'false' requires that GraphBLAS be
-compiled with OpenMP.  Internally, SuiteSparse:GraphBLAS never calls any memory
-management function inside a parallel region.  Results are undefined if all
-three of the following conditions hold: (1) the user application calls
-GraphBLAS in parallel from multiple user-level threads, (2) the memory
-functions are not thread-safe, and (3) GraphBLAS is not compiled with OpenMP.
-Safety is guaranteed if at least one of those conditions is false.
 
 To use the scalable Intel TBB memory manager:
 
@@ -1563,6 +1538,9 @@ To use the scalable Intel TBB memory manager:
     ...
     GxB_init (mode, scalable_malloc, scalable_calloc, scalable_realloc,
         scalable_free, true) ; \end{verbatim}}
+
+The last parameter (\verb'ignored') is ignored in this version (v5.2)
+and will be removed in v6.0.
 
 \newpage
 %===============================================================================
