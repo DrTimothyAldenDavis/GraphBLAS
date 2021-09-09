@@ -90,9 +90,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GrB_Monoid add = semiring->add ;
     ASSERT (mult->ztype == add->op->ztype) ;
 
-    bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
-    bool op_is_second = mult->opcode == GB_SECOND_opcode ;
-    bool op_is_pair   = mult->opcode == GB_PAIR_opcode ;
+    bool op_is_first  = mult->opcode == GB_FIRST_binop_code ;
+    bool op_is_second = mult->opcode == GB_SECOND_binop_code ;
+    bool op_is_pair   = mult->opcode == GB_PAIR_binop_code ;
     bool A_is_pattern = false ;
     bool B_is_pattern = false ;
 
@@ -285,10 +285,10 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
             // launch the switch factory
             //------------------------------------------------------------------
 
-            GB_Opcode mult_opcode, add_opcode ;
+            GB_Opcode mult_binop_code, add_binop_code ;
             GB_Type_code xcode, ycode, zcode ;
             if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern,
-                semiring, flipxy, &mult_opcode, &add_opcode, &xcode, &ycode,
+                semiring, flipxy, &mult_binop_code, &add_binop_code, &xcode, &ycode,
                 &zcode))
             { 
                 #include "GB_AxB_factory.c"

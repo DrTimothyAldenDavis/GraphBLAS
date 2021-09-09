@@ -30,7 +30,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 GrB_Info GB_selector
 (
     GrB_Matrix C,               // output matrix, NULL or static header
-    GB_Select_Opcode opcode,    // selector opcode
+    GB_Opcode opcode,           // selector opcode
     const GxB_SelectOp op,      // user operator
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
@@ -43,7 +43,7 @@ GrB_Info GB_bitmap_selector
 (
     GrB_Matrix C,               // output matrix, static header
     const bool C_iso,           // if true, C is iso
-    GB_Select_Opcode opcode,    // selector opcode
+    GB_Opcode opcode,           // selector opcode
     const GxB_select_function user_select,      // user select function
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
@@ -59,24 +59,24 @@ GrB_Info GB_bitmap_selector
 static inline void GB_iso_select
 (
     void *Cx,                       // output iso value
-    const GB_Select_Opcode opcode,  // selector opcode
+    const GB_Opcode opcode,         // selector opcode
     const void *xthunk,             // thunk scalar, of size asize
     const void *Ax,                 // Ax [0] scalar, of size asize
     const GB_Type_code acode,       // the type code of Ax
     const size_t asize
 )
 {
-    if (opcode == GB_EQ_ZERO_opcode)
+    if (opcode == GB_EQ_ZERO_selop_code)
     { 
         // all entries in C are zero
         memset (Cx, 0, asize) ;
     }
-    else if (opcode == GB_EQ_THUNK_opcode)
+    else if (opcode == GB_EQ_THUNK_selop_code)
     { 
         // all entries in C are equal to thunk
         memcpy (Cx, xthunk, asize) ;
     }
-    else if (opcode == GB_NONZERO_opcode && acode == GB_BOOL_code)
+    else if (opcode == GB_NONZERO_selop_code && acode == GB_BOOL_code)
     { 
         // all entries in C are true; C and A are boolean
         memset (Cx, 1, 1) ;

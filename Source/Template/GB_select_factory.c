@@ -10,7 +10,7 @@
 switch (opcode)
 {
 
-    case GB_TRIL_opcode          :  // C = tril (A,k)
+    case GB_TRIL_selop_code          :  // C = tril (A,k)
 
         #ifdef GB_SELECT_PHASE1
         GB_SEL_WORKER (_tril, _iso, GB_void)
@@ -23,7 +23,7 @@ switch (opcode)
         break ;
         #endif
 
-    case GB_TRIU_opcode          :  // C = triu (A,k)
+    case GB_TRIU_selop_code          :  // C = triu (A,k)
 
         #ifdef GB_SELECT_PHASE1
         GB_SEL_WORKER (_triu, _iso, GB_void)
@@ -36,7 +36,7 @@ switch (opcode)
         break ;
         #endif
 
-    case GB_DIAG_opcode          :  // C = diag (A,k)
+    case GB_DIAG_selop_code          :  // C = diag (A,k)
 
         #ifdef GB_SELECT_PHASE1
         GB_SEL_WORKER (_diag, _iso, GB_void)
@@ -49,7 +49,7 @@ switch (opcode)
         break ;
         #endif
 
-    case GB_OFFDIAG_opcode       :  // C = offdiag (A,k)
+    case GB_OFFDIAG_selop_code       :  // C = offdiag (A,k)
 
         #ifdef GB_SELECT_PHASE1
         GB_SEL_WORKER (_offdiag, _iso, GB_void)
@@ -62,7 +62,7 @@ switch (opcode)
         break ;
         #endif
 
-    case GB_USER_SELECT_opcode   : // C = user_select (A,k)
+    case GB_USER_selop_code   : // C = user_select (A,k)
 
         switch (typecode)
         {
@@ -77,7 +77,7 @@ switch (opcode)
 
     #ifndef GB_BITMAP_SELECTOR
 
-    case GB_RESIZE_opcode        :  // C = resize (A)
+    case GB_RESIZE_selop_code        :  // C = resize (A)
 
         #ifdef GB_SELECT_PHASE1
         GB_SEL_WORKER (_resize, _iso, GB_void)
@@ -90,7 +90,7 @@ switch (opcode)
         break ;
         #endif
 
-    case GB_NONZOMBIE_opcode     :  // C = all entries A(i,j) not a zombie
+    case GB_NONZOMBIE_selop_code     :  // C = all entries A(i,j) not a zombie
 
         #ifdef GB_SELECT_PHASE1
         // phase1: use a single worker for all types, since the test does not
@@ -126,7 +126,7 @@ switch (opcode)
     // none of these selectop workers are needed when A is iso
     //--------------------------------------------------------------------------
 
-    case GB_NONZERO_opcode   :  // A(i,j) != 0
+    case GB_NONZERO_selop_code   :  // A(i,j) != 0
 
         switch (typecode)
         {
@@ -148,7 +148,7 @@ switch (opcode)
         }
         break ;
 
-    case GB_EQ_ZERO_opcode   :  // A(i,j) == 0
+    case GB_EQ_ZERO_selop_code   :  // A(i,j) == 0
 
         switch (typecode)
         {
@@ -170,7 +170,7 @@ switch (opcode)
         }
         break ;
 
-    case GB_GT_ZERO_opcode   :  // A(i,j) > 0
+    case GB_GT_ZERO_selop_code   :  // A(i,j) > 0
 
         // bool and uint: renamed GxB_GT_ZERO to GxB_NONZERO
         switch (typecode)
@@ -185,7 +185,7 @@ switch (opcode)
         }
         break ;
 
-    case GB_GE_ZERO_opcode   :  // A(i,j) >= 0
+    case GB_GE_ZERO_selop_code   :  // A(i,j) >= 0
 
         // bool and uint: always true; use GB_dup
         switch (typecode)
@@ -200,7 +200,7 @@ switch (opcode)
         }
         break ;
 
-    case GB_LT_ZERO_opcode   :  // A(i,j) < 0
+    case GB_LT_ZERO_selop_code   :  // A(i,j) < 0
 
         // bool and uint: always false; return an empty matrix
         switch (typecode)
@@ -215,7 +215,7 @@ switch (opcode)
         }
         break ;
 
-    case GB_LE_ZERO_opcode   :  // A(i,j) <= 0
+    case GB_LE_ZERO_selop_code   :  // A(i,j) <= 0
 
         // bool and uint: renamed GxB_LE_ZERO to GxB_EQ_ZERO
         switch (typecode)
@@ -230,7 +230,7 @@ switch (opcode)
         }
         break ;
 
-    case GB_NE_THUNK_opcode   : // A(i,j) != thunk
+    case GB_NE_THUNK_selop_code   : // A(i,j) != thunk
 
         // bool: if thunk is true,  renamed GxB_NE_THUNK to GxB_EQ_ZERO 
         //       if thunk is false, renamed GxB_NE_THUNK to GxB_NONZERO 
@@ -253,7 +253,7 @@ switch (opcode)
         }
         break ;
 
-    case GB_EQ_THUNK_opcode   : // A(i,j) == thunk
+    case GB_EQ_THUNK_selop_code   : // A(i,j) == thunk
 
         // bool: if thunk is true,  renamed GxB_NE_THUNK to GxB_NONZERO 
         //       if thunk is false, renamed GxB_NE_THUNK to GxB_EQ_ZERO 
@@ -276,7 +276,7 @@ switch (opcode)
         }
         break ;
 
-    case GB_GT_THUNK_opcode   : // A(i,j) > thunk
+    case GB_GT_THUNK_selop_code   : // A(i,j) > thunk
 
         // bool: if thunk is false, renamed GxB_GT_THUNK to GxB_NONZERO
         //       if thunk is true,  return an empty matrix
@@ -296,7 +296,7 @@ switch (opcode)
         }
         break ;
 
-    case GB_GE_THUNK_opcode   : // A(i,j) >= thunk
+    case GB_GE_THUNK_selop_code   : // A(i,j) >= thunk
 
         // bool: if thunk is false, use GB_dup
         //       if thunk is true,  renamed GxB_GE_THUNK to GxB_NONZERO
@@ -316,7 +316,7 @@ switch (opcode)
         }
         break ;
 
-    case GB_LT_THUNK_opcode   : // A(i,j) < thunk
+    case GB_LT_THUNK_selop_code   : // A(i,j) < thunk
 
         // bool: if thunk is true,  renamed GxB_LT_THUNK to GxB_EQ_ZERO
         //       if thunk is false, return an empty matrix
@@ -336,7 +336,7 @@ switch (opcode)
         }
         break ;
 
-    case GB_LE_THUNK_opcode   : // A(i,j) <= thunk
+    case GB_LE_THUNK_selop_code   : // A(i,j) <= thunk
 
         // bool: if thunk is true,  use GB_dup
         //       if thunk is false, renamed GxB_LE_ZERO to GxB_EQ_ZERO

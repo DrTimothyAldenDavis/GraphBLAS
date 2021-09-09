@@ -53,10 +53,16 @@ GrB_Info GxB_SelectOp_new2      // create a new user-defined select operator
     GxB_SelectOp op = *selectop ;
     op->magic = GB_MAGIC ;
     op->header_size = header_size ;
+    op->ztype = GrB_BOOL ;
     op->xtype = xtype ;
-    op->ttype = ttype ;
-    op->function = function ;
-    op->opcode = GB_USER_SELECT_opcode ;
+    op->ytype = ttype ;         // thunk type
+
+    op->unop_function = NULL ;
+    op->idxunop_function = NULL ;
+    op->binop_function = NULL ;
+    op->selop_function = function ;
+
+    op->opcode = GB_USER_selop_code ;
     // get the unary op name and defn
     GB_op_name_and_defn (op->name, &(op->defn), selectop_name, selectop_defn,
         "GxB_select_function", 19) ;

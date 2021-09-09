@@ -3347,8 +3347,8 @@
 #define GB_extract_vector_list GM_extract_vector_list
 #define GB_FC32_div GM_FC32_div
 #define GB_FC64_div GM_FC64_div
+#define GB_flip_binop_code GM_flip_binop_code
 #define GB_flip_op GM_flip_op
-#define GB_flip_opcode GM_flip_opcode
 #define GB_free_memory GM_free_memory
 #define GB_free_pool_finalize GM_free_pool_finalize
 #define GB_frexpe GM_frexpe

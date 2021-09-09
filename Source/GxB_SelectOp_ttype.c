@@ -31,7 +31,7 @@ GrB_Info GxB_SelectOp_ttype         // return type of thunk or NULL if generic
     // return the ttype
     //--------------------------------------------------------------------------
 
-    (*ttype) = selectop->ttype ;
+    (*ttype) = selectop->ytype ;
     return (GrB_SUCCESS) ;
 }
 

@@ -112,7 +112,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         //----------------------------------------------------------------------
 
         #ifndef GBCOMPACT
-        if (Atype == op1->xtype || opcode == GB_IDENTITY_opcode)
+        if (Atype == op1->xtype || opcode == GB_IDENTITY_unop_code)
         { 
 
             // The switch factory is used if the op1 is IDENTITY, or if no
@@ -153,7 +153,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         size_t xsize = op1->xtype->size ;
         GB_cast_function
             cast_A_to_X = GB_cast_factory (op1->xtype->code, Atype->code) ;
-        GxB_unary_function fop = op1->function ;
+        GxB_unary_function fop = op1->unop_function ;
 
         ASSERT_TYPE_OK (op1->ztype, "op1 ztype", GB0) ;
         ASSERT_TYPE_OK (op1->xtype, "op1 xtype", GB0) ;
@@ -187,10 +187,10 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         ASSERT_BINARYOP_OK (op2, "op2 for transpose", GB0) ;
 
         GB_Type_code xcode, ycode, zcode ;
-        ASSERT (opcode != GB_FIRST_opcode) ;
-        ASSERT (opcode != GB_SECOND_opcode) ;
-        ASSERT (opcode != GB_PAIR_opcode) ;
-        ASSERT (opcode != GB_ANY_opcode) ;
+        ASSERT (opcode != GB_FIRST_binop_code) ;
+        ASSERT (opcode != GB_SECOND_binop_code) ;
+        ASSERT (opcode != GB_PAIR_binop_code) ;
+        ASSERT (opcode != GB_ANY_binop_code) ;
 
         size_t asize = Atype->size ;
         size_t ssize = scalar->type->size ;
@@ -226,7 +226,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
         }
 
         GB_Type_code acode = Atype->code ;
-        GxB_binary_function fop = op2->function ;
+        GxB_binary_function fop = op2->binop_function ;
         GB_cast_function cast_A_to_Y = GB_cast_factory (ycode, acode) ;
         GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
 

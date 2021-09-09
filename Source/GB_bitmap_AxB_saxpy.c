@@ -145,10 +145,10 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
             // launch the switch factory
             //------------------------------------------------------------------
 
-            GB_Opcode mult_opcode, add_opcode ;
+            GB_Opcode mult_binop_code, add_binop_code ;
             GB_Type_code xcode, ycode, zcode ;
             if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern,
-                semiring, flipxy, &mult_opcode, &add_opcode, &xcode, &ycode,
+                semiring, flipxy, &mult_binop_code, &add_binop_code, &xcode, &ycode,
                 &zcode))
             { 
                 #include "GB_AxB_factory.c"

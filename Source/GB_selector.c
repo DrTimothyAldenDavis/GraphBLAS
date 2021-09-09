@@ -42,7 +42,7 @@
 GrB_Info GB_selector
 (
     GrB_Matrix C,               // output matrix, NULL or static header
-    GB_Select_Opcode opcode,    // selector opcode
+    GB_Opcode opcode,    // selector opcode
     const GxB_SelectOp op,      // user operator
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
@@ -59,14 +59,14 @@ GrB_Info GB_selector
     GrB_Info info ;
     ASSERT_SELECTOP_OK_OR_NULL (op, "selectop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_selector", GB0) ;
-    ASSERT (opcode >= 0 && opcode <= GB_USER_SELECT_opcode) ;
+    ASSERT (opcode >= 0 && opcode <= GB_USER_selop_code) ;
     ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
     // positional selector (tril, triu, diag, offdiag, resize): can't be jumbled
-    ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_opcode ||
-        opcode == GB_USER_SELECT_opcode, !GB_JUMBLED (A))) ;
+    ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_selop_code ||
+        opcode == GB_USER_selop_code, !GB_JUMBLED (A))) ;
     // nonzombie, nentry selector: jumbled OK
-    ASSERT (GB_IMPLIES (opcode > GB_RESIZE_opcode && 
-        opcode < GB_USER_SELECT_opcode, GB_JUMBLED_OK (A))) ;
+    ASSERT (GB_IMPLIES (opcode > GB_RESIZE_selop_code && 
+        opcode < GB_USER_selop_code, GB_JUMBLED_OK (A))) ;
     ASSERT (C == NULL || (C != NULL && C->static_header)) ;
 
     //--------------------------------------------------------------------------
@@ -115,7 +115,7 @@ GrB_Info GB_selector
         xthunk = (GB_void *) Thunk->x ;
         const GB_Type_code tcode = Thunk->type->code ;
         ithunk = 0 ;
-        if (tcode <= GB_FP64_code && opcode < GB_USER_SELECT_opcode)
+        if (tcode <= GB_FP64_code && opcode < GB_USER_selop_code)
         { 
             // ithunk = (int64_t) Thunk
             GB_cast_scalar (&ithunk, GB_INT64_code, xthunk, tcode,
@@ -131,7 +131,7 @@ GrB_Info GB_selector
     // handle iso case for built-in select ops that depend only on the value
     //--------------------------------------------------------------------------
 
-    if (A_iso && opcode >= GB_NONZERO_opcode && opcode <= GB_LE_THUNK_opcode)
+    if (A_iso && opcode >= GB_NONZERO_selop_code && opcode <= GB_LE_THUNK_selop_code)
     { 
 
         // select op is NONZERO, EQ_ZERO, GT_ZERO, GE_ZERO, LT_ZERO, LE_ZERO,
@@ -177,15 +177,15 @@ GrB_Info GB_selector
 
     // now if A is iso, the following operators still need to be handled:
 
-    //      GB_TRIL_opcode        : use GB_sel__tril_iso
-    //      GB_TRIU_opcode        : use GB_sel__triu_iso
-    //      GB_DIAG_opcode        : use GB_sel__diag_iso
-    //      GB_OFFDIAG_opcode     : use GB_sel__offdiag_iso
-    //      GB_RESIZE_opcode      : use GB_sel__resize_iso
-    //      GB_NONZOMBIE_opcode   : use GB_sel__nonzombie_iso
-    //      GB_USER_SELECT_opcode : use GB_sel__user_iso
+    //      GB_TRIL_selop_code        : use GB_sel__tril_iso
+    //      GB_TRIU_selop_code        : use GB_sel__triu_iso
+    //      GB_DIAG_selop_code        : use GB_sel__diag_iso
+    //      GB_OFFDIAG_selop_code     : use GB_sel__offdiag_iso
+    //      GB_RESIZE_selop_code      : use GB_sel__resize_iso
+    //      GB_NONZOMBIE_selop_code   : use GB_sel__nonzombie_iso
+    //      GB_USER_selop_code : use GB_sel__user_iso
 
-    // Except for GB_USER_SELECT_opcode, the GB_sel__*_iso methods do not
+    // Except for GB_USER_selop_code, the GB_sel__*_iso methods do not
     // access the values of A and C, just the pattern.
 
     //--------------------------------------------------------------------------
@@ -193,10 +193,10 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GxB_select_function user_select = NULL ;
-    if (op != NULL && opcode >= GB_USER_SELECT_opcode)
+    if (op != NULL && opcode >= GB_USER_selop_code)
     { 
         GB_BURBLE_MATRIX (A, "(user select: %s) ", op->name) ;
-        user_select = (GxB_select_function) (op->function) ;
+        user_select = (GxB_select_function) (op->selop_function) ;
     }
 
     //--------------------------------------------------------------------------
@@ -204,7 +204,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     bool use_bitmap_selector ;
-    if (opcode == GB_RESIZE_opcode || opcode == GB_NONZOMBIE_opcode)
+    if (opcode == GB_RESIZE_selop_code || opcode == GB_NONZOMBIE_selop_code)
     { 
         // GB_bitmap_selector does not support these opcodes.  For the RESIZE
         // and NONZOMBIE operators, A will never be bitmap.  A is converted to
@@ -212,7 +212,7 @@ GrB_Info GB_selector
         // zombies.
         use_bitmap_selector = false ;
     }
-    else if (opcode == GB_DIAG_opcode)
+    else if (opcode == GB_DIAG_selop_code)
     { 
         // GB_bitmap_selector supports the DIAG operator, but it is currently
         // not efficient (GB_bitmap_selector should return a sparse diagonal
@@ -235,9 +235,9 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     bool C_iso = A_iso ||                       // C iso value is Ax [0]
-        (opcode == GB_EQ_ZERO_opcode) ||        // C iso value is zero
-        (opcode == GB_EQ_THUNK_opcode) ||       // C iso value is thunk
-        (opcode == GB_NONZERO_opcode &&
+        (opcode == GB_EQ_ZERO_selop_code) ||        // C iso value is zero
+        (opcode == GB_EQ_THUNK_selop_code) ||       // C iso value is thunk
+        (opcode == GB_NONZERO_selop_code &&
          acode == GB_BOOL_code) ;               // C iso value is true
 
     if (C_iso)
@@ -295,7 +295,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     int A_ntasks, A_nthreads ;
-    double work = 8*anvec + ((opcode == GB_DIAG_opcode) ? 0 : GB_nnz_held (A)) ;
+    double work = 8*anvec + ((opcode == GB_DIAG_selop_code) ? 0 : GB_nnz_held (A)) ;
     GB_SLICE_MATRIX_WORK (A, 8, chunk, work) ;
 
     //--------------------------------------------------------------------------
@@ -321,7 +321,7 @@ GrB_Info GB_selector
     // computed in Cp, where Cp [k] is the number of live entries in the kth
     // vector of A.
 
-    if (opcode <= GB_RESIZE_opcode)
+    if (opcode <= GB_RESIZE_selop_code)
     {
         // allocate Zp
         Zp = GB_MALLOC_WERK (anvec, int64_t, &Zp_size) ;

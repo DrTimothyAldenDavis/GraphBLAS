@@ -3826,13 +3826,13 @@ void mexFunction
 
     expected = GrB_INVALID_OBJECT ;
 
-    op1b->function = NULL ;
+    op1b->unop_function = NULL ;
     ERR (GB_UnaryOp_check (op1b, "op1b null func", G1, ff)) ;
-    op1b->function = f1 ;
+    op1b->unop_function = f1 ;
 
     op1b->opcode = 1024 ;
     ERR (GB_UnaryOp_check (op1b, "op1b invalid opcode", G1, ff)) ;
-    op1b->opcode = GB_USER_opcode ;
+    op1b->opcode = GB_USER_unop_code ;
 
     op1b->ztype = NULL ;
     ERR (GB_UnaryOp_check (op1b, "op1b invalid ztype", G1, ff)) ;
@@ -3873,13 +3873,13 @@ void mexFunction
 
     expected = GrB_INVALID_OBJECT ;
 
-    op2b->function = NULL ;
+    op2b->binop_function = NULL ;
     ERR (GB_BinaryOp_check (op2b, "op2b null func", G1, ff)) ;
-    op2b->function = f2 ;
+    op2b->binop_function = f2 ;
 
     op2b->opcode = 1024 ;
     ERR (GB_BinaryOp_check (op2b, "op2b invalid opcode", G1, ff)) ;
-    op2b->opcode = GB_USER_opcode ;
+    op2b->opcode = GB_USER_binop_code ;
 
     op2b->ztype = NULL ;
     ERR (GB_BinaryOp_check (op2b, "op2b invalid ztype", G1, ff)) ;
@@ -3925,13 +3925,13 @@ void mexFunction
 
     expected = GrB_INVALID_OBJECT ;
 
-    selectop->function = NULL ;
+    selectop->selop_function = NULL ;
     ERR (GB_SelectOp_check (selectop, "selectop invalid function", G1, ff)) ;
-    selectop->function = fselect ;
+    selectop->selop_function = fselect ;
 
     selectop->opcode = 9999 ;
     ERR (GB_SelectOp_check (selectop, "selectop invalid opcode", G1, ff)) ;
-    selectop->opcode = GB_USER_SELECT_opcode ;
+    selectop->opcode = GB_USER_selop_code ;
 
     selectop->xtype = Tcrud ;
     ERR (GB_SelectOp_check (selectop, "selectop invalid xtype", G1, ff)) ;

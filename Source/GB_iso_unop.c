@@ -104,7 +104,7 @@ void GB_iso_unop            // Cx [0] = op1 (A), op2 (s,A) or op2 (A,s)
             GB_cast_scalar (x, xcode, A->x, acode, asize) ;
 
             // Cx [0] = op1 (x)
-            GxB_unary_function fop = op1->function ;
+            GxB_unary_function fop = op1->unop_function ;
             fop (Cx, x) ;
 
         }
@@ -121,7 +121,7 @@ void GB_iso_unop            // Cx [0] = op1 (A), op2 (s,A) or op2 (A,s)
             GB_Type_code ycode = op2->ytype->code ;
             size_t xsize = op2->xtype->size ;
             size_t ysize = op2->ytype->size ;
-            GxB_binary_function fop = op2->function ;
+            GxB_binary_function fop = op2->binop_function ;
             GB_void x [GB_VLA(xsize)] ;
             GB_void y [GB_VLA(ysize)] ;
 

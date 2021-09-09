@@ -16,7 +16,7 @@ GrB_Info GB_bitmap_selector
 (
     GrB_Matrix C,               // output matrix, static header
     const bool C_iso,           // if true, C is iso
-    GB_Select_Opcode opcode,    // selector opcode
+    GB_Opcode opcode,    // selector opcode
     const GxB_select_function user_select,      // user select function
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
@@ -33,8 +33,8 @@ GrB_Info GB_bitmap_selector
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A for bitmap selector", GB0) ;
     ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
-    ASSERT (opcode != GB_RESIZE_opcode) ;
-    ASSERT (opcode != GB_NONZOMBIE_opcode) ;
+    ASSERT (opcode != GB_RESIZE_selop_code) ;
+    ASSERT (opcode != GB_NONZOMBIE_selop_code) ;
     ASSERT (C != NULL && C->static_header) ;
 
     //--------------------------------------------------------------------------

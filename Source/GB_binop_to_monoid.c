@@ -39,7 +39,7 @@ GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
     switch (opcode)
     {
 
-        case GB_MIN_opcode:
+        case GB_MIN_binop_code:
 
             switch (zcode)
             {
@@ -58,7 +58,7 @@ GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
             }
             break ;
 
-        case GB_MAX_opcode:
+        case GB_MAX_binop_code:
 
             switch (zcode)
             {
@@ -77,7 +77,7 @@ GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
             }
             break ;
 
-        case GB_TIMES_opcode:
+        case GB_TIMES_binop_code:
 
             switch (zcode)
             {
@@ -98,7 +98,7 @@ GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
             }
             break ;
 
-        case GB_PLUS_opcode:
+        case GB_PLUS_binop_code:
 
             switch (zcode)
             {
@@ -119,7 +119,7 @@ GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
             }
             break ;
 
-        case GB_ANY_opcode:
+        case GB_ANY_binop_code:
 
             switch (zcode)
             {
@@ -143,12 +143,12 @@ GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
 
         // 4 boolean monoids: (see also GxB_ANY_BOOL_MONOID above)
         #define B(monoid) return ((zcode == GB_BOOL_code) ? monoid : NULL) ;
-        case GB_LOR_opcode   : B (GrB_LOR_MONOID_BOOL)   ;
-        case GB_LAND_opcode  : B (GrB_LAND_MONOID_BOOL)  ;
-        case GB_LXOR_opcode  : B (GrB_LXOR_MONOID_BOOL)  ;
-        case GB_EQ_opcode    : B (GrB_LXNOR_MONOID_BOOL) ;
+        case GB_LOR_binop_code   : B (GrB_LOR_MONOID_BOOL)   ;
+        case GB_LAND_binop_code  : B (GrB_LAND_MONOID_BOOL)  ;
+        case GB_LXOR_binop_code  : B (GrB_LXOR_MONOID_BOOL)  ;
+        case GB_EQ_binop_code    : B (GrB_LXNOR_MONOID_BOOL) ;
 
-        case GB_BOR_opcode:
+        case GB_BOR_binop_code:
 
             switch (zcode)
             {
@@ -161,7 +161,7 @@ GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
             }
             break ;
 
-        case GB_BAND_opcode:
+        case GB_BAND_binop_code:
 
             switch (zcode)
             {
@@ -174,7 +174,7 @@ GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
             }
             break ;
 
-        case GB_BXOR_opcode:
+        case GB_BXOR_binop_code:
 
             switch (zcode)
             {
@@ -187,7 +187,7 @@ GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
             }
             break ;
 
-        case GB_BXNOR_opcode:
+        case GB_BXNOR_binop_code:
 
             switch (zcode)
             {

@@ -40,8 +40,8 @@ void GB_binop_rename            // rename a bound binary op
         // rename the binary op to an equivalent unary op, if possible
         //----------------------------------------------------------------------
 
-        if ((opcode == GB_FIRST_opcode  && !binop_bind1st) ||
-            (opcode == GB_SECOND_opcode &&  binop_bind1st))
+        if ((opcode == GB_FIRST_binop_code  && !binop_bind1st) ||
+            (opcode == GB_SECOND_binop_code &&  binop_bind1st))
         { 
 
             //------------------------------------------------------------------
@@ -67,7 +67,7 @@ void GB_binop_rename            // rename a bound binary op
             }
 
         }
-        else if (opcode == GB_PAIR_opcode)
+        else if (opcode == GB_PAIR_binop_code)
         { 
 
             //------------------------------------------------------------------

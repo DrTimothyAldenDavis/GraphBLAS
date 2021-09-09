@@ -107,7 +107,7 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
     {
 
         // get the binary operator
-        const GxB_binary_function fadd = op->function ;
+        const GxB_binary_function fadd = op->binop_function ;
 
         const GrB_Type xtype = op->xtype ;
         const GrB_Type ytype = op->ytype ;

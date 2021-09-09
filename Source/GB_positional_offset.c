@@ -19,12 +19,12 @@ int64_t GB_positional_offset        // return 0 or 1
     {
 
         // these operators are offset by one
-        case GB_POSITIONI1_opcode : // z = position_i1(A(i,j)) == i+1
-        case GB_FIRSTI1_opcode    : // z = first_i1(A(i,j),y) == i+1
-        case GB_SECONDI1_opcode   : // z = second_i1(x,A(i,j)) == i+1
-        case GB_POSITIONJ1_opcode : // z = position_j1(A(i,j)) == j+1
-        case GB_FIRSTJ1_opcode    : // z = first_j1(A(i,j),y) == j+1
-        case GB_SECONDJ1_opcode   : // z = second_j1(x,A(i,j)) == j+1
+        case GB_POSITIONI1_unop_code : // z = position_i1(A(i,j)) == i+1
+        case GB_FIRSTI1_binop_code   : // z = first_i1(A(i,j),y) == i+1
+        case GB_SECONDI1_binop_code  : // z = second_i1(x,A(i,j)) == i+1
+        case GB_POSITIONJ1_unop_code : // z = position_j1(A(i,j)) == j+1
+        case GB_FIRSTJ1_binop_code   : // z = first_j1(A(i,j),y) == j+1
+        case GB_SECONDJ1_binop_code  : // z = second_j1(x,A(i,j)) == j+1
             return (1) ;
 
         // all other operators have no offset

@@ -192,10 +192,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     bool A_is_pattern, B_is_pattern ;
     GB_binop_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
 
-    GB_Opcode mult_opcode, add_opcode ;
+    GB_Opcode mult_binop_code, add_binop_code ;
     GB_Type_code xcode, ycode, zcode ;
     bool builtin_semiring = GB_AxB_semiring_builtin (A, A_is_pattern, B,
-        B_is_pattern, semiring, flipxy, &mult_opcode, &add_opcode, &xcode,
+        B_is_pattern, semiring, flipxy, &mult_binop_code, &add_binop_code, &xcode,
         &ycode, &zcode) ;
 
     //--------------------------------------------------------------------------

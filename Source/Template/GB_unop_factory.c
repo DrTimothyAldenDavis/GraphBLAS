@@ -23,9 +23,9 @@
 
     ASSERT (code1 <= GB_UDT_code) ;
     ASSERT (code2 <= GB_UDT_code) ;
-    ASSERT (opcode != GB_ONE_opcode) ; // C is iso and the factory isn't used
+    ASSERT (opcode != GB_ONE_unop_code) ; // C is iso and the factory isn't used
 
-    if (opcode == GB_IDENTITY_opcode)
+    if (opcode == GB_IDENTITY_unop_code)
     { 
 
         //----------------------------------------------------------------------
@@ -52,7 +52,7 @@
         switch (opcode)
         {
 
-            case GB_ABS_opcode :     // z = abs (x), for x complex
+            case GB_ABS_unop_code :     // z = abs (x), for x complex
 
                 switch (code2)
                 {
@@ -62,7 +62,7 @@
                 }
                 break ;
 
-            case GB_CREAL_opcode :   // z = creal (x)
+            case GB_CREAL_unop_code :   // z = creal (x)
 
                 switch (code2)
                 {
@@ -72,7 +72,7 @@
                 }
                 break ;
 
-            case GB_CIMAG_opcode :   // z = cimag (x)
+            case GB_CIMAG_unop_code :   // z = cimag (x)
 
                 switch (code2)
                 {
@@ -82,7 +82,7 @@
                 }
                 break ;
 
-            case GB_CARG_opcode :    // z = carg (x)
+            case GB_CARG_unop_code :    // z = carg (x)
 
                 switch (code2)
                 {
@@ -106,7 +106,7 @@
         switch (opcode)
         {
 
-            case GB_ISINF_opcode :   // z = isinf (x)
+            case GB_ISINF_unop_code :   // z = isinf (x)
 
                 switch (code2)
                 {
@@ -118,7 +118,7 @@
                 }
                 break ;
 
-            case GB_ISNAN_opcode :   // z = isnan (x)
+            case GB_ISNAN_unop_code :   // z = isnan (x)
 
                 switch (code2)
                 {
@@ -130,7 +130,7 @@
                 }
                 break ;
 
-            case GB_ISFINITE_opcode :// z = isfinite (x)
+            case GB_ISFINITE_unop_code :// z = isfinite (x)
 
                 switch (code2)
                 {
@@ -157,7 +157,7 @@
         switch (opcode)
         {
 
-            case GB_AINV_opcode :      // z = -x, all 13 types
+            case GB_AINV_unop_code :      // z = -x, all 13 types
 
                 switch (code1)
                 {
@@ -178,7 +178,7 @@
                 }
                 break ;
 
-            case GB_MINV_opcode :      // z = 1/x, all 13 types
+            case GB_MINV_unop_code :      // z = 1/x, all 13 types
 
                 switch (code1)
                 {
@@ -199,7 +199,7 @@
                 }
                 break ;
 
-            case GB_ABS_opcode :       // z = abs (x), for all but complex
+            case GB_ABS_unop_code :       // z = abs (x), for all but complex
 
                 switch (code1)
                 {
@@ -218,7 +218,7 @@
                 }
                 break ;
 
-            case GB_LNOT_opcode :      // z = ! (x != 0), no complex case
+            case GB_LNOT_unop_code :      // z = ! (x != 0), no complex case
 
                 switch (code1)
                 {
@@ -237,7 +237,7 @@
                 }
                 break ;
 
-            case GB_BNOT_opcode :    // z = ~x (bitwise complement), integers only
+            case GB_BNOT_unop_code :    // z = ~x (bitwise complement), integers only
 
                 switch (code1)
                 {
@@ -253,7 +253,7 @@
                 }
                 break ;
 
-            case GB_SQRT_opcode :    // z = sqrt (x)
+            case GB_SQRT_unop_code :    // z = sqrt (x)
 
                 switch (code1)
                 {
@@ -265,7 +265,7 @@
                 }
                 break ;
 
-            case GB_LOG_opcode :     // z = log (x)
+            case GB_LOG_unop_code :     // z = log (x)
 
                 switch (code1)
                 {
@@ -278,7 +278,7 @@
                 break ;
 
 
-            case GB_EXP_opcode :     // z = exp (x)
+            case GB_EXP_unop_code :     // z = exp (x)
 
                 switch (code1)
                 {
@@ -291,7 +291,7 @@
                 break ;
 
 
-            case GB_SIN_opcode :     // z = sin (x)
+            case GB_SIN_unop_code :     // z = sin (x)
 
                 switch (code1)
                 {
@@ -303,7 +303,7 @@
                 }
                 break ;
 
-            case GB_COS_opcode :     // z = cos (x)
+            case GB_COS_unop_code :     // z = cos (x)
 
                 switch (code1)
                 {
@@ -315,7 +315,7 @@
                 }
                 break ;
 
-            case GB_TAN_opcode :     // z = tan (x)
+            case GB_TAN_unop_code :     // z = tan (x)
 
                 switch (code1)
                 {
@@ -328,7 +328,7 @@
                 break ;
 
 
-            case GB_ASIN_opcode :    // z = asin (x)
+            case GB_ASIN_unop_code :    // z = asin (x)
 
                 switch (code1)
                 {
@@ -340,7 +340,7 @@
                 }
                 break ;
 
-            case GB_ACOS_opcode :    // z = acos (x)
+            case GB_ACOS_unop_code :    // z = acos (x)
 
                 switch (code1)
                 {
@@ -352,7 +352,7 @@
                 }
                 break ;
 
-            case GB_ATAN_opcode :    // z = atan (x)
+            case GB_ATAN_unop_code :    // z = atan (x)
 
                 switch (code1)
                 {
@@ -365,7 +365,7 @@
                 break ;
 
 
-            case GB_SINH_opcode :    // z = sinh (x)
+            case GB_SINH_unop_code :    // z = sinh (x)
 
                 switch (code1)
                 {
@@ -377,7 +377,7 @@
                 }
                 break ;
 
-            case GB_COSH_opcode :    // z = cosh (x)
+            case GB_COSH_unop_code :    // z = cosh (x)
 
                 switch (code1)
                 {
@@ -389,7 +389,7 @@
                 }
                 break ;
 
-            case GB_TANH_opcode :    // z = tanh (x)
+            case GB_TANH_unop_code :    // z = tanh (x)
 
                 switch (code1)
                 {
@@ -402,7 +402,7 @@
                 break ;
 
 
-            case GB_ASINH_opcode :   // z = asinh (x)
+            case GB_ASINH_unop_code :   // z = asinh (x)
 
                 switch (code1)
                 {
@@ -414,7 +414,7 @@
                 }
                 break ;
 
-            case GB_ACOSH_opcode :   // z = acosh (x)
+            case GB_ACOSH_unop_code :   // z = acosh (x)
 
                 switch (code1)
                 {
@@ -426,7 +426,7 @@
                 }
                 break ;
 
-            case GB_ATANH_opcode :   // z = atanh (x)
+            case GB_ATANH_unop_code :   // z = atanh (x)
 
                 switch (code1)
                 {
@@ -438,7 +438,7 @@
                 }
                 break ;
 
-            case GB_SIGNUM_opcode :  // z = signum (x)
+            case GB_SIGNUM_unop_code :  // z = signum (x)
 
                 switch (code1)
                 {
@@ -450,7 +450,7 @@
                 }
                 break ;
 
-            case GB_CEIL_opcode :    // z = ceil (x)
+            case GB_CEIL_unop_code :    // z = ceil (x)
 
                 switch (code1)
                 {
@@ -462,7 +462,7 @@
                 }
                 break ;
 
-            case GB_FLOOR_opcode :   // z = floor (x)
+            case GB_FLOOR_unop_code :   // z = floor (x)
 
                 switch (code1)
                 {
@@ -474,7 +474,7 @@
                 }
                 break ;
 
-            case GB_ROUND_opcode :   // z = round (x)
+            case GB_ROUND_unop_code :   // z = round (x)
 
                 switch (code1)
                 {
@@ -486,7 +486,7 @@
                 }
                 break ;
 
-            case GB_TRUNC_opcode :   // z = trunc (x)
+            case GB_TRUNC_unop_code :   // z = trunc (x)
 
                 switch (code1)
                 {
@@ -499,7 +499,7 @@
                 break ;
 
 
-            case GB_EXP2_opcode :    // z = exp2 (x)
+            case GB_EXP2_unop_code :    // z = exp2 (x)
 
                 switch (code1)
                 {
@@ -511,7 +511,7 @@
                 }
                 break ;
 
-            case GB_EXPM1_opcode :   // z = expm1 (x)
+            case GB_EXPM1_unop_code :   // z = expm1 (x)
 
                 switch (code1)
                 {
@@ -523,7 +523,7 @@
                 }
                 break ;
 
-            case GB_LOG10_opcode :   // z = log10 (x)
+            case GB_LOG10_unop_code :   // z = log10 (x)
 
                 switch (code1)
                 {
@@ -535,7 +535,7 @@
                 }
                 break ;
 
-            case GB_LOG1P_opcode :   // z = log1P (x)
+            case GB_LOG1P_unop_code :   // z = log1P (x)
 
                 switch (code1)
                 {
@@ -547,7 +547,7 @@
                 }
                 break ;
 
-            case GB_LOG2_opcode :    // z = log2 (x)
+            case GB_LOG2_unop_code :    // z = log2 (x)
 
                 switch (code1)
                 {
@@ -559,7 +559,7 @@
                 }
                 break ;
 
-            case GB_LGAMMA_opcode :  // z = lgamma (x)
+            case GB_LGAMMA_unop_code :  // z = lgamma (x)
 
                 switch (code1)
                 {
@@ -569,7 +569,7 @@
                 }
                 break ;
 
-            case GB_TGAMMA_opcode :  // z = tgamma (x)
+            case GB_TGAMMA_unop_code :  // z = tgamma (x)
 
                 switch (code1)
                 {
@@ -579,7 +579,7 @@
                 }
                 break ;
 
-            case GB_ERF_opcode :     // z = erf (x)
+            case GB_ERF_unop_code :     // z = erf (x)
 
                 switch (code1)
                 {
@@ -589,7 +589,7 @@
                 }
                 break ;
 
-            case GB_ERFC_opcode :    // z = erfc (x)
+            case GB_ERFC_unop_code :    // z = erfc (x)
 
                 switch (code1)
                 {
@@ -599,7 +599,7 @@
                 }
                 break ;
 
-            case GB_FREXPX_opcode :  // z = frexpx (x), mantissa from ANSI C11 frexp
+            case GB_FREXPX_unop_code :  // z = frexpx (x), mantissa from ANSI C11 frexp
 
                 switch (code1)
                 {
@@ -609,7 +609,7 @@
                 }
                 break ;
 
-            case GB_FREXPE_opcode :  // z = frexpe (x), exponent from ANSI C11 frexp
+            case GB_FREXPE_unop_code :  // z = frexpe (x), exponent from ANSI C11 frexp
 
                 switch (code1)
                 {
@@ -619,7 +619,7 @@
                 }
                 break ;
 
-            case GB_CONJ_opcode :    // z = conj (x)
+            case GB_CONJ_unop_code :    // z = conj (x)
 
                 switch (code1)
                 {

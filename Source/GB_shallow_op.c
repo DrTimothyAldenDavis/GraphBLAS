@@ -149,9 +149,9 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     int64_t anz = GB_nnz_held (A) ;
 
     if ((A->type == op_intype) &&
-        ((opcode == GB_IDENTITY_opcode) ||
-         (opcode == GB_FIRST_opcode  && !binop_bind1st) ||
-         (opcode == GB_SECOND_opcode &&  binop_bind1st)))
+        ((opcode == GB_IDENTITY_unop_code) ||
+         (opcode == GB_FIRST_binop_code  && !binop_bind1st) ||
+         (opcode == GB_SECOND_binop_code &&  binop_bind1st)))
     { 
         // no work is done at all.  C is a pure shallow copy
         GBURBLE ("(pure shallow) ") ;

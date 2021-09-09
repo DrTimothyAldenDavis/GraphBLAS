@@ -129,7 +129,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     struct GB_BinaryOp_opaque op_header ;
     GrB_BinaryOp op = &op_header ;
     GB_binop_new (op, NULL, ztype, ztype, ztype, "1st_ztype", NULL,
-        GB_FIRST_opcode) ;
+        GB_FIRST_binop_code) ;
     ASSERT_BINARYOP_OK (op, "op for reduce-to-vector", GB0) ;
 
     //--------------------------------------------------------------------------

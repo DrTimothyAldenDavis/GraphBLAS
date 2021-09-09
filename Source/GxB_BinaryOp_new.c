@@ -57,7 +57,7 @@ GrB_Info GxB_BinaryOp_new
     //--------------------------------------------------------------------------
 
     GB_binop_new (*op, function, ztype, xtype, ytype, binop_name, binop_defn,
-        GB_USER_opcode) ;
+        GB_USER_binop_code) ;
     return (GrB_SUCCESS) ;
 }
 

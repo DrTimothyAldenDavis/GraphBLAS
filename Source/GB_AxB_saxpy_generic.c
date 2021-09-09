@@ -74,8 +74,8 @@ GrB_Info GB_AxB_saxpy_generic
     ASSERT (mult->ztype == add->op->ztype) ;
     ASSERT (mult->ztype == C->type) ;
 
-    GxB_binary_function fmult = mult->function ;    // NULL if positional
-    GxB_binary_function fadd  = add->op->function ;
+    GxB_binary_function fmult = mult->binop_function ;    // NULL if positional
+    GxB_binary_function fadd  = add->op->binop_function ;
     GB_Opcode opcode = mult->opcode ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
 
@@ -167,7 +167,7 @@ GrB_Info GB_AxB_saxpy_generic
         { 
             // flip a positional multiplicative operator
             bool handled ;
-            opcode = GB_flip_opcode (opcode, &handled) ;  // for positional ops
+            opcode = GB_flip_binop_code (opcode, &handled) ;
             ASSERT (handled) ;      // all positional ops can be flipped
         }
 
@@ -230,22 +230,22 @@ GrB_Info GB_AxB_saxpy_generic
             ASSERT (csize == sizeof (int64_t)) ;
             switch (opcode)
             {
-                case GB_FIRSTI_opcode   :   // z = first_i(A(i,k),y) == i
-                case GB_FIRSTI1_opcode  :   // z = first_i1(A(i,k),y) == i+1
+                case GB_FIRSTI_binop_code   :   // z = first_i(A(i,k),y) == i
+                case GB_FIRSTI1_binop_code  :   // z = first_i1(A(i,k),y) == i+1
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = i + offset
                     #include "GB_AxB_saxpy_template.c"
                     break ;
-                case GB_FIRSTJ_opcode   :   // z = first_j(A(i,k),y) == k
-                case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
-                case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
-                case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
+                case GB_FIRSTJ_binop_code   :   // z = first_j(A(i,k),y) == k
+                case GB_FIRSTJ1_binop_code  :   // z = first_j1(A(i,k),y) == k+1
+                case GB_SECONDI_binop_code  :   // z = second_i(x,B(k,j)) == k
+                case GB_SECONDI1_binop_code :   // z = second_i1(x,B(k,j))== k+1
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = k + offset
                     #include "GB_AxB_saxpy_template.c"
                     break ;
-                case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
-                case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
+                case GB_SECONDJ_binop_code  :   // z = second_j(x,B(k,j)) == j
+                case GB_SECONDJ1_binop_code :   // z = second_j1(x,B(k,j))== j+1
                     #undef  GB_MULT
                     #define GB_MULT(t, aik, bkj, i, k, j) t = j + offset
                     #include "GB_AxB_saxpy_template.c"
@@ -263,22 +263,22 @@ GrB_Info GB_AxB_saxpy_generic
             ASSERT (csize == sizeof (int32_t)) ;
             switch (opcode)
             {
-                case GB_FIRSTI_opcode   :   // z = first_i(A(i,k),y) == i
-                case GB_FIRSTI1_opcode  :   // z = first_i1(A(i,k),y) == i+1
+                case GB_FIRSTI_binop_code   :   // z = first_i(A(i,k),y) == i
+                case GB_FIRSTI1_binop_code  :   // z = first_i1(A(i,k),y) == i+1
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (i + offset)
                     #include "GB_AxB_saxpy_template.c"
                     break ;
-                case GB_FIRSTJ_opcode   :   // z = first_j(A(i,k),y) == k
-                case GB_FIRSTJ1_opcode  :   // z = first_j1(A(i,k),y) == k+1
-                case GB_SECONDI_opcode  :   // z = second_i(x,B(k,j)) == k
-                case GB_SECONDI1_opcode :   // z = second_i1(x,B(k,j)) == k+1
+                case GB_FIRSTJ_binop_code   :   // z = first_j(A(i,k),y) == k
+                case GB_FIRSTJ1_binop_code  :   // z = first_j1(A(i,k),y) == k+1
+                case GB_SECONDI_binop_code  :   // z = second_i(x,B(k,j)) == k
+                case GB_SECONDI1_binop_code :   // z = second_i1(x,B(k,j))== k+1
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (k + offset)
                     #include "GB_AxB_saxpy_template.c"
                     break ;
-                case GB_SECONDJ_opcode  :   // z = second_j(x,B(k,j)) == j
-                case GB_SECONDJ1_opcode :   // z = second_j1(x,B(k,j)) == j+1
+                case GB_SECONDJ_binop_code  :   // z = second_j(x,B(k,j)) == j
+                case GB_SECONDJ1_binop_code :   // z = second_j1(x,B(k,j))== j+1
                     #undef  GB_MULT
                     #define GB_MULT(t,aik,bkj,i,k,j) t = (int32_t) (j + offset)
                     #include "GB_AxB_saxpy_template.c"
@@ -361,17 +361,17 @@ GrB_Info GB_AxB_saxpy_generic
         #undef  GB_CSIZE
         #define GB_CSIZE csize
 
-        if (opcode == GB_FIRST_opcode || opcode == GB_SECOND_opcode)
+        if (opcode == GB_FIRST_binop_code || opcode == GB_SECOND_binop_code)
         {
             // fmult is not used and can be NULL (for user-defined types)
             if (flipxy)
             { 
                 // flip first and second
                 bool handled ;
-                opcode = GB_flip_opcode (opcode, &handled) ; // for 1st and 2nd
+                opcode = GB_flip_binop_code (opcode, &handled) ;
                 ASSERT (handled) ;      // FIRST and SECOND can be flipped
             }
-            if (opcode == GB_FIRST_opcode)
+            if (opcode == GB_FIRST_binop_code)
             { 
                 // t = A(i,k)
                 ASSERT (B_is_pattern) ;
@@ -379,7 +379,7 @@ GrB_Info GB_AxB_saxpy_generic
                 #define GB_MULT(t, aik, bkj, i, k, j) memcpy (t, aik, csize)
                 #include "GB_AxB_saxpy_template.c"
             }
-            else // opcode == GB_SECOND_opcode
+            else // opcode == GB_SECOND_binop_code
             { 
                 // t = B(i,k)
                 ASSERT (A_is_pattern) ;

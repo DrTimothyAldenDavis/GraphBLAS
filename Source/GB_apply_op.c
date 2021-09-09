@@ -95,7 +95,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
         ASSERT (C_code_iso == GB_ISO_1 ||   // C iso value is 1
                 C_code_iso == GB_ISO_S ||   // C iso value is the scalar
                 C_code_iso == GB_ISO_A) ;   // C iso value is the iso value of A
-        opcode = GB_NOP_opcode ;
+        opcode = GB_NOP_code ;
     }
 
     //--------------------------------------------------------------------------
@@ -150,21 +150,21 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
             int64_t *restrict Cx_int = (int64_t *) Cx ;
             switch (opcode)
             {
-                case GB_POSITIONI_opcode  : // z = position_i(A(i,j)) == i
-                case GB_POSITIONI1_opcode : // z = position_i1(A(i,j)) == i+1
-                case GB_FIRSTI_opcode     : // z = first_i(A(i,j),y) == i
-                case GB_FIRSTI1_opcode    : // z = first_i1(A(i,j),y) == i+1
-                case GB_SECONDI_opcode    : // z = second_i(x,A(i,j)) == i
-                case GB_SECONDI1_opcode   : // z = second_i1(x,A(i,j)) == i+1
+                case GB_POSITIONI_unop_code  : // z = position_i(A(i,j)) == i
+                case GB_POSITIONI1_unop_code : // z = position_i1(A(i,j)) == i+1
+                case GB_FIRSTI_binop_code    : // z = first_i(A(i,j),y) == i
+                case GB_FIRSTI1_binop_code   : // z = first_i1(A(i,j),y) == i+1
+                case GB_SECONDI_binop_code   : // z = second_i(x,A(i,j)) == i
+                case GB_SECONDI1_binop_code  : // z = second_i1(x,A(i,j)) == i+1
                     #define GB_POSITION i + offset
                     #include "GB_positional_op_ip.c"
                     return (GrB_SUCCESS) ;
-                case GB_POSITIONJ_opcode  : // z = position_j(A(i,j)) == j
-                case GB_POSITIONJ1_opcode : // z = position_j1(A(i,j)) == j+1
-                case GB_FIRSTJ_opcode     : // z = first_j(A(i,j),y) == j
-                case GB_FIRSTJ1_opcode    : // z = first_j1(A(i,j),y) == j+1
-                case GB_SECONDJ_opcode    : // z = second_j(x,A(i,j)) == j
-                case GB_SECONDJ1_opcode   : // z = second_j1(x,A(i,j)) == j+1
+                case GB_POSITIONJ_unop_code  : // z = position_j(A(i,j)) == j
+                case GB_POSITIONJ1_unop_code : // z = position_j1(A(i,j)) == j+1
+                case GB_FIRSTJ_binop_code    : // z = first_j(A(i,j),y) == j
+                case GB_FIRSTJ1_binop_code   : // z = first_j1(A(i,j),y) == j+1
+                case GB_SECONDJ_binop_code   : // z = second_j(x,A(i,j)) == j
+                case GB_SECONDJ1_binop_code  : // z = second_j1(x,A(i,j)) == j+1
                     #define GB_POSITION j + offset
                     #include "GB_positional_op_ijp.c"
                     return (GrB_SUCCESS) ;
@@ -176,21 +176,21 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
             int32_t *restrict Cx_int = (int32_t *) Cx ;
             switch (opcode)
             {
-                case GB_POSITIONI_opcode  : // z = position_i(A(i,j)) == i
-                case GB_POSITIONI1_opcode : // z = position_i1(A(i,j)) == i+1
-                case GB_FIRSTI_opcode     : // z = first_i(A(i,j),y) == i
-                case GB_FIRSTI1_opcode    : // z = first_i1(A(i,j),y) == i+1
-                case GB_SECONDI_opcode    : // z = second_i(x,A(i,j)) == i
-                case GB_SECONDI1_opcode   : // z = second_i1(x,A(i,j)) == i+1
+                case GB_POSITIONI_unop_code  : // z = position_i(A(i,j)) == i
+                case GB_POSITIONI1_unop_code : // z = position_i1(A(i,j)) == i+1
+                case GB_FIRSTI_binop_code    : // z = first_i(A(i,j),y) == i
+                case GB_FIRSTI1_binop_code   : // z = first_i1(A(i,j),y) == i+1
+                case GB_SECONDI_binop_code   : // z = second_i(x,A(i,j)) == i
+                case GB_SECONDI1_binop_code  : // z = second_i1(x,A(i,j)) == i+1
                     #define GB_POSITION (int32_t) (i + offset)
                     #include "GB_positional_op_ip.c"
                     return (GrB_SUCCESS) ;
-                case GB_POSITIONJ_opcode  : // z = position_j(A(i,j)) == j
-                case GB_POSITIONJ1_opcode : // z = position_j1(A(i,j)) == j+1
-                case GB_FIRSTJ_opcode     : // z = first_j(A(i,j),y) == j
-                case GB_FIRSTJ1_opcode    : // z = first_j1(A(i,j),y) == j+1
-                case GB_SECONDJ_opcode    : // z = second_j(x,A(i,j)) == j
-                case GB_SECONDJ1_opcode   : // z = second_j1(x,A(i,j)) == j+1
+                case GB_POSITIONJ_unop_code  : // z = position_j(A(i,j)) == j
+                case GB_POSITIONJ1_unop_code : // z = position_j1(A(i,j)) == j+1
+                case GB_FIRSTJ_binop_code    : // z = first_j(A(i,j),y) == j
+                case GB_FIRSTJ1_binop_code   : // z = first_j1(A(i,j),y) == j+1
+                case GB_SECONDJ_binop_code   : // z = second_j(x,A(i,j)) == j
+                case GB_SECONDJ1_binop_code  : // z = second_j1(x,A(i,j)) == j+1
                     #define GB_POSITION (int32_t) (j + offset)
                     #include "GB_positional_op_ijp.c"
                     return (GrB_SUCCESS) ;
@@ -229,7 +229,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
         // determine number of threads to use
         int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
         #ifndef GBCOMPACT
-        if (Atype == op1->xtype || opcode == GB_IDENTITY_opcode)
+        if (Atype == op1->xtype || opcode == GB_IDENTITY_unop_code)
         { 
 
             // The switch factory is used if the op1 is IDENTITY, or if no
@@ -271,7 +271,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
         GB_Type_code acode = Atype->code ;
         GB_Type_code xcode = op1->xtype->code ;
         GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
-        GxB_unary_function fop = op1->function ;
+        GxB_unary_function fop = op1->unop_function ;
 
         int64_t p ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -297,10 +297,10 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
         ASSERT_SCALAR_OK (scalar, "scalar for GB_apply_op", GB0) ;
 
         GB_Type_code xcode, ycode, zcode ;
-        ASSERT (opcode != GB_FIRST_opcode) ;
-        ASSERT (opcode != GB_SECOND_opcode) ;
-        ASSERT (opcode != GB_PAIR_opcode) ;
-        ASSERT (opcode != GB_ANY_opcode) ;
+        ASSERT (opcode != GB_FIRST_binop_code) ;
+        ASSERT (opcode != GB_SECOND_binop_code) ;
+        ASSERT (opcode != GB_PAIR_binop_code) ;
+        ASSERT (opcode != GB_ANY_binop_code) ;
 
         size_t asize = Atype->size ;
         size_t ssize = scalar->type->size ;
@@ -417,7 +417,7 @@ GrB_Info GB_apply_op        // apply a unary or binary operator, Cx = op (A)
         GB_BURBLE_N (anz, "(generic apply: %s) ", op2->name) ;
 
         GB_Type_code acode = Atype->code ;
-        GxB_binary_function fop = op2->function ;
+        GxB_binary_function fop = op2->binop_function ;
         ASSERT (!A->iso) ;
 
         if (binop_bind1st)

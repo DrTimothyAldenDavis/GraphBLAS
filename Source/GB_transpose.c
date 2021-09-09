@@ -148,13 +148,13 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
     GrB_UnaryOp  op1 = NULL ;
     GrB_BinaryOp op2 = NULL ;
-    GB_Opcode opcode = GB_NOP_opcode ;
+    GB_Opcode opcode = GB_NOP_code ;
 
     if (op1_in != NULL)
     {
         // get the unary operator
         opcode = op1_in->opcode ;
-        if (atype == op1_in->xtype && opcode == GB_IDENTITY_opcode)
+        if (atype == op1_in->xtype && opcode == GB_IDENTITY_unop_code)
         { 
             // op1 is a built-in identity operator, with the same type as A, so
             // do not apply the operator and do not typecast.  op1 is NULL.
@@ -176,9 +176,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // condition holds: first(A,y), second(x,A) have been renamed to
         // identity(A), and PAIR has been renamed one(A), so these cases do not
         // occur here.
-        ASSERT (!((opcode == GB_PAIR_opcode) ||
-                  (opcode == GB_FIRST_opcode  && !binop_bind1st) ||
-                  (opcode == GB_SECOND_opcode &&  binop_bind1st))) ;
+        ASSERT (!((opcode == GB_PAIR_binop_code) ||
+                  (opcode == GB_FIRST_binop_code  && !binop_bind1st) ||
+                  (opcode == GB_SECOND_binop_code &&  binop_bind1st))) ;
         // apply the operator, z=op2(A,y) or op2(x,A)
         op2 = op2_in ;
         ctype = op2->ztype ;

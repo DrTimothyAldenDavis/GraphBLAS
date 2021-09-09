@@ -1047,7 +1047,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // T(i,j) = (ttype) Sx(k) will be done for all tuples.
 
         #ifndef GBCOMPACT
-        opcode = GB_SECOND_opcode ;
+        opcode = GB_SECOND_binop_code ;
         #endif
         xtype = ttype ;
         ytype = ttype ;
@@ -1081,7 +1081,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         xtype = dup->xtype ;
         ytype = dup->ytype ;
         ztype = dup->ztype ;
-        fdup = dup->function ;
+        fdup = dup->binop_function ;
         op_2nd = GB_op_is_second (dup, ttype) ;
     }
 

@@ -59,18 +59,18 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, A->type, Context));
 
     GB_Type_code acode = A->type->code ;
-    GB_Select_Opcode opcode = op->opcode ;
+    GB_Opcode opcode = op->opcode ;
 
     // these opcodes are not availabe to the user
-    ASSERT (opcode != GB_RESIZE_opcode) ;
-    ASSERT (opcode != GB_NONZOMBIE_opcode) ;
+    ASSERT (opcode != GB_RESIZE_selop_code) ;
+    ASSERT (opcode != GB_NONZOMBIE_selop_code) ;
 
     // check if the op is a GT, GE, LT, or LE comparator
     bool op_is_ordered_comparator =
-        opcode == GB_GT_ZERO_opcode || opcode == GB_GT_THUNK_opcode ||
-        opcode == GB_GE_ZERO_opcode || opcode == GB_GE_THUNK_opcode ||
-        opcode == GB_LT_ZERO_opcode || opcode == GB_LT_THUNK_opcode ||
-        opcode == GB_LE_ZERO_opcode || opcode == GB_LE_THUNK_opcode ;
+        opcode == GB_GT_ZERO_selop_code || opcode == GB_GT_THUNK_selop_code ||
+        opcode == GB_GE_ZERO_selop_code || opcode == GB_GE_THUNK_selop_code ||
+        opcode == GB_LT_ZERO_selop_code || opcode == GB_LT_THUNK_selop_code ||
+        opcode == GB_LE_ZERO_selop_code || opcode == GB_LE_THUNK_selop_code ;
 
     if (op_is_ordered_comparator)
     {
@@ -115,13 +115,13 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     // check if op is (NE, EQ, GT, GE, LT, LE)_THUNK
     bool op_is_thunk_comparator =
-        (opcode >= GB_NE_THUNK_opcode && opcode <= GB_LE_THUNK_opcode) ;
+        (opcode >= GB_NE_THUNK_selop_code && opcode <= GB_LE_THUNK_selop_code) ;
 
     // check if op is TRIL, TRIU, DIAG, or OFFDIAG
     bool op_is_positional = GB_SELECTOP_IS_POSITIONAL (opcode) ;
 
     // check if op is user-defined
-    bool op_is_user_defined = (opcode >= GB_USER_SELECT_opcode) ;
+    bool op_is_user_defined = (opcode == GB_USER_selop_code) ;
 
     int64_t nz_thunk = 0 ;
     GB_void *restrict xthunk = NULL ;
@@ -162,33 +162,33 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         xthunk = (GB_void *) Thunk->x ;
     }
 
-    // if op is user-defined, Thunk must match the op->ttype exactly
+    // if op is user-defined, Thunk must match the op->ytype exactly
     if (op_is_user_defined)
     {
-        if (op->ttype == NULL && Thunk != NULL)
+        if (op->ytype == NULL && Thunk != NULL)
         { 
             // select operator does not take a Thunk, but one is present
             GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "User-defined operator %s(A,Thunk) does not take a Thunk\n"
                 "input, but Thunk parameter is non-NULL", op->name) ;
         }
-        else if (op->ttype != NULL && Thunk == NULL)
+        else if (op->ytype != NULL && Thunk == NULL)
         { 
             // select operator takes a Thunk, but Thunk parameter is missing
             GB_ERROR (GrB_NULL_POINTER,
                 "Required argument is null: [%s]", "Thunk") ;
         }
-        else if (op->ttype != NULL && Thunk != NULL)
+        else if (op->ytype != NULL && Thunk != NULL)
         {
             // select operator takes a Thunk, and it is present on input.
             // The types must match exactly.
-            if (op->ttype != ttype)
+            if (op->ytype != ttype)
             { 
                 GB_ERROR (GrB_DOMAIN_MISMATCH,
                     "User-defined operator %s(A,Thunk) has a Thunk input\n"
                     "type of [%s], which must exactly match the type of the\n"
                     "Thunk parameter; parameter to GxB_select has type [%s]",
-                    op->name, op->ttype->name, ttype->name) ;
+                    op->name, op->ytype->name, ttype->name) ;
             }
             if (nz_thunk != 1)
             { 
@@ -285,13 +285,13 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         if (flipij)
         {
             ithunk = -ithunk ;
-            if (opcode == GB_TRIL_opcode)
+            if (opcode == GB_TRIL_selop_code)
             { 
-                opcode = GB_TRIU_opcode ;
+                opcode = GB_TRIU_selop_code ;
             }
-            else if (opcode == GB_TRIU_opcode)
+            else if (opcode == GB_TRIU_selop_code)
             { 
-                opcode = GB_TRIL_opcode ;
+                opcode = GB_TRIL_selop_code ;
             }
             flipij = false ;
         }
@@ -307,7 +307,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         switch (opcode)
         {
 
-            case GB_GT_ZERO_opcode   :  // A(i,j) > 0
+            case GB_GT_ZERO_selop_code   :  // A(i,j) > 0
 
                 // bool and uint: rename GxB_GT_ZERO to GxB_NONZERO
                 // user type: return error above
@@ -317,12 +317,12 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     case GB_UINT8_code  : 
                     case GB_UINT16_code : 
                     case GB_UINT32_code : 
-                    case GB_UINT64_code : opcode = GB_NONZERO_opcode ; break ;
+                    case GB_UINT64_code : opcode = GB_NONZERO_selop_code ; break ;
                     default: ;
                 }
                 break ;
 
-            case GB_GE_ZERO_opcode   :  // A(i,j) >= 0
+            case GB_GE_ZERO_selop_code   :  // A(i,j) >= 0
 
                 // bool and uint: always true; use GB_dup_worker
                 // user type: return error above
@@ -337,7 +337,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 }
                 break ;
 
-            case GB_LT_ZERO_opcode   :  // A(i,j) < 0
+            case GB_LT_ZERO_selop_code   :  // A(i,j) < 0
 
                 // bool and uint: always false; return an empty matrix
                 // user type: return error above
@@ -352,7 +352,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 }
                 break ;
 
-            case GB_LE_ZERO_opcode   :  // A(i,j) <= 0
+            case GB_LE_ZERO_selop_code   :  // A(i,j) <= 0
 
                 // bool and uint: rename GxB_LE_ZERO to GxB_EQ_ZERO
                 // user type: return error above
@@ -362,32 +362,32 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     case GB_UINT8_code  : 
                     case GB_UINT16_code : 
                     case GB_UINT32_code : 
-                    case GB_UINT64_code : opcode = GB_EQ_ZERO_opcode ; break ;
+                    case GB_UINT64_code : opcode = GB_EQ_ZERO_selop_code ; break ;
                     default: ;
                 }
                 break ;
 
-            case GB_NE_THUNK_opcode   : // A(i,j) != thunk
+            case GB_NE_THUNK_selop_code   : // A(i,j) != thunk
 
                 // bool: if thunk is true,  rename GxB_NE_THUNK to GxB_EQ_ZERO 
                 //       if thunk is false, rename GxB_NE_THUNK to GxB_NONZERO 
                 if (acode == GB_BOOL_code)
                 { 
-                    opcode = (bthunk) ? GB_EQ_ZERO_opcode : GB_NONZERO_opcode ;
+                    opcode = (bthunk) ? GB_EQ_ZERO_selop_code : GB_NONZERO_selop_code ;
                 }
                 break ;
 
-            case GB_EQ_THUNK_opcode   : // A(i,j) == thunk
+            case GB_EQ_THUNK_selop_code   : // A(i,j) == thunk
 
                 // bool: if thunk is true,  rename GxB_NE_THUNK to GxB_NONZERO 
                 //       if thunk is false, rename GxB_NE_THUNK to GxB_EQ_ZERO 
                 if (acode == GB_BOOL_code)
                 { 
-                    opcode = (bthunk) ? GB_NONZERO_opcode : GB_EQ_ZERO_opcode ;
+                    opcode = (bthunk) ? GB_NONZERO_selop_code : GB_EQ_ZERO_selop_code ;
                 }
                 break ;
 
-            case GB_GT_THUNK_opcode   : // A(i,j) > thunk
+            case GB_GT_THUNK_selop_code   : // A(i,j) > thunk
 
                 // bool: if thunk is true,  return an empty matrix
                 //       if thunk is false, rename GxB_GT_THUNK to GxB_NONZERO
@@ -401,12 +401,12 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     else
                     { 
                         // rename GT_THUNK to NONZERO for boolean
-                        opcode = GB_NONZERO_opcode ;
+                        opcode = GB_NONZERO_selop_code ;
                     }
                 }
                 break ;
 
-            case GB_GE_THUNK_opcode   : // A(i,j) >= thunk
+            case GB_GE_THUNK_selop_code   : // A(i,j) >= thunk
 
                 // bool: if thunk is true,  rename GxB_GE_THUNK to GxB_NONZERO
                 //       if thunk is false, use GB_dup_worker
@@ -415,7 +415,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 {
                     if (bthunk)
                     { 
-                        opcode = GB_NONZERO_opcode ;
+                        opcode = GB_NONZERO_selop_code ;
                     }
                     else
                     { 
@@ -425,7 +425,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 }
                 break ;
 
-            case GB_LT_THUNK_opcode   : // A(i,j) < thunk
+            case GB_LT_THUNK_selop_code   : // A(i,j) < thunk
 
                 // bool: if thunk is true,  rename GxB_LT_THUNK to GxB_EQ_ZERO
                 //       if thunk is false, return an empty matrix
@@ -434,7 +434,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 {
                     if (bthunk)
                     { 
-                        opcode = GB_EQ_ZERO_opcode ;
+                        opcode = GB_EQ_ZERO_selop_code ;
                     }
                     else
                     { 
@@ -444,7 +444,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 }
                 break ;
 
-            case GB_LE_THUNK_opcode   : // A(i,j) <= thunk
+            case GB_LE_THUNK_selop_code   : // A(i,j) <= thunk
 
                 // bool: if thunk is true,  use GB_dup_worker
                 //       if thunk is false, rename GxB_LE_ZERO to GxB_EQ_ZERO
@@ -458,7 +458,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     }
                     else
                     { 
-                        opcode = GB_EQ_ZERO_opcode ;
+                        opcode = GB_EQ_ZERO_selop_code ;
                     }
                 }
                 break ;

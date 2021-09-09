@@ -47,7 +47,7 @@ void GB_burble_assign
     else
     {
         // use a simpler version of accum->name
-        if (accum->opcode == GB_USER_opcode) Op = "op" ;
+        if (accum->opcode == GB_USER_binop_code) Op = "op" ;
         else if (GB_STRING_MATCH (accum->name, "plus")) Op = "+" ;
         else if (GB_STRING_MATCH (accum->name, "minus")) Op = "-" ;
         else if (GB_STRING_MATCH (accum->name, "times")) Op = "*" ;

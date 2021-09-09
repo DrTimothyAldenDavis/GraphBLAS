@@ -116,11 +116,11 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (C_is_sparse_or_hyper == (Cp != NULL)) ;
     ASSERT (C_is_hyper == (Ch != NULL)) ;
 
-    GB_Opcode opcode = (op == NULL) ? GB_NOP_opcode : op->opcode ;
+    GB_Opcode opcode = (op == NULL) ? GB_NOP_code : op->opcode ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
-    bool op_is_first  = (opcode == GB_FIRST_opcode) ;
-    bool op_is_second = (opcode == GB_SECOND_opcode) ;
-    bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
+    bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
+    bool op_is_second = (opcode == GB_SECOND_binop_code) ;
+    bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
 
     if (op == NULL)
     { 
@@ -307,7 +307,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         else
         {
             // normal case, with optional typecasting
-            fadd = op->function ;       // NULL if op is positional
+            fadd = op->binop_function ;       // NULL if op is positional
             asize = A->type->size ;
             bsize = B->type->size ;
 
@@ -394,20 +394,20 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             { 
                 switch (opcode)
                 {
-                    case GB_FIRSTI_opcode    : // z = first_i(A(i,j),y) == i
-                    case GB_FIRSTI1_opcode   : // z = first_i1(A(i,j),y) == i+1
-                    case GB_SECONDI_opcode   : // z = second_i(x,A(i,j)) == i
-                    case GB_SECONDI1_opcode  : // z = second_i1(x,A(i,j)) == i+1
+                    case GB_FIRSTI_binop_code    : // first_i(A(i,j),y) == i
+                    case GB_FIRSTI1_binop_code   : // first_i1(A(i,j),y) == i+1
+                    case GB_SECONDI_binop_code   : // second_i(x,A(i,j)) == i
+                    case GB_SECONDI1_binop_code  : // second_i1(x,A(i,j)) == i+1
                         #undef  GB_BINOP
                         #define GB_BINOP(cij, aij, bij, i, j)   \
                             int64_t z = i + offset ;            \
                             cast_Z_to_C (cij, &z, csize) ;
                         #include "GB_add_template.c"
                         break ;
-                    case GB_FIRSTJ_opcode    : // z = first_j(A(i,j),y) == j
-                    case GB_FIRSTJ1_opcode   : // z = first_j1(A(i,j),y) == j+1
-                    case GB_SECONDJ_opcode   : // z = second_j(x,A(i,j)) == j
-                    case GB_SECONDJ1_opcode  : // z = second_j1(x,A(i,j)) == j+1
+                    case GB_FIRSTJ_binop_code    : // first_j(A(i,j),y) == j
+                    case GB_FIRSTJ1_binop_code   : // first_j1(A(i,j),y) == j+1
+                    case GB_SECONDJ_binop_code   : // second_j(x,A(i,j)) == j
+                    case GB_SECONDJ1_binop_code  : // second_j1(x,A(i,j)) == j+1
                         #undef  GB_BINOP
                         #define GB_BINOP(cij, aij, bij, i, j)   \
                             int64_t z = j + offset ;            \
@@ -421,20 +421,20 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             { 
                 switch (opcode)
                 {
-                    case GB_FIRSTI_opcode    : // z = first_i(A(i,j),y) == i
-                    case GB_FIRSTI1_opcode   : // z = first_i1(A(i,j),y) == i+1
-                    case GB_SECONDI_opcode   : // z = second_i(x,A(i,j)) == i
-                    case GB_SECONDI1_opcode  : // z = second_i1(x,A(i,j)) == i+1
+                    case GB_FIRSTI_binop_code    : // first_i(A(i,j),y) == i
+                    case GB_FIRSTI1_binop_code   : // first_i1(A(i,j),y) == i+1
+                    case GB_SECONDI_binop_code   : // second_i(x,A(i,j)) == i
+                    case GB_SECONDI1_binop_code  : // second_i1(x,A(i,j)) == i+1
                         #undef  GB_BINOP
                         #define GB_BINOP(cij, aij, bij, i, j)       \
                             int32_t z = (int32_t) (i + offset) ;    \
                             cast_Z_to_C (cij, &z, csize) ;
                         #include "GB_add_template.c"
                         break ;
-                    case GB_FIRSTJ_opcode    : // z = first_j(A(i,j),y) == j
-                    case GB_FIRSTJ1_opcode   : // z = first_j1(A(i,j),y) == j+1
-                    case GB_SECONDJ_opcode   : // z = second_j(x,A(i,j)) == j
-                    case GB_SECONDJ1_opcode  : // z = second_j1(x,A(i,j)) == j+1
+                    case GB_FIRSTJ_binop_code    : // first_j(A(i,j),y) == j
+                    case GB_FIRSTJ1_binop_code   : // first_j1(A(i,j),y) == j+1
+                    case GB_SECONDJ_binop_code   : // second_j(x,A(i,j)) == j
+                    case GB_SECONDJ1_binop_code  : // second_j1(x,A(i,j)) == j+1
                         #undef  GB_BINOP
                         #define GB_BINOP(cij, aij, bij, i, j)       \
                             int32_t z = (int32_t) (j + offset) ;    \

@@ -38,7 +38,7 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
     GB_CHECK_MAGIC (op) ;
 
     GB_Opcode opcode = op->opcode ;
-    if (opcode >= GB_USER_opcode)
+    if (opcode == GB_USER_idxunop_code)
     { 
         GBPR0 ("(user-defined) ") ;
     }
@@ -49,15 +49,16 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
 
     GBPR0 ("z=%s(x,y)\n", op->name) ;
 
-    if (op->function == NULL)
+    if (op->idxunop_function == NULL)
     { 
         GBPR0 ("    IndexUnaryOp has a NULL function pointer\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 
-    if (opcode != GB_USER_opcode)
+    if (opcode != GB_USER_idxunop_code)
     {
-        if (opcode < GB_ROWINDEX_idxopcode || opcode > GB_VALUEGE_idxopcode)
+        if (opcode < GB_ROWINDEX_idxunop_code
+         || opcode > GB_VALUEGE_idxunop_code)
         { 
             GBPR0 ("    invalid opcode\n") ;
             return (GrB_INVALID_OBJECT) ;
@@ -80,10 +81,10 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
-    info = GB_Type_check (op->ttype, "ttype", pr, f) ;
+    info = GB_Type_check (op->ytype, "thunk type", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
-        GBPR0 ("    IndexUnaryOp has an invalid ttype\n") ;
+        GBPR0 ("    IndexUnaryOp has an invalid thunk type\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 

@@ -348,9 +348,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     GB_Opcode opcode = semiring->multiply->opcode  ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
-    bool op_is_first  = (opcode == GB_FIRST_opcode) ;
-    bool op_is_second = (opcode == GB_SECOND_opcode) ;
-    bool op_is_pair   = (opcode == GB_PAIR_opcode) ;
+    bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
+    bool op_is_second = (opcode == GB_SECOND_binop_code) ;
+    bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
     bool A_is_pattern ;
     bool B_is_pattern ;
 
@@ -373,7 +373,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     }
 
     bool allow_scale = true ;
-    if (semiring->multiply->function == NULL && (op_is_first || op_is_second))
+    if (semiring->multiply->binop_function == NULL && (op_is_first || op_is_second))
     { 
         // GB_AxB_rowscale and GB_AxB_colscale do not handle the implicit FIRST
         // operator for GB_reduce_to_vector.  They do handle any other

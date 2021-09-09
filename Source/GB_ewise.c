@@ -275,7 +275,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         && (M == NULL) && !Mask_comp        // no mask
         && (C->is_csc == T_is_csc)          // no transpose of C
         && no_typecast                      // no typecasting
-        && (opcode < GB_USER_opcode)        // not a user-defined operator
+        && (opcode != GB_USER_binop_code)   // not a user-defined operator
         && !op_is_positional                // op is not positional
         && !any_bitmap                      // no bitmap matrices
         && !any_pending_work)               // no matrix has pending work
@@ -284,8 +284,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         if (C_as_if_full                    // C is as-if-full
         && !C->iso                          // C is not iso
         && accum == op                      // accum is same as the op
-        && (opcode >= GB_MIN_opcode)        // subset of binary operators
-        && (opcode <= GB_RDIV_opcode))
+        && (opcode >= GB_MIN_binop_code)    // subset of binary operators
+        && (opcode <= GB_RDIV_binop_code))
         { 
 
             //------------------------------------------------------------------

@@ -54,8 +54,14 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     op->header_size = header_size ;
     op->xtype = xtype ;
     op->ztype = ztype ;
-    op->function = function ;
-    op->opcode = GB_USER_opcode ;   // user-defined operator
+    op->ytype = NULL ;
+
+    op->unop_function = function ;
+    op->idxunop_function = NULL ;
+    op->binop_function = NULL ;
+    op->selop_function = NULL ;
+
+    op->opcode = GB_USER_unop_code ;   // user-defined operator
     // get the unary op name and defn
     GB_op_name_and_defn (op->name, &(op->defn), unop_name, unop_defn,
         "GxB_unary_function", 18) ;

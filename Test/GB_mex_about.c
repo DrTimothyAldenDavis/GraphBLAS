@@ -901,7 +901,7 @@ void mexFunction
     user_type->magic = 0xDEAD ;
     ERR (GxB_Type_fprint_(user_type, GxB_COMPLETE, NULL)) ;
     expected = GrB_INVALID_OBJECT ;
-    selectop->ttype = user_type ;
+    selectop->ytype = user_type ;
     ERR (GxB_SelectOp_fprint_(selectop, GxB_COMPLETE, NULL)) ;
     user_type->magic = GB_MAGIC ;
 

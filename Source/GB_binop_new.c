@@ -44,10 +44,13 @@ void GB_binop_new
     //--------------------------------------------------------------------------
 
     op->magic = GB_MAGIC ;
+    op->ztype = ztype ;
     op->xtype = xtype ;
     op->ytype = ytype ;
-    op->ztype = ztype ;
-    op->function = function ;       // may be NULL
+    op->unop_function = NULL ;
+    op->idxunop_function = NULL ;
+    op->binop_function = function ;       // may be NULL
+    op->selop_function = NULL ;
     op->opcode = opcode ;
     // get the binary op name and defn
     GB_op_name_and_defn (op->name, &(op->defn), binop_name, binop_defn,

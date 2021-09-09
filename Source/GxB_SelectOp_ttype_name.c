@@ -30,7 +30,7 @@ GrB_Info GxB_SelectOp_ttype_name    // return the name of the type of t
     // get the type_name
     //--------------------------------------------------------------------------
 
-    memcpy (type_name, selectop->ttype->name, GxB_MAX_NAME_LEN) ;
+    memcpy (type_name, selectop->ytype->name, GxB_MAX_NAME_LEN) ;
     return (GrB_SUCCESS) ;
 }
 

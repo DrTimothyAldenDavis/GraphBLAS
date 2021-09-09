@@ -62,11 +62,16 @@ GrB_Info GxB_IndexUnaryOp_new       // create a new user-defined index_unary op
     //--------------------------------------------------------------------------
 
     (*op)->magic = GB_MAGIC ;
-    (*op)->xtype = xtype ;
-    (*op)->ttype = ttype ;
     (*op)->ztype = ztype ;
-    (*op)->function = function ;
-    (*op)->opcode = GB_USER_opcode ;
+    (*op)->xtype = xtype ;
+    (*op)->ytype = ttype ;      // thunk type
+
+    (*op)->unop_function = NULL ;
+    (*op)->idxunop_function = function ;
+    (*op)->binop_function = NULL ;
+    (*op)->selop_function = NULL ;
+
+    (*op)->opcode = GB_USER_idxunop_code ;
     // get the index_unary op name and defn
     GB_op_name_and_defn ((*op)->name, &((*op)->defn), idxop_name, idxop_defn,
         "GxB_index_unary_function", 24) ;

@@ -31,7 +31,7 @@ GB_iso_code GB_iso_unop_code
     // get the opcode
     //--------------------------------------------------------------------------
 
-    GB_Opcode opcode = GB_NOP_opcode ;
+    GB_Opcode opcode = GB_NOP_code ;
     if (op1 != NULL) opcode = op1->opcode ;
     if (op2 != NULL) opcode = op2->opcode ;
 
@@ -49,7 +49,7 @@ GB_iso_code GB_iso_unop_code
     // C = op1 (A) or pair (...)
     //--------------------------------------------------------------------------
 
-    if ((opcode == GB_ONE_opcode) || (opcode == GB_PAIR_opcode))
+    if ((opcode == GB_ONE_unop_code) || (opcode == GB_PAIR_binop_code))
     { 
         // if op1 is ONE or op2 is PAIR, then C is iso, with a value
         // equal to 1
@@ -60,9 +60,9 @@ GB_iso_code GB_iso_unop_code
     // C = op2 (scalar,A) or op2 (A,scalar)
     //--------------------------------------------------------------------------
 
-    if ((opcode == GB_ANY_opcode) ||                        // C = any(...)
-        (opcode == GB_FIRST_opcode  &&  binop_bind1st) ||   // C = first(x,A)
-        (opcode == GB_SECOND_opcode && !binop_bind1st))     // C = second(A,y)
+    if ((opcode == GB_ANY_binop_code) ||                      // C = any(...)
+        (opcode == GB_FIRST_binop_code  &&  binop_bind1st) || // C = first(x,A)
+        (opcode == GB_SECOND_binop_code && !binop_bind1st))   // C = second(A,y)
     { 
         // if op2 is FIRST and binop_bind1st is true, or if op2 is SECOND and
         // binop_bind1st is false, or if op2 is ANY, then C is iso, with a
@@ -76,7 +76,7 @@ GB_iso_code GB_iso_unop_code
 
     if (A->iso)
     {
-        if (opcode == GB_NOP_opcode || opcode == GB_IDENTITY_opcode)
+        if (opcode == GB_NOP_code || opcode == GB_IDENTITY_unop_code)
         { 
             // C = (ctype) A
             return (GB_ISO_A) ;

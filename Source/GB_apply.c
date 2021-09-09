@@ -85,9 +85,9 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         opcode = op2->opcode ;
         if (!GB_OPCODE_IS_POSITIONAL (opcode))
         {
-            bool op_is_first  = opcode == GB_FIRST_opcode ;
-            bool op_is_second = opcode == GB_SECOND_opcode ;
-            bool op_is_pair   = opcode == GB_PAIR_opcode ;
+            bool op_is_first  = opcode == GB_FIRST_binop_code ;
+            bool op_is_second = opcode == GB_SECOND_binop_code ;
+            bool op_is_pair   = opcode == GB_PAIR_binop_code ;
             if (binop_bind1st)
             {
                 // C = op (scalar,A)
@@ -223,7 +223,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         // C = op (C), operating on the values in-place, with no typecasting
         // of the output of the operator with the matrix C.
         // No work to do if the op is identity.
-        if (opcode != GB_IDENTITY_opcode)
+        if (opcode != GB_IDENTITY_unop_code)
         {
             // the output Cx is aliased with C->x in GB_apply_op.
             GB_iso_code
