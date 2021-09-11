@@ -42,7 +42,7 @@
 GrB_Info GB_selector
 (
     GrB_Matrix C,               // output matrix, NULL or static header
-    GB_Opcode opcode,    // selector opcode
+    GB_Opcode opcode,           // selector opcode
     const GxB_SelectOp op,      // user operator
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
@@ -59,14 +59,14 @@ GrB_Info GB_selector
     GrB_Info info ;
     ASSERT_SELECTOP_OK_OR_NULL (op, "selectop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_selector", GB0) ;
-    ASSERT (opcode >= 0 && opcode <= GB_USER_selop_code) ;
+    ASSERT (GB_IS_SELECTOP_CODE (opcode)) ;
     ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
     // positional selector (tril, triu, diag, offdiag, resize): can't be jumbled
     ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_selop_code ||
         opcode == GB_USER_selop_code, !GB_JUMBLED (A))) ;
-    // nonzombie, nentry selector: jumbled OK
-    ASSERT (GB_IMPLIES (opcode > GB_RESIZE_selop_code && 
-        opcode < GB_USER_selop_code, GB_JUMBLED_OK (A))) ;
+    // nonzombie, entry-valued selector: jumbled OK
+    ASSERT (GB_IMPLIES (opcode >= GB_NONZOMBIE_selop_code && 
+        opcode <= GB_LE_THUNK_selop_code, GB_JUMBLED_OK (A))) ;
     ASSERT (C == NULL || (C != NULL && C->static_header)) ;
 
     //--------------------------------------------------------------------------
@@ -115,7 +115,7 @@ GrB_Info GB_selector
         xthunk = (GB_void *) Thunk->x ;
         const GB_Type_code tcode = Thunk->type->code ;
         ithunk = 0 ;
-        if (tcode <= GB_FP64_code && opcode < GB_USER_selop_code)
+        if (tcode <= GB_FP64_code && opcode != GB_USER_selop_code)
         { 
             // ithunk = (int64_t) Thunk
             GB_cast_scalar (&ithunk, GB_INT64_code, xthunk, tcode,
@@ -183,7 +183,7 @@ GrB_Info GB_selector
     //      GB_OFFDIAG_selop_code     : use GB_sel__offdiag_iso
     //      GB_RESIZE_selop_code      : use GB_sel__resize_iso
     //      GB_NONZOMBIE_selop_code   : use GB_sel__nonzombie_iso
-    //      GB_USER_selop_code : use GB_sel__user_iso
+    //      GB_USER_selop_code        : use GB_sel__user_iso
 
     // Except for GB_USER_selop_code, the GB_sel__*_iso methods do not
     // access the values of A and C, just the pattern.
@@ -193,7 +193,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GxB_select_function user_select = NULL ;
-    if (op != NULL && opcode >= GB_USER_selop_code)
+    if (op != NULL && opcode == GB_USER_selop_code)
     { 
         GB_BURBLE_MATRIX (A, "(user select: %s) ", op->name) ;
         user_select = (GxB_select_function) (op->selop_function) ;

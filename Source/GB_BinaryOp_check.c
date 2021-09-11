@@ -43,28 +43,26 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     //--------------------------------------------------------------------------
 
     GB_CHECK_MAGIC (op) ;
-
-    GBPR0 ("z=%s(x,y), ", op->name) ;
-
     GB_Opcode opcode = op->opcode ;
+    if (!GB_IS_BINARYOP_CODE (opcode))
+    { 
+        GBPR0 ("    BinaryOp has an invalid opcode\n") ;
+        return (GrB_INVALID_OBJECT) ;
+    }
+    if (opcode == GB_USER_binop_code)
+    { 
+        GBPR0 ("(user-defined) ") ;
+    }
+    else
+    { 
+        GBPR0 ("(built-in) ") ;
+    }
+    GBPR0 ("z=%s(x,y)\n", op->name) ;
+
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
-
-    if (opcode == GB_USER_binop_code)
-    { 
-        GBPR0 ("(user-defined)\n") ;
-    }
-    else
-    { 
-        GBPR0 ("(built-in)\n") ;
-        if (opcode < GB_FIRST_binop_code || opcode > GB_SECONDJ1_binop_code)
-        { 
-            GBPR0 ("    BinaryOp has an invalid opcode\n") ;
-            return (GrB_INVALID_OBJECT) ;
-        }
-    }
 
     if (!(op_is_positional || op_is_first || op_is_second)
        && op->binop_function == NULL)

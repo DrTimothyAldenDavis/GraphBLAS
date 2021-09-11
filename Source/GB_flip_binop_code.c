@@ -70,7 +70,6 @@ GB_Opcode GB_flip_binop_code    // flipped binary opcode, or -1 on error
         case GB_SECONDI1_binop_code : return (GB_FIRSTJ1_binop_code) ;
 
         // these operators are not commutative and do not have flipped ops:
-        default:
         case GB_POW_binop_code          :
         case GB_BGET_binop_code         :
         case GB_BSET_binop_code         :
@@ -83,6 +82,7 @@ GB_Opcode GB_flip_binop_code    // flipped binary opcode, or -1 on error
         case GB_LDEXP_binop_code        :
         case GB_CMPLX_binop_code        :
         case GB_USER_binop_code         :
+        default:
             (*handled) = false ;
             return (opcode) ;
 

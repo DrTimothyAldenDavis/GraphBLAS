@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// This file is #include'd many times in GB.h to define the unary and binary
-// functions.
+// This file is #include'd many times in GB_ops.h to define the unary and
+// binary functions.
 
 #define GB_UNOP_STRUCT(op,xtype) \
     GB_PUBLIC struct GB_UnaryOp_opaque GB_OPAQUE (GB_EVAL3 (op, _, xtype)) ; 

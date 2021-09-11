@@ -64,6 +64,7 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     // check the monoid
     //--------------------------------------------------------------------------
 
+    ASSERT (GB_IS_BINARYOP_CODE (*add_binop_code)) ;
     (*add_binop_code) = add->opcode ;
     if (*add_binop_code == GB_USER_binop_code)
     { 

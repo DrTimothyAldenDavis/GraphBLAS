@@ -36,30 +36,31 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
     //--------------------------------------------------------------------------
 
     GB_CHECK_MAGIC (op) ;
-
-    GBPR0 ("z=%s(x), ", op->name) ;
-
     GB_Opcode opcode = op->opcode ;
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
-    bool op_is_one = (opcode == GB_ONE_unop_code) ;
-
+    if (!GB_IS_UNARYOP_CODE (opcode))
+    { 
+        GBPR0 ("    UnaryOp has an invalid opcode\n") ;
+        return (GrB_INVALID_OBJECT) ;
+    }
     if (opcode == GB_USER_unop_code)
     { 
-        GBPR0 ("(user-defined)\n") ;
+        GBPR0 ("(user-defined) ") ;
     }
     else
     { 
-        GBPR0 ("(built-in)\n") ;
-        if (opcode < GB_ONE_unop_code || opcode > GB_POSITIONJ1_unop_code)
-        { 
-            GBPR0 ("    invalid opcode\n") ;
-            return (GrB_INVALID_OBJECT) ;
-        }
+        GBPR0 ("(built-in) ") ;
     }
+    GBPR0 ("z=%s(x)\n", op->name) ;
+
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_one = (opcode == GB_ONE_unop_code) ;
+
+    printf ("op_is_positional: %d\n", op_is_positional) ;
+    printf ("op->unop_function: %p\n", op->unop_function) ;
 
     if (!op_is_positional && op->unop_function == NULL)
     { 
-        GBPR0 ("    function pointer is NULL\n") ;
+        GBPR0 ("    UnaryOp has a NULL function pointer\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 
@@ -68,7 +69,7 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
     info = GB_Type_check (op->ztype, "ztype", pr, f) ;
     if (info != GrB_SUCCESS)
     { 
-        GBPR0 ("    UnaryOP has an invalid ztype\n") ;
+        GBPR0 ("    UnaryOp has an invalid ztype\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 
@@ -77,7 +78,7 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
         info = GB_Type_check (op->xtype, "xtype", pr, f) ;
         if (info != GrB_SUCCESS)
         { 
-            GBPR0 ("    UnaryOP has an invalid xtype\n") ;
+            GBPR0 ("    UnaryOp has an invalid xtype\n") ;
             return (GrB_INVALID_OBJECT) ;
         }
     }

@@ -64,6 +64,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
         op_ztype = op->ztype ;
     }
 
+    ASSERT (GB_IS_BINARYOP_CODE (*opcode)) ;
     if (*opcode == GB_USER_binop_code)
     { 
         // the binary operator is user-defined

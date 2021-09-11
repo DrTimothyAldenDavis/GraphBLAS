@@ -10,6 +10,10 @@
 #ifndef GB_OPS_H
 #define GB_OPS_H
 
+//------------------------------------------------------------------------------
+// define all built-in unary and binary operators
+//------------------------------------------------------------------------------
+
 #define GB_FUNC_T(op,xtype) GB (GB_EVAL4 (_func_, op, _, xtype))
 #define GB_FUNC(op) GB_FUNC_T (op, GB_XTYPE)
 

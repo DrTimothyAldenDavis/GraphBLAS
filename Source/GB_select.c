@@ -60,6 +60,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     GB_Type_code acode = A->type->code ;
     GB_Opcode opcode = op->opcode ;
+    ASSERT (GB_IS_SELECTOP_CODE (opcode)) ;
 
     // these opcodes are not availabe to the user
     ASSERT (opcode != GB_RESIZE_selop_code) ;
@@ -118,7 +119,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         (opcode >= GB_NE_THUNK_selop_code && opcode <= GB_LE_THUNK_selop_code) ;
 
     // check if op is TRIL, TRIU, DIAG, or OFFDIAG
-    bool op_is_positional = GB_SELECTOP_IS_POSITIONAL (opcode) ;
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
 
     // check if op is user-defined
     bool op_is_user_defined = (opcode == GB_USER_selop_code) ;

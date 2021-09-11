@@ -38,6 +38,7 @@ void GB_binop_new
     ASSERT (ztype != NULL) ;
     ASSERT (xtype != NULL) ;
     ASSERT (ytype != NULL) ;
+    ASSERT (GB_IS_BINARYOP_CODE (opcode)) ;
 
     //--------------------------------------------------------------------------
     // initialize the binary operator
