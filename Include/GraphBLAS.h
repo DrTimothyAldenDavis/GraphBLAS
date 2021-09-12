@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Sept 9, 2021 (alpha)"
+#define GxB_IMPLEMENTATION_DATE "Sept 11, 2021 (alpha2)"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -732,9 +732,9 @@ GrB_Info GRB (Type_new)         // create a new GraphBLAS type
 // GrB_Type_new as a user-callable macro, which allows the name of the ctype
 // to be added to the new type.  The type_defn is unknown.
 #define GrB_Type_new(utype, sizeof_ctype) \
-    GxB_Type_new (utype, sizeof_ctype, GB_STR(sizeof_ctype), NULL)
+        GxB_Type_new(utype, sizeof_ctype, GB_STR(sizeof_ctype), NULL)
 #define GrM_Type_new(utype, sizeof_ctype) \
-    GxB_Type_new (utype, sizeof_ctype, GB_STR(sizeof_ctype), NULL)
+        GxB_Type_new(utype, sizeof_ctype, GB_STR(sizeof_ctype), NULL)
 
 // GxB_Type_new creates a type with a name and definition that are known to
 // GraphBLAS, as strings.  The type_name is any valid string (max length of 128
@@ -1005,8 +1005,10 @@ GrB_Info GRB (UnaryOp_new)           // create a new user-defined unary operator
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype                  // type of input x
 ) ;
-#define GrB_UnaryOp_new(op,f,z,x) GxB_UnaryOp_new (op,f,z,x, GB_STR(f), NULL)
-#define GrM_UnaryOp_new(op,f,z,x) GxM_UnaryOp_new (op,f,z,x, GB_STR(f), NULL)
+#define GrB_UnaryOp_new(op,f,z,x) \
+        GxB_UnaryOp_new(op,f,z,x, GB_STR(f), NULL)
+#define GrM_UnaryOp_new(op,f,z,x) \
+        GxM_UnaryOp_new(op,f,z,x, GB_STR(f), NULL)
 
 // GxB_UnaryOp_new creates a named user-defined unary op.
 GB_PUBLIC
@@ -1469,8 +1471,10 @@ GrB_Info GRB (BinaryOp_new)
     GrB_Type xtype,                 // type of input x
     GrB_Type ytype                  // type of input y
 ) ;
-#define GrB_BinaryOp_new(op,f,z,x,y) GxB_BinaryOp_new(op,f,z,x,y,GB_STR(f),NULL)
-#define GrM_BinaryOp_new(op,f,z,x,y) GxM_BinaryOp_new(op,f,z,x,y,GB_STR(f),NULL)
+#define GrB_BinaryOp_new(op,f,z,x,y) \
+        GxB_BinaryOp_new(op,f,z,x,y, GB_STR(f), NULL)
+#define GrM_BinaryOp_new(op,f,z,x,y) \
+        GxM_BinaryOp_new(op,f,z,x,y, GB_STR(f), NULL)
 
 // GxB_BinaryOp_new creates a named user-defined binary op.
 GB_PUBLIC
@@ -1624,10 +1628,21 @@ GB_PUBLIC GxB_SelectOp
 // select operators
 //------------------------------------------------------------------------------
 
+// In v6.0, the row and column indices are passed as int64_t.  This has no
+// effect on any user-defined operator in v5 or earlier, since GxB_INDEX_MAX is
+// less than INT64_MAX already.  The change was made to allow simpler integer
+// computations within the select function such as computing i-j with negative
+// integers.
+
 typedef bool (*GxB_select_function)      // return true if A(i,j) is kept
 (
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GrB_Index i,                // row index of A(i,j)
     GrB_Index j,                // column index of A(i,j)
+    #else
+    int64_t i,                  // row index of A(i,j)
+    int64_t j,                  // column index of A(i,j)
+    #endif
     const void *x,              // value of A(i,j)
     const void *thunk           // optional input for select function
 ) ;
@@ -1644,9 +1659,12 @@ GrB_Info GXB (SelectOp_new)     // create a new user-defined select operator
     GrB_Type xtype,             // type of input x, or NULL if type-generic
     GrB_Type ttype              // type of thunk, or NULL if not used
 ) ;
-#define GxB_SelectOp_new(op,f,x,t) GxB_SelectOp_new2(op,f,x,t,GB_STR(f),NULL)
-#define GxM_SelectOp_new(op,f,x,t) GxM_SelectOp_new2(op,f,x,t,GB_STR(f),NULL)
+#define GxB_SelectOp_new(op,f,x,t) \
+        GxB_SelectOp_new2(op,f,x,t, GB_STR(f), NULL)
+#define GxM_SelectOp_new(op,f,x,t) \
+        GxM_SelectOp_new2(op,f,x,t, GB_STR(f), NULL)
 
+// FIXME: GxB_SelectOp_new2 is not a good name.  Just use GxB_SelectOp_new?
 // GxB_SelectOp_new2 creates a named user-defined select op.
 GB_PUBLIC
 GrB_Info GxB_SelectOp_new2      // create a named user-defined select operator
@@ -1699,22 +1717,22 @@ GrB_Info GxB_SelectOp_free      // free a user-created select operator
 
 // FIXME describe the GrB_IndexUnaryOp.
 
+// The indexop has the form z = f(aij, i, j, thunk) where aij is the numerical
+// value of the A(i,j) entry, i and j are its row and column index, and thunk
+// is a scalar.  For vectors, it has the form z = f(vi, i, 0, thunk).
+
 typedef struct GB_IndexUnaryOp_opaque *GrB_IndexUnaryOp ;
-
-// Note that the indices array in the GxB_index_unary_function is int64_t, so
-// the indices can be used in integer computations requiring negation.  The
-// indices array is always passed as an array of size 2.  When applied to
-// GrB_Vectors, the 2nd entry is zero.
-
-// FIXME: indices array should be int64_t, and always of size 2.
-// The value of n is not required: why not just pass in [i 0] for GrB_Vectors?
 
 typedef void (*GxB_index_unary_function)
 (
     void *z,            // output value z, of type ztype
     const void *x,      // input value x of type xtype; value of v(i) or A(i,j)
-    const int64_t *indices,   // [i 0] for v(i) or [i j] of A(i,j)
-    GrB_Index n,        // 1 for vector index, 2 for matrix indices
+//  draft v2.0 spec:
+//  const int64_t *indices,     // [i 0] for v(i) or [i j] of A(i,j)
+//  GrB_Index n,                // 1 for vector index, 2 for matrix indices
+//  a better approach:
+    int64_t i,          // row index of A(i,j)
+    int64_t j,          // column index of A(i,j), or zero for v(i)
     const void *thunk   // input scalar thunk
 ) ;
 
@@ -1731,8 +1749,10 @@ GrB_Info GRB (IndexUnaryOp_new)     // create a new user-defined IndexUnary op
     GrB_Type xtype,                 // type of input x
     GrB_Type ttype                  // type of input thunk
 ) ;
-#define GrB_IndexUnaryOp_new(op,f,z,x,t) GxB_IndexUnaryOp_new (op,f,z,x,t, GB_STR(f), NULL)
-#define GrM_IndexUnaryOp_new(op,f,z,x,t) GxM_IndexUnaryOp_new (op,f,z,x,t, GB_STR(f), NULL)
+#define GrB_IndexUnaryOp_new(op,f,z,x,t) \
+        GxB_IndexUnaryOp_new(op,f,z,x,t, GB_STR(f), NULL)
+#define GrM_IndexUnaryOp_new(op,f,z,x,t) \
+        GxM_IndexUnaryOp_new(op,f,z,x,t, GB_STR(f), NULL)
 
 GB_PUBLIC
 GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
@@ -1777,13 +1797,6 @@ GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 // built-in IndexUnaryOps
 //------------------------------------------------------------------------------
 
-// For matrices, the indexop has the form z = f(aij, [i j], 2, thunk)
-// where aij is the numerical value of the A(i,j) entry, [i j] are its row
-// and column index, 2 denotes the size of the indices [i j], and thunk is
-// a scalar.
-
-// For vectors, it has the form z = f(vi, [i 0], 1, thunk).
-
 // To facilitate computations with negative integers, the indices i and j are
 // of type int64_t.  The scalar thunk has the type corresponding to the suffix
 // of the name of the operator.
@@ -1791,7 +1804,7 @@ GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 GB_PUBLIC GrB_IndexUnaryOp
 
     //--------------------------------------------------------------------------
-    // Result has the integer type INT32 or INT64:
+    // Result has the integer type INT32 or INT64, the same as the suffix
     //--------------------------------------------------------------------------
 
     // These operators work on any data type, including user-defined.
@@ -1811,10 +1824,10 @@ GB_PUBLIC GrB_IndexUnaryOp
 
     // These operators work on any data type, including user-defined.
 
-    // TRIL: (i < (j+thunk)): lower triangular part (matrices only)
+    // TRIL: (i < (j+thunk)): lower triangular part
     GrB_TRIL_INT32,     GrB_TRIL_INT64,
 
-    // TRIU: (j > (i+thunk)): upper triangular part (matrices only)
+    // TRIU: (j > (i+thunk)): upper triangular part
     GrB_TRIU_INT32,     GrB_TRIU_INT64,
 
     // DIAG: (j == (i+thunk)): diagonal
@@ -1826,13 +1839,13 @@ GB_PUBLIC GrB_IndexUnaryOp
     // COLLE: (j <= thunk): columns 0:thunk
     GrB_COLLE_INT64,
 
-    // COLGT: (j > thunk): columns thunk+1:ncols-1 (matrices only)
+    // COLGT: (j > thunk): columns thunk+1:ncols-1
     GrB_COLGT_INT64,
 
-    // ROWLE: (i <= thunk): rows 0:thunk (vectors and matrices)
+    // ROWLE: (i <= thunk): rows 0:thunk
     GrB_ROWLE_INT64,
 
-    // ROWGT: (i > thunk): rows thunk+1:nrows-1 (vectors and matrices)
+    // ROWGT: (i > thunk): rows thunk+1:nrows-1
     GrB_ROWGT_INT64,
 
     //--------------------------------------------------------------------------
@@ -1843,43 +1856,43 @@ GB_PUBLIC GrB_IndexUnaryOp
     // including complex types.
 
     // VALUEEQ: (aij == thunk)
-    GrB_VALUEEQ_BOOL,
-    GrB_VALUEEQ_INT8,  GrB_VALUEEQ_INT16,  GrB_VALUEEQ_INT32,  GrB_VALUEEQ_INT64,
-    GrB_VALUEEQ_UINT8, GrB_VALUEEQ_UINT16, GrB_VALUEEQ_UINT32, GrB_VALUEEQ_UINT64,
-    GrB_VALUEEQ_FP32,  GrB_VALUEEQ_FP64,   GxB_VALUEEQ_FC32,   GxB_VALUEEQ_FC64,
+    GrB_VALUEEQ_INT8,  GrB_VALUEEQ_UINT8,  GrB_VALUEEQ_FP32, GrB_VALUEEQ_BOOL,
+    GrB_VALUEEQ_INT16, GrB_VALUEEQ_UINT16, GrB_VALUEEQ_FP64,
+    GrB_VALUEEQ_INT32, GrB_VALUEEQ_UINT32, GxB_VALUEEQ_FC32,
+    GrB_VALUEEQ_INT64, GrB_VALUEEQ_UINT64, GxB_VALUEEQ_FC64,
 
     // VALUENE: (aij != thunk)
-    GrB_VALUENE_BOOL,
-    GrB_VALUENE_INT8,  GrB_VALUENE_INT16,  GrB_VALUENE_INT32,  GrB_VALUENE_INT64,
-    GrB_VALUENE_UINT8, GrB_VALUENE_UINT16, GrB_VALUENE_UINT32, GrB_VALUENE_UINT64,
-    GrB_VALUENE_FP32,  GrB_VALUENE_FP64,   GxB_VALUENE_FC32,   GxB_VALUENE_FC64,
+    GrB_VALUENE_INT8,  GrB_VALUENE_UINT8,  GrB_VALUENE_FP32, GrB_VALUENE_BOOL,
+    GrB_VALUENE_INT16, GrB_VALUENE_UINT16, GrB_VALUENE_FP64,
+    GrB_VALUENE_INT32, GrB_VALUENE_UINT32, GxB_VALUENE_FC32,
+    GrB_VALUENE_INT64, GrB_VALUENE_UINT64, GxB_VALUENE_FC64,
 
     // These operators work on matrices and vectors of any real (non-complex)
     // built-in type.
 
     // VALUELT: (aij < thunk)
-    GrB_VALUELT_BOOL,
-    GrB_VALUELT_INT8,  GrB_VALUELT_INT16,  GrB_VALUELT_INT32,  GrB_VALUELT_INT64,
-    GrB_VALUELT_UINT8, GrB_VALUELT_UINT16, GrB_VALUELT_UINT32, GrB_VALUELT_UINT64,
-    GrB_VALUELT_FP32,  GrB_VALUELT_FP64,
+    GrB_VALUELT_INT8,  GrB_VALUELT_UINT8,  GrB_VALUELT_FP32, GrB_VALUELT_BOOL,
+    GrB_VALUELT_INT16, GrB_VALUELT_UINT16, GrB_VALUELT_FP64,
+    GrB_VALUELT_INT32, GrB_VALUELT_UINT32,
+    GrB_VALUELT_INT64, GrB_VALUELT_UINT64,
 
     // VALUELE: (aij <= thunk)
-    GrB_VALUELE_BOOL,
-    GrB_VALUELE_INT8,  GrB_VALUELE_INT16,  GrB_VALUELE_INT32,  GrB_VALUELE_INT64,
-    GrB_VALUELE_UINT8, GrB_VALUELE_UINT16, GrB_VALUELE_UINT32, GrB_VALUELE_UINT64,
-    GrB_VALUELE_FP32,  GrB_VALUELE_FP64,
+    GrB_VALUELE_INT8,  GrB_VALUELE_UINT8,  GrB_VALUELE_FP32, GrB_VALUELE_BOOL,
+    GrB_VALUELE_INT16, GrB_VALUELE_UINT16, GrB_VALUELE_FP64,
+    GrB_VALUELE_INT32, GrB_VALUELE_UINT32,
+    GrB_VALUELE_INT64, GrB_VALUELE_UINT64,
 
     // VALUEGT: (aij > thunk)
-    GrB_VALUEGT_BOOL,
-    GrB_VALUEGT_INT8,  GrB_VALUEGT_INT16,  GrB_VALUEGT_INT32,  GrB_VALUEGT_INT64,
-    GrB_VALUEGT_UINT8, GrB_VALUEGT_UINT16, GrB_VALUEGT_UINT32, GrB_VALUEGT_UINT64,
-    GrB_VALUEGT_FP32,  GrB_VALUEGT_FP64,
+    GrB_VALUEGT_INT8,  GrB_VALUEGT_UINT8,  GrB_VALUEGT_FP32, GrB_VALUEGT_BOOL,
+    GrB_VALUEGT_INT16, GrB_VALUEGT_UINT16, GrB_VALUEGT_FP64,
+    GrB_VALUEGT_INT32, GrB_VALUEGT_UINT32,
+    GrB_VALUEGT_INT64, GrB_VALUEGT_UINT64,
 
     // VALUEGE: (aij >= thunk)
-    GrB_VALUEGE_BOOL,
-    GrB_VALUEGE_INT8,  GrB_VALUEGE_INT16,  GrB_VALUEGE_INT32,  GrB_VALUEGE_INT64,
-    GrB_VALUEGE_UINT8, GrB_VALUEGE_UINT16, GrB_VALUEGE_UINT32, GrB_VALUEGE_UINT64,
-    GrB_VALUEGE_FP32,  GrB_VALUEGE_FP64 ;
+    GrB_VALUEGE_INT8,  GrB_VALUEGE_UINT8,  GrB_VALUEGE_FP32, GrB_VALUEGE_BOOL,
+    GrB_VALUEGE_INT16, GrB_VALUEGE_UINT16, GrB_VALUEGE_FP64,
+    GrB_VALUEGE_INT32, GrB_VALUEGE_UINT32,
+    GrB_VALUEGE_INT64, GrB_VALUEGE_UINT64,
 
 //==============================================================================
 // GrB_Monoid
