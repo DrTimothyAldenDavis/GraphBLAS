@@ -30,8 +30,6 @@ GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix, as a vector
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
-    // FIXME: use the A_transpose descriptor, and if set, negate k.
-
     //--------------------------------------------------------------------------
     // v = diag (A,k)
     //--------------------------------------------------------------------------

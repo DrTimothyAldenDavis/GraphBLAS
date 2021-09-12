@@ -1853,7 +1853,8 @@ GB_PUBLIC GrB_IndexUnaryOp
     //--------------------------------------------------------------------------
 
     // These operators work on matrices and vectors of any built-in type,
-    // including complex types.
+    // including complex types.  aij and thunk have the same type as the
+    // operator suffix.
 
     // VALUEEQ: (aij == thunk)
     GrB_VALUEEQ_INT8,  GrB_VALUEEQ_UINT8,  GrB_VALUEEQ_FP32, GrB_VALUEEQ_BOOL,
@@ -1892,7 +1893,7 @@ GB_PUBLIC GrB_IndexUnaryOp
     GrB_VALUEGE_INT8,  GrB_VALUEGE_UINT8,  GrB_VALUEGE_FP32, GrB_VALUEGE_BOOL,
     GrB_VALUEGE_INT16, GrB_VALUEGE_UINT16, GrB_VALUEGE_FP64,
     GrB_VALUEGE_INT32, GrB_VALUEGE_UINT32,
-    GrB_VALUEGE_INT64, GrB_VALUEGE_UINT64,
+    GrB_VALUEGE_INT64, GrB_VALUEGE_UINT64 ;
 
 //==============================================================================
 // GrB_Monoid
