@@ -152,12 +152,12 @@ typedef enum
 
     // operator codes used in GrB_IndexUnaryOp structures
 
-    // Result is INT32 or INT64, depending on i and/or j:
+    // Result is INT32 or INT64, depending on i and/or j, and thunk:
     GB_ROWINDEX_idxunop_code  = 51,   // (i+thunk): row index + thunk
     GB_COLINDEX_idxunop_code  = 52,   // (j+thunk): col index + thunk
     GB_DIAGINDEX_idxunop_code = 53,   // (i-j+thunk): diag index + thunk
 
-    // Result is BOOL, depending on i and/or j:
+    // Result is BOOL, depending on i and/or j, and thunk:
     GB_TRIL_idxunop_code      = 54,   // (j < (i+thunk)): tril (A,thunk-1)
     GB_TRIU_idxunop_code      = 55,   // (j > (i+thunk)): triu (A,thunk+1)
     GB_DIAG_idxunop_code      = 56,   // (j == (i+thunk)): diag(A,thunk)
@@ -167,7 +167,7 @@ typedef enum
     GB_ROWLE_idxunop_code     = 60,   // (i <= thunk): A (0:thunk,:)
     GB_ROWGT_idxunop_code     = 61,   // (i > thunk): A (thunk+1:nrows-1,:)
 
-    // Result is BOOL, depending on the value aij:
+    // Result is BOOL, depending on the value aij and thunk:
     GB_VALUEEQ_idxunop_code   = 62,   // (aij == thunk)
     GB_VALUENE_idxunop_code   = 63,   // (aij != thunk)
     GB_VALUELT_idxunop_code   = 64,   // (aij < thunk)

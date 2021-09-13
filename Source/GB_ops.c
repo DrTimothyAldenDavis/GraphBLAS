@@ -13,6 +13,25 @@
 #include "GB.h"
 
 //------------------------------------------------------------------------------
+// compiler flags
+//------------------------------------------------------------------------------
+
+#if defined __INTEL_COMPILER
+// disable icc warnings
+//  144:  initialize with incompatible pointer
+#pragma warning (disable: 144 )
+#elif defined __GNUC__
+#if !defined ( __cplusplus )
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+#endif
+#endif
+
+#if ( _MSC_VER && !__INTEL_COMPILER )
+// disable MS Visual Studio warnings
+GB_PRAGMA (warning (disable : 4146 ))
+#endif
+
+//------------------------------------------------------------------------------
 // built-in types
 //------------------------------------------------------------------------------
 
@@ -108,27 +127,15 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #undef o
 
 //------------------------------------------------------------------------------
-// built-in unary and binary operators
+// GB_OP: construct the name of an operator
 //------------------------------------------------------------------------------
-
-#if defined __INTEL_COMPILER
-// disable icc warnings
-//  144:  initialize with incompatible pointer
-#pragma warning (disable: 144 )
-#elif defined __GNUC__
-#if !defined ( __cplusplus )
-#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
-#endif
-#endif
-
-#if ( _MSC_VER && !__INTEL_COMPILER )
-// disable MS Visual Studio warnings
-GB_PRAGMA (warning (disable : 4146 ))
-#endif
 
 #define GB_OP(op) GB_EVAL3 (op, _, GB_XTYPE)
 
+//------------------------------------------------------------------------------
 // helper macros to define unary operators
+//------------------------------------------------------------------------------
+
 #define GB_OP1zx(op,str,z_t,ztype,x_t,xtype)                                \
     extern void GB_FUNC_T (op, xtype) (z_t *z, const x_t *x) ;              \
     struct GB_UnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                       \
@@ -158,7 +165,10 @@ GB_PRAGMA (warning (disable : 4146 ))
 #define GXB_OP1_RENAME(op)                                                  \
     GrB_UnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
 
+//------------------------------------------------------------------------------
 // helper macros to define binary operators
+//------------------------------------------------------------------------------
+
 #define GB_OP2zxy(op,str,z_t,ztype,x_t,xtype,y_t,ytype)                     \
     extern void GB_FUNC_T(op,xtype) (z_t *z, const x_t *x, const y_t *y) ;  \
     struct GB_BinaryOp_opaque GB_OPAQUE (GB_OP (op)) =                      \
@@ -189,100 +199,6 @@ GB_PRAGMA (warning (disable : 4146 ))
     GB_OP2zxy (op, str, GB_TYPE, GB_XTYPE, GB_TYPE, GB_XTYPE, int8_t, INT8) \
     GrB_BinaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
 
-#define GB_TYPE             bool
-#define GB_XTYPE            BOOL
-#include "GB_ops_template.c"
-
-#define GB_TYPE             int8_t
-#define GB_XTYPE            INT8
-#define GB_SIGNED_INT
-#include "GB_ops_template.c"
-
-#define GB_TYPE             uint8_t
-#define GB_XTYPE            UINT8
-#define GB_UNSIGNED_INT
-#include "GB_ops_template.c"
-
-#define GB_TYPE             int16_t
-#define GB_XTYPE            INT16
-#define GB_SIGNED_INT
-#include "GB_ops_template.c"
-
-#define GB_TYPE             uint16_t
-#define GB_XTYPE            UINT16
-#define GB_UNSIGNED_INT
-#include "GB_ops_template.c"
-
-#define GB_TYPE             int32_t
-#define GB_XTYPE            INT32
-#define GB_SIGNED_INT
-#include "GB_ops_template.c"
-
-#define GB_TYPE             uint32_t
-#define GB_XTYPE            UINT32
-#define GB_UNSIGNED_INT
-#include "GB_ops_template.c"
-
-#define GB_TYPE             int64_t
-#define GB_XTYPE            INT64
-#define GB_SIGNED_INT
-#include "GB_ops_template.c"
-
-#define GB_TYPE             uint64_t
-#define GB_XTYPE            UINT64
-#define GB_UNSIGNED_INT
-#include "GB_ops_template.c"
-
-#define GB_TYPE             float
-#define GB_XTYPE            FP32
-#define GB_FLOAT
-#define GB_FLOATING_POINT
-#include "GB_ops_template.c"
-
-#define GB_TYPE             double
-#define GB_XTYPE            FP64
-#define GB_DOUBLE
-#define GB_FLOATING_POINT
-#include "GB_ops_template.c"
-
-#define GB_TYPE             GxB_FC32_t
-#define GB_XTYPE            FC32
-#define GB_FLOAT_COMPLEX
-#define GB_COMPLEX
-#define GB_FLOATING_POINT
-#include "GB_ops_template.c"
-
-#define GB_TYPE             GxB_FC64_t
-#define GB_XTYPE            FC64
-#define GB_DOUBLE_COMPLEX
-#define GB_COMPLEX
-#define GB_FLOATING_POINT
-#include "GB_ops_template.c"
-
-//------------------------------------------------------------------------------
-// special cases for functions and operators
-//------------------------------------------------------------------------------
-
-// 5 special cases:
-// purely boolean operators: these do not have _BOOL in their name
-// They are not created by the templates above.
-GrB_UnaryOp  GrB_LNOT  = & GB_OPAQUE (LNOT_BOOL) ;
-GrB_BinaryOp GrB_LOR   = & GB_OPAQUE (LOR_BOOL) ;
-GrB_BinaryOp GrB_LAND  = & GB_OPAQUE (LAND_BOOL) ;
-GrB_BinaryOp GrB_LXOR  = & GB_OPAQUE (LXOR_BOOL) ;
-GrB_BinaryOp GrB_LXNOR = & GB_OPAQUE (EQ_BOOL) ;
-
-// Special case for GrB_Matrix_build and GrB_Vector_build:  this operator is
-// not valid to use in any other methods.
-struct GB_BinaryOp_opaque GB_OPAQUE (IGNORE_DUP) =
-{
-    GB_MAGIC2, 0,
-    NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL,
-    "ignore_dup", GB_NOP_code, NULL
-} ;
-GrB_BinaryOp GxB_IGNORE_DUP = & GB_OPAQUE (IGNORE_DUP) ;
-
 //------------------------------------------------------------------------------
 // positional unary and binary operators
 //------------------------------------------------------------------------------
@@ -290,6 +206,8 @@ GrB_BinaryOp GxB_IGNORE_DUP = & GB_OPAQUE (IGNORE_DUP) ;
 // The function pointer inside a positional operator cannot be called directly,
 // since it does not depend on the values of its two arguments.  The operator
 // can only be implemented via its opcode.
+
+// FIXME: use a function based on the index_unaryop signature
 
 // helper macros to define positional unary operators
 #define GXB_OP1_POS(op,str,type)                                            \
@@ -349,6 +267,84 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT32) ;
 GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
 
 //------------------------------------------------------------------------------
+// built-in index_unary operators
+//------------------------------------------------------------------------------
+
+// IndexUnaryOps that depend on i,j,thunk but not A(i,j), and result has
+// the same type as the thunk: ROWINDEX, COLINDEX, DIAGINDEX
+#define GRB_IDXOP_POSITIONAL(op,str)                                        \
+    extern void GB_FUNC_T(op,GB_XTYPE) (GB_TYPE *z, const void *unused,     \
+        int64_t i, int64_t j, const GB_TYPE *thunk) ;                       \
+    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
+    {                                                                       \
+        GB_MAGIC, 0,                                                        \
+        & GB_OPAQUE (GB_XTYPE), /* ztype */                                 \
+        NULL,                   /* xtype */                                 \
+        & GB_OPAQUE (GB_XTYPE), /* thunk type */                            \
+        NULL, (GxB_index_unary_function) (& GB_FUNC_T (op, GB_XTYPE)),      \
+            NULL, NULL,                                                     \
+        str,                                                                \
+        GB_ ## op ## _idxunop_code,                                         \
+        NULL                                                                \
+    } ;                                                                     \
+    GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+
+// IndexUnaryOps that depend on i,j, and thunk but not A(i,j), and result is
+// bool: TRIL, TRIU, DIAG, OFFDIAG, COLLE, COLGT, ROWLE, ROWGT
+#define GRB_IDXOP_POSITIONAL_BOOL(op,str)                                   \
+    extern void GB_FUNC_T(op,GB_XTYPE) (bool *z, const void *unused,        \
+        int64_t i, int64_t j, const GB_TYPE *thunk) ;                       \
+    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
+    {                                                                       \
+        GB_MAGIC, 0,                                                        \
+        & GB_OPAQUE (BOOL),     /* ztype */                                 \
+        NULL,                   /* xtype */                                 \
+        & GB_OPAQUE (GB_XTYPE), /* thunk type */                            \
+        NULL, (GxB_index_unary_function) (& GB_FUNC_T (op, GB_XTYPE)),      \
+            NULL, NULL,                                                     \
+        str,                                                                \
+        GB_ ## op ## _idxunop_code,                                         \
+        NULL                                                                \
+    } ;                                                                     \
+    GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+
+// GrB_IndexUnaryOps that depend on A(i,j), and result is bool: VALUE* ops
+#define GRB_IDXOP_VALUE(op,str)                                             \
+    extern void GB_FUNC_T(op,GB_XTYPE) (bool *z, const GB_TYPE *x,          \
+        int64_t i_unused, int64_t j_unused, const GB_TYPE *thunk) ;         \
+    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
+    {                                                                       \
+        GB_MAGIC, 0,                                                        \
+        & GB_OPAQUE (BOOL),     /* ztype */                                 \
+        & GB_OPAQUE (GB_XTYPE), /* xtype */                                 \
+        & GB_OPAQUE (GB_XTYPE), /* thunk type */                            \
+        NULL, (GxB_index_unary_function) (& GB_FUNC_T (op, GB_XTYPE)),      \
+            NULL, NULL,                                                     \
+        str,                                                                \
+        GB_ ## op ## _idxunop_code,                                         \
+        NULL                                                                \
+    } ;                                                                     \
+    GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+
+// GrB_IndexUnaryOps that depend on A(i,j), result is bool: VALUE* complex ops
+#define GXB_IDXOP_VALUE(op,str)                                             \
+    extern void GB_FUNC_T(op,GB_XTYPE) (bool *z, const GB_TYPE *x,          \
+        int64_t i_unused, int64_t j_unused, const GB_TYPE *thunk) ;         \
+    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
+    {                                                                       \
+        GB_MAGIC, 0,                                                        \
+        & GB_OPAQUE (BOOL),     /* ztype */                                 \
+        & GB_OPAQUE (GB_XTYPE), /* xtype */                                 \
+        & GB_OPAQUE (GB_XTYPE), /* thunk type */                            \
+        NULL, (GxB_index_unary_function) (& GB_FUNC_T (op, GB_XTYPE)),      \
+            NULL, NULL,                                                     \
+        str,                                                                \
+        GB_ ## op ## _idxunop_code,                                         \
+        NULL                                                                \
+    } ;                                                                     \
+    GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+
+//------------------------------------------------------------------------------
 // built-in select operators
 //------------------------------------------------------------------------------
 
@@ -384,6 +380,107 @@ GXB_SEL (GT_THUNK , "gt_thunk") ;
 GXB_SEL (GE_THUNK , "ge_thunk") ;
 GXB_SEL (LT_THUNK , "lt_thunk") ;
 GXB_SEL (LE_THUNK , "le_thunk") ;
+
+//------------------------------------------------------------------------------
+// define all built-in operators
+//------------------------------------------------------------------------------
+
+#define GB_TYPE             bool
+#define GB_XTYPE            BOOL
+#include "GB_ops_template.c"
+
+#define GB_TYPE             int8_t
+#define GB_XTYPE            INT8
+#define GB_SIGNED_INT
+#include "GB_ops_template.c"
+
+#define GB_TYPE             uint8_t
+#define GB_XTYPE            UINT8
+#define GB_UNSIGNED_INT
+#include "GB_ops_template.c"
+
+#define GB_TYPE             int16_t
+#define GB_XTYPE            INT16
+#define GB_SIGNED_INT
+#include "GB_ops_template.c"
+
+#define GB_TYPE             uint16_t
+#define GB_XTYPE            UINT16
+#define GB_UNSIGNED_INT
+#include "GB_ops_template.c"
+
+#define GB_TYPE             int32_t
+#define GB_XTYPE            INT32
+#define GB_SIGNED_INT
+#define GB_SIGNED_INDEX
+#include "GB_ops_template.c"
+
+#define GB_TYPE             uint32_t
+#define GB_XTYPE            UINT32
+#define GB_UNSIGNED_INT
+#include "GB_ops_template.c"
+
+#define GB_TYPE             int64_t
+#define GB_XTYPE            INT64
+#define GB_SIGNED_INT
+#define GB_SIGNED_INDEX
+#define GB_SIGNED_INDEX64
+#include "GB_ops_template.c"
+
+#define GB_TYPE             uint64_t
+#define GB_XTYPE            UINT64
+#define GB_UNSIGNED_INT
+#include "GB_ops_template.c"
+
+#define GB_TYPE             float
+#define GB_XTYPE            FP32
+#define GB_FLOAT
+#define GB_FLOATING_POINT
+#include "GB_ops_template.c"
+
+#define GB_TYPE             double
+#define GB_XTYPE            FP64
+#define GB_DOUBLE
+#define GB_FLOATING_POINT
+#include "GB_ops_template.c"
+
+#define GB_TYPE             GxB_FC32_t
+#define GB_XTYPE            FC32
+#define GB_FLOAT_COMPLEX
+#define GB_COMPLEX
+#define GB_FLOATING_POINT
+#include "GB_ops_template.c"
+
+#define GB_TYPE             GxB_FC64_t
+#define GB_XTYPE            FC64
+#define GB_DOUBLE_COMPLEX
+#define GB_COMPLEX
+#define GB_FLOATING_POINT
+#include "GB_ops_template.c"
+
+//------------------------------------------------------------------------------
+// special cases for functions and operators
+//------------------------------------------------------------------------------
+
+// 5 special cases:
+// purely boolean operators: these do not have _BOOL in their name
+// They are not created by the templates above.
+GrB_UnaryOp  GrB_LNOT  = & GB_OPAQUE (LNOT_BOOL) ;
+GrB_BinaryOp GrB_LOR   = & GB_OPAQUE (LOR_BOOL) ;
+GrB_BinaryOp GrB_LAND  = & GB_OPAQUE (LAND_BOOL) ;
+GrB_BinaryOp GrB_LXOR  = & GB_OPAQUE (LXOR_BOOL) ;
+GrB_BinaryOp GrB_LXNOR = & GB_OPAQUE (EQ_BOOL) ;
+
+// Special case for GrB_Matrix_build and GrB_Vector_build:  this operator is
+// not valid to use in any other methods.
+struct GB_BinaryOp_opaque GB_OPAQUE (IGNORE_DUP) =
+{
+    GB_MAGIC2, 0,
+    NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL,
+    "ignore_dup", GB_NOP_code, NULL
+} ;
+GrB_BinaryOp GxB_IGNORE_DUP = & GB_OPAQUE (IGNORE_DUP) ;
 
 //------------------------------------------------------------------------------
 // GrB_ALL

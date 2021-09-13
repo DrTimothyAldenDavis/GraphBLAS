@@ -1824,7 +1824,7 @@ GB_PUBLIC GrB_IndexUnaryOp
 
     // These operators work on any data type, including user-defined.
 
-    // TRIL: (i < (j+thunk)): lower triangular part
+    // TRIL: (j < (i+thunk)): lower triangular part
     GrB_TRIL_INT32,     GrB_TRIL_INT64,
 
     // TRIU: (j > (i+thunk)): upper triangular part

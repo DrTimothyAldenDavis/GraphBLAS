@@ -43,6 +43,7 @@
 #define GB_BITS             32
 #define GB_REAL
 #define GB_SIGNED_INT
+#define GB_SIGNED_INDEX
 #include "GB_ops_template.h"
 
 #define GB_TYPE             int64_t
@@ -50,6 +51,8 @@
 #define GB_BITS             64
 #define GB_REAL
 #define GB_SIGNED_INT
+#define GB_SIGNED_INDEX
+#define GB_SIGNED_INDEX64
 #include "GB_ops_template.h"
 
 #define GB_TYPE             uint8_t
