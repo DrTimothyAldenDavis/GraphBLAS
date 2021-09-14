@@ -82,6 +82,15 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
 ) ;
 
 GB_PUBLIC
+GrB_Info GB_Operator_check  // check a GraphBLAS operator
+(
+    const GB_Operator op,   // GraphBLAS operator to print and check
+    const char *name,       // name of the operator
+    int pr,                 // print level
+    FILE *f                 // file for output
+) ;
+
+GB_PUBLIC
 GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
 (
     const GrB_Monoid monoid,    // GraphBLAS monoid to print and check

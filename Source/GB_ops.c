@@ -354,7 +354,7 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         GB_MAGIC, 0,                                                        \
         & GB_OPAQUE (BOOL),     /* ztype */                                 \
         NULL,                   /* xtype */                                 \
-        NULL,                   /* ytype */                                 \
+        NULL,                   /* thunk type */                            \
         NULL, NULL, NULL, NULL,                                             \
         str,                                                                \
         GB_ ## op ## _selop_code,                                           \

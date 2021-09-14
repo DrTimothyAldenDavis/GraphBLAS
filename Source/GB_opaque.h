@@ -144,7 +144,13 @@ typedef enum
 
     // true if opcode is for a GrB_UnaryOp
     #define GB_IS_UNARYOP_CODE(opcode) \
-        ((opcode) >= GB_ONE_unop_code && (opcode) <= GB_USER_unop_code)
+        ((opcode) >= GB_ONE_unop_code && \
+         (opcode) <= GB_USER_unop_code)
+
+    // true if opcode is for a GrB_UnaryOp positional operator
+    #define GB_IS_UNARYOP_CODE_POSITIONAL(opcode) \
+        ((opcode) >= GB_POSITIONI_unop_code && \
+         (opcode) <= GB_POSITIONJ1_unop_code)
 
     //==========================================================================
     // index_unary operators
@@ -168,12 +174,12 @@ typedef enum
     GB_ROWGT_idxunop_code     = 61,   // (i > thunk): A (thunk+1:nrows-1,:)
 
     // Result is BOOL, depending on the value aij and thunk:
-    GB_VALUEEQ_idxunop_code   = 62,   // (aij == thunk)
-    GB_VALUENE_idxunop_code   = 63,   // (aij != thunk)
-    GB_VALUELT_idxunop_code   = 64,   // (aij < thunk)
-    GB_VALUELE_idxunop_code   = 65,   // (aij <= thunk)
-    GB_VALUEGT_idxunop_code   = 66,   // (aij > thunk)
-    GB_VALUEGE_idxunop_code   = 67,   // (aij >= thunk)
+    GB_VALUENE_idxunop_code   = 62,   // (aij != thunk)
+    GB_VALUEEQ_idxunop_code   = 63,   // (aij == thunk)
+    GB_VALUEGT_idxunop_code   = 64,   // (aij > thunk)
+    GB_VALUEGE_idxunop_code   = 65,   // (aij >= thunk)
+    GB_VALUELT_idxunop_code   = 66,   // (aij < thunk)
+    GB_VALUELE_idxunop_code   = 67,   // (aij <= thunk)
 
     GB_USER_idxunop_code = 68,
 
@@ -181,6 +187,11 @@ typedef enum
     #define GB_IS_INDEXUNARYOP_CODE(opcode) \
         ((opcode) >= GB_ROWINDEX_idxunop_code && \
          (opcode) <= GB_USER_idxunop_code)
+
+    // true if opcode is for a GrB_IndexUnaryOp positional operator
+    #define GB_IS_INDEXUNARYOP_CODE_POSITIONAL(opcode) \
+        ((opcode) >= GB_ROWINDEX_idxunop_code && \
+         (opcode) <= GB_ROWGT_idxunop_code)
 
     //==========================================================================
     // binary operators
@@ -271,15 +282,22 @@ typedef enum
     #define GB_IS_BINARYOP_CODE(opcode) \
         ((opcode) >= GB_FIRST_binop_code && (opcode) <= GB_USER_binop_code)
 
+    // true if opcode is for a GrB_BinaryOp positional operator
+    #define GB_IS_BINARYOP_CODE_POSITIONAL(opcode) \
+        ((opcode) >= GB_FIRSTI_binop_code && \
+         (opcode) <= GB_SECONDJ1_binop_code)
+
     //==========================================================================
     // built-in Select operators
     //==========================================================================
 
-    // built-in select operators: thunk optional; defaults to zero
+    // built-in positional select operators: thunk optional; defaults to zero
     GB_TRIL_selop_code      = 121,
     GB_TRIU_selop_code      = 122,
     GB_DIAG_selop_code      = 123,
     GB_OFFDIAG_selop_code   = 124,
+
+    // built-in select operators: thunk optional; defaults to zero
     GB_RESIZE_selop_code    = 125,
 
     // built-in select operators, no thunk used
@@ -305,15 +323,20 @@ typedef enum
     #define GB_IS_SELECTOP_CODE(opcode) \
         ((opcode) >= GB_TRIL_selop_code && (opcode) <= GB_USER_selop_code)
 
+    // true if opcode is for a GxB_SelectOp positional operator
+    #define GB_IS_SELECTOP_CODE_POSITIONAL(opcode) \
+        ((opcode) >= GB_TRIL_selop_code && \
+         (opcode) <= GB_OFFDIAG_selop_code)
+
 }
 GB_Opcode ;
 
-// true if the opcode is a positional operator
-#define GB_OPCODE_IS_POSITIONAL(opcode) \
-  (((opcode) >= GB_POSITIONI_unop_code && (opcode) <= GB_POSITIONJ1_unop_code)\
-|| ((opcode) >= GB_ROWINDEX_idxunop_code && (opcode) <= GB_ROWGT_idxunop_code)\
-|| ((opcode) >= GB_FIRSTI_binop_code && (opcode) <= GB_SECONDJ1_binop_code)   \
-|| ((opcode) >= GB_TRIL_selop_code && (opcode) <= GB_OFFDIAG_selop_code))
+// true if the opcode is a positional operator of any kind
+#define GB_OPCODE_IS_POSITIONAL(opcode)             \
+    (GB_IS_UNARYOP_CODE_POSITIONAL (opcode) ||      \
+     GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode) || \
+     GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ||     \
+     GB_IS_SELECTOP_CODE_POSITIONAL (opcode))
 
 // true if the op is a unary or binary positional operator
 #define GB_OP_IS_POSITIONAL(op) \

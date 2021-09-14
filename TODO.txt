@@ -4,21 +4,20 @@ later, for v6.0.0:
 
     GrB_*_wait: with 2nd parameter: GrB_COMPLETE, GrB_MATERIALIZE
     GxB_init: remove last parameter
+    GxB_select_function: change GrB_Index to int64_t
 
 --------------------------------------------------------------------------------
 
 IndexUnaryOp:
-    GrB_IndexUnaryOp
-    GrB_IndexUnaryOp_new
-    GrB_IndexUnaryOp_free
-    built-in GrB_IndexUnaryOps (see table 2.8)
-    GrB_select with IndexUnaryOp
-        not the same as my GxB_select, but very similar.
-        uses the GrB_IndexUnaryOp
+    GrB_select with IndexUnaryOp    (IN PROGRESS)
     GrB_apply with IndexUnaryOp
 
 --------------------------------------------------------------------------------
 DRAFTED: need to test them:
+
+    GrB_IndexUnaryOp
+    GrB_IndexUnaryOp_new, free, check, wait, fprint
+    built-in GrB_IndexUnaryOps (see table 2.8)
 
 --------------------------------------------------------------------------------
 DONE:

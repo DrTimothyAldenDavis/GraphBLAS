@@ -341,6 +341,11 @@ void GB_Matrix_free             // free a matrix
     GrB_Matrix *Ahandle         // handle of matrix to free
 ) ;
 
+GrB_Info GB_Op_free             // free a user-created op
+(
+    GB_Operator *op_handle      // handle of operator to free
+) ;
+
 //------------------------------------------------------------------------------
 
 GB_PUBLIC

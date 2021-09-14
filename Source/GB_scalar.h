@@ -20,12 +20,25 @@ GrB_Scalar GB_Scalar_wrap   // create a new GrB_Scalar with one entry
 // stype can be NULL if op is positional
 
 // wrap a bare scalar inside a statically-allocated GrB_Scalar
-#define GB_SCALAR_WRAP(scalar,T,ampersand,bare,stype)                       \
+#define GB_SCALAR_WRAP(scalar,bare,stype)                                   \
     struct GB_Scalar_opaque scalar ## _header ;                             \
     size_t ssize = (stype == NULL) ? 1 : (stype->size) ;                    \
     GB_void Sx [GB_VLA(ssize)] ;                                            \
     GrB_Scalar scalar = GB_Scalar_wrap (& scalar ## _header, stype, Sx) ;   \
-    memcpy (Sx, ampersand bare, ssize) ;
+    memcpy (Sx, &bare, ssize) ;
+
+// wrap a void *bare scalar inside a statically-allocated GrB_Scalar
+#define GB_SCALAR_WRAP_UDT(scalar,bare,scalar_type)                         \
+    GrB_Type stype = scalar_type ;                                          \
+    struct GB_Scalar_opaque scalar ## _header ;                             \
+    size_t ssize = (stype == NULL) ? 1 : (stype->size) ;                    \
+    GB_void Sx [GB_VLA(ssize)] ;                                            \
+    GrB_Scalar scalar = NULL ;                                              \
+    if (bare != NULL && stype != NULL)                                      \
+    {                                                                       \
+        scalar = GB_Scalar_wrap (& scalar ## _header, stype, Sx) ;          \
+        memcpy (Sx, bare, ssize) ;                                          \
+    }
 
 #endif
 

@@ -8,7 +8,7 @@ For the GraphBLAS/GraphBLAS Octave/MATLAB interface *only*:
 SPDX-License-Identifier: GPL-3.0-or-later
 (see below for a discussion of the licensing of this package).
 
-VERSION 5.2.0, Sept 11, 2021 (alpha2)
+VERSION 5.2.0, Sept 13, 2021 (alpha3)
 
 SuiteSparse:GraphBLAS is a complete implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of

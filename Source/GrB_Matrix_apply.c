@@ -15,8 +15,6 @@
 // GrB_Matrix_apply: apply a unary operator to a matrix
 //------------------------------------------------------------------------------
 
-// C<M> = accum(C,op(A)) or accum(C,op(A'))
-
 GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -117,8 +115,6 @@ static inline GrB_Info GB_1st       // C<M>=accum(C,op(x,A))
 // GB_2nd: apply a binary operator: op(A,y)
 //------------------------------------------------------------------------------
 
-// C<M> = accum(C,op(A,y)) or accum(C,op(A,y'))
-
 static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -170,8 +166,6 @@ static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
 // GrB_Matrix_apply_BinaryOp1st_Scalar: apply a binary operator: op(x,A)
 //------------------------------------------------------------------------------
 
-// C<M> = accum(C,op(x,A)) or accum(C,op(x,A'))
-
 GrB_Info GrB_Matrix_apply_BinaryOp1st_Scalar    // C<M>=accum(C,op(x,A))
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -183,8 +177,8 @@ GrB_Info GrB_Matrix_apply_BinaryOp1st_Scalar    // C<M>=accum(C,op(x,A))
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp1st_Scalar (C, M, accum, op, x, A,"
-        " desc)") ;
+    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp1st_Scalar"
+        " (C, M, accum, op, x, A, desc)") ;
     return (GB_1st (C, M, accum, op, x, A, desc, Context)) ;
 }
 
@@ -211,8 +205,6 @@ GrB_Info GxB_Matrix_apply_BinaryOp1st           // C<M>=accum(C,op(x,A))
 // GrB_Matrix_apply_BinaryOp2nd_Scalar: apply a binary operator: op(A,y)
 //------------------------------------------------------------------------------
 
-// C<M> = accum(C,op(A,y)) or accum(C,op(A,y'))
-
 GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -224,8 +216,8 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(A,y))
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp2nd_Scalar (C, M, accum, op, A, y,"
-        " desc)") ;
+    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp2nd_Scalar"
+        " (C, M, accum, op, A, y, desc)") ;
     return (GB_2nd (C, M, accum, op, A, y, desc, Context)) ;
 }
 
@@ -252,7 +244,7 @@ GrB_Info GxB_Matrix_apply_BinaryOp2nd           // C<M>=accum(C,op(A,y))
 // GrB_Matrix_apply_BinaryOp1st_TYPE: apply a binary operator: op(x,A)
 //------------------------------------------------------------------------------
 
-#define GB_BIND1ST(prefix,type,T,ampersand,stype)                           \
+#define GB_BIND1ST(prefix,type,T)                                           \
 GrB_Info GB_EVAL3 (prefix, _Matrix_apply_BinaryOp1st_, T)                   \
 (                                                                           \
     GrB_Matrix C,                   /* input/output matrix for results */   \
@@ -264,33 +256,52 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_apply_BinaryOp1st_, T)                   \
     const GrB_Descriptor desc       /* descriptor for C, M, and A */        \
 )                                                                           \
 {                                                                           \
-    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp1st_" GB_STR(T)                  \
-        "(C, M, accum, op, x, A, desc)") ;                                  \
-    GB_SCALAR_WRAP (scalar, T, ampersand, x, stype) ;                       \
-    ASSERT_SCALAR_OK (scalar, "scalar for matrix_apply_bind1st", GB0) ;     \
+    GB_WHERE (C, GB_STR(prefix) "_Matrix_apply_BinaryOp1st_" GB_STR(T)      \
+        " (C, M, accum, op, x, A, desc)") ;                                 \
+    GB_SCALAR_WRAP (scalar, x, GB_EVAL3 (prefix, _, T)) ;                   \
     return (GB_1st (C, M, accum, op, scalar, A, desc, Context)) ;           \
 }
 
-GB_BIND1ST (GrB, bool      , BOOL   , &, GrB_BOOL  )
-GB_BIND1ST (GrB, int8_t    , INT8   , &, GrB_INT8  )
-GB_BIND1ST (GrB, int16_t   , INT16  , &, GrB_INT16 )
-GB_BIND1ST (GrB, int32_t   , INT32  , &, GrB_INT32 )
-GB_BIND1ST (GrB, int64_t   , INT64  , &, GrB_INT64 )
-GB_BIND1ST (GrB, uint8_t   , UINT8  , &, GrB_UINT8 )
-GB_BIND1ST (GrB, uint16_t  , UINT16 , &, GrB_UINT16)
-GB_BIND1ST (GrB, uint32_t  , UINT32 , &, GrB_UINT32)
-GB_BIND1ST (GrB, uint64_t  , UINT64 , &, GrB_UINT64)
-GB_BIND1ST (GrB, float     , FP32   , &, GrB_FP32  )
-GB_BIND1ST (GrB, double    , FP64   , &, GrB_FP64  )
-GB_BIND1ST (GxB, GxB_FC32_t, FC32   , &, GxB_FC32  )
-GB_BIND1ST (GxB, GxB_FC64_t, FC64   , &, GxB_FC64  )
-GB_BIND1ST (GrB, void *    , UDT    ,  , op->xtype )
+GB_BIND1ST (GrB, bool      , BOOL  )
+GB_BIND1ST (GrB, int8_t    , INT8  )
+GB_BIND1ST (GrB, int16_t   , INT16 )
+GB_BIND1ST (GrB, int32_t   , INT32 )
+GB_BIND1ST (GrB, int64_t   , INT64 )
+GB_BIND1ST (GrB, uint8_t   , UINT8 )
+GB_BIND1ST (GrB, uint16_t  , UINT16)
+GB_BIND1ST (GrB, uint32_t  , UINT32)
+GB_BIND1ST (GrB, uint64_t  , UINT64)
+GB_BIND1ST (GrB, float     , FP32  )
+GB_BIND1ST (GrB, double    , FP64  )
+GB_BIND1ST (GxB, GxB_FC32_t, FC32  )
+GB_BIND1ST (GxB, GxB_FC64_t, FC64  )
+
+//------------------------------------------------------------------------------
+// GrB_Matrix_apply_BinaryOp1st_UDT: apply a binary operator: op(x,A)
+//------------------------------------------------------------------------------
+
+GrB_Info GrB_Matrix_apply_BinaryOp1st_UDT
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix M,             // optional mask for C
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_BinaryOp op,          // operator to apply to the entries
+    const void *x,                  // first input:  scalar x
+    const GrB_Matrix A,             // second input: matrix A
+    const GrB_Descriptor desc       // descriptor for C, M, and A
+)
+{ 
+    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp1st_UDT "
+        " (C, M, accum, op, x, A, desc)") ;
+    GB_SCALAR_WRAP_UDT (scalar, x, (op == NULL) ? NULL : op->xtype) ;
+    return (GB_1st (C, M, accum, op, scalar, A, desc, Context)) ;
+}
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_apply_BinaryOp2nd_TYPE: apply a binary operator: op(A,y)
 //------------------------------------------------------------------------------
 
-#define GB_BIND2ND(prefix,type,T,ampersand,stype)                           \
+#define GB_BIND2ND(prefix,type,T)                                           \
 GrB_Info GB_EVAL3 (prefix, _Matrix_apply_BinaryOp2nd_, T)                   \
 (                                                                           \
     GrB_Matrix C,                   /* input/output matrix for results */   \
@@ -302,25 +313,44 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_apply_BinaryOp2nd_, T)                   \
     const GrB_Descriptor desc       /* descriptor for C, M, and A */        \
 )                                                                           \
 {                                                                           \
-    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp2nd_" GB_STR(T)                  \
-        "(C, M, accum, op, A, y, desc)") ;                                  \
-    GB_SCALAR_WRAP (scalar, T, ampersand, y, stype) ;                       \
-    ASSERT_SCALAR_OK (scalar, "scalar for matrix_apply_bind2nd", GB0) ;     \
+    GB_WHERE (C, GB_STR(prefix) "_Matrix_apply_BinaryOp2nd_" GB_STR(T)      \
+        " (C, M, accum, op, A, y, desc)") ;                                 \
+    GB_SCALAR_WRAP (scalar, y, GB_EVAL3 (prefix, _, T)) ;                   \
     return (GB_2nd (C, M, accum, op, A, scalar, desc, Context)) ;           \
 }
 
-GB_BIND2ND (GrB, bool      , BOOL   , &, GrB_BOOL  )
-GB_BIND2ND (GrB, int8_t    , INT8   , &, GrB_INT8  )
-GB_BIND2ND (GrB, int16_t   , INT16  , &, GrB_INT16 )
-GB_BIND2ND (GrB, int32_t   , INT32  , &, GrB_INT32 )
-GB_BIND2ND (GrB, int64_t   , INT64  , &, GrB_INT64 )
-GB_BIND2ND (GrB, uint8_t   , UINT8  , &, GrB_UINT8 )
-GB_BIND2ND (GrB, uint16_t  , UINT16 , &, GrB_UINT16)
-GB_BIND2ND (GrB, uint32_t  , UINT32 , &, GrB_UINT32)
-GB_BIND2ND (GrB, uint64_t  , UINT64 , &, GrB_UINT64)
-GB_BIND2ND (GrB, float     , FP32   , &, GrB_FP32  )
-GB_BIND2ND (GrB, double    , FP64   , &, GrB_FP64  )
-GB_BIND2ND (GxB, GxB_FC32_t, FC32   , &, GxB_FC32  )
-GB_BIND2ND (GxB, GxB_FC64_t, FC64   , &, GxB_FC64  )
-GB_BIND2ND (GrB, void *    , UDT    ,  , op->ytype )
+GB_BIND2ND (GrB, bool      , BOOL  )
+GB_BIND2ND (GrB, int8_t    , INT8  )
+GB_BIND2ND (GrB, int16_t   , INT16 )
+GB_BIND2ND (GrB, int32_t   , INT32 )
+GB_BIND2ND (GrB, int64_t   , INT64 )
+GB_BIND2ND (GrB, uint8_t   , UINT8 )
+GB_BIND2ND (GrB, uint16_t  , UINT16)
+GB_BIND2ND (GrB, uint32_t  , UINT32)
+GB_BIND2ND (GrB, uint64_t  , UINT64)
+GB_BIND2ND (GrB, float     , FP32  )
+GB_BIND2ND (GrB, double    , FP64  )
+GB_BIND2ND (GxB, GxB_FC32_t, FC32  )
+GB_BIND2ND (GxB, GxB_FC64_t, FC64  )
+
+//------------------------------------------------------------------------------
+// GrB_Matrix_apply_BinaryOp2nd_UDT: apply a binary operator: op(A,y)
+//------------------------------------------------------------------------------
+
+GrB_Info GrB_Matrix_apply_BinaryOp2nd_UDT
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix M,             // optional mask for C
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_BinaryOp op,          // operator to apply to the entries
+    const GrB_Matrix A,             // first input:  matrix A
+    const void *y,                  // second input: scalar y
+    const GrB_Descriptor desc       // descriptor for C, M, and A
+)
+{ 
+    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp2nd_UDT"
+        " (C, M, accum, op, A, y, desc)") ;
+    GB_SCALAR_WRAP_UDT (scalar, y, (op == NULL) ? NULL : op->ytype) ;
+    return (GB_2nd (C, M, accum, op, A, scalar, desc, Context)) ;
+}
 

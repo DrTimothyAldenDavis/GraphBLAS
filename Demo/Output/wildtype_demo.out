@@ -27,13 +27,13 @@ a wildtype scalar: scalar_identity for the monoid [identity]
 
     GraphBLAS Semiring: InTheWild (user-defined)
     GraphBLAS Monoid: semiring->add (user-defined)
-    GraphBLAS BinaryOp: monoid->op z=wildtype_add(x,y), (user-defined)
+    GraphBLAS BinaryOp: monoid->op (user-defined) z=wildtype_add(x,y)
     GraphBLAS type: ztype user-defined: [wildtype] size: 128
     GraphBLAS type: xtype user-defined: [wildtype] size: 128
     GraphBLAS type: ytype user-defined: [wildtype] size: 128
     identity: [ [user-defined value] ] 
 
-    GraphBLAS BinaryOp: semiring->multiply z=wildtype_mult(x,y), (user-defined)
+    GraphBLAS BinaryOp: semiring->multiply (user-defined) z=wildtype_mult(x,y)
     GraphBLAS type: ztype user-defined: [wildtype] size: 128
     GraphBLAS type: xtype user-defined: [wildtype] size: 128
     GraphBLAS type: ytype user-defined: [wildtype] size: 128

@@ -43,7 +43,7 @@ GrB_Info GB_selector
 (
     GrB_Matrix C,               // output matrix, NULL or static header
     GB_Opcode opcode,           // selector opcode
-    const GxB_SelectOp op,      // user operator
+    const GB_Operator op,       // user operator
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
     int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL

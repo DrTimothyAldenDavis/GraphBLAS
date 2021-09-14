@@ -20,7 +20,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     const bool Mask_comp,           // descriptor for M
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GxB_SelectOp op,          // operator to select the entries
+    const GB_Operator op,           // GxB_SelectOp or GrB_IndexUnaryOp
     const GrB_Matrix A,             // input matrix
     const GrB_Scalar Thunk_in,      // optional input for select operator
     const bool A_transpose,         // A matrix descriptor
@@ -31,7 +31,7 @@ GrB_Info GB_selector
 (
     GrB_Matrix C,               // output matrix, NULL or static header
     GB_Opcode opcode,           // selector opcode
-    const GxB_SelectOp op,      // user operator
+    const GB_Operator op,       // user GxB_SelectOp or GrB_IndexUnaryOp op
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
     int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL

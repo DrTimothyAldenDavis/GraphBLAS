@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Sept 11, 2021 (alpha2)"
+#define GxB_IMPLEMENTATION_DATE "Sept 13, 2021 (alpha3)"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -293,7 +293,7 @@ typedef enum
     // errors:
     //--------------------------------------------------------------------------
 
-    #if (GRB_VERSION == 1)
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GrB_UNINITIALIZED_OBJECT = 2,   // object has not been initialized
     GrB_NULL_POINTER = 4,           // input pointer is NULL
     GrB_INVALID_VALUE = 5,          // generic error; some value is bad
@@ -4702,7 +4702,7 @@ GrB_WaitMode ;
 
 // Finish all pending work in a specific object.
 
-#if (GRB_VERSION == 1)
+#if (GxB_IMPLEMENTATION_MAJOR <= 5)
 
     //--------------------------------------------------------------------------
     // GrB_wait: in the v4 and v5 of SuiteSparse:GraphBLAS
