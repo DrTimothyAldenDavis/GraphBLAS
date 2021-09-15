@@ -3691,6 +3691,8 @@
 #define GB_nnz_max GM_nnz_max
 #define GB_nvals GM_nvals
 #define GB_nvec_nonempty GM_nvec_nonempty
+#define GB_Operator_check GM_Operator_check
+#define GB_Op_free GM_Op_free
 #define GB_op_is_second GM_op_is_second
 #define GB_op_name_and_defn GM_op_name_and_defn
 #define GB_Pending_alloc GM_Pending_alloc

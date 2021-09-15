@@ -62,7 +62,68 @@ switch (opcode)
         break ;
         #endif
 
-    case GB_USER_selop_code   : // C = user_select (A,k)
+    case GB_ROWINDEX_idxunop_code     :  // C = rowindex (A,k)
+
+        #ifdef GB_SELECT_PHASE1
+        GB_SEL_WORKER (_rowindex, _iso, GB_void)
+        #else
+        switch (typecode)
+        {
+            case GB_ignore_code  : GB_SEL_WORKER (_rowindex, _iso, GB_void)
+            default              : GB_SEL_WORKER (_rowindex, _any, GB_void)
+        }
+        break ;
+        #endif
+
+    case GB_ROWLE_idxunop_code     :  // C = rowle (A,k)
+
+        // also used for resize
+        #ifdef GB_SELECT_PHASE1
+        GB_SEL_WORKER (_rowle, _iso, GB_void)
+        #else
+        switch (typecode)
+        {
+            case GB_ignore_code  : GB_SEL_WORKER (_rowle, _iso, GB_void)
+            default              : GB_SEL_WORKER (_rowle, _any, GB_void)
+        }
+        break ;
+        #endif
+
+    case GB_ROWGT_idxunop_code     :  // C = rowgt (A,k)
+
+        #ifdef GB_SELECT_PHASE1
+        GB_SEL_WORKER (_rowgt, _iso, GB_void)
+        #else
+        switch (typecode)
+        {
+            case GB_ignore_code  : GB_SEL_WORKER (_rowgt, _iso, GB_void)
+            default              : GB_SEL_WORKER (_rowgt, _any, GB_void)
+        }
+        break ;
+        #endif
+
+    case GB_VALUENE_idxunop_code :  // C = value_select (A,k)
+    case GB_VALUEEQ_idxunop_code :
+    case GB_VALUEGT_idxunop_code :
+    case GB_VALUEGE_idxunop_code :
+    case GB_VALUELT_idxunop_code :
+    case GB_VALUELE_idxunop_code :
+
+        // A is not iso, and typecasting is required, so use the
+        // idxunop_function, just as if this were a user-defined operator
+        GB_SEL_WORKER (_idxunop, _any, GB_void)
+        break ;
+
+    case GB_USER_idxunop_code   : // C = user_idxunop (A,k)
+
+        switch (typecode)
+        {
+            case GB_ignore_code  : GB_SEL_WORKER (_idxunop, _iso, GB_void)
+            default              : GB_SEL_WORKER (_idxunop, _any, GB_void)
+        }
+        break ;
+
+    case GB_USER_selop_code     : // C = user_select (A,k)
 
         switch (typecode)
         {
@@ -72,23 +133,10 @@ switch (opcode)
         break ;
 
     //--------------------------------------------------------------------------
-    // resize and nonzombie selectors are not used for the bitmap case
+    // nonzombie selectors are not used for the bitmap case
     //--------------------------------------------------------------------------
 
     #ifndef GB_BITMAP_SELECTOR
-
-    case GB_RESIZE_selop_code        :  // C = resize (A)
-
-        #ifdef GB_SELECT_PHASE1
-        GB_SEL_WORKER (_resize, _iso, GB_void)
-        #else
-        switch (typecode)
-        {
-            case GB_ignore_code  : GB_SEL_WORKER (_resize, _iso, GB_void)
-            default              : GB_SEL_WORKER (_resize, _any, GB_void)
-        }
-        break ;
-        #endif
 
     case GB_NONZOMBIE_selop_code     :  // C = all entries A(i,j) not a zombie
 

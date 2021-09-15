@@ -207,7 +207,8 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 // since it does not depend on the values of its two arguments.  The operator
 // can only be implemented via its opcode.
 
-// FIXME: use a function based on the index_unaryop signature
+// FIXME: use a function based on the index_unaryop signature,
+// and create an index_binaryop function signature.
 
 // helper macros to define positional unary operators
 #define GXB_OP1_POS(op,str,type)                                            \

@@ -72,8 +72,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         GB_RETURN_IF_NULL (Thunk) ;
     }
 
-    // these opcodes are not availabe to the user
-    ASSERT (opcode != GB_RESIZE_selop_code) ;
+    // this opcodes are not available to the user
     ASSERT (opcode != GB_NONZOMBIE_selop_code) ;
 
     // check if the op is a GT, GE, LT, or LE comparator
@@ -142,7 +141,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         (opcode == GB_USER_idxunop_code) ;
 
     int64_t nz_thunk = 0 ;
-    GB_void *restrict xthunk = NULL ;
     GrB_Type ttype = NULL ;
 
     if (Thunk != NULL)
@@ -178,9 +176,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     op->name, A->type->name, ttype->name) ;
             }
         }
-
-        // get the pointer to the value of Thunk
-        xthunk = (GB_void *) Thunk->x ;
     }
 
     if (op_is_idxunop)
@@ -307,9 +302,9 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     int64_t ithunk = 0 ;        // ithunk = (int64_t) Thunk (0)
 
     if (nz_thunk > 0 && GB_Type_compatible (GrB_INT64, ttype))
-    {
+    { 
         // ithunk = (int64_t) Thunk
-        GB_cast_scalar (&ithunk, GB_INT64_code, xthunk, tcode,
+        GB_cast_scalar (&ithunk, GB_INT64_code, Thunk->x, tcode,
             sizeof (int64_t)) ;
         // bthunk = (bool) Thunk
         bthunk = (ithunk != 0) ;
@@ -410,6 +405,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
             flipij = false ;
         }
+
+        // flipij is now false for any positional operator
 
     }
     else
@@ -622,8 +619,13 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         }
     }
 
-    // flipij can still be true but is only needed for user-defined if the
-    // op (GrB_IndexUnaryOp or GxB_SelectOp) is user-defined.
+    if (!op_is_user_defined)
+    {
+        // flipij can still be true but is only needed for if the op
+        // (GrB_IndexUnaryOp or GxB_SelectOp) is user-defined.  So set here it
+        // to false for all but user-defined op.
+        flipij = false ;
+    }
 
     //--------------------------------------------------------------------------
     // create T
@@ -646,10 +648,23 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     else
     { 
         // T = select (A, Thunk)
-        op_is_idxunop = GB_IS_INDEXUNARYOP_CODE (opcode) ;
-        GB_OK (GB_selector (T, opcode, op, flipij, A, ithunk,
-            (op_is_thunk_comparator || op_is_user_defined || op_is_idxunop) ?
-            Thunk : NULL, Context)) ;
+        GrB_Scalar Thunk2 = NULL ;
+        if (nz_thunk > 0 && (op_is_thunk_comparator || op_is_user_defined))
+        {
+            // the GrB_Scalar Thunk is passed to GB_selector only if the
+            // operator is a thunk comparator (EQ, NE, GT, GE, LT, LE),
+            // or if the operator is user-defined.
+            Thunk2 = Thunk ;
+        }
+        GB_OK (GB_selector (
+            T,          // output matrix
+            opcode,     // opcode of the operator
+            op,         // the GB_Operator itself
+            flipij,     // if true, flip i and j for user-defined operator
+            A,          // input matrix
+            ithunk,     // thunk typecasted to int64_t
+            Thunk2,     // NULL, or the GrB_Scalar Thunk
+            Context)) ;
     }
 
     T->is_csc = A_csc ;

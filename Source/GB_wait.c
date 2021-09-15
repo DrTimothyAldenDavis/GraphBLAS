@@ -248,8 +248,15 @@ GrB_Info GB_wait                // finish all pending computations
     if (nzombies > 0)
     { 
         // remove all zombies from A
-        GB_OK (GB_selector (NULL /* A in-place */, GB_NONZOMBIE_selop_code,
-            NULL, false, A, 0, NULL, Context)) ;
+        GB_OK (GB_selector (
+            NULL,                       // A in-place
+            GB_NONZOMBIE_selop_code,    // use the opcode only
+            NULL,                       // no GB_Operator
+            false,                      // flipij is false
+            A,                          // input/output matrix
+            0,                          // ithunk is unused
+            NULL,                       // no GrB_Scalar Thunk
+            Context)) ;
         ASSERT (A->nzombies == (anz_orig - GB_nnz (A))) ;
         A->nzombies = 0 ;
     }

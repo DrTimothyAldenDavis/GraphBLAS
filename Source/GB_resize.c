@@ -281,8 +281,15 @@ GrB_Info GB_resize              // change the size of a matrix
         // if vlen is shrinking, delete entries outside the new matrix
         if (vlen_new < vlen_old)
         { 
-            GB_OK (GB_selector (NULL /* A in-place */, GB_RESIZE_selop_code,
-                NULL, false, A, vlen_new-1, NULL, Context)) ;
+            GB_OK (GB_selector (
+                NULL,                   // A in-place
+                GB_ROWLE_idxunop_code,  // use the opcode only
+                NULL,                   // no operator, just opcode is needed
+                false,                  // flipij is false
+                A,                      // input/output matrix
+                vlen_new-1,             // ithunk
+                NULL,                   // no Thunk GrB_Scalar
+                Context)) ;
         }
 
         //----------------------------------------------------------------------

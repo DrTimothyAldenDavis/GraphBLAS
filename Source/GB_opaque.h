@@ -159,8 +159,8 @@ typedef enum
     // operator codes used in GrB_IndexUnaryOp structures
 
     // Result is INT32 or INT64, depending on i and/or j, and thunk:
-    GB_ROWINDEX_idxunop_code  = 51,   // (i+thunk): row index + thunk
-    GB_COLINDEX_idxunop_code  = 52,   // (j+thunk): col index + thunk
+    GB_ROWINDEX_idxunop_code  = 51,   // (i-thunk): row index - thunk
+    GB_COLINDEX_idxunop_code  = 52,   // (j-thunk): col index - thunk
     GB_DIAGINDEX_idxunop_code = 53,   // (i-j+thunk): diag index + thunk
 
     // Result is BOOL, depending on i and/or j, and thunk:
@@ -297,27 +297,24 @@ typedef enum
     GB_DIAG_selop_code      = 123,
     GB_OFFDIAG_selop_code   = 124,
 
-    // built-in select operators: thunk optional; defaults to zero
-    GB_RESIZE_selop_code    = 125,
-
     // built-in select operators, no thunk used
-    GB_NONZOMBIE_selop_code = 126,
-    GB_NONZERO_selop_code   = 127,
-    GB_EQ_ZERO_selop_code   = 128,
-    GB_GT_ZERO_selop_code   = 129,
-    GB_GE_ZERO_selop_code   = 130,
-    GB_LT_ZERO_selop_code   = 131,
-    GB_LE_ZERO_selop_code   = 132,
+    GB_NONZOMBIE_selop_code = 125,
+    GB_NONZERO_selop_code   = 126,
+    GB_EQ_ZERO_selop_code   = 127,
+    GB_GT_ZERO_selop_code   = 128,
+    GB_GE_ZERO_selop_code   = 129,
+    GB_LT_ZERO_selop_code   = 130,
+    GB_LE_ZERO_selop_code   = 131,
 
     // built-in select operators, thunk optional; defaults to zero
-    GB_NE_THUNK_selop_code  = 133,
-    GB_EQ_THUNK_selop_code  = 134,
-    GB_GT_THUNK_selop_code  = 135,
-    GB_GE_THUNK_selop_code  = 136,
-    GB_LT_THUNK_selop_code  = 137,
-    GB_LE_THUNK_selop_code  = 138,
+    GB_NE_THUNK_selop_code  = 132,
+    GB_EQ_THUNK_selop_code  = 133,
+    GB_GT_THUNK_selop_code  = 134,
+    GB_GE_THUNK_selop_code  = 135,
+    GB_LT_THUNK_selop_code  = 136,
+    GB_LE_THUNK_selop_code  = 137,
 
-    GB_USER_selop_code = 139
+    GB_USER_selop_code = 138
 
     // true if opcode is for a GxB_SelectOp
     #define GB_IS_SELECTOP_CODE(opcode) \

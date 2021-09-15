@@ -17,9 +17,9 @@
 // The selection is defined by the following types and operators:
 
 // functions:
-// phase1: GB (_sel_phase1__resize_iso)
-// phase2: GB (_sel_phase2__resize_iso)
-// bitmap: GB (_sel_bitmap__(none))
+// phase1: GB (_sel_phase1__rowle_iso)
+// phase2: GB (_sel_phase2__rowle_iso)
+// bitmap: GB (_sel_bitmap__rowle_iso)
 
 // A type: GB_void
 
@@ -27,18 +27,14 @@
     1
 
 // kind
-#define GB_RESIZE_SELECTOR
+#define GB_ROWLE_SELECTOR
 
 #define GB_ATYPE \
     GB_void
 
 // test value of Ax [p]
-#define GB_TEST_VALUE_OF_ENTRY(p)                       \
-    (no test; resize ignores values)
-
-// get the vector index (user select operators only)
-#define GB_GET_J                                        \
-    ;
+#define GB_TEST_VALUE_OF_ENTRY(keep,p)                  \
+    (no test; rowle ignores values)
 
 // Cx [pC] = Ax [pA], no typecast
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
@@ -50,7 +46,7 @@
 
 
 
-void GB (_sel_phase1__resize_iso)
+void GB (_sel_phase1__rowle_iso)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -59,12 +55,14 @@ void GB (_sel_phase1__resize_iso)
     const GrB_Matrix A,
     const bool flipij,
     const int64_t ithunk,
-    const GB_void *restrict xthunk,
-    const GxB_select_function user_select,
+    const GB_void *restrict athunk,
+    const GB_void *restrict ythunk,
+    const GB_Operator op,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
-    ;
+    
+    
     #include "GB_select_phase1.c"
 }
 
@@ -74,7 +72,7 @@ void GB (_sel_phase1__resize_iso)
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
-void GB (_sel_phase2__resize_iso)
+void GB (_sel_phase2__rowle_iso)
 (
     int64_t *restrict Ci,
     GB_void *restrict Cx,
@@ -84,12 +82,14 @@ void GB (_sel_phase2__resize_iso)
     const GrB_Matrix A,
     const bool flipij,
     const int64_t ithunk,
-    const GB_void *restrict xthunk,
-    const GxB_select_function user_select,
+    const GB_void *restrict athunk,
+    const GB_void *restrict ythunk,
+    const GB_Operator op,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
-    ;
+    
+    
     #include "GB_select_phase2.c"
 }
 
@@ -97,9 +97,9 @@ void GB (_sel_phase2__resize_iso)
 // GB_sel_bitmap
 //------------------------------------------------------------------------------
 
-#if 0
 
-void GB (_sel_bitmap__(none))
+
+void GB (_sel_bitmap__rowle_iso)
 (
     int8_t *Cb,
     GB_void *restrict Cx,
@@ -107,13 +107,15 @@ void GB (_sel_bitmap__(none))
     GrB_Matrix A,
     const bool flipij,
     const int64_t ithunk,
-    const GB_void *restrict xthunk,
-    const GxB_select_function user_select,
+    const GB_void *restrict athunk,
+    const GB_void *restrict ythunk,
+    const GB_Operator op,
     const int nthreads
 )
 { 
-    ;
+    
+    
     #include "GB_bitmap_select_template.c"
 }
 
-#endif
+

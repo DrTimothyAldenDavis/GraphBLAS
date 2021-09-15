@@ -121,6 +121,9 @@
 #define ASSERT_OP_OK(op,name,pr) \
     ASSERT_OK (GB_Operator_check (op, name, pr, NULL))
 
+#define ASSERT_OP_OK_OR_NULL(op,name,pr) \
+    ASSERT_OK_OR_NULL (GB_Operator_check (op, name, pr, NULL))
+
 #define ASSERT_MONOID_OK(mon,name,pr)  \
     ASSERT_OK (GB_Monoid_check (mon, name, pr, NULL))
 

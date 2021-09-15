@@ -43,12 +43,13 @@ GrB_Info GB_bitmap_selector
 (
     GrB_Matrix C,               // output matrix, static header
     const bool C_iso,           // if true, C is iso
-    GB_Opcode opcode,           // selector opcode
-    const GxB_select_function user_select,      // user select function
+    GB_Opcode opcode,           // selector/idxunop opcode
+    const GB_Operator op,
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
     const int64_t ithunk,       // (int64_t) Thunk, if Thunk is NULL
-    const GB_void *restrict xthunk,
+    const GB_void *restrict athunk,     // (A->type) Thunk
+    const GB_void *restrict ythunk,     // (op->utype) Thunk
     GB_Context Context
 ) ;
 
@@ -60,7 +61,7 @@ static inline void GB_iso_select
 (
     void *Cx,                       // output iso value
     const GB_Opcode opcode,         // selector opcode
-    const void *xthunk,             // thunk scalar, of size asize
+    const void *athunk,             // thunk scalar, of size asize
     const void *Ax,                 // Ax [0] scalar, of size asize
     const GB_Type_code acode,       // the type code of Ax
     const size_t asize
@@ -74,7 +75,7 @@ static inline void GB_iso_select
     else if (opcode == GB_EQ_THUNK_selop_code)
     { 
         // all entries in C are equal to thunk
-        memcpy (Cx, xthunk, asize) ;
+        memcpy (Cx, athunk, asize) ;
     }
     else if (opcode == GB_NONZERO_selop_code && acode == GB_BOOL_code)
     { 

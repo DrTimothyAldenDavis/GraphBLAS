@@ -15,6 +15,7 @@ end
 
 is_entry_selector = isempty (kind) ;
 is_nonzombie_selector = isequal (opname, 'nonzombie') ;
+is_idxunop_selector = isequal (opname, 'idxunop') ;
 
 f = fopen ('control.m4', 'w') ;
 
@@ -38,6 +39,17 @@ else
     fprintf (f, 'define(`_sel_phase1'', `_sel_phase1__(none)'')\n') ;
 end
 fprintf (f, 'define(`_sel_phase2'', `_sel_phase2__%s'')\n', name) ;
+
+% zcode, zsize, xcode, xsize
+zxtype = '' ;
+if (is_idxunop_selector)
+    zcode = 'GB_Type_code zcode = op->ztype->code, ' ;
+    xcode = 'xcode = op->xtype->code, ' ;
+    acode = 'acode = A->type->code ; ' ;
+    sizes = 'size_t zsize = op->ztype->size, xsize = op->xtype->size ;' ;
+    zxtype = [zcode xcode acode sizes] ;
+end
+fprintf (f, 'define(`GB_get_zxtypes'', `%s'')\n', zxtype) ;
 
 if isequal (opname, 'nonzombie') || isequal (opname, 'resize') 
     fprintf (f, 'define(`_sel_bitmap'', `_sel_bitmap__(none)'')\n') ;
@@ -65,18 +77,11 @@ else
     fprintf (f, 'define(`GB_kind'', `#define %s'')\n', kind) ;
 end
 
-% get vector index for user-defined select operator
-if (isequal (opname, 'user'))
-    fprintf (f, 'define(`GB_get_j'', `int64_t j = GBH (Ah, k)'')\n') ;
-else
-    fprintf (f, 'define(`GB_get_j'', `;'')\n') ;
-end
-
 % get scalar thunk
 if (~isequal (atype, 'GB_void') && ~isempty (strfind (opname, 'thunk')))
-    fprintf (f, 'define(`GB_get_thunk'', `%s thunk = (*xthunk) ;'')\n', atype) ;
+    fprintf (f, 'define(`GB_get_thunk'', `%s thunk = (*athunk) ;'')\n', atype) ;
 else
-    fprintf (f, 'define(`GB_get_thunk'', `;'')\n') ;
+    fprintf (f, 'define(`GB_get_thunk'', `'')\n') ;
 end
 
 % enable phase1
@@ -97,7 +102,7 @@ elseif (isequal (opname, 'eq_zero'))
     % create C as iso for all EQ_ZERO ops even when A is not iso, with iso value zero
     fprintf (f, 'define(`GB_select_entry'', `/* assignment skipped, C is iso with all entries zero */'')\n') ;
 elseif (isequal (opname, 'eq_thunk'))
-    % create C as iso for all EQ_THUNK ops even when A is not iso, with iso value xthunk
+    % create C as iso for all EQ_THUNK ops even when A is not iso, with iso value athunk
     fprintf (f, 'define(`GB_select_entry'', `/* assignment skipped, C is iso with all entries equal to thunk */'')\n') ;
 elseif (isequal (opname, 'nonzero') && isequal (atype, 'bool'))
     % create C as iso for NONZERO_BOOL even when A is not iso, with iso value true

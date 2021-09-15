@@ -43,7 +43,7 @@ GrB_Info GB_selector
 (
     GrB_Matrix C,               // output matrix, NULL or static header
     GB_Opcode opcode,           // selector opcode
-    const GB_Operator op,       // user operator
+    const GB_Operator op,       // user operator, NULL for resize/nonzombie
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
     int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
@@ -57,16 +57,13 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT_SELECTOP_OK_OR_NULL (op, "selectop for GB_selector", GB0) ;
+    ASSERT_OP_OK_OR_NULL (op, "selectop/idxunop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_selector", GB0) ;
-    ASSERT (GB_IS_SELECTOP_CODE (opcode)) ;
+    ASSERT (GB_IS_SELECTOP_CODE (opcode) || GB_IS_INDEXUNARYOP_CODE (opcode)) ;
     ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
-    // positional selector (tril, triu, diag, offdiag, resize): can't be jumbled
-    ASSERT (GB_IMPLIES (opcode <= GB_RESIZE_selop_code ||
-        opcode == GB_USER_selop_code, !GB_JUMBLED (A))) ;
-    // nonzombie, entry-valued selector: jumbled OK
-    ASSERT (GB_IMPLIES (opcode >= GB_NONZOMBIE_selop_code && 
-        opcode <= GB_LE_THUNK_selop_code, GB_JUMBLED_OK (A))) ;
+    // positional selector (tril, triu, diag, offdiag, resize):
+    // can't be jumbled.  nonzombie, entry-valued op, user op: jumbled OK
+    ASSERT (GB_IMPLIES (GB_OPCODE_IS_POSITIONAL (opcode), !GB_JUMBLED (A))) ;
     ASSERT (C == NULL || (C != NULL && C->static_header)) ;
 
     //--------------------------------------------------------------------------
@@ -94,36 +91,67 @@ GrB_Info GB_selector
     // get Thunk
     //--------------------------------------------------------------------------
 
-    // The scalar value of Thunk is typecasted to an integer (int64_t
-    // ithunk) for built-in operators (tril, triu, diag, offdiag, and resize).
-    // It is also typecast to the same type as A (to the scalar athunk).  This
-    // is used for gt, ge, lt, le, ne, eq to Thunk, for built-in types.
+    // The scalar value of Thunk has already been typecasted to an integer
+    // (int64_t ithunk).
+
+    // It is also now typecast to the same type as A (to the scalar athunk)
+    // which is required for GxB_SelectOps, and to the op->ytype (the scalar
+    // ythunk) for GrB_IndexUnaryOps.
 
     // If Thunk is NULL, or has no entry, it is treated as a scalar value
     // of zero.
 
-    const int64_t asize = A->type->size ;
+    const size_t asize = A->type->size ;
     const GB_Type_code acode = A->type->code ;
 
+    GrB_Type ytype = NULL, xtype = NULL ;
+    GB_Type_code ycode = GB_ignore_code, xcode = GB_ignore_code ;
+    size_t ysize = 1, xsize = 1 ;
+
+    if (op != NULL)
+    {
+        if (op->ytype != NULL)
+        {
+            // get the type of the thunk input of the operator
+            ytype = op->ytype ;
+            ycode = ytype->code ;
+            ysize = ytype->size ;
+        }
+        if (op->xtype != NULL)
+        {
+            // get the type of the A input of the operator
+            xtype = op->xtype ;
+            xcode = xtype->code ;
+            xsize = xtype->size ;
+        }
+    }
+
+    // athunk = (A->type) Thunk, for selectop thunk comparators only
     GB_void athunk [GB_VLA(asize)] ;
     memset (athunk, 0, asize) ;
-    GB_void *restrict xthunk = athunk ;
 
-    if (Thunk != NULL && GB_nnz ((GrB_Matrix) Thunk) > 0)
+    // ythunk = (op->ytype) Thunk, for idxnunop
+    GB_void ythunk [GB_VLA(ysize)] ;
+    memset (ythunk, 0, ysize) ;
+
+    bool op_is_selectop = GB_IS_SELECTOP_CODE (opcode) ;
+    bool op_is_idxunop  = GB_IS_INDEXUNARYOP_CODE (opcode) ;
+    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+
+    if (Thunk != NULL)
     {
-        // xthunk points to Thunk->x for user-defined select operators
-        xthunk = (GB_void *) Thunk->x ;
+        // Thunk is passed to GB_selector only if it is non-empty
+        ASSERT (GB_nnz ((GrB_Matrix) Thunk) > 0) ;
         const GB_Type_code tcode = Thunk->type->code ;
-        ithunk = 0 ;
-        if (tcode <= GB_FP64_code && opcode != GB_USER_selop_code)
+        if (op_is_selectop && opcode != GB_USER_selop_code)
         { 
-            // ithunk = (int64_t) Thunk
-            GB_cast_scalar (&ithunk, GB_INT64_code, xthunk, tcode,
-                sizeof (int64_t)) ;
-            // athunk = (atype) Thunk
-            GB_cast_scalar (athunk, A->type->code, xthunk, tcode, asize) ;
-            // xthunk now points to the typecasted (atype) Thunk
-            xthunk = athunk ;
+            // athunk = (atype) Thunk, for built-in GxB_SelectOps only
+            GB_cast_scalar (athunk, acode, Thunk->x, tcode, asize) ;
+        }
+        if (ytype != NULL)
+        {
+            // ythunk = (op->ytype) Thunk
+            GB_cast_scalar (ythunk, ycode, Thunk->x, tcode, ysize) ;
         }
     }
 
@@ -131,29 +159,53 @@ GrB_Info GB_selector
     // handle iso case for built-in select ops that depend only on the value
     //--------------------------------------------------------------------------
 
-    if (A_iso && opcode >= GB_NONZERO_selop_code && opcode <= GB_LE_THUNK_selop_code)
+    bool op_is_select_valued =
+        opcode >= GB_NONZERO_selop_code && opcode <= GB_LE_THUNK_selop_code ;
+
+    bool op_is_idxunop_valued =
+        opcode >= GB_VALUENE_idxunop_code && opcode <= GB_VALUELE_idxunop_code ;
+
+    if (A_iso && (op_is_select_valued || op_is_idxunop_valued))
     { 
 
         // select op is NONZERO, EQ_ZERO, GT_ZERO, GE_ZERO, LT_ZERO, LE_ZERO,
-        // EQ_THUNK, GT_THUNK, GE_THUNK, LT_THUNK, or LE_THUNK.  All of these
-        // select ops depend only on the value of A(i,j).  Since A is iso,
-        // either all entries in A will be copied to C and thus C can be
-        // created as a shallow copy of A, or no entries from A will be copied
-        // to C and thus C is an empty matrix.  The select factory is not
-        // needed, except to check the iso value via GB_bitmap_selector.
+        // EQ_THUNK, GT_THUNK, GE_THUNK, LT_THUNK, or LE_THUNK, or the idxunop
+        // VALUE* operators.  All of these select/idxunop ops depend only on
+        // the value of A(i,j).  Since A is iso, either all entries in A will
+        // be copied to C and thus C can be created as a shallow copy of A, or
+        // no entries from A will be copied to C and thus C is an empty matrix.
+        // The select factory is not needed, except to check the iso value via
+        // GB_bitmap_selector.
 
         ASSERT (!in_place_A) ;
         ASSERT (C != NULL && C->static_header) ;
 
-        // construct a scalar containing the iso scalar
+        // construct a scalar containing the iso scalar of A
+
+        // xscalar = (op->xtype) A->x for idxunops
+        GB_void xscalar [GB_VLA(xsize)] ;
+        memset (xscalar, 0, xsize) ;
+
         struct GB_Scalar_opaque S_header ;
-        GrB_Scalar S = GB_Scalar_wrap (&S_header, A->type, A->x) ;
+        GrB_Scalar S ;
+        if (op_is_select_valued)
+        {
+            // wrap the iso-value of A in the scalar S, with no typecasting
+            S = GB_Scalar_wrap (&S_header, A->type, A->x) ;
+        }
+        else
+        {
+            // wrap the iso-value of A in the scalar S, typecasted to xtype
+            // xscalar = (op->xtype) A->x
+            GB_cast_scalar (xscalar, xcode, A->x, acode, asize) ;
+            S = GB_Scalar_wrap (&S_header, xtype, xscalar) ;
+        }
         S->iso = false ;    // but ensure S is not iso
         ASSERT_SCALAR_OK (S, "iso scalar wrap", GB0) ;
 
-        // apply the select operator to the iso scalar
+        // apply the select operator to the iso scalar S
         GB_OK (GB_bitmap_selector (C, false, opcode, NULL, false,
-            (GrB_Matrix) S, ithunk, xthunk, Context)) ;
+            (GrB_Matrix) S, ithunk, athunk, ythunk, Context)) ;
         ASSERT_MATRIX_OK (C, "C from iso scalar test", GB0) ;
         bool C_empty = (GB_nnz (C) == 0) ;
         GB_phbix_free (C) ;
@@ -181,35 +233,31 @@ GrB_Info GB_selector
     //      GB_TRIU_selop_code        : use GB_sel__triu_iso
     //      GB_DIAG_selop_code        : use GB_sel__diag_iso
     //      GB_OFFDIAG_selop_code     : use GB_sel__offdiag_iso
-    //      GB_RESIZE_selop_code      : use GB_sel__resize_iso
     //      GB_NONZOMBIE_selop_code   : use GB_sel__nonzombie_iso
     //      GB_USER_selop_code        : use GB_sel__user_iso
+    //      GB_ROWINDEX_idxunop_code  : use GB_sel__rowindex_iso
+    //      GB_ROWLE_idxunop_code     : use GB_sel__rowle_iso
+    //      GB_ROWGT_idxunop_code     : use GB_sel__rowle_iso
+    //      all other idxunop         : use GB_sel__idxunop_iso
 
-    // Except for GB_USER_selop_code, the GB_sel__*_iso methods do not
-    // access the values of A and C, just the pattern.
+    // column selectors are handled below:
+    //      GB_COLINDEX_idxunop_code  : 
+    //      GB_COLLE_idxunop_code     : 
+    //      GB_COLGT_idxunop_code     : 
 
-    //--------------------------------------------------------------------------
-    // get the user-defined operator
-    //--------------------------------------------------------------------------
-
-    GxB_select_function user_select = NULL ;
-    if (op != NULL && opcode == GB_USER_selop_code)
-    { 
-        GB_BURBLE_MATRIX (A, "(user select: %s) ", op->name) ;
-        user_select = (GxB_select_function) (op->selop_function) ;
-    }
+    // Except for GB_USER_selop_code and idxunop, the GB_sel__*_iso methods do
+    // not access the values of A and C, just the pattern.
 
     //--------------------------------------------------------------------------
     // handle the bitmap/as-if-full case
     //--------------------------------------------------------------------------
 
     bool use_bitmap_selector ;
-    if (opcode == GB_RESIZE_selop_code || opcode == GB_NONZOMBIE_selop_code)
+    if (opcode == GB_NONZOMBIE_selop_code || in_place_A)
     { 
-        // GB_bitmap_selector does not support these opcodes.  For the RESIZE
-        // and NONZOMBIE operators, A will never be bitmap.  A is converted to
-        // hypersparse first for RESIZE, and a full/bitmap matrix never has
-        // zombies.
+        // GB_bitmap_selector does not support the nonzombie opcode, nor does
+        // it support operating on A in place.  For the NONZOMBIE operator, A
+        // will never be bitmap.
         use_bitmap_selector = false ;
     }
     else if (opcode == GB_DIAG_selop_code)
@@ -245,17 +293,27 @@ GrB_Info GB_selector
         GB_BURBLE_MATRIX (A, "(iso select) ") ;
     }
 
-    //--------------------------------------------------------------------------
+    //==========================================================================
     // bitmap/full case
-    //--------------------------------------------------------------------------
+    //==========================================================================
 
     if (use_bitmap_selector)
     { 
         GB_BURBLE_MATRIX (A, "(bitmap select) ") ;
         ASSERT (C != NULL && C->static_header) ;
-        return (GB_bitmap_selector (C, C_iso, opcode, user_select, flipij, A,
-            ithunk, xthunk, Context)) ;
+        return (GB_bitmap_selector (C, C_iso, opcode, op,                  
+            flipij, A, ithunk, athunk, ythunk, Context)) ;
     }
+
+    //==========================================================================
+    // sparse/hypersparse case
+    //==========================================================================
+
+    //--------------------------------------------------------------------------
+    // determine the max number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     //--------------------------------------------------------------------------
     // get A: sparse, hypersparse, or full
@@ -270,6 +328,239 @@ GrB_Info GB_selector
     GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
     int64_t anvec = A->nvec ;
     bool A_jumbled = A->jumbled ;
+    bool A_is_hyper = (Ah != NULL) ;
+
+    //==========================================================================
+    // column selector
+    //==========================================================================
+
+    // The column selectors can be done in a single pass.
+
+    if (opcode == GB_COLINDEX_idxunop_code ||
+        opcode == GB_COLLE_idxunop_code ||
+        opcode == GB_COLGT_idxunop_code)
+    {
+
+        //----------------------------------------------------------------------
+        // find column j in A
+        //----------------------------------------------------------------------
+
+        int nth = nthreads_max ;
+        ASSERT (!in_place_A) ;
+        ASSERT (C != NULL && C->static_header) ;
+        ASSERT (GB_JUMBLED_OK (A)) ;
+
+        int64_t j = (opcode == GB_COLINDEX_idxunop_code) ? (-ithunk) : ithunk ;
+
+        int64_t k = 0 ;
+        bool found ;
+        if (A_is_hyper)
+        { 
+            // find the column j in the hyperlist of A
+            int64_t kright = anvec-1 ;
+            GB_SPLIT_BINARY_SEARCH (j, Ah, k, kright, found) ;
+            // if found is true the Ah [k] == j
+            // if found is false, then Ah [0..k-1] < j and Ah [k..anvec-1] > j
+        }
+        else
+        { 
+            // j appears as the jth column in A; found is always true
+            k = j ;
+            found = true ;
+        }
+
+        //----------------------------------------------------------------------
+        // determine the # of entries and # of vectors in C
+        //----------------------------------------------------------------------
+
+        int64_t pstart = Ap [k] ;
+        int64_t pend = found ? pstart : Ap [k+1] ;
+        int64_t ajnz = pend - pstart ;
+        int64_t cnz, cnvec ;
+        int64_t anz = Ap [anvec] ;
+
+        if (opcode == GB_COLINDEX_idxunop_code)
+        { 
+            // COLINDEX: delete column j:  C = A (:, [0:j-1 j+1:end])
+            cnz = anz - ajnz ;
+            cnvec = (A_is_hyper && found) ? (anvec-1) : anvec ;
+        }
+        else if (opcode == GB_COLLE_idxunop_code)
+        { 
+            // COLLE: C = A (:, 0:j)
+            cnz = pend ;
+            cnvec = (A_is_hyper) ? (found ? k : k-1) : anvec ;
+        }
+        else // (opcode == GB_COLGT_idxunop_code)
+        { 
+            // COLGT: C = A (:, j+1:end)
+            cnz = anz - pend ;
+            cnvec = anvec - ((A_is_hyper) ? (found ? k : k-1) : 0) ;
+        }
+
+        if (cnz == anz)
+        { 
+            // C is the same as A: return it a pure shallow copy
+            return (GB_shallow_copy (C, true, A, Context)) ;
+        }
+
+        //----------------------------------------------------------------------
+        // allocate C
+        //----------------------------------------------------------------------
+
+        int sparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+        GB_OK (GB_new_bix (&C, true, // sparse or hyper (from A), static header
+            A->type, avlen, avdim, GB_Ap_malloc, true, sparsity, false,
+            A->hyper_switch, cnvec, cnz, true, A_iso, Context)) ;
+        ASSERT (info == GrB_SUCCESS) ;
+        int nth2 = GB_nthreads (cnvec, chunk, nth) ;
+
+        int64_t *restrict Cp = C->p ;
+        int64_t *restrict Ch = C->h ;
+        int64_t *restrict Ci = C->i ;
+        GB_void *restrict Cx = C->x ;
+        int64_t kk ;
+
+        //----------------------------------------------------------------------
+        // construct C
+        //----------------------------------------------------------------------
+
+        if (A_iso)
+        { 
+            // Cx [0] = Ax [0]
+            memcpy (Cx, Ax, asize) ;
+        }
+
+        if (opcode == GB_COLINDEX_idxunop_code)
+        {
+
+            //------------------------------------------------------------------
+            // COLINDEX: delete the column j
+            //------------------------------------------------------------------
+
+            if (A_is_hyper)
+            { 
+                // Cp [0:k-1] = Ap [0:k-1]
+                GB_memcpy (Cp, Ap, k * sizeof (int64_t), nth) ;
+                // Cp [k:cnvec] = Ap [k+1:anvec] - ajnz
+                #pragma omp parallel for num_threads(nth2)
+                for (kk = k ; kk <= cnvec ; kk++)
+                { 
+                    Cp [kk] = Ap [kk+1] - ajnz ;
+                }
+                // Ch [0:k-1] = Ah [0:k-1]
+                GB_memcpy (Ch, Ah, k * sizeof (int64_t), nth) ;
+                // Ch [k:cnvec-1] = Ah [k+1:anvec-1]
+                GB_memcpy (Ch + k, Ah + (k+1), (cnvec-k) * sizeof (int64_t),
+                    nth) ;
+            }
+            else
+            { 
+                // Cp [0:k] = Ap [0:k]
+                GB_memcpy (Cp, Ap, (k+1) * sizeof (int64_t), nth) ;
+                // Cp [k+1:anvec] = Ap [k+1:anvec] - ajnz
+                #pragma omp parallel for num_threads(nth2)
+                for (kk = k+1 ; kk <= cnvec ; kk++)
+                { 
+                    Cp [kk] = Ap [kk] - ajnz ;
+                }
+            }
+            // Ci [0:pstart-1] = Ai [0:pstart-1]
+            GB_memcpy (Ci, Ai, pstart * sizeof (int64_t), nth) ;
+            // Ci [pstart:cnz-1] = Ai [pend:anz-1]
+            GB_memcpy (Ci + pstart, Ai + pend,
+                (cnz - pstart) * sizeof (int64_t), nth) ;
+            if (!A_iso)
+            { 
+                // Cx [0:pstart-1] = Ax [0:pstart-1]
+                GB_memcpy (Cx, Ax, pstart * asize, nth) ;
+                // Cx [pstart:cnz-1] = Ax [pend:anz-1]
+                GB_memcpy (Cx + pstart * asize, Ai + pend * asize,
+                    (cnz - pstart) * asize, nth) ;
+            }
+
+        }
+        else if (opcode == GB_COLLE_idxunop_code)
+        {
+
+            //------------------------------------------------------------------
+            // COLLE: C = A (:, 0:j)
+            //------------------------------------------------------------------
+
+            // Cp [0:cnvec] = Ap [0:cnvec]
+            GB_memcpy (Cp, Ap, (cnvec+1) * sizeof (int64_t), nth) ;
+            if (A_is_hyper)
+            { 
+                // Ch [0:cnvec-1] = Ah [0:cnvec-1]
+                GB_memcpy (Ch, Ah, (cnvec) * sizeof (int64_t), nth) ;
+            }
+            // Ci [0:cnz-1] = Ai [0:cnz-1]
+            GB_memcpy (Ci, Ai, cnz * sizeof (int64_t), nth) ;
+            if (!A_iso)
+            { 
+                // Cx [0:cnz-1] = Ax [0:cnz-1]
+                GB_memcpy (Cx, Ax, cnz * asize, nth) ;
+            }
+
+        }
+        else // (opcode == GB_COLGT_idxunop_code)
+        {
+
+            //------------------------------------------------------------------
+            // COLGT: C = A (:, j+1:end)
+            //------------------------------------------------------------------
+
+            // Cp [0:cnvec] = Ap [0:cnvec] - pend
+            #pragma omp parallel for num_threads(nth2)
+            for (kk = 0 ; kk <= cnvec ; kk++)
+            { 
+                Cp [kk] = Ap [kk] - pend ;
+            }
+            if (A_is_hyper)
+            { 
+                // Ch [0:cnvec-1] = Ah [k+found:anvec-1]
+                GB_memcpy (Ch, Ah + k + found, cnvec * sizeof (int64_t), nth) ;
+            }
+            // Ci [0:cnz-1] = Ai [pend:anz-1]
+            GB_memcpy (Ci, Ai + pend, cnz * sizeof (int64_t), nth) ;
+            if (!A_iso)
+            { 
+                // Cx [0:cnz-1] = Ax [pend:anz-1]
+                GB_memcpy (Cx, Ax + pend * asize, cnz * asize, nth) ;
+            }
+        }
+
+        //----------------------------------------------------------------------
+        // finalize the matrix, free workspace, and return result
+        //----------------------------------------------------------------------
+
+        C->magic = GB_MAGIC ;
+        C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
+        C->iso = C_iso ;            // OK: burble already done above
+
+        if (opcode == GB_COLINDEX_idxunop_code && A->nvec_nonempty >= 0)
+        { 
+            C->nvec_nonempty = A->nvec_nonempty - 1 ;
+        }
+        else
+        { 
+            C->nvec_nonempty = GB_nvec_nonempty (C, Context) ;
+        }
+
+        ASSERT_MATRIX_OK (C, "C output for GB_selector (column select)", GB0) ;
+        return (GrB_SUCCESS) ;
+    }
+
+    //==========================================================================
+    // all other select/idxunop operators
+    //==========================================================================
+
+    #undef  GB_FREE_ALL
+    #define GB_FREE_ALL                         \
+    {                                           \
+        GB_phbix_free (C) ;                     \
+        GB_FREE_WORK ;                          \
+    }
 
     //--------------------------------------------------------------------------
     // allocate the new vector pointers of C
@@ -285,17 +576,12 @@ GrB_Info GB_selector
     }
 
     //--------------------------------------------------------------------------
-    // determine the number of threads and tasks to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-
-    //--------------------------------------------------------------------------
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
     int A_ntasks, A_nthreads ;
-    double work = 8*anvec + ((opcode == GB_DIAG_selop_code) ? 0 : GB_nnz_held (A)) ;
+    double work = 8*anvec
+        + ((opcode == GB_DIAG_selop_code) ? 0 : GB_nnz_held (A)) ;
     GB_SLICE_MATRIX_WORK (A, 8, chunk, work) ;
 
     //--------------------------------------------------------------------------
@@ -314,14 +600,15 @@ GrB_Info GB_selector
     Cp_kfirst = Work + A_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
-    // count the live entries in each vector
+    // allocate workspace for phase1
     //--------------------------------------------------------------------------
 
-    // Count the number of live entries in each vector of A.  The result is
-    // computed in Cp, where Cp [k] is the number of live entries in the kth
-    // vector of A.
+    // phase1 counts the number of live entries in each vector of A.  The
+    // result is computed in Cp, where Cp [k] is the number of live entries in
+    // the kth vector of A.  Zp [k] is the location of the A(i,k) entry, for
+    // positional operators.
 
-    if (opcode <= GB_RESIZE_selop_code)
+    if (op_is_positional)
     {
         // allocate Zp
         Zp = GB_MALLOC_WERK (anvec, int64_t, &Zp_size) ;
@@ -334,7 +621,7 @@ GrB_Info GB_selector
     }
 
     //--------------------------------------------------------------------------
-    // phase1: count the entries
+    // phase1: count the live entries in each column
     //--------------------------------------------------------------------------
 
     // define the worker for the switch factory
@@ -342,9 +629,9 @@ GrB_Info GB_selector
     #define GB_sel1(opname,aname) GB (_sel_phase1_ ## opname ## aname)
     #define GB_SEL_WORKER(opname,aname,atype)                               \
     {                                                                       \
-        GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast, A, flipij, ithunk,  \
-            (atype *) xthunk, user_select, A_ek_slicing, A_ntasks,          \
-            A_nthreads) ;                                                   \
+        GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast, A,                  \
+            flipij, ithunk, (atype *) athunk, ythunk, op,                   \
+            A_ek_slicing, A_ntasks, A_nthreads) ;                           \
     }                                                                       \
     break ;
 
@@ -385,8 +672,8 @@ GrB_Info GB_selector
     if (C_iso)
     { 
         // The pattern of C is computed by the worker below, for the DIAG,
-        // OFFDIAG, TRIL, TRIU, RESIZE, NONZOMBIE, and USER select operators.
-        GB_iso_select (Cx, opcode, xthunk, Ax, acode, asize) ;
+        // OFFDIAG, TRIL, TRIU, NONZOMBIE, and USER select operators.
+        GB_iso_select (Cx, opcode, athunk, Ax, acode, asize) ;
     }
 
     //--------------------------------------------------------------------------
@@ -399,8 +686,8 @@ GrB_Info GB_selector
     #define GB_SEL_WORKER(opname,aname,atype)                               \
     {                                                                       \
         GB_sel2 (opname, aname) (Ci, (atype *) Cx, Zp, Cp, Cp_kfirst, A,    \
-            flipij, ithunk, (atype *) xthunk, user_select, A_ek_slicing,    \
-            A_ntasks, A_nthreads) ;                                         \
+            flipij, ithunk, (atype *) athunk, ythunk, op,                   \
+            A_ek_slicing, A_ntasks, A_nthreads) ;                           \
     }                                                                       \
     break ;
 
@@ -466,7 +753,7 @@ GrB_Info GB_selector
         // create C and transplant Cp, Ch, Ci, Cx into C
         //----------------------------------------------------------------------
 
-        int sparsity = (A->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+        int sparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
         ASSERT (C != NULL && C->static_header) ;
         info = GB_new (&C, true, // sparse or hyper (from A), static header
             A->type, avlen, avdim, GB_Ap_null, true,
