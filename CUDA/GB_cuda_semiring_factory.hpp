@@ -21,7 +21,7 @@ extern "C"
 //std::istream* (*file_callback)(std::string, std::iostream&);
 
 // Define a factory class for building any semiring text definitions
-class GB_cuda_semiring_factory:public File_Desc {
+class GB_cuda_semiring_factory: public jit::File_Desc {
 
     public:
 

@@ -109,8 +109,9 @@ if ( CMAKE_CUDA )
     find_package(CUDA REQUIRED)
     message ( STATUS "CUDA enabled" )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
-    set ( GB_CUDA graphblascuda  cuda cudadevrt cudart nvrtc )
-    link_directories ( "CUDA" ${CUDA_LIBRARIES} "/usr/local/cuda/lib64/stubs" )
+    add_subdirectory(CUDA)
+    set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES})
+    link_directories ( "CUDA" ${CUDA_LIBRARIES})
 
     # TODO: Need to be able to enable this. For now, use make already in ${REPO_ROOT}/CUDA
     #add_subdirectory("CUDA")
@@ -282,6 +283,15 @@ set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_CUDA_FLAG}" )
 file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Generated/*.c" )
 
 add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )
+
+if ( CMAKE_CUDA )
+    add_dependencies(graphblas graphblascuda)
+endif()
+
+if ( RMM_WRAP )
+    add_dependencies(graphblas rmm_wrap)
+endif()
+
 SET_TARGET_PROPERTIES ( graphblas PROPERTIES
     VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
     SOVERSION ${GraphBLAS_VERSION_MAJOR}

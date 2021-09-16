@@ -62,7 +62,7 @@ GrB_Info GB_reduce_to_scalar_cuda
                    templates_reduceNonZombiesWarp_cu,
                    header_names,
                    compiler_flags,
-                   callback_wrapper)
+                   dummy_callback)
                    .set_kernel_inst( reduce_kernel_name , { ctype->name })
                    .configure(red_grid, red_block) //if commented, use implicit 1D configure in launch
                    .launch(
