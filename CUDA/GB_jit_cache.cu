@@ -94,13 +94,14 @@ GBJitCache::~GBJitCache() { }
 std::mutex GBJitCache::_kernel_cache_mutex;
 std::mutex GBJitCache::_program_cache_mutex;
 
-std::string GBJitCache::getFile( 
-    File_Desc file_object )
+std::string GBJitCache::getFile(
+    File_Desc const &file_object )
 {
     // Lock for thread safety
     std::lock_guard<std::mutex> lock(_program_cache_mutex);
 
-    return std::get<1>( getCachedFile( file_object.file_name, file_map ) );
+    auto cached_file = getCachedFile( file_object, file_map );
+    return *std::get<1>( cached_file ).get();
 
 }
 
@@ -176,7 +177,7 @@ GBJitCache::cacheFile::cacheFile(std::string file_name)
 
 GBJitCache::cacheFile::~cacheFile() { }
 
-std::string GBJitCache::cacheFile::read()
+std::string GBJitCache::cacheFile::read_file()
 {
     // Open file (duh)
     int fd = open ( _file_name.c_str(), O_RDWR );

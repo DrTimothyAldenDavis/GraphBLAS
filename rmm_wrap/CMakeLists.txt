@@ -15,7 +15,7 @@ execute_process(
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/spdlog/include)
 execute_process(
-		COMMAND git clone "https://github.com/rapidsai/rmm.git" --recursive rmm
+		COMMAND git clone "https://github.com/rapidsai/rmm.git" --branch branch-21.08 --recursive rmm
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/rmm/include)

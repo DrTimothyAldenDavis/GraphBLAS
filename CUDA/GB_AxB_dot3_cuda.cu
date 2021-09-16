@@ -33,11 +33,11 @@ extern "C"
 #include "templates/GB_jit_AxB_dot3_phase3_warpix.cu.jit"
 #include "templates/reduceNonZombiesWarp.cu.jit"
 
+
+#include "GB_callback.hpp"
 #include "GB_jit_launcher.h"
 #include "GB_jit_cache.h"
-std::istream* dummy_callback( std::string fname, std::iostream& tmp_stream){
-   return 0;
-}
+
 const std::vector<std::string> header_names ={};
 
 #define GB_FREE_WORK                                                    \
@@ -676,7 +676,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                    reduce_program.str(),
                    header_names,
                    compiler_flags,
-                   callback_wrapper)
+                   dummy_callback)
                    .set_kernel_inst( reduce_kernel_name , { ctype->name })
                    .configure(red_grid, red_block) //if commented, use implicit 1D configure in launch
                    .launch(
