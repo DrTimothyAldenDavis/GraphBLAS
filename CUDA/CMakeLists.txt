@@ -17,23 +17,23 @@ set(CMAKE_C_STANDARD 99)
 # TODO: Need to do this piece in cmake
 
 # 2. Generate test .cu files named "{semiring_operation}_test_instances.hpp"
-list(CUDA_TEST_SUITES
+set(CUDA_TEST_SUITES
     AxB_dot3
 )
 
 
-list(CUDA_TEST_MONOIDS PLUS MIN MAX TIMES ANY)
-list(CUDA_TEST_BINOPS TIMES PLUS MIN MAX DIV MINUS RDIV RMINUS FIRST SECOND PAIR)
-list(CUDA_TEST_SEMIRINGS PLUS_TIMES MIN_PLUS MAX_PLUS)
-list(CUDA_TEST_DATATYPES int32_t int64_t uint32_t uint64_t float double)
-list(CUDA_TEST_KERNELS warp mp vsvs dndn spdn vssp)
+set(CUDA_TEST_MONOIDS PLUS MIN MAX TIMES ANY)
+set(CUDA_TEST_BINOPS TIMES PLUS MIN MAX DIV MINUS RDIV RMINUS FIRST SECOND PAIR)
+set(CUDA_TEST_SEMIRINGS PLUS_TIMES MIN_PLUS MAX_PLUS)
+set(CUDA_TEST_DATATYPES int32_t int64_t uint32_t uint64_t float double)
+set(CUDA_TEST_KERNELS warp mp vsvs dndn spdn vssp)
 
 # TODO: Update testGen.py to accept the above CUDA_TEST_* params as arguments
 
 # Note: I don't believe there's a way to do this particular piece in parallel but
 # once all the files are written, we should be able to compile them in parallel
 
-list(CUDA_TEST_CPP_FILES)
+set(CUDA_TEST_CPP_FILES "")
 foreach(var ${CUDA_TEST_SUITES})
 
     # TODO: Have Python script also build separate cudaTest.cpp (named something
@@ -56,6 +56,6 @@ endforeach()
 
 # 3. Compile/link individual {test_suite_name}_cuda_tests.cpp files into a gtest executable
 
-add_executable(${CUDA_TEST_TARGET} ${CUDA_TEST_CPP_FILES})
-add_target_link_libraries(${CUDA_TEST_TARGET} "graphblas" "graphblascuda.so" ${ADDITIONAL_DEPS})
-add_target_include_libraries(${CUDA_TEST_TARGET} ${ADDITIONAL_INCLUDES})
+add_executable(graphblascuda_test ${CUDA_TEST_CPP_FILES})
+target_link_libraries(graphblascuda_test "graphblas" "graphblascuda.so" ${ADDITIONAL_DEPS})
+target_include_directories(graphblascuda_test PUBLIC  ${ADDITIONAL_INCLUDES})

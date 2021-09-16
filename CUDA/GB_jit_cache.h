@@ -30,17 +30,20 @@
 
 namespace jit {
 
-template <typename Tv>
+std::string getCacheDir(void);
+
+        template <typename Tv>
 using named_prog = std::pair<std::string, std::shared_ptr<Tv>>;
 
 // Basic file descriptor to enable file manipulation with caching 
 class File_Desc 
 {
-   void open();
-   void close();
-   std::string macrofy();
+public:
+   void open_file();
+   void close_file();
+   std::string macrofy() const;
    std::string filename;
-}
+};
 
 /**
  * @brief Get the string path to the JITIFY kernel cache directory.
@@ -55,9 +58,7 @@ class File_Desc
  * The default cache directory `~/.GraphBLAS_kernel_cache`.
  **/
 
-std::string getCacheDir();
-
-class GBJitCache
+class GBJitCache: public File_Desc
 {
 public:
 
@@ -164,7 +165,7 @@ private:
          * @brief Read this file and return the contents as a std::string
          * 
          *---------------------------------------------------------------------------**/
-        std::string read();
+        std::string read_file();
 
         /**---------------------------------------------------------------------------*
          * @brief Write the passed string to this file
@@ -193,11 +194,11 @@ private:
 
     template <typename T>
     named_prog<T> getCachedFile( 
-        File_Desc file_object, 
+        File_Desc const &file_object,
         umap_str_shptr<T>& map )
     {
      
-        std::string name = file_object.file_name;    
+        std::string name = file_object.filename;
         // Find memory cached T object
         auto it = map.find(name);
         if ( it != map.end()) {
@@ -214,13 +215,13 @@ private:
                     //std::cout<<"looking for prog in file "<<file_name<<std::endl;
 
                     cacheFile file{file_name};
-                    serialized = file.read();
+                    serialized = file.read_file();
                     successful_read = file.is_read_successful();
                 }
             #endif
             if (not successful_read) {
                 // JIT compile and write to file if possible
-                serialized = file_object.macrofy()
+                serialized = file_object.macrofy();
                 std::cout<<" got fresh content for "<<name<<std::endl;
 
                 #if defined(JITIFY_USE_CACHE)
@@ -233,9 +234,9 @@ private:
                 #endif
             }
             // Add deserialized T to cache and return
-            map[name] = serialized;
+            map[name] = std::make_shared<std::string>(serialized);
             //std::cout<<"storing file in memory "<<name<<std::endl;
-            return std::make_pair(name, serialized);
+            return std::make_pair(name, map[name]);
         }
     }
 
@@ -266,7 +267,7 @@ private:
                     //std::cout<<"looking for prog in file "<<file_name<<std::endl;
 
                     cacheFile file{file_name};
-                    serialized = file.read();
+                    serialized = file.read_file();
                     successful_read = file.is_read_successful();
                 }
             #endif

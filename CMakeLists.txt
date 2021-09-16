@@ -109,8 +109,9 @@ if ( CMAKE_CUDA )
     find_package(CUDA REQUIRED)
     message ( STATUS "CUDA enabled" )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
-    set ( GB_CUDA graphblascuda  cuda cudadevrt cudart nvrtc )
-    link_directories ( "CUDA" ${CUDA_LIBRARIES} "/usr/local/cuda/lib64/stubs" )
+    add_subdirectory(CUDA)
+    set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES})
+    link_directories ( "CUDA" ${CUDA_LIBRARIES})
 
     # TODO: Need to be able to enable this. For now, use make already in ${REPO_ROOT}/CUDA
     #add_subdirectory("CUDA")
