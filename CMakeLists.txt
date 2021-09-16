@@ -283,6 +283,15 @@ set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_CUDA_FLAG}" )
 file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Generated/*.c" )
 
 add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )
+
+if ( CMAKE_CUDA )
+    add_dependencies(graphblas graphblascuda)
+endif()
+
+if ( RMM_WRAP )
+    add_dependencies(graphblas rmm_wrap)
+endif()
+
 SET_TARGET_PROPERTIES ( graphblas PROPERTIES
     VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
     SOVERSION ${GraphBLAS_VERSION_MAJOR}

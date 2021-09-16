@@ -25,13 +25,11 @@ set(GRAPHBLAS_CUDA_INCLUDES
         ../CUDA
         $RMM_WRAP_INCLUDES)
 
-
-
 target_link_libraries(graphblascuda PUBLIC ${CUDA_LIBRARIES})
 target_include_directories(graphblascuda PUBLIC  ${CUDA_INCLUDE_DIRECTORIES} ${GRAPHBLAS_CUDA_INCLUDES})
 set_target_properties(graphblascuda PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-
+set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "75")
 #I = -I. -I../Source -I../Source/Template -I../Include -I../rmm/rmm/include/  -Irmm/thirdparty/spdlog/include
 # The ou
 
