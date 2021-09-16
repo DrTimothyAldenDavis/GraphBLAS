@@ -13,6 +13,7 @@
 // structure.
 
 #include "GB_mxm.h"
+// #include "GB_dynamic.h"
 #include "GB_binop.h"
 #include "GB_AxB__include1.h"
 #ifndef GBCOMPACT
@@ -21,6 +22,9 @@
 
 #define GB_FREE_WORK                            \
 {                                               \
+/*  GB_undo_dynamic_header (&M, M_input, Context) ; */  \
+/*  GB_undo_dynamic_header (&A, A_input, Context) ; */  \
+/*  GB_undo_dynamic_header (&B, B_input, Context) ; */  \
     GB_FREE_WERK (&TaskList, TaskList_size) ;   \
 }
 
@@ -52,6 +56,10 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     GrB_Info info ;
     ASSERT (C != NULL && C->static_header) ;
+//  GB_OK (GB_do_dynamic_header (&M, M_input, Context)) ;
+//  GB_OK (GB_do_dynamic_header (&A, A_input, Context)) ;
+//  GB_OK (GB_do_dynamic_header (&B, B_input, Context)) ;
+
     ASSERT_MATRIX_OK (M, "M for dot3 A'*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for dot3 A'*B", GB0) ;
     ASSERT_MATRIX_OK (B, "B for dot3 A'*B", GB0) ;
@@ -314,6 +322,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     GB_FREE_WORK ;
     C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled
+//  GB_undo_dynamic_header (&C, C_output, Context) ;
     ASSERT_MATRIX_OK (C, "dot3: C<M> = A'*B output", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;

@@ -1,5 +1,5 @@
 
-consider these methods on the GPU: (see ../Source/Template/GB_AxB_dot_cij.c)
+//consider these methods on the GPU: (see ../Source/Template/GB_AxB_dot_cij.c)
 
             while (pA < pA_end && pB < pB_end)
             {

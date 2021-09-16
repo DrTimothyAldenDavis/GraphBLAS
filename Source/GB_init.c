@@ -81,25 +81,6 @@ GrB_Info GB_init            // start up GraphBLAS
     // GrB_init passes in the ANSI C11 malloc/realloc/free
     // GxB_cuda_init passes in NULL pointers; they are now defined below.
 
-    if (caller_is_GxB_cuda_init)
-    {
-        #if defined ( GBCUDA )
-        // CUDA is available at compile time, and requested at run time via
-        // GxB_cuda_init.  Use CUDA unified memory management functions.
-        // No realloc function is needed.
-        malloc_function = GxB_cuda_malloc ;
-        realloc_function = NULL ;
-        free_function = GxB_cuda_free ;
-        #else
-        // CUDA not available at compile time.  Use ANSI C memory managment
-        // functions instead, even though the caller is GxB_cuda_init.
-        // No GPUs will be used.
-        malloc_function = malloc ;
-        realloc_function = realloc ;
-        free_function = free ;
-        #endif
-    }
-
     GB_Global_malloc_function_set  (malloc_function ) ; // cannot be NULL
     GB_Global_realloc_function_set (realloc_function) ; // ok if NULL
     GB_Global_free_function_set    (free_function   ) ; // cannot be NULL
@@ -171,8 +152,9 @@ GrB_Info GB_init            // start up GraphBLAS
     // Then warmup each GPU.
 
     #if defined ( GBCUDA )
-    if (caller_is_GxB_cuda_init)
     {
+        // TODO: this does not have to be here
+
         // query the system for the # of GPUs
         // TODO for GPU: make this a function in the CUDA folder
         GB_Global_gpu_control_set (GxB_DEFAULT) ;
@@ -195,13 +177,13 @@ GrB_Info GB_init            // start up GraphBLAS
 
         // also check for jit cache, pre-load library of common kernels ...
     }
-    else
-    #endif
+    #else
     { 
-        // CUDA not available at compile-time, or available but not requested.
+        // CUDA not available at compile-time
         GB_Global_gpu_control_set (GxB_GPU_NEVER) ;
         GB_Global_gpu_count_set (0) ;
     }
+    #endif
 
     GB_Global_gpu_chunk_set (GxB_DEFAULT) ;
 

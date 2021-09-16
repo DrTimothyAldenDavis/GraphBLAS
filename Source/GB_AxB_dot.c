@@ -165,35 +165,15 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         (*done_in_place) = false ;
 
         #if defined ( GBCUDA )
-
-// [ replace this with:
-// if (GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring, flipxy, Context)
-
-        // very rough estimate of the work to do
-        int64_t anz = GB_nnz (A) ;
-        int64_t bnz = GB_nnz (B) ;
-        int64_t mnz = GB_nnz (M) ;
-
-        double adeg = ((double) anz) / ((double) GB_IMAX (1, A->nvec)) ;
-        double bdeg = ((double) bnz) / ((double) GB_IMAX (1, B->nvec)) ;
-        double work = mnz * GB_IMIN (adeg, bdeg) ;
-
-        // TODO for GPU: if A or B are not accessed (first, 2nd, or pair
-        // ops) then the type of A can be user-defined here, for CUDA.
-
-        int ngpus_to_use = GB_ngpus_to_use (work) ;
-        GBURBLE (" work:%g gpus:%d ", work, ngpus_to_use) ;
-        if (ngpus_to_use > 0
-            && (semiring->header_size == 0)     // semiring is built-in
-            && (A->type->code != GB_UDT_code)
-            && (B->type->code != GB_UDT_code)
-            && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
-            && !C_iso && !A->iso && !B->iso)
-// to here ... ]
+        if (!C_iso && GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring,
+            flipxy, Context))
         {
-            // use "the" GPU (TODO for GPU: could use multiple GPUs too)
-            return (GB_AxB_dot3_cuda (C, M, Mask_struct, A, B, semiring,
-                flipxy, Context)) ;
+            GB_MATRIX_WAIT (M) ;    // make sure it's not jumbled
+            if (GB_AxB_dot3_control (M, Mask_comp))
+            {
+                return (GB_AxB_dot3_cuda (C, M, Mask_struct, A, B, semiring,
+                    flipxy, Context)) ;
+            }
         }
         else
         #endif

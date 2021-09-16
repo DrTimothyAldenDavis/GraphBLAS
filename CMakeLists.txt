@@ -23,7 +23,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Sept 15, 2021 (alpha4)")
+set ( GraphBLAS_DATE "Sept 15, 2021 (alpha5)")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -98,26 +98,44 @@ configure_file (
 # include ( FindOpenMP  )
 find_package ( OpenMP )
 
+enable_language ( CUDA )
+
 # Intel(R) IPP not yet supported
 # find_package ( IPP )
 
-# enable_language ( CUDA )
 # for nvcc, add -DGBCUDA
 # set ( CMAKE_CUDA on )
+# set ( RMM_WRAP on )
 set ( CMAKE_CUDA off )
-
-# LIBS = -L/usr/local/cuda/lib64 -lcudadevrt -lcudart
-# LIB += -ldl -L$(CUDA_LIB_DIR) -lcuda -lcudart -lnvrtc
+set ( RMM_WRAP off )
 
 if ( CMAKE_CUDA )
+    find_package(CUDA REQUIRED)
     message ( STATUS "CUDA enabled" )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
     set ( GB_CUDA graphblascuda  cuda cudadevrt cudart nvrtc )
-    link_directories ( "CUDA" "/usr/local/cuda/lib64" "/usr/local/cuda/lib64/stubs" )
+    link_directories ( "CUDA" ${CUDA_LIBRARIES} "/usr/local/cuda/lib64/stubs" )
+
+    # TODO: Need to be able to enable this. For now, use make already in ${REPO_ROOT}/CUDA
+    #add_subdirectory("CUDA")
 else ( )
     message ( STATUS "CUDA not enabled" )
     set ( CMAKE_CUDA_FLAG " " )
     set ( GB_CUDA )
+endif ( )
+
+# TODO: Eventually this should be nested under CMAKE_CUDA conditional(?)
+if ( RMM_WRAP )
+    message ( STATUS "RMM enabled" )
+    set ( CMAKE_RMM_FLAG " -DGBRMM" )
+    set ( GB_RMM rmm_wrap ${CUDA_LIBRARIES} stdc++ )
+    add_subdirectory(rmm_wrap)
+    include_directories ( "rmm_wrap" ${CUDA_INCLUDE_DIRS})
+    link_directories ( "CUDA" "${CUDA_LIBRARIES}" "/usr/local/cuda/lib64/stubs" "rmm_wrap"  )
+else ( )
+    message ( STATUS "RMM not enabled" )
+    set ( CMAKE_RMM_FLAG " " )
+    set ( GB_RMM )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -353,9 +371,9 @@ endif ( )
 #   endif ( )
 
 if ( CMAKE_CUDA )
-    target_link_libraries ( graphblas PUBLIC ${GB_CUDA} )
+    target_link_libraries ( graphblas PUBLIC ${GB_CUDA} ${GB_RMM} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static PUBLIC ${GB_CUDA} )
+        target_link_libraries ( graphblas_static PUBLIC ${GB_CUDA} ${GB_RMM} )
     endif ( )
 endif ( )
 
@@ -405,7 +423,7 @@ if ( DEMO )
         SOVERSION ${GraphBLAS_VERSION_MAJOR}
         C_STANDARD_REQUIRED 11 )
     set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
-    target_link_libraries ( graphblasdemo PUBLIC ${M_LIB} graphblas  ${GB_CUDA} )
+    target_link_libraries ( graphblasdemo PUBLIC ${M_LIB} graphblas  ${GB_CUDA} ${GB_RMM})
 
     if ( BUILD_GRB_STATIC_LIBRARY )
         add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
@@ -413,7 +431,7 @@ if ( DEMO )
             VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
             C_STANDARD_REQUIRED 11 )
         set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
-        target_link_libraries ( graphblasdemo_static PUBLIC  graphblas_static  ${GB_CUDA} )
+        target_link_libraries ( graphblasdemo_static PUBLIC  graphblas_static  ${GB_CUDA} ${GB_RMM} )
     endif ( )
 
     #---------------------------------------------------------------------------
@@ -431,15 +449,15 @@ if ( DEMO )
     add_executable ( import_demo   "Demo/Program/import_demo.c" )
 
     # Libraries required for Demo programs
-    target_link_libraries ( pagerank_demo PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-    target_link_libraries ( openmp_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-    target_link_libraries ( mis_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-    target_link_libraries ( complex_demo  PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-    target_link_libraries ( kron_demo     PUBLIC graphblas graphblasdemo ${GB_CUDA} )
-    target_link_libraries ( simple_demo   PUBLIC graphblasdemo ${GB_CUDA} )
-    target_link_libraries ( wildtype_demo PUBLIC graphblas ${GB_CUDA} )
-    target_link_libraries ( reduce_demo   PUBLIC graphblas ${GB_CUDA} )
-    target_link_libraries ( import_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} )
+    target_link_libraries ( pagerank_demo PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( openmp_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( mis_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( complex_demo  PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( kron_demo     PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( simple_demo   PUBLIC graphblasdemo ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( wildtype_demo PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( reduce_demo   PUBLIC graphblas ${GB_CUDA} ${GB_RMM} )
+    target_link_libraries ( import_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
 
 else ( )
 

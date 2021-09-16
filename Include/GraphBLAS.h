@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Sept 15, 2021 (alpha4)"
+#define GxB_IMPLEMENTATION_DATE "Sept 15, 2021 (alpha5)"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -740,19 +740,13 @@ GrB_Info GRB (Type_new)         // create a new GraphBLAS type
 // GraphBLAS, as strings.  The type_name is any valid string (max length of 128
 // characters, including the required null-terminating character) that may
 // appear as the name of a C type created by a C "typedef" statement.  It must
-// not contain any white-space characters.  If type_name and type_defn are
-// provided, then the following printf statement shall create a valid C typedef
-// statement:
-//
-//      printf ("typedef %s %s ;\n", type_defn, type_name) ;
-//
-// Example, creating a type of size 16*4+1 = 65 bytes, containing a 4-by-4
-// dense float array and a 32-bit integer:
+// not contain any white-space characters.  Example, creating a type of size
+// 16*4+1 = 65 bytes, with a 4-by-4 dense float array and a 32-bit integer:
 //
 //      typedef struct { float x [4][4] ; int color ; } myquaternion ;
 //      GrB_Type MyQtype ;
-//      GxB_Type_new (&MyQtype, sizeof (myquaternion),
-//          "myquaternion", "struct { float x [4][4] ; int color ; }") ;
+//      GxB_Type_new (&MyQtype, sizeof (myquaternion), "myquaternion",
+//          "typedef struct { float x [4][4] ; int color ; } myquaternion ;") ;
 //
 // The type_name and type_defn are both null-terminated strings.  Currently,
 // type_defn is unused, but it will be required for best performance when a JIT
