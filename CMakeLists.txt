@@ -104,10 +104,10 @@ enable_language ( CUDA )
 # find_package ( IPP )
 
 # for nvcc, add -DGBCUDA
-# set ( CMAKE_CUDA on )
-# set ( RMM_WRAP on )
-set ( CMAKE_CUDA off )
-set ( RMM_WRAP off )
+  set ( CMAKE_CUDA on )
+  set ( RMM_WRAP on )
+# set ( CMAKE_CUDA off )
+# set ( RMM_WRAP off )
 
 if ( CMAKE_CUDA )
     find_package(CUDA REQUIRED)
