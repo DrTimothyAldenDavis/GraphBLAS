@@ -266,21 +266,19 @@ GXB_OP2 (POW    , "pow"   )
     GRB_IDXOP_POSITIONAL (COLINDEX,  "colindex" ) ;
     GRB_IDXOP_POSITIONAL (DIAGINDEX, "diagindex") ;
 
-    // z = f (x, i, j, thunk) where z is bool; thunk has type int32 or int64
-    GRB_IDXOP_POSITIONAL_BOOL (TRIL,    "tril" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (TRIU,    "triu" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (DIAG,    "diag" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (OFFDIAG, "offdiag" ) ;
-
 #endif
 
 #if defined ( GB_SIGNED_INDEX64 )
 
     // z = f (x, i, j, thunk) where z is bool; thunk has type int64 only
-    GRB_IDXOP_POSITIONAL_BOOL (COLLE, "colle" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (COLGT, "colgt" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (ROWLE, "rowle" ) ;
-    GRB_IDXOP_POSITIONAL_BOOL (ROWGT, "rowgt" ) ;
+    GRB_IDXOP_POSITIONAL_BOOL (TRIL,    "tril" ) ;
+    GRB_IDXOP_POSITIONAL_BOOL (TRIU,    "triu" ) ;
+    GRB_IDXOP_POSITIONAL_BOOL (DIAG,    "diag" ) ;
+    GRB_IDXOP_POSITIONAL_BOOL (OFFDIAG, "offdiag" ) ;
+    GRB_IDXOP_POSITIONAL_BOOL (COLLE,   "colle" ) ;
+    GRB_IDXOP_POSITIONAL_BOOL (COLGT,   "colgt" ) ;
+    GRB_IDXOP_POSITIONAL_BOOL (ROWLE,   "rowle" ) ;
+    GRB_IDXOP_POSITIONAL_BOOL (ROWGT,   "rowgt" ) ;
 
 #endif
 

@@ -343,7 +343,7 @@ classdef GrB
 %   GrB.binopinfo (op, type)     list properties of a binary operator
 %   GrB.descriptorinfo (d)       list properties of a descriptor
 %   GrB.monoidinfo (op, type)    list properties of a monoid
-%   GrB.selectopinfo (op)        list properties of a select operator
+%   GrB.selectopinfo (op, type)  list properties of a select operator
 %   GrB.semiringinfo (s, type)   list properties of a semiring
 %   GrB.unopinfo (op, type)      list properties of a unary operator
 %
@@ -1020,7 +1020,7 @@ methods (Static)
     C = reduce (cin, accum, monoid, A, desc) ;
     filename_used = save (C, filename) ;
     C = select (Cin, M, accum, selectop, A, b, desc) ;
-    selectopinfo (op) ;
+    selectopinfo (op, type) ;
     semiringinfo (s, type) ;
     blob = serialize (A, method, level) ;
     C = speye (m, n, type) ;

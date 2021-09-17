@@ -204,7 +204,7 @@ GrB_Info GB_selector
         ASSERT_SCALAR_OK (S, "iso scalar wrap", GB0) ;
 
         // apply the select operator to the iso scalar S
-        GB_OK (GB_bitmap_selector (C, false, opcode, NULL, false,
+        GB_OK (GB_bitmap_selector (C, false, opcode, op, false,
             (GrB_Matrix) S, ithunk, athunk, ythunk, Context)) ;
         ASSERT_MATRIX_OK (C, "C from iso scalar test", GB0) ;
         bool C_empty = (GB_nnz (C) == 0) ;

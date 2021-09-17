@@ -24,8 +24,8 @@ fclose (f) ;
 % select ops where A is either iso or non-iso
 %===============================================================================
 
-% USER:
-fprintf ('\nuser       ') ;
+% USER selectop:
+fprintf ('\nselop      ') ;
 
 % user select op, A is not iso
 test_value = 'bool keep = op->selop_function (flipij ? j : i, flipij ? i : j, Ax +(p)*asize, ythunk)' ;

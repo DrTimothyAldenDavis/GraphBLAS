@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// NOTE: this function is historical.  Use GxB_SelectOp_ttype_name instead.
+// NOTE: this function is historical.  Use a GrB_IndexUnaryOp instead.
 
 #include "GB.h"
 

@@ -1,11 +1,14 @@
 //------------------------------------------------------------------------------
-// GxB_SelectOp_new2: create a new select operator
+// GB_SelectOp_new: create a new user-defined select operator
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// This function is historical.  Use GrB_IndexUnaryOp_new with GrB_select,
+// instead of a user-defined GxB_SelectOp with GxB_select.
 
 // The select function signature must be:
 
@@ -14,22 +17,21 @@
 
 #include "GB.h"
 
-GrB_Info GxB_SelectOp_new2      // create a new user-defined select operator
+GrB_Info GB_SelectOp_new            // create a new user-defined select operator
 (
-    GxB_SelectOp *selectop,     // handle for the new select operator
-    GxB_select_function function,// pointer to the select function
-    GrB_Type xtype,             // type of input x
-    GrB_Type ttype,             // type of input thunk, or NULL if not used
-    const char *selectop_name,  // name of the user function
-    const char *selectop_defn   // definition of the user function
+    GxB_SelectOp *selectop,         // handle for the new select operator
+    GxB_select_function function,   // pointer to the select function
+    GrB_Type xtype,                 // type of input x, or NULL if type-generic
+    GrB_Type ttype,                 // type of input thunk, or NULL if not used
+    const char *unused              // no longer used
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_SelectOp_new2 (selectop, function, xtype, name, defn)") ;
+    GB_WHERE1 ("GxB_SelectOp_new (selectop, function, xtype, ttype)") ;
     GB_RETURN_IF_NULL (selectop) ;
     (*selectop) = NULL ;
     GB_RETURN_IF_NULL (function) ;
@@ -63,9 +65,9 @@ GrB_Info GxB_SelectOp_new2      // create a new user-defined select operator
     op->selop_function = function ;
 
     op->opcode = GB_USER_selop_code ;
-    // get the unary op name and defn
-    GB_op_name_and_defn (op->name, &(op->defn), selectop_name, selectop_defn,
-        "GxB_select_function", 19) ;
+    memset (op->name, 0, GxB_MAX_NAME_LEN) ;
+    snprintf (op->name, GxB_MAX_NAME_LEN-1, "user_selectop") ;
+    op->defn = NULL ;
 
     //--------------------------------------------------------------------------
     // return result

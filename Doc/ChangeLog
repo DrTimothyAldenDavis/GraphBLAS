@@ -3,7 +3,7 @@ Version 6.0.0, FUTURE
     * Fully compliant with the v2.0 C API Specification:  the only
         changes in v6.0.0 for SuiteSparse:GraphBLAS are the two from the v2.0 C
         API Spec that require SS:GrB to break backward compatibility with v5.x:
-        GrB_*wait, and the GrB_Info enum values.
+        GrB_*wait, and the GrB_Info enum values, and a change to GxB_init.
     * GrB_wait (object, mode): was GrB_wait (&object).
     * GrB_Info: changed enum values
     * GxB_init (mode, malloc, calloc, realloc, free, is_thread_safe): the last
@@ -16,30 +16,31 @@ Version 5.2.0, FIXME
         backward compatible with SuiteSparse:GraphBLAS v5.x have been
         added to v5.2.0.
         * GrB_Scalar: replaces GxB_Scalar, GxB_Scalar_* functions renamed GrB
-        * GrB_IndexUnaryOp: new, free, fprint, wait                 FIXME
-        * GrB_select: selection via GrB_IndexUnaryOp                FIXME
+        * GrB_IndexUnaryOp: new, free, fprint, wait
+        * GrB_select: selection via GrB_IndexUnaryOp
         * GrB_apply: with GrB_IndexUnaryOp                          FIXME
         * GrB_reduce: reduce matrix or vector to GrB_Scalar
         * GrB_assign, GrB_subassion: with GrB_Scalar input
         * GrB_*_extractElement_Scalar: get GrB_Scalar from a matrix or vector
         * GrB*build: when dup is NULL, duplicates result in an error.
-        * GxB_IGNORE_DUP: special operator for build methods only; if dup
-            is this operator, then duplicate are ignored (not an error)
         * GrB import/export: import/export from/to user-provided arrays
         * GrB_EMPTY_OBJECT, GrB_NOT_IMPLEMENTED: error codes added
         * GrB_*_setElement_Scalar: set an entry in a matrix or vector,
             from a GrB_Scalar
         * GrB_Matrix_diag: same as GxB_Matrix_diag (C, v, 0, NULL)
-    * GxB_SelectOp_new2: create a named selectop
+        * GrB_*_serialize/deserialize
+    * GxB_IGNORE_DUP: special operator for build methods only; if dup
+        is this operator, then duplicates are ignored (not an error)
+    * GxB_IndexUnaryOp_new: create a named index-unary operator
     * GxB_BinaryOp_new: create a named binary operator
     * GxB_UnaryOp_new: create a named unary operator
-    * GxB_Type_new: to create a named type and definition, as strings
+    * GxB_Type_new: to create a named type
     * GxB_Type_name: to query the name of a type
     * added GxB_BinaryOp_xtype_name, GxB_BinaryOp_ytype_name,
         GxB_BinaryOp_ztype_name, GxB_deserialize_type_name,
-        GxB_Matrix_type_name, GxB_Scalar_type_name,
-        GxB_SelectOp_ttype_name, GxB_SelectOp_xtype_name,
-        GxB_UnaryOp_xtype_name, GxB_UnaryOp_ztype_name,
+        GxB_Matrix_type_name, GxB_Scalar_type_name, GxB_UnaryOp_xtype_name,
+        GxB_UnaryOp_ztype_name, GxB_IndexUnaryOp_xtype_name,
+        GxB_IndexUnaryOp_ttype_name, GxB_IndexUnaryOp_ztype_name,
         GxB_Vector_type_name: to query the name of a type as a string
     * GxB_BinaryOp_xtype, GxB_BinaryOp_ytype, GxB_BinaryOp_ztype,
         GxB_Matrix_type, GxB_Scalar_type, GxB_SelectOp_ttype,

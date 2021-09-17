@@ -7,15 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// Create a new a index_unary operator: z = f (x,[i j],n,thunk).  The
+// Create a new a index_unary operator: z = f (x,i,j,thunk).  The
 // index_unary function signature must be:
 
-// void f (void *z, const void *x, GrB_Index *indices, GrB_Index n,
-//         const void *thunk)
+// void f (void *z, const void *x, int64_t i, int64_t j, const void *thunk)
 
-// and then it must recast its input (x and thunk) and output (z) arguments
-// internally as needed.  The GrB_Index *indices and GrB_Index n arguments
-// always have that type and do not need to be typecast.
+// and then it must recast its inputs (x and thunk) and output (z) arguments
+// internally as needed.  When used with a GrB_Vector, j is zero.
 
 #include "GB.h"
 

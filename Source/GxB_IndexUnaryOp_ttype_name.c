@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_SelectOp_xtype_name: return the type_name of x for z=f(x,thunk)
+// GxB_IndexUnaryOp_ttype_name: return the type_name of thunk for z=f(x,thunk)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -9,11 +9,11 @@
 
 #include "GB.h"
 
-GrB_Info GxB_SelectOp_xtype_name    // return the name of the type of x
+GrB_Info GxB_IndexUnaryOp_ttype_name    // return the name of the type of thunk
 (
     char *type_name,        // name of the type (char array of size at least
                             // GxB_MAX_NAME_LEN, owned by the user application).
-    const GxB_SelectOp selectop
+    const GrB_IndexUnaryOp op
 )
 { 
 
@@ -21,16 +21,16 @@ GrB_Info GxB_SelectOp_xtype_name    // return the name of the type of x
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_SelectOp_xtype_name (type_name, op)") ;
+    GB_WHERE1 ("GxB_IndexUnaryOp_ttype_name (type_name, op)") ;
     GB_RETURN_IF_NULL (type_name) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (selectop) ;
-    ASSERT_SELECTOP_OK (selectop, "selectop for xtype_name", GB0) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    ASSERT_INDEXUNARYOP_OK (op, "op for ttype_name", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the type_name
     //--------------------------------------------------------------------------
 
-    memcpy (type_name, selectop->xtype->name, GxB_MAX_NAME_LEN) ;
+    memcpy (type_name, op->ytype->name, GxB_MAX_NAME_LEN) ;
     return (GrB_SUCCESS) ;
 }
 

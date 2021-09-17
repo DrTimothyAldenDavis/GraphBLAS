@@ -50,7 +50,7 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
     { 
         GBPR0 ("(built-in) ") ;
     }
-    GBPR0 ("z=%s(x,y), ", op->name) ;
+    GBPR0 ("z=%s(x,y)\n", op->name) ;
 
     if (op->idxunop_function == NULL)
     { 
@@ -67,11 +67,14 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
         return (GrB_INVALID_OBJECT) ;
     }
 
-    info = GB_Type_check (op->xtype, "xtype", pr, f) ;
-    if (info != GrB_SUCCESS)
-    { 
-        GBPR0 ("    IndexUnaryOp has an invalid xtype\n") ;
-        return (GrB_INVALID_OBJECT) ;
+    if (op->xtype != NULL)
+    {
+        info = GB_Type_check (op->xtype, "xtype", pr, f) ;
+        if (info != GrB_SUCCESS)
+        { 
+            GBPR0 ("    IndexUnaryOp has an invalid xtype\n") ;
+            return (GrB_INVALID_OBJECT) ;
+        }
     }
 
     info = GB_Type_check (op->ytype, "thunk type", pr, f) ;

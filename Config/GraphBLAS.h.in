@@ -767,6 +767,15 @@ GrB_Info GxB_Type_new           // create a new named GraphBLAS type
     const char *type_defn       // typedef for the type (no max length)
 ) ;
 
+// GB_Type_new is historical: use GxB_Type_new instead
+GB_PUBLIC
+GrB_Info GB_Type_new            // not user-callable
+(
+    GrB_Type *type,             // handle of user type to create
+    size_t sizeof_ctype,        // size of the user type
+    const char *type_name       // name of the type, as "sizeof (ctype)"
+) ;
+
 GB_PUBLIC
 GrB_Info GxB_Type_name      // return the name of a GraphBLAS type
 (
@@ -1016,7 +1025,18 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     const char *unop_defn           // definition of the user function
 ) ;
 
-// NOTE: GxB_UnaryOp_ztype is historical.  Use GxB_UnaryOp_ztype_name instead.
+// GB_UnaryOp_new is historical: use GxB_UnaryOp_new instead
+GB_PUBLIC
+GrB_Info GB_UnaryOp_new             // not user-callable
+(
+    GrB_UnaryOp *unaryop,           // handle for the new unary operator
+    GxB_unary_function function,    // pointer to the unary function
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype,                 // type of input x
+    const char *unop_name           // name of the user function
+) ;
+
+// GxB_UnaryOp_ztype is historical.  Use GxB_UnaryOp_ztype_name instead.
 GB_PUBLIC
 GrB_Info GxB_UnaryOp_ztype          // return the type of z
 (
@@ -1030,7 +1050,7 @@ GrB_Info GxB_UnaryOp_ztype_name     // return the type_name of z
     const GrB_UnaryOp unaryop       // unary operator
 ) ;
 
-// NOTE: GxB_UnaryOp_xtype is historical.  Use GxB_UnaryOp_xtype_name instead.
+// GxB_UnaryOp_xtype is historical.  Use GxB_UnaryOp_xtype_name instead.
 GB_PUBLIC
 GrB_Info GxB_UnaryOp_xtype          // return the type of x
 (
@@ -1483,6 +1503,18 @@ GrB_Info GxB_BinaryOp_new
     const char *binop_defn          // definition of the user function
 ) ;
 
+// GB_BinaryOp_new is historical: use GxB_BinaryOp_new instead
+GB_PUBLIC
+GrB_Info GB_BinaryOp_new            // not user-callable
+(
+    GrB_BinaryOp *binaryop,         // handle for the new binary operator
+    GxB_binary_function function,   // pointer to the binary function
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype,                 // type of input x
+    GrB_Type ytype,                 // type of input y
+    const char *binop_name          // name of the user function
+) ;
+
 // NOTE: GxB_BinaryOp_ztype is historical.  Use GxB_BinaryOp_ztype_name instead.
 GB_PUBLIC
 GrB_Info GxB_BinaryOp_ztype         // return the type of z
@@ -1532,8 +1564,10 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 ) ;
 
 //==============================================================================
-// GxB_SelectOp: select operators
+// GxB_SelectOp: select operators (historical)
 //==============================================================================
+
+// GrB_IndexUnaryOp should be used instead of GxB_SelectOp.
 
 // GxB_SelectOp is an operator used by GxB_select to select entries from an
 // input matrix A that are kept in the output C.  If an entry A(i,j) in the
@@ -1619,8 +1653,11 @@ GB_PUBLIC GxB_SelectOp
 // types (not complex).  They cannot be used for user-defined types.
 
 //------------------------------------------------------------------------------
-// select operators
+// select operators: historical
 //------------------------------------------------------------------------------
+
+// User-defined GxB_SelectOps are historical.  New code should use
+// GrB_IndexUnaryOp_new instead.
 
 // In v6.0, the row and column indices are passed as int64_t.  This has no
 // effect on any user-defined operator in v5 or earlier, since GxB_INDEX_MAX is
@@ -1641,10 +1678,9 @@ typedef bool (*GxB_select_function)      // return true if A(i,j) is kept
     const void *thunk           // optional input for select function
 ) ;
 
-// GxB_SelectOp_new creates a user-defined select op, with an automatic
-// detection of the operator name.
 #undef GxB_SelectOp_new
 #undef GxM_SelectOp_new
+
 GB_PUBLIC
 GrB_Info GXB (SelectOp_new)     // create a new user-defined select operator
 (
@@ -1653,50 +1689,36 @@ GrB_Info GXB (SelectOp_new)     // create a new user-defined select operator
     GrB_Type xtype,             // type of input x, or NULL if type-generic
     GrB_Type ttype              // type of thunk, or NULL if not used
 ) ;
-#define GxB_SelectOp_new(op,f,x,t) \
-        GxB_SelectOp_new2(op,f,x,t, GB_STR(f), NULL)
-#define GxM_SelectOp_new(op,f,x,t) \
-        GxM_SelectOp_new2(op,f,x,t, GB_STR(f), NULL)
 
-// FIXME: GxB_SelectOp_new2 is not a good name.  Just use GxB_SelectOp_new?
-// GxB_SelectOp_new2 creates a named user-defined select op.
+#define GxB_SelectOp_new(op,f,x,t) GB_SelectOp_new (op,f,x,t, GB_STR(f))
+#define GxM_SelectOp_new(op,f,x,t) GM_SelectOp_new (op,f,x,t, GB_STR(f))
+
+// GB_SelectOp_new should not be called directly, but only through the
+// GxB_SelectOp_new macro.
 GB_PUBLIC
-GrB_Info GxB_SelectOp_new2      // create a named user-defined select operator
+GrB_Info GB_SelectOp_new        // not user-callable
 (
     GxB_SelectOp *selectop,     // handle for the new select operator
     GxB_select_function function,// pointer to the select function
     GrB_Type xtype,             // type of input x
     GrB_Type ttype,             // type of thunk, or NULL if not used
-    const char *selectop_name,  // name of the user function
-    const char *selectop_defn   // definition of the user function
+    const char *name            // name of the underlying function
 ) ;
 
-// NOTE: GxB_SelectOp_xtype is historical.  Use GxB_SelectOp_xtype_name instead.
+// GxB_SelectOp_xtype is historical.  Use a GrB_IndexUnaryOp instead.
 GB_PUBLIC
 GrB_Info GxB_SelectOp_xtype     // return the type of x
 (
     GrB_Type *xtype,            // return type of input x
     GxB_SelectOp selectop       // select operator
 ) ;
-GB_PUBLIC
-GrB_Info GxB_SelectOp_xtype_name    // return the type_name of x
-(
-    char *type_name,                // user array of size GxB_MAX_NAME_LEN
-    const GxB_SelectOp selectop     // select operator
-) ;
 
-// NOTE: GxB_SelectOp_ttype is historical.  Use GxB_SelectOp_ttype_name instead.
+// GxB_SelectOp_ttype is historical.  Use a GrB_IndexUnaryOp instead.
 GB_PUBLIC
 GrB_Info GxB_SelectOp_ttype     // return the type of thunk
 (
     GrB_Type *ttype,            // return type of input thunk
     GxB_SelectOp selectop       // select operator
-) ;
-GB_PUBLIC
-GrB_Info GxB_SelectOp_ttype_name    // return the type_name of thunk
-(
-    char *type_name,                // user array of size GxB_MAX_NAME_LEN
-    const GxB_SelectOp selectop     // select operator
 ) ;
 
 GB_PUBLIC
@@ -1767,6 +1789,9 @@ GrB_Info GxB_IndexUnaryOp_ztype_name    // return the type_name of z
     const GrB_IndexUnaryOp op           // IndexUnary operator
 ) ;
 
+// For TRIL, TRIU, DIAG, OFFDIAG, COLLE, COLGT, ROWLE, and ROWGT,
+// the xtype_name is an empty string (""), since these functions do not depend
+// on the type of the matrix input.
 GB_PUBLIC
 GrB_Info GxB_IndexUnaryOp_xtype_name    // return the type_name of x
 (
@@ -1817,18 +1842,19 @@ GB_PUBLIC GrB_IndexUnaryOp
     //--------------------------------------------------------------------------
 
     // These operators work on any data type, including user-defined.
+    // The thunk is int64.
 
     // TRIL: (j < (i+thunk)): lower triangular part
-    GrB_TRIL_INT32,     GrB_TRIL_INT64,
+    GrB_TRIL_INT64,
 
     // TRIU: (j > (i+thunk)): upper triangular part
-    GrB_TRIU_INT32,     GrB_TRIU_INT64,
+    GrB_TRIU_INT64,
 
     // DIAG: (j == (i+thunk)): diagonal
-    GrB_DIAG_INT32,     GrB_DIAG_INT64,
+    GrB_DIAG_INT64,
 
     // OFFDIAG: (j != (i+thunk)): offdiagonal
-    GrB_OFFDIAG_INT32,  GrB_OFFDIAG_INT64,
+    GrB_OFFDIAG_INT64,
 
     // COLLE: (j <= thunk): columns 0:thunk
     GrB_COLLE_INT64,

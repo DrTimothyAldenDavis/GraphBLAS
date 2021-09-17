@@ -111,11 +111,19 @@ switch (opcode)
 
         // A is not iso, and typecasting is required, so use the
         // idxunop_function, just as if this were a user-defined operator
+        ASSERT (op != NULL) ;
+        ASSERT (op->ztype != NULL) ;
+        ASSERT (op->xtype != NULL) ;
+        ASSERT (op->ytype != NULL) ;
         GB_SEL_WORKER (_idxunop, _any, GB_void)
         break ;
 
     case GB_USER_idxunop_code   : // C = user_idxunop (A,k)
 
+        ASSERT (op != NULL) ;
+        ASSERT (op->ztype != NULL) ;
+        ASSERT (op->xtype != NULL) ;
+        ASSERT (op->ytype != NULL) ;
         switch (typecode)
         {
             case GB_ignore_code  : GB_SEL_WORKER (_idxunop, _iso, GB_void)

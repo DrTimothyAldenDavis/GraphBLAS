@@ -1020,48 +1020,19 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
     inline void GB_FUNC (ROWINDEX) (GB_TYPE *z, const void *unused,
         int64_t i, int64_t j_unused, const GB_TYPE *thunk)
     {
-        (*z) = i + (*thunk) ;
+        (*z) = (GB_TYPE) (i + (*thunk)) ;
     }
     GB_IDXOP_STRUCT (COLINDEX, GB_XTYPE) ;
     inline void GB_FUNC (COLINDEX) (GB_TYPE *z, const void *unused,
         int64_t i_unused, int64_t j, const GB_TYPE *thunk)
     {
-        (*z) = j + (*thunk) ;
+        (*z) = (GB_TYPE) (j + (*thunk)) ;
     }
     GB_IDXOP_STRUCT (DIAGINDEX, GB_XTYPE) ;
     inline void GB_FUNC (DIAGINDEX) (GB_TYPE *z, const void *unused,
         int64_t i, int64_t j, const GB_TYPE *thunk)
     {
-        (*z) = j - (i + (*thunk)) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // z = f (x, i, j, thunk) where z is bool, thunk is type int32 or int64
-    //--------------------------------------------------------------------------
-
-    GB_IDXOP_STRUCT (TRIL, GB_XTYPE) ;
-    inline void GB_FUNC (TRIL) (bool *z, const void *unused,
-        int64_t i, int64_t j, const GB_TYPE *thunk)
-    {
-        (*z) = (j < (i + (*thunk))) ;
-    }
-    GB_IDXOP_STRUCT (TRIU, GB_XTYPE) ;
-    inline void GB_FUNC (TRIU) (bool *z, const void *unused,
-        int64_t i, int64_t j, const GB_TYPE *thunk)
-    {
-        (*z) = (j > (i + (*thunk))) ;
-    }
-    GB_IDXOP_STRUCT (DIAG, GB_XTYPE) ;
-    inline void GB_FUNC (DIAG) (bool *z, const void *unused,
-        int64_t i, int64_t j, const GB_TYPE *thunk)
-    {
-        (*z) = (j == (i + (*thunk))) ;
-    }
-    GB_IDXOP_STRUCT (OFFDIAG, GB_XTYPE) ;
-    inline void GB_FUNC (OFFDIAG) (bool *z, const void *unused,
-        int64_t i, int64_t j, const GB_TYPE *thunk)
-    {
-        (*z) = (j != (i + (*thunk))) ;
+        (*z) = (GB_TYPE) (j - (i + (*thunk))) ;
     }
 
 #endif
@@ -1071,6 +1042,34 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
     //--------------------------------------------------------------------------
     // z = f (x, i, j, thunk) where z is bool, thunk is type int64
     //--------------------------------------------------------------------------
+
+    GB_IDXOP_STRUCT (TRIL, GB_XTYPE) ;
+    inline void GB_FUNC (TRIL) (bool *z, const void *unused,
+        int64_t i, int64_t j, const GB_TYPE *thunk)
+    {
+        (*z) = (j < (i + (*thunk))) ;
+    }
+
+    GB_IDXOP_STRUCT (TRIU, GB_XTYPE) ;
+    inline void GB_FUNC (TRIU) (bool *z, const void *unused,
+        int64_t i, int64_t j, const GB_TYPE *thunk)
+    {
+        (*z) = (j > (i + (*thunk))) ;
+    }
+
+    GB_IDXOP_STRUCT (DIAG, GB_XTYPE) ;
+    inline void GB_FUNC (DIAG) (bool *z, const void *unused,
+        int64_t i, int64_t j, const GB_TYPE *thunk)
+    {
+        (*z) = (j == (i + (*thunk))) ;
+    }
+
+    GB_IDXOP_STRUCT (OFFDIAG, GB_XTYPE) ;
+    inline void GB_FUNC (OFFDIAG) (bool *z, const void *unused,
+        int64_t i, int64_t j, const GB_TYPE *thunk)
+    {
+        (*z) = (j != (i + (*thunk))) ;
+    }
 
     GB_IDXOP_STRUCT (COLLE, GB_XTYPE) ;
     inline void GB_FUNC (COLLE) (bool *z, const void *unused,

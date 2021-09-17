@@ -109,7 +109,6 @@
 #define GrB_DESC_T1 GrM_DESC_T1
 #define GrB_DIAGINDEX_INT32 GrM_DIAGINDEX_INT32
 #define GrB_DIAGINDEX_INT64 GrM_DIAGINDEX_INT64
-#define GrB_DIAG_INT32 GrM_DIAG_INT32
 #define GrB_DIAG_INT64 GrM_DIAG_INT64
 #define GrB_DIV_BOOL GrM_DIV_BOOL
 #define GrB_DIV_FP32 GrM_DIV_FP32
@@ -565,7 +564,6 @@
 #define GrB_NE_UINT32 GrM_NE_UINT32
 #define GrB_NE_UINT64 GrM_NE_UINT64
 #define GrB_NE_UINT8 GrM_NE_UINT8
-#define GrB_OFFDIAG_INT32 GrM_OFFDIAG_INT32
 #define GrB_OFFDIAG_INT64 GrM_OFFDIAG_INT64
 #define GrB_PLUS_BOOL GrM_PLUS_BOOL
 #define GrB_PLUS_FP32 GrM_PLUS_FP32
@@ -681,9 +679,7 @@
 #define GrB_TIMES_UINT64 GrM_TIMES_UINT64
 #define GrB_TIMES_UINT8 GrM_TIMES_UINT8
 #define GrB_transpose GrM_transpose
-#define GrB_TRIL_INT32 GrM_TRIL_INT32
 #define GrB_TRIL_INT64 GrM_TRIL_INT64
-#define GrB_TRIU_INT32 GrM_TRIU_INT32
 #define GrB_TRIU_INT64 GrM_TRIU_INT64
 #define GrB_Type_error GrM_Type_error
 #define GrB_Type_free GrM_Type_free
@@ -1541,6 +1537,9 @@
 #define GxB_IGNORE_DUP GxM_IGNORE_DUP
 #define GxB_IndexUnaryOp_fprint GxM_IndexUnaryOp_fprint
 #define GxB_IndexUnaryOp_new GxM_IndexUnaryOp_new
+#define GxB_IndexUnaryOp_ttype_name GxM_IndexUnaryOp_ttype_name
+#define GxB_IndexUnaryOp_xtype_name GxM_IndexUnaryOp_xtype_name
+#define GxB_IndexUnaryOp_ztype_name GxM_IndexUnaryOp_ztype_name
 #define GxB_init GxM_init
 #define GxB_ISEQ_BOOL GxM_ISEQ_BOOL
 #define GxB_ISEQ_FC32 GxM_ISEQ_FC32
@@ -2856,10 +2855,8 @@
 #define GxB_SelectOp_fprint GxM_SelectOp_fprint
 #define GxB_SelectOp_free GxM_SelectOp_free
 #define GxB_SelectOp_ttype GxM_SelectOp_ttype
-#define GxB_SelectOp_ttype_name GxM_SelectOp_ttype_name
 #define GxB_SelectOp_wait GxM_SelectOp_wait
 #define GxB_SelectOp_xtype GxM_SelectOp_xtype
-#define GxB_SelectOp_xtype_name GxM_SelectOp_xtype_name
 #define GxB_Semiring_add GxM_Semiring_add
 #define GxB_Semiring_fprint GxM_Semiring_fprint
 #define GxB_Semiring_multiply GxM_Semiring_multiply
@@ -3296,6 +3293,7 @@
 #define GB_AxB_semiring_builtin GM_AxB_semiring_builtin
 #define GB_BinaryOp_check GM_BinaryOp_check
 #define GB_BinaryOp_compatible GM_BinaryOp_compatible
+#define GB_BinaryOp_new GM_BinaryOp_new
 #define GB_binop_builtin GM_binop_builtin
 #define GB_binop_new GM_binop_new
 #define GB_binop_pattern GM_binop_pattern
@@ -3427,6 +3425,7 @@
 #define GB_deserialize GM_deserialize
 #define GB_deserialize_from_blob GM_deserialize_from_blob
 #define GB_divcomplex GM_divcomplex
+#define GB_do_dynamic_header GM_do_dynamic_header
 #define GB_dup GM_dup
 #define GB_dup_worker GM_dup_worker
 #define GB_ek_slice GM_ek_slice
@@ -3733,6 +3732,7 @@
 #define GB_Scalar_wrap GM_Scalar_wrap
 #define GB_select GM_select
 #define GB_SelectOp_check GM_SelectOp_check
+#define GB_SelectOp_new GM_SelectOp_new
 #define GB_selector GM_selector
 #define GB_Semiring_check GM_Semiring_check
 #define GB_Semiring_new GM_Semiring_new
@@ -3800,7 +3800,10 @@
 #define GB_transpose_op GM_transpose_op
 #define GB_Type_check GM_Type_check
 #define GB_Type_compatible GM_Type_compatible
+#define GB_Type_new GM_Type_new
 #define GB_UnaryOp_check GM_UnaryOp_check
+#define GB_UnaryOp_new GM_UnaryOp_new
+#define GB_undo_dynamic_header GM_undo_dynamic_header
 #define GB_unjumble GM_unjumble
 #define GB_unop_one GM_unop_one
 #define GB_Vector_check GM_Vector_check
