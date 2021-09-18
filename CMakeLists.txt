@@ -23,7 +23,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Sept 15, 2021 (alpha5)")
+set ( GraphBLAS_DATE "Sept 17, 2021 (alpha6)")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -98,11 +98,13 @@ configure_file (
 # include ( FindOpenMP  )
 find_package ( OpenMP )
 
-enable_language ( CUDA )
+# FIXME: this breaks compilation on my laptop when uncommented:
+  enable_language ( CUDA )
 
 # Intel(R) IPP not yet supported
 # find_package ( IPP )
 
+# FIXME: this breaks compilation on my laptop when turned on:
 # for nvcc, add -DGBCUDA
   set ( CMAKE_CUDA on )
   set ( RMM_WRAP on )

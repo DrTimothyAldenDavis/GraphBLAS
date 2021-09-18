@@ -15,13 +15,20 @@ IndexUnaryOp:
 --------------------------------------------------------------------------------
 DRAFTED: need to test them:
 
-    GrB_IndexUnaryOp
+--------------------------------------------------------------------------------
+DONE:
+
+GrB_IndexUnaryOp:
     GrB_IndexUnaryOp_new, free, check, wait, fprint
     built-in GrB_IndexUnaryOps (see table 2.8)
     GrB_select with IndexUnaryOp
 
---------------------------------------------------------------------------------
-DONE:
+    Only remaining GxB_SelectOps not handled by GrB_IndexUnaryOps are the
+    comparators that can work on any user-defined type: GxB_NONZERO,
+    GxB_EQ_ZERO, GxB_NE_THUNK, GxB_EQ_THUNK.  Otherwise, GxB_SelectOps could be
+    entirely declared "historical".  Consider allowing GxB_NONZERO,
+    GxB_EQ_ZERO, GxB_NE_THUNK, GxB_EQ_THUNK as GrB_IndexUnaryOps, and inputs to
+    GrB_Matrix_select.  The function pointers would have to be NULL.
 
 GrB_Scalar:
     GrB_Vector_assign_Scalar with GrB_Scalar
