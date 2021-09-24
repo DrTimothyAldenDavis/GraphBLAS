@@ -23,7 +23,7 @@
     blob = malloc (blob_size) ;                     // user mallocs the blob
     GrB_Vector_serialize (blob, &blob_size, u) ;    // returns actual size
     blob = realloc (blob, blob_size) ;              // user can shrink the blob
-    GrB_Vector_deserialize (&w, blob, blob_size, atype) ;
+    GrB_Vector_deserialize (&w, atype, blob, blob_size) ;
     free (blob) ;                                   // user frees the blob
 */
 

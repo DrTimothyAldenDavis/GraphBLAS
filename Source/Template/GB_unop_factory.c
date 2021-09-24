@@ -7,9 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// Switch factory for applying a unary operator.  This file is #include'd into
-// GB_apply_op.c and GB_transpose_op.c, which must define the GrB_UnaryOp op
-// and the GrB_Type Atype.
+// Switch factory for applying a non-positional unary operator.  This file is
+// #include'd into GB_apply_op.c and GB_transpose_op.c, which must define the
+// GrB_UnaryOp op and the GrB_Type Atype.  This factory does not handle
+// GrB_BinaryOp or GrB_IndexUnaryOp.
 
 // If the op is user-defined, or if the combinations of z and x type are not
 // handled by the built-in operator, then this switch factory falls through
@@ -17,9 +18,9 @@
 
 {
     // switch factory for two types, controlled by code1 and code2
-    GB_Type_code code1 = op1->ztype->code ;     // defines ztype
+    GB_Type_code code1 = op->ztype->code ;      // defines ztype
     GB_Type_code code2 = Atype->code ;          // defines the type of A
-    GB_Opcode opcode = op1->opcode ;
+    GB_Opcode opcode = op->opcode ;
 
     ASSERT (code1 <= GB_UDT_code) ;
     ASSERT (code2 <= GB_UDT_code) ;

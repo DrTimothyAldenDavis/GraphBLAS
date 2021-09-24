@@ -110,13 +110,17 @@ switch (opcode)
     case GB_VALUELE_idxunop_code :
 
         // A is not iso, and typecasting is required, so use the
-        // idxunop_function, just as if this were a user-defined operator
+        // idxunop_function, just as if this were a user-defined operator.
+        // Typecasting is costly; both the typecast and the idxunop function
+        // are used via function pointers, so this is a generic method.
+        #ifdef GB_SELECT_PHASE1
+        GBURBLE ("(generic select) ") ;
+        #endif
         ASSERT (op != NULL) ;
         ASSERT (op->ztype != NULL) ;
         ASSERT (op->xtype != NULL) ;
         ASSERT (op->ytype != NULL) ;
         GB_SEL_WORKER (_idxunop, _any, GB_void)
-        break ;
 
     case GB_USER_idxunop_code   : // C = user_idxunop (A,k)
 

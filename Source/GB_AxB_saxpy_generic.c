@@ -218,7 +218,7 @@ GrB_Info GB_AxB_saxpy_generic
         // Hx [i] += t
         #define GB_HX_UPDATE(i,t) fadd (GB_HX (i), GB_HX (i), &t)
 
-        int64_t offset = GB_positional_offset (opcode) ;
+        int64_t offset = GB_positional_offset (opcode, NULL) ;
 
         if (mult->ztype == GrB_INT64)
         {

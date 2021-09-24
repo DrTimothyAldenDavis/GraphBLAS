@@ -62,12 +62,11 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     const GrB_Type ctype,       // type of output matrix C
     const bool C_is_csc,        // format of output matrix C
     const GrB_Matrix A,         // input matrix
-        // no operator is applied if both op1 and op2 are NULL
-        const GrB_UnaryOp op1,          // unary operator to apply
-        const GrB_BinaryOp op2,         // binary operator to apply
-        const GrB_Scalar scalar,        // scalar to bind to binary operator
-        bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
-    const int nworkspaces,      // # of workspaces to use (1, or nthreads)
+        // no operator is applied if op is NULL
+        const GB_Operator op,       // unary/idxunop/binop to apply
+        const GrB_Scalar scalar,    // scalar to bind to binary operator
+        bool binop_bind1st,         // if true, binop(x,A) else binop(A,y)
+    const int nworkspaces,      // # of workspaces to use
     const int nthreads,         // # of threads to use
     GB_Context Context
 )
@@ -85,7 +84,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
 
-    // if op1 and op2 are NULL, then no operator is applied
+    // if op is NULL, then no operator is applied
 
     // This method is only be used when A is sparse or hypersparse.
     // The full and bitmap cases are handled in GB_transpose.
@@ -315,7 +314,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //==========================================================================
 
     // transpose both the pattern and the values
-    if (op1 == NULL && op2 == NULL)
+    if (op == NULL)
     { 
         // do not apply an operator; optional typecast to C->type
         GB_transpose_ix (C, A, Workspaces, A_slice, nworkspaces, nthreads) ;
@@ -323,7 +322,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     else
     { 
         // apply an operator, C has type op->ztype
-        GB_transpose_op (C, C_code_iso, op1, op2, scalar, binop_bind1st, A,
+        GB_transpose_op (C, C_code_iso, op, scalar, binop_bind1st, A,
             Workspaces, A_slice, nworkspaces, nthreads) ;
     }
 

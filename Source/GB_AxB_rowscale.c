@@ -102,21 +102,21 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
             ASSERT (handled) ;      // all positional ops can be flipped
         }
         // determine unary operator to compute C=D*B
-        GrB_UnaryOp op1 = NULL ;
+        GB_Operator op = NULL ;
         if (ztype == GrB_INT64)
         {
             switch (opcode)
             {
                 // first_op(D,B) becomes position_i(B)
                 case GB_FIRSTI_binop_code   : 
-                case GB_FIRSTJ_binop_code   : op1 = GxB_POSITIONI_INT64 ; break;
+                case GB_FIRSTJ_binop_code   : op = GxB_POSITIONI_INT64 ; break;
                 case GB_FIRSTI1_binop_code  : 
-                case GB_FIRSTJ1_binop_code  : op1 = GxB_POSITIONI1_INT64; break;
+                case GB_FIRSTJ1_binop_code  : op = GxB_POSITIONI1_INT64; break;
                 // second_op(D,B) becomes position_op(B)
-                case GB_SECONDI_binop_code  : op1 = GxB_POSITIONI_INT64 ; break;
-                case GB_SECONDJ_binop_code  : op1 = GxB_POSITIONJ_INT64 ; break;
-                case GB_SECONDI1_binop_code : op1 = GxB_POSITIONI1_INT64; break;
-                case GB_SECONDJ1_binop_code : op1 = GxB_POSITIONJ1_INT64; break;
+                case GB_SECONDI_binop_code  : op = GxB_POSITIONI_INT64 ; break;
+                case GB_SECONDJ_binop_code  : op = GxB_POSITIONJ_INT64 ; break;
+                case GB_SECONDI1_binop_code : op = GxB_POSITIONI1_INT64; break;
+                case GB_SECONDJ1_binop_code : op = GxB_POSITIONJ1_INT64; break;
                 default:  ;
             }
         }
@@ -126,19 +126,19 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
             {
                 // first_op(D,B) becomes position_i(B)
                 case GB_FIRSTI_binop_code   : 
-                case GB_FIRSTJ_binop_code   : op1 = GxB_POSITIONI_INT32 ; break;
+                case GB_FIRSTJ_binop_code   : op = GxB_POSITIONI_INT32 ; break;
                 case GB_FIRSTI1_binop_code  : 
-                case GB_FIRSTJ1_binop_code  : op1 = GxB_POSITIONI1_INT32; break;
+                case GB_FIRSTJ1_binop_code  : op = GxB_POSITIONI1_INT32; break;
                 // second_op(D,B) becomes position_op(B)
-                case GB_SECONDI_binop_code  : op1 = GxB_POSITIONI_INT32 ; break;
-                case GB_SECONDJ_binop_code  : op1 = GxB_POSITIONJ_INT32 ; break;
-                case GB_SECONDI1_binop_code : op1 = GxB_POSITIONI1_INT32; break;
-                case GB_SECONDJ1_binop_code : op1 = GxB_POSITIONJ1_INT32; break;
+                case GB_SECONDI_binop_code  : op = GxB_POSITIONI_INT32 ; break;
+                case GB_SECONDJ_binop_code  : op = GxB_POSITIONJ_INT32 ; break;
+                case GB_SECONDI1_binop_code : op = GxB_POSITIONI1_INT32; break;
+                case GB_SECONDJ1_binop_code : op = GxB_POSITIONJ1_INT32; break;
                 default:  ;
             }
         }
-        GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO, op1,   // positional op
-            NULL, NULL, false, B, Context)) ;
+        GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO, op,   // positional op
+            NULL, false, false, B, Context)) ;
         ASSERT_MATRIX_OK (C, "rowscale positional: C = D*B output", GB0) ;
 
     }

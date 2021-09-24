@@ -251,18 +251,33 @@ GrB_BinaryOp gb_mxstring_to_binop       // return binary operator from a string
     const GrB_Type btype                // type of B
 ) ;
 
-GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
+void gb_mxstring_to_binop_or_idxunop    // binop or idxunop from a string
+(
+    const mxArray *mxstring,            // built-in string
+    const GrB_Type atype,               // type of A
+    const GrB_Type btype,               // type of B
+    // output:
+    GrB_BinaryOp *op2,                  // binary op
+    GrB_IndexUnaryOp *idxunop,          // idxunop
+    int64_t *ithunk                     // thunk for idxunop
+) ;
+
+GrB_BinaryOp gb_string_to_binop_or_idxunop
 (
     char *opstring,                     // string defining the operator
     const GrB_Type atype,               // type of A
-    const GrB_Type btype                // type of B
+    const GrB_Type btype,               // type of B
+    GrB_IndexUnaryOp *idxunop,          // idxunop from the string
+    int64_t *ithunk                     // thunk for idxunop
 ) ;
 
-GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
+GrB_BinaryOp gb_string_and_type_to_binop_or_idxunop
 (
     const char *op_name,        // name of the operator, as a string
     const GrB_Type type,        // type of the x,y inputs to the operator
-    const bool type_not_given   // true if no type present in the string
+    const bool type_not_given,  // true if no type present in the string
+    GrB_IndexUnaryOp *idxunop,          // idxunop from the string
+    int64_t *ithunk                     // thunk for idxunop
 ) ;
 
 GrB_Semiring gb_mxstring_to_semiring    // return semiring from a string

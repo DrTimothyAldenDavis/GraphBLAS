@@ -7,17 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// gbdeserialize is an interface to GxB_Matrix_deserialize.
+// gbdeserialize is an interface to GrB_Matrix_deserialize.
 
 // Usage:
 
-// A = gbdeserialize (blob)         % set the type of A from the blob
-// A = gbdeserialize (blob, mode)   % mode is 'fast' or 'secure'
-// A = gbdeserialize (blob, mode, type)   % for testing only
+// A = gbdeserialize (blob)
 
 #include "gb_interface.h"
 
-#define USAGE "usage: A = GrB.deserialize (blob, mode)"
+#define USAGE "usage: A = GrB.deserialize (blob)"
 
 void mexFunction
 (
@@ -37,12 +35,13 @@ void mexFunction
         || mxGetN (pargin [0]) != 1, "blob must be a uint8 column vector") ;
 
     //--------------------------------------------------------------------------
-    // get the blob and the optional mode and type
+    // get the blob
     //--------------------------------------------------------------------------
 
     void *blob = mxGetData (pargin [0]) ;
     size_t blob_size = mxGetM (pargin [0]) ;
 
+#if 0
     // get the mode: 'fast' or 'secure' (or 'debug' for testing only)
     bool debug = false ;
     GrB_Descriptor desc = NULL ;
@@ -76,23 +75,27 @@ void mexFunction
 
     // get the ctype (testing only; not documented)
     GrB_Type ctype = (nargin > 2) ? gb_mxstring_to_type (pargin [2]) : NULL ;
+#endif
 
     //--------------------------------------------------------------------------
     // deserialize the blob into a matrix
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL ;
+    OK (GrB_Matrix_deserialize (&C, NULL, blob, blob_size)) ;
+
+#if 0
     if (debug)
     {
         // test GrB_Matrix_deserialize (not the default)
-        OK (GrB_Matrix_deserialize (&C, blob, blob_size, ctype)) ;
+        OK (GrB_Matrix_deserialize (&C, ctype, blob, blob_size)) ;
     }
     else
     {
-        OK (GxB_Matrix_deserialize (&C, blob, blob_size, ctype, desc)) ;
+        OK (GxB_Matrix_deserialize (&C, ctype, blob, blob_size, desc)) ;
     }
-
     OK (GrB_Descriptor_free (&desc)) ;
+#endif
 
     //--------------------------------------------------------------------------
     // export the output matrix C

@@ -7,7 +7,6 @@ function gbtest115
 rng ('default') ;
 
 types = gbtest_types ;
-modes = { 'fast', 'secure', 'debug' } ;
 compression_methods = { 'none', 'lz4', 'lz4hc', 'debug' } ;
 
 for k = 1:length(types)
@@ -19,29 +18,21 @@ for k = 1:length(types)
     B = GrB.deserialize (blob) ;
     assert (isequal (A, B)) ;
 
-    for k1 = 1:3
-        mode = modes {k1} ;
-        for k2 = 1:4
-            method = compression_methods {k2} ;
+    for k2 = 1:4
+        method = compression_methods {k2} ;
 
-            % default level
-            blob = GrB.serialize (A, method) ;
-            B = GrB.deserialize (blob, mode) ;
-            assert (isequal (A, B)) ;
+        % default level
+        blob = GrB.serialize (A, method) ;
+        B = GrB.deserialize (blob) ;
+        assert (isequal (A, B)) ;
 
-            % levels 0:9 for lz4hc
-            if (k2 == 3)
-                for level = 0:9
-                    blob = GrB.serialize (A, method, level) ;
-                    B = GrB.deserialize (blob, mode) ;
-                    assert (isequal (A, B)) ;
-                end
+        % levels 0:9 for lz4hc
+        if (k2 == 3)
+            for level = 0:9
+                blob = GrB.serialize (A, method, level) ;
+                B = GrB.deserialize (blob) ;
+                assert (isequal (A, B)) ;
             end
-
-            % with typecasting
-            blob = GrB.serialize (A, method) ;
-            B = GrB.deserialize (blob, mode, 'double') ;
-            assert (isequal (GrB (A, 'double'), B)) ;
         end
     end
 end

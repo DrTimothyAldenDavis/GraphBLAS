@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_string_and_type_to_binop: get a GraphBLAS operator from a string and type
+// gb_string_and_type_to_binop_or_idxunop: get operator from a string and type
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -10,10 +10,10 @@
 #include "gb_interface.h"
 
 // op_name: a built-in string defining the operator name:
-//  1st, 2nd, pair, min, max, +, -, rminus, *, /, \
+//  1st, 2nd, any, pair, min, max, +, -, rminus, *, /, \
 //  iseq, isne, isgt, islt, isge, isle,
 //  ==, ~=, >, <, >=, <=,
-//  ||, &&, xor
+//  ||, &&, xor, xnor
 //  atan2, hypot, fmod, remainder, copysign, cmplx, pow, pow2
 
 //  bitwise operators:
@@ -22,6 +22,10 @@
 // positional operators:
 //      firsti0, firsti1, firstj0, firstj1, secondi0, secondi1, secondj0,
 //      secondj1.  The default type is int64
+
+// index unary operators:
+//      tril, triu, diag, offdiag, diagindex, rowindex, rowle, rowgt,
+//      colindex, colle, colgt
 
 // The following synonyms are allowed for specifying these operators:
 //
@@ -44,13 +48,17 @@
 //      xor   lxor
 //      pow2  ldexp
 
-GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
+GrB_BinaryOp gb_string_and_type_to_binop_or_idxunop
 (
     const char *op_name,        // name of the operator, as a string
     const GrB_Type type,        // type of the x,y inputs to the operator
-    const bool type_not_given   // true if no type present in the string
+    const bool type_not_given,  // true if no type present in the string
+    GrB_IndexUnaryOp *idxunop,          // idxunop from the string
+    int64_t *ithunk                     // thunk for idxunop
 )
 {
+
+    if (idxunop != NULL) (*idxunop) = NULL ;
 
     if (MATCH (op_name, "1st") || MATCH (op_name, "first"))
     { 
@@ -696,69 +704,69 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
     else if (MATCH (op_name, "firsti0" ) || MATCH (op_name, "1sti0"))
     {
 
-        if (type == GrB_INT32) return (GxB_FIRSTI_INT32 ) ;
         if (type == GrB_INT64
         ||  type_not_given   ) return (GxB_FIRSTI_INT64 ) ;
+        if (type == GrB_INT32) return (GxB_FIRSTI_INT32 ) ;
 
     }
     else if (MATCH (op_name, "firsti1" ) || MATCH (op_name, "1sti1") ||
              MATCH (op_name, "firsti"  ) || MATCH (op_name, "1sti"))
     {
 
-        if (type == GrB_INT32) return (GxB_FIRSTI1_INT32 ) ;
         if (type == GrB_INT64
         ||  type_not_given   ) return (GxB_FIRSTI1_INT64 ) ;
+        if (type == GrB_INT32) return (GxB_FIRSTI1_INT32 ) ;
 
     }
     else if (MATCH (op_name, "firstj0" ) || MATCH (op_name, "1stj0"))
     {
 
-        if (type == GrB_INT32) return (GxB_FIRSTJ_INT32 ) ;
         if (type == GrB_INT64
         ||  type_not_given   ) return (GxB_FIRSTJ_INT64 ) ;
+        if (type == GrB_INT32) return (GxB_FIRSTJ_INT32 ) ;
 
     }
     else if (MATCH (op_name, "firstj1" ) || MATCH (op_name, "1stj1") ||
              MATCH (op_name, "firstj"  ) || MATCH (op_name, "1stj"))
     {
 
-        if (type == GrB_INT32) return (GxB_FIRSTJ1_INT32 ) ;
         if (type == GrB_INT64
         ||  type_not_given   ) return (GxB_FIRSTJ1_INT64 ) ;
+        if (type == GrB_INT32) return (GxB_FIRSTJ1_INT32 ) ;
 
     }
     else if (MATCH (op_name, "secondi0") || MATCH (op_name, "2ndi0"))
     {
 
-        if (type == GrB_INT32) return (GxB_SECONDI_INT32 ) ;
         if (type == GrB_INT64
         ||  type_not_given   ) return (GxB_SECONDI_INT64 ) ;
+        if (type == GrB_INT32) return (GxB_SECONDI_INT32 ) ;
 
     }
     else if (MATCH (op_name, "secondi1") || MATCH (op_name, "2ndi1") ||
              MATCH (op_name, "secondi" ) || MATCH (op_name, "2ndi"))
     {
 
-        if (type == GrB_INT32) return (GxB_SECONDI1_INT32 ) ;
         if (type == GrB_INT64
         ||  type_not_given   ) return (GxB_SECONDI1_INT64 ) ;
+        if (type == GrB_INT32) return (GxB_SECONDI1_INT32 ) ;
 
     }
     else if (MATCH (op_name, "secondj0" ) || MATCH (op_name, "2ndj0"))
     {
 
-        if (type == GrB_INT32) return (GxB_SECONDJ_INT32 ) ;
         if (type == GrB_INT64
         ||  type_not_given   ) return (GxB_SECONDJ_INT64 ) ;
+        if (type == GrB_INT32) return (GxB_SECONDJ_INT32 ) ;
 
     }
     else if (MATCH (op_name, "secondj1") || MATCH (op_name, "2ndj1") ||
              MATCH (op_name, "secondj" ) || MATCH (op_name, "2ndj"))
     {
 
-        if (type == GrB_INT32) return (GxB_SECONDJ1_INT32 ) ;
         if (type == GrB_INT64
         ||  type_not_given   ) return (GxB_SECONDJ1_INT64 ) ;
+        if (type == GrB_INT32) return (GxB_SECONDJ1_INT32 ) ;
 
     }
     else if (MATCH (op_name, "ignore") || MATCH (op_name, "ignore_dup"))
@@ -768,13 +776,84 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
     }
 
     //--------------------------------------------------------------------------
+    // return an idxunop
+    //--------------------------------------------------------------------------
+
+    bool is32 = (type == GrB_INT32) ;
+
+    if (idxunop != NULL)
+    {
+
+        CHECK_ERROR (ithunk == NULL, "thunk missing") ;
+
+        if (MATCH (op_name, "tril"))
+        { 
+            (*idxunop) = GrB_TRIL_INT64 ;
+            (*ithunk)++ ;
+        }
+        else if (MATCH (op_name, "triu"))
+        { 
+            (*idxunop) = GrB_TRIU_INT64 ;
+            (*ithunk)-- ;
+        }
+        else if (MATCH (op_name, "diag"))
+        {
+            (*idxunop) = GrB_DIAG_INT64 ;
+        }
+        else if (MATCH (op_name, "diagindex"))
+        { 
+            (*idxunop) = is32 ? GrB_DIAGINDEX_INT32 : GrB_DIAGINDEX_INT64 ;
+        }
+        else if (MATCH (op_name, "offdiag"))
+        { 
+            (*idxunop) = GrB_OFFDIAG_INT64 ;
+        }
+        else if (MATCH (op_name, "rowindex"))
+        { 
+            (*idxunop) = is32 ? GrB_ROWINDEX_INT32 : GrB_ROWINDEX_INT64 ;
+            (*ithunk)++ ;
+        }
+        else if (MATCH (op_name, "rowle"))
+        { 
+            (*idxunop) = GrB_ROWLE_INT64 ;
+            (*ithunk)-- ;
+        }
+        else if (MATCH (op_name, "rowgt"))
+        { 
+            (*idxunop) = GrB_ROWGT_INT64 ;
+            (*ithunk)-- ;
+        }
+        else if (MATCH (op_name, "colindex"))
+        { 
+            (*idxunop) = is32 ? GrB_COLINDEX_INT32 : GrB_COLINDEX_INT64 ;
+            (*ithunk)++ ;
+        }
+        else if (MATCH (op_name, "colle"))
+        { 
+            (*idxunop) = GrB_COLLE_INT64 ;
+            (*ithunk)-- ;
+        }
+        else if (MATCH (op_name, "colgt"))
+        { 
+            (*idxunop) = GrB_COLGT_INT64 ;
+            (*ithunk)-- ;
+        }
+
+        if ((*idxunop) != NULL)
+        {
+            // this is not an error condition
+            return (NULL) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // unknown type or operator
     //--------------------------------------------------------------------------
 
     // the type can be NULL for positional operators, but no others
 
     CHECK_ERROR (type == NULL, "unknown type") ;
-    ERROR2 ("unknown binary operator", op_name) ;
+    ERROR2 ("unknown operator", op_name) ;
     return (NULL) ;
 }
 

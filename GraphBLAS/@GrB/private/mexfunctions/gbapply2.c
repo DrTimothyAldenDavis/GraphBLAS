@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbapply2: apply a binary operator to a matrix, with scalar binding
+// gbapply2: apply idxunop or binary operator to a matrix, with scalar binding
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,16 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-// gbapply2 is an interface to GxB_Matrix_apply_BinaryOp1st.
-// and GxB_Matrix_apply_Binaryop2nd.
+// gbapply2 is an interface to GrB_Matrix_apply_BinaryOp1st_Scalar.
+// GrB_Matrix_apply_BinaryOp2nd_Scalar, and GrB_Matrix_apply_IndexOp_Scalar.
 
 // Usage:
 
-// C = gbapply2 (binop, A, B)
-// C = gbapply2 (binop, A, B, desc)
-// C = gbapply2 (Cin, accum, binop, A, B, desc)
-// C = gbapply2 (Cin, M, binop, A, B, desc)
-// C = gbapply2 (Cin, M, accum, binop, A, B, desc)
+// C = gbapply2 (op, A, B)
+// C = gbapply2 (op, A, B, desc)
+// C = gbapply2 (Cin, accum, op, A, B, desc)
+// C = gbapply2 (Cin, M, op, A, B, desc)
+// C = gbapply2 (Cin, M, accum, op, A, B, desc)
 
 // Either A or B (or both) must be a scalar (1-by-1, with 0 or 1 entries).
 // If the scalar has no entry, it is treated as the value zero.
@@ -26,7 +26,7 @@
 
 #include "gb_interface.h"
 
-#define USAGE "usage: C = GrB.apply2 (Cin, M, accum, binop, A, B, desc)"
+#define USAGE "usage: C = GrB.apply2 (Cin, M, accum, op, A, B, desc)"
 
 void mexFunction
 (
@@ -130,7 +130,7 @@ void mexFunction
     OK (GrB_Scalar_nvals (&nvals, scalar)) ;
     if (nvals == 0)
     {
-        // GxB_apply requires at least one entry.  Create a new scalar zero.
+        // scalar must have an entry.  Create a new scalar zero.
         OK (GrB_Scalar_dup (&scalar0, scalar)) ;
         // the scalar need not be int32; this will typecast as needed
         OK (GrB_Scalar_setElement_INT32 (scalar0, 0)) ;
@@ -138,23 +138,35 @@ void mexFunction
         scalar = scalar0 ;
     }
 
+    // extract the int64 value of the scalar
+    int64_t ithunk = 0 ;
+    OK (GrB_Scalar_extractElement_INT64 (&ithunk, scalar)) ;
+
     //--------------------------------------------------------------------------
-    // get the operators
+    // get the operators, and revise ithunk for idxunops
     //--------------------------------------------------------------------------
 
-    GrB_BinaryOp accum = NULL, op = NULL ;
+    GrB_BinaryOp accum = NULL, op2 = NULL ;
+    GrB_IndexUnaryOp idxunop = NULL ;
 
     if (nstrings == 1)
     { 
-        op    = gb_mxstring_to_binop (String [0], atype, btype) ;
+        gb_mxstring_to_binop_or_idxunop (String [0], atype, btype,
+            &op2, &idxunop, &ithunk) ;
     }
     else 
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
         accum = gb_mxstring_to_binop (String [0], ctype, ctype) ;
-        op    = gb_mxstring_to_binop (String [1], atype, btype) ;
+        gb_mxstring_to_binop_or_idxunop (String [1], atype, btype,
+            &op2, &idxunop, &ithunk) ;
     }
+
+    // create an int64 scalar from ithunk
+    GrB_Scalar Thunk ;
+    OK (GrB_Scalar_new (&Thunk, GrB_INT64)) ;
+    OK (GrB_Scalar_setElement_INT64 (Thunk, ithunk)) ;
 
     //--------------------------------------------------------------------------
     // construct C if not present on input
@@ -189,7 +201,15 @@ void mexFunction
         }
 
         // use the ztype of the op as the type of C
-        OK (GxB_BinaryOp_ztype (&ctype, op)) ;
+        if (op2 != NULL)
+        {
+            OK (GxB_BinaryOp_ztype (&ctype, op2)) ;
+        }
+        else
+        {
+            // OK (GxB_IndexUnaryOp_ztype (&ctype, idxunop)) ;
+            ctype = idxunop->ztype ;
+        }
 
         // create the matrix C and set its format and sparsity
         fmt = gb_get_format (cnrows, cncols, A, B, fmt) ;
@@ -201,15 +221,20 @@ void mexFunction
     // compute C<M> += op (A,B) where one input is a scalar
     //--------------------------------------------------------------------------
 
-    if (binop_bind1st)
+    if (idxunop != NULL)
     {
-        OK1 (C, GxB_Matrix_apply_BinaryOp1st (C, M, accum, op, scalar, B,
-            desc)) ;
+        OK1 (C, GrB_Matrix_apply_IndexOp_Scalar (C, M, accum, idxunop,
+            A, Thunk, desc)) ;
+    }
+    else if (binop_bind1st)
+    {
+        OK1 (C, GrB_Matrix_apply_BinaryOp1st_Scalar (C, M, accum, op2,
+            scalar, B, desc)) ;
     }
     else
     {
-        OK1 (C, GxB_Matrix_apply_BinaryOp2nd (C, M, accum, op, A, scalar,
-            desc)) ;
+        OK1 (C, GrB_Matrix_apply_BinaryOp2nd_Scalar (C, M, accum, op2,
+            A, scalar, desc)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -220,6 +245,7 @@ void mexFunction
     OK (GrB_Matrix_free (&A)) ;
     OK (GrB_Matrix_free (&B)) ;
     OK (GrB_Matrix_free (&scalar0)) ;
+    OK (GrB_Scalar_free (&Thunk)) ;
     OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------

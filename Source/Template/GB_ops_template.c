@@ -265,6 +265,7 @@ GXB_OP2 (POW    , "pow"   )
     GRB_IDXOP_POSITIONAL (ROWINDEX,  "rowindex" ) ;
     GRB_IDXOP_POSITIONAL (COLINDEX,  "colindex" ) ;
     GRB_IDXOP_POSITIONAL (DIAGINDEX, "diagindex") ;
+    GXB_IDXOP_POSITIONAL (FLIPDIAGINDEX, "flipdiagindex") ;
 
 #endif
 

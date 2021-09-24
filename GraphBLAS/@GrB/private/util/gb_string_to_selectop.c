@@ -122,7 +122,7 @@ void gb_string_to_selectop
     }
     else if (MATCH (opstring, "rowgt"))
     { 
-        (*idxunop) = GrB_ROWLE_INT64 ;
+        (*idxunop) = GrB_ROWGT_INT64 ;
         (*ithunk)-- ;
         (*op_is_positional) = true ;
     }
@@ -140,7 +140,7 @@ void gb_string_to_selectop
     }
     else if (MATCH (opstring, "colgt"))
     { 
-        (*idxunop) = GrB_COLLE_INT64 ;
+        (*idxunop) = GrB_COLGT_INT64 ;
         (*ithunk)-- ;
         (*op_is_positional) = true ;
     }

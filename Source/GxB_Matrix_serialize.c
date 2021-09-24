@@ -26,7 +26,7 @@
     GrB_Matrix A, B = NULL ;
     // construct a matrix A, then serialized it:
     GxB_Matrix_serialize (&blob, &blob_size, A, NULL) ; // GxB mallocs the blob
-    GxB_Matrix_deserialize (&B, blob, blob_size, atype, NULL) ;
+    GxB_Matrix_deserialize (&B, atype, blob, blob_size, NULL) ;
     free (blob) ;                                   // user frees the blob
 */
 

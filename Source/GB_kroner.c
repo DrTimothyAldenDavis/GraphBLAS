@@ -203,7 +203,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int64_t offset = 0 ;
     if (op_is_positional)
     { 
-        offset = GB_positional_offset (opcode) ;
+        offset = GB_positional_offset (opcode, NULL) ;
         Cx_int64 = (int64_t *) Cx ;
         Cx_int32 = (int32_t *) Cx ;
     }

@@ -23,7 +23,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Sept 17, 2021 (alpha6)")
+set ( GraphBLAS_DATE "Sept 24, 2021 (alpha7)")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -105,11 +105,12 @@ find_package ( OpenMP )
 # find_package ( IPP )
 
 # FIXME: this breaks compilation on my laptop when turned on:
-# for nvcc, add -DGBCUDA
   set ( CMAKE_CUDA on )
   set ( RMM_WRAP on )
 # set ( CMAKE_CUDA off )
 # set ( RMM_WRAP off )
+
+# for nvcc, add -DGBCUDA
 
 if ( CMAKE_CUDA )
     find_package(CUDA REQUIRED)

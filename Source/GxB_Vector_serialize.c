@@ -26,7 +26,7 @@
     GrB_Vector u, B = NULL ;
     // construct a vector u, then serialized it:
     GxB_Vector_serialize (&blob, &blob_size, u, NULL) ; // GxB mallocs the blob
-    GxB_Vector_deserialize (&B, blob, blob_size, atype, NULL) ;
+    GxB_Vector_deserialize (&B, atype, blob, blob_size, NULL) ;
     free (blob) ;                                   // user frees the blob
 */
 

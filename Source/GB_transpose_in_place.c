@@ -19,7 +19,8 @@ GrB_Info GB_transpose_in_place   // C=A', no change of type, no operators
     GB_Context Context
 )
 { 
-    return (GB_transpose (C, NULL, C_is_csc, C, NULL, NULL, NULL, false,
+    return (GB_transpose (C, NULL, C_is_csc, C,
+        NULL, NULL, false, false,       // no operator
         Context)) ;
 }
 

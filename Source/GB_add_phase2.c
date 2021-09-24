@@ -388,7 +388,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             // C(i,j) = positional_op (aij, bij)
             //------------------------------------------------------------------
 
-            int64_t offset = GB_positional_offset (opcode) ;
+            int64_t offset = GB_positional_offset (opcode, NULL) ;
 
             if (op->ztype == GrB_INT64)
             { 

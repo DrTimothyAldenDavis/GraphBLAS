@@ -88,14 +88,15 @@ void mexFunction
     if (GB_VECTOR_OK (A))
     {
         // test the vector methods
-        METHOD (GxB_Vector_serialize (&blob, &blob_size, (GrB_Vector) A, desc)) ;
-        METHOD (GxB_Vector_deserialize ((GrB_Vector *) &C, blob, blob_size, atype, desc)) ;
+        METHOD (GxB_Vector_serialize (&blob, &blob_size, (GrB_Vector) A, desc));
+        METHOD (GxB_Vector_deserialize ((GrB_Vector *) &C, atype,
+            blob, blob_size, desc)) ;
     }
     else
     {
         // test the matrix methods
         METHOD (GxB_Matrix_serialize (&blob, &blob_size, A, desc)) ;
-        METHOD (GxB_Matrix_deserialize (&C, blob, blob_size, atype, desc)) ;
+        METHOD (GxB_Matrix_deserialize (&C, atype, blob, blob_size, desc)) ;
     }
 
 /*

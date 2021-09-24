@@ -207,9 +207,6 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 // since it does not depend on the values of its two arguments.  The operator
 // can only be implemented via its opcode.
 
-// FIXME: use a function based on the index_unaryop signature,
-// and create an index_binaryop function signature.
-
 // helper macros to define positional unary operators
 #define GXB_OP1_POS(op,str,type)                                            \
     struct GB_UnaryOp_opaque GB_OPAQUE (op ## _ ## type) =                  \
@@ -289,6 +286,25 @@ GXB_OP2_POS (SECONDJ1  , "secondj1"  , INT64) ;
         NULL                                                                \
     } ;                                                                     \
     GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
+
+// GxB_IndexUnaryOps that depend on i,j,thunk but not A(i,j), and result has
+// the same type as the thunk: FLIPDIAGINDEX
+#define GXB_IDXOP_POSITIONAL(op,str)                                        \
+    extern void GB_FUNC_T(op,GB_XTYPE) (GB_TYPE *z, const void *unused,     \
+        int64_t i, int64_t j, const GB_TYPE *thunk) ;                       \
+    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
+    {                                                                       \
+        GB_MAGIC, 0,                                                        \
+        & GB_OPAQUE (GB_XTYPE), /* ztype */                                 \
+        NULL,                   /* xtype */                                 \
+        & GB_OPAQUE (GB_XTYPE), /* thunk type */                            \
+        NULL, (GxB_index_unary_function) (& GB_FUNC_T (op, GB_XTYPE)),      \
+            NULL, NULL,                                                     \
+        str,                                                                \
+        GB_ ## op ## _idxunop_code,                                         \
+        NULL                                                                \
+    } ;                                                                     \
+    GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op)) ;
 
 // IndexUnaryOps that depend on i,j, and thunk but not A(i,j), and result is
 // bool: TRIL, TRIU, DIAG, OFFDIAG, COLLE, COLGT, ROWLE, ROWGT

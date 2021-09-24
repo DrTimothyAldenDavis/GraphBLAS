@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Sept 17, 2021 (alpha6)"
+#define GxB_IMPLEMENTATION_DATE "Sept 24, 2021 (alpha7)"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -1593,23 +1593,20 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 // GxB_SelectOp:  a function z=f(i,j,x,thunk) for the GxB_Select operation.
 // The function f must have the signature:
 
-//      bool f (GrB_Index i, GrB_Index j,
-//              const void *x, const void *thunk) ;
+//      bool f (GrB_Index i, GrB_Index j, const void *x, const void *thunk) ;
 
-// The values of i and j are guaranteed to be in the range 0 to GxB_INDEX_MAX,
+// This will change slightly in v6.0:
+
+//      bool f (int64_T i, int64_T j, const void *x, const void *thunk) ;
+
+// The values of i and j are guaranteed to be in the range 0 to GxB_INDEX_MAX-1,
 // and they can be safely typecasted to int64_t then negated, if desired,
 // without any risk of integer overflow.
-
-// NOTE: GxB_SelectOp has changed in v4.  In v3.3.3 it had this syntax:
-
-//      bool f (GrB_Index i, GrB_Index j,
-//              GrB_Index nrows, GrB_Index ncols,
-//              const void *x, const void *thunk) ;
 
 typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
 
 //------------------------------------------------------------------------------
-// built-in select operators
+// built-in select operators (historical)
 //------------------------------------------------------------------------------
 
 // GxB_select (C, Mask, accum, op, A, Thunk, desc) always returns a matrix C of
@@ -1653,7 +1650,7 @@ GB_PUBLIC GxB_SelectOp
 // types (not complex).  They cannot be used for user-defined types.
 
 //------------------------------------------------------------------------------
-// select operators: historical
+// select operators: (historical)
 //------------------------------------------------------------------------------
 
 // User-defined GxB_SelectOps are historical.  New code should use
@@ -1694,7 +1691,7 @@ GrB_Info GXB (SelectOp_new)     // create a new user-defined select operator
 #define GxM_SelectOp_new(op,f,x,t) GM_SelectOp_new (op,f,x,t, GB_STR(f))
 
 // GB_SelectOp_new should not be called directly, but only through the
-// GxB_SelectOp_new macro.
+// GxB_SelectOp_new macro (but use GrB_IndexUnaryOp_new instead).
 GB_PUBLIC
 GrB_Info GB_SelectOp_new        // not user-callable
 (
@@ -1728,10 +1725,8 @@ GrB_Info GxB_SelectOp_free      // free a user-created select operator
 ) ;
 
 //==============================================================================
-// GrB_IndexUnaryOp     FIXME write these
+// GrB_IndexUnaryOp: a unary operator that depends on the row/col indices
 //==============================================================================
-
-// FIXME describe the GrB_IndexUnaryOp.
 
 // The indexop has the form z = f(aij, i, j, thunk) where aij is the numerical
 // value of the A(i,j) entry, i and j are its row and column index, and thunk
@@ -1744,7 +1739,7 @@ typedef void (*GxB_index_unary_function)
     void *z,            // output value z, of type ztype
     const void *x,      // input value x of type xtype; value of v(i) or A(i,j)
 //  draft v2.0 spec:
-//  const int64_t *indices,     // [i 0] for v(i) or [i j] of A(i,j)
+//  const GrB_Index *indices,   // [i 0] for v(i) or [i j] of A(i,j)
 //  GrB_Index n,                // 1 for vector index, 2 for matrix indices
 //  a better approach:
     int64_t i,          // row index of A(i,j)
@@ -1756,15 +1751,17 @@ typedef void (*GxB_index_unary_function)
 // detection of the operator name.
 #undef GrB_IndexUnaryOp_new
 #undef GrM_IndexUnaryOp_new
+
 GB_PUBLIC
 GrB_Info GRB (IndexUnaryOp_new)     // create a new user-defined IndexUnary op
 (
     GrB_IndexUnaryOp *op,           // handle for the new IndexUnary operator
     GxB_index_unary_function function,    // pointer to IndexUnary function
     GrB_Type ztype,                 // type of output z
-    GrB_Type xtype,                 // type of input x
+    GrB_Type xtype,                 // type of input x (the A(i,j) entry)
     GrB_Type ttype                  // type of input thunk
 ) ;
+
 #define GrB_IndexUnaryOp_new(op,f,z,x,t) \
         GxB_IndexUnaryOp_new(op,f,z,x,t, GB_STR(f), NULL)
 #define GrM_IndexUnaryOp_new(op,f,z,x,t) \
@@ -2052,8 +2049,13 @@ GrB_Info GrB_Monoid_new             // create a monoid
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Monoid_new(monoid,op,identity) \
-    _Generic ((identity), GB_CASES (, GrB, Monoid_new)) (monoid, op, identity) ;
+#define GrB_Monoid_new(monoid,op,identity)      \
+    _Generic                                    \
+    (                                           \
+        (identity),                             \
+            GB_CASES (, GrB, Monoid_new)        \
+    )                                           \
+    (monoid, op, identity)
 #endif
 
 // GxB_Monoid_terminal_new is identical to GrB_Monoid_new, except that a
@@ -2203,9 +2205,13 @@ GrB_Info GxB_Monoid_terminal_new             // create a monoid
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_Monoid_terminal_new(monoid,op,identity,terminal)        \
-    _Generic ((identity), GB_CASES (, GxB, Monoid_terminal_new))     \
-    (monoid, op, identity, terminal) ;
+#define GxB_Monoid_terminal_new(monoid,op,identity,terminal)    \
+    _Generic                                                    \
+    (                                                           \
+        (identity),                                             \
+            GB_CASES (, GxB, Monoid_terminal_new)               \
+    )                                                           \
+    (monoid, op, identity, terminal)
 #endif
 
 GB_PUBLIC
@@ -2480,8 +2486,14 @@ GrB_Info GrB_Scalar_setElement          // s = x
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Scalar_setElement(s,x)  \
-    _Generic ((x), GB_CASES (, GrB, Scalar_setElement)) (s, x)
+#define GrB_Scalar_setElement(s,x)                  \
+    _Generic                                        \
+    (                                               \
+        (x),                                        \
+            GB_CASES (, GrB, Scalar_setElement)     \
+    )                                               \
+    (s, x)
+
 #define GxB_Scalar_setElement(s,x) GrB_Scalar_setElement (s, x)
 #endif
 
@@ -2619,8 +2631,14 @@ GrB_Info GrB_Scalar_extractElement  // x = s
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Scalar_extractElement(x,s)  \
-    _Generic ((x), GB_CASES (*, GrB, Scalar_extractElement)) (x, s)
+#define GrB_Scalar_extractElement(x,s)                  \
+    _Generic                                            \
+    (                                                   \
+        (x),                                            \
+            GB_CASES (*, GrB, Scalar_extractElement)    \
+    )                                                   \
+    (x, s)
+
 #define GxB_Scalar_extractElement(x,s) GrB_Scalar_extractElement (x, s)
 #endif
 
@@ -2878,7 +2896,11 @@ GrB_Info GrB_Vector_build           // build a vector from (I,X) tuples
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_build(w,I,X,nvals,dup)               \
-    _Generic ((X), GB_CASES (*, GrB, Vector_build))     \
+    _Generic                                            \
+    (                                                   \
+        (X),                                            \
+            GB_CASES (*, GrB, Vector_build)             \
+    )                                                   \
     (w, I, ((const void *) (X)), nvals, dup)
 #endif
 
@@ -3026,11 +3048,13 @@ GrB_Info GrB_Vector_setElement          // w(i) = x
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_setElement(w,x,i)                        \
-    _Generic ((x),                                          \
-        GB_CASES (, GrB, Vector_setElement),                \
-        const GrB_Scalar : GrB_Vector_setElement_Scalar,    \
-              GrB_Scalar : GrB_Vector_setElement_Scalar     \
-        ) (w, x, i)
+    _Generic                                                \
+    (                                                       \
+        (x),                                                \
+            GB_CASES (, GrB, Vector_setElement),            \
+            default : GrB_Vector_setElement_Scalar          \
+    )                                                       \
+    (w, x, i)
 #endif
 
 //------------------------------------------------------------------------------
@@ -3177,11 +3201,13 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_extractElement(x,v,i)                        \
-    _Generic ((x),                                              \
-        GB_CASES (*, GrB, Vector_extractElement),               \
-        const GrB_Scalar : GrB_Vector_extractElement_Scalar,    \
-              GrB_Scalar : GrB_Vector_extractElement_Scalar     \
-        ) (x, v, i)
+    _Generic                                                    \
+    (                                                           \
+        (x),                                                    \
+            GB_CASES (*, GrB, Vector_extractElement),           \
+            default : GrB_Vector_extractElement_Scalar          \
+    )                                                           \
+    (x, v, i)
 #endif
 
 //------------------------------------------------------------------------------
@@ -3349,8 +3375,13 @@ GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_extractTuples(I,X,nvals,v)   \
-    _Generic ((X), GB_CASES (*, GrB, Vector_extractTuples)) (I, X, nvals, v)
+#define GrB_Vector_extractTuples(I,X,nvals,v)           \
+    _Generic                                            \
+    (                                                   \
+        (X),                                            \
+            GB_CASES (*, GrB, Vector_extractTuples)     \
+    )                                                   \
+    (I, X, nvals, v)
 #endif
 
 //==============================================================================
@@ -3631,7 +3662,11 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_build(C,I,J,X,nvals,dup)             \
-    _Generic ((X), GB_CASES (*, GrB, Matrix_build))     \
+    _Generic                                            \
+    (                                                   \
+        (X),                                            \
+            GB_CASES (*, GrB, Matrix_build)             \
+    )                                                   \
     (C, I, J, ((const void *) (X)), nvals, dup)
 #endif
 
@@ -3795,11 +3830,13 @@ GrB_Info GrB_Matrix_setElement          // C (i,j) = x
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_setElement(C,x,i,j)                      \
-    _Generic ((x),                                          \
-        GB_CASES (, GrB, Matrix_setElement),                \
-        const GrB_Scalar : GrB_Matrix_setElement_Scalar,    \
-              GrB_Scalar : GrB_Matrix_setElement_Scalar     \
-        ) (C, x, i, j)
+    _Generic                                                \
+    (                                                       \
+        (x),                                                \
+            GB_CASES (, GrB, Matrix_setElement),            \
+            default : GrB_Matrix_setElement_Scalar          \
+    )                                                       \
+    (C, x, i, j)
 #endif
 
 //------------------------------------------------------------------------------
@@ -3962,11 +3999,13 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_extractElement(x,A,i,j)                      \
-    _Generic ((x),                                              \
-        GB_CASES (*, GrB, Matrix_extractElement),               \
-        const GrB_Scalar : GrB_Matrix_extractElement_Scalar,    \
-              GrB_Scalar : GrB_Matrix_extractElement_Scalar     \
-        ) (x, A, i, j)
+    _Generic                                                    \
+    (                                                           \
+        (x),                                                    \
+            GB_CASES (*, GrB, Matrix_extractElement),           \
+            default : GrB_Matrix_extractElement_Scalar          \
+    )                                                           \
+    (x, A, i, j)
 #endif
 
 //------------------------------------------------------------------------------
@@ -4150,8 +4189,13 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_extractTuples(I,J,X,nvals,A) \
-    _Generic ((X), GB_CASES (*, GrB, Matrix_extractTuples)) (I, J, X, nvals, A)
+#define GrB_Matrix_extractTuples(I,J,X,nvals,A)         \
+    _Generic                                            \
+    (                                                   \
+        (X),                                            \
+            GB_CASES (*, GrB, Matrix_extractTuples)     \
+    )                                                   \
+    (I, J, X, nvals, A)
 #endif
 
 //------------------------------------------------------------------------------
@@ -4651,33 +4695,33 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_get (GrB_Descriptor d, GxB_IMPORT, int *method) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_set(arg1,...)                                   \
-    _Generic                                                \
-    (                                                       \
-        (arg1),                                             \
-              int              : GxB_Global_Option_set ,    \
-              GxB_Option_Field : GxB_Global_Option_set ,    \
-              GrB_Vector       : GxB_Vector_Option_set ,    \
-              GrB_Matrix       : GxB_Matrix_Option_set ,    \
-              GrB_Descriptor   : GxB_Desc_set               \
-    )                                                       \
+#define GxB_set(arg1,...)                                       \
+    _Generic                                                    \
+    (                                                           \
+        (arg1),                                                 \
+            int              : GxB_Global_Option_set ,          \
+            GxB_Option_Field : GxB_Global_Option_set ,          \
+            GrB_Vector       : GxB_Vector_Option_set ,          \
+            GrB_Matrix       : GxB_Matrix_Option_set ,          \
+            GrB_Descriptor   : GxB_Desc_set                     \
+    )                                                           \
     (arg1, __VA_ARGS__)
 
-#define GxB_get(arg1,...)                                   \
-    _Generic                                                \
-    (                                                       \
-        (arg1),                                             \
-        const int              : GxB_Global_Option_get ,    \
-              int              : GxB_Global_Option_get ,    \
-        const GxB_Option_Field : GxB_Global_Option_get ,    \
-              GxB_Option_Field : GxB_Global_Option_get ,    \
-        const GrB_Vector       : GxB_Vector_Option_get ,    \
-              GrB_Vector       : GxB_Vector_Option_get ,    \
-        const GrB_Matrix       : GxB_Matrix_Option_get ,    \
-              GrB_Matrix       : GxB_Matrix_Option_get ,    \
-        const GrB_Descriptor   : GxB_Desc_get          ,    \
-              GrB_Descriptor   : GxB_Desc_get               \
-    )                                                       \
+#define GxB_get(arg1,...)                                       \
+    _Generic                                                    \
+    (                                                           \
+        (arg1),                                                 \
+            const int              : GxB_Global_Option_get ,    \
+                  int              : GxB_Global_Option_get ,    \
+            const GxB_Option_Field : GxB_Global_Option_get ,    \
+                  GxB_Option_Field : GxB_Global_Option_get ,    \
+            const GrB_Vector       : GxB_Vector_Option_get ,    \
+                  GrB_Vector       : GxB_Vector_Option_get ,    \
+            const GrB_Matrix       : GxB_Matrix_Option_get ,    \
+                  GrB_Matrix       : GxB_Matrix_Option_get ,    \
+            const GrB_Descriptor   : GxB_Desc_get          ,    \
+                  GrB_Descriptor   : GxB_Desc_get               \
+    )                                                           \
     (arg1, __VA_ARGS__)
 #endif
 
@@ -4690,22 +4734,22 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 #define GrB_INVALID_HANDLE NULL
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_free(object)                            \
-    _Generic                                        \
-    (                                               \
-        (object),                                   \
-        GrB_Type         *: GrB_Type_free       ,   \
-        GrB_UnaryOp      *: GrB_UnaryOp_free    ,   \
-        GrB_BinaryOp     *: GrB_BinaryOp_free   ,   \
-        GxB_SelectOp     *: GxB_SelectOp_free   ,   \
-        GrB_IndexUnaryOp *: GrB_IndexUnaryOp_free,  \
-        GrB_Monoid       *: GrB_Monoid_free     ,   \
-        GrB_Semiring     *: GrB_Semiring_free   ,   \
-        GrB_Scalar       *: GrB_Scalar_free     ,   \
-        GrB_Vector       *: GrB_Vector_free     ,   \
-        GrB_Matrix       *: GrB_Matrix_free     ,   \
-        GrB_Descriptor   *: GrB_Descriptor_free     \
-    )                                               \
+#define GrB_free(object)                                \
+    _Generic                                            \
+    (                                                   \
+        (object),                                       \
+            GrB_Type         *: GrB_Type_free         , \
+            GrB_UnaryOp      *: GrB_UnaryOp_free      , \
+            GrB_BinaryOp     *: GrB_BinaryOp_free     , \
+            GxB_SelectOp     *: GxB_SelectOp_free     , \
+            GrB_IndexUnaryOp *: GrB_IndexUnaryOp_free , \
+            GrB_Monoid       *: GrB_Monoid_free       , \
+            GrB_Semiring     *: GrB_Semiring_free     , \
+            GrB_Scalar       *: GrB_Scalar_free       , \
+            GrB_Vector       *: GrB_Vector_free       , \
+            GrB_Matrix       *: GrB_Matrix_free       , \
+            GrB_Descriptor   *: GrB_Descriptor_free     \
+    )                                                   \
     (object)
 #endif
 
@@ -4753,22 +4797,22 @@ GrB_WaitMode ;
 
     // GrB_wait (&object) polymorphic function:
     #if GxB_STDC_VERSION >= 201112L
-    #define GrB_wait(object)                            \
-        _Generic                                        \
-        (                                               \
-            (object),                                   \
-            GrB_Type         *: GrB_Type_wait         , \
-            GrB_UnaryOp      *: GrB_UnaryOp_wait      , \
-            GrB_BinaryOp     *: GrB_BinaryOp_wait     , \
-            GxB_SelectOp     *: GxB_SelectOp_wait     , \
-            GrB_IndexUnaryOp *: GrB_IndexUnaryOp_wait , \
-            GrB_Monoid       *: GrB_Monoid_wait       , \
-            GrB_Semiring     *: GrB_Semiring_wait     , \
-            GrB_Scalar       *: GrB_Scalar_wait       , \
-            GrB_Vector       *: GrB_Vector_wait       , \
-            GrB_Matrix       *: GrB_Matrix_wait       , \
-            GrB_Descriptor   *: GrB_Descriptor_wait     \
-        )                                               \
+    #define GrB_wait(object)                                \
+        _Generic                                            \
+        (                                                   \
+            (object),                                       \
+                GrB_Type         *: GrB_Type_wait         , \
+                GrB_UnaryOp      *: GrB_UnaryOp_wait      , \
+                GrB_BinaryOp     *: GrB_BinaryOp_wait     , \
+                GxB_SelectOp     *: GxB_SelectOp_wait     , \
+                GrB_IndexUnaryOp *: GrB_IndexUnaryOp_wait , \
+                GrB_Monoid       *: GrB_Monoid_wait       , \
+                GrB_Semiring     *: GrB_Semiring_wait     , \
+                GrB_Scalar       *: GrB_Scalar_wait       , \
+                GrB_Vector       *: GrB_Vector_wait       , \
+                GrB_Matrix       *: GrB_Matrix_wait       , \
+                GrB_Descriptor   *: GrB_Descriptor_wait     \
+        )                                                   \
         (object)
     #endif
 
@@ -4794,22 +4838,22 @@ GrB_WaitMode ;
 
     // GrB_wait (object,waitmode) polymorphic function:
     #if GxB_STDC_VERSION >= 201112L
-    #define GrB_wait(object,waitmode)                   \
-        _Generic                                        \
-        (                                               \
-            (object),                                   \
-            GrB_Type         : GrB_Type_wait         ,  \
-            GrB_UnaryOp      : GrB_UnaryOp_wait      ,  \
-            GrB_BinaryOp     : GrB_BinaryOp_wait     ,  \
-            GxB_SelectOp     : GxB_SelectOp_wait     ,  \
-            GrB_IndexUnaryOp : GrB_IndexUnaryOp_wait ,  \
-            GrB_Monoid       : GrB_Monoid_wait       ,  \
-            GrB_Semiring     : GrB_Semiring_wait     ,  \
-            GrB_Scalar       : GrB_Scalar_wait       ,  \
-            GrB_Vector       : GrB_Vector_wait       ,  \
-            GrB_Matrix       : GrB_Matrix_wait       ,  \
-            GrB_Descriptor   : GrB_Descriptor_wait      \
-        )                                               \
+    #define GrB_wait(object,waitmode)                       \
+        _Generic                                            \
+        (                                                   \
+            (object),                                       \
+                GrB_Type         : GrB_Type_wait         ,  \
+                GrB_UnaryOp      : GrB_UnaryOp_wait      ,  \
+                GrB_BinaryOp     : GrB_BinaryOp_wait     ,  \
+                GxB_SelectOp     : GxB_SelectOp_wait     ,  \
+                GrB_IndexUnaryOp : GrB_IndexUnaryOp_wait ,  \
+                GrB_Monoid       : GrB_Monoid_wait       ,  \
+                GrB_Semiring     : GrB_Semiring_wait     ,  \
+                GrB_Scalar       : GrB_Scalar_wait       ,  \
+                GrB_Vector       : GrB_Vector_wait       ,  \
+                GrB_Matrix       : GrB_Matrix_wait       ,  \
+                GrB_Descriptor   : GrB_Descriptor_wait      \
+        )                                                   \
         (object)
     #endif
 
@@ -4845,33 +4889,33 @@ GB_PUBLIC GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar 
 
 // GrB_error (error,object) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_error(error,object)                             \
-    _Generic                                                \
-    (                                                       \
-        (object),                                           \
-        const GrB_Type         : GrB_Type_error       ,     \
-              GrB_Type         : GrB_Type_error       ,     \
-        const GrB_UnaryOp      : GrB_UnaryOp_error    ,     \
-              GrB_UnaryOp      : GrB_UnaryOp_error    ,     \
-        const GrB_BinaryOp     : GrB_BinaryOp_error   ,     \
-              GrB_BinaryOp     : GrB_BinaryOp_error   ,     \
-        const GxB_SelectOp     : GxB_SelectOp_error   ,     \
-              GxB_SelectOp     : GxB_SelectOp_error   ,     \
-        const GrB_IndexUnaryOp : GrB_IndexUnaryOp_error,    \
-              GrB_IndexUnaryOp : GrB_IndexUnaryOp_error,    \
-        const GrB_Monoid       : GrB_Monoid_error     ,     \
-              GrB_Monoid       : GrB_Monoid_error     ,     \
-        const GrB_Semiring     : GrB_Semiring_error   ,     \
-              GrB_Semiring     : GrB_Semiring_error   ,     \
-        const GrB_Scalar       : GrB_Scalar_error     ,     \
-              GrB_Scalar       : GrB_Scalar_error     ,     \
-        const GrB_Vector       : GrB_Vector_error     ,     \
-              GrB_Vector       : GrB_Vector_error     ,     \
-        const GrB_Matrix       : GrB_Matrix_error     ,     \
-              GrB_Matrix       : GrB_Matrix_error     ,     \
-        const GrB_Descriptor   : GrB_Descriptor_error ,     \
-              GrB_Descriptor   : GrB_Descriptor_error       \
-    )                                                       \
+#define GrB_error(error,object)                                 \
+    _Generic                                                    \
+    (                                                           \
+        (object),                                               \
+            const GrB_Type         : GrB_Type_error         ,   \
+                  GrB_Type         : GrB_Type_error         ,   \
+            const GrB_UnaryOp      : GrB_UnaryOp_error      ,   \
+                  GrB_UnaryOp      : GrB_UnaryOp_error      ,   \
+            const GrB_BinaryOp     : GrB_BinaryOp_error     ,   \
+                  GrB_BinaryOp     : GrB_BinaryOp_error     ,   \
+            const GxB_SelectOp     : GxB_SelectOp_error     ,   \
+                  GxB_SelectOp     : GxB_SelectOp_error     ,   \
+            const GrB_IndexUnaryOp : GrB_IndexUnaryOp_error ,   \
+                  GrB_IndexUnaryOp : GrB_IndexUnaryOp_error ,   \
+            const GrB_Monoid       : GrB_Monoid_error       ,   \
+                  GrB_Monoid       : GrB_Monoid_error       ,   \
+            const GrB_Semiring     : GrB_Semiring_error     ,   \
+                  GrB_Semiring     : GrB_Semiring_error     ,   \
+            const GrB_Scalar       : GrB_Scalar_error       ,   \
+                  GrB_Scalar       : GrB_Scalar_error       ,   \
+            const GrB_Vector       : GrB_Vector_error       ,   \
+                  GrB_Vector       : GrB_Vector_error       ,   \
+            const GrB_Matrix       : GrB_Matrix_error       ,   \
+                  GrB_Matrix       : GrB_Matrix_error       ,   \
+            const GrB_Descriptor   : GrB_Descriptor_error   ,   \
+                  GrB_Descriptor   : GrB_Descriptor_error       \
+    )                                                           \
     (error, object)
 #endif
 
@@ -4999,33 +5043,33 @@ GrB_Info GrB_Matrix_eWiseMult_BinaryOp       // C<Mask> = accum (C, A.*B)
 // type-generic function, GrB_eWiseMult:
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_eWiseMult(C,Mask,accum,op,A,B,desc)                         \
-    _Generic                                                            \
-    (                                                                   \
-        (C),                                                            \
-        GrB_Matrix :                                                    \
-            _Generic                                                    \
-            (                                                           \
-                (op),                                                   \
-                const GrB_Semiring : GrB_Matrix_eWiseMult_Semiring ,    \
-                      GrB_Semiring : GrB_Matrix_eWiseMult_Semiring ,    \
-                const GrB_Monoid   : GrB_Matrix_eWiseMult_Monoid   ,    \
-                      GrB_Monoid   : GrB_Matrix_eWiseMult_Monoid   ,    \
-                const GrB_BinaryOp : GrB_Matrix_eWiseMult_BinaryOp ,    \
-                      GrB_BinaryOp : GrB_Matrix_eWiseMult_BinaryOp      \
-            ),                                                          \
-        GrB_Vector :                                                    \
-            _Generic                                                    \
-            (                                                           \
-                (op),                                                   \
-                const GrB_Semiring : GrB_Vector_eWiseMult_Semiring ,    \
-                      GrB_Semiring : GrB_Vector_eWiseMult_Semiring ,    \
-                const GrB_Monoid   : GrB_Vector_eWiseMult_Monoid   ,    \
-                      GrB_Monoid   : GrB_Vector_eWiseMult_Monoid   ,    \
-                const GrB_BinaryOp : GrB_Vector_eWiseMult_BinaryOp ,    \
-                      GrB_BinaryOp : GrB_Vector_eWiseMult_BinaryOp      \
-            )                                                           \
-    )                                                                   \
+#define GrB_eWiseMult(C,Mask,accum,op,A,B,desc)                              \
+    _Generic                                                                 \
+    (                                                                        \
+        (C),                                                                 \
+            GrB_Matrix :                                                     \
+                _Generic                                                     \
+                (                                                            \
+                    (op),                                                    \
+                        const GrB_Semiring : GrB_Matrix_eWiseMult_Semiring , \
+                              GrB_Semiring : GrB_Matrix_eWiseMult_Semiring , \
+                        const GrB_Monoid   : GrB_Matrix_eWiseMult_Monoid   , \
+                              GrB_Monoid   : GrB_Matrix_eWiseMult_Monoid   , \
+                        const GrB_BinaryOp : GrB_Matrix_eWiseMult_BinaryOp , \
+                              GrB_BinaryOp : GrB_Matrix_eWiseMult_BinaryOp   \
+                ),                                                           \
+            GrB_Vector :                                                     \
+                _Generic                                                     \
+                (                                                            \
+                    (op),                                                    \
+                        const GrB_Semiring : GrB_Vector_eWiseMult_Semiring , \
+                              GrB_Semiring : GrB_Vector_eWiseMult_Semiring , \
+                        const GrB_Monoid   : GrB_Vector_eWiseMult_Monoid   , \
+                              GrB_Monoid   : GrB_Vector_eWiseMult_Monoid   , \
+                        const GrB_BinaryOp : GrB_Vector_eWiseMult_BinaryOp , \
+                              GrB_BinaryOp : GrB_Vector_eWiseMult_BinaryOp   \
+                )                                                            \
+    )                                                                        \
     (C, Mask, accum, op, A, B, desc)
 #endif
 
@@ -5109,33 +5153,33 @@ GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<Mask> = accum (C, A+B)
 ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_eWiseAdd(C,Mask,accum,op,A,B,desc)                          \
-    _Generic                                                            \
-    (                                                                   \
-        (C),                                                            \
-        GrB_Matrix :                                                    \
-            _Generic                                                    \
-            (                                                           \
-                (op),                                                   \
-                const GrB_Semiring : GrB_Matrix_eWiseAdd_Semiring ,     \
-                      GrB_Semiring : GrB_Matrix_eWiseAdd_Semiring ,     \
-                const GrB_Monoid   : GrB_Matrix_eWiseAdd_Monoid   ,     \
-                      GrB_Monoid   : GrB_Matrix_eWiseAdd_Monoid   ,     \
-                const GrB_BinaryOp : GrB_Matrix_eWiseAdd_BinaryOp ,     \
-                      GrB_BinaryOp : GrB_Matrix_eWiseAdd_BinaryOp       \
-            ),                                                          \
-        GrB_Vector :                                                    \
-            _Generic                                                    \
-            (                                                           \
-                (op),                                                   \
-                const GrB_Semiring : GrB_Vector_eWiseAdd_Semiring ,     \
-                      GrB_Semiring : GrB_Vector_eWiseAdd_Semiring ,     \
-                const GrB_Monoid   : GrB_Vector_eWiseAdd_Monoid   ,     \
-                      GrB_Monoid   : GrB_Vector_eWiseAdd_Monoid   ,     \
-                const GrB_BinaryOp : GrB_Vector_eWiseAdd_BinaryOp ,     \
-                      GrB_BinaryOp : GrB_Vector_eWiseAdd_BinaryOp       \
-            )                                                           \
-    )                                                                   \
+#define GrB_eWiseAdd(C,Mask,accum,op,A,B,desc)                              \
+    _Generic                                                                \
+    (                                                                       \
+        (C),                                                                \
+            GrB_Matrix :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (op),                                                   \
+                        const GrB_Semiring : GrB_Matrix_eWiseAdd_Semiring , \
+                              GrB_Semiring : GrB_Matrix_eWiseAdd_Semiring , \
+                        const GrB_Monoid   : GrB_Matrix_eWiseAdd_Monoid   , \
+                              GrB_Monoid   : GrB_Matrix_eWiseAdd_Monoid   , \
+                        const GrB_BinaryOp : GrB_Matrix_eWiseAdd_BinaryOp , \
+                              GrB_BinaryOp : GrB_Matrix_eWiseAdd_BinaryOp   \
+                ),                                                          \
+            GrB_Vector :                                                    \
+                _Generic                                                    \
+                (                                                           \
+                    (op),                                                   \
+                        const GrB_Semiring : GrB_Vector_eWiseAdd_Semiring , \
+                              GrB_Semiring : GrB_Vector_eWiseAdd_Semiring , \
+                        const GrB_Monoid   : GrB_Vector_eWiseAdd_Monoid   , \
+                              GrB_Monoid   : GrB_Vector_eWiseAdd_Monoid   , \
+                        const GrB_BinaryOp : GrB_Vector_eWiseAdd_BinaryOp , \
+                              GrB_BinaryOp : GrB_Vector_eWiseAdd_BinaryOp   \
+                )                                                           \
+    )                                                                       \
     (C, Mask, accum, op, A, B, desc)
 #endif
 
@@ -5234,20 +5278,20 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
 
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_extract(arg1,Mask,accum,arg4,...) \
-    _Generic                                                \
-    (                                                       \
-        (arg1),                                             \
-        GrB_Vector :                                        \
-            _Generic                                        \
-            (                                               \
-                (arg4),                                     \
-                const GrB_Vector : GrB_Vector_extract ,     \
-                      GrB_Vector : GrB_Vector_extract ,     \
-                const GrB_Matrix : GrB_Col_extract    ,     \
-                      GrB_Matrix : GrB_Col_extract          \
-            ),                                              \
-        GrB_Matrix : GrB_Matrix_extract                     \
-    )                                                       \
+    _Generic                                                    \
+    (                                                           \
+        (arg1),                                                 \
+            GrB_Vector :                                        \
+                _Generic                                        \
+                (                                               \
+                    (arg4),                                     \
+                        const GrB_Vector : GrB_Vector_extract , \
+                              GrB_Vector : GrB_Vector_extract , \
+                        const GrB_Matrix : GrB_Col_extract    , \
+                              GrB_Matrix : GrB_Col_extract      \
+                ),                                              \
+            GrB_Matrix : GrB_Matrix_extract                     \
+    )                                                           \
     (arg1, Mask, accum, arg4, __VA_ARGS__)
 #endif
 
@@ -5771,45 +5815,45 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<Mask> = accum (C(I,J),x)
 // GxB_Matrix_subassign_T (C,M,acc,x,I,ni,J,nj,d) // C(I,J)<M>  = acc(C(I,J),x)
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_subassign(arg1,Mask,accum,arg4,arg5,...)            \
-    _Generic                                                    \
-    (                                                           \
-        (arg1),                                                 \
-        GrB_Vector :                                            \
-            _Generic                                            \
-            (                                                   \
-                (arg4),                                         \
-                GB_CASES (, GxB, Vector_subassign) ,            \
-                const GrB_Scalar : GxB_Vector_subassign_Scalar, \
-                      GrB_Scalar : GxB_Vector_subassign_Scalar, \
-                default : GxB_Vector_subassign                  \
-            ),                                                  \
-        default :                                               \
-            _Generic                                            \
-            (                                                   \
-                (arg4),                                         \
-                GB_CASES (, GxB, Matrix_subassign) ,            \
-                const GrB_Scalar : GxB_Matrix_subassign_Scalar, \
-                      GrB_Scalar : GxB_Matrix_subassign_Scalar, \
-                const GrB_Vector :                              \
-                    _Generic                                    \
-                    (                                           \
-                        (arg5),                                 \
-                        const GrB_Index *: GxB_Col_subassign ,  \
-                              GrB_Index *: GxB_Col_subassign ,  \
-                        default          : GxB_Row_subassign    \
-                    ),                                          \
-                GrB_Vector :                                    \
-                    _Generic                                    \
-                    (                                           \
-                        (arg5),                                 \
-                        const GrB_Index *: GxB_Col_subassign ,  \
-                              GrB_Index *: GxB_Col_subassign ,  \
-                        default          : GxB_Row_subassign    \
-                    ),                                          \
-                default    : GxB_Matrix_subassign               \
-            )                                                   \
-    )                                                           \
+#define GxB_subassign(arg1,Mask,accum,arg4,arg5,...)                    \
+    _Generic                                                            \
+    (                                                                   \
+        (arg1),                                                         \
+        GrB_Vector :                                                    \
+            _Generic                                                    \
+            (                                                           \
+                (arg4),                                                 \
+                    GB_CASES (, GxB, Vector_subassign) ,                \
+                    const GrB_Scalar : GxB_Vector_subassign_Scalar,     \
+                          GrB_Scalar : GxB_Vector_subassign_Scalar,     \
+                    default : GxB_Vector_subassign                      \
+            ),                                                          \
+        default :                                                       \
+            _Generic                                                    \
+            (                                                           \
+                (arg4),                                                 \
+                    GB_CASES (, GxB, Matrix_subassign) ,                \
+                    const GrB_Scalar : GxB_Matrix_subassign_Scalar,     \
+                          GrB_Scalar : GxB_Matrix_subassign_Scalar,     \
+                    const GrB_Vector :                                  \
+                        _Generic                                        \
+                        (                                               \
+                            (arg5),                                     \
+                                const GrB_Index *: GxB_Col_subassign ,  \
+                                      GrB_Index *: GxB_Col_subassign ,  \
+                                default          : GxB_Row_subassign    \
+                        ),                                              \
+                    GrB_Vector :                                        \
+                        _Generic                                        \
+                        (                                               \
+                            (arg5),                                     \
+                                const GrB_Index *: GxB_Col_subassign ,  \
+                                      GrB_Index *: GxB_Col_subassign ,  \
+                                default          : GxB_Row_subassign    \
+                        ),                                              \
+                    default : GxB_Matrix_subassign                      \
+            )                                                           \
+    )                                                                   \
     (arg1, Mask, accum, arg4, arg5, __VA_ARGS__)
 #endif
 
@@ -6293,45 +6337,45 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)
 // GrB_Matrix_assign   (C,M,acc,A,I,ni,J,nj,d) // C<M>(I,J)  = acc(C(I,J),A)
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_assign(arg1,Mask,accum,arg4,arg5,...)               \
-    _Generic                                                    \
-    (                                                           \
-        (arg1),                                                 \
-        GrB_Vector :                                            \
-            _Generic                                            \
-            (                                                   \
-                (arg4),                                         \
-                GB_CASES (, GrB, Vector_assign) ,               \
-                const GrB_Scalar : GrB_Vector_assign_Scalar ,   \
-                      GrB_Scalar : GrB_Vector_assign_Scalar ,   \
-                default : GrB_Vector_assign                     \
-            ),                                                  \
-        default :                                               \
-            _Generic                                            \
-            (                                                   \
-                (arg4),                                         \
-                GB_CASES (, GrB, Matrix_assign) ,               \
-                const GrB_Scalar : GrB_Matrix_assign_Scalar ,   \
-                      GrB_Scalar : GrB_Matrix_assign_Scalar ,   \
-                const GrB_Vector :                              \
-                    _Generic                                    \
-                    (                                           \
-                        (arg5),                                 \
-                        const GrB_Index *: GrB_Col_assign ,     \
-                              GrB_Index *: GrB_Col_assign ,     \
-                        default          : GrB_Row_assign       \
-                    ),                                          \
-                GrB_Vector :                                    \
-                    _Generic                                    \
-                    (                                           \
-                        (arg5),                                 \
-                        const GrB_Index *: GrB_Col_assign ,     \
-                              GrB_Index *: GrB_Col_assign ,     \
-                        default          : GrB_Row_assign       \
-                    ),                                          \
-                default    : GrB_Matrix_assign                  \
-            )                                                   \
-    )                                                           \
+#define GrB_assign(arg1,Mask,accum,arg4,arg5,...)                       \
+    _Generic                                                            \
+    (                                                                   \
+        (arg1),                                                         \
+            GrB_Vector :                                                \
+                _Generic                                                \
+                (                                                       \
+                    (arg4),                                             \
+                        GB_CASES (, GrB, Vector_assign) ,               \
+                        const GrB_Scalar : GrB_Vector_assign_Scalar ,   \
+                              GrB_Scalar : GrB_Vector_assign_Scalar ,   \
+                        default : GrB_Vector_assign                     \
+                ),                                                      \
+            default :                                                   \
+                _Generic                                                \
+                (                                                       \
+                    (arg4),                                             \
+                        GB_CASES (, GrB, Matrix_assign) ,               \
+                        const GrB_Scalar : GrB_Matrix_assign_Scalar ,   \
+                              GrB_Scalar : GrB_Matrix_assign_Scalar ,   \
+                        const GrB_Vector :                              \
+                            _Generic                                    \
+                            (                                           \
+                                (arg5),                                 \
+                                const GrB_Index *: GrB_Col_assign ,     \
+                                      GrB_Index *: GrB_Col_assign ,     \
+                                default          : GrB_Row_assign       \
+                            ),                                          \
+                        GrB_Vector :                                    \
+                            _Generic                                    \
+                            (                                           \
+                                (arg5),                                 \
+                                const GrB_Index *: GrB_Col_assign ,     \
+                                      GrB_Index *: GrB_Col_assign ,     \
+                                default          : GrB_Row_assign       \
+                            ),                                          \
+                        default : GrB_Matrix_assign                     \
+                )                                                       \
+    )                                                                   \
     (arg1, Mask, accum, arg4, arg5, __VA_ARGS__)
 #endif
 
@@ -6339,11 +6383,8 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)
 // GrB_apply: matrix and vector apply
 //==============================================================================
 
-// FIXME add GrB_Vector_apply_IndexOp_T
-// FIXME add GrB_Matrix_apply_IndexOp_T
-
-// Apply a unary operator to entries in a matrix or vector,
-// C<M> = accum (C, op (A)).
+// Apply a unary, index_unary, or binary operator to entries in a matrix or
+// vector, C<M> = accum (C, op (A)).
 
 GB_PUBLIC
 GrB_Info GrB_Vector_apply           // w<mask> = accum (w, op(u))
@@ -6567,7 +6608,6 @@ GrB_Info GrB_Vector_apply_BinaryOp1st_UDT       // w<mask> = accum (w, op(x,u))
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
-
 //-------------------------------------------
 // vector apply: binaryop variants (bind 2nd)
 //-------------------------------------------
@@ -6769,10 +6809,10 @@ GrB_Info GrB_Vector_apply_BinaryOp2nd_UDT       // w<mask> = accum (w, op(u,y))
 ) ;
 
 //-------------------------------------------
-// vector apply: IndexUnaryOp variants FIXME write these
+// vector apply: IndexUnaryOp variants
 //-------------------------------------------
 
-// Apply an IndexUnaryOp to the entries in a vector
+// Apply a GrB_IndexUnaryOp to the entries in a vector
 
 GB_PUBLIC
 GrB_Info GrB_Vector_apply_IndexOp_Scalar    // w<mask> = accum (w, op(u))
@@ -7355,10 +7395,10 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UDT       // C<M>=accum(C,op(A,y))
 ) ;
 
 //-------------------------------------------
-// matrix apply: IndexUnaryOp variants FIXME write these
+// matrix apply: IndexUnaryOp variants
 //-------------------------------------------
 
-// Apply an IndexUnaryOp to the entries in a matrix.
+// Apply a GrB_IndexUnaryOp to the entries in a matrix.
 
 GB_PUBLIC
 GrB_Info GrB_Matrix_apply_IndexOp_Scalar    // C<M>=accum(C,op(A))
@@ -7562,52 +7602,51 @@ GrB_Info GrB_Matrix_apply_IndexOp_UDT       // C<M>=accum(C,op(A))
 
 #if GxB_STDC_VERSION >= 201112L
 
-#define GB_BIND(kind,x,y,...)                                               \
-    _Generic                                                                \
-    (                                                                       \
-        (x),                                                                \
-        const GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar),\
-              GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar),\
-        GB_CASES (, GrB, GB_CONCAT ( kind, _apply_BinaryOp1st,, )) ,        \
-        default :                                                           \
-            _Generic                                                        \
-            (                                                               \
-                (y),                                                        \
-                default :                                                   \
-                    GB_CONCAT ( GrB,_,kind,_apply_BinaryOp2nd_Scalar),      \
-                GB_CASES (, GrB, GB_CONCAT ( kind , _apply_BinaryOp2nd,, )) \
-            )                                                               \
+#define GB_BIND(kind,x,y,...)                                                \
+    _Generic                                                                 \
+    (                                                                        \
+        (x),                                                                 \
+        const GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar), \
+              GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar), \
+        GB_CASES (, GrB, GB_CONCAT ( kind, _apply_BinaryOp1st,, )) ,         \
+        default :                                                            \
+            _Generic                                                         \
+            (                                                                \
+                (y),                                                         \
+                GB_CASES (, GrB, GB_CONCAT ( kind , _apply_BinaryOp2nd,, )), \
+                default : GB_CONCAT ( GrB,_,kind,_apply_BinaryOp2nd_Scalar)  \
+            )                                                                \
     )
 
-#define GB_IDXOP(kind,A,thunk,...)                                          \
-    _Generic                                                                \
-    (                                                                       \
-        (thunk),                                                            \
-        GrB_Scalar: GB_CONCAT ( GrB, _, kind, _apply_IndexOp_Scalar),       \
-        GB_CASES (, GrB, GB_CONCAT ( kind, _apply_IndexOp,, )) ,            \
+#define GB_IDXOP(kind,A,thunk,...)                                           \
+    _Generic                                                                 \
+    (                                                                        \
+        (thunk),                                                             \
+            GB_CASES (, GrB, GB_CONCAT ( kind, _apply_IndexOp,, )),          \
+            default : GB_CONCAT ( GrB, _, kind, _apply_IndexOp_Scalar)       \
     )
 
-#define GrB_apply(C,Mask,accum,op,...)                                      \
-    _Generic                                                                \
-    (                                                                       \
-        (C),                                                                \
-        GrB_Vector :                                                        \
-            _Generic                                                        \
-            (                                                               \
-                (op),                                                       \
-                GrB_UnaryOp  : GrB_Vector_apply ,                           \
-                GrB_BinaryOp : GB_BIND (Vector, __VA_ARGS__)                \
-/*              GrB_IndexUnaryOp : GB_IDXOP (Vector, __VA_ARGS__)   FIXME*/ \
-            ),                                                              \
-        GrB_Matrix :                                                        \
-            _Generic                                                        \
-            (                                                               \
-                (op),                                                       \
-                GrB_UnaryOp  : GrB_Matrix_apply ,                           \
-                GrB_BinaryOp : GB_BIND (Matrix, __VA_ARGS__)                \
-/*              GrB_IndexUnaryOp : GB_IDXOP (Matrix, __VA_ARGS__)   FIXME*/ \
-            )                                                               \
-    )                                                                       \
+#define GrB_apply(C,Mask,accum,op,...)                                       \
+    _Generic                                                                 \
+    (                                                                        \
+        (C),                                                                 \
+            GrB_Vector :                                                     \
+                _Generic                                                     \
+                (                                                            \
+                    (op),                                                    \
+                        GrB_UnaryOp  : GrB_Vector_apply ,                    \
+                        GrB_BinaryOp : GB_BIND (Vector, __VA_ARGS__),        \
+                        GrB_IndexUnaryOp : GB_IDXOP (Vector, __VA_ARGS__)    \
+                ),                                                           \
+            GrB_Matrix :                                                     \
+                _Generic                                                     \
+                (                                                            \
+                    (op),                                                    \
+                        GrB_UnaryOp  : GrB_Matrix_apply ,                    \
+                        GrB_BinaryOp : GB_BIND (Matrix, __VA_ARGS__),        \
+                        GrB_IndexUnaryOp : GB_IDXOP (Matrix, __VA_ARGS__)    \
+                )                                                            \
+    )                                                                        \
     (C, Mask, accum, op, __VA_ARGS__)
 #endif
 
@@ -7616,11 +7655,11 @@ GrB_Info GrB_Matrix_apply_IndexOp_UDT       // C<M>=accum(C,op(A))
 //==============================================================================
 
 //-------------------------------------------
-// vector select using an IndexUnaryOp FIXME write these
+// vector select using an IndexUnaryOp
 //-------------------------------------------
 
 GB_PUBLIC
-GrB_Info GrB_Vector_select_Scalar    // w<mask> = accum (w, op(u))
+GrB_Info GrB_Vector_select_Scalar   // w<mask> = accum (w, op(u))
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -7800,7 +7839,7 @@ GrB_Info GrB_Vector_select_UDT       // w<mask> = accum (w, op(u))
 ) ;
 
 //-------------------------------------------
-// matrix select using an IndexUnaryOp FIXME write these
+// matrix select using an IndexUnaryOp
 //-------------------------------------------
 
 GB_PUBLIC
@@ -7989,30 +8028,34 @@ GrB_Info GrB_Matrix_select_UDT       // C<M>=accum(C,op(A))
 // GrB_Vector_select_TYPE (w,m,acc,idxop,u,t,d)
 // GrB_Matrix_select_TYPE (C,M,acc,idxop,A,t,d)
 
-#define GrB_select(C,Mask,accum,op,x,thunk,d)                               \
-    _Generic                                                                \
-    (                                                                       \
-        (C),                                                                \
-        GrB_Vector :                                                        \
-            _Generic ((thunk),                                              \
-                GB_CASES (, GrB, Vector_select),                            \
-                const GrB_Scalar : GrB_Vector_select_Scalar,                \
-                      GrB_Scalar : GrB_Vector_select_Scalar                 \
-        GrB_Matrix :                                                        \
-            _Generic ((thunk),                                              \
-                GB_CASES (, GrB, Matrix_select),                            \
-                const GrB_Scalar : GrB_Matrix_select_Scalar,                \
-                      GrB_Scalar : GrB_Matrix_select_Scalar                 \
-    )                                                                       \
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_select(C,Mask,accum,op,x,thunk,d)                           \
+    _Generic                                                            \
+    (                                                                   \
+        (C),                                                            \
+            GrB_Vector :                                                \
+                _Generic                                                \
+                (                                                       \
+                    (thunk),                                            \
+                        GB_CASES (, GrB, Vector_select),                \
+                        default : GrB_Vector_select_Scalar              \
+                ),                                                      \
+            GrB_Matrix :                                                \
+                _Generic                                                \
+                (                                                       \
+                    (thunk),                                            \
+                        GB_CASES (, GrB, Matrix_select),                \
+                        default : GrB_Matrix_select_Scalar              \
+                )                                                       \
+    )                                                                   \
     (C, Mask, accum, op, x, thunk, d)
+#endif
 
 //==============================================================================
-// GxB_select: matrix and vector selection
+// GxB_select: matrix and vector selection (historical)
 //==============================================================================
 
-// Select a subset of entries from a matrix or vector.
-// C<Mask> = accum (C, op (A,k)), where the entries of op(A,k) are a subset of
-// the entries of A.
+// GrB_select and with the GrB_IndexUnaryOp operators should be used instead.
 
 GB_PUBLIC
 GrB_Info GxB_Vector_select          // w<mask> = accum (w, op(u,k))
@@ -8038,30 +8081,16 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
-//------------------------------------------------------------------------------
-// GxB_select: generic matrix/vector select
-//------------------------------------------------------------------------------
-
-// GxB_select is a generic function for applying a select operator to a matrix
-// or vector and provides access to these functions:
-
-// GrB_Vector_select (w,mask,acc,op,u,k,d)  // w<mask> = accum (w, op(u,k))
-// GrB_Matrix_select (C,Mask,acc,op,A,k,d)  // C<Mask> = accum (C, op(A,k))
-
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_select(C,Mask,accum,op,A,Thunk,desc)    \
     _Generic                                        \
     (                                               \
         (C),                                        \
-        GrB_Vector   : GxB_Vector_select ,          \
-        GrB_Matrix   : GxB_Matrix_select            \
+            GrB_Vector   : GxB_Vector_select ,      \
+            GrB_Matrix   : GxB_Matrix_select        \
     )                                               \
     (C, Mask, accum, op, A, Thunk, desc)
 #endif
-
-//==============================================================================
-// GrB_select: matrix and vector selection  FIXME write this
-//==============================================================================
 
 //==============================================================================
 // GrB_reduce: matrix and vector reduction
@@ -8432,29 +8461,27 @@ GrB_Info GrB_Matrix_reduce_Scalar   // c = accum (c, reduce_to_scalar (A))
 // GrB_Matrix_reduce_[SCALAR] (c,acc,monoid,A,d)  // c = acc (c,reduce(A))
 
 #if GxB_STDC_VERSION >= 201112L
-#define GB_REDUCE_TO_SCALAR(kind,c)                                 \
-    _Generic                                                        \
-    (                                                               \
-        (c),                                                        \
-        const GrB_Scalar : GB_CONCAT (GrB,_,kind,_reduce_Scalar),   \
-              GrB_Scalar : GB_CONCAT (GrB,_,kind,_reduce_Scalar),   \
-        GB_CASES (*, GrB, GB_CONCAT ( kind, _reduce,, )),           \
-        default: GB_CONCAT ( GrB, _, kind, _reduce_UDT )            \
+#define GB_REDUCE_TO_SCALAR(kind,c)                                     \
+    _Generic                                                            \
+    (                                                                   \
+        (c),                                                            \
+            GB_CASES (*, GrB, GB_CONCAT ( kind, _reduce,, )),           \
+            default : GB_CONCAT (GrB,_,kind,_reduce_Scalar)             \
     )
 
-#define GrB_reduce(arg1,arg2,arg3,arg4,...)                         \
-    _Generic                                                        \
-    (                                                               \
-        (arg4),                                                     \
-        const GrB_Vector   : GB_REDUCE_TO_SCALAR (Vector, arg1),    \
-              GrB_Vector   : GB_REDUCE_TO_SCALAR (Vector, arg1),    \
-        const GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
-              GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
-        const GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
-              GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
-        const GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp ,           \
-              GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp             \
-    )                                                               \
+#define GrB_reduce(arg1,arg2,arg3,arg4,...)                             \
+    _Generic                                                            \
+    (                                                                   \
+        (arg4),                                                         \
+            const GrB_Vector   : GB_REDUCE_TO_SCALAR (Vector, arg1),    \
+                  GrB_Vector   : GB_REDUCE_TO_SCALAR (Vector, arg1),    \
+            const GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
+                  GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
+            const GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
+                  GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
+            const GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp ,           \
+                  GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp             \
+    )                                                                   \
     (arg1, arg2, arg3, arg4, __VA_ARGS__)
 #endif
 
@@ -8526,17 +8553,17 @@ GrB_Info GrB_Matrix_kronecker_Semiring  // C<M> = accum (C, kron(A,B))
 ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_kronecker(C,Mask,accum,op,A,B,desc)                 \
-    _Generic                                                    \
-    (                                                           \
-        (op),                                                   \
-        const GrB_Semiring : GrB_Matrix_kronecker_Semiring ,    \
-              GrB_Semiring : GrB_Matrix_kronecker_Semiring ,    \
-        const GrB_Monoid   : GrB_Matrix_kronecker_Monoid   ,    \
-              GrB_Monoid   : GrB_Matrix_kronecker_Monoid   ,    \
-        const GrB_BinaryOp : GrB_Matrix_kronecker_BinaryOp ,    \
-              GrB_BinaryOp : GrB_Matrix_kronecker_BinaryOp      \
-    )                                                           \
+#define GrB_kronecker(C,Mask,accum,op,A,B,desc)                     \
+    _Generic                                                        \
+    (                                                               \
+        (op),                                                       \
+            const GrB_Semiring : GrB_Matrix_kronecker_Semiring ,    \
+                  GrB_Semiring : GrB_Matrix_kronecker_Semiring ,    \
+            const GrB_Monoid   : GrB_Matrix_kronecker_Monoid   ,    \
+                  GrB_Monoid   : GrB_Matrix_kronecker_Monoid   ,    \
+            const GrB_BinaryOp : GrB_Matrix_kronecker_BinaryOp ,    \
+                  GrB_BinaryOp : GrB_Matrix_kronecker_BinaryOp      \
+    )                                                               \
     (C, Mask, accum, op, A, B, desc)
 #endif
 
@@ -9690,37 +9717,35 @@ GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
 ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_fprint(object,pr,f)                             \
-    _Generic                                                \
-    (                                                       \
-        (object),                                           \
-        const GrB_Type       : GxB_Type_fprint           ,  \
-              GrB_Type       : GxB_Type_fprint           ,  \
-        const GrB_UnaryOp    : GxB_UnaryOp_fprint        ,  \
-              GrB_UnaryOp    : GxB_UnaryOp_fprint        ,  \
-        const GrB_BinaryOp   : GxB_BinaryOp_fprint       ,  \
-              GrB_BinaryOp   : GxB_BinaryOp_fprint       ,  \
-        const GrB_IndexUnaryOp : GxB_IndexUnaryOp_fprint ,  \
-              GrB_IndexUnaryOp : GxB_IndexUnaryOp_fprint ,  \
-        const GxB_SelectOp   : GxB_SelectOp_fprint       ,  \
-              GxB_SelectOp   : GxB_SelectOp_fprint       ,  \
-        const GrB_Monoid     : GxB_Monoid_fprint         ,  \
-              GrB_Monoid     : GxB_Monoid_fprint         ,  \
-        const GrB_Semiring   : GxB_Semiring_fprint       ,  \
-              GrB_Semiring   : GxB_Semiring_fprint       ,  \
-        const GrB_Scalar     : GxB_Scalar_fprint         ,  \
-              GrB_Scalar     : GxB_Scalar_fprint         ,  \
-        const GrB_Vector     : GxB_Vector_fprint         ,  \
-              GrB_Vector     : GxB_Vector_fprint         ,  \
-        const GrB_Matrix     : GxB_Matrix_fprint         ,  \
-              GrB_Matrix     : GxB_Matrix_fprint         ,  \
-        const GrB_Descriptor : GxB_Descriptor_fprint     ,  \
-              GrB_Descriptor : GxB_Descriptor_fprint        \
-    )                                                       \
+#define GxB_fprint(object,pr,f)                                 \
+    _Generic                                                    \
+    (                                                           \
+        (object),                                               \
+            const GrB_Type         : GxB_Type_fprint         ,  \
+                  GrB_Type         : GxB_Type_fprint         ,  \
+            const GrB_UnaryOp      : GxB_UnaryOp_fprint      ,  \
+                  GrB_UnaryOp      : GxB_UnaryOp_fprint      ,  \
+            const GrB_BinaryOp     : GxB_BinaryOp_fprint     ,  \
+                  GrB_BinaryOp     : GxB_BinaryOp_fprint     ,  \
+            const GrB_IndexUnaryOp : GxB_IndexUnaryOp_fprint ,  \
+                  GrB_IndexUnaryOp : GxB_IndexUnaryOp_fprint ,  \
+            const GxB_SelectOp     : GxB_SelectOp_fprint     ,  \
+                  GxB_SelectOp     : GxB_SelectOp_fprint     ,  \
+            const GrB_Monoid       : GxB_Monoid_fprint       ,  \
+                  GrB_Monoid       : GxB_Monoid_fprint       ,  \
+            const GrB_Semiring     : GxB_Semiring_fprint     ,  \
+                  GrB_Semiring     : GxB_Semiring_fprint     ,  \
+            const GrB_Scalar       : GxB_Scalar_fprint       ,  \
+                  GrB_Scalar       : GxB_Scalar_fprint       ,  \
+            const GrB_Vector       : GxB_Vector_fprint       ,  \
+                  GrB_Vector       : GxB_Vector_fprint       ,  \
+            const GrB_Matrix       : GxB_Matrix_fprint       ,  \
+                  GrB_Matrix       : GxB_Matrix_fprint       ,  \
+            const GrB_Descriptor   : GxB_Descriptor_fprint   ,  \
+                  GrB_Descriptor   : GxB_Descriptor_fprint      \
+    )                                                           \
     (object, GB_STR(object), pr, f)
-#endif
 
-#if GxB_STDC_VERSION >= 201112L
 #define GxB_print(object,pr) GxB_fprint(object,pr,NULL)
 #endif
 
@@ -10828,7 +10853,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     fclose (f) ;
     GrB_Matrix_free (&A) ;
     // B is a copy of A
-    GxB_Matrix_deserialize (&B, blob, blob_size, MyQtype, NULL) ;
+    GxB_Matrix_deserialize (&B, MyQtype, blob, blob_size, NULL) ;
     GrB_Matrix_free (&B) ;
     free (blob) ;               // note, freed by the user, not GraphBLAS
     GrB_finalize ( ) ;
@@ -10845,7 +10870,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     GrB_Type user_type = NULL ;
     if (strncmp (type_name, "myquaternion", GxB_MAX_NAME_LEN))
         user_type = MyQtype ;
-    GxB_Matrix_deserialize (&A, blob, blob_size, user_type, NULL) ;
+    GxB_Matrix_deserialize (&A, user_type, blob, blob_size, NULL) ;
     free (blob) ;               // note, freed by the user, not GraphBLAS
 
     //--------------------------------------------------------------------------
@@ -10867,7 +10892,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     fclose (f) ;
     GrB_Matrix_free (&A) ;
     // B is a copy of A:
-    GrB_Matrix_deserialize (&B, blob, blob_size, MyQtype) ;
+    GrB_Matrix_deserialize (&B, MyQtype, blob, blob_size) ;
     GrB_Matrix_free (&B) ;
     free (blob) ;               // note, freed by the user, not GraphBLAS
     GrB_finalize ( ) ;
@@ -10879,7 +10904,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     blob = malloc (blob_size) ; // note, allocated by the user this time
     fread (&blob, sizeof (uint8_t), 1, f) ;
     // the user must know the type of A is MyQType
-    GxB_Matrix_deserialize (&A, blob, blob_size, MyQType) ;
+    GrB_Matrix_deserialize (&A, MyQtype, blob, blob_size) ;
     free (blob) ;               // note, freed by the user, not GraphBLAS
 */
 
@@ -11008,13 +11033,12 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     // output:
     GrB_Matrix *C,      // output matrix created from the blob
     // input:
-    const void *blob,   // the blob
-    size_t blob_size,   // size of the blob
     GrB_Type type,      // type of the matrix C.  Required if the blob holds a
                         // matrix of user-defined type.  May be NULL if blob
-                        // holds a built-in type.  If not NULL and the blob
-                        // holds a matrix of a built-in type, then C is
-                        // typecasted to this requested type.
+                        // holds a built-in type; otherwise must match the
+                        // type of C.
+    const void *blob,   // the blob
+    size_t blob_size,   // size of the blob
     const GrB_Descriptor desc       // to control # of threads used and
                         // whether or not the input blob is trusted.
 ) ;
@@ -11025,13 +11049,12 @@ GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     // output:
     GrB_Matrix *C,      // output matrix created from the blob
     // input:
-    const void *blob,   // the blob
-    size_t blob_size,   // size of the blob
-    GrB_Type type       // type of the matrix C.  Required if the blob holds a
+    GrB_Type type,      // type of the matrix C.  Required if the blob holds a
                         // matrix of user-defined type.  May be NULL if blob
-                        // holds a built-in type.  If not NULL and the blob
-                        // holds a matrix of a built-in type, then C is
-                        // typecasted to this requested type.
+                        // holds a built-in type; otherwise must match the
+                        // type of C.
+    const void *blob,   // the blob
+    size_t blob_size    // size of the blob
 ) ;
 
 GB_PUBLIC
@@ -11040,13 +11063,12 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
     // output:
     GrB_Vector *w,      // output vector created from the blob
     // input:
-    const void *blob,   // the blob
-    size_t blob_size,   // size of the blob
     GrB_Type type,      // type of the vector w.  Required if the blob holds a
                         // vector of user-defined type.  May be NULL if blob
-                        // holds a built-in type.  If not NULL and the blob
-                        // holds a vector of a built-in type, then w is
-                        // typecasted to this requested type.
+                        // holds a built-in type; otherwise must match the
+                        // type of w.
+    const void *blob,   // the blob
+    size_t blob_size,   // size of the blob
     const GrB_Descriptor desc       // to control # of threads used and
                         // whether or not the input blob is trusted.
 ) ;
@@ -11057,13 +11079,12 @@ GrB_Info GrB_Vector_deserialize     // deserialize blob into a GrB_Vector
     // output:
     GrB_Vector *w,      // output vector created from the blob
     // input:
-    const void *blob,   // the blob
-    size_t blob_size,   // size of the blob
-    GrB_Type type       // type of the vector w.  Required if the blob holds a
+    GrB_Type type,      // type of the vector w.  Required if the blob holds a
                         // vector of user-defined type.  May be NULL if blob
-                        // holds a built-in type.  If not NULL and the blob
-                        // holds a vector of a built-in type, then w is
-                        // typecasted to this requested type.
+                        // holds a built-in type; otherwise must match the
+                        // type of w.
+    const void *blob,   // the blob
+    size_t blob_size    // size of the blob
 ) ;
 
 // GxB_deserialize_type_name extracts the type_name of the GrB_Type of the

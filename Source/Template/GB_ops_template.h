@@ -1034,6 +1034,12 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
     {
         (*z) = (GB_TYPE) (j - (i + (*thunk))) ;
     }
+    GB_IDXOP_STRUCT (FLIPDIAGINDEX, GB_XTYPE) ;
+    inline void GB_FUNC (FLIPDIAGINDEX) (GB_TYPE *z, const void *unused,
+        int64_t i, int64_t j, const GB_TYPE *thunk)
+    {
+        (*z) = (GB_TYPE) (i - (j + (*thunk))) ;
+    }
 
 #endif
 

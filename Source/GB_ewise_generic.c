@@ -160,7 +160,7 @@ void GB_ewise_generic       // generic ewise
         // C(i,j) = positional_op (aij, bij)
         //----------------------------------------------------------------------
 
-        const int64_t offset = GB_positional_offset (opcode) ;
+        const int64_t offset = GB_positional_offset (opcode, NULL) ;
         const bool index_is_i = 
             (opcode == GB_FIRSTI_binop_code  ) ||
             (opcode == GB_FIRSTI1_binop_code ) ||

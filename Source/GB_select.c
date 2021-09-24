@@ -65,6 +65,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     bool op_is_selectop = GB_IS_SELECTOP_CODE (opcode) ;
     bool op_is_idxunop  = GB_IS_INDEXUNARYOP_CODE (opcode) ;
     ASSERT (op_is_selectop || op_is_idxunop) ;
+    ASSERT (opcode != GB_FLIPDIAGINDEX_idxunop_code) ;
 
     if (op_is_idxunop)
     { 

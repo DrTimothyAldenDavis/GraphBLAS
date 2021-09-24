@@ -97,6 +97,22 @@ function binopinfo (op, optype)
 % The bitwise ops bitor, bitand, bitxor, bitxnor, bitget, bitset, bitclr,
 % and bitshift are available for any signed or unsigned integer type.
 %
+% The following index_unary operators can be applied to a matrix A with
+% GrB.apply2 only, where the 2nd input is the thunk scalar.  When applied
+% to an entry A(i,j):
+%
+%   tril            j <= (i + thunk)
+%   triu            j >= (i + thunk)
+%   diag            j == (i + thunk)
+%   offdiag         j != (i + thunk)
+%   diagindex       j - (i + thunk)
+%   rowindex        i + thunk
+%   rowle           i <= thunk
+%   rowgt           i > thunk
+%   colindex        j + thunk
+%   colle           j <= thunk
+%   colgt           j > thunk
+%
 % Typecasting:  If the optype is omitted from the string (for example,
 % GrB.eadd (A, '+', B) or simply C = A+B), then the optype is inferred
 % from the type of A and B.  See 'help GrB.optype' for details.

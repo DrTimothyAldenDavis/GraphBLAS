@@ -55,8 +55,7 @@ GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
         (GrB_Matrix) w, C_replace,  // w and its descriptor
         M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(w,T)
-        op,                         // operator op(.) to apply to the entries
-        NULL, NULL, false,          // no binary operator
+        (GB_Operator) op, NULL, false, // operator op(.) to apply to the entries
         (GrB_Matrix) u, false,      // u, not transposed
         Context) ;
 
@@ -110,8 +109,7 @@ static inline GrB_Info GB_1st       // w<mask> = accum (w, op(x,u))
         (GrB_Matrix) w, C_replace,  // w and its descriptor
         M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(w,T)
-        NULL,                       // no unary operator
-        op, x, true,                // operator op(x,.) to apply to the entries
+        (GB_Operator) op, x, true,  // operator op(x,.) to apply to the entries
         (GrB_Matrix) u,  false,     // u, not transposed
         Context) ;
 
@@ -120,7 +118,7 @@ static inline GrB_Info GB_1st       // w<mask> = accum (w, op(x,u))
 }
 
 //------------------------------------------------------------------------------
-// GB_2nd: apply a binary operator: op(u,y)
+// GB_2nd: apply a binary operator: op(u,y) or index_unop
 //------------------------------------------------------------------------------
 
 static inline GrB_Info GB_2nd       // w<mask> = accum (w, op(u,y))
@@ -128,7 +126,7 @@ static inline GrB_Info GB_2nd       // w<mask> = accum (w, op(u,y))
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector M_in,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_BinaryOp op,          // operator to apply to the entries
+    const GB_Operator op,           // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
     const GrB_Scalar y,             // second input: scalar y
     const GrB_Descriptor desc,      // descriptor for w and M
@@ -165,7 +163,6 @@ static inline GrB_Info GB_2nd       // w<mask> = accum (w, op(u,y))
         (GrB_Matrix) w, C_replace,  // w and its descriptor
         M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(w,T)
-        NULL,                       // no unary operator
         op, y, false,               // operator op(.,y) to apply to the entries
         (GrB_Matrix) u, false,      // u, not transposed
         Context) ;
@@ -230,7 +227,7 @@ GrB_Info GrB_Vector_apply_BinaryOp2nd_Scalar    // w<mask> = accum (w, op(u,y))
 { 
     GB_WHERE (w, "GrB_Vector_apply_BinaryOp2nd_Scalar"
         " (w, M, accum, op, u, y, desc)") ;
-    return (GB_2nd (w, M, accum, op, u, y, desc, Context)) ;
+    return (GB_2nd (w, M, accum, (GB_Operator) op, u, y, desc, Context)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -328,7 +325,7 @@ GrB_Info GB_EVAL3 (prefix, _Vector_apply_BinaryOp2nd_, T)                   \
     GB_WHERE (w, GB_STR(prefix) "_Vector_apply_BinaryOp2nd_" GB_STR(T)      \
         " (w, M, accum, op, u, y, desc)") ;                                 \
     GB_SCALAR_WRAP (scalar, y, GB_EVAL3 (prefix, _, T)) ;                   \
-    return (GB_2nd (w, M, accum, op, u, scalar, desc, Context)) ;           \
+    return (GB_2nd (w, M, accum, (GB_Operator) op, u, scalar, desc, Context)) ;\
 }
 
 GB_BIND2ND (GrB, bool      , BOOL  )
@@ -346,7 +343,7 @@ GB_BIND2ND (GxB, GxB_FC32_t, FC32  )
 GB_BIND2ND (GxB, GxB_FC64_t, FC64  )
 
 //------------------------------------------------------------------------------
-// GrB_Vector_apply_BinaryOp2nd_UDT: apply a binary operator: op(A,y)
+// GrB_Vector_apply_BinaryOp2nd_UDT: apply a binary operator: op(u,y)
 //------------------------------------------------------------------------------
 
 GrB_Info GrB_Vector_apply_BinaryOp2nd_UDT
@@ -363,6 +360,83 @@ GrB_Info GrB_Vector_apply_BinaryOp2nd_UDT
     GB_WHERE (w, "GrB_Vector_apply_BinaryOp2nd_UDT"
         " (w, M, accum, op, u, y, desc)") ;
     GB_SCALAR_WRAP_UDT (scalar, y, (op == NULL) ? NULL : op->ytype) ;
-    return (GB_2nd (w, M, accum, op, u, scalar, desc, Context)) ;
+    return (GB_2nd (w, M, accum, (GB_Operator) op, u, scalar, desc, Context)) ;
+}
+
+//------------------------------------------------------------------------------
+// GrB_Vector_apply_IndexOp_TYPE: apply an idxunop operator: op(u,i,j,thunk)
+//------------------------------------------------------------------------------
+
+#define GB_IDXUNOP(prefix,type,T)                                           \
+GrB_Info GB_EVAL3 (prefix, _Vector_apply_IndexOp_, T)                       \
+(                                                                           \
+    GrB_Vector w,                   /* input/output vector for results */   \
+    const GrB_Vector M,             /* optional mask for w*/                \
+    const GrB_BinaryOp accum,       /* optional accum for Z=accum(w,T) */   \
+    const GrB_IndexUnaryOp op,      /* operator to apply to the entries */  \
+    const GrB_Vector u,             /* first input:  vector u */            \
+    const type thunk,               /* second input: scalar thunk */        \
+    const GrB_Descriptor desc       /* descriptor for w and M */            \
+)                                                                           \
+{                                                                           \
+    GB_WHERE (w, GB_STR(prefix) "_Vector_apply_IndexOp_" GB_STR(T)          \
+        " (w, M, accum, op, u, thunk, desc)") ;                             \
+    GB_SCALAR_WRAP (scalar, thunk, GB_EVAL3 (prefix, _, T)) ;               \
+    return (GB_2nd (w, M, accum, (GB_Operator) op, u, scalar, desc, Context)) ;\
+}
+
+GB_IDXUNOP (GrB, bool      , BOOL  )
+GB_IDXUNOP (GrB, int8_t    , INT8  )
+GB_IDXUNOP (GrB, int16_t   , INT16 )
+GB_IDXUNOP (GrB, int32_t   , INT32 )
+GB_IDXUNOP (GrB, int64_t   , INT64 )
+GB_IDXUNOP (GrB, uint8_t   , UINT8 )
+GB_IDXUNOP (GrB, uint16_t  , UINT16)
+GB_IDXUNOP (GrB, uint32_t  , UINT32)
+GB_IDXUNOP (GrB, uint64_t  , UINT64)
+GB_IDXUNOP (GrB, float     , FP32  )
+GB_IDXUNOP (GrB, double    , FP64  )
+GB_IDXUNOP (GxB, GxB_FC32_t, FC32  )
+GB_IDXUNOP (GxB, GxB_FC64_t, FC64  )
+
+//------------------------------------------------------------------------------
+// GrB_Vector_apply_IndexOp_UDT: apply an idxunop operator: op(u,i,j,thunk)
+//------------------------------------------------------------------------------
+
+GrB_Info GrB_Vector_apply_IndexOp_UDT
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector M,             // optional mask for w
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(w,T)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    const void *thunk,              // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and M
+)
+{ 
+    GB_WHERE (w, "GrB_Vector_apply_IndexOp_UDT"
+        " (w, M, accum, op, u, thunk, desc)") ;
+    GB_SCALAR_WRAP_UDT (scalar, thunk, (op == NULL) ? NULL : op->ytype) ;
+    return (GB_2nd (w, M, accum, (GB_Operator) op, u, scalar, desc, Context)) ;
+}
+
+//------------------------------------------------------------------------------
+// GrB_Vector_apply_IndexOp_Scalar: apply an idxunop operator: op(u,i,j,thunk)
+//------------------------------------------------------------------------------
+
+GrB_Info GrB_Vector_apply_IndexOp_Scalar
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector M,             // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_IndexUnaryOp op,      // operator to apply to the entries
+    const GrB_Vector u,             // first input:  vector u
+    const GrB_Scalar thunk,         // second input: scalar thunk
+    const GrB_Descriptor desc       // descriptor for w and M
+)
+{ 
+    GB_WHERE (w, "GrB_Vector_apply_IndexOp_Scalar"
+        " (w, M, accum, op, u, thunk, desc)") ;
+    return (GB_2nd (w, M, accum, (GB_Operator) op, u, thunk, desc, Context)) ;
 }
 
