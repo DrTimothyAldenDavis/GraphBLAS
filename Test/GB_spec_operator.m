@@ -316,6 +316,44 @@ switch opname
         end
         ytype = optype ;
 
+    %--------------------------------------------------------------------------
+    % idxunop
+    %--------------------------------------------------------------------------
+
+    case { 'rowindex', 'colindex', 'diagindex' }
+        s = strcmp (optype, 'int64') || strcmp (optype, 'int32') ;
+        if (~s)
+            error ('invalid op') ;
+        end
+        xtype = '' ;
+        ytype = optype ;
+        ztype = optype ;
+
+    case { 'tril', 'triu', 'diag', 'offdiag', ...
+        'colle', 'colgt', 'rowle', 'rowgt' }
+        s = strcmp (optype, 'int64') ;
+        if (~s)
+            error ('invalid op') ;
+        end
+        xtype = '' ;
+        ytype = optype ;
+        ztype = 'logical' ;
+
+    case { 'valuene', 'valueeq' }
+        s = true ;
+        xtype = optype ;
+        ytype = optype ;
+        ztype = 'logical' ;
+
+    case { 'valuelt', 'valuele', 'valuegt', 'valuege' }
+        s = ~test_contains (optype, 'complex') ;
+        if (~s)
+            error ('invalid op') ;
+        end
+        xtype = optype ;
+        ytype = optype ;
+        ztype = 'logical' ;
+
     otherwise
         error ('unknown op') ;
 

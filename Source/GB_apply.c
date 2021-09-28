@@ -251,7 +251,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         }
         else // op_is_idxunop
         {
-            // also revise ithunk as needed (TRIL and TRIU only)
+            // also revise ithunk as needed (TRIL, TRIU, DIAG, OFFDIAG only)
             op = GB_positional_idxunop_ijflip (&ithunk, (GrB_IndexUnaryOp) op) ;
         }
         opcode = op->opcode ;

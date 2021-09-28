@@ -1,7 +1,7 @@
-function [binops unary_ops add_ops types semirings selops] = GB_spec_opsall
+function [binops unary_ops add_ops types semirings selops idxunop] = GB_spec_opsall
 %GB_SPEC_OPSALL return a list of all operators, types, and semirings
 %
-% [binops unary_ops add_ops types semirings select_ops] = GB_spec_opsall
+% [binops unary_ops add_ops types semirings select_ops idxunop] = GB_spec_opsall
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -277,4 +277,13 @@ selops = { 'tril', 'triu', 'diag', 'offdiag', ...
     'ne_thunk', 'eq_thunk', 'gt_thunk', 'ge_thunk', 'lt_thunk', 'le_thunk' }' ;
 
 % fprintf ('semirings: %d\n', n) ;
+
+%-------------------------------------------------------------------------------
+% idxunop
+%-------------------------------------------------------------------------------
+
+idxunop = { 'rowindex', 'colindex', 'diagindex', ...
+    'tril', 'triu', 'diag', 'offdiag', ...
+    'colle', 'colgt', 'rowle', 'rowgt', ...
+    'valuene', 'valueeq', 'valuelt', 'valuele', 'valuegt', 'valuege' } ;
 

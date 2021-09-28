@@ -1,8 +1,9 @@
-function C = GB_spec_apply (C, Mask, accum, op, A, descriptor)
+function C = GB_spec_apply (C, Mask, accum, op, A, descriptor, thunk)
 %GB_SPEC_APPLY a mimic of GrB_apply
 %
 % Usage:
 % C = GB_spec_apply (C, Mask, accum, op, A, descriptor)
+% C = GB_spec_apply (C, Mask, accum, op, A, descriptor, thunk)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -11,9 +12,17 @@ function C = GB_spec_apply (C, Mask, accum, op, A, descriptor)
 % get inputs
 %-------------------------------------------------------------------------------
 
-if (nargout > 1 || nargin ~= 6)
-    error ('usage: C = GB_spec_apply (C, Mask, accum, op, A, descriptor)') ;
+if (nargout > 1 || nargin < 6 || nargin > 7)
+    error ('usage: C = GB_spec_apply (C, Mask, accum, op, A, descriptor, thunk)') ;
 end
+
+if (nargin < 7)
+    thunk = 0 ;
+end
+if (isstruct (thunk))
+    thunk = GB_mex_cast (thunk.matrix, thunk.class) ;
+end
+thunk = full (thunk) ;
 
 C = GB_spec_matrix (C) ;
 A = GB_spec_matrix (A) ;
@@ -38,7 +47,19 @@ T.pattern = A.pattern ;
 T.class = ztype ;
 p = T.pattern ;
 
-if (GB_spec_is_positional (opname))
+if (GB_spec_is_idxunop (opname))
+
+    [m, n] = size (A.matrix) ;
+    for i = 1:m
+        for j = 1:n
+            if (p (i,j))
+                T.matrix (i,j) = GB_spec_idxunop (opname, A.matrix (i,j), i, j, thunk) ;
+            end
+        end
+    end
+
+elseif (GB_spec_is_positional (opname))
+
     [m, n] = size (A.matrix) ;
     for i = 1:m
         for j = 1:n
@@ -47,10 +68,13 @@ if (GB_spec_is_positional (opname))
             end
         end
     end
+
 else
+
     x = A.matrix (p) ;
     z = GB_spec_op (op, x) ;
     T.matrix (p) = z ;
+
 end
 
 % C<Mask> = accum (C,T): apply the accum, then Mask, and return the result

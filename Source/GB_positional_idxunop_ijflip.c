@@ -39,6 +39,38 @@ GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
                 // j-(i+thunk) becomes i-(j+thunk): no change to thunk
                 return (GxB_FLIPDIAGINDEX_INT64) ;
 
+            default : ;
+        }
+
+    }
+    else if (op->ztype == GrB_INT32)
+    {
+
+        switch (op->opcode)
+        {
+
+            case GB_ROWINDEX_idxunop_code  :
+                // i+thunk becomes j+thunk: no change to thunk
+                return (GrB_COLINDEX_INT32) ;
+
+            case GB_COLINDEX_idxunop_code  : 
+                // j+thunk becomes i+thunk: no change to thunk
+                return (GrB_ROWINDEX_INT32) ;
+
+            case GB_DIAGINDEX_idxunop_code :
+                // j-(i+thunk) becomes i-(j+thunk): no change to thunk
+                return (GxB_FLIPDIAGINDEX_INT32) ;
+
+            default : ;
+        }
+
+    }
+    else if (op->ztype == GrB_BOOL)
+    {
+
+        switch (op->opcode)
+        {
+
             case GB_TRIL_idxunop_code      :
                 // (j < (i+thunk)) becomes (i < (j+thunk))
                 // or (i-thunk) < j which is j > (i-thunk).
@@ -55,7 +87,10 @@ GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
 
             case GB_DIAG_idxunop_code      :
             case GB_OFFDIAG_idxunop_code   :
-                // no change to DIAG and OFFDIAG
+                // DIAG:    (j == (i+thunk))
+                // OFFDIAG: (j != (i+thunk))
+                // no change to DIAG and OFFDIAG, but negate the thunk
+                (*ithunk) = -(*ithunk) ;
                 return (op) ;
 
             case GB_COLLE_idxunop_code     :
@@ -73,26 +108,6 @@ GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
             case GB_ROWGT_idxunop_code     :
                 // (i > thunk) becomes (j > thunk)
                 return (GrB_COLGT_INT64) ;
-
-            default : ;
-        }
-    }
-    else if (op->ztype == GrB_INT32)
-    {
-        switch (op->opcode)
-        {
-
-            case GB_ROWINDEX_idxunop_code  :
-                // i+thunk becomes j+thunk: no change to thunk
-                return (GrB_COLINDEX_INT32) ;
-
-            case GB_COLINDEX_idxunop_code  : 
-                // j+thunk becomes i+thunk: no change to thunk
-                return (GrB_ROWINDEX_INT32) ;
-
-            case GB_DIAGINDEX_idxunop_code :
-                // j-(i+thunk) becomes i-(j+thunk): no change to thunk
-                return (GxB_FLIPDIAGINDEX_INT32) ;
 
             default : ;
         }

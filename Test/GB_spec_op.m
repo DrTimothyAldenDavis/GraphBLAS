@@ -155,6 +155,20 @@ switch opname
     case 'le'
         z = (x <= y) ;
 
+    % 6 index_unop comparators (result is boolean)
+    case 'valueeq'
+        z = (x == y) ;
+    case 'valuene'
+        z = (x ~= y) ;
+    case 'valuegt'
+        z = (x >  y) ;
+    case 'valuelt'
+        z = (x <  y) ;
+    case 'valuege'
+        z = (x >= y) ;
+    case 'valuele'
+        z = (x <= y) ;
+
     % 3 binary logical operators (result is ztype)
     case 'or'
         z = GB_mex_cast ((x ~= 0) | (y ~= 0), ztype) ;

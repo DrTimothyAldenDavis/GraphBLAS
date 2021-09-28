@@ -205,8 +205,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // do not apply the positional op until after the transpose;
         // replace op with the ONE operator, as a placeholder.  C will be
         // constructed as iso, and needs to be expanded to non-iso when done.
-        ASSERT (ctype == GrB_INT64 || ctype == GrB_INT32) ;
-        op = (ctype == GrB_INT64) ? GxB_ONE_INT64 : GxB_ONE_INT32 ;
+        ASSERT (ctype == GrB_INT64 || ctype == GrB_INT32 || ctype == GrB_BOOL) ;
+        op = (GB_Operator) GB_unop_one (ctype->code) ;
     }
     else if (user_idxunop)
     {

@@ -87,6 +87,22 @@ bool GB_mx_string_to_UnaryOp            // true if successful, false otherwise
     const bool user_complex             // true if X is complex
 ) ;
 
+bool GB_mx_mxArray_to_IndexUnaryOp      // true if successful, false otherwise
+(
+    GrB_IndexUnaryOp *op_handle,        // the binary op
+    const mxArray *op_builtin,          // built-in version of op
+    const char *name,                   // name of the argument
+    const GrB_Type default_optype       // default operator type
+) ;
+
+bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
+(
+    GrB_IndexUnaryOp *op_handle,    // the op
+    const GrB_Type default_optype,  // default operator type
+    const mxArray *opname_mx,       // built-in string with operator name
+    const mxArray *optype_mx        // built-in string with operator type
+) ;
+
 mxArray *GB_mx_Vector_to_mxArray    // returns the built-in mxArray
 (
     GrB_Vector *handle,             // handle of GraphBLAS matrix to convert

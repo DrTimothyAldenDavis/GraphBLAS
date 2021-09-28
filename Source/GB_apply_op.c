@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_apply_op: typecast and apply a unary or binary operator to an array
+// GB_apply_op: typecast and apply a unary/binary/idxunop operator to an array
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -572,6 +572,12 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         //----------------------------------------------------------------------
         // apply a user-defined index_unary op
         //----------------------------------------------------------------------
+
+        // All valued GrB_IndexUnaryOps (GrB_VALUE*) have already been renamed
+        // to their corresponding binary op (GrB_VALUEEQ_FP32 became
+        // GrB_EQ_FP32, for example).  The only remaining index unary ops are
+        // positional, and user-defined.  Positional ops have been handled
+        // above, so only user-defined index unary ops are left.
 
         // get A and C
         const int64_t *restrict Ah = A->h ;

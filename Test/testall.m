@@ -95,6 +95,7 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test230',t) ; % test apply with idxunops
 logstat ('test229',t) ; % test setElement
 logstat ('test228',t) ; % test serialize/deserialize
 logstat ('test227',t) ; % test kron
