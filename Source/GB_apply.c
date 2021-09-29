@@ -219,7 +219,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     //--------------------------------------------------------------------------
 
     if (op_is_idxunop && op_is_positional)
-    {
+    { 
         // ithunk = (int64) scalar
         GB_cast_scalar (&ithunk, GB_INT64_code, scalar->x, scalar->type->code,
             scalar->type->size) ;
@@ -250,7 +250,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
             op = GB_positional_binop_ijflip ((GrB_BinaryOp) op) ;
         }
         else // op_is_idxunop
-        {
+        { 
             // also revise ithunk as needed (TRIL, TRIU, DIAG, OFFDIAG only)
             op = GB_positional_idxunop_ijflip (&ithunk, (GrB_IndexUnaryOp) op) ;
         }

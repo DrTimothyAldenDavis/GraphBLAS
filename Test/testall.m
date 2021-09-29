@@ -148,7 +148,6 @@ logstat ('test176',t) ; % test GrB_assign, method 09, 11
 logstat ('test174',t) ; % test GrB_assign C<A>=A
 logstat ('test170',t) ; % test C<B>=A+B (alias M==B)
 logstat ('test169',t) ; % test C<!M>=A+B with C sparse, M hyper, A and B sparse
-logstat ('test166',t) ; % test GxB_select with a dense matrix
 logstat ('test164',t) ; % test dot5 method
 logstat ('test152',t) ; % test binops with C=A+B, all matrices dense
 logstat ('test155',t) ; % test GrB_*_setElement and GrB_*_removeElement
@@ -392,16 +391,20 @@ logstat ('test119',t) ;    %      % performance tests for GrB_assign
 logstat ('test120',t) ;    %      % performance tests for GrB_assign
 logstat ('test121',t) ;    %      % performance tests for GrB_assign
 logstat ('test122',t) ;    %      % performance tests for GrB_assign
-logstat ('test126',t) ;    %    7 % test GrB_reduce to vector on a very sparse matrix 
+logstat ('test126',t) ;    %    7 % GrB_reduce to vector; very sparse matrix 
 
 logstat ('test143',t) ;    %   37 % mxm, special cases
 logstat ('test146',t) ;    %   .1 % expand scalar
 logstat ('test147',t) ;           % C<M>=A*B with very sparse M
 logstat ('test149',t) ;           % test fine hash tasks for C<!M>=A*B
 
+logstat ('test166',t) ;    %   .1 % test GxB_select with a dense matrix
 logstat ('test168',t) ;           % test C=A+B with C and B full, A bitmap
+
 logstat ('test171',t) ;    %    1 % test conversion and GB_memset
+
 logstat ('test190',t) ;    %   .3 % test dense matrix for C<!M>=A*B
+
 logstat ('test205',t) ;    %    0 % test iso kron
 
 % tested via test16:

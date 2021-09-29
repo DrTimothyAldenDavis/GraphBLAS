@@ -12,10 +12,10 @@ unmodified from v1.9.3, which are under the BSD-2-clause license.
 Files in this folder:
 
     LICENSE         BSD 2-clause, Copyright (c) 2011-2016, Yann Collet
-    lz4.c           extremely fast compression with good compression 
+    lz4.c           extremely fast with good compression 
     lz4.h           include file for lz4.c
     lz4hc.c         slow compression, slightly more compact than lz4
-    lz4hc.h         include file for
+    lz4hc.h         include file for lz4hc.c
     README_lz4.md   lz4/README.md
     README.md       lz4/lib/README.md
     README.txt      this file

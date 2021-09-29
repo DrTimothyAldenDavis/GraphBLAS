@@ -29,7 +29,7 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
     const GrB_Descriptor desc       // to control # of threads used and
                         // whether or not the input blob is trusted.
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

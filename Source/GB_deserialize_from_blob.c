@@ -137,7 +137,7 @@ GrB_Info GB_deserialize_from_blob
                 ok = false ;
             }
             else
-            {
+            { 
                 // uncompress the compressed block of size s_size
                 // from blob [s + s_start:s_end-1] into X [kstart:kend-1].
                 // This is safe and secure so far.  The contents of X are
@@ -157,7 +157,7 @@ GrB_Info GB_deserialize_from_blob
         }
     }
     else
-    {
+    { 
         // unknown compression method
         ok = false ;
     }

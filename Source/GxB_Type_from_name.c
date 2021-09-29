@@ -64,7 +64,7 @@
 
 GrB_Info GxB_Type_from_name     // return the GrB_Type from a name
 (
-    GrB_Type *type,             // built-in type, or NULL if not recognized 
+    GrB_Type *type,             // built-in type, or NULL if not recognized
     const char *type_name       // array of size at least GxB_MAX_NAME_LEN
 )
 { 

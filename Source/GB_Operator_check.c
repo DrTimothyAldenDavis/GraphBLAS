@@ -36,23 +36,23 @@ GrB_Info GB_Operator_check  // check a GraphBLAS operator
     GB_Opcode opcode = op->opcode ;
 
     if (GB_IS_UNARYOP_CODE (opcode))
-    {
+    { 
         return (GB_UnaryOp_check ((GrB_UnaryOp) op, name, pr, f)) ;
     }
     else if (GB_IS_BINARYOP_CODE (opcode))
-    {
+    { 
         return (GB_BinaryOp_check ((GrB_BinaryOp) op, name, pr, f)) ;
     }
     else if (GB_IS_INDEXUNARYOP_CODE (opcode))
-    {
+    { 
         return (GB_IndexUnaryOp_check ((GrB_IndexUnaryOp) op, name, pr, f)) ;
     }
     else if (GB_IS_SELECTOP_CODE (opcode))
-    {
+    { 
         return (GB_SelectOp_check ((GxB_SelectOp) op, name, pr, f)) ;
     }
     else
-    {
+    { 
         GBPR0 ("\n    GraphBLAS Operator: %s: invalid opcode\n",
             ((name != NULL) ? name : "")) ;
         return (GrB_INVALID_OBJECT) ;    // bad opcode

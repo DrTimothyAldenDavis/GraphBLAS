@@ -76,7 +76,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         dryrun = true ;
     }
     else if (*blob_handle != NULL)
-    {
+    { 
         // for GrB_Matrix_serialize:  the blob is already allocated by the user
         // and provided on input.  Fill the blob, and return the blob_size_used
         // as the # of bytes written to the blob.
@@ -85,7 +85,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         blob_size = (*blob_size_handle) ;
     }
     else
-    {
+    { 
         // for GxB_Matrix_serialize:  the blob is not allocated yet. Allocate
         // it and return it below, and return its exact size as blob_size_used.
         blob = NULL ;
@@ -241,7 +241,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     //--------------------------------------------------------------------------
 
     if (dryrun)
-    {
+    { 
         // GrB_Matrix_serializeSize: this is an upper bound on the required
         // size of the blob, not the actual size.
         (*blob_size_handle) = s ;
@@ -257,7 +257,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         // GrB_Matrix_serialize passes in a preallocated blob of size blob_size.
         // Check if it is large enough for the actual blob, of size s.
         if (blob_size < s)
-        {
+        { 
             // blob too small, blob_size must be >= s.  The required minimum
             // size of the blob could be returned to the caller.
             GB_FREE_ALL ;
@@ -284,7 +284,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // write the header and type_name into the blob
     //--------------------------------------------------------------------------
 
-    // 160 bytes, plus 128 bytes for user-defined types 
+    // 160 bytes, plus 128 bytes for user-defined types
 
     s = 0 ;
     int32_t sparsity_iso_csc = (4 * sparsity) + (iso ? 2 : 0) +
@@ -304,7 +304,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     GB_BLOB_WRITE (Ab_len, int64_t) ;
     GB_BLOB_WRITE (Ai_len, int64_t) ;
     GB_BLOB_WRITE (Ax_len, int64_t) ;
-    GB_BLOB_WRITE (hyper_switch, float) ; 
+    GB_BLOB_WRITE (hyper_switch, float) ;
     GB_BLOB_WRITE (bitmap_switch, float) ;
     GB_BLOB_WRITE (sparsity_control, int32_t) ;
     GB_BLOB_WRITE (sparsity_iso_csc, int32_t);
@@ -355,7 +355,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     //--------------------------------------------------------------------------
 
     if (!preallocated_blob)
-    {
+    { 
         // GxB_Matrix_serialize: giving the blob to the user; remove it from
         // the list of malloc'd blocks
         #ifdef GB_MEMDUMP

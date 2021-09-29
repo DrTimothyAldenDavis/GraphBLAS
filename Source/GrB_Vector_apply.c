@@ -196,7 +196,7 @@ GrB_Info GrB_Vector_apply_BinaryOp1st_Scalar    // w<mask> = accum (w, op(x,u))
 //------------------------------------------------------------------------------
 
 // identical to GrB_Vector_apply_BinaryOp1st_Scalar
-GrB_Info GxB_Vector_apply_BinaryOp1st           // w<mask> = accum (w, op(x,u))
+GrB_Info GxB_Vector_apply_BinaryOp1st
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector M,             // optional mask for w, unused if NULL
@@ -235,7 +235,7 @@ GrB_Info GrB_Vector_apply_BinaryOp2nd_Scalar    // w<mask> = accum (w, op(u,y))
 //------------------------------------------------------------------------------
 
 // identical to GrB_Vector_apply_BinaryOp2nd_Scalar
-GrB_Info GxB_Vector_apply_BinaryOp2nd           // w<mask> = accum (w, op(u,y))
+GrB_Info GxB_Vector_apply_BinaryOp2nd
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector M,             // optional mask for w, unused if NULL

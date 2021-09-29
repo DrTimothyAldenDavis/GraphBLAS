@@ -50,6 +50,7 @@ project ( graphblas_renamed
 include ( GNUInstallDirs )
 
 # Uncomment this line for for development only, not for end-users:
+# FIXME
   set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )

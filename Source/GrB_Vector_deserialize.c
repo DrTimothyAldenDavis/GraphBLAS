@@ -27,7 +27,7 @@ GrB_Info GrB_Vector_deserialize     // deserialize blob into a GrB_Vector
     const void *blob,   // the blob
     size_t blob_size    // size of the blob
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -28,7 +28,7 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
     size_t blob_size        // size of the blob
 )
 {
-    
+
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------

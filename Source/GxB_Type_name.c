@@ -15,7 +15,7 @@ GrB_Info GxB_Type_name      // return the name of a GraphBLAS type
                             // GxB_MAX_NAME_LEN, owned by the user application).
     GrB_Type type
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

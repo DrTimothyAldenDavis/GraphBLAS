@@ -23,7 +23,7 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
     // input:
     GrB_Matrix A                    // matrix to serialize
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

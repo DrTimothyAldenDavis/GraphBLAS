@@ -27,7 +27,7 @@ GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
         switch (op->opcode)
         {
 
-            case GB_ROWINDEX_idxunop_code  :
+            case GB_ROWINDEX_idxunop_code  : 
                 // i+thunk becomes j+thunk: no change to thunk
                 return (GrB_COLINDEX_INT64) ;
 
@@ -35,7 +35,7 @@ GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
                 // j+thunk becomes i+thunk: no change to thunk
                 return (GrB_ROWINDEX_INT64) ;
 
-            case GB_DIAGINDEX_idxunop_code :
+            case GB_DIAGINDEX_idxunop_code : 
                 // j-(i+thunk) becomes i-(j+thunk): no change to thunk
                 return (GxB_FLIPDIAGINDEX_INT64) ;
 
@@ -49,7 +49,7 @@ GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
         switch (op->opcode)
         {
 
-            case GB_ROWINDEX_idxunop_code  :
+            case GB_ROWINDEX_idxunop_code  : 
                 // i+thunk becomes j+thunk: no change to thunk
                 return (GrB_COLINDEX_INT32) ;
 
@@ -57,7 +57,7 @@ GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
                 // j+thunk becomes i+thunk: no change to thunk
                 return (GrB_ROWINDEX_INT32) ;
 
-            case GB_DIAGINDEX_idxunop_code :
+            case GB_DIAGINDEX_idxunop_code : 
                 // j-(i+thunk) becomes i-(j+thunk): no change to thunk
                 return (GxB_FLIPDIAGINDEX_INT32) ;
 
@@ -71,41 +71,41 @@ GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
         switch (op->opcode)
         {
 
-            case GB_TRIL_idxunop_code      :
+            case GB_TRIL_idxunop_code      : 
                 // (j < (i+thunk)) becomes (i < (j+thunk))
                 // or (i-thunk) < j which is j > (i-thunk).
                 // TRIL becomes TRIU and thunk must be negated.
                 (*ithunk) = -(*ithunk) ;
                 return (GrB_TRIU_INT64) ;
 
-            case GB_TRIU_idxunop_code      :
+            case GB_TRIU_idxunop_code      : 
                 // (j > (i+thunk)) becomes (i > (j+thunk))
                 // or (i-thunk) > j which is j < (i-thunk).
                 // TRIU becomes TRIL and thunk must be negated.
                 (*ithunk) = -(*ithunk) ;
                 return (GrB_TRIL_INT64) ;
 
-            case GB_DIAG_idxunop_code      :
-            case GB_OFFDIAG_idxunop_code   :
+            case GB_DIAG_idxunop_code      : 
+            case GB_OFFDIAG_idxunop_code   : 
                 // DIAG:    (j == (i+thunk))
                 // OFFDIAG: (j != (i+thunk))
                 // no change to DIAG and OFFDIAG, but negate the thunk
                 (*ithunk) = -(*ithunk) ;
                 return (op) ;
 
-            case GB_COLLE_idxunop_code     :
+            case GB_COLLE_idxunop_code     : 
                 // (j <= thunk) becomes (i <= thunk)
                 return (GrB_ROWLE_INT64) ;
 
-            case GB_COLGT_idxunop_code     :
+            case GB_COLGT_idxunop_code     : 
                 // (j > thunk) becomes (i > thunk)
                 return (GrB_ROWGT_INT64) ;
 
-            case GB_ROWLE_idxunop_code     :
+            case GB_ROWLE_idxunop_code     : 
                 // (i <= thunk) becomes (j <= thunk)
                 return (GrB_COLLE_INT64) ;
 
-            case GB_ROWGT_idxunop_code     :
+            case GB_ROWGT_idxunop_code     : 
                 // (i > thunk) becomes (j > thunk)
                 return (GrB_COLGT_INT64) ;
 

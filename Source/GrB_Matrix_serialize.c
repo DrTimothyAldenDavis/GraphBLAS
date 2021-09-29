@@ -40,7 +40,7 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // input:
     GrB_Matrix A                    // matrix to serialize
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

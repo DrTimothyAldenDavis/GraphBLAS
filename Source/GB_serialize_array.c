@@ -171,12 +171,12 @@ GrB_Info GB_serialize_array
         ASSERT (s < INT32_MAX) ;
         size_t p_size = 0 ;
         if (dryrun)
-        {
+        { 
             // do not allocate the block; just sum up the upper bound sizes
             (*compressed_size) += s ;
         }
         else
-        {
+        { 
             // allocate the block
             GB_void *p = GB_MALLOC (s, GB_void, &p_size) ;
             ok = (p != NULL) ;
@@ -186,8 +186,8 @@ GrB_Info GB_serialize_array
     }
 
     if (dryrun)
-    {
-        // GrB_Matrix_serializesize: no more work to do.  (*compressed_size) is
+    { 
+        // GrB_Matrix_serializeSize: no more work to do.  (*compressed_size) is
         // an upper bound of the blob_size required when the matrix is
         // compressed, and (*nblocks_handle) is the number of blocks to be used.
         // No space has been allocated.

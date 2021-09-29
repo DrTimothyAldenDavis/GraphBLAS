@@ -316,7 +316,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     bool is_empty = false ;
 
     if (op_is_positional)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // replace idxunop with their corresponding selectop positional ops
@@ -369,7 +369,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         // userop(A)       row/col indices and dimensions are swapped
 
         if (flipij)
-        {
+        { 
             switch (opcode)
             {
                 // TRIL becomes TRIU with thunk negated
@@ -445,7 +445,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         //----------------------------------------------------------------------
 
         if (op_is_idxunop && A->type == op->xtype)
-        {
+        { 
             // If there is no typecasting of the A matrix, the VALUE* operators
             // are identical to their selectop counterparts.  The GxB_SelectOps
             // never typecast the input matrix A, but do their tests on the
@@ -648,7 +648,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     }
 
     if (!op_is_user_defined)
-    {
+    { 
         // flipij can still be true but is only needed for if the op
         // (GrB_IndexUnaryOp or GxB_SelectOp) is user-defined.  So set here it
         // to false for all but user-defined op.

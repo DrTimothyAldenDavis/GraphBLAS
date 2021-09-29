@@ -27,7 +27,7 @@ GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     const void *blob,   // the blob
     size_t blob_size    // size of the blob
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

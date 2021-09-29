@@ -184,7 +184,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp1st_Scalar    // C<M>=accum(C,op(x,A))
 //------------------------------------------------------------------------------
 
 // identical to GrB_Matrix_apply_BinaryOp1st_Scalar
-GrB_Info GxB_Matrix_apply_BinaryOp1st           // C<M>=accum(C,op(x,A))
+GrB_Info GxB_Matrix_apply_BinaryOp1st
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix M,             // optional mask for C, unused if NULL
@@ -223,7 +223,7 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(A,y))
 //------------------------------------------------------------------------------
 
 // identical to GrB_Matrix_apply_BinaryOp2nd_Scalar
-GrB_Info GxB_Matrix_apply_BinaryOp2nd           // C<M>=accum(C,op(A,y))
+GrB_Info GxB_Matrix_apply_BinaryOp2nd
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix M,             // optional mask for C, unused if NULL

@@ -8,13 +8,7 @@ later, for v6.0.0:
     GrB_Info: change enum values
 
 --------------------------------------------------------------------------------
-DRAFTED: need to test them:
-
-IndexUnaryOp:
-    GrB_apply with IndexUnaryOp
-
---------------------------------------------------------------------------------
-DONE:
+DONE: some tests not yet finished
 
 GrB_IndexUnaryOp:
     GrB_IndexUnaryOp_new, free, check, wait, fprint

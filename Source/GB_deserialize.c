@@ -116,7 +116,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
         s += GxB_MAX_NAME_LEN ;
     }
     else if (type_expected != NULL && ctype != type_expected)
-    {
+    { 
         // built-in type must match type_expected
         // blob is invalid
         return (GrB_DOMAIN_MISMATCH) ;
@@ -172,7 +172,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
                 &s, Context)) ;
             break ;
 
-        case GxB_SPARSE :
+        case GxB_SPARSE : 
 
             // decompress Cp and Ci
             GB_OK (GB_deserialize_from_blob (&(C->p), &(C->p_size), Cp_len,
@@ -212,7 +212,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // the same check below.
 
     if (!fast_import)
-    { 
+    {
         // See the extensive comments in GB_import.c.  If fast_import is false
         // then a slower but secure deserialization is performed.  If the data
         // is mangled (maliciously or inadvertantly) this check will catch it
@@ -231,7 +231,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // typecast if requested type_expected differs from ctype
     ASSERT_MATRIX_OK (C, "C from deserialize (before typecast)", GB0) ;
     if (ctype != type_expected && type_expected != NULL)
-    { 
+    {
         GBURBLE ("(cast %s to %s) ", C->type->name, type_expected->name) ;
         // T = empty matrix with the final type_expected.  All content except
         // the header of T itself will be overwritten by C.

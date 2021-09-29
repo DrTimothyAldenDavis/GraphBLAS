@@ -83,7 +83,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     bool op_is_unop = false ;
     bool op_is_binop = false ;
     if (op != NULL)
-    {
+    { 
         opcode = op->opcode ;
         op_is_unop = GB_IS_UNARYOP_CODE (opcode) ;
         op_is_binop = GB_IS_BINARYOP_CODE (opcode) ;
@@ -567,7 +567,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // apply a user-defined index_unary op

@@ -15,7 +15,7 @@ GrB_Info GxB_IndexUnaryOp_xtype_name    // return the name of the type of x
                             // GxB_MAX_NAME_LEN, owned by the user application).
     const GrB_IndexUnaryOp op
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
