@@ -405,6 +405,24 @@
 #define GrB_Vector_apply_IndexOp_UDT_(...)      GrB_apply (__VA_ARGS__)
 #define GrB_Vector_apply_IndexOp_Scalar_(...)   GrB_apply (__VA_ARGS__)
 
+// GrB_select:
+#define GrB_Vector_select_BOOL_(...)     GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_INT8_(...)     GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_INT16_(...)    GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_INT32_(...)    GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_INT64_(...)    GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_UINT8_(...)    GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_UINT16_(...)   GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_UINT32_(...)   GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_UINT64_(...)   GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_FP32_(...)     GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_FP64_(...)     GrB_select (__VA_ARGS__)
+#define GxB_Vector_select_FC32_(...)     GrB_select (__VA_ARGS__)
+#define GxB_Vector_select_FC64_(...)     GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_UDT_(...)      GrB_select (__VA_ARGS__)
+#define GrB_Vector_select_Scalar_(...)   GrB_select (__VA_ARGS__)
+
+// GrB_apply: binary op, bind 1st
 #define GxB_Matrix_apply_BinaryOp1st_(...)          GrB_apply (__VA_ARGS__)
 #define GrB_Matrix_apply_BinaryOp1st_BOOL_(...)     GrB_apply (__VA_ARGS__)
 #define GrB_Matrix_apply_BinaryOp1st_INT8_(...)     GrB_apply (__VA_ARGS__)
@@ -422,6 +440,7 @@
 #define GrB_Matrix_apply_BinaryOp1st_UDT_(...)      GrB_apply (__VA_ARGS__)
 #define GrB_Matrix_apply_BinaryOp1st_Scalar_(...)   GrB_apply (__VA_ARGS__)
 
+// GrB_apply: binary op, bind 2nd
 #define GxB_Matrix_apply_BinaryOp2nd_(...)          GrB_apply (__VA_ARGS__)
 #define GrB_Matrix_apply_BinaryOp2nd_BOOL_(...)     GrB_apply (__VA_ARGS__)
 #define GrB_Matrix_apply_BinaryOp2nd_INT8_(...)     GrB_apply (__VA_ARGS__)
@@ -439,6 +458,7 @@
 #define GrB_Matrix_apply_BinaryOp2nd_UDT_(...)      GrB_apply (__VA_ARGS__)
 #define GrB_Matrix_apply_BinaryOp2nd_Scalar_(...)   GrB_apply (__VA_ARGS__)
 
+// GrB_apply: idxunop
 #define GxB_Matrix_apply_IndexOp_(...)          GrB_apply (__VA_ARGS__)
 #define GrB_Matrix_apply_IndexOp_BOOL_(...)     GrB_apply (__VA_ARGS__)
 #define GrB_Matrix_apply_IndexOp_INT8_(...)     GrB_apply (__VA_ARGS__)
@@ -455,6 +475,23 @@
 #define GxB_Matrix_apply_IndexOp_FC64_(...)     GrB_apply (__VA_ARGS__)
 #define GrB_Matrix_apply_IndexOp_UDT_(...)      GrB_apply (__VA_ARGS__)
 #define GrB_Matrix_apply_IndexOp_Scalar_(...)   GrB_apply (__VA_ARGS__)
+
+// GrB_select:
+#define GrB_Matrix_select_BOOL_(...)     GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_INT8_(...)     GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_INT16_(...)    GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_INT32_(...)    GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_INT64_(...)    GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_UINT8_(...)    GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_UINT16_(...)   GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_UINT32_(...)   GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_UINT64_(...)   GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_FP32_(...)     GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_FP64_(...)     GrB_select (__VA_ARGS__)
+#define GxB_Matrix_select_FC32_(...)     GrB_select (__VA_ARGS__)
+#define GxB_Matrix_select_FC64_(...)     GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_UDT_(...)      GrB_select (__VA_ARGS__)
+#define GrB_Matrix_select_Scalar_(...)   GrB_select (__VA_ARGS__)
 
 // GxB_select:
 #define GxB_Vector_select_(...)                     GxB_select (__VA_ARGS__)
@@ -906,6 +943,22 @@
 #define GrB_Vector_apply_IndexOp_UDT_(...)      GrB_Vector_apply_IndexOp_UDT (__VA_ARGS__)
 #define GrB_Vector_apply_IndexOp_Scalar_(...)   GrB_Vector_apply_IndexOp_Scalar (__VA_ARGS__)
 
+#define GrB_Vector_select_BOOL_(...)     GrB_Vector_select_BOOL (__VA_ARGS__)
+#define GrB_Vector_select_INT8_(...)     GrB_Vector_select_INT8 (__VA_ARGS__)
+#define GrB_Vector_select_INT16_(...)    GrB_Vector_select_INT16 (__VA_ARGS__)
+#define GrB_Vector_select_INT32_(...)    GrB_Vector_select_INT32 (__VA_ARGS__)
+#define GrB_Vector_select_INT64_(...)    GrB_Vector_select_INT64 (__VA_ARGS__)
+#define GrB_Vector_select_UINT8_(...)    GrB_Vector_select_UINT8 (__VA_ARGS__)
+#define GrB_Vector_select_UINT16_(...)   GrB_Vector_select_UINT16 (__VA_ARGS__)
+#define GrB_Vector_select_UINT32_(...)   GrB_Vector_select_UINT32 (__VA_ARGS__)
+#define GrB_Vector_select_UINT64_(...)   GrB_Vector_select_UINT64 (__VA_ARGS__)
+#define GrB_Vector_select_FP32_(...)     GrB_Vector_select_FP32 (__VA_ARGS__)
+#define GrB_Vector_select_FP64_(...)     GrB_Vector_select_FP64 (__VA_ARGS__)
+#define GxB_Vector_select_FC32_(...)     GxB_Vector_select_FC32 (__VA_ARGS__)
+#define GxB_Vector_select_FC64_(...)     GxB_Vector_select_FC64 (__VA_ARGS__)
+#define GrB_Vector_select_UDT_(...)      GrB_Vector_select_UDT (__VA_ARGS__)
+#define GrB_Vector_select_Scalar_(...)   GrB_Vector_select_Scalar (__VA_ARGS__)
+
 #define GxB_Matrix_apply_BinaryOp1st_(...)          GxB_Matrix_apply_BinaryOp1st (__VA_ARGS__)
 #define GrB_Matrix_apply_BinaryOp1st_BOOL_(...)     GrB_Matrix_apply_BinaryOp1st_BOOL (__VA_ARGS__)
 #define GrB_Matrix_apply_BinaryOp1st_INT8_(...)     GrB_Matrix_apply_BinaryOp1st_INT8 (__VA_ARGS__)
@@ -956,6 +1009,22 @@
 #define GxB_Matrix_apply_IndexOp_FC64_(...)     GxB_Matrix_apply_IndexOp_FC64 (__VA_ARGS__)
 #define GrB_Matrix_apply_IndexOp_UDT_(...)      GrB_Matrix_apply_IndexOp_UDT (__VA_ARGS__)
 #define GrB_Matrix_apply_IndexOp_Scalar_(...)   GrB_Matrix_apply_IndexOp_Scalar (__VA_ARGS__)
+
+#define GrB_Matrix_select_BOOL_(...)     GrB_Matrix_select_BOOL (__VA_ARGS__)
+#define GrB_Matrix_select_INT8_(...)     GrB_Matrix_select_INT8 (__VA_ARGS__)
+#define GrB_Matrix_select_INT16_(...)    GrB_Matrix_select_INT16 (__VA_ARGS__)
+#define GrB_Matrix_select_INT32_(...)    GrB_Matrix_select_INT32 (__VA_ARGS__)
+#define GrB_Matrix_select_INT64_(...)    GrB_Matrix_select_INT64 (__VA_ARGS__)
+#define GrB_Matrix_select_UINT8_(...)    GrB_Matrix_select_UINT8 (__VA_ARGS__)
+#define GrB_Matrix_select_UINT16_(...)   GrB_Matrix_select_UINT16 (__VA_ARGS__)
+#define GrB_Matrix_select_UINT32_(...)   GrB_Matrix_select_UINT32 (__VA_ARGS__)
+#define GrB_Matrix_select_UINT64_(...)   GrB_Matrix_select_UINT64 (__VA_ARGS__)
+#define GrB_Matrix_select_FP32_(...)     GrB_Matrix_select_FP32 (__VA_ARGS__)
+#define GrB_Matrix_select_FP64_(...)     GrB_Matrix_select_FP64 (__VA_ARGS__)
+#define GxB_Matrix_select_FC32_(...)     GxB_Matrix_select_FC32 (__VA_ARGS__)
+#define GxB_Matrix_select_FC64_(...)     GxB_Matrix_select_FC64 (__VA_ARGS__)
+#define GrB_Matrix_select_UDT_(...)      GrB_Matrix_select_UDT (__VA_ARGS__)
+#define GrB_Matrix_select_Scalar_(...)   GrB_Matrix_select_Scalar (__VA_ARGS__)
 
 // GxB_select:
 #define GxB_Vector_select_(...)                     GxB_Vector_select (__VA_ARGS__)

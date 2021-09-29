@@ -72,6 +72,8 @@ void GB (_sel_phase1__offdiag_iso)
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
+
+
 void GB (_sel_phase2__offdiag_iso)
 (
     int64_t *restrict Ci,
@@ -92,6 +94,8 @@ void GB (_sel_phase2__offdiag_iso)
     
     #include "GB_select_phase2.c"
 }
+
+
 
 //------------------------------------------------------------------------------
 // GB_sel_bitmap

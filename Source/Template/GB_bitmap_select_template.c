@@ -16,10 +16,6 @@
 // TODO: use a single GB_memcpy for the values, regardless of selectop,
 // if no typecasting is being done.
 
-// the following macro is awkward but currently needed for the user_select op:
-#undef  GBI
-#define GBI(Ai,p,avlen) i
-
 {
     int8_t *Ab = A->b ;
     GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;

@@ -13,7 +13,7 @@
 
 #define USAGE "C = GB_mex_apply_idxunop (C, Mask, accum, op, how, A, y, desc)"
 
-// if how == 0: use the GrB_Scalar and GxB_Matrix/Vector_apply_IndexOp
+// if how == 0: use the GrB_Scalar and GrB_Matrix/Vector_apply_IndexOp_Scalar
 // if how == 1: use the C scalar   and GrB_Matrix/Vector_apply_IndexOp_T
 
 #define FREE_ALL                        \

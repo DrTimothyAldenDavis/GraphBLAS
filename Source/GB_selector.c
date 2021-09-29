@@ -61,7 +61,7 @@ GrB_Info GB_selector
     ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_selector", GB0) ;
     ASSERT (GB_IS_SELECTOP_CODE (opcode) || GB_IS_INDEXUNARYOP_CODE (opcode)) ;
     ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
-    // positional selector (tril, triu, diag, offdiag, resize):
+    // positional selector (tril, triu, diag, offdiag, resize, rowindex, ...):
     // can't be jumbled.  nonzombie, entry-valued op, user op: jumbled OK
     ASSERT (GB_IMPLIES (GB_OPCODE_IS_POSITIONAL (opcode), !GB_JUMBLED (A))) ;
     ASSERT (C == NULL || (C != NULL && C->static_header)) ;
@@ -111,14 +111,14 @@ GrB_Info GB_selector
     if (op != NULL)
     {
         if (op->ytype != NULL)
-        {
+        { 
             // get the type of the thunk input of the operator
             ytype = op->ytype ;
             ycode = ytype->code ;
             ysize = ytype->size ;
         }
         if (op->xtype != NULL)
-        {
+        { 
             // get the type of the A input of the operator
             xtype = op->xtype ;
             xcode = xtype->code ;
@@ -149,7 +149,7 @@ GrB_Info GB_selector
             GB_cast_scalar (athunk, acode, Thunk->x, tcode, asize) ;
         }
         if (ytype != NULL)
-        {
+        { 
             // ythunk = (op->ytype) Thunk
             GB_cast_scalar (ythunk, ycode, Thunk->x, tcode, ysize) ;
         }
@@ -189,12 +189,12 @@ GrB_Info GB_selector
         struct GB_Scalar_opaque S_header ;
         GrB_Scalar S ;
         if (op_is_select_valued)
-        {
+        { 
             // wrap the iso-value of A in the scalar S, with no typecasting
             S = GB_Scalar_wrap (&S_header, A->type, A->x) ;
         }
         else
-        {
+        { 
             // wrap the iso-value of A in the scalar S, typecasted to xtype
             // xscalar = (op->xtype) A->x
             GB_cast_scalar (xscalar, xcode, A->x, acode, asize) ;
@@ -214,6 +214,7 @@ GrB_Info GB_selector
         if (C_empty)
         { 
             // C is an empty matrix
+            // printf ("C is empty\n") ;
             return (GB_new (&C, true, // static header
                 A->type, avlen, avdim, GB_Ap_calloc, true,
                 GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ),
@@ -223,6 +224,7 @@ GrB_Info GB_selector
         { 
             // C is a shallow copy of A with all the same entries as A
             // set C->iso = A->iso  OK
+            // printf ("C is shallow copy of A\n") ;
             return (GB_shallow_copy (C, true, A, Context)) ;
         }
     }
@@ -345,28 +347,47 @@ GrB_Info GB_selector
         // find column j in A
         //----------------------------------------------------------------------
 
+        // printf ("COL opcode %d\n", opcode) ;
+        ASSERT_MATRIX_OK (A, "A for col selector", GB_FLIP (GB0)) ;
         int nth = nthreads_max ;
         ASSERT (!in_place_A) ;
         ASSERT (C != NULL && C->static_header) ;
         ASSERT (GB_JUMBLED_OK (A)) ;
 
         int64_t j = (opcode == GB_COLINDEX_idxunop_code) ? (-ithunk) : ithunk ;
+        // printf ("look for j %ld\n", j) ;
 
         int64_t k = 0 ;
         bool found ;
-        if (A_is_hyper)
+        if (j < 0)
+        { 
+            // j is outside the range of columns of A
+            k = 0 ;
+            found = false ;
+            // printf ("j = %ld outside range [0,%ld]\n", j, avdim-1) ;
+        }
+        else if (j >= avdim)
+        { 
+            // j is outside the range of columns of A
+            k = anvec ;
+            found = false ;
+            // printf ("j = %ld outside range [0,%ld]\n", j, avdim-1) ;
+        }
+        else if (A_is_hyper)
         { 
             // find the column j in the hyperlist of A
             int64_t kright = anvec-1 ;
             GB_SPLIT_BINARY_SEARCH (j, Ah, k, kright, found) ;
             // if found is true the Ah [k] == j
             // if found is false, then Ah [0..k-1] < j and Ah [k..anvec-1] > j
+            // printf ("j = %ld, A hyper, found %d, k = %ld\n", j, found, k) ;
         }
         else
         { 
             // j appears as the jth column in A; found is always true
             k = j ;
             found = true ;
+            // printf ("found k = j = %ld\n", k) ;
         }
 
         //----------------------------------------------------------------------
@@ -374,7 +395,7 @@ GrB_Info GB_selector
         //----------------------------------------------------------------------
 
         int64_t pstart = Ap [k] ;
-        int64_t pend = found ? pstart : Ap [k+1] ;
+        int64_t pend = found ? Ap [k+1] : pstart ;
         int64_t ajnz = pend - pstart ;
         int64_t cnz, cnvec ;
         int64_t anz = Ap [anvec] ;
@@ -382,26 +403,37 @@ GrB_Info GB_selector
         if (opcode == GB_COLINDEX_idxunop_code)
         { 
             // COLINDEX: delete column j:  C = A (:, [0:j-1 j+1:end])
+            // printf ("delete kth (k = %ld) column j = %ld\n", k, j) ;
             cnz = anz - ajnz ;
+            // printf ("cnz %ld anz %ld ajnz %ld\n", cnz, anz, ajnz) ;
             cnvec = (A_is_hyper && found) ? (anvec-1) : anvec ;
+            // printf ("cnvec %ld\n", cnvec) ;
         }
         else if (opcode == GB_COLLE_idxunop_code)
         { 
             // COLLE: C = A (:, 0:j)
             cnz = pend ;
-            cnvec = (A_is_hyper) ? (found ? k : k-1) : anvec ;
+            cnvec = (A_is_hyper) ? (found ? (k+1) : k) : anvec ;
         }
         else // (opcode == GB_COLGT_idxunop_code)
         { 
             // COLGT: C = A (:, j+1:end)
             cnz = anz - pend ;
-            cnvec = anvec - ((A_is_hyper) ? (found ? k : k-1) : 0) ;
+            cnvec = anvec - ((A_is_hyper) ? (found ? (k+1) : k) : 0) ;
         }
 
         if (cnz == anz)
         { 
             // C is the same as A: return it a pure shallow copy
+            // printf ("return C same as A\n") ;
             return (GB_shallow_copy (C, true, A, Context)) ;
+        }
+        else if (cnz == 0)
+        { 
+            // printf ("return C as empty\n") ;
+            return (GB_new (&C, true, // auto (sparse or hyper), static header
+                A->type, avlen, avdim, GB_Ap_calloc, true,
+                GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1, Context)) ;
         }
 
         //----------------------------------------------------------------------
@@ -412,6 +444,7 @@ GrB_Info GB_selector
         GB_OK (GB_new_bix (&C, true, // sparse or hyper (from A), static header
             A->type, avlen, avdim, GB_Ap_malloc, true, sparsity, false,
             A->hyper_switch, cnvec, cnz, true, A_iso, Context)) ;
+
         ASSERT (info == GrB_SUCCESS) ;
         int nth2 = GB_nthreads (cnvec, chunk, nth) ;
 
@@ -440,6 +473,7 @@ GrB_Info GB_selector
 
             if (A_is_hyper)
             { 
+                ASSERT (found) ;
                 // Cp [0:k-1] = Ap [0:k-1]
                 GB_memcpy (Cp, Ap, k * sizeof (int64_t), nth) ;
                 // Cp [k:cnvec] = Ap [k+1:anvec] - ajnz
@@ -453,6 +487,11 @@ GrB_Info GB_selector
                 // Ch [k:cnvec-1] = Ah [k+1:anvec-1]
                 GB_memcpy (Ch + k, Ah + (k+1), (cnvec-k) * sizeof (int64_t),
                     nth) ;
+
+//              for (kk = 0 ; kk <= cnvec ; kk++) printf ("Cp [%ld] = %ld\n",
+//                  kk, Cp [kk]) ;
+//              for (kk = 0 ; kk <  cnvec ; kk++) printf ("Ch [%ld] = %ld\n",
+//                  kk, Ch [kk]) ;
             }
             else
             { 
@@ -475,7 +514,7 @@ GrB_Info GB_selector
                 // Cx [0:pstart-1] = Ax [0:pstart-1]
                 GB_memcpy (Cx, Ax, pstart * asize, nth) ;
                 // Cx [pstart:cnz-1] = Ax [pend:anz-1]
-                GB_memcpy (Cx + pstart * asize, Ai + pend * asize,
+                GB_memcpy (Cx + pstart * asize, Ax + pend * asize,
                     (cnz - pstart) * asize, nth) ;
             }
 
@@ -487,12 +526,24 @@ GrB_Info GB_selector
             // COLLE: C = A (:, 0:j)
             //------------------------------------------------------------------
 
-            // Cp [0:cnvec] = Ap [0:cnvec]
-            GB_memcpy (Cp, Ap, (cnvec+1) * sizeof (int64_t), nth) ;
             if (A_is_hyper)
             { 
+                // Cp [0:cnvec] = Ap [0:cnvec]
+                GB_memcpy (Cp, Ap, (cnvec+1) * sizeof (int64_t), nth) ;
                 // Ch [0:cnvec-1] = Ah [0:cnvec-1]
                 GB_memcpy (Ch, Ah, (cnvec) * sizeof (int64_t), nth) ;
+            }
+            else
+            {
+                // Cp [0:k+1] = Ap [0:k+1]
+                ASSERT (found) ;
+                GB_memcpy (Cp, Ap, (k+2) * sizeof (int64_t), nth) ;
+                // Cp [k+2:cnvec] = cnz
+                #pragma omp parallel for num_threads(nth2)
+                for (kk = k+2 ; kk <= cnvec ; kk++)
+                { 
+                    Cp [kk] = cnz ;
+                }
             }
             // Ci [0:cnz-1] = Ai [0:cnz-1]
             GB_memcpy (Ci, Ai, cnz * sizeof (int64_t), nth) ;
@@ -510,16 +561,28 @@ GrB_Info GB_selector
             // COLGT: C = A (:, j+1:end)
             //------------------------------------------------------------------
 
-            // Cp [0:cnvec] = Ap [0:cnvec] - pend
-            #pragma omp parallel for num_threads(nth2)
-            for (kk = 0 ; kk <= cnvec ; kk++)
-            { 
-                Cp [kk] = Ap [kk] - pend ;
-            }
             if (A_is_hyper)
             { 
+                // Cp [0:cnvec] = Ap [k+found:anvec] - pend
+                #pragma omp parallel for num_threads(nth2)
+                for (kk = 0 ; kk <= cnvec ; kk++)
+                { 
+                    Cp [kk] = Ap [kk + k + found] - pend ;
+                }
                 // Ch [0:cnvec-1] = Ah [k+found:anvec-1]
                 GB_memcpy (Ch, Ah + k + found, cnvec * sizeof (int64_t), nth) ;
+            }
+            else
+            {
+                ASSERT (found) ;
+                // Cp [0:k] = 0
+                GB_memset (Cp, 0, (k+1) * sizeof (int64_t), nth) ;
+                // Cp [k+1:cnvec] = Ap [k+1:cnvec] - pend
+                #pragma omp parallel for num_threads(nth2)
+                for (kk = k+1 ; kk <= cnvec ; kk++)
+                { 
+                    Cp [kk] = Ap [kk] - pend ;
+                }
             }
             // Ci [0:cnz-1] = Ai [pend:anz-1]
             GB_memcpy (Ci, Ai + pend, cnz * sizeof (int64_t), nth) ;
@@ -534,19 +597,11 @@ GrB_Info GB_selector
         // finalize the matrix, free workspace, and return result
         //----------------------------------------------------------------------
 
+        C->nvec = cnvec ;
         C->magic = GB_MAGIC ;
         C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
         C->iso = C_iso ;            // OK: burble already done above
-
-        if (opcode == GB_COLINDEX_idxunop_code && A->nvec_nonempty >= 0)
-        { 
-            C->nvec_nonempty = A->nvec_nonempty - 1 ;
-        }
-        else
-        { 
-            C->nvec_nonempty = GB_nvec_nonempty (C, Context) ;
-        }
-
+        C->nvec_nonempty = GB_nvec_nonempty (C, Context) ;
         ASSERT_MATRIX_OK (C, "C output for GB_selector (column select)", GB0) ;
         return (GrB_SUCCESS) ;
     }

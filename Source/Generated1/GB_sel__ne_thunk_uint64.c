@@ -72,6 +72,8 @@ void GB (_sel_phase1__ne_thunk_uint64)
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
+
+
 void GB (_sel_phase2__ne_thunk_uint64)
 (
     int64_t *restrict Ci,
@@ -92,6 +94,8 @@ void GB (_sel_phase2__ne_thunk_uint64)
     
     #include "GB_select_phase2.c"
 }
+
+
 
 //------------------------------------------------------------------------------
 // GB_sel_bitmap

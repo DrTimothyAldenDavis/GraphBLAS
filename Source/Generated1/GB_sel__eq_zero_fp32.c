@@ -72,6 +72,8 @@ void GB (_sel_phase1__eq_zero_fp32)
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
+
+
 void GB (_sel_phase2__eq_zero_fp32)
 (
     int64_t *restrict Ci,
@@ -92,6 +94,8 @@ void GB (_sel_phase2__eq_zero_fp32)
     
     #include "GB_select_phase2.c"
 }
+
+
 
 //------------------------------------------------------------------------------
 // GB_sel_bitmap

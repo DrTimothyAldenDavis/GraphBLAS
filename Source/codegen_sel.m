@@ -80,6 +80,18 @@ fprintf ('\nrowgt      ') ;
 codegen_sel_method ('rowgt'     , [ ], 'GB_void' , 'GB_ROWGT_SELECTOR'   ) ;
 codegen_sel_method ('rowgt'     , [ ], 'GB_void' , 'GB_ROWGT_SELECTOR'   , 1) ;
 
+fprintf ('\ncolindex   ') ;
+codegen_sel_method ('colindex'  , [ ], 'GB_void' , 'GB_COLINDEX_SELECTOR') ;
+codegen_sel_method ('colindex'  , [ ], 'GB_void' , 'GB_COLINDEX_SELECTOR', 1) ;
+
+fprintf ('\ncolle      ') ; % was called resize
+codegen_sel_method ('colle'     , [ ], 'GB_void' , 'GB_COLLE_SELECTOR'   ) ;
+codegen_sel_method ('colle'     , [ ], 'GB_void' , 'GB_COLLE_SELECTOR'   , 1) ;
+
+fprintf ('\ncolgt      ') ;
+codegen_sel_method ('colgt'     , [ ], 'GB_void' , 'GB_COLGT_SELECTOR'   ) ;
+codegen_sel_method ('colgt'     , [ ], 'GB_void' , 'GB_COLGT_SELECTOR'   , 1) ;
+
 % NONZOMBIE:         name         selector                     type
 % phase1: depends on Ai only, so only nonzombie_iso is used
 % phase2: use all 15 workers

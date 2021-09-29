@@ -72,6 +72,8 @@ void GB (_sel_phase1__idxunop_any)
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
+
+
 void GB (_sel_phase2__idxunop_any)
 (
     int64_t *restrict Ci,
@@ -92,6 +94,8 @@ void GB (_sel_phase2__idxunop_any)
     GB_Type_code zcode = op->ztype->code, xcode = op->xtype->code, acode = A->type->code ; size_t zsize = op->ztype->size, xsize = op->xtype->size ;
     #include "GB_select_phase2.c"
 }
+
+
 
 //------------------------------------------------------------------------------
 // GB_sel_bitmap

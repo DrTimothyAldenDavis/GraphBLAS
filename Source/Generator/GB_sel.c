@@ -72,6 +72,8 @@ endif_phase1
 // GB_sel_phase2
 //------------------------------------------------------------------------------
 
+if_phase2
+
 void GB (_sel_phase2)
 (
     int64_t *restrict Ci,
@@ -92,6 +94,8 @@ void GB (_sel_phase2)
     GB_get_zxtypes
     #include "GB_select_phase2.c"
 }
+
+endif_phase2
 
 //------------------------------------------------------------------------------
 // GB_sel_bitmap

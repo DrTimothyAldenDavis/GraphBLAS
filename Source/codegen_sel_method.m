@@ -26,9 +26,14 @@ end
 
 name = sprintf ('%s_%s', opname, aname) ;
 
-enable_phase1 = iso || (is_entry_selector && ~is_nonzombie_selector) ;
-
-% fprintf ('\nname: %s phase1: %d', name, enable_phase1) ;
+if (test_contains (opname, 'col'))
+    % only bitmap selector is used
+    enable_phase1 = false ;
+    enable_phase2 = false ;
+else
+    enable_phase1 = iso || (is_entry_selector && ~is_nonzombie_selector) ;
+    enable_phase2 = true ;
+end
 
 fprintf (f, 'define(`GB_iso_select'', `%d'')\n', iso) ;
 
@@ -38,7 +43,11 @@ if (enable_phase1)
 else
     fprintf (f, 'define(`_sel_phase1'', `_sel_phase1__(none)'')\n') ;
 end
-fprintf (f, 'define(`_sel_phase2'', `_sel_phase2__%s'')\n', name) ;
+if (enable_phase2)
+    fprintf (f, 'define(`_sel_phase2'', `_sel_phase2__%s'')\n', name) ;
+else
+    fprintf (f, 'define(`_sel_phase2'', `_sel_phase2__(none)'')\n', name) ;
+end
 
 % zcode, zsize, xcode, xsize
 zxtype = '' ;
@@ -51,7 +60,8 @@ if (is_idxunop_selector)
 end
 fprintf (f, 'define(`GB_get_zxtypes'', `%s'')\n', zxtype) ;
 
-if isequal (opname, 'nonzombie') || isequal (opname, 'resize') 
+if isequal (opname, 'nonzombie')
+    % no bitmap selectors for nonzombie selectors
     fprintf (f, 'define(`_sel_bitmap'', `_sel_bitmap__(none)'')\n') ;
     fprintf (f, 'define(`if_bitmap'', `#if 0'')\n') ;
     fprintf (f, 'define(`endif_bitmap'', `#endif'')\n') ;
@@ -94,6 +104,15 @@ else
     fprintf (f, 'define(`endif_phase1'', `#endif'')\n') ;
 end
 
+% enable phase2
+if (enable_phase2)
+    fprintf (f, 'define(`if_phase2'', `'')\n') ;
+    fprintf (f, 'define(`endif_phase2'', `'')\n') ;
+else
+    fprintf (f, 'define(`if_phase2'', `#if 0'')\n') ;
+    fprintf (f, 'define(`endif_phase2'', `#endif'')\n') ;
+end
+
 % for phase2: copy the numerical value of the entry
 if (iso)
     % A is iso
@@ -117,14 +136,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_sel.c | m4 | tail -n +15 > Generated1/GB_sel__%s.c', ...
+'cat control.m4 Generator/GB_sel.c | m4 | tail -n +17 > Generated1/GB_sel__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_sel.h | m4 | tail -n +15 >> Generated1/GB_sel__include.h') ;
+'cat control.m4 Generator/GB_sel.h | m4 | tail -n +17 >> Generated1/GB_sel__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

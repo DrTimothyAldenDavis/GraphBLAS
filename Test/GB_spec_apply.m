@@ -16,17 +16,9 @@ if (nargout > 1 || nargin < 6 || nargin > 7)
     error ('usage: C = GB_spec_apply (C, Mask, accum, op, A, descriptor, thunk)') ;
 end
 
-if (nargin < 7)
-    thunk = 0 ;
-end
-if (isstruct (thunk))
-    thunk = GB_mex_cast (thunk.matrix, thunk.class) ;
-end
-thunk = full (thunk) ;
-
 C = GB_spec_matrix (C) ;
 A = GB_spec_matrix (A) ;
-[opname optype ztype xtype] = GB_spec_operator (op, C.class) ;
+[opname optype ztype xtype ytype] = GB_spec_operator (op, C.class) ;
 [C_replace Mask_comp Atrans Btrans Mask_struct] = ...
     GB_spec_descriptor (descriptor) ;
 Mask = GB_spec_getmask (Mask, Mask_struct) ;
@@ -48,6 +40,15 @@ T.class = ztype ;
 p = T.pattern ;
 
 if (GB_spec_is_idxunop (opname))
+
+    if (nargin < 7)
+        thunk = 0 ;
+    end
+    if (isstruct (thunk))
+        thunk = GB_mex_cast (thunk.matrix, thunk.class) ;
+    end
+    thunk = full (thunk) ;
+    thunk = GB_mex_cast (thunk, ytype) ;
 
     [m, n] = size (A.matrix) ;
     for i = 1:m

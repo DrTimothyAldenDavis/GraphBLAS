@@ -145,6 +145,41 @@ switch (opcode)
         break ;
 
     //--------------------------------------------------------------------------
+    // COL selectors are used only for the bitmap case
+    //--------------------------------------------------------------------------
+
+    #ifdef GB_BITMAP_SELECTOR
+
+    case GB_COLINDEX_idxunop_code     :  // C = colindex (A,k)
+
+        switch (typecode)
+        {
+            case GB_ignore_code  : GB_SEL_WORKER (_colindex, _iso, GB_void)
+            default              : GB_SEL_WORKER (_colindex, _any, GB_void)
+        }
+        break ;
+
+    case GB_COLLE_idxunop_code     :  // C = colle (A,k)
+
+        switch (typecode)
+        {
+            case GB_ignore_code  : GB_SEL_WORKER (_colle, _iso, GB_void)
+            default              : GB_SEL_WORKER (_colle, _any, GB_void)
+        }
+        break ;
+
+    case GB_COLGT_idxunop_code     :  // C = colgt (A,k)
+
+        switch (typecode)
+        {
+            case GB_ignore_code  : GB_SEL_WORKER (_colgt, _iso, GB_void)
+            default              : GB_SEL_WORKER (_colgt, _any, GB_void)
+        }
+        break ;
+
+    #endif
+
+    //--------------------------------------------------------------------------
     // nonzombie selectors are not used for the bitmap case
     //--------------------------------------------------------------------------
 
