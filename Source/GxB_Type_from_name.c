@@ -92,7 +92,7 @@ GrB_Info GxB_Type_from_name     // return the GrB_Type from a name
     else if (MATCH ("uint32_t"      )) (*type) = GrB_UINT32 ;
     else if (MATCH ("uint64_t"      )) (*type) = GrB_UINT64 ;
     else if (MATCH ("float"         )) (*type) = GrB_FP32   ;
-    else if (MATCH ("double"        )) (*type) = GrB_FP32   ;
+    else if (MATCH ("double"        )) (*type) = GrB_FP64   ;
     else if (MATCH ("float complex" )) (*type) = GxB_FC32   ;
     else if (MATCH ("double complex")) (*type) = GxB_FC64   ;
     else

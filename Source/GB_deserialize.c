@@ -48,7 +48,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     if (blob_size < GB_BLOB_HEADER_SIZE)
     { 
         // blob is invalid
-        return (GrB_INVALID_VALUE) ;
+        return (GrB_INVALID_OBJECT)  ;
     }
 
     GB_BLOB_READ (blob_size2, size_t) ;
@@ -60,7 +60,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
             blob_size < GB_BLOB_HEADER_SIZE + GxB_MAX_NAME_LEN))
     { 
         // blob is invalid
-        return (GrB_INVALID_VALUE) ;
+        return (GrB_INVALID_OBJECT)  ;
     }
 
     GB_BLOB_READ (version, int32_t) ;
@@ -99,8 +99,8 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // ensure the type has the right size
     if (ctype == NULL || ctype->size != typesize)
     { 
-        // blob is invalid
-        return (GrB_INVALID_VALUE) ;
+        // blob is invalid; type is missing or the wrong size
+        return (GrB_DOMAIN_MISMATCH) ;
     }
 
     if (ccode == GB_UDT_code)
@@ -201,55 +201,11 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
         blob, blob_size, Cx_Sblocks, Cx_nblocks, Cx_method, &s, Context)) ;
     C->magic = GB_MAGIC ;
 
-#if 0
-    //--------------------------------------------------------------------------
-    // fast vs secure deserialization
-    //--------------------------------------------------------------------------
-
-    // Since this method no longer does typecasting on its result, the matrix
-    // check can be deferred to the user application.  If the blob is not
-    // trusted, then GxB_print (C, GxB_SILENT) can be used, which performs
-    // the same check below.
-
-    if (!fast_import)
-    {
-        // See the extensive comments in GB_import.c.  If fast_import is false
-        // then a slower but secure deserialization is performed.  If the data
-        // is mangled (maliciously or inadvertantly) this check will catch it
-        // and safely report an error.
-        // https://cwe.mitre.org/data/definitions/502.html
-        GBURBLE ("(secure) ") ;
-        GB_OK (GB_matvec_check (C, "secure deserialize", GxB_SILENT, NULL, ""));
-    }
-#endif
-
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-#if 0
-    // typecast if requested type_expected differs from ctype
-    ASSERT_MATRIX_OK (C, "C from deserialize (before typecast)", GB0) ;
-    if (ctype != type_expected && type_expected != NULL)
-    {
-        GBURBLE ("(cast %s to %s) ", C->type->name, type_expected->name) ;
-        // T = empty matrix with the final type_expected.  All content except
-        // the header of T itself will be overwritten by C.
-        ASSERT (ccode != GB_UDT_code) ;
-        GB_OK (GB_new (&T, false, type_expected, 0, 0, GB_Ap_null, false,
-            GxB_AUTO_SPARSITY, GB_HYPER_SWITCH_DEFAULT, 0, Context)) ;
-        // transplant C into T, and typecast to type_expected
-        GB_OK (GB_transplant (T, type_expected, &C, Context)) ;
-        ASSERT (C == NULL) ;
-        (*Chandle) = T ;
-    }
-    else
-#endif
-    { 
-        // return result as-is
-        (*Chandle) = C ;
-    }
-
+    (*Chandle) = C ;
     ASSERT_MATRIX_OK (*Chandle, "Final result from deserialize", GB0) ;
     return (GrB_SUCCESS) ;
 }

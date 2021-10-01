@@ -25,7 +25,7 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
                             // GxB_MAX_NAME_LEN, owned by the user application).
     // input, not modified:
     const void *blob,       // the blob
-    size_t blob_size        // size of the blob
+    GrB_Index blob_size     // size of the blob
 )
 {
 
@@ -40,7 +40,7 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
     if (blob_size < GB_BLOB_HEADER_SIZE)
     { 
         // blob is invalid
-        return (GrB_INVALID_VALUE) ;
+        return (GrB_INVALID_OBJECT) ;
     }
 
     //--------------------------------------------------------------------------
@@ -51,10 +51,10 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
     GB_BLOB_READ (blob_size2, size_t) ;
     GB_BLOB_READ (typecode, int32_t) ;
 
-    if (blob_size2 != blob_size)
+    if (blob_size2 != (size_t) blob_size)
     { 
         // blob is invalid
-        return (GrB_INVALID_VALUE) ;
+        return (GrB_INVALID_OBJECT) ;
     }
 
     //--------------------------------------------------------------------------
@@ -72,9 +72,9 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
     { 
         // blob has a user-defined type
         if (blob_size < GB_BLOB_HEADER_SIZE + GxB_MAX_NAME_LEN)
-        {
+        { 
             // blob is invalid
-            return (GrB_INVALID_VALUE) ;
+            return (GrB_INVALID_OBJECT) ;
         }
         // get the name of the user type from the blob
         memcpy (type_name, blob + GB_BLOB_HEADER_SIZE, GxB_MAX_NAME_LEN) ;
@@ -82,7 +82,7 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
     else
     { 
         // blob is invalid
-        return (GrB_INVALID_VALUE) ;
+        return (GrB_INVALID_OBJECT) ;
     }
 
     // this should already be in the blob, but set it to null just in case

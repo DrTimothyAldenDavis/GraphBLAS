@@ -254,17 +254,17 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             switch (opcode)
             {
 
-                case GB_TRIL_idxunop_code : // z = (j < (i+thunk))
+                case GB_TRIL_idxunop_code : // z = (j <= (i+thunk))
                     #define GB_APPLY(p)                     \
                         int64_t i = GBI (Ai, p, avlen) ;    \
-                        Cz [p] = (j < (i + thunk)) ;
+                        Cz [p] = (j <= (i + thunk)) ;
                     #include "GB_positional_op_ijp.c"
                     return (GrB_SUCCESS) ;
 
-                case GB_TRIU_idxunop_code : // z = (j > (i+thunk))
+                case GB_TRIU_idxunop_code : // z = (j >= (i+thunk))
                     #define GB_APPLY(p)                     \
                         int64_t i = GBI (Ai, p, avlen) ;    \
-                        Cz [p] = (j > (i + thunk)) ;
+                        Cz [p] = (j >= (i + thunk)) ;
                     #include "GB_positional_op_ijp.c"
                     return (GrB_SUCCESS) ;
 

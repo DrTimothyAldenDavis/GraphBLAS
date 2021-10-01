@@ -86,7 +86,7 @@ static void gb_argminmax
     // but using x as a GrB_Matrix simplifies the gb_export.
 
     OK (GrB_Matrix_new (&D, type, m, m)) ;
-    OK (GxB_Matrix_diag (D, *x, 0, NULL)) ;
+    OK (GrB_Matrix_diag (D, *x, 0)) ;
 
     //--------------------------------------------------------------------------
     // compute G, where G(i,j)=1 if A(i,j) is the min/max in its row/col

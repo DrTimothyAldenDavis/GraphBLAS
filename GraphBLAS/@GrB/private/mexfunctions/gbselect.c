@@ -137,7 +137,7 @@ void mexFunction
     bool op_is_positional = false ;
 
     gb_mxstring_to_selectop (&idxunop, &selop, &thunk_required,
-        &op_is_positional, &ithunk, String [nstrings-1], NULL, NULL) ;
+        &op_is_positional, &ithunk, String [nstrings-1], NULL) ;
 
     //--------------------------------------------------------------------------
     // get the matrices
@@ -217,7 +217,7 @@ void mexFunction
     }
 
     gb_mxstring_to_selectop (&idxunop, &selop, &thunk_required,
-        &op_is_positional, &ithunk, String [nstrings-1], atype, btype) ;
+        &op_is_positional, &ithunk, String [nstrings-1], atype) ;
 
     //--------------------------------------------------------------------------
     // get the accum operator
@@ -269,7 +269,7 @@ void mexFunction
 
     GrB_IndexUnaryOp nan_test = NULL ;
     GrB_Matrix b2 = b ;
-    GrB_Matrix b3 = NULL ;
+    GrB_Matrix b3 = NULL, b4 = NULL ;
 
     if (op_is_positional)
     { 
@@ -382,8 +382,16 @@ void mexFunction
     }
     else
     { 
+        // typecast the b2 scalar to the idxunop->ytype
+        GrB_Type ytype ;
+        char ytype_name [GxB_MAX_NAME_LEN] ;
+        OK (GxB_IndexUnaryOp_ttype_name (ytype_name, idxunop)) ;
+        OK (GxB_Type_from_name (&ytype, ytype_name)) ;
+        OK (GrB_Matrix_new (&b4, ytype, 1, 1)) ;
+        OK (GrB_Matrix_assign (b4, NULL, NULL, b2, GrB_ALL, 1, GrB_ALL, 1,
+            NULL)) ;
         OK1 (C, GrB_Matrix_select_Scalar (C, M, accum, idxunop, A,
-            (GrB_Scalar) b2, desc)) ;
+            (GrB_Scalar) b4, desc)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -394,6 +402,7 @@ void mexFunction
     OK (GrB_Matrix_free (&A)) ;
     OK (GrB_Matrix_free (&b)) ;
     OK (GrB_Matrix_free (&b3)) ;
+    OK (GrB_Matrix_free (&b4)) ;
     OK (GrB_Descriptor_free (&desc)) ;
     OK (GrB_IndexUnaryOp_free (&nan_test)) ;
 

@@ -18,7 +18,7 @@
 GrB_Info GrB_Vector_serializeSize   // estimate the size of a blob
 (
     // output:
-    size_t *blob_size_handle,       // upper bound on the required size of the
+    GrB_Index *blob_size_handle,    // upper bound on the required size of the
                                     // blob on output.
     // input:
     GrB_Vector u                    // vector to serialize
@@ -44,8 +44,10 @@ GrB_Info GrB_Vector_serializeSize   // estimate the size of a blob
     // serialize the vector
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_serialize (NULL, blob_size_handle, (GrB_Matrix) u,
-        method, Context) ;
+    size_t blob_size ;
+    GrB_Info info = GB_serialize (NULL, &blob_size, (GrB_Matrix) u, method,
+        Context) ;
+    (*blob_size_handle) = (GrB_Index) blob_size ;
     GB_BURBLE_END ;
     return (info) ;
 }

@@ -43,7 +43,7 @@ GrB_Info GxB_Scalar_dup     // make an exact copy of a GrB_Scalar
     GrB_Scalar *s,          // handle of output GrB_Scalar to create
     const GrB_Scalar t      // input GrB_Scalar to copy
 )
-{ 
+{
     return (GrB_Scalar_dup (s, t)) ;
 }
 

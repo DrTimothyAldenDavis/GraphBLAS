@@ -51,7 +51,7 @@ void mexFunction
     int64_t ignore3 = 0 ;
 
     gb_mxstring_to_selectop (&idxunop, &selop, &ignore1, &ignore2, &ignore3,
-        pargin [0], type, type) ;
+        pargin [0], type) ;
 
     if (selop != NULL)
     { 

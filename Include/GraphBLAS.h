@@ -468,7 +468,8 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 //      GxB_Vector_serialize.  The default is LZ4.
 //
 // GxB_IMPORT:  GxB_FAST_IMPORT (faster, for trusted input data) or
-//      GxB_SECURE_IMPORT (slower, for untrusted input data).
+//      GxB_SECURE_IMPORT (slower, for untrusted input data), for the
+//      import/pack methods.
 
 // The following are enumerated values in both the GrB_Desc_Field and the
 // GxB_Option_Field for global options.  They are defined with the same integer
@@ -532,8 +533,7 @@ typedef enum
     GxB_AxB_SAXPY     = 1005,   // saxpy method (any kind)
 
     // for GxB_IMPORT only:
-    GxB_SECURE_IMPORT = 502     // GxB import/deserialize do not trust their
-                                // input data.
+    GxB_SECURE_IMPORT = 502     // import/pack trust their input data.
 }
 GrB_Desc_Value ;
 
@@ -767,6 +767,7 @@ GrB_Info GxB_Type_new           // create a new named GraphBLAS type
     const char *type_defn       // typedef for the type (no max length)
 ) ;
 
+#if (GxB_IMPLEMENTATION_MAJOR <= 5)
 // GB_Type_new is historical: use GxB_Type_new instead
 GB_PUBLIC
 GrB_Info GB_Type_new            // not user-callable
@@ -775,6 +776,7 @@ GrB_Info GB_Type_new            // not user-callable
     size_t sizeof_ctype,        // size of the user type
     const char *type_name       // name of the type, as "sizeof (ctype)"
 ) ;
+#endif
 
 GB_PUBLIC
 GrB_Info GxB_Type_name      // return the name of a GraphBLAS type
@@ -1025,6 +1027,7 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     const char *unop_defn           // definition of the user function
 ) ;
 
+#if (GxB_IMPLEMENTATION_MAJOR <= 5)
 // GB_UnaryOp_new is historical: use GxB_UnaryOp_new instead
 GB_PUBLIC
 GrB_Info GB_UnaryOp_new             // not user-callable
@@ -1035,6 +1038,7 @@ GrB_Info GB_UnaryOp_new             // not user-callable
     GrB_Type xtype,                 // type of input x
     const char *unop_name           // name of the user function
 ) ;
+#endif
 
 // GxB_UnaryOp_ztype is historical.  Use GxB_UnaryOp_ztype_name instead.
 GB_PUBLIC
@@ -1503,6 +1507,7 @@ GrB_Info GxB_BinaryOp_new
     const char *binop_defn          // definition of the user function
 ) ;
 
+#if (GxB_IMPLEMENTATION_MAJOR <= 5)
 // GB_BinaryOp_new is historical: use GxB_BinaryOp_new instead
 GB_PUBLIC
 GrB_Info GB_BinaryOp_new            // not user-callable
@@ -1514,6 +1519,7 @@ GrB_Info GB_BinaryOp_new            // not user-callable
     GrB_Type ytype,                 // type of input y
     const char *binop_name          // name of the user function
 ) ;
+#endif
 
 // NOTE: GxB_BinaryOp_ztype is historical.  Use GxB_BinaryOp_ztype_name instead.
 GB_PUBLIC
@@ -1841,10 +1847,10 @@ GB_PUBLIC GrB_IndexUnaryOp
     // These operators work on any data type, including user-defined.
     // The thunk is int64.
 
-    // TRIL: (j < (i+thunk)): lower triangular part
+    // TRIL: (j <= (i+thunk)): lower triangular part
     GrB_TRIL_INT64,
 
-    // TRIU: (j > (i+thunk)): upper triangular part
+    // TRIU: (j >= (i+thunk)): upper triangular part
     GrB_TRIU_INT64,
 
     // DIAG: (j == (i+thunk)): diagonal
@@ -4285,16 +4291,18 @@ GrB_Info GxB_Matrix_diag    // construct a diagonal matrix from a vector
     GrB_Matrix C,                   // output matrix
     const GrB_Vector v,             // input vector
     int64_t k,
-    const GrB_Descriptor desc       // unused, except threading control
+    const GrB_Descriptor desc       // to specify # of threads
 ) ;
 
-// GrB_Matrix_diag is identical to GxB_Matrix_diag (C, v, 0, NULL).
+// GrB_Matrix_diag is identical to GxB_Matrix_diag (C, v, k, NULL),
+// using the default # of threads from the global setting.
 
 GB_PUBLIC
 GrB_Info GrB_Matrix_diag    // construct a diagonal matrix from a vector
 (
     GrB_Matrix C,                   // output matrix
-    const GrB_Vector v              // input vector
+    const GrB_Vector v,             // input vector
+    int64_t k 
 ) ;
 
 // GxB_Vector_diag extracts a vector v from an input matrix A, which may be
@@ -10823,18 +10831,12 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 // GxB_Matrix_deserialize can deserialize a blob coming from either
 // GrB_Matrix_serialize or GxB_Matrix_serialize.
 
-// GrB_*_deserialize assumes its input data cannot be trusted, and performs a
-// secure deserialization.  GxB_*_deserialize has a descriptor setting that
-// allows it to be told that the data is trusted or untrusted.  By default,
-// GxB_*_deserialize assumes the input is trusted, and is thus faster than
-// GrB_*_deserialize as a result.
-
-// Deserialization of untrusted data is a common security problem; see:
-// https://cwe.mitre.org/data/definitions/502.html
-// If the input is untrusted, use the following descriptor setting for
-// GxB_Matrix_deserialize and GxB_Vector_deserialize; do not pass desc as NULL.
-//
-//      GxB_set (desc, GxB_IMPORT, GxB_SECURE_IMPORT) ;
+// Deserialization of untrusted data is a common security problem; see
+// https://cwe.mitre.org/data/definitions/502.html. The deserialization methods
+// below do a few basic checks so that no out-of-bounds access occurs during
+// deserialization, but the output matrix itself may still be corrupted.  If
+// the data is untrusted, use this to check the matrix:
+//      GxB_Matrix_fprint (A, "A deserialized", GrB_SILENT, NULL)
 
 // Example usage:
 
@@ -10844,8 +10846,8 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     //--------------------------------------------------------------------------
 
     // Given a GrB_Matrix A: assuming a user-defined type:
-    void *blob ;                // note, not allocated by the user
-    size_t blob_size ;
+    void *blob ;
+    GrB_Index blob_size ;
     GxB_Matrix_serialize (&blob, &blob_size, A, NULL) ;
     FILE *f = fopen ("myblob", "w") ;
     fwrite (blob_size, sizeof (size_t), 1, f) ;
@@ -10855,20 +10857,20 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     // B is a copy of A
     GxB_Matrix_deserialize (&B, MyQtype, blob, blob_size, NULL) ;
     GrB_Matrix_free (&B) ;
-    free (blob) ;               // note, freed by the user, not GraphBLAS
+    free (blob) ;
     GrB_finalize ( ) ;
 
     // --- in another process, to recreate the GrB_Matrix A:
-    GrB_init (GrB_NONBLOCKING) ;    // using ANSI C11 malloc/calloc/realloc/free
+    GrB_init (GrB_NONBLOCKING) ;
     FILE *f = fopen ("myblob", "r") ;
     fread (&blob_size, sizeof (size_t), 1, f) ;
-    blob = malloc (blob_size) ; // note, allocated by the user this time
+    blob = malloc (blob_size) ;
     fread (&blob, sizeof (uint8_t), 1, f) ;
     char type_name [GxB_MAX_NAME_LEN] ;
     GxB_deserialize_type_name (type_name, blob, blob_size) ;
     printf ("blob type is: %s\n", type_name) ;
     GrB_Type user_type = NULL ;
-    if (strncmp (type_name, "myquaternion", GxB_MAX_NAME_LEN))
+    if (strncmp (type_name, "myquaternion", GxB_MAX_NAME_LEN) == 0)
         user_type = MyQtype ;
     GxB_Matrix_deserialize (&A, user_type, blob, blob_size, NULL) ;
     free (blob) ;               // note, freed by the user, not GraphBLAS
@@ -10879,11 +10881,11 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 
     // Given a GrB_Matrix A: assuming a user-defined type, MyQType:
     void *blob = NULL ;
-    size_t blob_size = 0 ;
+    GrB_Index blob_size = 0 ;
     GrB_Matrix A, B = NULL ;
     // construct a matrix A, then serialized it:
     GrB_Matrix_serializeSize (&blob_size, A) ;      // loose upper bound
-    blob = malloc (blob_size) ;                     // user mallocs the blob
+    blob = malloc (blob_size) ;
     GrB_Matrix_serialize (blob, &blob_size, A) ;    // returns actual size
     blob = realloc (blob, blob_size) ;              // user can shrink the blob
     FILE *f = fopen ("myblob", "w") ;
@@ -10894,18 +10896,18 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     // B is a copy of A:
     GrB_Matrix_deserialize (&B, MyQtype, blob, blob_size) ;
     GrB_Matrix_free (&B) ;
-    free (blob) ;               // note, freed by the user, not GraphBLAS
+    free (blob) ;
     GrB_finalize ( ) ;
 
     // --- in another process, to recreate the GrB_Matrix A:
     GrB_init (GrB_NONBLOCKING) ;
     FILE *f = fopen ("myblob", "r") ;
     fread (&blob_size, sizeof (size_t), 1, f) ;
-    blob = malloc (blob_size) ; // note, allocated by the user this time
+    blob = malloc (blob_size) ;
     fread (&blob, sizeof (uint8_t), 1, f) ;
     // the user must know the type of A is MyQType
     GrB_Matrix_deserialize (&A, MyQtype, blob, blob_size) ;
-    free (blob) ;               // note, freed by the user, not GraphBLAS
+    free (blob) ;
 */
 
 // Three methods are currently implemented: no compression, LZ4, and LZ4HC
@@ -10960,7 +10962,7 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 (
     // output:
     void **blob_handle,             // the blob, allocated on output
-    size_t *blob_size_handle,       // size of the blob on output
+    GrB_Index *blob_size_handle,    // size of the blob on output
     // input:
     GrB_Matrix A,                   // matrix to serialize
     const GrB_Descriptor desc       // descriptor to select compression method
@@ -10973,7 +10975,7 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // output:
     void *blob,                     // the blob, already allocated in input
     // input/output:
-    size_t *blob_size_handle,       // size of the blob on input.  On output,
+    GrB_Index *blob_size_handle,    // size of the blob on input.  On output,
                                     // the # of bytes used in the blob.
     // input:
     GrB_Matrix A                    // matrix to serialize
@@ -10984,7 +10986,7 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 (
     // output:
     void **blob_handle,             // the blob, allocated on output
-    size_t *blob_size_handle,       // size of the blob on output
+    GrB_Index *blob_size_handle,    // size of the blob on output
     // input:
     GrB_Vector u,                   // vector to serialize
     const GrB_Descriptor desc       // descriptor to select compression method
@@ -10997,7 +10999,7 @@ GrB_Info GrB_Vector_serialize       // serialize a GrB_Vector to a blob
     // output:
     void *blob,                     // the blob, already allocated in input
     // input/output:
-    size_t *blob_size_handle,       // size of the blob on input.  On output,
+    GrB_Index *blob_size_handle,    // size of the blob on input.  On output,
                                     // the # of bytes used in the blob.
     // input:
     GrB_Vector u                    // vector to serialize
@@ -11007,7 +11009,7 @@ GB_PUBLIC
 GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
 (
     // output:
-    size_t *blob_size_handle,       // upper bound on the required size of the
+    GrB_Index *blob_size_handle,    // upper bound on the required size of the
                                     // blob on output.
     // input:
     GrB_Matrix A                    // matrix to serialize
@@ -11017,7 +11019,7 @@ GB_PUBLIC
 GrB_Info GrB_Vector_serializeSize   // estimate the size of a blob
 (
     // output:
-    size_t *blob_size_handle,       // upper bound on the required size of the
+    GrB_Index *blob_size_handle,    // upper bound on the required size of the
                                     // blob on output.
     // input:
     GrB_Vector u                    // vector to serialize
@@ -11037,10 +11039,9 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
                         // matrix of user-defined type.  May be NULL if blob
                         // holds a built-in type; otherwise must match the
                         // type of C.
-    const void *blob,   // the blob
-    size_t blob_size,   // size of the blob
-    const GrB_Descriptor desc       // to control # of threads used and
-                        // whether or not the input blob is trusted.
+    const void *blob,       // the blob
+    GrB_Index blob_size,    // size of the blob
+    const GrB_Descriptor desc       // to control # of threads used
 ) ;
 
 GB_PUBLIC
@@ -11053,8 +11054,8 @@ GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
                         // matrix of user-defined type.  May be NULL if blob
                         // holds a built-in type; otherwise must match the
                         // type of C.
-    const void *blob,   // the blob
-    size_t blob_size    // size of the blob
+    const void *blob,       // the blob
+    GrB_Index blob_size     // size of the blob
 ) ;
 
 GB_PUBLIC
@@ -11067,10 +11068,9 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
                         // vector of user-defined type.  May be NULL if blob
                         // holds a built-in type; otherwise must match the
                         // type of w.
-    const void *blob,   // the blob
-    size_t blob_size,   // size of the blob
-    const GrB_Descriptor desc       // to control # of threads used and
-                        // whether or not the input blob is trusted.
+    const void *blob,       // the blob
+    GrB_Index blob_size,    // size of the blob
+    const GrB_Descriptor desc       // to control # of threads used
 ) ;
 
 GB_PUBLIC
@@ -11083,8 +11083,8 @@ GrB_Info GrB_Vector_deserialize     // deserialize blob into a GrB_Vector
                         // vector of user-defined type.  May be NULL if blob
                         // holds a built-in type; otherwise must match the
                         // type of w.
-    const void *blob,   // the blob
-    size_t blob_size    // size of the blob
+    const void *blob,       // the blob
+    GrB_Index blob_size     // size of the blob
 ) ;
 
 // GxB_deserialize_type_name extracts the type_name of the GrB_Type of the
@@ -11103,7 +11103,7 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
                             // GxB_MAX_NAME_LEN, owned by the user application).
     // input, not modified:
     const void *blob,       // the blob
-    size_t blob_size        // size of the blob
+    GrB_Index blob_size     // size of the blob
 ) ;
 
 #endif

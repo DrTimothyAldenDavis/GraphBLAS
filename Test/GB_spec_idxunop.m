@@ -16,9 +16,9 @@ switch (opname)
     case { 'diagindex' }
         z = j - (i + thunk) ;
     case { 'tril' }
-        z = (j < (i+thunk)) ;
+        z = (j <= (i+thunk)) ;
     case { 'triu' }
-        z = (j > (i+thunk)) ;
+        z = (j >= (i+thunk)) ;
     case { 'diag' }
         z = (j == (i+thunk)) ;
     case { 'offdiag' }

@@ -28,7 +28,7 @@ Version 5.2.0, FIXME
         * GrB_EMPTY_OBJECT, GrB_NOT_IMPLEMENTED: error codes added
         * GrB_*_setElement_Scalar: set an entry in a matrix or vector,
             from a GrB_Scalar
-        * GrB_Matrix_diag: same as GxB_Matrix_diag (C, v, 0, NULL)
+        * GrB_Matrix_diag: same as GxB_Matrix_diag (C, v, k, NULL)
         * GrB_*_serialize/deserialize: with compression
     * GxB_IGNORE_DUP: special operator for build methods only; if dup
         is this operator, then duplicates are ignored (not an error)

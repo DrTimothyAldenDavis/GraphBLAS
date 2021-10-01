@@ -938,7 +938,6 @@ void mexFunction
     ERR (GrB_Vector_nvals (&nvals, vcrud)) ;
     CHECK (nvals == 7) ;
 
-    // FIXME: add _Scalar
     OK (GrB_Vector_setElement_INT32  (v, 12, 0)) ;
     OK (GrB_Vector_setElement_BOOL   (v, false, 18)) ;
     OK (GrB_Vector_setElement_INT8   (v, 1, 19)) ;
@@ -1143,7 +1142,6 @@ void mexFunction
     printf ("GrB_Vector_setElement----------------------------------------\n") ;
     expected = GrB_NULL_POINTER ;
 
-    // FIXME add _Scalar
     ERR (GrB_Vector_setElement_BOOL   (NULL, 0, 0)) ;
     ERR (GrB_Vector_setElement_INT8   (NULL, 0, 0)) ;
     ERR (GrB_Vector_setElement_UINT8  (NULL, 0, 0)) ;
@@ -1588,7 +1586,6 @@ void mexFunction
     printf ("GrB_Matrix_setElement----------------------------------------\n") ;
     expected = GrB_NULL_POINTER ;
 
-    // FIXME add _Scalar
     ERR (GrB_Matrix_setElement_BOOL   (NULL, 0, 0, 0)) ;
     ERR (GrB_Matrix_setElement_INT8   (NULL, 0, 0, 0)) ;
     ERR (GrB_Matrix_setElement_UINT8  (NULL, 0, 0, 0)) ;
@@ -3384,7 +3381,7 @@ void mexFunction
 
     expected = GrB_DIMENSION_MISMATCH ;
 
-    ERR1 (A,  GxB_Matrix_select_(A , NULL, NULL, GxB_TRIL, C , NULL, d0)) ;
+    ERR1 (A, GxB_Matrix_select_(A , NULL, NULL, GxB_TRIL, C , NULL, d0)) ;
 
     OK (GrB_Scalar_free_(&Thunk)) ;
 

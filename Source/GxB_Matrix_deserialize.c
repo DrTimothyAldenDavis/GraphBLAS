@@ -24,10 +24,9 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
                         // matrix of user-defined type.  May be NULL if blob
                         // holds a built-in type; otherwise must match the
                         // type of C.
-    const void *blob,   // the blob
-    size_t blob_size,   // size of the blob
-    const GrB_Descriptor desc       // to control # of threads used and
-                        // whether or not the input blob is trusted.
+    const void *blob,       // the blob
+    GrB_Index blob_size,    // size of the blob
+    const GrB_Descriptor desc       // to control # of threads used
 )
 { 
 
@@ -45,7 +44,7 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     // deserialize the blob into a matrix
     //--------------------------------------------------------------------------
 
-    info = GB_deserialize (C, type, blob, blob_size, Context) ;
+    info = GB_deserialize (C, type, blob, (size_t) blob_size, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

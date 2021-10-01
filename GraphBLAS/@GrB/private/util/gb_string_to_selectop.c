@@ -22,8 +22,7 @@ void gb_string_to_selectop
     int64_t *ithunk,
     // inputs:
     char *opstring,                     // string defining the operator
-    const GrB_Type atype,               // type of A, or NULL if not present
-    const GrB_Type ttype                // type of thunk, or NULL if not present
+    const GrB_Type atype                // type of A, or NULL if not present
 )
 {
 
@@ -49,24 +48,14 @@ void gb_string_to_selectop
     }
 
     //--------------------------------------------------------------------------
-    // get the operator type
+    // get the operator type for VALUE* operators
     //--------------------------------------------------------------------------
 
     GrB_Type type ;
     if (op_typename == NULL)
     { 
-        // no type in the opstring; select the type from from A and the thunk
-        if (ttype == NULL)
-        {
-            // only A is present; use its type
-            type = atype ;
-        }
-        else
-        {
-            // Both A and the thunk are present: use the GrB.optype approach.
-            // If neither A nor the thunk are present, type is NULL.
-            type = gb_default_type (atype, ttype) ;
-        }
+        // no type in the opstring; select the type from A
+        type = atype ;
     }
     else
     { 
@@ -89,13 +78,11 @@ void gb_string_to_selectop
     if (MATCH (opstring, "tril"))
     { 
         (*idxunop) = GrB_TRIL_INT64 ;
-        (*ithunk)++ ;
         (*op_is_positional) = true ;
     }
     else if (MATCH (opstring, "triu"))
     { 
         (*idxunop) = GrB_TRIU_INT64 ;
-        (*ithunk)-- ;
         (*op_is_positional) = true ;
     }
     else if (MATCH (opstring, "diag"))

@@ -50,6 +50,7 @@ GrB_Info GxB_Scalar_new     // create a new GrB_Scalar with no entries
     GrB_Scalar *s,          // handle of GrB_Scalar to create
     GrB_Type type           // type of GrB_Scalar to create
 )
-{ 
+{
     return (GrB_Scalar_new (s, type)) ;
 }
+

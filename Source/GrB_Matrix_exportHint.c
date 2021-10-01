@@ -62,6 +62,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
             break ;
     }
 
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

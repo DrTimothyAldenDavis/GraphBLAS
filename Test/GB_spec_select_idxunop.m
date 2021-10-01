@@ -59,9 +59,9 @@ switch (opname)
     case { 'diagindex' }
         p = A.pattern & ((J - (I + ithunk)) ~= 0) ;
     case { 'tril' }
-        p = A.pattern & (J < (I + ithunk)) ;
+        p = A.pattern & (J <= (I + ithunk)) ;
     case { 'triu' }
-        p = A.pattern & (J > (I + ithunk)) ;
+        p = A.pattern & (J >= (I + ithunk)) ;
     case { 'diag' }
         p = A.pattern & (J == (I + ithunk)) ;
     case { 'offdiag' }

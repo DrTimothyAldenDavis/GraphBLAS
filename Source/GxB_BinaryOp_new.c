@@ -61,3 +61,31 @@ GrB_Info GxB_BinaryOp_new
     return (GrB_SUCCESS) ;
 }
 
+//------------------------------------------------------------------------------
+// GB_BinaryOp_new: create a new user-defined binary operator (historical)
+//------------------------------------------------------------------------------
+
+// This method was only accessible via the GrB_BinaryOp_new macro in v5.1.x
+// and earlier.  The GrB_BinaryOp_new macro in v5.2.x and later calls
+// GxB_BinaryOp_new instead.  This method is left for historical purposes,
+// so that older binaries compiled with v5.1.x can work with v5.2.x.
+// It will no longer be needed in v6.0 or later.
+
+#if (GxB_IMPLEMENTATION_MAJOR <= 5)
+
+GrB_Info GB_BinaryOp_new
+(
+    GrB_BinaryOp *binaryop,         // handle for the new binary operator
+    GxB_binary_function function,   // pointer to the binary function
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype,                 // type of input x
+    GrB_Type ytype,                 // type of input y
+    const char *name                // name of the user function
+)
+{
+    return (GxB_BinaryOp_new (binaryop, function, ztype, xtype, ytype,
+        name, NULL)) ;
+}
+
+#endif
+

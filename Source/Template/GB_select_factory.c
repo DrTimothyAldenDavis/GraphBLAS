@@ -102,12 +102,12 @@ switch (opcode)
         break ;
         #endif
 
-    case GB_VALUENE_idxunop_code :  // C = value_select (A,k)
-    case GB_VALUEEQ_idxunop_code :
-    case GB_VALUEGT_idxunop_code :
-    case GB_VALUEGE_idxunop_code :
-    case GB_VALUELT_idxunop_code :
-    case GB_VALUELE_idxunop_code :
+    case GB_VALUEEQ_idxunop_code : // C = value_select (A,k)
+    case GB_VALUENE_idxunop_code :
+    case GB_VALUEGT_idxunop_code : 
+    case GB_VALUEGE_idxunop_code : 
+    case GB_VALUELT_idxunop_code : 
+    case GB_VALUELE_idxunop_code : 
 
         // A is not iso, and typecasting is required, so use the
         // idxunop_function, just as if this were a user-defined operator.

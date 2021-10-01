@@ -55,9 +55,6 @@ GrB_Info GB_UnaryOp_check   // check a GraphBLAS unary operator
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
     bool op_is_one = (opcode == GB_ONE_unop_code) ;
 
-//  printf ("op_is_positional: %d\n", op_is_positional) ;
-//  printf ("op->unop_function: %p\n", op->unop_function) ;
-
     if (!op_is_positional && op->unop_function == NULL)
     { 
         GBPR0 ("    UnaryOp has a NULL function pointer\n") ;

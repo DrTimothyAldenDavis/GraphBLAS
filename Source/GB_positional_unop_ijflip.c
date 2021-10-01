@@ -27,8 +27,7 @@ GrB_UnaryOp GB_positional_unop_ijflip   // return flipped operator
             case GB_POSITIONI1_unop_code : return (GxB_POSITIONJ1_INT64) ;
             case GB_POSITIONJ_unop_code  : return (GxB_POSITIONI_INT64 ) ;
             case GB_POSITIONJ1_unop_code : return (GxB_POSITIONI1_INT64) ;
-            // non-positional op is returned unmodified
-            default                   : return (op) ;
+            default: ;
         }
     }
     else
@@ -39,9 +38,10 @@ GrB_UnaryOp GB_positional_unop_ijflip   // return flipped operator
             case GB_POSITIONI1_unop_code : return (GxB_POSITIONJ1_INT32) ;
             case GB_POSITIONJ_unop_code  : return (GxB_POSITIONI_INT32 ) ;
             case GB_POSITIONJ1_unop_code : return (GxB_POSITIONI1_INT32) ;
-            // non-positional op is returned unmodified
-            default                   : return (op) ;
+            default: ;
         }
     }
+    // non-positional op is returned unmodified
+    return (op) ;
 }
 

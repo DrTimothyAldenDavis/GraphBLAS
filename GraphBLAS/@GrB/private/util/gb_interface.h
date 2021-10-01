@@ -352,8 +352,7 @@ void gb_string_to_selectop
     int64_t *ithunk,
     // inputs:
     char *opstring,                     // string defining the operator
-    const GrB_Type atype,               // type of A, or NULL if not present
-    const GrB_Type ttype                // type of thunk, or NULL if not present
+    const GrB_Type atype                // type of A, or NULL if not present
 ) ;
 
 void gb_mxstring_to_selectop
@@ -367,8 +366,7 @@ void gb_mxstring_to_selectop
     int64_t *ithunk,
     // inputs:
     const mxArray *mxstring,            // built-in string
-    const GrB_Type atype,               // type of A, or NULL if not present
-    const GrB_Type ttype                // type of thunk, or NULL if not present
+    const GrB_Type atype                // type of A, or NULL if not present
 ) ;
 
 bool gb_mxarray_is_scalar   // true if built-in array is a scalar

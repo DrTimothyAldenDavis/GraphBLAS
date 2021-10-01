@@ -42,7 +42,7 @@ GrB_Matrix_serializeSize
 
 Vector_build, Matrix_build when dup is NULL: no duplicates allowed
 
-GrB_Matrix_diag (C, v) same as GxB_Matrix_diag (C, v, 0, NULL)
+GrB_Matrix_diag (C, v, k) same as GxB_Matrix_diag (C, v, k, NULL)
 
 apply bind1st and bind2nd: already handle GxB_Scalar, change to GrB_Scalar
 

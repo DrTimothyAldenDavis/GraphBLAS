@@ -18,7 +18,7 @@
 GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
 (
     // output:
-    size_t *blob_size_handle,       // upper bound on the required size of the
+    GrB_Index *blob_size_handle,    // upper bound on the required size of the
                                     // blob on output.
     // input:
     GrB_Matrix A                    // matrix to serialize
@@ -44,7 +44,9 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
     // serialize the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_serialize (NULL, blob_size_handle, A, method, Context) ;
+    size_t blob_size ;
+    GrB_Info info = GB_serialize (NULL, &blob_size, A, method, Context) ;
+    (*blob_size_handle) = (GrB_Index) blob_size ;
     GB_BURBLE_END ;
     return (info) ;
 }

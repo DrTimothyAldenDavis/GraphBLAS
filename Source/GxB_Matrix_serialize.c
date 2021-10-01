@@ -22,7 +22,7 @@
 
 /*
     void *blob = NULL ;
-    size_t blob_size = 0 ;
+    GrB_Index blob_size = 0 ;
     GrB_Matrix A, B = NULL ;
     // construct a matrix A, then serialized it:
     GxB_Matrix_serialize (&blob, &blob_size, A, NULL) ; // GxB mallocs the blob
@@ -37,7 +37,7 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 (
     // output:
     void **blob_handle,             // the blob, allocated on output
-    size_t *blob_size_handle,       // size of the blob on output
+    GrB_Index *blob_size_handle,    // size of the blob on output
     // input:
     GrB_Matrix A,                   // matrix to serialize
     const GrB_Descriptor desc       // descriptor to select compression method
@@ -64,7 +64,9 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     //--------------------------------------------------------------------------
 
     (*blob_handle) = NULL ;
-    info = GB_serialize (blob_handle, blob_size_handle, A, method, Context) ;
+    size_t blob_size = 0 ;
+    info = GB_serialize (blob_handle, &blob_size, A, method, Context) ;
+    (*blob_size_handle) = (GrB_Index) blob_size ;
     GB_BURBLE_END ;
     return (info) ;
 }

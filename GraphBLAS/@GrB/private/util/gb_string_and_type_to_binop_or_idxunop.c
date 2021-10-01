@@ -789,12 +789,10 @@ GrB_BinaryOp gb_string_and_type_to_binop_or_idxunop
         if (MATCH (op_name, "tril"))
         { 
             (*idxunop) = GrB_TRIL_INT64 ;
-            (*ithunk)++ ;
         }
         else if (MATCH (op_name, "triu"))
         { 
             (*idxunop) = GrB_TRIU_INT64 ;
-            (*ithunk)-- ;
         }
         else if (MATCH (op_name, "diag"))
         {

@@ -28,21 +28,14 @@ void GB_undo_dynamic_header
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (A_dynamic == NULL || (*A_dynamic) == NULL || A == NULL)
+    if (A_dynamic == NULL || (*A_dynamic) == NULL || A == NULL ||
+        !(A->static_header))
     { 
         // nothing to do
         return ;
     }
 
     ASSERT (!((*A_dynamic)->static_header)) ;
-
-    if (!(A->static_header))
-    { 
-        // nothing to do
-        ASSERT ((*A_dynamic) == A) ;
-        (*A_dynamic) = NULL ;
-        return ;
-    }
 
     //--------------------------------------------------------------------------
     // copy the dynamic header of A_dynamic back to the static header, A

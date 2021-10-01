@@ -28,15 +28,8 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (op != NULL) ;
-    if (op == GxB_IGNORE_DUP)
-    { 
-        GB_ERROR (GrB_DOMAIN_MISMATCH, "%s", "GxB_IGNORE_DUP is not a valid"
-            " operator in this context.  It can only be used in the build "
-            "methods") ;
-    }
-
     // ctype and btype may be NULL, but atype is never NULL
+    ASSERT (op != NULL) ;
     ASSERT (atype != NULL) ;
     ASSERT (bcode <= GB_UDT_code) ;
     GB_Opcode opcode = op->opcode ;

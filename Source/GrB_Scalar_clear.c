@@ -38,7 +38,7 @@ GrB_Info GxB_Scalar_clear   // clear a GrB_Scalar of its entry
 (                           // type and dimension remain unchanged
     GrB_Scalar s            // GrB_Scalar to clear
 )
-{ 
+{
     return (GrB_Scalar_clear (s)) ;
 }
 

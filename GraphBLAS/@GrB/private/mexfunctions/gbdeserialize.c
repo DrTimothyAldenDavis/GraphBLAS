@@ -39,43 +39,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     void *blob = mxGetData (pargin [0]) ;
-    size_t blob_size = mxGetM (pargin [0]) ;
-
-#if 0
-    // get the mode: 'fast' or 'secure' (or 'debug' for testing only)
-    bool debug = false ;
-    GrB_Descriptor desc = NULL ;
-    if (nargin > 1)
-    { 
-        GrB_Desc_Value import_mode ;
-        #define LEN 256
-        char mode_string [LEN+1] ;
-        gb_mxstring_to_string (mode_string, LEN, pargin [1], "mode") ;
-        if (MATCH (mode_string, "fast"))
-        { 
-            import_mode = GxB_FAST_IMPORT ;
-        }
-        else if (MATCH (mode_string, "secure"))
-        { 
-            import_mode = GxB_SECURE_IMPORT ;
-        }
-        else if (MATCH (mode_string, "debug"))
-        {
-            // use GrB_Matrix_deserialize, which does not use the descriptor
-            debug = true ;
-            import_mode = GxB_SECURE_IMPORT ;
-        }
-        else
-        {
-            ERROR ("unknown mode") ;
-        }
-        OK (GrB_Descriptor_new (&desc)) ;
-        OK (GrB_Descriptor_set (desc, GxB_IMPORT, import_mode)) ;
-    }
-
-    // get the ctype (testing only; not documented)
-    GrB_Type ctype = (nargin > 2) ? gb_mxstring_to_type (pargin [2]) : NULL ;
-#endif
+    GrB_Index blob_size = (GrB_Index) mxGetM (pargin [0]) ;
 
     //--------------------------------------------------------------------------
     // deserialize the blob into a matrix
@@ -83,19 +47,6 @@ void mexFunction
 
     GrB_Matrix C = NULL ;
     OK (GrB_Matrix_deserialize (&C, NULL, blob, blob_size)) ;
-
-#if 0
-    if (debug)
-    {
-        // test GrB_Matrix_deserialize (not the default)
-        OK (GrB_Matrix_deserialize (&C, ctype, blob, blob_size)) ;
-    }
-    else
-    {
-        OK (GxB_Matrix_deserialize (&C, ctype, blob, blob_size, desc)) ;
-    }
-    OK (GrB_Descriptor_free (&desc)) ;
-#endif
 
     //--------------------------------------------------------------------------
     // export the output matrix C

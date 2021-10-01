@@ -125,7 +125,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     void *blob = NULL ;
-    size_t blob_size ;
+    GrB_Index blob_size ;
 
     if (debug)
     {

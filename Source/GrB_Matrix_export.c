@@ -177,6 +177,7 @@ GrB_Info GrB_Matrix_export  // export a matrix
             ASSERT (csc_requested == A->is_csc) ;
             if (A->iso)
             { 
+                // expand the iso A->x into the non-iso array Ax
                 ASSERT (nvals > 0) ;
                 GB_iso_expand (Ax, nvals, A->x, A->type->size, Context) ;
             }

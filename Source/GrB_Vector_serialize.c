@@ -16,7 +16,7 @@
 
 /*
     void *blob = NULL ;
-    size_t blob_size = 0 ;
+    GrB_Index blob_size = 0 ;
     GrB_Vector u, w = NULL ;
     // construct a vector u, then serialized it:
     GrB_Vector_serializeSize (&blob_size, u) ;      // loose upper bound
@@ -35,7 +35,7 @@ GrB_Info GrB_Vector_serialize       // serialize a GrB_Vector to a blob
     // output:
     void *blob,                     // the blob, already allocated in input
     // input/output:
-    size_t *blob_size_handle,       // size of the blob on input.  On output,
+    GrB_Index *blob_size_handle,    // size of the blob on input.  On output,
                                     // the # of bytes used in the blob.
     // input:
     GrB_Vector u                    // vector to serialize
@@ -62,8 +62,13 @@ GrB_Info GrB_Vector_serialize       // serialize a GrB_Vector to a blob
     // serialize the vector into the preallocated blob
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_serialize (&blob, blob_size_handle, (GrB_Matrix) u,
-        method, Context) ;
+    size_t blob_size = (size_t) (*blob_size_handle) ;
+    GrB_Info info = GB_serialize (&blob, &blob_size, (GrB_Matrix) u, method,
+        Context) ;
+    if (info == GrB_SUCCESS)
+    { 
+        (*blob_size_handle) = (GrB_Index) blob_size ;
+    }
     GB_BURBLE_END ;
     return (info) ;
 }

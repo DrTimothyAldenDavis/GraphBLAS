@@ -165,8 +165,8 @@ typedef enum
     GB_FLIPDIAGINDEX_idxunop_code = 54,   // (i-(j+thunk)), internal use only
 
     // Result is BOOL, depending on i and/or j, and thunk:
-    GB_TRIL_idxunop_code      = 55,   // (j < (i+thunk)): tril (A,thunk-1)
-    GB_TRIU_idxunop_code      = 56,   // (j > (i+thunk)): triu (A,thunk+1)
+    GB_TRIL_idxunop_code      = 55,   // (j <= (i+thunk)): tril (A,thunk)
+    GB_TRIU_idxunop_code      = 56,   // (j >= (i+thunk)): triu (A,thunk)
     GB_DIAG_idxunop_code      = 57,   // (j == (i+thunk)): diag(A,thunk)
     GB_OFFDIAG_idxunop_code   = 58,   // (j != (i+thunk)): offdiag(A,thunk)
     GB_COLLE_idxunop_code     = 59,   // (j <= thunk): A (:,0:thunk)

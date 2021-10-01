@@ -7,14 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// Identical to GxB_Matrix_diag (C, v, 0, NULL)
+// Identical to GxB_Matrix_diag (C, v, k, NULL)
 
 #include "GB_diag.h"
 
 GrB_Info GrB_Matrix_diag    // construct a diagonal matrix from a vector
 (
     GrB_Matrix C,                   // output matrix
-    const GrB_Vector v              // input vector
+    const GrB_Vector v,             // input vector
+    int64_t k
 )
 { 
 
@@ -22,7 +23,7 @@ GrB_Info GrB_Matrix_diag    // construct a diagonal matrix from a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GrB_Matrix_diag (C, v)") ;
+    GB_WHERE (C, "GrB_Matrix_diag (C, v, k)") ;
     GB_BURBLE_START ("GrB_Matrix_diag") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
@@ -31,7 +32,7 @@ GrB_Info GrB_Matrix_diag    // construct a diagonal matrix from a vector
     // C = diag (v,0)
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_Matrix_diag (C, (GrB_Matrix) v, 0, Context) ;
+    GrB_Info info = GB_Matrix_diag (C, (GrB_Matrix) v, k, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

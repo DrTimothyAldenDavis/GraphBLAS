@@ -190,8 +190,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         }
         if (!GB_Type_compatible (GrB_BOOL, op->ztype))
         { 
-            // GrB_IndexUnaryOp ztype must be compatible with GrB_BOOL;
-            // this is true for all built-in ops
+            // GrB_IndexUnaryOp ztype must be compatible with GrB_BOOL
             GB_ERROR (GrB_DOMAIN_MISMATCH,
                 "Output of user-defined IndexUnaryOp %s is %s\n"
                 "which cannot be typecasted to bool\n",
@@ -205,14 +204,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 "input Thunk type [%s] and op thunk type [%s]"
                 " not compatible",
                 op->name, ttype->name, op->ytype->name) ;
-        }
-        if (!GB_Type_compatible (A->type, op->xtype))
-        { 
-            // A must be typecasted to the op->xtype, unless xtype is NULL
-            GB_ERROR (GrB_DOMAIN_MISMATCH,
-                "Incompatible type for C=%s(A,Thunk):\n"
-                "input A type [%s] and op xtype [%s] not compatible",
-                op->name, A->type->name, op->xtype->name) ;
         }
     }
     else if (op_is_user_defined)
@@ -293,7 +284,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     //--------------------------------------------------------------------------
 
     bool flipij = !A_csc ;
-    // printf ("in GB_select, flipij is %d\n", flipij) ;
 
     ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk now GB_select", GB0) ;
 
@@ -325,23 +315,17 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         switch (opcode)
         {
             case GB_TRIL_idxunop_code : 
-                ithunk-- ;
                 opcode = GB_TRIL_selop_code ;
-                // printf ("using TRIL selectop instead of idxunop\n") ;
                 break ;
             case GB_TRIU_idxunop_code : 
-                ithunk++ ;
                 opcode = GB_TRIU_selop_code ;
-                // printf ("using TRIL selectop instead of idxunop\n") ;
                 break ;
             case GB_DIAG_idxunop_code : 
                 opcode = GB_DIAG_selop_code ;
-                // printf ("using DIAG selectop instead of idxunop\n") ;
                 break ;
             case GB_DIAGINDEX_idxunop_code : 
             case GB_OFFDIAG_idxunop_code : 
                 opcode = GB_OFFDIAG_selop_code ;
-                // printf ("using OFFDIAG selectop instead of idxunop\n") ;
                 break ;
             default:;
         }
@@ -393,21 +377,18 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 // ROWINDEX becomes COLINDEX
                 case GB_ROWINDEX_idxunop_code  :
                     // i+thunk becomes j+thunk: no change to thunk
-                    // printf ("flip rowindex to colindex\n") ;
                     opcode = GB_COLINDEX_idxunop_code ;
                     break ;
 
                 // COLINDEX becomes ROWINDEX
                 case GB_COLINDEX_idxunop_code  : 
                     // j+thunk becomes i+thunk: no change to thunk
-                    // printf ("flip colindex to rowindex\n") ;
                     opcode = GB_ROWINDEX_idxunop_code ;
                     break ;
 
                 // DIAGINDEX becomes FLIPDIAGINDEX
                 case GB_DIAGINDEX_idxunop_code :
                     // j-(i+thunk) becomes i-(j+thunk): no change to thunk
-                    // printf ("flip diagindex to flipdiagindex\n") ;
                     opcode = GB_FLIPDIAGINDEX_idxunop_code ;
                     break ;
 
@@ -434,7 +415,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         }
 
         // flipij is now false for any positional operator
-        // printf ("flipij is now %d\n", flipij) ;
 
     }
     else
@@ -684,7 +664,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
             // or if the operator is user-defined.
             Thunk2 = Thunk ;
         }
-        // printf ("Calling selector: opcode %d\n", opcode) ;
         GB_OK (GB_selector (
             T,          // output matrix
             opcode,     // opcode of the operator

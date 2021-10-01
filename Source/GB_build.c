@@ -305,8 +305,8 @@ GrB_Info GB_build               // build matrix
         // matrix returned with duplicates discarded, use dup = GxB_IGNORE_DUP
         // instead. 
         GB_FREE_ALL ;
-        GB_ERROR (GrB_INVALID_VALUE, "Duplicates appear (" GBd
-            ") but dup is NULL", ((int64_t) nvals) - tnvals) ;
+        GB_ERROR (GrB_INVALID_VALUE, "Duplicates appear (" GBd ") but dup "
+            "is NULL", ((int64_t) nvals) - tnvals) ;
     }
 
     //--------------------------------------------------------------------------

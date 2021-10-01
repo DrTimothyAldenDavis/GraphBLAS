@@ -29,7 +29,7 @@ GrB_Info GxB_Scalar_free    // free a GrB_Scalar
 (
     GrB_Scalar *s           // handle of GrB_Scalar to free
 )
-{ 
+{
     return (GrB_Scalar_free (s)) ;
 }
 

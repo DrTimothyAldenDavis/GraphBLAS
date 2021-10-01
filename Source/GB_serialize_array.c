@@ -234,8 +234,8 @@ GrB_Info GB_serialize_array
     }
 
     if (!ok)
-    { 
-        // compression failure
+    {
+        // compression failure: this can "never" occur
         GB_FREE_ALL ;
         return (GrB_PANIC) ;
     }

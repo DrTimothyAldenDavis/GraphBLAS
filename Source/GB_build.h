@@ -56,9 +56,4 @@ GrB_Info GB_builder                 // build a matrix from tuples
     GB_Context Context
 ) ;
 
-static inline bool GB_iso_build (GrB_BinaryOp dup)
-{ 
-    return (dup == NULL) ;
-}
-
 #endif

@@ -882,23 +882,34 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     // free workspace, apply positional op, and transplant/conform T into C
     //==========================================================================
 
-    GB_FREE_WORK ;
+    //--------------------------------------------------------------------------
+    // free workspace
+    //--------------------------------------------------------------------------
 
-    // free prior space of A, if transpose is done in-place
+    GB_FREE_WORK ;
     if (in_place)
-    {
+    { 
+        // free prior space of A, if transpose is done in-place
         GB_phbix_free (A) ;
     }
+
+    //--------------------------------------------------------------------------
+    // transplant T into the result C
+    //--------------------------------------------------------------------------
 
     // transplant the control settings from A to C
     C->hyper_switch = A_hyper_switch ;
     C->bitmap_switch = A_bitmap_switch ;
     C->sparsity_control = A_sparsity_control ;
-
-    // transplant T into the result C
     GB_OK (GB_transplant (C, ctype, &T, Context)) ;
+    ASSERT_MATRIX_OK (C, "C transplanted in GB_transpose", GB0) ;
+    ASSERT_TYPE_OK (ctype, "C type in GB_transpose", GB0) ;
 
+    //--------------------------------------------------------------------------
     // apply a positional operator or user idxunop after transposing the matrix
+    //--------------------------------------------------------------------------
+
+    op = save_op ;
     if (op_is_positional)
     {
         if (C->iso)
@@ -911,12 +922,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         }
 
         // the positional unary op is applied in-place: C->x = op (C)
-        GB_OK (GB_apply_op ((GB_void *) C->x, ctype, GB_NON_ISO, save_op,
+        GB_OK (GB_apply_op ((GB_void *) C->x, ctype, GB_NON_ISO, op,
             scalar, binop_bind1st, flipij, C, Context)) ;
 
     }
     else if (user_idxunop)
-    {
+    { 
 
         if (C->iso)
         { 
@@ -929,7 +940,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         { 
             // the user-defined index unary op is applied in-place: C->x = op
             // (C) where the type of C does not change
-            GB_OK (GB_apply_op ((GB_void *) C->x, ctype, GB_NON_ISO, save_op,
+            GB_OK (GB_apply_op ((GB_void *) C->x, ctype, GB_NON_ISO, op,
                 scalar, binop_bind1st, flipij, C, Context)) ;
         }
         else // op is a user-defined index unary operator
@@ -947,7 +958,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 return (GrB_OUT_OF_MEMORY) ;
             }
             // Cx_final = op (C)
-            GB_OK (GB_apply_op (Cx_final, ctype, GB_NON_ISO, save_op,
+            GB_OK (GB_apply_op (Cx_final, ctype, GB_NON_ISO, op,
                 scalar, false, flipij, C, Context)) ;
             // transplant Cx_final as C->x and finalize the type of C
             GB_FREE (&(C->x), C->x_size) ;
@@ -958,7 +969,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         }
     }
 
+    //--------------------------------------------------------------------------
     // conform the result to the desired sparsity structure of A
+    //--------------------------------------------------------------------------
+
     ASSERT_MATRIX_OK (C, "C to conform in GB_transpose", GB0) ;
     GB_OK (GB_conform (C, Context)) ;
     ASSERT_MATRIX_OK (C, "C output of GB_transpose", GB0) ;

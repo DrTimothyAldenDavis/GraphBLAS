@@ -16,7 +16,7 @@
 
 /*
     void *blob = NULL ;
-    size_t blob_size = 0 ;
+    GrB_Index blob_size = 0 ;
     GrB_Matrix A, B = NULL ;
     // construct a matrix A, then serialized it:
     GrB_Matrix_serializeSize (&blob_size, A) ;      // loose upper bound
@@ -35,7 +35,7 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // output:
     void *blob,                     // the blob, already allocated in input
     // input/output:
-    size_t *blob_size_handle,       // size of the blob on input.  On output,
+    GrB_Index *blob_size_handle,    // size of the blob on input.  On output,
                                     // the # of bytes used in the blob.
     // input:
     GrB_Matrix A                    // matrix to serialize
@@ -62,7 +62,12 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // serialize the matrix into the preallocated blob
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_serialize (&blob, blob_size_handle, A, method, Context) ;
+    size_t blob_size = (size_t) (*blob_size_handle) ;
+    GrB_Info info = GB_serialize (&blob, &blob_size, A, method, Context) ;
+    if (info == GrB_SUCCESS)
+    { 
+        (*blob_size_handle) = (GrB_Index) blob_size ;
+    }
     GB_BURBLE_END ;
     return (info) ;
 }

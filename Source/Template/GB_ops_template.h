@@ -1053,14 +1053,14 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
     inline void GB_FUNC (TRIL) (bool *z, const void *unused,
         int64_t i, int64_t j, const GB_TYPE *thunk)
     {
-        (*z) = (j < (i + (*thunk))) ;
+        (*z) = (j <= (i + (*thunk))) ;
     }
 
     GB_IDXOP_STRUCT (TRIU, GB_XTYPE) ;
     inline void GB_FUNC (TRIU) (bool *z, const void *unused,
         int64_t i, int64_t j, const GB_TYPE *thunk)
     {
-        (*z) = (j > (i + (*thunk))) ;
+        (*z) = (j >= (i + (*thunk))) ;
     }
 
     GB_IDXOP_STRUCT (DIAG, GB_XTYPE) ;

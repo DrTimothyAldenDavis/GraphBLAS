@@ -214,7 +214,6 @@ GrB_Info GB_selector
         if (C_empty)
         { 
             // C is an empty matrix
-            // printf ("C is empty\n") ;
             return (GB_new (&C, true, // static header
                 A->type, avlen, avdim, GB_Ap_calloc, true,
                 GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ),
@@ -224,7 +223,6 @@ GrB_Info GB_selector
         { 
             // C is a shallow copy of A with all the same entries as A
             // set C->iso = A->iso  OK
-            // printf ("C is shallow copy of A\n") ;
             return (GB_shallow_copy (C, true, A, Context)) ;
         }
     }
@@ -347,7 +345,6 @@ GrB_Info GB_selector
         // find column j in A
         //----------------------------------------------------------------------
 
-        // printf ("COL opcode %d\n", opcode) ;
         ASSERT_MATRIX_OK (A, "A for col selector", GB_FLIP (GB0)) ;
         int nth = nthreads_max ;
         ASSERT (!in_place_A) ;
@@ -355,7 +352,6 @@ GrB_Info GB_selector
         ASSERT (GB_JUMBLED_OK (A)) ;
 
         int64_t j = (opcode == GB_COLINDEX_idxunop_code) ? (-ithunk) : ithunk ;
-        // printf ("look for j %ld\n", j) ;
 
         int64_t k = 0 ;
         bool found ;
@@ -364,14 +360,12 @@ GrB_Info GB_selector
             // j is outside the range of columns of A
             k = 0 ;
             found = false ;
-            // printf ("j = %ld outside range [0,%ld]\n", j, avdim-1) ;
         }
         else if (j >= avdim)
         { 
             // j is outside the range of columns of A
             k = anvec ;
             found = false ;
-            // printf ("j = %ld outside range [0,%ld]\n", j, avdim-1) ;
         }
         else if (A_is_hyper)
         { 
@@ -380,14 +374,12 @@ GrB_Info GB_selector
             GB_SPLIT_BINARY_SEARCH (j, Ah, k, kright, found) ;
             // if found is true the Ah [k] == j
             // if found is false, then Ah [0..k-1] < j and Ah [k..anvec-1] > j
-            // printf ("j = %ld, A hyper, found %d, k = %ld\n", j, found, k) ;
         }
         else
         { 
             // j appears as the jth column in A; found is always true
             k = j ;
             found = true ;
-            // printf ("found k = j = %ld\n", k) ;
         }
 
         //----------------------------------------------------------------------
@@ -403,11 +395,8 @@ GrB_Info GB_selector
         if (opcode == GB_COLINDEX_idxunop_code)
         { 
             // COLINDEX: delete column j:  C = A (:, [0:j-1 j+1:end])
-            // printf ("delete kth (k = %ld) column j = %ld\n", k, j) ;
             cnz = anz - ajnz ;
-            // printf ("cnz %ld anz %ld ajnz %ld\n", cnz, anz, ajnz) ;
             cnvec = (A_is_hyper && found) ? (anvec-1) : anvec ;
-            // printf ("cnvec %ld\n", cnvec) ;
         }
         else if (opcode == GB_COLLE_idxunop_code)
         { 
@@ -425,12 +414,11 @@ GrB_Info GB_selector
         if (cnz == anz)
         { 
             // C is the same as A: return it a pure shallow copy
-            // printf ("return C same as A\n") ;
             return (GB_shallow_copy (C, true, A, Context)) ;
         }
         else if (cnz == 0)
         { 
-            // printf ("return C as empty\n") ;
+            // return C as empty
             return (GB_new (&C, true, // auto (sparse or hyper), static header
                 A->type, avlen, avdim, GB_Ap_calloc, true,
                 GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1, Context)) ;
@@ -487,11 +475,6 @@ GrB_Info GB_selector
                 // Ch [k:cnvec-1] = Ah [k+1:anvec-1]
                 GB_memcpy (Ch + k, Ah + (k+1), (cnvec-k) * sizeof (int64_t),
                     nth) ;
-
-//              for (kk = 0 ; kk <= cnvec ; kk++) printf ("Cp [%ld] = %ld\n",
-//                  kk, Cp [kk]) ;
-//              for (kk = 0 ; kk <  cnvec ; kk++) printf ("Ch [%ld] = %ld\n",
-//                  kk, Ch [kk]) ;
             }
             else
             { 

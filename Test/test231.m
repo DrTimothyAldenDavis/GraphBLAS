@@ -38,7 +38,6 @@ for k2 = 1:length(ops)
     for hi = [1 5] % [-1:2:5 ]
     for lo = [-1 0] % [-3:2:5 ]
     Amat = (hi*sprand (m,n,0.8)-lo) .* sprand (m,n,0.5) ;
-    Bmat = (hi*sprand (m,n,0.8)-lo) .* sprand (m,n,0.5) ;
     Cmat = sparse (m, n) ;
     fprintf ('.') ;
 
@@ -51,7 +50,11 @@ for k2 = 1:length(ops)
     A.matrix = Amat ;
     A.class = type ;
 
-    for ythunk = [-3 -1 0 1 3] % -3:3
+    B.matrix = spones (Amat) ;
+    B.class = type ;
+    B.iso = true ;
+
+    for ythunk = -3:3
     y.matrix = ythunk ;
     y.class = type ;
 
@@ -68,6 +71,11 @@ for k2 = 1:length(ops)
 % save gunk C op how A y
         C1 = GB_mex_select_idxunop  (C, [ ], [ ], op, how, A, y, [ ]) ;
         C2 = GB_spec_select_idxunop (C, [ ], [ ], op,      A, y, [ ]) ;
+        GB_spec_compare (C1, C2) ;
+
+% save gunk C op how B y
+        C1 = GB_mex_select_idxunop  (C, [ ], [ ], op, how, B, y, [ ]) ;
+        C2 = GB_spec_select_idxunop (C, [ ], [ ], op,      B, y, [ ]) ;
         GB_spec_compare (C1, C2) ;
 
 % save gunk CT op how A y desc

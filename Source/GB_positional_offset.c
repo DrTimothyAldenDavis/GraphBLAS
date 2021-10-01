@@ -40,8 +40,8 @@ int64_t GB_positional_offset        // return the positional thunk
         case GB_COLINDEX_idxunop_code  :   // (j+thunk): col index - thunk
         case GB_DIAGINDEX_idxunop_code :   // (j-(i+thunk)): diag index + thunk
         case GB_FLIPDIAGINDEX_idxunop_code :   // (i-(j+thunk)), internal use
-        case GB_TRIL_idxunop_code      :   // (j < (i+thunk)): tril (A,thunk-1)
-        case GB_TRIU_idxunop_code      :   // (j > (i+thunk)): triu (A,thunk+1)
+        case GB_TRIL_idxunop_code      :   // (j <= (i+thunk)): tril (A,thunk)
+        case GB_TRIU_idxunop_code      :   // (j >= (i+thunk)): triu (A,thunk)
         case GB_DIAG_idxunop_code      :   // (j == (i+thunk)): diag(A,thunk)
         case GB_OFFDIAG_idxunop_code   :   // (j != (i+thunk)): offdiag(A,thunk)
         case GB_COLLE_idxunop_code     :   // (j <= thunk): A (:,0:thunk)

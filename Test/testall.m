@@ -95,6 +95,7 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test232',t) ; % test assign with GrB_Scalar
 logstat ('test231',t) ; % test GrB_select with idxunp
 logstat ('test230',t) ; % test apply with idxunops
 logstat ('test229',t) ; % test setElement
@@ -130,6 +131,7 @@ logstat ('test199',t) ; % test dot2 with hypersparse
 logstat ('test198',t) ; % test apply with C=op(C)
 logstat ('test197',t) ; % test large sparse split
 logstat ('test196',t) ; % test hypersparse concat
+
 logstat ('test195',t) ; % test all variants of saxpy3
 logstat ('test194',t) ; % test GxB_Vector_diag
 logstat ('test193',t) ; % test GxB_Matrix_diag

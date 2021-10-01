@@ -74,3 +74,30 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     return (GrB_SUCCESS) ;
 }
 
+//------------------------------------------------------------------------------
+// GB_UnaryOp_new: create a new user-defined unary operator (historical)
+//------------------------------------------------------------------------------
+
+// This method was only accessible via the GrB_UnaryOp_new macro in v5.1.x
+// and earlier.  The GrB_UnaryOp_new macro in v5.2.x and later calls
+// GxB_UnaryOp_new instead.  This method is left for historical purposes,
+// so that older binaries compiled with v5.1.x can work with v5.2.x.
+// It will no longer be needed in v6.0 or later.
+
+#if (GxB_IMPLEMENTATION_MAJOR <= 5)
+
+GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
+(
+    GrB_UnaryOp *unaryop,           // handle for the new unary operator
+    GxB_unary_function function,    // pointer to the unary function
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype,                 // type of input x
+    const char *name                // name of the user function
+)
+{
+    return (GxB_UnaryOp_new (unaryop, function, ztype, xtype, name, NULL)) ;
+}
+
+#endif
+
+

@@ -124,11 +124,10 @@ void mexFunction
 
     // test both Vector and Matrix methods.  The typecast is not necessary,
     // just to test.
-    if (A->vdim == 1)
+    if (GB_VECTOR_OK (A))
     {
-        GrB_Vector V = (GrB_Vector) A ;
-        METHOD (GrB_Vector_reduce_Scalar ((GrB_Scalar) S, accum, reduce, V,
-            NULL)) ;
+        METHOD (GrB_Vector_reduce_Scalar ((GrB_Scalar) S, accum, reduce,
+            (GrB_Vector) A, NULL)) ;
     }
     else
     {

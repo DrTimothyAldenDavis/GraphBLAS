@@ -31,7 +31,7 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
     //--------------------------------------------------------------------------
 
     GB_WHERE (C, "GrB_Matrix_apply (C, M, accum, op, A, desc)") ;
-    GB_BURBLE_START ("GrB_apply") ;
+    GB_BURBLE_START ("GrB_apply (unary op)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
@@ -80,7 +80,7 @@ static inline GrB_Info GB_1st       // C<M>=accum(C,op(x,A))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_BURBLE_START ("GrB_apply") ;
+    GB_BURBLE_START ("GrB_apply (bind 1st)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (x) ;
@@ -110,7 +110,7 @@ static inline GrB_Info GB_1st       // C<M>=accum(C,op(x,A))
 }
 
 //------------------------------------------------------------------------------
-// GB_2nd: apply a binary operator: op(A,y)
+// GB_2nd: apply a binary operator or idxunop: op(A,y)
 //------------------------------------------------------------------------------
 
 static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
@@ -130,7 +130,7 @@ static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_BURBLE_START ("GrB_apply") ;
+    GB_BURBLE_START ("GrB_apply (bind 2nd) ") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;

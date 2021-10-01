@@ -83,10 +83,11 @@ void mexFunction
 
     GET_DEEP_COPY ;
 
-    // C = diag (v,k)
-    if (k == 0)
+    // C = diag (v,k), using either GrB_Matrix_diag or GxB_Matrix_diag.
+    // The two methods do the same thing.  This is just to test.
+    if (k % 2 == 0)
     {
-        METHOD (GrB_Matrix_diag (C, (GrB_Vector) V)) ;
+        METHOD (GrB_Matrix_diag (C, (GrB_Vector) V, k)) ;
     }
     else
     {

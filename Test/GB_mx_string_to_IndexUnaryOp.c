@@ -71,20 +71,20 @@ bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
          if (MATCH (opname, "rowindex" )) { opcode = GB_ROWINDEX_idxunop_code ; }
     else if (MATCH (opname, "colindex" )) { opcode = GB_COLINDEX_idxunop_code ; }
     else if (MATCH (opname, "diagindex")) { opcode = GB_DIAGINDEX_idxunop_code; }
-    else if (MATCH (opname, "tril"     )) { opcode = GB_TRIL_idxunop_code; }
-    else if (MATCH (opname, "triu"     )) { opcode = GB_TRIU_idxunop_code; }
-    else if (MATCH (opname, "diag"     )) { opcode = GB_DIAG_idxunop_code; }
-    else if (MATCH (opname, "offdiag"  )) { opcode = GB_OFFDIAG_idxunop_code; }
-    else if (MATCH (opname, "colle"    )) { opcode = GB_COLLE_idxunop_code; }
-    else if (MATCH (opname, "colgt"    )) { opcode = GB_COLGT_idxunop_code; }
-    else if (MATCH (opname, "rowle"    )) { opcode = GB_ROWLE_idxunop_code; }
-    else if (MATCH (opname, "rowgt"    )) { opcode = GB_ROWGT_idxunop_code; }
-    else if (MATCH (opname, "valueeq"  )) { opcode = GB_VALUEEQ_idxunop_code; }
-    else if (MATCH (opname, "valuene"  )) { opcode = GB_VALUENE_idxunop_code; }
-    else if (MATCH (opname, "valuegt"  )) { opcode = GB_VALUEGT_idxunop_code; }
-    else if (MATCH (opname, "valuege"  )) { opcode = GB_VALUEGE_idxunop_code; }
-    else if (MATCH (opname, "valuelt"  )) { opcode = GB_VALUELT_idxunop_code; }
-    else if (MATCH (opname, "valuele"  )) { opcode = GB_VALUELE_idxunop_code; }
+    else if (MATCH (opname, "tril"     )) { opcode = GB_TRIL_idxunop_code ; }
+    else if (MATCH (opname, "triu"     )) { opcode = GB_TRIU_idxunop_code ; }
+    else if (MATCH (opname, "diag"     )) { opcode = GB_DIAG_idxunop_code ; }
+    else if (MATCH (opname, "offdiag"  )) { opcode = GB_OFFDIAG_idxunop_code ; }
+    else if (MATCH (opname, "colle"    )) { opcode = GB_COLLE_idxunop_code ; }
+    else if (MATCH (opname, "colgt"    )) { opcode = GB_COLGT_idxunop_code ; }
+    else if (MATCH (opname, "rowle"    )) { opcode = GB_ROWLE_idxunop_code ; }
+    else if (MATCH (opname, "rowgt"    )) { opcode = GB_ROWGT_idxunop_code ; }
+    else if (MATCH (opname, "valueeq"  )) { opcode = GB_VALUEEQ_idxunop_code ; }
+    else if (MATCH (opname, "valuene"  )) { opcode = GB_VALUENE_idxunop_code ; }
+    else if (MATCH (opname, "valuegt"  )) { opcode = GB_VALUEGT_idxunop_code ; }
+    else if (MATCH (opname, "valuege"  )) { opcode = GB_VALUEGE_idxunop_code ; }
+    else if (MATCH (opname, "valuelt"  )) { opcode = GB_VALUELT_idxunop_code ; }
+    else if (MATCH (opname, "valuele"  )) { opcode = GB_VALUELE_idxunop_code ; }
     else
     {
         mexWarnMsgIdAndTxt ("GB:warn", "unrecognized function name") ;
@@ -134,7 +134,7 @@ bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
             break ;
 
         // Result is BOOL, depending on i and/or j, and thunk:
-        case GB_TRIL_idxunop_code      : // (j < (i+thunk)): tril (A,thunk-1)
+        case GB_TRIL_idxunop_code      : // (j <= (i+thunk)): tril (A,thunk)
 
             switch (xcode)
             {
@@ -145,7 +145,7 @@ bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
             }
             break ;
 
-        case GB_TRIU_idxunop_code      : // (j > (i+thunk)): triu (A,thunk+1)
+        case GB_TRIU_idxunop_code      : // (j >= (i+thunk)): triu (A,thunk)
 
             switch (xcode)
             {

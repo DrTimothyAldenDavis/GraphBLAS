@@ -7,11 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// copy a matrix using GxB_Matrix_serialize and GxB_Matrix_deserialize
+// copy a matrix using one of:
+// GxB_Matrix_serialize and GxB_Matrix_deserialize
+// GrB_Matrix_serialize and GrB_Matrix_deserialize
+// GxB_Vector_serialize and GxB_Vector_deserialize
+// GrB_Vector_serialize and GrB_Vector_deserialize
 
 #include "GB_mex.h"
+#include "GB_mex_errors.h"
 
 // method:
+// -2                          // GrB*serialize with default LZ4 compression
 // GxB_COMPRESSION_NONE -1     // no compression
 // GxB_COMPRESSION_DEFAULT 0   // LZ4
 // GxB_COMPRESSION_LZ4   1000  // LZ4
@@ -20,7 +26,7 @@
 // ...
 // GxB_COMPRESSION_LZ4HC 2009  // LZ4HC:9
 
-#define USAGE "C = GB_mex_serialize (A, method, mode)"
+#define USAGE "C = GB_mex_serialize (A, method)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -44,7 +50,7 @@ void mexFunction
     GrB_Matrix A = NULL, C = NULL ;
     GrB_Descriptor desc = NULL ;
     void *blob = NULL ;
-    size_t blob_size = 0 ;
+    GrB_Index blob_size = 0 ;
 
     // check inputs
     if (nargout > 1 || nargin < 1 || nargin > 3)
@@ -69,53 +75,67 @@ void mexFunction
 
     // get method
     int GET_SCALAR (1, int, method, 0) ;
+    bool use_GrB_serialize = (method < -1) ;
+    if (use_GrB_serialize)
+    {
+        method = 0 ;
+    }
     if (method != 0)
     {
         GrB_Descriptor_new (&desc) ;
         GxB_Desc_set (desc, GxB_COMPRESSION, method) ;
     }
 
-    // get mode: 0:NULL, 1:fast, 502:secure
-    int GET_SCALAR (2, int, mode, GxB_DEFAULT) ;
-    if (mode != GxB_DEFAULT)
-    {
-        if (mode != GxB_SECURE_IMPORT) mode = GxB_FAST_IMPORT ;
-        if (desc == NULL) GrB_Descriptor_new (&desc) ;
-        GrB_Descriptor_set (desc, GxB_IMPORT, mode) ;
-    }
-
     // serialize A into the blob and then deserialize into C
-    if (GB_VECTOR_OK (A))
+    if (use_GrB_serialize)
     {
-        // test the vector methods
-        METHOD (GxB_Vector_serialize (&blob, &blob_size, (GrB_Vector) A, desc));
-        METHOD (GxB_Vector_deserialize ((GrB_Vector *) &C, atype,
-            blob, blob_size, desc)) ;
+        if (GB_VECTOR_OK (A))
+        {
+            // test the vector methods
+            METHOD (GrB_Vector_serializeSize (&blob_size, (GrB_Vector) A)) ;
+            blob = mxMalloc (blob_size) ;
+            METHOD (GrB_Vector_serialize (blob, &blob_size, (GrB_Vector) A)) ;
+            METHOD (GrB_Vector_deserialize ((GrB_Vector *) &C, atype,
+                blob, blob_size)) ;
+        }
+        else
+        {
+            // test the matrix methods
+            METHOD (GrB_Matrix_serializeSize (&blob_size, A)) ;
+            blob = mxMalloc (blob_size) ;
+            METHOD (GrB_Matrix_serialize (blob, &blob_size, A)) ;
+            METHOD (GrB_Matrix_deserialize (&C, atype, blob, blob_size)) ;
+        }
     }
     else
     {
-        // test the matrix methods
-        METHOD (GxB_Matrix_serialize (&blob, &blob_size, A, desc)) ;
-        METHOD (GxB_Matrix_deserialize (&C, atype, blob, blob_size, desc)) ;
+        if (GB_VECTOR_OK (A))
+        {
+            // test the vector methods
+            METHOD (GxB_Vector_serialize (&blob, &blob_size, (GrB_Vector) A,
+                desc));
+            METHOD (GxB_Vector_deserialize ((GrB_Vector *) &C, atype,
+                blob, blob_size, desc)) ;
+        }
+        else
+        {
+            // test the matrix methods
+            METHOD (GxB_Matrix_serialize (&blob, &blob_size, A, desc)) ;
+            METHOD (GxB_Matrix_deserialize (&C, atype, blob, blob_size, desc)) ;
+        }
     }
 
-/*
-    size_t asize, csize ;
-    GxB_Matrix_memoryUsage (&asize, A) ;
-    int64_t nallocs ;
-    size_t adeep, ashallow ;
-    GB_memoryUsage (&nallocs, &adeep, &ashallow, A) ;
-    GxB_Matrix_memoryUsage (&csize, C) ;
-    printf ("A memory usage:    %ld (shallow %ld, deep %ld, tot %ld)\n", asize,
-        adeep, ashallow, adeep+ashallow) ;
-    printf ("C memory usage:    %ld\n", csize) ;
-    printf ("blob memory usage: %ld (%8.2f%%)\n", blob_size,
-        100 * (double) blob_size / (double) csize) ;
-*/
+    // check the type
+    char type_name1 [GxB_MAX_NAME_LEN], type_name2 [GxB_MAX_NAME_LEN],
+         type_name3 [GxB_MAX_NAME_LEN] ;
+    GxB_Matrix_type_name (&type_name1, C) ;
+    GxB_Matrix_type_name (&type_name2, A) ;
+    GxB_deserialize_type_name (&type_name3, blob, blob_size) ;
+    CHECK (MATCH (type_name1, type_name2)) ;
+    CHECK (MATCH (type_name1, type_name3)) ;
 
     // return C as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
-
     FREE_ALL ;
 }
 

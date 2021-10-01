@@ -150,6 +150,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     { 
         GBPR0 ("%d\n", nthreads_max) ;
     }
+
     GBPR0 ("    d.chunk    = ") ;
     if (chunk <= GxB_DEFAULT)
     { 
@@ -168,6 +169,11 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     if (D->import != GxB_DEFAULT)
     { 
         GBPR0 ("    d.import   = secure\n") ;
+    }
+
+    if (D->compression != GxB_DEFAULT)
+    { 
+        GBPR0 ("    d.compression = %d\n", D->compression) ;
     }
 
     return (GrB_SUCCESS) ;
