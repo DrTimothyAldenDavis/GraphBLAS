@@ -501,8 +501,8 @@ typedef enum
 
     GxB_AxB_METHOD = 1000,  // descriptor for selecting C=A*B algorithm
     GxB_SORT = 35,          // control sort in GrB_mxm
-    GxB_COMPRESSION = 36,
-    GxB_IMPORT = 37,
+    GxB_COMPRESSION = 36,   // select compression for serialize
+    GxB_IMPORT = 37,        // secure vs fast import
 }
 GrB_Desc_Field ;
 
@@ -533,11 +533,11 @@ typedef enum
     GxB_AxB_SAXPY     = 1005,   // saxpy method (any kind)
 
     // for GxB_IMPORT only:
-    GxB_SECURE_IMPORT = 502     // import/pack trust their input data.
+    GxB_SECURE_IMPORT = 502     // import/pack trust their input data
 }
 GrB_Desc_Value ;
 
-// default for GxB import/deserialize is to trust the input data
+// default for GxB import is to trust the input data
 #define GxB_FAST_IMPORT GxB_DEFAULT
 
 typedef struct GB_Descriptor_opaque *GrB_Descriptor ;
@@ -3450,7 +3450,7 @@ GrB_Info GxB_Matrix_type    // get the type of a matrix
     const GrB_Matrix A      // matrix to query
 ) ;
 GB_PUBLIC
-GrB_Info GxB_Matrix_type_name      // return the name of the type of a vector
+GrB_Info GxB_Matrix_type_name      // return the name of the type of a matrix
 (
     char *type_name,        // name of the type (char array of size at least
                             // GxB_MAX_NAME_LEN, owned by the user application).
@@ -10788,6 +10788,7 @@ GrB_Info GrB_Matrix_export  // export a matrix
     GrB_Matrix A            // matrix to export
 ) ;
 
+GB_PUBLIC
 GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
 (
     GrB_Index *Ap_len,      // # of entries required for Ap (not # of bytes)
@@ -10797,6 +10798,7 @@ GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
     GrB_Matrix A            // matrix to export
 ) ;
 
+GB_PUBLIC
 GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 (
     GrB_Format *format,     // export format

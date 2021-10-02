@@ -17,9 +17,9 @@
     typedef struct { float z [4][4] ; int color ; } myquaternion ;
     GrB_Type MyType1, MyQType ;
     GxB_Type_new (&MyType1, sizeof (myfirsttype), "myfirsttype",
-        "struct { double x ; char stuff [16] ; }") ;
+        "typedef struct { double x ; char stuff [16] ; } myfirsttype ;") ;
     GxB_Type_new (&MyQType, sizeof (myquaternion), "myquaternion",
-        "struct { float z [4][4] ; int color ; }") ;
+        "typedef struct { float z [4][4] ; int color ; } myquaternion ;") ;
 
     GrB_Matrix A ;
     // ... create a matrix A of some built-in or user-defined type
