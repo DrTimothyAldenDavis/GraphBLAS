@@ -51,6 +51,8 @@ Version 5.2.0, FIXME
     * GxB_*_serialize/deserialize: with compression; optional descriptor
     * added LZ4/LZ4HC: compression library, http://www.lz4.org (BSD 2),
         v1.9.3, Copyright (c) 2011-2016, Yann Collet, All Rights Reserved.
+    * (31) bug fix: C<M>=Z not returning C as iso if Z iso and C initialy
+        empty.  Caught by Erik Welch, Anaconda.
 
 Version 5.1.7, Aug 23, 2021
 
