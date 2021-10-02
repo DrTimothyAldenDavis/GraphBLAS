@@ -101,19 +101,25 @@ find_package ( OpenMP )
 # Intel(R) IPP not yet supported
 # find_package ( IPP )
 
-# FIXME: this breaks compilation on my laptop when uncommented:
-  enable_language ( CUDA )
-  set ( CMAKE_CUDA on )
-  set ( RMM_WRAP on )
-# without CUDA:
-# set ( CMAKE_CUDA off )
-# set ( RMM_WRAP off )
+include ( CheckLanguage )
+check_language ( CUDA )
+if ( CMAKE_CUDA_COMPILER )
+    # with CUDA:
+    message ( STATUS "CUDA: enabled")
+    enable_language ( CUDA )
+    set ( CMAKE_CUDA on )
+    set ( RMM_WRAP on )
+else ( )
+    # without CUDA:
+    message ( STATUS "CUDA: not enabled")
+    set ( CMAKE_CUDA off )
+    set ( RMM_WRAP off )
+endif ( )
 
 # for nvcc, add -DGBCUDA
 
 if ( CMAKE_CUDA )
-    find_package(CUDA REQUIRED)
-    message ( STATUS "CUDA enabled" )
+    find_package (CUDA REQUIRED )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
     add_subdirectory(CUDA)
     set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES})
@@ -122,7 +128,6 @@ if ( CMAKE_CUDA )
     # TODO: Need to be able to enable this. For now, use make already in ${REPO_ROOT}/CUDA
     #add_subdirectory("CUDA")
 else ( )
-    message ( STATUS "CUDA not enabled" )
     set ( CMAKE_CUDA_FLAG " " )
     set ( GB_CUDA )
 endif ( )
