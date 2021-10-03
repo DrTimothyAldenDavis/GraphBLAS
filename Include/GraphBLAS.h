@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Oct 2, 2021 (alpha10)"
+#define GxB_IMPLEMENTATION_DATE "Oct 2, 2021 (alpha11)"
 #define GxB_IMPLEMENTATION_MAJOR 5
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -1603,11 +1603,11 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 
 // This will change slightly in v6.0:
 
-//      bool f (int64_T i, int64_T j, const void *x, const void *thunk) ;
+//      bool f (int64_t i, int64_t j, const void *x, const void *thunk) ;
 
-// The values of i and j are guaranteed to be in the range 0 to GxB_INDEX_MAX-1,
-// and they can be safely typecasted to int64_t then negated, if desired,
-// without any risk of integer overflow.
+// The values of i and j are guaranteed to be in the range 0 to
+// GxB_INDEX_MAX-1, and they can be safely typecasted to int64_t then negated,
+// if desired, without any risk of integer overflow.
 
 typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
 
@@ -4890,11 +4890,6 @@ GB_PUBLIC GrB_Info GrB_Descriptor_error   (const char **error, const GrB_Descrip
 // historical: use GrB_Scalar_error instead
 GB_PUBLIC GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar       s) ;
 
-// Note that v1.0 of the GraphBLAS C API had a no-input GrB_error ( ) method,
-// which is now deprecated and no longer supported, since it conflicts with the
-// 2-input GrB_error method defined below.  The no-input GrB_error ( ) method
-// has been removed, as of v4.0 of SuiteSparse:GraphBLAS.
-
 // GrB_error (error,object) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_error(error,object)                                 \
@@ -7851,7 +7846,7 @@ GrB_Info GrB_Vector_select_UDT       // w<mask> = accum (w, op(u))
 //-------------------------------------------
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_Scalar    // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_Scalar   // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7863,7 +7858,7 @@ GrB_Info GrB_Matrix_select_Scalar    // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_BOOL      // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_BOOL     // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7875,7 +7870,7 @@ GrB_Info GrB_Matrix_select_BOOL      // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_INT8      // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_INT8     // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7887,7 +7882,7 @@ GrB_Info GrB_Matrix_select_INT8      // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_INT16     // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_INT16    // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7899,7 +7894,7 @@ GrB_Info GrB_Matrix_select_INT16     // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_INT32     // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_INT32    // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7911,7 +7906,7 @@ GrB_Info GrB_Matrix_select_INT32     // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_INT64     // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_INT64    // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7923,7 +7918,7 @@ GrB_Info GrB_Matrix_select_INT64     // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_UINT8      // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_UINT8    // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7935,7 +7930,7 @@ GrB_Info GrB_Matrix_select_UINT8      // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_UINT16     // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_UINT16   // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7947,7 +7942,7 @@ GrB_Info GrB_Matrix_select_UINT16     // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_UINT32     // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_UINT32   // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7959,7 +7954,7 @@ GrB_Info GrB_Matrix_select_UINT32     // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_UINT64     // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_UINT64   // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7971,7 +7966,7 @@ GrB_Info GrB_Matrix_select_UINT64     // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_FP32      // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_FP32     // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -7983,7 +7978,7 @@ GrB_Info GrB_Matrix_select_FP32      // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_FP64      // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_FP64     // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -8019,7 +8014,7 @@ GrB_Info GxB_Matrix_select_FC64      // C<M>=accum(C,op(A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_select_UDT       // C<M>=accum(C,op(A))
+GrB_Info GrB_Matrix_select_UDT      // C<M>=accum(C,op(A))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL

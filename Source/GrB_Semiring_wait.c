@@ -15,7 +15,12 @@
 
 GrB_Info GrB_Semiring_wait   // no work, just check if the GrB_Semiring is valid
 (
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GrB_Semiring *semiring
+    #else
+    GrB_Semiring semiring,
+    GrB_WaitMode waitmode
+    #endif
 )
 { 
 
@@ -24,9 +29,14 @@ GrB_Info GrB_Semiring_wait   // no work, just check if the GrB_Semiring is valid
     //--------------------------------------------------------------------------
 
     #pragma omp flush
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GB_WHERE1 ("GrB_Semiring_wait (&semiring)") ;
     GB_RETURN_IF_NULL (semiring) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*semiring) ;
+    #else
+    GB_WHERE1 ("GrB_Semiring_wait (semiring, mode)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // return result

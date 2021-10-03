@@ -109,7 +109,7 @@ typedef struct
 }
 mytype ;
 
-void gunk
+void donothing
 (
     void *z,
     const void *x,
@@ -118,7 +118,7 @@ void gunk
     const void *thunk
 ) ;
 
-void gunk
+void donothing
 (
     void *z,
     const void *x,
@@ -1016,28 +1016,28 @@ void mexFunction
     expected = GrB_DOMAIN_MISMATCH ;
 
     printf ("(1)------------------------------------------------\n") ;
-    OK (GRB (IndexUnaryOp_new) (&Gunk, gunk, MyType, MyType, MyType)) ;
+    OK (GRB (IndexUnaryOp_new) (&Gunk, donothing, MyType, MyType, MyType)) ;
     ERR (GrB_Matrix_select_Scalar (A, NULL, NULL, Gunk, A, scalar, NULL)) ;
     OK (GrB_Matrix_error_ (&err, A)) ;
     printf ("\nexpected error: %s\n", err) ;
     OK (GrB_IndexUnaryOp_free_ (&Gunk)) ;
 
     printf ("(2)------------------------------------------------\n") ;
-    OK (GRB (IndexUnaryOp_new) (&Gunk, gunk, GrB_BOOL, MyType, MyType)) ;
+    OK (GRB (IndexUnaryOp_new) (&Gunk, donothing, GrB_BOOL, MyType, MyType)) ;
     ERR (GrB_Matrix_select_Scalar (A, NULL, NULL, Gunk, A, scalar, NULL)) ;
     OK (GrB_Matrix_error_ (&err, A)) ;
     printf ("\nexpected error: %s\n", err) ;
     OK (GrB_IndexUnaryOp_free_ (&Gunk)) ;
 
     printf ("(3)------------------------------------------------\n") ;
-    OK (GRB (IndexUnaryOp_new) (&Gunk, gunk, GrB_BOOL, GrB_FP64, MyType)) ;
+    OK (GRB (IndexUnaryOp_new) (&Gunk, donothing, GrB_BOOL, GrB_FP64, MyType)) ;
     ERR (GrB_Matrix_select_Scalar (A, NULL, NULL, Gunk, A, scalar, NULL)) ;
     OK (GrB_Matrix_error_ (&err, A)) ;
     printf ("\nexpected error: %s\n", err) ;
     OK (GrB_IndexUnaryOp_free_ (&Gunk)) ;
 
     printf ("(4)------------------------------------------------\n") ;
-    OK (GRB (IndexUnaryOp_new) (&Gunk, gunk, MyType, GrB_FP64, GrB_FP64)) ;
+    OK (GRB (IndexUnaryOp_new) (&Gunk, donothing, MyType, GrB_FP64, GrB_FP64)) ;
     ERR (GrB_Matrix_select_Scalar (A, NULL, NULL, Gunk, A, scalar, NULL)) ;
     OK (GrB_Matrix_error_ (&err, A)) ;
     printf ("\nexpected error: %s\n", err) ;

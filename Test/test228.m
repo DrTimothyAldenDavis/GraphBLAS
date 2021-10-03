@@ -19,7 +19,6 @@ for k1 = 1:length (types)
             A = GB_spec_random (10, n, d, 128, atype) ;
             for A_sparsity = 0:15
                 A.sparsity = A_sparsity ;
-save gunk A
                 C = GB_mex_serialize (A, -2) ;      % GrB_serialize
                 GB_spec_compare (A, C) ;
                 for method = [-1 0 1000 2000:2009]

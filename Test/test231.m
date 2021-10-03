@@ -68,17 +68,14 @@ for k2 = 1:length(ops)
     for sparsity = [1 2 4]
         A.sparsity = sparsity ;
 
-% save gunk C op how A y
         C1 = GB_mex_select_idxunop  (C, [ ], [ ], op, how, A, y, [ ]) ;
         C2 = GB_spec_select_idxunop (C, [ ], [ ], op,      A, y, [ ]) ;
         GB_spec_compare (C1, C2) ;
 
-% save gunk C op how B y
         C1 = GB_mex_select_idxunop  (C, [ ], [ ], op, how, B, y, [ ]) ;
         C2 = GB_spec_select_idxunop (C, [ ], [ ], op,      B, y, [ ]) ;
         GB_spec_compare (C1, C2) ;
 
-% save gunk CT op how A y desc
         C1 = GB_mex_select_idxunop  (CT, [ ], [ ], op, how, A, y, desc) ;
         C2 = GB_spec_select_idxunop (CT, [ ], [ ], op,      A, y, desc) ;
         GB_spec_compare (C1, C2) ;

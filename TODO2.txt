@@ -1,4 +1,6 @@
-My ranking of importants off the current C API issues:
+FIXME: remove this file in the final stable release.
+
+My ranking of importance of the current C API issues:
 
 --------------------------------------------------------------------------------
 High priority:

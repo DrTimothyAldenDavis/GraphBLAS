@@ -15,7 +15,12 @@
 
 GrB_Info GrB_IndexUnaryOp_wait   // no work, just check if valid
 (
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GrB_IndexUnaryOp *op
+    #else
+    GrB_IndexUnaryOp op,
+    GrB_WaitMode waitmode
+    #endif
 )
 { 
 
@@ -24,9 +29,14 @@ GrB_Info GrB_IndexUnaryOp_wait   // no work, just check if valid
     //--------------------------------------------------------------------------
 
     #pragma omp flush
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GB_WHERE1 ("GrB_IndexUnaryOp_wait (&op)") ;
     GB_RETURN_IF_NULL (op) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*op) ;
+    #else
+    GB_WHERE1 ("GrB_IndexUnaryOp_wait (op, waitmode)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // return result

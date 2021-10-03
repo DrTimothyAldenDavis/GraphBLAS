@@ -30,6 +30,7 @@ Version 5.2.0, FIXME
             from a GrB_Scalar
         * GrB_Matrix_diag: same as GxB_Matrix_diag (C, v, k, NULL)
         * GrB_*_serialize/deserialize: with compression
+    * GxB_select: is now historical; use GrB_select instead.
     * GxB_IGNORE_DUP: special operator for build methods only; if dup
         is this operator, then duplicates are ignored (not an error)
     * GxB_IndexUnaryOp_new: create a named index-unary operator

@@ -15,7 +15,12 @@
 
 GrB_Info GrB_Scalar_wait    // finish all work on a scalar
 (
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GrB_Scalar *s
+    #else
+    GrB_Scalar s,
+    GrB_WaitMode waitmode
+    #endif
 )
 {
 
@@ -24,14 +29,20 @@ GrB_Info GrB_Scalar_wait    // finish all work on a scalar
     //--------------------------------------------------------------------------
 
     #pragma omp flush
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GB_WHERE ((*s), "GrB_Scalar_wait (&s)") ;
     GB_RETURN_IF_NULL (s) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*s) ;
+    #else
+    GB_WHERE (s, "GrB_Scalar_wait (s, waitmode)") ;
+    GB_RETURN_IF_NULL_OR_FAULTY (s) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // finish all pending work on the scalar
     //--------------------------------------------------------------------------
 
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     if (GB_ANY_PENDING_WORK (*s))
     { 
         GrB_Info info ;
@@ -39,6 +50,15 @@ GrB_Info GrB_Scalar_wait    // finish all work on a scalar
         GB_OK (GB_wait ((GrB_Matrix) (*s), "scalar", Context)) ;
         GB_BURBLE_END ;
     }
+    #else
+    if (waitmode == GrB_MATERIALIZE && GB_ANY_PENDING_WORK (s))
+    {
+        GrB_Info info ;
+        GB_BURBLE_START ("GrB_Scalar_wait") ;
+        GB_OK (GB_wait ((GrB_Matrix) s, "scalar", Context)) ;
+        GB_BURBLE_END ;
+    }
+    #endif
 
     //--------------------------------------------------------------------------
     // return result
@@ -52,6 +72,7 @@ GrB_Info GrB_Scalar_wait    // finish all work on a scalar
 // GxB_Scalar_wait: wait for a scalar to complete (historical)
 //------------------------------------------------------------------------------
 
+#if (GxB_IMPLEMENTATION_MAJOR <= 5)
 GrB_Info GxB_Scalar_wait    // finish all work on a scalar
 (
     GrB_Scalar *s
@@ -59,3 +80,5 @@ GrB_Info GxB_Scalar_wait    // finish all work on a scalar
 {
     return (GrB_Scalar_wait (s)) ;
 }
+#endif
+
