@@ -24,9 +24,15 @@
     GB_mx_put_global (true) ;           \
 }
 
-bool isnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
+#if (GxB_IMPLEMENTATION_MAJOR <= 5)
+#define Int GrB_Index
+#else
+#define Int int64_t
+#endif
 
-bool isnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b)
+bool isnan64 (Int i, Int j, const void *x, const void *b) ;
+
+bool isnan64 (Int i, Int j, const void *x, const void *b)
 { 
     double aij = * ((double *) x) ;
     return (isnan (aij)) ;
@@ -206,7 +212,11 @@ void mexFunction
                 GxB_print (thunk_type, 3) ;
                 mexErrMsgTxt ("unknown thunk type") ;
             }
+            #if (GxB_IMPLEMENTATION_MAJOR <= 5)
             GrB_Scalar_wait_(&Thunk) ;
+            #else
+            GrB_Scalar_wait_(Thunk, GrB_MATERIALIZE) ;
+            #endif
         }
     }
 

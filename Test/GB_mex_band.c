@@ -40,10 +40,16 @@ typedef struct
     int64_t hi ;
 } LoHi_type ; 
 
-bool LoHi_band (GrB_Index i, GrB_Index j,
+#if (GxB_IMPLEMENTATION_MAJOR <= 5)
+#define Int GrB_Index
+#else
+#define Int int64_t
+#endif
+
+bool LoHi_band (Int i, Int j,
     /* x is unused: */ const void *x, const LoHi_type *thunk) ;
 
-bool LoHi_band (GrB_Index i, GrB_Index j,
+bool LoHi_band (Int i, Int j,
     /* x is unused: */ const void *x, const LoHi_type *thunk)
 {
     int64_t i2 = (int64_t) i ;
@@ -98,7 +104,11 @@ void mexFunction
 
     OK (GrB_Scalar_new (&Thunk, Thunk_type)) ;
     OK (GrB_Scalar_setElement_UDT (Thunk, (void *) &bandwidth)) ;
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_Scalar_wait_(&Thunk)) ;
+    #else
+    OK (GrB_Scalar_wait_(Thunk, GrB_MATERIALIZE)) ;
+    #endif
 
     // get atranspose
     bool atranspose = false ;

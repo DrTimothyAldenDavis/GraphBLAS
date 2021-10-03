@@ -417,12 +417,20 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     expected = GrB_NULL_POINTER ;
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     ERR (GrB_IndexUnaryOp_wait (NULL)) ;
     ERR (GrB_IndexUnaryOp_wait_ (&Banded)) ;
+    #else
+    ERR (GrB_IndexUnaryOp_wait (NULL, GrB_MATERIALIZE)) ;
+    #endif
 
     OK (GrB_IndexUnaryOp_new (&Banded, banded_idx,
         GrB_BOOL, GrB_INT64, GrB_INT64)) ;
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_IndexUnaryOp_wait_ (&Banded)) ;
+    #else
+    OK (GrB_IndexUnaryOp_wait_ (Banded, GrB_MATERIALIZE)) ;
+    #endif
     OK (GxB_IndexUnaryOp_fprint (Banded, "banded", 3, NULL)) ;
 
     #undef GrB_IndexUnaryOp_new
@@ -443,7 +451,11 @@ void mexFunction
             OK (GrB_Matrix_setElement_INT64 (A, i*100 + j, i, j)) ;
         }
     }
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_Matrix_wait (&A)) ;
+    #else
+    OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
+    #endif
     OK (GxB_Matrix_fprint (A, "A", 3, NULL)) ;
 
     OK (GrB_Matrix_new (&C, GrB_INT64, 5, 6)) ;
@@ -605,7 +617,11 @@ void mexFunction
         }
     }
     OK (GrB_Matrix_removeElement (A, 0, 0)) ;
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_Matrix_wait (&A)) ;
+    #else
+    OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
+    #endif
     OK (GxB_Matrix_Option_set_ (A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     for (int k = 0 ; k <= 1 ; k++)
     {
@@ -706,7 +722,11 @@ void mexFunction
     OK (GrB_Matrix_new (&A, GrB_FP32, 5, 5)) ;
     OK (GrB_Matrix_setElement_INT64 (A, 2, 0, 0)) ;
     OK (GrB_Matrix_setElement_INT64 (A, 1, 1, 1)) ;
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_Matrix_wait_ (&A)) ;
+    #else
+    OK (GrB_Matrix_wait_ (A, GrB_MATERIALIZE)) ;
+    #endif
     OK (GxB_Matrix_fprint (A, "A for static/dynamic header", 3, NULL)) ;
     struct GB_Matrix_opaque A2_header ;
     GrB_Matrix A2 = GB_clear_static_header (&A2_header) ;
@@ -746,7 +766,11 @@ void mexFunction
     OK (GxB_Type_new (&MyType, sizeof (mytype), "mytype", "")) ;
     OK (GrB_Matrix_new (&A, MyType, 4, 4)) ;
     OK (GrB_Matrix_setElement_UDT (A, &scalar1, 2, 3)) ;
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_Matrix_wait_ (&A)) ;
+    #else
+    OK (GrB_Matrix_wait_ (A, GrB_MATERIALIZE)) ;
+    #endif
     OK (GxB_Matrix_fprint (A, "A of MyType", 3, NULL)) ;
 
     GB_Global_malloc_debug_count_set (0) ;
@@ -829,7 +853,11 @@ void mexFunction
     OK (GrB_Matrix_new (&A, GrB_FP32, 3, 4)) ;
     OK (GrB_Matrix_setElement_FP32 (A, (float) 1.1, 2, 2)) ;
     OK (GrB_Matrix_setElement_FP32 (A, (float) 9.1, 1, 1)) ;
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_Matrix_wait_ (&A)) ;
+    #else
+    OK (GrB_Matrix_wait_ (A, GrB_MATERIALIZE)) ;
+    #endif
     OK (GxB_Matrix_fprint (A, "A for serialize", 3, NULL)) ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
     expected = GrB_DOMAIN_MISMATCH ;
@@ -923,7 +951,11 @@ void mexFunction
 
     OK (GrB_Matrix_new (&A, GrB_FP32, 100, 100)) ;
     OK (GrB_Matrix_setElement_FP32 (A, 1, 0, 0)) ;
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_Matrix_wait_ (&A)) ;
+    #else
+    OK (GrB_Matrix_wait_ (A, GrB_MATERIALIZE)) ;
+    #endif
     A->nvec_nonempty = -1 ;
     OK (GB_conform_hyper (A, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A conformed", 3, NULL)) ;

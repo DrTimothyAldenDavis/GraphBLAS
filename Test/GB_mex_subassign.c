@@ -477,7 +477,11 @@ GrB_Info many_subassign
         }
     }
 
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_Matrix_wait_(&C)) ;
+    #else
+    OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
+    #endif
     return (info) ;
 }
 
@@ -766,7 +770,11 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GrB_Matrix_wait_(&C) ;
+    #else
+    GrB_Matrix_wait_(C, GrB_MATERIALIZE) ;
+    #endif
 
     if (C == A) A = NULL ;      // do not free A if it is aliased to C
     if (C == M) M = NULL ;      // do not free M if it is aliased to C

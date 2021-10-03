@@ -71,7 +71,11 @@ void mexFunction
 
     GrB_Scalar_new (&Thunk, GrB_INT64) ;
     GrB_Scalar_setElement_INT64_(Thunk, k) ;
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GrB_Scalar_wait_(&Thunk) ;
+    #else
+    GrB_Scalar_wait_(Thunk, GrB_MATERIALIZE) ;
+    #endif
 
     // C = diag (A,k)
     METHOD (GxB_Matrix_select_(C, NULL, NULL, GxB_DIAG, A, Thunk, NULL)) ;
