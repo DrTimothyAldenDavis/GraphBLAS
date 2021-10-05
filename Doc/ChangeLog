@@ -1,3 +1,8 @@
+Version 5.1.8, Oct 5, 2021
+
+    * (31) bug fix: C=A*B when A is sparse and B is iso and bitmap.
+        Caught by Mark Blanco, CMU.
+
 Version 5.1.7, Aug 23, 2021
 
     * (30) bug fix:  GrB_apply, when done in-place and matrix starts
