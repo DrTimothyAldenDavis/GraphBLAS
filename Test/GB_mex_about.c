@@ -482,10 +482,30 @@ void mexFunction
     GB_code_check (GB_FP64_code,   &f64, 5, stdout) ; printf ("\n");
     GB_code_check (GB_UDT_code,    &f64, 5, stdout) ; printf ("\n");
 
-    for (int i = 0 ; i <= GrB_PANIC + 1 ; i++)
-    {
-        printf ("info: %2d %s\n", i, GB_status_code (i)) ;
+    printf ("Check status codes\n") ;
+    #define CHKSTAT(code,string)                        \
+    {                                                   \
+        printf ("%4d : %s\n", code, string) ;           \
+        CHECK (MATCH (GB_status_code (code), string)) ; \
     }
+
+    CHKSTAT (GrB_SUCCESS             , "GrB_SUCCESS") ;
+    CHKSTAT (GrB_NO_VALUE            , "GrB_NO_VALUE") ;
+    CHKSTAT (GrB_UNINITIALIZED_OBJECT, "GrB_UNINITIALIZED_OBJECT") ;
+    CHKSTAT (GrB_NULL_POINTER        , "GrB_NULL_POINTER") ;
+    CHKSTAT (GrB_INVALID_VALUE       , "GrB_INVALID_VALUE") ;
+    CHKSTAT (GrB_INVALID_INDEX       , "GrB_INVALID_INDEX") ;
+    CHKSTAT (GrB_DOMAIN_MISMATCH     , "GrB_DOMAIN_MISMATCH") ;
+    CHKSTAT (GrB_DIMENSION_MISMATCH  , "GrB_DIMENSION_MISMATCH") ;
+    CHKSTAT (GrB_OUTPUT_NOT_EMPTY    , "GrB_OUTPUT_NOT_EMPTY") ;
+    CHKSTAT (GrB_NOT_IMPLEMENTED     , "GrB_NOT_IMPLEMENTED") ;
+    CHKSTAT (GrB_PANIC               , "GrB_PANIC") ;
+    CHKSTAT (GrB_OUT_OF_MEMORY       , "GrB_OUT_OF_MEMORY") ;
+    CHKSTAT (GrB_INSUFFICIENT_SPACE  , "GrB_INSUFFICIENT_SPACE") ;
+    CHKSTAT (GrB_INVALID_OBJECT      , "GrB_INVALID_OBJECT") ;
+    CHKSTAT (GrB_INDEX_OUT_OF_BOUNDS , "GrB_INDEX_OUT_OF_BOUNDS") ;
+    CHKSTAT (GrB_EMPTY_OBJECT        , "GrB_EMPTY_OBJECT") ;
+    CHKSTAT (911                     , "unknown GrB_Info value!") ;
 
     //--------------------------------------------------------------------------
     // global get/set
@@ -987,7 +1007,7 @@ void mexFunction
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_Scalar_wait_(&scalar)) ;
     #else
-    OK (GrB_Scalar_wait_(&scalar, GrB_MATERIALIZE)) ;
+    OK (GrB_Scalar_wait_(scalar, GrB_MATERIALIZE)) ;
     #endif
     CHECK (nvals == 0) ;
 

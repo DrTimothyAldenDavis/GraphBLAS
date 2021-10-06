@@ -1838,8 +1838,7 @@ GrB_Info GB_subassign_08n_slice
     {                                                                       \
         /* no pending tuples, so skip phase 2 */                            \
         GB_FREE_ALL ;                                                       \
-        ASSERT_MATRIX_OK (C, "C, no pending tuples " __FILE__,              \
-            GB_FLIP (GB0)) ;                                                \
+        ASSERT_MATRIX_OK (C, "C, no pending tuples ", GB_FLIP (GB0)) ;      \
         return (GrB_SUCCESS) ;                                              \
     }                                                                       \
     /* ensure that C->Pending is large enough to handle nnew more tuples */ \
@@ -1914,7 +1913,7 @@ GrB_Info GB_subassign_08n_slice
     Pending->n += nnew ;                                                    \
     Pending->sorted = pending_sorted ;                                      \
     GB_FREE_ALL ;                                                           \
-    ASSERT_MATRIX_OK (C, "C with pending tuples :" __FILE__, GB_FLIP (GB0)) ;\
+    ASSERT_MATRIX_OK (C, "C with pending tuples", GB_FLIP (GB0)) ;          \
     return (GrB_SUCCESS) ;
 
 #endif

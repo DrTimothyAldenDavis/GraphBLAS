@@ -22,7 +22,7 @@ GrB_Info GrB_Matrix_wait    // finish all work on a matrix
     GrB_WaitMode waitmode
     #endif
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -44,7 +44,7 @@ GrB_Info GrB_Matrix_wait    // finish all work on a matrix
 
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     if (GB_ANY_PENDING_WORK (*A))
-    { 
+    {
         GrB_Info info ;
         GB_BURBLE_START ("GrB_Matrix_wait") ;
         GB_OK (GB_wait (*A, "matrix", Context)) ;

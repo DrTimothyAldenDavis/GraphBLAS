@@ -23,7 +23,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Oct 2, 2021 (alpha11)")
+set ( GraphBLAS_DATE "Oct 5, 2021 (alpha11)")
 set ( GraphBLAS_VERSION_MAJOR 5 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -31,7 +31,7 @@ set ( GraphBLAS_VERSION_SUB   0 )
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 
 # GraphBLAS C API Specification version, at graphblas.org
-set ( GraphBLAS_API_DATE "Sept 29, 2021 (draft)" )
+set ( GraphBLAS_API_DATE "Oct 4, 2021 (draft)" )
 set ( GraphBLAS_API_VERSION_MAJOR 2 )
 set ( GraphBLAS_API_VERSION_MINOR 0 )
 set ( GraphBLAS_API_VERSION_SUB   0 )

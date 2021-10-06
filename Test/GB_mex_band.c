@@ -54,8 +54,6 @@ bool LoHi_band (Int i, Int j,
 {
     int64_t i2 = (int64_t) i ;
     int64_t j2 = (int64_t) j ;
-//  printf ("i %lld j %lld lo %lld hi %lld\n", i2, j2, thunk->lo, thunk->hi) ;
-//  printf ("   j-i %lld\n", j2-i2) ;
     return ((thunk->lo <= (j2-i2)) && ((j2-i2) <= thunk->hi)) ;
 }
 

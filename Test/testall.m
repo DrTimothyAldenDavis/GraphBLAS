@@ -95,6 +95,7 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test233',t) ; % test bitmap saxpy C=A*B with A sparse and B bitmap
 logstat ('test232',t) ; % test assign with GrB_Scalar
 logstat ('test231',t) ; % test GrB_select with idxunp
 logstat ('test230',t) ; % test apply with idxunops

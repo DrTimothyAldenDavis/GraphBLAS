@@ -469,7 +469,7 @@ GrB_Info GrB_getVersion         // runtime access to C API version number
 //
 // GxB_IMPORT:  GxB_FAST_IMPORT (faster, for trusted input data) or
 //      GxB_SECURE_IMPORT (slower, for untrusted input data), for the
-//      import/pack methods.
+//      GxB*_pack* methods.
 
 // The following are enumerated values in both the GrB_Desc_Field and the
 // GxB_Option_Field for global options.  They are defined with the same integer
@@ -533,11 +533,11 @@ typedef enum
     GxB_AxB_SAXPY     = 1005,   // saxpy method (any kind)
 
     // for GxB_IMPORT only:
-    GxB_SECURE_IMPORT = 502     // import/pack trust their input data
+    GxB_SECURE_IMPORT = 502     // GxB*_pack* methods trust their input data
 }
 GrB_Desc_Value ;
 
-// default for GxB import is to trust the input data
+// default for GxB pack is to trust the input data
 #define GxB_FAST_IMPORT GxB_DEFAULT
 
 typedef struct GB_Descriptor_opaque *GrB_Descriptor ;
@@ -4862,7 +4862,7 @@ GrB_WaitMode ;
                 GrB_Matrix       : GrB_Matrix_wait       ,  \
                 GrB_Descriptor   : GrB_Descriptor_wait      \
         )                                                   \
-        (object)
+        (object, waitmode)
     #endif
 
 #endif
@@ -9840,12 +9840,16 @@ GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
 //
 //      GxB_set (desc, GxB_IMPORT, GxB_SECURE_IMPORT) ;
 
+// As of v5.2.0, GxB_*import* and GxB_*export* are declared historical.  Use
+// GxB_*pack* and GxB_*unpack* instead.  The GxB import/export will be kept
+// but only documented here, not in the User Guide.
+
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_CSR and GxB_Matrix_pack_CSR: import/pack a CSR matrix
+// GxB_Matrix_pack_CSR: pack a CSR matrix
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
+GrB_Info GxB_Matrix_import_CSR  // historical: use GxB_Matrix_pack_CSR
 (
     GrB_Matrix *A,      // handle of matrix to create
     GrB_Type type,      // type of matrix to create
@@ -9896,11 +9900,11 @@ GrB_Info GxB_Matrix_pack_CSR      // pack a CSR matrix
     //      NULL.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_CSC and GxB_Matrix_pack_CSC: import/pack a CSC matrix
+// GxB_Matrix_pack_CSC: pack a CSC matrix
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
+GrB_Info GxB_Matrix_import_CSC  // historical: use GxB_Matrix_pack_CSC
 (
     GrB_Matrix *A,      // handle of matrix to create
     GrB_Type type,      // type of matrix to create
@@ -9951,12 +9955,11 @@ GrB_Info GxB_Matrix_pack_CSC      // pack a CSC matrix
     //      NULL.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_HyperCSR, GxB_Matrix_pack_HyperCSR: import/pack a
-// hypersparse CSR matrix
+// GxB_Matrix_pack_HyperCSR: pack a hypersparse CSR matrix
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix
+GrB_Info GxB_Matrix_import_HyperCSR // historical: use GxB_Matrix_pack_HyperCSR
 (
     GrB_Matrix *A,      // handle of matrix to create
     GrB_Type type,      // type of matrix to create
@@ -10020,12 +10023,11 @@ GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
     //      the Aj and Ax arrays need not be present and can be NULL.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_HyperCSC and GxB_Matrix_pack_HyperCSC: import/pack
-// a hypersparse CSC matrix
+// GxB_Matrix_pack_HyperCSC: pack a hypersparse CSC matrix
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_import_HyperCSC      // import a hypersparse CSC matrix
+GrB_Info GxB_Matrix_import_HyperCSC // historical: use GxB_Matrix_pack_HyperCSC
 (
     GrB_Matrix *A,      // handle of matrix to create
     GrB_Type type,      // type of matrix to create
@@ -10090,12 +10092,11 @@ GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
     //      can be NULL.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_BitmapR and GxB_Matrix_pack_BitmapR: import/pack a bitmap
-// matrix, held by row
+// GxB_Matrix_pack_BitmapR: pack a bitmap matrix, held by row
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
+GrB_Info GxB_Matrix_import_BitmapR // historical: use GxB_Matrix_pack_BitmapR
 (
     GrB_Matrix *A,      // handle of matrix to create
     GrB_Type type,      // type of matrix to create
@@ -10136,12 +10137,11 @@ GrB_Info GxB_Matrix_pack_BitmapR  // pack a bitmap matrix, held by row
     //      array.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_BitmapC and GxB_Matrix_pack_BitmapC: import/pack a bitmap
-// matrix, held by column
+// GxB_Matrix_pack_BitmapC: pack a bitmap matrix, held by column
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_import_BitmapC  // import a bitmap matrix, held by column
+GrB_Info GxB_Matrix_import_BitmapC // historical: use GxB_Matrix_pack_BitmapC
 (
     GrB_Matrix *A,      // handle of matrix to create
     GrB_Type type,      // type of matrix to create
@@ -10182,12 +10182,11 @@ GrB_Info GxB_Matrix_pack_BitmapC  // pack a bitmap matrix, held by column
     //      array.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_FullR and GxB_Matrix_pack_FullR:  import/pack a full
-// matrix, held by row
+// GxB_Matrix_pack_FullR:  pack a full matrix, held by row
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_import_FullR  // import a full matrix, held by row
+GrB_Info GxB_Matrix_import_FullR // historical: use GxB_Matrix_pack_FullR
 (
     GrB_Matrix *A,      // handle of matrix to create
     GrB_Type type,      // type of matrix to create
@@ -10219,12 +10218,11 @@ GrB_Info GxB_Matrix_pack_FullR  // pack a full matrix, held by row
     //      Ax [i*ncols+j].  All entries in A are present.
 
 //------------------------------------------------------------------------------
-// GxB_Matrix_import_FullC and GxB_Matrix_pack_FullC: import/pack a full
-// matrix, held by column
+// GxB_Matrix_pack_FullC: pack a full matrix, held by column
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
+GrB_Info GxB_Matrix_import_FullC // historical: use GxB_Matrix_pack_FullC
 (
     GrB_Matrix *A,      // handle of matrix to create
     GrB_Type type,      // type of matrix to create
@@ -10256,12 +10254,11 @@ GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
     //      Ax [i+j*nrows].  All entries in A are present.
 
 //------------------------------------------------------------------------------
-// GxB_Vector_import_CSC and GxB_Vector_pack_CSC: import/pack a vector in CSC
-// format
+// GxB_Vector_pack_CSC: import/pack a vector in CSC format
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
+GrB_Info GxB_Vector_import_CSC // historical: use GxB_Vector_pack_CSC
 (
     GrB_Vector *v,      // handle of vector to create
     GrB_Type type,      // type of vector to create
@@ -10297,12 +10294,11 @@ GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
     // zero, then the vi and vx arrays need not be present and can be NULL.
 
 //------------------------------------------------------------------------------
-// GxB_Vector_import_Bitmap and GxB_Vector_pack_Bitmap: import/pack a vector in
-// bitmap format
+// GxB_Vector_pack_Bitmap: pack a vector in bitmap format
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
+GrB_Info GxB_Vector_import_Bitmap // historical: GxB_Vector_pack_Bitmap
 (
     GrB_Vector *v,      // handle of vector to create
     GrB_Type type,      // type of vector to create
@@ -10335,12 +10331,11 @@ GrB_Info GxB_Vector_pack_Bitmap // pack a bitmap vector
     // matrix in BitmapC format.
 
 //------------------------------------------------------------------------------
-// GxB_Vector_import_Full and GxB_Vector_pack_Full: import/pack a vector in
-// full format
+// GxB_Vector_pack_Full: pack a vector in full format
 //------------------------------------------------------------------------------
 
 GB_PUBLIC
-GrB_Info GxB_Vector_import_Full // import a full vector
+GrB_Info GxB_Vector_import_Full // historical: use GxB_Vector_pack_Full
 (
     GrB_Vector *v,      // handle of vector to create
     GrB_Type type,      // type of vector to create
@@ -10366,6 +10361,8 @@ GrB_Info GxB_Vector_pack_Full // pack a full vector
     // The GrB_Vector is treated as if it was a single column of an n-by-1
     // matrix in FullC format.
 
+//------------------------------------------------------------------------------
+// GxB* export/unpack
 //------------------------------------------------------------------------------
 
 // The GxB_*_export/unpack functions are symmetric with the GxB_*_import/pack
@@ -10402,7 +10399,7 @@ GrB_Info GxB_Vector_pack_Full // pack a full vector
 // modify matrix or vector and the user arrays are returned as NULL.
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
+GrB_Info GxB_Matrix_export_CSR  // historical: use GxB_Matrix_unpack_CSR
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
@@ -10435,7 +10432,7 @@ GrB_Info GxB_Matrix_unpack_CSR  // unpack a CSR matrix
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
+GrB_Info GxB_Matrix_export_CSC  // historical: use GxB_Matrix_unpack_CSC
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
@@ -10468,7 +10465,7 @@ GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
+GrB_Info GxB_Matrix_export_HyperCSR // historical: use GxB_Matrix_unpack_HyperCSR
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
@@ -10507,7 +10504,7 @@ GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
+GrB_Info GxB_Matrix_export_HyperCSC // historical: use GxB_Matrix_unpack_HyperCSC
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
@@ -10546,7 +10543,7 @@ GrB_Info GxB_Matrix_unpack_HyperCSC  // unpack a hypersparse CSC matrix
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
+GrB_Info GxB_Matrix_export_BitmapR // historical: use GxB_Matrix_unpack_BitmapR
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
@@ -10575,7 +10572,7 @@ GrB_Info GxB_Matrix_unpack_BitmapR  // unpack a bitmap matrix, by row
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
+GrB_Info GxB_Matrix_export_BitmapC // historical: use GxB_Matrix_unpack_BitmapC
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
@@ -10604,7 +10601,7 @@ GrB_Info GxB_Matrix_unpack_BitmapC  // unpack a bitmap matrix, by col
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
+GrB_Info GxB_Matrix_export_FullR // historical: use GxB_Matrix_unpack_FullR
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
@@ -10627,7 +10624,7 @@ GrB_Info GxB_Matrix_unpack_FullR  // unpack a full matrix, by row
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
+GrB_Info GxB_Matrix_export_FullC // historical: use GxB_Matrix_unpack_FullC
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
@@ -10650,7 +10647,7 @@ GrB_Info GxB_Matrix_unpack_FullC  // unpack a full matrix, by column
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
+GrB_Info GxB_Vector_export_CSC // historical: use GxB_Vector_unpack_CSC
 (
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
@@ -10680,7 +10677,7 @@ GrB_Info GxB_Vector_unpack_CSC  // unpack a CSC vector
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
+GrB_Info GxB_Vector_export_Bitmap // historical: use GxB_Vector_unpack_Bitmap
 (
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
@@ -10708,7 +10705,7 @@ GrB_Info GxB_Vector_unpack_Bitmap   // unpack a bitmap vector
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_Vector_export_Full   // export and free a full vector
+GrB_Info GxB_Vector_export_Full // historical: use GxB_Vector_unpack_Full
 (
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
@@ -10735,14 +10732,14 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 
 // The GrB_Matrix_import method copies from user-provided arrays into an
 // opaque GrB_Matrix and GrB_Matrix_export copies data out, from an opaque
-// GrB_Matrix into user-provided arrays.  Unlike the GxB import/export methods,
+// GrB_Matrix into user-provided arrays.  Unlike the GxB pack/unpack methods,
 // memory is not handed off between the user application and GraphBLAS.
 
-// These methods are much slower than the GxB import/export methods, since they
+// These methods are much slower than the GxB pack/unpack methods, since they
 // require a copy of the data to be made.  GrB_Matrix_import also must assume
 // its input data cannot be trusted, and so it does extensive checks.  The GxB
-// import takes O(1) time in all cases (unless it is told the input data is
-// untrusted, via the descriptor).  GxB export takes O(1) time unless the
+// pack takes O(1) time in all cases (unless it is told the input data is
+// untrusted, via the descriptor).  GxB unpack takes O(1) time unless the
 // matrix is exported in a different format than it currently has.
 
 // The GrB C API specification supports 5 formats:

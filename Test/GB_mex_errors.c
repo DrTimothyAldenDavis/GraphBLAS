@@ -5263,8 +5263,14 @@ void mexFunction
         OK (GrB_transpose (B, Amask, NULL, A, NULL)) ;
         OK (GrB_transpose (A, Amask, NULL, A, NULL)) ;
         GrB_Index ignore ;
+
+        #if (GxB_IMPLEMENTATION_MAJOR <= 5)
         OK (GrB_Matrix_wait (&A)) ;
         OK (GrB_Matrix_wait (&B)) ;
+        #else
+        OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
+        OK (GrB_Matrix_wait (B, GrB_MATERIALIZE)) ;
+        #endif
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_Matrix_free_(&B) ;
 

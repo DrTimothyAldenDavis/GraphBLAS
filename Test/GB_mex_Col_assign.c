@@ -218,9 +218,9 @@ GrB_Info assign ( )
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait_(&C)) ;
+    OK (GrB_Matrix_wait (&C)) ;
     #else
-    OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
+    OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
     #endif
     return (info) ;
 }
@@ -345,7 +345,11 @@ GrB_Info many_assign
     }
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_Matrix_wait_(&C)) ;
+    #else
+    OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
+    #endif
     return (info) ;
 }
 

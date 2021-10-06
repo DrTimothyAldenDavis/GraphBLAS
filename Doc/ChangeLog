@@ -30,6 +30,7 @@ Version 5.2.0, FIXME
             from a GrB_Scalar
         * GrB_Matrix_diag: same as GxB_Matrix_diag (C, v, k, NULL)
         * GrB_*_serialize/deserialize: with compression
+    * GxB*import* and GxB*export*: now historical; use GxB*pack/unpack*
     * GxB_select: is now historical; use GrB_select instead.
     * GxB_IGNORE_DUP: special operator for build methods only; if dup
         is this operator, then duplicates are ignored (not an error)
@@ -52,8 +53,13 @@ Version 5.2.0, FIXME
     * GxB_*_serialize/deserialize: with compression; optional descriptor
     * added LZ4/LZ4HC: compression library, http://www.lz4.org (BSD 2),
         v1.9.3, Copyright (c) 2011-2016, Yann Collet, All Rights Reserved.
-    * (31) bug fix: C<M>=Z not returning C as iso if Z iso and C initialy
+    * (32) bug fix: C<M>=Z not returning C as iso if Z iso and C initialy
         empty.  Caught by Erik Welch, Anaconda.
+
+Version 5.1.8, Oct 5, 2021
+
+    * (31) bug fix: C=A*B when A is sparse and B is iso and bitmap.
+        Caught by Mark Blanco, CMU.
 
 Version 5.1.7, Aug 23, 2021
 
