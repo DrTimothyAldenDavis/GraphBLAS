@@ -281,8 +281,20 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         {
             // the output Cx is aliased with C->x in GB_apply_op.
             GB_iso_code C_code_iso = GB_iso_unop_code (C, op, binop_bind1st) ;
-            info = GB_apply_op ((GB_void *) C->x, C->type, C_code_iso,
-                op, scalar, binop_bind1st, flipij, C, Context) ;
+            info = GrB_SUCCESS ;
+            if (C_code_iso == GB_NON_ISO && C->iso)
+            { 
+                // expand C to non-iso; initialize C->x unless the op
+                // is positional
+                info = GB_convert_any_to_non_iso (C, !op_is_positional,
+                    Context) ;
+            }
+            if (info == GrB_SUCCESS)
+            { 
+                // C->x = op (C->x) in place
+                info = GB_apply_op ((GB_void *) C->x, C->type, C_code_iso,
+                    op, scalar, binop_bind1st, flipij, C, Context) ;
+            }
             if (info == GrB_SUCCESS && C_code_iso != GB_NON_ISO)
             { 
                 // compact the iso values of C
