@@ -56,7 +56,6 @@
 #include "GraphBLAS.h"
 #include "simple_rand.h"
 #include "usercomplex.h"
-#include "prand.h"
 
 #undef MIN
 #undef MAX
@@ -74,28 +73,6 @@ GrB_Info read_matrix        // read a double-precision matrix
     bool boolean,           // if true, input is GrB_BOOL, otherwise GrB_FP64
     bool printstuff         // if true, print status to stdout
 ) ;
-
-GB_PUBLIC
-GrB_Info mis                    // compute a maximal independent set
-(
-    GrB_Vector *iset_output,    // iset(i) = true if i is in the set
-    const GrB_Matrix A,         // symmetric Boolean matrix
-    int64_t seed                // random number seed
-) ;
-
-GB_PUBLIC
-GrB_Info mis_check              // compute a maximal independent set
-(
-    GrB_Vector *iset_output,    // iset(i) = true if i is in the set
-    const GrB_Matrix A,         // symmetric Boolean matrix
-    int64_t seed                // random number seed
-) ;
-
-GB_PUBLIC
-void mis_score  (void *result, const void *degree) ;
-
-GB_PUBLIC
-void mis_score2 (void *result, const void *degree, const void *xrand) ;
 
 GB_PUBLIC
 GrB_Info random_matrix      // create a random double-precision matrix

@@ -25,9 +25,6 @@ in Demo/Source:
 --------------------------------------------------------------------------------
 
     get_matrix.c            get a matrix (file, Wathen, or random)
-    mis.c                   maximal independent set
-    mis_check.c             as above, but with error checking
-    mis_score.c             random score for mis
     random_matrix.c         create a random matrix
     read_matrix.c           read a matrix from a file (Matrix/*)
     simple_rand.c           a very simple random number generator
@@ -40,7 +37,6 @@ in Demo/Source:
     irowscale.c             row scaling for ipagerank
     import_test.c           test import/export
     isequal.c               test if 2 matrices are equal
-    prand.c                 thread-safe parallel number generator
 
 --------------------------------------------------------------------------------
 in Demo/Program:
@@ -49,7 +45,6 @@ in Demo/Program:
     complex_demo.c          demo program to test complex type
     import_demo.c           demo program to test import/export
     kron_demo.c             demo program to test GrB_kronecker
-    mis_demo.c              demo program to test mis
     simple_demo.c           demo program to test simple_rand
     wildtype_demo.c         demo program, arbitrary struct as user-defined type
     pagerank_demo.c         demo program to test dpagerank and ipagerank
@@ -60,7 +55,6 @@ in Demo/Output:
 --------------------------------------------------------------------------------
 
     complex_demo_out.m  output of complex_demo
-    mis_demo.out        output of mis_demo
     simple_test.out     output of simple_demo
     tri_demo.out        output of tri_demo
     wildtype_demo.out   output of wildtype_demo

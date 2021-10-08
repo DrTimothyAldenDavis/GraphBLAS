@@ -101,20 +101,20 @@ find_package ( OpenMP )
 # Intel(R) IPP not yet supported
 # find_package ( IPP )
 
-include ( CheckLanguage )
-check_language ( CUDA )
-if ( CMAKE_CUDA_COMPILER )
-    # with CUDA:
-    message ( STATUS "CUDA: enabled")
-    enable_language ( CUDA )
-    set ( CMAKE_CUDA on )
-    set ( RMM_WRAP on )
-else ( )
-    # without CUDA:
-    message ( STATUS "CUDA: not enabled")
-    set ( CMAKE_CUDA off )
-    set ( RMM_WRAP off )
-endif ( )
+#   include ( CheckLanguage )
+#   check_language ( CUDA )
+#   if ( CMAKE_CUDA_COMPILER )
+#       # with CUDA:
+#       message ( STATUS "CUDA: enabled")
+#       enable_language ( CUDA )
+#       set ( CMAKE_CUDA on )
+#       set ( RMM_WRAP on )
+#   else ( )
+#       # without CUDA:
+#       message ( STATUS "CUDA: not enabled")
+        set ( CMAKE_CUDA off )
+        set ( RMM_WRAP off )
+#   endif ( )
 
 # for nvcc, add -DGBCUDA
 
@@ -457,7 +457,6 @@ if ( DEMO )
 
     add_executable ( pagerank_demo "Demo/Program/pagerank_demo.c" )
     add_executable ( openmp_demo   "Demo/Program/openmp_demo.c" )
-    add_executable ( mis_demo      "Demo/Program/mis_demo.c" )
     add_executable ( complex_demo  "Demo/Program/complex_demo.c" )
     add_executable ( kron_demo     "Demo/Program/kron_demo.c" )
     add_executable ( simple_demo   "Demo/Program/simple_demo.c" )
@@ -468,7 +467,6 @@ if ( DEMO )
     # Libraries required for Demo programs
     target_link_libraries ( pagerank_demo PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
     target_link_libraries ( openmp_demo   PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
-    target_link_libraries ( mis_demo      PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
     target_link_libraries ( complex_demo  PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
     target_link_libraries ( kron_demo     PUBLIC graphblas graphblasdemo ${GB_CUDA} ${GB_RMM} )
     target_link_libraries ( simple_demo   PUBLIC graphblasdemo ${GB_CUDA} ${GB_RMM} )

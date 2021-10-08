@@ -208,6 +208,7 @@ are extensions to the GraphBLAS C API.
         optional descriptor.
     \item added LZ4/LZ4HC: compression library, \url{http://www.lz4.org} (BSD 2),
         v1.9.3, Copyright (c) 2011-2016, Yann Collet.
+    \item mis demo: removed; revised and added to LAGraph/experimental
     \item (32) bug fix: \verb'C<M>=Z' not returning \verb'C'
         as iso if \verb'Z 'iso and \verb'C' initially
         empty.  Caught by Erik Welch, Anaconda.
@@ -13018,7 +13019,6 @@ Several examples of how to use GraphBLAS are listed below.  They all
 appear in the \verb'Demo' folder of SuiteSparse:GraphBLAS.
 
 \begin{enumerate}
-\item finding a maximal independent set
 \item creating a random matrix
 \item creating a finite-element matrix
 \item reading a matrix from a file
@@ -13050,140 +13050,6 @@ and \verb'GraphBLAS' in the same parent directory.  This allows the
 the GraphBLAS source could be placed anywhere, as long as
 \verb'sudo make install' is performed.
 
-%-------------------------------------------------------------------------------
-\subsection{Maximal independent set}
-%-------------------------------------------------------------------------------
-\label{mis}
-
-The {\em maximal independent set} problem is to find a set of nodes $S$ such
-that no two nodes in $S$ are adjacent to each other (an independent set), and
-all nodes not in $S$ are adjacent to at least one node in $S$ (and thus $S$ is
-maximal since it cannot be augmented by any node while remaining an independent
-set).  The \verb'mis' function in the \verb'Demo' folder solves this problem
-using Luby's method \cite{Luby86}.  The key operations in the method are
-replicated on the next page.
-
-The gist of the algorithm is this.  In each phase, all candidate nodes are
-given a random score.  If a node has a score higher than all its neighbors,
-then it is added to the independent set.  All new nodes added to the set cause
-their neighbors to be removed from the set of candidates.  The process must be
-repeated for multiple phases until no new nodes can be added.  This is because
-in one phase, a node \verb'i' might not be added because one of its neighbors
-\verb'j' has a higher score, yet that neighbor \verb'j' might not be added
-because one of its neighbors \verb'k' is added to the independent set instead.
-The node \verb'j' is no longer a candidate and can never be added to the
-independent set, but node \verb'i' could be added to $S$ in a subsequent phase.
-
-The initialization step, before the \verb'while' loop, computes the degree of
-each node with a \verb'PLUS' reduction.  The set of \verb'candidates' is
-Boolean vector, the \verb'i'th component is true if node \verb'i' is a
-candidate.  A node with no neighbors causes the algorithm to stall, so these
-nodes are not candidates.  Instead, they are immediately added to the
-independent set, represented by another Boolean vector \verb'iset'.  Both steps
-are done with an \verb'assign', using the \verb'degree' as a mask, except the
-assignment to \verb'iset' uses the complement of the mask, via the
-\verb'sr_desc' descriptor.  Finally, the \verb'GrB_Vector_nvals' statement
-counts how many candidates remain.
-
-Each phase of Luby's algorithm consists of 11 calls to GraphBLAS operations,
-all of which are either parallel, or take $O(1)$ time.
-Not all of them are described here since they are commented in the code itself.
-The two matrix-vector multiplications are the important parts and also take the
-most time.  They also make interesting use of semirings and masks.  The first
-one computes the largest score of all the neighbors of each node in the
-candidate set:
-
-        {\footnotesize
-        \begin{verbatim}
-        // compute the max probability of all neighbors
-        GrB_vxm (neighbor_max, candidates, NULL, maxFirst, prob, A, r_desc) ; \end{verbatim}}
-
-\verb'A' is a symmetric Boolean matrix and \verb'prob' is a sparse real vector
-(of type \verb'FP32'), where \verb'prob(i)' is nonzero only if node \verb'i' is
-a candidate.  The \verb'prob' vector is computed from a random vector computed
-by a utility function \verb'prand_xget', in the \verb'Demo' folder.  It uses
-two calls to \verb'GrB_apply' to construct \verb'n' random numbers in parallel,
-using a repeatable pseudo-random number generator.
-
-The \verb'maxFirst' semiring uses \verb'z=FIRST(x,y)' as the multiplier
-operator.  The column \verb'A(:,j)' is the adjacency of node \verb'j', and the
-dot product \verb"prob'*A(:,j)" applies the \verb'FIRST' operator on all
-entries that appear in the intersection of \verb'prob' and \verb'A(:,j)', where
-\verb'z=FIRST(prob(i),A(i,j))' which is just \verb'prob(i)' if \verb'A(i,j)' is
-present.  If \verb'A(i,j)' not an explicit entry in the matrix, then this term
-is not computed and does not take part in the reduction by the \verb'MAX'
-monoid.
-
-Thus, each term \verb'z=FIRST(prob(i),A(i,j))' is the score, \verb'prob(i)',
-of all neighbors \verb'i' of node \verb'j' that have a score.  Node \verb'i'
-does not have a score if it is not also a candidate and so this is skipped.
-These terms are then ``summed'' up by taking the maximum score, using
-\verb'MAX' as the additive monoid.
-
-Finally, the results of this matrix-vector multiply are written to the result,
-\verb'neighbor_max'.  The \verb'r_desc' descriptor has the \verb'REPLACE'
-option enabled.  Since \verb'neighbor_max' does not also take part in the
-computation \verb"prob'*A", it is simply cleared first.  Next, is it modified
-only in those positions \verb'i' where \verb'candidates(i)' is true, using
-\verb'candidates' as a mask.  This sets the \verb'neighbor_max' only for
-candidate nodes, and leaves the other components of \verb'neighbor_max' as zero
-(implicit values not in the pattern of the vector).
-
-All of the above work is done in a single matrix-vector multiply, with an
-elegant use of the \verb'maxFirst' semiring coupled with a mask.  The
-matrix-vector multiplication is described above as if it uses dot products of
-rows of \verb'A' with the column vector \verb'prob', but SuiteSparse:GraphBLAS
-does not compute it that way.  Sparse dot products are much slower the optimal
-method for multiplying a sparse matrix times a sparse vector.  The result is
-the same, however.
-
-The second matrix-vector multiplication is more straight-forward.  Once the set
-of new members in the independent is found, it is used to remove all neighbors
-of those new members from the set of candidates.
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    // compute the degree of each node
-    GrB_reduce (degrees, NULL, NULL, GrB_PLUS_FP64, A, NULL) ;
-    // singletons are not candidates; they are added to iset first instead
-    // candidates[degree != 0] = 1
-    GrB_assign (candidates, degrees, NULL, true, GrB_ALL, n, NULL);
-    // add all singletons to iset
-    // iset[degree == 0] = 1
-    GrB_assign (iset, degrees, NULL, true, GrB_ALL, n, sr_desc) ;
-    // Iterate while there are candidates to check.
-    GrB_Index nvals ;
-    GrB_Vector_nvals (&nvals, candidates) ;
-    while (nvals > 0)
-    {
-        // sparsify the random number seeds (just keep it for each candidate)
-        GrB_assign (Seed, candidates, NULL, Seed, GrB_ALL, n, r_desc) ;
-        // compute a random probability scaled by inverse of degree
-        prand_xget (X, Seed) ;  // two calls to GrB_apply
-        GrB_eWiseMult (prob, candidates, NULL, set_random, degrees, X, r_desc) ;
-        // compute the max probability of all neighbors
-        GrB_vxm (neighbor_max, candidates, NULL, maxFirst, prob, A, r_desc) ;
-        // select node if its probability is > than all its active neighbors
-        GrB_eWiseAdd (new_members, NULL,NULL, GrB_GT_FP64, prob, neighbor_max,0);
-        // add new members to independent set.
-        GrB_eWiseAdd (iset, NULL, NULL, GrB_LOR, iset, new_members, NULL) ;
-        // remove new members from set of candidates c = c & !new
-        GrB_apply (candidates, new_members, NULL, GrB_IDENTITY_BOOL,
-            candidates, sr_desc) ;
-        GrB_Vector_nvals (&nvals, candidates) ;
-        if (nvals == 0) { break ; }                  // early exit condition
-        // Neighbors of new members can also be removed from candidates
-        GrB_vxm (new_neighbors, candidates, NULL, Boolean,
-            new_members, A, NULL) ;
-        GrB_apply (candidates, new_neighbors, NULL, GrB_IDENTITY_BOOL,
-            candidates, sr_desc) ;
-        GrB_Vector_nvals (&nvals, candidates) ;
-    } \end{verbatim}}
-\end{mdframed}
-
-
-\newpage
 %-------------------------------------------------------------------------------
 \subsection{Creating a random matrix}
 %-------------------------------------------------------------------------------
@@ -13233,7 +13099,6 @@ the matrix, or at least a good upper bound, before the matrix is constructed.
 It is slightly faster, creating the same matrix in 60 seconds, 51 seconds
 of which is spent in \verb'GrB_Matrix_build'.
 
-\newpage
     {\footnotesize
     \begin{verbatim}
     GrB_Index *I, *J ;
@@ -13281,7 +13146,6 @@ the tuples \verb'[I,J,X]'.  Considering just the time for
 methods, \verb'setElement' and \verb'build' in SuiteSparse:GraphBLAS, and
 \verb'sparse' in MATLAB, are equally fast.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsection{Creating a finite-element matrix}
 %-------------------------------------------------------------------------------
@@ -14300,7 +14164,6 @@ See \url{http://graphblas.org} for the GraphBLAS community page.  See
 \url{https://github.com/GraphBLAS/GraphBLAS-Pointers} for an up-to-date list of
 additional resources on GraphBLAS, maintained by G{\'{a}}bor Sz{\'{a}}rnyas.
 
-\newpage
 %-------------------------------------------------------------------------------
 % References
 %-------------------------------------------------------------------------------
