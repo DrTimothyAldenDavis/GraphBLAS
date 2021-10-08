@@ -15,22 +15,21 @@ set(CMAKE_C_STANDARD 99)
 
 add_library(graphblascuda SHARED
     GB_AxB_dot3_cuda.cu
-    GB_reduce_to_scalar_cuda.cu
+#    GB_reduce_to_scalar_cuda.cu
 )
 
 set(GRAPHBLAS_CUDA_INCLUDES
+        $RMM_WRAP_INCLUDES
         ../Source
         ../Source/Template
         ../Include
-        ../CUDA
-        $RMM_WRAP_INCLUDES)
+        ../CUDA)
 
 target_link_libraries(graphblascuda PUBLIC ${CUDA_LIBRARIES})
 target_include_directories(graphblascuda PUBLIC  ${CUDA_INCLUDE_DIRECTORIES} ${GRAPHBLAS_CUDA_INCLUDES})
 set_target_properties(graphblascuda PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "75")
-#I = -I. -I../Source -I../Source/Template -I../Include -I../rmm/rmm/include/  -Irmm/thirdparty/spdlog/include
 # The ou
 
 # 1. Execute enumify/stringify/jitify logic to compile ptx kernels and compile/link w/ relevant *.cu files.
@@ -38,45 +37,66 @@ set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "75")
 # TODO: Need to do this piece in cmake
 
 # 2. Generate test .cu files named "{semiring_operation}_test_instances.hpp"
-#set(CUDA_TEST_SUITES
-#    AxB_dot3
-#)
+set(CUDA_TEST_SUITES
+    AxB_dot3
+#    reduce_to_scalar
+)
 
 #
-#set(CUDA_TEST_MONOIDS PLUS MIN MAX TIMES ANY)
-#set(CUDA_TEST_BINOPS TIMES PLUS MIN MAX DIV MINUS RDIV RMINUS FIRST SECOND PAIR)
-#set(CUDA_TEST_SEMIRINGS PLUS_TIMES MIN_PLUS MAX_PLUS)
-#set(CUDA_TEST_DATATYPES int32_t int64_t uint32_t uint64_t float double)
-#set(CUDA_TEST_KERNELS warp mp vsvs dndn spdn vssp)
+set(CUDA_TEST_MONOIDS PLUS MIN MAX TIMES ANY)
+set(CUDA_TEST_BINOPS TIMES PLUS MIN MAX DIV MINUS RDIV RMINUS FIRST SECOND PAIR)
+set(CUDA_TEST_SEMIRINGS PLUS_TIMES MIN_PLUS MAX_PLUS)
+set(CUDA_TEST_DATATYPES int32_t int64_t uint32_t uint64_t float double)
+set(CUDA_TEST_KERNELS warp mp vsvs dndn spdn vssp)
 
 # TODO: Update testGen.py to accept the above CUDA_TEST_* params as arguments
 
 # Note: I don't believe there's a way to do this particular piece in parallel but
 # once all the files are written, we should be able to compile them in parallel
 
-#set(CUDA_TEST_CPP_FILES "")
-#foreach(var ${CUDA_TEST_SUITES})
-#
-#    # TODO: Have Python script also build separate cudaTest.cpp (named something
-#    # like AxB_dot3_cuda_tests.cpp) for each suite. This way we should be able to
-#    # easily ignore them from the build
-#    add_custom_command(
-#            OUTPUT
-#            ${CMAKE_CURRENT_SOURCE_DIR}/${var}_test_instances.hpp
-#            ${CMAKE_CURRENT_SOURCE_DIR}/${var}_cuda_tests.cpp
-#            DEPENDS
-#            ${CMAKE_CURRENT_SOURCE_DIR}/jitFactory.hpp
-#            COMMAND python testGen_cmake.py "${var}" "${CUDA_TEST_MONOIDS}"
-#                "${CUDA_TEST_BINOPS}" "${CUDA_TEST_SEMIRINGS}" "${CUDA_TEST_DATATYPES}"
-#                "${CUDA_TEST_KERNELS}"
-#    )
-#
-#    # Construct final list of files to compile (in parallel)
-#    list(APPEND CUDA_TEST_CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${var}_cuda_tests.cpp)
-#endforeach()
+# Separate individual kernels from larger "overview" test (e.g. 2-level testing structure)
+# We want to test all the *_cuda versions
+
+set(CUDA_TEST_CPP_FILES "")
+foreach(var ${CUDA_TEST_SUITES})
+
+    # TODO: Have Python script also build separate cudaTest.cpp (named something
+    # like AxB_dot3_cuda_tests.cpp) for each suite. This way we should be able to
+    # easily ignore them from the build
+    add_custom_command(
+            OUTPUT
+            ${CMAKE_CURRENT_BINARY_DIR}/${var}_test_instances.hpp
+            ${CMAKE_CURRENT_BINARY_DIR}/${var}_cuda_tests.cpp
+            DEPENDS
+            ${CMAKE_CURRENT_SOURCE_DIR}/test/jitFactory.hpp
+            COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/test/testGen_cmake.py "\"${CMAKE_CURRENT_SOURCE_DIR}\"" "\"${var}\"" "\"${CUDA_TEST_MONOIDS}\""
+                "\"${CUDA_TEST_BINOPS}\"" "\"${CUDA_TEST_SEMIRINGS}\"" "\"${CUDA_TEST_DATATYPES}\""
+                "\"${CUDA_TEST_KERNELS}\""
+    )
+
+    # Construct final list of files to compile (in parallel)
+    list(APPEND CUDA_TEST_CPP_FILES ${CMAKE_CURRENT_BINARY_DIR}/${var}_cuda_tests.cpp)
+endforeach()
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
+execute_process(
+        COMMAND git clone "https://github.com/google/googletest.git" googletest
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/googletest/googletest/include)
 
 # 3. Compile/link individual {test_suite_name}_cuda_tests.cpp files into a gtest executable
+set(GRAPHBLAS_CUDA_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/test)
 
-#add_executable(graphblascuda_test ${CUDA_TEST_CPP_FILES})
-#target_link_libraries(graphblascuda_test "graphblas" "graphblascuda.so" ${ADDITIONAL_DEPS})
-#target_include_directories(graphblascuda_test PUBLIC  ${ADDITIONAL_INCLUDES})
+add_executable(graphblascuda_test ${CMAKE_CURRENT_SOURCE_DIR}/test/run_tests.cpp ${CUDA_TEST_CPP_FILES})
+target_include_directories(graphblascuda_test PUBLIC  ${CUDA_INCLUDE_DIRECTORIES} ${GRAPHBLAS_CUDA_INCLUDES})
+set_target_properties(graphblascuda_test PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(graphblascuda_test PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+set_target_properties(graphblascuda_test PROPERTIES CUDA_ARCHITECTURES "75")
+
+add_dependencies(graphblascuda_test graphblas)
+target_link_libraries(graphblascuda_test graphblas graphblascuda ${ADDITIONAL_DEPS})
+target_include_directories(graphblascuda_test PUBLIC
+        ${ADDITIONAL_INCLUDES}
+        ${CUDA_INCLUDE_DIRECTORIES}
+        ${GRAPHBLAS_CUDA_INCLUDES})

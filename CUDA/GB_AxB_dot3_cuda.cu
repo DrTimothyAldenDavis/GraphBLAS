@@ -22,17 +22,6 @@ extern "C"
 #include "GB_cuda.h"
 
 
-#include "templates/GB_jit_AxB_dot3_phase1.cu.jit"
-#include "templates/GB_jit_AxB_dot3_phase2.cu.jit"
-// the 5 kernels for the 5 buckets:
-#include "templates/GB_jit_AxB_dot3_phase3_dndn.cu.jit"
-#include "templates/GB_jit_AxB_dot3_phase3_vsvs.cu.jit"
-#include "templates/GB_jit_AxB_dot3_phase3_vssp.cu.jit"
-#include "templates/GB_jit_AxB_dot3_phase3_spdn.cu.jit"
-#include "templates/GB_jit_AxB_dot3_phase3_mp.cu.jit"
-#include "templates/GB_jit_AxB_dot3_phase3_warpix.cu.jit"
-#include "templates/reduceNonZombiesWarp.cu.jit"
-
 
 #include "GB_callback.hpp"
 #include "GB_jit_launcher.h"
@@ -358,6 +347,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     */
     // where GB_semiring_23030928029.h is mysemiring.filename
 
+    /**
+     * JIT Instantiation Calls
+     */
     std::stringstream phase1_program ;
     phase1_program <<
     R"(phase1_program
@@ -371,7 +363,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     jit::launcher( base_name + Opname + mysemiring.filename, 
                    phase1_program.str(),
                    header_names,
-                   compiler_flags,
+                   jit::compiler_flags,
                    dummy_callback,
                    stream_AxB)
                .set_kernel_inst("GB_AxB_cuda_dot3_phase1",
@@ -397,7 +389,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     jit::launcher( base_name + Opname + mysemiring.filename,
                    phase2_program.str(),
                    header_names,
-                   compiler_flags,
+                   jit::compiler_flags,
                    dummy_callback) 
                    //stream_AxB)
                .set_kernel_inst("GB_AxB_dot3_phase2",
@@ -409,7 +401,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     jit::launcher( base_name + Opname + mysemiring.filename,
                    phase2_program.str(),
                    header_names,
-                   compiler_flags,
+                   jit::compiler_flags,
                    dummy_callback)
                    //stream_AxB)
                .set_kernel_inst("GB_AxB_dot3_phase2end",
@@ -417,6 +409,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                .configure(grid, block);
 
 
+    /**
+     * JIT Kernel Launch
+     */
     phase1Kernel.launch(
                         Nanobuckets,       // array of size NBUCKETS-blockDim.x-by-gridDim.x
                         Blockbucket,       // bucket counts, of size NBUCKETS-by-gridDim.x
@@ -624,7 +619,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         jit::launcher( base_name + Opname + "_" + mysemiring.filename,
                        phase3_program.str(),
                        header_names,
-                       compiler_flags,
+                       jit::compiler_flags,
                        dummy_callback)
                    .set_kernel_inst(kernel_name + Opname,
                                     { ctype->name,
@@ -675,7 +670,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     jit::launcher( reduce_kernel_name + "_" + mysemiring.filename,
                    reduce_program.str(),
                    header_names,
-                   compiler_flags,
+                   jit::compiler_flags,
                    dummy_callback)
                    .set_kernel_inst( reduce_kernel_name , { ctype->name })
                    .configure(red_grid, red_block) //if commented, use implicit 1D configure in launch
