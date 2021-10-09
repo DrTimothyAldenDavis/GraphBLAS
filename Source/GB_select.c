@@ -345,18 +345,12 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         // typecasting needs to be performed.
 
         //----------------------------------------------------------------------
-        // tril, triu, diag, offdiag: get k and handle the flip
+        // tril, triu, diag, offdiag, ...: get k and handle the flip
         //----------------------------------------------------------------------
 
         // The built-in operators are modified so they can always work as if A
         // were in CSC format.  If A is not in CSC, then the operation is
         // flipped.
-        // 0: tril(A,k)    becomes triu(A,-k)
-        // 1: triu(A,k)    becomes tril(A,-k)
-        // 2: diag(A,k)    becomes diag(A,-k)
-        // 3: offdiag(A,k) becomes offdiag(A,-k)
-        // all others      Thunk is unchanged
-        // userop(A)       row/col indices and dimensions are swapped
 
         if (flipij)
         { 
@@ -374,7 +368,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     opcode = GB_TRIL_selop_code ;
                     break ;
 
-                // thunk is negated for DIAG and OFFDIAG
+                // DIAG and OFFDIAG: same opcode, but negate the thunk
                 case GB_DIAG_selop_code : 
                 case GB_OFFDIAG_selop_code : 
                     ithunk = -ithunk ;
@@ -392,25 +386,27 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     opcode = GB_ROWINDEX_idxunop_code ;
                     break ;
 
-                // DIAGINDEX becomes FLIPDIAGINDEX
-                case GB_DIAGINDEX_idxunop_code : 
-                    // j-(i+thunk) becomes i-(j+thunk): no change to thunk
-                    opcode = GB_FLIPDIAGINDEX_idxunop_code ;
-                    break ;
-
-                // COL* becomes ROW*; thunk is unchanged
+                // COLLE becomes ROWLE
                 case GB_COLLE_idxunop_code : 
+                    // j <= thunk becomes i <= thunk: no change to thunk
                     opcode = GB_ROWLE_idxunop_code ;
                     break ;
+
+                // COLGT becomes ROWGT
                 case GB_COLGT_idxunop_code : 
+                    // j > thunk becomes i > thunk: no change to thunk
                     opcode = GB_ROWGT_idxunop_code ;
                     break ;
 
-                // ROW* becomes COL*; thunk is unchanged
+                // ROWLE becomes COLLE
                 case GB_ROWLE_idxunop_code : 
+                    // i <= thunk becomes j <= thunk: no change to thunk
                     opcode = GB_COLLE_idxunop_code ;
                     break ;
+
+                // ROWGT becomes COLGT
                 case GB_ROWGT_idxunop_code : 
+                    // i > thunk becomes j > thunk: no change to thunk
                     opcode = GB_COLGT_idxunop_code ;
                     break ;
 

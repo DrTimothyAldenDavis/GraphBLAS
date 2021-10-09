@@ -1,5 +1,5 @@
 function test230
-%TEST230 test GrB_apply with idxunp
+%TEST230 test GrB_apply with idxunop
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
