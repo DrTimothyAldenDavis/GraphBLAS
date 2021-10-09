@@ -227,7 +227,7 @@ void mexFunction
     OK (GxB_Type_from_name (&type, type_name)) ;
     CHECK (type == NULL) ;
 
-    OK (GxB_IndexUnaryOp_ttype_name (type_name, GrB_TRIL_INT64)) ;
+    OK (GxB_IndexUnaryOp_ytype_name (type_name, GrB_TRIL_INT64)) ;
     CHECK (MATCH (type_name, "int64_t")) ;
     OK (GxB_Type_from_name (&type, type_name)) ;
     CHECK (type == GrB_INT64) ;
@@ -247,7 +247,7 @@ void mexFunction
     ERR (GxB_BinaryOp_ytype_name (NULL, GrB_PLUS_FP32)) ;
     ERR (GxB_BinaryOp_ztype_name (NULL, GrB_PLUS_FP32)) ;
     ERR (GxB_IndexUnaryOp_xtype_name (NULL, GrB_TRIL_INT64)) ;
-    ERR (GxB_IndexUnaryOp_ttype_name (NULL, GrB_TRIL_INT64)) ;
+    ERR (GxB_IndexUnaryOp_ytype_name (NULL, GrB_TRIL_INT64)) ;
     ERR (GxB_IndexUnaryOp_ztype_name (NULL, GrB_VALUELT_INT16)) ;
 
     ERR (GxB_UnaryOp_xtype_name (type_name, NULL)) ;
@@ -256,7 +256,7 @@ void mexFunction
     ERR (GxB_BinaryOp_ytype_name (type_name, NULL)) ;
     ERR (GxB_BinaryOp_ztype_name (type_name, NULL)) ;
     ERR (GxB_IndexUnaryOp_xtype_name (type_name, NULL)) ;
-    ERR (GxB_IndexUnaryOp_ttype_name (type_name, NULL)) ;
+    ERR (GxB_IndexUnaryOp_ytype_name (type_name, NULL)) ;
     ERR (GxB_IndexUnaryOp_ztype_name (type_name, NULL)) ;
 
     OK (GxB_Type_name (type_name, GrB_BOOL)) ;
@@ -1245,6 +1245,30 @@ void mexFunction
     OK (GrB_Matrix_free_ (&A)) ;
     OK (GrB_Vector_free_ (&w)) ;
     OK (GrB_BinaryOp_free_ (&Add)) ;
+
+    //--------------------------------------------------------------------------
+    // iso in-place apply
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Matrix_new (&A, GrB_INT64, 5, 4)) ;
+    OK (GrB_Matrix_assign_INT64_ (A, NULL, NULL, (int64_t) 1, GrB_ALL, 5,
+        GrB_ALL, 4, NULL)) ;
+    OK (GxB_Matrix_fprint (A, "A iso", 3, NULL)) ;
+    OK (GxB_Global_Option_set (GxB_BURBLE, true)) ;
+    OK (GrB_Matrix_apply_IndexOp_INT64_ (A, NULL, NULL, GrB_ROWINDEX_INT64, A,
+        (int64_t) 0, NULL)) ;
+    OK (GxB_Global_Option_set (GxB_BURBLE, false)) ;
+    OK (GxB_Matrix_fprint (A, "A after apply rowindex", 3, NULL)) ;
+    for (int i = 0 ; i < 5 ; i++)
+    {
+        for (int j = 0 ; j < 4 ; j++)
+        {
+            int64_t aij = -1 ;
+            OK (GrB_Matrix_extractElement (&aij, A, i, j)) ;
+            CHECK (aij == i) ;
+        }
+    }
+    OK (GrB_Matrix_free_ (&A)) ;
 
     //--------------------------------------------------------------------------
     // wrapup

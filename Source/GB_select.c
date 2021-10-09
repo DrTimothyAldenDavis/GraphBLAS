@@ -302,6 +302,12 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         bthunk = (ithunk != 0) ;
     }
 
+    bool thunk_is_zero = false ;
+    if (nz_thunk > 0)
+    { 
+        thunk_is_zero = !GB_is_nonzero (Thunk->x, ttype->size) ;
+    }
+
     bool make_copy = false ;
     bool is_empty = false ;
 
@@ -437,22 +443,28 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
             switch (opcode)
             {
                 case GB_VALUENE_idxunop_code :
-                    opcode = GB_NE_THUNK_selop_code ;
+                    opcode = thunk_is_zero ?
+                        GB_NONZERO_selop_code : GB_NE_THUNK_selop_code ;
                     break ;
                 case GB_VALUEEQ_idxunop_code :
-                    opcode = GB_EQ_THUNK_selop_code ;
+                    opcode = thunk_is_zero ?
+                        GB_EQ_ZERO_selop_code : GB_EQ_THUNK_selop_code ;
                     break ;
                 case GB_VALUEGT_idxunop_code :
-                    opcode = GB_GT_THUNK_selop_code ;
+                    opcode = thunk_is_zero ?
+                        GB_GT_ZERO_selop_code : GB_GT_THUNK_selop_code ;
                     break ;
                 case GB_VALUEGE_idxunop_code :
-                    opcode = GB_GE_THUNK_selop_code ;
+                    opcode = thunk_is_zero ?
+                        GB_GE_ZERO_selop_code : GB_GE_THUNK_selop_code ;
                     break ;
                 case GB_VALUELT_idxunop_code :
-                    opcode = GB_LT_THUNK_selop_code ;
+                    opcode = thunk_is_zero ?
+                        GB_LT_ZERO_selop_code : GB_LT_THUNK_selop_code ;
                     break ;
                 case GB_VALUELE_idxunop_code :
-                    opcode = GB_LE_THUNK_selop_code ;
+                    opcode = thunk_is_zero ?
+                        GB_LE_ZERO_selop_code : GB_LE_THUNK_selop_code ;
                     break ;
                 default:;
             }
@@ -470,8 +482,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 // bool and uint: rename GxB_GT_ZERO to GxB_NONZERO
                 switch (acode)
                 {
-                    case GB_BOOL_code   : 
-                    case GB_UINT8_code  : 
+                    case GB_BOOL_code   :   // C is iso, if boolean
+                    case GB_UINT8_code  :   // C is not iso if uint*
                     case GB_UINT16_code : 
                     case GB_UINT32_code : 
                     case GB_UINT64_code :
@@ -520,6 +532,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     case GB_UINT16_code : 
                     case GB_UINT32_code : 
                     case GB_UINT64_code : 
+                        // C is iso for boolean and uint* cases
                         opcode = GB_EQ_ZERO_selop_code ; break ;
                     default: ;
                 }
@@ -531,6 +544,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 //       if thunk is false, rename GxB_NE_THUNK to GxB_NONZERO 
                 if (acode == GB_BOOL_code)
                 { 
+                    // C is iso boolean, in both cases
                     opcode = (bthunk) ?
                         GB_EQ_ZERO_selop_code : GB_NONZERO_selop_code ;
                 }
@@ -542,6 +556,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 //       if thunk is false, rename GxB_NE_THUNK to GxB_EQ_ZERO 
                 if (acode == GB_BOOL_code)
                 { 
+                    // C is iso boolean, in both cases
                     opcode = (bthunk) ?
                         GB_NONZERO_selop_code : GB_EQ_ZERO_selop_code ;
                 }
@@ -560,7 +575,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     }
                     else
                     { 
-                        // rename GT_THUNK to NONZERO for boolean
+                        // C is iso boolean
                         opcode = GB_NONZERO_selop_code ;
                     }
                 }
@@ -575,6 +590,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 {
                     if (bthunk)
                     { 
+                        // C is iso boolean
                         opcode = GB_NONZERO_selop_code ;
                     }
                     else
@@ -594,6 +610,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 {
                     if (bthunk)
                     { 
+                        // C is iso boolean
                         opcode = GB_EQ_ZERO_selop_code ;
                     }
                     else
@@ -618,6 +635,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     }
                     else
                     { 
+                        // C is iso boolean
                         opcode = GB_EQ_ZERO_selop_code ;
                     }
                 }

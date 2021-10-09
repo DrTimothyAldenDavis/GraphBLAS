@@ -1578,7 +1578,7 @@
 #define GxB_IGNORE_DUP GxM_IGNORE_DUP
 #define GxB_IndexUnaryOp_fprint GxM_IndexUnaryOp_fprint
 #define GxB_IndexUnaryOp_new GxM_IndexUnaryOp_new
-#define GxB_IndexUnaryOp_ttype_name GxM_IndexUnaryOp_ttype_name
+#define GxB_IndexUnaryOp_ytype_name GxM_IndexUnaryOp_ytype_name
 #define GxB_IndexUnaryOp_xtype_name GxM_IndexUnaryOp_xtype_name
 #define GxB_IndexUnaryOp_ztype_name GxM_IndexUnaryOp_ztype_name
 #define GxB_init GxM_init

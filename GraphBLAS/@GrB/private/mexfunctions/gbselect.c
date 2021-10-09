@@ -385,7 +385,7 @@ void mexFunction
         // typecast the b2 scalar to the idxunop->ytype
         GrB_Type ytype ;
         char ytype_name [GxB_MAX_NAME_LEN] ;
-        OK (GxB_IndexUnaryOp_ttype_name (ytype_name, idxunop)) ;
+        OK (GxB_IndexUnaryOp_ytype_name (ytype_name, idxunop)) ;
         OK (GxB_Type_from_name (&ytype, ytype_name)) ;
         OK (GrB_Matrix_new (&b4, ytype, 1, 1)) ;
         OK (GrB_Matrix_assign (b4, NULL, NULL, b2, GrB_ALL, 1, GrB_ALL, 1,

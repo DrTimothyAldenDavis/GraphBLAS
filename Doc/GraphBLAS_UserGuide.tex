@@ -208,7 +208,7 @@ are extensions to the GraphBLAS C API.
         optional descriptor.
     \item added LZ4/LZ4HC: compression library, \url{http://www.lz4.org} (BSD 2),
         v1.9.3, Copyright (c) 2011-2016, Yann Collet.
-    \item mis demo: removed; revised and added to LAGraph/experimental
+    \item mis and pagerank demos: removed; mis added to LAGraph/experimental
     \item (32) bug fix: \verb'C<M>=Z' not returning \verb'C'
         as iso if \verb'Z 'iso and \verb'C' initially
         empty.  Caught by Erik Welch, Anaconda.
@@ -3159,7 +3159,7 @@ the non-deterministic nature of intra-thread synchronization.
 \label{idxunop}
 
 An index-unary operator is a scalar function of the form
-$z=f(a_{ij},i,j,\mbox{thunk})$ that is applied to the entries $a_{ij}$ of an
+$z=f(a_{ij},i,j,y)$ that is applied to the entries $a_{ij}$ of an
 $m$-by-$n$ matrix.  It can be used in \verb'GrB_apply' (Section~\ref{apply}) or
 in \verb'GrB_select' (Section~\ref{select}) to select entries from a matrix or
 vector.
@@ -3178,13 +3178,13 @@ void f
 //  a better approach:
     int64_t i,          // row index of A(i,j)
     int64_t j,          // column index of A(i,j), or zero for v(i)
-    const void *thunk   // input scalar thunk
+    const void *y       // input scalar y
 ) ; \end{verbatim}}
 
 The following built-in operators are available.  Operators that do not depend
 on the value of \verb'A(i,j)' can be used on any matrix or vector, including
-those of user-defined type.  In the table, \verb'k' refers to the \verb'thunk'
-scalar, whose type matches the suffix of the operator.  The \verb'VALUENE' and
+those of user-defined type.  In the table, \verb'y' is a
+scalar whose type matches the suffix of the operator.  The \verb'VALUENE' and
 \verb'VALUENE' operators are defined for any built-in type. The other
 \verb'VALUE' operators are defined only for real (not complex) built-in types.
 Any index computations are done in \verb'int64_t' arithmetic; the result is
@@ -3198,28 +3198,28 @@ typecasted to \verb'int32_t' for the \verb'*INDEX_INT32' operators.
 GraphBLAS name          & Octave/MATLAB     & description \\
                         & analog            & \\
 \hline
-\verb'GrB_ROWINDEX_INT32'  & \verb'z=i+k'       & row index of \verb'A(i,j)', as int32 \\
-\verb'GrB_ROWINDEX_INT64'  & \verb'z=i+k'       & row index of \verb'A(i,j)', as int64 \\
-\verb'GrB_COLINDEX_INT32'  & \verb'z=j+k'       & column index of \verb'A(i,j)', as int32 \\
-\verb'GrB_COLINDEX_INT64'  & \verb'z=j+k'       & column index of \verb'A(i,j)', as int64 \\
-\verb'GrB_DIAGINDEX_INT32' & \verb'z=j-(i+k)'   & column diagonal index of \verb'A(i,j)', as int32 \\
-\verb'GrB_DIAGINDEX_INT64' & \verb'z=j-(i+k)'   & column diagonal index of \verb'A(i,j)', as int64 \\
+\verb'GrB_ROWINDEX_INT32'  & \verb'z=i+y'       & row index of \verb'A(i,j)', as int32 \\
+\verb'GrB_ROWINDEX_INT64'  & \verb'z=i+y'       & row index of \verb'A(i,j)', as int64 \\
+\verb'GrB_COLINDEX_INT32'  & \verb'z=j+y'       & column index of \verb'A(i,j)', as int32 \\
+\verb'GrB_COLINDEX_INT64'  & \verb'z=j+y'       & column index of \verb'A(i,j)', as int64 \\
+\verb'GrB_DIAGINDEX_INT32' & \verb'z=j-(i+y)'   & column diagonal index of \verb'A(i,j)', as int32 \\
+\verb'GrB_DIAGINDEX_INT64' & \verb'z=j-(i+y)'   & column diagonal index of \verb'A(i,j)', as int64 \\
 \hline
-\verb'GrB_TRIL_INT64'    & \verb'z=(j<=(i+k))'  & true for entries on or below the \verb'k'th diagonal \\
-\verb'GrB_TRIU_INT64'    & \verb'z=(j>=(i+k))'  & true for entries on or above the \verb'k'th diagonal \\
-\verb'GrB_DIAG_INT64'    & \verb'z=(j==(i+k))'  & true for entries on the \verb'k'th diagonal \\
-\verb'GrB_OFFDIAG_INT64' & \verb'z=(j!=(i+k))'  & true for entries not on the \verb'k'th diagonal \\
-\verb'GrB_COLLE_INT64'   & \verb'z=(j<=k)'      & true for entries in columns 0 to \verb'k' \\
-\verb'GrB_COLGT_INT64'   & \verb'z=(j>k)'       & true for entries in columns \verb'k+1' and above \\
-\verb'GrB_ROWLE_INT64'   & \verb'z=(i<=k)'      & true for entries in rows 0 to \verb'k' \\
-\verb'GrB_ROWGT_INT64'   & \verb'z=(i>k)'       & true for entries in rows \verb'k+1' and above \\
+\verb'GrB_TRIL_INT64'    & \verb'z=(j<=(i+y))'  & true for entries on or below the \verb'y'th diagonal \\
+\verb'GrB_TRIU_INT64'    & \verb'z=(j>=(i+y))'  & true for entries on or above the \verb'y'th diagonal \\
+\verb'GrB_DIAG_INT64'    & \verb'z=(j==(i+y))'  & true for entries on the \verb'y'th diagonal \\
+\verb'GrB_OFFDIAG_INT64' & \verb'z=(j!=(i+y))'  & true for entries not on the \verb'y'th diagonal \\
+\verb'GrB_COLLE_INT64'   & \verb'z=(j<=y)'      & true for entries in columns 0 to \verb'y' \\
+\verb'GrB_COLGT_INT64'   & \verb'z=(j>y)'       & true for entries in columns \verb'y+1' and above \\
+\verb'GrB_ROWLE_INT64'   & \verb'z=(i<=y)'      & true for entries in rows 0 to \verb'y' \\
+\verb'GrB_ROWGT_INT64'   & \verb'z=(i>y)'       & true for entries in rows \verb'y+1' and above \\
 \hline
-\verb'GrB_VALUENE_T'     & \verb'z=(aij!=k)'    & true if \verb'A(i,j)' is not equal to \verb'k'\\
-\verb'GrB_VALUEEQ_T'     & \verb'z=(aij==k)'    & true if \verb'A(i,j)' is equal to \verb'k'\\
-\verb'GrB_VALUEGT_T'     & \verb'z=(aij>k)'     & true if \verb'A(i,j)' is greater than \verb'k' \\
-\verb'GrB_VALUEGE_T'     & \verb'z=(aij>=k)'    & true if \verb'A(i,j)' is greater than or equal to \verb'k' \\
-\verb'GrB_VALUELT_T'     & \verb'z=(aij<k)'     & true if \verb'A(i,j)' is less than \verb'k' \\
-\verb'GrB_VALUELE_T'     & \verb'z=(aij<=k)'    & true if \verb'A(i,j)' is less than or equal to \verb'k' \\
+\verb'GrB_VALUENE_T'     & \verb'z=(aij!=y)'    & true if \verb'A(i,j)' is not equal to \verb'y'\\
+\verb'GrB_VALUEEQ_T'     & \verb'z=(aij==y)'    & true if \verb'A(i,j)' is equal to \verb'y'\\
+\verb'GrB_VALUEGT_T'     & \verb'z=(aij>y)'     & true if \verb'A(i,j)' is greater than \verb'y' \\
+\verb'GrB_VALUEGE_T'     & \verb'z=(aij>=y)'    & true if \verb'A(i,j)' is greater than or equal to \verb'y' \\
+\verb'GrB_VALUELT_T'     & \verb'z=(aij<y)'     & true if \verb'A(i,j)' is less than \verb'y' \\
+\verb'GrB_VALUELE_T'     & \verb'z=(aij<=y)'    & true if \verb'A(i,j)' is less than or equal to \verb'y' \\
 %
 \hline
 \end{tabular}
@@ -3240,7 +3240,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_IndexUnaryOp_wait'  & wait for a user-defined index-unary operator  & \ref{idxunop_wait} \\
 \verb'GrB_IndexUnaryOp_ztype_name' & return the type of the output $z$        & \ref{idxunop_ztype_name} \\
 \verb'GrB_IndexUnaryOp_xtype_name' & return the type of the input $x$         & \ref{idxunop_xtype_name} \\
-\verb'GrB_IndexUnaryOp_ttype_name' & return the type of the input {\em thunk} & \ref{idxunop_ttype_name} \\
+\verb'GrB_IndexUnaryOp_ytype_name' & return the type of the scalar $y$        & \ref{idxunop_ytype_name} \\
 \verb'GrB_IndexUnaryOp_free'  & free a user-defined index-unary operator      & \ref{idxunop_free} \\
 \hline
 \end{tabular}
@@ -3262,7 +3262,7 @@ GrB_Info GrB_IndexUnaryOp_new       // create a new user-defined IndexUnary op
     void *function,                 // pointer to IndexUnary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x (the A(i,j) entry)
-    GrB_Type ttype                  // type of input thunk
+    GrB_Type ytype                  // type of scalar input y
 ) ;
 \end{verbatim} }\end{mdframed}
 
@@ -3280,12 +3280,12 @@ not appear in the output.  If the return value is not \verb'GrB_BOOL',
 it is typecasted to \verb'GrB_BOOL' by \verb'GrB_select'.
 
 The type \verb'xtype' is the GraphBLAS type of the input $x$ of the
-user-defined function $z=f(x,i,j,\mbox{thunk})$, which is used for the
+user-defined function $z=f(x,i,j,y)$, which is used for the
 entry \verb'A(i,j)' of a matrix or \verb'v(i)' of a vector.  The type may be
 built-in or user-defined.
 
-The type \verb'ttype' is the GraphBLAS type of the input {\em thunk} of the
-user-defined function $z=f(x,i,j,\mbox{thunk})$.  The type may be built-in
+The type \verb'ytype' is the GraphBLAS type of the scalar input $y$ of the
+user-defined function $z=f(x,i,j,y)$.  The type may be built-in
 or user-defined.
 
 %-------------------------------------------------------------------------------
@@ -3302,7 +3302,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     GxB_index_unary_function function,    // pointer to index_unary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x
-    GrB_Type ttype,                 // type of input thunk
+    GrB_Type ytype,                 // type of scalar input y
     const char *idxop_name,         // name of the user function
     const char *idxop_defn          // definition of the user function
 ) ;
@@ -3361,7 +3361,7 @@ GrB_Info GxB_IndexUnaryOp_ztype_name    // return the type_name of x
 }\end{mdframed}
 
 \verb'GrB_IndexUnaryOp_ztype_name' returns the \verb'ztype' of the index-unary
-operator, which is the type of $z$ in the function $z=f(x,i,j,\mbox{thunk})$.
+operator, which is the type of $z$ in the function $z=f(x,i,j,y)$.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -3381,19 +3381,19 @@ GrB_Info GxB_IndexUnaryOp_xtype_name    // return the type_name of x
 }\end{mdframed}
 
 \verb'GrB_IndexUnaryOp_xtype_name' returns the \verb'xtype' of the index-unary
-operator, which is the type of $x$ in the function $z=f(x,i,j,\mbox{thunk})$.
+operator, which is the type of $x$ in the function $z=f(x,i,j,y)$.
 This input is used for the entry \verb'A(i,j)' of a matrix or \verb'v(i)' of a
 vector.
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_IndexUnaryOp\_ttype\_name:} return the name of the type of {\em thunk}}
+\subsubsection{{\sf GxB\_IndexUnaryOp\_ytype\_name:} return the name of the type of scalar $y$}
 %-------------------------------------------------------------------------------
-\label{idxunop_ttype_name}
+\label{idxunop_ytype_name}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_IndexUnaryOp_ttype_name    // return the type_name of the thunk
+GrB_Info GxB_IndexUnaryOp_ytype_name    // return the type_name of the scalar y
 (
     char *type_name,                    // user array of size GxB_MAX_NAME_LEN
     const GrB_IndexUnaryOp op           // index-unary operator
@@ -3401,8 +3401,8 @@ GrB_Info GxB_IndexUnaryOp_ttype_name    // return the type_name of the thunk
 \end{verbatim}
 }\end{mdframed}
 
-\verb'GrB_IndexUnaryOp_ttype_name' returns the \verb'ttype' of the index-unary
-operator, which is the type of the thunk in the function $z=f(x,i,j,\mbox{thunk})$.
+\verb'GrB_IndexUnaryOp_ytype_name' returns the \verb'ytype' of the index-unary
+operator, which is the type of the scalar y in the function $z=f(x,i,j,y)$.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_IndexUnaryOp\_free:} free a user-defined index-unary operator}
@@ -11467,7 +11467,7 @@ x (13 built-in types, one for user-defined types, and a version for
 \verb'GrB_Scalar').
 
 \item \verb'GrB_*_apply_IndexOp_*' applies a \verb'GrB_IndexUnaryOp',
-single scalar is provided as the {\em thunk} input to the index-unary operator.
+single scalar is provided as the scalar $y$ input to the index-unary operator.
 There are 30 variants, depending on the type of the scalar: (matrix or vector)
 x (13 built-in types, one for user-defined types, and a version for
 \verb'GrB_Scalar').
@@ -11631,14 +11631,14 @@ GrB_Info GrB_apply                  // w<mask> = accum (w, op(u,y))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    const <type> thunk,             // second input: scalar thunk
+    const <type> y,                 // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 \end{verbatim} } \end{mdframed}
 
 \verb'GrB_Vector_apply_IndexOp_<type>'  applies an index-unary operator
-$z=f(x,i,0,\mbox{thunk})$ to a vector.
-The scalar \verb'thunk' can be a non-opaque C scalar corresponding to a built-in
+$z=f(x,i,0,y)$ to a vector.
+The scalar \verb'y' can be a non-opaque C scalar corresponding to a built-in
 type, a \verb'void *' for user-defined types, or a \verb'GrB_Scalar'.
 It is otherwise identical to \verb'GrB_Vector_apply'.
 
@@ -11712,14 +11712,14 @@ GrB_Info GrB_apply                  // C<M>=accum(C,op(A,y))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const <type> thunk,             // second input: scalar thunk
+    const <type> y,                 // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 \end{verbatim} } \end{mdframed}
 
 \verb'GrB_Matrix_apply_IndexOp_<type>'  applies an index-unary operator
-$z=f(x,i,j,\mbox{thunk})$ to a matrix.
-The scalar \verb'thunk' can be a non-opaque C scalar corresponding to a built-in
+$z=f(x,i,j,y)$ to a matrix.
+The scalar \verb'y' can be a non-opaque C scalar corresponding to a built-in
 type, a \verb'void *' for user-defined types, or a \verb'GrB_Scalar'.
 It is otherwise identical to \verb'GrB_Matrix_apply'.
 
@@ -11731,7 +11731,7 @@ It is otherwise identical to \verb'GrB_Matrix_apply'.
 
 The \verb'GrB_select' function is the generic name for 30 specific functions,
 depending on whether it operates on a matrix or vector, and depending on the
-type of a {\em thunk} scalar: (matrix or vector) x (13 built-in types,
+type of the scalar \verb'y': (matrix or vector) x (13 built-in types,
 \verb'void *' for user-defined types, and a \verb'GrB_Scalar').  The generic
 name appears in the function prototypes, but the specific function name is used
 when describing each variation.  When discussing features that apply to both
@@ -11753,7 +11753,7 @@ GrB_Info GrB_select                 // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    const <type> thunk,             // second input: scalar thunk
+    const <type> y,                 // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -11783,7 +11783,7 @@ GrB_Info GrB_select                 // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Scalar thunk,         // second input: scalar thunk
+    const GrB_Scalar y,             // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -11799,7 +11799,7 @@ T}$, as described in Section~\ref{accummask}.
 The matrix \verb'T' has the same size and type as \verb'A' (or the transpose of
 \verb'A' if the input is transposed via the descriptor).  The entries of
 \verb'T' are a subset of those of \verb'A'.  Each entry \verb'A(i,j)' of
-\verb'A' is passed to the \verb'op', as $z=f(a_{ij},i,j,\mbox{thunk})$.  If
+\verb'A' is passed to the \verb'op', as $z=f(a_{ij},i,j,y)$.  If
 \verb'A' is transposed first then the operator is applied to entries in the
 transposed matrix, \verb"A'".  If $z$ is returned as true, then the entry is
 copied into \verb'T', unchanged.  If it returns false, the entry does not
@@ -11829,7 +11829,7 @@ and
 \verb'GrB_ROWGT_INT64'.
 
 For floating-point values, comparisons with \verb'NaN' always return false.
-The \verb'GrB_VALUE*' should not be used with a scalar \verb'thunk' that is
+The \verb'GrB_VALUE*' should not be used with a scalar \verb'y' that is
 equal to \verb'NaN'.  For this case, create a user-defined select operator that
 performs the test with the ANSI C \verb'isnan' function instead.
 
@@ -11838,28 +11838,28 @@ performs the test with the ANSI C \verb'isnan' function instead.
 {\footnotesize
 \begin{tabular}{lll}
 \hline
-GraphBLAS name          & Octave/MATLAB     & description (\verb'k' is the value of the {\em thunk}) \\
+GraphBLAS name          & Octave/MATLAB     & description \\
                         & analog            & \\
 \hline
-\verb'GrB_ROWINDEX_*'    & \verb'z=i+k'         & select \verb'A(i,j)' if \verb'i != -k' \\
-\verb'GrB_COLINDEX_*'    & \verb'z=j+k'         & select \verb'A(i,j)' if \verb'j != -k' \\
-\verb'GrB_DIAGINDEX_*'   & \verb'z=j-(i+k)'     & select \verb'A(i,j)' if \verb'j != i+k' \\
+\verb'GrB_ROWINDEX_*'    & \verb'z=i+y'         & select \verb'A(i,j)' if \verb'i != -y' \\
+\verb'GrB_COLINDEX_*'    & \verb'z=j+y'         & select \verb'A(i,j)' if \verb'j != -y' \\
+\verb'GrB_DIAGINDEX_*'   & \verb'z=j-(i+y)'     & select \verb'A(i,j)' if \verb'j != i+y' \\
 \hline
-\verb'GrB_TRIL_INT64'    & \verb'z=(j<=(i+k))'  & select entries on or below the \verb'k'th diagonal \\
-\verb'GrB_TRIU_INT64'    & \verb'z=(j>=(i+k))'  & select entries on or above the \verb'k'th diagonal \\
-\verb'GrB_DIAG_INT64'    & \verb'z=(j==(i+k))'  & select entries on the \verb'k'th diagonal \\
-\verb'GrB_OFFDIAG_INT64' & \verb'z=(j!=(i+k))'  & select entries not on the \verb'k'th diagonal \\
-\verb'GrB_COLLE_INT64'   & \verb'z=(j<=k)'      & select entries in columns 0 to \verb'k' \\
-\verb'GrB_COLGT_INT64'   & \verb'z=(j>k)'       & select entries in columns \verb'k+1' and above \\
-\verb'GrB_ROWLE_INT64'   & \verb'z=(i<=k)'      & select entries in rows 0 to \verb'k' \\
-\verb'GrB_ROWGT_INT64'   & \verb'z=(i>k)'       & select entries in rows \verb'k+1' and above \\
+\verb'GrB_TRIL_INT64'    & \verb'z=(j<=(i+y))'  & select entries on or below the \verb'y'th diagonal \\
+\verb'GrB_TRIU_INT64'    & \verb'z=(j>=(i+y))'  & select entries on or above the \verb'y'th diagonal \\
+\verb'GrB_DIAG_INT64'    & \verb'z=(j==(i+y))'  & select entries on the \verb'y'th diagonal \\
+\verb'GrB_OFFDIAG_INT64' & \verb'z=(j!=(i+y))'  & select entries not on the \verb'y'th diagonal \\
+\verb'GrB_COLLE_INT64'   & \verb'z=(j<=y)'      & select entries in columns 0 to \verb'y' \\
+\verb'GrB_COLGT_INT64'   & \verb'z=(j>y)'       & select entries in columns \verb'y+1' and above \\
+\verb'GrB_ROWLE_INT64'   & \verb'z=(i<=y)'      & select entries in rows 0 to \verb'y' \\
+\verb'GrB_ROWGT_INT64'   & \verb'z=(i>y)'       & select entries in rows \verb'y+1' and above \\
 \hline
-\verb'GrB_VALUENE_T'     & \verb'z=(aij!=k)'    & select \verb'A(i,j)' if it is not equal to \verb'k'\\
-\verb'GrB_VALUEEQ_T'     & \verb'z=(aij==k)'    & select \verb'A(i,j)' is it equal to \verb'k'\\
-\verb'GrB_VALUEGT_T'     & \verb'z=(aij>k)'     & select \verb'A(i,j)' is it greater than \verb'k' \\
-\verb'GrB_VALUEGE_T'     & \verb'z=(aij>=k)'    & select \verb'A(i,j)' is it greater than or equal to \verb'k' \\
-\verb'GrB_VALUELT_T'     & \verb'z=(aij<k)'     & select \verb'A(i,j)' is it less than \verb'k' \\
-\verb'GrB_VALUELE_T'     & \verb'z=(aij<=k)'    & select \verb'A(i,j)' is it less than or equal to \verb'k' \\
+\verb'GrB_VALUENE_T'     & \verb'z=(aij!=y)'    & select \verb'A(i,j)' if it is not equal to \verb'y'\\
+\verb'GrB_VALUEEQ_T'     & \verb'z=(aij==y)'    & select \verb'A(i,j)' is it equal to \verb'y'\\
+\verb'GrB_VALUEGT_T'     & \verb'z=(aij>y)'     & select \verb'A(i,j)' is it greater than \verb'y' \\
+\verb'GrB_VALUEGE_T'     & \verb'z=(aij>=y)'    & select \verb'A(i,j)' is it greater than or equal to \verb'y' \\
+\verb'GrB_VALUELT_T'     & \verb'z=(aij<y)'     & select \verb'A(i,j)' is it less than \verb'y' \\
+\verb'GrB_VALUELE_T'     & \verb'z=(aij<=y)'    & select \verb'A(i,j)' is it less than or equal to \verb'y' \\
 %
 \hline
 \end{tabular}
@@ -12816,17 +12816,19 @@ operator with \verb's' a scalar.
 %-------------------------------------------------------------------------------
 \label{iso_select}
 
-Let \verb'C=select(A)' denote the application of a select operator.
+Let \verb'C=select(A)' denote the application of a \verb'GrB_IndexUnaryOp' operator
+in \verb'GrB_select'.
 
     \begin{itemize}
     \item If \verb'A' is iso, then \verb'C' is iso with $c=a$.
-    \item If the select operator is \verb'EQ_ZERO' then \verb'C' is always
-        iso, with $c=0$.
-    \item If the select operator is \verb'NONZERO' and \verb'A' is boolean,
-        then \verb'C' is iso with $c=1$.
-    \item If the selector operator is \verb'EQ_THUNK' then \verb'C' is
-        always iso, with $c=t$ where $t$ is the value of the \verb'thunk'
-        scalar.
+    \item If the operator is any \verb'GrB_VALUE*_BOOL' operator,
+        with no typecasting, and the test is true only for a single boolean
+        value, then \verb'C' is iso.
+    \item If the operator is \verb'GrB_VALUEEQ_*', with no typecasting,
+        then \verb'C' is iso, with $c=t$ where $t$ is the value of the scalar
+        \verb'y'.
+    \item If the operator is \verb'GrB_VALUELE_UINT*', with no typecasting,
+        and the scalar \verb'y' is zero, then \verb'C' is iso with $c=0$.
     \item Otherwise, \verb'C' is not iso.
     \end{itemize}
 
@@ -13023,7 +13025,6 @@ appear in the \verb'Demo' folder of SuiteSparse:GraphBLAS.
 \item creating a finite-element matrix
 \item reading a matrix from a file
 \item complex numbers as a user-defined type
-\item PageRank
 \item matrix import/export
 \end{enumerate}
 
@@ -13283,7 +13284,6 @@ Either one can be used, and their performance would be identical.
 Refer to the \verb'wathen.c' function in the \verb'Demo' folder, which
 uses GraphBLAS to implement the two methods above, and two additional ones.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsection{Reading a matrix from a file}
 %-------------------------------------------------------------------------------
@@ -13417,28 +13417,6 @@ simple concatenation.  In general, however, allowing GraphBLAS to postpone
 pending updates can lead to significant reductions in run time.
 
 %-------------------------------------------------------------------------------
-\subsection{PageRank}
-%-------------------------------------------------------------------------------
-\label{pagerank}
-
-The \verb'Demo' folder contains three methods for computing the PageRank of the
-nodes of a graph.  One uses floating-point arithmetic (\verb'GrB_FP64') and two
-user-defined unary operators (\verb'dpagerank.c').  The second
-(\verb'ipagerank.c') is very similar, relying on integer arithmetic instead
-(\verb'GrB_UINT64').  Neither method include a stopping condition.  They simply
-compute a fixed number of iterations.  The third example is more extensive
-(\verb'dpagerank2.c'), and serves as an example of the power and flexibility of
-user-defined types, operators, monoids, and semirings.  It creates a semiring
-for the entire PageRank computation.  It terminates if the 2-norm of the change
-in the rank vector \verb'r' is below a threshold.
-
-LAGraph contains a much faster pagerank method, as \\
-\verb'LAGraph_VertexCentrality_PageRankGAP', which can be used for the
-GAP benchmarks of Scott Beamer.  Do {\bf not} benchmark the pagerank
-methods in the \verb'GraphBLAS/Demo' folder.
-
-\newpage
-%-------------------------------------------------------------------------------
 \subsection{User-defined types and operators}
 %-------------------------------------------------------------------------------
 \label{user}
@@ -13499,7 +13477,6 @@ matrices.  Each of these 4-by-4 matrices is treated by GraphBLAS as a
 GraphBLAS type can be manipulated. The purpose of this type is illustrate the
 endless possibilities of user-defined types and their use in GraphBLAS.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsection{User applications using OpenMP or other threading models}
 %-------------------------------------------------------------------------------

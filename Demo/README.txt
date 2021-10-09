@@ -30,11 +30,6 @@ in Demo/Source:
     simple_rand.c           a very simple random number generator
     usercomplex.c           user-defined double complex type
     wathen.c                GraphBLAS version of wathen.m
-    dpagerank.c             PageRank via real semiring
-    dpagerank2.c            PageRank via pagegrank semiring
-    drowscale.c             row scaling for dpagerank
-    ipagerank.c             PageRank via integer semiring
-    irowscale.c             row scaling for ipagerank
     import_test.c           test import/export
     isequal.c               test if 2 matrices are equal
 
@@ -47,7 +42,6 @@ in Demo/Program:
     kron_demo.c             demo program to test GrB_kronecker
     simple_demo.c           demo program to test simple_rand
     wildtype_demo.c         demo program, arbitrary struct as user-defined type
-    pagerank_demo.c         demo program to test dpagerank and ipagerank
     openmp_demo.c           demo program using OpenMP
 
 --------------------------------------------------------------------------------
@@ -58,7 +52,6 @@ in Demo/Output:
     simple_test.out     output of simple_demo
     tri_demo.out        output of tri_demo
     wildtype_demo.out   output of wildtype_demo
-    pagerank_demo.out   output of pagerank_demo
     import_demo.out     output of import_demo
 
 --------------------------------------------------------------------------------
@@ -70,20 +63,6 @@ in Demo/Include:
     usercomplex.h           include file for usercomplex.h
 
 --------------------------------------------------------------------------------
-in Demo/Octave:
---------------------------------------------------------------------------------
-
-    Contents.m              contents of Demo/Octave
-    adj_to_edges.m          convert adjacency matrix to incidence matrix
-    edges_to_adj.m          convert incidence matrix to adjacency matrix
-    check_adj.m             check an adjaceny matrix
-    kron_demo.m             kron demo
-    kron_test.m             kron test
-    dpagerank.m             pagerank with real values
-    ipagerank.m             pagerank with integers
-    rowscale.m              rowscaling for dpagerank.m and ipagerank.m
-
---------------------------------------------------------------------------------
 in Demo/Matrix:
 --------------------------------------------------------------------------------
 
@@ -93,7 +72,6 @@ the Harwell/Boeing matrix collection.  Contains:
     2blocks
     ash219
     bcsstk01
-    bcsstk16
     eye3
     fs_183_1
     huge

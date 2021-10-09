@@ -1734,9 +1734,9 @@ GrB_Info GxB_SelectOp_free      // free a user-created select operator
 // GrB_IndexUnaryOp: a unary operator that depends on the row/col indices
 //==============================================================================
 
-// The indexop has the form z = f(aij, i, j, thunk) where aij is the numerical
-// value of the A(i,j) entry, i and j are its row and column index, and thunk
-// is a scalar.  For vectors, it has the form z = f(vi, i, 0, thunk).
+// The indexop has the form z = f(aij, i, j, y) where aij is the numerical
+// value of the A(i,j) entry, i and j are its row and column index, and y
+// is a scalar.  For vectors, it has the form z = f(vi, i, 0, y).
 
 typedef struct GB_IndexUnaryOp_opaque *GrB_IndexUnaryOp ;
 
@@ -1750,7 +1750,7 @@ typedef void (*GxB_index_unary_function)
 //  a better approach:
     int64_t i,          // row index of A(i,j)
     int64_t j,          // column index of A(i,j), or zero for v(i)
-    const void *thunk   // input scalar thunk
+    const void *y       // input scalar y
 ) ;
 
 // GrB_IndexUnaryOp_new creates a user-defined unary op, with an automatic
@@ -1765,13 +1765,13 @@ GrB_Info GRB (IndexUnaryOp_new)     // create a new user-defined IndexUnary op
     GxB_index_unary_function function,    // pointer to IndexUnary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x (the A(i,j) entry)
-    GrB_Type ttype                  // type of input thunk
+    GrB_Type ytype                  // type of input y (the scalar)
 ) ;
 
-#define GrB_IndexUnaryOp_new(op,f,z,x,t) \
-        GxB_IndexUnaryOp_new(op,f,z,x,t, GB_STR(f), NULL)
-#define GrM_IndexUnaryOp_new(op,f,z,x,t) \
-        GxM_IndexUnaryOp_new(op,f,z,x,t, GB_STR(f), NULL)
+#define GrB_IndexUnaryOp_new(op,f,z,x,y) \
+        GxB_IndexUnaryOp_new(op,f,z,x,y, GB_STR(f), NULL)
+#define GrM_IndexUnaryOp_new(op,f,z,x,y) \
+        GxM_IndexUnaryOp_new(op,f,z,x,y, GB_STR(f), NULL)
 
 GB_PUBLIC
 GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
@@ -1780,7 +1780,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     GxB_index_unary_function function,    // pointer to index_unary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x
-    GrB_Type ttype,                 // type of input thunk
+    GrB_Type ytype,                 // type of input y
     const char *idxop_name,         // name of the user function
     const char *idxop_defn          // definition of the user function
 ) ;
@@ -1803,7 +1803,7 @@ GrB_Info GxB_IndexUnaryOp_xtype_name    // return the type_name of x
 ) ;
 
 GB_PUBLIC
-GrB_Info GxB_IndexUnaryOp_ttype_name    // return the type_name of thunk
+GrB_Info GxB_IndexUnaryOp_ytype_name    // return the type_name of the scalary y
 (
     char *type_name,                    // user array of size GxB_MAX_NAME_LEN
     const GrB_IndexUnaryOp op           // select operator
@@ -1820,7 +1820,7 @@ GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 //------------------------------------------------------------------------------
 
 // To facilitate computations with negative integers, the indices i and j are
-// of type int64_t.  The scalar thunk has the type corresponding to the suffix
+// of type int64_t.  The scalar y has the type corresponding to the suffix
 // of the name of the operator.
 
 GB_PUBLIC GrB_IndexUnaryOp
@@ -1831,44 +1831,44 @@ GB_PUBLIC GrB_IndexUnaryOp
 
     // These operators work on any data type, including user-defined.
 
-    // ROWINDEX: (i+thunk): row index plus thunk
+    // ROWINDEX: (i+y): row index plus y
     GrB_ROWINDEX_INT32,  GrB_ROWINDEX_INT64,
 
-    // COLINDEX: (j+thunk): col index plus thunk
+    // COLINDEX: (j+y): col index plus y
     GrB_COLINDEX_INT32,  GrB_COLINDEX_INT64,
 
-    // DIAGINDEX: (j-(i+thunk)): diagonal index plus thunk
+    // DIAGINDEX: (j-(i+y)): diagonal index plus y
     GrB_DIAGINDEX_INT32, GrB_DIAGINDEX_INT64,
 
     //--------------------------------------------------------------------------
-    // Result is bool, depending only on the indices i,j, and thunk
+    // Result is bool, depending only on the indices i,j, and y
     //--------------------------------------------------------------------------
 
     // These operators work on any data type, including user-defined.
-    // The thunk is int64.
+    // The scalar y is int64.
 
-    // TRIL: (j <= (i+thunk)): lower triangular part
+    // TRIL: (j <= (i+y)): lower triangular part
     GrB_TRIL_INT64,
 
-    // TRIU: (j >= (i+thunk)): upper triangular part
+    // TRIU: (j >= (i+y)): upper triangular part
     GrB_TRIU_INT64,
 
-    // DIAG: (j == (i+thunk)): diagonal
+    // DIAG: (j == (i+y)): diagonal
     GrB_DIAG_INT64,
 
-    // OFFDIAG: (j != (i+thunk)): offdiagonal
+    // OFFDIAG: (j != (i+y)): offdiagonal
     GrB_OFFDIAG_INT64,
 
-    // COLLE: (j <= thunk): columns 0:thunk
+    // COLLE: (j <= y): columns 0:y
     GrB_COLLE_INT64,
 
-    // COLGT: (j > thunk): columns thunk+1:ncols-1
+    // COLGT: (j > y): columns y+1:ncols-1
     GrB_COLGT_INT64,
 
-    // ROWLE: (i <= thunk): rows 0:thunk
+    // ROWLE: (i <= y): rows 0:y
     GrB_ROWLE_INT64,
 
-    // ROWGT: (i > thunk): rows thunk+1:nrows-1
+    // ROWGT: (i > y): rows y+1:nrows-1
     GrB_ROWGT_INT64,
 
     //--------------------------------------------------------------------------
@@ -1876,16 +1876,16 @@ GB_PUBLIC GrB_IndexUnaryOp
     //--------------------------------------------------------------------------
 
     // These operators work on matrices and vectors of any built-in type,
-    // including complex types.  aij and thunk have the same type as the
+    // including complex types.  aij and the scalar y have the same type as the
     // operator suffix.
 
-    // VALUEEQ: (aij == thunk)
+    // VALUEEQ: (aij == y)
     GrB_VALUEEQ_INT8,  GrB_VALUEEQ_UINT8,  GrB_VALUEEQ_FP32, GrB_VALUEEQ_BOOL,
     GrB_VALUEEQ_INT16, GrB_VALUEEQ_UINT16, GrB_VALUEEQ_FP64,
     GrB_VALUEEQ_INT32, GrB_VALUEEQ_UINT32, GxB_VALUEEQ_FC32,
     GrB_VALUEEQ_INT64, GrB_VALUEEQ_UINT64, GxB_VALUEEQ_FC64,
 
-    // VALUENE: (aij != thunk)
+    // VALUENE: (aij != y)
     GrB_VALUENE_INT8,  GrB_VALUENE_UINT8,  GrB_VALUENE_FP32, GrB_VALUENE_BOOL,
     GrB_VALUENE_INT16, GrB_VALUENE_UINT16, GrB_VALUENE_FP64,
     GrB_VALUENE_INT32, GrB_VALUENE_UINT32, GxB_VALUENE_FC32,
@@ -1894,25 +1894,25 @@ GB_PUBLIC GrB_IndexUnaryOp
     // These operators work on matrices and vectors of any real (non-complex)
     // built-in type.
 
-    // VALUELT: (aij < thunk)
+    // VALUELT: (aij < y)
     GrB_VALUELT_INT8,  GrB_VALUELT_UINT8,  GrB_VALUELT_FP32, GrB_VALUELT_BOOL,
     GrB_VALUELT_INT16, GrB_VALUELT_UINT16, GrB_VALUELT_FP64,
     GrB_VALUELT_INT32, GrB_VALUELT_UINT32,
     GrB_VALUELT_INT64, GrB_VALUELT_UINT64,
 
-    // VALUELE: (aij <= thunk)
+    // VALUELE: (aij <= y)
     GrB_VALUELE_INT8,  GrB_VALUELE_UINT8,  GrB_VALUELE_FP32, GrB_VALUELE_BOOL,
     GrB_VALUELE_INT16, GrB_VALUELE_UINT16, GrB_VALUELE_FP64,
     GrB_VALUELE_INT32, GrB_VALUELE_UINT32,
     GrB_VALUELE_INT64, GrB_VALUELE_UINT64,
 
-    // VALUEGT: (aij > thunk)
+    // VALUEGT: (aij > y)
     GrB_VALUEGT_INT8,  GrB_VALUEGT_UINT8,  GrB_VALUEGT_FP32, GrB_VALUEGT_BOOL,
     GrB_VALUEGT_INT16, GrB_VALUEGT_UINT16, GrB_VALUEGT_FP64,
     GrB_VALUEGT_INT32, GrB_VALUEGT_UINT32,
     GrB_VALUEGT_INT64, GrB_VALUEGT_UINT64,
 
-    // VALUEGE: (aij >= thunk)
+    // VALUEGE: (aij >= y)
     GrB_VALUEGE_INT8,  GrB_VALUEGE_UINT8,  GrB_VALUEGE_FP32, GrB_VALUEGE_BOOL,
     GrB_VALUEGE_INT16, GrB_VALUEGE_UINT16, GrB_VALUEGE_FP64,
     GrB_VALUEGE_INT32, GrB_VALUEGE_UINT32,
@@ -6825,7 +6825,7 @@ GrB_Info GrB_Vector_apply_IndexOp_Scalar    // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    const GrB_Scalar thunk,         // second input: scalar thunk
+    const GrB_Scalar y,             // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6837,7 +6837,7 @@ GrB_Info GrB_Vector_apply_IndexOp_BOOL      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    bool thunk,                     // second input: scalar thunk
+    bool y,                         // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6849,7 +6849,7 @@ GrB_Info GrB_Vector_apply_IndexOp_INT8      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    int8_t thunk,                   // second input: scalar thunk
+    int8_t y,                       // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6861,7 +6861,7 @@ GrB_Info GrB_Vector_apply_IndexOp_INT16     // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    int16_t thunk,                  // second input: scalar thunk
+    int16_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6873,7 +6873,7 @@ GrB_Info GrB_Vector_apply_IndexOp_INT32     // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    int32_t thunk,                  // second input: scalar thunk
+    int32_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6885,7 +6885,7 @@ GrB_Info GrB_Vector_apply_IndexOp_INT64     // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    int64_t thunk,                  // second input: scalar thunk
+    int64_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6897,7 +6897,7 @@ GrB_Info GrB_Vector_apply_IndexOp_UINT8     // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    uint8_t thunk,                  // second input: scalar thunk
+    uint8_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6909,7 +6909,7 @@ GrB_Info GrB_Vector_apply_IndexOp_UINT16    // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    uint16_t thunk,                 // second input: scalar thunk
+    uint16_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6921,7 +6921,7 @@ GrB_Info GrB_Vector_apply_IndexOp_UINT32    // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    uint32_t thunk,                 // second input: scalar thunk
+    uint32_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6933,7 +6933,7 @@ GrB_Info GrB_Vector_apply_IndexOp_UINT64    // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    uint64_t thunk,                 // second input: scalar thunk
+    uint64_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6945,7 +6945,7 @@ GrB_Info GrB_Vector_apply_IndexOp_FP32      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    float thunk,                    // second input: scalar thunk
+    float y,                        // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6957,7 +6957,7 @@ GrB_Info GrB_Vector_apply_IndexOp_FP64      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    double thunk,                   // second input: scalar thunk
+    double y,                       // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6969,7 +6969,7 @@ GrB_Info GxB_Vector_apply_IndexOp_FC32      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    GxB_FC32_t thunk,               // second input: scalar thunk
+    GxB_FC32_t y,                   // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6981,7 +6981,7 @@ GrB_Info GxB_Vector_apply_IndexOp_FC64      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    GxB_FC64_t thunk,               // second input: scalar thunk
+    GxB_FC64_t y,                   // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -6993,7 +6993,7 @@ GrB_Info GrB_Vector_apply_IndexOp_UDT       // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    const void *thunk,              // second input: scalar thunk
+    const void *y,                  // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7411,7 +7411,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_Scalar    // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Scalar thunk,         // second input: scalar thunk
+    const GrB_Scalar y,             // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7423,7 +7423,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_BOOL      // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    bool thunk,                     // second input: scalar thunk
+    bool y,                         // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7435,7 +7435,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_INT8      // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    int8_t thunk,                   // second input: scalar thunk
+    int8_t y,                       // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7447,7 +7447,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_INT16     // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    int16_t thunk,                  // second input: scalar thunk
+    int16_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7459,7 +7459,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_INT32     // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    int32_t thunk,                  // second input: scalar thunk
+    int32_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7471,7 +7471,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_INT64     // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    int64_t thunk,                  // second input: scalar thunk
+    int64_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7483,7 +7483,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_UINT8      // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    uint8_t thunk,                  // second input: scalar thunk
+    uint8_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7495,7 +7495,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_UINT16     // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    uint16_t thunk,                 // second input: scalar thunk
+    uint16_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7507,7 +7507,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_UINT32     // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    uint32_t thunk,                 // second input: scalar thunk
+    uint32_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7519,7 +7519,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_UINT64     // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    uint64_t thunk,                 // second input: scalar thunk
+    uint64_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7531,7 +7531,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_FP32      // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    float thunk,                    // second input: scalar thunk
+    float y,                        // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7543,7 +7543,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_FP64      // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    double thunk,                   // second input: scalar thunk
+    double y,                       // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7555,7 +7555,7 @@ GrB_Info GxB_Matrix_apply_IndexOp_FC32      // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    GxB_FC32_t thunk,               // second input: scalar thunk
+    GxB_FC32_t y,                   // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7567,7 +7567,7 @@ GrB_Info GxB_Matrix_apply_IndexOp_FC64      // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    GxB_FC64_t thunk,               // second input: scalar thunk
+    GxB_FC64_t y,                   // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7579,7 +7579,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_UDT       // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const void *thunk,              // second input: scalar thunk
+    const void *y,                  // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7596,12 +7596,12 @@ GrB_Info GrB_Matrix_apply_IndexOp_UDT       // C<M>=accum(C,op(A))
 // GrB_Vector_apply                  (w,m,acc,unop ,u,d)
 // GrB_Vector_apply_BinaryOp1st_TYPE (w,m,acc,binop,x,u,d)
 // GrB_Vector_apply_BinaryOp2nd_TYPE (w,m,acc,binop,u,y,d)
-// GrB_Vector_apply_IndexOp_TYPE     (w,m,acc,idxop,u,t,d)
+// GrB_Vector_apply_IndexOp_TYPE     (w,m,acc,idxop,u,y,d)
 
 // GrB_Matrix_apply                  (C,M,acc,unop ,A,d)
 // GrB_Matrix_apply_BinaryOp1st_TYPE (C,M,acc,binop,x,A,d)
 // GrB_Matrix_apply_BinaryOp2nd_TYPE (C,M,acc,binop,A,y,d)
-// GrB_Matrix_apply_IndexOp_TYPE     (C,M,acc,idxop,A,t,d)
+// GrB_Matrix_apply_IndexOp_TYPE     (C,M,acc,idxop,A,y,d)
 
 #if GxB_STDC_VERSION >= 201112L
 
@@ -7621,10 +7621,10 @@ GrB_Info GrB_Matrix_apply_IndexOp_UDT       // C<M>=accum(C,op(A))
             )                                                                \
     )
 
-#define GB_IDXOP(kind,A,thunk,...)                                           \
+#define GB_IDXOP(kind,A,y,...)                                               \
     _Generic                                                                 \
     (                                                                        \
-        (thunk),                                                             \
+        (y),                                                                 \
             GB_CASES (, GrB, GB_CONCAT ( kind, _apply_IndexOp,, )),          \
             default : GB_CONCAT ( GrB, _, kind, _apply_IndexOp_Scalar)       \
     )
@@ -7669,7 +7669,7 @@ GrB_Info GrB_Vector_select_Scalar   // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    const GrB_Scalar thunk,         // second input: scalar thunk
+    const GrB_Scalar y,             // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7681,7 +7681,7 @@ GrB_Info GrB_Vector_select_BOOL      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    bool thunk,                     // second input: scalar thunk
+    bool y,                         // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7693,7 +7693,7 @@ GrB_Info GrB_Vector_select_INT8      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    int8_t thunk,                   // second input: scalar thunk
+    int8_t y,                       // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7705,7 +7705,7 @@ GrB_Info GrB_Vector_select_INT16     // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    int16_t thunk,                  // second input: scalar thunk
+    int16_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7717,7 +7717,7 @@ GrB_Info GrB_Vector_select_INT32     // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    int32_t thunk,                  // second input: scalar thunk
+    int32_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7729,7 +7729,7 @@ GrB_Info GrB_Vector_select_INT64     // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    int64_t thunk,                  // second input: scalar thunk
+    int64_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7741,7 +7741,7 @@ GrB_Info GrB_Vector_select_UINT8     // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    uint8_t thunk,                  // second input: scalar thunk
+    uint8_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7753,7 +7753,7 @@ GrB_Info GrB_Vector_select_UINT16    // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    uint16_t thunk,                 // second input: scalar thunk
+    uint16_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7765,7 +7765,7 @@ GrB_Info GrB_Vector_select_UINT32    // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    uint32_t thunk,                 // second input: scalar thunk
+    uint32_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7777,7 +7777,7 @@ GrB_Info GrB_Vector_select_UINT64    // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    uint64_t thunk,                 // second input: scalar thunk
+    uint64_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7789,7 +7789,7 @@ GrB_Info GrB_Vector_select_FP32      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    float thunk,                    // second input: scalar thunk
+    float y,                        // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7801,7 +7801,7 @@ GrB_Info GrB_Vector_select_FP64      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    double thunk,                   // second input: scalar thunk
+    double y,                       // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7813,7 +7813,7 @@ GrB_Info GxB_Vector_select_FC32      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    GxB_FC32_t thunk,               // second input: scalar thunk
+    GxB_FC32_t y,                   // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7825,7 +7825,7 @@ GrB_Info GxB_Vector_select_FC64      // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    GxB_FC64_t thunk,               // second input: scalar thunk
+    GxB_FC64_t y,                   // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7837,7 +7837,7 @@ GrB_Info GrB_Vector_select_UDT       // w<mask> = accum (w, op(u))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    const void *thunk,              // second input: scalar thunk
+    const void *y,                  // second input: scalar y
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -7853,7 +7853,7 @@ GrB_Info GrB_Matrix_select_Scalar   // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Scalar thunk,         // second input: scalar thunk
+    const GrB_Scalar y,             // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7865,7 +7865,7 @@ GrB_Info GrB_Matrix_select_BOOL     // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    bool thunk,                     // second input: scalar thunk
+    bool y,                         // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7877,7 +7877,7 @@ GrB_Info GrB_Matrix_select_INT8     // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    int8_t thunk,                   // second input: scalar thunk
+    int8_t y,                       // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7889,7 +7889,7 @@ GrB_Info GrB_Matrix_select_INT16    // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    int16_t thunk,                  // second input: scalar thunk
+    int16_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7901,7 +7901,7 @@ GrB_Info GrB_Matrix_select_INT32    // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    int32_t thunk,                  // second input: scalar thunk
+    int32_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7913,7 +7913,7 @@ GrB_Info GrB_Matrix_select_INT64    // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    int64_t thunk,                  // second input: scalar thunk
+    int64_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7925,7 +7925,7 @@ GrB_Info GrB_Matrix_select_UINT8    // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    uint8_t thunk,                  // second input: scalar thunk
+    uint8_t y,                      // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7937,7 +7937,7 @@ GrB_Info GrB_Matrix_select_UINT16   // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    uint16_t thunk,                 // second input: scalar thunk
+    uint16_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7949,7 +7949,7 @@ GrB_Info GrB_Matrix_select_UINT32   // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    uint32_t thunk,                 // second input: scalar thunk
+    uint32_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7961,7 +7961,7 @@ GrB_Info GrB_Matrix_select_UINT64   // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    uint64_t thunk,                 // second input: scalar thunk
+    uint64_t y,                     // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7973,7 +7973,7 @@ GrB_Info GrB_Matrix_select_FP32     // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    float thunk,                    // second input: scalar thunk
+    float y,                        // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7985,7 +7985,7 @@ GrB_Info GrB_Matrix_select_FP64     // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    double thunk,                   // second input: scalar thunk
+    double y,                       // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -7997,7 +7997,7 @@ GrB_Info GxB_Matrix_select_FC32      // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    GxB_FC32_t thunk,               // second input: scalar thunk
+    GxB_FC32_t y,                   // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -8009,7 +8009,7 @@ GrB_Info GxB_Matrix_select_FC64      // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    GxB_FC64_t thunk,               // second input: scalar thunk
+    GxB_FC64_t y,                   // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -8021,37 +8021,37 @@ GrB_Info GrB_Matrix_select_UDT      // C<M>=accum(C,op(A))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const void *thunk,              // second input: scalar thunk
+    const void *y,                  // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
 // GrB_select is a generic method that applies an IndexUnaryOp to
-// a matrix or vector, using any type of the scalar thunk.
+// a matrix or vector, using any type of the scalar y.
 
-// GrB_Vector_select_TYPE (w,m,acc,idxop,u,t,d)
-// GrB_Matrix_select_TYPE (C,M,acc,idxop,A,t,d)
+// GrB_Vector_select_TYPE (w,m,acc,idxop,u,y,d)
+// GrB_Matrix_select_TYPE (C,M,acc,idxop,A,y,d)
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_select(C,Mask,accum,op,x,thunk,d)                           \
+#define GrB_select(C,Mask,accum,op,x,y,d)                               \
     _Generic                                                            \
     (                                                                   \
         (C),                                                            \
             GrB_Vector :                                                \
                 _Generic                                                \
                 (                                                       \
-                    (thunk),                                            \
+                    (y),                                                \
                         GB_CASES (, GrB, Vector_select),                \
                         default : GrB_Vector_select_Scalar              \
                 ),                                                      \
             GrB_Matrix :                                                \
                 _Generic                                                \
                 (                                                       \
-                    (thunk),                                            \
+                    (y),                                                \
                         GB_CASES (, GrB, Matrix_select),                \
                         default : GrB_Matrix_select_Scalar              \
                 )                                                       \
     )                                                                   \
-    (C, Mask, accum, op, x, thunk, d)
+    (C, Mask, accum, op, x, y, d)
 #endif
 
 //==============================================================================
