@@ -186,7 +186,6 @@ logstat ('test145',t) ; % dot4 for C += A'*B
 logstat ('test92',t) ;  % GB_subref: symbolic case
 logstat ('test108',t) ; % boolean monoids
 logstat ('test172',t) ; % test eWiseMult with M bitmap/full
-logstat ('test26',t) ;  % quick test of GxB_select
 logstat ('test148',t) ; % ewise with alias
 logstat ('testc2(1)',t) ;  % complex tests (quick case)
 logstat ('test163',t) ; % test C<!M>=A'*B where C and M are sparse
@@ -207,7 +206,6 @@ logstat ('test74',t) ;  % test GrB_mxm on all semirings
 logstat ('test03',t) ; logstat ('test03',s) ;  % random matrix tests
 logstat ('test128',t) ; % eWiseMult, eWiseAdd, special cases
 logstat ('test125',t) ; % test GrB_mxm: row and column scaling
-logstat ('test131',t) ; % GrB_Matrix_clear
 logstat ('test82',t) ;  % GrB_extract with index range (hypersparse)
 
 %----------------------------------------
@@ -229,7 +227,6 @@ logstat ('test23',t) ;  % quick test of GB_*_build
 logstat ('test175',t) ; % test142 updated
 logstat ('test160',t) ; % test A*B, parallel
 logstat ('test160',s) ; % test A*B, single threaded
-logstat ('test134',t) ; % quick test of GxB_select
 logstat ('test54',t) ;  % assign and extract with begin:inc:end
 logstat ('test104',t) ; % export/import
 logstat ('test11',t) ;  % exhaustive test of GrB_extractTuples
@@ -302,6 +299,7 @@ logstat ('test23(1)',t) ;  %      % exhaustive test of GB_*_build
 logstat ('test24',t) ;     %   42 % test of GrB_Matrix_reduce
 logstat ('test24(1)',t) ;  %      % exhaustive test of GrB_Matrix_reduce
 logstat ('test25',t) ;     %      % long test of GxB_select
+logstat ('test26',t) ;     %   .6 % quick test of GxB_select
 logstat ('test26(1)',t) ;  %      % performance test of GxB_select (use ssget)
 logstat ('test27',t) ;     %   13 % quick test of GxB_select (LoHi_band)
 logstat ('test28',t) ;     %    1 % mxm with aliased inputs, C<C> = accum(C,C*C)
@@ -395,6 +393,9 @@ logstat ('test120',t) ;    %      % performance tests for GrB_assign
 logstat ('test121',t) ;    %      % performance tests for GrB_assign
 logstat ('test122',t) ;    %      % performance tests for GrB_assign
 logstat ('test126',t) ;    %    7 % GrB_reduce to vector; very sparse matrix 
+
+logstat ('test131',t) ;    %   .1 % GrB_Matrix_clear
+logstat ('test134',t) ;    %  105 % quick test of GxB_select
 
 logstat ('test143',t) ;    %   37 % mxm, special cases
 logstat ('test146',t) ;    %   .1 % expand scalar

@@ -381,7 +381,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     break ;
 
                 // ROWINDEX becomes COLINDEX
-                case GB_ROWINDEX_idxunop_code  :
+                case GB_ROWINDEX_idxunop_code  : 
                     // i+thunk becomes j+thunk: no change to thunk
                     opcode = GB_COLINDEX_idxunop_code ;
                     break ;
@@ -393,7 +393,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     break ;
 
                 // DIAGINDEX becomes FLIPDIAGINDEX
-                case GB_DIAGINDEX_idxunop_code :
+                case GB_DIAGINDEX_idxunop_code : 
                     // j-(i+thunk) becomes i-(j+thunk): no change to thunk
                     opcode = GB_FLIPDIAGINDEX_idxunop_code ;
                     break ;
@@ -442,29 +442,53 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
             // operators are only applied in the generic select method.
             switch (opcode)
             {
-                case GB_VALUENE_idxunop_code :
-                    opcode = thunk_is_zero ?
-                        GB_NONZERO_selop_code : GB_NE_THUNK_selop_code ;
+                case GB_VALUENE_idxunop_code : 
+                    opcode = GB_NE_THUNK_selop_code ;
                     break ;
-                case GB_VALUEEQ_idxunop_code :
-                    opcode = thunk_is_zero ?
-                        GB_EQ_ZERO_selop_code : GB_EQ_THUNK_selop_code ;
+                case GB_VALUEEQ_idxunop_code : 
+                    opcode = GB_EQ_THUNK_selop_code ;
                     break ;
-                case GB_VALUEGT_idxunop_code :
-                    opcode = thunk_is_zero ?
-                        GB_GT_ZERO_selop_code : GB_GT_THUNK_selop_code ;
+                case GB_VALUEGT_idxunop_code : 
+                    opcode = GB_GT_THUNK_selop_code ;
                     break ;
-                case GB_VALUEGE_idxunop_code :
-                    opcode = thunk_is_zero ?
-                        GB_GE_ZERO_selop_code : GB_GE_THUNK_selop_code ;
+                case GB_VALUEGE_idxunop_code : 
+                    opcode = GB_GE_THUNK_selop_code ;
                     break ;
-                case GB_VALUELT_idxunop_code :
-                    opcode = thunk_is_zero ?
-                        GB_LT_ZERO_selop_code : GB_LT_THUNK_selop_code ;
+                case GB_VALUELT_idxunop_code : 
+                    opcode = GB_LT_THUNK_selop_code ;
                     break ;
-                case GB_VALUELE_idxunop_code :
-                    opcode = thunk_is_zero ?
-                        GB_LE_ZERO_selop_code : GB_LE_THUNK_selop_code ;
+                case GB_VALUELE_idxunop_code : 
+                    opcode = GB_LE_THUNK_selop_code ;
+                    break ;
+                default:;
+            }
+        }
+
+        //----------------------------------------------------------------------
+        // rename THUNK comparators if thunk is zero
+        //----------------------------------------------------------------------
+
+        if (thunk_is_zero)
+        { 
+            switch (opcode)
+            {
+                case GB_NE_THUNK_selop_code : 
+                    opcode = GB_NONZERO_selop_code ;
+                    break ;
+                case GB_EQ_THUNK_selop_code : 
+                    opcode = GB_EQ_ZERO_selop_code ;
+                    break ;
+                case GB_GT_THUNK_selop_code : 
+                    opcode = GB_GT_ZERO_selop_code ;
+                    break ;
+                case GB_GE_THUNK_selop_code : 
+                    opcode = GB_GE_ZERO_selop_code ;
+                    break ;
+                case GB_LT_THUNK_selop_code : 
+                    opcode = GB_LT_ZERO_selop_code ;
+                    break ;
+                case GB_LE_THUNK_selop_code : 
+                    opcode = GB_LE_ZERO_selop_code ;
                     break ;
                 default:;
             }
@@ -486,7 +510,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     case GB_UINT8_code  :   // C is not iso if uint*
                     case GB_UINT16_code : 
                     case GB_UINT32_code : 
-                    case GB_UINT64_code :
+                    case GB_UINT64_code : 
                         opcode = GB_NONZERO_selop_code ; break ;
                     default: ;
                 }
@@ -501,7 +525,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     case GB_UINT8_code  : 
                     case GB_UINT16_code : 
                     case GB_UINT32_code : 
-                    case GB_UINT64_code :
+                    case GB_UINT64_code : 
                         make_copy = true ; break ;
                     default: ;
                 }
@@ -516,7 +540,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                     case GB_UINT8_code  : 
                     case GB_UINT16_code : 
                     case GB_UINT32_code : 
-                    case GB_UINT64_code :
+                    case GB_UINT64_code : 
                         is_empty = true ; break ;
                     default: ;
                 }
