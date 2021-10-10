@@ -54,6 +54,7 @@ Version 5.2.0, FIXME
     * added LZ4/LZ4HC: compression library, http://www.lz4.org (BSD 2),
         v1.9.3, Copyright (c) 2011-2016, Yann Collet, All Rights Reserved.
     * mis and pagerank demos: removed; mis added to LAGraph/experimental
+    * (33) bug fix: GrB_apply when C is iso and index op is applied in place
     * (32) bug fix: C<M>=Z not returning C as iso if Z iso and C initialy
         empty.  Caught by Erik Welch, Anaconda.
 
