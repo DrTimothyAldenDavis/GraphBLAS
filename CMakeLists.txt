@@ -111,16 +111,14 @@ find_package ( OpenMP )
 #       set ( CMAKE_CUDA on )
 #       set ( RMM_WRAP on )
 #   else ( )
-#       # without CUDA:
-#       message ( STATUS "CUDA: not enabled")
+        # without CUDA:
+        message ( STATUS "CUDA: not enabled")
         set ( CMAKE_CUDA off )
         set ( RMM_WRAP off )
 #   endif ( )
 
-# for nvcc, add -DGBCUDA
-
 if ( CMAKE_CUDA )
-    find_package (CUDA REQUIRED )
+    # find_package (CUDA REQUIRED )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
     add_subdirectory(CUDA)
     set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES})
