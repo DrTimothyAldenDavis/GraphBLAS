@@ -99,17 +99,30 @@ configure_file (
 
 include ( FindOpenMP )
 
-enable_language ( CUDA )
-
-# for nvcc, add -DGBCUDA
-set ( CMAKE_CUDA on )
-set ( RMM_WRAP on )
+    include ( CheckLanguage )
+    check_language ( CUDA )
+    if ( CMAKE_CUDA_COMPILER )
+        # with CUDA:
+        message ( STATUS "CUDA: enabled")
+        message ( STATUS "CUDA host compiler: " ${CMAKE_CUDA_HOST_COMPILER} )
+        enable_language ( CUDA )
+        set ( CMAKE_CUDA on )
+        set ( RMM_WRAP on )
+        message ( STATUS "CUDA Libraries: " ${CUDA_LIBRARIES} )
+    else ( )
+        # without CUDA:
+        message ( STATUS "CUDA: not enabled")
+        set ( CMAKE_CUDA off )
+        set ( RMM_WRAP off )
+    endif ( )
 
 if ( CMAKE_CUDA )
-    find_package(CUDA REQUIRED)
+    # find_package(CUDA REQUIRED)
+    message ( STATUS "CUDA Libraries: " ${CUDA_LIBRARIES} )
     message ( STATUS "CUDA enabled" )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
     add_subdirectory(CUDA)
+    message ( STATUS "CUDA Libraries: " ${CUDA_LIBRARIES} )
     set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES})
     link_directories ( "CUDA" ${CUDA_LIBRARIES})
 
