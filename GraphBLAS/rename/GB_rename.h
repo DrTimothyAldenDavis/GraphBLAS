@@ -1966,6 +1966,7 @@
 #define GxB_Matrix_concat GxM_Matrix_concat
 #define GxB_Matrix_deserialize GxM_Matrix_deserialize
 #define GxB_Matrix_diag GxM_Matrix_diag
+#define GxB_Matrix_eWiseUnion GxM_Matrix_eWiseUnion
 #define GxB_Matrix_export_BitmapC GxM_Matrix_export_BitmapC
 #define GxB_Matrix_export_BitmapR GxM_Matrix_export_BitmapR
 #define GxB_Matrix_export_CSC GxM_Matrix_export_CSC
@@ -3213,6 +3214,7 @@
 #define GxB_Vector_build_Scalar GxM_Vector_build_Scalar
 #define GxB_Vector_deserialize GxM_Vector_deserialize
 #define GxB_Vector_diag GxM_Vector_diag
+#define GxB_Vector_eWiseUnion GxM_Vector_eWiseUnion
 #define GxB_Vector_export_Bitmap GxM_Vector_export_Bitmap
 #define GxB_Vector_export_CSC GxM_Vector_export_CSC
 #define GxB_Vector_export_Full GxM_Vector_export_Full

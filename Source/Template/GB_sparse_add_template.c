@@ -339,12 +339,12 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        // C (i,j) = A (i,j)
+                        // C (i,j) = A (i,j), or A(i,j) + Bmissing
                         int64_t i = p + iA_first ;
                         Ci [pC + p] = i ;
                         ASSERT (Ai [pA + p] == i) ;
                         #ifndef GB_ISO_ADD
-                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p, A_iso) ;
+                        GB_A_BMISSING (GB_CX (pC + p), Ax, pA + p, A_iso, i, j);
                         #endif
                     }
                     GB_PRAGMA_SIMD_VECTORIZE
@@ -377,12 +377,12 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        // C (i,j) = B (i,j)
+                        // C (i,j) = B (i,j), or Amissing + B(i,j)
                         int64_t i = p + iB_first ;
                         Ci [pC + p] = i ;
                         ASSERT (Bi [pB + p] == i) ;
                         #ifndef GB_ISO_ADD
-                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p, B_iso) ;
+                        GB_AMISSING_B (GB_CX (pC + p), Bx, pB + p, B_iso, i, j);
                         #endif
                     }
                     GB_PRAGMA_SIMD_VECTORIZE
@@ -417,8 +417,9 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        // C (i,j) = B (i,j)
-                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p, B_iso) ;
+                        // C (i,j) = B (i,j), or Amissing + B(i,j)
+                        GB_AMISSING_B (GB_CX (pC + p), Bx, pB + p, B_iso, 
+                            Bi [pB+p], j) ;
                     }
                     #endif
                     #endif
@@ -440,8 +441,9 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p, A_iso) ;
+                        // C (i,j) = A (i,j), or A(i,j) + Bmissing
+                        GB_A_BMISSING (GB_CX (pC + p), Ax, pA + p, A_iso,
+                            Ai [pA+p], j) ;
                     }
                     #endif
                     #endif
@@ -463,8 +465,9 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p, A_iso) ;
+                        // C (i,j) = A (i,j), or A(i,j) + Bmissing
+                        GB_A_BMISSING (GB_CX (pC + p), Ax, pA + p, A_iso,
+                            Ai [pA+p], j) ;
                     }
                     #endif
                     pC += ajnz ;
@@ -473,8 +476,9 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        // C (i,j) = B (i,j)
-                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p, B_iso) ;
+                        // C (i,j) = B (i,j), or Amissing + B(i,j)
+                        GB_AMISSING_B (GB_CX (pC + p), Bx, pB + p, B_iso,
+                            Bi [pB+p], j) ;
                     }
                     #endif
                     #endif
@@ -496,8 +500,9 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        // C (i,j) = B (i,j)
-                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p, B_iso) ;
+                        // C (i,j) = B (i,j), or Amissing + B(i,j)
+                        GB_AMISSING_B (GB_CX (pC + p), Bx, pB + p, B_iso,
+                            Bi [pB+p], j) ;
                     }
                     #endif
                     pC += bjnz ;
@@ -506,8 +511,9 @@
                     GB_PRAGMA_SIMD_VECTORIZE
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p, A_iso) ;
+                        // C (i,j) = A (i,j), or A(i,j) + Bmissing
+                        GB_A_BMISSING (GB_CX (pC + p), Ax, pA + p, A_iso,
+                            Ai [pA+p], j) ;
                     }
                     #endif
                     #endif
@@ -572,22 +578,22 @@
                         int64_t iB = Bi [pB] ;
                         if (iA < iB)
                         { 
-                            // C (iA,j) = A (iA,j)
+                            // C (iA,j) = A (iA,j), or A(iA,j) + Bmissing
                             #if defined ( GB_PHASE_2_OF_2 )
                             Ci [pC] = iA ;
                             #ifndef GB_ISO_ADD
-                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
+                            GB_A_BMISSING (GB_CX (pC), Ax, pA, A_iso, iA, j) ;
                             #endif
                             #endif
                             pA++ ;
                         }
                         else if (iA > iB)
                         { 
-                            // C (iB,j) = B (iB,j)
+                            // C (iB,j) = B (iB,j), or Amissing + B(iB,j)
                             #if defined ( GB_PHASE_2_OF_2 )
                             Ci [pC] = iB ;
                             #ifndef GB_ISO_ADD
-                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
+                            GB_AMISSING_B (GB_CX (pC), Bx, pB, B_iso, iB, j) ;
                             #endif
                             #endif
                             pB++ ;
@@ -627,16 +633,18 @@
                     #ifndef GB_ISO_ADD
                     for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        // C (i,j) = A (i,j)
-                        GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p, A_iso) ;
+                        // C (i,j) = A (i,j), or A(i,j) + Bmissing
+                        GB_A_BMISSING (GB_CX (pC + p), Ax, pA + p, A_iso,
+                            Ai [pA+p], j) ;
                     }
                     #endif
                     memcpy (Ci + pC, Bi + pB, bjnz * sizeof (int64_t)) ;
                     #ifndef GB_ISO_ADD
                     for (int64_t p = 0 ; p < bjnz ; p++)
                     { 
-                        // C (i,j) = B (i,j)
-                        GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p, B_iso) ;
+                        // C (i,j) = B (i,j), or Amissing + B(i,j)
+                        GB_AMISSING_B (GB_CX (pC + p), Bx, pB + p, B_iso,
+                            Bi [pB+p], j) ;
                     }
                     #endif
                     ASSERT (pC + ajnz + bjnz == pC_end) ;
@@ -881,26 +889,26 @@
                     }
                     else if (afound)
                     { 
-                        // C (i,j) = A (i,j)
+                        // C (i,j) = A (i,j), or A(i,j) + Bmissing
                         #if defined ( GB_PHASE_1_OF_2 )
                         cjnz++ ;
                         #else
                         Ci [pC] = i ;
                         #ifndef GB_ISO_ADD
-                        GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
+                        GB_A_BMISSING (GB_CX (pC), Ax, pA, A_iso, i, j) ;
                         #endif
                         pC++ ;
                         #endif
                     }
                     else if (bfound)
                     { 
-                        // C (i,j) = B (i,j)
+                        // C (i,j) = B (i,j), or Amissing + B(i,j)
                         #if defined ( GB_PHASE_1_OF_2 )
                         cjnz++ ;
                         #else
                         Ci [pC] = i ;
                         #ifndef GB_ISO_ADD
-                        GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
+                        GB_AMISSING_B (GB_CX (pC), Bx, pB, B_iso, i, j) ;
                         #endif
                         pC++ ;
                         #endif
@@ -999,13 +1007,13 @@
                         GB_GET_MIJ (i) ;
                         if (mij)
                         { 
-                            // C (i,j) = B (i,j)
+                            // C (i,j) = B (i,j), or Amissing + B(i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
                             #ifndef GB_ISO_ADD
-                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
+                            GB_AMISSING_B (GB_CX (pC), Bx, pB, B_iso, i, j) ;
                             #endif
                             pC++ ;
                             #endif
@@ -1026,13 +1034,13 @@
                         GB_GET_MIJ (i) ;
                         if (mij)
                         { 
-                            // C (i,j) = A (i,j)
+                            // C (i,j) = A (i,j), or A(i,j) + Bmissing
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
                             #ifndef GB_ISO_ADD
-                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
+                            GB_A_BMISSING (GB_CX (pC), Ax, pA, A_iso, i, j) ;
                             #endif
                             pC++ ;
                             #endif
@@ -1053,13 +1061,13 @@
                         GB_GET_MIJ (i) ;
                         if (mij)
                         { 
-                            // C (i,j) = A (i,j)
+                            // C (i,j) = A (i,j), or A(i,j) + Bmissing
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
                             #ifndef GB_ISO_ADD
-                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
+                            GB_A_BMISSING (GB_CX (pC), Ax, pA, A_iso, i, j) ;
                             #endif
                             pC++ ;
                             #endif
@@ -1072,13 +1080,13 @@
                         GB_GET_MIJ (i) ;
                         if (mij)
                         { 
-                            // C (i,j) = B (i,j)
+                            // C (i,j) = B (i,j), or Amissing + B(i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
                             #ifndef GB_ISO_ADD
-                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
+                            GB_AMISSING_B (GB_CX (pC), Bx, pB, B_iso, i, j) ;
                             #endif
                             pC++ ;
                             #endif
@@ -1099,13 +1107,13 @@
                         GB_GET_MIJ (i) ;
                         if (mij)
                         { 
-                            // C (i,j) = B (i,j)
+                            // C (i,j) = B (i,j), or Amissing + B(i,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
                             #ifndef GB_ISO_ADD
-                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
+                            GB_AMISSING_B (GB_CX (pC), Bx, pB, B_iso, i, j) ;
                             #endif
                             pC++ ;
                             #endif
@@ -1118,13 +1126,13 @@
                         GB_GET_MIJ (i) ;
                         if (mij)
                         { 
-                            // C (i,j) = A (i,j)
+                            // C (i,j) = A (i,j), or A(i,j) + Bmissing
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
                             Ci [pC] = i ;
                             #ifndef GB_ISO_ADD
-                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
+                            GB_A_BMISSING (GB_CX (pC), Ax, pA, A_iso, i, j) ;
                             #endif
                             pC++ ;
                             #endif
@@ -1148,13 +1156,14 @@
                             GB_GET_MIJ (iA) ;
                             if (mij)
                             { 
-                                // C (iA,j) = A (iA,j)
+                                // C (iA,j) = A (iA,j), or A(i,j) + Bmissing
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
                                 #else
                                 Ci [pC] = iA ;
                                 #ifndef GB_ISO_ADD
-                                GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
+                                GB_A_BMISSING (GB_CX (pC), Ax, pA, A_iso,
+                                    iA, j) ;
                                 #endif
                                 pC++ ;
                                 #endif
@@ -1166,13 +1175,14 @@
                             GB_GET_MIJ (iB) ;
                             if (mij)
                             { 
-                                // C (iB,j) = B (iB,j)
+                                // C (iB,j) = B (iB,j), or Amissing + B(iB,j)
                                 #if defined ( GB_PHASE_1_OF_2 )
                                 cjnz++ ;
                                 #else
                                 Ci [pC] = iB ;
                                 #ifndef GB_ISO_ADD
-                                GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
+                                GB_AMISSING_B (GB_CX (pC), Bx, pB, B_iso,
+                                    iB, j) ;
                                 #endif
                                 pC++ ;
                                 #endif
@@ -1212,13 +1222,13 @@
                         GB_GET_MIJ (iA) ;
                         if (mij)
                         { 
-                            // C (iA,j) = A (iA,j)
+                            // C (iA,j) = A (iA,j), or A(i,j) + Bmissing
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
                             Ci [pC] = iA ;
                             #ifndef GB_ISO_ADD
-                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA, A_iso) ;
+                            GB_A_BMISSING (GB_CX (pC), Ax, pA, A_iso, iA, j) ;
                             #endif
                             pC++ ;
                             #endif
@@ -1231,13 +1241,13 @@
                         GB_GET_MIJ (iB) ;
                         if (mij)
                         { 
-                            // C (iB,j) = B (iB,j)
+                            // C (iB,j) = B (iB,j), or Amissing + B(iB,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
                             Ci [pC] = iB ;
                             #ifndef GB_ISO_ADD
-                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB, B_iso) ;
+                            GB_AMISSING_B (GB_CX (pC), Bx, pB, B_iso, iB, j) ;
                             #endif
                             pC++ ;
                             #endif

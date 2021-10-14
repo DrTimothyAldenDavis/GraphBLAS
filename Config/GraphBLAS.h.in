@@ -5187,6 +5187,70 @@ GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<Mask> = accum (C, A+B)
 #endif
 
 //==============================================================================
+// GxB_eWiseUnion: a variant of GrB_eWiseAdd
+//==============================================================================
+
+// GxB_eWiseUnion is a variant of eWiseAdd.  They differ when an entry is
+// present in A but not B, or in B but not A.
+
+// eWiseAdd does the following, for a matrix, where "+" is the add binary op:
+
+//      if A(i,j) and B(i,j) are both present:
+//          C(i,j) = A(i,j) + B(i,j)
+//      else if A(i,j) is present but not B(i,j)
+//          C(i,j) = A(i,j)
+//      else if B(i,j) is present but not A(i,j)
+//          C(i,j) = B(i,j)
+
+// by constrast, eWiseUnion always applies the operator:
+
+//      if A(i,j) and B(i,j) are both present:
+//          C(i,j) = A(i,j) + B(i,j)
+//      else if A(i,j) is present but not B(i,j)
+//          C(i,j) = A(i,j) + Bmissing
+//      else if B(i,j) is present but not A(i,j)
+//          C(i,j) = Amissing + B(i,j)
+
+GrB_Info GxB_Vector_eWiseUnion      // w<M> = accum (w, u+v)
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_BinaryOp add,         // defines '+' for t=u+v
+    const GrB_Vector u,             // first input:  vector u
+    const GrB_Scalar umissing,
+    const GrB_Vector v,             // second input: vector v
+    const GrB_Scalar vmissing,
+    const GrB_Descriptor desc       // descriptor for w and M
+) ;
+
+GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_BinaryOp add,         // defines '+' for T=A+B
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Scalar Amissing,
+    const GrB_Matrix B,             // second input: matrix B
+    const GrB_Scalar Bmissing,
+    const GrB_Descriptor desc       // descriptor for C, M, A, and B
+) ;
+
+#if GxB_STDC_VERSION >= 201112L
+#define GxB_eWiseUnion(C,Mask,accum,op,A,Amissing,B,Bmissing,desc)          \
+    _Generic                                                                \
+    (                                                                       \
+        (C),                                                                \
+            const GrB_Matrix : GxB_Matrix_eWiseUnion ,                      \
+                  GrB_Matrix : GxB_Matrix_eWiseUnion ,                      \
+            const GrB_Vector : GxB_Vector_eWiseUnion ,                      \
+                  GrB_Vector : GxB_Vector_eWiseUnion                        \
+    )                                                                       \
+    (C, Mask, accum, op, A, Amissing, B, Bmissing, desc)
+#endif
+
+//==============================================================================
 // GrB_extract: extract a submatrix or subvector
 //==============================================================================
 

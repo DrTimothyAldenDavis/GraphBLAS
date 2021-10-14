@@ -42,6 +42,9 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     bool B_transpose,               // if true, use B' instead of B
     bool eWiseAdd,                  // if true, do set union (like A+B),
                                     // otherwise do intersection (like A.*B)
+    const bool is_eWiseUnion,   // if true, eWiseUnion, else eWiseAdd
+    const GrB_Scalar Amissing,  // Amissing and Bmissing ignored for eWiseAdd,
+    const GrB_Scalar Bmissing,  // nonempty scalars for GxB_eWiseUnion
     GB_Context Context
 )
 {
@@ -82,21 +85,45 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     if (eWiseAdd)
     {
-        // C = A is done for entries in A but not C
-        if (!GB_Type_compatible (C->type, A->type))
-        { 
-            GB_ERROR (GrB_DOMAIN_MISMATCH,
-                "First input of type [%s]\n"
-                "cannot be typecast to final output of type [%s]",
-                A->type->name, C->type->name) ;
+        if (is_eWiseUnion)
+        {
+            // C = op (A, Bmissing) is done for entries in A but not B
+            if (Bmissing != NULL &&
+                !GB_Type_compatible (op->ytype, Bmissing->type))
+            { 
+                GB_ERROR (GrB_DOMAIN_MISMATCH,
+                    "Bmissing scalar of type [%s]\n"
+                    "cannot be typecast to op input of type [%s]",
+                    Bmissing->type->name, op->ytype->name) ;
+            }
+            // C = op (Amissing, B) is done for entries in B but not A
+            if (Amissing != NULL &&
+                !GB_Type_compatible (op->xtype, Amissing->type))
+            { 
+                GB_ERROR (GrB_DOMAIN_MISMATCH,
+                    "Amissing scalar of type [%s]\n"
+                    "cannot be typecast to op input of type [%s]",
+                    Amissing->type->name, op->xtype->name) ;
+            }
         }
-        // C = B is done for entries in B but not C
-        if (!GB_Type_compatible (C->type, B->type))
-        { 
-            GB_ERROR (GrB_DOMAIN_MISMATCH,
-                "Second input of type [%s]\n"
-                "cannot be typecast to final output of type [%s]",
-                B->type->name, C->type->name) ;
+        else
+        {
+            // C = A is done for entries in A but not B
+            if (!GB_Type_compatible (C->type, A->type))
+            { 
+                GB_ERROR (GrB_DOMAIN_MISMATCH,
+                    "First input of type [%s]\n"
+                    "cannot be typecast to final output of type [%s]",
+                    A->type->name, C->type->name) ;
+            }
+            // C = B is done for entries in B but not A
+            if (!GB_Type_compatible (C->type, B->type))
+            { 
+                GB_ERROR (GrB_DOMAIN_MISMATCH,
+                    "Second input of type [%s]\n"
+                    "cannot be typecast to final output of type [%s]",
+                    B->type->name, C->type->name) ;
+            }
         }
     }
 
@@ -347,7 +374,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // could be faster to exploit the mask duing GB_add.
 
         GB_OK (GB_add (T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
-            &mask_applied, A1, B1, op, Context)) ;
+            &mask_applied, A1, B1, is_eWiseUnion, Amissing, Bmissing, op,
+            Context)) ;
 
     }
     else

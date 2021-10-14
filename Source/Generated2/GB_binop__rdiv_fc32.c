@@ -261,6 +261,9 @@ GrB_Info GB (_AaddB__rdiv_fc32)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const bool is_eWiseUnion,
+    const GB_void *amissing_scalar,
+    const GB_void *bmissing_scalar,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -277,6 +280,13 @@ GrB_Info GB (_AaddB__rdiv_fc32)
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
+    GxB_FC32_t amissing ;
+    GxB_FC32_t bmissing ;
+    if (is_eWiseUnion)
+    {
+        amissing = (*((GxB_FC32_t *) amissing_scalar)) ;
+        bmissing = (*((GxB_FC32_t *) bmissing_scalar)) ;
+    }
     #include "GB_add_template.c"
     GB_FREE_WORK ;
     return (GrB_SUCCESS) ;

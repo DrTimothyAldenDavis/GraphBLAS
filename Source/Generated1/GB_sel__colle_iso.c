@@ -118,6 +118,7 @@ void GB (_sel_bitmap__colle_iso)
 )
 { 
     
+    
     #include "GB_bitmap_select_template.c"
 }
 

@@ -409,6 +409,7 @@ classdef GrB
 %   GrB.apply2      apply a binary operator
 %   GrB.assign      sparse matrix assignment, such as C(I,J)=A
 %   GrB.eadd        element-wise addition
+%   GrB.eunion      element-wise union
 %   GrB.emult       element-wise multiplication
 %   GrB.extract     extract submatrix, like C=A(I,J)
 %   GrB.kronecker   Kronecker product
@@ -451,6 +452,7 @@ classdef GrB
 %       C = GrB.apply2    (Cin, M, accum, op, A, B,       desc)
 %       C = GrB.assign    (Cin, M, accum,     A,    I, J, desc)
 %       C = GrB.eadd      (Cin, M, accum, op, A, B,       desc)
+%       C = GrB.eunion    (Cin, M, accum, op, A, a, B, b, desc)
 %       C = GrB.emult     (Cin, M, accum, op, A, B,       desc)
 %       C = GrB.extract   (Cin, M, accum,     A,    I, J, desc)
 %       C = GrB.kronecker (Cin, M, accum, op, A, B,       desc)
@@ -469,14 +471,15 @@ classdef GrB
 %   M, A, and then B.  However, if a single string appears as a
 %   parameter, it can appear anywhere within the list of 4 matrices.
 %
-%   (1) Cin, M, A, B are matrices.  If the method takes up to 4 matrices
+%   (1) Cin, M, A, B are matrices, and a and b are scalars (eunion only).
+%       If the method takes up to 4 matrices
 %       (mxm, kronecker, select (with operator requiring a b
 %       parameter), eadd, emult, apply2), then they appear in this order:
 %       with 2 matrix inputs: A, B
 %       with 3 matrix inputs: Cin, A, B
 %       with 4 matrix inputs: Cin, M, A, B
 %       For GrB.select, b is a scalar.  For GrB.apply2, either A or B
-%       is be a scalar.
+%       is a scalar.
 %
 %       If the method takes up to 3 matrices (vreduce, apply, assign,
 %       subassign, extract, trans, or select without b):
@@ -994,6 +997,7 @@ methods (Static)
     C = expand (scalar, A, type) ;
     C = extract (Cin, M, accum, A, I, J, desc) ;
     [I, J, X] = extracttuples (A, desc) ;
+    C = eunion (Cin, M, accum, op, A, a, B, b, desc) ;
     C = eye (m, n, type) ;
     finalize ;
     [f, s, iso] = format (arg) ;

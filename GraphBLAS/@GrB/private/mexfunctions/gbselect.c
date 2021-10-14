@@ -115,7 +115,7 @@ void mexFunction
     // find the arguments
     //--------------------------------------------------------------------------
 
-    mxArray *Matrix [4], *String [2], *Cell [2] ;
+    mxArray *Matrix [6], *String [2], *Cell [2] ;
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
@@ -124,7 +124,8 @@ void mexFunction
     gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
         Cell, &ncells, &desc, &base, &kind, &fmt, &sparsity) ;
 
-    CHECK_ERROR (nmatrices < 1 || nstrings < 1 || ncells > 0, USAGE) ;
+    CHECK_ERROR (nmatrices < 1 || nmatrices > 4 || nstrings < 1 || ncells > 0,  
+        USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the select operator; determine the type and ithunk later

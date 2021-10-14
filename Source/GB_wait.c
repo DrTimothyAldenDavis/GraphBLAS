@@ -444,7 +444,7 @@ GrB_Info GB_wait                // finish all pending computations
             //------------------------------------------------------------------
 
             GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A1, T,
-                NULL, Context)) ;
+                false, NULL, NULL, NULL, Context)) ;
 
             ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
 
@@ -530,8 +530,8 @@ GrB_Info GB_wait                // finish all pending computations
         // FUTURE:: if GB_add could tolerate zombies in A, then the initial
         // prune of zombies can be skipped.
 
-        GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T, NULL,
-            Context)) ;
+        GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T,
+            false, NULL, NULL, NULL, Context)) ;
         GB_phbix_free (T) ;
         ASSERT_MATRIX_OK (S, "S after GB_wait:add", GB0) ;
         info = GB_transplant_conform (A, A->type, &S, Context) ;

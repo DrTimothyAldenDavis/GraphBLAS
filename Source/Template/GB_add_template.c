@@ -127,28 +127,113 @@
     #else
 
         // phase2: numerical phase
-        if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
-        { 
-            // C is sparse or hypersparse
-            // Werk allocated: none
-            #include "GB_sparse_add_template.c"
-        }
-        else if (C_sparsity == GxB_BITMAP)
-        { 
-            // C is bitmap (phase2 only)
-            // Werk: slice M and A, M and B, just A, or just B, or none
-            #include "GB_bitmap_add_template.c"
+
+        #ifndef GB_ISO_ADD
+        if (is_eWiseUnion)
+        {
+
+            //------------------------------------------------------------------
+            // eWiseUnion, using Amissing and Bmissing scalars
+            //------------------------------------------------------------------
+
+            // if A(i,j) is not present: C(i,j) = Amissing + B(i,j)
+            // if B(i,j) is not present: C(i,j) = A(i,j) + Bmissing
+            #undef  GB_A_BMISSING
+            #undef  GB_AMISSING_B
+
+            #ifdef GB_POSITIONAL_OP
+
+                // op doesn't depend aij, bij, amissing, or bmissing
+                #define GB_A_BMISSING(cij, Ax,pA,A_iso, i,j)    \
+                {                                               \
+                    /* cij = aij + bmissing */                  \
+                    GB_BINOP(cij, aij, bmissing, i, j) ;        \
+                }
+                #define GB_AMISSING_B(cij, Bx,pB,B_iso, i,j)    \
+                {                                               \
+                    /* cij = amissing + bij */                  \
+                    GB_BINOP(cij, amissing, bij, i, j) ;        \
+                }
+
+            #else
+
+                #define GB_A_BMISSING(cij, Ax,pA,A_iso, i,j)    \
+                {                                               \
+                    /* cij = aij + bmissing */                  \
+                    GB_GETA (aij, Ax,pA,A_iso) ;                \
+                    GB_BINOP(cij, aij, bmissing, i, j) ;        \
+                }
+                #define GB_AMISSING_B(cij, Bx,pB,B_iso, i,j)    \
+                {                                               \
+                    /* cij = amissing + bij */                  \
+                    GB_GETB (bij, Bx,pB,B_iso) ;                \
+                    GB_BINOP(cij, amissing, bij, i, j) ;        \
+                }
+
+            #endif
+
+            if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
+            { 
+                // C is sparse or hypersparse
+                // Werk allocated: none
+                #include "GB_sparse_add_template.c"
+            }
+            else if (C_sparsity == GxB_BITMAP)
+            { 
+                // C is bitmap (phase2 only)
+                // Werk: slice M and A, M and B, just A, or just B, or none
+                #include "GB_bitmap_add_template.c"
+            }
+            else
+            { 
+                // C is full (phase2 only)
+                ASSERT (C_sparsity == GxB_FULL) ;
+                // Werk: slice just A, just B, or none
+                #include "GB_full_add_template.c"
+            }
         }
         else
-        { 
-            // C is full (phase2 only)
-            ASSERT (C_sparsity == GxB_FULL) ;
-            // Werk: slice just A, just B, or none
-            #include "GB_full_add_template.c"
+        #endif
+        {
+
+            //------------------------------------------------------------------
+            // eWiseAdd:
+            //------------------------------------------------------------------
+
+            // if A(i,j) is not present: C(i,j) = B(i,j)
+            // if B(i,j) is not present: C(i,j) = A(i,j)
+            #undef  GB_A_BMISSING
+            #undef  GB_AMISSING_B
+            #define GB_A_BMISSING(cij, Ax,pA,A_iso, i,j)    \
+                GB_COPY_A_TO_C(cij,Ax,pA,A_iso)
+            #define GB_AMISSING_B(cij, Bx,pB,B_iso, i,j)    \
+                GB_COPY_B_TO_C(cij,Bx,pB,B_iso)
+
+            if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
+            { 
+                // C is sparse or hypersparse
+                // Werk allocated: none
+                #include "GB_sparse_add_template.c"
+            }
+            else if (C_sparsity == GxB_BITMAP)
+            { 
+                // C is bitmap (phase2 only)
+                // Werk: slice M and A, M and B, just A, or just B, or none
+                #include "GB_bitmap_add_template.c"
+            }
+            else
+            { 
+                // C is full (phase2 only)
+                ASSERT (C_sparsity == GxB_FULL) ;
+                // Werk: slice just A, just B, or none
+                #include "GB_full_add_template.c"
+            }
         }
 
     #endif
 }
 
 #undef GB_ISO_ADD
+#undef GB_A_BMISSING
+#undef GB_AMISSING_B
 

@@ -79,6 +79,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const bool Mask_comp,       // if true, use !M
     const GrB_Matrix A,
     const GrB_Matrix B,
+    const bool is_eWiseUnion,   // if true, eWiseUnion, else eWiseAdd
+    const GrB_Scalar Amissing,  // Amissing and Bmissing ignored for eWiseAdd,
+    const GrB_Scalar Bmissing,  // nonempty scalars for GxB_eWiseUnion
     GB_Context Context
 )
 {
@@ -198,6 +201,94 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GB_Type_code ccode = ctype->code ;
 
     //--------------------------------------------------------------------------
+    // get the typecasting functions
+    //--------------------------------------------------------------------------
+
+    GxB_binary_function fadd ;
+    size_t asize, bsize, xsize, ysize, zsize ;
+    GB_cast_function cast_A_to_C, cast_B_to_C ;
+    GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;
+
+    if (op == NULL)
+    { 
+        // implicit GB_SECOND_[type] operator with no typecasting
+        fadd = NULL ;               // the operator is not called
+        asize = csize ;
+        bsize = csize ;
+        xsize = csize ;
+        ysize = csize ;
+        zsize = csize ;
+        cast_A_to_X = GB_copy_user_user ;
+        cast_B_to_Y = GB_copy_user_user ;
+        cast_A_to_C = GB_copy_user_user ;
+        cast_B_to_C = GB_copy_user_user ;
+        cast_Z_to_C = GB_copy_user_user ;
+    }
+    else
+    {
+        // normal case, with optional typecasting
+        fadd = op->binop_function ;       // NULL if op is positional
+        asize = A->type->size ;
+        bsize = B->type->size ;
+
+        if (op_is_second || op_is_pair || op_is_positional)
+        { 
+            // the op does not depend on the value of A(i,j)
+            xsize = 1 ;
+            cast_A_to_X = NULL ;
+        }
+        else
+        { 
+            xsize = op->xtype->size ;
+            cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
+        }
+
+        if (op_is_first || op_is_pair || op_is_positional)
+        { 
+            // the op does not depend on the value of B(i,j)
+            ysize = 1 ;
+            cast_B_to_Y = NULL ;
+        }
+        else
+        { 
+            ysize = op->ytype->size ;
+            cast_B_to_Y = GB_cast_factory (op->ytype->code, B->type->code) ;
+        }
+
+        zsize = op->ztype->size ;
+        cast_A_to_C = GB_cast_factory (ccode, A->type->code) ;
+        cast_B_to_C = GB_cast_factory (ccode, B->type->code) ;
+        cast_Z_to_C = GB_cast_factory (ccode, op->ztype->code) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // cast the Amissing and Bmissing scalars, if present
+    //--------------------------------------------------------------------------
+
+    GB_void amissing [GB_VLA(xsize)] ;
+    GB_void bmissing [GB_VLA(ysize)] ;
+    if (is_eWiseUnion && Amissing != NULL && cast_A_to_X != NULL)
+    { 
+        // amissing = (xtype) Amissing
+        cast_A_to_X (amissing, Amissing->x, xsize) ;
+    }
+    else
+    { 
+        // amissing = 0
+        memset (amissing, 0, xsize) ;
+    }
+    if (is_eWiseUnion && Bmissing != NULL && cast_B_to_Y != NULL)
+    { 
+        // bmissing = (ytype) Bmissing
+        cast_B_to_Y (bmissing, Bmissing->x, ysize) ;
+    }
+    else
+    { 
+        // bmissing = 0
+        memset (bmissing, 0, ysize) ;
+    }
+
+    //--------------------------------------------------------------------------
     // using a built-in binary operator (except for positional operators)
     //--------------------------------------------------------------------------
 
@@ -242,7 +333,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             {                                                               \
                 info = GB_AaddB(mult,xname) (C, C_sparsity,                 \
                     M, Mask_struct, Mask_comp,                              \
-                    A, B, Ch_is_Mh, C_to_M, C_to_A, C_to_B,                 \
+                    A, B, is_eWiseUnion, amissing, bmissing,                \
+                    Ch_is_Mh, C_to_M, C_to_A, C_to_B,                       \
                     TaskList, C_ntasks, C_nthreads, Context) ;              \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
@@ -282,67 +374,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         GB_BURBLE_MATRIX (C, "(generic add: %s) ",
             (op == NULL) ? "second" : op->name) ;
 
-// TODO:: use GB_ewise_generic
-
-        GxB_binary_function fadd ;
-        size_t asize, bsize, xsize, ysize, zsize ;
-        GB_cast_function cast_A_to_C, cast_B_to_C ;
-        GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;
-
-        if (op == NULL)
-        { 
-            // implicit GB_SECOND_[type] operator with no typecasting
-            fadd = NULL ;               // the operator is not called
-            asize = csize ;
-            bsize = csize ;
-            xsize = csize ;
-            ysize = csize ;
-            zsize = csize ;
-            cast_A_to_X = GB_copy_user_user ;
-            cast_B_to_Y = GB_copy_user_user ;
-            cast_A_to_C = GB_copy_user_user ;
-            cast_B_to_C = GB_copy_user_user ;
-            cast_Z_to_C = GB_copy_user_user ;
-        }
-        else
-        {
-            // normal case, with optional typecasting
-            fadd = op->binop_function ;       // NULL if op is positional
-            asize = A->type->size ;
-            bsize = B->type->size ;
-
-            if (op_is_second || op_is_pair || op_is_positional)
-            { 
-                // the op does not depend on the value of A(i,j)
-                xsize = 1 ;
-                cast_A_to_X = NULL ;
-            }
-            else
-            { 
-                xsize = op->xtype->size ;
-                cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
-            }
-
-            if (op_is_first || op_is_pair || op_is_positional)
-            { 
-                // the op does not depend on the value of B(i,j)
-                ysize = 1 ;
-                cast_B_to_Y = NULL ;
-            }
-            else
-            { 
-                ysize = op->ytype->size ;
-                cast_B_to_Y = GB_cast_factory (op->ytype->code, B->type->code) ;
-            }
-
-            zsize = op->ztype->size ;
-            cast_A_to_C = GB_cast_factory (ccode, A->type->code) ;
-            cast_B_to_C = GB_cast_factory (ccode, B->type->code) ;
-            cast_Z_to_C = GB_cast_factory (ccode, op->ztype->code) ;
-        }
-
         // C(i,j) = (ctype) A(i,j), located in Ax [pA]
-        #undef  GB_COPY_A_TO_C
+        #undef  GB_COPY_A_TO_C 
         #define GB_COPY_A_TO_C(cij,Ax,pA,A_iso)                             \
             cast_A_to_C (cij, Ax +((A_iso) ? 0: (pA)*asize), asize) ;
 
@@ -389,6 +422,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             //------------------------------------------------------------------
 
             int64_t offset = GB_positional_offset (opcode, NULL) ;
+            #define GB_POSITIONAL_OP
 
             if (op->ztype == GrB_INT64)
             { 
@@ -452,6 +486,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             //------------------------------------------------------------------
             // standard binary operator
             //------------------------------------------------------------------
+
+            #undef GB_POSITIONAL_OP
 
             // C(i,j) = (ctype) (A(i,j) + B(i,j))
             // not used if op is null since the intersection of A and B is empty

@@ -72,8 +72,8 @@
                 }
                 else
                 { 
-                    // C (i,j) = A (i,j)
-                    GB_COPY_A_TO_C (GB_CX (p), Ax, p, A_iso) ;
+                    // C (i,j) = A (i,j), or A(i,j) + Bmissing
+                    GB_A_BMISSING (GB_CX (p), Ax, p, A_iso, p % vlen, p / vlen);
                 }
             }
 
@@ -88,8 +88,8 @@
             #pragma omp parallel for num_threads(C_nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
             {
-                // C (i,j) = A (i,j)
-                GB_COPY_A_TO_C (GB_CX (p), Ax, p, A_iso) ;
+                // C (i,j) = A (i,j), or A(i,j) + Bmissing
+                GB_A_BMISSING (GB_CX (p), Ax, p, A_iso, p % vlen, p / vlen) ;
             }
 
             GB_SLICE_MATRIX (B, 8, chunk) ;
@@ -148,8 +148,8 @@
                 }
                 else
                 { 
-                    // C (i,j) = B (i,j)
-                    GB_COPY_B_TO_C (GB_CX (p), Bx, p, B_iso) ;
+                    // C (i,j) = B (i,j), or Amissing + B(i,j)
+                    GB_AMISSING_B (GB_CX (p), Bx, p, B_iso, p % vlen, p / vlen);
                 }
             }
 
@@ -164,8 +164,8 @@
             #pragma omp parallel for num_threads(C_nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
             {
-                // C (i,j) = B (i,j)
-                GB_COPY_B_TO_C (GB_CX (p), Bx, p, B_iso) ;
+                // C (i,j) = B (i,j), or Amissing + B(i,j)
+                GB_AMISSING_B (GB_CX (p), Bx, p, B_iso, p % vlen, p / vlen) ;
             }
 
             GB_SLICE_MATRIX (A, 8, chunk) ;
