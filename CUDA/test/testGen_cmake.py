@@ -29,7 +29,7 @@ def load_types(argv):
 
     Monoids = argv[3].split(";")
     Binops  = argv[4].split(";")
-    Semirings = argv[5].split(";")
+    Semirings = argv[5]
     DataTypes = argv[6].split(";")
 
     # Hard-coding data shapes for now
@@ -40,43 +40,41 @@ def load_types(argv):
         # "largexlarge": {'N':2**16, 'Anz': 64*2**20, 'Bnz':64*2**20}
     }
 
-    Kernels= argv[7].split(";")
+    Kernels= argv[7]
 
     return argv[1], test_suite_name, Monoids, Binops, Semirings, DataTypes, DataShapes, Kernels
 
 def write_test_instances_header(test_suite_name, Monoids, Binops, Semirings, DataTypes, DataShapes, Kernels):
-    outfile = f'{test_suite_name}_test_instances.hpp'
+    outfile = f'{test_suite_name}_{Semirings}_{Kernels}_test_instances.hpp'
     with open(outfile, 'w') as fp:
         fp.write("#pragma once\n");
-        for k in Kernels:
-            Test_suite = f'{test_suite_name}_tests_{k}'
-            for SR in Semirings:
-                for dtC in DataTypes:
-                    dtX = dtC
-                    dtY = dtC
-                    dtZ = dtC
-                    for dtM in ["bool", "int32_t"]:
-                        for dtA in DataTypes:
-                            for dtB in DataTypes:
-                                for ds in DataShapes:
-                                    for phase in [2]:
+        Test_suite = f'{test_suite_name}_tests_{Semirings}_{Kernels}'
+        for dtC in DataTypes:
+            dtX = dtC
+            dtY = dtC
+            dtZ = dtC
+            for dtM in ["bool", "int32_t"]:
+                for dtA in DataTypes:
+                    for dtB in DataTypes:
+                        for ds in DataShapes:
+                            for phase in [2]:
 
-                                        TEST_HEAD, TEST_BODY = buildTest( Test_suite, k, ds, SR, phase,
-                                                                          dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
-                                        fp.write( TEST_HEAD)
-                                        fp.write( """{ std::string SR = "%s"; """%SR)
-                                        fp.write( TEST_BODY)
-                                        fp.write( "}\n")
+                                TEST_HEAD, TEST_BODY = buildTest( Test_suite, Kernels, ds, Semirings, phase,
+                                                                  dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
+                                fp.write( TEST_HEAD)
+                                fp.write( """{ std::string SR = "%s"; """%Semirings)
+                                fp.write( TEST_BODY)
+                                fp.write( "}\n")
 
-def write_cuda_test(source_dir, test_suite_name):
+def write_cuda_test(source_dir, test_suite_name, semiring, kernel):
     import shutil
 
-    shutil.copy(f"{source_dir}/test/cuda_tests_template.cpp", f"{test_suite_name}_cuda_tests.cpp")
+    shutil.copy(f"{source_dir}/test/cuda_tests_template.cpp", f"{test_suite_name}_{semiring}_{kernel}_cuda_tests.cpp")
 
-    with open(f"{test_suite_name}_cuda_tests.cpp", "a") as file_object:
+    with open(f"{test_suite_name}_{semiring}_{kernel}_cuda_tests.cpp", "a") as file_object:
         # Keeping this as a separate file for now to allow for further nesting
         # of test instances for each test_suite_name
-        file_object.write(f"\n#include \"{test_suite_name}_test_instances.hpp\"")
+        file_object.write(f"\n#include \"{test_suite_name}_{semiring}_{kernel}_test_instances.hpp\"")
 
 if __name__ == "__main__":
     import sys
@@ -91,4 +89,4 @@ if __name__ == "__main__":
 
     write_test_instances_header(test_suite_name, Monoids, Binops, Semirings, DataTypes, DataShapes, Kernels)
 
-    write_cuda_test(source_dir, test_suite_name)
+    write_cuda_test(source_dir, test_suite_name, Semirings, Kernels)

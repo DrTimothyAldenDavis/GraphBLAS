@@ -6,6 +6,8 @@
 // Tests Semirings, data types and a range of data input sizes and shapes
 // Connects to the jitFactory for launches.
 
+#pragma once
+
 #include <cassert>
 #include <cmath>
 #include <random>

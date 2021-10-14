@@ -59,23 +59,27 @@ set(CUDA_TEST_KERNELS warp mp vsvs dndn spdn vssp)
 
 set(CUDA_TEST_CPP_FILES "")
 foreach(var ${CUDA_TEST_SUITES})
+    foreach(semiring ${CUDA_TEST_SEMIRINGS})
+        foreach(kernel ${CUDA_TEST_KERNELS})
 
-    # TODO: Have Python script also build separate cudaTest.cpp (named something
-    # like AxB_dot3_cuda_tests.cpp) for each suite. This way we should be able to
-    # easily ignore them from the build
-    add_custom_command(
-            OUTPUT
-            ${CMAKE_CURRENT_BINARY_DIR}/${var}_test_instances.hpp
-            ${CMAKE_CURRENT_BINARY_DIR}/${var}_cuda_tests.cpp
-            DEPENDS
-            ${CMAKE_CURRENT_SOURCE_DIR}/test/jitFactory.hpp
-            COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/test/testGen_cmake.py "\"${CMAKE_CURRENT_SOURCE_DIR}\"" "\"${var}\"" "\"${CUDA_TEST_MONOIDS}\""
-                "\"${CUDA_TEST_BINOPS}\"" "\"${CUDA_TEST_SEMIRINGS}\"" "\"${CUDA_TEST_DATATYPES}\""
-                "\"${CUDA_TEST_KERNELS}\""
-    )
+            # TODO: Have Python script also build separate cudaTest.cpp (named something
+            # like AxB_dot3_cuda_tests.cpp) for each suite. This way we should be able to
+            # easily ignore them from the build
+            add_custom_command(
+                    OUTPUT
+                    ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${kernel}_test_instances.hpp
+                    ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${kernel}_cuda_tests.cpp
+                    DEPENDS
+                    ${CMAKE_CURRENT_SOURCE_DIR}/test/jitFactory.hpp
+                    COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/test/testGen_cmake.py "\"${CMAKE_CURRENT_SOURCE_DIR}\"" "\"${var}\"" "\"${CUDA_TEST_MONOIDS}\""
+                        "\"${CUDA_TEST_BINOPS}\"" "\"${semiring}\"" "\"${CUDA_TEST_DATATYPES}\""
+                        "\"${kernel}\""
+            )
 
-    # Construct final list of files to compile (in parallel)
-    list(APPEND CUDA_TEST_CPP_FILES ${CMAKE_CURRENT_BINARY_DIR}/${var}_cuda_tests.cpp)
+            # Construct final list of files to compile (in parallel)
+            list(APPEND CUDA_TEST_CPP_FILES ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${kernel}_cuda_tests.cpp)
+        endforeach()
+    endforeach()
 endforeach()
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
