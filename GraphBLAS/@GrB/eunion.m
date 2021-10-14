@@ -63,15 +63,15 @@ end
 
 switch (nargin)
     case 5
-        [C, k] = gbeadd (arg1, arg2, arg3, arg4, arg5) ;
+        [C, k] = gbeunion (arg1, arg2, arg3, arg4, arg5) ;
     case 6
-        [C, k] = gbeadd (arg1, arg2, arg3, arg4, arg5, arg6) ;
+        [C, k] = gbeunion (arg1, arg2, arg3, arg4, arg5, arg6) ;
     case 7
-        [C, k] = gbeadd (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
+        [C, k] = gbeunion (arg1, arg2, arg3, arg4, arg5, arg6, arg7) ;
     case 8
-        [C, k] = gbeadd (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) ;
+        [C, k] = gbeunion (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) ;
     case 9
-        [C, k] = gbeadd (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) ;
+        [C, k] = gbeunion (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) ;
 end
 
 if (k == 0)
