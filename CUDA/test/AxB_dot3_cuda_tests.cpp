@@ -6,8 +6,6 @@
 // Tests Semirings, data types and a range of data input sizes and shapes
 // Connects to the jitFactory for launches.
 
-#pragma once
-
 #include <cassert>
 #include <cmath>
 #include <random>
@@ -16,6 +14,5 @@
 #include "jitTestFactory.hpp"
 #include "gtest/gtest.h"
 
-//Test instances and groupings 
-#include "AxB_dot3_test_instances.hpp"
+//Test instances and groupings
 

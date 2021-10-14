@@ -13,6 +13,9 @@
 
 #include "GB_imin.h"
 #include "GB_zombie.h"
+
+#include "GB_opaque.h"
+
 #include "GB_nnz.h"
 #include "GB_partition.h"
 #include "GB_binary_search.h"
@@ -38,8 +41,6 @@
 
 
 typedef void (*GxB_binary_function) (void *, const void *, const void *) ;
-
-#include "GB_opaque.h"
 
 typedef enum
 {

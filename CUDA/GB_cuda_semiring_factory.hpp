@@ -25,12 +25,12 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
 
     public:
 
-    const char *include_filename = "";
-    uint64_t sr_code;
-    char filename[256];    // GB_semiring_0238402984398AC0DE.h where the numbers are the sr_code
+        const char *include_filename = "";
+        uint64_t sr_code;
+        char filename[256];    // GB_semiring_0238402984398AC0DE.h where the numbers are the sr_code
 
-    // file ptr 
-    FILE *fp;
+        // file ptr
+        FILE *fp;
 
     void open( const char *path_and_file)
     {
