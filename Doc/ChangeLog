@@ -52,6 +52,8 @@ Version 5.2.0, FIXME
         GxB_Vector_type: declared historical; will be kept but not
         recommended (use *type_name methods).
     * GxB_*_serialize/deserialize: with compression; optional descriptor
+    * GxB_eWiseUnion: like GrB_eWiseAdd except for how entries in A\B
+        and B/A are computed.
     * added LZ4/LZ4HC: compression library, http://www.lz4.org (BSD 2),
         v1.9.3, Copyright (c) 2011-2016, Yann Collet, All Rights Reserved.
     * mis and pagerank demos: removed; mis added to LAGraph/experimental

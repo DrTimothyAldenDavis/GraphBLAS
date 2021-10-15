@@ -207,6 +207,8 @@ are extensions to the GraphBLAS C API.
         recommended (use \verb'GxB_*type_name' methods).
     \item \verb'GxB_Matrix_serialize/deserialize': with compression;
         optional descriptor.
+    \item \verb'GxB_eWiseUnion': like \verb'GrB_eWiseAdd' except for how entries in $\bf A\setminus B$
+        and $\bf B \setminus A$ are computed.
     \item added LZ4/LZ4HC: compression library, \url{http://www.lz4.org} (BSD 2),
         v1.9.3, Copyright (c) 2011-2016, Yann Collet.
     \item mis and pagerank demos: removed; mis added to LAGraph/experimental
@@ -9578,7 +9580,7 @@ table below.
 \verb'GrB_eWiseAdd'  & element-wise,           & ${\bf C \langle M \rangle = C \odot (A \oplus  B)}$ \\
                      & set union               & ${\bf w \langle m \rangle = w \odot (u \oplus  v)}$ \\
 \hline
-\verb'GrB_eWiseUnion'& element-wise,           & ${\bf C \langle M \rangle = C \odot (A \oplus  B)}$ \\
+\verb'GxB_eWiseUnion'& element-wise,           & ${\bf C \langle M \rangle = C \odot (A \oplus  B)}$ \\
                      & set union               & ${\bf w \langle m \rangle = w \odot (u \oplus  v)}$ \\
 \hline
 \verb'GrB_extract'   & extract submatrix       & ${\bf C \langle M \rangle = C \odot A(I,J)}$ \\
@@ -10137,7 +10139,7 @@ other.
 \verb'GxB_eWiseUnion' is useful in contexts where \verb'GrB_eWiseAdd' cannot be
 used because of the typecasting rules of GraphBLAS.  In particular, suppose
 \verb'A' and \verb'B' are matrices with a user-defined type, and suppose
-\verb'<' is a user-defined operator that compares to entries of this type and
+\verb'<' is a user-defined operator that compares two entries of this type and
 returns a Boolean value.  Then \verb'C=A<B' can be computed with
 \verb'GxB_eWiseUnion' but not with \verb'GrB_eWiseAdd'.  In the latter, if
 \verb'A(i,j)' is present but \verb'B(i,j)' is not, then \verb'A(i,j)' must
@@ -10158,14 +10160,14 @@ call to \verb'GxB_eWiseUnion', and uses more memory.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_Vector\_eWiseUnion:} element-wise vector addition}
+\subsubsection{{\sf GxB\_Vector\_eWiseUnion:} element-wise vector addition}
 %-------------------------------------------------------------------------------
-\label{eWiseUnion_matrix}
+\label{eWiseUnion_vector}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_Vector_eWiseUnion      // w<mask> = accum (w, u+v)
+GrB_Info GxB_eWiseUnion             // w<mask> = accum (w, u+v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -10192,14 +10194,14 @@ where \verb'+' denotes the binary operator, \verb'add'.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_Matrix\_eWiseUnion:} element-wise matrix addition}
+\subsubsection{{\sf GxB\_Matrix\_eWiseUnion:} element-wise matrix addition}
 %-------------------------------------------------------------------------------
 \label{eWiseUnion_matrix}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
+GrB_Info GxB_eWiseUnion             // C<M> = accum (C, A+B)
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -10215,7 +10217,7 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
 
 Identical to \verb'GrB_Matrix_eWiseAdd' except that two scalars are used
 to define how to compute the result when entries are present in one of
-the two input vectors (\verb'A' and \verb'B'), but not the other.
+the two input matrices (\verb'A' and \verb'B'), but not the other.
 Each of the two input scalars, \verb'Amissing' and \verb'Bmissing'
 must contain an entry.
 When computing the result \verb'T=A+B',
