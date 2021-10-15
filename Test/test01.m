@@ -10,6 +10,7 @@ GB_mex_errors ;
 GB_mex_about3 ;
 GB_mex_about4 ;
 GB_mex_about5 ;
+GB_mex_about6 ;
 
 fprintf ('\ntest01: all tests passed\n') ;
 
