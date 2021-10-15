@@ -9,30 +9,12 @@
 ./complex_demo 1                        > complex_demo_out2.m
 ./openmp_demo                           > openmp_demo.out
 
-./import_demo   < ../Demo/Matrix/west0067            > import_demo.out
+./import_demo < ../Demo/Matrix/west0067 > import_demo.out
+./wildtype_demo                         > wildtype_demo.out
 
-./pagerank_demo < ../Demo/Matrix/eye3                > pagerank_demo.out
-./pagerank_demo < ../Demo/Matrix/2blocks            >> pagerank_demo.out
-./pagerank_demo < ../Demo/Matrix/t1                 >> pagerank_demo.out
-./pagerank_demo < ../Demo/Matrix/bcsstk01           >> pagerank_demo.out
-./pagerank_demo < ../Demo/Matrix/bcsstk16           >> pagerank_demo.out
-./pagerank_demo < ../Demo/Matrix/fs_183_1           >> pagerank_demo.out
-./pagerank_demo < ../Demo/Matrix/west0067           >> pagerank_demo.out
-
+echo "Comparing output:"
 diff ../Demo/Output/simple_demo.out       simple_demo.out
 diff ../Demo/Output/complex_demo_out.m    complex_demo_out.m
 diff ../Demo/Output/wildtype_demo.out     wildtype_demo.out
-
-echo "Comparing PageRank results:"
-diff -I " d:" ../Demo/Output/pagerank_demo.out     pagerank_demo.out
-echo "Some mismatches are expected between dpagerank and ipagerank."
-echo "number of mismatches between dpagerank and ipagerank in your tests: "
-grep mismatch pagerank_demo.out | wc -l
-echo "number of mismatches between dpagerank and ipagerank in Demo/Output: "
-grep mismatch ../Demo/Output/pagerank_demo.out | wc -l
-echo "Compare openmp_demo.out with Output/* manually,"
-echo "since the threads can print their results in random order."
-
-./wildtype_demo                         > wildtype_demo.out
 
 exit 0
