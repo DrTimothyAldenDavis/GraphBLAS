@@ -5086,7 +5086,7 @@ GrB_Info GrB_Matrix_eWiseMult_BinaryOp       // C<Mask> = accum (C, A.*B)
 // two matrices (or two vectors) are pairwise "added".
 
 GB_PUBLIC
-GrB_Info GrB_Vector_eWiseAdd_Semiring       // w<Mask> = accum (w, u+v)
+GrB_Info GrB_Vector_eWiseAdd_Semiring       // w<mask> = accum (w, u+v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -5098,7 +5098,7 @@ GrB_Info GrB_Vector_eWiseAdd_Semiring       // w<Mask> = accum (w, u+v)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Vector_eWiseAdd_Monoid         // w<Mask> = accum (w, u+v)
+GrB_Info GrB_Vector_eWiseAdd_Monoid         // w<mask> = accum (w, u+v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -5110,7 +5110,7 @@ GrB_Info GrB_Vector_eWiseAdd_Monoid         // w<Mask> = accum (w, u+v)
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Vector_eWiseAdd_BinaryOp       // w<Mask> = accum (w, u+v)
+GrB_Info GrB_Vector_eWiseAdd_BinaryOp       // w<mask> = accum (w, u+v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -5213,7 +5213,7 @@ GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<Mask> = accum (C, A+B)
 //      else if B(i,j) is present but not A(i,j)
 //          C(i,j) = Amissing + B(i,j)
 
-GrB_Info GxB_Vector_eWiseUnion      // w<M> = accum (w, u+v)
+GrB_Info GxB_Vector_eWiseUnion      // w<mask> = accum (w, u+v)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -5223,7 +5223,7 @@ GrB_Info GxB_Vector_eWiseUnion      // w<M> = accum (w, u+v)
     const GrB_Scalar umissing,
     const GrB_Vector v,             // second input: vector v
     const GrB_Scalar vmissing,
-    const GrB_Descriptor desc       // descriptor for w and M
+    const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
 GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
