@@ -87,9 +87,23 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     {
         if (is_eWiseUnion)
         {
+            // Amissing and Bmissing scalars must be present
+            GB_RETURN_IF_NULL_OR_FAULTY (Amissing) ;
+            GB_RETURN_IF_NULL_OR_FAULTY (Bmissing) ;
+            GB_MATRIX_WAIT (Amissing) ;
+            GB_MATRIX_WAIT (Bmissing) ;
+            if (GB_nnz (Amissing) == 0)
+            {
+                GB_ERROR (GrB_EMPTY_OBJECT, "%s\n",
+                    "Amissing cannot be an empty scalar") ;
+            }
+            if (GB_nnz (Bmissing) == 0)
+            { 
+                GB_ERROR (GrB_EMPTY_OBJECT, "%s\n",
+                    "Bmissing cannot be an empty scalar") ;
+            }
             // C = op (A, Bmissing) is done for entries in A but not B
-            if (Bmissing != NULL &&
-                !GB_Type_compatible (op->ytype, Bmissing->type))
+            if (!GB_Type_compatible (op->ytype, Bmissing->type))
             { 
                 GB_ERROR (GrB_DOMAIN_MISMATCH,
                     "Bmissing scalar of type [%s]\n"
@@ -97,8 +111,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
                     Bmissing->type->name, op->ytype->name) ;
             }
             // C = op (Amissing, B) is done for entries in B but not A
-            if (Amissing != NULL &&
-                !GB_Type_compatible (op->xtype, Amissing->type))
+            if (!GB_Type_compatible (op->xtype, Amissing->type))
             { 
                 GB_ERROR (GrB_DOMAIN_MISMATCH,
                     "Amissing scalar of type [%s]\n"

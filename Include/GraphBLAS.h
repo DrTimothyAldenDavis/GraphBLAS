@@ -516,7 +516,9 @@ typedef enum
 
     // for GrB_MASK only:
     GrB_COMP = 2,       // use the structural complement of the input
-    GrB_SCMP = 2,       // same as GrB_COMP (historical; use GrB_COMP instead)
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
+    GrB_SCMP = 2,       // same as GrB_COMP (deprecated; use GrB_COMP instead)
+    #endif
     GrB_STRUCTURE = 4,  // use the only pattern of the mask, not its values
 
     // for GrB_INP0 and GrB_INP1 only:

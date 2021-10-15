@@ -267,25 +267,18 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     GB_void amissing [GB_VLA(xsize)] ;
     GB_void bmissing [GB_VLA(ysize)] ;
-    if (is_eWiseUnion && Amissing != NULL && cast_A_to_X != NULL)
+    if (is_eWiseUnion)
     { 
         // amissing = (xtype) Amissing
-        cast_A_to_X (amissing, Amissing->x, xsize) ;
-    }
-    else
-    { 
-        // amissing = 0
-        memset (amissing, 0, xsize) ;
-    }
-    if (is_eWiseUnion && Bmissing != NULL && cast_B_to_Y != NULL)
-    { 
+        ASSERT (Amissing != NULL) ;
+        GB_cast_function cast_Amissing_to_X =
+            GB_cast_factory (op->xtype->code, Amissing->type->code) ;
+        cast_Amissing_to_X (amissing, Amissing->x, Amissing->type->size) ;
         // bmissing = (ytype) Bmissing
-        cast_B_to_Y (bmissing, Bmissing->x, ysize) ;
-    }
-    else
-    { 
-        // bmissing = 0
-        memset (bmissing, 0, ysize) ;
+        ASSERT (Bmissing != NULL) ;
+        GB_cast_function cast_Bmissing_to_Y =
+            GB_cast_factory (op->ytype->code, Bmissing->type->code) ;
+        cast_Bmissing_to_Y (bmissing, Bmissing->x, Bmissing->type->size) ;
     }
 
     //--------------------------------------------------------------------------

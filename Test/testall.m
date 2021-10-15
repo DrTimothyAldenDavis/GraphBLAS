@@ -95,6 +95,7 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test234',t) ; % test GxB_eWiseUnion
 logstat ('test233',t) ; % test bitmap saxpy C=A*B with A sparse and B bitmap
 logstat ('test232',t) ; % test assign with GrB_Scalar
 logstat ('test231',t) ; % test GrB_select with idxunp
@@ -110,7 +111,6 @@ logstat ('test222',t) ; % test user selectop for iso matrices
 logstat ('test221',t) ; % test C += A where C is bitmap and A is full
 logstat ('test220',t) ; % test mask C<M>=Z, iso case
 logstat ('test219',s) ; % test reduce to scalar (1 thread)
-logstat ('test218',t) ; % test C=A+B, C and A are full, B is bitmap
 logstat ('test217',t) ; % test C<repl>(I,J)=A, bitmap assign
 logstat ('test216',t) ; % test C<A>=A, iso case
 logstat ('test215',t) ; % test C<M>=A'*B (dot2, ANY_PAIR semiring)
@@ -150,7 +150,6 @@ logstat ('test83',t) ;  % GrB_assign with C_replace and empty J
 logstat ('test176',t) ; % test GrB_assign, method 09, 11
 logstat ('test174',t) ; % test GrB_assign C<A>=A
 logstat ('test170',t) ; % test C<B>=A+B (alias M==B)
-logstat ('test169',t) ; % test C<!M>=A+B with C sparse, M hyper, A and B sparse
 logstat ('test164',t) ; % test dot5 method
 logstat ('test152',t) ; % test binops with C=A+B, all matrices dense
 logstat ('test155',t) ; % test GrB_*_setElement and GrB_*_removeElement
@@ -204,7 +203,7 @@ logstat ('test74',t) ;  % test GrB_mxm on all semirings
 %----------------------------------------
 
 logstat ('test03',t) ; logstat ('test03',s) ;  % random matrix tests
-logstat ('test128',t) ; % eWiseMult, eWiseAdd, special cases
+logstat ('test128',t) ; % eWiseMult, eWiseAdd, eWiseUnion special cases
 logstat ('test125',t) ; % test GrB_mxm: row and column scaling
 logstat ('test82',t) ;  % GrB_extract with index range (hypersparse)
 
@@ -404,12 +403,14 @@ logstat ('test149',t) ;           % test fine hash tasks for C<!M>=A*B
 
 logstat ('test166',t) ;    %   .1 % test GxB_select with a dense matrix
 logstat ('test168',t) ;           % test C=A+B with C and B full, A bitmap
+logstat ('test169',t) ;    %    0 % test C<!M>=A+B with C sparse, M hyper, A and B sparse
 
 logstat ('test171',t) ;    %    1 % test conversion and GB_memset
 
 logstat ('test190',t) ;    %   .3 % test dense matrix for C<!M>=A*B
 
 logstat ('test205',t) ;    %    0 % test iso kron
+logstat ('test218',t) ;    %    0 % test C=A+B, C and A are full, B is bitmap
 
 % tested via test16:
 logstat ('testc1',t) ;     %      % test complex operators

@@ -303,6 +303,11 @@ GrB_Info GB_mx_random_matrix      // create a random double-precision matrix
     bool A_complex          // if true, create a Complex matrix
 ) ;
 
+GrB_Scalar GB_mx_get_Scalar
+(
+    const mxArray *mx_scalar
+) ;
+
 //------------------------------------------------------------------------------
 
 #ifdef GB_PRINT_MALLOC

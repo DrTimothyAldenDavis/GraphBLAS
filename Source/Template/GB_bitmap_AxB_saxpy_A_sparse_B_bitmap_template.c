@@ -237,12 +237,6 @@
                         }                                                   \
                     }
 
-                    #undef  GB_LOAD_A_ij
-                    #define GB_LOAD_A_ij                                    \
-                        int64_t i = Ai [pA] ;                               \
-                        GB_GETA (aik, Ax, pA, A_iso) ;                      \
-                        int64_t pH = i * np ;
-
                     //----------------------------------------------------------
                     // H += A(:,k)*G(k,:)
                     //----------------------------------------------------------
@@ -266,7 +260,9 @@
                             case 4 : 
                                 for ( ; pA < pA_end ; pA++)
                                 {
-                                    GB_LOAD_A_ij ;
+                                    int64_t i = Ai [pA] ;
+                                    int64_t pH = i * np ;
+                                    GB_GETA (aik, Ax, pA, A_iso) ;
                                     GB_HX_COMPUTE (0) ;
                                     GB_HX_COMPUTE (1) ;
                                     GB_HX_COMPUTE (2) ;
@@ -277,7 +273,9 @@
                             case 3 : 
                                 for ( ; pA < pA_end ; pA++)
                                 {
-                                    GB_LOAD_A_ij ;
+                                    int64_t i = Ai [pA] ;
+                                    int64_t pH = i * np ;
+                                    GB_GETA (aik, Ax, pA, A_iso) ;
                                     GB_HX_COMPUTE (0) ;
                                     GB_HX_COMPUTE (1) ;
                                     GB_HX_COMPUTE (2) ;
@@ -287,7 +285,9 @@
                             case 2 : 
                                 for ( ; pA < pA_end ; pA++)
                                 {
-                                    GB_LOAD_A_ij ;
+                                    int64_t i = Ai [pA] ;
+                                    int64_t pH = i * np ;
+                                    GB_GETA (aik, Ax, pA, A_iso) ;
                                     GB_HX_COMPUTE (0) ;
                                     GB_HX_COMPUTE (1) ;
                                 }
@@ -296,10 +296,9 @@
                             case 1 : 
                                 for ( ; pA < pA_end ; pA++)
                                 {
-                                    GB_LOAD_A_ij ;
-
-
-
+                                    int64_t i = Ai [pA] ;
+                                    int64_t pH = i * np ;
+                                    GB_GETA (aik, Ax, pA, A_iso) ;
                                     GB_HX_COMPUTE (0) ;
                                 }
                                 break ;
@@ -309,7 +308,6 @@
 
                     #undef  GB_MULT_A_ik_G_kjj
                     #undef  GB_HX_COMPUTE
-                    #undef  GB_LOAD_A_ij
                 }
 
                 //--------------------------------------------------------------

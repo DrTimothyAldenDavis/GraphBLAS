@@ -128,6 +128,15 @@
 
         // phase2: numerical phase
 
+        #ifdef GB_POSITIONAL_OP
+            // op doesn't depend aij, bij, amissing, or bmissing
+            #define GB_LOAD_A(aij, Ax,pA,A_iso)
+            #define GB_LOAD_B(bij, Bx,pB,B_iso)
+        #else
+            #define GB_LOAD_A(aij, Ax,pA,A_iso) GB_GETA(aij, Ax,pA,A_iso)
+            #define GB_LOAD_B(bij, Bx,pB,B_iso) GB_GETB(bij, Bx,pB,B_iso)
+        #endif
+
         #ifndef GB_ISO_ADD
         if (is_eWiseUnion)
         {
@@ -136,41 +145,9 @@
             // eWiseUnion, using Amissing and Bmissing scalars
             //------------------------------------------------------------------
 
+            #define GB_EWISEUNION
             // if A(i,j) is not present: C(i,j) = Amissing + B(i,j)
             // if B(i,j) is not present: C(i,j) = A(i,j) + Bmissing
-            #undef  GB_A_BMISSING
-            #undef  GB_AMISSING_B
-
-            #ifdef GB_POSITIONAL_OP
-
-                // op doesn't depend aij, bij, amissing, or bmissing
-                #define GB_A_BMISSING(cij, Ax,pA,A_iso, i,j)    \
-                {                                               \
-                    /* cij = aij + bmissing */                  \
-                    GB_BINOP(cij, aij, bmissing, i, j) ;        \
-                }
-                #define GB_AMISSING_B(cij, Bx,pB,B_iso, i,j)    \
-                {                                               \
-                    /* cij = amissing + bij */                  \
-                    GB_BINOP(cij, amissing, bij, i, j) ;        \
-                }
-
-            #else
-
-                #define GB_A_BMISSING(cij, Ax,pA,A_iso, i,j)    \
-                {                                               \
-                    /* cij = aij + bmissing */                  \
-                    GB_GETA (aij, Ax,pA,A_iso) ;                \
-                    GB_BINOP(cij, aij, bmissing, i, j) ;        \
-                }
-                #define GB_AMISSING_B(cij, Bx,pB,B_iso, i,j)    \
-                {                                               \
-                    /* cij = amissing + bij */                  \
-                    GB_GETB (bij, Bx,pB,B_iso) ;                \
-                    GB_BINOP(cij, amissing, bij, i, j) ;        \
-                }
-
-            #endif
 
             if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
             { 
@@ -191,6 +168,7 @@
                 // Werk: slice just A, just B, or none
                 #include "GB_full_add_template.c"
             }
+
         }
         else
         #endif
@@ -200,14 +178,9 @@
             // eWiseAdd:
             //------------------------------------------------------------------
 
+            #undef GB_EWISEUNION
             // if A(i,j) is not present: C(i,j) = B(i,j)
             // if B(i,j) is not present: C(i,j) = A(i,j)
-            #undef  GB_A_BMISSING
-            #undef  GB_AMISSING_B
-            #define GB_A_BMISSING(cij, Ax,pA,A_iso, i,j)    \
-                GB_COPY_A_TO_C(cij,Ax,pA,A_iso)
-            #define GB_AMISSING_B(cij, Bx,pB,B_iso, i,j)    \
-                GB_COPY_B_TO_C(cij,Bx,pB,B_iso)
 
             if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
             { 
@@ -234,6 +207,6 @@
 }
 
 #undef GB_ISO_ADD
-#undef GB_A_BMISSING
-#undef GB_AMISSING_B
+#undef GB_LOAD_A
+#undef GB_LOAD_B
 
