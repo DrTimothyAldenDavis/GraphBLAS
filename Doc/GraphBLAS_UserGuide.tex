@@ -159,6 +159,7 @@ are extensions to the GraphBLAS C API.
         \begin{packed_itemize}
         \item \verb'GrB_wait (object, mode)': was \verb'GrB_wait (&object)'.
         \item \verb'GrB_Info': changed enum values
+        \item \verb'GrB_SCMP': removed
         \item \verb'GxB_init (mode, malloc, calloc, realloc, free, is_thread_safe)':
             the last parameter, \verb'is_thread_safe', will be deleted.
             The malloc, calloc, realloc, and free functions must be thread-safe.
@@ -1064,6 +1065,9 @@ semiring.
                      & set intersection        & ${\bf w \langle m \rangle = w \odot (u \otimes v)}$ \\
 \hline
 \verb'GrB_eWiseAdd'  & element-wise,           & ${\bf C \langle M \rangle = C \odot (A \oplus  B)}$ \\
+                     & set union               & ${\bf w \langle m \rangle = w \odot (u \oplus  v)}$ \\
+\hline
+\verb'GxB_eWiseUnion'& element-wise,           & ${\bf C \langle M \rangle = C \odot (A \oplus  B)}$ \\
                      & set union               & ${\bf w \langle m \rangle = w \odot (u \oplus  v)}$ \\
 \hline
 \verb'GrB_extract'   & extract submatrix       & ${\bf C \langle M \rangle = C \odot A(I,J)}$ \\
@@ -9574,6 +9578,9 @@ table below.
 \verb'GrB_eWiseAdd'  & element-wise,           & ${\bf C \langle M \rangle = C \odot (A \oplus  B)}$ \\
                      & set union               & ${\bf w \langle m \rangle = w \odot (u \oplus  v)}$ \\
 \hline
+\verb'GrB_eWiseUnion'& element-wise,           & ${\bf C \langle M \rangle = C \odot (A \oplus  B)}$ \\
+                     & set union               & ${\bf w \langle m \rangle = w \odot (u \oplus  v)}$ \\
+\hline
 \verb'GrB_extract'   & extract submatrix       & ${\bf C \langle M \rangle = C \odot A(I,J)}$ \\
                      &                         & ${\bf w \langle m \rangle = w \odot u(i)}$ \\
 \hline
@@ -9836,7 +9843,7 @@ for both matrices and vectors.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_eWiseMult\_Vector:} element-wise vector multiply}
+\subsubsection{{\sf GrB\_Vector\_eWiseMult:} element-wise vector multiply}
 %-------------------------------------------------------------------------------
 \label{eWiseMult_vector}
 
@@ -9880,7 +9887,7 @@ intersection manner.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_eWiseMult\_Matrix:} element-wise matrix multiply}
+\subsubsection{{\sf GrB\_Matrix\_eWiseMult:} element-wise matrix multiply}
 %-------------------------------------------------------------------------------
 \label{eWiseMult_matrix}
 
@@ -10004,7 +10011,7 @@ use the multiplicative operator of the semiring.
 
 % \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_eWiseAdd\_Vector:} element-wise vector addition}
+\subsubsection{{\sf GrB\_Vector\_eWiseAdd:} element-wise vector addition}
 %-------------------------------------------------------------------------------
 \label{eWiseAdd_vector}
 
@@ -10044,7 +10051,7 @@ of matrices.
 
 % \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_eWiseAdd\_Matrix:} element-wise matrix addition}
+\subsubsection{{\sf GrB\_Matrix\_eWiseAdd:} element-wise matrix addition}
 %-------------------------------------------------------------------------------
 \label{eWiseAdd_matrix}
 
@@ -10097,6 +10104,93 @@ Except for when typecasting is performed, this is identical to how the
 
 The final step is ${\bf C \langle M \rangle  = C \odot T}$, as described in
 Section~\ref{accummask}.
+
+\newpage
+%===============================================================================
+\subsection{{\sf GxB\_eWiseUnion:} element-wise operations, set union} %========
+%===============================================================================
+\label{eWiseUnion}
+
+\verb'GxB_eWiseUnion' computes a result with the same pattern
+\verb'GrB_eWiseAdd', namely, a set union of its two inputs.  It differs in how
+the binary operator is applied.
+
+Let $\oplus$ denote the binary operator to be used.  The operator is applied to
+every entry in $\bf A$ and $\bf B$.  A pair of scalars, $\alpha$ and $\beta$
+(\verb'Amissing' and \verb'Bmissing' in the API, respectively) define the
+inputs to the operator when entries are present in one matrix but not the
+other.
+
+    \vspace{-0.2in}
+    {\small
+    \begin{tabbing}
+    \hspace{2em} \= \hspace{2em} \= \hspace{2em} \= \\
+    \> for all entries $(i,j)$ in ${\bf A \cap B}$ \\
+    \> \> $t_{ij} = a_{ij} \oplus b_{ij}$ \\
+    \> for all entries $(i,j)$ in ${\bf A \setminus B}$ \\
+    \> \> $t_{ij} = a_{ij} \oplus \beta $ \\
+    \> for all entries $(i,j)$ in ${\bf B \setminus A}$ \\
+    \> \> $t_{ij} = \alpha \oplus b_{ij}$
+    \end{tabbing}
+    }
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GrB\_Vector\_eWiseUnion:} element-wise vector addition}
+%-------------------------------------------------------------------------------
+\label{eWiseUnion_matrix}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_eWiseUnion      // w<M> = accum (w, u+v)
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_BinaryOp add,         // defines '+' for t=u+v
+    const GrB_Vector u,             // first input:  vector u
+    const GrB_Scalar umissing,
+    const GrB_Vector v,             // second input: vector v
+    const GrB_Scalar vmissing,
+    const GrB_Descriptor desc       // descriptor for w and M
+) ;
+\end{verbatim} } \end{mdframed}
+
+Identical to \verb'GrB_Vector_eWiseAdd' except that two scalars are used
+to define how to compute the result when entries are present in one of
+the two input vectors (\verb'u' and \verb'v'), but not the other.
+Each of the two input scalars, \verb'umissing' and \verb'vmissing'
+must contain an entry.
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GrB\_Matrix\_eWiseUnion:} element-wise matrix addition}
+%-------------------------------------------------------------------------------
+\label{eWiseUnion_matrix}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_BinaryOp add,         // defines '+' for T=A+B
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Scalar Amissing,
+    const GrB_Matrix B,             // second input: matrix B
+    const GrB_Scalar Bmissing,
+    const GrB_Descriptor desc       // descriptor for C, M, A, and B
+) ;
+\end{verbatim} } \end{mdframed}
+
+Identical to \verb'GrB_Matrix_eWiseAdd' except that two scalars are used
+to define how to compute the result when entries are present in one of
+the two input vectors (\verb'A' and \verb'B'), but not the other.
+Each of the two input scalars, \verb'Amissing' and \verb'Bmissing'
+must contain an entry.
 
 \newpage
 %===============================================================================

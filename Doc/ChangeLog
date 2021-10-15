@@ -7,6 +7,7 @@ Version 6.0.0, FUTURE
         enum).  GxB_init has also changed.
         * GrB_wait (object, mode): was GrB_wait (&object).
         * GrB_Info: changed enum values
+        * GrB_SCMP: removed
         * GxB_init (mode, malloc, calloc, realloc, free, is_thread_safe): the
             last parameter, is_thread_safe, will be deleted.
             The malloc/calloc/realloc/free functions must be thread-safe.
