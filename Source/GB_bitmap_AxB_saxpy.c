@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B; C bitmap or full
+// GB_bitmap_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B; C bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -23,12 +23,11 @@
 // like GB_AxB_dot4.
 
 GB_PUBLIC                           // for testing only
-GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
+GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
 (
     GrB_Matrix C,                   // output matrix, static header
     const bool C_iso,               // true if C is iso
     const GB_void *cscalar,         // iso value of C
-    const int C_sparsity,
     const GrB_Matrix M,             // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
@@ -68,8 +67,6 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     ASSERT_SEMIRING_OK (semiring, "semiring for bitmap saxpy A*B", GB0) ;
     ASSERT (A->vdim == B->vlen) ;
 
-    ASSERT (C_sparsity == GxB_BITMAP || C_sparsity == GxB_FULL) ;
-
     //--------------------------------------------------------------------------
     // construct C
     //--------------------------------------------------------------------------
@@ -82,7 +79,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     (void) GB_int64_multiply ((GrB_Index *) &cnzmax, A->vlen, B->vdim) ;
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, true, // static header
-        ctype, A->vlen, B->vdim, GB_Ap_null, true, C_sparsity, true,
+        ctype, A->vlen, B->vdim, GB_Ap_null, true, GxB_BITMAP, true,
         GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, C_iso, Context)) ;
     C->magic = GB_MAGIC ;
 
@@ -97,7 +94,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
     GB_binop_pattern (&A_is_pattern, &B_is_pattern, flipxy, mult->opcode) ;
 
     //--------------------------------------------------------------------------
-    // C<#M>+=A*B
+    // C<#M>=A*B
     //--------------------------------------------------------------------------
 
     if (C_iso)
@@ -148,8 +145,8 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap or full
             GB_Opcode mult_binop_code, add_binop_code ;
             GB_Type_code xcode, ycode, zcode ;
             if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern,
-                semiring, flipxy, &mult_binop_code, &add_binop_code, &xcode, &ycode,
-                &zcode))
+                semiring, flipxy, &mult_binop_code, &add_binop_code, &xcode,
+                &ycode, &zcode))
             { 
                 #include "GB_AxB_factory.c"
             }

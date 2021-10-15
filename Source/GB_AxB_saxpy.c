@@ -116,6 +116,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         //----------------------------------------------------------------------
 
         GBURBLE ("(iso full saxpy) ") ;
+        ASSERT (C_sparsity == GxB_FULL) ;
         GrB_Type ztype = semiring->add->op->ztype ;
         // set C->iso = true    OK
         info = GB_new_bix (&C, true,    // static header
@@ -143,6 +144,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         // high enough so that the time to initialize the space.  C is sparse
         // or hypersparse.
 
+        ASSERT (C_sparsity == GxB_HYPERSPARSE || C_sparsity == GxB_SPARSE) ;
         info = GB_AxB_saxpy3 (C, C_iso, cscalar, C_sparsity, M, Mask_comp,
             Mask_struct, A, B, semiring, flipxy, mask_applied, AxB_method,
             do_sort, Context) ;
@@ -166,10 +168,11 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     { 
 
         //----------------------------------------------------------------------
-        // bitmap method: C is bitmap or full
+        // bitmap method: C is bitmap
         //----------------------------------------------------------------------
 
-        info = GB_bitmap_AxB_saxpy (C, C_iso, cscalar, C_sparsity, M,
+        ASSERT (C_sparsity == GxB_BITMAP) ;
+        info = GB_bitmap_AxB_saxpy (C, C_iso, cscalar, M,
             Mask_comp, Mask_struct, A, B, semiring, flipxy, mask_applied,
             Context) ;
     }

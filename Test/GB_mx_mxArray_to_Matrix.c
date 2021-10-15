@@ -197,6 +197,11 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     }
 
     GB_void *Mx = mxGetData (Amatrix) ;
+    if (anz == 0)
+    {
+        // an empty matrix cannot be iso
+        A_iso = false ;
+    }
 
     //--------------------------------------------------------------------------
     // look for A.values
