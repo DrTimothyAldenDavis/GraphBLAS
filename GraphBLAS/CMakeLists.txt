@@ -30,8 +30,8 @@ set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
 set ( GraphBLAS_DATE "Oct 15, 2021 (alpha13)")
-set ( GraphBLAS_VERSION_MAJOR 5 )
-set ( GraphBLAS_VERSION_MINOR 2 )
+set ( GraphBLAS_VERSION_MAJOR 6 )
+set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   0 )
 
 # GraphBLAS C API Specification version, at graphblas.org
