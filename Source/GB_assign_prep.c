@@ -1247,7 +1247,7 @@ GrB_Info GB_assign_prep
         // C is non-iso on input, but iso on output
         // copy the cout scalar into C->x
         // set C->iso = true    OK
-        GB_OK (GB_convert_any_to_iso (C, cout, true, Context)) ;
+        GB_OK (GB_convert_any_to_iso (C, cout, Context)) ;
     }
     else if (C->iso && C_iso_out)
     { 

@@ -306,7 +306,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
         // All entries in A are the same; convert A to iso
         GBURBLE ("(post iso) ") ;
         (*A)->iso = true ;
-        GB_OK (GB_convert_any_to_iso (*A, NULL, true, Context)) ;
+        GB_OK (GB_convert_any_to_iso (*A, NULL, Context)) ;
     }
 
     //--------------------------------------------------------------------------

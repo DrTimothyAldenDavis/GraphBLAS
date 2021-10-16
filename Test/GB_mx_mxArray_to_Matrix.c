@@ -405,15 +405,14 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             {
                 // use the first entry of A->x as the iso value of A
                 A->iso = true ;
-                GB_convert_any_to_iso (A, NULL, true, NULL) ;
             }
             else
             {
                 // A is converted to iso, but it doesn't have enough space in
                 // A->x for the iso value, so set it to zero
                 A->iso = false ;
-                GB_convert_any_to_iso (A, NULL, true, NULL) ;
             }
+            GB_convert_any_to_iso (A, NULL, NULL) ;
         }
         else
         {

@@ -299,7 +299,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
             { 
                 // compact the iso values of C
                 C->iso = true ; // OK
-                info = GB_convert_any_to_iso (C, NULL, true, Context) ;
+                info = GB_convert_any_to_iso (C, NULL, Context) ;
             }
         }
         return (info) ;

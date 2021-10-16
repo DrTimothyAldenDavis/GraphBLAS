@@ -6,6 +6,8 @@ My ranking of importance of the current C API issues:
 High priority:
 --------------------------------------------------------------------------------
 
+    #51 remove GrB_SCMP
+
     #48 Consider adding descriptor to all methods
         this is extensive, but since the C API is changing (to v2.0)
         anyway, now is the time to consider this.
@@ -56,6 +58,11 @@ High priority:
 --------------------------------------------------------------------------------
 Low priority: most are useful or important, but can wait until the v2.1 C API:
 --------------------------------------------------------------------------------
+
+    #50 GraphBLAS needs methods to sort a vector or matrix
+
+    #49 consider making GrB_DESC_S the default.
+        this would require v3.0 C API since it breaks backward compatiblity
 
     #47 GrB_Vector_diag
 
