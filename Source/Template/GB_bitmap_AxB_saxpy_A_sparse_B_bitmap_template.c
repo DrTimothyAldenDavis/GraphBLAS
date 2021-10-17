@@ -399,6 +399,34 @@
             // handles the B iso case.
         }
 
+        //----------------------------------------------------------------------
+        // C = identity, for special case (no mask, B full, atomic monoid
+        //----------------------------------------------------------------------
+
+#if 0
+        #if ( !GB_B_IS_BITMAP && GB_NO_MASK && GB_HAS_ATOMIC )
+        int64_t cnzmax = avlen * bvdim ;
+        #if ( !GB_IS_ANY_PAIR_SEMIRING )
+        { 
+            #if GB_HAS_IDENTITY_BYTE
+                GB_memset (Cx, GB_IDENTITY_BYTE, cnzmax, nthreads_max) ;
+            #else
+                int64_t pC ;
+                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                for (pC = 0 ; pC < cnzmax ; pC++)
+                { 
+                    Cx [pC] = GB_IDENTITY ;
+                }
+            #endif
+        }
+        #endif
+        #endif
+#endif
+
+        //----------------------------------------------------------------------
+        // C<#M> += A*B using fine tasks and atomics
+        //----------------------------------------------------------------------
+
         int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
             reduction(+:cnvals)
@@ -448,7 +476,9 @@
 
                 int64_t k = GBH (Ah, kk) ;      // k in range k1:k2
                 int64_t pB = pB_start + k ;     // get pointer to B(k,j)
+                #if GB_B_IS_BITMAP
                 if (!GBB (Bb, pB)) continue ;   
+                #endif
                 int64_t pA = Ap [kk] ;
                 int64_t pA_end = Ap [kk+1] ;
                 GB_GET_B_kj ;                   // bkj = B(k,j)
@@ -468,6 +498,30 @@
                     // C<#M>(i,j) += A(i,k) * B(k,j)
                     //----------------------------------------------------------
 
+#if 0
+                    // #if ( !GB_B_IS_BITMAP && GB_NO_MASK && GB_HAS_ATOMIC )
+                    {
+
+                        //------------------------------------------------------
+                        // B is full, no mask, monoid can be done via atomics
+                        //------------------------------------------------------
+
+                        GB_ATOMIC_READ
+                        cb = Cb [pC] ;
+                        if (cb == 0)
+                        {
+                            GB_ATOMIC_WRITE
+                            Cb [pC] = 1 ;
+                        }
+                        GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
+                        #if GB_IS_ANY_MONOID
+                        GB_ATOMIC_WRITE_HX (i, t) ;     // C(i,j) = t
+                        #else
+                        GB_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
+                        #endif
+
+                    }
+#endif
                     #if GB_MASK_IS_SPARSE_OR_HYPER
                     { 
 
@@ -603,6 +657,31 @@
             cnvals += task_cnvals ;
         }
 
+        //----------------------------------------------------------------------
+        // count the # of entries in C
+        //----------------------------------------------------------------------
+
+#if 0
+        #if ( !GB_B_IS_BITMAP && GB_NO_MASK && GB_HAS_ATOMIC )
+        { 
+            cnvals = 0 ;
+            #pragma omp parallel for num_threads(nthreads) schedule(static) \
+                reduction(+:cnvals)
+            for (tid = 0 ; tid < nthreads ; tid++)
+            {
+                int64_t pstart, pend ;
+                int64_t task_cnvals = 0 ;
+                GB_PARTITION (pstart, pend, cnzmax, tid, nthreads) ;
+                for (int64_t pC = pstart ; pC < pend ; pC++)
+                { 
+                    task_cnvals += Cb [pC] ;
+                }
+                cnvals += task_cnvals ;
+            }
+        }
+        #endif
+#endif
+
     }
     else
     {
@@ -696,7 +775,9 @@
 
                 int64_t k = GBH (Ah, kk) ;      // k in range k1:k2
                 int64_t pB = pB_start + k ;     // get pointer to B(k,j)
+                #if GB_B_IS_BITMAP
                 if (!GBB (Bb, pB)) continue ;   
+                #endif
                 int64_t pA = Ap [kk] ;
                 int64_t pA_end = Ap [kk+1] ;
                 GB_GET_B_kj ;                   // bkj = B(k,j)

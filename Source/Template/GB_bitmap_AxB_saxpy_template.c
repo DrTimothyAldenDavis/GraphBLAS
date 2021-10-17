@@ -387,19 +387,21 @@
                 // non-atomic method with workspace
                 use_atomics = false ;
                 ntasks = nthreads ;
-                GBURBLE (": non-atomic) ") ;
+                GBURBLE (": non-atomic, ") ;
             }
             else
             { 
                 // atomic method
                 use_atomics = true ;
                 ntasks = 2 * nthreads ;
-                GBURBLE (": atomic) ") ;
+                GBURBLE (": atomic, ") ;
             }
 
             nfine_tasks_per_vector = ceil ((double) ntasks / (double) bvdim) ;
             ntasks = bvdim * nfine_tasks_per_vector ;
             ASSERT (nfine_tasks_per_vector > 1) ;
+            GBURBLE ("tasks: %d, tasks per vector: %d) ", ntasks,
+                nfine_tasks_per_vector) ;
 
             // slice the matrix A for each team of fine tasks
             GB_WERK_PUSH (A_slice, nfine_tasks_per_vector + 1, int64_t) ;
@@ -419,6 +421,7 @@
             // C = A*B, no mask, A sparse/hyper, B bitmap/full
             //------------------------------------------------------------------
 
+            #define GB_NO_MASK 1
             #define GB_MASK_IS_SPARSE_OR_HYPER 0
             #define GB_MASK_IS_BITMAP_OR_FULL  0
             #undef  keep
@@ -439,6 +442,7 @@
             }
             #undef GB_MASK_IS_SPARSE_OR_HYPER
             #undef GB_MASK_IS_BITMAP_OR_FULL
+            #undef GB_NO_MASK
 
         }
         else if (M_is_sparse_or_hyper)
@@ -448,6 +452,7 @@
             // C<M> or <!M> = A*B, M and A are sparse/hyper, B bitmap/full
             //------------------------------------------------------------------
 
+            #define GB_NO_MASK 0
             #define GB_MASK_IS_SPARSE_OR_HYPER 1
             #define GB_MASK_IS_BITMAP_OR_FULL  0
             #undef  keep
@@ -461,7 +466,7 @@
             }
             else
             { 
-                // A is sparse/hyper, B is full, no mask
+                // A is sparse/hyper, B is full, M is sparse/hyper
                 #undef  GB_B_IS_BITMAP
                 #define GB_B_IS_BITMAP 0
                 #include "GB_bitmap_AxB_saxpy_A_sparse_B_bitmap_template.c"
@@ -497,6 +502,7 @@
             }
             #undef GB_MASK_IS_SPARSE_OR_HYPER
             #undef GB_MASK_IS_BITMAP_OR_FULL
+            #undef GB_NO_MASK
         }
 
         #undef GB_B_IS_BITMAP

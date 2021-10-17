@@ -74,6 +74,9 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
     // TODO: If C is the right type on input, and accum is the same as the
     // monoid, then do not create C, but compute in-place instead.
 
+    // Cb is set to all zero.  C->x is malloc'd unless C is iso, in which case
+    // it is calloc'ed.
+
     GrB_Type ctype = semiring->add->op->ztype ;
     int64_t cnzmax = 1 ;
     (void) GB_int64_multiply ((GrB_Index *) &cnzmax, A->vlen, B->vdim) ;
