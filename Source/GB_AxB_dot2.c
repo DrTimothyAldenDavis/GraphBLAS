@@ -363,7 +363,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     GB_FREE_ALL ;
     C->magic = GB_MAGIC ;
-    ASSERT_MATRIX_OK (C, "dot2: C = A'*B output", GB0) ;
+    ASSERT_MATRIX_OK (C, "dot2: C = A'*B output, before expand", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
 
     //--------------------------------------------------------------------------
@@ -371,119 +371,16 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     if (A_or_B_hyper)
-    {
-
-        //----------------------------------------------------------------------
-        // convert C from bitmap to sparse/hyper
-        //----------------------------------------------------------------------
-
-        // C is currently A_in->nvec by B_in->nvec, in bitmap form.  It must be
-        // converted back into sparse/hypersparse form, with zombies.
-
-        //----------------------------------------------------------------------
-        // allocate the sparse/hypersparse structure of the final C
-        //----------------------------------------------------------------------
-
-        int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
-        int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;
-        int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
-
-        Cp = GB_MALLOC (cvdim+1, int64_t, &Cp_size) ;
-        Ch = NULL ;
-        if (B_is_hyper)
-        { 
-            Ch = GB_MALLOC (cvdim, int64_t, &Ch_size) ;
-        }
-        Ci = GB_MALLOC (cnz, int64_t, &Ci_size) ;
-        if (Cp == NULL || (B_is_hyper && Ch == NULL) || Ci == NULL)
-        { 
-            // out of memory
-            GB_phbix_free (C) ;
-            GB_FREE (&Cp, Cp_size) ;
-            GB_FREE (&Ch, Ch_size) ;
-            GB_FREE (&Ci, Ci_size) ;
-            return (GrB_OUT_OF_MEMORY) ;
-        }
-
-        //----------------------------------------------------------------------
-        // construct the hyperlist of C, if B is hypersparse
-        //----------------------------------------------------------------------
-
-        nthreads = GB_nthreads (cvdim, chunk, nthreads_max) ;
-        if (B_is_hyper)
-        { 
-            // C becomes hypersparse
-            ASSERT (cvdim == B_in->nvec) ;
-            GB_memcpy (Ch, B_in->h, cvdim * sizeof (int64_t), nthreads) ;
-        }
-
-        //----------------------------------------------------------------------
-        // construct the vector pointers of C
-        //----------------------------------------------------------------------
-
-        int64_t pC ;
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (pC = 0 ; pC < cvdim+1 ; pC++)
-        { 
-            Cp [pC] = pC * cvlen ;
-        }
-
-        //----------------------------------------------------------------------
-        // construct the pattern of C from its bitmap
-        //----------------------------------------------------------------------
-
-        // C(i,j) becomes a zombie if not present in the bitmap
-        nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
-
-        int8_t *restrict Cb = C->b ;
-        if (A_is_hyper)
-        { 
-            ASSERT (cvlen == A_in->nvec) ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (pC = 0 ; pC < cnz ; pC++)
-            {
-                int64_t i = Ah [pC % cvlen] ;
-                Ci [pC] = (Cb [pC]) ? i : GB_FLIP (i) ;
-            }
-        }
-        else
-        { 
-            ASSERT (cvlen == cvlen_final && cvlen == A->vdim) ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (pC = 0 ; pC < cnz ; pC++)
-            {
-                int64_t i = pC % cvlen ;
-                Ci [pC] = (Cb [pC]) ? i : GB_FLIP (i) ;
-            }
-        }
-
-        //----------------------------------------------------------------------
-        // transplant the new content and finalize C
-        //----------------------------------------------------------------------
-
-        C->p = Cp ; Cp = NULL ; C->p_size = Cp_size ;
-        C->h = Ch ; Ch = NULL ; C->h_size = Ch_size ;
-        C->i = Ci ; Ci = NULL ; C->i_size = Ci_size ;
-        C->nzombies = cnz - C->nvals ;
-        C->vdim = cvdim_final ;
-        C->vlen = cvlen_final ;
-        C->nvals = -1 ;
-        C->nvec = cvdim ;
-        C->plen = cvdim ;
-        C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
-
-        // free the bitmap
-        GB_FREE ((&C->b), C->b_size) ;
-
-        // C is now sparse or hypersparse
-        ASSERT_MATRIX_OK (C, "dot2: converted back from bitmap C", GB0) ;
-        ASSERT (GB_ZOMBIES_OK (C)) ;
+    { 
+        GB_OK (GB_bitmap_expand_to_hyper (C, cvlen_final, cvdim_final,
+            A_in, B_in, Context)) ;
     }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (C, "dot2: C = A'*B output, after expand", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;

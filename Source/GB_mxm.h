@@ -184,6 +184,18 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     GB_Context Context
 ) ;
 
+GrB_Info GB_bitmap_expand_to_hyper
+(
+    // input/output:
+    GrB_Matrix C,
+    // input
+    int64_t cvlen_final,
+    int64_t cvdim_final,
+    GrB_Matrix A,
+    GrB_Matrix B,
+    GB_Context Context
+) ;
+
 //------------------------------------------------------------------------------
 // GB_AxB_dot4_control: determine if the dot4 method should be used
 //------------------------------------------------------------------------------
