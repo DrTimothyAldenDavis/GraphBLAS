@@ -1,105 +1,230 @@
+GxB_Matrix_sort and GxB_Vector_sort:
+
+    GxB_Matrix_sort (C, P, op_lt or op_gt, op_eq, A, descriptor)
+
+        descriptor.direction = GxB_BY_ROW or GxB_BY_COL
+        C or P can be NULL (but not both), which means they are not computed
+        P must have type GrB_INT64 or GrB_UINT64
+        C has any type, including user-defined, must match the type of A
+            (no typecasting performed)
+
+        C, P, and A must have the same dimensions
+        original contents of C and P are deleted
+
+        op_lt / op_gt, and op_eq are GrB_BinaryOps, and must return bool
+
+            op_lt (x,y) is x < y, and is used to indicate ascending sort
+            op_gt (x,y) is x > y, and is used to indicate descending sort
+            op_eq (x,y) is x == y
+
+            if A has a user-defined type, the user application can create
+                user-defined ops that return bool.
+
+        if by row, and suppose op_lt is used:
+
+            C (i, 0:k-1) contains the entries in A(i,:), in ascending order,
+                where k is the # of entries in A(i,:)
+            P (i, 0:k-1) contains the column indices of the same entries
+                in A(i,:)
+            ties in value are broken by column index
+            implementation-specific: C and P are returned as CSR or HyperCSR
+            if op_gt is used: same, except sort in descending order
+
+        if by col:
+
+            C (0:k-1, j) contains the entries in A(:,j), in ascending order,
+                where k is the # of entries in A(:,j)
+            P (0:k-1, j) contains the column indices of the same entries
+                in A(:,j)
+            ties in value are broken by row index
+            implementation-specific: C and P are returned as CSC or HyperCSC
+            if op_gt is used: same, except sort in descending order
+
+    GxB_Vector_sort (w, p, op_lt or op_gt, op_eq, u, descriptor)
+
+        same as GxB_Matrix_sort, except descriptor.direction is ignored
+
+
 New saxpy method:
 
-C<#M> += A*B when C is initially full, and remains so.
+    C<#M> += A*B when C is initially full, and remains so.
 
-C may be iso on input but is normally non-iso on output,
-unless A and B are both iso and full and no mask is present.
+    C may be iso on input but is normally non-iso on output,
+    unless A and B are both iso and full and no mask is present.
 
-No replace option.
-Mask: can be NULL, M, or !M, structural or valued.
+    No replace option.
+    Mask: can be NULL, M, or !M, structural or valued.
 
-accum op must be present, and must match the monoid.
-no typecasting allowed, at all.
+    accum op must be present, and must match the monoid.
+    no typecasting allowed, at all.
 
-disabled if GBCOMPACT is turned on.
+    disabled if GBCOMPACT is turned on.
 
-    C<#M> += A*B: handle the mask if present
+        C<#M> += A*B: handle the mask if present
 
-        If M is bitmap, structural, and not complemented
-            Mb = M->b
-        else
-            allocate Mb as a dense bitmap and fill it with M
-            complemented mask is explicitly complemented
+            If M is bitmap, structural, and not complemented
+                Mb = M->b
+            else
+                allocate Mb as a dense bitmap and fill it with M
+                complemented mask is explicitly complemented
 
-        or better yet, call it Cb since the Cb bitmap
-        is needed for some methods below (atomics)
+            or better yet, call it Cb since the Cb bitmap
+            is needed for some methods below (atomics)
 
-Now there are 2 methods left:
+    Now there are 2 methods left:
 
-    C += A*B        Mb is NULL
-    C{M} += A*B     using the mask bitmap, Mb
+        C += A*B        Mb is NULL
+        C{M} += A*B     using the mask bitmap, Mb
 
 
-A and B can be hyper/sparse / bitmap / full (3 cases)
-hyper/sparse: treat as one case.
+    A and B can be hyper/sparse / bitmap / full (3 cases)
+    hyper/sparse: treat as one case.
 
-    F += S*S
+        F += S*S
 
-        mix of fine/coarse Gustavson tasks; see GB_AxB_saxpy_template.
-        no Gustavson workspace needed; accumulate directly into Cx.
-        No symbolic phase needed.
+            mix of fine/coarse Gustavson tasks; see GB_AxB_saxpy_template.
+            no Gustavson workspace needed; accumulate directly into Cx.
+            No symbolic phase needed.
 
-    F += S*B
+        F += S*B
 
-        use existing Template/GB_bitmap_AxB_saxpy_A_sparse_B_bitmap,
-        but with Cb implicitly all true (#if's).
+            use existing Template/GB_bitmap_AxB_saxpy_A_sparse_B_bitmap,
+            but with Cb implicitly all true (#if's).
 
-        if atomics are used, need to create Cb and set it all to 1's,
-        then free it when done.
+            if atomics are used, need to create Cb and set it all to 1's,
+            then free it when done.
 
-    F += S*F
+        F += S*F
 
-        use existing Template/GB_bitmap_AxB_saxpy_A_sparse_B_bitmap,
-        but with Cb implicitly all true (#if's).
+            use existing Template/GB_bitmap_AxB_saxpy_A_sparse_B_bitmap,
+            but with Cb implicitly all true (#if's).
 
-    F += B*S
+        F += B*S
 
-        use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_sparse,
-        but with Cb implicitly all true (#if's).
+            use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_sparse,
+            but with Cb implicitly all true (#if's).
 
-    F += B*B
+        F += B*B
 
-        use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap,
-        but with Cb implicitly all true (#if's).
+            use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap,
+            but with Cb implicitly all true (#if's).
 
-    F += B*F
+        F += B*F
 
-        use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap,
-        but with Cb implicitly all true (#if's).
+            use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap,
+            but with Cb implicitly all true (#if's).
 
-    F += F*S
+        F += F*S
 
-        use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_sparse,
-        but with Cb implicitly all true (#if's).
+            use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_sparse,
+            but with Cb implicitly all true (#if's).
 
-    F += F*B
+        F += F*B
 
-        use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap,
-        but with Cb implicitly all true (#if's).
+            use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap,
+            but with Cb implicitly all true (#if's).
 
-    F += F*F
+        F += F*F
 
-        use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap,
-        but with Cb implicitly all true (#if's).
+            use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_bitmap,
+            but with Cb implicitly all true (#if's).
 
-These methods are identical to the ones above, but
-templatized with the mask bitmap present.
+    These methods are identical to the ones above, but
+    templatized with the mask bitmap present.
 
-    F{M} += S*S
+        F{M} += S*S
 
-    F{M} += S*B
+        F{M} += S*B
 
-    F{M} += S*F
+        F{M} += S*F
 
-    F{M} += B*S
+        F{M} += B*S
 
-    F{M} += B*B
+        F{M} += B*B
 
-    F{M} += B*F
+        F{M} += B*F
 
-    F{M} += F*S
+        F{M} += F*S
 
-    F{M} += F*B
+        F{M} += F*B
 
-    F{M} += F*F
+        F{M} += F*F
+
+
+Possible extensions to GrB_extract and GrB_assign:
+
+    Currently, GrB_extract and GrB_assign (as well as my GxB_subassign), all
+    accept inputs of user-visible arrays of GrB_Index values.  This is
+    limiting.  There are many cases I've come across in graph algorithms where
+    the list of nodes to extract is computed by the algorithm, and this is
+    computed in a GrB_Vector.  To pass this vector to GrB_extract or
+    GrB_assign, its contents must first be extracted by GrB_extractTuples
+    and/or the import/export methods.  This is tedious and slow, and (worse)
+    loses a great deal of information.
+
+    Consider a GrB_Vector called P, and suppose we want to form a submatrix, C
+    = A(P,P).  This could be written as
+
+        GrB_extract (C, NULL, NULL, A, P, P, descriptor) ;
+
+    There are two ways to interpret the use of P, and this interpretation could
+    be controlled by the descriptor.  The simplest way to explain the two use
+    cases is to pretend GrB_Vector_extractTuples_UINT64 returns the list of
+    tuples sorted by row index, so that we have:
+
+        GrB_Index *Pi, *Px, Pnvals ;
+        GrB_Vector_nvals (&Pnvals, P) ;
+        Pi = malloc (Pnvals * sizeof (GrB_Index)) ;
+        Px = malloc (Pnvals * sizeof (GrB_Index)) ;
+        GrB_Vector_extractTuples (Pi, Px,&Pnvals, P) ;
+
+    Now, in the above, assume that GrB_Vector_extractTuples returns the tuples
+    in ascending order of index (I'm not proposing to add that specification to
+    GrB_Vector_extractTuples).  Then either Pi or Px could be used as the
+    GrB_Index * array input to GrB_extract:
+
+        GrB_extract (C, NULL, NULL, A, Pi or Px, Pi or Px, descriptor)
+
+    where descriptor.ROWINDEX = GxB_BY_INDEX (for example) would mean that Pi
+    should be used for the 1st input.  descriptor.ROWINDEX = GxB_BY_VALUE would
+    mean that Px should by used.  So, for example, if we want to do
+
+        GrB_extract (C, NULL, NULL, A, Pi, Px, descriptor)
+
+    we would use descriptor.ROWINDEX = GxB_BY_INDEX and descriptor.COLINDEX =
+    GxB_BY_VALUE.  I'm not sure what the default descriptor should be.
+
+    So why add this feature to GrB_extract, you might ask ... why not just use
+    extractTuples as above?  The answers:
+
+
+    1. this feature would be much faster and save memory, over using
+        extractTuples
+
+    2. if the descriptor is BY_INDEX, then we *know* a great deal about Pi.  It
+        is a list of unique integers in ascending order.  This saves some time
+        because otherwise I have to examine the properties of the index array
+        to discover its properties
+
+    3. the extractTuples in the spec does not guarantee the order of
+        extraction, but the use of this method would imply a sort of the
+        indices in Pi and correspondingly the order of entries in Px.
+        (That is, P would be used "unjumbled").
+
+    4. It would be easy to implement, at least for GrB_extract.  The
+        GrB_extract polymorphic method could be expanded to have one new
+        variant for GrB_Vector_extract, and 3 new variants for
+        GrB_Matrix_extract, where the (... , GrB_Index *, GrB_Index *, ...)
+        parameters can take on all combinations of GrB_Vector and GrB_Index *.
+        The downside would be GrB_assign which is already a polymorphic
+        nightmare with the assign from scalar.  Each existing GrB_assign
+        non-polymorphic function would require 3 more of these extended
+        versions.
+
+    Alternative:  use GxB_Vector_unpack to unpack Pi and Px, do the extract
+        or assign, and then use GxB_Vector_pack to reconstruct the contents
+        of P.  This is just as fast as the above proposal, except for detecting
+        the properties of Pi.  It's a lot simpler and adding GrB_Vector
+        inputs to GrB_extract and GrB_assign (and GxB_subassign).
+        Pi and Px can be extracted jumbled or unjumbled.
 
