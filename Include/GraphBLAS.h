@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Oct 15, 2021 (alpha13)"
+#define GxB_IMPLEMENTATION_DATE "Oct 18, 2021 (alpha14)"
 #define GxB_IMPLEMENTATION_MAJOR 6
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0

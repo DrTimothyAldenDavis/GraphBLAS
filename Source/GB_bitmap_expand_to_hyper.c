@@ -151,5 +151,6 @@ GrB_Info GB_bitmap_expand_to_hyper
     // C is now sparse or hypersparse
     ASSERT_MATRIX_OK (C, "C expanded from bitmap to hyper", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
+    return (GrB_SUCCESS) ;
 }
 

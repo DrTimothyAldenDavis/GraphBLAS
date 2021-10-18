@@ -35,7 +35,6 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    bool *mask_applied,             // mask always applied if present
     GB_Context Context
 )
 {
@@ -46,7 +45,6 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
 
     GrB_Info info ;
 
-    (*mask_applied) = false ;
     ASSERT (C != NULL && C->static_header) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for bitmap saxpy A*B", GB0) ;
@@ -181,7 +179,6 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
     // return result
     //--------------------------------------------------------------------------
 
-    (*mask_applied) = (M != NULL) ;
     ASSERT_MATRIX_OK (C, "C bitmap saxpy output", GB0) ;
     return (GrB_SUCCESS) ;
 }

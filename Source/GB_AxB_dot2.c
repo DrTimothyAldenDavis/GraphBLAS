@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot2: compute C=A'*B or C<!M>=A'*B in parallel, in-place
+// GB_AxB_dot2: compute C<#M>=A'*B, C is bitmap, or C<#M>=A*B (A bitmap/full)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -11,12 +11,15 @@
 // hyper if A or B are hypersparse.  The C<M>=A'*B dot product when C is sparse
 // is computed by GB_AxB_dot3.  This method handles the case when C is bitmap.
 
+// If A_not_transposed is true, then C=A*B is computed for GB_AxB_saxpy.  A is
+// bitmap or full, and the dot product method accesses A with a different
+// stride than when computing C=A'*B.
+
 // TODO:  this is slower than it could be if A and B are both bitmap, when
-// A->vlen is large, and likely if A and B are both either bitmap or full.
-// This is because the inner loop is a simple full/bitmap dot product, across
-// the entire input vectors.  No tiling is used, so cache performance is not
-// as good as it could be.  For large problems, C=(A')*B is faster with
-// the saxpy3 method, as compared to this method with C=A'*B.
+// A->vlen is large.  This is because the inner loop is a simple full/bitmap
+// dot product, across the entire input vectors.  No tiling is used, so cache
+// performance is not as good as it could be.  For large problems, C=(A')*B is
+// faster with the saxpy3 method, as compared to this method with C=A'*B.
 
 #include "GB_mxm.h"
 #include "GB_subref.h"
@@ -44,6 +47,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     const GrB_Matrix M_in,          // mask matrix for C<!M>=A'*B, may be NULL
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
+    const bool A_not_transposed,    // if true, C=A*B, else C=A'*B
     const GrB_Matrix A_in,          // input matrix
     const GrB_Matrix B_in,          // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -82,27 +86,34 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GB_WERK_DECLARE (A_slice, int64_t) ;
     GB_WERK_DECLARE (B_slice, int64_t) ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
-    ASSERT (A_in->vlen == B_in->vlen) ;
-    ASSERT (A_in->vlen > 0) ;
 
     if (M_in == NULL)
     { 
-        GBURBLE ("(%s=%s'*%s) ",
+        GBURBLE ("(dot %s=%s%s*%s) ",
             GB_sparsity_char (GxB_BITMAP),
             GB_sparsity_char_matrix (A_in),
+            A_not_transposed ? "" : "'",
             GB_sparsity_char_matrix (B_in)) ;
     }
     else
     { 
-        GBURBLE ("(%s%s%s%s%s=%s'*%s) ",
+        GBURBLE ("(dot %s%s%s%s%s=%s%s*%s) ",
             GB_sparsity_char (GxB_BITMAP),
             Mask_struct ? "{" : "<",
             Mask_comp ? "!" : "",
             GB_sparsity_char_matrix (M_in),
             Mask_struct ? "}" : ">",
             GB_sparsity_char_matrix (A_in),
+            A_not_transposed ? "" : "'",
             GB_sparsity_char_matrix (B_in)) ;
     }
+
+    // GB_AxB_saxpy punts to this dot2 method for for C=A*B, and in this case,
+    // A is bitmap or full, and B is hypersparse or sparse
+    bool A_bitmap_or_full = (GB_IS_BITMAP (A_in) || GB_IS_FULL (A_in)) ;
+    bool B_bitmap_or_full = (GB_IS_BITMAP (B_in) || GB_IS_FULL (B_in)) ;
+    ASSERT (GB_IMPLIES (A_not_transposed,
+        A_bitmap_or_full && !B_bitmap_or_full)) ;
 
     //--------------------------------------------------------------------------
     // construct shallow copies of A and B, if hypersparse
@@ -116,8 +127,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // B->vdim = B_in->nvec and the same vlen as B_in, and then the
     // hyper_shallow C->vdim will equal B->vdim < cvdim_final.
 
-    int64_t cvlen_final = A_in->vdim ;
+    int64_t cvlen_final = (A_not_transposed) ? A_in->vlen : A_in->vdim ;
     int64_t cvdim_final = B_in->vdim ;
+    ASSERT (A_in->vlen > 0) ;
     bool A_is_hyper = GB_IS_HYPERSPARSE (A_in) ;
     bool B_is_hyper = GB_IS_HYPERSPARSE (B_in) ;
     bool A_or_B_hyper = A_is_hyper || B_is_hyper ;
@@ -128,13 +140,14 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GrB_Matrix B = (B_is_hyper) ? GB_hyper_shallow (&B_header, B_in) : B_in ;
     ASSERT (!GB_IS_HYPERSPARSE (A)) ;
     ASSERT (!GB_IS_HYPERSPARSE (B)) ;
+    ASSERT (GB_IMPLIES (A_not_transposed, !A_is_hyper && (A == A_in))) ;
 
     //--------------------------------------------------------------------------
     // determine the size of C
     //--------------------------------------------------------------------------
 
     int64_t cnvec = B->nvec ;
-    int64_t cvlen = A->vdim ;
+    int64_t cvlen = (A_not_transposed) ? A->vlen : A->vdim ;
     int64_t cvdim = B->vdim ;
 
     int64_t cnz ;
@@ -168,14 +181,37 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int64_t naslice = 0 ;
     int64_t nbslice = 0 ;
 
-    int64_t anvec = A->nvec ;
+    int64_t anvec = (A_not_transposed) ? A->vlen : A->nvec ;
     double anz = (double) GB_nnz_held (A) ;
 
     int64_t bnvec = B->nvec ;
     double bnz = (double) GB_nnz_held (B) ;
 
+    double work ;
+    if (A_bitmap_or_full && !B_bitmap_or_full)
+    { 
+        // A is bitmap/full, B is sparse/hyper; only B is scanned
+        work = bnz ;
+    }
+    else if (!A_bitmap_or_full && B_bitmap_or_full)
+    {
+        // A is sparse/hyper, B is bitmap/full; only A is scanned
+        work = anz ;
+    }
+    else if (A_bitmap_or_full && B_bitmap_or_full)
+    { 
+        // All of A and B are scanned (unless the mask is present)
+        work = ((double) cnz) * ((double) B->vlen) ;
+    }
+    else
+    { 
+        // In this case, most of both A and B are scanned.  This is a very
+        // rough estimate of the work required.
+        work = 10 * (anz + bnz) ;
+    }
+
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
+    int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
 
     #define GB_NTASKS_PER_THREAD 32
 
@@ -240,8 +276,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_pslice (A_slice, A->p, A->nvec, naslice, false) ;
-    GB_pslice (B_slice, B->p, B->nvec, nbslice, false) ;
+    GB_pslice (A_slice, A->p, anvec, naslice, false) ;
+    GB_pslice (B_slice, B->p, bnvec, nbslice, false) ;
 
     //--------------------------------------------------------------------------
     // allocate C
@@ -294,9 +330,11 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // C is iso; compute the pattern of C<#>=A'*B with the any_pair semiring
         //----------------------------------------------------------------------
 
+        GBURBLE ("(iso dot2) ") ;
         memcpy (C->x, cscalar, ctype->size) ;
-        info = GB (_Adot2B__any_pair_iso) (C, M, Mask_comp, Mask_struct, A,
-            true, A_slice, B, true, B_slice, nthreads, naslice, nbslice) ;
+        info = GB (_Adot2B__any_pair_iso) (C, M, Mask_comp, Mask_struct,
+            A_not_transposed, A, true, A_slice, B, true, B_slice,
+            nthreads, naslice, nbslice) ;
         ASSERT (info != GrB_NO_VALUE) ;
 
     }
@@ -321,8 +359,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
             #define GB_AxB_WORKER(add,mult,xname)                           \
             {                                                               \
                 info = GB_Adot2B (add,mult,xname) (C, M, Mask_comp,         \
-                    Mask_struct, A, A_is_pattern, A_slice, B, B_is_pattern, \
-                    B_slice, nthreads, naslice, nbslice) ;                  \
+                    Mask_struct, A_not_transposed, A, A_is_pattern, A_slice,\
+                    B, B_is_pattern, B_slice, nthreads, naslice, nbslice) ; \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
@@ -345,14 +383,15 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         #endif
 
         //----------------------------------------------------------------------
-        // C = A'*B, computing each entry with a dot product, with typecasting
+        // C = A'*B or A*B, using the dot product method, with typecasting
         //----------------------------------------------------------------------
 
         if (!done)
         { 
             #define GB_DOT2_GENERIC
-            GB_BURBLE_MATRIX (C, "(generic C%s=A'*B) ", (M == NULL) ? "" :
-                (Mask_comp ? "<!M>" : "<M>")) ;
+            GB_BURBLE_MATRIX (C, "(generic C%s=A%s*B, C bitmap) ",
+                (M == NULL) ? "" : (Mask_comp ? "<!M>" : "<M>"),
+                A_not_transposed ? "" : "'") ;
             #include "GB_AxB_dot_generic.c"
         }
     }
@@ -363,7 +402,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     GB_FREE_ALL ;
     C->magic = GB_MAGIC ;
-    ASSERT_MATRIX_OK (C, "dot2: C = A'*B output, before expand", GB0) ;
+    ASSERT_MATRIX_OK (C, "dot2: result C, before expand", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
 
     //--------------------------------------------------------------------------
@@ -380,7 +419,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "dot2: C = A'*B output, after expand", GB0) ;
+    ASSERT_MATRIX_OK (C, "dot2: result C, after expand", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;

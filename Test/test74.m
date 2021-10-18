@@ -18,6 +18,7 @@ dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 
 dnn_Gus  = struct ( 'axb', 'gustavson' ) ;
 dnn_hash = struct ( 'axb', 'hash' ) ;
+% GrB.burble (1) ;
 
 ntrials = 0 ;
 
@@ -41,6 +42,9 @@ for k0 = 1:size(m_list,2)
     B = GB_spec_random (k,n,density,100,'none') ;
     C = GB_spec_random (m,n,density,100,'none') ;
     M = spones (sprandn (m, n, 0.3)) ;
+
+    A_bitmap = A ; A_bitmap.sparsity = 4 ;
+    B_bitmap = B ; B_bitmap.sparsity = 4 ;
 
     clear AT
     AT = A ;
@@ -72,7 +76,7 @@ for k0 = 1:size(m_list,2)
                         GB_spec_operator (mult_op);
                     [ add_opname  add_optype] = GB_spec_operator (add_op) ;
                     identity = GB_spec_identity (semiring.add, add_optype) ;
-                catch
+                catch me
                     continue
                 end
             
@@ -85,6 +89,8 @@ for k0 = 1:size(m_list,2)
                 A.class = semiring_type ;
                 B.class = semiring_type ;
                 C.class = semiring_type ;
+                A_bitmap.class = semiring_type ;
+                B_bitmap.class = semiring_type ;
 
                 % C<M> = A'*B, with Mask, no typecasting
                 C1 = GB_mex_mxm  (C, M, [ ], semiring, AT, B, dtn);
@@ -104,6 +110,19 @@ for k0 = 1:size(m_list,2)
                 % C = A*B, no Mask, no typecasting, Hash
                 C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A, B, dnn_hash);
                 % C0 = GB_spec_mxm (C, [ ], [ ], semiring, A, B, dnn_hash);
+                GB_spec_compare (C0, C1, identity) ;
+
+                % C = A_bitmap * B
+                C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A_bitmap, B, [ ]);
+                GB_spec_compare (C0, C1, identity) ;
+
+                % C = A * B_bitmap
+                C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A, B_bitmap, [ ]);
+                GB_spec_compare (C0, C1, identity) ;
+
+                % C = A_bitmap * B_bitmap
+                C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A_bitmap, B_bitmap, ...
+                    [ ]);
                 GB_spec_compare (C0, C1, identity) ;
 
             end

@@ -3,6 +3,7 @@ GrB_Info GB (_Adot2B)
 (
     GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
+    const bool A_not_transposed,
     const GrB_Matrix A, bool A_is_pattern, int64_t *restrict A_slice,
     const GrB_Matrix B, bool B_is_pattern, int64_t *restrict B_slice,
     int nthreads, int naslice, int nbslice

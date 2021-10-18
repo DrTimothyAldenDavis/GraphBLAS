@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // C is bitmap. A is hyper/sparse, B is bitmap/full.
-// FIXME: add #if case for C full.
 
 {
 

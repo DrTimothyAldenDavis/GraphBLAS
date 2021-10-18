@@ -2137,8 +2137,8 @@ void mexFunction
     struct GB_Matrix_opaque HugeMatrix_header ;
     GrB_Matrix HugeMatrix = GB_clear_static_header (&HugeMatrix_header) ;
 
-    OK (GB_AxB_dot2 (HugeMatrix, false, NULL, NULL, false, false, HugeRow,
-        HugeRow, GxB_PLUS_TIMES_FP64, false, Context)) ;
+    OK (GB_AxB_dot2 (HugeMatrix, false, NULL, NULL, false, false,
+        false, HugeRow, HugeRow, GxB_PLUS_TIMES_FP64, false, Context)) ;
 
     GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", G3, ff) ;
     GrB_Matrix_free_(&HugeMatrix) ;

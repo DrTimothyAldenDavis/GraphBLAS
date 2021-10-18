@@ -76,8 +76,8 @@ GrB_Info adotb_complex (GB_Context Context)
     {
         // C = A'*B using dot product method
         mask_applied = false ;  // no mask to apply
-        info = GB_AxB_dot2 (C, false, NULL, NULL, false, false, Aconj, B,
-            semiring, flipxy, Context) ;
+        info = GB_AxB_dot2 (C, false, NULL, NULL, false, false,
+            false, Aconj, B, semiring, flipxy, Context) ;
     }
 
     GrB_Matrix_free_(&Aconj) ;
@@ -111,8 +111,8 @@ GrB_Info adotb (GB_Context Context)
     else
     {
         mask_applied = false ;  // no mask to apply
-        info = GB_AxB_dot2 (C, false, NULL, NULL, false, false, A, B,
-            semiring /* GxB_PLUS_TIMES_FP64 */, flipxy, Context) ;
+        info = GB_AxB_dot2 (C, false, NULL, NULL, false, false,
+            false, A, B, semiring /* GxB_PLUS_TIMES_FP64 */, flipxy, Context) ;
     }
 
     GrB_Monoid_free_(&add) ;

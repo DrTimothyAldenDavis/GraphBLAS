@@ -82,7 +82,6 @@
     #endif
 
     const int64_t vlen = A->vlen ;
-    ASSERT (A->vlen == B->vlen) ;
 
     const int ntasks = naslice * nbslice ;
 
@@ -94,11 +93,50 @@
     { 
 
         //----------------------------------------------------------------------
-        // C = A'*B
+        // C = A'*B or C=A*B
         //----------------------------------------------------------------------
 
         #undef GB_MASK_IS_PRESENT
-        #include "GB_meta16_factory.c"
+
+        if (A_not_transposed)
+        {
+            // C=A*B where A is bitmap or full, and B is sparse
+            #define GB_A_NOT_TRANSPOSED
+            ASSERT (A_is_bitmap || GB_IS_FULL (A)) ;
+            ASSERT (B_is_sparse) ;
+            if (A_is_bitmap)
+            { 
+                // C=A*B via dot products, where A is bitmap and B is sparse
+                #define GB_A_IS_SPARSE 0
+                #define GB_A_IS_HYPER  0
+                #define GB_A_IS_BITMAP 1
+                #define GB_A_IS_FULL   0
+                #define GB_B_IS_SPARSE 1
+                #define GB_B_IS_HYPER  0
+                #define GB_B_IS_BITMAP 0
+                #define GB_B_IS_FULL   0
+                #include "GB_AxB_dot2_template.c"
+            }
+            else
+            { 
+                // C=A*B via dot products, where A is full and B is sparse
+                #define GB_A_IS_SPARSE 0
+                #define GB_A_IS_HYPER  0
+                #define GB_A_IS_BITMAP 0
+                #define GB_A_IS_FULL   1
+                #define GB_B_IS_SPARSE 1
+                #define GB_B_IS_HYPER  0
+                #define GB_B_IS_BITMAP 0
+                #define GB_B_IS_FULL   0
+                #include "GB_AxB_dot2_template.c"
+            } 
+            #undef GB_A_NOT_TRANSPOSED
+        }
+        else
+        {
+            // C = A'*B, via dot2 method, where A is implicitly transposed
+            #include "GB_meta16_factory.c"
+        }
 
     }
     else
@@ -160,7 +198,7 @@
         { 
 
             //------------------------------------------------------------------
-            // C<M>=A'*B or C<!M>=A'*B
+            // C<#M>=A'*B or C<#!M>=A*B
             //------------------------------------------------------------------
 
             const GB_void *restrict Mx = (GB_void *)
@@ -168,9 +206,48 @@
             const size_t msize = M->type->size ;
 
             #define GB_MASK_IS_PRESENT
-            #include "GB_meta16_factory.c"
-            #undef GB_MASK_IS_PRESENT
 
+            if (A_not_transposed)
+            {
+                // C<#M>=A*B where A is bitmap or full, and B is sparse
+                #define GB_A_NOT_TRANSPOSED
+                ASSERT (A_is_bitmap || GB_IS_FULL (A)) ;
+                ASSERT (B_is_sparse) ;
+                if (A_is_bitmap)
+                { 
+                    // C<#M>=A*B via dot products, A is bitmap and B is sparse
+                    #define GB_A_IS_SPARSE 0
+                    #define GB_A_IS_HYPER  0
+                    #define GB_A_IS_BITMAP 1
+                    #define GB_A_IS_FULL   0
+                    #define GB_B_IS_SPARSE 1
+                    #define GB_B_IS_HYPER  0
+                    #define GB_B_IS_BITMAP 0
+                    #define GB_B_IS_FULL   0
+                    #include "GB_AxB_dot2_template.c"
+                }
+                else
+                { 
+                    // C<#M>=A*B via dot products, A is full and B is sparse
+                    #define GB_A_IS_SPARSE 0
+                    #define GB_A_IS_HYPER  0
+                    #define GB_A_IS_BITMAP 0
+                    #define GB_A_IS_FULL   1
+                    #define GB_B_IS_SPARSE 1
+                    #define GB_B_IS_HYPER  0
+                    #define GB_B_IS_BITMAP 0
+                    #define GB_B_IS_FULL   0
+                    #include "GB_AxB_dot2_template.c"
+                } 
+                #undef GB_A_NOT_TRANSPOSED
+            }
+            else
+            {
+                // C<#>M = A'*B, via dot2 method, A is implicitly transposed
+                #include "GB_meta16_factory.c"
+            }
+
+            #undef GB_MASK_IS_PRESENT
         }
     }
 

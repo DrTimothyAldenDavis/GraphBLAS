@@ -419,7 +419,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // from the temporary matrix into T, so that T->h is not freed when AT,
         // BT, and MT are freed.
 
-        // GB_tranpose can return all kinds of shallow components, particularly
+        // GB_transpose can return all kinds of shallow components, particularly
         // when transposing vectors.  It can return AT->h as shallow copy of
         // A->i, for example.
 

@@ -292,10 +292,13 @@
 // GB_Adot2B: C=A'*B, C<M>=A'*B, or C<!M>=A'*B: dot product method, C is bitmap
 //------------------------------------------------------------------------------
 
+// if A_not_transposed is true, then C=A*B is computed where A is bitmap or full
+
 GrB_Info GB (_Adot2B__lxor_le_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
+    const bool A_not_transposed,
     const GrB_Matrix A, bool A_is_pattern, int64_t *restrict A_slice,
     const GrB_Matrix B, bool B_is_pattern, int64_t *restrict B_slice,
     int nthreads, int naslice, int nbslice

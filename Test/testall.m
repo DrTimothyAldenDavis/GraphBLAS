@@ -188,7 +188,6 @@ logstat ('test108',t) ; % boolean monoids
 logstat ('test172',t) ; % test eWiseMult with M bitmap/full
 logstat ('test148',t) ; % ewise with alias
 logstat ('testc2(1)',t) ;  % complex tests (quick case)
-logstat ('test163',t) ; % test C<!M>=A'*B where C and M are sparse
 
 %----------------------------------------
 % tests with decent rates (20 to 30/sec)
@@ -402,6 +401,7 @@ logstat ('test146',t) ;    %   .1 % expand scalar
 logstat ('test147',t) ;           % C<M>=A*B with very sparse M
 logstat ('test149',t) ;           % test fine hash tasks for C<!M>=A*B
 
+logstat ('test163',t) ;    %   .6 % test C<!M>=A'*B where C and M are sparse
 logstat ('test166',t) ;    %   .1 % test GxB_select with a dense matrix
 logstat ('test168',t) ;           % test C=A+B with C and B full, A bitmap
 logstat ('test169',t) ;    %    0 % test C<!M>=A+B with C sparse, M hyper, A and B sparse

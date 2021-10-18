@@ -138,6 +138,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         {
             mxArray *s = mxGetFieldByNumber (A_builtin, 0, fieldnumber) ;
             atype_out = GB_mx_string_to_Type (s, atype_in) ;
+            if (atype_out == NULL) mexErrMsgTxt ("unknown class") ;
         }
 
         // get the iso property (false if not present)

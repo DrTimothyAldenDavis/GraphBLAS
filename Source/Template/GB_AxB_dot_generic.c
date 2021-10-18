@@ -84,7 +84,7 @@
             ASSERT (handled) ;      // all positional ops can be flipped
         }
 
-        // aki = A(i,k), located in Ax [A_iso?0:pA], but value not used
+        // aki = A(i,k), located in Ax [A_iso?0:(pA)], but value not used
         #define GB_GETA(aki,Ax,pA,A_iso) ;
 
         // bkj = B(k,j), located in Bx [B_iso?0:pB], but value not used
@@ -239,7 +239,7 @@
         // generic semirings with standard multiply operators
         //----------------------------------------------------------------------
 
-        // aki = A(i,k), located in Ax [A_iso?0:pA]
+        // aki = A(i,k), located in Ax [A_iso?0:(pA)]
         #undef  GB_GETA
         #define GB_GETA(aki,Ax,pA,A_iso)                                \
             GB_void aki [GB_VLA(aki_size)] ;                            \

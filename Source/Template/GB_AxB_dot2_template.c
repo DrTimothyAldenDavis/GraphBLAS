@@ -12,6 +12,9 @@
 // sparse matrices, and C is converted from bitmap to sparse/hypersparse when
 // done.
 
+// If A_NOT_TRANSPOSED is #defined, the C=A*B or C<#M>=A*B is computed.
+// In this case A is bitmap or full, and B is sparse.
+
 #if ( !GB_A_IS_HYPER && !GB_B_IS_HYPER )
 {
 
@@ -45,10 +48,14 @@
         {
 
             //------------------------------------------------------------------
-            // get B(:,j) and C(:,j)
+            // get C(:,j)
             //------------------------------------------------------------------
 
             const int64_t pC_start = j * cvlen ;
+
+            //------------------------------------------------------------------
+            // get B(:,j)
+            //------------------------------------------------------------------
 
             #if GB_B_IS_SPARSE
                 // B is sparse (never hypersparse)
@@ -124,15 +131,22 @@
                     const int64_t ainz = pA_end - pA ;
                     if (ainz > 0)
                     #else
-                    // A is bitmap or full
-                    const int64_t pA = i * vlen ;
+                        // A is bitmap or full
+                        #ifdef GB_A_NOT_TRANSPOSED
+                        // A(i,:) starts at position i
+                        const int64_t pA = i ;
+                        #else
+                        // A(:,i) starts at position i * vlen
+                        const int64_t pA = i * vlen ;
+                        #endif
                     #endif
                     { 
-                        // C(i,j) = A(:,i)'*B(:,j)
+                        // C(i,j) = A(:,i)'*B(:,j) or A(i,:)*B(:,j)
                         bool cij_exists = false ;
                         GB_CIJ_DECLARE (cij) ;
                         #include "GB_AxB_dot_cij.c"
                     }
+
                 }
             }
         }

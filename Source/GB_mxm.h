@@ -122,6 +122,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     const GrB_Matrix M_in,          // mask matrix for C<!M>=A'*B, may be NULL
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
+    const bool A_not_transposed,    // if true, C=A*B, else C=A'*B
     const GrB_Matrix A_in,          // input matrix
     const GrB_Matrix B_in,          // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B

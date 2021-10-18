@@ -191,7 +191,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     GBURBLE ("(%sdot2) ", iso_kind) ;
     (*mask_applied) = (M != NULL) ; // mask applied if present
     (*done_in_place) = false ;      // TODO: allow dot2 to work in-place
-    return (GB_AxB_dot2 (C, C_iso, cscalar, M, Mask_comp, Mask_struct, A, B,
-        semiring, flipxy, Context)) ;
+    return (GB_AxB_dot2 (C, C_iso, cscalar, M, Mask_comp, Mask_struct,
+        false, A, B, semiring, flipxy, Context)) ;
 }
 

@@ -24,7 +24,6 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    bool *mask_applied,             // mask always applied if present
     GB_Context Context
 ) ;
 

@@ -172,9 +172,25 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         //----------------------------------------------------------------------
 
         ASSERT (C_sparsity == GxB_BITMAP) ;
-        info = GB_bitmap_AxB_saxpy (C, C_iso, cscalar, M,
-            Mask_comp, Mask_struct, A, B, semiring, flipxy, mask_applied,
-            Context) ;
+
+        if ((GB_IS_BITMAP (A) || GB_IS_FULL (A)) &&
+            (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)))
+        { 
+            // C<#M> = A*B via dot products, where A is bitmap or full and B is
+            // sparse or hypersparse, using the dot2 method with A not
+            // explicitly transposed.
+            info = GB_AxB_dot2 (C, C_iso, cscalar, M, Mask_comp, Mask_struct,
+                true, A, B, semiring, flipxy, Context) ;
+        }
+        else
+        { 
+            // C<#M> = A*B via bitmap saxpy method
+            info = GB_bitmap_AxB_saxpy (C, C_iso, cscalar, M,
+                Mask_comp, Mask_struct, A, B, semiring, flipxy, Context) ;
+        }
+
+        // the mask is always applied if present
+        (*mask_applied) = (M != NULL && info == GrB_SUCCESS) ;
     }
 
     return (info) ;

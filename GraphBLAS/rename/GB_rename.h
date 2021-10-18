@@ -3368,6 +3368,7 @@
 #define GB_bitmap_assign_to_full GM_bitmap_assign_to_full
 #define GB_bitmap_AxB_saxpy GM_bitmap_AxB_saxpy
 #define GB_bitmap_emult GM_bitmap_emult
+#define GB_bitmap_expand_to_hyper GM_bitmap_expand_to_hyper
 #define GB_bitmap_M_scatter GM_bitmap_M_scatter
 #define GB_bitmap_M_scatter_whole GM_bitmap_M_scatter_whole
 #define GB_bitmap_selector GM_bitmap_selector
