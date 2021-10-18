@@ -13,8 +13,6 @@
 // or non-blocking), for pointers to malloc/realloc/free functions,
 // global matrix options, and other settings.
 
-// FIXME: reduce the size of the memory pool and check GAP timings
-
 #include "GB_atomics.h"
 
 //------------------------------------------------------------------------------
