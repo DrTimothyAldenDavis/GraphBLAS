@@ -187,11 +187,12 @@
             use_coarse_tasks = true ;
             GBURBLE ("(coarse, threads: 1) ") ;
         }
-        else if (nthreads <= bvdim)
+        else if (nthreads <= bvdim || nthreads <= 3)
         { 
             // All tasks are coarse, and each coarse task does 1 or more
             // whole vectors of B
             ntasks = GB_IMIN (bvdim, 2 * nthreads) ;
+            nthreads = GB_IMIN (ntasks, nthreads) ;
             use_coarse_tasks = true ;
             GBURBLE ("(coarse, threads: %d, tasks %d) ", nthreads, ntasks) ;
         }

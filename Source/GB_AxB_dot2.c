@@ -251,6 +251,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         }
     }
 
+    GBURBLE ("(nthreads: %d naslice %ld nbslice %ld) ", nthreads, naslice,
+        nbslice) ;
+
     //--------------------------------------------------------------------------
     // get the semiring operators
     //--------------------------------------------------------------------------
@@ -345,6 +348,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // C is non-iso
         //----------------------------------------------------------------------
 
+// double ttt = omp_get_wtime ( ) ;
         bool done = false ;
 
         #ifndef GBCOMPACT
@@ -381,6 +385,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
             ASSERT (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
 
         #endif
+// ttt = omp_get_wtime ( ) - ttt ;
+// printf ("dot2 time: %g sec\n", ttt) ;
+
 
         //----------------------------------------------------------------------
         // C = A'*B or A*B, using the dot product method, with typecasting
