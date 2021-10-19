@@ -977,6 +977,7 @@ methods (Static)
     C = apply (Cin, M, accum, op, A, desc) ;
     C = apply2 (Cin, M, accum, op, A, B, desc) ;
     [x,p] = argmin (A, dim) ;
+    [C,P] = argsort (A, dim, direction) ;
     [x,p] = argmax (A, dim) ;
     C = assign (Cin, M, accum, A, I, J, desc) ;
     [v, parent] = bfs (A, s, varargin) ;        % uses GrB matrices

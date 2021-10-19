@@ -11166,5 +11166,42 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
     GrB_Index blob_size     // size of the blob
 ) ;
 
+//==============================================================================
+// GxB_Vector_sort and GxB_Matrix_sort: sort a matrix or vector
+//==============================================================================
+
+GB_PUBLIC
+GrB_Info GxB_Vector_sort
+(
+    // output:
+    GrB_Vector w,           // vector of sorted values
+    GrB_Vector p,           // vector containing the permutation
+    // input
+    GrB_BinaryOp op,        // comparator op
+    GrB_Vector u,           // vector to sort
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_sort
+(
+    // output:
+    GrB_Matrix C,           // matrix of sorted values
+    GrB_Matrix P,           // matrix containing the permutations
+    // input
+    GrB_BinaryOp op,        // comparator op
+    GrB_Matrix A,           // matrix to sort
+    const GrB_Descriptor desc
+) ;
+
+#define GxB_sort(arg1,...)                                  \
+    _Generic                                                \
+    (                                                       \
+        (arg1),                                             \
+              GrB_Vector : GxB_Vector_sort ,                \
+              GrB_Matrix : GxB_Matrix_sort                  \
+    )                                                       \
+    (arg1, __VA_ARGS__)
+
 #endif
 

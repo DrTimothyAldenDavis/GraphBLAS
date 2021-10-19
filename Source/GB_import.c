@@ -309,7 +309,8 @@ GrB_Info GB_import      // import/pack a matrix in any format
         { 
             // for debugging only
             #ifdef GB_MEMDUMP
-            printf ("import A->x to memtable: %p\n", (*A)->x) ;
+            printf ("import A->x to memtable: %p size: %lu\n",
+                (*A)->x, Ax_size) ;
             #endif
             GB_Global_memtable_add ((*A)->x, (*A)->x_size) ;
         }

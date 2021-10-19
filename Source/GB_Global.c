@@ -542,7 +542,6 @@ void GB_Global_memtable_add (void *p, size_t size)
         GB_Global.nmalloc++ ;
     }
     #ifdef GB_DEBUG
-    ASSERT ((p == NULL) == (size == 0)) ;
     bool fail = false ;
     #ifdef GB_MEMDUMP
     printf ("memtable add %p size %ld\n", p, size) ;
