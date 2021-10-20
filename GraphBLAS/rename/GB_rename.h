@@ -3801,7 +3801,7 @@
 #define GB_signumf GM_signumf
 #define GB_size_t_multiply GM_size_t_multiply
 #define GB_slice_vector GM_slice_vector
-#define GB_sort GB_sort
+#define GB_sort GM_sort
 #define GB_sparsity_control GM_sparsity_control
 #define GB_split GM_split
 #define GB_split_bitmap GM_split_bitmap
