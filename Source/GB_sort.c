@@ -193,9 +193,11 @@
 // GB_sort
 //------------------------------------------------------------------------------
     
+#undef  GB_FREE_WORK
 #define GB_FREE_WORK            \
     GB_phbix_free (T) ;
 
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORK ;              \

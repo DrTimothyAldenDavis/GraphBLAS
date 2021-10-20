@@ -641,6 +641,15 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
 // sort all vectors in a matrix
 //------------------------------------------------------------------------------
 
+#undef  GB_FREE_WORK
+#define GB_FREE_WORK                            \
+{                                               \
+    GB_WERK_POP (Werk, int64_t) ;               \
+    GB_FREE_WERK (&C_skipped, C_skipped_size) ; \
+    GB_FREE_WERK (&W_0, W_0_size) ;             \
+    GB_FREE_WERK (&W, W_size) ;                 \
+}
+
 static GrB_Info GB_SORT (matrix)
 (
     GrB_Matrix C,               // matrix sorted in-place
@@ -680,6 +689,13 @@ static GrB_Info GB_SORT (matrix)
     int64_t *restrict Ci = C->i ;
     GB_TYPE *restrict Cx = (GB_TYPE *) C->x ;
 
+    // workspace
+    GB_TYPE *restrict W_0 = NULL ; size_t W_0_size = 0 ;
+    int64_t *restrict W   = NULL ; size_t W_size   = 0 ;
+    int64_t *restrict C_skipped = NULL ;
+    size_t C_skipped_size = 0 ;
+    GB_WERK_DECLARE (Werk, int64_t) ;
+
     #if GB_SORT_UDT
     // get typesize, and function pointers for operators and typecasting
     GrB_Type ctype = C->type ;
@@ -688,9 +704,9 @@ static GrB_Info GB_SORT (matrix)
     GB_cast_function fcast = GB_cast_factory (op->xtype->code, ctype->code) ;
     #endif
 
-    //--------------------------------------------------------------------------
+    //==========================================================================
     // phase1: sort all short vectors
-    //--------------------------------------------------------------------------
+    //==========================================================================
 
     // slice the C matrix into tasks for phase 1
 
@@ -701,14 +717,15 @@ static GrB_Info GB_SORT (matrix)
     ntasks = GB_IMAX (ntasks, 1) ;
     // printf ("phase1: threads %d tasks %d\n", nthreads, ntasks) ;
 
-    GB_WERK_DECLARE (Werk, int64_t) ;
-    GB_WERK_PUSH (Werk, 2*ntasks + 1, int64_t) ;
+    GB_WERK_PUSH (Werk, 3*ntasks + 2, int64_t) ;
     if (Werk == NULL)
-    {
+    { 
+        // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
-    int64_t *restrict C_slice = Werk ;
-    int64_t *restrict C_max   = Werk + ntasks + 1 ;
+    int64_t *restrict C_max   = Werk ;                  // size ntasks
+    int64_t *restrict C_skip  = Werk + ntasks ;         // size ntasks+1
+    int64_t *restrict C_slice = Werk + 2*ntasks + 1;    // size ntasks+1
 
     GB_pslice (C_slice, Cp, cnvec, ntasks, false) ;
 
@@ -716,18 +733,19 @@ static GrB_Info GB_SORT (matrix)
     int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (tid = 0 ; tid < ntasks ; tid++)
-    { 
+    {
         const int64_t kfirst = C_slice [tid] ;
         const int64_t klast  = C_slice [tid+1] ;
         int64_t task_max_length = 0 ;
+        int64_t n_skipped = 0 ;
         for (int64_t k = kfirst ; k < klast ; k++)
-        { 
+        {
             // sort the vector C(:,k), unless it is too long
             const int64_t pC_start = Cp [k] ;
             const int64_t pC_end   = Cp [k+1] ;
             const int64_t cknz = pC_end - pC_start ;
             if (cknz <= GB_BASECASE || nthreads == 1)
-            {
+            { 
                 uint64_t seed = k ;
                 GB_SORT (quicksort) (GB_ADDR (Cx, pC_start), Ci + pC_start,
                     cknz, &seed
@@ -736,9 +754,14 @@ static GrB_Info GB_SORT (matrix)
                     #endif
                     ) ;
             }
+            else
+            { 
+                n_skipped++ ;
+            }
             task_max_length = GB_IMAX (task_max_length, cknz) ;
         }
-        C_max [tid] = task_max_length ;
+        C_max  [tid] = task_max_length ;
+        C_skip [tid] = n_skipped ;
     }
 
     // find max vector length and return if all vectors are now sorted
@@ -747,19 +770,55 @@ static GrB_Info GB_SORT (matrix)
     { 
         max_length = GB_IMAX (max_length, C_max [tid]) ;
     }
-    // free phase1 workspace
-    GB_WERK_POP (Werk, int64_t) ;
+
     if (max_length <= GB_BASECASE || nthreads == 1)
     { 
         // all vectors are sorted
+        GB_FREE_WORK ;
         return (GrB_SUCCESS) ;
     }
 
-    //--------------------------------------------------------------------------
+    //==========================================================================
     // phase2: sort all long vectors in parallel
+    //==========================================================================
+
+    //--------------------------------------------------------------------------
+    // construct a list of vectors that must still be sorted
     //--------------------------------------------------------------------------
 
+    GB_cumsum (C_skip, ntasks, NULL, 1, Context) ;
+    int64_t total_skipped = C_skip [ntasks] ;
+
+    C_skipped = GB_MALLOC_WERK (total_skipped, int64_t, &C_skipped_size) ;
+    if (C_skipped == NULL)
+    { 
+        // out of memory
+        GB_FREE_WORK ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    for (tid = 0 ; tid < ntasks ; tid++)
+    {
+        const int64_t kfirst = C_slice [tid] ;
+        const int64_t klast  = C_slice [tid+1] ;
+        int64_t n_skipped = C_skip [tid] ;
+        for (int64_t k = kfirst ; k < klast ; k++)
+        {
+            const int64_t pC_start = Cp [k] ;
+            const int64_t pC_end   = Cp [k+1] ;
+            const int64_t cknz = pC_end - pC_start ;
+            if (cknz > GB_BASECASE)
+            { 
+                // C(:,k) was not sorted
+                C_skipped [n_skipped++] = k ;
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // determine # of tasks for each vector in phase 2
+    //--------------------------------------------------------------------------
 
     // determine the number of levels to create, which must always be an
     // even number.  The # of levels is chosen to ensure that the # of leaves
@@ -773,23 +832,20 @@ static GrB_Info GB_SORT (matrix)
     // ...
 
     int kk = (int) (2 + 2 * ceil (log2 ((double) nthreads) / 2)) ;
-    ntasks = 1 << kk ;
-    // printf ("phase2: threads %d tasks %d\n", nthreads, ntasks) ;
+    int ntasks2 = 1 << kk ;
+    // printf ("phase2: threads %d tasks %d\n", nthreads, ntasks2) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_TYPE *restrict W_0 = NULL ; size_t W_0_size = 0 ;
-    int64_t *restrict W   = NULL ; size_t W_size   = 0 ;
-    W   = GB_MALLOC_WERK (max_length + 6*ntasks + 1, int64_t, &W_size) ;
+    W   = GB_MALLOC_WERK (max_length + 6*ntasks2 + 1, int64_t, &W_size) ;
     W_0 = (GB_TYPE *) GB_MALLOC_WERK (max_length * GB_SIZE, GB_void,
         &W_0_size) ;
     if (W == NULL || W_0 == NULL)
     { 
         // out of memory
-        GB_FREE_WERK (&W_0, W_0_size) ;
-        GB_FREE_WERK (&W, W_size) ;
+        GB_FREE_WORK ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -797,28 +853,26 @@ static GrB_Info GB_SORT (matrix)
     // sort each long vector using all available threads
     //--------------------------------------------------------------------------
 
-    for (int64_t k = 0 ; k < cnvec ; k++)
+    for (int64_t t = 0 ; t < total_skipped ; t++)
     {
+        const int64_t k = C_skipped [t] ;
         const int64_t pC_start = Cp [k] ;
         const int64_t pC_end   = Cp [k+1] ;
         const int64_t cknz = pC_end - pC_start ;
-        if (cknz > GB_BASECASE)
-        {
-            GB_SORT (vector) (GB_ADDR (Cx, pC_start), Ci + pC_start,
-                W_0, W, cknz, kk, ntasks, nthreads
-                #if GB_SORT_UDT
-                , csize, flt, fcast
-                #endif
-                ) ;
-        }
+        ASSERT (cknz > GB_BASECASE) ;
+        GB_SORT (vector) (GB_ADDR (Cx, pC_start), Ci + pC_start,
+            W_0, W, cknz, kk, ntasks2, nthreads
+            #if GB_SORT_UDT
+            , csize, flt, fcast
+            #endif
+            ) ;
     }
 
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WERK (&W_0, W_0_size) ;
-    GB_FREE_WERK (&W, W_size) ;
+    GB_FREE_WORK ;
     C->jumbled = true ;
     ASSERT_MATRIX_OK (C, "C sorted by value", GB0) ;
     return (GrB_SUCCESS) ;

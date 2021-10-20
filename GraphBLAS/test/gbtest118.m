@@ -1,4 +1,4 @@
-% function gbtest118
+function gbtest118
 %GBTEST118 test GrB.argsort
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -63,11 +63,41 @@ for k = 1:length (types)
         assert (isequal (Pk, a)) ;
     end
 
+    [C, P] = GrB.argsort (A, 'descend') ;
+    for k = 1:n
+        Ak = A (:,k) ;
+        [Ai, ~, Ax] = GrB.extracttuples (Ak) ;
+        [x, p] = sort (Ax, 'descend') ;
+        nz = length (x) ;
+        Ck = C (:,k) ;
+        Pk = P (:,k) ;
+        Ck = Ck (1:nz) ;
+        assert (isequal (Ck, x)) ;
+        Pk = double (Pk (1:nz)) ;
+        a = Ai (p) ;
+        assert (isequal (Pk, a)) ;
+    end
+
     [C, P] = GrB.argsort (A, 2) ;
     for k = 1:m
         Ak = A (k,:) ;
         [~, Aj, Ax] = GrB.extracttuples (Ak) ;
         [x, p] = sort (Ax) ;
+        nz = length (x) ;
+        Ck = C (k,:) ;
+        Pk = P (k,:) ;
+        Ck = Ck (1:nz) ;
+        assert (isequal (Ck', x)) ;
+        Pk = double (Pk (1:nz)) ;
+        a = Aj (p) ;
+        assert (isequal (Pk', a)) ;
+    end
+
+    [C, P] = GrB.argsort (A, 2, 'descend') ;
+    for k = 1:m
+        Ak = A (k,:) ;
+        [~, Aj, Ax] = GrB.extracttuples (Ak) ;
+        [x, p] = sort (Ax, 'descend') ;
         nz = length (x) ;
         Ck = C (k,:) ;
         Pk = P (k,:) ;

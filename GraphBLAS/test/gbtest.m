@@ -169,6 +169,7 @@ gbtest114 % test kron with iso matrices
 gbtest115 % test serialize/deserialize
 gbtest116 % test GrB.binopinfo for index_unary operators
 gbtest117 % test idxunop in GrB.apply2
+gbtest118 % test GrB.argsort
 gbtest96  % test GrB.optype
 
 if (~have_octave)
