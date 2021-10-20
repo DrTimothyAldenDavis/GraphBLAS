@@ -45,7 +45,7 @@ if (Atrans)
     for j = 1:n
         indices = find (A.pattern (:,j)) ;
         values  = A.matrix (indices, j) ;
-        T = sortrows ([values indices], direction) ;
+        T = sortrows ([values indices], { direction, 'ascend'} ) ;
         nvals = length (indices) ;
         C.matrix (1:nvals, j) = T (:,1)     ; C.pattern (1:nvals, j) = true ;
         P.matrix (1:nvals, j) = T (:,2) - 1 ; P.pattern (1:nvals, j) = true ;
@@ -55,7 +55,7 @@ else
     for i = 1:m
         indices = find (A.pattern (i,:))' ;
         values  = A.matrix (i, indices)' ;
-        T = sortrows ([values indices], direction) ;
+        T = sortrows ([values indices], { direction, 'ascend'} ) ;
         nvals = length (indices) ;
         C.matrix (i, 1:nvals) = T (:,1)'     ; C.pattern (i, 1:nvals) = true ;
         P.matrix (i, 1:nvals) = T (:,2)' - 1 ; P.pattern (i, 1:nvals) = true ;

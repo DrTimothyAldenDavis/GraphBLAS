@@ -31,7 +31,7 @@ void mexFunction
 {
 
     GrB_Info info ;
-    GrB_Matrix C = NULL, A = NULL, B = NULL ;
+    GrB_Matrix C = NULL, A = NULL, B = NULL, P = NULL ;
     GrB_Scalar Amissing = NULL, Bmissing = NULL ;
     GrB_Type MyType = NULL ;
     char *err ;
@@ -99,6 +99,31 @@ void mexFunction
     GrB_Scalar_free_(&Amissing) ;
     GrB_Scalar_free_(&Bmissing) ;
     GrB_Type_free_(&MyType) ;
+
+    //--------------------------------------------------------------------------
+    // sort
+    //--------------------------------------------------------------------------
+
+    expected = GrB_NULL_POINTER ;
+    OK (GrB_Matrix_new (&A, GrB_FP64, 10, 10)) ;
+    OK (GrB_Matrix_setElement_FP64 (A, (double) 1.2, 0, 0)) ;
+    ERR (GxB_Matrix_sort (NULL, NULL, GrB_LT_FP64, A, NULL)) ;
+
+    OK (GrB_Matrix_new (&C, GrB_FP64, 10, 10)) ;
+    OK (GrB_Matrix_new (&P, GrB_INT64, 10, 10)) ;
+
+    expected = GrB_DOMAIN_MISMATCH ;
+    ERR (GxB_Matrix_sort (C, P, GrB_PLUS_FP64, A, NULL)) ;
+
+    GrB_Matrix_free_(&C) ;
+    OK (GrB_Matrix_new (&C, GrB_FP64, 9, 10)) ;
+
+    expected = GrB_DIMENSION_MISMATCH ;
+    ERR (GxB_Matrix_sort (C, P, GrB_LT_FP64, A, NULL)) ;
+
+    GrB_Matrix_free_(&A) ;
+    GrB_Matrix_free_(&P) ;
+    GrB_Matrix_free_(&C) ;
 
     //--------------------------------------------------------------------------
     // wrapup

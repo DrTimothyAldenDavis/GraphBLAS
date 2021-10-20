@@ -10,7 +10,7 @@
 #include "GB_mex.h"
 
 #define USAGE \
-    "[C,P] = GB_mex_Matrix_sort (op, A, desc)"
+    "[C,P] = GB_mex_Matrix_sort (op, A, desc, arg1)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -35,7 +35,7 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
 
     // check inputs
-    if (nargout > 2 || nargin < 2 || nargin > 3)
+    if (nargout > 2 || nargin < 2 || nargin > 4)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -69,24 +69,50 @@ void mexFunction
     GrB_Index nrows, ncols ;
     GrB_Matrix_nrows (&nrows, A) ;
     GrB_Matrix_ncols (&ncols, A) ;
-    GrB_Matrix_new (&C, A->type, nrows, ncols) ;
-    if (nargout > 1)
+
+    // P = GB_mex_Matrix_sort (op, A, desc, 1): do not compute C
+    bool P_only = (nargin == 4 && nargout == 1) ;
+    if (!P_only)
+    {
+        GrB_Matrix_new (&C, A->type, nrows, ncols) ;
+    }
+    if (P_only || nargout > 1)
     {
         GrB_Matrix_new (&P, GrB_INT64, nrows, ncols) ;
     }
 
-    // [C,P] = sort(op,A,desc)
-    #define FREE_DEEP_COPY ;
-    #define GET_DEEP_COPY ;
-    METHOD (GxB_Matrix_sort (C, P, op, A, desc)) ;
+    if (nargout == 1 && !P_only)
+    {
+        GrB_Matrix_free (&C) ;
+        #define FREE_DEEP_COPY GrB_Matrix_free (&C) ;
+        #define GET_DEEP_COPY  GrB_Matrix_dup (&C, A) ;
+        GET_DEEP_COPY ;
+        METHOD (GxB_Matrix_sort (C, NULL, op, C, desc)) ;
+    }
+    else
+    {
+        // [C,P] = sort(op,A,desc)
+        #undef  FREE_DEEP_COPY
+        #define FREE_DEEP_COPY ;
+        #undef  GET_DEEP_COPY
+        #define GET_DEEP_COPY ;
+        METHOD (GxB_Matrix_sort (C, P, op, A, desc)) ;
+    }
 
-    // return C as a struct and free the GraphBLAS C
-    pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
-
-    if (nargout > 1)
+    if (P_only)
     {
         // return P as a struct and free the GraphBLAS P
-        pargout [1] = GB_mx_Matrix_to_mxArray (&P, "P output", true) ;
+        pargout [0] = GB_mx_Matrix_to_mxArray (&P, "P output", true) ;
+    }
+    else
+    {
+        // return C as a struct and free the GraphBLAS C
+        pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
+        if (nargout > 1)
+        {
+            // return P as a struct and free the GraphBLAS P
+            pargout [1] = GB_mx_Matrix_to_mxArray (&P, "P output", true) ;
+        }
     }
 
     FREE_ALL ;

@@ -47,7 +47,7 @@ P.class = 'int64' ;
     for j = 1:n
         indices = find (A.pattern (:,j)) ;
         values  = A.matrix (indices, j) ;
-        T = sortrows ([values indices], direction) ;
+        T = sortrows ([values indices], { direction, 'ascend'} ) ;
         nvals = length (indices) ;
         C.matrix (1:nvals, j) = T (:,1)     ; C.pattern (1:nvals, j) = true ;
         P.matrix (1:nvals, j) = T (:,2) - 1 ; P.pattern (1:nvals, j) = true ;

@@ -207,6 +207,8 @@ are extensions to the GraphBLAS C API.
         recommended (use \verb'GxB_*type_name' methods).
     \item \verb'GxB_Matrix_serialize/deserialize': with compression;
         optional descriptor.
+    \item \verb'GxB_Matrix_sort', \verb'GxB_Vector_sort':
+        sort a matrix or vector
     \item \verb'GxB_eWiseUnion': like \verb'GrB_eWiseAdd' except for how entries in $\bf A\setminus B$
         and $\bf B \setminus A$ are computed.
     \item added LZ4/LZ4HC: compression library, \url{http://www.lz4.org} (BSD 2),
@@ -4357,13 +4359,17 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Vector_pack_Full'        & pack in full format     & \ref{vector_pack_full} \\
 \verb'GxB_Vector_unpack_Full'      & unpack in full format   & \ref{vector_unpack_full} \\
 \hline
+\hline
+\verb'GxB_Vector_sort'          & sort a vector & \ref{vector_sort} \\
 \end{tabular}
 }
 
 \vspace{0.2in}
 Refer to
-Section~\ref{serialize_deserialize} for serialization/deserialization methods, and to
-Section~\ref{pack_unpack} for pack/unpack methods.
+Section~\ref{serialize_deserialize} for serialization/deserialization methods,
+Section~\ref{pack_unpack} for pack/unpack methods,
+and to
+Section~\ref{sorting_methods} for sorting methods.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -4906,6 +4912,9 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Matrix_exportSize'    & array sizes for export & \ref{export_size} \\
 \verb'GrB_Matrix_exportHint'    & hint best export format & \ref{export_hint} \\
 \hline
+\hline
+\verb'GxB_Matrix_sort'          & sort a matrix & \ref{matrix_sort} \\
+\hline
 \end{tabular}
 }
 
@@ -4913,8 +4922,9 @@ GraphBLAS function   & purpose                                      & Section \\
 Refer to
 Section~\ref{serialize_deserialize} for serialization/deserialization methods,
 Section~\ref{pack_unpack} for \verb'GxB'pack/unpack methods,
+Section~\ref{GrB_import_export} for \verb'GrB' import/export methods,
 and
-Section~\ref{GrB_import_export} for \verb'GrB' import/export methods.
+Section~\ref{sorting_methods} for sorting methods.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_new:}          create a matrix}
@@ -7544,6 +7554,97 @@ format of the \verb'GrB_Matrix':
 \item \verb'GxB_FULL', \verb'GxB_BY_ROW': export as \verb'GrB_DENSE_ROW_FORMAT'
 \item \verb'GxB_FULL', \verb'GxB_BY_COL': export as \verb'GrB_DENSE_COL_FORMAT'
 \end{packed_itemize}
+
+\newpage
+%===============================================================================
+\subsection{Sorting methods}
+%===============================================================================
+\label{sorting_methods}
+
+\verb'GxB_Matrix_sort' provides a mechanism to sort all the rows or
+all the columns of a matrix, and \verb'GxB_Vector_sort' sorts all the
+entries in a vector.
+
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_sort:} sort a vector}
+%-------------------------------------------------------------------------------
+\label{vector_sort}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_sort
+(
+    // output:
+    GrB_Vector w,           // vector of sorted values
+    GrB_Vector p,           // vector containing the permutation
+    // input
+    GrB_BinaryOp op,        // comparator op
+    GrB_Vector u,           // vector to sort
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Vector_sort' is identical to the sort of the single column of
+an \verb'n'-by-1 matrix.  The descriptor is ignored, except to control
+the number of threads to use.  Refer to Section \ref{matrix_sort} for details.
+
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_sort:} sort the rows/columns of a matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_sort}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_sort
+(
+    // output:
+    GrB_Matrix C,           // matrix of sorted values
+    GrB_Matrix P,           // matrix containing the permutations
+    // input
+    GrB_BinaryOp op,        // comparator op
+    GrB_Matrix A,           // matrix to sort
+    const GrB_Descriptor desc
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Matrix_sort' sorts all the rows or all the columns of a matrix.
+Each row (or column) is sorted separately.  The rows are sorted by default.
+To sort the columns, use \verb'GrB_DESC_IN0'.  A comparator operator is
+provided to define the sorting order (ascending or descending).
+For example, to sort a \verb'GrB_FP64' matrix in ascending order,
+use \verb'GrB_LT_FP64' as the \verb'op', and to sort in descending order,
+use \verb'GrB_GT_FP64'.
+
+The \verb'op' must have a return value of \verb'GrB_BOOL', and the types of
+its two inputs must be the same.  The entries in \verb'A' are typecasted to
+the inputs of the \verb'op', if necessary.  Matrices with user-defined types
+can be sorted with a user-defined comparator operator, whose two input types
+must match the type of \verb'A', and whose output is \verb'GrB_BOOL'.
+
+The two matrix outputs are \verb'C' and \verb'P'.  Any entries present on input
+in \verb'C' or \verb'P' are discarded on output.  The type of \verb'C' must
+match the type of \verb'A' exactly.  The dimensions of \verb'C', \verb'P', and
+\verb'A' must also match exactly (even with the \verb'GrB_DESC_IN0'
+descriptor).
+
+With the default sort (by row), suppose \verb'A(i,:)' contains \verb'k'
+entries.  In this case, \verb'C(i,0:k-1)' contains the values of those entries
+in sorted order, and \verb'P(i,0:k-1)' contains their corresponding column
+indices in the matrix \verb'A'.  If two values are the same, ties are broken
+according column index.
+
+If the matrix is sorted by column, and \verb'A(:,j)' contains \verb'k' entries,
+then \verb'C(0:k-1,j)' contains the values of those entries in sorted order,
+and \verb'P(0:k-1,j)' contains their corresponding row indices in the matrix
+\verb'A'.  If two values are the same, ties are broken according row index.
+
+The outputs \verb'C' and \verb'P' are both optional; either one (but not both)
+may be \verb'NULL', in which case that particular output matrix is not
+computed.
 
 \newpage
 %===============================================================================

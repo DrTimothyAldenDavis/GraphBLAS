@@ -251,9 +251,6 @@ GrB_Info GB_sort
         (P != NULL && (GB_NROWS (P) != anrows || GB_NCOLS (P) != ancols)))
     { 
         // C and P must have the same dimensions as A
-//      printf ("A is %ld by %ld\n", anrows, ancols) ;
-//      if (C != NULL) printf ("C is %ld by %ld\n", GB_NROWS (C), GB_NROWS (C));
-//      if (P != NULL) printf ("P is %ld by %ld\n", GB_NROWS (P), GB_NROWS (P));
         return (GrB_DIMENSION_MISMATCH) ;
     }
 
@@ -356,6 +353,10 @@ GrB_Info GB_sort
 
     GB_Opcode opcode = op->opcode ;
     GB_Type_code acode = atype->code ;
+//  GxB_print (op, 3) ;
+//  GxB_print (atype, 3) ;
+//  printf ("opcode: %d  is lt: %d is gt: %d\n", opcode,
+//      opcode == GB_LT_binop_code, opcode == GB_GT_binop_code) ;
 
     if ((op->xtype == atype) && (op->ytype == atype) &&
         (opcode == GB_LT_binop_code || opcode == GB_GT_binop_code) &&
@@ -549,8 +550,8 @@ GrB_Info GB_sort
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    if (C != NULL) ASSERT_MATRIX_OK (C, "C output of GB_sort", GB0) ;
-    if (P != NULL) ASSERT_MATRIX_OK (P, "P output of GB_sort", GB0) ;
+    if (!C_is_NULL) ASSERT_MATRIX_OK (C, "C output of GB_sort", GB0) ;
+    if (P != NULL)  ASSERT_MATRIX_OK (P, "P output of GB_sort", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -250,7 +250,7 @@ static int64_t GB_SORT (binary_search)  // return pleft
         // less =   (x0, X_1 [pleft]) < (Pivot0, Pivot1)
         GB_LT (less, x0, X_1 [pleft],    Pivot0, Pivot1) ;
         if (less)
-        { 
+        {
             pleft++ ;
         }
         else

@@ -75,6 +75,7 @@ GB_mex_hack (hack) ;
 hack (2) = 1 ;
 GB_mex_hack (hack) ;
 
+logstat ('test236',t) ; % test GxB_Matrix_sort and GxB_Vector_sort
 logstat ('test192',t) ; % test C<C,struct>=scalar
 logstat ('test191',t) ; % test split
 logstat ('test188',t) ; % test concat
