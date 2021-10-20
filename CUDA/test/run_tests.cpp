@@ -15,9 +15,10 @@ int main(int argc, char **argv) {
     void *p = (void *)rmm_wrap_allocate( &buff_size );
 
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    auto r = RUN_ALL_TESTS();
 
     rmm_wrap_deallocate( p, buff_size);
     rmm_wrap_destroy_handle();
 
+    return r;
 }

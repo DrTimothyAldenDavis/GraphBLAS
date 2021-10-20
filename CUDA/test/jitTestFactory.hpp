@@ -10,20 +10,20 @@
 #include "../binary_search.h"
 #include "GpuTimer.h"
 #include "../../rmm_wrap/rmm_wrap.h"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "dataFactory.hpp"
 
-//Operations for test results on CPU
-template<typename T> T myOP_plus( T a, T b) { return  a + b;}
-template<typename T> T myOP_min ( T a, T b) { return  a < b ? a : b;}
-template<typename T> T myOP_max ( T a, T b) { return  a > b ? a : b;}
-template<typename T> T myOP_first ( T a, T b) { return  a ;}
-template<typename T> T myOP_second ( T a, T b) { return  b ;}
-template<typename T> T myOP_times ( T a, T b) { return  a * b ;}
-
-template<typename T> T (*myOpPTR)(T a, T b);
-template<typename T> T (*ADD_ptr)(T a, T b);
-template<typename T> T (*MUL_ptr)(T a, T b);
+////Operations for test results on CPU
+//template<typename T> T myOP_plus( T a, T b) { return  a + b;}
+//template<typename T> T myOP_min ( T a, T b) { return  a < b ? a : b;}
+//template<typename T> T myOP_max ( T a, T b) { return  a > b ? a : b;}
+//template<typename T> T myOP_first ( T a, T b) { return  a ;}
+//template<typename T> T myOP_second ( T a, T b) { return  b ;}
+//template<typename T> T myOP_times ( T a, T b) { return  a * b ;}
+//
+//template<typename T> T (*myOpPTR)(T a, T b);
+//template<typename T> T (*ADD_ptr)(T a, T b);
+//template<typename T> T (*MUL_ptr)(T a, T b);
 
 //AxB_dot3_phase1 kernels
 template <typename T_C, typename T_M, typename T_A,typename T_B>
@@ -82,7 +82,7 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
 
     std::cout<< "found device "<<gpuID<<std::endl;
 
-    phase1launchFactory<T_C, T_M, T_A, T_B> p1lF();
+    phase1launchFactory<T_C, T_M, T_A, T_B> p1lF;
 
     SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G;
     int64_t Annz = N*N;

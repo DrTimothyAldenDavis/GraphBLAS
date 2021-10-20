@@ -5,13 +5,15 @@
 // all 12 cases for the masked GEMM ( C, M, A, B) in GraphBLAS
 // Connects to the jitFactory for launches.
 
+
+#pragma once
 #include <cassert>
 #include <cmath>
 #include <random>
 #include <algorithm>
 #include <cstdint>
 #include "jitTestFactory.hpp"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 
 //Test generators using jitify

@@ -11,7 +11,6 @@
 #include <random>
 #include <algorithm>
 #include <cstdint>
-#include "jitTestFactory.hpp"
 
 //Test instances and groupings
 

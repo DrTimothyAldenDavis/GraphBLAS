@@ -1,0 +1,1 @@
+/usr/bin/g++  -v CMakeFiles/cmTC_e83be.dir/CMakeCUDACompilerABI.cu.o -o cmTC_e83be  -lcudadevrt -lcudart_static -lrt -lpthread -ldl  -L"/usr/local/cuda/targets/x86_64-linux/lib/stubs" -L"/usr/local/cuda/targets/x86_64-linux/lib"

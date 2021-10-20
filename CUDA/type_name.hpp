@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 #ifndef GB_TYPE_NAME_H
 #define GB_TYPE_NAME_H
 
@@ -34,7 +35,7 @@ public:
   static const char *name;
 };
 
-#define DECLARE_TYPE_NAME(x) template<> const char *jit::type_name<x>::name = #x;
+#define DECLARE_TYPE_NAME(x)  template<> inline const char *jit::type_name<x>::name = #x;
 #define GET_TYPE_NAME(x) (jit::type_name<decltype(x)>::name)
 
 DECLARE_TYPE_NAME(int);

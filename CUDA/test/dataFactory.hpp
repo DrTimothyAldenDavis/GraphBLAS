@@ -110,7 +110,7 @@ class matrix : public Managed {
      matrix(){};
 
      matrix( int64_t N, int64_t nvecs) {
-         mat = (GrB_Matrix*)malloc(sizeof(GrB_Matrix));
+         mat = (GrB_Matrix)malloc(sizeof(GrB_Matrix));
         mat->vlen = N;
         mat->vdim = nvecs;
      }

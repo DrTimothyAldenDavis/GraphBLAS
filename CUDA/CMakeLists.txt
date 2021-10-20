@@ -7,11 +7,12 @@ cmake_minimum_required(VERSION 3.20.1)
 
 project(GRAPHBLAS_CUDA VERSION 0.1 LANGUAGES CXX CUDA)
 
-find_package(CUDA REQUIRED)
-
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CUDA_FLAGS "-cudart static")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_C_STANDARD 99)
+
+message(STATUS "${CMAKE_CXX_FLAGS}")
 
 add_library(graphblascuda SHARED
     GB_AxB_dot3_cuda.cu
@@ -19,18 +20,19 @@ add_library(graphblascuda SHARED
 )
 
 set(GRAPHBLAS_CUDA_INCLUDES
-        $RMM_WRAP_INCLUDES
+        ${RMM_WRAP_INCLUDES}
         ../Source
         ../Source/Template
         ../Include
         ../CUDA)
 
-target_link_libraries(graphblascuda PUBLIC ${CUDA_LIBRARIES})
+message(STATUS "${GRAPHBLAS_CUDA_INCLUDES}")
+
+
 target_include_directories(graphblascuda PUBLIC  ${CUDA_INCLUDE_DIRECTORIES} ${GRAPHBLAS_CUDA_INCLUDES})
 set_target_properties(graphblascuda PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "75")
-# The ou
 
 # 1. Execute enumify/stringify/jitify logic to compile ptx kernels and compile/link w/ relevant *.cu files.
 
@@ -43,11 +45,11 @@ set(CUDA_TEST_SUITES
 )
 
 #
-set(CUDA_TEST_MONOIDS PLUS MIN MAX TIMES ANY)
-set(CUDA_TEST_BINOPS TIMES PLUS MIN MAX DIV MINUS RDIV RMINUS FIRST SECOND PAIR)
-set(CUDA_TEST_SEMIRINGS PLUS_TIMES MIN_PLUS MAX_PLUS)
-set(CUDA_TEST_DATATYPES int32_t int64_t uint32_t uint64_t float double)
-set(CUDA_TEST_KERNELS warp mp vsvs dndn spdn vssp)
+set(CUDA_TEST_MONOIDS PLUS) #MIN MAX TIMES ANY)
+set(CUDA_TEST_BINOPS TIMES) #PLUS MIN MAX DIV MINUS RDIV RMINUS FIRST SECOND PAIR)
+set(CUDA_TEST_SEMIRINGS PLUS_TIMES) # MIN_PLUS MAX_PLUS)
+set(CUDA_TEST_DATATYPES int32_t ) #int64_t uint32_t uint64_t float double)
+set(CUDA_TEST_KERNELS mp) # mp vsvs dndn spdn vssp)
 
 # TODO: Update testGen.py to accept the above CUDA_TEST_* params as arguments
 
@@ -68,7 +70,7 @@ foreach(var ${CUDA_TEST_SUITES})
             add_custom_command(
                     OUTPUT
                     ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${kernel}_test_instances.hpp
-                    ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${kernel}_cuda_tests.cpp
+                    ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${kernel}_cuda_tests.cu
                     DEPENDS
                     ${CMAKE_CURRENT_SOURCE_DIR}/test/jitFactory.hpp
                     COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/test/testGen_cmake.py "\"${CMAKE_CURRENT_SOURCE_DIR}\"" "\"${var}\"" "\"${CUDA_TEST_MONOIDS}\""
@@ -77,30 +79,55 @@ foreach(var ${CUDA_TEST_SUITES})
             )
 
             # Construct final list of files to compile (in parallel)
-            list(APPEND CUDA_TEST_CPP_FILES ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${kernel}_cuda_tests.cpp)
+            list(APPEND CUDA_TEST_CPP_FILES ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${kernel}_cuda_tests.cu)
         endforeach()
     endforeach()
 endforeach()
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
-execute_process(
-        COMMAND git clone "https://github.com/google/googletest.git" googletest
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        # Specify the commit you depend on and update it regularly.
+        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/googletest/googletest/include)
+#file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
+#execute_process(
+#        COMMAND git clone "https://github.com/google/googletest.git" googletest
+#        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
+#
+#include_directories(${CMAKE_CURRENT_BINARY_DIR}/external_includes/googletest/googletest/include)
+
+#add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/external_includes/googletest/googletest/)
 
 # 3. Compile/link individual {test_suite_name}_cuda_tests.cpp files into a gtest executable
 set(GRAPHBLAS_CUDA_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/test)
 
+message(STATUS "${CUDA_TEST_CPP_FILES}")
+
 add_executable(graphblascuda_test ${CMAKE_CURRENT_SOURCE_DIR}/test/run_tests.cpp ${CUDA_TEST_CPP_FILES})
-target_include_directories(graphblascuda_test PUBLIC  ${CUDA_INCLUDE_DIRECTORIES} ${GRAPHBLAS_CUDA_INCLUDES})
+target_include_directories(graphblascuda_test PUBLIC
+        ${CUDA_INCLUDE_DIRECTORIES}
+        ${GRAPHBLAS_CUDA_INCLUDES}
+        )
+
 set_target_properties(graphblascuda_test PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda_test PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(graphblascuda_test PROPERTIES CUDA_ARCHITECTURES "75")
 
 add_dependencies(graphblascuda_test graphblas)
-target_link_libraries(graphblascuda_test graphblas graphblascuda ${ADDITIONAL_DEPS})
+add_dependencies(graphblascuda_test graphblascuda)
+target_link_libraries(graphblascuda_test
+        graphblascuda
+        graphblas
+        gtest_main
+        ${ADDITIONAL_DEPS})
 target_include_directories(graphblascuda_test PUBLIC
         ${ADDITIONAL_INCLUDES}
         ${CUDA_INCLUDE_DIRECTORIES}
         ${GRAPHBLAS_CUDA_INCLUDES})
+
+add_test(NAME graphblascuda_test_test COMMAND graphblascuda_test)

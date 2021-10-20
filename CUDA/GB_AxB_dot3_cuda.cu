@@ -354,8 +354,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     phase1_program <<
     R"(phase1_program
     #include ")" << mysemiring.filename << R"("
-    #include "GB_jit_AxB_dot3_phase1.cu"
-    )" ;
+    #include "GB_jit_AxB_phase1.cu"
+    )";
+
     // dump it:
     std::cout << phase1_program.str() ;
 
@@ -366,7 +367,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                    jit::compiler_flags,
                    dummy_callback,
                    stream_AxB)
-               .set_kernel_inst("GB_AxB_cuda_dot3_phase1",
+               .set_kernel_inst("GB_AxB_cuda_phase1",
                                 {M->type->name})
                .configure(grid, block); 
 

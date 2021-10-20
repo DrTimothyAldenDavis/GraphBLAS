@@ -37,9 +37,9 @@ set ( GraphBLAS_API_VERSION_SUB   0 )
 
 if ( CMAKE_MAJOR_VERSION GREATER 2 )
     project ( graphblas
-        VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" LANGUAGES C )
+        VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" LANGUAGES CUDA C )
 else ( )
-    project ( graphblas C )
+    project ( graphblas CUDA C )
 endif ( )
 
 #-------------------------------------------------------------------------------

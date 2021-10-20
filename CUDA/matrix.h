@@ -1,5 +1,7 @@
 //SPDX-License-Identifier: Apache-2.0
 
+#pragma once
+
 #define chunksize 128 
 
 #define ASSERT

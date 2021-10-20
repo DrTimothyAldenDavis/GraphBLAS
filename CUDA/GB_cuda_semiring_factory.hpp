@@ -6,6 +6,7 @@
 
 // Implementations of string callbacks
 #pragma once
+
 #include <iostream>
 #include <cstdint>
 #include "GB_jit_cache.h"

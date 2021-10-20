@@ -32,16 +32,17 @@
 #define JITIFY_PRINT_PTX 1
 #define JITIFY_PRINT_LINKER_LOG 0
 #define JITIFY_PRINT_LAUNCH 1
-#include <jitify.hpp>
+#include "jitify.hpp"
 
 
 namespace jit {
 
 const std::vector<std::string> compiler_flags{
-    "-std=c++14",
+    "-std=c++11",
             "--use_fast_math",
             "-remove-unused-globals",
             "-w",
+            "-lcudart",
             "-D__CUDACC_RTC__",
             "-I.",
             "-I..",
