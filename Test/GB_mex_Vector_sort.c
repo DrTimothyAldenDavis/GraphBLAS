@@ -81,27 +81,16 @@ void mexFunction
         GrB_Vector_new (&P, GrB_INT64, nrows) ;
     }
 
-    // GxB_print (A, 3) ;
-    // GxB_print (C, 3) ;
-    // if (P != NULL) GxB_print (P, 3) ;
-
     GrB_Vector u = (GrB_Vector) A ;
     if (!GB_VECTOR_OK (u))
     {
         mexErrMsgTxt ("invalid input vector") ;
     }
 
-
     // [C,P] = sort(op,A,desc)
     #define FREE_DEEP_COPY ;
     #define GET_DEEP_COPY ;
-    // METHOD (GxB_Vector_sort (C, P, op, u, desc)) ;
-    GrB_Info info = (GxB_Vector_sort (C, P, op, u, desc)) ;
-    if (info != GrB_SUCCESS) mexErrMsgTxt ("failed") ;
-
-    // printf ("final C:\n") ;GxB_print (C, 3) ;
-    // if (P != NULL)
-    // printf ("final P:\n") ;GxB_print (P, 3) ;
+    METHOD (GxB_Vector_sort (C, P, op, u, desc)) ;
 
     // return C as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Vector_to_mxArray (&C, "C output", true) ;

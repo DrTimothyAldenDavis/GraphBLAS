@@ -65,7 +65,7 @@ static inline int64_t GB_SORT (partition)
         // increment left until finding an entry A [left] >= Pivot
         bool less ;
         do
-        {
+        { 
             left++ ;
             // a0 = A_0 [left]
             GB_GET (a0, A_0, left) ;
@@ -76,7 +76,7 @@ static inline int64_t GB_SORT (partition)
 
         // decrement right until finding an entry A [right] <= Pivot
         do
-        {
+        { 
             right-- ;
             // a0 = A_0 [right]
             GB_GET (a1, A_0, right) ;
@@ -863,7 +863,7 @@ static GrB_Info GB_SORT (matrix)
     //--------------------------------------------------------------------------
 
     for (int64_t t = 0 ; t < total_skipped ; t++)
-    {
+    { 
         const int64_t k = C_skipped [t] ;
         const int64_t pC_start = Cp [k] ;
         const int64_t pC_end   = Cp [k+1] ;

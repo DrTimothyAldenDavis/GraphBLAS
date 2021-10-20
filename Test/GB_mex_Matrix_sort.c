@@ -75,20 +75,10 @@ void mexFunction
         GrB_Matrix_new (&P, GrB_INT64, nrows, ncols) ;
     }
 
-    // GxB_print (A, 3) ;
-    // GxB_print (C, 3) ;
-    // if (P != NULL) GxB_print (P, 3) ;
-
     // [C,P] = sort(op,A,desc)
     #define FREE_DEEP_COPY ;
     #define GET_DEEP_COPY ;
-    // METHOD (GxB_Matrix_sort (C, P, op, A, desc)) ;
-    GrB_Info info = (GxB_Matrix_sort (C, P, op, A, desc)) ;
-    if (info != GrB_SUCCESS) mexErrMsgTxt ("failed") ;
-
-    // printf ("final C:\n") ;GxB_print (C, 3) ;
-    // if (P != NULL)
-    // printf ("final P:\n") ;GxB_print (P, 3) ;
+    METHOD (GxB_Matrix_sort (C, P, op, A, desc)) ;
 
     // return C as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;

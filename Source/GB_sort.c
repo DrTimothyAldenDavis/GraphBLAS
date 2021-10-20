@@ -249,7 +249,7 @@ GrB_Info GB_sort
     int64_t ancols = GB_NCOLS (A) ;
     if ((C != NULL && (GB_NROWS (C) != anrows || GB_NCOLS (C) != ancols)) ||
         (P != NULL && (GB_NROWS (P) != anrows || GB_NCOLS (P) != ancols)))
-    {
+    { 
         // C and P must have the same dimensions as A
 //      printf ("A is %ld by %ld\n", anrows, ancols) ;
 //      if (C != NULL) printf ("C is %ld by %ld\n", GB_NROWS (C), GB_NROWS (C));
@@ -272,14 +272,14 @@ GrB_Info GB_sort
     //--------------------------------------------------------------------------
 
     if (C_is_NULL)
-    {
+    { 
         // C is a temporary matrix, which is freed when done
         T = GB_clear_static_header (&T_header) ;
         C = T ;
     }
 
     if (A_transpose)
-    { 
+    {
         // ensure C is in sparse or hypersparse CSC format
         if (A->is_csc)
         {
@@ -429,7 +429,7 @@ GrB_Info GB_sort
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // typecasting, user-defined types, or unconventional operators
@@ -485,7 +485,7 @@ GrB_Info GB_sort
     bool C_is_hyper = GB_IS_HYPERSPARSE (C) ;
 
     if (P != NULL)
-    { 
+    {
         P->is_csc = C->is_csc ;
         P->nvec = C->nvec ;
         P->nvec_nonempty = C->nvec_nonempty ;
@@ -539,7 +539,7 @@ GrB_Info GB_sort
     //--------------------------------------------------------------------------
 
     if (!C_is_NULL && P != NULL)
-    {
+    { 
         // copy P->i into C->i
         GB_memcpy (C->i, P->i, cnz * sizeof (int64_t), nthreads_max) ;
     }
