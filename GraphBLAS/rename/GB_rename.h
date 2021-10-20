@@ -2009,6 +2009,7 @@
 #define GxB_Matrix_serialize GxM_Matrix_serialize
 #define GxB_Matrix_setElement_FC32 GxM_Matrix_setElement_FC32
 #define GxB_Matrix_setElement_FC64 GxM_Matrix_setElement_FC64
+#define GxB_Matrix_sort GxM_Matrix_sort
 #define GxB_Matrix_split GxM_Matrix_split
 #define GxB_Matrix_subassign GxM_Matrix_subassign
 #define GxB_Matrix_subassign_BOOL GxM_Matrix_subassign_BOOL
@@ -3242,6 +3243,7 @@
 #define GxB_Vector_serialize GxM_Vector_serialize
 #define GxB_Vector_setElement_FC32 GxM_Vector_setElement_FC32
 #define GxB_Vector_setElement_FC64 GxM_Vector_setElement_FC64
+#define GxB_Vector_sort GxM_Vector_sort
 #define GxB_Vector_subassign GxM_Vector_subassign
 #define GxB_Vector_subassign_BOOL GxM_Vector_subassign_BOOL
 #define GxB_Vector_subassign_FC32 GxM_Vector_subassign_FC32
@@ -3799,6 +3801,7 @@
 #define GB_signumf GM_signumf
 #define GB_size_t_multiply GM_size_t_multiply
 #define GB_slice_vector GM_slice_vector
+#define GB_sort GB_sort
 #define GB_sparsity_control GM_sparsity_control
 #define GB_split GM_split
 #define GB_split_bitmap GM_split_bitmap
