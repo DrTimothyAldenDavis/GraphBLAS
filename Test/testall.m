@@ -95,6 +95,7 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test236',t) ; % test GxB_Matrix_sort and GxB_Vector_sort
 logstat ('test235',t) ; % test GxB_eWiseUnion and GrB_eWiseAdd
 logstat ('test234',t) ; % test GxB_eWiseUnion
 logstat ('test233',t) ; % test bitmap saxpy C=A*B with A sparse and B bitmap

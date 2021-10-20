@@ -37,7 +37,7 @@ GrB_Info GxB_Vector_sort
     //--------------------------------------------------------------------------
 
     GrB_Info info = GB_sort ((GrB_Matrix) w, (GrB_Matrix) p, op,
-        (GrB_Matrix) u, false, Context) ;
+        (GrB_Matrix) u, true, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

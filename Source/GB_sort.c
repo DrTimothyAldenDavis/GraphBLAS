@@ -19,9 +19,8 @@
 //  GB_TYPE             bool, int8_, ... or GB_void for UDT
 
 //  GB_ADDR(A,p)        A+p for builtin, A + p * GB_SIZE otherwise
-//  GB_DECL(x)          declare a scalar x
 //  GB_SIZE             size of each entry: sizeof (GB_TYPE) for built-in
-//  GB_GET(x,X,i)       x = X [i] for built-in, memcpy for UDT
+//  GB_GET(x,X,i)       x = (op->xtype) X [i]
 //  GB_COPY(A,i,C,k)    A [i] = C [k]
 //  GB_SWAP(A,i,k)      swap A [i] and A [k]
 //  GB_LT               compare two entries, x < y
@@ -32,8 +31,7 @@
 
 #define GB_SORT_UDT         0
 #define GB_ADDR(A,i)        ((A) + (i))
-#define GB_DECL(x)          GB_TYPE x
-#define GB_GET(x,A,i)       x = A [i]
+#define GB_GET(x,A,i)       GB_TYPE x = A [i]
 #define GB_COPY(A,i,B,j)    A [i] = B [j]
 #define GB_SIZE             sizeof (GB_TYPE)
 #define GB_SWAP(A,i,j)      { GB_TYPE t = A [i] ; A [i] = A [j] ; A [j] = t ; }
@@ -146,7 +144,6 @@
 //------------------------------------------------------------------------------
 
 #undef  GB_ADDR
-#undef  GB_DECL
 #undef  GB_GET
 #undef  GB_COPY
 #undef  GB_SIZE
@@ -154,32 +151,28 @@
 #undef  GB_LT
 
 #define GB_ADDR(A,i)        ((A) + (i) * csize)
-#define GB_DECL(x)          GB_void x [GB_VLA(csize)]
-#define GB_GET(x,A,i)       memcpy (x, GB_ADDR (A, i), csize)
+#define GB_GET(x,A,i)       GB_void x [GB_VLA(xsize)] ;                     \
+                            fcast (x, GB_ADDR (A, i), csize)
 #define GB_COPY(A,i,B,j)    memcpy (GB_ADDR (A, i), GB_ADDR (B, j), csize)
 #define GB_SIZE             csize
 #define GB_TYPE             GB_void
 
 #define GB_SWAP(A,i,j)                                                      \
 {                                                                           \
-    GB_DECL (t) ;                       /* declare the scalar t */          \
-    GB_GET (t, A, i) ;                  /* t = A [i] */                     \
+    GB_void t [GB_VLA(csize)] ;         /* declare the scalar t */          \
+    memcpy (t, GB_ADDR (A, i), csize) ; /* t = A [i] */                     \
     GB_COPY (A, i, A, j) ;              /* A [i] = A [j] */                 \
     memcpy (GB_ADDR (A, j), t, csize) ; /* A [j] = t */                     \
 }
 
 #define GB_LT(less,a,i,b,j)                                                 \
 {                                                                           \
-    GB_DECL (t) ;                           /* declare scalar t */          \
-    fcast (t, GB_ADDR (a, i), csize) ;      /* t = (xtype) A [i] */         \
-    GB_DECL (s) ;                           /* declare scalar s */          \
-    fcast (s, GB_ADDR (b, j), csize) ;      /* s = (ytype) B [j] */         \
-    flt (&less, t, s) ;                     /* less = (t < s) */            \
+    flt (&less, a, b) ;         /* less = (a < b) */                        \
     if (!less)                                                              \
     {                                                                       \
         /* check for equality and tie-break on index */                     \
         bool more ;                                                         \
-        flt (&more, s, t) ;                 /* more = (s < t) */            \
+        flt (&more, b, a) ;     /* more = (b < a) */                        \
         less = (more) ? false : ((i) < (j)) ;                               \
     }                                                                       \
 }
@@ -252,10 +245,15 @@ GrB_Info GB_sort
         return (GrB_DOMAIN_MISMATCH) ;
     }
 
-    if ((C != NULL && (C->vlen != A->vlen || C->vdim != A->vdim)) ||
-        (P != NULL && (P->vlen != A->vlen || P->vdim != A->vdim)))
+    int64_t anrows = GB_NROWS (A) ;
+    int64_t ancols = GB_NCOLS (A) ;
+    if ((C != NULL && (GB_NROWS (C) != anrows || GB_NCOLS (C) != ancols)) ||
+        (P != NULL && (GB_NROWS (P) != anrows || GB_NCOLS (P) != ancols)))
     {
         // C and P must have the same dimensions as A
+//      printf ("A is %ld by %ld\n", anrows, ancols) ;
+//      if (C != NULL) printf ("C is %ld by %ld\n", GB_NROWS (C), GB_NROWS (C));
+//      if (P != NULL) printf ("P is %ld by %ld\n", GB_NROWS (P), GB_NROWS (P));
         return (GrB_DIMENSION_MISMATCH) ;
     }
 
@@ -290,6 +288,7 @@ GrB_Info GB_sort
             { 
                 // A = C
                 GB_OK (GB_dup_worker (&C, A_iso, A, true, atype, Context)) ;
+                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
         }
         else
@@ -299,11 +298,13 @@ GrB_Info GB_sort
             { 
                 // A = A'
                 GB_OK (GB_transpose_in_place (A, true, Context)) ;
+                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
             else
             { 
                 // C = A'
                 GB_OK (GB_transpose_cast (C, atype, true, A, false, Context)) ;
+                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
         }
     }
@@ -316,7 +317,9 @@ GrB_Info GB_sort
             if (!sort_in_place)
             { 
                 // A = C
-                GB_OK (GB_dup_worker (&C, A_iso, A, false, atype, Context)) ;
+                // printf ("Here %d: %d\n", __LINE__, A_iso) ; GxB_print (A, 3);
+                GB_OK (GB_dup_worker (&C, A_iso, A, true, atype, Context)) ;
+                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
         }
         else
@@ -326,20 +329,26 @@ GrB_Info GB_sort
             { 
                 // A = A'
                 GB_OK (GB_transpose_in_place (A, false, Context)) ;
+                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
             else
             { 
                 // C = A'
                 GB_OK (GB_transpose_cast (C, atype, false, A, false, Context)) ;
+                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
         }
     }
+
+    // printf ("Prior to convert:\n") ;GxB_print (C, 3) ;
 
     // ensure C is sparse or hypersparse CSC
     if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
     { 
         GB_OK (GB_convert_any_to_sparse (C, Context)) ;
     }
+    
+    // printf ("Prior to sort:\n") ;GxB_print (C, 3) ;
 
     //--------------------------------------------------------------------------
     // sort C in place
@@ -427,7 +436,6 @@ GrB_Info GB_sort
         //----------------------------------------------------------------------
 
         GB_OK (GB_sort_matrix_UDT (C, op, Context)) ;
-
     }
 
     //--------------------------------------------------------------------------
@@ -478,7 +486,6 @@ GrB_Info GB_sort
 
     if (P != NULL)
     { 
-        // construct P
         P->is_csc = C->is_csc ;
         P->nvec = C->nvec ;
         P->nvec_nonempty = C->nvec_nonempty ;
@@ -528,7 +535,7 @@ GrB_Info GB_sort
     }
 
     //--------------------------------------------------------------------------
-    // finalize C
+    // finalize the pattern of C
     //--------------------------------------------------------------------------
 
     if (!C_is_NULL && P != NULL)

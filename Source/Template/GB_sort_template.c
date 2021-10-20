@@ -14,7 +14,6 @@
 //  GB_TYPE             bool, int8_, ... or GB_void for UDT or ISO
 //  GB_ADDR(A,p)        A+p for builtin, A + p * GB_SIZE otherwise
 //  GB_SIZE             size of each entry: sizeof (GB_TYPE) for built-in
-//  GB_DECL(x)          declare a scalar x
 //  GB_GET(x,X,i)       x = X [i] for built-in, memcpy for UDT
 //  GB_COPY(A,i,C,k)    A[i] = C [k]
 //  GB_SWAP(A,i,k)      swap A[i] and A[k]
@@ -36,6 +35,7 @@ static inline int64_t GB_SORT (partition)
     uint64_t *seed          // random number seed, modified on output
     #if GB_SORT_UDT
     , size_t csize              // size of GB_TYPE
+    , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
     #endif
@@ -45,9 +45,8 @@ static inline int64_t GB_SORT (partition)
     // select a pivot at random
     int64_t pivot = ((n < GB_RAND_MAX) ? GB_rand15 (seed) : GB_rand (seed)) % n;
 
-    // get the Pivot
-    GB_DECL (Pivot0) ;
-    GB_GET (Pivot0, A_0, pivot) ;
+    // Pivot = A [pivot]
+    GB_GET (Pivot0, A_0, pivot) ;       // Pivot0 = A_0 [pivot]
     int64_t Pivot1 = A_1 [pivot] ;
 
     // At the top of the while loop, A [left+1...right-1] is considered, and
@@ -60,26 +59,29 @@ static inline int64_t GB_SORT (partition)
     // keep partitioning until the left and right sides meet
     while (true)
     {
-        // loop invariant:  A [0..left] < pivot and A [right..n-1] > pivot,
+        // loop invariant:  A [0..left] < pivot and A [right..n-1] > Pivot,
         // so the region to be considered is A [left+1 ... right-1].
 
-        // increment left until finding an entry A [left] >= pivot
-        GB_DECL (a0) ;
+        // increment left until finding an entry A [left] >= Pivot
         bool less ;
         do
         {
             left++ ;
+            // a0 = A_0 [left]
             GB_GET (a0, A_0, left) ;
-            GB_LT (less, a0, A_1 [left], Pivot0, Pivot1) ;
+            // less =   (a0, A_1 [left]) < (Pivot0, Pivot1)
+            GB_LT (less, a0, A_1 [left],    Pivot0, Pivot1) ;
         }
         while (less) ;
 
-        // decrement right until finding an entry A [right] <= pivot
+        // decrement right until finding an entry A [right] <= Pivot
         do
         {
             right-- ;
-            GB_GET (a0, A_0, right) ;
-            GB_LT (less, Pivot0, Pivot1, a0, A_1 [right]) ;
+            // a0 = A_0 [right]
+            GB_GET (a1, A_0, right) ;
+            // less =   (Pivot0, Pivot1) < (a1, A_1 [right])
+            GB_LT (less, Pivot0, Pivot1,    a1, A_1 [right]) ;
         }
         while (less) ;
 
@@ -116,6 +118,7 @@ static void GB_SORT (quicksort)    // sort A [0:n-1]
     uint64_t *seed          // random number seed
     #if GB_SORT_UDT
     , size_t csize              // size of GB_TYPE
+    , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
     #endif
@@ -130,14 +133,13 @@ static void GB_SORT (quicksort)    // sort A [0:n-1]
             for (int64_t j = k ; j > 0 ; j--)
             { 
                 // a0 = A_0 [j]
-                GB_DECL (a0) ;
                 GB_GET (a0, A_0, j) ;
                 // a1 = A_0 [j-1]
-                GB_DECL (a1) ;
                 GB_GET (a1, A_0, j-1) ;
                 // break if A [j] >= A [j-1]
                 bool less ;
-                GB_LT (less, a0, A_1 [j], a1, A_1 [j-1]) ;
+                // less =   (a0, A_1 [j]) < (a1, A_1 [j-1])
+                GB_LT (less, a0, A_1 [j],    a1, A_1 [j-1]) ;
                 if (!less) break ;
                 // swap A [j-1] and A [j]
                 GB_SWAP (A_0, j-1, j) ;
@@ -150,7 +152,7 @@ static void GB_SORT (quicksort)    // sort A [0:n-1]
         // partition A [0:n-1] into A [0:k-1] and A [k:n-1]
         int64_t k = GB_SORT (partition) (A_0, A_1, n, seed
             #if GB_SORT_UDT
-            , csize, flt, fcast
+            , csize, xsize, flt, fcast
             #endif
             ) ;
 
@@ -159,14 +161,14 @@ static void GB_SORT (quicksort)    // sort A [0:n-1]
         // sort A [0:k-1]
         GB_SORT (quicksort) (A_0, A_1, k, seed
             #if GB_SORT_UDT
-            , csize, flt, fcast
+            , csize, xsize, flt, fcast
             #endif
             ) ;
 
         // sort A [k:n-1]
         GB_SORT (quicksort) (GB_ADDR (A_0, k), A_1 + k, n-k, seed
             #if GB_SORT_UDT
-            , csize, flt, fcast
+            , csize, xsize, flt, fcast
             #endif
             ) ;
     }
@@ -200,6 +202,7 @@ static int64_t GB_SORT (binary_search)  // return pleft
     const int64_t p_end
     #if GB_SORT_UDT
     , size_t csize              // size of GB_TYPE
+    , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
     #endif
@@ -213,18 +216,16 @@ static int64_t GB_SORT (binary_search)  // return pleft
     // binary search of X [p_start...p_end-1] for the Pivot
     int64_t pleft = p_start ;
     int64_t pright = p_end - 1 ;
-    // Pivot0 = Y_0 [pivot]
-    GB_DECL (Pivot0) ;
-    GB_GET (Pivot0, Y_0, pivot) ;
+    GB_GET (Pivot0, Y_0, pivot) ;       // Pivot0 = Y_0 [pivot]
     int64_t Pivot1 = Y_1 [pivot] ;
-    GB_DECL (x0) ;
     bool less ;
     while (pleft < pright)
     { 
         int64_t pmiddle = (pleft + pright) >> 1 ;
-        // less = (X [pmiddle] < Pivot)
+        // x0 = X_0 [pmiddle]
         GB_GET (x0, X_0, pmiddle) ;
-        GB_LT (less, x0, X_1 [pmiddle], Pivot0, Pivot1) ;
+        // less =   (x0, X_1 [pmiddle]) < (Pivot0, Pivot1)
+        GB_LT (less, x0, X_1 [pmiddle],    Pivot0, Pivot1) ;
         pleft  = less ? (pmiddle+1) : pleft ;
         pright = less ? pright : pmiddle ;
     }
@@ -239,13 +240,15 @@ static int64_t GB_SORT (binary_search)  // return pleft
     //    X [p_start ... pleft-1] < Pivot and
     //    X [pleft+1 ... p_end-1] > Pivot holds.
     //    The value X [pleft] may be either < or > Pivot.
-    GB_GET (x0, X_0, pleft) ;
     bool found = (pleft == pright) && (X_1 [pleft] == Pivot1) ;
 
     // Modify pleft and pright:
     if (!found && (pleft == pright))
     {
-        GB_LT (less, x0, X_1 [pleft], Pivot0, Pivot1) ;
+        // x0 = X_0 [pleft]
+        GB_GET (x0, X_0, pleft) ;
+        // less =   (x0, X_1 [pleft]) < (Pivot0, Pivot1)
+        GB_LT (less, x0, X_1 [pleft],    Pivot0, Pivot1) ;
         if (less)
         { 
             pleft++ ;
@@ -312,6 +315,7 @@ static void GB_SORT (create_merge_tasks)
     const int64_t pR_end
     #if GB_SORT_UDT
     , size_t csize              // size of GB_TYPE
+    , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
     #endif
@@ -360,7 +364,7 @@ static void GB_SORT (create_merge_tasks)
                         L_0, L_1, pleft,
                         R_0, R_1, pR_start, pR_end
                         #if GB_SORT_UDT
-                        , csize, flt, fcast
+                        , csize, xsize, flt, fcast
                         #endif
                         ) ;
         }
@@ -372,7 +376,7 @@ static void GB_SORT (create_merge_tasks)
                         R_0, R_1, pright,
                         L_0, L_1, pL_start, pL_end
                         #if GB_SORT_UDT
-                        , csize, flt, fcast
+                        , csize, xsize, flt, fcast
                         #endif
                         ) ;
         }
@@ -403,7 +407,7 @@ static void GB_SORT (create_merge_tasks)
             L_0, L_1, pL_start, pleft,
             R_0, R_1, pR_start, pright
             #if GB_SORT_UDT
-            , csize, flt, fcast
+            , csize, xsize, flt, fcast
             #endif
             ) ;
 
@@ -421,7 +425,7 @@ static void GB_SORT (create_merge_tasks)
             L_0, L_1, pleft,  pL_end,
             R_0, R_1, pright, pR_end
             #if GB_SORT_UDT
-            , csize, flt, fcast
+            , csize, xsize, flt, fcast
             #endif
             ) ;
     }
@@ -445,6 +449,7 @@ static void GB_SORT (merge)
     const int64_t nright
     #if GB_SORT_UDT
     , size_t csize              // size of GB_TYPE
+    , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
     #endif
@@ -456,13 +461,12 @@ static void GB_SORT (merge)
     for (p = 0, pleft = 0, pright = 0 ; pleft < nleft && pright < nright ; p++)
     {
         // left0 = Left_0 [pleft]
-        GB_DECL (left0) ;
         GB_GET (left0, Left_0, pleft) ;
         // right0 = Right_0 [pright]
-        GB_DECL (right0) ;
         GB_GET (right0, Right_0, pright) ;
         bool less ;
-        GB_LT (less, left0, Left_1 [pleft], right0, Right_1 [pright]) ;
+        // less =   (left0, Left_1 [pleft]) < (right0, Right_1 [pright])
+        GB_LT (less, left0, Left_1 [pleft],    right0, Right_1 [pright]) ;
         if (less)
         { 
             // S [p] = Left [pleft++]
@@ -512,6 +516,7 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
     const int nthreads          // # of threads to use
     #if GB_SORT_UDT
     , size_t csize              // size of GB_TYPE
+    , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
     #endif
@@ -546,7 +551,7 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
         uint64_t seed = tid ;
         GB_SORT (quicksort) (GB_ADDR (A_0, leaf), A_1 + leaf, leafsize, &seed
             #if GB_SORT_UDT
-            , csize, flt, fcast
+            , csize, xsize, flt, fcast
             #endif
             ) ;
     }
@@ -575,7 +580,7 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
                 A_0, A_1, Slice [tid],    Slice [tid+nt],
                 A_0, A_1, Slice [tid+nt], Slice [tid+2*nt]
                 #if GB_SORT_UDT
-                , csize, flt, fcast
+                , csize, xsize, flt, fcast
                 #endif
                 ) ;
         }
@@ -593,7 +598,7 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
                 GB_ADDR (A_0, pL), A_1 + pL, nL,
                 GB_ADDR (A_0, pR), A_1 + pR, nR
                 #if GB_SORT_UDT
-                , csize, flt, fcast
+                , csize, xsize, flt, fcast
                 #endif
                 ) ;
         }
@@ -612,7 +617,7 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
                 W_0, W_1, Slice [tid],    Slice [tid+nt],
                 W_0, W_1, Slice [tid+nt], Slice [tid+2*nt]
                 #if GB_SORT_UDT
-                , csize, flt, fcast
+                , csize, xsize, flt, fcast
                 #endif
                 ) ;
         }
@@ -629,7 +634,7 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
                 GB_ADDR (W_0, pL), W_1 + pL, nL,
                 GB_ADDR (W_0, pR), W_1 + pR, nR
                 #if GB_SORT_UDT
-                , csize, flt, fcast
+                , csize, xsize, flt, fcast
                 #endif
                 ) ;
         }
@@ -700,6 +705,7 @@ static GrB_Info GB_SORT (matrix)
     // get typesize, and function pointers for operators and typecasting
     GrB_Type ctype = C->type ;
     size_t csize = ctype->size ;
+    size_t xsize = op->xtype->size ;
     GxB_binary_function flt = op->binop_function ;
     GB_cast_function fcast = GB_cast_factory (op->xtype->code, ctype->code) ;
     #endif
@@ -715,7 +721,7 @@ static GrB_Info GB_SORT (matrix)
     int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
     ntasks = GB_IMIN (ntasks, cnvec) ;
     ntasks = GB_IMAX (ntasks, 1) ;
-    // printf ("phase1: threads %d tasks %d\n", nthreads, ntasks) ;
+//  printf ("phase1: threads %d tasks %d\n", nthreads, ntasks) ;
 
     GB_WERK_PUSH (Werk, 3*ntasks + 2, int64_t) ;
     if (Werk == NULL)
@@ -746,16 +752,18 @@ static GrB_Info GB_SORT (matrix)
             const int64_t cknz = pC_end - pC_start ;
             if (cknz <= GB_BASECASE || nthreads == 1)
             { 
+//              printf ("\n------------sort: %ld cknz %ld\n", k, cknz)  ;
                 uint64_t seed = k ;
                 GB_SORT (quicksort) (GB_ADDR (Cx, pC_start), Ci + pC_start,
                     cknz, &seed
                     #if GB_SORT_UDT
-                    , csize, flt, fcast
+                    , csize, xsize, flt, fcast
                     #endif
                     ) ;
             }
             else
             { 
+//              printf ("\n------------skip: %ld cknz %ld\n", k, cknz)  ;
                 n_skipped++ ;
             }
             task_max_length = GB_IMAX (task_max_length, cknz) ;
@@ -833,7 +841,8 @@ static GrB_Info GB_SORT (matrix)
 
     int kk = (int) (2 + 2 * ceil (log2 ((double) nthreads) / 2)) ;
     int ntasks2 = 1 << kk ;
-    // printf ("phase2: threads %d tasks %d\n", nthreads, ntasks2) ;
+//  printf ("phase2: threads %d tasks %d skipped %ld\n", nthreads, ntasks2,
+//      total_skipped) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -863,7 +872,7 @@ static GrB_Info GB_SORT (matrix)
         GB_SORT (vector) (GB_ADDR (Cx, pC_start), Ci + pC_start,
             W_0, W, cknz, kk, ntasks2, nthreads
             #if GB_SORT_UDT
-            , csize, flt, fcast
+            , csize, xsize, flt, fcast
             #endif
             ) ;
     }

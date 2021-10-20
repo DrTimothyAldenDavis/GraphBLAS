@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Oct 18, 2021 (alpha14)"
+#define GxB_IMPLEMENTATION_DATE "Oct 20, 2021 (alpha14)"
 #define GxB_IMPLEMENTATION_MAJOR 6
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -5213,6 +5213,7 @@ GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<Mask> = accum (C, A+B)
 //      else if B(i,j) is present but not A(i,j)
 //          C(i,j) = Amissing + B(i,j)
 
+GB_PUBLIC
 GrB_Info GxB_Vector_eWiseUnion      // w<mask> = accum (w, u+v)
 (
     GrB_Vector w,                   // input/output vector for results
@@ -5226,6 +5227,7 @@ GrB_Info GxB_Vector_eWiseUnion      // w<mask> = accum (w, u+v)
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
+GB_PUBLIC
 GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
 (
     GrB_Matrix C,                   // input/output matrix for results
