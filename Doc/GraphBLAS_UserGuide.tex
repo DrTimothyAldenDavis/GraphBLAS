@@ -1552,14 +1552,6 @@ compile-time version check with \verb'GRB_VERSION' would be stale.
 \verb'GrB_getVersion' thus provides a runtime access of the version of the C
 API Specification supported by the library.
 
-\begin{alert}
-{\bf SPEC:} 
-This version of SuiteSparse:GraphBLAS supports the majority of
-\input{GraphBLAS_API_version.tex}
-of the C API Specification, with the exception of
-\verb'GrB_wait', and \verb'GrB_info'.
-\end{alert}
-
 %===============================================================================
 \subsection{{\sf GxB\_init:} initialize with alternate malloc} %================
 %===============================================================================
@@ -12106,6 +12098,19 @@ The generic function name \verb'GrB_reduce' may be used for all specific
 functions discussed in this section.  When the details of a specific function
 are discussed, the specific name is used for clarity.
 
+\begin{alert}
+{\bf SPEC:} 
+All methods below use a monoid for the reduction.  The Specification also
+allows reductions using an associative and commutative binary operator.
+SuiteSparse:GraphBLAS permits the use of a \verb'GrB_BinaryOp' instead of a
+\verb'GrB_Monoid', but only if the binary operator is built-in and corresponds
+to a known built-in monoid.  For example, the binary operator
+\verb'GrB_PLUS_FP64' can be used, since this is the binary operator of the
+built-in \verb'GrB_PLUS_MONOID_FP64'.  For other binary ops (including any
+user-defined ones), \verb'GrB_NOT_IMPLEMENTED' is returned.
+
+\end{alert}
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_reduce\_Monoid} reduce a matrix to a vector}
 %-------------------------------------------------------------------------------
@@ -12145,11 +12150,6 @@ the result \verb't (i)'.
 The final step is ${\bf w \langle m \rangle  = w \odot t}$, as described
 in Section~\ref{accummask}, except that all the
 terms are column vectors instead of matrices.
-
-\verb'GrB_reduce' can also be passed a \verb'GrB_BinaryOp' in place of the
-monoid parameter, but the binary operator must correspond to a known
-built-in monoid.  This provides a limited implementation of
-\verb'GrB_Matrix_reduce_BinaryOp'.
 
 \newpage
 %-------------------------------------------------------------------------------
