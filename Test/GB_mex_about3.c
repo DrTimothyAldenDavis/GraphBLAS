@@ -145,8 +145,13 @@ void mexFunction
 
     OK (GrB_Vector_new (&w, GrB_FP32, 10)) ;
     info = GrB_Matrix_reduce_BinaryOp (w, NULL, NULL, GrB_LT_FP32, C, NULL) ;
-    CHECK (info == GrB_NOT_IMPLEMENTED) ;
+    CHECK (info == GrB_DOMAIN_MISMATCH) ;
     const char *s ;
+    OK (GrB_error (&s, w)) ;
+    printf ("expected error: [%s]\n", s) ;
+
+    info = GrB_Matrix_reduce_BinaryOp (w, NULL, NULL, GrB_DIV_FP32, C, NULL) ;
+    CHECK (info == GrB_NOT_IMPLEMENTED) ;
     OK (GrB_error (&s, w)) ;
     printf ("expected error: [%s]\n", s) ;
     GrB_Vector_free_(&w) ;
