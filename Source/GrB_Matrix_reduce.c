@@ -117,6 +117,11 @@ GrB_Info GrB_Matrix_reduce_BinaryOp
     GB_WHERE (w, "GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    if (op->ztype != op->xtype || op->ztype != op->ytype)
+    { 
+        GB_ERROR (GrB_DOMAIN_MISMATCH, "Invalid binary operator:"
+            " z=%s(x,y); all types of x,y,z must be the same\n", op->name) ;
+    }
     // convert the binary op to its corresponding monoid
     GrB_Monoid monoid = GB_binop_to_monoid (op) ;
     if (monoid == NULL)
@@ -144,7 +149,7 @@ GrB_Info GrB_Matrix_reduce_Scalar
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE1 ("GrB_Matrix_reduce_Scalar (s, accum, monoid, A, desc)") ;
+    GB_WHERE (S, "GrB_Matrix_reduce_Scalar (s, accum, monoid, A, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GrB_Info info = GB_Scalar_reduce (S, accum, monoid, A, Context) ;
     GB_BURBLE_END ;
@@ -164,9 +169,14 @@ GrB_Info GrB_Matrix_nameless        // FIXME: spec leaves it nameless
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE1 ("GrB_Matrix_nameless (s, accum, binaryop, A, desc)") ;
+    GB_WHERE (S, "GrB_Matrix_nameless (s, accum, binaryop, A, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    if (op->ztype != op->xtype || op->ztype != op->ytype)
+    { 
+        GB_ERROR (GrB_DOMAIN_MISMATCH, "Invalid binary operator:"
+            " z=%s(x,y); all types of x,y,z must be the same\n", op->name) ;
+    }
     // convert the binary op to its corresponding monoid
     GrB_Monoid monoid = GB_binop_to_monoid (op) ;
     if (monoid == NULL)

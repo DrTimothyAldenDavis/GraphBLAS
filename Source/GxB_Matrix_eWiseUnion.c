@@ -41,6 +41,9 @@
         true,                       /* eWiseAdd                    */       \
         true, Amissing, Bmissing,   /* eWiseUnion                  */       \
         Context) ;
+//------------------------------------------------------------------------------
+// GxB_Matrix_eWiseUnion: matrix addition
+//------------------------------------------------------------------------------
 
 GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
 (
