@@ -9,7 +9,7 @@ project(GRAPHBLAS_CUDA VERSION 0.1 LANGUAGES CXX CUDA)
 
 set(CMAKE_CUDA_FLAGS "-cudart static")
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_C_STANDARD 99)
 
 message(STATUS "${CMAKE_CXX_FLAGS}")
@@ -88,11 +88,12 @@ include(FetchContent)
 FetchContent_Declare(
         googletest
         # Specify the commit you depend on and update it regularly.
-        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+        URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
+
 
 #file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
 #execute_process(
@@ -108,23 +109,28 @@ set(GRAPHBLAS_CUDA_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 message(STATUS "${CUDA_TEST_CPP_FILES}")
 
-add_executable(graphblascuda_test ${CMAKE_CURRENT_SOURCE_DIR}/test/run_tests.cpp ${CUDA_TEST_CPP_FILES})
+add_executable(graphblascuda_test ${CUDA_TEST_CPP_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/test/run_tests.cpp)
 target_include_directories(graphblascuda_test PUBLIC
         ${CUDA_INCLUDE_DIRECTORIES}
-        ${GRAPHBLAS_CUDA_INCLUDES}
-        )
+        ${GRAPHBLAS_CUDA_INCLUDES})
 
 set_target_properties(graphblascuda_test PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda_test PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-set_target_properties(graphblascuda_test PROPERTIES CUDA_ARCHITECTURES "75")
+set_target_properties(graphblascuda_test PROPERTIES CUDA_ARCHITECTURES "70")
+
+include(GoogleTest)
+gtest_discover_tests(graphblascuda_test)
 
 add_dependencies(graphblascuda_test graphblas)
 add_dependencies(graphblascuda_test graphblascuda)
+add_dependencies(graphblascuda_test gtest_main)
+
 target_link_libraries(graphblascuda_test
         graphblascuda
         graphblas
         gtest_main
         ${ADDITIONAL_DEPS})
+
 target_include_directories(graphblascuda_test PUBLIC
         ${ADDITIONAL_INCLUDES}
         ${CUDA_INCLUDE_DIRECTORIES}
