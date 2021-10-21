@@ -8218,7 +8218,7 @@ GrB_Info GrB_Vector_reduce_BOOL     // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8228,7 +8228,7 @@ GrB_Info GrB_Vector_reduce_INT8     // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8238,7 +8238,7 @@ GrB_Info GrB_Vector_reduce_UINT8    // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8248,7 +8248,7 @@ GrB_Info GrB_Vector_reduce_INT16    // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8258,7 +8258,7 @@ GrB_Info GrB_Vector_reduce_UINT16   // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8268,7 +8268,7 @@ GrB_Info GrB_Vector_reduce_INT32    // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8278,7 +8278,7 @@ GrB_Info GrB_Vector_reduce_UINT32   // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8288,7 +8288,7 @@ GrB_Info GrB_Vector_reduce_INT64    // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8298,7 +8298,7 @@ GrB_Info GrB_Vector_reduce_UINT64   // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8308,7 +8308,7 @@ GrB_Info GrB_Vector_reduce_FP32     // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8318,7 +8318,7 @@ GrB_Info GrB_Vector_reduce_FP64     // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8328,7 +8328,7 @@ GrB_Info GxB_Vector_reduce_FC32     // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8338,7 +8338,7 @@ GrB_Info GxB_Vector_reduce_FC64     // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8348,7 +8348,7 @@ GrB_Info GrB_Vector_reduce_UDT      // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8358,7 +8358,17 @@ GrB_Info GrB_Vector_reduce_Scalar   // c = accum (c, reduce_to_scalar (u))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Vector u,             // vector to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Vector_nameless        // FIXME: spec leaves it nameless
+(
+    GrB_Scalar c,                   // result scalar
+    const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
+    const GrB_BinaryOp op,          // binary op to do the reduction
+    const GrB_Vector u,             // vector to reduce
+    const GrB_Descriptor desc
 ) ;
 
 //------------------------------------------------------------------------------
@@ -8374,7 +8384,7 @@ GrB_Info GrB_Matrix_reduce_BOOL     // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8384,7 +8394,7 @@ GrB_Info GrB_Matrix_reduce_INT8     // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8394,7 +8404,7 @@ GrB_Info GrB_Matrix_reduce_UINT8    // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8404,7 +8414,7 @@ GrB_Info GrB_Matrix_reduce_INT16    // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8414,7 +8424,7 @@ GrB_Info GrB_Matrix_reduce_UINT16   // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8424,7 +8434,7 @@ GrB_Info GrB_Matrix_reduce_INT32    // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8434,7 +8444,7 @@ GrB_Info GrB_Matrix_reduce_UINT32   // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8444,7 +8454,7 @@ GrB_Info GrB_Matrix_reduce_INT64    // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8454,7 +8464,7 @@ GrB_Info GrB_Matrix_reduce_UINT64   // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8464,7 +8474,7 @@ GrB_Info GrB_Matrix_reduce_FP32     // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8474,7 +8484,7 @@ GrB_Info GrB_Matrix_reduce_FP64     // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8484,7 +8494,7 @@ GrB_Info GxB_Matrix_reduce_FC32     // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8494,7 +8504,7 @@ GrB_Info GxB_Matrix_reduce_FC64     // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8504,7 +8514,7 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
 ) ;
 
 GB_PUBLIC
@@ -8514,7 +8524,17 @@ GrB_Info GrB_Matrix_reduce_Scalar   // c = accum (c, reduce_to_scalar (A))
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
     const GrB_Monoid monoid,        // monoid to do the reduction
     const GrB_Matrix A,             // matrix to reduce
-    const GrB_Descriptor desc       // descriptor (currently unused)
+    const GrB_Descriptor desc
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_nameless        // FIXME: spec leaves it nameless
+(
+    GrB_Scalar S,                   // result scalar
+    const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
+    const GrB_BinaryOp op,          // binary op to do the reduction
+    const GrB_Matrix A,             // matrix to reduce
+    const GrB_Descriptor desc
 ) ;
 
 //------------------------------------------------------------------------------
@@ -8530,29 +8550,40 @@ GrB_Info GrB_Matrix_reduce_Scalar   // c = accum (c, reduce_to_scalar (A))
 // reduce matrix to scalar:
 // GrB_Vector_reduce_[SCALAR] (c,acc,monoid,u,d)  // c = acc (c,reduce(u))
 // GrB_Matrix_reduce_[SCALAR] (c,acc,monoid,A,d)  // c = acc (c,reduce(A))
+// GrB_Vector_reduce_Scalar   (s,acc,monoid,u,d)  // s = acc (s,reduce(u))
+// GrB_Matrix_reduce_Scalar   (s,acc,monoid,A,d)  // s = acc (s,reduce(A))
+// GrB_Vector_nameless        (s,acc,op,u,d)      // s = acc (s,reduce(u))
+// GrB_Matrix_nameless        (s,acc,op,A,d)      // s = acc (s,reduce(A))
 
 #if GxB_STDC_VERSION >= 201112L
-#define GB_REDUCE_TO_SCALAR(kind,c)                                     \
-    _Generic                                                            \
-    (                                                                   \
-        (c),                                                            \
-            GB_CASES (*, GrB, GB_CONCAT ( kind, _reduce,, )),           \
-            default : GB_CONCAT (GrB,_,kind,_reduce_Scalar)             \
+#define GB_REDUCE_TO_SCALAR(kind,c,op)                                         \
+    _Generic                                                                   \
+    (                                                                          \
+        (c),                                                                   \
+            GB_CASES (*, GrB, GB_CONCAT ( kind, _reduce,, )),                  \
+            default :                                                          \
+                _Generic                                                       \
+                (                                                              \
+                    (op),                                                      \
+                        const GrB_BinaryOp : GB_CONCAT (GrB,_,kind,_nameless), \
+                              GrB_BinaryOp : GB_CONCAT (GrB,_,kind,_nameless), \
+                        default : GB_CONCAT (GrB,_,kind,_reduce_Scalar)        \
+                )                                                              \
     )
 
-#define GrB_reduce(arg1,arg2,arg3,arg4,...)                             \
-    _Generic                                                            \
-    (                                                                   \
-        (arg4),                                                         \
-            const GrB_Vector   : GB_REDUCE_TO_SCALAR (Vector, arg1),    \
-                  GrB_Vector   : GB_REDUCE_TO_SCALAR (Vector, arg1),    \
-            const GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
-                  GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1),    \
-            const GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
-                  GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,           \
-            const GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp ,           \
-                  GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp             \
-    )                                                                   \
+#define GrB_reduce(arg1,arg2,arg3,arg4,...)                                 \
+    _Generic                                                                \
+    (                                                                       \
+        (arg4),                                                             \
+            const GrB_Vector   : GB_REDUCE_TO_SCALAR (Vector, arg1, arg3),  \
+                  GrB_Vector   : GB_REDUCE_TO_SCALAR (Vector, arg1, arg3),  \
+            const GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1, arg3),  \
+                  GrB_Matrix   : GB_REDUCE_TO_SCALAR (Matrix, arg1, arg3),  \
+            const GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,               \
+                  GrB_Monoid   : GrB_Matrix_reduce_Monoid   ,               \
+            const GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp ,               \
+                  GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp                 \
+    )                                                                       \
     (arg1, arg2, arg3, arg4, __VA_ARGS__)
 #endif
 
