@@ -18,9 +18,6 @@ High priority:
         simple change, but computations on unsigned ints break badly and so
         should not be added.
 
-    #44 NULL input to GrB_wait as the mode is problematic
-        GrB_wait (A, NULL) is broken; no need for it.
-
     #42 export of a matrix in full format when entries are missing: should be an error
         Make this an error, just like an empty GrB_Scalar is often an error.
         Exporting in bitmap is awkward and not a "dense" format.
@@ -60,6 +57,7 @@ Low priority: most are useful or important, but can wait until the v2.1 C API:
 --------------------------------------------------------------------------------
 
     #50 GraphBLAS needs methods to sort a vector or matrix
+        I've written GxB_Matrix_sort and GxB_Vector_sort
 
     #49 consider making GrB_DESC_S the default.
         this would require v3.0 C API since it breaks backward compatiblity

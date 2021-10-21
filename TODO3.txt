@@ -56,8 +56,7 @@ New saxpy method:
 
         F += B*S
 
-            use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_sparse,
-            but with Cb implicitly all true (#if's).
+            uses dot products
 
         F += B*B
 
@@ -71,8 +70,7 @@ New saxpy method:
 
         F += F*S
 
-            use existing Template/GB_bitmap_AxB_saxpy_A_bitmap_B_sparse,
-            but with Cb implicitly all true (#if's).
+            uses dot products
 
         F += F*B
 
