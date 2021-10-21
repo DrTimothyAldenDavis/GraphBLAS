@@ -10,6 +10,7 @@
 #include "GB_sort.h"
 #include "GB_werk.h"
 #include "GB_transpose.h"
+#include "GB_ek_slice.h"
 
 //  macros:
 
@@ -187,15 +188,18 @@
 //------------------------------------------------------------------------------
     
 #undef  GB_FREE_WORK
-#define GB_FREE_WORK            \
-    GB_phbix_free (T) ;
+#define GB_FREE_WORK                        \
+{                                           \
+    GB_WERK_POP (C_ek_slicing, int64_t) ;   \
+    GB_phbix_free (T) ;                     \
+}
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_phbix_free (C) ;         \
-    GB_phbix_free (P) ;         \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_FREE_WORK ;                          \
+    GB_phbix_free (C) ;                     \
+    GB_phbix_free (P) ;                     \
 }
 
 GrB_Info GB_sort
@@ -221,6 +225,7 @@ GrB_Info GB_sort
 
     GrB_Matrix T = NULL ;
     struct GB_Matrix_opaque T_header ;
+    GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
@@ -285,7 +290,6 @@ GrB_Info GB_sort
             { 
                 // A = C
                 GB_OK (GB_dup_worker (&C, A_iso, A, true, atype, Context)) ;
-                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
         }
         else
@@ -295,13 +299,11 @@ GrB_Info GB_sort
             { 
                 // A = A'
                 GB_OK (GB_transpose_in_place (A, true, Context)) ;
-                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
             else
             { 
                 // C = A'
                 GB_OK (GB_transpose_cast (C, atype, true, A, false, Context)) ;
-                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
         }
     }
@@ -314,9 +316,7 @@ GrB_Info GB_sort
             if (!sort_in_place)
             { 
                 // A = C
-                // printf ("Here %d: %d\n", __LINE__, A_iso) ; GxB_print (A, 3);
                 GB_OK (GB_dup_worker (&C, A_iso, A, true, atype, Context)) ;
-                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
         }
         else
@@ -326,26 +326,20 @@ GrB_Info GB_sort
             { 
                 // A = A'
                 GB_OK (GB_transpose_in_place (A, false, Context)) ;
-                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
             else
             { 
                 // C = A'
                 GB_OK (GB_transpose_cast (C, atype, false, A, false, Context)) ;
-                // printf ("Here %d:\n", __LINE__) ; GxB_print (C, 3) ;
             }
         }
     }
-
-    // printf ("Prior to convert:\n") ;GxB_print (C, 3) ;
 
     // ensure C is sparse or hypersparse CSC
     if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
     { 
         GB_OK (GB_convert_any_to_sparse (C, Context)) ;
     }
-    
-    // printf ("Prior to sort:\n") ;GxB_print (C, 3) ;
 
     //--------------------------------------------------------------------------
     // sort C in place
@@ -353,10 +347,6 @@ GrB_Info GB_sort
 
     GB_Opcode opcode = op->opcode ;
     GB_Type_code acode = atype->code ;
-//  GxB_print (op, 3) ;
-//  GxB_print (atype, 3) ;
-//  printf ("opcode: %d  is lt: %d is gt: %d\n", opcode,
-//      opcode == GB_LT_binop_code, opcode == GB_GT_binop_code) ;
 
     if ((op->xtype == atype) && (op->ytype == atype) &&
         (opcode == GB_LT_binop_code || opcode == GB_GT_binop_code) &&
@@ -465,17 +455,26 @@ GrB_Info GB_sort
         Ti = P->i ;
     }
 
-    // construct the indices of P (and also C on output)
-    // FIXME: do this in parallel
-
+    int C_nthreads, C_ntasks ;
+    GB_SLICE_MATRIX (C, 1, chunk) ;
     int64_t *restrict Cp = C->p ;
-    for (int k = 0 ; k < cnvec ; k++)
+    const int64_t cvlen = C->vlen ;
+    int tid ;
+    #pragma omp parallel for num_threads(C_nthreads) schedule(static,1)
+    for (tid = 0 ; tid < C_ntasks ; tid++)
     {
-        int64_t pC_start = Cp [k] ;
-        int64_t pC_end = Cp [k+1] ;
-        for (int64_t pC = pC_start ; pC < pC_end ; pC++)
-        { 
-            Ti [pC] = pC - pC_start ;
+        int64_t kfirst = kfirst_Cslice [tid] ;
+        int64_t klast  = klast_Cslice  [tid] ;
+        for (int64_t k = kfirst ; k <= klast ; k++)
+        {
+            const int64_t pC0 = Cp [k] ;
+            int64_t pC_start, pC_end ;
+            GB_get_pA (&pC_start, &pC_end, tid, k,
+                kfirst, klast, pstart_Cslice, Cp, cvlen) ;
+            for (int64_t pC = pC_start ; pC < pC_end ; pC++)
+            { 
+                Ti [pC] = pC - pC0 ;
+            }
         }
     }
 
