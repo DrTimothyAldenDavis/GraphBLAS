@@ -335,6 +335,7 @@
 #define GrB_Matrix_kronecker_BinaryOp GrM_Matrix_kronecker_BinaryOp
 #define GrB_Matrix_kronecker_Monoid GrM_Matrix_kronecker_Monoid
 #define GrB_Matrix_kronecker_Semiring GrM_Matrix_kronecker_Semiring
+#define GrB_Matrix_nameless GrM_Matrix_nameless
 #define GrB_Matrix_ncols GrM_Matrix_ncols
 #define GrB_Matrix_new GrM_Matrix_new
 #define GrB_Matrix_nrows GrM_Matrix_nrows
@@ -873,6 +874,7 @@
 #define GrB_Vector_extractTuples_UINT64 GrM_Vector_extractTuples_UINT64
 #define GrB_Vector_extractTuples_UINT8 GrM_Vector_extractTuples_UINT8
 #define GrB_Vector_free GrM_Vector_free
+#define GrB_Vector_nameless GrM_Vector_nameless
 #define GrB_Vector_new GrM_Vector_new
 #define GrB_Vector_nvals GrM_Vector_nvals
 #define GrB_Vector_reduce_BOOL GrM_Vector_reduce_BOOL

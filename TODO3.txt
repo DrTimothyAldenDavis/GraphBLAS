@@ -49,6 +49,11 @@ New saxpy method:
             if atomics are used, need to create Cb and set it all to 1's,
             then free it when done.
 
+C = A*B   A sparse, by col, B full by col: C is full!
+C = identity
+C += A*B
+C = GrB_mxm (A,B) ; the GrB result
+
         F += S*F
 
             use existing Template/GB_bitmap_AxB_saxpy_A_sparse_B_bitmap,

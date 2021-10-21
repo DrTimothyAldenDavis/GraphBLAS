@@ -32,7 +32,8 @@ void mexFunction
 
     GrB_Info info ;
     GrB_Matrix C = NULL, A = NULL, B = NULL, P = NULL ;
-    GrB_Scalar Amissing = NULL, Bmissing = NULL ;
+    GrB_Scalar Amissing = NULL, Bmissing = NULL, S = NULL ;
+    GrB_Vector u = NULL ;
     GrB_Type MyType = NULL ;
     char *err ;
 
@@ -121,9 +122,21 @@ void mexFunction
     expected = GrB_DIMENSION_MISMATCH ;
     ERR (GxB_Matrix_sort (C, P, GrB_LT_FP64, A, NULL)) ;
 
-    GrB_Matrix_free_(&A) ;
     GrB_Matrix_free_(&P) ;
     GrB_Matrix_free_(&C) ;
+
+    //--------------------------------------------------------------------------
+    // reduce to GrB_Scalar
+    //--------------------------------------------------------------------------
+
+    expected = GrB_NOT_IMPLEMENTED ;
+    GrB_Scalar_new (&S, GrB_FP64) ;
+    ERR (GrB_Matrix_nameless_(S, NULL, GrB_LT_FP64, A, NULL)) ;
+    OK (GrB_Vector_new (&u, GrB_FP64, 10)) ;
+    ERR (GrB_Vector_nameless_(S, NULL, GrB_LT_FP64, u, NULL)) ;
+    GrB_Scalar_free_(&S) ;
+    GrB_Vector_free_(&u) ;
+    GrB_Matrix_free_(&A) ;
 
     //--------------------------------------------------------------------------
     // wrapup

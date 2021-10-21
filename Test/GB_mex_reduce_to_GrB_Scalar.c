@@ -122,17 +122,105 @@ void mexFunction
 
     // S = accum(S,A*B)
 
-    // test both Vector and Matrix methods.  The typecast is not necessary,
-    // just to test.
-    if (GB_VECTOR_OK (A))
+    if (reduceop == GrB_MIN_INT8
+    ||  reduceop == GrB_MIN_INT16
+    ||  reduceop == GrB_MIN_INT32
+    ||  reduceop == GrB_MIN_INT64
+    ||  reduceop == GrB_MIN_UINT8
+    ||  reduceop == GrB_MIN_UINT16
+    ||  reduceop == GrB_MIN_UINT32
+    ||  reduceop == GrB_MIN_UINT64
+    ||  reduceop == GrB_MIN_FP32
+    ||  reduceop == GrB_MIN_FP64
+    ||  reduceop == GrB_MAX_INT8
+    ||  reduceop == GrB_MAX_INT16
+    ||  reduceop == GrB_MAX_INT32
+    ||  reduceop == GrB_MAX_INT64
+    ||  reduceop == GrB_MAX_UINT8
+    ||  reduceop == GrB_MAX_UINT16
+    ||  reduceop == GrB_MAX_UINT32
+    ||  reduceop == GrB_MAX_UINT64
+    ||  reduceop == GrB_MAX_FP32
+    ||  reduceop == GrB_MAX_FP64
+    ||  reduceop == GrB_PLUS_INT8
+    ||  reduceop == GrB_PLUS_INT16
+    ||  reduceop == GrB_PLUS_INT32
+    ||  reduceop == GrB_PLUS_INT64
+    ||  reduceop == GrB_PLUS_UINT8
+    ||  reduceop == GrB_PLUS_UINT16
+    ||  reduceop == GrB_PLUS_UINT32
+    ||  reduceop == GrB_PLUS_UINT64
+    ||  reduceop == GrB_PLUS_FP32
+    ||  reduceop == GrB_PLUS_FP64
+    ||  reduceop == GxB_PLUS_FC32
+    ||  reduceop == GxB_PLUS_FC64
+    ||  reduceop == GrB_TIMES_INT8
+    ||  reduceop == GrB_TIMES_INT16
+    ||  reduceop == GrB_TIMES_INT32
+    ||  reduceop == GrB_TIMES_INT64
+    ||  reduceop == GrB_TIMES_UINT8
+    ||  reduceop == GrB_TIMES_UINT16
+    ||  reduceop == GrB_TIMES_UINT32
+    ||  reduceop == GrB_TIMES_UINT64
+    ||  reduceop == GrB_TIMES_FP32
+    ||  reduceop == GrB_TIMES_FP64
+    ||  reduceop == GxB_TIMES_FC32
+    ||  reduceop == GxB_TIMES_FC64
+    ||  reduceop == GxB_ANY_BOOL
+    ||  reduceop == GxB_ANY_INT8
+    ||  reduceop == GxB_ANY_INT16
+    ||  reduceop == GxB_ANY_INT32
+    ||  reduceop == GxB_ANY_INT64
+    ||  reduceop == GxB_ANY_UINT8
+    ||  reduceop == GxB_ANY_UINT16
+    ||  reduceop == GxB_ANY_UINT32
+    ||  reduceop == GxB_ANY_UINT64
+    ||  reduceop == GxB_ANY_FP32
+    ||  reduceop == GxB_ANY_FP64
+    ||  reduceop == GxB_ANY_FC32
+    ||  reduceop == GxB_ANY_FC64
+    ||  reduceop == GrB_LOR
+    ||  reduceop == GrB_LAND
+    ||  reduceop == GrB_LXOR
+    ||  reduceop == GrB_LXNOR
+    ||  reduceop == GrB_BOR_UINT8
+    ||  reduceop == GrB_BOR_UINT16
+    ||  reduceop == GrB_BOR_UINT32
+    ||  reduceop == GrB_BOR_UINT64
+    ||  reduceop == GrB_BAND_UINT8
+    ||  reduceop == GrB_BAND_UINT16
+    ||  reduceop == GrB_BAND_UINT32
+    ||  reduceop == GrB_BAND_UINT64
+    ||  reduceop == GrB_BXOR_UINT8
+    ||  reduceop == GrB_BXOR_UINT16
+    ||  reduceop == GrB_BXOR_UINT32
+    ||  reduceop == GrB_BXOR_UINT64
+    ||  reduceop == GrB_BXNOR_UINT8
+    ||  reduceop == GrB_BXNOR_UINT16
+    ||  reduceop == GrB_BXNOR_UINT32
+    ||  reduceop == GrB_BXNOR_UINT64)
     {
-        METHOD (GrB_Vector_reduce_Scalar ((GrB_Scalar) S, accum, reduce,
-            (GrB_Vector) A, NULL)) ;
+        // S = accum (S, reduce (A)) using a binary op
+        if (GB_VECTOR_OK (A))
+        {
+            METHOD (GrB_Vector_nameless_((GrB_Scalar) S, accum, reduceop, (GrB_Vector) A, NULL)) ;
+        }
+        else
+        {
+            METHOD (GrB_Matrix_nameless_((GrB_Scalar) S, accum, reduceop, A, NULL)) ;
+        }
     }
     else
     {
-        METHOD (GrB_Matrix_reduce_Scalar ((GrB_Scalar) S, accum, reduce, A,
-            NULL)) ;
+        // S = accum (S, reduce (A)) using a monoid
+        if (GB_VECTOR_OK (A))
+        {
+            METHOD (GrB_Vector_reduce_Scalar_((GrB_Scalar) S, accum, reduce, (GrB_Vector) A, NULL)) ;
+        }
+        else
+        {
+            METHOD (GrB_Matrix_reduce_Scalar_((GrB_Scalar) S, accum, reduce, A, NULL)) ;
+        }
     }
 
     // return S as struct
