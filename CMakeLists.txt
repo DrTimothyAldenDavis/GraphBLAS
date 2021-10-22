@@ -125,6 +125,10 @@ find_package ( OpenMP )
         set ( RMM_WRAP off )
     endif ( )
 
+# FIXME: CUDA disabled for now
+set ( CMAKE_CUDA off )
+set ( RMM_WRAP off )
+
 if ( CMAKE_CUDA )
     # find_package (CUDA REQUIRED )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
