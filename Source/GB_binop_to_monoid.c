@@ -20,12 +20,7 @@ GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (op_in == NULL ||
-        op_in->xtype != op_in->ztype ||
-        op_in->ytype != op_in->ztype)
-    { 
-        return (NULL) ;
-    }
+    ASSERT (op_in != NULL) ;
 
     //--------------------------------------------------------------------------
     // convert the binary op_in to its corresponding monoid
