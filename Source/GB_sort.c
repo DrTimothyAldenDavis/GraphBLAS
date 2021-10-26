@@ -363,27 +363,27 @@ GrB_Info GB_sort
             switch (acode)
             {
                 case GB_BOOL_code : 
-                    GB_OK (GB_sort_matrix_ascend_BOOL    (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_BOOL   )(C, Context)) ; break ;
                 case GB_INT8_code : 
-                    GB_OK (GB_sort_matrix_ascend_INT8    (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_INT8   )(C, Context)) ; break ;
                 case GB_INT16_code : 
-                    GB_OK (GB_sort_matrix_ascend_INT16   (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_INT16  )(C, Context)) ; break ;
                 case GB_INT32_code : 
-                    GB_OK (GB_sort_matrix_ascend_INT32   (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_INT32  )(C, Context)) ; break ;
                 case GB_INT64_code : 
-                    GB_OK (GB_sort_matrix_ascend_INT64   (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_INT64  )(C, Context)) ; break ;
                 case GB_UINT8_code : 
-                    GB_OK (GB_sort_matrix_ascend_UINT8   (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_UINT8  )(C, Context)) ; break ;
                 case GB_UINT16_code : 
-                    GB_OK (GB_sort_matrix_ascend_UINT16  (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_UINT16 )(C, Context)) ; break ;
                 case GB_UINT32_code : 
-                    GB_OK (GB_sort_matrix_ascend_UINT32  (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_UINT32 )(C, Context)) ; break ;
                 case GB_UINT64_code : 
-                    GB_OK (GB_sort_matrix_ascend_UINT64  (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_UINT64 )(C, Context)) ; break ;
                 case GB_FP32_code : 
-                    GB_OK (GB_sort_matrix_ascend_FP32    (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_FP32   )(C, Context)) ; break ;
                 case GB_FP64_code : 
-                    GB_OK (GB_sort_matrix_ascend_FP64    (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_FP64   )(C, Context)) ; break ;
                 default:;
             }
         }
@@ -393,27 +393,27 @@ GrB_Info GB_sort
             switch (acode)
             {
                 case GB_BOOL_code : 
-                    GB_OK (GB_sort_matrix_descend_BOOL   (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_BOOL  )(C, Context)) ; break ;
                 case GB_INT8_code : 
-                    GB_OK (GB_sort_matrix_descend_INT8   (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_INT8  )(C, Context)) ; break ;
                 case GB_INT16_code : 
-                    GB_OK (GB_sort_matrix_descend_INT16  (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_INT16 )(C, Context)) ; break ;
                 case GB_INT32_code : 
-                    GB_OK (GB_sort_matrix_descend_INT32  (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_INT32 )(C, Context)) ; break ;
                 case GB_INT64_code : 
-                    GB_OK (GB_sort_matrix_descend_INT64  (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_INT64 )(C, Context)) ; break ;
                 case GB_UINT8_code : 
-                    GB_OK (GB_sort_matrix_descend_UINT8  (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_UINT8 )(C, Context)) ; break ;
                 case GB_UINT16_code : 
-                    GB_OK (GB_sort_matrix_descend_UINT16 (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_UINT16)(C, Context)) ; break ;
                 case GB_UINT32_code : 
-                    GB_OK (GB_sort_matrix_descend_UINT32 (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_UINT32)(C, Context)) ; break ;
                 case GB_UINT64_code : 
-                    GB_OK (GB_sort_matrix_descend_UINT64 (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_UINT64)(C, Context)) ; break ;
                 case GB_FP32_code : 
-                    GB_OK (GB_sort_matrix_descend_FP32   (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_FP32  )(C, Context)) ; break ;
                 case GB_FP64_code : 
-                    GB_OK (GB_sort_matrix_descend_FP64   (C, Context)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_FP64  )(C, Context)) ; break ;
                 default:;
             }
         }
@@ -426,7 +426,7 @@ GrB_Info GB_sort
         // typecasting, user-defined types, or unconventional operators
         //----------------------------------------------------------------------
 
-        GB_OK (GB_sort_matrix_UDT (C, op, Context)) ;
+        GB_OK (GB (sort_matrix_UDT) (C, op, Context)) ;
     }
 
     //--------------------------------------------------------------------------
