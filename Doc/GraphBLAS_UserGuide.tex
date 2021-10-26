@@ -215,10 +215,16 @@ are extensions to the GraphBLAS C API.
         v1.9.3, Copyright (c) 2011-2016, Yann Collet.
     \item mis and pagerank demos: removed; mis added to LAGraph/experimental
     \item disabled free memory pool if OpenMP not available
-    \item (33) bug fix: \verb'GrB_apply' when \verb'C' is iso and index op is applied in place
-    \item (32) bug fix: \verb'C<M>=Z' not returning \verb'C'
+    \item (34) bug fix: \verb'C<M>=Z' not returning \verb'C'
         as iso if \verb'Z 'iso and \verb'C' initially
         empty.  Caught by Erik Welch, Anaconda.
+    \end{packed_itemize}
+
+\item Version 5.1.9, Oct 26, 2021
+
+    \begin{packed_itemize}
+    \item (33) bug fix: in-place test incorrect for C+=A'*B using dot4
+    \item (32) bug fix: disable free pool if OpenMP not available
     \end{packed_itemize}
 
 \item Version 5.1.8 (Oct 5, 2021)
