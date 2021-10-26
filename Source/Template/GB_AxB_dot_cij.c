@@ -30,8 +30,6 @@
 // found, so these optimizations can be used only if A(:,i) and/or B(:,j) are
 // entirely populated.
 
-// TODO::: if A or B are full, and no mask, create C as full (dot2)
-
 #undef GB_A_INDEX
 #ifdef GB_A_NOT_TRANSPOSED
 #define GB_A_INDEX(k) (pA+(k)*vlen)

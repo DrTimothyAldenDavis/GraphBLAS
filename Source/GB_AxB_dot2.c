@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot2: compute C<#M>=A'*B, C is bitmap, or C<#M>=A*B (A bitmap/full)
+// GB_AxB_dot2: compute C<#M>=A'*B, C is bitmap, or C<#M>=A*B (C bitmap/full)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -15,7 +15,7 @@
 // bitmap or full, and the dot product method accesses A with a different
 // stride than when computing C=A'*B.
 
-// TODO:  this is slower than it could be if A and B are both bitmap, when
+// TODO:  this is slower than it could be if A and B are both bitmap/full, when
 // A->vlen is large.  This is because the inner loop is a simple full/bitmap
 // dot product, across the entire input vectors.  No tiling is used, so cache
 // performance is not as good as it could be.  For large problems, C=(A')*B is
@@ -87,33 +87,15 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GB_WERK_DECLARE (B_slice, int64_t) ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
-    if (M_in == NULL)
-    { 
-        GBURBLE ("(dot %s=%s%s*%s) ",
-            GB_sparsity_char (GxB_BITMAP),
-            GB_sparsity_char_matrix (A_in),
-            A_not_transposed ? "" : "'",
-            GB_sparsity_char_matrix (B_in)) ;
-    }
-    else
-    { 
-        GBURBLE ("(dot %s%s%s%s%s=%s%s*%s) ",
-            GB_sparsity_char (GxB_BITMAP),
-            Mask_struct ? "{" : "<",
-            Mask_comp ? "!" : "",
-            GB_sparsity_char_matrix (M_in),
-            Mask_struct ? "}" : ">",
-            GB_sparsity_char_matrix (A_in),
-            A_not_transposed ? "" : "'",
-            GB_sparsity_char_matrix (B_in)) ;
-    }
-
     // GB_AxB_saxpy punts to this dot2 method for for C=A*B, and in this case,
     // A is bitmap or full, and B is hypersparse or sparse
-    bool A_bitmap_or_full = (GB_IS_BITMAP (A_in) || GB_IS_FULL (A_in)) ;
-    bool B_bitmap_or_full = (GB_IS_BITMAP (B_in) || GB_IS_FULL (B_in)) ;
+    bool A_is_full = GB_as_if_full (A_in) ;
+    bool B_is_full = GB_as_if_full (B_in) ;
+    bool A_bitmap_or_full = (GB_IS_BITMAP (A_in) || A_is_full) ;
+    bool B_bitmap_or_full = (GB_IS_BITMAP (B_in) || B_is_full) ;
     ASSERT (GB_IMPLIES (A_not_transposed,
-        A_bitmap_or_full && !B_bitmap_or_full)) ;
+        (GB_IS_BITMAP (A_in) || GB_IS_FULL (A_in)) &&
+        (GB_IS_SPARSE (B_in) || GB_IS_HYPERSPARSE (B_in)))) ;
 
     //--------------------------------------------------------------------------
     // construct shallow copies of A and B, if hypersparse
@@ -141,6 +123,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     ASSERT (!GB_IS_HYPERSPARSE (A)) ;
     ASSERT (!GB_IS_HYPERSPARSE (B)) ;
     ASSERT (GB_IMPLIES (A_not_transposed, !A_is_hyper && (A == A_in))) ;
+    bool A_is_sparse = GB_IS_SPARSE (A) ;
+    bool B_is_sparse = GB_IS_SPARSE (B) ;
 
     //--------------------------------------------------------------------------
     // determine the size of C
@@ -290,9 +274,66 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     bool M_is_sparse_or_hyper = (M != NULL) &&
         (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     GrB_Type ctype = add->op->ztype ;
+
+    // determine the sparsity of C
+    int C_sparsity = GxB_BITMAP ;
+    if (M == NULL)
+    {
+        // no mask is present so C can be bitmap or full
+        if (A_is_full && B_is_full)
+        {
+            // C = A*B or A'*B, both A and B full: C is full
+            C_sparsity = GxB_FULL ;
+        }
+        else if (A_is_full && B_is_sparse)
+        {
+            // C = A*B or A'*B, where A is full and B sparse
+            if (B->nvec_nonempty < 0)
+            { 
+                B->nvec_nonempty = GB_nvec_nonempty (B, Context) ;
+            }
+            // C is full if all vectors of B are present
+            C_sparsity = (B->nvec_nonempty == B->vdim) ?
+                GxB_FULL : GxB_BITMAP ;
+        }
+        else if (A_is_sparse && B_is_full)
+        {
+            // C = A'*B, where A is sparse and B is full
+            if (A->nvec_nonempty < 0)
+            { 
+                // A->nvec_nonempty is used to select the method 
+                A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+            }
+            // C is full if all vectors of A are present
+            C_sparsity = (A->nvec_nonempty == A->vdim) ?
+                GxB_FULL : GxB_BITMAP ;
+        }
+    }
+
+    if (M_in == NULL)
+    { 
+        GBURBLE ("(dot %s=%s%s*%s) ",
+            GB_sparsity_char (C_sparsity),
+            GB_sparsity_char_matrix (A_in),
+            A_not_transposed ? "" : "'",
+            GB_sparsity_char_matrix (B_in)) ;
+    }
+    else
+    { 
+        GBURBLE ("(dot %s%s%s%s%s=%s%s*%s) ",
+            GB_sparsity_char (C_sparsity),
+            Mask_struct ? "{" : "<",
+            Mask_comp ? "!" : "",
+            GB_sparsity_char_matrix (M_in),
+            Mask_struct ? "}" : ">",
+            GB_sparsity_char_matrix (A_in),
+            A_not_transposed ? "" : "'",
+            GB_sparsity_char_matrix (B_in)) ;
+    }
+
     // set C->iso = C_iso
-    GB_OK (GB_new_bix (&C, true, // bitmap, static header
-        ctype, cvlen, cvdim, GB_Ap_malloc, true, GxB_BITMAP,
+    GB_OK (GB_new_bix (&C, true, // bitmap/ful, static header
+        ctype, cvlen, cvdim, GB_Ap_malloc, true, C_sparsity,
         M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso,
         Context)) ;
 
@@ -306,6 +347,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // However, in the future, this method might be able to modify C on
         // input, in which case C->b will not be all zero.
 
+        ASSERT (C_sparsity == GxB_BITMAP) ;
         int M_ntasks, M_nthreads ;
         GB_SLICE_MATRIX (M, 8, chunk) ;
 
@@ -396,9 +438,10 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         if (!done)
         { 
             #define GB_DOT2_GENERIC
-            GB_BURBLE_MATRIX (C, "(generic C%s=A%s*B, C bitmap) ",
+            GB_BURBLE_MATRIX (C, "(generic C%s=A%s*B, C %s) ",
                 (M == NULL) ? "" : (Mask_comp ? "<!M>" : "<M>"),
-                A_not_transposed ? "" : "'") ;
+                A_not_transposed ? "" : "'",
+                (C_sparsity == GxB_BITMAP) ? "bitmap" : "full") ;
             #include "GB_AxB_dot_generic.c"
         }
     }

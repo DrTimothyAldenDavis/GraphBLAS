@@ -15,6 +15,38 @@
 // If A_NOT_TRANSPOSED is #defined, the C=A*B or C<#M>=A*B is computed.
 // In this case A is bitmap or full, and B is sparse.
 
+// GB_DOT_ALWAYS_SAVE_CIJ: C(i,j) = cij
+#undef GB_DOT_ALWAYS_SAVE_CIJ
+#if GB_C_IS_FULL
+    #define GB_DOT_ALWAYS_SAVE_CIJ      \
+    {                                   \
+        GB_PUTC (cij, pC) ;             \
+    }
+#else
+    #define GB_DOT_ALWAYS_SAVE_CIJ      \
+    {                                   \
+        GB_PUTC (cij, pC) ;             \
+        Cb [pC] = 1 ;                   \
+        task_cnvals++ ;                 \
+    }
+#endif
+
+// GB_DOT_SAVE_CIJ: C(i,j) = cij, unless already done by GB_DOT
+#undef GB_DOT_SAVE_CIJ
+#if GB_IS_ANY_MONOID
+    // for the ANY monoid, GB_DOT saves C(i,j) as soon as a value is found
+    #define GB_DOT_SAVE_CIJ
+#else
+    // all other monoids: C(i,j) = cij if it exists
+    #define GB_DOT_SAVE_CIJ             \
+    {                                   \
+        if (GB_CIJ_EXISTS)              \
+        {                               \
+            GB_DOT_ALWAYS_SAVE_CIJ ;    \
+        }                               \
+    }
+#endif
+
 #if ( !GB_A_IS_HYPER && !GB_B_IS_HYPER )
 {
 
@@ -23,8 +55,12 @@
     //--------------------------------------------------------------------------
 
     int tid ;
+    #if GB_C_IS_FULL
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    #else
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(+:cnvals)
+    #endif
     for (tid = 0 ; tid < ntasks ; tid++)
     {
 
@@ -38,7 +74,9 @@
         const int64_t kA_end   = A_slice [a_tid+1] ;
         const int64_t kB_start = B_slice [b_tid] ;
         const int64_t kB_end   = B_slice [b_tid+1] ;
+        #if (!GB_C_IS_FULL)
         int64_t task_cnvals = 0 ;
+        #endif
 
         //----------------------------------------------------------------------
         // C=A'*B, C<M>=A'*B, or C<!M>=A'*B via dot products
@@ -114,6 +152,8 @@
                 }
                 Cb [pC] = 0 ;
                 if (mij ^ Mask_comp)
+                #elif GB_C_IS_FULL
+                // C is full; nothing to do
                 #else
                 // M is not present
                 Cb [pC] = 0 ;
@@ -129,7 +169,9 @@
                     int64_t pA = Ap [i] ;
                     const int64_t pA_end = Ap [i+1] ;
                     const int64_t ainz = pA_end - pA ;
-                    if (ainz > 0)
+                    #if (!GB_C_IS_FULL)
+                    if (ainz > 0)       // skip this test if C is full
+                    #endif
                     #else
                         // A is bitmap or full
                         #ifdef GB_A_NOT_TRANSPOSED
@@ -146,11 +188,12 @@
                         GB_CIJ_DECLARE (cij) ;
                         #include "GB_AxB_dot_cij.c"
                     }
-
                 }
             }
         }
+        #if (!GB_C_IS_FULL)
         cnvals += task_cnvals ;
+        #endif
     }
 }
 #endif
@@ -163,4 +206,6 @@
 #undef GB_B_IS_HYPER
 #undef GB_B_IS_BITMAP
 #undef GB_B_IS_FULL
+#undef GB_DOT_ALWAYS_SAVE_CIJ
+#undef GB_DOT_SAVE_CIJ
 

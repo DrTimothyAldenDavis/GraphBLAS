@@ -12,33 +12,6 @@
 #include "GB_unused.h"
 #include "GB_AxB_dot_cij.h"
 
-// GB_DOT_ALWAYS_SAVE_CIJ: C(i,j) = cij
-#define GB_DOT_ALWAYS_SAVE_CIJ      \
-{                                   \
-    GB_PUTC (cij, pC) ;             \
-    Cb [pC] = 1 ;                   \
-    task_cnvals++ ;                 \
-}
-
-// GB_DOT_SAVE_CIJ: C(i,j) = cij, unless already done by GB_DOT
-#if GB_IS_ANY_MONOID
-
-    // for the ANY monoid, GB_DOT saves C(i,j) as soon as a value is found
-    #define GB_DOT_SAVE_CIJ
-
-#else
-
-    // all other monoids: C(i,j) = cij if it exists
-    #define GB_DOT_SAVE_CIJ             \
-    {                                   \
-        if (GB_CIJ_EXISTS)              \
-        {                               \
-            GB_DOT_ALWAYS_SAVE_CIJ ;    \
-        }                               \
-    }
-
-#endif
-
 {
 
     //--------------------------------------------------------------------------
@@ -47,20 +20,22 @@
 
     // A and B are never hypersparse.  If they are hypersparse on input, they
     // are converted to hyper_shallow form first, and the C matrix has smaller
-    // dimensions.  The C bitmap matrix is converted back into a sparse or
+    // dimensions.  The C bitmap/full matrix is converted back into a sparse or
     // hypersparse matrix when done.
 
     int64_t cnvals = 0 ;
 
-    ASSERT (GB_IS_BITMAP (C)) ;     // TODO::: make C full if possible
+    ASSERT (GB_IS_BITMAP (C) || GB_IS_FULL (C)) ;
     int8_t *restrict Cb = C->b ;
     const int64_t cvlen = C->vlen ;
+    const bool C_is_full = (Cb == NULL) ;
 
     const int64_t *restrict Bp = B->p ;
     const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
+    const bool B_is_full   = GB_as_if_full (B) ;
     const bool B_iso = B->iso ;
     ASSERT (!GB_IS_HYPERSPARSE (B)) ;
     #define B_is_hyper false
@@ -71,6 +46,7 @@
 
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
+    const bool A_is_full   = GB_as_if_full (A) ;
     const bool A_iso = A->iso ;
     ASSERT (!GB_IS_HYPERSPARSE (A)) ;
     #define A_is_hyper false
@@ -104,9 +80,29 @@
             #define GB_A_NOT_TRANSPOSED
             ASSERT (A_is_bitmap || GB_IS_FULL (A)) ;
             ASSERT (B_is_sparse) ;
-            if (A_is_bitmap)
+            if (C_is_full)
+            {
+                // C=A*B via dot products, where A is full and B is sparse,
+                // and C is full
+                ASSERT (GB_as_if_full (A)) ;
+                #undef  GB_C_IS_FULL
+                #define GB_C_IS_FULL   1
+                #define GB_A_IS_SPARSE 0
+                #define GB_A_IS_HYPER  0
+                #define GB_A_IS_BITMAP 0
+                #define GB_A_IS_FULL   1
+                #define GB_B_IS_SPARSE 1
+                #define GB_B_IS_HYPER  0
+                #define GB_B_IS_BITMAP 0
+                #define GB_B_IS_FULL   0
+                #include "GB_AxB_dot2_template.c"
+            }
+            else if (A_is_bitmap)
             { 
-                // C=A*B via dot products, where A is bitmap and B is sparse
+                // C=A*B via dot products, where A is bitmap and B is sparse,
+                // and C is bitmap
+                #undef  GB_C_IS_FULL
+                #define GB_C_IS_FULL   0
                 #define GB_A_IS_SPARSE 0
                 #define GB_A_IS_HYPER  0
                 #define GB_A_IS_BITMAP 1
@@ -119,7 +115,10 @@
             }
             else
             { 
-                // C=A*B via dot products, where A is full and B is sparse
+                // C=A*B via dot products, where A is full and B is sparse,
+                // and C is bitmap
+                #undef  GB_C_IS_FULL
+                #define GB_C_IS_FULL   0
                 #define GB_A_IS_SPARSE 0
                 #define GB_A_IS_HYPER  0
                 #define GB_A_IS_BITMAP 0
@@ -132,9 +131,61 @@
             } 
             #undef GB_A_NOT_TRANSPOSED
         }
+        else if (C_is_full)
+        {
+            // C = A'*B, via dot2 method, where A is implicitly transposed,
+            // C is full.  3 cases:
+            #undef  GB_C_IS_FULL
+            #define GB_C_IS_FULL   1
+            if (A_is_full && B_is_full)
+            {
+                // A full, B full
+                #define GB_A_IS_SPARSE 0
+                #define GB_A_IS_HYPER  0
+                #define GB_A_IS_BITMAP 0
+                #define GB_A_IS_FULL   1
+                #define GB_B_IS_SPARSE 0
+                #define GB_B_IS_HYPER  0
+                #define GB_B_IS_BITMAP 0
+                #define GB_B_IS_FULL   1
+                #include "GB_AxB_dot2_template.c"
+            }
+            else if (A_is_full)
+            { 
+                // A full, B sparse
+                ASSERT (B_is_sparse) ;
+                #define GB_A_IS_SPARSE 0
+                #define GB_A_IS_HYPER  0
+                #define GB_A_IS_BITMAP 0
+                #define GB_A_IS_FULL   1
+                #define GB_B_IS_SPARSE 1
+                #define GB_B_IS_HYPER  0
+                #define GB_B_IS_BITMAP 0
+                #define GB_B_IS_FULL   0
+                #include "GB_AxB_dot2_template.c"
+            }
+            else
+            { 
+                // A sparse, B full
+                ASSERT (A_is_sparse) ;
+                ASSERT (B_is_full) ;
+                #define GB_A_IS_SPARSE 1
+                #define GB_A_IS_HYPER  0
+                #define GB_A_IS_BITMAP 0
+                #define GB_A_IS_FULL   0
+                #define GB_B_IS_SPARSE 0
+                #define GB_B_IS_HYPER  0
+                #define GB_B_IS_BITMAP 0
+                #define GB_B_IS_FULL   1
+                #include "GB_AxB_dot2_template.c"
+            }
+            #undef  GB_C_IS_FULL
+            #define GB_C_IS_FULL   0
+        }
         else
         {
-            // C = A'*B, via dot2 method, where A is implicitly transposed
+            // C = A'*B, via dot2 method, where A is implicitly transposed,
+            // C is bitmap
             #include "GB_meta16_factory.c"
         }
 
@@ -256,9 +307,5 @@
 
 #undef A_is_hyper
 #undef B_is_hyper
-
-#undef GB_DOT_ALWAYS_SAVE_CIJ
-#undef GB_DOT_SAVE_CIJ
-
 #undef GB_DOT2
 
