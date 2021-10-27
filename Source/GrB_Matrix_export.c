@@ -135,7 +135,7 @@ GrB_Info GrB_Matrix_export  // export a matrix
         else
         { 
             // T = A
-            GB_OK (GB_dup_worker (&T, false, A, true, A->type, Context)) ;
+            GB_OK (GB_dup_worker (&T, A->iso, A, true, A->type, Context)) ;
         }
 
         switch (format)
