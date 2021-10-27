@@ -767,6 +767,7 @@ GrB_Info GB_selector
             // free the old A->p and transplant in Cp as the new A->p
             GB_FREE (&Ap, Ap_size) ;
             A->p = Cp ; Cp = NULL ; A->p_size = Cp_size ;
+            A->plen = anvec ;
         }
 
         ASSERT (Cp == NULL) ;
@@ -833,6 +834,7 @@ GrB_Info GB_selector
         C->h = Ch ; Ch = NULL ; C->h_size = Ch_size ;
         C->i = Ci ; Ci = NULL ; C->i_size = Ci_size ;
         C->x = Cx ; Cx = NULL ; C->x_size = Cx_size ;
+        C->plen = anvec ;
         C->magic = GB_MAGIC ;
         C->nvec_nonempty = C_nvec_nonempty ;
         C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled

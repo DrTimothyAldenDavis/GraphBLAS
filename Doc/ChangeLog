@@ -62,6 +62,11 @@ Version 5.2.0, FIXME
     * (34) bug fix: C<M>=Z not returning C as iso if Z iso and C initialy
         empty.  Caught by Erik Welch, Anaconda.
 
+Version 5.1.10, Oct 27, 2021
+
+    * (35) bug fix: GB_selector; A->plen and C->plen not updated correctly.
+        Caught by Jeffery Lovitz, Redis.
+
 Version 5.1.9, Oct 26, 2021
 
     * (33) bug fix: in-place test incorrect for C+=A'*B using dot4
