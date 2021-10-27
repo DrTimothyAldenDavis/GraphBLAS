@@ -138,8 +138,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
             ok = (Ap_copy != NULL && Ai_copy != NULL && Ax_copy != NULL) ;
             break ;
 
-//      case GrB_DENSE_ROW_FORMAT : 
-//      case GrB_DENSE_COL_FORMAT : 
+//      case GrB_DENSE_ROW_FORMAT :
+//      case GrB_DENSE_COL_FORMAT :
 //          Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ;
 //          ok = (Ax_copy != NULL) ;
 //          break ;
@@ -171,8 +171,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
         case GrB_CSC_FORMAT : 
             GB_memcpy (Ap_copy, Ap, plen  * sizeof (GrB_Index), nthreads_max) ;
             GB_memcpy (Ai_copy, Ai, nvals * sizeof (GrB_Index), nthreads_max) ;
-//      case GrB_DENSE_ROW_FORMAT : 
-//      case GrB_DENSE_COL_FORMAT : 
+//      case GrB_DENSE_ROW_FORMAT :
+//      case GrB_DENSE_COL_FORMAT :
             GB_memcpy (Ax_copy, Ax, nvals * typesize          , nthreads_max) ;
             break ;
         default : // GrB_COO_FORMAT, nothing to copy
@@ -218,7 +218,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 Context)) ;
             break ;
 
-//      case GrB_DENSE_ROW_FORMAT : 
+//      case GrB_DENSE_ROW_FORMAT :
 //
 //          GB_OK (GB_import (false, A, type, ncols, nrows, false,
 //              NULL, 0,            // Ap
@@ -234,7 +234,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
 //              Context)) ;
 //          break ;
 
-//      case GrB_DENSE_COL_FORMAT : 
+//      case GrB_DENSE_COL_FORMAT :
 //
 //          GB_OK (GB_import (false, A, type, nrows, ncols, false,
 //              NULL, 0,            // Ap
@@ -250,7 +250,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
 //              Context)) ;
 //          break ;
 
-        default : // GrB_COO_FORMAT : 
+        default : // GrB_COO_FORMAT
             {
                 // build A as hypersparse by row or by column
                 int64_t *no_I_work = NULL ; size_t I_work_size = 0 ;
