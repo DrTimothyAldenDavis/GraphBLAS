@@ -11,6 +11,7 @@ GB_mex_about3 ;
 GB_mex_about4 ;
 GB_mex_about5 ;
 GB_mex_about6 ;
+GB_mex_about7 ;
 
 fprintf ('\ntest01: all tests passed\n') ;
 
