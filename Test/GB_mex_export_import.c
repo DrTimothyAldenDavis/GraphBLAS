@@ -536,7 +536,7 @@ GrB_Info export_import
 //          break ;
 
         //----------------------------------------------------------------------
-        case 15 :   // COO using GrB_Matrix_export/import    (matrices only)
+        case 14 :   // COO using GrB_Matrix_export/import    (matrices only)
         //----------------------------------------------------------------------
 
             // export in COO format, then free C
