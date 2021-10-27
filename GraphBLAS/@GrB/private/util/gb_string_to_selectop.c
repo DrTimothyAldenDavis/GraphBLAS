@@ -77,22 +77,22 @@ void gb_string_to_selectop
 
     if (MATCH (opstring, "tril"))
     { 
-        (*idxunop) = GrB_TRIL_INT64 ;
+        (*idxunop) = GrB_TRIL ;
         (*op_is_positional) = true ;
     }
     else if (MATCH (opstring, "triu"))
     { 
-        (*idxunop) = GrB_TRIU_INT64 ;
+        (*idxunop) = GrB_TRIU ;
         (*op_is_positional) = true ;
     }
     else if (MATCH (opstring, "diag"))
     { 
-        (*idxunop) = GrB_DIAG_INT64 ;
+        (*idxunop) = GrB_DIAG ;
         (*op_is_positional) = true ;
     }
     else if (MATCH (opstring, "offdiag"))
     { 
-        (*idxunop) = GrB_OFFDIAG_INT64 ;
+        (*idxunop) = GrB_OFFDIAG ;
         (*op_is_positional) = true ;
     }
     else if (MATCH (opstring, "rowne"))
@@ -103,13 +103,13 @@ void gb_string_to_selectop
     }
     else if (MATCH (opstring, "rowle"))
     { 
-        (*idxunop) = GrB_ROWLE_INT64 ;
+        (*idxunop) = GrB_ROWLE ;
         (*ithunk)-- ;
         (*op_is_positional) = true ;
     }
     else if (MATCH (opstring, "rowgt"))
     { 
-        (*idxunop) = GrB_ROWGT_INT64 ;
+        (*idxunop) = GrB_ROWGT ;
         (*ithunk)-- ;
         (*op_is_positional) = true ;
     }
@@ -121,13 +121,13 @@ void gb_string_to_selectop
     }
     else if (MATCH (opstring, "colle"))
     { 
-        (*idxunop) = GrB_COLLE_INT64 ;
+        (*idxunop) = GrB_COLLE ;
         (*ithunk)-- ;
         (*op_is_positional) = true ;
     }
     else if (MATCH (opstring, "colgt"))
     { 
-        (*idxunop) = GrB_COLGT_INT64 ;
+        (*idxunop) = GrB_COLGT ;
         (*ithunk)-- ;
         (*op_is_positional) = true ;
     }

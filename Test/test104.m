@@ -20,7 +20,7 @@ for m = [0 1 5 100]
             is_sparse = (nz < m*n) ;
             fprintf ('.') ;
             for fmat = fmts
-                for fexport = 0:16
+                for fexport = 0:14
                     try
                         C = GB_mex_export_import (A, fmat, fexport) ;
                         GB_spec_compare (C, A) ;

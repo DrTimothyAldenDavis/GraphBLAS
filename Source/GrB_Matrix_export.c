@@ -89,25 +89,25 @@ GrB_Info GrB_Matrix_export  // export a matrix
             csc_requested = true ;
             break ;
 
-        case GrB_DENSE_ROW_FORMAT :
-            if (!GB_is_dense (A))
-            { 
-                // A must dense or full
-                return (GrB_INVALID_VALUE) ;
-            }
-            make_copy = !(sparsity == GxB_FULL && !is_csc) ;
-            csc_requested = false ;
-            break ;
+//      case GrB_DENSE_ROW_FORMAT :
+//          if (!GB_is_dense (A))
+//          {
+//              // A must dense or full
+//              return (GrB_INVALID_VALUE) ;
+//          }
+//          make_copy = !(sparsity == GxB_FULL && !is_csc) ;
+//          csc_requested = false ;
+//          break ;
 
-        case GrB_DENSE_COL_FORMAT :
-            if (!GB_is_dense (A))
-            { 
-                // A must dense or full
-                return (GrB_INVALID_VALUE) ;
-            }
-            make_copy = !(sparsity == GxB_FULL && is_csc) ;
-            csc_requested = true ;
-            break ;
+//      case GrB_DENSE_COL_FORMAT :
+//          if (!GB_is_dense (A))
+//          {
+//              // A must dense or full
+//              return (GrB_INVALID_VALUE) ;
+//          }
+//          make_copy = !(sparsity == GxB_FULL && is_csc) ;
+//          csc_requested = true ;
+//          break ;
 
         case GrB_COO_FORMAT : 
             // never make a copy to export in tuple format
@@ -145,10 +145,10 @@ GrB_Info GrB_Matrix_export  // export a matrix
                 GB_OK (GB_convert_any_to_sparse (T, Context)) ;
                 break ;
 
-            case GrB_DENSE_ROW_FORMAT :
-            case GrB_DENSE_COL_FORMAT :
-                GB_convert_any_to_full (T) ;
-                break ;
+//          case GrB_DENSE_ROW_FORMAT :
+//          case GrB_DENSE_COL_FORMAT :
+//              GB_convert_any_to_full (T) ;
+//              break ;
 
             default :
                 break ;
@@ -172,8 +172,8 @@ GrB_Info GrB_Matrix_export  // export a matrix
             GB_memcpy (Ap, A->p, plen  * sizeof (GrB_Index), nthreads_max) ;
             GB_memcpy (Ai, A->i, nvals * sizeof (GrB_Index), nthreads_max) ;
 
-        case GrB_DENSE_ROW_FORMAT :
-        case GrB_DENSE_COL_FORMAT :
+//      case GrB_DENSE_ROW_FORMAT :
+//      case GrB_DENSE_COL_FORMAT :
             ASSERT (csc_requested == A->is_csc) ;
             if (A->iso)
             { 

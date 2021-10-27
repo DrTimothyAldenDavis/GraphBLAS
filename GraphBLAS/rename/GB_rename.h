@@ -67,10 +67,10 @@
 #define GrB_BXOR_UINT8 GrM_BXOR_UINT8
 #define GrB_Col_assign GrM_Col_assign
 #define GrB_Col_extract GrM_Col_extract
-#define GrB_COLGT_INT64 GrM_COLGT_INT64
+#define GrB_COLGT GrM_COLGT
 #define GrB_COLINDEX_INT32 GrM_COLINDEX_INT32
 #define GrB_COLINDEX_INT64 GrM_COLINDEX_INT64
-#define GrB_COLLE_INT64 GrM_COLLE_INT64
+#define GrB_COLLE GrM_COLLE
 #define GrB_DESC_C GrM_DESC_C
 #define GrB_DESC_CT0 GrM_DESC_CT0
 #define GrB_DESC_CT0T1 GrM_DESC_CT0T1
@@ -107,9 +107,9 @@
 #define GrB_DESC_T0 GrM_DESC_T0
 #define GrB_DESC_T0T1 GrM_DESC_T0T1
 #define GrB_DESC_T1 GrM_DESC_T1
+#define GrB_DIAG GrM_DIAG
 #define GrB_DIAGINDEX_INT32 GrM_DIAGINDEX_INT32
 #define GrB_DIAGINDEX_INT64 GrM_DIAGINDEX_INT64
-#define GrB_DIAG_INT64 GrM_DIAG_INT64
 #define GrB_DIV_BOOL GrM_DIV_BOOL
 #define GrB_DIV_FP32 GrM_DIV_FP32
 #define GrB_DIV_FP64 GrM_DIV_FP64
@@ -578,7 +578,7 @@
 #define GrB_NE_UINT32 GrM_NE_UINT32
 #define GrB_NE_UINT64 GrM_NE_UINT64
 #define GrB_NE_UINT8 GrM_NE_UINT8
-#define GrB_OFFDIAG_INT64 GrM_OFFDIAG_INT64
+#define GrB_OFFDIAG GrM_OFFDIAG
 #define GrB_PLUS_BOOL GrM_PLUS_BOOL
 #define GrB_PLUS_FP32 GrM_PLUS_FP32
 #define GrB_PLUS_FP64 GrM_PLUS_FP64
@@ -621,10 +621,10 @@
 #define GrB_PLUS_UINT64 GrM_PLUS_UINT64
 #define GrB_PLUS_UINT8 GrM_PLUS_UINT8
 #define GrB_Row_assign GrM_Row_assign
-#define GrB_ROWGT_INT64 GrM_ROWGT_INT64
+#define GrB_ROWGT GrM_ROWGT
 #define GrB_ROWINDEX_INT32 GrM_ROWINDEX_INT32
 #define GrB_ROWINDEX_INT64 GrM_ROWINDEX_INT64
-#define GrB_ROWLE_INT64 GrM_ROWLE_INT64
+#define GrB_ROWLE GrM_ROWLE
 #define GrB_Scalar_clear GrM_Scalar_clear
 #define GrB_Scalar_dup GrM_Scalar_dup
 #define GrB_Scalar_error GrM_Scalar_error
@@ -693,8 +693,8 @@
 #define GrB_TIMES_UINT64 GrM_TIMES_UINT64
 #define GrB_TIMES_UINT8 GrM_TIMES_UINT8
 #define GrB_transpose GrM_transpose
-#define GrB_TRIL_INT64 GrM_TRIL_INT64
-#define GrB_TRIU_INT64 GrM_TRIU_INT64
+#define GrB_TRIL GrM_TRIL
+#define GrB_TRIU GrM_TRIU
 #define GrB_Type_error GrM_Type_error
 #define GrB_Type_free GrM_Type_free
 #define GrB_Type_wait GrM_Type_wait

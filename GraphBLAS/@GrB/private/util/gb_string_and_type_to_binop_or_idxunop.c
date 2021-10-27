@@ -788,15 +788,15 @@ GrB_BinaryOp gb_string_and_type_to_binop_or_idxunop
 
         if (MATCH (op_name, "tril"))
         { 
-            (*idxunop) = GrB_TRIL_INT64 ;
+            (*idxunop) = GrB_TRIL ;
         }
         else if (MATCH (op_name, "triu"))
         { 
-            (*idxunop) = GrB_TRIU_INT64 ;
+            (*idxunop) = GrB_TRIU ;
         }
         else if (MATCH (op_name, "diag"))
         {
-            (*idxunop) = GrB_DIAG_INT64 ;
+            (*idxunop) = GrB_DIAG ;
         }
         else if (MATCH (op_name, "diagindex"))
         { 
@@ -804,7 +804,7 @@ GrB_BinaryOp gb_string_and_type_to_binop_or_idxunop
         }
         else if (MATCH (op_name, "offdiag"))
         { 
-            (*idxunop) = GrB_OFFDIAG_INT64 ;
+            (*idxunop) = GrB_OFFDIAG ;
         }
         else if (MATCH (op_name, "rowindex"))
         { 
@@ -813,12 +813,12 @@ GrB_BinaryOp gb_string_and_type_to_binop_or_idxunop
         }
         else if (MATCH (op_name, "rowle"))
         { 
-            (*idxunop) = GrB_ROWLE_INT64 ;
+            (*idxunop) = GrB_ROWLE ;
             (*ithunk)-- ;
         }
         else if (MATCH (op_name, "rowgt"))
         { 
-            (*idxunop) = GrB_ROWGT_INT64 ;
+            (*idxunop) = GrB_ROWGT ;
             (*ithunk)-- ;
         }
         else if (MATCH (op_name, "colindex"))
@@ -828,12 +828,12 @@ GrB_BinaryOp gb_string_and_type_to_binop_or_idxunop
         }
         else if (MATCH (op_name, "colle"))
         { 
-            (*idxunop) = GrB_COLLE_INT64 ;
+            (*idxunop) = GrB_COLLE ;
             (*ithunk)-- ;
         }
         else if (MATCH (op_name, "colgt"))
         { 
-            (*idxunop) = GrB_COLGT_INT64 ;
+            (*idxunop) = GrB_COLGT ;
             (*ithunk)-- ;
         }
 

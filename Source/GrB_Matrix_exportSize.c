@@ -52,16 +52,16 @@ GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
             (*Ai_len) = nvals ;
             break ;
 
-        case GrB_DENSE_ROW_FORMAT :
-        case GrB_DENSE_COL_FORMAT :
-            (*Ap_len) = 0 ;
-            (*Ai_len) = 0 ;
-            if (!GB_is_dense (A))
-            { 
-                // A must dense or full
-                return (GrB_INVALID_VALUE) ;
-            }
-            break ;
+//      case GrB_DENSE_ROW_FORMAT :
+//      case GrB_DENSE_COL_FORMAT :
+//          (*Ap_len) = 0 ;
+//          (*Ai_len) = 0 ;
+//          if (!GB_is_dense (A))
+//          {
+//              // A must dense or full
+//              return (GrB_INVALID_VALUE) ;
+//          }
+//          break ;
 
         case GrB_COO_FORMAT : 
             (*Ap_len) = nvals ;

@@ -13,8 +13,7 @@
 // 'double', etc).  If not present, the default type is used (provided on
 // input).
 //
-// That is: 
-// op = 'tril' ;    % the GrB_TRIL_INT64, type determined by default_optype.
+// op = 'tril' ;    % GrB_TRIL operator, no type needed
 //
 // op.opname = 'rowindex' ; op.type = 'int32' ; % the GrB_ROWINDEX_INT32
 // operator.

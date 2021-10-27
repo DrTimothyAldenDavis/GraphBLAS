@@ -222,12 +222,12 @@ void mexFunction
     OK (GxB_Type_from_name (&type, type_name)) ;
     CHECK (type == GrB_UINT32) ;
 
-    OK (GxB_IndexUnaryOp_xtype_name (type_name, GrB_TRIL_INT64)) ;
+    OK (GxB_IndexUnaryOp_xtype_name (type_name, GrB_TRIL)) ;
     CHECK (MATCH (type_name, "")) ;
     OK (GxB_Type_from_name (&type, type_name)) ;
     CHECK (type == NULL) ;
 
-    OK (GxB_IndexUnaryOp_ytype_name (type_name, GrB_TRIL_INT64)) ;
+    OK (GxB_IndexUnaryOp_ytype_name (type_name, GrB_TRIL)) ;
     CHECK (MATCH (type_name, "int64_t")) ;
     OK (GxB_Type_from_name (&type, type_name)) ;
     CHECK (type == GrB_INT64) ;
@@ -246,8 +246,8 @@ void mexFunction
     ERR (GxB_BinaryOp_xtype_name (NULL, GrB_PLUS_FP32)) ;
     ERR (GxB_BinaryOp_ytype_name (NULL, GrB_PLUS_FP32)) ;
     ERR (GxB_BinaryOp_ztype_name (NULL, GrB_PLUS_FP32)) ;
-    ERR (GxB_IndexUnaryOp_xtype_name (NULL, GrB_TRIL_INT64)) ;
-    ERR (GxB_IndexUnaryOp_ytype_name (NULL, GrB_TRIL_INT64)) ;
+    ERR (GxB_IndexUnaryOp_xtype_name (NULL, GrB_TRIL)) ;
+    ERR (GxB_IndexUnaryOp_ytype_name (NULL, GrB_TRIL)) ;
     ERR (GxB_IndexUnaryOp_ztype_name (NULL, GrB_VALUELT_INT16)) ;
 
     ERR (GxB_UnaryOp_xtype_name (type_name, NULL)) ;
@@ -315,97 +315,97 @@ void mexFunction
     // fprint for GrB_IndexUnaryOp
     //--------------------------------------------------------------------------
 
-    OK (GxB_IndexUnaryOp_fprint (GrB_ROWINDEX_INT32,  "rowindex32",     3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_ROWINDEX_INT64,  "rowindex64",     3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_COLINDEX_INT32,  "colindex32",     3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_COLINDEX_INT64,  "colindex64",     3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_DIAGINDEX_INT32, "diagindex32",    3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_DIAGINDEX_INT64, "diagindex64",    3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_ROWINDEX_INT32,  "rowindex32",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_ROWINDEX_INT64,  "rowindex64",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_COLINDEX_INT32,  "colindex32",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_COLINDEX_INT64,  "colindex64",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_DIAGINDEX_INT32, "diagindex32", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_DIAGINDEX_INT64, "diagindex64", 3, NULL)) ;
 
-    OK (GxB_IndexUnaryOp_fprint (GrB_TRIL_INT64,      "tril",           3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_TRIU_INT64,      "triu",           3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_DIAG_INT64,      "diag",           3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_OFFDIAG_INT64,   "offdiag",        3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_COLLE_INT64,     "colle",          3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_COLGT_INT64,     "colgt",          3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_ROWLE_INT64,     "rowle",          3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_ROWGT_INT64,     "rowgt",          3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_TRIL,    "tril",    3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_TRIU,    "triu",    3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_DIAG,    "diag",    3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_OFFDIAG, "offdiag", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_COLLE,   "colle",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_COLGT,   "colgt",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_ROWLE,   "rowle",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_ROWGT,   "rowgt",   3, NULL)) ;
 
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_BOOL,    "valueeq_bool",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_INT8,    "valueeq_int8",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_INT16,   "valueeq_int16",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_INT32,   "valueeq_int32",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_INT64,   "valueeq_int64",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_UINT8,   "valueeq_uint8",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_UINT16,  "valueeq_uint16", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_UINT32,  "valueeq_uint32", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_UINT64,  "valueeq_uint64", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_FP32,    "valueeq_fp32",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_FP64,    "valueeq_fp64",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GxB_VALUEEQ_FC32,    "valueeq_fc32",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GxB_VALUEEQ_FC64,    "valueeq_fc64",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_BOOL,   "valueeq_bool",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_INT8,   "valueeq_int8",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_INT16,  "valueeq_int16",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_INT32,  "valueeq_int32",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_INT64,  "valueeq_int64",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_UINT8,  "valueeq_uint8",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_UINT16, "valueeq_uint16", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_UINT32, "valueeq_uint32", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_UINT64, "valueeq_uint64", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_FP32,   "valueeq_fp32",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEEQ_FP64,   "valueeq_fp64",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GxB_VALUEEQ_FC32,   "valueeq_fc32",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GxB_VALUEEQ_FC64,   "valueeq_fc64",   3, NULL)) ;
 
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_BOOL,    "valuene_bool",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_INT8,    "valuene_int8",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_INT16,   "valuene_int16",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_INT32,   "valuene_int32",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_INT64,   "valuene_int64",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_UINT8,   "valuene_uint8",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_UINT16,  "valuene_uint16", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_UINT32,  "valuene_uint32", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_UINT64,  "valuene_uint64", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_FP32,    "valuene_fp32",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_FP64,    "valuene_fp64",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GxB_VALUENE_FC32,    "valuene_fc32",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GxB_VALUENE_FC64,    "valuene_fc64",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_BOOL,   "valuene_bool",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_INT8,   "valuene_int8",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_INT16,  "valuene_int16",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_INT32,  "valuene_int32",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_INT64,  "valuene_int64",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_UINT8,  "valuene_uint8",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_UINT16, "valuene_uint16", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_UINT32, "valuene_uint32", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_UINT64, "valuene_uint64", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_FP32,   "valuene_fp32",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUENE_FP64,   "valuene_fp64",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GxB_VALUENE_FC32,   "valuene_fc32",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GxB_VALUENE_FC64,   "valuene_fc64",   3, NULL)) ;
 
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_BOOL,    "valuelt_bool",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_INT8,    "valuelt_int8",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_INT16,   "valuelt_int16",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_INT32,   "valuelt_int32",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_INT64,   "valuelt_int64",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_UINT8,   "valuelt_uint8",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_UINT16,  "valuelt_uint16", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_UINT32,  "valuelt_uint32", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_UINT64,  "valuelt_uint64", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_FP32,    "valuelt_fp32",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_FP64,    "valuelt_fp64",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_BOOL,   "valuelt_bool",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_INT8,   "valuelt_int8",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_INT16,  "valuelt_int16",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_INT32,  "valuelt_int32",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_INT64,  "valuelt_int64",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_UINT8,  "valuelt_uint8",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_UINT16, "valuelt_uint16", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_UINT32, "valuelt_uint32", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_UINT64, "valuelt_uint64", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_FP32,   "valuelt_fp32",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELT_FP64,   "valuelt_fp64",   3, NULL)) ;
 
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_BOOL,    "valuele_bool",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_INT8,    "valuele_int8",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_INT16,   "valuele_int16",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_INT32,   "valuele_int32",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_INT64,   "valuele_int64",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_UINT8,   "valuele_uint8",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_UINT16,  "valuele_uint16", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_UINT32,  "valuele_uint32", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_UINT64,  "valuele_uint64", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_FP32,    "valuele_fp32",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_FP64,    "valuele_fp64",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_BOOL,   "valuele_bool",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_INT8,   "valuele_int8",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_INT16,  "valuele_int16",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_INT32,  "valuele_int32",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_INT64,  "valuele_int64",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_UINT8,  "valuele_uint8",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_UINT16, "valuele_uint16", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_UINT32, "valuele_uint32", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_UINT64, "valuele_uint64", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_FP32,   "valuele_fp32",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUELE_FP64,   "valuele_fp64",   3, NULL)) ;
 
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_BOOL,    "valuegt_bool",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_INT8,    "valuegt_int8",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_INT16,   "valuegt_int16",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_INT32,   "valuegt_int32",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_INT64,   "valuegt_int64",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_UINT8,   "valuegt_uint8",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_UINT16,  "valuegt_uint16", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_UINT32,  "valuegt_uint32", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_UINT64,  "valuegt_uint64", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_FP32,    "valuegt_fp32",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_FP64,    "valuegt_fp64",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_BOOL,   "valuegt_bool",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_INT8,   "valuegt_int8",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_INT16,  "valuegt_int16",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_INT32,  "valuegt_int32",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_INT64,  "valuegt_int64",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_UINT8,  "valuegt_uint8",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_UINT16, "valuegt_uint16", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_UINT32, "valuegt_uint32", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_UINT64, "valuegt_uint64", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_FP32,   "valuegt_fp32",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGT_FP64,   "valuegt_fp64",   3, NULL)) ;
 
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_BOOL,    "valuege_bool",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_INT8,    "valuege_int8",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_INT16,   "valuege_int16",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_INT32,   "valuege_int32",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_INT64,   "valuege_int64",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_UINT8,   "valuege_uint8",  3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_UINT16,  "valuege_uint16", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_UINT32,  "valuege_uint32", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_UINT64,  "valuege_uint64", 3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_FP32,    "valuege_fp32",   3, NULL)) ;
-    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_FP64,    "valuege_fp64",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_BOOL,   "valuege_bool",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_INT8,   "valuege_int8",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_INT16,  "valuege_int16",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_INT32,  "valuege_int32",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_INT64,  "valuege_int64",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_UINT8,  "valuege_uint8",  3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_UINT16, "valuege_uint16", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_UINT32, "valuege_uint32", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_UINT64, "valuege_uint64", 3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_FP32,   "valuege_fp32",   3, NULL)) ;
+    OK (GxB_IndexUnaryOp_fprint (GrB_VALUEGE_FP64,   "valuege_fp64",   3, NULL)) ;
 
     expected = GrB_NULL_POINTER ;
     ERR (GxB_IndexUnaryOp_fprint (NULL, "nothing", 3, NULL)) ;
@@ -699,7 +699,7 @@ void mexFunction
 
     OK (GB_Operator_check (GrB_PLUS_FP32, "plus", 3, NULL)) ;
     OK (GB_Operator_check (GrB_ABS_FP32, "abs", 3, NULL)) ;
-    OK (GB_Operator_check (GrB_TRIL_INT64, "tril_idx", 3, NULL)) ;
+    OK (GB_Operator_check (GrB_TRIL, "tril_idx", 3, NULL)) ;
     OK (GB_Operator_check (GxB_TRIL, "tril_selectop", 3, NULL)) ;
     expected = GrB_NULL_POINTER ;
     ERR (GB_Operator_check (NULL, "null", 3, NULL)) ;
@@ -922,7 +922,8 @@ void mexFunction
     CHECK (fmt == GrB_CSR_FORMAT) ;
     OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_FULL)) ;
     OK (GrB_Matrix_exportHint (&fmt, A)) ;
-    CHECK (fmt == GrB_DENSE_ROW_FORMAT) ;
+    CHECK (fmt == GrB_CSR_FORMAT) ;
+//  CHECK (fmt == GrB_DENSE_ROW_FORMAT) ;
 
     OK (GxB_Matrix_Option_set (A, GxB_FORMAT, GxB_BY_COL)) ;
     OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
@@ -936,7 +937,8 @@ void mexFunction
     CHECK (fmt == GrB_CSC_FORMAT) ;
     OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_FULL)) ;
     OK (GrB_Matrix_exportHint (&fmt, A)) ;
-    CHECK (fmt == GrB_DENSE_COL_FORMAT) ;
+    CHECK (fmt == GrB_CSC_FORMAT) ;
+//  CHECK (fmt == GrB_DENSE_COL_FORMAT) ;
 
     expected = GrB_NULL_POINTER ;
     ERR (GrB_Matrix_exportHint (NULL, A)) ;
@@ -970,13 +972,14 @@ void mexFunction
     float *Ax = mxCalloc (16, sizeof (float))  ;
     OK (GrB_Matrix_new (&A, GrB_FP32, 4, 4)) ;
     OK (GrB_Matrix_setElement_FP32 (A, 1, 0, 0)) ;
-    expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Matrix_export (Ap, Ai, Ax, GrB_DENSE_ROW_FORMAT, A)) ;
-    ERR (GrB_Matrix_export (Ap, Ai, Ax, GrB_DENSE_COL_FORMAT, A)) ;
+//  expected = GrB_INVALID_VALUE ;
+//  ERR (GrB_Matrix_export (Ap, Ai, Ax, GrB_DENSE_ROW_FORMAT, A)) ;
+//  ERR (GrB_Matrix_export (Ap, Ai, Ax, GrB_DENSE_COL_FORMAT, A)) ;
     OK (GrB_Matrix_assign_FP32 (A, NULL, NULL, (float) 2.0, GrB_ALL, 4,
         GrB_ALL, 4, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A iso to export", 3, NULL)) ;
-    OK (GrB_Matrix_export (Ap, Ai, Ax, GrB_DENSE_COL_FORMAT, A)) ;
+    OK (GrB_Matrix_export (Ap, Ai, Ax, GrB_CSC_FORMAT, A)) ;
+//  OK (GrB_Matrix_export (Ap, Ai, Ax, GrB_DENSE_COL_FORMAT, A)) ;
     for (int i = 0 ; i < 16 ; i++)
     {
         CHECK (Ax [i] == 2.0) ;
@@ -984,9 +987,9 @@ void mexFunction
     OK (GrB_Matrix_free_ (&A)) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Matrix_import (&A, GrB_FP32, 2 * GxB_INDEX_MAX, 1, Ap, Ai, Ax,
-        5, 16, 16, GrB_DENSE_ROW_FORMAT)) ;
-    CHECK (A == NULL) ;
+//  ERR (GrB_Matrix_import (&A, GrB_FP32, 2 * GxB_INDEX_MAX, 1, Ap, Ai, Ax,
+//      5, 16, 16, GrB_DENSE_ROW_FORMAT)) ;
+//  CHECK (A == NULL) ;
 
     ERR (GrB_Matrix_import (&A, GrB_FP32, 100, 100, Ap, Ai, Ax,
         5, 16, 16, GrB_CSC_FORMAT)) ;
@@ -1000,9 +1003,9 @@ void mexFunction
         5, 3, 3, GrB_CSC_FORMAT)) ;
     CHECK (A == NULL) ;
 
-    ERR (GrB_Matrix_import (&A, GrB_FP32, 4, 4, Ap, Ai, Ax,
-        0, 0, 3, GrB_DENSE_COL_FORMAT)) ;
-    CHECK (A == NULL) ;
+//  ERR (GrB_Matrix_import (&A, GrB_FP32, 4, 4, Ap, Ai, Ax,
+//      0, 0, 3, GrB_DENSE_COL_FORMAT)) ;
+//  CHECK (A == NULL) ;
 
     ERR (GrB_Matrix_import (&A, GrB_FP32, 4, 4, Ap, Ai, Ax,
         5, 6, 7, GrB_COO_FORMAT)) ;
@@ -1087,7 +1090,7 @@ void mexFunction
     OK (GrB_Matrix_nvals (&anvals, A)) ;
     CHECK (anvals == 5) ;
 
-    OK (GrB_Matrix_select_INT64 (A, NULL, NULL, GrB_COLLE_INT64,
+    OK (GrB_Matrix_select_INT64 (A, NULL, NULL, GrB_COLLE,
         A, (int64_t) 2, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A iso select COLLE output", 3, NULL)) ;
     OK (GrB_Matrix_nvals (&anvals, A)) ;
@@ -1095,7 +1098,7 @@ void mexFunction
 
     OK (GrB_Matrix_assign_FP64 (A, NULL, NULL, (double) 3, GrB_ALL, 5,
         GrB_ALL, 5, NULL)) ;
-    OK (GrB_Matrix_select_INT64 (A, NULL, NULL, GrB_COLGT_INT64,
+    OK (GrB_Matrix_select_INT64 (A, NULL, NULL, GrB_COLGT,
         A, (int64_t) 2, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A iso select COLGT output", 3, NULL)) ;
     OK (GrB_Matrix_nvals (&anvals, A)) ;
@@ -1103,7 +1106,7 @@ void mexFunction
 
     OK (GrB_Matrix_assign_FP64 (A, NULL, NULL, (double) 3, GrB_ALL, 5,
         GrB_ALL, 5, NULL)) ;
-    OK (GrB_Matrix_select_INT64 (A, NULL, NULL, GrB_ROWGT_INT64,
+    OK (GrB_Matrix_select_INT64 (A, NULL, NULL, GrB_ROWGT,
         A, (int64_t) 2, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A iso select ROWGT output", 3, NULL)) ;
     OK (GrB_Matrix_nvals (&anvals, A)) ;

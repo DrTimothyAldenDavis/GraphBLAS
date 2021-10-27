@@ -56,9 +56,10 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
             break ;
 
         case GxB_FULL : 
-            // Full is supported by GraphBLAS, and can be exported with no
-            // change at all.
-            (*format) = is_csc ?  GrB_DENSE_COL_FORMAT : GrB_DENSE_ROW_FORMAT ; 
+            // Full is not supported by GraphBLAS
+            (*format) = is_csc ? GrB_CSC_FORMAT : GrB_CSR_FORMAT ;
+            // if full was supported by GraphBLAS;
+//          (*format) = is_csc ?  GrB_DENSE_COL_FORMAT : GrB_DENSE_ROW_FORMAT ; 
             break ;
     }
 

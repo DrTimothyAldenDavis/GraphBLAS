@@ -76,14 +76,14 @@ GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
                 // or (i-thunk) <= j which is j >= (i-thunk).
                 // TRIL becomes TRIU and thunk must be negated.
                 (*ithunk) = -(*ithunk) ;
-                return (GrB_TRIU_INT64) ;
+                return (GrB_TRIU) ;
 
             case GB_TRIU_idxunop_code      : 
                 // (j >= (i+thunk)) becomes (i >= (j+thunk))
                 // or (i-thunk) >= j which is j <= (i-thunk).
                 // TRIU becomes TRIL and thunk must be negated.
                 (*ithunk) = -(*ithunk) ;
-                return (GrB_TRIL_INT64) ;
+                return (GrB_TRIL) ;
 
             case GB_DIAG_idxunop_code      : 
             case GB_OFFDIAG_idxunop_code   : 
@@ -95,19 +95,19 @@ GrB_IndexUnaryOp GB_positional_idxunop_ijflip   // return flipped operator
 
             case GB_COLLE_idxunop_code     : 
                 // (j <= thunk) becomes (i <= thunk)
-                return (GrB_ROWLE_INT64) ;
+                return (GrB_ROWLE) ;
 
             case GB_COLGT_idxunop_code     : 
                 // (j > thunk) becomes (i > thunk)
-                return (GrB_ROWGT_INT64) ;
+                return (GrB_ROWGT) ;
 
             case GB_ROWLE_idxunop_code     : 
                 // (i <= thunk) becomes (j <= thunk)
-                return (GrB_COLLE_INT64) ;
+                return (GrB_COLLE) ;
 
             case GB_ROWGT_idxunop_code     : 
                 // (i > thunk) becomes (j > thunk)
-                return (GrB_COLGT_INT64) ;
+                return (GrB_COLGT) ;
 
             default: ;
         }

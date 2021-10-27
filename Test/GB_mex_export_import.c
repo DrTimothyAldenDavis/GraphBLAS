@@ -36,9 +36,9 @@
 
 //      case 12 :   // CSR using GrB_Matrix_export/import    (matrices only)
 //      case 13 :   // CSC using GrB_Matrix_export/import    (matrices only)
-//      case 14 :   // FullR using GrB_Matrix_export/import  (matrices only)
-//      case 15 :   // FullC using GrB_Matrix_export/import  (matrices only)
-//      case 16 :   // COO using GrB_Matrix_export/import    (matrices only)
+//      case 14 :   // COO using GrB_Matrix_export/import    (matrices only)
+//      case 15 :   // FullR using GrB_Matrix_export/import  (matrices only)
+//      case 16 :   // FullC using GrB_Matrix_export/import  (matrices only)
 
 #include "GB_mex.h"
 
@@ -503,40 +503,40 @@ GrB_Info export_import
             mxFree (Tx) ;
             break ;
 
-        //----------------------------------------------------------------------
-        case 14 :   // FullR using GrB_Matrix_export/import  (matrices only)
-        //----------------------------------------------------------------------
+//      //----------------------------------------------------------------------
+//      case 15 :   // FullR using GrB_Matrix_export/import  (matrices only)
+//      //----------------------------------------------------------------------
+//
+//          // export in FullR format, then free C
+//          OK (GrB_Matrix_exportSize (&Tp_len, &Ti_len, &Tx_len,
+//              GrB_DENSE_ROW_FORMAT, C)) ;
+//          Tx = mxMalloc ((Tx_len+1) * typesize) ;
+//          OK (GrB_Matrix_export (Tp, Ti, Tx, GrB_DENSE_ROW_FORMAT, C)) ;
+//          OK (GrB_Matrix_free (&C)) ;
+//          // import in FullR format, then free Tx
+//          OK (GrB_Matrix_import (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
+//              Tp_len, Ti_len, Tx_len, GrB_DENSE_ROW_FORMAT)) ;
+//          mxFree (Tx) ;
+//          break ;
 
-            // export in FullR format, then free C
-            OK (GrB_Matrix_exportSize (&Tp_len, &Ti_len, &Tx_len,
-                GrB_DENSE_ROW_FORMAT, C)) ;
-            Tx = mxMalloc ((Tx_len+1) * typesize) ;
-            OK (GrB_Matrix_export (Tp, Ti, Tx, GrB_DENSE_ROW_FORMAT, C)) ;
-            OK (GrB_Matrix_free (&C)) ;
-            // import in FullR format, then free Tx
-            OK (GrB_Matrix_import (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
-                Tp_len, Ti_len, Tx_len, GrB_DENSE_ROW_FORMAT)) ;
-            mxFree (Tx) ;
-            break ;
+//      //----------------------------------------------------------------------
+//      case 16 :   // FullC using GrB_Matrix_export/import  (matrices only)
+//      //----------------------------------------------------------------------
+//
+//          // export in FullC format, then free C
+//          OK (GrB_Matrix_exportSize (&Tp_len, &Ti_len, &Tx_len,
+//              GrB_DENSE_COL_FORMAT, C)) ;
+//          Tx = mxMalloc ((Tx_len+1) * typesize) ;
+//          OK (GrB_Matrix_export (Tp, Ti, Tx, GrB_DENSE_COL_FORMAT, C)) ;
+//          OK (GrB_Matrix_free (&C)) ;
+//          // import in CSR format, then free Tx
+//          OK (GrB_Matrix_import (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
+//              Tp_len, Ti_len, Tx_len, GrB_DENSE_COL_FORMAT)) ;
+//          mxFree (Tx) ;
+//          break ;
 
         //----------------------------------------------------------------------
-        case 15 :   // FullC using GrB_Matrix_export/import  (matrices only)
-        //----------------------------------------------------------------------
-
-            // export in FullC format, then free C
-            OK (GrB_Matrix_exportSize (&Tp_len, &Ti_len, &Tx_len,
-                GrB_DENSE_COL_FORMAT, C)) ;
-            Tx = mxMalloc ((Tx_len+1) * typesize) ;
-            OK (GrB_Matrix_export (Tp, Ti, Tx, GrB_DENSE_COL_FORMAT, C)) ;
-            OK (GrB_Matrix_free (&C)) ;
-            // import in CSR format, then free Tx
-            OK (GrB_Matrix_import (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
-                Tp_len, Ti_len, Tx_len, GrB_DENSE_COL_FORMAT)) ;
-            mxFree (Tx) ;
-            break ;
-
-        //----------------------------------------------------------------------
-        case 16 :   // COO using GrB_Matrix_export/import    (matrices only)
+        case 15 :   // COO using GrB_Matrix_export/import    (matrices only)
         //----------------------------------------------------------------------
 
             // export in COO format, then free C

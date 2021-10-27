@@ -1603,10 +1603,6 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 
 //      bool f (GrB_Index i, GrB_Index j, const void *x, const void *thunk) ;
 
-// This will change slightly in v6.0:
-
-//      bool f (int64_t i, int64_t j, const void *x, const void *thunk) ;
-
 // The values of i and j are guaranteed to be in the range 0 to
 // GxB_INDEX_MAX-1, and they can be safely typecasted to int64_t then negated,
 // if desired, without any risk of integer overflow.
@@ -1664,21 +1660,10 @@ GB_PUBLIC GxB_SelectOp
 // User-defined GxB_SelectOps are historical.  New code should use
 // GrB_IndexUnaryOp_new instead.
 
-// In v6.0, the row and column indices are passed as int64_t.  This has no
-// effect on any user-defined operator in v5 or earlier, since GxB_INDEX_MAX is
-// less than INT64_MAX already.  The change was made to allow simpler integer
-// computations within the select function such as computing i-j with negative
-// integers.
-
 typedef bool (*GxB_select_function)      // return true if A(i,j) is kept
 (
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GrB_Index i,                // row index of A(i,j)
     GrB_Index j,                // column index of A(i,j)
-    #else
-    int64_t i,                  // row index of A(i,j)
-    int64_t j,                  // column index of A(i,j)
-    #endif
     const void *x,              // value of A(i,j)
     const void *thunk           // optional input for select function
 ) ;
@@ -1746,12 +1731,8 @@ typedef void (*GxB_index_unary_function)
 (
     void *z,            // output value z, of type ztype
     const void *x,      // input value x of type xtype; value of v(i) or A(i,j)
-//  draft v2.0 spec:
-//  const GrB_Index *indices,   // [i 0] for v(i) or [i j] of A(i,j)
-//  GrB_Index n,                // 1 for vector index, 2 for matrix indices
-//  a better approach:
-    int64_t i,          // row index of A(i,j)
-    int64_t j,          // column index of A(i,j), or zero for v(i)
+    GrB_Index i,        // row index of A(i,j)
+    GrB_Index j,        // column index of A(i,j), or zero for v(i)
     const void *y       // input scalar y
 ) ;
 
@@ -1850,28 +1831,28 @@ GB_PUBLIC GrB_IndexUnaryOp
     // The scalar y is int64.
 
     // TRIL: (j <= (i+y)): lower triangular part
-    GrB_TRIL_INT64,
+    GrB_TRIL,
 
     // TRIU: (j >= (i+y)): upper triangular part
-    GrB_TRIU_INT64,
+    GrB_TRIU,
 
     // DIAG: (j == (i+y)): diagonal
-    GrB_DIAG_INT64,
+    GrB_DIAG,
 
     // OFFDIAG: (j != (i+y)): offdiagonal
-    GrB_OFFDIAG_INT64,
+    GrB_OFFDIAG,
 
     // COLLE: (j <= y): columns 0:y
-    GrB_COLLE_INT64,
+    GrB_COLLE,
 
     // COLGT: (j > y): columns y+1:ncols-1
-    GrB_COLGT_INT64,
+    GrB_COLGT,
 
     // ROWLE: (i <= y): rows 0:y
-    GrB_ROWLE_INT64,
+    GrB_ROWLE,
 
     // ROWGT: (i > y): rows y+1:nrows-1
-    GrB_ROWGT_INT64,
+    GrB_ROWGT,
 
     //--------------------------------------------------------------------------
     // Result is bool, depending only on the value aij
@@ -10847,9 +10828,7 @@ typedef enum
 {
     GrB_CSR_FORMAT = 0,     // CSR format (equiv to GxB_SPARSE with GxB_BY_ROW)
     GrB_CSC_FORMAT = 1,     // CSC format (equiv to GxB_SPARSE with GxB_BY_COL)
-    GrB_COO_FORMAT = 2,     // triplet format (like input to GrB*build)
-    GrB_DENSE_ROW_FORMAT = 3, // FullR format (GxB_FULL with GxB_BY_ROW)
-    GrB_DENSE_COL_FORMAT = 4  // FullC format (GxB_FULL with GxB_BY_ROW)
+    GrB_COO_FORMAT = 2      // triplet format (like input to GrB*build)
 }
 GrB_Format ;
 

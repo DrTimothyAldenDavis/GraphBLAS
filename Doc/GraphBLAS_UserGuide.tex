@@ -3213,14 +3213,14 @@ GraphBLAS name          & Octave/MATLAB     & description \\
 \verb'GrB_DIAGINDEX_INT32' & \verb'z=j-(i+y)'   & column diagonal index of \verb'A(i,j)', as int32 \\
 \verb'GrB_DIAGINDEX_INT64' & \verb'z=j-(i+y)'   & column diagonal index of \verb'A(i,j)', as int64 \\
 \hline
-\verb'GrB_TRIL_INT64'    & \verb'z=(j<=(i+y))'  & true for entries on or below the \verb'y'th diagonal \\
-\verb'GrB_TRIU_INT64'    & \verb'z=(j>=(i+y))'  & true for entries on or above the \verb'y'th diagonal \\
-\verb'GrB_DIAG_INT64'    & \verb'z=(j==(i+y))'  & true for entries on the \verb'y'th diagonal \\
-\verb'GrB_OFFDIAG_INT64' & \verb'z=(j!=(i+y))'  & true for entries not on the \verb'y'th diagonal \\
-\verb'GrB_COLLE_INT64'   & \verb'z=(j<=y)'      & true for entries in columns 0 to \verb'y' \\
-\verb'GrB_COLGT_INT64'   & \verb'z=(j>y)'       & true for entries in columns \verb'y+1' and above \\
-\verb'GrB_ROWLE_INT64'   & \verb'z=(i<=y)'      & true for entries in rows 0 to \verb'y' \\
-\verb'GrB_ROWGT_INT64'   & \verb'z=(i>y)'       & true for entries in rows \verb'y+1' and above \\
+\verb'GrB_TRIL'    & \verb'z=(j<=(i+y))'  & true for entries on or below the \verb'y'th diagonal \\
+\verb'GrB_TRIU'    & \verb'z=(j>=(i+y))'  & true for entries on or above the \verb'y'th diagonal \\
+\verb'GrB_DIAG'    & \verb'z=(j==(i+y))'  & true for entries on the \verb'y'th diagonal \\
+\verb'GrB_OFFDIAG' & \verb'z=(j!=(i+y))'  & true for entries not on the \verb'y'th diagonal \\
+\verb'GrB_COLLE'   & \verb'z=(j<=y)'      & true for entries in columns 0 to \verb'y' \\
+\verb'GrB_COLGT'   & \verb'z=(j>y)'       & true for entries in columns \verb'y+1' and above \\
+\verb'GrB_ROWLE'   & \verb'z=(i<=y)'      & true for entries in rows 0 to \verb'y' \\
+\verb'GrB_ROWGT'   & \verb'z=(i>y)'       & true for entries in rows \verb'y+1' and above \\
 \hline
 \verb'GrB_VALUENE_T'     & \verb'z=(aij!=y)'    & true if \verb'A(i,j)' is not equal to \verb'y'\\
 \verb'GrB_VALUEEQ_T'     & \verb'z=(aij==y)'    & true if \verb'A(i,j)' is equal to \verb'y'\\
@@ -7392,9 +7392,7 @@ typedef enum
 {
     GrB_CSR_FORMAT = 0,     // CSR format (equiv to GxB_SPARSE with GxB_BY_ROW)
     GrB_CSC_FORMAT = 1,     // CSC format (equiv to GxB_SPARSE with GxB_BY_COL)
-    GrB_COO_FORMAT = 2,     // triplet format (like input to GrB*build)
-    GrB_DENSE_ROW_FORMAT = 3, // FullR format (GxB_FULL with GxB_BY_ROW)
-    GrB_DENSE_COL_FORMAT = 4  // FullC format (GxB_FULL with GxB_BY_ROW)
+    GrB_COO_FORMAT = 2      // triplet format (like input to GrB*build)
 }
 GrB_Format ; \end{verbatim}}
 
@@ -7431,7 +7429,7 @@ pack/unpack methods, memory is not handed off between the user application
 and GraphBLAS.   The three arrays \verb'Ap', \verb'Ai'.  and \verb'Ax' are not
 modified, and are still owned by the user application when the method finishes.
 
-The matrix can be imported in one of five different formats:
+The matrix can be imported in one of three different formats:
 
 \begin{packed_itemize}
     \item \verb'GrB_CSR_FORMAT': % CSR format (equiv to GxB_SPARSE with GxB_BY_ROW)
@@ -7460,15 +7458,16 @@ The matrix can be imported in one of five different formats:
         column index \verb'Ap[k]', and value \verb'Ax[k]'.  The tuples can
         appear any order, but no duplicates are permitted.
 
-    \item \verb'GrB_DENSE_ROW_FORMAT': % FullR format (GxB_FULL with GxB_BY_ROW)
-        Dense matrix format, held by row.  Only the \verb'Ax' array is used, of
-        size \verb'nrows*ncols'.
-        It holds the matrix in dense format, in row major order.
+%   \item \verb'GrB_DENSE_ROW_FORMAT': % FullR format (GxB_FULL with GxB_BY_ROW)
+%       Dense matrix format, held by row.  Only the \verb'Ax' array is used, of
+%       size \verb'nrows*ncols'.
+%       It holds the matrix in dense format, in row major order.
+%
+%   \item \verb'GrB_DENSE_COL_FORMAT': % FullC format (GxB_FULL with GxB_BY_ROW)
+%       Dense matrix format, held by column.  Only the \verb'Ax' array is used, of
+%       size \verb'nrows*ncols'.
+%       It holds the matrix in dense format, in column major order.
 
-    \item \verb'GrB_DENSE_COL_FORMAT': % FullC format (GxB_FULL with GxB_BY_ROW)
-        Dense matrix format, held by column.  Only the \verb'Ax' array is used, of
-        size \verb'nrows*ncols'.
-        It holds the matrix in dense format, in column major order.
 \end{packed_itemize}
 
 %-------------------------------------------------------------------------------
@@ -7496,10 +7495,10 @@ described in Section~\ref{GrB_matrix_import}.  The size of the arrays must be
 at least as large as the lengths returned by \verb'GrB_Matrix_exportSize'.  The
 matrix \verb'A' is not modified.
 
-The \verb'GrB_DENSE_ROW_FORMAT' and \verb'GrB_DENSE_COL_FORMAT' formats can
-only be used if all entries are present in the matrix.  That is,
-\verb'GrB_Matrix_nvals (&nvals,A)' must return \verb'nvals' equal to
-\verb'nrows*ncols'.
+% The \verb'GrB_DENSE_ROW_FORMAT' and \verb'GrB_DENSE_COL_FORMAT' formats can
+% only be used if all entries are present in the matrix.  That is,
+% \verb'GrB_Matrix_nvals (&nvals,A)' must return \verb'nvals' equal to
+% \verb'nrows*ncols'.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_exportSize:} determine size of export}
@@ -7550,8 +7549,10 @@ format of the \verb'GrB_Matrix':
 \item \verb'GxB_HYPERSPARSE': export as \verb'GrB_COO_FORMAT'
 \item \verb'GxB_BITMAP', \verb'GxB_BY_ROW': export as \verb'GrB_CSR_FORMAT'
 \item \verb'GxB_BITMAP', \verb'GxB_BY_COL': export as \verb'GrB_CSC_FORMAT'
-\item \verb'GxB_FULL', \verb'GxB_BY_ROW': export as \verb'GrB_DENSE_ROW_FORMAT'
-\item \verb'GxB_FULL', \verb'GxB_BY_COL': export as \verb'GrB_DENSE_COL_FORMAT'
+%\item \verb'GxB_FULL', \verb'GxB_BY_ROW': export as \verb'GrB_DENSE_ROW_FORMAT'
+%\item \verb'GxB_FULL', \verb'GxB_BY_COL': export as \verb'GrB_DENSE_COL_FORMAT'
+\item \verb'GxB_FULL', \verb'GxB_BY_ROW': export as \verb'GrB_CSR_FORMAT'
+\item \verb'GxB_FULL', \verb'GxB_BY_COL': export as \verb'GrB_CSC_FORMAT'
 \end{packed_itemize}
 
 \newpage
@@ -12047,15 +12048,15 @@ The following operators may be used on matrices with a user-defined type:
 \verb'GrB_ROWINDEX_*',
 \verb'GrB_COLINDEX_*',
 \verb'GrB_DIAGINDEX_*',
-\verb'GrB_TRIL_INT64', \newline
-\verb'GrB_TRIU_INT64',
-\verb'GrB_DIAG_INT64',
-\verb'GrB_OFFIAG_INT64',
-\verb'GrB_COLLE_INT64',
-\verb'GrB_COLGT_INT64',
-\verb'GrB_ROWLE_INT64',
+\verb'GrB_TRIL', \newline
+\verb'GrB_TRIU',
+\verb'GrB_DIAG',
+\verb'GrB_OFFIAG',
+\verb'GrB_COLLE',
+\verb'GrB_COLGT',
+\verb'GrB_ROWLE',
 and
-\verb'GrB_ROWGT_INT64'.
+\verb'GrB_ROWGT'.
 
 For floating-point values, comparisons with \verb'NaN' always return false.
 The \verb'GrB_VALUE*' should not be used with a scalar \verb'y' that is
@@ -12074,14 +12075,14 @@ GraphBLAS name          & Octave/MATLAB     & description \\
 \verb'GrB_COLINDEX_*'    & \verb'z=j+y'         & select \verb'A(i,j)' if \verb'j != -y' \\
 \verb'GrB_DIAGINDEX_*'   & \verb'z=j-(i+y)'     & select \verb'A(i,j)' if \verb'j != i+y' \\
 \hline
-\verb'GrB_TRIL_INT64'    & \verb'z=(j<=(i+y))'  & select entries on or below the \verb'y'th diagonal \\
-\verb'GrB_TRIU_INT64'    & \verb'z=(j>=(i+y))'  & select entries on or above the \verb'y'th diagonal \\
-\verb'GrB_DIAG_INT64'    & \verb'z=(j==(i+y))'  & select entries on the \verb'y'th diagonal \\
-\verb'GrB_OFFDIAG_INT64' & \verb'z=(j!=(i+y))'  & select entries not on the \verb'y'th diagonal \\
-\verb'GrB_COLLE_INT64'   & \verb'z=(j<=y)'      & select entries in columns 0 to \verb'y' \\
-\verb'GrB_COLGT_INT64'   & \verb'z=(j>y)'       & select entries in columns \verb'y+1' and above \\
-\verb'GrB_ROWLE_INT64'   & \verb'z=(i<=y)'      & select entries in rows 0 to \verb'y' \\
-\verb'GrB_ROWGT_INT64'   & \verb'z=(i>y)'       & select entries in rows \verb'y+1' and above \\
+\verb'GrB_TRIL'    & \verb'z=(j<=(i+y))'  & select entries on or below the \verb'y'th diagonal \\
+\verb'GrB_TRIU'    & \verb'z=(j>=(i+y))'  & select entries on or above the \verb'y'th diagonal \\
+\verb'GrB_DIAG'    & \verb'z=(j==(i+y))'  & select entries on the \verb'y'th diagonal \\
+\verb'GrB_OFFDIAG' & \verb'z=(j!=(i+y))'  & select entries not on the \verb'y'th diagonal \\
+\verb'GrB_COLLE'   & \verb'z=(j<=y)'      & select entries in columns 0 to \verb'y' \\
+\verb'GrB_COLGT'   & \verb'z=(j>y)'       & select entries in columns \verb'y+1' and above \\
+\verb'GrB_ROWLE'   & \verb'z=(i<=y)'      & select entries in rows 0 to \verb'y' \\
+\verb'GrB_ROWGT'   & \verb'z=(i>y)'       & select entries in rows \verb'y+1' and above \\
 \hline
 \verb'GrB_VALUENE_T'     & \verb'z=(aij!=y)'    & select \verb'A(i,j)' if it is not equal to \verb'y'\\
 \verb'GrB_VALUEEQ_T'     & \verb'z=(aij==y)'    & select \verb'A(i,j)' is it equal to \verb'y'\\
@@ -12567,8 +12568,8 @@ GrB_Info GxB_IndexUnaryOp_fprint    // print and check a GrB_IndexUnaryOp
 \end{verbatim} } \end{mdframed}
 
 For example,
-\verb'GrB_IndexUnaryOp_fprint (GrB_TRIL_INT64, "tril", GxB_COMPLETE, f)' prints
-the \verb'GrB_TRIL_INT64' index-unary operator to the file \verb'f'.
+\verb'GrB_IndexUnaryOp_fprint (GrB_TRIL, "tril", GxB_COMPLETE, f)' prints
+the \verb'GrB_TRIL' index-unary operator to the file \verb'f'.
 
 \newpage
 %===============================================================================

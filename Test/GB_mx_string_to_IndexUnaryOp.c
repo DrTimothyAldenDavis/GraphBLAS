@@ -138,7 +138,7 @@ bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
 
             switch (xcode)
             {
-                case GB_INT64_code   : op = GrB_TRIL_INT64 ; break ;
+                case GB_INT64_code   : op = GrB_TRIL ; break ;
                 default              : 
                     mexWarnMsgIdAndTxt ("GB:warn","unknown operator") ;
                     return (false) ;
@@ -149,7 +149,7 @@ bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
 
             switch (xcode)
             {
-                case GB_INT64_code   : op = GrB_TRIU_INT64 ; break ;
+                case GB_INT64_code   : op = GrB_TRIU ; break ;
                 default              : 
                     mexWarnMsgIdAndTxt ("GB:warn","unknown operator") ;
                     return (false) ;
@@ -160,7 +160,7 @@ bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
 
             switch (xcode)
             {
-                case GB_INT64_code   : op = GrB_DIAG_INT64 ; break ;
+                case GB_INT64_code   : op = GrB_DIAG; break ;
                 default              : 
                     mexWarnMsgIdAndTxt ("GB:warn","unknown operator") ;
                     return (false) ;
@@ -171,7 +171,7 @@ bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
 
             switch (xcode)
             {
-                case GB_INT64_code   : op = GrB_OFFDIAG_INT64 ; break ;
+                case GB_INT64_code   : op = GrB_OFFDIAG; break ;
                 default              : 
                     mexWarnMsgIdAndTxt ("GB:warn","unknown operator") ;
                     return (false) ;
@@ -182,7 +182,7 @@ bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
 
             switch (xcode)
             {
-                case GB_INT64_code   : op = GrB_COLLE_INT64 ; break ;
+                case GB_INT64_code   : op = GrB_COLLE; break ;
                 default              : 
                     mexWarnMsgIdAndTxt ("GB:warn","unknown operator") ;
                     return (false) ;
@@ -193,7 +193,7 @@ bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
 
             switch (xcode)
             {
-                case GB_INT64_code   : op = GrB_COLGT_INT64 ; break ;
+                case GB_INT64_code   : op = GrB_COLGT; break ;
                 default              : 
                     mexWarnMsgIdAndTxt ("GB:warn","unknown operator") ;
                     return (false) ;
@@ -204,7 +204,7 @@ bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
 
             switch (xcode)
             {
-                case GB_INT64_code   : op = GrB_ROWLE_INT64 ; break ;
+                case GB_INT64_code   : op = GrB_ROWLE; break ;
                 default              : 
                     mexWarnMsgIdAndTxt ("GB:warn","unknown operator") ;
                     return (false) ;
@@ -215,7 +215,7 @@ bool GB_mx_string_to_IndexUnaryOp       // true if successful, false otherwise
 
             switch (xcode)
             {
-                case GB_INT64_code   : op = GrB_ROWGT_INT64 ; break ;
+                case GB_INT64_code   : op = GrB_ROWGT; break ;
                 default              : 
                     mexWarnMsgIdAndTxt ("GB:warn","unknown operator") ;
                     return (false) ;

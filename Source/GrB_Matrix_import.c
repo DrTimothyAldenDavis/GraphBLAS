@@ -86,16 +86,16 @@ GrB_Info GrB_Matrix_import  // import a matrix
             }
             break ;
 
-        case GrB_DENSE_ROW_FORMAT :
-        case GrB_DENSE_COL_FORMAT :
-
-            ok = GB_int64_multiply (&nvals, (int64_t) nrows, (int64_t) ncols) ;
-            if (!ok || Ax_len < nvals)
-            { 
-                // Ap, Ai, and Ax must all have the same size
-                return (GrB_INVALID_VALUE) ;
-            }
-            break ;
+//      case GrB_DENSE_ROW_FORMAT :
+//      case GrB_DENSE_COL_FORMAT :
+//
+//          ok = GB_int64_multiply (&nvals, (int64_t) nrows, (int64_t) ncols) ;
+//          if (!ok || Ax_len < nvals)
+//          {
+//              // Ap, Ai, and Ax must all have the same size
+//              return (GrB_INVALID_VALUE) ;
+//          }
+//          break ;
 
         case GrB_COO_FORMAT :
 
@@ -138,11 +138,11 @@ GrB_Info GrB_Matrix_import  // import a matrix
             ok = (Ap_copy != NULL && Ai_copy != NULL && Ax_copy != NULL) ;
             break ;
 
-        case GrB_DENSE_ROW_FORMAT : 
-        case GrB_DENSE_COL_FORMAT : 
-            Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ;
-            ok = (Ax_copy != NULL) ;
-            break ;
+//      case GrB_DENSE_ROW_FORMAT : 
+//      case GrB_DENSE_COL_FORMAT : 
+//          Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ;
+//          ok = (Ax_copy != NULL) ;
+//          break ;
 
         default : // GrB_COO_FORMAT, nothing to allocate
             break ;
@@ -171,8 +171,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
         case GrB_CSC_FORMAT : 
             GB_memcpy (Ap_copy, Ap, plen  * sizeof (GrB_Index), nthreads_max) ;
             GB_memcpy (Ai_copy, Ai, nvals * sizeof (GrB_Index), nthreads_max) ;
-        case GrB_DENSE_ROW_FORMAT : 
-        case GrB_DENSE_COL_FORMAT : 
+//      case GrB_DENSE_ROW_FORMAT : 
+//      case GrB_DENSE_COL_FORMAT : 
             GB_memcpy (Ax_copy, Ax, nvals * typesize          , nthreads_max) ;
             break ;
         default : // GrB_COO_FORMAT, nothing to copy
@@ -218,37 +218,37 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 Context)) ;
             break ;
 
-        case GrB_DENSE_ROW_FORMAT : 
+//      case GrB_DENSE_ROW_FORMAT : 
+//
+//          GB_OK (GB_import (false, A, type, ncols, nrows, false,
+//              NULL, 0,            // Ap
+//              NULL, 0,            // Ah
+//              NULL, 0,            // Ab
+//              NULL, 0,            // Ai
+//              &Ax_copy, Ax_size,  // Ax
+//              0, false, 0,        // cannot be jumbled
+//              GxB_FULL, false,    // full by row
+//              false,              // not iso
+//              fast_import,
+//              false,              // do not add to memtable
+//              Context)) ;
+//          break ;
 
-            GB_OK (GB_import (false, A, type, ncols, nrows, false,
-                NULL, 0,            // Ap
-                NULL, 0,            // Ah
-                NULL, 0,            // Ab
-                NULL, 0,            // Ai
-                &Ax_copy, Ax_size,  // Ax
-                0, false, 0,        // cannot be jumbled
-                GxB_FULL, false,    // full by row
-                false,              // not iso
-                fast_import,
-                false,              // do not add to memtable
-                Context)) ;
-            break ;
-
-        case GrB_DENSE_COL_FORMAT : 
-
-            GB_OK (GB_import (false, A, type, nrows, ncols, false,
-                NULL, 0,            // Ap
-                NULL, 0,            // Ah
-                NULL, 0,            // Ab
-                NULL, 0,            // Ai
-                &Ax_copy, Ax_size,  // Ax
-                0, false, 0,        // cannot be jumbled
-                GxB_FULL, true,     // full by column
-                false,              // not iso
-                fast_import,
-                false,              // do not add to memtable
-                Context)) ;
-            break ;
+//      case GrB_DENSE_COL_FORMAT : 
+//
+//          GB_OK (GB_import (false, A, type, nrows, ncols, false,
+//              NULL, 0,            // Ap
+//              NULL, 0,            // Ah
+//              NULL, 0,            // Ab
+//              NULL, 0,            // Ai
+//              &Ax_copy, Ax_size,  // Ax
+//              0, false, 0,        // cannot be jumbled
+//              GxB_FULL, true,     // full by column
+//              false,              // not iso
+//              fast_import,
+//              false,              // do not add to memtable
+//              Context)) ;
+//          break ;
 
         default : // GrB_COO_FORMAT : 
             {
