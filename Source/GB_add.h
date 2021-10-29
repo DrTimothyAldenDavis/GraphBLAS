@@ -23,8 +23,8 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const bool is_eWiseUnion,   // if true, eWiseUnion, else eWiseAdd
-    const GrB_Scalar Amissing,  // Amissing and Bmissing ignored for eWiseAdd,
-    const GrB_Scalar Bmissing,  // nonempty scalars for GxB_eWiseUnion
+    const GrB_Scalar alpha, // alpha and beta ignored for eWiseAdd,
+    const GrB_Scalar beta,  // nonempty scalars for GxB_eWiseUnion
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     GB_Context Context
 ) ;
@@ -104,8 +104,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool is_eWiseUnion,   // if true, eWiseUnion, else eWiseAdd
-    const GrB_Scalar Amissing,  // Amissing and Bmissing ignored for eWiseAdd,
-    const GrB_Scalar Bmissing,  // nonempty scalars for GxB_eWiseUnion
+    const GrB_Scalar alpha, // alpha and beta ignored for eWiseAdd,
+    const GrB_Scalar beta,  // nonempty scalars for GxB_eWiseUnion
     GB_Context Context
 ) ;
 

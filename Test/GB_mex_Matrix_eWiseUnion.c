@@ -10,14 +10,14 @@
 #include "GB_mex.h"
 
 #define USAGE \
-    "C = GB_mex_Matrix_eWiseUnion (C, M, accum, add, A, Amissing, B, Bmissing, desc)"
+    "C = GB_mex_Matrix_eWiseUnion (C, M, accum, add, A, alpha, B, beta, desc)"
 
 #define FREE_ALL                        \
 {                                       \
     GrB_Matrix_free_(&A) ;              \
-    GrB_Scalar_free_(&Amissing) ;       \
+    GrB_Scalar_free_(&alpha) ;          \
     GrB_Matrix_free_(&B) ;              \
-    GrB_Scalar_free_(&Bmissing) ;       \
+    GrB_Scalar_free_(&beta) ;           \
     GrB_Matrix_free_(&C) ;              \
     GrB_Descriptor_free_(&desc) ;       \
     GrB_Matrix_free_(&M) ;              \
@@ -39,7 +39,7 @@ void mexFunction
     GrB_Matrix C = NULL ;
     GrB_Matrix M = NULL ;
     GrB_Descriptor desc = NULL ;
-    GrB_Scalar Amissing = NULL, Bmissing = NULL ;
+    GrB_Scalar alpha = NULL, beta = NULL ;
 
     // check inputs
     if (nargout > 1 || nargin < 8 || nargin > 9)
@@ -75,12 +75,12 @@ void mexFunction
         mexErrMsgTxt ("A failed") ;
     }
 
-    // get Amissing
-    Amissing = GB_mx_get_Scalar (pargin [5]) ; 
-    if (Amissing == NULL)
+    // get alpha
+    alpha = GB_mx_get_Scalar (pargin [5]) ; 
+    if (alpha == NULL)
     {
         FREE_ALL ;
-        mexErrMsgTxt ("Amissing failed") ;
+        mexErrMsgTxt ("alpha failed") ;
     }
 
     // get B (shallow copy)
@@ -91,12 +91,12 @@ void mexFunction
         mexErrMsgTxt ("B failed") ;
     }
 
-    // get Bmissing
-    Bmissing = GB_mx_get_Scalar (pargin [7]) ; 
-    if (Bmissing == NULL)
+    // get beta
+    beta = GB_mx_get_Scalar (pargin [7]) ; 
+    if (beta == NULL)
     {
         FREE_ALL ;
-        mexErrMsgTxt ("Bmissing failed") ;
+        mexErrMsgTxt ("beta failed") ;
     }
 
     // get add operator
@@ -129,7 +129,7 @@ void mexFunction
     }
 
     // C<M> = accum(C,A+B)
-    METHOD (GxB_Matrix_eWiseUnion(C, M, accum, add, A, Amissing, B, Bmissing,
+    METHOD (GxB_Matrix_eWiseUnion(C, M, accum, add, A, alpha, B, beta,
         desc)) ;
 
     // return C as a struct and free the GraphBLAS C

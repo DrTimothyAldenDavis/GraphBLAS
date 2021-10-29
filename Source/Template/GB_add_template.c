@@ -142,12 +142,12 @@
         {
 
             //------------------------------------------------------------------
-            // eWiseUnion, using Amissing and Bmissing scalars
+            // eWiseUnion, using alpha and beta scalars
             //------------------------------------------------------------------
 
             #define GB_EWISEUNION
-            // if A(i,j) is not present: C(i,j) = Amissing + B(i,j)
-            // if B(i,j) is not present: C(i,j) = A(i,j) + Bmissing
+            // if A(i,j) is not present: C(i,j) = alpha + B(i,j)
+            // if B(i,j) is not present: C(i,j) = A(i,j) + beta
 
             if (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE)
             { 

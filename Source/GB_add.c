@@ -63,8 +63,8 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const bool is_eWiseUnion,   // if true, eWiseUnion, else eWiseAdd
-    const GrB_Scalar Amissing,  // Amissing and Bmissing ignored for eWiseAdd,
-    const GrB_Scalar Bmissing,  // nonempty scalars for GxB_eWiseUnion
+    const GrB_Scalar alpha, // alpha and beta ignored for eWiseAdd,
+    const GrB_Scalar beta,  // nonempty scalars for GxB_eWiseUnion
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     GB_Context Context
 )
@@ -222,7 +222,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         Cnvec, &Ch, Ch_size, C_to_M, C_to_A, C_to_B, Ch_is_Mh, C_sparsity,
         // original input:
         (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B,
-        is_eWiseUnion, Amissing, Bmissing, Context) ;
+        is_eWiseUnion, alpha, beta, Context) ;
 
     // Ch and Cp must not be freed; they are now C->h and C->p.
     // If the method failed, Cp and Ch have already been freed.

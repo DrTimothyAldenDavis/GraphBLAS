@@ -97,3 +97,19 @@ GrB_Info GB (_AsaxbitB__any_pair_iso)
     GB_Context Context
 ) ;
 
+#if 0
+GrB_Info GB (_Asaxpy4B__any_pair_iso)
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const int ntasks,
+    const int nthreads,
+    const int nfine_tasks_per_vector,
+    const bool use_coarse_tasks,
+    const bool use_atomics,
+    const int64_t *A_slice,
+    GB_Context Context
+) ;
+#endif
+

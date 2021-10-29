@@ -10,19 +10,22 @@
 #include "GB_mxm.h"
 #include "GB_bitmap_AxB_saxpy.h"
 
-// TODO: pass in user's C and accum, and allow bitmap multiply to work in-place
+// TODO: allow bitmap multiply to work in-place as well
 
 GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 (
     GrB_Matrix C,                   // output, static header
+    GrB_Matrix C_in,                // original input matrix
     const GrB_Matrix M,             // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_BinaryOp accum,
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
+    bool *done_in_place,            // if true, C was computed in-place 
     const GrB_Desc_Value AxB_method,
     const int do_sort,              // if nonzero, try to sort in saxpy3
     GB_Context Context
@@ -55,10 +58,35 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     ASSERT (A->vdim == B->vlen) ;
 
     //--------------------------------------------------------------------------
-    // determine the sparsity of C
+    // determine if saxpy4 can be used: C += A*B where C is full
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    GrB_Type ztype = semiring->add->op->ztype ;
+    GrB_BinaryOp mult = semiring->multiply ;
+    GB_Opcode mult_opcode = mult->opcode ;
+    if (C_in != NULL && M == NULL
+        && (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
+        && (GB_IS_BITMAP (B) || GB_as_if_full (B)))
+    { 
+        // GB_AxB_saxpy4 computes C += A*B where C is as-is-full, B is bitmap
+        // or as-if-full, A is sparse/hypersparse, no mask, the accum operator
+        // matches the monoid, no typecasting is done, no user-defined types or
+        // operators
+        ASSERT (accum == semiring->add->op) ;
+        info = GB_AxB_saxpy4 (C_in, A, B, semiring, flipxy, done_in_place,
+            Context) ;
+        if (info != GrB_NO_VALUE)
+        { 
+            // return if saxpy4 has handled this case, otherwise fall through
+            return (info) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // determine the sparsity of C
+    //--------------------------------------------------------------------------
+
     int C_sparsity, saxpy_method ;
     GB_AxB_saxpy_sparsity (&C_sparsity, &saxpy_method,
         M, Mask_comp, A, B, Context) ;
@@ -67,7 +95,6 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     // determine if C is iso
     //--------------------------------------------------------------------------
 
-    GrB_Type ztype = semiring->add->op->ztype ;
     size_t zsize = ztype->size ;
     GB_void cscalar [GB_VLA(zsize)] ;
     bool C_iso = GB_iso_AxB (cscalar, A, B, A->vdim, semiring, flipxy, false) ;
@@ -117,7 +144,6 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
         GBURBLE ("(iso full saxpy) ") ;
         ASSERT (C_sparsity == GxB_FULL) ;
-        GrB_Type ztype = semiring->add->op->ztype ;
         // set C->iso = true    OK
         info = GB_new_bix (&C, true,    // static header
             ztype, A->vlen, B->vdim, GB_Ap_null, true, GxB_FULL, false,
@@ -159,8 +185,9 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
             // results in a different analysis in GB_AxB_saxpy3, with no mask
             // present.  Otherwise, GB_bitmap_AxB_saxpy, below, is called.
             ASSERT (M != NULL) ;
-            info = GB_AxB_saxpy (C, NULL, false, false, A, B,
-                semiring, flipxy, mask_applied, AxB_method, do_sort, Context) ;
+            info = GB_AxB_saxpy (C, NULL, NULL, false, false, NULL, A, B,
+                semiring, flipxy, mask_applied, done_in_place, AxB_method,
+                do_sort, Context) ;
         }
 
     }

@@ -80,8 +80,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool is_eWiseUnion,   // if true, eWiseUnion, else eWiseAdd
-    const GrB_Scalar Amissing,  // Amissing and Bmissing ignored for eWiseAdd,
-    const GrB_Scalar Bmissing,  // nonempty scalars for GxB_eWiseUnion
+    const GrB_Scalar alpha,  // alpha and beta ignored for eWiseAdd,
+    const GrB_Scalar beta,  // nonempty scalars for GxB_eWiseUnion
     GB_Context Context
 )
 {
@@ -262,23 +262,23 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     }
 
     //--------------------------------------------------------------------------
-    // cast the Amissing and Bmissing scalars, if present
+    // cast the alpha and beta scalars, if present
     //--------------------------------------------------------------------------
 
     GB_void amissing [GB_VLA(xsize)] ;
     GB_void bmissing [GB_VLA(ysize)] ;
     if (is_eWiseUnion)
     { 
-        // amissing = (xtype) Amissing
-        ASSERT (Amissing != NULL) ;
-        GB_cast_function cast_Amissing_to_X =
-            GB_cast_factory (op->xtype->code, Amissing->type->code) ;
-        cast_Amissing_to_X (amissing, Amissing->x, Amissing->type->size) ;
-        // bmissing = (ytype) Bmissing
-        ASSERT (Bmissing != NULL) ;
-        GB_cast_function cast_Bmissing_to_Y =
-            GB_cast_factory (op->ytype->code, Bmissing->type->code) ;
-        cast_Bmissing_to_Y (bmissing, Bmissing->x, Bmissing->type->size) ;
+        // amissing = (xtype) alpha
+        ASSERT (alpha != NULL) ;
+        GB_cast_function cast_alpha_to_X =
+            GB_cast_factory (op->xtype->code, alpha->type->code) ;
+        cast_alpha_to_X (amissing, alpha->x, alpha->type->size) ;
+        // bmissing = (ytype) beta
+        ASSERT (beta != NULL) ;
+        GB_cast_function cast_beta_to_Y =
+            GB_cast_factory (op->ytype->code, beta->type->code) ;
+        cast_beta_to_Y (bmissing, beta->x, beta->type->size) ;
     }
 
     //--------------------------------------------------------------------------

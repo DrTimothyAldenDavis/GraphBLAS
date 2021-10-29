@@ -42,9 +42,9 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     bool B_transpose,               // if true, use B' instead of B
     bool eWiseAdd,                  // if true, do set union (like A+B),
                                     // otherwise do intersection (like A.*B)
-    const bool is_eWiseUnion,   // if true, eWiseUnion, else eWiseAdd
-    const GrB_Scalar Amissing,  // Amissing and Bmissing ignored for eWiseAdd,
-    const GrB_Scalar Bmissing,  // nonempty scalars for GxB_eWiseUnion
+    const bool is_eWiseUnion,       // if true, eWiseUnion, else eWiseAdd
+    const GrB_Scalar alpha,         // alpha and beta ignored for eWiseAdd,
+    const GrB_Scalar beta,          // nonempty scalars for GxB_eWiseUnion
     GB_Context Context
 )
 {
@@ -87,36 +87,36 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     {
         if (is_eWiseUnion)
         {
-            // Amissing and Bmissing scalars must be present
-            GB_RETURN_IF_NULL_OR_FAULTY (Amissing) ;
-            GB_RETURN_IF_NULL_OR_FAULTY (Bmissing) ;
-            GB_MATRIX_WAIT (Amissing) ;
-            GB_MATRIX_WAIT (Bmissing) ;
-            if (GB_nnz (Amissing) == 0)
+            // alpha and beta scalars must be present
+            GB_RETURN_IF_NULL_OR_FAULTY (alpha) ;
+            GB_RETURN_IF_NULL_OR_FAULTY (beta) ;
+            GB_MATRIX_WAIT (alpha) ;
+            GB_MATRIX_WAIT (beta) ;
+            if (GB_nnz (alpha) == 0)
             {
                 GB_ERROR (GrB_EMPTY_OBJECT, "%s\n",
-                    "Amissing cannot be an empty scalar") ;
+                    "alpha cannot be an empty scalar") ;
             }
-            if (GB_nnz (Bmissing) == 0)
+            if (GB_nnz (beta) == 0)
             { 
                 GB_ERROR (GrB_EMPTY_OBJECT, "%s\n",
-                    "Bmissing cannot be an empty scalar") ;
+                    "beta cannot be an empty scalar") ;
             }
-            // C = op (A, Bmissing) is done for entries in A but not B
-            if (!GB_Type_compatible (op->ytype, Bmissing->type))
+            // C = op (A, beta) is done for entries in A but not B
+            if (!GB_Type_compatible (op->ytype, beta->type))
             { 
                 GB_ERROR (GrB_DOMAIN_MISMATCH,
-                    "Bmissing scalar of type [%s]\n"
+                    "beta scalar of type [%s]\n"
                     "cannot be typecast to op input of type [%s]",
-                    Bmissing->type->name, op->ytype->name) ;
+                    beta->type->name, op->ytype->name) ;
             }
-            // C = op (Amissing, B) is done for entries in B but not A
-            if (!GB_Type_compatible (op->xtype, Amissing->type))
+            // C = op (alpha, B) is done for entries in B but not A
+            if (!GB_Type_compatible (op->xtype, alpha->type))
             { 
                 GB_ERROR (GrB_DOMAIN_MISMATCH,
-                    "Amissing scalar of type [%s]\n"
+                    "alpha scalar of type [%s]\n"
                     "cannot be typecast to op input of type [%s]",
-                    Amissing->type->name, op->xtype->name) ;
+                    alpha->type->name, op->xtype->name) ;
             }
         }
         else
@@ -387,8 +387,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // could be faster to exploit the mask duing GB_add.
 
         GB_OK (GB_add (T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
-            &mask_applied, A1, B1, is_eWiseUnion, Amissing, Bmissing, op,
-            Context)) ;
+            &mask_applied, A1, B1, is_eWiseUnion, alpha, beta, op, Context)) ;
 
     }
     else

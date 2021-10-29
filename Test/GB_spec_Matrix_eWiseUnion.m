@@ -1,8 +1,8 @@
-function C = GB_spec_Matrix_eWiseUnion (C, Mask, accum, add, A, Amissing, B, Bmissing, descriptor, ignore)
+function C = GB_spec_Matrix_eWiseUnion (C, Mask, accum, add, A, alpha, B, beta, descriptor, ignore)
 %GB_SPEC_MATRIX_EWISEADD a mimic of GxB_Matrix_eWiseUnion
 %
 % Usage:
-% C = GB_spec_Matrix_eWiseUnion (C, Mask, accum, add, A, Amissing, B, Bmissing, descriptor)
+% C = GB_spec_Matrix_eWiseUnion (C, Mask, accum, add, A, alpha, B, beta, descriptor)
 %
 % Computes C<Mask> = accum(C,T), in GraphBLAS notation, where T =A+B, A'+B,
 % A+B' or A'+B'.  The pattern of T is the union of A and B.
@@ -15,7 +15,7 @@ function C = GB_spec_Matrix_eWiseUnion (C, Mask, accum, add, A, Amissing, B, Bmi
 %-------------------------------------------------------------------------------
 
 if (nargout > 1 || ~(nargin == 9 || nargin == 10))
-    error ('usage: C = GB_spec_Matrix_eWiseUnion (C, Mask, accum, add, A, Amissing, B, Bmissing, descriptor)') ;
+    error ('usage: C = GB_spec_Matrix_eWiseUnion (C, Mask, accum, add, A, alpha, B, beta, descriptor)') ;
 end
 
 C = GB_spec_matrix (C) ;
@@ -30,11 +30,11 @@ Mask = GB_spec_getmask (Mask, Mask_struct) ;
 % do the work via a clean *.m interpretation of the entire GraphBLAS spec
 %-------------------------------------------------------------------------------
 
-Amissing = full (Amissing) ;
-Amissing = GB_mex_cast (Amissing, xtype) ;
+alpha = full (alpha) ;
+alpha = GB_mex_cast (alpha, xtype) ;
 
-Bmissing = full (Bmissing) ;
-Bmissing = GB_mex_cast (Bmissing, ytype) ;
+beta = full (beta) ;
+beta = GB_mex_cast (beta, ytype) ;
 
 % apply the descriptor to A
 if (Atrans)
@@ -69,24 +69,24 @@ else
     % apply the operator
     T.matrix (p) = GB_spec_op (add, A1, B1) ;
 
-    % for entries in A but not in B: T = add (A2, Bmissing)
+    % for entries in A but not in B: T = add (A2, beta)
     p = A.pattern & ~B.pattern ;
     A2 = GB_mex_cast (A.matrix (p), xtype) ;
-    Bmissing = repmat (Bmissing, length (A2), 1) ;
+    beta = repmat (beta, length (A2), 1) ;
     % p
     % A2
-    % Bmissing
-    T1 = GB_spec_op (add, A2, Bmissing) ;
+    % beta
+    T1 = GB_spec_op (add, A2, beta) ;
     T.matrix (p) = T1 ;
 
-    % for entries in B but not in A: T = add (Amissing, B2)
+    % for entries in B but not in A: T = add (alpha, B2)
     p = B.pattern & ~A.pattern ;
     % p_full = full (p)
     B2 = GB_mex_cast (B.matrix (p), ytype) ;
     % B2
-    Amissing = repmat (Amissing, length (B2), 1) ;
-    % Amissing
-    T2 = GB_spec_op (add, Amissing, B2) ;
+    alpha = repmat (alpha, length (B2), 1) ;
+    % alpha
+    T2 = GB_spec_op (add, alpha, B2) ;
     % T2
     T.matrix (p) = T2 ;
 end

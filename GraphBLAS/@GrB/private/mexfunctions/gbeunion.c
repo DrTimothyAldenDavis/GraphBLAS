@@ -11,11 +11,11 @@
 
 // Usage:
 
-// C = gbeunion (binop, A, Amissing, B, Bmissing)
-// C = gbeunion (binop, A, Amissing, B, Bmissing, desc)
-// C = gbeunion (Cin, accum, binop, A, Amissing, B, Bmissing, desc)
-// C = gbeunion (Cin, M, binop, A, Amissing, B, Bmissing, desc)
-// C = gbeunion (Cin, M, accum, binop, A, Amissing, B, Bmissing, desc)
+// C = gbeunion (binop, A, alpha, B, beta)
+// C = gbeunion (binop, A, alpha, B, beta, desc)
+// C = gbeunion (Cin, accum, binop, A, alpha, B, beta, desc)
+// C = gbeunion (Cin, M, binop, A, alpha, B, beta, desc)
+// C = gbeunion (Cin, M, accum, binop, A, alpha, B, beta, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, B, and the descriptor).
@@ -23,7 +23,7 @@
 #include "gb_interface.h"
 
 #define USAGE \
-"usage: C = GrB.eunion (Cin, M, accum, binop, A, Amissing, B, Bmissing, desc)"
+"usage: C = GrB.eunion (Cin, M, accum, binop, A, alpha, B, beta, desc)"
 
 void mexFunction
 (
@@ -60,42 +60,42 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Type atype, btype, ctype = NULL ;
-    GrB_Matrix C = NULL, M = NULL, A, B, Amissing, Bmissing ;
+    GrB_Matrix C = NULL, M = NULL, A, B, alpha, beta ;
 
     if (nmatrices == 4)
     { 
         A = gb_get_shallow (Matrix [0]) ;
-        Amissing = gb_get_shallow (Matrix [1]) ;
+        alpha = gb_get_shallow (Matrix [1]) ;
         B = gb_get_shallow (Matrix [2]) ;
-        Bmissing = gb_get_shallow (Matrix [3]) ;
+        beta = gb_get_shallow (Matrix [3]) ;
     }
     else if (nmatrices == 5)
     { 
         C = gb_get_deep    (Matrix [0]) ;
         A = gb_get_shallow (Matrix [1]) ;
-        Amissing = gb_get_shallow (Matrix [2]) ;
+        alpha = gb_get_shallow (Matrix [2]) ;
         B = gb_get_shallow (Matrix [3]) ;
-        Bmissing = gb_get_shallow (Matrix [4]) ;
+        beta = gb_get_shallow (Matrix [4]) ;
     }
     else // if (nmatrices == 6)
     { 
         C = gb_get_deep    (Matrix [0]) ;
         M = gb_get_shallow (Matrix [1]) ;
         A = gb_get_shallow (Matrix [2]) ;
-        Amissing = gb_get_shallow (Matrix [3]) ;
+        alpha = gb_get_shallow (Matrix [3]) ;
         B = gb_get_shallow (Matrix [4]) ;
-        Bmissing = gb_get_shallow (Matrix [5]) ;
+        beta = gb_get_shallow (Matrix [5]) ;
     }
 
     GrB_Index n ;
-    OK (GrB_Matrix_nrows (&n, Amissing)) ;
-    CHECK_ERROR (n != 1, "Amissing must be a scalar") ;
-    OK (GrB_Matrix_ncols (&n, Amissing)) ;
-    CHECK_ERROR (n != 1, "Amissing must be a scalar") ;
-    OK (GrB_Matrix_nrows (&n, Bmissing)) ;
-    CHECK_ERROR (n != 1, "Bmissing must be a scalar") ;
-    OK (GrB_Matrix_ncols (&n, Bmissing)) ;
-    CHECK_ERROR (n != 1, "Bmissing must be a scalar") ;
+    OK (GrB_Matrix_nrows (&n, alpha)) ;
+    CHECK_ERROR (n != 1, "alpha must be a scalar") ;
+    OK (GrB_Matrix_ncols (&n, alpha)) ;
+    CHECK_ERROR (n != 1, "alpha must be a scalar") ;
+    OK (GrB_Matrix_nrows (&n, beta)) ;
+    CHECK_ERROR (n != 1, "beta must be a scalar") ;
+    OK (GrB_Matrix_ncols (&n, beta)) ;
+    CHECK_ERROR (n != 1, "beta must be a scalar") ;
 
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&btype, B)) ;
@@ -159,7 +159,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK1 (C, GxB_Matrix_eWiseUnion (C, M, accum, op,
-        A, (GrB_Scalar) Amissing, B, (GrB_Scalar) Bmissing, desc)) ;
+        A, (GrB_Scalar) alpha, B, (GrB_Scalar) beta, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies
@@ -167,9 +167,9 @@ void mexFunction
 
     OK (GrB_Matrix_free (&M)) ;
     OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Matrix_free (&Amissing)) ;
+    OK (GrB_Matrix_free (&alpha)) ;
     OK (GrB_Matrix_free (&B)) ;
-    OK (GrB_Matrix_free (&Bmissing)) ;
+    OK (GrB_Matrix_free (&beta)) ;
     OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------

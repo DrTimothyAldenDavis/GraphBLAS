@@ -12,9 +12,9 @@
 // if u(i) and v(i) both appear:
 //      C(i,j) = add (u(i), v(i))
 // else if u(i) appears but v(i) does not:
-//      C(i,j) = add (u(i), Bmissing)
+//      C(i,j) = add (u(i), beta)
 // else if u(i) does not appear but v(i) does:
-//      C(i,j) = add (Amissing, v(i))
+//      C(i,j) = add (alpha, v(i))
 
 #include "GB_ewise.h"
 #include "GB_get_mask.h"
@@ -43,7 +43,7 @@
         (GrB_Matrix) u, false,      /* u, never transposed         */       \
         (GrB_Matrix) v, false,      /* v, never transposed         */       \
         true,                       /* eWiseAdd                    */       \
-        true, umissing, vmissing,   /* eWiseUnion                  */       \
+        true, alpha, beta,          /* eWiseUnion                  */       \
         Context)
 
 //------------------------------------------------------------------------------
@@ -57,9 +57,9 @@ GrB_Info GxB_Vector_eWiseUnion      // w<M> = accum (w, u+v)
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_BinaryOp add,         // defines '+' for t=u+v
     const GrB_Vector u,             // first input:  vector u
-    const GrB_Scalar umissing,
+    const GrB_Scalar alpha,
     const GrB_Vector v,             // second input: vector v
-    const GrB_Scalar vmissing,
+    const GrB_Scalar beta,
     const GrB_Descriptor desc       // descriptor for w and M
 )
 { 
@@ -68,8 +68,8 @@ GrB_Info GxB_Vector_eWiseUnion      // w<M> = accum (w, u+v)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, "GxB_Vector_eWiseUnion (w, M, accum, add, u, umissing,"
-        " v, vmissing, desc)") ;
+    GB_WHERE (w, "GxB_Vector_eWiseUnion (w, M, accum, add, u, alpha,"
+        " v, beta, desc)") ;
     GB_BURBLE_START ("GxB_eWiseUnion") ;
     GB_RETURN_IF_NULL_OR_FAULTY (add) ;
 

@@ -67,7 +67,7 @@
                     { 
                         #ifdef GB_EWISEUNION
                         { 
-                            // C (i,j) = Amissing + B(i,j)
+                            // C (i,j) = alpha + B(i,j)
                             GB_LOAD_B (bij, Bx, p, B_iso) ;
                             GB_BINOP (GB_CX (p), amissing, bij,
                                 p % vlen, p / vlen) ;
@@ -84,7 +84,7 @@
                     { 
                         #ifdef GB_EWISEUNION
                         { 
-                            // C (i,j) = A(i,j) + Bmissing
+                            // C (i,j) = A(i,j) + beta
                             GB_LOAD_A (aij, Ax, p, A_iso) ;
                             GB_BINOP (GB_CX (p), aij, bmissing,
                                 p % vlen, p / vlen) ;
@@ -125,7 +125,7 @@
                     { 
                         #ifdef GB_EWISEUNION
                         { 
-                            // C (i,j) = A(i,j) + Bmissing
+                            // C (i,j) = A(i,j) + beta
                             GB_LOAD_A (aij, Ax, p, A_iso) ;
                             GB_BINOP (GB_CX (p), aij, bmissing,
                                 p % vlen, p / vlen) ;
@@ -178,7 +178,7 @@
                             #ifndef GB_ISO_ADD
                             #ifdef GB_EWISEUNION
                             { 
-                                // C (i,j) = Amissing + B(i,j)
+                                // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, pB, B_iso) ;
                                 GB_BINOP (GB_CX (p), amissing, bij, i, j) ;
                             }
@@ -218,7 +218,7 @@
                     {
                         #ifdef GB_EWISEUNION
                         { 
-                            // C (i,j) = Amissing + B(i,j)
+                            // C (i,j) = alpha + B(i,j)
                             GB_LOAD_B (bij, Bx, p, B_iso) ;
                             GB_BINOP (GB_CX (p), amissing, bij,
                                 p % vlen, p / vlen) ;
@@ -272,7 +272,7 @@
                             #ifndef GB_ISO_ADD
                             #ifdef GB_EWISEUNION
                             { 
-                                // C (i,j) = A(i,j) + Bmissing
+                                // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
                                 GB_BINOP (GB_CX (p), aij, bmissing, i, j) ;
                             }
@@ -401,7 +401,7 @@
                         { 
                             #ifdef GB_EWISEUNION
                             { 
-                                // C (i,j) = Amissing + B(i,j)
+                                // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, p, B_iso) ;
                                 GB_BINOP (GB_CX (p), amissing, bij,
                                     p % vlen, p / vlen) ;
@@ -418,7 +418,7 @@
                         { 
                             #ifdef GB_EWISEUNION
                             { 
-                                // C (i,j) = A(i,j) + Bmissing
+                                // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, p, A_iso) ;
                                 GB_BINOP (GB_CX (p), aij, bmissing,
                                     p % vlen, p / vlen) ;
@@ -470,7 +470,7 @@
                         {
                             #ifdef GB_EWISEUNION
                             { 
-                                // C (i,j) = A(i,j) + Bmissing
+                                // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, p, A_iso) ;
                                 GB_BINOP (GB_CX (p), aij, bmissing,
                                     p % vlen, p / vlen) ;
@@ -527,7 +527,7 @@
                             #ifndef GB_ISO_ADD
                             #ifdef GB_EWISEUNION
                             {
-                                // C (i,j) = Amissing + B(i,j)
+                                // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, pB, B_iso) ;
                                 GB_BINOP (GB_CX (p), amissing, bij, i, j) ;
                             }
@@ -571,7 +571,7 @@
                         {
                             #ifdef GB_EWISEUNION
                             {
-                                // C (i,j) = Amissing + B(i,j)
+                                // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, p, B_iso) ;
                                 GB_BINOP (GB_CX (p), amissing, bij,
                                     p % vlen, p / vlen) ;
@@ -628,7 +628,7 @@
                             #ifndef GB_ISO_ADD
                             #ifdef GB_EWISEUNION
                             { 
-                                // C (i,j) = A(i,j) + Bmissing
+                                // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
                                 GB_BINOP (GB_CX (p), aij, bmissing, i, j) ;
                             }
@@ -793,7 +793,7 @@
                         { 
                             #ifdef GB_EWISEUNION
                             {
-                                // C (i,j) = Amissing + B(i,j)
+                                // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, p, B_iso) ;
                                 GB_BINOP (GB_CX (p), amissing, bij,
                                     p % vlen, p / vlen) ;
@@ -810,7 +810,7 @@
                         { 
                             #ifdef GB_EWISEUNION
                             { 
-                                // C (i,j) = A(i,j) + Bmissing
+                                // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, p, A_iso) ;
                                 GB_BINOP (GB_CX (p), aij, bmissing,
                                     p % vlen, p / vlen) ;
@@ -862,7 +862,7 @@
                         {
                             #ifdef GB_EWISEUNION
                             { 
-                                // C (i,j) = A(i,j) + Bmissing
+                                // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, p, A_iso) ;
                                 GB_BINOP (GB_CX (p), aij, bmissing,
                                     p % vlen, p / vlen) ;
@@ -926,7 +926,7 @@
                                 #ifndef GB_ISO_ADD
                                 #ifdef GB_EWISEUNION
                                 {
-                                    // C (i,j) = Amissing + B(i,j)
+                                    // C (i,j) = alpha + B(i,j)
                                     GB_LOAD_B (bij, Bx, pB, B_iso) ;
                                     GB_BINOP (GB_CX (p), amissing, bij, i, j) ;
                                 }
@@ -972,7 +972,7 @@
                         {
                             #ifdef GB_EWISEUNION
                             {
-                                // C (i,j) = Amissing + B(i,j)
+                                // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, p, B_iso) ;
                                 GB_BINOP (GB_CX (p), amissing, bij,
                                     p % vlen, p / vlen) ;
@@ -1036,7 +1036,7 @@
                                 #ifndef GB_ISO_ADD
                                 #ifdef GB_EWISEUNION
                                 { 
-                                    // C (i,j) = A(i,j) + Bmissing
+                                    // C (i,j) = A(i,j) + beta
                                     GB_LOAD_A (aij, Ax, pA, A_iso) ;
                                     GB_BINOP (GB_CX (p), aij, bmissing, i, j) ;
                                 }

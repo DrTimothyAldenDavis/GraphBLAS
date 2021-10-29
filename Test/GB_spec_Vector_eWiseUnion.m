@@ -1,4 +1,4 @@
-function w = GB_spec_Vector_eWiseUnion (w, mask, accum, add, u, umissing, v, vmissing, descriptor)
+function w = GB_spec_Vector_eWiseUnion (w, mask, accum, add, u, alpha, v, beta, descriptor)
 %GB_SPEC_VECTOR_EWISEADD a mimic of GxB_Vector_eWiseUnion
 %
 % Usage:
@@ -15,7 +15,7 @@ function w = GB_spec_Vector_eWiseUnion (w, mask, accum, add, u, umissing, v, vmi
 %-------------------------------------------------------------------------------
 
 if (nargout > 1 || nargin ~= 9)
-    error ('usage: C = GB_spec_Vector_eWiseUnion (w, mask, accum, add, u, umissing, v, vmissing, descriptor)') ;
+    error ('usage: C = GB_spec_Vector_eWiseUnion (w, mask, accum, add, u, alpha, v, beta, descriptor)') ;
 end
 
 % make sure u is a column vector
@@ -36,6 +36,6 @@ if (isfield (descriptor, 'inp1'))
     descriptor = rmfield (descriptor, 'inp1') ;
 end
 
-w = GB_spec_Matrix_eWiseUnion (w, mask, accum, add, u, umissing, v, vmissing, descriptor) ;
+w = GB_spec_Matrix_eWiseUnion (w, mask, accum, add, u, alpha, v, beta, descriptor) ;
 
 

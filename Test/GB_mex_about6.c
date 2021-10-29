@@ -32,7 +32,7 @@ void mexFunction
 
     GrB_Info info ;
     GrB_Matrix C = NULL, A = NULL, B = NULL, P = NULL ;
-    GrB_Scalar Amissing = NULL, Bmissing = NULL, S = NULL ;
+    GrB_Scalar alpha = NULL, beta = NULL, S = NULL ;
     GrB_Vector u = NULL ;
     GrB_Type MyType = NULL ;
     char *err ;
@@ -55,50 +55,50 @@ void mexFunction
     OK (GrB_Matrix_new (&C, GrB_FP64, 10, 10)) ;
 
     expected = GrB_NULL_POINTER ;
-    ERR (GxB_Matrix_eWiseUnion (C, NULL, NULL, GrB_PLUS_FP64, A, Amissing,
-        B, Bmissing, NULL)) ;
+    ERR (GxB_Matrix_eWiseUnion (C, NULL, NULL, GrB_PLUS_FP64, A, alpha,
+        B, beta, NULL)) ;
 
-    OK (GrB_Scalar_new (&Amissing, GrB_FP64)) ;
-    OK (GrB_Scalar_new (&Bmissing, GrB_FP64)) ;
+    OK (GrB_Scalar_new (&alpha, GrB_FP64)) ;
+    OK (GrB_Scalar_new (&beta, GrB_FP64)) ;
 
     expected = GrB_EMPTY_OBJECT ;
-    ERR (GxB_Matrix_eWiseUnion (C, NULL, NULL, GrB_PLUS_FP64, A, Amissing,
-        B, Bmissing, NULL)) ;
+    ERR (GxB_Matrix_eWiseUnion (C, NULL, NULL, GrB_PLUS_FP64, A, alpha,
+        B, beta, NULL)) ;
     OK (GrB_Matrix_error_(&err, C)) ;
     printf ("expected error:\n%s\n", err) ;
 
-    OK (GrB_Scalar_setElement_FP64_ (Amissing, (double) 42)) ;
-    ERR (GxB_Matrix_eWiseUnion (C, NULL, NULL, GrB_PLUS_FP64, A, Amissing,
-        B, Bmissing, NULL)) ;
+    OK (GrB_Scalar_setElement_FP64_ (alpha, (double) 42)) ;
+    ERR (GxB_Matrix_eWiseUnion (C, NULL, NULL, GrB_PLUS_FP64, A, alpha,
+        B, beta, NULL)) ;
     OK (GrB_Matrix_error_(&err, C)) ;
     printf ("expected error:\n%s\n", err) ;
 
-    GrB_Scalar_free_(&Amissing) ;
-    OK (GrB_Scalar_new (&Amissing, MyType)) ;
+    GrB_Scalar_free_(&alpha) ;
+    OK (GrB_Scalar_new (&alpha, MyType)) ;
     myint nothing [1] ;
     memset (nothing, 0, sizeof (myint)) ;
-    OK (GrB_Scalar_setElement_UDT (Amissing, (void *) nothing)) ;
-    OK (GxB_Scalar_fprint (Amissing, "Amissing", 3, NULL)) ;
-    OK (GxB_Scalar_fprint (Bmissing, "Bmissing", 3, NULL)) ;
-    OK (GrB_Scalar_setElement_FP64 (Bmissing, (double) 99)) ;
+    OK (GrB_Scalar_setElement_UDT (alpha, (void *) nothing)) ;
+    OK (GxB_Scalar_fprint (alpha, "alpha", 3, NULL)) ;
+    OK (GxB_Scalar_fprint (beta, "beta", 3, NULL)) ;
+    OK (GrB_Scalar_setElement_FP64 (beta, (double) 99)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
 
-    ERR (GxB_Matrix_eWiseUnion (C, NULL, NULL, GrB_PLUS_FP64, A, Amissing,
-        B, Bmissing, NULL)) ;
+    ERR (GxB_Matrix_eWiseUnion (C, NULL, NULL, GrB_PLUS_FP64, A, alpha,
+        B, beta, NULL)) ;
     OK (GrB_Matrix_error_(&err, C)) ;
     printf ("expected error:\n%s\n", err) ;
 
-    ERR (GxB_Matrix_eWiseUnion (C, NULL, NULL, GrB_PLUS_FP64, A, Bmissing,
-        B, Amissing, NULL)) ;
+    ERR (GxB_Matrix_eWiseUnion (C, NULL, NULL, GrB_PLUS_FP64, A, beta,
+        B, alpha, NULL)) ;
     OK (GrB_Matrix_error_(&err, C)) ;
     printf ("expected error:\n%s\n", err) ;
 
     GrB_Matrix_free_(&A) ;
     GrB_Matrix_free_(&B) ;
     GrB_Matrix_free_(&C) ;
-    GrB_Scalar_free_(&Amissing) ;
-    GrB_Scalar_free_(&Bmissing) ;
+    GrB_Scalar_free_(&alpha) ;
+    GrB_Scalar_free_(&beta) ;
     GrB_Type_free_(&MyType) ;
 
     //--------------------------------------------------------------------------

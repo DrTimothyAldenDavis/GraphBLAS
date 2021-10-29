@@ -3341,6 +3341,8 @@
 #define GB_AxB_saxpy3_sym_sf GM_AxB_saxpy3_sym_sf
 #define GB_AxB_saxpy3_sym_sh GM_AxB_saxpy3_sym_sh
 #define GB_AxB_saxpy3_sym_ss GM_AxB_saxpy3_sym_ss
+#define GB_AxB_saxpy4 GM_AxB_saxpy4
+#define GB_AxB_saxpy4_tasks GM_AxB_saxpy4_tasks
 #define GB_AxB_saxpy_generic GM_AxB_saxpy_generic
 #define GB_AxB_saxpy_sparsity GM_AxB_saxpy_sparsity
 #define GB_AxB_semiring_builtin GM_AxB_semiring_builtin

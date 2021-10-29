@@ -288,7 +288,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     GrB_Matrix M ;
 
-
     if (M_transpose && M_in != NULL)
     { 
         // MT = M_in' also typecasting to boolean.  It is not freed here
@@ -378,7 +377,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     }
 
     bool allow_scale = true ;
-    if (semiring->multiply->binop_function == NULL && (op_is_first || op_is_second))
+    if (semiring->multiply->binop_function == NULL &&
+        (op_is_first || op_is_second))
     { 
         // GB_AxB_rowscale and GB_AxB_colscale do not handle the implicit FIRST
         // operator for GB_reduce_to_vector.  They do handle any other
@@ -538,8 +538,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             default : 
                 // C = A'*B via saxpy: Gustavson + Hash method
                 GBURBLE ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
-                GB_OK (GB_AxB_saxpy (C, M, Mask_comp, Mask_struct,
-                    AT, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
+                GB_OK (GB_AxB_saxpy (C, can_do_in_place ? C_in : NULL, M,
+                    Mask_comp, Mask_struct, accum, AT, B, semiring, flipxy,
+                    mask_applied, done_in_place, AxB_method, do_sort,
                     Context)) ;
                 break ;
         }
@@ -622,8 +623,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             default : 
                 // C = A*B' via saxpy: Gustavson + Hash method
                 GBURBLE ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
-                GB_OK (GB_AxB_saxpy (C, M, Mask_comp, Mask_struct,
-                    A, BT, semiring, flipxy, mask_applied, AxB_method, do_sort,
+                GB_OK (GB_AxB_saxpy (C, can_do_in_place ? C_in : NULL, M,
+                    Mask_comp, Mask_struct, accum, A, BT, semiring, flipxy,
+                    mask_applied, done_in_place, AxB_method, do_sort,
                     Context)) ;
                 break ;
         }
@@ -725,8 +727,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             default : 
                 // C = A*B via saxpy: Gustavson + Hash method
                 GBURBLE ("C%s=A*B, saxpy ", M_str) ;
-                GB_OK (GB_AxB_saxpy (C, M, Mask_comp, Mask_struct,
-                    A, B, semiring, flipxy, mask_applied, AxB_method, do_sort,
+                GB_OK (GB_AxB_saxpy (C, can_do_in_place ? C_in : NULL, M,
+                    Mask_comp, Mask_struct, accum, A, B, semiring, flipxy,
+                    mask_applied, done_in_place, AxB_method, do_sort,
                     Context)) ;
                 break ;
         }

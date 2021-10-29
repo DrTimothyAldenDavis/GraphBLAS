@@ -262,28 +262,6 @@
 #define GB_CIJ_MEMCPY(p,i,len) \
     memcpy (Cx +(p), Hx +(i), (len) * sizeof(bool));
 
-// 1 if the semiring has a concise bitmap multiply-add
-#define GB_HAS_BITMAP_MULTADD \
-    1
-
-// concise statement(s) for the bitmap case:
-//  if (exists)
-//      if (cb == 0)
-//          cx = ax * bx
-//          cb = 1
-//      else
-//          cx += ax * bx
-#define GB_BITMAP_MULTADD(cb,cx,exists,ax,bx) \
-    cx |= exists & ((ax > bx)) ; cb |= exists
-
-// define X for bitmap multiply-add
-#define GB_XINIT \
-    ;
-
-// load X [1] = bkj for bitmap multiply-add
-#define GB_XLOAD(bkj) \
-    ;
-
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_LOR || GxB_NO_GT || GxB_NO_BOOL || GxB_NO_LOR_BOOL || GxB_NO_GT_BOOL || GxB_NO_LOR_GT_BOOL)
@@ -384,6 +362,42 @@ GrB_Info GB (_AsaxbitB__lor_gt_bool)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+//------------------------------------------------------------------------------
+// GB_Asaxpy4B: C += A*B when C is full
+//------------------------------------------------------------------------------
+
+#if 1
+
+    GrB_Info GB (_Asaxpy4B__lor_gt_bool)
+    (
+        GrB_Matrix C,
+        const GrB_Matrix A, bool A_is_pattern,
+        const GrB_Matrix B, bool B_is_pattern,
+        const int ntasks,
+        const int nthreads,
+        const int nfine_tasks_per_vector,
+        const bool use_coarse_tasks,
+        const bool use_atomics,
+        const int64_t *A_slice,
+        GB_Context Context
+    )
+    { 
+        #if GB_DISABLE
+        return (GrB_NO_VALUE) ;
+        #else
+            #if ( !GB_HAS_ATOMIC || GB_IS_ANY_MONOID )
+            // saxpy4 is not used if the monoid is not atomic, and it is not
+            // used for the ANY monoid
+            return (GrB_NO_VALUE) ;
+            #else
+            #include "GB_AxB_saxpy4_template.c"
+            return (GrB_SUCCESS) ;
+            #endif
+        #endif
+    }
+
+#endif
 
 //------------------------------------------------------------------------------
 // GB_Asaxpy3B: C=A*B, C<M>=A*B, C<!M>=A*B: saxpy method (Gustavson + Hash)

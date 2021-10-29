@@ -24,6 +24,9 @@
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
 
+#undef  GB_C_IS_BITMAP
+#define GB_C_IS_BITMAP 1
+
 {
 
     //--------------------------------------------------------------------------
@@ -174,65 +177,14 @@
         // bitmap           any             hyper       full 
         // bitmap           any             sparse      full
 
+        // construct the tasks
         ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
-        double work = ((double) anz) * (double) bvdim ;
-        int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
-        int nfine_tasks_per_vector = 0, ntasks ;
-        bool use_coarse_tasks, use_atomics = false ;
-
-        if (nthreads == 1 || bvdim == 0)
-        { 
-            // do the entire computation with a single thread, with coarse task
-            ntasks = 1 ;
-            use_coarse_tasks = true ;
-            GBURBLE ("(coarse, threads: 1) ") ;
-        }
-        else if (nthreads <= bvdim || nthreads <= 2)
-        { 
-            // All tasks are coarse, and each coarse task does 1 or more
-            // whole vectors of B
-            ntasks = GB_IMIN (bvdim, 2 * nthreads) ;
-            nthreads = GB_IMIN (ntasks, nthreads) ;
-            use_coarse_tasks = true ;
-            GBURBLE ("(coarse, threads: %d, tasks %d) ", nthreads, ntasks) ;
-        }
-        else
-        { 
-            // All tasks are fine.  Each task does a slice of a single vector
-            // of B, and each vector of B is handled by the same # of fine
-            // tasks.
-            use_coarse_tasks = false ;
-
-            // Select between a non-atomic method with Wf/Wx workspace,
-            // and an atomic method with no workspace.
-            double cnz = ((double) cvlen) * ((double) bvdim) ;
-            double intensity = ((double) work) / fmax (cnz, 1) ;
-            double workspace = ((double) cvlen) * ((double) nthreads) ;
-            double relwspace = workspace / fmax (anz + bnz + cnz, 1) ;
-            GBURBLE ("(fine, threads: %d, relwspace: %0.3g, intensity: %0.3g",
-                nthreads, relwspace, intensity) ;
-            if ((intensity > 64 && relwspace < 0.05) ||
-                (intensity > 16 && intensity <= 64 && relwspace < 0.50))
-            { 
-                // non-atomic method with workspace
-                use_atomics = false ;
-                ntasks = nthreads ;
-                GBURBLE (": non-atomic, ") ;
-            }
-            else
-            { 
-                // atomic method
-                use_atomics = true ;
-                ntasks = 2 * nthreads ;
-                GBURBLE (": atomic, ") ;
-            }
-
-            nfine_tasks_per_vector = ceil ((double) ntasks / (double) bvdim) ;
-            ntasks = bvdim * nfine_tasks_per_vector ;
-            ASSERT (nfine_tasks_per_vector > 1) ;
-            GBURBLE ("tasks: %d, tasks per vector: %d) ", ntasks,
-                nfine_tasks_per_vector) ;
-
+        int nthreads, ntasks, nfine_tasks_per_vector ;
+        bool use_coarse_tasks, use_atomics ;
+        GB_AxB_saxpy4_tasks (&ntasks, &nthreads, &nfine_tasks_per_vector,
+            &use_coarse_tasks, &use_atomics, anz, bnz, bvdim, cvlen, Context) ;
+        if (!use_coarse_tasks)
+        {
             // slice the matrix A for each team of fine tasks
             GB_WERK_PUSH (A_slice, nfine_tasks_per_vector + 1, int64_t) ;
             if (A_slice == NULL)
@@ -449,4 +401,5 @@
 }
 
 #undef GB_FREE_ALL
+#undef GB_C_IS_BITMAP
 

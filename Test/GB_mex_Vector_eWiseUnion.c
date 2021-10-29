@@ -9,15 +9,15 @@
 
 #include "GB_mex.h"
 
-#define USAGE "w = GB_mex_Vector_eWiseUnion (w, mask, accum, add, u, umissing, v, vmissing, desc)"
+#define USAGE "w = GB_mex_Vector_eWiseUnion (w, mask, accum, add, u, alpha, v, beta, desc)"
 
 #define FREE_ALL                    \
 {                                   \
     GrB_Vector_free_(&w) ;          \
     GrB_Vector_free_(&u) ;          \
-    GrB_Scalar_free_(&umissing) ;       \
+    GrB_Scalar_free_(&alpha) ;      \
     GrB_Vector_free_(&v) ;          \
-    GrB_Scalar_free_(&vmissing) ;       \
+    GrB_Scalar_free_(&beta) ;       \
     GrB_Descriptor_free_(&desc) ;   \
     GrB_Vector_free_(&mask) ;       \
     GB_mx_put_global (true) ;       \
@@ -38,7 +38,7 @@ void mexFunction
     GrB_Vector v = NULL ;
     GrB_Vector mask = NULL ;
     GrB_Descriptor desc = NULL ;
-    GrB_Scalar umissing = NULL, vmissing = NULL ;
+    GrB_Scalar alpha = NULL, beta = NULL ;
 
     // check inputs
     if (nargout > 1 || nargin < 8 || nargin > 9)
@@ -73,12 +73,12 @@ void mexFunction
         mexErrMsgTxt ("u failed") ;
     }
 
-    // get umissing
-    umissing = GB_mx_get_Scalar (pargin [5]) ; 
-    if (umissing == NULL)
+    // get alpha
+    alpha = GB_mx_get_Scalar (pargin [5]) ; 
+    if (alpha == NULL)
     {
         FREE_ALL ;
-        mexErrMsgTxt ("umissing failed") ;
+        mexErrMsgTxt ("alpha failed") ;
     }
 
     // get v (shallow copy)
@@ -89,12 +89,12 @@ void mexFunction
         mexErrMsgTxt ("v failed") ;
     }
 
-    // get vmissing
-    vmissing = GB_mx_get_Scalar (pargin [7]) ; 
-    if (vmissing == NULL)
+    // get beta
+    beta = GB_mx_get_Scalar (pargin [7]) ; 
+    if (beta == NULL)
     {
         FREE_ALL ;
-        mexErrMsgTxt ("vmissing failed") ;
+        mexErrMsgTxt ("beta failed") ;
     }
 
     // get add operator
@@ -127,8 +127,8 @@ void mexFunction
     }
 
     // w<mask> = accum(w,u+v)
-    METHOD (GxB_Vector_eWiseUnion (w, mask, accum, add, u, umissing,
-        v, vmissing, desc)) ;
+    METHOD (GxB_Vector_eWiseUnion (w, mask, accum, add, u, alpha,
+        v, beta, desc)) ;
 
     // return w as a struct and free the GraphBLAS w
     pargout [0] = GB_mx_Vector_to_mxArray (&w, "w output", true) ;

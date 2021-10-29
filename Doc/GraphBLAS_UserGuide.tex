@@ -10227,7 +10227,7 @@ the binary operator is applied.
 
 Let $\oplus$ denote the binary operator to be used.  The operator is applied to
 every entry in $\bf A$ and $\bf B$.  A pair of scalars, $\alpha$ and $\beta$
-(\verb'Amissing' and \verb'Bmissing' in the API, respectively) define the
+(\verb'alpha' and \verb'beta' in the API, respectively) define the
 inputs to the operator when entries are present in one matrix but not the
 other.
 
@@ -10260,7 +10260,7 @@ the Octave/MATLAB expression \verb'C=A-B' computes \verb'C(i,j)=-B(i,j)' when
 \verb'A(i,j)' is not present.  This cannot be done with a single call
 \verb'GrB_eWiseAdd', but it can be done with a single call to
 \verb'GxB_eWiseUnion', with the \verb'GrB_MINUS_FP64' operator, and with both
-\verb'Amissing' and \verb'Bmissing' scalars equal to zero.  It is possible to
+\verb'alpha' and \verb'beta' scalars equal to zero.  It is possible to
 compute this result with a temporary matrix, \verb'E=-B', computed with
 \verb'GrB_apply' and \verb'GrB_AINV_FP64', followed by a call to
 \verb'GrB_eWiseAdd' to compute \verb'C=A+E', but this is slower than a single
@@ -10282,9 +10282,9 @@ GrB_Info GxB_eWiseUnion             // w<mask> = accum (w, u+v)
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_BinaryOp add,         // defines '+' for t=u+v
     const GrB_Vector u,             // first input:  vector u
-    const GrB_Scalar umissing,
+    const GrB_Scalar alpha,
     const GrB_Vector v,             // second input: vector v
-    const GrB_Scalar vmissing,
+    const GrB_Scalar beta,
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -10292,12 +10292,12 @@ GrB_Info GxB_eWiseUnion             // w<mask> = accum (w, u+v)
 Identical to \verb'GrB_Vector_eWiseAdd' except that two scalars are used
 to define how to compute the result when entries are present in one of
 the two input vectors (\verb'u' and \verb'v'), but not the other.
-Each of the two input scalars, \verb'umissing' and \verb'vmissing'
+Each of the two input scalars, \verb'alpha' and \verb'beta'
 must contain an entry.
 When computing the result \verb't=u+v',
-if \verb'u(i)' is present but \verb'v(i)' is not, then \verb't(i)=u(i)+vmissing'.
+if \verb'u(i)' is present but \verb'v(i)' is not, then \verb't(i)=u(i)+beta'.
 Likewise,
-if \verb'v(i)' is present but \verb'u(i)' is not, then \verb't(i)=umissing+v(i)',
+if \verb'v(i)' is present but \verb'u(i)' is not, then \verb't(i)=alpha+v(i)',
 where \verb'+' denotes the binary operator, \verb'add'.
 
 \newpage
@@ -10316,9 +10316,9 @@ GrB_Info GxB_eWiseUnion             // C<M> = accum (C, A+B)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp add,         // defines '+' for T=A+B
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Scalar Amissing,
+    const GrB_Scalar alpha,
     const GrB_Matrix B,             // second input: matrix B
-    const GrB_Scalar Bmissing,
+    const GrB_Scalar beta,
     const GrB_Descriptor desc       // descriptor for C, M, A, and B
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -10326,12 +10326,12 @@ GrB_Info GxB_eWiseUnion             // C<M> = accum (C, A+B)
 Identical to \verb'GrB_Matrix_eWiseAdd' except that two scalars are used
 to define how to compute the result when entries are present in one of
 the two input matrices (\verb'A' and \verb'B'), but not the other.
-Each of the two input scalars, \verb'Amissing' and \verb'Bmissing'
+Each of the two input scalars, \verb'alpha' and \verb'beta'
 must contain an entry.
 When computing the result \verb'T=A+B',
-if \verb'A(i,j)' is present but \verb'B(i,j))' is not, then \verb'T(i,j)=A(i,j)+Bmissing'.
+if \verb'A(i,j)' is present but \verb'B(i,j))' is not, then \verb'T(i,j)=A(i,j)+beta'.
 Likewise,
-if \verb'B(i,j)' is present but \verb'A(i,j)' is not, then \verb'T(i,j)=Amissing+B(i,j)',
+if \verb'B(i,j)' is present but \verb'A(i,j)' is not, then \verb'T(i,j)=alpha+B(i,j)',
 where \verb'+' denotes the binary operator, \verb'add'.
 
 \newpage

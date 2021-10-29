@@ -133,11 +133,6 @@ GrB_Info GB_AxB_saxpy_generic
     #define GB_IS_ANY_PAIR_SEMIRING 0
     #define GB_IS_PAIR_MULTIPLIER 0
 
-    // a generic semiring does not have a concise bitmap multiply-add statement
-    #define GB_HAS_BITMAP_MULTADD 0
-    #define GB_XINIT ;
-    #define GB_XLOAD(bkj) ;
-
     #define GB_ATYPE GB_void
     #define GB_BTYPE GB_void
     #define GB_ASIZE asize

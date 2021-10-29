@@ -204,7 +204,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Oct 26, 2021 (alpha16)"
+#define GxB_IMPLEMENTATION_DATE "Oct 28, 2021 (alpha17)"
 #define GxB_IMPLEMENTATION_MAJOR 6
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -5190,9 +5190,9 @@ GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<Mask> = accum (C, A+B)
 //      if A(i,j) and B(i,j) are both present:
 //          C(i,j) = A(i,j) + B(i,j)
 //      else if A(i,j) is present but not B(i,j)
-//          C(i,j) = A(i,j) + Bmissing
+//          C(i,j) = A(i,j) + beta
 //      else if B(i,j) is present but not A(i,j)
-//          C(i,j) = Amissing + B(i,j)
+//          C(i,j) = alpha + B(i,j)
 
 GB_PUBLIC
 GrB_Info GxB_Vector_eWiseUnion      // w<mask> = accum (w, u+v)
@@ -5202,9 +5202,9 @@ GrB_Info GxB_Vector_eWiseUnion      // w<mask> = accum (w, u+v)
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_BinaryOp add,         // defines '+' for t=u+v
     const GrB_Vector u,             // first input:  vector u
-    const GrB_Scalar umissing,
+    const GrB_Scalar alpha,
     const GrB_Vector v,             // second input: vector v
-    const GrB_Scalar vmissing,
+    const GrB_Scalar beta,
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -5216,14 +5216,14 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp add,         // defines '+' for T=A+B
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Scalar Amissing,
+    const GrB_Scalar alpha,
     const GrB_Matrix B,             // second input: matrix B
-    const GrB_Scalar Bmissing,
+    const GrB_Scalar beta,
     const GrB_Descriptor desc       // descriptor for C, M, A, and B
 ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_eWiseUnion(C,Mask,accum,op,A,Amissing,B,Bmissing,desc)          \
+#define GxB_eWiseUnion(C,Mask,accum,op,A,alpha,B,beta,desc)                 \
     _Generic                                                                \
     (                                                                       \
         (C),                                                                \
@@ -5232,7 +5232,7 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
             const GrB_Vector : GxB_Vector_eWiseUnion ,                      \
                   GrB_Vector : GxB_Vector_eWiseUnion                        \
     )                                                                       \
-    (C, Mask, accum, op, A, Amissing, B, Bmissing, desc)
+    (C, Mask, accum, op, A, alpha, B, beta, desc)
 #endif
 
 //==============================================================================

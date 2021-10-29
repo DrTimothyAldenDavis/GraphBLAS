@@ -12,9 +12,9 @@
 // if A(i,j) and B(i,j) both appear:
 //      C(i,j) = add (A(i,j), B(i,j))
 // else if A(i,j) appears but B(i,j) does not:
-//      C(i,j) = add (A(i,j), Bmissing)
+//      C(i,j) = add (A(i,j), beta)
 // else if A(i,j) does not appear but B(i,j) does:
-//      C(i,j) = add (Amissing, B(i,j))
+//      C(i,j) = add (alpha, B(i,j))
 
 #include "GB_ewise.h"
 #include "GB_get_mask.h"
@@ -39,7 +39,7 @@
         A,              A_tran,     /* A matrix and its descriptor */       \
         B,              B_tran,     /* B matrix and its descriptor */       \
         true,                       /* eWiseAdd                    */       \
-        true, Amissing, Bmissing,   /* eWiseUnion                  */       \
+        true, alpha, beta,          /* eWiseUnion                  */       \
         Context) ;
 //------------------------------------------------------------------------------
 // GxB_Matrix_eWiseUnion: matrix addition
@@ -52,9 +52,9 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp add,         // defines '+' for T=A+B
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Scalar Amissing,
+    const GrB_Scalar alpha,
     const GrB_Matrix B,             // second input: matrix B
-    const GrB_Scalar Bmissing,
+    const GrB_Scalar beta,
     const GrB_Descriptor desc       // descriptor for C, M, A, and B
 )
 { 
@@ -63,8 +63,8 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GxB_Matrix_eWiseUnion (C, M, accum, add, A, Amissing,"
-        " B, Bmissing, desc)") ;
+    GB_WHERE (C, "GxB_Matrix_eWiseUnion (C, M, accum, add, A, alpha,"
+        " B, beta, desc)") ;
     GB_BURBLE_START ("GxB_eWiseUnion") ;
     GB_RETURN_IF_NULL_OR_FAULTY (add) ;
 
