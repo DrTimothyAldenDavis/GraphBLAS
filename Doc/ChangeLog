@@ -61,6 +61,8 @@ Version 5.2.0, FIXME
     * disabled free memory pool if OpenMP not available
     * (34) bug fix: C<M>=Z not returning C as iso if Z iso and C initialy
         empty.  Caught by Erik Welch, Anaconda.
+    * performance improvements: C=A*B: sparse/hyper times bitmap/full,
+        and visa versa, including C += A*B when C is full
 
 Version 5.1.10, Oct 27, 2021
 

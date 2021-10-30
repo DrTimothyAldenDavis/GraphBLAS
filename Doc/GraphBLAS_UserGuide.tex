@@ -218,6 +218,8 @@ are extensions to the GraphBLAS C API.
     \item (34) bug fix: \verb'C<M>=Z' not returning \verb'C'
         as iso if \verb'Z 'iso and \verb'C' initially
         empty.  Caught by Erik Welch, Anaconda.
+    \item performance improvements: \verb'C=A*B': sparse/hyper times bitmap/full,
+        and visa versa, including \verb'C += A*B' when \verb'C' is full
     \end{packed_itemize}
 
 \item Version 5.1.10 (Oct 27, 2021)

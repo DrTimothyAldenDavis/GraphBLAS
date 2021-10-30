@@ -28,15 +28,12 @@
 
         if (B_iso)
         { 
-            // No special cases needed.  GB_GET_B_kj (bkj = B(k,j))
-            // handles the B iso case.
+            // No special cases needed.  GB_GETB handles the B iso case.
         }
 
         //----------------------------------------------------------------------
         // allocate workspace for each task
         //----------------------------------------------------------------------
-
-        // TODO: this can be put in a single function
 
         GB_WERK_PUSH (H_slice, ntasks, int64_t) ;
         if (H_slice == NULL)
@@ -112,7 +109,6 @@
             #if GB_C_IS_BITMAP
             int8_t *restrict Hf = Wf + (H_slice [tid] * cvlen) ;
             #endif
-
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
             GB_CTYPE *restrict Hx = (GB_CTYPE *) (Wcx + H_slice [tid] * cvlenx);
             #endif
@@ -162,7 +158,7 @@
                     Hx = Cx + pC_start ;
                 }
                 else
-                {
+                { 
                     // Hx = identity
                     int64_t nc = np * cvlen ;
                     #if GB_HAS_IDENTITY_BYTE
@@ -266,7 +262,7 @@
                             GB_GETB (gk3, Gx, k + 3*bvlen, B_iso) ;
                             const int64_t pA_end = Ap [kA+1] ;
                             for (int64_t pA = Ap [kA] ; pA < pA_end ; pA++)
-                            {
+                            { 
                                 const int64_t i = Ai [pA] ;
                                 const int64_t pH = i * 4 ;
                                 GB_GETA (aik, Ax, pA, A_iso) ;
@@ -296,7 +292,7 @@
                             GB_GETB (gk2, Gx, k + 2*bvlen, B_iso) ;
                             const int64_t pA_end = Ap [kA+1] ;
                             for (int64_t pA = Ap [kA] ; pA < pA_end ; pA++)
-                            {
+                            { 
                                 const int64_t i = Ai [pA] ;
                                 const int64_t pH = i * 3 ;
                                 GB_GETA (aik, Ax, pA, A_iso) ;
@@ -323,7 +319,7 @@
                             GB_GETB (gk1, Gx, k +   bvlen, B_iso) ;
                             const int64_t pA_end = Ap [kA+1] ;
                             for (int64_t pA = Ap [kA] ; pA < pA_end ; pA++)
-                            {
+                            { 
                                 const int64_t i = Ai [pA] ;
                                 const int64_t pH = i * 2 ;
                                 GB_GETA (aik, Ax, pA, A_iso) ;
@@ -347,7 +343,7 @@
                             GB_GETB (gk0, Gx, k, B_iso) ;
                             const int64_t pA_end = Ap [kA+1] ;
                             for (int64_t pA = Ap [kA] ; pA < pA_end ; pA++)
-                            {
+                            { 
                                 const int64_t i = Ai [pA] ;
                                 const int64_t pH = i ;
                                 GB_GETA (aik, Ax, pA, A_iso) ;
@@ -439,8 +435,10 @@
                             GB_CIJ_GATHER_UPDATE (pC, pH) ;
                         }
                         #else
+                        { 
                             // C(i,j) = H(i,jj)
                             GB_CIJ_GATHER_UPDATE (pC, pH) ;
+                        }
                         #endif
                     }
                 }
@@ -759,7 +757,7 @@
 
             // for Hf and Hx Gustavason workspace: use W(:,tid):
             #if GB_C_IS_BITMAP
-            int8_t   *restrict Hf = Wf + pW_start ;
+            int8_t *restrict Hf = Wf + pW_start ;
             #endif
             #if ( !GB_IS_ANY_PAIR_SEMIRING )
             GB_CTYPE *restrict Hx = (GB_CTYPE *) (Wcx + (pW_start * cxsize)) ;
@@ -773,12 +771,15 @@
             #endif
 
             //------------------------------------------------------------------
-            // clear Hf
+            // clear the panel
             //------------------------------------------------------------------
 
             #if GB_C_IS_BITMAP
+            { 
                 memset (Hf, 0, cvlen) ;
+            }
             #else
+            { 
                 // set Hx to identity
                 #if GB_HAS_IDENTITY_BYTE
                     memset (Hx, GB_IDENTITY_BYTE, cvlen * GB_CSIZE) ;
@@ -788,6 +789,7 @@
                         Hx [i] = GB_IDENTITY ;
                     }
                 #endif
+            }
             #endif
 
             //------------------------------------------------------------------

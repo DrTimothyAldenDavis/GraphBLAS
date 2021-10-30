@@ -165,10 +165,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     // launch the switch factory
     //--------------------------------------------------------------------------
 
-double tt0 = omp_get_wtime ( )  ;
     #include "GB_AxB_factory.c"
-tt0 = omp_get_wtime ( ) - tt0 ;
-printf ("saxpy4 time %g\n", tt0) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

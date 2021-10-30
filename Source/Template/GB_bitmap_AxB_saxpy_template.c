@@ -15,8 +15,6 @@
 #define GB_FREE_ALL                         \
 {                                           \
     GB_FREE_WERK (&Wf, Wf_size) ;           \
-    GB_FREE_WERK (&Wax, Wax_size) ;         \
-    GB_FREE_WERK (&Wbx, Wbx_size) ;         \
     GB_FREE_WERK (&Wcx, Wcx_size) ;         \
     GB_WERK_POP (H_slice, int64_t) ;        \
     GB_WERK_POP (A_slice, int64_t) ;        \
@@ -34,8 +32,6 @@
     //--------------------------------------------------------------------------
 
     int8_t  *restrict Wf  = NULL ; size_t Wf_size = 0 ;
-    GB_void *restrict Wax = NULL ; size_t Wax_size = 0 ;
-    GB_void *restrict Wbx = NULL ; size_t Wbx_size = 0 ;
     GB_void *restrict Wcx = NULL ; size_t Wcx_size = 0 ;
     GB_WERK_DECLARE (H_slice, int64_t) ;
     GB_WERK_DECLARE (A_slice, int64_t) ;
@@ -60,11 +56,10 @@
     ASSERT (A->vdim == B->vlen) ;
     int64_t cnvals = C->nvals ;
 
-    const int8_t  *restrict Bb = B->b ;
+    const int8_t *restrict Bb = B->b ;
     const bool B_iso = B->iso ;
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
-    const int64_t bnvec = B->nvec ;
 
     const bool B_jumbled = B->jumbled ;
     const int64_t bnz = GB_nnz_held (B) ;
