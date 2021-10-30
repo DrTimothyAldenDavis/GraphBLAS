@@ -135,6 +135,9 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         (*mask_applied) = false ;    // no mask to apply
         GBURBLE ("(dot4) ") ;
         return (GB_AxB_dot4 (C_in, A, B, semiring, flipxy, Context)) ;
+
+        // FIXME: remove generic dot4, and return GrB_NO_VALUE if the
+        // method is not handled.  Let dot2 and dot3 handle it.
     }
 
     //--------------------------------------------------------------------------

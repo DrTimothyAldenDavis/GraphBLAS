@@ -142,13 +142,8 @@ GrB_Info GxB_Type_new
 // GB_Type_new: create a new user-defined type (historical)
 //------------------------------------------------------------------------------
 
-// This method was only accessible via the GrB_Type_new macro in v5.1.x
-// and earlier.  The GrB_Type_new macro in v5.2.x and later calls
-// GxB_Type_new instead.  This method is left for historical purposes,
-// so that older binaries compiled with v5.1.x can work with v5.2.x.
-// It will no longer be needed in v6.0 or later.
-
-#if (GxB_IMPLEMENTATION_MAJOR <= 5)
+// This method was only accessible via the GrB_Type_new macro in v5.1.x and
+// earlier.  The GrB_Type_new macro in v5.2.x and later calls GxB_Type_new.
 
 GrB_Info GB_Type_new            // create a new GraphBLAS type
 (
@@ -159,6 +154,4 @@ GrB_Info GB_Type_new            // create a new GraphBLAS type
 {
     return (GxB_Type_new (type, sizeof_ctype, name, NULL)) ;
 }
-
-#endif
 

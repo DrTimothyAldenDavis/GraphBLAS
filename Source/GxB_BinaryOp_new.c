@@ -67,11 +67,7 @@ GrB_Info GxB_BinaryOp_new
 
 // This method was only accessible via the GrB_BinaryOp_new macro in v5.1.x
 // and earlier.  The GrB_BinaryOp_new macro in v5.2.x and later calls
-// GxB_BinaryOp_new instead.  This method is left for historical purposes,
-// so that older binaries compiled with v5.1.x can work with v5.2.x.
-// It will no longer be needed in v6.0 or later.
-
-#if (GxB_IMPLEMENTATION_MAJOR <= 5)
+// GxB_BinaryOp_new instead.
 
 GrB_Info GB_BinaryOp_new
 (
@@ -86,6 +82,4 @@ GrB_Info GB_BinaryOp_new
     return (GxB_BinaryOp_new (binaryop, function, ztype, xtype, ytype,
         name, NULL)) ;
 }
-
-#endif
 

@@ -51,7 +51,7 @@ GrB_Info GrB_Scalar_wait    // finish all work on a scalar
         GB_BURBLE_END ;
     }
     #else
-    if (waitmode == GrB_MATERIALIZE && GB_ANY_PENDING_WORK (s))
+    if (waitmode != GrB_COMPLETE && GB_ANY_PENDING_WORK (s))
     {
         GrB_Info info ;
         GB_BURBLE_START ("GrB_Scalar_wait") ;
@@ -72,13 +72,15 @@ GrB_Info GrB_Scalar_wait    // finish all work on a scalar
 // GxB_Scalar_wait: wait for a scalar to complete (historical)
 //------------------------------------------------------------------------------
 
-#if (GxB_IMPLEMENTATION_MAJOR <= 5)
 GrB_Info GxB_Scalar_wait    // finish all work on a scalar
 (
     GrB_Scalar *s
 )
 {
+    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     return (GrB_Scalar_wait (s)) ;
+    #else
+    return (GrB_Scalar_wait (*s, GrB_MATERIALIZE)) ;
+    #endif
 }
-#endif
 

@@ -142,7 +142,8 @@
                 int8_t *restrict Gb = (int8_t *) (Bb + (j1 * bvlen)) ;
                 #if ( !GB_IS_ANY_PAIR_SEMIRING )
                 GB_BTYPE *restrict Gx = (GB_BTYPE *)
-                     (((GB_void *) (B->x)) + (j1 * bvlen) * GB_BSIZE) ;
+                     (((GB_void *) (B->x)) +
+                       (B_iso ? 0 : ((j1 * bvlen) * GB_BSIZE))) ;
                 #endif
 
                 //--------------------------------------------------------------

@@ -206,6 +206,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     // C += A'*B, computing each entry with a dot product, with typecasting
     //--------------------------------------------------------------------------
 
+    // FIXME: return GrB_NO_VALUE instead, and let dot2 and dot3 do the work
+
     if (!done)
     { 
         #define GB_DOT4_GENERIC

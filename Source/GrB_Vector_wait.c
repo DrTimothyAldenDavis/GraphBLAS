@@ -51,7 +51,7 @@ GrB_Info GrB_Vector_wait    // finish all work on a vector
         GB_BURBLE_END ;
     }
     #else
-    if (waitmode == GrB_MATERIALIZE && GB_ANY_PENDING_WORK (v))
+    if (waitmode != GrB_COMPLETE && GB_ANY_PENDING_WORK (v))
     {
         GrB_Info info ;
         GB_BURBLE_START ("GrB_Vector_wait") ;

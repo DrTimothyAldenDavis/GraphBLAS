@@ -51,7 +51,7 @@ GrB_Info GrB_Matrix_wait    // finish all work on a matrix
         GB_BURBLE_END ;
     }
     #else
-    if (waitmode == GrB_MATERIALIZE && GB_ANY_PENDING_WORK (A))
+    if (waitmode != GrB_COMPLETE && GB_ANY_PENDING_WORK (A))
     {
         GrB_Info info ;
         GB_BURBLE_START ("GrB_Matrix_wait") ;

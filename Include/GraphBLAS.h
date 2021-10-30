@@ -125,7 +125,8 @@
 
 #if defined ( __cplusplus )
 
-    extern "C++" {
+    extern "C++"
+    {
         // C++ complex types
         #include <cmath>
         #include <complex>
@@ -170,7 +171,7 @@
         #define GxB_CMPLXF(r,i) \
         ((GxB_FC32_t)((float)(r)) + (GxB_FC32_t)((float)(i) * _Complex_I))
     #else
-        // use the ANSI C11 CMPLX macro
+        // use the ANSI C11 CMPLXF macro
         #define GxB_CMPLXF(r,i) CMPLXF (r,i)
     #endif
 
@@ -309,7 +310,7 @@ typedef enum
     GrB_INDEX_OUT_OF_BOUNDS = 12,   // row or col index out of bounds
     GrB_EMPTY_OBJECT = -106         // an object does not contain a value
     #else
-    // v2.0 C API Specification, to appear in v6.0 of SuiteSparse:GraphBLAS:
+    // v2.0 C API Specification, in v6.0 of SuiteSparse:GraphBLAS:
     GrB_UNINITIALIZED_OBJECT = -1,  // object has not been initialized
     GrB_NULL_POINTER = -2,          // input pointer is NULL
     GrB_INVALID_VALUE = -3,         // generic error; some value is bad
@@ -367,7 +368,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void * (* user_realloc_function ) (void *, size_t),
     void   (* user_free_function    ) (void *)
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    // parameter added in v3.0, unused in this v5.2.0, to be removed in v6.0
+    // parameter added in v3.0, unused in this v5.2.0, removed in v6.0
     , bool ignored
     #endif
 ) ;
@@ -769,7 +770,6 @@ GrB_Info GxB_Type_new           // create a new named GraphBLAS type
     const char *type_defn       // typedef for the type (no max length)
 ) ;
 
-#if (GxB_IMPLEMENTATION_MAJOR <= 5)
 // GB_Type_new is historical: use GxB_Type_new instead
 GB_PUBLIC
 GrB_Info GB_Type_new            // not user-callable
@@ -778,7 +778,6 @@ GrB_Info GB_Type_new            // not user-callable
     size_t sizeof_ctype,        // size of the user type
     const char *type_name       // name of the type, as "sizeof (ctype)"
 ) ;
-#endif
 
 GB_PUBLIC
 GrB_Info GxB_Type_name      // return the name of a GraphBLAS type
@@ -1029,7 +1028,6 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     const char *unop_defn           // definition of the user function
 ) ;
 
-#if (GxB_IMPLEMENTATION_MAJOR <= 5)
 // GB_UnaryOp_new is historical: use GxB_UnaryOp_new instead
 GB_PUBLIC
 GrB_Info GB_UnaryOp_new             // not user-callable
@@ -1040,7 +1038,6 @@ GrB_Info GB_UnaryOp_new             // not user-callable
     GrB_Type xtype,                 // type of input x
     const char *unop_name           // name of the user function
 ) ;
-#endif
 
 // GxB_UnaryOp_ztype is historical.  Use GxB_UnaryOp_ztype_name instead.
 GB_PUBLIC
@@ -1509,7 +1506,6 @@ GrB_Info GxB_BinaryOp_new
     const char *binop_defn          // definition of the user function
 ) ;
 
-#if (GxB_IMPLEMENTATION_MAJOR <= 5)
 // GB_BinaryOp_new is historical: use GxB_BinaryOp_new instead
 GB_PUBLIC
 GrB_Info GB_BinaryOp_new            // not user-callable
@@ -1521,7 +1517,6 @@ GrB_Info GB_BinaryOp_new            // not user-callable
     GrB_Type ytype,                 // type of input y
     const char *binop_name          // name of the user function
 ) ;
-#endif
 
 // NOTE: GxB_BinaryOp_ztype is historical.  Use GxB_BinaryOp_ztype_name instead.
 GB_PUBLIC
@@ -2270,7 +2265,7 @@ GrB_Info GrB_Semiring_free          // free a user-created semiring
 // GrB_Scalar: a GraphBLAS scalar
 //==============================================================================
 
-// This has become GrB_Scalar. The older name GxB_Scalar is kept as
+// GxB_Scalar has become GrB_Scalar. The older name GxB_Scalar is kept as
 // historical, but GrB_Scalar should be used instead.
 
 typedef struct GB_Scalar_opaque *GxB_Scalar ;   // historical: use GrB_Scalar
@@ -4770,9 +4765,6 @@ GrB_WaitMode ;
     // v2.0 C API.  However, in the final v2.0 C API, GrB_wait has taken a
     // different form: GrB_wait (object, mode).
 
-    // When the new GrB_*wait is added from the v2.0 C API, these functions
-    // will be removed in SuiteSparse:GraphBLAS v6.0.
-
     GB_PUBLIC GrB_Info GrB_Type_wait         (GrB_Type       *type    ) ;
     GB_PUBLIC GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    *op      ) ;
     GB_PUBLIC GrB_Info GrB_BinaryOp_wait     (GrB_BinaryOp   *op      ) ;
@@ -4781,7 +4773,6 @@ GrB_WaitMode ;
     GB_PUBLIC GrB_Info GrB_Monoid_wait       (GrB_Monoid     *monoid  ) ;
     GB_PUBLIC GrB_Info GrB_Semiring_wait     (GrB_Semiring   *semiring) ;
     GB_PUBLIC GrB_Info GrB_Descriptor_wait   (GrB_Descriptor *desc    ) ;
-    GB_PUBLIC GrB_Info GxB_Scalar_wait       (GrB_Scalar     *s       ) ;
     GB_PUBLIC GrB_Info GrB_Scalar_wait       (GrB_Scalar     *s       ) ;
     GB_PUBLIC GrB_Info GrB_Vector_wait       (GrB_Vector     *v       ) ;
     GB_PUBLIC GrB_Info GrB_Matrix_wait       (GrB_Matrix     *A       ) ;
@@ -4812,8 +4803,6 @@ GrB_WaitMode ;
     //--------------------------------------------------------------------------
     // GrB_wait: in the v2.0 C API Spec and v6.0 of SuiteSparse:GraphBLAS
     //--------------------------------------------------------------------------
-
-    // These functions will appear in SuiteSparse:GraphBLAS v6.0.
 
     GB_PUBLIC GrB_Info GrB_Type_wait         (GrB_Type       type    , GrB_WaitMode waitmode) ;
     GB_PUBLIC GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    op      , GrB_WaitMode waitmode) ;
@@ -4850,6 +4839,9 @@ GrB_WaitMode ;
 
 #endif
 
+// NOTE: GxB_Scalar_wait is historical; use GrB_Scalar_wait instead
+GB_PUBLIC GrB_Info GxB_Scalar_wait (GrB_Scalar *s) ;
+
 //==============================================================================
 // GrB_error: error handling
 //==============================================================================
@@ -4870,7 +4862,7 @@ GB_PUBLIC GrB_Info GrB_Scalar_error       (const char **error, const GrB_Scalar 
 GB_PUBLIC GrB_Info GrB_Vector_error       (const char **error, const GrB_Vector       v) ;
 GB_PUBLIC GrB_Info GrB_Matrix_error       (const char **error, const GrB_Matrix       A) ;
 GB_PUBLIC GrB_Info GrB_Descriptor_error   (const char **error, const GrB_Descriptor   d) ;
-// historical: use GrB_Scalar_error instead
+// GxB_Scalar_error is historical: use GrB_Scalar_error instead
 GB_PUBLIC GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar       s) ;
 
 // GrB_error (error,object) polymorphic function:

@@ -36,6 +36,7 @@ if_not_any_pair_semiring
 // C+=A'*B (dot4):     GB (_Adot4B)
 // A*B (saxpy bitmap): GB (_AsaxbitB)
 // A*B (saxpy3):       GB (_Asaxpy3B)
+// A*B (saxpy4):       GB (_Asaxpy4B)
 //     no mask:        GB (_Asaxpy3B_noM)
 //     mask M:         GB (_Asaxpy3B_M)
 //     mask !M:        GB (_Asaxpy3B_notM)
@@ -366,6 +367,8 @@ GrB_Info GB (_AsaxbitB)
 //------------------------------------------------------------------------------
 // GB_Asaxpy4B: C += A*B when C is full
 //------------------------------------------------------------------------------
+
+// FIXME: remove non-atomic and any monoids from the AxB factory
 
 if_not_any_pair_semiring
 
