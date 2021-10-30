@@ -121,6 +121,7 @@ ASSERT (zcode == GB_BOOL_code) ;
             }
             break ;
 
+        #ifndef GB_NO_ANY_MONOID
         case GB_ANY_binop_code    :
 
             switch (xcode)
@@ -141,6 +142,7 @@ ASSERT (zcode == GB_BOOL_code) ;
                 default: ;
             }
             break ;
+        #endif
 
         default: ;
     }

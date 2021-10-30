@@ -98,7 +98,7 @@ GrB_Info GB (_AsaxbitB__any_pair_iso)
 ) ;
 
 #if 0
-GrB_Info GB (_Asaxpy4B__any_pair_iso)
+GrB_Info GB (_Asaxpy4B__(none))
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,

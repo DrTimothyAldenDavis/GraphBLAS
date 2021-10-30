@@ -23,7 +23,9 @@ ASSERT (GB_OPCODE_IS_POSITIONAL (mult_binop_code)) ;
             case GB_MAX_binop_code   : GB_AxB_WORKER (_max,   GB_MNAME, _int32)
             case GB_TIMES_binop_code : GB_AxB_WORKER (_times, GB_MNAME, _int32)
             case GB_PLUS_binop_code  : GB_AxB_WORKER (_plus,  GB_MNAME, _int32)
+            #ifndef GB_NO_ANY_MONOID
             case GB_ANY_binop_code   : GB_AxB_WORKER (_any,   GB_MNAME, _int32)
+            #endif
             default: ;
         }
     }
@@ -36,7 +38,9 @@ ASSERT (GB_OPCODE_IS_POSITIONAL (mult_binop_code)) ;
             case GB_MAX_binop_code   : GB_AxB_WORKER (_max,   GB_MNAME, _int64)
             case GB_TIMES_binop_code : GB_AxB_WORKER (_times, GB_MNAME, _int64)
             case GB_PLUS_binop_code  : GB_AxB_WORKER (_plus,  GB_MNAME, _int64)
+            #ifndef GB_NO_ANY_MONOID
             case GB_ANY_binop_code   : GB_AxB_WORKER (_any,   GB_MNAME, _int64)
+            #endif
             default: ;
         }
     }

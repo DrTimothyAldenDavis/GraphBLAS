@@ -66,20 +66,24 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
     GrB_Type ztype = semiring->add->op->ztype ;
     GrB_BinaryOp mult = semiring->multiply ;
     GB_Opcode mult_opcode = mult->opcode ;
-    if (C_in != NULL && M == NULL
+    if (C_in != NULL && GB_as_if_full (C_in) && M == NULL && (accum != NULL)
+        && (accum == semiring->add->op) && (C_in->type == accum->ztype)
         && (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
         && (GB_IS_BITMAP (B) || GB_as_if_full (B)))
     { 
-        // GB_AxB_saxpy4 computes C += A*B where C is as-is-full, B is bitmap
-        // or as-if-full, A is sparse/hypersparse, no mask, the accum operator
-        // matches the monoid, no typecasting is done, no user-defined types or
-        // operators
-        ASSERT (accum == semiring->add->op) ;
+        // GB_AxB_saxpy4 computes C += A*B where C is as-is-full, no mask is
+        // present, accum is present and matches the monoid, no typecasting, A
+        // is sparse or hypersparse, and B is bitmap or as-if-full.  Only
+        // built-in semirings are supported, but not all: (1) the ANY monoid is
+        // not supported since it would be unusual to use ANY as the accum, and
+        // (2) only monoids that can be done atomically without a critical
+        // section are supported.
         info = GB_AxB_saxpy4 (C_in, A, B, semiring, flipxy, done_in_place,
             Context) ;
         if (info != GrB_NO_VALUE)
         { 
             // return if saxpy4 has handled this case, otherwise fall through
+            // to saxpy3, dot2, or bitmap_saxpy below.
             return (info) ;
         }
     }

@@ -88,7 +88,7 @@ GrB_Info GB (_AsaxbitB)
     GB_Context Context
 ) ;
 
-if_not_any_pair_semiring
+if_saxpy4_enabled
 GrB_Info GB (_Asaxpy4B)
 (
     GrB_Matrix C,

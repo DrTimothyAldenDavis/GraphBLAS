@@ -368,9 +368,7 @@ GrB_Info GB (_AsaxbitB)
 // GB_Asaxpy4B: C += A*B when C is full
 //------------------------------------------------------------------------------
 
-// FIXME: remove non-atomic and any monoids from the AxB factory
-
-if_not_any_pair_semiring
+if_saxpy4_enabled
 
     GrB_Info GB (_Asaxpy4B)
     (
@@ -389,14 +387,8 @@ if_not_any_pair_semiring
         if_disabled
         return (GrB_NO_VALUE) ;
         #else
-            #if ( !GB_HAS_ATOMIC || GB_IS_ANY_MONOID )
-            // saxpy4 is not used if the monoid is not atomic, and it is not
-            // used for the ANY monoid
-            return (GrB_NO_VALUE) ;
-            #else
-            #include "GB_AxB_saxpy4_template.c"
-            return (GrB_SUCCESS) ;
-            #endif
+        #include "GB_AxB_saxpy4_template.c"
+        return (GrB_SUCCESS) ;
         #endif
     }
 

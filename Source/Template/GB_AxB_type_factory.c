@@ -97,7 +97,8 @@ if (xcode != GB_BOOL_code)
                 case GB_UINT64_code : GB_AxB_WORKER (_times, GB_MNAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_times, GB_MNAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_times, GB_MNAME, _fp64  )
-                #if defined ( GB_COMPLEX )
+                #if defined ( GB_COMPLEX ) && !defined (GB_NO_NONATOMIC_MONOID)
+                // the TIMES monoid is non-atomic for complex types
                 case GB_FC32_code   : GB_AxB_WORKER (_times, GB_MNAME, _fc32  )
                 case GB_FC64_code   : GB_AxB_WORKER (_times, GB_MNAME, _fc64  )
                 #endif
@@ -105,6 +106,7 @@ if (xcode != GB_BOOL_code)
             }
             break ;
 
+        #ifndef GB_NO_ANY_MONOID
         case GB_ANY_binop_code:
 
             switch (xcode)
@@ -120,14 +122,15 @@ if (xcode != GB_BOOL_code)
                 case GB_UINT64_code : GB_AxB_WORKER (_any, GB_MNAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_any, GB_MNAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_any, GB_MNAME, _fp64  )
-                #if defined ( GB_COMPLEX )
+                #if defined ( GB_COMPLEX ) && !defined (GB_NO_NONATOMIC_MONOID)
+                // the ANY monoid is non-atomic for complex types
                 case GB_FC32_code   : GB_AxB_WORKER (_any, GB_MNAME, _fc32  )
                 case GB_FC64_code   : GB_AxB_WORKER (_any, GB_MNAME, _fc64  )
                 #endif
                 default: ;
             }
             break ;
-
+        #endif
         #endif
 
         case GB_PLUS_binop_code:
@@ -146,6 +149,7 @@ if (xcode != GB_BOOL_code)
                 case GB_FP32_code   : GB_AxB_WORKER (_plus, GB_MNAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_plus, GB_MNAME, _fp64  )
                 #if defined ( GB_COMPLEX )
+                // only the PLUS monoid is atomic for complex types
                 case GB_FC32_code   : GB_AxB_WORKER (_plus, GB_MNAME, _fc32  )
                 case GB_FC64_code   : GB_AxB_WORKER (_plus, GB_MNAME, _fc64  )
                 #endif
@@ -168,7 +172,9 @@ else
             case GB_LOR_binop_code  : GB_AxB_WORKER (_lor , GB_MNAME, _bool)
             case GB_LAND_binop_code : GB_AxB_WORKER (_land, GB_MNAME, _bool)
             case GB_EQ_binop_code   : GB_AxB_WORKER (_eq  , GB_MNAME, _bool)
+            #ifndef GB_NO_ANY_MONOID
             case GB_ANY_binop_code  : GB_AxB_WORKER (_any , GB_MNAME, _bool)
+            #endif
             #endif
             case GB_LXOR_binop_code : GB_AxB_WORKER (_lxor, GB_MNAME, _bool)
             default: ;

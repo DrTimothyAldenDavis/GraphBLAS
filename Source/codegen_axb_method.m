@@ -158,7 +158,6 @@ fprintf (f, 'define(`_Asaxpy3B_M'', `_Asaxpy3B_M__%s'')\n', name) ;
 fprintf (f, 'define(`_Asaxpy3B_noM'', `_Asaxpy3B_noM__%s'')\n', name) ;
 fprintf (f, 'define(`_Asaxpy3B_notM'', `_Asaxpy3B_notM__%s'')\n', name) ;
 fprintf (f, 'define(`_AsaxbitB'', `_AsaxbitB__%s'')\n', name) ;
-fprintf (f, 'define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AxB'', `GB_AxB__%s'')\n', name) ;
 
 % type of C, A, and B
@@ -286,12 +285,24 @@ if (ztype_is_real)
     % The ANY monoid is atomic on any architecture.
     % MIN, MAX, EQ, XNOR are implemented with atomic compare/exchange.
     fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
+    if (is_any)
+        % disable the ANY monoid for saxpy4
+        fprintf (f, 'define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', '(none)') ;
+        fprintf (f, 'define(`if_saxpy4_enabled'', `#if 0'')\n') ;
+    else
+        fprintf (f, 'define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', name) ;
+        fprintf (f, 'define(`if_saxpy4_enabled'', `#if 1'')\n') ;
+    end
 else
     % complex monoids are not atomic, except for 'plus'
     if (isequal (addop, 'plus'))
         fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
+        fprintf (f, 'define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', name) ;
+        fprintf (f, 'define(`if_saxpy4_enabled'', `#if 1'')\n') ;
     else
         fprintf (f, 'define(`GB_has_atomic'', `0'')\n') ;
+        fprintf (f, 'define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', '(none)') ;
+        fprintf (f, 'define(`if_saxpy4_enabled'', `#if 0'')\n') ;
     end
 end
 
@@ -603,7 +614,7 @@ end
 
 fclose (f) ;
 
-nprune = 69 ;
+nprune = 70 ;
 
 if (is_any_pair)
     % the ANY_PAIR_ISO semiring goes in Generated1

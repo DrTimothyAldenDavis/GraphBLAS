@@ -36,6 +36,7 @@
 // C+=A'*B (dot4):     GB (_Adot4B__eq_first_bool)
 // A*B (saxpy bitmap): GB (_AsaxbitB__eq_first_bool)
 // A*B (saxpy3):       GB (_Asaxpy3B__eq_first_bool)
+// A*B (saxpy4):       GB (_Asaxpy4B__eq_first_bool)
 //     no mask:        GB (_Asaxpy3B_noM__eq_first_bool)
 //     mask M:         GB (_Asaxpy3B_M__eq_first_bool)
 //     mask !M:        GB (_Asaxpy3B_notM__eq_first_bool)
@@ -386,14 +387,8 @@ GrB_Info GB (_AsaxbitB__eq_first_bool)
         #if GB_DISABLE
         return (GrB_NO_VALUE) ;
         #else
-            #if ( !GB_HAS_ATOMIC || GB_IS_ANY_MONOID )
-            // saxpy4 is not used if the monoid is not atomic, and it is not
-            // used for the ANY monoid
-            return (GrB_NO_VALUE) ;
-            #else
-            #include "GB_AxB_saxpy4_template.c"
-            return (GrB_SUCCESS) ;
-            #endif
+        #include "GB_AxB_saxpy4_template.c"
+        return (GrB_SUCCESS) ;
         #endif
     }
 

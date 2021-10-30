@@ -9,9 +9,9 @@
 
 // This method is only used for built-in semirings with no typecasting.
 // The accumulator matches the semiring monoid.
-// The ANY monoid is not used.
+// The ANY monoid and non-atomic monoids are not supported.
 
-// C is always full (or as-if-full).
+// C is as-if-full.
 // B is bitmap or full.
 // A is sparse or hypersparse.
 
@@ -28,11 +28,11 @@
 #define GB_C_IS_BITMAP 0
 
 #if !GB_HAS_ATOMIC
-#error "monoid does not have an atomic variant"
+#error "saxpy4 not defined for non-atomic monoids"
 #endif
 
-#if GB_IS_ANY_PAIR_SEMIRING
-#error "saxpy4 is not defined for the ANY_PAIR semiring"
+#if GB_IS_ANY_MONOID
+#error "saxpy4 not defined for the ANY monoid"
 #endif
 
 {
@@ -70,7 +70,6 @@
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
-
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) (A_is_pattern ? NULL : A->x) ;

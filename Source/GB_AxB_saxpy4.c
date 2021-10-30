@@ -99,9 +99,12 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
         B_is_pattern, semiring, flipxy, &mult_binop_code, &add_binop_code,
         &xcode, &ycode, &zcode) ;
 
-    if (!builtin_semiring)
+    if (!builtin_semiring || (add_binop_code == GB_ANY_binop_code)
+        || (add_binop_code == GB_TIMES_binop_code && (zcode >= GB_FC32_code)))
     { 
-        // only built-in semirings are handled
+        // The semiring must be built-in, and cannot use the ANY monoid.
+        // In addition, the TIMES monoid for complex types is not supported,
+        // since it cannot be done atomically. 
         return (GrB_NO_VALUE) ;
     }
 
@@ -109,14 +112,6 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
             GB_sparsity_char_matrix (C),
             GB_sparsity_char_matrix (A),
             GB_sparsity_char_matrix (B)) ;
-
-    if (add_binop_code == GB_ANY_binop_code)
-    { 
-        // no work to do
-        GBURBLE ("(no work) ") ;
-        (*done_in_place) = true ;
-        return (GrB_SUCCESS) ;
-    }
 
     //--------------------------------------------------------------------------
     // ensure C is non-iso
@@ -165,6 +160,9 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     // launch the switch factory
     //--------------------------------------------------------------------------
 
+    // disabled the ANY monoid, and the TIMES monoid for complex types
+    #define GB_NO_ANY_MONOID
+    #define GB_NO_NONATOMIC_MONOID
     #include "GB_AxB_factory.c"
 
     //--------------------------------------------------------------------------
