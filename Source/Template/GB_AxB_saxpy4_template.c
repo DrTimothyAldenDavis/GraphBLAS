@@ -22,7 +22,7 @@
     GB_FREE_WERK (&Wax, Wax_size) ;         \
     GB_FREE_WERK (&Wbx, Wbx_size) ;         \
     GB_FREE_WERK (&Wcx, Wcx_size) ;         \
-    GB_WERK_POP (GH_slice, int64_t) ;       \
+    GB_WERK_POP (H_slice, int64_t) ;        \
 /*  GB_WERK_POP (A_slice, int64_t) ; */     \
     GB_WERK_POP (B_slice, int64_t) ;        \
 }
@@ -48,7 +48,7 @@
     GB_void *restrict Wax = NULL ; size_t Wax_size = 0 ;
     GB_void *restrict Wbx = NULL ; size_t Wbx_size = 0 ;
     GB_void *restrict Wcx = NULL ; size_t Wcx_size = 0 ;
-    GB_WERK_DECLARE (GH_slice, int64_t) ;
+    GB_WERK_DECLARE (H_slice, int64_t) ;
 //  GB_WERK_DECLARE (A_slice, int64_t) ;
     GB_WERK_DECLARE (B_slice, int64_t) ;
 
