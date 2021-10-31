@@ -108,7 +108,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
         GBURBLE ("(iso bitmap saxpy) ") ;
         memcpy (C->x, cscalar, ctype->size) ;
         info = GB (_AsaxbitB__any_pair_iso) (C, M, Mask_comp, Mask_struct, A,
-            true, B, true, Context) ;
+            B, Context) ;
 
     }
     else
@@ -133,8 +133,7 @@ GrB_Info GB_bitmap_AxB_saxpy        // C = A*B where C is bitmap
             #define GB_AxB_WORKER(add,mult,xname)                       \
             {                                                           \
                 info = GB_AsaxbitB (add,mult,xname) (C, M, Mask_comp,   \
-                    Mask_struct, A, A_is_pattern, B, B_is_pattern,      \
-                    Context) ;                                          \
+                    Mask_struct, A, B, Context) ;                       \
                 done = (info != GrB_NO_VALUE) ;                         \
             }                                                           \
             break ;

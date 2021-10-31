@@ -609,7 +609,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
         GBURBLE ("(iso sparse saxpy) ") ;
         info = GB (_Asaxpy3B__any_pair_iso) (C, M, Mask_comp, Mask_struct,
-            M_in_place, A, true, B, true, SaxpyTasks, ntasks, nfine,
+            M_in_place, A, B, SaxpyTasks, ntasks, nfine,
             nthreads, do_sort, Context) ;
         if (info == GrB_SUCCESS)
         { 
@@ -639,8 +639,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             #define GB_AxB_WORKER(add,mult,xname)                           \
             {                                                               \
                 info = GB_Asaxpy3B (add,mult,xname) (C, M, Mask_comp,       \
-                    Mask_struct, M_in_place, A, A_is_pattern, B,            \
-                    B_is_pattern, SaxpyTasks, ntasks, nfine, nthreads,      \
+                    Mask_struct, M_in_place, A, B,                          \
+                    SaxpyTasks, ntasks, nfine, nthreads,                    \
                     do_sort, Context) ;                                     \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \

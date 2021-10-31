@@ -38,10 +38,13 @@
 // C=A+scalar                       GB (_bind2nd)
 // C=A'+scalar                      GB (_bind2nd_tran)
 
-// C type:   GB_ctype
-// A type:   GB_atype
-// B,b type: GB_btype
-// BinaryOp: GB_binaryop(cij,aij,bij,i,j)
+// C type:     GB_ctype
+// A type:     GB_atype
+// A pattern?  GB_a_is_pattern
+// B type:     GB_btype
+// B pattern?  GB_b_is_pattern
+
+// BinaryOp:   GB_binaryop(cij,aij,bij,i,j)
 
 #define GB_ATYPE \
     GB_atype
@@ -68,9 +71,17 @@
 #define GB_GETA(aij,Ax,pA,A_iso)  \
     GB_geta(aij,Ax,pA,A_iso)
 
+// true if values of A are not used
+#define GB_A_IS_PATTERN \
+    GB_a_is_pattern \
+
 // bij = Bx [pB]
 #define GB_GETB(bij,Bx,pB,B_iso)  \
     GB_getb(bij,Bx,pB,B_iso)
+
+// true if values of B are not used
+#define GB_B_IS_PATTERN \
+    GB_b_is_pattern \
 
 // declare scalar of the same type as C
 #define GB_CTYPE_SCALAR(t)  \
@@ -207,8 +218,8 @@ if_binop_is_semiring_multiplier
 GrB_Info GB (_AxD)
 (
     GrB_Matrix C,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix A,
+    const GrB_Matrix D,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
@@ -232,8 +243,8 @@ if_binop_is_semiring_multiplier
 GrB_Info GB (_DxB)
 (
     GrB_Matrix C,
-    const GrB_Matrix D, bool D_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
+    const GrB_Matrix D,
+    const GrB_Matrix B,
     int nthreads
 )
 { 

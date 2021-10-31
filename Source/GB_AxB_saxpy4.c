@@ -150,8 +150,8 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     #define GB_Asaxpy4B(add,mult,xname) GB (_Asaxpy4B_ ## add ## mult ## xname)
     #define GB_AxB_WORKER(add,mult,xname)                               \
     {                                                                   \
-        info = GB_Asaxpy4B (add,mult,xname) (C, A, A_is_pattern,        \
-            B, B_is_pattern, ntasks, nthreads, nfine_tasks_per_vector,  \
+        info = GB_Asaxpy4B (add,mult,xname) (C, A,                      \
+            B, ntasks, nthreads, nfine_tasks_per_vector,                \
             use_coarse_tasks, use_atomics, A_slice, Context) ;          \
     }                                                                   \
     break ;

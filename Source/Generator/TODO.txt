@@ -1,1 +1,0 @@
-FIXME: remove [ABD]_is_pattern

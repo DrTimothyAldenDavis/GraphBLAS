@@ -177,14 +177,12 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 
         #define GB_Adot4B(add,mult,xname) GB (_Adot4B_ ## add ## mult ## xname)
 
-        #define GB_AxB_WORKER(add,mult,xname)                       \
-        {                                                           \
-            info = GB_Adot4B (add,mult,xname) (C, C_in_iso, cinput, \
-                A, A_is_pattern, A_slice, naslice,                  \
-                B, B_is_pattern, B_slice, nbslice,                  \
-                nthreads) ;                                         \
-            done = (info != GrB_NO_VALUE) ;                         \
-        }                                                           \
+        #define GB_AxB_WORKER(add,mult,xname)                           \
+        {                                                               \
+            info = GB_Adot4B (add,mult,xname) (C, C_in_iso, cinput,     \
+                A, A_slice, naslice, B, B_slice, nbslice, nthreads) ;   \
+            done = (info != GrB_NO_VALUE) ;                             \
+        }                                                               \
         break ;
 
         //----------------------------------------------------------------------

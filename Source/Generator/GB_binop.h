@@ -35,15 +35,15 @@ if_binop_is_semiring_multiplier
 GrB_Info GB (_AxD)
 (
     GrB_Matrix C,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix A,
+    const GrB_Matrix D,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 ) ;
 GrB_Info GB (_DxB)
 (
     GrB_Matrix C,
-    const GrB_Matrix D, bool D_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
+    const GrB_Matrix D,
+    const GrB_Matrix B,
     int nthreads
 ) ;
 endif_binop_is_semiring_multiplier

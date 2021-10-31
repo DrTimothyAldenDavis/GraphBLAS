@@ -258,8 +258,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         //----------------------------------------------------------------------
 
         memcpy (C->x, cscalar, ctype->size) ;
-        GB_OK (GB (_Adot3B__any_pair_iso) (C, M, Mask_struct, A, true, B,
-            true, TaskList, ntasks, nthreads)) ;
+        GB_OK (GB (_Adot3B__any_pair_iso) (C, M, Mask_struct, A, B,
+            TaskList, ntasks, nthreads)) ;
 
     }
     else
@@ -282,8 +282,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
             #define GB_AxB_WORKER(add,mult,xname)                           \
             {                                                               \
-                info = GB_Adot3B (add,mult,xname) (C, M, Mask_struct,       \
-                    A, A_is_pattern, B, B_is_pattern,                       \
+                info = GB_Adot3B (add,mult,xname) (C, M, Mask_struct, A, B, \
                     TaskList, ntasks, nthreads) ;                           \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \

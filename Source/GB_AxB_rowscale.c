@@ -212,8 +212,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
             #define GB_BINOP_WORKER(mult,xname)                     \
             {                                                       \
-                info = GB_DxB(mult,xname) (C, D, D_is_pattern, B,   \
-                    B_is_pattern, nthreads) ;                       \
+                info = GB_DxB(mult,xname) (C, D, B, nthreads) ;     \
                 done = (info != GrB_NO_VALUE) ;                     \
             }                                                       \
             break ;
@@ -287,6 +286,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
             //------------------------------------------------------------------
 
             // dii = D(i,i), located in Dx [i]
+            #define GB_A_IS_PATTERN 0
             #define GB_GETA(dii,Dx,i,D_iso)                             \
                 GB_void dii [GB_VLA(dii_size)] ;                        \
                 if (!D_is_pattern)                                      \
@@ -295,6 +295,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
                 }
 
             // bij = B(i,j), located in Bx [pB]
+            #define GB_B_IS_PATTERN 0
             #define GB_GETB(bij,Bx,pB,B_iso)                            \
                 GB_void bij [GB_VLA(bij_size)] ;                        \
                 if (!B_is_pattern)                                      \

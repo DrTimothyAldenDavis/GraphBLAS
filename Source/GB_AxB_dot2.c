@@ -378,7 +378,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         GBURBLE ("(iso dot2) ") ;
         memcpy (C->x, cscalar, ctype->size) ;
         info = GB (_Adot2B__any_pair_iso) (C, M, Mask_comp, Mask_struct,
-            A_not_transposed, A, true, A_slice, B, true, B_slice,
+            A_not_transposed, A, A_slice, B, B_slice,
             nthreads, naslice, nbslice) ;
         ASSERT (info != GrB_NO_VALUE) ;
 
@@ -405,8 +405,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
             #define GB_AxB_WORKER(add,mult,xname)                           \
             {                                                               \
                 info = GB_Adot2B (add,mult,xname) (C, M, Mask_comp,         \
-                    Mask_struct, A_not_transposed, A, A_is_pattern, A_slice,\
-                    B, B_is_pattern, B_slice, nthreads, naslice, nbslice) ; \
+                    Mask_struct, A_not_transposed, A, A_slice,              \
+                    B, B_slice, nthreads, naslice, nbslice) ;               \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;

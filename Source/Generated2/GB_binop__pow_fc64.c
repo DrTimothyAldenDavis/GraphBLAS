@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -38,10 +39,13 @@
 // C=A+scalar                       GB (_bind2nd__pow_fc64)
 // C=A'+scalar                      GB (_bind2nd_tran__pow_fc64)
 
-// C type:   GxB_FC64_t
-// A type:   GxB_FC64_t
-// B,b type: GxB_FC64_t
-// BinaryOp: cij = GB_cpow (aij, bij)
+// C type:     GxB_FC64_t
+// A type:     GxB_FC64_t
+// A pattern?  0
+// B type:     GxB_FC64_t
+// B pattern?  0
+
+// BinaryOp:   cij = GB_cpow (aij, bij)
 
 #define GB_ATYPE \
     GxB_FC64_t
@@ -68,9 +72,17 @@
 #define GB_GETA(aij,Ax,pA,A_iso)  \
     GxB_FC64_t aij = GBX (Ax, pA, A_iso)
 
+// true if values of A are not used
+#define GB_A_IS_PATTERN \
+    0 \
+
 // bij = Bx [pB]
 #define GB_GETB(bij,Bx,pB,B_iso)  \
     GxB_FC64_t bij = GBX (Bx, pB, B_iso)
+
+// true if values of B are not used
+#define GB_B_IS_PATTERN \
+    0 \
 
 // declare scalar of the same type as C
 #define GB_CTYPE_SCALAR(t)  \
@@ -207,8 +219,8 @@ GrB_Info GB (_Cdense_accumb__pow_fc64)
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix A,
+    const GrB_Matrix D,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
@@ -232,8 +244,8 @@ GrB_Info GB ((none))
 GrB_Info GB ((none))
 (
     GrB_Matrix C,
-    const GrB_Matrix D, bool D_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
+    const GrB_Matrix D,
+    const GrB_Matrix B,
     int nthreads
 )
 { 

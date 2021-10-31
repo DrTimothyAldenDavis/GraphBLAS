@@ -228,8 +228,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
             #define GB_BINOP_WORKER(mult,xname)                             \
             {                                                               \
-                info = GB_AxD(mult,xname) (C, A, A_is_pattern, D,           \
-                    D_is_pattern, A_ek_slicing, A_ntasks, A_nthreads) ;     \
+                info = GB_AxD(mult,xname) (C, A, D,                         \
+                    A_ek_slicing, A_ntasks, A_nthreads) ;                   \
                 done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
@@ -303,6 +303,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
             //------------------------------------------------------------------
 
             // aij = A(i,j), located in Ax [pA]
+            #define GB_A_IS_PATTERN 0
             #define GB_GETA(aij,Ax,pA,A_iso)                            \
                 GB_void aij [GB_VLA(aij_size)] ;                        \
                 if (!A_is_pattern)                                      \
@@ -311,6 +312,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
                 }
 
             // dji = D(j,j), located in Dx [j]
+            #define GB_B_IS_PATTERN 0
             #define GB_GETB(djj,Dx,j,D_iso)                             \
                 GB_void djj [GB_VLA(djj_size)] ;                        \
                 if (!D_is_pattern)                                      \

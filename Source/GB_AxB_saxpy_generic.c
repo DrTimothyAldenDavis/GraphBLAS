@@ -175,9 +175,11 @@ GrB_Info GB_AxB_saxpy_generic
         ASSERT (B_is_pattern) ;
 
         // aik = A(i,k), located in Ax [A_iso ? 0:pA], value not used
+        #define GB_A_IS_PATTERN 1
         #define GB_GETA(aik,Ax,pA,A_iso) ;
 
         // bkj = B(k,j), located in Bx [B_iso ? 0:pB], value not used
+        #define GB_B_IS_PATTERN 1
         #define GB_GETB(bkj,Bx,pB,B_iso) ;
 
         // Gx [pG] = A(i,k), located in Ax [A_iso ? 0:pA], value not used
@@ -293,6 +295,8 @@ GrB_Info GB_AxB_saxpy_generic
         GB_BURBLE_MATRIX (C, "(generic C=A*B) ") ;
 
         // aik = A(i,k), located in Ax [A_iso ? 0:pA]
+        #undef  GB_A_IS_PATTERN
+        #define GB_A_IS_PATTERN 0
         #undef  GB_GETA
         #define GB_GETA(aik,Ax,pA,A_iso)                                    \
             GB_void aik [GB_VLA(aik_size)] ;                                \
@@ -302,6 +306,8 @@ GrB_Info GB_AxB_saxpy_generic
             }
 
         // bkj = B(k,j), located in Bx [B_iso ? 0:pB]
+        #undef  GB_B_IS_PATTERN
+        #define GB_B_IS_PATTERN 0
         #undef  GB_GETB
         #define GB_GETB(bkj,Bx,pB,B_iso)                                    \
             GB_void bkj [GB_VLA(bkj_size)] ;                                \

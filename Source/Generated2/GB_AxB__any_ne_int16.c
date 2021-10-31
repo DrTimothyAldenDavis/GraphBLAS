@@ -41,9 +41,11 @@
 //     mask M:         GB (_Asaxpy3B_M__any_ne_int16)
 //     mask !M:        GB (_Asaxpy3B_notM__any_ne_int16)
 
-// C type:   bool
-// A type:   int16_t
-// B type:   int16_t
+// C type:     bool
+// A type:     int16_t
+// A pattern?  0
+// B type:     int16_t
+// B pattern?  0
 
 // Multiply: z = (aik != bkj)
 // Add:      cij = z
@@ -80,9 +82,17 @@
 #define GB_GETA(aik,Ax,pA,A_iso) \
     int16_t aik = GBX (Ax, pA, A_iso)
 
+// true if values of A are not used
+#define GB_A_IS_PATTERN \
+    0 \
+
 // bkj = Bx [pB]
 #define GB_GETB(bkj,Bx,pB,B_iso) \
     int16_t bkj = GBX (Bx, pB, B_iso)
+
+// true if values of B are not used
+#define GB_B_IS_PATTERN \
+    0 \
 
 // Gx [pG] = Ax [pA]
 #define GB_LOADA(Gx,pG,Ax,pA,A_iso) \
@@ -278,8 +288,8 @@ GrB_Info GB (_Adot2B__any_ne_int16)
     GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
     const bool A_not_transposed,
-    const GrB_Matrix A, bool A_is_pattern, int64_t *restrict A_slice,
-    const GrB_Matrix B, bool B_is_pattern, int64_t *restrict B_slice,
+    const GrB_Matrix A, int64_t *restrict A_slice,
+    const GrB_Matrix B, int64_t *restrict B_slice,
     int nthreads, int naslice, int nbslice
 )
 { 
@@ -299,8 +309,8 @@ GrB_Info GB (_Adot3B__any_ne_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_struct,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
     const GB_task_struct *restrict TaskList,
     const int ntasks,
     const int nthreads
@@ -323,9 +333,9 @@ GrB_Info GB (_Adot3B__any_ne_int16)
     GrB_Info GB (_Adot4B__any_ne_int16)
     (
         GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
-        const GrB_Matrix A, bool A_is_pattern,
+        const GrB_Matrix A,
         int64_t *restrict A_slice, int naslice,
-        const GrB_Matrix B, bool B_is_pattern,
+        const GrB_Matrix B,
         int64_t *restrict B_slice, int nbslice,
         const int nthreads
     )
@@ -351,8 +361,8 @@ GrB_Info GB (_AsaxbitB__any_ne_int16)
 (
     GrB_Matrix C,   // bitmap or full
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
     GB_Context Context
 )
 { 
@@ -373,8 +383,8 @@ GrB_Info GB (_AsaxbitB__any_ne_int16)
     GrB_Info GB (_Asaxpy4B__(none))
     (
         GrB_Matrix C,
-        const GrB_Matrix A, bool A_is_pattern,
-        const GrB_Matrix B, bool B_is_pattern,
+        const GrB_Matrix A,
+        const GrB_Matrix B,
         const int ntasks,
         const int nthreads,
         const int nfine_tasks_per_vector,
@@ -403,8 +413,8 @@ GrB_Info GB (_Asaxpy3B__any_ne_int16)
     GrB_Matrix C,   // C<any M>=A*B, C sparse or hypersparse
     const GrB_Matrix M, const bool Mask_comp, const bool Mask_struct,
     const bool M_in_place,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
     GB_saxpy3task_struct *restrict SaxpyTasks,
     const int ntasks, const int nfine, const int nthreads, const int do_sort,
     GB_Context Context
@@ -417,24 +427,21 @@ GrB_Info GB (_Asaxpy3B__any_ne_int16)
     if (M == NULL)
     {
         // C = A*B, no mask
-        return (GB (_Asaxpy3B_noM__any_ne_int16) (C,
-            A, A_is_pattern, B, B_is_pattern,
+        return (GB (_Asaxpy3B_noM__any_ne_int16) (C, A, B,
             SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context)) ;
     }
     else if (!Mask_comp)
     {
         // C<M> = A*B
         return (GB (_Asaxpy3B_M__any_ne_int16) (C,
-            M, Mask_struct, M_in_place,
-            A, A_is_pattern, B, B_is_pattern,
+            M, Mask_struct, M_in_place, A, B,
             SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context)) ;
     }
     else
     {
         // C<!M> = A*B
         return (GB (_Asaxpy3B_notM__any_ne_int16) (C,
-            M, Mask_struct, M_in_place,
-            A, A_is_pattern, B, B_is_pattern,
+            M, Mask_struct, M_in_place, A, B,
             SaxpyTasks, ntasks, nfine, nthreads, do_sort, Context)) ;
     }
     #endif
@@ -451,8 +458,8 @@ GrB_Info GB (_Asaxpy3B__any_ne_int16)
         GrB_Matrix C,   // C<M>=A*B, C sparse or hypersparse
         const GrB_Matrix M, const bool Mask_struct,
         const bool M_in_place,
-        const GrB_Matrix A, bool A_is_pattern,
-        const GrB_Matrix B, bool B_is_pattern,
+        const GrB_Matrix A,
+        const GrB_Matrix B,
         GB_saxpy3task_struct *restrict SaxpyTasks,
         const int ntasks, const int nfine, const int nthreads,
         const int do_sort,
@@ -499,8 +506,8 @@ GrB_Info GB (_Asaxpy3B__any_ne_int16)
     GrB_Info GB (_Asaxpy3B_noM__any_ne_int16)
     (
         GrB_Matrix C,   // C=A*B, C sparse or hypersparse
-        const GrB_Matrix A, bool A_is_pattern,
-        const GrB_Matrix B, bool B_is_pattern,
+        const GrB_Matrix A,
+        const GrB_Matrix B,
         GB_saxpy3task_struct *restrict SaxpyTasks,
         const int ntasks, const int nfine, const int nthreads,
         const int do_sort,
@@ -549,8 +556,8 @@ GrB_Info GB (_Asaxpy3B__any_ne_int16)
         GrB_Matrix C,   // C<!M>=A*B, C sparse or hypersparse
         const GrB_Matrix M, const bool Mask_struct,
         const bool M_in_place,
-        const GrB_Matrix A, bool A_is_pattern,
-        const GrB_Matrix B, bool B_is_pattern,
+        const GrB_Matrix A,
+        const GrB_Matrix B,
         GB_saxpy3task_struct *restrict SaxpyTasks,
         const int ntasks, const int nfine, const int nthreads,
         const int do_sort,

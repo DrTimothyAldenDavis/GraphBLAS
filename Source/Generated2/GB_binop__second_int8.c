@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -38,10 +39,13 @@
 // C=A+scalar                       GB ((none))
 // C=A'+scalar                      GB ((none))
 
-// C type:   int8_t
-// A type:   int8_t
-// B,b type: int8_t
-// BinaryOp: cij = bij
+// C type:     int8_t
+// A type:     int8_t
+// A pattern?  1
+// B type:     int8_t
+// B pattern?  0
+
+// BinaryOp:   cij = bij
 
 #define GB_ATYPE \
     int8_t
@@ -68,9 +72,17 @@
 #define GB_GETA(aij,Ax,pA,A_iso)  \
     ;
 
+// true if values of A are not used
+#define GB_A_IS_PATTERN \
+    1 \
+
 // bij = Bx [pB]
 #define GB_GETB(bij,Bx,pB,B_iso)  \
     int8_t bij = GBX (Bx, pB, B_iso)
+
+// true if values of B are not used
+#define GB_B_IS_PATTERN \
+    0 \
 
 // declare scalar of the same type as C
 #define GB_CTYPE_SCALAR(t)  \
@@ -207,8 +219,8 @@ GrB_Info GB (_Cdense_accumb__second_int8)
 GrB_Info GB (_AxD__second_int8)
 (
     GrB_Matrix C,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix A,
+    const GrB_Matrix D,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
@@ -232,8 +244,8 @@ GrB_Info GB (_AxD__second_int8)
 GrB_Info GB (_DxB__second_int8)
 (
     GrB_Matrix C,
-    const GrB_Matrix D, bool D_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
+    const GrB_Matrix D,
+    const GrB_Matrix B,
     int nthreads
 )
 { 
