@@ -33,7 +33,7 @@
 
 // A'*B (dot2):        GB (_Adot2B__any_land_bool)
 // A'*B (dot3):        GB (_Adot3B__any_land_bool)
-// C+=A'*B (dot4):     GB (_Adot4B__any_land_bool)
+// C+=A'*B (dot4):     GB (_Adot4B__(none))
 // A*B (saxpy bitmap): GB (_AsaxbitB__any_land_bool)
 // A*B (saxpy3):       GB (_Asaxpy3B__any_land_bool)
 // A*B (saxpy4):       GB (_Asaxpy4B__(none))
@@ -328,9 +328,9 @@ GrB_Info GB (_Adot3B__any_land_bool)
 // GB_Adot4B:  C+=A'*B: dense dot product (not used for ANY_PAIR_ISO)
 //------------------------------------------------------------------------------
 
-#if 1
+#if 0
 
-    GrB_Info GB (_Adot4B__any_land_bool)
+    GrB_Info GB (_Adot4B__(none))
     (
         GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
         const GrB_Matrix A,

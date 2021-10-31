@@ -3527,8 +3527,8 @@ GrB_Info GB (_Adot3B__any_times_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -3633,8 +3633,8 @@ GrB_Info GB (_Adot3B__any_times_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -3739,8 +3739,8 @@ GrB_Info GB (_Adot3B__any_times_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -3845,8 +3845,8 @@ GrB_Info GB (_Adot3B__any_times_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -3951,8 +3951,8 @@ GrB_Info GB (_Adot3B__any_times_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -4057,8 +4057,8 @@ GrB_Info GB (_Adot3B__any_times_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -4163,8 +4163,8 @@ GrB_Info GB (_Adot3B__any_times_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -4269,8 +4269,8 @@ GrB_Info GB (_Adot3B__any_times_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -4375,8 +4375,8 @@ GrB_Info GB (_Adot3B__any_times_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -4481,8 +4481,8 @@ GrB_Info GB (_Adot3B__any_times_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -4587,8 +4587,8 @@ GrB_Info GB (_Adot3B__any_times_fc32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_fc32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -4693,8 +4693,8 @@ GrB_Info GB (_Adot3B__any_times_fc64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_times_fc64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -9463,8 +9463,8 @@ GrB_Info GB (_Adot3B__any_first_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -9569,8 +9569,8 @@ GrB_Info GB (_Adot3B__any_first_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -9675,8 +9675,8 @@ GrB_Info GB (_Adot3B__any_first_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -9781,8 +9781,8 @@ GrB_Info GB (_Adot3B__any_first_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -9887,8 +9887,8 @@ GrB_Info GB (_Adot3B__any_first_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -9993,8 +9993,8 @@ GrB_Info GB (_Adot3B__any_first_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -10099,8 +10099,8 @@ GrB_Info GB (_Adot3B__any_first_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -10205,8 +10205,8 @@ GrB_Info GB (_Adot3B__any_first_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -10311,8 +10311,8 @@ GrB_Info GB (_Adot3B__any_first_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -10417,8 +10417,8 @@ GrB_Info GB (_Adot3B__any_first_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -10523,8 +10523,8 @@ GrB_Info GB (_Adot3B__any_first_fc32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_fc32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -10629,8 +10629,8 @@ GrB_Info GB (_Adot3B__any_first_fc64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_fc64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -13597,8 +13597,8 @@ GrB_Info GB (_Adot3B__any_first_bool)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_first_bool)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -15929,8 +15929,8 @@ GrB_Info GB (_Adot3B__any_second_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -16035,8 +16035,8 @@ GrB_Info GB (_Adot3B__any_second_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -16141,8 +16141,8 @@ GrB_Info GB (_Adot3B__any_second_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -16247,8 +16247,8 @@ GrB_Info GB (_Adot3B__any_second_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -16353,8 +16353,8 @@ GrB_Info GB (_Adot3B__any_second_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -16459,8 +16459,8 @@ GrB_Info GB (_Adot3B__any_second_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -16565,8 +16565,8 @@ GrB_Info GB (_Adot3B__any_second_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -16671,8 +16671,8 @@ GrB_Info GB (_Adot3B__any_second_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -16777,8 +16777,8 @@ GrB_Info GB (_Adot3B__any_second_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -16883,8 +16883,8 @@ GrB_Info GB (_Adot3B__any_second_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -16989,8 +16989,8 @@ GrB_Info GB (_Adot3B__any_second_fc32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_fc32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -17095,8 +17095,8 @@ GrB_Info GB (_Adot3B__any_second_fc64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_fc64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -20063,8 +20063,8 @@ GrB_Info GB (_Adot3B__any_second_bool)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_second_bool)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -22395,8 +22395,8 @@ GrB_Info GB (_Adot3B__any_min_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_min_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -22501,8 +22501,8 @@ GrB_Info GB (_Adot3B__any_min_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_min_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -22607,8 +22607,8 @@ GrB_Info GB (_Adot3B__any_min_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_min_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -22713,8 +22713,8 @@ GrB_Info GB (_Adot3B__any_min_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_min_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -22819,8 +22819,8 @@ GrB_Info GB (_Adot3B__any_min_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_min_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -22925,8 +22925,8 @@ GrB_Info GB (_Adot3B__any_min_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_min_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -23031,8 +23031,8 @@ GrB_Info GB (_Adot3B__any_min_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_min_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -23137,8 +23137,8 @@ GrB_Info GB (_Adot3B__any_min_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_min_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -23243,8 +23243,8 @@ GrB_Info GB (_Adot3B__any_min_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_min_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -23349,8 +23349,8 @@ GrB_Info GB (_Adot3B__any_min_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_min_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -27695,8 +27695,8 @@ GrB_Info GB (_Adot3B__any_max_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_max_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -27801,8 +27801,8 @@ GrB_Info GB (_Adot3B__any_max_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_max_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -27907,8 +27907,8 @@ GrB_Info GB (_Adot3B__any_max_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_max_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -28013,8 +28013,8 @@ GrB_Info GB (_Adot3B__any_max_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_max_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -28119,8 +28119,8 @@ GrB_Info GB (_Adot3B__any_max_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_max_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -28225,8 +28225,8 @@ GrB_Info GB (_Adot3B__any_max_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_max_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -28331,8 +28331,8 @@ GrB_Info GB (_Adot3B__any_max_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_max_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -28437,8 +28437,8 @@ GrB_Info GB (_Adot3B__any_max_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_max_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -28543,8 +28543,8 @@ GrB_Info GB (_Adot3B__any_max_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_max_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -28649,8 +28649,8 @@ GrB_Info GB (_Adot3B__any_max_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_max_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -32995,8 +32995,8 @@ GrB_Info GB (_Adot3B__any_plus_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -33101,8 +33101,8 @@ GrB_Info GB (_Adot3B__any_plus_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -33207,8 +33207,8 @@ GrB_Info GB (_Adot3B__any_plus_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -33313,8 +33313,8 @@ GrB_Info GB (_Adot3B__any_plus_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -33419,8 +33419,8 @@ GrB_Info GB (_Adot3B__any_plus_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -33525,8 +33525,8 @@ GrB_Info GB (_Adot3B__any_plus_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -33631,8 +33631,8 @@ GrB_Info GB (_Adot3B__any_plus_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -33737,8 +33737,8 @@ GrB_Info GB (_Adot3B__any_plus_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -33843,8 +33843,8 @@ GrB_Info GB (_Adot3B__any_plus_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -33949,8 +33949,8 @@ GrB_Info GB (_Adot3B__any_plus_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -34055,8 +34055,8 @@ GrB_Info GB (_Adot3B__any_plus_fc32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_fc32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -34161,8 +34161,8 @@ GrB_Info GB (_Adot3B__any_plus_fc64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_plus_fc64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -38931,8 +38931,8 @@ GrB_Info GB (_Adot3B__any_minus_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -39037,8 +39037,8 @@ GrB_Info GB (_Adot3B__any_minus_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -39143,8 +39143,8 @@ GrB_Info GB (_Adot3B__any_minus_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -39249,8 +39249,8 @@ GrB_Info GB (_Adot3B__any_minus_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -39355,8 +39355,8 @@ GrB_Info GB (_Adot3B__any_minus_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -39461,8 +39461,8 @@ GrB_Info GB (_Adot3B__any_minus_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -39567,8 +39567,8 @@ GrB_Info GB (_Adot3B__any_minus_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -39673,8 +39673,8 @@ GrB_Info GB (_Adot3B__any_minus_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -39779,8 +39779,8 @@ GrB_Info GB (_Adot3B__any_minus_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -39885,8 +39885,8 @@ GrB_Info GB (_Adot3B__any_minus_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -39991,8 +39991,8 @@ GrB_Info GB (_Adot3B__any_minus_fc32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_fc32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -40097,8 +40097,8 @@ GrB_Info GB (_Adot3B__any_minus_fc64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_minus_fc64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -44867,8 +44867,8 @@ GrB_Info GB (_Adot3B__any_rminus_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -44973,8 +44973,8 @@ GrB_Info GB (_Adot3B__any_rminus_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -45079,8 +45079,8 @@ GrB_Info GB (_Adot3B__any_rminus_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -45185,8 +45185,8 @@ GrB_Info GB (_Adot3B__any_rminus_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -45291,8 +45291,8 @@ GrB_Info GB (_Adot3B__any_rminus_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -45397,8 +45397,8 @@ GrB_Info GB (_Adot3B__any_rminus_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -45503,8 +45503,8 @@ GrB_Info GB (_Adot3B__any_rminus_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -45609,8 +45609,8 @@ GrB_Info GB (_Adot3B__any_rminus_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -45715,8 +45715,8 @@ GrB_Info GB (_Adot3B__any_rminus_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -45821,8 +45821,8 @@ GrB_Info GB (_Adot3B__any_rminus_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -45927,8 +45927,8 @@ GrB_Info GB (_Adot3B__any_rminus_fc32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_fc32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -46033,8 +46033,8 @@ GrB_Info GB (_Adot3B__any_rminus_fc64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rminus_fc64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -50803,8 +50803,8 @@ GrB_Info GB (_Adot3B__any_div_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -50909,8 +50909,8 @@ GrB_Info GB (_Adot3B__any_div_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -51015,8 +51015,8 @@ GrB_Info GB (_Adot3B__any_div_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -51121,8 +51121,8 @@ GrB_Info GB (_Adot3B__any_div_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -51227,8 +51227,8 @@ GrB_Info GB (_Adot3B__any_div_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -51333,8 +51333,8 @@ GrB_Info GB (_Adot3B__any_div_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -51439,8 +51439,8 @@ GrB_Info GB (_Adot3B__any_div_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -51545,8 +51545,8 @@ GrB_Info GB (_Adot3B__any_div_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -51651,8 +51651,8 @@ GrB_Info GB (_Adot3B__any_div_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -51757,8 +51757,8 @@ GrB_Info GB (_Adot3B__any_div_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -51863,8 +51863,8 @@ GrB_Info GB (_Adot3B__any_div_fc32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_fc32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -51969,8 +51969,8 @@ GrB_Info GB (_Adot3B__any_div_fc64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_div_fc64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -56739,8 +56739,8 @@ GrB_Info GB (_Adot3B__any_rdiv_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -56845,8 +56845,8 @@ GrB_Info GB (_Adot3B__any_rdiv_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -56951,8 +56951,8 @@ GrB_Info GB (_Adot3B__any_rdiv_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -57057,8 +57057,8 @@ GrB_Info GB (_Adot3B__any_rdiv_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -57163,8 +57163,8 @@ GrB_Info GB (_Adot3B__any_rdiv_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -57269,8 +57269,8 @@ GrB_Info GB (_Adot3B__any_rdiv_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -57375,8 +57375,8 @@ GrB_Info GB (_Adot3B__any_rdiv_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -57481,8 +57481,8 @@ GrB_Info GB (_Adot3B__any_rdiv_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -57587,8 +57587,8 @@ GrB_Info GB (_Adot3B__any_rdiv_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -57693,8 +57693,8 @@ GrB_Info GB (_Adot3B__any_rdiv_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -57799,8 +57799,8 @@ GrB_Info GB (_Adot3B__any_rdiv_fc32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_fc32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -57905,8 +57905,8 @@ GrB_Info GB (_Adot3B__any_rdiv_fc64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_rdiv_fc64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -61721,8 +61721,8 @@ GrB_Info GB (_Adot3B__any_eq_bool)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_eq_bool)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -61827,8 +61827,8 @@ GrB_Info GB (_Adot3B__any_eq_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_eq_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -61933,8 +61933,8 @@ GrB_Info GB (_Adot3B__any_eq_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_eq_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -62039,8 +62039,8 @@ GrB_Info GB (_Adot3B__any_eq_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_eq_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -62145,8 +62145,8 @@ GrB_Info GB (_Adot3B__any_eq_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_eq_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -62251,8 +62251,8 @@ GrB_Info GB (_Adot3B__any_eq_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_eq_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -62357,8 +62357,8 @@ GrB_Info GB (_Adot3B__any_eq_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_eq_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -62463,8 +62463,8 @@ GrB_Info GB (_Adot3B__any_eq_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_eq_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -62569,8 +62569,8 @@ GrB_Info GB (_Adot3B__any_eq_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_eq_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -62675,8 +62675,8 @@ GrB_Info GB (_Adot3B__any_eq_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_eq_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -62781,8 +62781,8 @@ GrB_Info GB (_Adot3B__any_eq_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_eq_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -67445,8 +67445,8 @@ GrB_Info GB (_Adot3B__any_ne_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ne_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -67551,8 +67551,8 @@ GrB_Info GB (_Adot3B__any_ne_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ne_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -67657,8 +67657,8 @@ GrB_Info GB (_Adot3B__any_ne_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ne_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -67763,8 +67763,8 @@ GrB_Info GB (_Adot3B__any_ne_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ne_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -67869,8 +67869,8 @@ GrB_Info GB (_Adot3B__any_ne_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ne_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -67975,8 +67975,8 @@ GrB_Info GB (_Adot3B__any_ne_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ne_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -68081,8 +68081,8 @@ GrB_Info GB (_Adot3B__any_ne_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ne_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -68187,8 +68187,8 @@ GrB_Info GB (_Adot3B__any_ne_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ne_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -68293,8 +68293,8 @@ GrB_Info GB (_Adot3B__any_ne_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ne_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -68399,8 +68399,8 @@ GrB_Info GB (_Adot3B__any_ne_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ne_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -72851,8 +72851,8 @@ GrB_Info GB (_Adot3B__any_gt_bool)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_gt_bool)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -72957,8 +72957,8 @@ GrB_Info GB (_Adot3B__any_gt_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_gt_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -73063,8 +73063,8 @@ GrB_Info GB (_Adot3B__any_gt_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_gt_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -73169,8 +73169,8 @@ GrB_Info GB (_Adot3B__any_gt_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_gt_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -73275,8 +73275,8 @@ GrB_Info GB (_Adot3B__any_gt_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_gt_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -73381,8 +73381,8 @@ GrB_Info GB (_Adot3B__any_gt_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_gt_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -73487,8 +73487,8 @@ GrB_Info GB (_Adot3B__any_gt_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_gt_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -73593,8 +73593,8 @@ GrB_Info GB (_Adot3B__any_gt_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_gt_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -73699,8 +73699,8 @@ GrB_Info GB (_Adot3B__any_gt_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_gt_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -73805,8 +73805,8 @@ GrB_Info GB (_Adot3B__any_gt_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_gt_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -73911,8 +73911,8 @@ GrB_Info GB (_Adot3B__any_gt_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_gt_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -78681,8 +78681,8 @@ GrB_Info GB (_Adot3B__any_lt_bool)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lt_bool)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -78787,8 +78787,8 @@ GrB_Info GB (_Adot3B__any_lt_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lt_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -78893,8 +78893,8 @@ GrB_Info GB (_Adot3B__any_lt_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lt_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -78999,8 +78999,8 @@ GrB_Info GB (_Adot3B__any_lt_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lt_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -79105,8 +79105,8 @@ GrB_Info GB (_Adot3B__any_lt_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lt_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -79211,8 +79211,8 @@ GrB_Info GB (_Adot3B__any_lt_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lt_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -79317,8 +79317,8 @@ GrB_Info GB (_Adot3B__any_lt_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lt_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -79423,8 +79423,8 @@ GrB_Info GB (_Adot3B__any_lt_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lt_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -79529,8 +79529,8 @@ GrB_Info GB (_Adot3B__any_lt_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lt_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -79635,8 +79635,8 @@ GrB_Info GB (_Adot3B__any_lt_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lt_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -79741,8 +79741,8 @@ GrB_Info GB (_Adot3B__any_lt_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lt_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -84511,8 +84511,8 @@ GrB_Info GB (_Adot3B__any_ge_bool)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ge_bool)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -84617,8 +84617,8 @@ GrB_Info GB (_Adot3B__any_ge_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ge_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -84723,8 +84723,8 @@ GrB_Info GB (_Adot3B__any_ge_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ge_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -84829,8 +84829,8 @@ GrB_Info GB (_Adot3B__any_ge_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ge_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -84935,8 +84935,8 @@ GrB_Info GB (_Adot3B__any_ge_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ge_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -85041,8 +85041,8 @@ GrB_Info GB (_Adot3B__any_ge_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ge_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -85147,8 +85147,8 @@ GrB_Info GB (_Adot3B__any_ge_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ge_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -85253,8 +85253,8 @@ GrB_Info GB (_Adot3B__any_ge_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ge_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -85359,8 +85359,8 @@ GrB_Info GB (_Adot3B__any_ge_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ge_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -85465,8 +85465,8 @@ GrB_Info GB (_Adot3B__any_ge_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ge_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -85571,8 +85571,8 @@ GrB_Info GB (_Adot3B__any_ge_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_ge_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -90341,8 +90341,8 @@ GrB_Info GB (_Adot3B__any_le_bool)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_le_bool)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -90447,8 +90447,8 @@ GrB_Info GB (_Adot3B__any_le_int8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_le_int8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -90553,8 +90553,8 @@ GrB_Info GB (_Adot3B__any_le_uint8)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_le_uint8)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -90659,8 +90659,8 @@ GrB_Info GB (_Adot3B__any_le_int16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_le_int16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -90765,8 +90765,8 @@ GrB_Info GB (_Adot3B__any_le_uint16)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_le_uint16)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -90871,8 +90871,8 @@ GrB_Info GB (_Adot3B__any_le_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_le_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -90977,8 +90977,8 @@ GrB_Info GB (_Adot3B__any_le_uint32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_le_uint32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -91083,8 +91083,8 @@ GrB_Info GB (_Adot3B__any_le_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_le_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -91189,8 +91189,8 @@ GrB_Info GB (_Adot3B__any_le_uint64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_le_uint64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -91295,8 +91295,8 @@ GrB_Info GB (_Adot3B__any_le_fp32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_le_fp32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -91401,8 +91401,8 @@ GrB_Info GB (_Adot3B__any_le_fp64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_le_fp64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -96383,8 +96383,8 @@ GrB_Info GB (_Adot3B__any_lor_bool)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lor_bool)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -97973,8 +97973,8 @@ GrB_Info GB (_Adot3B__any_land_bool)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_land_bool)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -99563,8 +99563,8 @@ GrB_Info GB (_Adot3B__any_lxor_bool)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_lxor_bool)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -106983,8 +106983,8 @@ GrB_Info GB (_Adot3B__any_firsti_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_firsti_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -107089,8 +107089,8 @@ GrB_Info GB (_Adot3B__any_firsti_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_firsti_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -108043,8 +108043,8 @@ GrB_Info GB (_Adot3B__any_firsti1_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_firsti1_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -108149,8 +108149,8 @@ GrB_Info GB (_Adot3B__any_firsti1_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_firsti1_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -109103,8 +109103,8 @@ GrB_Info GB (_Adot3B__any_firstj_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_firstj_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -109209,8 +109209,8 @@ GrB_Info GB (_Adot3B__any_firstj_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_firstj_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -110163,8 +110163,8 @@ GrB_Info GB (_Adot3B__any_firstj1_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_firstj1_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -110269,8 +110269,8 @@ GrB_Info GB (_Adot3B__any_firstj1_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_firstj1_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -111223,8 +111223,8 @@ GrB_Info GB (_Adot3B__any_secondj_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_secondj_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -111329,8 +111329,8 @@ GrB_Info GB (_Adot3B__any_secondj_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_secondj_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -112283,8 +112283,8 @@ GrB_Info GB (_Adot3B__any_secondj1_int64)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_secondj1_int64)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,
@@ -112389,8 +112389,8 @@ GrB_Info GB (_Adot3B__any_secondj1_int32)
     const int nthreads
 ) ;
 
-#if 1
-GrB_Info GB (_Adot4B__any_secondj1_int32)
+#if 0
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,

@@ -40,6 +40,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     GrB_Matrix M,                   // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_BinaryOp accum,
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -182,6 +183,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C+=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    bool *done_in_place,            // if true, dot4 has computed the result
     GB_Context Context
 ) ;
 
@@ -211,11 +213,14 @@ static inline bool GB_AxB_dot4_control
                                 // to use dot4
     const GrB_Matrix C_in,      // must be present and as-if-full to use dot4
     const GrB_Matrix M,         // must be NULL to use dot4
-    const bool Mask_comp        // must be false to use dot4
+    const bool Mask_comp,       // must be false to use dot4
+    const GrB_BinaryOp accum,   // accum must match the monoid
+    const GrB_Semiring semiring
 )
 {
-    return (!C_out_iso && C_in != NULL && M == NULL && !Mask_comp &&
-        GB_as_if_full (C_in)) ;
+    return (!C_out_iso && C_in != NULL && GB_as_if_full (C_in)
+        && (M == NULL) && (!Mask_comp) && (accum != NULL)
+        && (accum == semiring->add->op) && (C_in->type == accum->ztype)) ;
 }
 
 //------------------------------------------------------------------------------

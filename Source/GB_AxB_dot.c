@@ -50,6 +50,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     GrB_Matrix M,                   // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_BinaryOp accum,
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -64,6 +65,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (C != NULL && C->static_header) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for dot A'*B", GB0) ;
@@ -108,7 +110,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             (*done_in_place) = false ;
             (*mask_applied) = false ;
             // set C->iso = true    OK
-            GrB_Info info = GB_new_bix (&C, true,    // static header
+            info = GB_new_bix (&C, true,    // static header
                 ztype, A->vdim, B->vdim, GB_Ap_null, true, GxB_FULL, false,
                 GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Context) ;
             if (info == GrB_SUCCESS)
@@ -126,18 +128,20 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     // in-place C+=A'*B.  mask is not present (and not applied)
     //--------------------------------------------------------------------------
 
-    if (GB_AxB_dot4_control (C_iso, C_in, M, Mask_comp))
+    if (GB_AxB_dot4_control (C_iso, C_in, M, Mask_comp, accum, semiring))
     { 
         // C_in must be as-if-full on input.  M must be NULL and not
         // complemented.  the C iso case is not handled (where C is iso on
         // output), but C_in might be iso on input.
-        (*done_in_place) = true ;
         (*mask_applied) = false ;    // no mask to apply
-        GBURBLE ("(dot4) ") ;
-        return (GB_AxB_dot4 (C_in, A, B, semiring, flipxy, Context)) ;
-
-        // FIXME: remove generic dot4, and return GrB_NO_VALUE if the
-        // method is not handled.  Let dot2 and dot3 handle it.
+        info = GB_AxB_dot4 (C_in, A, B, semiring, flipxy, done_in_place,
+            Context) ;
+        if (info != GrB_NO_VALUE)
+        { 
+            // return if dot4 has handled this case, otherwise fall through
+            // to dot2 or dot3 below.
+            return (info) ;
+        }
     }
 
     //--------------------------------------------------------------------------

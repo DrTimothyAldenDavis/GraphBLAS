@@ -11,12 +11,15 @@
 // no mask is present, C_replace is false, the accum matches the monoid,
 // no typecasting is needed, and no user-defined types or operators are used.
 
+// The ANY monoid is not supported, since its use as accum would be unusual.
+// The monoid must have an atomic implementation, so the TIMES monoid for
+// complex types is not supported.
+
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
 #include "GB_control.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__include1.h"
 #include "GB_AxB__include2.h"
 #endif
 
@@ -32,7 +35,7 @@
 }
 
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy4: compute C+=A*B
+// GB_AxB_saxpy4: compute C+=A*B in-place
 //------------------------------------------------------------------------------
 
 GrB_Info GB_AxB_saxpy4              // C += A*B

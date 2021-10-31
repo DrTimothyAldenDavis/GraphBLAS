@@ -33,7 +33,7 @@
 
 // A'*B (dot2):        GB (_Adot2B__any_pair_iso)
 // A'*B (dot3):        GB (_Adot3B__any_pair_iso)
-// C+=A'*B (dot4):     GB (_Adot4B__any_pair_iso)
+// C+=A'*B (dot4):     GB (_Adot4B__(none))
 // A*B (saxpy bitmap): GB (_AsaxbitB__any_pair_iso)
 // A*B (saxpy3):       GB (_Asaxpy3B__any_pair_iso)
 // A*B (saxpy4):       GB (_Asaxpy4B__(none))
@@ -330,7 +330,7 @@ GrB_Info GB (_Adot3B__any_pair_iso)
 
 #if 0
 
-    GrB_Info GB (_Adot4B__any_pair_iso)
+    GrB_Info GB (_Adot4B__(none))
     (
         GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
         const GrB_Matrix A,

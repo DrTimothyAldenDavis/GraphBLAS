@@ -55,8 +55,8 @@
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
 
-    #if GB_IS_ANY_PAIR_SEMIRING
-    #error "any_pair_iso semiring not supported for the dot4 method"
+    #if GB_IS_ANY_MONOID
+    #error "dot4 not supported for ANY monoids"
     #endif
 
     ASSERT (!C->iso) ; // C was iso on input, it has been expanded to non-iso
@@ -79,6 +79,5 @@
 }
 
 #undef GB_DOT
-
 #undef GB_DOT4
 

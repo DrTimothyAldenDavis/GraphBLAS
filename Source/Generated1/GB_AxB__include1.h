@@ -30,7 +30,7 @@ GrB_Info GB (_Adot3B__any_pair_iso)
 ) ;
 
 #if 0
-GrB_Info GB (_Adot4B__any_pair_iso)
+GrB_Info GB (_Adot4B__(none))
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
     const GrB_Matrix A,

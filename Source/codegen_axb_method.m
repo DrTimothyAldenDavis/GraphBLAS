@@ -152,7 +152,6 @@ name = sprintf ('%s_%s_%s', addop, multop, fname) ;
 % function names
 fprintf (f, 'define(`_Adot2B'', `_Adot2B__%s'')\n', name) ;
 fprintf (f, 'define(`_Adot3B'', `_Adot3B__%s'')\n', name) ;
-fprintf (f, 'define(`_Adot4B'', `_Adot4B__%s'')\n', name) ;
 fprintf (f, 'define(`_Asaxpy3B'', `_Asaxpy3B__%s'')\n', name) ;
 fprintf (f, 'define(`_Asaxpy3B_M'', `_Asaxpy3B_M__%s'')\n', name) ;
 fprintf (f, 'define(`_Asaxpy3B_noM'', `_Asaxpy3B_noM__%s'')\n', name) ;
@@ -304,6 +303,15 @@ else
         fprintf (f, 'define(`_Asaxpy4B'', `_Asaxpy4B__%s'')\n', '(none)') ;
         fprintf (f, 'define(`if_saxpy4_enabled'', `#if 0'')\n') ;
     end
+end
+
+if (is_any)
+    % dot4 is disabled for the ANY monoid
+    fprintf (f, 'define(`_Adot4B'', `_Adot4B__%s'')\n', '(none)') ;
+    fprintf (f, 'define(`if_dot4_enabled'', `#if 0'')\n') ;
+else
+    fprintf (f, 'define(`_Adot4B'', `_Adot4B__%s'')\n', name) ;
+    fprintf (f, 'define(`if_dot4_enabled'', `#if 1'')\n') ;
 end
 
 % firsti multiply operator
@@ -614,7 +622,7 @@ end
 
 fclose (f) ;
 
-nprune = 70 ;
+nprune = 71 ;
 
 if (is_any_pair)
     % the ANY_PAIR_ISO semiring goes in Generated1

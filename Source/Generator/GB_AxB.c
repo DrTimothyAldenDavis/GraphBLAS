@@ -328,7 +328,7 @@ GrB_Info GB (_Adot3B)
 // GB_Adot4B:  C+=A'*B: dense dot product (not used for ANY_PAIR_ISO)
 //------------------------------------------------------------------------------
 
-if_not_any_pair_semiring
+if_dot4_enabled
 
     GrB_Info GB (_Adot4B)
     (

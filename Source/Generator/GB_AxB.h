@@ -20,7 +20,7 @@ GrB_Info GB (_Adot3B)
     const int nthreads
 ) ;
 
-if_not_any_pair_semiring
+if_dot4_enabled
 GrB_Info GB (_Adot4B)
 (
     GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,

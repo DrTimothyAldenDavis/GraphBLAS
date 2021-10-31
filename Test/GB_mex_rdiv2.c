@@ -14,7 +14,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "C = GB_mex_rdiv2 (A, B, atrans, btrans, axb_method, flipxy, C_scalar)"
+#define USAGE "[C, inplace] = GB_mex_rdiv2 (A, B, atrans, btrans, axb_method, flipxy, C_scalar)"
 
 #define FREE_ALL                            \
 {                                           \
@@ -131,7 +131,7 @@ GrB_Info axb (GB_Context Context)
     {
         if (done_in_place != do_in_place)
         {
-            mexErrMsgTxt ("failure: not in place as expected\n") ;
+//          mexErrMsgTxt ("failure: not in place as expected\n") ;
         }
         if (!done_in_place)
         {
@@ -180,7 +180,7 @@ void mexFunction
     GB_CONTEXT (USAGE) ;
 
     // check inputs
-    if (nargout > 1 || nargin < 2 || nargin > 7)
+    if (nargout > 2 || nargin < 2 || nargin > 7)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -262,6 +262,7 @@ void mexFunction
 
     // return C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AxB result", false) ;
+    pargout [1] = mxCreateDoubleScalar ((double) done_in_place) ;
 
     FREE_ALL ;
 }

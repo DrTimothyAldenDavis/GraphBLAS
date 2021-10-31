@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// This template serves all three dot product methods.  The #including file
-// defines GB_DOT2_GENERIC, GB_DOT3_GENERIC, or GB_DOT4_GENERIC.
+// This template serves the dot2 and dot3 methods, but not dot4.  The
+// #including file defines GB_DOT2_GENERIC or GB_DOT3_GENERIC.
 
 {
 
@@ -98,17 +98,6 @@
         // address of Cx [p]
         #define GB_CX(p) (&Cx [p])
 
-        // get the value of C(i,j) on input, for dot4 only
-        #define GB_GET4C(cij,p)                                         \
-            if (C_in_iso)                                               \
-            {                                                           \
-                memcpy (&cij, cinput, csize) ;                          \
-            }                                                           \
-            else                                                        \
-            {                                                           \
-                cij = Cx [p] ;                                          \
-            }
-
         // Cx [p] = cij
         #define GB_PUTC(cij,p) Cx [p] = cij
 
@@ -146,8 +135,6 @@
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
-                    #else
-                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 case GB_FIRSTJ_binop_code   :   // first_j(A'(i,k),y) == k
@@ -160,8 +147,6 @@
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
-                    #else
-                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 case GB_SECONDJ_binop_code  :   // second_j(x,B(k,j)) == j
@@ -172,8 +157,6 @@
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
-                    #else
-                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 default: ;
@@ -199,8 +182,6 @@
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
-                    #else
-                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 case GB_FIRSTJ_binop_code   :   // first_j(A'(i,k),y) == k
@@ -213,8 +194,6 @@
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
-                    #else
-                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 case GB_SECONDJ_binop_code  :   // second_j(x,B(k,j)) == j
@@ -225,8 +204,6 @@
                     #include "GB_AxB_dot2_meta.c"
                     #elif defined ( GB_DOT3_GENERIC )
                     #include "GB_AxB_dot3_meta.c"
-                    #else
-                    #include "GB_AxB_dot4_meta.c"
                     #endif
                     break ;
                 default: ;
@@ -264,18 +241,6 @@
         // address of Cx [p]
         #undef  GB_CX
         #define GB_CX(p) Cx +((p)*csize)
-
-        // get the value of C(i,j) on input, for dot4 only
-        #undef  GB_GET4C
-        #define GB_GET4C(cij,p)                                         \
-            if (C_in_iso)                                               \
-            {                                                           \
-                memcpy (cij, cinput, csize) ;                           \
-            }                                                           \
-            else                                                        \
-            {                                                           \
-                memcpy (cij, GB_CX (p), csize) ;                        \
-            }
 
         // Cx [p] = cij
         #undef  GB_PUTC
@@ -319,8 +284,6 @@
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
                 #include "GB_AxB_dot3_meta.c"
-                #else
-                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
             else // opcode == GB_SECOND_binop_code
@@ -333,8 +296,6 @@
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
                 #include "GB_AxB_dot3_meta.c"
-                #else
-                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
         }
@@ -349,8 +310,6 @@
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
                 #include "GB_AxB_dot3_meta.c"
-                #else
-                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
             else
@@ -362,8 +321,6 @@
                 #include "GB_AxB_dot2_meta.c"
                 #elif defined ( GB_DOT3_GENERIC )
                 #include "GB_AxB_dot3_meta.c"
-                #else
-                #include "GB_AxB_dot4_meta.c"
                 #endif
             }
         }

@@ -468,7 +468,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                     false) ;
             }
             if (GB_AxB_dot4_control (C_out_iso, can_do_in_place ? C_in : NULL,
-                M, Mask_comp))
+                M, Mask_comp, accum, semiring))
             { 
                 // C+=A'*B can be done with dot4
                 axb_method = GB_USE_DOT ;
@@ -531,7 +531,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 GBURBLE ("C%s=A'*B, %sdot_product ", M_str,
                     (M != NULL && !Mask_comp) ? "masked_" : "") ;
                 GB_OK (GB_AxB_dot (C, (can_do_in_place) ? C_in : NULL,
-                    M, Mask_comp, Mask_struct, A, B, semiring, flipxy,
+                    M, Mask_comp, Mask_struct, accum, A, B, semiring, flipxy,
                     mask_applied, done_in_place, Context)) ;
                 break ;
 
@@ -616,7 +616,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 GB_OK (GB_transpose_cast (AT, atype_cast, true, A, A_is_pattern,
                     Context)) ;
                 GB_OK (GB_AxB_dot (C, (can_do_in_place) ? C_in : NULL,
-                    M, Mask_comp, Mask_struct, AT, BT, semiring, flipxy,
+                    M, Mask_comp, Mask_struct, accum, AT, BT, semiring, flipxy,
                     mask_applied, done_in_place, Context)) ;
                 break ;
 
@@ -720,7 +720,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 GB_OK (GB_transpose_cast (AT, atype_cast, true, A, A_is_pattern,
                     Context)) ;
                 GB_OK (GB_AxB_dot (C, (can_do_in_place) ? C_in : NULL,
-                    M, Mask_comp, Mask_struct, AT, B, semiring, flipxy,
+                    M, Mask_comp, Mask_struct, accum, AT, B, semiring, flipxy,
                     mask_applied, done_in_place, Context)) ;
                 break ;
 

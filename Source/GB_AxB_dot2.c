@@ -312,7 +312,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     if (M_in == NULL)
     { 
-        GBURBLE ("(dot %s=%s%s*%s) ",
+        GBURBLE ("(dot %s = %s%s*%s) ",
             GB_sparsity_char (C_sparsity),
             GB_sparsity_char_matrix (A_in),
             A_not_transposed ? "" : "'",
@@ -320,7 +320,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     }
     else
     { 
-        GBURBLE ("(dot %s%s%s%s%s=%s%s*%s) ",
+        GBURBLE ("(dot %s%s%s%s%s = %s%s*%s) ",
             GB_sparsity_char (C_sparsity),
             Mask_struct ? "{" : "<",
             Mask_comp ? "!" : "",
