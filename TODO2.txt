@@ -14,20 +14,21 @@ High priority:
 
     #46 PAIR operator: essential for best performance on many problems
 
-    #45 TRIL, TRIU, DIAG, OFFDIAG, ROWLE, ROWGT, COLLE, and COLGT: only need _INT64 versions
-        simple change, but computations on unsigned ints break badly and so
-        should not be added.
+    #45 TRIL, TRIU, DIAG, OFFDIAG, ROWLE, ROWGT, COLLE, and COLGT: only need
+        _INT64 versions simple change, but computations on unsigned ints break
+        badly and so should not be added.
 
-    #42 export of a matrix in full format when entries are missing: should be an error
-        Make this an error, just like an empty GrB_Scalar is often an error.
-        Exporting in bitmap is awkward and not a "dense" format.
+    #42 export of a matrix in full format when entries are missing: should be
+        an error Make this an error, just like an empty GrB_Scalar is often an
+        error.  Exporting in bitmap is awkward and not a "dense" format.
 
     #36 Where are vector serialize/deserialize?
 
     #33 function signature for GrB_IndexUnaryOp
 
     #34 GxB_INDEX_MAX
-        needed because index computations for IndexUnaryOps must be done in int64
+        needed because index computations for IndexUnaryOps must be done in
+        int64
 
     #32 named and defined operators and types
         also part of this issue: query the type of a matrix/vector/scalar
@@ -47,9 +48,6 @@ High priority:
     #2 BB-4: Macro to identify the library implementation
 
     #12 BB-26: build()/extractTuples() that allow NULL arrays
-
-
-
 
 
 --------------------------------------------------------------------------------
@@ -88,18 +86,17 @@ Low priority: most are useful or important, but can wait until the v2.1 C API:
     #17 BB-31: Pretty printing
         would be nice to have
 
-    #16 BB-30: eWiseAdd with extra scalars for when entries are missing (and the implied zero does not work).
+    #16 BB-30: eWiseAdd with extra scalars for when entries are missing (and
+    the implied zero does not work).
 
-    #15 BB-29: Consider index array ranges/strides as accomplished with colon notation.
+    #15 BB-29: Consider index array ranges/strides as accomplished with colon
+    notation.
 
     #14 BB-28: Consider global get/set methods
 
     #13 BB-27: Descriptors query and default
 
     #11 BB-23: User-defined monoids with terminal values
-
-
-
 
 --------------------------------------------------------------------------------
 could be closed: not so important after all
@@ -108,7 +105,6 @@ could be closed: not so important after all
     #9 BB-21: BinaryOps RMINUS and RDIV
 
     #10 BB-22: Extend boolean binary ops to T x T --> T
-
 
 --------------------------------------------------------------------------------
 Should be closed:

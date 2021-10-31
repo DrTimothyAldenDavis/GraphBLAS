@@ -45,17 +45,21 @@ GB_builtin_complex_set (true) ;
 
 % many of the tests use spok in SuiteSparse, a copy of which is
 % included here in GraphBLAS/Test/spok.
-addpath ('spok') ;
+addpath ('../Test/spok') ;
 
 try
     spok (sparse (1)) ;
 catch
-    cd spok ; spok_install ; cd ..
+    here = pwd ;
+    cd ../Test/spok ;
+    spok_install ;
+    cd (here) ;
 end
 
 logstat ;             % start the log.txt
 hack = GB_mex_hack ;
 
+% start with the Werk stack enabled
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
@@ -71,10 +75,15 @@ GB_mex_hack (hack) ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
+logstat ('test74',t) ;  % test GrB_mxm on all semirings
+
 % disable the Werk stack for these tests:
 hack (2) = 1 ;
 GB_mex_hack (hack) ;
 
+fprintf ('--------- no werk stack\n') ;
+
+logstat ('test237',t) ; % test GrB_mxm (saxpy4)
 logstat ('test236',t) ; % test GxB_Matrix_sort and GxB_Vector_sort
 logstat ('test192',t) ; % test C<C,struct>=scalar
 logstat ('test191',t) ; % test split
@@ -96,7 +105,8 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
-logstat ('test236',t) ; % test GxB_Matrix_sort and GxB_Vector_sort
+fprintf ('--------- with werk stack\n') ;
+
 logstat ('test235',t) ; % test GxB_eWiseUnion and GrB_eWiseAdd
 logstat ('test234',t) ; % test GxB_eWiseUnion
 logstat ('test233',t) ; % test bitmap saxpy C=A*B with A sparse and B bitmap
@@ -153,7 +163,6 @@ logstat ('test83',t) ;  % GrB_assign with C_replace and empty J
 logstat ('test176',t) ; % test GrB_assign, method 09, 11
 logstat ('test174',t) ; % test GrB_assign C<A>=A
 logstat ('test170',t) ; % test C<B>=A+B (alias M==B)
-logstat ('test164',t) ; % test dot5 method
 logstat ('test152',t) ; % test binops with C=A+B, all matrices dense
 logstat ('test155',t) ; % test GrB_*_setElement and GrB_*_removeElement
 logstat ('test156',t) ; % test GrB_assign C=A with typecasting
@@ -175,8 +184,6 @@ logstat ('test137',s) ; % GrB_eWiseMult with FIRST and SECOND operators
 logstat ('test139',s) ; % merge sort, special cases
 logstat ('test09',t) ;  % duplicate I,J test of GB_mex_subassign
 logstat ('test132',t) ; % setElement
-logstat ('test167',t) ; % test C<M>=A*B with very sparse M, different types
-logstat ('test177',t) ; % test C<!M>=A*B, C and B bitmap, M and A sparse
 logstat ('test141',t) ; % eWiseAdd with dense matrices
 logstat ('test144',t) ; % cumsum
 logstat ('test145',t) ; % dot4 for C += A'*B
@@ -198,7 +205,6 @@ logstat ('testc2(1)',t) ;  % complex tests (quick case)
 logstat ('test173',t) ; % test GrB_assign C<A>=A
 logstat ('test157',t) ; % test sparsity formats
 logstat ('test29',t) ;  % reduce with zombies
-logstat ('test74',t) ;  % test GrB_mxm on all semirings
 
 %----------------------------------------
 % tests with decent rates (10 to 20/sec)
@@ -404,11 +410,14 @@ logstat ('test147',t) ;           % C<M>=A*B with very sparse M
 logstat ('test149',t) ;           % test fine hash tasks for C<!M>=A*B
 
 logstat ('test163',t) ;    %   .6 % test C<!M>=A'*B where C and M are sparse
+logstat ('test164',t) ;    %    0 % test dot5 method
 logstat ('test166',t) ;    %   .1 % test GxB_select with a dense matrix
+logstat ('test167',t) ;    %   .2 % test C<M>=A*B with very sparse M, different types
 logstat ('test168',t) ;           % test C=A+B with C and B full, A bitmap
 logstat ('test169',t) ;    %    0 % test C<!M>=A+B with C sparse, M hyper, A and B sparse
 
 logstat ('test171',t) ;    %    1 % test conversion and GB_memset
+logstat ('test177',t) ;    %   1.2 % test C<!M>=A*B, C and B bitmap, M and A sparse
 
 logstat ('test190',t) ;    %   .3 % test dense matrix for C<!M>=A*B
 
