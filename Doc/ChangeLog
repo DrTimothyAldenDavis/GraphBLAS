@@ -2,9 +2,9 @@ Version 6.0.0, FUTURE
 
     * v6.0.0: this release will contain only a few changes that cause a
         break with backward compatibility.
-    * Fully compliant with the v2.0 C API Specification: two changes from the
-        v2.0 C API Spec are not backward compatible: (GrB_*wait, and GrB_Info
-        enum).  GxB_init has also changed.
+    * Fully compliant with the v2.0 C API Specification: three changes from the
+        v2.0 C API Spec are not backward compatible: (GrB_*wait, GrB_Info
+        enum, and GrB_SCMP).  GxB_init has also changed.
         * GrB_wait (object, mode): was GrB_wait (&object).
         * GrB_Info: changed enum values
         * GrB_SCMP: removed
@@ -12,7 +12,7 @@ Version 6.0.0, FUTURE
             last parameter, is_thread_safe, will be deleted.
             The malloc/calloc/realloc/free functions must be thread-safe.
 
-Version 5.2.0, FIXME
+Version 5.2.0, FIXME: date
 
     * Added for the v2.0 C API Specification: only features that are
         backward compatible with SuiteSparse:GraphBLAS v5.x have been
