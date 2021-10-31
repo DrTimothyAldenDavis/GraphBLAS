@@ -35,13 +35,13 @@
 
 #include "GB_transpose.h"
 
-#define GB_FREE_WORK                                                    \
+#define GB_FREE_WORKSPACE                                               \
 {                                                                       \
     if (Workspaces != NULL && Workspaces_size != NULL)                  \
     {                                                                   \
         for (int tid = 0 ; tid < nworkspaces ; tid++)                   \
         {                                                               \
-            GB_FREE_WERK (&(Workspaces [tid]), Workspaces_size [tid]) ; \
+            GB_FREE_WORK (&(Workspaces [tid]), Workspaces_size [tid]) ; \
         }                                                               \
     }                                                                   \
     GB_WERK_POP (A_slice, int64_t) ;                                    \
@@ -52,7 +52,7 @@
 #define GB_FREE_ALL                                                     \
 {                                                                       \
     GB_phbix_free (C) ;                                                 \
-    GB_FREE_WORK ;                                                      \
+    GB_FREE_WORKSPACE ;                                                 \
 }
 
 GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
@@ -144,7 +144,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     bool ok = true ;
     for (int tid = 0 ; tid < nworkspaces ; tid++)
     { 
-        Workspaces [tid] = GB_MALLOC_WERK (vlen + 1, int64_t,
+        Workspaces [tid] = GB_MALLOC_WORK (vlen + 1, int64_t,
             &Workspaces_size [tid]) ;
         ok = ok && (Workspaces [tid] != NULL) ;
     }
@@ -330,7 +330,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C transpose of A", GB0) ;
     ASSERT (C->h == NULL) ;
     return (GrB_SUCCESS) ;

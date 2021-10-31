@@ -22,9 +22,9 @@
 #include "GB_scalar.h"
 #include "GB_transpose.h"
 
-#define GB_FREE_WORK                        \
+#define GB_FREE_WORKSPACE                   \
 {                                           \
-    GB_FREE_WERK (&Zp, Zp_size) ;           \
+    GB_FREE_WORK (&Zp, Zp_size) ;           \
     GB_WERK_POP (Work, int64_t) ;           \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
     GB_FREE (&Cp, Cp_size) ;                \
@@ -36,7 +36,7 @@
 #define GB_FREE_ALL                         \
 {                                           \
     GB_phbix_free (C) ;                     \
-    GB_FREE_WORK ;                          \
+    GB_FREE_WORKSPACE ;                     \
 }
 
 GrB_Info GB_selector
@@ -597,7 +597,7 @@ GrB_Info GB_selector
     #define GB_FREE_ALL                         \
     {                                           \
         GB_phbix_free (C) ;                     \
-        GB_FREE_WORK ;                          \
+        GB_FREE_WORKSPACE ;                     \
     }
 
     //--------------------------------------------------------------------------
@@ -649,7 +649,7 @@ GrB_Info GB_selector
     if (op_is_positional)
     {
         // allocate Zp
-        Zp = GB_MALLOC_WERK (anvec, int64_t, &Zp_size) ;
+        Zp = GB_MALLOC_WORK (anvec, int64_t, &Zp_size) ;
         if (Zp == NULL)
         { 
             // out of memory
@@ -847,7 +847,7 @@ GrB_Info GB_selector
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
 }
 

@@ -40,7 +40,7 @@ extern "C"
 
 const std::vector<std::string> header_names ={};
 
-#define GB_FREE_WORK                                                    \
+#define GB_FREE_WORKSPACE                                               \
 {                                                                       \
     /* free any dynamic headers allocated by GB_do_dynamic_header */    \
     GB_undo_dynamic_header (&M, M_input, Context) ;                     \
@@ -55,7 +55,7 @@ const std::vector<std::string> header_names ={};
 
 #define GB_FREE_ALL                                                     \
 {                                                                       \
-    GB_FREE_WORK ;                                                      \
+    GB_FREE_WORKSPACE ;                                                 \
     GB_Matrix_free (&C) ;                                               \
 }
 
@@ -705,7 +705,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     GB_undo_dynamic_header (&C_static, C, Context) ;
     ASSERT (C == NULL) ;
 
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     return GrB_SUCCESS; 
 }
 

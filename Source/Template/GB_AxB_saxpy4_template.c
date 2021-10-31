@@ -18,8 +18,8 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_FREE_WERK (&Wf, Wf_size) ;           \
-    GB_FREE_WERK (&Wcx, Wcx_size) ;         \
+    GB_FREE_WORK (&Wf, Wf_size) ;           \
+    GB_FREE_WORK (&Wcx, Wcx_size) ;         \
     GB_WERK_POP (H_slice, int64_t) ;        \
     GB_WERK_POP (B_slice, int64_t) ;        \
 }

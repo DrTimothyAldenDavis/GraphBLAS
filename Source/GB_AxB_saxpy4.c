@@ -23,14 +23,14 @@
 #include "GB_AxB__include2.h"
 #endif
 
-#define GB_FREE_WORK                    \
+#define GB_FREE_WORKSPACE               \
 {                                       \
     GB_WERK_POP (A_slice, int64_t) ;    \
 }
 
 #define GB_FREE_ALL             \
 {                               \
-    GB_FREE_WORK ;              \
+    GB_FREE_WORKSPACE ;         \
     GB_phbix_free (C) ;         \
 }
 
@@ -172,7 +172,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     if (info == GrB_NO_VALUE)
     { 
         // saxpy4 doesn't handle this case; punt to saxpy3, bitmap saxpy, etc

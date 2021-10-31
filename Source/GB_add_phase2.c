@@ -35,8 +35,8 @@
 #include "GB_binop__include.h"
 #endif
 
-#undef  GB_FREE_WORK
-#define GB_FREE_WORK                        \
+#undef  GB_FREE_WORKSPACE
+#define GB_FREE_WORKSPACE                   \
 {                                           \
     GB_WERK_POP (B_ek_slicing, int64_t) ;   \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
@@ -46,7 +46,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_FREE_WORK ;                  \
+    GB_FREE_WORKSPACE ;             \
     GB_phbix_free (C) ;             \
 }
 
@@ -506,7 +506,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     // caller must free C_to_M, C_to_A, and C_to_B, but not Cp or Ch
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C output for add phase2", GB0) ;
     return (GrB_SUCCESS) ;
 }

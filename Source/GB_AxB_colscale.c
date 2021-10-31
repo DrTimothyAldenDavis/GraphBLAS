@@ -15,14 +15,14 @@
 #include "GB_binop__include.h"
 #endif
 
-#define GB_FREE_WORK                        \
+#define GB_FREE_WORKSPACE                   \
 {                                           \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }
 
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_FREE_WORK ;                  \
+    GB_FREE_WORKSPACE ;             \
     GB_phbix_free (C) ;             \
 }
 
@@ -350,7 +350,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "colscale: C = A*D output", GB0) ;
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
 }
 

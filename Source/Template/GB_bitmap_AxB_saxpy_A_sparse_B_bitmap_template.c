@@ -66,9 +66,9 @@
 
         int64_t cvlenx = (GB_IS_ANY_PAIR_SEMIRING ? 0 : cvlen) * GB_CSIZE ;
         #if GB_C_IS_BITMAP
-        Wf  = GB_MALLOC_WERK (hwork * cvlen, int8_t, &Wf_size) ;
+        Wf  = GB_MALLOC_WORK (hwork * cvlen, int8_t, &Wf_size) ;
         #endif
-        Wcx = GB_MALLOC_WERK (hwork * cvlenx, GB_void, &Wcx_size) ;
+        Wcx = GB_MALLOC_WORK (hwork * cvlenx, GB_void, &Wcx_size) ;
         if ((GB_C_IS_BITMAP && Wf == NULL) || Wcx == NULL)
         { 
             // out of memory
@@ -717,9 +717,9 @@
         size_t workspace = cvlen * ntasks ;
         size_t cxsize = (GB_IS_ANY_PAIR_SEMIRING) ? 0 : GB_CSIZE ;
         #if GB_C_IS_BITMAP
-        Wf  = GB_MALLOC_WERK (workspace, int8_t, &Wf_size) ;
+        Wf  = GB_MALLOC_WORK (workspace, int8_t, &Wf_size) ;
         #endif
-        Wcx = GB_MALLOC_WERK (workspace * cxsize, GB_void, &Wcx_size) ;
+        Wcx = GB_MALLOC_WORK (workspace * cxsize, GB_void, &Wcx_size) ;
         if ((GB_C_IS_BITMAP && Wf == NULL) || Wcx == NULL)
         { 
             // out of memory

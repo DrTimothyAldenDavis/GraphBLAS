@@ -21,22 +21,22 @@
 // free workspace
 //------------------------------------------------------------------------------
 
-#ifndef GB_FREE_WORK
-#define GB_FREE_WORK ;
+#ifndef GB_FREE_WORKSPACE
+#define GB_FREE_WORKSPACE ;
 #endif
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                             \
 {                                               \
-    GB_FREE_WORK ;                              \
+    GB_FREE_WORKSPACE ;                         \
     GB_WERK_POP (Npending, int64_t) ;           \
-    GB_FREE_WERK (&TaskList, TaskList_size) ;   \
+    GB_FREE_WORK (&TaskList, TaskList_size) ;   \
     GB_FREE (&Zh, Zh_size) ;                    \
-    GB_FREE_WERK (&Z_to_X, Z_to_X_size) ;       \
-    GB_FREE_WERK (&Z_to_S, Z_to_S_size) ;       \
-    GB_FREE_WERK (&Z_to_A, Z_to_A_size) ;       \
-    GB_FREE_WERK (&Z_to_M, Z_to_M_size) ;       \
-    GB_phbix_free (S);                          \
+    GB_FREE_WORK (&Z_to_X, Z_to_X_size) ;       \
+    GB_FREE_WORK (&Z_to_S, Z_to_S_size) ;       \
+    GB_FREE_WORK (&Z_to_A, Z_to_A_size) ;       \
+    GB_FREE_WORK (&Z_to_M, Z_to_M_size) ;       \
+    GB_phbix_free (S) ;                         \
 }
 
 //------------------------------------------------------------------------------

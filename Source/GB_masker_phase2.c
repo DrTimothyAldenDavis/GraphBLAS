@@ -28,8 +28,8 @@
 #include "GB_ek_slice.h"
 #include "GB_unused.h"
 
-#undef  GB_FREE_WORK
-#define GB_FREE_WORK                        \
+#undef  GB_FREE_WORKSPACE
+#define GB_FREE_WORKSPACE                   \
 {                                           \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
     GB_WERK_POP (C_ek_slicing, int64_t) ;   \
@@ -38,7 +38,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_FREE_WORK ;                          \
+    GB_FREE_WORKSPACE ;                     \
     GB_phbix_free (R) ;                     \
 }
 
@@ -211,7 +211,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     //--------------------------------------------------------------------------
 
     // caller must free R_to_M, R_to_C, and R_to_Z, but not Rp or Rh
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (R, "R output for mask phase2", GB0) ;
     ASSERT (!GB_ZOMBIES (R)) ; 
     ASSERT (!GB_JUMBLED (R)) ;

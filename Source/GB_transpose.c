@@ -38,7 +38,7 @@
 #include "GB_build.h"
 #include "GB_apply.h"
 
-#define GB_FREE_WORK                    \
+#define GB_FREE_WORKSPACE               \
 {                                       \
     GB_FREE (&iwork, iwork_size) ;      \
     GB_FREE (&jwork, jwork_size) ;      \
@@ -48,7 +48,7 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_FREE_WORK ;                      \
+    GB_FREE_WORKSPACE ;                 \
     GB_phbix_free (T) ;                 \
     /* freeing C also frees A if transpose is done in-place */ \
     GB_phbix_free (C) ;                 \
@@ -886,7 +886,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     // free workspace
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     if (in_place)
     { 
         // free prior space of A, if transpose is done in-place

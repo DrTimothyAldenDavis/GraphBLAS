@@ -7,11 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_FREE_WORK        \
+#define GB_FREE_WORKSPACE   \
     GB_phbix_free (T) ;
 
 #define GB_FREE_ALL         \
-    GB_FREE_WORK ;          \
+    GB_FREE_WORKSPACE ;     \
     GB_phbix_free (V) ;
 
 #include "GB_diag.h"
@@ -188,7 +188,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     // free workspace, conform V to its desired format, and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (V, "V before conform for GB_Vector_diag", GB0) ;
     GB_OK (GB_conform (V, Context)) ;
     ASSERT_MATRIX_OK (V, "V output for GB_Vector_diag", GB0) ;

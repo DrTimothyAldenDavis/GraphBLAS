@@ -34,18 +34,18 @@
 #include "GB_emult.h"
 #include "GB_add.h"
 
-#define GB_FREE_WORK                            \
+#define GB_FREE_WORKSPACE                       \
 {                                               \
-    GB_FREE_WERK (&TaskList, TaskList_size) ;   \
-    GB_FREE_WERK (&C_to_M, C_to_M_size) ;       \
-    GB_FREE_WERK (&C_to_A, C_to_A_size) ;       \
-    GB_FREE_WERK (&C_to_B, C_to_B_size) ;       \
+    GB_FREE_WORK (&TaskList, TaskList_size) ;   \
+    GB_FREE_WORK (&C_to_M, C_to_M_size) ;       \
+    GB_FREE_WORK (&C_to_A, C_to_A_size) ;       \
+    GB_FREE_WORK (&C_to_B, C_to_B_size) ;       \
 }
 
 #define GB_FREE_ALL             \
 {                               \
-    GB_FREE_WORK ;              \
-    GB_phbix_free (C) ;       \
+    GB_FREE_WORKSPACE ;         \
+    GB_phbix_free (C) ;         \
 }
 
 GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
@@ -421,7 +421,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C output for emult phased", GB0) ;
     (*mask_applied) = apply_mask ;
     return (GrB_SUCCESS) ;

@@ -44,17 +44,17 @@ typedef struct          // task descriptor
 }
 GB_task_struct ;
 
-// GB_REALLOC_TASK_WERK: Allocate or reallocate the TaskList so that it can
+// GB_REALLOC_TASK_WORK: Allocate or reallocate the TaskList so that it can
 // hold at least ntasks.  Double the size if it's too small.
 
-#define GB_REALLOC_TASK_WERK(TaskList,ntasks,max_ntasks)                    \
+#define GB_REALLOC_TASK_WORK(TaskList,ntasks,max_ntasks)                    \
 {                                                                           \
     if ((ntasks) >= max_ntasks)                                             \
     {                                                                       \
         bool ok ;                                                           \
         int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;               \
         int nnew = 2 * (ntasks) + 1 ;                                       \
-        GB_REALLOC_WERK (TaskList, nnew, GB_task_struct,  &TaskList_size,   \
+        GB_REALLOC_WORK (TaskList, nnew, GB_task_struct,  &TaskList_size,   \
             &ok, NULL) ;                                                    \
         if (!ok)                                                            \
         {                                                                   \

@@ -14,7 +14,7 @@
 #include "GB.h"
 #include "GB_serialize.h"
 
-#define GB_FREE_WORK                            \
+#define GB_FREE_WORKSPACE                       \
 {                                               \
     GB_FREE (&Ap_Sblocks, Ap_Sblocks_size) ;    \
     GB_FREE (&Ah_Sblocks, Ah_Sblocks_size) ;    \
@@ -30,7 +30,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_FREE_WORK ;                          \
+    GB_FREE_WORKSPACE ;                     \
     if (!preallocated_blob)                 \
     {                                       \
         GB_FREE (&blob, blob_size) ;        \
@@ -366,7 +366,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     }
 
     (*blob_size_handle) = blob_size ;
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
 }
 

@@ -24,8 +24,8 @@
 
 // phase2: computes C, using the counts computed by phase1.
 
-#undef  GB_FREE_WORK
-#define GB_FREE_WORK                        \
+#undef  GB_FREE_WORKSPACE
+#define GB_FREE_WORKSPACE                   \
 {                                           \
     GB_WERK_POP (B_ek_slicing, int64_t) ;   \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
@@ -35,7 +35,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_FREE_WORK ;                  \
+    GB_FREE_WORKSPACE ;             \
     GB_phbix_free (C) ;             \
 }
 

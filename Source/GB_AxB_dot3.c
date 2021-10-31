@@ -20,17 +20,17 @@
 #include "GB_AxB__include2.h"
 #endif
 
-#define GB_FREE_WORK                            \
+#define GB_FREE_WORKSPACE                       \
 {                                               \
 /*  GB_undo_dynamic_header (&M, M_input, Context) ; */  \
 /*  GB_undo_dynamic_header (&A, A_input, Context) ; */  \
 /*  GB_undo_dynamic_header (&B, B_input, Context) ; */  \
-    GB_FREE_WERK (&TaskList, TaskList_size) ;   \
+    GB_FREE_WORK (&TaskList, TaskList_size) ;   \
 }
 
 #define GB_FREE_ALL                             \
 {                                               \
-    GB_FREE_WORK ;                              \
+    GB_FREE_WORKSPACE ;                         \
     GB_phbix_free (C) ;                         \
 }
 
@@ -240,7 +240,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // free the current tasks and construct the tasks for the second phase
     //--------------------------------------------------------------------------
 
-    GB_FREE_WERK (&TaskList, TaskList_size) ;
+    GB_FREE_WORK (&TaskList, TaskList_size) ;
     GB_OK (GB_AxB_dot3_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
         C, Context)) ;
 
@@ -319,7 +319,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled
 //  GB_undo_dynamic_header (&C, C_output, Context) ;
     ASSERT_MATRIX_OK (C, "dot3: C<M> = A'*B output", GB0) ;

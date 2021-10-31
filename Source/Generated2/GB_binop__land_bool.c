@@ -300,7 +300,7 @@ GrB_Info GB (_AaddB__land_bool)
         bmissing = (*((bool *) bmissing_scalar)) ;
     }
     #include "GB_add_template.c"
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
     #endif
 }

@@ -26,7 +26,7 @@
 #include "GB_AxB__include2.h"
 #endif
 
-#define GB_FREE_WORK                    \
+#define GB_FREE_WORKSPACE               \
 {                                       \
     GB_WERK_POP (B_slice, int64_t) ;    \
     GB_WERK_POP (A_slice, int64_t) ;    \
@@ -34,7 +34,7 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_FREE_WORK ;                      \
+    GB_FREE_WORKSPACE ;                 \
     GB_phbix_free (C) ;                 \
 }
 
@@ -170,7 +170,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     if (A_slice == NULL || B_slice == NULL)
     { 
         // out of memory
-        GB_FREE_WORK ;
+        GB_FREE_WORKSPACE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
     GB_pslice (A_slice, A->p, anvec, naslice, false) ;
@@ -217,7 +217,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     if (info == GrB_NO_VALUE)
     { 
         // dot4 doesn't handle this case; punt to dot2 or dot3

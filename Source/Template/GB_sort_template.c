@@ -646,13 +646,13 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
 // sort all vectors in a matrix
 //------------------------------------------------------------------------------
 
-#undef  GB_FREE_WORK
-#define GB_FREE_WORK                            \
+#undef  GB_FREE_WORKSPACE
+#define GB_FREE_WORKSPACE                       \
 {                                               \
     GB_WERK_POP (Werk, int64_t) ;               \
-    GB_FREE_WERK (&C_skipped, C_skipped_size) ; \
-    GB_FREE_WERK (&W_0, W_0_size) ;             \
-    GB_FREE_WERK (&W, W_size) ;                 \
+    GB_FREE_WORK (&C_skipped, C_skipped_size) ; \
+    GB_FREE_WORK (&W_0, W_0_size) ;             \
+    GB_FREE_WORK (&W, W_size) ;                 \
 }
 
 static GrB_Info GB_SORT (matrix)
@@ -782,7 +782,7 @@ static GrB_Info GB_SORT (matrix)
     if (max_length <= GB_BASECASE || nthreads == 1)
     { 
         // all vectors are sorted
-        GB_FREE_WORK ;
+        GB_FREE_WORKSPACE ;
         return (GrB_SUCCESS) ;
     }
 
@@ -797,11 +797,11 @@ static GrB_Info GB_SORT (matrix)
     GB_cumsum (C_skip, ntasks, NULL, 1, Context) ;
     int64_t total_skipped = C_skip [ntasks] ;
 
-    C_skipped = GB_MALLOC_WERK (total_skipped, int64_t, &C_skipped_size) ;
+    C_skipped = GB_MALLOC_WORK (total_skipped, int64_t, &C_skipped_size) ;
     if (C_skipped == NULL)
     { 
         // out of memory
-        GB_FREE_WORK ;
+        GB_FREE_WORKSPACE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -848,13 +848,13 @@ static GrB_Info GB_SORT (matrix)
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    W   = GB_MALLOC_WERK (max_length + 6*ntasks2 + 1, int64_t, &W_size) ;
-    W_0 = (GB_TYPE *) GB_MALLOC_WERK (max_length * GB_SIZE, GB_void,
+    W   = GB_MALLOC_WORK (max_length + 6*ntasks2 + 1, int64_t, &W_size) ;
+    W_0 = (GB_TYPE *) GB_MALLOC_WORK (max_length * GB_SIZE, GB_void,
         &W_0_size) ;
     if (W == NULL || W_0 == NULL)
     { 
         // out of memory
-        GB_FREE_WORK ;
+        GB_FREE_WORKSPACE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -881,7 +881,7 @@ static GrB_Info GB_SORT (matrix)
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     C->jumbled = true ;
     ASSERT_MATRIX_OK (C, "C sorted by value", GB0) ;
     return (GrB_SUCCESS) ;

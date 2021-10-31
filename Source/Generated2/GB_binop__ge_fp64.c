@@ -300,7 +300,7 @@ GrB_Info GB (_AaddB__ge_fp64)
         bmissing = (*((double *) bmissing_scalar)) ;
     }
     #include "GB_add_template.c"
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
     #endif
 }

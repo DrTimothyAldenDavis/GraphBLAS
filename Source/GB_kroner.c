@@ -25,7 +25,7 @@
 #include "GB_kron.h"
 #include "GB_emult.h"
 
-#define GB_FREE_WORK        \
+#define GB_FREE_WORKSPACE   \
 {                           \
     GB_phbix_free (A2) ;    \
     GB_phbix_free (B2) ;    \
@@ -33,7 +33,7 @@
 
 #define GB_FREE_ALL         \
 {                           \
-    GB_FREE_WORK ;          \
+    GB_FREE_WORKSPACE ;     \
     GB_phbix_free (C) ;     \
 }
 
@@ -259,7 +259,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         { 
             // no more work to do if C is iso and full
             ASSERT_MATRIX_OK (C, "C=kron(A,B), iso full", GB0) ;
-            GB_FREE_WORK ;
+            GB_FREE_WORKSPACE ;
             return (GrB_SUCCESS) ;
         }
     }
@@ -407,7 +407,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C=kron(A,B)", GB0) ;
-    GB_FREE_WORK ;
+    GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
 }
 
