@@ -186,6 +186,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     const bool C_in_iso = C->iso ;
     if (C->iso)
     { 
+        // allocate but do not initialize C->x
         memcpy (cinput, C->x, csize) ;
         GB_OK (GB_convert_any_to_non_iso (C, false, Context)) ;
         ASSERT (!C->iso) ;
@@ -224,14 +225,10 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         GBURBLE ("(punt) ") ;
         return (info) ;
     }
-    else if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
     else
     { 
+        // the dot4 template does not allocate any memory
+        ASSERT (info == GrB_SUCCESS) ;
         ASSERT_MATRIX_OK (C, "dot4: output", GB0) ;
         (*done_in_place) = true ;
         return (GrB_SUCCESS) ;
