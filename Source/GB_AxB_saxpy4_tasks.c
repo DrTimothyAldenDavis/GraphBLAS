@@ -110,7 +110,7 @@ GrB_Info GB_AxB_saxpy4_tasks
             // fine atomic method, with no workspace
             use_coarse_tasks = false ;
             use_atomics = true ;
-            ntasks = 2 * nthreads ;         // FIXME: try more tasks
+            ntasks = 2 * nthreads ;
             GBURBLE (": fine atomic, ") ;
         }
 

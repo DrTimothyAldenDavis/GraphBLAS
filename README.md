@@ -142,13 +142,13 @@ SuiteSparse:GraphBLAS and LAGraph.
 ## Licensing and supporting SuiteSparse:GraphBLAS
 
 SuiteSparse:GraphBLAS is released primarily under the Apache-2.0 license,
-because of how the project is supported by many organizations (NVIDIA, Redis,
-MIT Lincoln Lab, Intel, IBM, and Julia Computing), primarily through gifts to
-the Texas A&M Foundation.  Because of this support, and to facilitate the
-wide-spread use of GraphBLAS, the decision was made to give this library a
-permissive open-source license (Apache-2.0).  Currently all source code
-required to create the C-callable library libgraphblas.so is licensed with
-Apache-2.0, and there are no plans to change this.
+because of how the project is supported by many organizations (NVIDIA, Redis
+Labs, MIT Lincoln Lab, Intel, and IBM), primarily through gifts to the Texas
+A&M Foundation.  Because of this support, and to facilitate the wide-spread use
+of GraphBLAS, the decision was made to give this library a permissive
+open-source license (Apache-2.0).  Currently all source code required to create
+the C-callable library libgraphblas.so is licensed with Apache-2.0, and there
+are no plans to change this.
 
 However, just because this code is free to use doesn't make it zero-cost to
 create.  If you are using GraphBLAS in a commercial closed-source product and
@@ -159,7 +159,12 @@ The Octave/MATLAB interface is now licensed under the GNU GPLv3.0 (or later)
 license, so if any code from the GraphBLAS/GraphBLAS folder is needed in a
 commercial closed-source application, you will either need to license your
 commercial application as GNU GPLv3.0, or you can ask me for a non-GNU and
-non-Apache license.
+non-Apache license.  This change to the licensing of the Octave/MATLAB
+interface is retroactive to all versions of GraphBLAS (back to v1.0 in 2017); I
+have not updated the github releases with the text to change this license,
+because this would be disruptive to version management systems.  However, if
+you see an "Apache-2.0" stamp on any file in the GraphBLAS/GraphBLAS folder or
+its subfolders, ignore it and assume GPLv3.
 
 This licensing change has no impact at all on the use of GraphBLAS in Octave,
 since Octave itself is already under the GNU GPLv3.0 license.
