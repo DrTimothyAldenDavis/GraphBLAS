@@ -1111,7 +1111,7 @@ GB_PUBLIC GrB_BinaryOp
     GrB_FIRST_FP64,     GrB_SECOND_FP64,    GrB_ONEB_FP64,      GxB_POW_FP64,
     // complex:
     GxB_FIRST_FC32,     GxB_SECOND_FC32,    GxB_ONEB_FC32,      GxB_POW_FC32,
-    GxB_FIRST_FC64,     GxB_SECOND_FC64,    GxB_ONEB_FC64,      GxB_POW_FP64,
+    GxB_FIRST_FC64,     GxB_SECOND_FC64,    GxB_ONEB_FC64,      GxB_POW_FC64,
 
     // z = x+y          z = x-y             z = x*y             z = x/y
     GrB_PLUS_BOOL,      GrB_MINUS_BOOL,     GrB_TIMES_BOOL,     GrB_DIV_BOOL,
