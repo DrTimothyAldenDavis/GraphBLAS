@@ -499,6 +499,21 @@ struct GB_BinaryOp_opaque GB_OPAQUE (IGNORE_DUP) =
 } ;
 GrB_BinaryOp GxB_IGNORE_DUP = & GB_OPAQUE (IGNORE_DUP) ;
 
+// GrB_ONEB_T: identical to GxB_PAIR_T
+GrB_BinaryOp GrB_ONEB_BOOL   = & GB_OPAQUE (PAIR_BOOL) ;
+GrB_BinaryOp GrB_ONEB_INT8   = & GB_OPAQUE (PAIR_INT8) ;
+GrB_BinaryOp GrB_ONEB_INT16  = & GB_OPAQUE (PAIR_INT16) ;
+GrB_BinaryOp GrB_ONEB_INT32  = & GB_OPAQUE (PAIR_INT32) ;
+GrB_BinaryOp GrB_ONEB_INT64  = & GB_OPAQUE (PAIR_INT64) ;
+GrB_BinaryOp GrB_ONEB_UINT8  = & GB_OPAQUE (PAIR_UINT8) ;
+GrB_BinaryOp GrB_ONEB_UINT16 = & GB_OPAQUE (PAIR_UINT16) ;
+GrB_BinaryOp GrB_ONEB_UINT32 = & GB_OPAQUE (PAIR_UINT32) ;
+GrB_BinaryOp GrB_ONEB_UINT64 = & GB_OPAQUE (PAIR_UINT64) ;
+GrB_BinaryOp GrB_ONEB_FP32   = & GB_OPAQUE (PAIR_FP32) ;
+GrB_BinaryOp GrB_ONEB_FP64   = & GB_OPAQUE (PAIR_FP64) ;
+GrB_BinaryOp GxB_ONEB_FC32   = & GB_OPAQUE (PAIR_FC32) ;
+GrB_BinaryOp GxB_ONEB_FC64   = & GB_OPAQUE (PAIR_FC64) ;
+
 //------------------------------------------------------------------------------
 // GrB_ALL
 //------------------------------------------------------------------------------

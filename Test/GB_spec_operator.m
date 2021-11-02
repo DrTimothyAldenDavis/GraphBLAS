@@ -108,7 +108,7 @@ switch opname
     %--------------------------------------------------------------------------
 
     case { 'first', 'second', 'pow', 'plus', 'minus', 'times', 'div', ...
-           'rminus', 'rdiv', 'pair', 'any', 'iseq', 'isne' }
+           'rminus', 'rdiv', 'pair', 'oneb', 'any', 'iseq', 'isne' }
         % x,y,z types are all the same.
 
     case { 'eq', 'ne' }

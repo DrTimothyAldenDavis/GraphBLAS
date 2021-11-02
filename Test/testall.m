@@ -75,7 +75,8 @@ GB_mex_hack (hack) ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
-logstat ('test74',t) ;  % test GrB_mxm on all semirings
+logstat ('test239',t) ; % test GxB_eWiseUnion
+logstat ('test74' ,t) ; % test GrB_mxm on all semirings
 
 % disable the Werk stack for these tests:
 hack (2) = 1 ;

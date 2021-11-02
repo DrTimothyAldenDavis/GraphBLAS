@@ -8,11 +8,11 @@ function C = GB_spec_op (op, A, B)
 % op or op.opname is a string with just the operator name.  Valid names of
 % binary operators are 'first', 'second', 'min', 'max', 'plus', 'minus',
 % 'rminus', 'times', 'div', 'rdiv', 'eq', 'ne', 'gt', 'lt', 'ge', 'le', 'or',
-% 'and', 'xor'.  'iseq', 'isne', 'isgt', 'islt', 'isge', 'le', 'pair', 'any',
-% 'pow', ('bitget' or 'bget'), ('bitset' or 'bset'), ('bitclr' or 'bclr'),
-% ('bitand' or 'band'), ('bitor' or 'bor'), ('bitxor' or 'bxor'), ('bitxnor',
-% 'bxnor'), ('bitshift' or 'bshift'), ('bitnot' or 'bitcmp'), 'atan2', 'hypot',
-% ('ldexp' or 'pow2'), ('complex', 'cmplx').  
+% 'and', 'xor'.  'iseq', 'isne', 'isgt', 'islt', 'isge', 'le', 'pair' (same
+% as 'oneb'), 'any', 'pow', ('bitget' or 'bget'), ('bitset' or 'bset'),
+% ('bitclr' or 'bclr'), ('bitand' or 'band'), ('bitor' or 'bor'), ('bitxor' or
+% 'bxor'), ('bitxnor', 'bxnor'), ('bitshift' or 'bshift'), ('bitnot' or
+% 'bitcmp'), 'atan2', 'hypot', ('ldexp' or 'pow2'), ('complex', 'cmplx').  
 %
 % Unary operators are 'one', 'identity', 'ainv', 'abs', 'minv', 'not', 'bnot',
 % 'sqrt', 'log', 'exp', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh',
@@ -74,7 +74,7 @@ switch opname
         z = y ;
     case 'any'
         z = y ;
-    case 'pair'
+    case { 'pair', 'oneb' }
         z = GB_spec_ones (size (x), ztype) ;
     case 'min'
         % min(x,y) in SuiteSparse:GraphBLAS is min(x,y,'omitnan') with built-in.

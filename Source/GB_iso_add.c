@@ -203,7 +203,7 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
             fadd (t, alpha_scalar, b) ;
             if (memcmp (c, t, csize) != 0)
             { 
-                // op(a,b) != op(a,beta) so C is not iso
+                // op(a,b) != op(alpha,b) so C is not iso
                 return (false) ;
             }
 

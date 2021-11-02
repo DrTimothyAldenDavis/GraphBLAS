@@ -44,6 +44,7 @@ binops.alltypes = {
 'first',     % z = x
 'second',    % z = y
 'pair',      % z = 1
+'oneb',      % z = 1 (same as pair)
 'plus',      % z = x + y
 'minus',     % z = x - y
 'rminus',    % z = y - x
@@ -180,7 +181,7 @@ n = 0 ;
 % 1000: x,y,z all nonboolean:  20*5*10
 %-------------------------------------------------------------------------------
 
-for mult = {'first', 'second', 'pair', 'min', 'max', 'plus', 'minus', ...
+for mult = {'first', 'second', 'oneb', 'min', 'max', 'plus', 'minus', ...
             'rminus', 'times', 'div', 'rdiv', ...
             'iseq', 'isne', 'isgt', 'islt', 'isge', 'isle', ...
             'or', 'and', 'xor', }
@@ -213,7 +214,7 @@ end
 % 55: x,y,z all boolean: 11 * 5
 %-------------------------------------------------------------------------------
 
-for mult = { 'first', 'second', 'pair', 'or', 'and', 'xor', ...
+for mult = { 'first', 'second', 'oneb', 'or', 'and', 'xor', ...
     'eq', 'gt', 'lt', 'ge', 'le' }
     for add = { 'or', 'and', 'xor', 'eq', 'any' }
         n = n + 1 ;
@@ -242,7 +243,7 @@ end
 % 54: complex
 %-------------------------------------------------------------------------------
 
-for mult = {'first', 'second', 'pair', 'plus', 'minus', ...
+for mult = {'first', 'second', 'oneb', 'plus', 'minus', ...
             'rminus', 'times', 'div', 'rdiv' }
     for add = { 'plus', 'times', 'any' }
         for c = { 'single complex', 'double complex' }

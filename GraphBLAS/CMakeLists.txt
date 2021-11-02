@@ -29,13 +29,13 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Oct 31, 2021 (alpha17)")
+set ( GraphBLAS_DATE "Nov 2, 2021 (alpha18)")
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   0 )
 
 # GraphBLAS C API Specification version, at graphblas.org
-set ( GraphBLAS_API_DATE "Oct 4, 2021 (draft)" )
+set ( GraphBLAS_API_DATE "Nov 2, 2021 (draft)" )
 set ( GraphBLAS_API_VERSION_MAJOR 2 )
 set ( GraphBLAS_API_VERSION_MINOR 0 )
 set ( GraphBLAS_API_VERSION_SUB   0 )
@@ -50,8 +50,7 @@ project ( graphblas_renamed
 include ( GNUInstallDirs )
 
 # Uncomment this line for for development only, not for end-users:
-# FIXME
-set ( CMAKE_BUILD_TYPE Debug )
+# set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
     set ( CMAKE_BUILD_TYPE Release )

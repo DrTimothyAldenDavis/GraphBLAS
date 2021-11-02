@@ -31,6 +31,7 @@ Version 5.2.0, FIXME: date
             from a GrB_Scalar
         * GrB_Matrix_diag: same as GxB_Matrix_diag (C, v, k, NULL)
         * GrB_*_serialize/deserialize: with compression
+        * GrB_ONEB_T: binary operator, f(x,y)=1, the same as GxB_PAIR_T
     * GxB*import* and GxB*export*: now historical; use GxB*pack/unpack*
     * GxB_select: is now historical; use GrB_select instead.
     * GxB_IGNORE_DUP: special operator for build methods only; if dup

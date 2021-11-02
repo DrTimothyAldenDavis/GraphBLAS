@@ -10,7 +10,7 @@
 #include "gb_interface.h"
 
 // op_name: a built-in string defining the operator name:
-//  1st, 2nd, any, pair, min, max, +, -, rminus, *, /, \
+//  1st, 2nd, any, pair (same as oneb), min, max, +, -, rminus, *, /, \
 //  iseq, isne, isgt, islt, isge, isle,
 //  ==, ~=, >, <, >=, <=,
 //  ||, &&, xor, xnor
@@ -31,7 +31,7 @@
 //
 //      1st   first
 //      2nd   second
-//      pair
+//      pair  oneb
 //      +     plus
 //      -     minus
 //      *     times
@@ -114,22 +114,23 @@ GrB_BinaryOp gb_string_and_type_to_binop_or_idxunop
         if (type == GxB_FC64  ) return (GxB_ANY_FC64  ) ;
 
     }
-    else if (MATCH (op_name, "pair"))
+    else if (MATCH (op_name, "pair") || MATCH (op_name, "oneb"))
     { 
 
-        if (type == GrB_BOOL  ) return (GxB_PAIR_BOOL  ) ;
-        if (type == GrB_INT8  ) return (GxB_PAIR_INT8  ) ;
-        if (type == GrB_INT16 ) return (GxB_PAIR_INT16 ) ;
-        if (type == GrB_INT32 ) return (GxB_PAIR_INT32 ) ;
-        if (type == GrB_INT64 ) return (GxB_PAIR_INT64 ) ;
-        if (type == GrB_UINT8 ) return (GxB_PAIR_UINT8 ) ;
-        if (type == GrB_UINT16) return (GxB_PAIR_UINT16) ;
-        if (type == GrB_UINT32) return (GxB_PAIR_UINT32) ;
-        if (type == GrB_UINT64) return (GxB_PAIR_UINT64) ;
-        if (type == GrB_FP32  ) return (GxB_PAIR_FP32  ) ;
-        if (type == GrB_FP64  ) return (GxB_PAIR_FP64  ) ;
-        if (type == GxB_FC32  ) return (GxB_PAIR_FC32  ) ;
-        if (type == GxB_FC64  ) return (GxB_PAIR_FC64  ) ;
+        // GrB_ONEB is the new name for GxB_PAIR
+        if (type == GrB_BOOL  ) return (GrB_ONEB_BOOL  ) ;
+        if (type == GrB_INT8  ) return (GrB_ONEB_INT8  ) ;
+        if (type == GrB_INT16 ) return (GrB_ONEB_INT16 ) ;
+        if (type == GrB_INT32 ) return (GrB_ONEB_INT32 ) ;
+        if (type == GrB_INT64 ) return (GrB_ONEB_INT64 ) ;
+        if (type == GrB_UINT8 ) return (GrB_ONEB_UINT8 ) ;
+        if (type == GrB_UINT16) return (GrB_ONEB_UINT16) ;
+        if (type == GrB_UINT32) return (GrB_ONEB_UINT32) ;
+        if (type == GrB_UINT64) return (GrB_ONEB_UINT64) ;
+        if (type == GrB_FP32  ) return (GrB_ONEB_FP32  ) ;
+        if (type == GrB_FP64  ) return (GrB_ONEB_FP64  ) ;
+        if (type == GxB_FC32  ) return (GxB_ONEB_FC32  ) ;
+        if (type == GxB_FC64  ) return (GxB_ONEB_FC64  ) ;
 
     }
     else if (MATCH (op_name, "min"))

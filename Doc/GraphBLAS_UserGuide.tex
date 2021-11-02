@@ -191,6 +191,8 @@ are extensions to the GraphBLAS C API.
             from a \verb'GrB_Scalar'
         \item \verb'GrB_Matrix_diag': same as \verb'GxB_Matrix_diag (C, v, k, NULL)'
         \item \verb'GrB_*_serialize/deserialize': with compression
+        \item \verb'GrB_ONEB_T': binary operator, $f(x,y)=1$, the same as
+            \verb'GxB_PAIR_T'.
         \end{packed_itemize}
     \item \verb'GxB*import*' and \verb'GxB*export*': now historical; use \verb'GxB*pack/unpack*'
     \item \verb'GxB_select': is now historical; use \verb'GrB_select' instead.
@@ -2638,7 +2640,8 @@ GraphBLAS name        & types (domains)            & $z=f(x,y)$      & descripti
 \verb'GrB_FIRST_'$T$  & $T \times T \rightarrow T$ & $z = x$         & first argument \\
 \verb'GrB_SECOND_'$T$ & $T \times T \rightarrow T$ & $z = y$         & second argument \\
 \verb'GxB_ANY_'$T$    & $T \times T \rightarrow T$ & $z = x$ or $y$  & pick $x$ or $y$ arbitrarily \\
-\verb'GxB_PAIR_'$T$   & $T \times T \rightarrow T$ & $z = 1$         & one \\
+\verb'GrB_ONEB_'$T$   & $T \times T \rightarrow T$ & $z = 1$         & one \\
+\verb'GxB_PAIR_'$T$   & $T \times T \rightarrow T$ & $z = 1$         & one (historical) \\
 \verb'GrB_PLUS_'$T$   & $T \times T \rightarrow T$ & $z = x+y$       & addition \\
 \verb'GrB_MINUS_'$T$  & $T \times T \rightarrow T$ & $z = x-y$       & subtraction \\
 \verb'GxB_RMINUS_'$T$ & $T \times T \rightarrow T$ & $z = y-x$       & reverse subtraction \\
@@ -3127,11 +3130,12 @@ handle, or if \verb'op == NULL' on input.
 It does nothing at all if passed a built-in binary operator.
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf ANY} and {\sf PAIR} operators}
+\subsubsection{{\sf ANY} and {\sf PAIR} ({\sf ONEB}) operators}
 %-------------------------------------------------------------------------------
 \label{any_pair}
 
-The \verb'PAIR' operator is simple to describe: just $f(x,y)=1$.  It is called
+The \verb'PAIR' operator (also called \verb'ONEB') is simple to describe:
+just $f(x,y)=1$.  It is called
 the \verb'PAIR' operator since it returns $1$ in a semiring when a pair of
 entries $a_{ik}$ and $b_{kj}$ is found in the matrix multiply.  This operator
 is simple yet very useful.  It allows purely symbolic computations to be
@@ -3139,6 +3143,10 @@ performed on matrices of any type, without having to typecast them to Boolean
 with all values being true.  Typecasting need not be performed on the inputs to
 the \verb'PAIR' operator, and the \verb'PAIR' operator does not have to access
 the values of the matrix, so it is a very fast operator to use.
+
+The \verb'GxB_PAIR_T' operator is an SuiteSparse:GraphBLAS extension.
+It has since been added to the v2.0 C API Specification as \verb'GrB_ONEB_T'.
+They are identical.
 
 The \verb'ANY' operator is very unusual, but very powerful.  It is the function
 $f_{\mbox{any}}(x,y)=x$, or $y$, where GraphBLAS has to freedom to select
@@ -3882,7 +3890,8 @@ use is preferred, for portability to other GraphBLAS implementations.
     \begin{itemize}
     \item 5 monoids (\verb'MIN', \verb'MAX', \verb'PLUS', \verb'TIMES', \verb'ANY')
     \item 20 multiply operators
-    (\verb'FIRST', \verb'SECOND', \verb'PAIR', \verb'MIN', \verb'MAX',
+    (\verb'FIRST', \verb'SECOND', \verb'PAIR' (same as \verb'ONEB'),
+    \verb'MIN', \verb'MAX',
     \verb'PLUS', \verb'MINUS', \verb'RMINUS', \verb'TIMES', \verb'DIV', \verb'RDIV',
     \verb'ISEQ', \verb'ISNE', \verb'ISGT',
     \verb'ISLT', \verb'ISGE', \verb'ISLE',
@@ -3910,7 +3919,8 @@ use is preferred, for portability to other GraphBLAS implementations.
     \item 5 Boolean monoids
     (\verb'LAND', \verb'LOR', \verb'LXOR', \verb'EQ', \verb'ANY')
     \item 11 multiply operators
-    (\verb'FIRST', \verb'SECOND', \verb'PAIR', \verb'LOR', \verb'LAND', \verb'LXOR',
+    (\verb'FIRST', \verb'SECOND', \verb'PAIR' (same as \verb'ONEB'),
+    \verb'LOR', \verb'LAND', \verb'LXOR',
     \verb'EQ', \verb'GT', \verb'LT', \verb'GE', \verb'LE')
     \end{itemize}
 
@@ -3922,7 +3932,8 @@ use is preferred, for portability to other GraphBLAS implementations.
     \begin{itemize}
     \item 3 complex monoids (\verb'PLUS', \verb'TIMES', \verb'ANY')
     \item 9 complex multiply operators
-        (\verb'FIRST', \verb'SECOND', \verb'PAIR', \verb'PLUS', \verb'MINUS',
+        (\verb'FIRST', \verb'SECOND', \verb'PAIR' (same as \verb'ONEB'),
+        \verb'PLUS', \verb'MINUS',
             \verb'TIMES', \verb'DIV', \verb'RDIV', \verb'RMINUS')
     \item 2 complex types, $Z$
     \end{itemize}
@@ -12930,7 +12941,8 @@ Consider \verb'GrB_mxm', \verb'GrB_mxv', and \verb'GrB_vxm', and
     mechanism for telling SuiteSparse:GraphBLAS that a user-defined monoid
     is an iso-monoid.
 
-    \item If the multiplicative op is \verb'PAIR', and the monoid is an
+    \item If the multiplicative op is \verb'PAIR' (same as \verb'ONEB'),
+    and the monoid is an
     iso-monoid, or the \verb'EQ' or \verb'TIMES' monoids, then \verb'C' is
     iso with a value of 1.
 
@@ -12971,7 +12983,7 @@ applied with \verb'eWiseMult'.  These rules also apply to \verb'GrB_kronecker'.
     \item If the operator is positional (\verb'GxB_FIRSTI' and related) then
     \verb'C' is not iso.
 
-    \item If the op is \verb'PAIR',
+    \item If the op is \verb'PAIR' (same as \verb'ONEB'),
         then \verb'C' is iso with $c=1$.
 
     \item If \verb'B' is iso and the op is \verb'SECOND' or \verb'ANY',
@@ -13013,6 +13025,42 @@ with any mask and where \verb'C' is initially empty.
     \end{itemize}
 
 %-------------------------------------------------------------------------------
+\subsection{Iso matrices from eWiseUnion}
+%-------------------------------------------------------------------------------
+\label{iso_union}
+
+\verb'GxB_eWiseUnion' is very similar to \verb'GrB_eWiseAdd', but the rules
+for when the result is iso-valued are very different.
+
+    \begin{itemize}
+    \item If both \verb'A' and \verb'B' are full (all entries present), then
+    the rules for \verb'eWiseMult' in Section~\ref{iso_emult} are used
+    instead.
+
+    \item If the operator is positional (\verb'GxB_FIRSTI' and related) then
+    \verb'C' is not iso.
+
+    \item If the op is \verb'PAIR' (same as \verb'ONEB'),
+        then \verb'C' is iso with $c=1$.
+
+    \item If \verb'B' is iso and the op is \verb'SECOND' or \verb'ANY',
+        and the input scalar \verb'beta' matches $b$
+        (the iso-value of \verb'B'),
+        then \verb'C' is iso with $c=b$.
+
+    \item If \verb'A' is iso and the op is \verb'FIRST' or \verb'ANY',
+        and the input scalar \verb'alpha' matches $a$
+        (the iso-value of \verb'A'),
+        then \verb'C' is iso with $c=a$.
+
+    \item If both \verb'A' and \verb'B' are iso,
+        and $f(a,b) = f(\alpha,b) = f(a,\beta)$,
+        then \verb'C' is iso with $c=f(a,b)$.
+
+    \item Otherwise, \verb'C' is not iso.
+    \end{itemize}
+
+%-------------------------------------------------------------------------------
 \subsection{Reducing iso matrices to a scalar or vector}
 %-------------------------------------------------------------------------------
 \label{iso_reduce}
@@ -13036,7 +13084,7 @@ operator with \verb's' a scalar.
     \item If the operator is positional (\verb'GxB_POSITION*',
     \verb'GxB_FIRSTI', and related) then \verb'C' is not iso.
 
-    \item If the operator is \verb'ONE' or \verb'PAIR',
+    \item If the operator is \verb'ONE' or \verb'PAIR' (same as \verb'ONEB'),
         then \verb'C' iso with $c=1$.
 
     \item If the operator is \verb'FIRST' or \verb'ANY' with \verb'C=f(s,A)',

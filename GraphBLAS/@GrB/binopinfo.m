@@ -52,7 +52,7 @@ function binopinfo (op, optype)
 %   |   || or  lor   x | y          |   >=  ge            x >= y
 %   &   && and land  x & y          |   <=  le            x <= y
 %   xor lxor         xor(x,y)       |   .^  pow           x .^ y
-%   pair             1              |   any               pick x or y
+%   pair oneb        1              |   any               pick x or y
 %
 % All of the above operators are defined for logical operands, but many
 % are redundant. 'min.logical' is the same as 'and.logical', for example.

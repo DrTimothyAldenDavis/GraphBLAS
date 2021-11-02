@@ -1094,21 +1094,24 @@ GB_PUBLIC GrB_BinaryOp
 
     // operators for all 13 types (including complex):
 
-    // z = x            z = y               z = pow (x,y)
-    GrB_FIRST_BOOL,     GrB_SECOND_BOOL,    GxB_POW_BOOL,
-    GrB_FIRST_INT8,     GrB_SECOND_INT8,    GxB_POW_INT8,
-    GrB_FIRST_INT16,    GrB_SECOND_INT16,   GxB_POW_INT16,
-    GrB_FIRST_INT32,    GrB_SECOND_INT32,   GxB_POW_INT32,
-    GrB_FIRST_INT64,    GrB_SECOND_INT64,   GxB_POW_INT64,
-    GrB_FIRST_UINT8,    GrB_SECOND_UINT8,   GxB_POW_UINT8,
-    GrB_FIRST_UINT16,   GrB_SECOND_UINT16,  GxB_POW_UINT16,
-    GrB_FIRST_UINT32,   GrB_SECOND_UINT32,  GxB_POW_UINT32,
-    GrB_FIRST_UINT64,   GrB_SECOND_UINT64,  GxB_POW_UINT64,
-    GrB_FIRST_FP32,     GrB_SECOND_FP32,    GxB_POW_FP32,
-    GrB_FIRST_FP64,     GrB_SECOND_FP64,    GxB_POW_FP64,
+    // GxB_PAIR_T and GrB_ONEB_T are identical; the latter was added to the
+    // v2.0 C API Specification.
+
+    // z = x            z = y               z = 1               z = pow (x,y)
+    GrB_FIRST_BOOL,     GrB_SECOND_BOOL,    GrB_ONEB_BOOL,      GxB_POW_BOOL,
+    GrB_FIRST_INT8,     GrB_SECOND_INT8,    GrB_ONEB_INT8,      GxB_POW_INT8,
+    GrB_FIRST_INT16,    GrB_SECOND_INT16,   GrB_ONEB_INT16,     GxB_POW_INT16,
+    GrB_FIRST_INT32,    GrB_SECOND_INT32,   GrB_ONEB_INT32,     GxB_POW_INT32,
+    GrB_FIRST_INT64,    GrB_SECOND_INT64,   GrB_ONEB_INT64,     GxB_POW_INT64,
+    GrB_FIRST_UINT8,    GrB_SECOND_UINT8,   GrB_ONEB_UINT8,     GxB_POW_UINT8,
+    GrB_FIRST_UINT16,   GrB_SECOND_UINT16,  GrB_ONEB_UINT16,    GxB_POW_UINT16,
+    GrB_FIRST_UINT32,   GrB_SECOND_UINT32,  GrB_ONEB_UINT32,    GxB_POW_UINT32,
+    GrB_FIRST_UINT64,   GrB_SECOND_UINT64,  GrB_ONEB_UINT64,    GxB_POW_UINT64,
+    GrB_FIRST_FP32,     GrB_SECOND_FP32,    GrB_ONEB_FP32,      GxB_POW_FP32,
+    GrB_FIRST_FP64,     GrB_SECOND_FP64,    GrB_ONEB_FP64,      GxB_POW_FP64,
     // complex:
-    GxB_FIRST_FC32,     GxB_SECOND_FC32,    GxB_POW_FC32,
-    GxB_FIRST_FC64,     GxB_SECOND_FC64,    GxB_POW_FC64,
+    GxB_FIRST_FC32,     GxB_SECOND_FC32,    GxB_ONEB_FC32,      GxB_POW_FC32,
+    GxB_FIRST_FC64,     GxB_SECOND_FC64,    GxB_ONEB_FC64,      GxB_POW_FP64,
 
     // z = x+y          z = x-y             z = x*y             z = x/y
     GrB_PLUS_BOOL,      GrB_MINUS_BOOL,     GrB_TIMES_BOOL,     GrB_DIV_BOOL,
@@ -1454,7 +1457,7 @@ GB_PUBLIC GrB_BinaryOp GxB_IGNORE_DUP ;
 //      z = ~x          1 1 0 0     (not(x), not predefined)
 //      z = (x <= y)    1 1 0 1     LE, ISLE, and "y implies x"
 //      z = ~(x && y)   1 1 1 0     (nand(x,y) function, not predefined)
-//      z = 1           1 1 1 1     PAIR
+//      z = 1           1 1 1 1     PAIR, ONEB
 //
 //      z = any(x,y)    0 . . 1     ANY (pick x or y arbitrarily)
 
@@ -8844,7 +8847,8 @@ GB_PUBLIC GrB_Monoid
 
 //      5 monoids: MIN, MAX, PLUS, TIMES, ANY
 //      20 multiply operators:
-//          FIRST, SECOND, PAIR, MIN, MAX, PLUS, MINUS, TIMES, DIV, RDIV, RMINUS
+//          FIRST, SECOND, PAIR (=ONEB), MIN, MAX, PLUS, MINUS, TIMES, DIV,
+//          RDIV, RMINUS
 //          ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
 //          LOR, LAND, LXOR
 //      10 non-Boolean real types, T
@@ -8865,7 +8869,8 @@ GB_PUBLIC GrB_Monoid
 
 //      5 Boolean monoids LAND, LOR, LXOR, EQ (=LXNOR), ANY
 //      11 multiply operators:
-//          FIRST, SECOND, LOR, LAND, LXOR, EQ (=LXNOR), GT, LT, GE, LE, PAIR
+//          FIRST, SECOND, LOR, LAND, LXOR, EQ (=LXNOR), GT, LT, GE, LE,
+//          PAIR (=ONEB)
 //
 //      Note that lor_pair, land_pair, and eq_pair are all identical to
 //      any_pair.  These 3 semirings are named below, but are internally
@@ -8875,7 +8880,7 @@ GB_PUBLIC GrB_Monoid
 
 //      3 complex monoids: PLUS, TIMES, ANY
 //      9 complex multiply operators:
-//          FIRST, SECOND, PAIR, PLUS, MINUS, TIMES, DIV, RDIV, RMINUS
+//          FIRST, SECOND, PAIR (=ONEB), PLUS, MINUS, TIMES, DIV, RDIV, RMINUS
 //      2 complex types
 //
 //      Note that times_pair is identical to any_pair.

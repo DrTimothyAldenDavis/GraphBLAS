@@ -128,9 +128,11 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
         GB_Opcode opcode ; 
 
         // 12 binary operators z=f(x,y), all x,y,z of the same type
+        // (pair and oneb are identical)
              if (MATCH (opname, "first"   )) { opcode = GB_FIRST_binop_code ; }
         else if (MATCH (opname, "second"  )) { opcode = GB_SECOND_binop_code ; }
         else if (MATCH (opname, "pair"    )) { opcode = GB_PAIR_binop_code ; }
+        else if (MATCH (opname, "oneb"    )) { opcode = GB_PAIR_binop_code ; }
         else if (MATCH (opname, "any"     )) { opcode = GB_ANY_binop_code ; }
         else if (MATCH (opname, "min"     )) { opcode = GB_MIN_binop_code ; }
         else if (MATCH (opname, "max"     )) { opcode = GB_MAX_binop_code ; }
@@ -306,19 +308,20 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
 
                 switch (xcode)
                 {
-                    case GB_BOOL_code    : op = GxB_PAIR_BOOL   ; break ;
-                    case GB_INT8_code    : op = GxB_PAIR_INT8   ; break ;
-                    case GB_INT16_code   : op = GxB_PAIR_INT16  ; break ;
-                    case GB_INT32_code   : op = GxB_PAIR_INT32  ; break ;
-                    case GB_INT64_code   : op = GxB_PAIR_INT64  ; break ;
-                    case GB_UINT8_code   : op = GxB_PAIR_UINT8  ; break ;
-                    case GB_UINT16_code  : op = GxB_PAIR_UINT16 ; break ;
-                    case GB_UINT32_code  : op = GxB_PAIR_UINT32 ; break ;
-                    case GB_UINT64_code  : op = GxB_PAIR_UINT64 ; break ;
-                    case GB_FP32_code    : op = GxB_PAIR_FP32   ; break ;
-                    case GB_FP64_code    : op = GxB_PAIR_FP64   ; break ;
-                    case GB_FC32_code    : op = GxB_PAIR_FC32   ; break ;
-                    case GB_FC64_code    : op = GxB_PAIR_FC64   ; break ;
+                    // GrB_ONEB_T is the new name for GxB_PAIR_T
+                    case GB_BOOL_code    : op = GrB_ONEB_BOOL   ; break ;
+                    case GB_INT8_code    : op = GrB_ONEB_INT8   ; break ;
+                    case GB_INT16_code   : op = GrB_ONEB_INT16  ; break ;
+                    case GB_INT32_code   : op = GrB_ONEB_INT32  ; break ;
+                    case GB_INT64_code   : op = GrB_ONEB_INT64  ; break ;
+                    case GB_UINT8_code   : op = GrB_ONEB_UINT8  ; break ;
+                    case GB_UINT16_code  : op = GrB_ONEB_UINT16 ; break ;
+                    case GB_UINT32_code  : op = GrB_ONEB_UINT32 ; break ;
+                    case GB_UINT64_code  : op = GrB_ONEB_UINT64 ; break ;
+                    case GB_FP32_code    : op = GrB_ONEB_FP32   ; break ;
+                    case GB_FP64_code    : op = GrB_ONEB_FP64   ; break ;
+                    case GB_FC32_code    : op = GxB_ONEB_FC32   ; break ;
+                    case GB_FC64_code    : op = GxB_ONEB_FC64   ; break ;
                     default              : 
                         mexWarnMsgIdAndTxt ("GB:warn","unknown operator") ;
                         return (false) ;

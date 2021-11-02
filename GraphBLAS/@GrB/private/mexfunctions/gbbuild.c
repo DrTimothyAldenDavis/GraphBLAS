@@ -31,7 +31,8 @@
 // type is a string that defines is the type of A, which defaults to the type
 // of X.
 
-// If X is a scalar, and dup is '1st', '2nd', 'any', 'min', 'max', 'pair',
+// If X is a scalar, and dup is '1st', '2nd', 'any', 'min', 'max',
+// 'pair' (same as 'oneb'),
 // 'or', 'and', 'bitor', or 'bitand', then GxB_Matrix_build_Scalar is used and
 // A is built as an iso matrix.  X is not explicitly expanded. This is
 // much faster than when using the default dup.
