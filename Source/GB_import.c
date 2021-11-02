@@ -71,11 +71,11 @@ GrB_Info GB_import      // import/pack a matrix in any format
     }
 
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
-    if (vlen  > GxB_INDEX_MAX || vdim > GxB_INDEX_MAX ||
-        nvals > GxB_INDEX_MAX || nvec > GxB_INDEX_MAX ||
-        Ap_size > GxB_INDEX_MAX ||
-        Ah_size > GxB_INDEX_MAX || Ab_size > GxB_INDEX_MAX ||
-        Ai_size > GxB_INDEX_MAX || Ax_size > GxB_INDEX_MAX)
+    if (vlen  > GB_NMAX || vdim > GB_NMAX ||
+        nvals > GB_NMAX || nvec > GB_NMAX ||
+        Ap_size > GB_NMAX ||
+        Ah_size > GB_NMAX || Ab_size > GB_NMAX ||
+        Ai_size > GB_NMAX || Ax_size > GB_NMAX)
     { 
         return (GrB_INVALID_VALUE) ;
     }

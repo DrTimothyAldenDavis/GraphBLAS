@@ -222,8 +222,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the dimensions
     //--------------------------------------------------------------------------
 
-    if (A->vlen < 0 || A->vlen > GxB_INDEX_MAX ||
-        A->vdim < 0 || A->vdim > GxB_INDEX_MAX)
+    if (A->vlen < 0 || A->vlen > GB_NMAX || A->vdim < 0 || A->vdim > GB_NMAX)
     { 
         GBPR0 ("  invalid %s dimensions\n", kind) ;
         return (GrB_INVALID_OBJECT) ;

@@ -31,7 +31,7 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     (*v) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
 
-    if (n > GxB_INDEX_MAX)
+    if (n > GB_NMAX)
     { 
         // problem too large
         return (GrB_INVALID_VALUE) ;

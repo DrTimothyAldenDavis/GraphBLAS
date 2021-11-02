@@ -14,7 +14,15 @@ function [C,P] = argsort (A, arg1, arg2)
 %
 % Example:
 %
-%   TODO
+%   A = sprand (20,10,0.5) ;
+%   [C,P] = GrB.argsort (A) ;
+%   A (:,1)
+%   C (:,1)
+%   P (:,1)
+%   % the MATLAB sort includes all implicit zeros:
+%   [B,I] = sort (A) ;
+%   B (:,1)
+%   I (:,1)
 %
 % This methods differs from the MATLAB sort function.  Implicit zeros
 % are ignored and always placed last in the output.  P is returned sparse,

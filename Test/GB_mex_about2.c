@@ -398,7 +398,7 @@ void mexFunction
     p = GB_realloc_memory (1024*1024, sizeof (int), p, &nbytes, &ok, NULL) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
-    p = GB_realloc_memory (4, GxB_INDEX_MAX + 1, p, &nbytes, &ok, NULL) ;
+    p = GB_realloc_memory (4, GB_NMAX + 1, p, &nbytes, &ok, NULL) ;
     CHECK (!ok) ;
     GB_free_memory (&p, nbytes) ;
 
@@ -407,7 +407,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix X = NULL ;
-    info = GxB_Matrix_import_FullC (&X, GrB_FP32, GxB_INDEX_MAX, GxB_INDEX_MAX,
+    info = GxB_Matrix_import_FullC (&X, GrB_FP32, GB_NMAX, GB_NMAX,
         NULL, UINT64_MAX, false, NULL) ;
     if (info != GrB_INVALID_VALUE || X != NULL) mexErrMsgTxt ("huge fail1") ;
 
@@ -427,7 +427,7 @@ void mexFunction
     // hypermatrix prune
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_new (&C, GrB_FP32, GxB_INDEX_MAX, GxB_INDEX_MAX)) ;
+    OK (GrB_Matrix_new (&C, GrB_FP32, GB_NMAX, GB_NMAX)) ;
     OK (GrB_Matrix_setElement_FP32 (C, (double) 3, 0, 0)) ;
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_Matrix_wait (&C)) ;

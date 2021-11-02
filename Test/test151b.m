@@ -6,7 +6,7 @@ function test151b
 
 fprintf ('test151b: test bshift operator\n') ;
 
-[binops, ~, ~, types, ~, ~,] = GB_spec_opsall ;
+[~, ~, ~, types, ~, ~,] = GB_spec_opsall ;
 types = types.int ;
 ops2 = { 'bshift' } ;
 

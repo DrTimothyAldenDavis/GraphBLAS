@@ -987,7 +987,7 @@ void mexFunction
     OK (GrB_Matrix_free_ (&A)) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Matrix_import (&A, GrB_FP32, 2 * GxB_INDEX_MAX, 1, Ap, Ai, Ax,
+    ERR (GrB_Matrix_import (&A, GrB_FP32, 2 * GB_NMAX, 1, Ap, Ai, Ax,
         5, 16, 16, GrB_CSR_FORMAT)) ;
     CHECK (A == NULL) ;
 

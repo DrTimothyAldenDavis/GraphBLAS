@@ -263,7 +263,13 @@
 
 typedef uint64_t GrB_Index ;
 
-// The largest valid dimension permitted in this implementation is 2^60.
+// GrB_INDEX_MAX is the largest permissible index value.  The largest valid
+// matrix or vector dimension is GrB_INDEX_MAX+1, or 2^60 in SuiteSparse:GrB.
+#define GrB_INDEX_MAX ((GrB_Index) (1ULL << 60) - 1)
+
+// GxB_INDEX_MAX is historical; use GrB_INDEX_MAX+1 instead.  It differs by one
+// from GrB_INDEX_MAX, since it defined the largest valid matrix or vector
+// dimension. 
 #define GxB_INDEX_MAX ((GrB_Index) (1ULL << 60))
 
 //==============================================================================
@@ -1602,7 +1608,7 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 //      bool f (GrB_Index i, GrB_Index j, const void *x, const void *thunk) ;
 
 // The values of i and j are guaranteed to be in the range 0 to
-// GxB_INDEX_MAX-1, and they can be safely typecasted to int64_t then negated,
+// GrB_INDEX_MAX, and they can be safely typecasted to int64_t then negated,
 // if desired, without any risk of integer overflow.
 
 typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
@@ -2644,6 +2650,7 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     GrB_Vector *v,          // handle of vector to create
     GrB_Type type,          // type of vector to create
     GrB_Index n             // vector dimension is n-by-1
+                            // (n must be <= GrB_INDEX_MAX+1)
 ) ;
 
 GB_PUBLIC
@@ -3386,7 +3393,7 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
     GrB_Matrix *A,          // handle of matrix to create
     GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
-    GrB_Index ncols
+    GrB_Index ncols         // (nrows and ncols must be <= GrB_INDEX_MAX+1)
 ) ;
 
 GB_PUBLIC

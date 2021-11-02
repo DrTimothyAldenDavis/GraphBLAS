@@ -65,7 +65,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
 
     ASSERT (I != NULL) ;
     ASSERT (limit >= 0) ;
-    ASSERT (limit <= GxB_INDEX_MAX) ;
+    ASSERT (limit <= GrB_INDEX_MAX) ;
     int64_t imin, imax ;
 
     //--------------------------------------------------------------------------

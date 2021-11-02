@@ -54,8 +54,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
     // GrB_Matrix_import has no descritptor so it only supports a secure import
     bool fast_import = false ;
 
-    if (nrows > GxB_INDEX_MAX || ncols > GxB_INDEX_MAX || Ap_len > GxB_INDEX_MAX
-        || Ai_len > GxB_INDEX_MAX || Ax_len > GxB_INDEX_MAX)
+    if (nrows > GB_NMAX || ncols > GB_NMAX || Ap_len > GB_NMAX
+        || Ai_len > GB_NMAX || Ax_len > GB_NMAX)
     { 
         // problem is too large
         return (GrB_INVALID_VALUE) ;
@@ -79,7 +79,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 return (GrB_INVALID_VALUE) ;
             }
             nvals = Ap [plen-1] ;
-            if (Ai_len < nvals || Ax_len < nvals || nvals > GxB_INDEX_MAX)
+            if (Ai_len < nvals || Ax_len < nvals || nvals > GB_NMAX)
             { 
                 // Ai and/or Ax are too small or problem is too large
                 return (GrB_INVALID_VALUE) ;

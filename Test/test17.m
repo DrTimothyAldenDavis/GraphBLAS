@@ -43,7 +43,8 @@ for k1 = 1:length (types)
                     for j = 0:n-1
                         ju = uint64 (j) ;
                         use_scalar = (rand (1) > 0.9) ;
-                        x1 = GB_mex_Matrix_extractElement  (A, iu, ju, xtype, use_scalar) ;
+                        x1 = GB_mex_Matrix_extractElement  (A, iu, ju, ...
+                                xtype, use_scalar) ;
                         x2 = GB_spec_Matrix_extractElement (A, i, j, xtype) ;
                         assert (isequal (x1,x2))
 

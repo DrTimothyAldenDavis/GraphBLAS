@@ -162,11 +162,11 @@ GrB_Info GB_build               // build matrix
             "GxB_RANGE, GxB_STRIDE, or GxB_BACKWARDS") ;
     }
 
-    if (nvals > GxB_INDEX_MAX)
+    if (nvals > GB_NMAX)
     { 
         // problem too large
         GB_ERROR (GrB_INVALID_VALUE, "Problem too large: nvals " GBu
-            " exceeds " GBu, nvals, GxB_INDEX_MAX) ;
+            " exceeds " GBu, nvals, GB_NMAX) ;
     }
 
     //--------------------------------------------------------------------------

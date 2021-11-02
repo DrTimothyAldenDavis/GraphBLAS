@@ -1453,8 +1453,9 @@ Matrix and vector dimensions and indexing rely on a specific integer,
 Row and column indices of an \verb'nrows'-by-\verb'ncols' matrix range from
 zero to the \verb'nrows-1' for the rows, and zero to \verb'ncols-1' for the
 columns.  Indices are zero-based, like C, and not one-based, like
-Octave/MATLAB.  In SuiteSparse:GraphBLAS, the largest size permitted for any
-integer of \verb'GrB_Index' is $2^{60}$ (defined by \verb'GxB_INDEX_MAX').
+Octave/MATLAB.  In SuiteSparse:GraphBLAS, the largest permitted index value
+is \verb'GrB_INDEX_MAX', defined as $2^{60}-1$.  The largest permitted
+matrix or vector dimension is $2^{60}$ (that is, \verb'GrB_INDEX_MAX+1').
 The largest \verb'GrB_Matrix' that
 SuiteSparse: GraphBLAS can construct is thus $2^{60}$-by-$2^{60}$.  An
 $n$-by-$n$ matrix $A$ that size can easily be constructed in practice with
@@ -1579,6 +1580,7 @@ API Specification supported by the library.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
+% in SuiteSparse:GraphBLAS v5.2.0 or earlier:
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc
 (
     GrB_Mode mode,          // blocking or non-blocking mode
@@ -1588,6 +1590,17 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc
     void * (* user_realloc_function ) (void *, size_t),
     void   (* user_free_function    ) (void *),
     bool ignored            // unused parameter to be removed in v6.0
+) ;
+
+% in SuiteSparse:GraphBLAS v6.0.0 or later:
+GrB_Info GxB_init           // start up GraphBLAS and also define malloc
+(
+    GrB_Mode mode,          // blocking or non-blocking mode
+    // pointers to memory management functions.
+    void * (* user_malloc_function  ) (size_t),
+    void * (* user_calloc_function  ) (size_t, size_t),
+    void * (* user_realloc_function ) (void *, size_t),
+    void   (* user_free_function    ) (void *),
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -1614,20 +1627,13 @@ The following usage is identical to \verb'GrB_init(mode)':
 
     {\footnotesize
     \begin{verbatim}
-    GxB_init (mode, malloc, calloc, realloc, free, true) ; \end{verbatim}}
+    % in SuiteSparse:GraphBLAS v5.2.0:
+    GxB_init (mode, malloc, calloc, realloc, free, true) ;
+    % in SuiteSparse:GraphBLAS v6.0.0:
+    GxB_init (mode, malloc, calloc, realloc, free) ; \end{verbatim}}
 
-To use the scalable Intel TBB memory manager:
-
-    {\footnotesize
-    \begin{verbatim}
-    #include "tbb/scalable_allocator.h"
-    #include "GraphBLAS.h"
-    ...
-    GxB_init (mode, scalable_malloc, scalable_calloc, scalable_realloc,
-        scalable_free, true) ; \end{verbatim}}
-
-The last parameter (\verb'ignored') is ignored in this version (v5.2)
-and will be removed in v6.0.
+The last parameter (\verb'ignored') is ignored in v5.2
+and is removed in v6.0.
 
 \newpage
 %===============================================================================

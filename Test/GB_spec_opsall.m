@@ -44,7 +44,6 @@ binops.alltypes = {
 'first',     % z = x
 'second',    % z = y
 'pair',      % z = 1
-'oneb',      % z = 1 (same as pair)
 'plus',      % z = x + y
 'minus',     % z = x - y
 'rminus',    % z = y - x
@@ -56,7 +55,8 @@ binops.alltypes = {
 'eq',        % z = (x == y)
 'ne',        % z = (x != y)
 'pow',       % z = x.^y
-'any'}' ;    % z = any(x,y)
+'any',       % z = any(x,y)
+'oneb'}' ;   % z = 1 (same as pair)
 
 % binary operators for 11 types (all but complex)
 binops.real = {

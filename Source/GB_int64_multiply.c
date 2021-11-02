@@ -28,7 +28,7 @@ bool GB_int64_multiply      // true if ok, false if overflow
         return (true) ;
     }
 
-    if (a < 0 || a > GxB_INDEX_MAX || b < 0 || b > GxB_INDEX_MAX)
+    if (a < 0 || a > GB_NMAX || b < 0 || b > GB_NMAX)
     { 
         // a or b are out of range
         return (false) ;

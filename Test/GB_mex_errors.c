@@ -1080,7 +1080,7 @@ void mexFunction
     o2 = GrB_SECOND_FP64 ;
     ERR1 (v, GrB_Vector_build_FP64 (v, GrB_ALL, X, 0, o2)) ;
 
-    ERR1 (v, GrB_Vector_build_FP64_(v, I, X, GxB_INDEX_MAX+1, o2)) ;
+    ERR1 (v, GrB_Vector_build_FP64_(v, I, X, GB_NMAX+1, o2)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
@@ -1550,7 +1550,7 @@ void mexFunction
     o2 = GrB_SECOND_FP64 ;
     ERR1 (A, GrB_Matrix_build_FP64_(A, GrB_ALL, J, X, 0, o2)) ;
     ERR1 (A, GrB_Matrix_build_FP64_(A, I, GrB_ALL, X, 0, o2)) ;
-    ERR1 (A, GrB_Matrix_build_FP64_(A, I,       J, X, GxB_INDEX_MAX+1, o2)) ;
+    ERR1 (A, GrB_Matrix_build_FP64_(A, I,       J, X, GB_NMAX+1, o2)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
@@ -2128,7 +2128,7 @@ void mexFunction
     // GrB_mxm dot product
     //--------------------------------------------------------------------------
 
-    GrB_Index huge = GxB_INDEX_MAX ;
+    GrB_Index huge = GrB_INDEX_MAX + 1 ;
     GrB_Matrix HugeRow ;
     OK (GrB_Matrix_new (&HugeRow, GrB_FP64, 1, huge)) ;
     GB_Matrix_check (HugeRow, "huge row", G3, NULL) ;
@@ -4873,18 +4873,18 @@ void mexFunction
     CHECK (n == 0) ;
 
     n = 911 ;
-    ok = GB_int64_multiply (&n, 1, GxB_INDEX_MAX+1) ;
+    ok = GB_int64_multiply (&n, 1, GB_NMAX+1) ;
     CHECK (!ok) ;
     CHECK (n == 0) ;
 
     ok = GB_int64_multiply (&n,
-        ((GrB_Index) GxB_INDEX_MAX)+1,
-        ((GrB_Index) GxB_INDEX_MAX)+1) ;
+        ((GrB_Index) GB_NMAX)+1,
+        ((GrB_Index) GB_NMAX)+1) ;
     CHECK (!ok) ;
 
     ok = GB_int64_multiply (&n,
-        ((GrB_Index) GxB_INDEX_MAX),
-        ((GrB_Index) GxB_INDEX_MAX)) ;
+        ((GrB_Index) GB_NMAX),
+        ((GrB_Index) GB_NMAX)) ;
     CHECK (!ok) ;
 
     a = (GrB_Index) 16777216/2 ;     // (2^24)/2
@@ -4902,7 +4902,7 @@ void mexFunction
     OK (GxB_Matrix_fprint (A, "A for bix_alloc", G3, NULL)) ;
     CHECK (A != NULL) ;
     Context->where = "GB_bix_alloc" ;
-    info = GB_bix_alloc (A, GxB_INDEX_MAX+1, GxB_SPARSE, true, true, false,
+    info = GB_bix_alloc (A, GB_NMAX+1, GxB_SPARSE, true, true, false,
         Context) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
     OK (GrB_Matrix_free_(&A)) ;
@@ -4913,7 +4913,7 @@ void mexFunction
 
     CHECK (A != NULL) ;
     OK (GxB_Matrix_fprint (A, "A for ix_realloc", G3, NULL)) ;
-    info = GB_ix_realloc (A, GxB_INDEX_MAX+1, Context) ;
+    info = GB_ix_realloc (A, GB_NMAX+1, Context) ;
     CHECK (info == GrB_OUT_OF_MEMORY) ;
 
     OK (GB_Matrix_check (A, "A pattern 1", G3, NULL)) ;

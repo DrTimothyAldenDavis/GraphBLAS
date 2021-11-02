@@ -32,7 +32,7 @@ GrB_Info GrB_Matrix_new     // create a new matrix with no entries
     (*A) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
 
-    if (nrows > GxB_INDEX_MAX || ncols > GxB_INDEX_MAX)
+    if (nrows > GB_NMAX || ncols > GB_NMAX)
     { 
         // problem too large
         return (GrB_INVALID_VALUE) ;
