@@ -41,11 +41,11 @@ if (isobject (arg3))
     arg3 = arg3.opaque ;
 end
 
-if (nargin > 3 && isobject (arg4))
+if (isobject (arg4))
     arg4 = arg4.opaque ;
 end
 
-if (nargin > 4 && isobject (arg5))
+if (isobject (arg5))
     arg5 = arg5.opaque ;
 end
 
@@ -53,11 +53,11 @@ if (nargin > 5 && isobject (arg6))
     arg6 = arg6.opaque ;
 end
 
-if (nargin > 6 && isobject (arg6))
+if (nargin > 6 && isobject (arg7))
     arg7 = arg7.opaque ;
 end
 
-if (nargin > 7 && isobject (arg6))
+if (nargin > 7 && isobject (arg8))
     arg8 = arg8.opaque ;
 end
 

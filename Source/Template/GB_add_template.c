@@ -129,7 +129,7 @@
         // phase2: numerical phase
 
         #ifdef GB_POSITIONAL_OP
-            // op doesn't depend aij, bij, amissing, or bmissing
+            // op doesn't depend aij, bij, alpha_scalar, or beta_scalar
             #define GB_LOAD_A(aij, Ax,pA,A_iso)
             #define GB_LOAD_B(bij, Bx,pB,B_iso)
         #else

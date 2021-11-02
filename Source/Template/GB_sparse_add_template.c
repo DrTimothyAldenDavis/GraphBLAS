@@ -347,7 +347,7 @@
                         { 
                             // C (i,j) = A(i,j) + beta
                             GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                            GB_BINOP (GB_CX (pC+p), aij, bmissing, i, j) ;
+                            GB_BINOP (GB_CX (pC+p), aij, beta_scalar, i, j) ;
                         }
                         #else
                         { 
@@ -395,7 +395,7 @@
                         { 
                             // C (i,j) = alpha + B(i,j)
                             GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                            GB_BINOP (GB_CX (pC+p), amissing, bij, i, j) ;
+                            GB_BINOP (GB_CX (pC+p), alpha_scalar, bij, i, j) ;
                         }
                         #else
                         { 
@@ -441,7 +441,7 @@
                         { 
                             // C (i,j) = alpha + B(i,j)
                             GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                            GB_BINOP (GB_CX (pC+p), amissing, bij,
+                            GB_BINOP (GB_CX (pC+p), alpha_scalar, bij,
                                 Bi [pB+p], j) ;
                         }
                         #else
@@ -475,7 +475,7 @@
                         { 
                             // C (i,j) = A(i,j) + beta
                             GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                            GB_BINOP (GB_CX (pC+p), aij, bmissing,
+                            GB_BINOP (GB_CX (pC+p), aij, beta_scalar,
                                 Ai [pA+p], j) ;
                         }
                         #else
@@ -509,7 +509,7 @@
                         { 
                             // C (i,j) = A(i,j) + beta
                             GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                            GB_BINOP (GB_CX (pC+p), aij, bmissing,
+                            GB_BINOP (GB_CX (pC+p), aij, beta_scalar,
                                 Ai [pA+p], j) ;
                         }
                         #else
@@ -530,7 +530,7 @@
                         { 
                             // C (i,j) = alpha + B(i,j)
                             GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                            GB_BINOP (GB_CX (pC+p), amissing, bij,
+                            GB_BINOP (GB_CX (pC+p), alpha_scalar, bij,
                                 Bi [pB+p], j) ;
                         }
                         #else
@@ -564,7 +564,7 @@
                         { 
                             // C (i,j) = alpha + B(i,j)
                             GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                            GB_BINOP (GB_CX (pC+p), amissing, bij,
+                            GB_BINOP (GB_CX (pC+p), alpha_scalar, bij,
                                 Bi [pB+p], j) ;
                         }
                         #else
@@ -585,7 +585,7 @@
                         { 
                             // C (i,j) = A(i,j) + beta
                             GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                            GB_BINOP (GB_CX (pC+p), aij, bmissing,
+                            GB_BINOP (GB_CX (pC+p), aij, beta_scalar,
                                 Ai [pA+p], j) ;
                         }
                         #else
@@ -665,7 +665,7 @@
                             { 
                                 // C (iA,j) = A(iA,j) + beta
                                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                                GB_BINOP (GB_CX (pC), aij, bmissing, iA, j) ;
+                                GB_BINOP (GB_CX (pC), aij, beta_scalar, iA, j) ;
                             }
                             #else
                             { 
@@ -686,7 +686,8 @@
                             { 
                                 // C (iB,j) = alpha + B(iB,j)
                                 GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                                GB_BINOP (GB_CX (pC), amissing, bij, iB, j) ;
+                                GB_BINOP (GB_CX (pC), alpha_scalar, bij,
+                                    iB, j) ;
                             }
                             #else
                             { 
@@ -737,7 +738,7 @@
                         { 
                             // C (i,j) = A(i,j) + beta
                             GB_LOAD_A (aij, Ax, pA+p, A_iso) ;
-                            GB_BINOP (GB_CX (pC+p), aij, bmissing,
+                            GB_BINOP (GB_CX (pC+p), aij, beta_scalar,
                                 Ai [pA+p], j) ;
                         }
                         #else
@@ -756,7 +757,7 @@
                         { 
                             // C (i,j) = alpha + B(i,j)
                             GB_LOAD_B (bij, Bx, pB+p, B_iso) ;
-                            GB_BINOP (GB_CX (pC+p), amissing, bij,
+                            GB_BINOP (GB_CX (pC+p), alpha_scalar, bij,
                                 Bi [pB+p], j) ;
                         }
                         #else
@@ -1018,7 +1019,7 @@
                         { 
                             // C (i,j) = A(i,j) + beta
                             GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                            GB_BINOP (GB_CX (pC), aij, bmissing, i, j) ;
+                            GB_BINOP (GB_CX (pC), aij, beta_scalar, i, j) ;
                         }
                         #else
                         { 
@@ -1041,7 +1042,7 @@
                         { 
                             // C (i,j) = alpha + B(i,j)
                             GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                            GB_BINOP (GB_CX (pC), amissing, bij, i, j) ;
+                            GB_BINOP (GB_CX (pC), alpha_scalar, bij, i, j) ;
                         }
                         #else
                         { 
@@ -1157,7 +1158,7 @@
                             { 
                                 // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                                GB_BINOP (GB_CX (pC), amissing, bij, i, j) ;
+                                GB_BINOP (GB_CX (pC), alpha_scalar, bij, i, j) ;
                             }
                             #else
                             { 
@@ -1194,7 +1195,7 @@
                             { 
                                 // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                                GB_BINOP (GB_CX (pC), aij, bmissing, i, j) ;
+                                GB_BINOP (GB_CX (pC), aij, beta_scalar, i, j) ;
                             }
                             #else
                             { 
@@ -1231,7 +1232,7 @@
                             { 
                                 // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                                GB_BINOP (GB_CX (pC), aij, bmissing, i, j) ;
+                                GB_BINOP (GB_CX (pC), aij, beta_scalar, i, j) ;
                             }
                             #else
                             { 
@@ -1260,7 +1261,7 @@
                             { 
                                 // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                                GB_BINOP (GB_CX (pC), amissing, bij, i, j) ;
+                                GB_BINOP (GB_CX (pC), alpha_scalar, bij, i, j) ;
                             }
                             #else
                             { 
@@ -1298,7 +1299,7 @@
                             { 
                                 // C (i,j) = alpha + B(i,j)
                                 GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                                GB_BINOP (GB_CX (pC), amissing, bij, i, j) ;
+                                GB_BINOP (GB_CX (pC), alpha_scalar, bij, i, j) ;
                             }
                             #else
                             { 
@@ -1327,7 +1328,7 @@
                             { 
                                 // C (i,j) = A(i,j) + beta
                                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                                GB_BINOP (GB_CX (pC), aij, bmissing, i, j) ;
+                                GB_BINOP (GB_CX (pC), aij, beta_scalar, i, j) ;
                             }
                             #else
                             { 
@@ -1367,7 +1368,8 @@
                                 { 
                                     // C (iA,j) = A(iA,j) + beta
                                     GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                                    GB_BINOP (GB_CX (pC), aij, bmissing, iA, j);
+                                    GB_BINOP (GB_CX (pC), aij, beta_scalar,
+                                        iA, j);
                                 }
                                 #else
                                 { 
@@ -1396,7 +1398,8 @@
                                 { 
                                     // C (iB,j) = alpha + B(iB,j)
                                     GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                                    GB_BINOP (GB_CX (pC), amissing, bij, iB, j);
+                                    GB_BINOP (GB_CX (pC), alpha_scalar, bij,
+                                        iB, j) ;
                                 }
                                 #else
                                 { 
@@ -1452,7 +1455,7 @@
                             { 
                                 // C (iA,j) = A(iA,j) + beta
                                 GB_LOAD_A (aij, Ax, pA, A_iso) ;
-                                GB_BINOP (GB_CX (pC), aij, bmissing, iA, j) ;
+                                GB_BINOP (GB_CX (pC), aij, beta_scalar, iA, j) ;
                             }
                             #else
                             { 
@@ -1482,7 +1485,8 @@
                             { 
                                 // C (iB,j) = alpha + B(iB,j)
                                 GB_LOAD_B (bij, Bx, pB, B_iso) ;
-                                GB_BINOP (GB_CX (pC), amissing, bij, iB, j) ;
+                                GB_BINOP (GB_CX (pC), alpha_scalar, bij,
+                                    iB, j) ;
                             }
                             #else
                             { 

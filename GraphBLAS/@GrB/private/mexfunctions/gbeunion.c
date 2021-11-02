@@ -38,7 +38,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 3 && nargin <= 7 && nargout <= 2, USAGE) ;
+    gb_usage (nargin >= 3 && nargin <= 9 && nargout <= 2, USAGE) ;
 
     //--------------------------------------------------------------------------
     // find the arguments

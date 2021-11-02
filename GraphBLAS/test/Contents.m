@@ -14,7 +14,7 @@
 %  gbtest9   - test eye and speye
 %  gbtest10  - test GrB.assign
 %  gbtest11  - test GrB, sparse
-%  gbtest12  - test GrB.eadd, GrB.emult
+%  gbtest12  - test GrB.eadd, GrB.emult, GrB.eunion
 %  gbtest13  - test find and GrB.extracttuples
 %  gbtest14  - test kron and GrB.kronecker
 %  gbtest15  - list all unary operators

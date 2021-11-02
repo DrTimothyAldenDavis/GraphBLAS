@@ -127,8 +127,11 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
     // input
     GrB_Type ctype,         // type of c
     GrB_Matrix A,           // input matrix
+    const GB_void *restrict alpha_scalar,   // of type op->xtype
     GrB_Matrix B,           // input matrix
-    GrB_BinaryOp op         // binary operator, if present
+    const GB_void *restrict beta_scalar,    // of type op->ytype
+    GrB_BinaryOp op,        // binary operator, if present
+    const bool is_eWiseUnion
 ) ;
 
 #endif

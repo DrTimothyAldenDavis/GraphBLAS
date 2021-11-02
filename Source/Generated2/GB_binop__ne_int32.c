@@ -274,8 +274,8 @@ GrB_Info GB (_AaddB__ne_int32)
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool is_eWiseUnion,
-    const GB_void *amissing_scalar,
-    const GB_void *bmissing_scalar,
+    const GB_void *alpha_scalar_in,
+    const GB_void *beta_scalar_in,
     const bool Ch_is_Mh,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -292,12 +292,12 @@ GrB_Info GB (_AaddB__ne_int32)
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
     GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
-    int32_t amissing ;
-    int32_t bmissing ;
+    int32_t alpha_scalar ;
+    int32_t beta_scalar ;
     if (is_eWiseUnion)
     {
-        amissing = (*((int32_t *) amissing_scalar)) ;
-        bmissing = (*((int32_t *) bmissing_scalar)) ;
+        alpha_scalar = (*((int32_t *) alpha_scalar_in)) ;
+        beta_scalar  = (*((int32_t *) beta_scalar_in )) ;
     }
     #include "GB_add_template.c"
     GB_FREE_WORKSPACE ;

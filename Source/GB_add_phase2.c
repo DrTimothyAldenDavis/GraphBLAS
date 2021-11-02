@@ -80,8 +80,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool is_eWiseUnion,   // if true, eWiseUnion, else eWiseAdd
-    const GrB_Scalar alpha,  // alpha and beta ignored for eWiseAdd,
-    const GrB_Scalar beta,  // nonempty scalars for GxB_eWiseUnion
+    const GrB_Scalar alpha,     // alpha and beta ignored for eWiseAdd,
+    const GrB_Scalar beta,      // nonempty scalars for GxB_eWiseUnion
     GB_Context Context
 )
 {
@@ -147,12 +147,98 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     }
 
     //--------------------------------------------------------------------------
+    // get the typecasting functions
+    //--------------------------------------------------------------------------
+
+    GxB_binary_function fadd ;
+    size_t asize, bsize, xsize, ysize, zsize ;
+    GB_cast_function cast_A_to_C = NULL, cast_B_to_C = NULL ;
+    GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;
+    const size_t csize = ctype->size ;
+    GB_Type_code ccode = ctype->code ;
+
+    if (op == NULL)
+    { 
+        // implicit GB_SECOND_[type] operator with no typecasting
+        ASSERT (!is_eWiseUnion) ;
+        fadd = NULL ;               // the operator is not called
+        asize = csize ;
+        bsize = csize ;
+        xsize = csize ;
+        ysize = csize ;
+        zsize = csize ;
+        cast_A_to_X = GB_copy_user_user ;
+        cast_B_to_Y = GB_copy_user_user ;
+        cast_A_to_C = GB_copy_user_user ;
+        cast_B_to_C = GB_copy_user_user ;
+        cast_Z_to_C = GB_copy_user_user ;
+    }
+    else
+    {
+        // normal case, with optional typecasting
+        fadd = op->binop_function ;       // NULL if op is positional
+        asize = A->type->size ;
+        bsize = B->type->size ;
+
+        if (op_is_second || op_is_pair || op_is_positional)
+        { 
+            // the op does not depend on the value of A(i,j)
+            xsize = 1 ;
+            cast_A_to_X = NULL ;
+        }
+        else
+        { 
+            xsize = op->xtype->size ;
+            cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
+        }
+
+        if (op_is_first || op_is_pair || op_is_positional)
+        { 
+            // the op does not depend on the value of B(i,j)
+            ysize = 1 ;
+            cast_B_to_Y = NULL ;
+        }
+        else
+        { 
+            ysize = op->ytype->size ;
+            cast_B_to_Y = GB_cast_factory (op->ytype->code, B->type->code) ;
+        }
+
+        zsize = op->ztype->size ;
+        if (!is_eWiseUnion)
+        { 
+            // typecasting for eWiseAdd only
+            cast_A_to_C = GB_cast_factory (ccode, A->type->code) ;
+            cast_B_to_C = GB_cast_factory (ccode, B->type->code) ;
+        }
+        cast_Z_to_C = GB_cast_factory (ccode, op->ztype->code) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // cast the alpha and beta scalars, if present
+    //--------------------------------------------------------------------------
+
+    GB_void alpha_scalar [GB_VLA(xsize)] ;
+    GB_void beta_scalar  [GB_VLA(ysize)] ;
+    if (is_eWiseUnion)
+    { 
+        // alpha_scalar = (xtype) alpha
+        ASSERT (alpha != NULL) ;
+        GB_cast_scalar (alpha_scalar, op->xtype->code, alpha->x, 
+            alpha->type->code, alpha->type->size) ;
+        // beta_scalar = (ytype) beta
+        ASSERT (beta != NULL) ;
+        GB_cast_scalar (beta_scalar, op->ytype->code, beta->x,
+            beta->type->code, beta->type->size) ;
+    }
+
+    //--------------------------------------------------------------------------
     // check if C is iso and compute its iso value if it is
     //--------------------------------------------------------------------------
 
-    const size_t csize = ctype->size ;
     GB_void cscalar [GB_VLA(csize)] ;
-    bool C_iso = GB_iso_add (cscalar, ctype, A, B, op) ;
+    bool C_iso = GB_iso_add (cscalar, ctype, A, alpha_scalar,
+        B, beta_scalar, op, is_eWiseUnion) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C: hypersparse, sparse, bitmap, or full
@@ -198,88 +284,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT ((*Cp_handle) == NULL) ;
     ASSERT ((*Ch_handle) == NULL) ;
     C->magic = GB_MAGIC ;
-    GB_Type_code ccode = ctype->code ;
-
-    //--------------------------------------------------------------------------
-    // get the typecasting functions
-    //--------------------------------------------------------------------------
-
-    GxB_binary_function fadd ;
-    size_t asize, bsize, xsize, ysize, zsize ;
-    GB_cast_function cast_A_to_C, cast_B_to_C ;
-    GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;
-
-    if (op == NULL)
-    { 
-        // implicit GB_SECOND_[type] operator with no typecasting
-        fadd = NULL ;               // the operator is not called
-        asize = csize ;
-        bsize = csize ;
-        xsize = csize ;
-        ysize = csize ;
-        zsize = csize ;
-        cast_A_to_X = GB_copy_user_user ;
-        cast_B_to_Y = GB_copy_user_user ;
-        cast_A_to_C = GB_copy_user_user ;
-        cast_B_to_C = GB_copy_user_user ;
-        cast_Z_to_C = GB_copy_user_user ;
-    }
-    else
-    {
-        // normal case, with optional typecasting
-        fadd = op->binop_function ;       // NULL if op is positional
-        asize = A->type->size ;
-        bsize = B->type->size ;
-
-        if (op_is_second || op_is_pair || op_is_positional)
-        { 
-            // the op does not depend on the value of A(i,j)
-            xsize = 1 ;
-            cast_A_to_X = NULL ;
-        }
-        else
-        { 
-            xsize = op->xtype->size ;
-            cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
-        }
-
-        if (op_is_first || op_is_pair || op_is_positional)
-        { 
-            // the op does not depend on the value of B(i,j)
-            ysize = 1 ;
-            cast_B_to_Y = NULL ;
-        }
-        else
-        { 
-            ysize = op->ytype->size ;
-            cast_B_to_Y = GB_cast_factory (op->ytype->code, B->type->code) ;
-        }
-
-        zsize = op->ztype->size ;
-        cast_A_to_C = GB_cast_factory (ccode, A->type->code) ;
-        cast_B_to_C = GB_cast_factory (ccode, B->type->code) ;
-        cast_Z_to_C = GB_cast_factory (ccode, op->ztype->code) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // cast the alpha and beta scalars, if present
-    //--------------------------------------------------------------------------
-
-    GB_void amissing [GB_VLA(xsize)] ;
-    GB_void bmissing [GB_VLA(ysize)] ;
-    if (is_eWiseUnion)
-    { 
-        // amissing = (xtype) alpha
-        ASSERT (alpha != NULL) ;
-        GB_cast_function cast_alpha_to_X =
-            GB_cast_factory (op->xtype->code, alpha->type->code) ;
-        cast_alpha_to_X (amissing, alpha->x, alpha->type->size) ;
-        // bmissing = (ytype) beta
-        ASSERT (beta != NULL) ;
-        GB_cast_function cast_beta_to_Y =
-            GB_cast_factory (op->ytype->code, beta->type->code) ;
-        cast_beta_to_Y (bmissing, beta->x, beta->type->size) ;
-    }
 
     //--------------------------------------------------------------------------
     // using a built-in binary operator (except for positional operators)
@@ -326,7 +330,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             {                                                               \
                 info = GB_AaddB(mult,xname) (C, C_sparsity,                 \
                     M, Mask_struct, Mask_comp,                              \
-                    A, B, is_eWiseUnion, amissing, bmissing,                \
+                    A, B, is_eWiseUnion, alpha_scalar, beta_scalar,         \
                     Ch_is_Mh, C_to_M, C_to_A, C_to_B,                       \
                     TaskList, C_ntasks, C_nthreads, Context) ;              \
                 done = (info != GrB_NO_VALUE) ;                             \

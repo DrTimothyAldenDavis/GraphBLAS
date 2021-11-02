@@ -133,9 +133,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
             // A and B are both full (or as-if-full).  The mask M may be
             // anything.  GB_add computes the same thing in this case, so it is
-            // used instead, to reduce the code needed for GB_emult.  GB_add
-            // must be used for C=A.*B if all 3 matrices are full.  Otherwise,
-            // GB_emult method can be used as well.
+            // used instead, to reduce the code needed for GB_emult.
 
             return (GB_add (C, ctype, C_is_csc, M, Mask_struct,
                 Mask_comp, mask_applied, A, B, false, NULL, NULL,
