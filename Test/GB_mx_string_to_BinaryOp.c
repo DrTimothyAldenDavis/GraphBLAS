@@ -78,6 +78,7 @@ bool GB_mx_string_to_BinaryOp       // true if successful, false otherwise
              if (MATCH (opname, "first"   )) { op = Complex_first  ; }
         else if (MATCH (opname, "second"  )) { op = Complex_second ; }
         else if (MATCH (opname, "pair"    )) { op = Complex_pair   ; }
+        else if (MATCH (opname, "oneb"    )) { op = Complex_pair   ; }
         else if (MATCH (opname, "any"     )) { op = Complex_second ; }
         else if (MATCH (opname, "min"     )) { op = Complex_min    ; }
         else if (MATCH (opname, "max"     )) { op = Complex_max    ; }
