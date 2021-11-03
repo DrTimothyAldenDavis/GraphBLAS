@@ -12,6 +12,7 @@
 % \usepackage{pdflscape}
 \newmdenv[backgroundcolor=white]{spec}
 \newmdenv[backgroundcolor=yellow]{alert}
+\newmdenv[backgroundcolor=red]{note}
 \hyphenation{Suite-Sparse}
 \hyphenation{Graph-BLAS}
 \hyphenation{Suite-Sparse-Graph-BLAS}
@@ -4420,6 +4421,10 @@ entries in it, of the given type.  This is analogous to Octave/MATLAB statement
 \verb'v = sparse (n,1)', except that GraphBLAS can create sparse vectors any
 type.  The pattern of the new vector is empty.
 
+\begin{alert}
+{\bf SPEC:} \verb'n' may be zero, as an extenstion to the spec.
+\end{alert}
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_wait:} wait for a vector}
 %-------------------------------------------------------------------------------
@@ -4449,7 +4454,7 @@ threads.  A user application may force completion of a vector \verb'w' via
 call GraphBLAS operations that use the vector \verb'w' as an input parameter.
 The function will change in SS:GrB v6.0.0 (for the v2.0 C API Specification).
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_dup:}           copy a vector}
 %-------------------------------------------------------------------------------
@@ -4974,7 +4979,11 @@ with no entries in it, of the given type.  This is analogous to the MATLAB
 statement \verb'A = sparse (nrows, ncols)', except that GraphBLAS can create
 sparse matrices of any type.
 
-\newpage
+\begin{alert}
+{\bf SPEC:} \verb'nrows' and/or \verb'ncols' may be zero,
+as an extenstion to the spec.
+\end{alert}
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_wait:} wait for a matrix}
 %-------------------------------------------------------------------------------
@@ -5356,6 +5365,7 @@ See Section~\ref{random} for an example of how to use
 \verb'GrB_Matrix_setElement'.
 If an error occurs, \verb'GrB_error(&err,C)' returns details about the error.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_extractElement:} get an entry from a matrix}
 %-------------------------------------------------------------------------------
@@ -5410,6 +5420,7 @@ function should not be arbitrarily intermixed with calls to these other two
 functions.  Everything will work correctly and results will be predictable, it
 will just be slow.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_removeElement:} remove an entry from a matrix}
 %-------------------------------------------------------------------------------
@@ -5454,7 +5465,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 unique.  No pair of row and column indices \verb'(i,j)' appears more than once.
 
 The GraphBLAS API states the tuples can be returned in any order.  If
-\verb'GrB_wait(&A)' is called first, then SuiteSparse:GraphBLAS chooses to
+\verb'GrB_wait' is called first, then SuiteSparse:GraphBLAS chooses to
 always return them in sorted order, depending on whether the matrix is stored
 by row or by column.  Otherwise, the indices can be returned in any order.
 
@@ -5475,7 +5486,6 @@ extracted.
 \verb'NULL'.  This is not an error condition.
 \end{alert}
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_resize:}          resize a matrix}
 %-------------------------------------------------------------------------------
@@ -13309,7 +13319,7 @@ these cases.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{examples}
 
-\begin{alert}
+\begin{note}
 {\bf NOTE:} The programs in the \verb'Demo' folder are not always the fastest
 methods.  They are simple methods for illustration only, not performance.  Do
 not benchmark them.  Refer to the latest (draft) \verb'LAGraph' package for the
@@ -13317,7 +13327,7 @@ fastest methods.  Be sure to use the right combination of package versions
 between LAGraph and SuiteSparse:GraphBLAS.  Contact the author (davis@tamu.edu)
 if you have any questions about how to properly benchmark LAGraph +
 SuiteSparse:GraphBLAS.
-\end{alert}
+\end{note}
 
 Several examples of how to use GraphBLAS are listed below.  They all
 appear in the \verb'Demo' folder of SuiteSparse:GraphBLAS.
@@ -13824,14 +13834,14 @@ will still compile, but you will not have access to polymorphic functions
 such as \verb'GrB_assign'.  You will need to use the non-polymorphic functions
 instead.
 
-\begin{alert}
+\begin{note}
 {\bf NOTE:} icc is generally an excellent compiler, but it will generate slower
 code than gcc for SuiteSparse:GraphBLAS.  This is because of how the two
 compilers treat \verb'#pragma omp atomic'. The use of gcc is strongly
 recommended.  Atomics are far slower in icc as compared to gcc.
 Intel has a new \verb'icx' compiler that has much better performance for
 atomics, but I have not tested it with GraphBLAS.
-\end{alert}
+\end{note}
 
 To compile SuiteSparse:GraphBLAS, simply type \verb'make'
 in the main GraphBLAS folder, which compiles the library.  This will be a
@@ -14289,14 +14299,14 @@ The \verb'./demo' command is a script that runs the demos with various input
 matrices in the \verb'Demo/Matrix' folder.  The output of the demos will be
 compared with expected output files in \verb'Demo/Output'.
 
-\begin{alert}
+\begin{note}
 DO NOT publish benchmarks of these demos, and do not link against the
 demo library in any user application.  These codes are sometimes slow,
 and are meant as simple illustrations only, not for performance.  The fastest
 methods are in LAGraph, not in SuiteSparse/GraphBLAS/Demo.  Benchmark LAGraph
 instead.  Eventually, all GraphBLAS/Demos methods will be removed, and LAGraph
 will serve all uses: for illustration, benchmarking, and production uses.
-\end{alert}
+\end{note}
 
 %----------------------------------------
 \subsection{Installing SuiteSparse:GraphBLAS}
