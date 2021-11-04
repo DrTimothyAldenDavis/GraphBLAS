@@ -12,7 +12,7 @@
 
 #include "GB_AxB_saxpy.h"
 
-GrB_Info GB_AxB_saxpy4_tasks
+void GB_AxB_saxpy4_tasks
 (
     // output
     int *p_ntasks,                  // # of tasks to use

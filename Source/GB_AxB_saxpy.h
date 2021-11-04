@@ -94,7 +94,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
     GB_Context Context
 ) ;
 
-GrB_Info GB_AxB_saxpy4_tasks
+void GB_AxB_saxpy4_tasks
 (
     // output
     int *p_ntasks,                  // # of tasks to use
