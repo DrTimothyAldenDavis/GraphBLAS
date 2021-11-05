@@ -55,7 +55,7 @@ void GB_AxB_saxpy4_tasks
         GBURBLE ("(coarse, threads: 1) ") ;
 
     }
-    else if (nthreads <= bvdim)
+    else if (nthreads <= 2 * bvdim)
     { 
 
         //----------------------------------------------------------------------
@@ -73,7 +73,7 @@ void GB_AxB_saxpy4_tasks
     { 
 
         //----------------------------------------------------------------------
-        // use fine tasks, unless there are not enough threads for atomic method
+        // use fine tasks
         //----------------------------------------------------------------------
 
         // Each task does a slice of a single vector of B, and each vector of B
@@ -86,42 +86,28 @@ void GB_AxB_saxpy4_tasks
         double relwspace = workspace / fmax (anz + bnz + cnz, 1) ;
         GBURBLE ("(threads: %d, relwspace: %0.3g, intensity: %0.3g",
             nthreads, relwspace, intensity) ;
-        if ((intensity > 64 && relwspace < 0.05) ||
-            (intensity > 16 && intensity <= 64 && relwspace < 0.50))
+
+        if (intensity > 2 && relwspace < 0.5)
         { 
             // fine non-atomic method with workspace
             use_coarse_tasks = false ;
             ntasks = nthreads ;
             GBURBLE (": fine non-atomic, ") ;
         }
-        else if (nthreads <= 2*bvdim)
-        { 
-            // not enough threads for good performance in the fine atomic
-            // method; disable atomics and use the coarse method instead, with
-            // one task per vector of B
-            use_coarse_tasks = true ;
-            ntasks = bvdim ;
-            nthreads = GB_IMIN (ntasks, nthreads) ;
-            GBURBLE (": coarse, threads used: %d, tasks: %d (one per vector)) ",
-                nthreads, ntasks) ;
-        }
         else
         { 
             // fine atomic method, with no workspace
             use_coarse_tasks = false ;
             use_atomics = true ;
-            ntasks = 2 * nthreads ;
+            ntasks = 4 * nthreads ;
             GBURBLE (": fine atomic, ") ;
         }
 
-        if (!use_coarse_tasks)
-        { 
-            nfine_tasks_per_vector = ceil ((double) ntasks / (double) bvdim) ;
-            ntasks = bvdim * nfine_tasks_per_vector ;
-            ASSERT (nfine_tasks_per_vector > 1) ;
-            GBURBLE ("tasks: %d, tasks per vector: %d) ", ntasks,
-                nfine_tasks_per_vector) ;
-        }
+        nfine_tasks_per_vector = ceil ((double) ntasks / (double) bvdim) ;
+        ntasks = bvdim * nfine_tasks_per_vector ;
+        ASSERT (nfine_tasks_per_vector > 1) ;
+        GBURBLE ("tasks: %d, tasks per vector: %d) ", ntasks,
+            nfine_tasks_per_vector) ;
     }
 
     //--------------------------------------------------------------------------
