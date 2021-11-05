@@ -58,6 +58,20 @@ for k = [1 2 4 8 32]
     GB_spec_compare (C1, C2, tol) ;
 end
 
+% k = 1 with a sparser A matrix
+
+    A = GB_spec_random (n, n, 0.05) ;
+    B = GB_spec_random (n, 1, 0.3) ;
+    B.sparsity = 4 ;    % bitmap
+    F = GB_spec_random (n, 1, inf) ;
+    F.sparsity = 8 ;    % full
+
+    % fprintf ('\n----------------- F += S*F:\n\n') ;
+    A.sparsity = 2 ;
+    C1 = GB_mex_mxm  (F, [ ], accum, semiring, A, B, [ ]) ;
+    C2 = GB_spec_mxm (F, [ ], accum, semiring, A, B, [ ]) ;
+    GB_spec_compare (C1, C2, tol) ;
+
 GrB.burble (0) ;
 fprintf ('test237: all tests passed\n') ;
 

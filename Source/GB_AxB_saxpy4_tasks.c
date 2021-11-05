@@ -80,6 +80,7 @@ void GB_AxB_saxpy4_tasks
         // is handled by the same # of fine tasks.  Determine if atomics are
         // to be used or not.
 
+        use_coarse_tasks = false ;
         double cnz = ((double) cvlen) * ((double) bvdim) ;
         double intensity = work / fmax (cnz, 1) ;
         double workspace = ((double) cvlen) * ((double) nthreads) ;
@@ -90,14 +91,12 @@ void GB_AxB_saxpy4_tasks
         if (intensity > 2 && relwspace < 0.5)
         { 
             // fine non-atomic method with workspace
-            use_coarse_tasks = false ;
             ntasks = nthreads ;
             GBURBLE (": fine non-atomic, ") ;
         }
         else
         { 
             // fine atomic method, with no workspace
-            use_coarse_tasks = false ;
             use_atomics = true ;
             ntasks = 4 * nthreads ;
             GBURBLE (": fine atomic, ") ;
