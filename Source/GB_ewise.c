@@ -92,12 +92,12 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             GB_RETURN_IF_NULL_OR_FAULTY (beta) ;
             GB_MATRIX_WAIT (alpha) ;
             GB_MATRIX_WAIT (beta) ;
-            if (GB_nnz (alpha) == 0)
+            if (GB_nnz ((GrB_Matrix) alpha) == 0)
             {
                 GB_ERROR (GrB_EMPTY_OBJECT, "%s\n",
                     "alpha cannot be an empty scalar") ;
             }
-            if (GB_nnz (beta) == 0)
+            if (GB_nnz ((GrB_Matrix) beta) == 0)
             { 
                 GB_ERROR (GrB_EMPTY_OBJECT, "%s\n",
                     "beta cannot be an empty scalar") ;

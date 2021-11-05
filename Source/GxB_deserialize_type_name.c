@@ -64,7 +64,7 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
     if (typecode >= GB_BOOL_code && typecode < GB_UDT_code)
     { 
         // blob has a built-in type; the name is not in the blob
-        GrB_Type blob_type = GB_code_type (typecode, NULL) ;
+        GrB_Type blob_type = GB_code_type ((GB_Type_code) typecode, NULL) ;
         ASSERT (blob_type != NULL) ;
         memcpy (type_name, blob_type->name, GxB_MAX_NAME_LEN) ;
     }
@@ -77,7 +77,8 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
             return (GrB_INVALID_OBJECT) ;
         }
         // get the name of the user type from the blob
-        memcpy (type_name, blob + GB_BLOB_HEADER_SIZE, GxB_MAX_NAME_LEN) ;
+        memcpy (type_name, ((GB_void *) blob) + GB_BLOB_HEADER_SIZE,
+            GxB_MAX_NAME_LEN) ;
     }
     else
     { 

@@ -65,7 +65,8 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 
     (*blob_handle) = NULL ;
     size_t blob_size = 0 ;
-    info = GB_serialize (blob_handle, &blob_size, A, method, Context) ;
+    info = GB_serialize ((GB_void **) blob_handle, &blob_size, A, method,
+        Context) ;
     (*blob_size_handle) = (GrB_Index) blob_size ;
     GB_BURBLE_END ;
     return (info) ;

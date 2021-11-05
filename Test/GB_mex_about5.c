@@ -888,10 +888,6 @@ void mexFunction
     OK (GxB_Desc_get (desc, GxB_IMPORT, &method)) ;
     CHECK (method == GxB_SECURE_IMPORT) ;
 
-    GrB_Desc_Field ff ;
-    OK (GxB_Descriptor_get (&ff, desc, GxB_IMPORT)) ;
-    CHECK (ff == GxB_SECURE_IMPORT) ;
-
     OK (GxB_Desc_set (desc, GxB_COMPRESSION, GxB_COMPRESSION_LZ4HC + 4)) ;
     OK (GxB_Desc_get (desc, GxB_COMPRESSION, &method)) ;
     CHECK (method == GxB_COMPRESSION_LZ4HC + 4)

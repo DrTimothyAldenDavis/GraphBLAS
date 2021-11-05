@@ -459,7 +459,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             //------------------------------------------------------------------
 
             if (GB_binop_builtin (op->xtype, false, Atype, false,
-                op, false, &opcode, &xcode, &ycode, &zcode))
+                (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 
 
                 //--------------------------------------------------------------
@@ -493,7 +493,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             //------------------------------------------------------------------
 
             if (GB_binop_builtin (Atype, false, op->ytype, false,
-                op, false, &opcode, &xcode, &ycode, &zcode))
+                (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 
 
                 //--------------------------------------------------------------

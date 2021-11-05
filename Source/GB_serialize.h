@@ -125,13 +125,15 @@ GrB_Info GB_deserialize_from_blob
 #define GB_BLOB_WRITES(S,n) \
     if (n > 0)                                              \
     {                                                       \
-        memcpy (blob + s, S + 1, n * sizeof (int64_t)) ;    \
+        memcpy (((GB_void *) blob) + s, S + 1, n * sizeof (int64_t)) ;    \
         s += n * sizeof (int64_t) ;                         \
     }
 
 // read a scalar from the blob
-#define GB_BLOB_READ(x,type) \
-    type x ; memcpy (&x, blob + s, sizeof (type)) ; s += sizeof (type) ;
+#define GB_BLOB_READ(x,type)                                \
+    type x ;                                                \
+    memcpy (&x, ((GB_void *) blob) + s, sizeof (type)) ;    \
+    s += sizeof (type) ;
 
 // get an int64_t pointer to an array in the blob
 #define GB_BLOB_READS(S,n) \

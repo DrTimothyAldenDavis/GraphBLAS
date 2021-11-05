@@ -42,7 +42,7 @@ static inline GrB_Info GB_sel   // w<M> = accum (w, select(w,k))
         xx0, xx1, xx2, xx7) ;
 
     // get the mask
-    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
+    GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // select the entries and optionally transpose; assemble pending tuples

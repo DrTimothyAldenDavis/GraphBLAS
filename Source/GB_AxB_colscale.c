@@ -113,7 +113,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
             ASSERT (handled) ;      // all positional ops can be flipped
         }
         // determine unary operator to compute C=A*D
-        GB_Operator op = NULL ;
+        GrB_UnaryOp op = NULL ;
         if (ztype == GrB_INT64)
         {
             switch (opcode)
@@ -148,7 +148,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
                 default:  ;
             }
         }
-        GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO, op,   // positional op
+        GB_OK (GB_apply_op (Cx, C->type, GB_NON_ISO,
+            (GB_Operator) op,   // positional op
             NULL, false, false, A, Context)) ;
         ASSERT_MATRIX_OK (C, "colscale positional: C = A*D output", GB0) ;
 

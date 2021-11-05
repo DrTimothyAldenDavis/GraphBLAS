@@ -293,5 +293,6 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
             return (true) ;
         }
     }
+    return (false) ;
 }
 

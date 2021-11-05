@@ -242,7 +242,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             //------------------------------------------------------------------
 
             if (GB_binop_builtin (op->xtype, false, Atype, false,
-                op, false, &opcode, &xcode, &ycode, &zcode))
+                (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 
 
                 //--------------------------------------------------------------
@@ -278,7 +278,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
             //------------------------------------------------------------------
 
             if (GB_binop_builtin (Atype, false, op->ytype, false,
-                op, false, &opcode, &xcode, &ycode, &zcode))
+                (GrB_BinaryOp) op, false, &opcode, &xcode, &ycode, &zcode))
             { 
 
                 //--------------------------------------------------------------

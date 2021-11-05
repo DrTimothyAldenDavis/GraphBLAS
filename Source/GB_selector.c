@@ -439,7 +439,7 @@ GrB_Info GB_selector
         int64_t *restrict Cp = C->p ;
         int64_t *restrict Ch = C->h ;
         int64_t *restrict Ci = C->i ;
-        GB_void *restrict Cx = C->x ;
+        GB_void *restrict Cx = (GB_void *) C->x ;
         int64_t kk ;
 
         //----------------------------------------------------------------------

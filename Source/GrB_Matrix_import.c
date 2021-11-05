@@ -193,6 +193,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 NULL, 0,            // Ah
                 NULL, 0,            // Ab
                 &Ai_copy, Ai_size,  // Ai
+                (void **)
                 &Ax_copy, Ax_size,  // Ax
                 0, true, 0,         // CSR format may be jumbled
                 GxB_SPARSE, false,  // sparse by row
@@ -209,6 +210,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
                 NULL, 0,            // Ah
                 NULL, 0,            // Ab
                 &Ai_copy, Ai_size,  // Ai
+                (void **)
                 &Ax_copy, Ax_size,  // Ax
                 0, true, 0,         // CSC format may be jumbled
                 GxB_SPARSE, true,   // sparse by column
@@ -225,6 +227,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
 //              NULL, 0,            // Ah
 //              NULL, 0,            // Ab
 //              NULL, 0,            // Ai
+//              (void **)
 //              &Ax_copy, Ax_size,  // Ax
 //              0, false, 0,        // cannot be jumbled
 //              GxB_FULL, false,    // full by row
@@ -241,6 +244,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
 //              NULL, 0,            // Ah
 //              NULL, 0,            // Ab
 //              NULL, 0,            // Ai
+//              (void **)
 //              &Ax_copy, Ax_size,  // Ax
 //              0, false, 0,        // cannot be jumbled
 //              GxB_FULL, true,     // full by column
@@ -284,7 +288,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
                     true,           // A is a GrB_Matrix
                     (int64_t *) (is_csc ? Ap : Ai),     // row/col indices
                     (int64_t *) (is_csc ? Ai : Ap),     // col/row indices
-                    Ax,                                 // values
+                    (const GB_void *) Ax,               // values
                     false,          // matrix is not iso
                     nvals,          // number of tuples
                     NULL,           // implicit SECOND operator for duplicates

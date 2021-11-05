@@ -18,9 +18,9 @@
 
 default: library
 
-VER1 = 5
-VER2 = 1
-VER3 = 6
+VER1 = 6
+VER2 = 0
+VER3 = 0
 
 # pick your compiler:
   CC = gcc
@@ -45,7 +45,7 @@ ifneq ($(CC),c++)
     # comment this out if using c++:
     CFLAGS += -std=c11 
 endif
-CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated1 -I../Source/Generated2
+CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated1 -I../Source/Generated2 -I../lz4
 SO_OPTS = $(LDFLAGS)
 CFLAGS += -Wno-pragmas
 

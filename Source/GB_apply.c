@@ -243,16 +243,17 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         // positional ops must be flipped, with i and j swapped
         if (op_is_unop)
         { 
-            op = GB_positional_unop_ijflip ((GrB_UnaryOp) op) ;
+            op = (GB_Operator) GB_positional_unop_ijflip ((GrB_UnaryOp) op) ;
         }
         else if (op_is_binop)
         { 
-            op = GB_positional_binop_ijflip ((GrB_BinaryOp) op) ;
+            op = (GB_Operator) GB_positional_binop_ijflip ((GrB_BinaryOp) op) ;
         }
         else // op_is_idxunop
         { 
             // also revise ithunk as needed (TRIL, TRIU, DIAG, OFFDIAG only)
-            op = GB_positional_idxunop_ijflip (&ithunk, (GrB_IndexUnaryOp) op) ;
+            op = (GB_Operator) GB_positional_idxunop_ijflip (&ithunk,
+                (GrB_IndexUnaryOp) op) ;
         }
         opcode = op->opcode ;
     }

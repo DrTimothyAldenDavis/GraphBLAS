@@ -319,7 +319,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     { 
         // only copy the type_name for user-defined types
         memset (blob + s, 0, GxB_MAX_NAME_LEN) ;
-        strncpy (blob + s, atype->name, GxB_MAX_NAME_LEN-1) ;
+        strncpy ((char *) (blob + s), atype->name, GxB_MAX_NAME_LEN-1) ;
         s += GxB_MAX_NAME_LEN ;
     }
 

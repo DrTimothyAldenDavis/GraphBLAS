@@ -42,8 +42,8 @@ GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     // deserialize the blob into a matrix
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_deserialize (C, type, blob, (size_t) blob_size,
-        Context) ;
+    GrB_Info info = GB_deserialize (C, type, (const GB_void *) blob,
+        (size_t) blob_size, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

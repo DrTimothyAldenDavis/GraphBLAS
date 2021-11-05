@@ -32,7 +32,7 @@ GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
     GB_RETURN_IF_NULL (Ax_len) ;
 
     GrB_Info info ;
-    int64_t nvals ;
+    GrB_Index nvals ;
     GB_OK (GB_nvals (&nvals, A, Context)) ;
     (*Ax_len) = nvals ;
 

@@ -305,7 +305,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     bool thunk_is_zero = false ;
     if (nz_thunk > 0)
     { 
-        thunk_is_zero = !GB_is_nonzero (Thunk->x, ttype->size) ;
+        thunk_is_zero = !GB_is_nonzero ((GB_void *) Thunk->x, ttype->size) ;
     }
 
     bool make_copy = false ;

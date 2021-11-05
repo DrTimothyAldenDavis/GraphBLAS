@@ -32,7 +32,7 @@ void GB_serialize_free_blocks
             if (p_size > 0)
             { 
                 // free the block
-                GB_void *p = Blocks [blockid].p ;
+                GB_void *p = (GB_void *) Blocks [blockid].p ;
                 GB_FREE (&p, p_size) ;
             }
         }

@@ -26,7 +26,8 @@ GrB_Info GB_transpose_cast      // C= (ctype) A' or one (A'), not in-place
 { 
     ASSERT (C != A && !GB_aliased (C, A)) ;
 
-    GB_Operator op = (iso_one) ? GB_unop_one (ctype->code) : NULL ;
+    GB_Operator op = (GB_Operator)
+        ((iso_one) ? GB_unop_one (ctype->code) : NULL) ;
 
     // C = (ctype) A' if op is NULL, or C = (ctype) one (A')
     return (GB_transpose (C, ctype, C_is_csc, A,

@@ -57,19 +57,19 @@ void GB_binop_rename            // rename a bound binary op or an idxunop
 
             switch (xcode)
             {
-                case GB_BOOL_code    : (*op) = GrB_IDENTITY_BOOL   ; break ;
-                case GB_INT8_code    : (*op) = GrB_IDENTITY_INT8   ; break ;
-                case GB_INT16_code   : (*op) = GrB_IDENTITY_INT16  ; break ;
-                case GB_INT32_code   : (*op) = GrB_IDENTITY_INT32  ; break ;
-                case GB_INT64_code   : (*op) = GrB_IDENTITY_INT64  ; break ;
-                case GB_UINT8_code   : (*op) = GrB_IDENTITY_UINT8  ; break ;
-                case GB_UINT16_code  : (*op) = GrB_IDENTITY_UINT16 ; break ;
-                case GB_UINT32_code  : (*op) = GrB_IDENTITY_UINT32 ; break ;
-                case GB_UINT64_code  : (*op) = GrB_IDENTITY_UINT64 ; break ;
-                case GB_FP32_code    : (*op) = GrB_IDENTITY_FP32   ; break ;
-                case GB_FP64_code    : (*op) = GrB_IDENTITY_FP64   ; break ;
-                case GB_FC32_code    : (*op) = GxB_IDENTITY_FC32   ; break ;
-                case GB_FC64_code    : (*op) = GxB_IDENTITY_FC64   ; break ;
+                case GB_BOOL_code    : (*op) = (GB_Operator) GrB_IDENTITY_BOOL   ; break ;
+                case GB_INT8_code    : (*op) = (GB_Operator) GrB_IDENTITY_INT8   ; break ;
+                case GB_INT16_code   : (*op) = (GB_Operator) GrB_IDENTITY_INT16  ; break ;
+                case GB_INT32_code   : (*op) = (GB_Operator) GrB_IDENTITY_INT32  ; break ;
+                case GB_INT64_code   : (*op) = (GB_Operator) GrB_IDENTITY_INT64  ; break ;
+                case GB_UINT8_code   : (*op) = (GB_Operator) GrB_IDENTITY_UINT8  ; break ;
+                case GB_UINT16_code  : (*op) = (GB_Operator) GrB_IDENTITY_UINT16 ; break ;
+                case GB_UINT32_code  : (*op) = (GB_Operator) GrB_IDENTITY_UINT32 ; break ;
+                case GB_UINT64_code  : (*op) = (GB_Operator) GrB_IDENTITY_UINT64 ; break ;
+                case GB_FP32_code    : (*op) = (GB_Operator) GrB_IDENTITY_FP32   ; break ;
+                case GB_FP64_code    : (*op) = (GB_Operator) GrB_IDENTITY_FP64   ; break ;
+                case GB_FC32_code    : (*op) = (GB_Operator) GxB_IDENTITY_FC32   ; break ;
+                case GB_FC64_code    : (*op) = (GB_Operator) GxB_IDENTITY_FC64   ; break ;
                 default:;
             }
 
@@ -81,7 +81,7 @@ void GB_binop_rename            // rename a bound binary op or an idxunop
             // pair(A,scalar) and pair(scalar,A) become one(A)
             //------------------------------------------------------------------
 
-            (*op) = GB_unop_one (xcode) ;
+            (*op) = (GB_Operator) GB_unop_one (xcode) ;
         }
 
     }
@@ -105,19 +105,19 @@ void GB_binop_rename            // rename a bound binary op or an idxunop
 
                 switch (xcode)
                 {
-                    case GB_BOOL_code    : (*op) = GrB_NE_BOOL   ; break ;
-                    case GB_INT8_code    : (*op) = GrB_NE_INT8   ; break ;
-                    case GB_INT16_code   : (*op) = GrB_NE_INT16  ; break ;
-                    case GB_INT32_code   : (*op) = GrB_NE_INT32  ; break ;
-                    case GB_INT64_code   : (*op) = GrB_NE_INT64  ; break ;
-                    case GB_UINT8_code   : (*op) = GrB_NE_UINT8  ; break ;
-                    case GB_UINT16_code  : (*op) = GrB_NE_UINT16 ; break ;
-                    case GB_UINT32_code  : (*op) = GrB_NE_UINT32 ; break ;
-                    case GB_UINT64_code  : (*op) = GrB_NE_UINT64 ; break ;
-                    case GB_FP32_code    : (*op) = GrB_NE_FP32   ; break ;
-                    case GB_FP64_code    : (*op) = GrB_NE_FP64   ; break ;
-                    case GB_FC32_code    : (*op) = GxB_NE_FC32   ; break ;
-                    case GB_FC64_code    : (*op) = GxB_NE_FC64   ; break ;
+                    case GB_BOOL_code    : (*op) = (GB_Operator) GrB_NE_BOOL   ; break ;
+                    case GB_INT8_code    : (*op) = (GB_Operator) GrB_NE_INT8   ; break ;
+                    case GB_INT16_code   : (*op) = (GB_Operator) GrB_NE_INT16  ; break ;
+                    case GB_INT32_code   : (*op) = (GB_Operator) GrB_NE_INT32  ; break ;
+                    case GB_INT64_code   : (*op) = (GB_Operator) GrB_NE_INT64  ; break ;
+                    case GB_UINT8_code   : (*op) = (GB_Operator) GrB_NE_UINT8  ; break ;
+                    case GB_UINT16_code  : (*op) = (GB_Operator) GrB_NE_UINT16 ; break ;
+                    case GB_UINT32_code  : (*op) = (GB_Operator) GrB_NE_UINT32 ; break ;
+                    case GB_UINT64_code  : (*op) = (GB_Operator) GrB_NE_UINT64 ; break ;
+                    case GB_FP32_code    : (*op) = (GB_Operator) GrB_NE_FP32   ; break ;
+                    case GB_FP64_code    : (*op) = (GB_Operator) GrB_NE_FP64   ; break ;
+                    case GB_FC32_code    : (*op) = (GB_Operator) GxB_NE_FC32   ; break ;
+                    case GB_FC64_code    : (*op) = (GB_Operator) GxB_NE_FC64   ; break ;
                     default:;
                 }
                 break ;
@@ -126,19 +126,19 @@ void GB_binop_rename            // rename a bound binary op or an idxunop
 
                 switch (xcode)
                 {
-                    case GB_BOOL_code    : (*op) = GrB_EQ_BOOL   ; break ;
-                    case GB_INT8_code    : (*op) = GrB_EQ_INT8   ; break ;
-                    case GB_INT16_code   : (*op) = GrB_EQ_INT16  ; break ;
-                    case GB_INT32_code   : (*op) = GrB_EQ_INT32  ; break ;
-                    case GB_INT64_code   : (*op) = GrB_EQ_INT64  ; break ;
-                    case GB_UINT8_code   : (*op) = GrB_EQ_UINT8  ; break ;
-                    case GB_UINT16_code  : (*op) = GrB_EQ_UINT16 ; break ;
-                    case GB_UINT32_code  : (*op) = GrB_EQ_UINT32 ; break ;
-                    case GB_UINT64_code  : (*op) = GrB_EQ_UINT64 ; break ;
-                    case GB_FP32_code    : (*op) = GrB_EQ_FP32   ; break ;
-                    case GB_FP64_code    : (*op) = GrB_EQ_FP64   ; break ;
-                    case GB_FC32_code    : (*op) = GxB_EQ_FC32   ; break ;
-                    case GB_FC64_code    : (*op) = GxB_EQ_FC64   ; break ;
+                    case GB_BOOL_code    : (*op) = (GB_Operator) GrB_EQ_BOOL   ; break ;
+                    case GB_INT8_code    : (*op) = (GB_Operator) GrB_EQ_INT8   ; break ;
+                    case GB_INT16_code   : (*op) = (GB_Operator) GrB_EQ_INT16  ; break ;
+                    case GB_INT32_code   : (*op) = (GB_Operator) GrB_EQ_INT32  ; break ;
+                    case GB_INT64_code   : (*op) = (GB_Operator) GrB_EQ_INT64  ; break ;
+                    case GB_UINT8_code   : (*op) = (GB_Operator) GrB_EQ_UINT8  ; break ;
+                    case GB_UINT16_code  : (*op) = (GB_Operator) GrB_EQ_UINT16 ; break ;
+                    case GB_UINT32_code  : (*op) = (GB_Operator) GrB_EQ_UINT32 ; break ;
+                    case GB_UINT64_code  : (*op) = (GB_Operator) GrB_EQ_UINT64 ; break ;
+                    case GB_FP32_code    : (*op) = (GB_Operator) GrB_EQ_FP32   ; break ;
+                    case GB_FP64_code    : (*op) = (GB_Operator) GrB_EQ_FP64   ; break ;
+                    case GB_FC32_code    : (*op) = (GB_Operator) GxB_EQ_FC32   ; break ;
+                    case GB_FC64_code    : (*op) = (GB_Operator) GxB_EQ_FC64   ; break ;
                     default:;
                 }
                 break ;
@@ -147,17 +147,17 @@ void GB_binop_rename            // rename a bound binary op or an idxunop
 
                 switch (xcode)
                 {
-                    case GB_BOOL_code    : (*op) = GrB_GT_BOOL   ; break ;
-                    case GB_INT8_code    : (*op) = GrB_GT_INT8   ; break ;
-                    case GB_INT16_code   : (*op) = GrB_GT_INT16  ; break ;
-                    case GB_INT32_code   : (*op) = GrB_GT_INT32  ; break ;
-                    case GB_INT64_code   : (*op) = GrB_GT_INT64  ; break ;
-                    case GB_UINT8_code   : (*op) = GrB_GT_UINT8  ; break ;
-                    case GB_UINT16_code  : (*op) = GrB_GT_UINT16 ; break ;
-                    case GB_UINT32_code  : (*op) = GrB_GT_UINT32 ; break ;
-                    case GB_UINT64_code  : (*op) = GrB_GT_UINT64 ; break ;
-                    case GB_FP32_code    : (*op) = GrB_GT_FP32   ; break ;
-                    case GB_FP64_code    : (*op) = GrB_GT_FP64   ; break ;
+                    case GB_BOOL_code    : (*op) = (GB_Operator) GrB_GT_BOOL   ; break ;
+                    case GB_INT8_code    : (*op) = (GB_Operator) GrB_GT_INT8   ; break ;
+                    case GB_INT16_code   : (*op) = (GB_Operator) GrB_GT_INT16  ; break ;
+                    case GB_INT32_code   : (*op) = (GB_Operator) GrB_GT_INT32  ; break ;
+                    case GB_INT64_code   : (*op) = (GB_Operator) GrB_GT_INT64  ; break ;
+                    case GB_UINT8_code   : (*op) = (GB_Operator) GrB_GT_UINT8  ; break ;
+                    case GB_UINT16_code  : (*op) = (GB_Operator) GrB_GT_UINT16 ; break ;
+                    case GB_UINT32_code  : (*op) = (GB_Operator) GrB_GT_UINT32 ; break ;
+                    case GB_UINT64_code  : (*op) = (GB_Operator) GrB_GT_UINT64 ; break ;
+                    case GB_FP32_code    : (*op) = (GB_Operator) GrB_GT_FP32   ; break ;
+                    case GB_FP64_code    : (*op) = (GB_Operator) GrB_GT_FP64   ; break ;
                     default:;
                 }
                 break ;
@@ -166,17 +166,17 @@ void GB_binop_rename            // rename a bound binary op or an idxunop
 
                 switch (xcode)
                 {
-                    case GB_BOOL_code    : (*op) = GrB_GE_BOOL   ; break ;
-                    case GB_INT8_code    : (*op) = GrB_GE_INT8   ; break ;
-                    case GB_INT16_code   : (*op) = GrB_GE_INT16  ; break ;
-                    case GB_INT32_code   : (*op) = GrB_GE_INT32  ; break ;
-                    case GB_INT64_code   : (*op) = GrB_GE_INT64  ; break ;
-                    case GB_UINT8_code   : (*op) = GrB_GE_UINT8  ; break ;
-                    case GB_UINT16_code  : (*op) = GrB_GE_UINT16 ; break ;
-                    case GB_UINT32_code  : (*op) = GrB_GE_UINT32 ; break ;
-                    case GB_UINT64_code  : (*op) = GrB_GE_UINT64 ; break ;
-                    case GB_FP32_code    : (*op) = GrB_GE_FP32   ; break ;
-                    case GB_FP64_code    : (*op) = GrB_GE_FP64   ; break ;
+                    case GB_BOOL_code    : (*op) = (GB_Operator) GrB_GE_BOOL   ; break ;
+                    case GB_INT8_code    : (*op) = (GB_Operator) GrB_GE_INT8   ; break ;
+                    case GB_INT16_code   : (*op) = (GB_Operator) GrB_GE_INT16  ; break ;
+                    case GB_INT32_code   : (*op) = (GB_Operator) GrB_GE_INT32  ; break ;
+                    case GB_INT64_code   : (*op) = (GB_Operator) GrB_GE_INT64  ; break ;
+                    case GB_UINT8_code   : (*op) = (GB_Operator) GrB_GE_UINT8  ; break ;
+                    case GB_UINT16_code  : (*op) = (GB_Operator) GrB_GE_UINT16 ; break ;
+                    case GB_UINT32_code  : (*op) = (GB_Operator) GrB_GE_UINT32 ; break ;
+                    case GB_UINT64_code  : (*op) = (GB_Operator) GrB_GE_UINT64 ; break ;
+                    case GB_FP32_code    : (*op) = (GB_Operator) GrB_GE_FP32   ; break ;
+                    case GB_FP64_code    : (*op) = (GB_Operator) GrB_GE_FP64   ; break ;
                     default:;
                 }
                 break ;
@@ -185,17 +185,17 @@ void GB_binop_rename            // rename a bound binary op or an idxunop
 
                 switch (xcode)
                 {
-                    case GB_BOOL_code    : (*op) = GrB_LT_BOOL   ; break ;
-                    case GB_INT8_code    : (*op) = GrB_LT_INT8   ; break ;
-                    case GB_INT16_code   : (*op) = GrB_LT_INT16  ; break ;
-                    case GB_INT32_code   : (*op) = GrB_LT_INT32  ; break ;
-                    case GB_INT64_code   : (*op) = GrB_LT_INT64  ; break ;
-                    case GB_UINT8_code   : (*op) = GrB_LT_UINT8  ; break ;
-                    case GB_UINT16_code  : (*op) = GrB_LT_UINT16 ; break ;
-                    case GB_UINT32_code  : (*op) = GrB_LT_UINT32 ; break ;
-                    case GB_UINT64_code  : (*op) = GrB_LT_UINT64 ; break ;
-                    case GB_FP32_code    : (*op) = GrB_LT_FP32   ; break ;
-                    case GB_FP64_code    : (*op) = GrB_LT_FP64   ; break ;
+                    case GB_BOOL_code    : (*op) = (GB_Operator) GrB_LT_BOOL   ; break ;
+                    case GB_INT8_code    : (*op) = (GB_Operator) GrB_LT_INT8   ; break ;
+                    case GB_INT16_code   : (*op) = (GB_Operator) GrB_LT_INT16  ; break ;
+                    case GB_INT32_code   : (*op) = (GB_Operator) GrB_LT_INT32  ; break ;
+                    case GB_INT64_code   : (*op) = (GB_Operator) GrB_LT_INT64  ; break ;
+                    case GB_UINT8_code   : (*op) = (GB_Operator) GrB_LT_UINT8  ; break ;
+                    case GB_UINT16_code  : (*op) = (GB_Operator) GrB_LT_UINT16 ; break ;
+                    case GB_UINT32_code  : (*op) = (GB_Operator) GrB_LT_UINT32 ; break ;
+                    case GB_UINT64_code  : (*op) = (GB_Operator) GrB_LT_UINT64 ; break ;
+                    case GB_FP32_code    : (*op) = (GB_Operator) GrB_LT_FP32   ; break ;
+                    case GB_FP64_code    : (*op) = (GB_Operator) GrB_LT_FP64   ; break ;
                     default:;
                 }
                 break ;
@@ -204,17 +204,17 @@ void GB_binop_rename            // rename a bound binary op or an idxunop
 
                 switch (xcode)
                 {
-                    case GB_BOOL_code    : (*op) = GrB_LE_BOOL   ; break ;
-                    case GB_INT8_code    : (*op) = GrB_LE_INT8   ; break ;
-                    case GB_INT16_code   : (*op) = GrB_LE_INT16  ; break ;
-                    case GB_INT32_code   : (*op) = GrB_LE_INT32  ; break ;
-                    case GB_INT64_code   : (*op) = GrB_LE_INT64  ; break ;
-                    case GB_UINT8_code   : (*op) = GrB_LE_UINT8  ; break ;
-                    case GB_UINT16_code  : (*op) = GrB_LE_UINT16 ; break ;
-                    case GB_UINT32_code  : (*op) = GrB_LE_UINT32 ; break ;
-                    case GB_UINT64_code  : (*op) = GrB_LE_UINT64 ; break ;
-                    case GB_FP32_code    : (*op) = GrB_LE_FP32   ; break ;
-                    case GB_FP64_code    : (*op) = GrB_LE_FP64   ; break ;
+                    case GB_BOOL_code    : (*op) = (GB_Operator) GrB_LE_BOOL   ; break ;
+                    case GB_INT8_code    : (*op) = (GB_Operator) GrB_LE_INT8   ; break ;
+                    case GB_INT16_code   : (*op) = (GB_Operator) GrB_LE_INT16  ; break ;
+                    case GB_INT32_code   : (*op) = (GB_Operator) GrB_LE_INT32  ; break ;
+                    case GB_INT64_code   : (*op) = (GB_Operator) GrB_LE_INT64  ; break ;
+                    case GB_UINT8_code   : (*op) = (GB_Operator) GrB_LE_UINT8  ; break ;
+                    case GB_UINT16_code  : (*op) = (GB_Operator) GrB_LE_UINT16 ; break ;
+                    case GB_UINT32_code  : (*op) = (GB_Operator) GrB_LE_UINT32 ; break ;
+                    case GB_UINT64_code  : (*op) = (GB_Operator) GrB_LE_UINT64 ; break ;
+                    case GB_FP32_code    : (*op) = (GB_Operator) GrB_LE_FP32   ; break ;
+                    case GB_FP64_code    : (*op) = (GB_Operator) GrB_LE_FP64   ; break ;
                     default:;
                 }
                 break ;
