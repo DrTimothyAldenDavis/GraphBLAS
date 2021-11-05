@@ -24,15 +24,9 @@
     GB_mx_put_global (true) ;           \
 }
 
-#if (GxB_IMPLEMENTATION_MAJOR <= 5)
-#define Int GrB_Index
-#else
-#define Int int64_t
-#endif
+bool isnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
 
-bool isnan64 (Int i, Int j, const void *x, const void *b) ;
-
-bool isnan64 (Int i, Int j, const void *x, const void *b)
+bool isnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b)
 { 
     double aij = * ((double *) x) ;
     return (isnan (aij)) ;

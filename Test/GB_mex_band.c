@@ -40,16 +40,10 @@ typedef struct
     int64_t hi ;
 } LoHi_type ; 
 
-#if (GxB_IMPLEMENTATION_MAJOR <= 5)
-#define Int GrB_Index
-#else
-#define Int int64_t
-#endif
-
-bool LoHi_band (Int i, Int j,
+bool LoHi_band (GrB_Index i, GrB_Index j,
     /* x is unused: */ const void *x, const LoHi_type *thunk) ;
 
-bool LoHi_band (Int i, Int j,
+bool LoHi_band (GrB_Index i, GrB_Index j,
     /* x is unused: */ const void *x, const LoHi_type *thunk)
 {
     int64_t i2 = (int64_t) i ;

@@ -92,14 +92,8 @@ void f3 (GxB_FC64_t *z, const GxB_FC64_t *x, const double *y)
     (*z) = GB_FC64_add ((*x), GxB_CMPLX (0,(*y))) ;
 }
 
-#if (GxB_IMPLEMENTATION_MAJOR <= 5)
-#define Int GrB_Index
-#else
-#define Int int64_t
-#endif
-
-bool fselect (Int i, Int j, const double *x, const double *k) ;
-bool fselect (Int i, Int j, const double *x, const double *k)
+bool fselect (GrB_Index i, GrB_Index j, const double *x, const double *k) ;
+bool fselect (GrB_Index i, GrB_Index j, const double *x, const double *k)
 {
     // select entries in triu(A) that are greater than k
     int64_t i2 = (int64_t) i ;

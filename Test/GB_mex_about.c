@@ -24,23 +24,17 @@ GrB_Info ack (int64_t *stuff, GrB_Matrix GunkIt)
     return (GrB_SUCCESS) ;
 }
 
-#if (GxB_IMPLEMENTATION_MAJOR <= 5)
-#define Int GrB_Index
-#else
-#define Int int64_t
-#endif
+bool select_plus_one (GrB_Index i, GrB_Index j, const double *x, const double *thunk) ;
 
-bool select_plus_one (Int i, Int j, const double *x, const double *thunk) ;
+bool select_nothing (GrB_Index i, GrB_Index j, const void *x, const void *thunk) ;
 
-bool select_nothing (Int i, Int j, const void *x, const void *thunk) ;
-
-bool select_plus_one (Int i, Int j, const double *x, const double *thunk)
+bool select_plus_one (GrB_Index i, GrB_Index j, const double *x, const double *thunk)
 {
     // return true if x >= thunk+1
     return ((*x) >= ((*thunk)+1)) ;
 }
 
-bool select_nothing (Int i, Int j, const void *x, const void *thunk)
+bool select_nothing (GrB_Index i, GrB_Index j, const void *x, const void *thunk)
 {
     return (false) ;
 }
