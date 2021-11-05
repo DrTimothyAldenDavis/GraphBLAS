@@ -32,7 +32,7 @@ void GB_ijlength            // get the length and kind of an index list I
 
     ASSERT (I != NULL) ;
     ASSERT (limit >= 0) ;
-    ASSERT (limit <= GrB_INDEX_MAX) ;
+    ASSERT (limit < GB_NMAX) ;
 
     //--------------------------------------------------------------------------
     // determine the length of I

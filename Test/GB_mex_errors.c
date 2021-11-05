@@ -2128,7 +2128,7 @@ void mexFunction
     // GrB_mxm dot product
     //--------------------------------------------------------------------------
 
-    GrB_Index huge = GrB_INDEX_MAX + 1 ;
+    GrB_Index huge = GB_NMAX ;
     GrB_Matrix HugeRow ;
     OK (GrB_Matrix_new (&HugeRow, GrB_FP64, 1, huge)) ;
     GB_Matrix_check (HugeRow, "huge row", G3, NULL) ;
