@@ -9,14 +9,14 @@
 
 // serialize a GrB_Vector into a blob of bytes
 
-// This method is similar to GrB_Vector_serialize.  In contrast with the GrB*
-// method, this method allocates the blob itself, and hands over the allocated
-// space to the user application.  The blob must be freed by the same free
-// function passed in to GxB_init, or by the ANSI C11 free() if GrB_init was
-// used.  On input, the blob_size need not be initialized; it is returned as
-// the size of the blob as allocated.
+// This method is similar to GxB_Matrix_serialize.  Like that method, it
+// allocates the blob itself, and hands over the allocated space to the user
+// application.  The blob must be freed by the same free function passed in to
+// GxB_init, or by the ANSI C11 free() if GrB_init was used.  On input, the
+// blob_size need not be initialized; it is returned as the size of the blob as
+// allocated.
 
-// This method also includes the descriptor as the last parameter, which allows
+// This method includes the descriptor as the last parameter, which allows
 // for the compression method to be selected, and controls the # of threads
 // used to create the blob.  Example usage:
 

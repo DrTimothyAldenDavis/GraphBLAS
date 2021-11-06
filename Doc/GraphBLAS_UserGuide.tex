@@ -4366,10 +4366,11 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Vector_free'           & free a vector                    & \ref{vector_free} \\
 \hline
 \hline
-\verb'GrB_Vector_serializeSize'  & return size of serialized vector & \ref{vector_serialize_size} \\
-\verb'GrB_Vector_serialize'      & serialize a vector               & \ref{vector_serialize} \\
+% NOTE: GrB_Vector_serialize / deserialize does not appear in the 2.0 C API.
+% \verb'GrB_Vector_serializeSize'  & return size of serialized vector & \ref{vector_serialize_size} \\
+% \verb'GrB_Vector_serialize'      & serialize a vector               & \ref{vector_serialize} \\
 \verb'GxB_Vector_serialize'      & serialize a vector               & \ref{vector_serialize_GxB} \\
-\verb'GrB_Vector_deserialize'    & deserialize a vector             & \ref{vector_deserialize} \\
+% \verb'GrB_Vector_deserialize'    & deserialize a vector             & \ref{vector_deserialize} \\
 \verb'GxB_Vector_deserialize'    & deserialize a vector             & \ref{vector_deserialize_GxB} \\
 \hline
 \hline
@@ -5789,10 +5790,10 @@ The following methods are described in this Section:
 \begin{tabular}{lll}
 GraphBLAS function   & purpose                                      & Section \\
 \hline
-\verb'GrB_Vector_serializeSize'  & return size of serialized vector & \ref{vector_serialize_size} \\
-\verb'GrB_Vector_serialize'      & serialize a vector               & \ref{vector_serialize} \\
+% \verb'GrB_Vector_serializeSize'  & return size of serialized vector & \ref{vector_serialize_size} \\
+% \verb'GrB_Vector_serialize'      & serialize a vector               & \ref{vector_serialize} \\
 \verb'GxB_Vector_serialize'      & serialize a vector               & \ref{vector_serialize_GxB} \\
-\verb'GrB_Vector_deserialize'    & deserialize a vector             & \ref{vector_deserialize} \\
+% \verb'GrB_Vector_deserialize'    & deserialize a vector             & \ref{vector_deserialize} \\
 \verb'GxB_Vector_deserialize'    & deserialize a vector             & \ref{vector_deserialize_GxB} \\
 \hline
 \verb'GrB_Matrix_serializeSize' & return size of serialized matrix & \ref{matrix_serialize_size} \\
@@ -5807,59 +5808,59 @@ GraphBLAS function   & purpose                                      & Section \\
 }
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_Vector\_serializeSize:}  return size of serialized vector}
+% \subsubsection{{\sf GrB\_Vector\_serializeSize:}  return size of serialized vector}
 %-------------------------------------------------------------------------------
-\label{vector_serialize_size}
+% \label{vector_serialize_size}
 
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GrB_Vector_serializeSize   // estimate the size of a blob
-(
-    // output:
-    GrB_Index *blob_size_handle,    // upper bound on the required size of the
-                                    // blob on output.
-    // input:
-    GrB_Vector u                    // vector to serialize
-) ;
-\end{verbatim}
-} \end{mdframed}
+% \begin{mdframed}[userdefinedwidth=6in]
+% {\footnotesize
+% \begin{verbatim}
+% GrB_Info GrB_Vector_serializeSize   // estimate the size of a blob
+% (
+%    // output:
+%    GrB_Index *blob_size_handle,    // upper bound on the required size of the
+%                                    // blob on output.
+%    // input:
+%    GrB_Vector u                    // vector to serialize
+%) ;
+%\end{verbatim}
+%} \end{mdframed}
+% 
+% \verb'GrB_Vector_serializeSize' returns an upper bound on the size of the blob
+% needed to serialize a \verb'GrB_Vector' using \verb'GrB_Vector_serialize'.
+% After the vector is serialized, the actual size used is returned, and the blob
+% may be \verb'realloc''d to that size if desired.
+% This method is not required for \verb'GxB_Vector_serialize'.
 
-\verb'GrB_Vector_serializeSize' returns an upper bound on the size of the blob
-needed to serialize a \verb'GrB_Vector' using \verb'GrB_Vector_serialize'.
-After the vector is serialized, the actual size used is returned, and the blob
-may be \verb'realloc''d to that size if desired.
-This method is not required for \verb'GxB_Vector_serialize'.
-
-\newpage
+% \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_Vector\_serialize:}      serialize a vector}
+% \subsubsection{{\sf GrB\_Vector\_serialize:}      serialize a vector}
 %-------------------------------------------------------------------------------
-\label{vector_serialize}
+% \label{vector_serialize}
 
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GrB_Vector_serialize       // serialize a GrB_Vector to a blob
-(
-    // output:
-    void *blob,                     // the blob, already allocated in input
-    // input/output:
-    GrB_Index *blob_size_handle,    // size of the blob on input.  On output,
-                                    // the # of bytes used in the blob.
-    // input:
-    GrB_Vector u                    // vector to serialize
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GrB_Vector_serialize' serializes a vector into a single array of bytes
-(the blob), which must be already allocated by the user application.
-On input, \verb'&blob_size' is the size of the allocated blob in bytes.
-On output, it is reduced to the numbed of bytes actually used to serialize
-the vector.  After calling \verb'GrB_Vector_serialize', the blob may be
-\verb'realloc''d to this revised size if desired (this is optional).
-LZ4 compression is used to construct a compact blob.
+% \begin{mdframed}[userdefinedwidth=6in]
+% {\footnotesize
+% \begin{verbatim}
+% GrB_Info GrB_Vector_serialize       // serialize a GrB_Vector to a blob
+% (
+%    // output:
+%    void *blob,                     // the blob, already allocated in input
+%    // input/output:
+%    GrB_Index *blob_size_handle,    // size of the blob on input.  On output,
+%                                    // the # of bytes used in the blob.
+%    // input:
+%    GrB_Vector u                    // vector to serialize
+% ) ;
+% \end{verbatim}
+% } \end{mdframed}
+%
+% \verb'GrB_Vector_serialize' serializes a vector into a single array of bytes
+% (the blob), which must be already allocated by the user application.
+% On input, \verb'&blob_size' is the size of the allocated blob in bytes.
+% On output, it is reduced to the numbed of bytes actually used to serialize
+% the vector.  After calling \verb'GrB_Vector_serialize', the blob may be
+% \verb'realloc''d to this revised size if desired (this is optional).
+% LZ4 compression is used to construct a compact blob.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_serialize:}      serialize a vector}
@@ -5882,37 +5883,37 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 \end{verbatim}
 } \end{mdframed}
 
-\verb'GxB_Vector_serialize' is identical to \verb'GrB_Vector_serialize', except
-that it does not require a pre-allocated blob.  Instead, it \verb'malloc''s the
-blob internally, and fills it with the serialized vector.
+\verb'GxB_Vector_serialize' serializes a vector into a single array of bytes
+(the blob), which is \verb'malloc''ed and filled with
+the serialized vector.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_Vector\_deserialize:}    deserialize a vector}
+% \subsubsection{{\sf GrB\_Vector\_deserialize:}    deserialize a vector}
 %-------------------------------------------------------------------------------
-\label{vector_deserialize}
+% \label{vector_deserialize}
 
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GrB_Vector_deserialize     // deserialize blob into a GrB_Vector
-(
-    // output:
-    GrB_Vector *w,      // output vector created from the blob
-    // input:
-    GrB_Type type,      // type of the vector w.  Required if the blob holds a
-                        // vector of user-defined type.  May be NULL if blob
-                        // holds a built-in type; otherwise must match the
-                        // type of w.
-    const void *blob,       // the blob
-    GrB_Index blob_size     // size of the blob
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-This method creates a vector \verb'w' by deserializing the contents of the
-blob, constructed by either \verb'GrB_Vector_serialize' or
-\verb'GxB_Vector_serialize'.
+% \begin{mdframed}[userdefinedwidth=6in]
+% {\footnotesize
+% \begin{verbatim}
+% GrB_Info GrB_Vector_deserialize     // deserialize blob into a GrB_Vector
+% (
+%     // output:
+%     GrB_Vector *w,      // output vector created from the blob
+%     // input:
+%     GrB_Type type,      // type of the vector w.  Required if the blob holds a
+%                         // vector of user-defined type.  May be NULL if blob
+%                         // holds a built-in type; otherwise must match the
+%                         // type of w.
+%     const void *blob,       // the blob
+%     GrB_Index blob_size     // size of the blob
+% ) ;
+% \end{verbatim}
+% } \end{mdframed}
+% 
+% This method creates a vector \verb'w' by deserializing the contents of the
+% blob, constructed by either \verb'GrB_Vector_serialize' or
+% \verb'GxB_Vector_serialize'.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_deserialize:}    deserialize a vector}
@@ -5938,8 +5939,13 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
 \end{verbatim}
 } \end{mdframed}
 
-Identical to \verb'GrB_Vector_deserialize', except that the descriptor
-appears as the last parameter to control the number of threads used.
+This method creates a vector \verb'w' by deserializing the contents of the
+blob, constructed by
+% either \verb'GrB_Vector_serialize' or
+\verb'GxB_Vector_serialize'.
+
+% Identical to \verb'GrB_Vector_deserialize', except that the descriptor
+% appears as the last parameter to control the number of threads used.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -6103,7 +6109,8 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
 
 \verb'GrB_deserialize_type_name' returns the name of type of the matrix or
 vector serialized into the blob.  This method works for any blob, from
-\verb'GrB_Vector_serialize', \verb'GxB_Vector_serialize',
+% \verb'GrB_Vector_serialize',
+\verb'GxB_Vector_serialize',
 \verb'GrB_Matrix_serialize', or \verb'GxB_Matrix_serialize'.
 
 \newpage

@@ -11070,18 +11070,6 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Vector_serialize       // serialize a GrB_Vector to a blob
-(
-    // output:
-    void *blob,                     // the blob, already allocated in input
-    // input/output:
-    GrB_Index *blob_size_handle,    // size of the blob on input.  On output,
-                                    // the # of bytes used in the blob.
-    // input:
-    GrB_Vector u                    // vector to serialize
-) ;
-
-GB_PUBLIC
 GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
 (
     // output:
@@ -11089,16 +11077,6 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
                                     // blob on output.
     // input:
     GrB_Matrix A                    // matrix to serialize
-) ;
-
-GB_PUBLIC
-GrB_Info GrB_Vector_serializeSize   // estimate the size of a blob
-(
-    // output:
-    GrB_Index *blob_size_handle,    // upper bound on the required size of the
-                                    // blob on output.
-    // input:
-    GrB_Vector u                    // vector to serialize
 ) ;
 
 // The GrB* and GxB* deserialize methods are nearly identical.  The GxB*
@@ -11147,20 +11125,6 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
     const void *blob,       // the blob
     GrB_Index blob_size,    // size of the blob
     const GrB_Descriptor desc       // to control # of threads used
-) ;
-
-GB_PUBLIC
-GrB_Info GrB_Vector_deserialize     // deserialize blob into a GrB_Vector
-(
-    // output:
-    GrB_Vector *w,      // output vector created from the blob
-    // input:
-    GrB_Type type,      // type of the vector w.  Required if the blob holds a
-                        // vector of user-defined type.  May be NULL if blob
-                        // holds a built-in type; otherwise must match the
-                        // type of w.
-    const void *blob,       // the blob
-    GrB_Index blob_size     // size of the blob
 ) ;
 
 // GxB_deserialize_type_name extracts the type_name of the GrB_Type of the

@@ -849,7 +849,6 @@
 #define GrB_Vector_build_UINT64 GrM_Vector_build_UINT64
 #define GrB_Vector_build_UINT8 GrM_Vector_build_UINT8
 #define GrB_Vector_clear GrM_Vector_clear
-#define GrB_Vector_deserialize GrM_Vector_deserialize
 #define GrB_Vector_dup GrM_Vector_dup
 #define GrB_Vector_error GrM_Vector_error
 #define GrB_Vector_eWiseAdd_BinaryOp GrM_Vector_eWiseAdd_BinaryOp
@@ -916,8 +915,6 @@
 #define GrB_Vector_select_UINT32 GrM_Vector_select_UINT32
 #define GrB_Vector_select_UINT64 GrM_Vector_select_UINT64
 #define GrB_Vector_select_UINT8 GrM_Vector_select_UINT8
-#define GrB_Vector_serialize GrM_Vector_serialize
-#define GrB_Vector_serializeSize GrM_Vector_serializeSize
 #define GrB_Vector_setElement_BOOL GrM_Vector_setElement_BOOL
 #define GrB_Vector_setElement_FP32 GrM_Vector_setElement_FP32
 #define GrB_Vector_setElement_FP64 GrM_Vector_setElement_FP64
