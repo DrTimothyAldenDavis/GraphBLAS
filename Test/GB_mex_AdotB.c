@@ -42,6 +42,12 @@ GrB_Info adotb_complex (GB_Context Context)
 {
     GrB_Info info = GrB_Matrix_new (&Aconj, Complex, anrows, ancols) ;
     if (info != GrB_SUCCESS) return (info) ;
+    info = GxB_Matrix_Option_set (Aconj, GxB_FORMAT, GxB_BY_COL) ;
+    if (info != GrB_SUCCESS)
+    { 
+        GrB_Matrix_free_(&Aconj) ;
+        return (info) ;
+    }
     info = GrB_Matrix_apply_(Aconj, NULL, NULL, Complex_conj, A, NULL) ;
     if (info != GrB_SUCCESS)
     {
