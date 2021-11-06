@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: remove this; it is not in the v2.0 C API.
+
 // serialize a GrB_Vector into a blob of bytes
 
 // This method is similar to GxB_Vector_serialize.  In contrast with the GrB*

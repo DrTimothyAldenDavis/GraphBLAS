@@ -155,7 +155,6 @@ logstat ('test179',t) ; % test bitmap select
 
 logstat ('test165',t) ; % test C=A*B' where A is diagonal and B becomes bitmap
 logstat ('test01' ,t) ; % error handling
-logstat ('test01' ,s) ; % error handling
 logstat ('test07b',t) ; % quick test GB_mex_assign
 logstat ('test83' ,t) ; % GrB_assign with C_replace and empty J
 

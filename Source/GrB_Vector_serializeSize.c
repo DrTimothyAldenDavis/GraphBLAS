@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: remove this; it is not in the v2.0 C API.
+
 // GrB_Vector_serialize and GxB_Vector_serialize both serialize a GrB_Vector
 // into a blob of bytes.  This function provides an estimate of the # of bytes
 // the blob would have, assuming the default method and default # of threads,

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: remove this; it is not in the v2.0 C API.
+
 // deserialize: create a GrB_Vector from a blob of bytes
 
 // Identical to GxB_Vector_deserialize, except that this method does not take
