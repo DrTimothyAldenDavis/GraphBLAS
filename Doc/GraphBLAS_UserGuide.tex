@@ -217,7 +217,7 @@ are extensions to the GraphBLAS C API.
         and $\bf B \setminus A$ are computed.
     \item added LZ4/LZ4HC: compression library, \url{http://www.lz4.org} (BSD 2),
         v1.9.3, Copyright (c) 2011-2016, Yann Collet.
-    \item mis and pagerank demos: removed; mis added to LAGraph/experimental
+    \item MIS and pagerank demos: removed; MIS added to LAGraph/experimental
     \item disabled free memory pool if OpenMP not available
     \item (34) bug fix: \verb'C<M>=Z' not returning \verb'C'
         as iso if \verb'Z 'iso and \verb'C' initially
@@ -1601,7 +1601,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc
     void * (* user_malloc_function  ) (size_t),
     void * (* user_calloc_function  ) (size_t, size_t),
     void * (* user_realloc_function ) (void *, size_t),
-    void   (* user_free_function    ) (void *),
+    void   (* user_free_function    ) (void *)
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -3205,19 +3205,15 @@ void f
 (
     void *z,            // output value z, of type ztype
     const void *x,      // input value x of type xtype; value of v(i) or A(i,j)
-//  draft v2.0 spec:
-//  const GrB_Index *indices,   // [i 0] for v(i) or [i j] of A(i,j)
-//  GrB_Index n,                // 1 for vector index, 2 for matrix indices
-//  a better approach:
-    int64_t i,          // row index of A(i,j)
-    int64_t j,          // column index of A(i,j), or zero for v(i)
+    GrB_Index i,        // row index of A(i,j)
+    GrB_Index j,        // column index of A(i,j), or zero for v(i)
     const void *y       // input scalar y
 ) ; \end{verbatim}}
 
 The following built-in operators are available.  Operators that do not depend
 on the value of \verb'A(i,j)' can be used on any matrix or vector, including
 those of user-defined type.  In the table, \verb'y' is a
-scalar whose type matches the suffix of the operator.  The \verb'VALUENE' and
+scalar whose type matches the suffix of the operator.  The \verb'VALUEEQ' and
 \verb'VALUENE' operators are defined for any built-in type. The other
 \verb'VALUE' operators are defined only for real (not complex) built-in types.
 Any index computations are done in \verb'int64_t' arithmetic; the result is
@@ -4422,7 +4418,7 @@ entries in it, of the given type.  This is analogous to Octave/MATLAB statement
 type.  The pattern of the new vector is empty.
 
 \begin{alert}
-{\bf SPEC:} \verb'n' may be zero, as an extenstion to the spec.
+{\bf SPEC:} \verb'n' may be zero, as an extension to the spec.
 \end{alert}
 
 %-------------------------------------------------------------------------------
@@ -4536,7 +4532,6 @@ GrB_Info GrB_Vector_size    // get the dimension of a vector
 \verb'GrB_Vector_size' returns the size of a vector (the number of rows).
 Analogous to \verb'n = length(v)' or \verb'n = size(v,1)' in MATLAB.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_nvals:}         return the number of entries in a vector}
 %-------------------------------------------------------------------------------
@@ -4579,6 +4574,7 @@ GrB_Info GxB_Vector_type_name      // return the name of the type of a vector
 \verb'GxB_Vector_type_name' returns the name of the type of a vector.
 Analogous to \verb'type = class (v)' in MATLAB.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_build:}         build a vector from a set of tuples}
 %-------------------------------------------------------------------------------
@@ -4668,7 +4664,6 @@ matrix, \verb'A(i,0) = x', where the column index for a vector is implicitly
 \verb'GrB_Matrix_setElement' in Section~\ref{matrix_setElement}.
 If an error occurs, \verb'GrB_error(&err,w)' returns details about the error.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_extractElement:} get an entry from a vector}
 %-------------------------------------------------------------------------------
@@ -4697,6 +4692,7 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 \verb'x = A(i,0)' from an \verb'n'-by-1 matrix; see
 Section~\ref{matrix_extractElement}.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_removeElement:} remove an entry from a vector}
 %-------------------------------------------------------------------------------
@@ -4758,6 +4754,7 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
 \verb'GrB_Vector_resize' changes the size of a vector.  If the dimension
 decreases, entries that fall outside the resized vector are deleted.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_diag:} extract a diagonal from a matrix}
 %-------------------------------------------------------------------------------
@@ -4815,6 +4812,7 @@ GrB_Info GxB_Vector_iso     // return iso status of a vector
 
 Returns the true if the vector is iso-valued, false otherwise.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_memoryUsage:} memory used by a vector}
 %-------------------------------------------------------------------------------
@@ -4992,7 +4990,7 @@ changed with \verb'GxB_set (A, GxB_FORMAT, fmt)' with \verb'fmt' equal to
 
 \begin{alert}
 {\bf SPEC:} \verb'nrows' and/or \verb'ncols' may be zero,
-as an extenstion to the spec.
+as an extension to the spec.
 \end{alert}
 
 %-------------------------------------------------------------------------------
@@ -5162,6 +5160,7 @@ GrB_Info GxB_Matrix_type_name      // return the name of the type of a matrix
 \verb'GxB_Matrix_type_name' returns the name of the type of a matrix, like
 \verb'type=class(A)' in MATLAB.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_build:} build a matrix from a set of tuples}
 %-------------------------------------------------------------------------------
@@ -5335,12 +5334,12 @@ feature of ANSI C11.  For a user-defined type, \verb'x' is a \verb'void *'
 pointer that points to a memory space holding a single entry of this
 user-defined type.  This user-defined type must exactly match the user-defined
 type of \verb'C' since no typecasting is done between user-defined types.
-
+%
 If \verb'x' is a \verb'GrB_Scalar' and contains no entry, then the
 entry \verb'C(i,j)' is removed (if it exists).  The action taken is
 identical to \verb'GrB_Matrix_removeElement(C,i,j)' in this case.
 
-\paragraph{\bf Performance considerations:} % BLOCKING: setElement, *assign
+{\bf Performance considerations:} % BLOCKING: setElement, *assign
 SuiteSparse:GraphBLAS exploits the non-blocking mode to greatly improve the
 performance of this method.  Refer to the example shown in
 Section~\ref{overview}.  If the entry exists in the pattern already, it is
@@ -6472,7 +6471,7 @@ GrB_Info GxB_Vector_pack_Full // pack a full vector
 \verb'GxB_Vector_pack_Full' is analogous to \verb'GxB_Matrix_pack_FullC'.
 Refer to the description of \verb'GxB_Matrix_pack_BitmapC' for details
 (Section~\ref{matrix_pack_fullc}).
-The vector \verb'v' must exist on iput with the right type and length.
+The vector \verb'v' must exist on input with the right type and length.
 No typecasting is done.
 If successful, \verb'v' has
 all entries are present, and the value of $v(i)$ is given by \verb'vx[i]'.
@@ -7571,6 +7570,7 @@ Returns the required sizes of the arrays \verb'Ap', \verb'Ai', and \verb'Ax'
 for exporting a matrix using \verb'GrB_Matrix_export', using the same
 \verb'format'.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_exportHint:} determine best export format}
 %-------------------------------------------------------------------------------
@@ -9106,7 +9106,6 @@ of size $2^k$ that are kept in the pool.  Passing in a \verb'NULL' pointer
 sets the defaults.  Passing in an array of size 64 whose entries are all zero
 disables the memory pool entirely.
 
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Matrix\_Option\_set:} set a matrix option}
 %===============================================================================
@@ -9177,6 +9176,7 @@ consistent with the other usages of this generic function.  Unlike
 for details.  If an error occurs, \verb'GrB_error(&err,desc)' returns details
 about the error.
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Global\_Option\_get:} retrieve a global option}
 %===============================================================================
