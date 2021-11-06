@@ -549,8 +549,8 @@ GrB_Info GB_sort
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    if (!C_is_NULL) ASSERT_MATRIX_OK (C, "C output of GB_sort", GB0) ;
-    if (P != NULL)  ASSERT_MATRIX_OK (P, "P output of GB_sort", GB0) ;
+    if (!C_is_NULL) { ASSERT_MATRIX_OK (C, "C output of GB_sort", GB0) ; }
+    if (P != NULL)  { ASSERT_MATRIX_OK (P, "P output of GB_sort", GB0) ; }
     return (GrB_SUCCESS) ;
 }
 

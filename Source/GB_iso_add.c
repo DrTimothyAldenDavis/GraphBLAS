@@ -141,10 +141,6 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
                 memcpy (c, b, ysize) ;
                 return (true) ;
             }
-            else
-            { 
-                return (false) ;
-            }
 
         }
         else if (A->iso &&
@@ -164,11 +160,6 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
                 // c = a
                 memcpy (c, a, xsize) ;
                 return (true) ;
-            }
-            else
-            { 
-                // C is not iso
-                return (false) ;
             }
 
         }
@@ -284,15 +275,15 @@ bool GB_iso_add             // c = op(a,b), return true if C is iso
             // c = (ctype) z
             GB_cast_scalar (c, ccode, z, zcode, zsize) ;
 
-            if (memcmp (c, a, csize) != 0)
+            if (memcmp (c, a, csize) == 0)
             { 
-                // the iso values of C and A differ
-                return (false) ;
+                // the iso values of C and A match
+                return (true) ;
             }
-
-            return (true) ;
         }
     }
+
+    // if the tests above fall through, C is not iso
     return (false) ;
 }
 
