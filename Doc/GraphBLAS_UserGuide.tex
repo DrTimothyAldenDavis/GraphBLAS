@@ -4979,6 +4979,17 @@ with no entries in it, of the given type.  This is analogous to the MATLAB
 statement \verb'A = sparse (nrows, ncols)', except that GraphBLAS can create
 sparse matrices of any type.
 
+By default, matrices of size \verb'nrows-by-1' are held by column, regardless
+of the global setting controlled by \verb'GxB_set (GxB_FORMAT, ...)', for any
+value of \verb'nrows'.  Matrices of size \verb'1-by-ncols' with \verb'ncols'
+not equal to 1 are held by row, regardless of this global setting.  The global
+setting only affects matrices with both \verb'm > 1' and \verb'n > 1'.  Empty
+matrices (\verb'0-by-0') are also controlled by the global setting.
+
+Once a matrix is created, its format (by-row or by-column) can be arbitrarily
+changed with \verb'GxB_set (A, GxB_FORMAT, fmt)' with \verb'fmt' equal to
+\verb'GxB_BY_COL' or \verb'GxB_BY_ROW'.
+
 \begin{alert}
 {\bf SPEC:} \verb'nrows' and/or \verb'ncols' may be zero,
 as an extenstion to the spec.
@@ -8650,14 +8661,13 @@ Likewise, if \verb'u' is a very sparse column vector and \verb'A' is stored by
 column, then \verb"w=u'*A" (via \verb'GrB_vxm') is slower than \verb'w=A*u'
 (via \verb'GrB_mxv').  The opposite is true if the matrix is stored by row.
 
-SuiteSparse:GraphBLAS stores its sparse matrices by row, by default.  In
-Versions 2.1 and earlier, the matrices were stored by column, by default.
-However, it can also be instructed to store any selected matrices, or all
-matrices, by column instead (just like MATLAB), so that \verb'w=A(:,j)' (via
-\verb'GrB_Col_extract') is very fast.  The change in data format has no effect
-on the result, just the time and memory usage.  To use a column-oriented format
-by default, the following can be done in a user application that tends to
-access its matrices by column.
+SuiteSparse:GraphBLAS stores its matrices by row, by default (with one
+exception described below).  However, it can also be instructed to store any
+selected matrices, or all matrices, by column instead (just like MATLAB), so
+that \verb'w=A(:,j)' (via \verb'GrB_Col_extract') is very fast.  The change in
+data format has no effect on the result, just the time and memory usage.  To
+use a column-oriented format by default, the following can be done in a user
+application that tends to access its matrices by column.
 
     {\footnotesize
     \begin{verbatim}
@@ -8668,10 +8678,22 @@ access its matrices by column.
     #endif \end{verbatim} }
 
 If this is done, and no other \verb'GxB_set' calls are made with
-\verb'GxB_FORMAT', all matrices will be stored by column.  Alternatively,
-SuiteSparse:GraphBLAS can be compiled with \verb'-DBYCOL', which changes the
-default format to \verb'GxB_BY_COL', with no calls to any \verb'GxB_*'
-function.  The default format is now \verb'GxB_BY_ROW'.
+\verb'GxB_FORMAT', all matrices will be stored by column.
+The default format is \verb'GxB_BY_ROW'.
+
+All vectors (\verb'GrB_Vector') are held by column, and this cannot be changed.
+
+By default, matrices of size \verb'm-by-1' are held by column, regardless of
+the global setting described above.  Matrices of size \verb'1-by-n' with
+\verb'n' not equal to 1 are held by row, regardless of the global setting.
+The global setting only affects matrices with both \verb'm > 1' and \verb'n > 1'.
+Empty matrices (\verb'0-by-0') are also controlled by the global setting.
+
+After creating a matrix with \verb'GrB_Matrix_new (&A, ...)',
+its format can be changed arbitrarily with \verb'GxB_set (A, GxB_FORMAT, ...)'.
+So even an \verb'm-by-1' matrix can then be changed to be held by row, for
+example.  Likewise, once a \verb'1-by-n' matrix is created, it can be converted
+to column-oriented format.
 
 %-------------------------------------------------------------------------------
 \subsection{Hypersparse matrices}
@@ -8869,10 +8891,8 @@ GxB_Format_Value ;
 \end{verbatim} }
 
 The default format is given by the predefined value \verb'GxB_FORMAT_DEFAULT',
-which is equal to \verb'GxB_BY_ROW' if default compile-time options are used.
-To change the default at compile time to \verb'GxB_BY_COL', compile the
-SuiteSparse: GraphBLAS library with \verb'-DBYCOL'.  This changes
-\verb'GxB_FORMAT_DEFAULT' to \verb'GxB_BY_COL'.  The default hypersparsity
+which is equal to \verb'GxB_BY_ROW'.
+The default hypersparsity
 ratio is 0.0625 (1/16), but this value may change in the future.
 
 Setting the \verb'GxB_HYPER_SWITCH' field to \verb'GxB_ALWAYS_HYPER' ensures a matrix
@@ -8883,12 +8903,12 @@ settings:
 {\footnotesize
 \begin{verbatim}
     GxB_set (GxB_HYPER_SWITCH, GxB_HYPER_DEFAULT) ;
-    GxB_set (GxB_FORMAT, GxB_FORMAT_DEFAULT) ;
+    GxB_set (GxB_FORMAT, GxB_BY_ROW) ;
 \end{verbatim} }
 
-That is, by default, all new matrices are held by column in CSR format, unless
-\verb'-DBYCOL' is used at compile time, in which case the default is to store
-all new matrices by row in CSC format.  If a matrix has fewer than $n/16$
+That is, by default, all new matrices are held by row in CSR format (except
+for \verb'n-by-1' matrices; see \verb'GrB_Matrix_new').
+If a matrix has fewer than $n/16$
 columns, it can be converted to hypersparse format.  If it has more than $n/8$
 columns, it can be converted to non-hypersparse format.  These options can be
 changed for all future matrices with \verb'GxB_set'.  For example, to change
@@ -14203,14 +14223,9 @@ compiled in MATLAB R2021a in earlier versions of MATLAB (such as R2020a).
 %----------------------------------------
 
 By default, SuiteSparse:GraphBLAS stores its matrices by row, using the
-\verb'GxB_BY_ROW' format.  You can change the default at compile time to
-\verb'GxB_BY_COL' using \verb'cmake -DBYCOL=1'.  For example:
+\verb'GxB_BY_ROW' format.
 
-    {\small
-    \begin{verbatim}
-    cmake -DBYCOL=1 ..  \end{verbatim} }
-
-The user application can also use \verb'GxB_get' and \verb'GxB_set' to set and
+The user application can use \verb'GxB_get' and \verb'GxB_set' to set and
 query the global option (see also Sections~\ref{gxbset} and \ref{gxbget}):
 
     {\small
@@ -14224,17 +14239,7 @@ query the global option (see also Sections~\ref{gxbset} and \ref{gxbget}):
 \subsection{Setting the C flags and using CMake}
 %----------------------------------------
 
-The above options can also be combined.  For example, to use the \verb'gcc'
-compiler, to change the default format \verb'GxB_FORMAT_DEFAULT' to
-\verb'GxB_BY_COL', use the following \verb'cmake' command while in the
-\verb'GraphBLAS/build' directory:
-
-    {\small
-    \begin{verbatim}
-    CC=gcc cmake -DBYCOL=1 .. \end{verbatim}}
-
-\noindent
-Then do \verb'make' in the \verb'build' directory.  If this still fails, see
+Next, do \verb'make' in the \verb'build' directory.  If this still fails, see
 the \verb'CMakeLists.txt' file.  You can edit that file to pass
 compiler-specific options to your compiler.  Locate this section in the
 \verb'CMakeLists.txt' file.  Use the \verb'set' command in \verb'cmake', as in

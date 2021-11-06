@@ -187,7 +187,7 @@ GB_Global_struct GB_Global =
         GB_BITSWITCH_gt_than_64 },
     .hyper_switch = GB_HYPER_SWITCH_DEFAULT,
 
-    .is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW),    // default is GxB_BY_ROW
+    .is_csc = false,    // default is GxB_BY_ROW
 
     // abort function for debugging only
     .abort_function   = abort,

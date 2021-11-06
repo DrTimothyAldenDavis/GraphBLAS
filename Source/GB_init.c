@@ -112,12 +112,12 @@ GrB_Info GB_init            // start up GraphBLAS
     // set the global default format
     //--------------------------------------------------------------------------
 
-    // set the default hyper_switch and CSR/CSC format;  any thread
+    // set the default hyper_switch and the default format (by-row);  any thread
     // can do this later as well, so there is no race condition danger.
 
     GB_Global_hyper_switch_set (GB_HYPER_SWITCH_DEFAULT) ;
     GB_Global_bitmap_switch_default ( ) ;
-    GB_Global_is_csc_set (GB_FORMAT_DEFAULT != GxB_BY_ROW) ;
+    GB_Global_is_csc_set (false) ;
 
     //--------------------------------------------------------------------------
     // initialize malloc tracking (testing and debugging only)
