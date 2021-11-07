@@ -42,9 +42,11 @@ CFLAGS = -fopenmp -fexceptions -fPIC
 # pick the optimization level:
   CFLAGS += -O3
 # CFLAGS += -g
+# to compile GraphBLAS as compact (fast to compile, small libgraphblas.so,
+# but slow at run time), uncomment this line:
+# CFLAGS += -DGBCOMPACT=1
 ifneq ($(CC),c++)
-    # comment this out if using c++:
-    CFLAGS += -std=c11 
+    CFLAGS += -std=c11
 endif
 CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated1 -I../Source/Generated2 -I../lz4
 SO_OPTS = $(LDFLAGS)
