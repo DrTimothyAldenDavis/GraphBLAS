@@ -2066,10 +2066,8 @@ GrB_Info GrB_wait               // wait for a user-defined type
 }\end{mdframed}
 
 After creating a user-defined type, a GraphBLAS library may choose to exploit
-non-blocking mode to delay its creation.  \verb'GrB_Type_wait(&type)' ensures
-the \verb'type' is completed.  SuiteSparse:GraphBLAS currently does nothing for
-\verb'GrB_Type_wait(&type)', except to ensure that \verb'type' is valid.
-The function will change in SS:GrB v6.0.0 (for the v2.0 C API Specification).
+non-blocking mode to delay its creation.  Currently, SuiteSparse:GraphBLAS
+currently does nothing except to ensure that \verb'type' is valid.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -2542,12 +2540,9 @@ GrB_Info GrB_wait               // wait for a user-defined unary operator
 }\end{mdframed}
 
 After creating a user-defined unary operator, a GraphBLAS library may choose to
-exploit non-blocking mode to delay its creation.
-\verb'GrB_UnaryOp_wait(&unaryop)' ensures the \verb'op' is completed.
-SuiteSparse:GraphBLAS currently does nothing for
-\verb'GrB_UnaryOp_wait(&unaryop)', except to ensure that the \verb'unaryop' is
-valid.
-The function will change in SS:GrB v6.0.0 (for the v2.0 C API Specification).
+exploit non-blocking mode to delay its creation.  Currently,
+SuiteSparse:GraphBLAS currently does nothing except to ensure that the
+\verb'unaryop' is valid.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_UnaryOp\_ztype\_name:} return the name of the type of $z$}
@@ -3039,12 +3034,9 @@ GrB_Info GrB_wait               // wait for a user-defined binary operator
 }\end{mdframed}
 
 After creating a user-defined binary operator, a GraphBLAS library may choose
-to exploit non-blocking mode to delay its creation.
-\verb'GrB_BinaryOp_wait(&binaryop)' ensures the \verb'binaryop' is completed.
-SuiteSparse:GraphBLAS currently does nothing for
-\verb'GrB_BinaryOp_wait(&binaryop)', except to ensure that the \verb'binaryop'
-is valid.
-The function will change in SS:GrB v6.0.0 (for the v2.0 C API Specification).
+to exploit non-blocking mode to delay its creation.  Currently,
+SuiteSparse:GraphBLAS currently does nothing for except to ensure that the
+\verb'binaryop' is valid.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_BinaryOp\_ztype\_name:} return the name of the type of $z$}
@@ -3145,15 +3137,16 @@ The \verb'PAIR' operator (also called \verb'ONEB') is simple to describe:
 just $f(x,y)=1$.  It is called
 the \verb'PAIR' operator since it returns $1$ in a semiring when a pair of
 entries $a_{ik}$ and $b_{kj}$ is found in the matrix multiply.  This operator
-is simple yet very useful.  It allows purely symbolic computations to be
+is simple yet very useful.  It allows purely structural computations to be
 performed on matrices of any type, without having to typecast them to Boolean
 with all values being true.  Typecasting need not be performed on the inputs to
 the \verb'PAIR' operator, and the \verb'PAIR' operator does not have to access
 the values of the matrix, so it is a very fast operator to use.
 
-The \verb'GxB_PAIR_T' operator is an SuiteSparse:GraphBLAS extension.
+The \verb'GxB_PAIR_T' operator is a SuiteSparse:GraphBLAS extension.
 It has since been added to the v2.0 C API Specification as \verb'GrB_ONEB_T'.
-They are identical.
+They are identical, but the latter name should be used for compatibility
+with other GraphBLAS libraries.
 
 The \verb'ANY' operator is very unusual, but very powerful.  It is the function
 $f_{\mbox{any}}(x,y)=x$, or $y$, where GraphBLAS has to freedom to select
@@ -3164,11 +3157,11 @@ using the logical OR operator.
 The \verb'ANY' function is associative and commutative, and can thus serve as
 an operator for a monoid.  The selection of $x$ are $y$ is not randomized.
 Instead, SuiteSparse:GraphBLAS uses this freedom to compute as fast a result as
-possible.  When used in a dot product, \[ c_{ij} = \sum_k a_{ik} b_{kj} \] for
-example, the computation can terminate as soon as any matching pair of entries
-is found.  When used in a parallel saxpy-style computation, the \verb'ANY'
-operator allows for a relaxed form of synchronization to be used, resulting
-in a fast benign race condition.
+possible.  When used as the monoid in a dot product, \[ c_{ij} = \sum_k a_{ik}
+b_{kj} \] for example, the computation can terminate as soon as any matching
+pair of entries is found.  When used in a parallel saxpy-style computation, the
+\verb'ANY' operator allows for a relaxed form of synchronization to be used,
+resulting in a fast benign race condition.
 
 Because of this benign race condition, the result of the \verb'ANY' monoid can
 be non-deterministic, unless it is coupled with the \verb'PAIR' multiplicative
@@ -3366,12 +3359,9 @@ GrB_Info GrB_wait               // wait for a user-defined binary operator
 }\end{mdframed}
 
 After creating a user-defined select operator, a GraphBLAS library may choose
-to exploit non-blocking mode to delay its creation.
-\verb'GrB_IndexUnaryOp_wait(&op)' ensures the \verb'op' is completed.
-SuiteSparse:GraphBLAS currently does nothing for
-\verb'GrB_IndexUnaryOp_wait(&op)', except to ensure that the \verb'op' is
-valid.
-The function will change in SS:GrB v6.0.0 (for the v2.0 C API Specification).
+to exploit non-blocking mode to delay its creation.  Currently,
+SuiteSparse:GraphBLAS currently does nothing except to ensure that the
+\verb'op' is valid.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_IndexUnaryOp\_ztype\_name:} return the name of the type of $z$}
@@ -3638,11 +3628,8 @@ GrB_Info GrB_wait               // wait for a user-defined monoid
 }\end{mdframed}
 
 After creating a user-defined monoid, a GraphBLAS library may choose to exploit
-non-blocking mode to delay its creation.  \verb'GrB_Monoid_wait(&monoid)'
-ensures the \verb'monoid' is completed.  SuiteSparse:GraphBLAS currently does
-nothing for \verb'GrB_Monoid_wait(&monoid)', except to ensure that the
-\verb'monoid' is valid.
-The function will change in SS:GrB v6.0.0 (for the v2.0 C API Specification).
+non-blocking mode to delay its creation.  Currently, SuiteSparse:GraphBLAS
+currently does nothing except to ensure that the \verb'monoid' is valid.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -3988,13 +3975,11 @@ GrB_Info GrB_wait               // wait for a user-defined semiring
 }\end{mdframed}
 
 After creating a user-defined semiring, a GraphBLAS library may choose to
-exploit non-blocking mode to delay its creation.
-\verb'GrB_Semiring_wait(&semiring)' ensures the \verb'semiring' is completed.
-SuiteSparse:GraphBLAS currently does nothing for
-\verb'GrB_Semiring_wait(&semiring)', except to ensure that the \verb'semiring'
-is valid.
-The function will change in SS:GrB v6.0.0 (for the v2.0 C API Specification).
+exploit non-blocking mode to delay its creation.  Currently,
+SuiteSparse:GraphBLAS currently does nothing except to ensure that the
+\verb'semiring' is valid.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Semiring\_add:} return the additive monoid of a semiring}
 %-------------------------------------------------------------------------------
@@ -4133,9 +4118,12 @@ GrB_Info GrB_wait               // wait for a scalar
 In non-blocking mode, the computations for a \verb'GrB_Scalar' may be delayed.
 In this case, the scalar is not yet safe to use by multiple independent user
 threads.  A user application may force completion of a scalar \verb's' via
-\verb'GrB_Scalar_wait(&s)'.  After this call, different user threads may safely
-call GraphBLAS operations that use the scalar \verb's' as an input parameter.
-The function will change in SS:GrB v6.0.0 (for the v2.0 C API Specification).
+\verb'GrB_Scalar_wait(&s)' (in v5.2.0), or
+\verb'GrB_Scalar_wait(s,mode)' (in v6.0.0).
+With a \verb'mode' of \verb'GrB_MATERIALIZE',
+all pending computations are finished, and different user threads may
+simultaneously call GraphBLAS operations that use the scalar \verb's' as an
+input parameter.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Scalar\_dup:} copy a scalar}
@@ -4447,9 +4435,12 @@ GrB_Info GrB_wait               // wait for a vector
 In non-blocking mode, the computations for a \verb'GrB_Vector' may be delayed.
 In this case, the vector is not yet safe to use by multiple independent user
 threads.  A user application may force completion of a vector \verb'w' via
-\verb'GrB_Vector_wait(&w)'.  After this call, different user threads may safely
-call GraphBLAS operations that use the vector \verb'w' as an input parameter.
-The function will change in SS:GrB v6.0.0 (for the v2.0 C API Specification).
+\verb'GrB_Vector_wait(&w)' (in v5.2.0), or
+\verb'GrB_Vector_wait(w,mode)' (in v6.0.0).
+With a \verb'mode' of \verb'GrB_MATERIALIZE',
+all pending computations are finished, and different user threads may
+simultaneously call GraphBLAS operations that use the vector \verb'w' as an
+input parameter.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -5019,9 +5010,12 @@ GrB_Info GrB_wait               // wait for a matrix
 In non-blocking mode, the computations for a \verb'GrB_Matrix' may be delayed.
 In this case, the matrix is not yet safe to use by multiple independent user
 threads.  A user application may force completion of a matrix \verb'C' via
-\verb'GrB_Matrix_wait(&C)'.  After this call, different user threads may safely
-call GraphBLAS operations that use the matrix \verb'C' as an input parameter.
-The function will change in SS:GrB v6.0.0 (for the v2.0 C API Specification).
+\verb'GrB_Matrix_wait(&C)' (in v5.2.0), or
+\verb'GrB_Matrix_wait(C,mode)' (in v6.0.0).
+With a \verb'mode' of \verb'GrB_MATERIALIZE',
+all pending computations are finished, and different user threads may
+simultaneously call GraphBLAS operations that use the matrix \verb'C' as an
+input parameter.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_dup:}          copy a matrix}
@@ -5879,8 +5873,9 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 } \end{mdframed}
 
 \verb'GxB_Vector_serialize' serializes a vector into a single array of bytes
-(the blob), which is \verb'malloc''ed and filled with
-the serialized vector.
+(the blob), which is \verb'malloc''ed and filled with the serialized vector.
+By default, LZ4 compression is used, but other options can be selected
+via the descriptor.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -6019,10 +6014,9 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
 
 \verb'GxB_Matrix_serialize' is identical to \verb'GrB_Matrix_serialize', except
 that it does not require a pre-allocated blob.  Instead, it \verb'malloc''s the
-blob internally, and fills it with the serialized vector.
-
+blob internally, and fills it with the serialized matrix.
 By default, LZ4 compression is used, but other options can be selected
-via the descriptor.  Refer to Section~\ref{vector_serialize_GxB} for details.
+via the descriptor.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_deserialize:}    deserialize a matrix}
@@ -7091,7 +7085,7 @@ the \verb'Ai' and \verb'Ax' arrays are returned as \verb'NULL'; this is not an
 error.  After a successful unpack, the user application is responsible for
 freeing these three arrays via \verb'free' (or the \verb'free' function passed
 to \verb'GxB_init').  The hypersparse CSC format is described in
-Section~\ref{matrix_packt_hypercsc}.
+Section~\ref{matrix_pack_hypercsc}.
 
 This method takes $O(1)$ time if the matrix is already in HyperCSC format
 internally.  Otherwise, the matrix is converted to HyperCSC format and then
@@ -7986,11 +7980,8 @@ GrB_Info GrB_wait                   // wait for a descriptor
 }\end{mdframed}
 
 After creating a user-defined descriptor, a GraphBLAS library may choose to
-exploit non-blocking mode to delay its creation.
-\verb'GrB_Descriptor_wait(&d)' ensures the descriptor \verb'd' is completed.
-SuiteSparse:GraphBLAS currently does nothing for
-\verb'GrB_Descriptor_wait(&d)', except to ensure that \verb'd' is valid.
-The function will change in SS:GrB v6.0.0 (for the v2.0 C API Specification).
+exploit non-blocking mode to delay its creation.  Currently,
+SuiteSparse:GraphBLAS does nothing except to ensure that \verb'd' is valid.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -14427,6 +14418,9 @@ CUDA kernels (still in progress), and for the support of NVIDIA.
 I would like to thank Michel Pelletier for his collaboration and work on the
 pygraphblas interface, and Jim Kitchen and Erik Welch for their work on
 Anaconda's python interface.
+
+I would like to thank Will Kimmerer for his collaboration and work on the
+Julia interface.
 
 I would like to thank John Gilbert (UC Santa Barbara) for our many discussions
 on GraphBLAS, and for our decades-long conversation and collaboration on sparse
