@@ -134,21 +134,21 @@ void mexFunction
 
     expected = GrB_DOMAIN_MISMATCH ;
 
-    ERR (GrB_Matrix_nameless_(S, NULL, GrB_LT_FP64, A, NULL)) ;
+    ERR (GrB_Matrix_reduce_BinaryOp_Scalar_(S, NULL, GrB_LT_FP64, A, NULL)) ;
     OK (GrB_Scalar_error_(&err, S)) ;
     printf ("expected error:\n%s\n", err) ;
 
-    ERR (GrB_Vector_nameless_(S, NULL, GrB_LT_FP64, u, NULL)) ;
+    ERR (GrB_Vector_reduce_BinaryOp_Scalar_(S, NULL, GrB_LT_FP64, u, NULL)) ;
     OK (GrB_Scalar_error_(&err, S)) ;
     printf ("expected error:\n%s\n", err) ;
 
     expected = GrB_NOT_IMPLEMENTED ;
 
-    ERR (GrB_Matrix_nameless_(S, NULL, GrB_DIV_FP64, A, NULL)) ;
+    ERR (GrB_Matrix_reduce_BinaryOp_Scalar_(S, NULL, GrB_DIV_FP64, A, NULL)) ;
     OK (GrB_Scalar_error_(&err, S)) ;
     printf ("expected error:\n%s\n", err) ;
 
-    ERR (GrB_Vector_nameless_(S, NULL, GrB_DIV_FP64, u, NULL)) ;
+    ERR (GrB_Vector_reduce_BinaryOp_Scalar_(S, NULL, GrB_DIV_FP64, u, NULL)) ;
     OK (GrB_Scalar_error_(&err, S)) ;
     printf ("expected error:\n%s\n", err) ;
 

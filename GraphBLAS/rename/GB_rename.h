@@ -335,12 +335,12 @@
 #define GrB_Matrix_kronecker_BinaryOp GrM_Matrix_kronecker_BinaryOp
 #define GrB_Matrix_kronecker_Monoid GrM_Matrix_kronecker_Monoid
 #define GrB_Matrix_kronecker_Semiring GrM_Matrix_kronecker_Semiring
-#define GrB_Matrix_nameless GrM_Matrix_nameless
 #define GrB_Matrix_ncols GrM_Matrix_ncols
 #define GrB_Matrix_new GrM_Matrix_new
 #define GrB_Matrix_nrows GrM_Matrix_nrows
 #define GrB_Matrix_nvals GrM_Matrix_nvals
 #define GrB_Matrix_reduce_BinaryOp GrM_Matrix_reduce_BinaryOp
+#define GrB_Matrix_reduce_BinaryOp_Scalar GrM_Matrix_reduce_BinaryOp_Scalar
 #define GrB_Matrix_reduce_BOOL GrM_Matrix_reduce_BOOL
 #define GrB_Matrix_reduce_FP32 GrM_Matrix_reduce_FP32
 #define GrB_Matrix_reduce_FP64 GrM_Matrix_reduce_FP64
@@ -349,7 +349,7 @@
 #define GrB_Matrix_reduce_INT64 GrM_Matrix_reduce_INT64
 #define GrB_Matrix_reduce_INT8 GrM_Matrix_reduce_INT8
 #define GrB_Matrix_reduce_Monoid GrM_Matrix_reduce_Monoid
-#define GrB_Matrix_reduce_Scalar GrM_Matrix_reduce_Scalar
+#define GrB_Matrix_reduce_Monoid_Scalar GrM_Matrix_reduce_Monoid_Scalar
 #define GrB_Matrix_reduce_UDT GrM_Matrix_reduce_UDT
 #define GrB_Matrix_reduce_UINT16 GrM_Matrix_reduce_UINT16
 #define GrB_Matrix_reduce_UINT32 GrM_Matrix_reduce_UINT32
@@ -884,9 +884,9 @@
 #define GrB_Vector_extractTuples_UINT64 GrM_Vector_extractTuples_UINT64
 #define GrB_Vector_extractTuples_UINT8 GrM_Vector_extractTuples_UINT8
 #define GrB_Vector_free GrM_Vector_free
-#define GrB_Vector_nameless GrM_Vector_nameless
 #define GrB_Vector_new GrM_Vector_new
 #define GrB_Vector_nvals GrM_Vector_nvals
+#define GrB_Vector_reduce_BinaryOp_Scalar GrM_Vector_reduce_BinaryOp_Scalar
 #define GrB_Vector_reduce_BOOL GrM_Vector_reduce_BOOL
 #define GrB_Vector_reduce_FP32 GrM_Vector_reduce_FP32
 #define GrB_Vector_reduce_FP64 GrM_Vector_reduce_FP64
@@ -894,7 +894,7 @@
 #define GrB_Vector_reduce_INT32 GrM_Vector_reduce_INT32
 #define GrB_Vector_reduce_INT64 GrM_Vector_reduce_INT64
 #define GrB_Vector_reduce_INT8 GrM_Vector_reduce_INT8
-#define GrB_Vector_reduce_Scalar GrM_Vector_reduce_Scalar
+#define GrB_Vector_reduce_Monoid_Scalar GrM_Vector_reduce_Monoid_Scalar
 #define GrB_Vector_reduce_UDT GrM_Vector_reduce_UDT
 #define GrB_Vector_reduce_UINT16 GrM_Vector_reduce_UINT16
 #define GrB_Vector_reduce_UINT32 GrM_Vector_reduce_UINT32
@@ -3653,8 +3653,8 @@
 #define GB_LZ4_compress_fast_extState GM_LZ4_compress_fast_extState
 #define GB_LZ4_compress_fast_extState_fastReset GM_LZ4_compress_fast_extState_fastReset
 #define GB_LZ4_compress_forceExtDict GM_LZ4_compress_forceExtDict
-#define GB_LZ4_compress_HC GM_LZ4_compress_HC
 #define GB_LZ4_compressHC GM_LZ4_compressHC
+#define GB_LZ4_compress_HC GM_LZ4_compress_HC
 #define GB_LZ4_compressHC2 GM_LZ4_compressHC2
 #define GB_LZ4_compressHC2_continue GM_LZ4_compressHC2_continue
 #define GB_LZ4_compressHC2_limitedOutput GM_LZ4_compressHC2_limitedOutput

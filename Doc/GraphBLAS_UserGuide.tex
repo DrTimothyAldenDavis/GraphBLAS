@@ -71,7 +71,7 @@ mathematics of sparse matrix operations on a semiring.
 
 When compared with MATLAB R2021a, some methods in GraphBLAS are up to
 a million times faster than MATLAB, even when using the same syntax.
-Typical speedups are in the range 2x to 30x, with a few 1000x speedups.
+Typical speedups are in the range 2x to 30x.
 The statement \verb'C(M)=A' when using MATLAB sparse matrices takes
 $O(e^2)$ time where $e$ is the number of entries in \verb'C'.  GraphBLAS
 can perform the same computation with the exact same syntax, but
@@ -123,9 +123,9 @@ A full and precise definition of the GraphBLAS specification is provided in
 Scott McMillan, Jos\'e Moreira, Carl Yang, and Benjamin Brock}
 \cite{BulucMattsonMcMillanMoreiraYang17,spec}, based on {\em GraphBLAS
 Mathematics} by Jeremy Kepner \cite{Kepner2017}.  The GraphBLAS C API
-Specification is available at \url{http://graphblas.org}.  This version of
-SuiteSparse:GraphBLAS conforms to most of Version \input{GraphBLAS_API_version.tex} of
-{\em The GraphBLAS C API specification}, except for \verb'GrB_wait' and \verb'GrB_Info'.
+Specification is available at \url{http://graphblas.org}.
+This version of SuiteSparse:GraphBLAS conforms to Version
+\input{GraphBLAS_API_version.tex} of {\em The GraphBLAS C API specification}.
 
 In this User Guide, aspects of the GraphBLAS specification that would be true
 for any GraphBLAS implementation are simply called ``GraphBLAS.'' Details
@@ -1647,7 +1647,7 @@ return value, an enumerated type (an \verb'enum') called \verb'GrB_Info'.  The
 first two values in the following table denote a successful status, the rest
 are error codes.  SuiteSparse:GraphBLAS v5.x and earlier use the enum values
 in the v5 column, since the C API Specification did not define them.
-The values are now defined in the v2.0 C API Specification, and will appear
+The values are now defined in the v2.0 C API Specification, and appear
 in SuiteSparse:GraphBLAS v6.0.0 with the values in the v6 column.
 
 \vspace{0.2in}

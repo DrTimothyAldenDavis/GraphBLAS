@@ -203,11 +203,11 @@ void mexFunction
         // S = accum (S, reduce (A)) using a binary op
         if (GB_VECTOR_OK (A))
         {
-            METHOD (GrB_Vector_nameless_((GrB_Scalar) S, accum, reduceop, (GrB_Vector) A, NULL)) ;
+            METHOD (GrB_Vector_reduce_BinaryOp_Scalar_((GrB_Scalar) S, accum, reduceop, (GrB_Vector) A, NULL)) ;
         }
         else
         {
-            METHOD (GrB_Matrix_nameless_((GrB_Scalar) S, accum, reduceop, A, NULL)) ;
+            METHOD (GrB_Matrix_reduce_BinaryOp_Scalar_((GrB_Scalar) S, accum, reduceop, A, NULL)) ;
         }
     }
     else
@@ -215,11 +215,11 @@ void mexFunction
         // S = accum (S, reduce (A)) using a monoid
         if (GB_VECTOR_OK (A))
         {
-            METHOD (GrB_Vector_reduce_Scalar_((GrB_Scalar) S, accum, reduce, (GrB_Vector) A, NULL)) ;
+            METHOD (GrB_Vector_reduce_Monoid_Scalar_((GrB_Scalar) S, accum, reduce, (GrB_Vector) A, NULL)) ;
         }
         else
         {
-            METHOD (GrB_Matrix_reduce_Scalar_((GrB_Scalar) S, accum, reduce, A, NULL)) ;
+            METHOD (GrB_Matrix_reduce_Monoid_Scalar_((GrB_Scalar) S, accum, reduce, A, NULL)) ;
         }
     }
 

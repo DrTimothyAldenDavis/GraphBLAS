@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// gbreduce is an interface to GrB_Matrix_reduce_Scalar.
+// gbreduce is an interface to GrB_Matrix_reduce_Monoid_Scalar.
 
 // Usage:
 
@@ -129,7 +129,7 @@ void mexFunction
     // compute C += reduce(A)
     //--------------------------------------------------------------------------
 
-    OK (GrB_Matrix_reduce_Scalar ((GrB_Scalar) C, accum, monoid, A, desc)) ;
+    OK (GrB_Matrix_reduce_Monoid_Scalar ((GrB_Scalar) C, accum, monoid, A, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies

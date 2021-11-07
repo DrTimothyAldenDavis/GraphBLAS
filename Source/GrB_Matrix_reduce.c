@@ -137,10 +137,10 @@ GrB_Info GrB_Matrix_reduce_BinaryOp
 }
 
 //------------------------------------------------------------------------------
-// GrB_Matrix_reduce_Scalar: reduce a matrix to a GrB_Scalar
+// GrB_Matrix_reduce_Monoid_Scalar: reduce a matrix to a GrB_Scalar
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Matrix_reduce_Scalar
+GrB_Info GrB_Matrix_reduce_Monoid_Scalar
 (
     GrB_Scalar S,                   // result scalar
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
@@ -149,7 +149,7 @@ GrB_Info GrB_Matrix_reduce_Scalar
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE (S, "GrB_Matrix_reduce_Scalar (s, accum, monoid, A, desc)") ;
+    GB_WHERE (S, "GrB_Matrix_reduce_Monoid_Scalar (s, accum, monoid, A, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GrB_Info info = GB_Scalar_reduce (S, accum, monoid, A, Context) ;
     GB_BURBLE_END ;
@@ -157,10 +157,10 @@ GrB_Info GrB_Matrix_reduce_Scalar
 }
 
 //------------------------------------------------------------------------------
-// GrB_Matrix_nameless: reduce matrix to GrB_Scalar via binary op
+// GrB_Matrix_reduce_BinaryOp_Scalar: reduce matrix to GrB_Scalar via binary op
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Matrix_nameless        // FIXME: spec leaves it nameless
+GrB_Info GrB_Matrix_reduce_BinaryOp_Scalar
 (
     GrB_Scalar S,                   // result scalar
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
@@ -169,7 +169,8 @@ GrB_Info GrB_Matrix_nameless        // FIXME: spec leaves it nameless
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE (S, "GrB_Matrix_nameless (s, accum, binaryop, A, desc)") ;
+    GB_WHERE (S, "GrB_Matrix_reduce_BinaryOp_Scalar (s, accum, binaryop, A, "
+        "desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     if (op->ztype != op->xtype || op->ztype != op->ytype)

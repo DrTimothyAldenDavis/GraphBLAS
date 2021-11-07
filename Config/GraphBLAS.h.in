@@ -8335,7 +8335,7 @@ GrB_Info GrB_Vector_reduce_UDT      // c = accum (c, reduce_to_scalar (u))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Vector_reduce_Scalar   // c = accum (c, reduce_to_scalar (u))
+GrB_Info GrB_Vector_reduce_Monoid_Scalar   // c = accum(c,reduce_to_scalar(u))
 (
     GrB_Scalar c,                   // result scalar
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
@@ -8345,7 +8345,7 @@ GrB_Info GrB_Vector_reduce_Scalar   // c = accum (c, reduce_to_scalar (u))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Vector_nameless        // FIXME: spec leaves it nameless
+GrB_Info GrB_Vector_reduce_BinaryOp_Scalar
 (
     GrB_Scalar c,                   // result scalar
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
@@ -8501,7 +8501,7 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_reduce_Scalar   // c = accum (c, reduce_to_scalar (A))
+GrB_Info GrB_Matrix_reduce_Monoid_Scalar   // c = accum(c,reduce_to_scalar(A))
 (
     GrB_Scalar c,                   // result scalar
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
@@ -8511,7 +8511,7 @@ GrB_Info GrB_Matrix_reduce_Scalar   // c = accum (c, reduce_to_scalar (A))
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_nameless        // FIXME: spec leaves it nameless
+GrB_Info GrB_Matrix_reduce_BinaryOp_Scalar
 (
     GrB_Scalar S,                   // result scalar
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
@@ -8530,13 +8530,14 @@ GrB_Info GrB_Matrix_nameless        // FIXME: spec leaves it nameless
 // reduce matrix to vector:
 // GrB_Matrix_reduce_Monoid   (w,mask,acc,mo,A,d) // w<mask> = acc (w,reduce(A))
 // GrB_Matrix_reduce_BinaryOp (w,mask,acc,op,A,d) // w<mask> = acc (w,reduce(A))
+
 // reduce matrix to scalar:
 // GrB_Vector_reduce_[SCALAR] (c,acc,monoid,u,d)  // c = acc (c,reduce(u))
 // GrB_Matrix_reduce_[SCALAR] (c,acc,monoid,A,d)  // c = acc (c,reduce(A))
-// GrB_Vector_reduce_Scalar   (s,acc,monoid,u,d)  // s = acc (s,reduce(u))
-// GrB_Matrix_reduce_Scalar   (s,acc,monoid,A,d)  // s = acc (s,reduce(A))
-// GrB_Vector_nameless        (s,acc,op,u,d)      // s = acc (s,reduce(u))
-// GrB_Matrix_nameless        (s,acc,op,A,d)      // s = acc (s,reduce(A))
+// GrB_Vector_reduce_Monoid_Scalar (s,acc,monoid,u,d)   // s = acc (s,reduce(u))
+// GrB_Matrix_reduce_Monoid_Scalar (s,acc,monoid,A,d)   // s = acc (s,reduce(A))
+// GrB_Vector_reduce_BinaryOp_Scalar (s,acc,op,u,d)     // s = acc (s,reduce(u))
+// GrB_Matrix_reduce_BinaryOp_Scalar (s,acc,op,A,d)     // s = acc (s,reduce(A))
 
 #if GxB_STDC_VERSION >= 201112L
 #define GB_REDUCE_TO_SCALAR(kind,c,op)                                         \
@@ -8548,9 +8549,11 @@ GrB_Info GrB_Matrix_nameless        // FIXME: spec leaves it nameless
                 _Generic                                                       \
                 (                                                              \
                     (op),                                                      \
-                        const GrB_BinaryOp : GB_CONCAT (GrB,_,kind,_nameless), \
-                              GrB_BinaryOp : GB_CONCAT (GrB,_,kind,_nameless), \
-                        default : GB_CONCAT (GrB,_,kind,_reduce_Scalar)        \
+                        const GrB_BinaryOp :                                   \
+                                GB_CONCAT (GrB,_,kind,_reduce_BinaryOp_Scalar),\
+                              GrB_BinaryOp :                                   \
+                                GB_CONCAT (GrB,_,kind,_reduce_BinaryOp_Scalar),\
+                        default : GB_CONCAT (GrB,_,kind,_reduce_Monoid_Scalar) \
                 )                                                              \
     )
 

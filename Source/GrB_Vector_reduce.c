@@ -78,10 +78,10 @@ GrB_Info GrB_Vector_reduce_UDT      // c = accum (c, reduce_to_scalar (u))
 }
 
 //------------------------------------------------------------------------------
-// GrB_Vector_reduce_Scalar: reduce a vector to a GrB_Scalar
+// GrB_Vector_reduce_Monoid_Scalar: reduce a vector to a GrB_Scalar
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Vector_reduce_Scalar
+GrB_Info GrB_Vector_reduce_Monoid_Scalar
 (
     GrB_Scalar S,                   // result scalar
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
@@ -90,7 +90,7 @@ GrB_Info GrB_Vector_reduce_Scalar
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE (S, "GrB_Vector_reduce_Scalar (s, accum, monoid, u, desc)") ;
+    GB_WHERE (S, "GrB_Vector_reduce_Monoid_Scalar (s, accum, monoid, u, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GrB_Info info = GB_Scalar_reduce (S, accum, monoid, (GrB_Matrix) u, 
         Context) ;
@@ -99,10 +99,10 @@ GrB_Info GrB_Vector_reduce_Scalar
 }
 
 //------------------------------------------------------------------------------
-// GrB_Vector_nameless: reduce vector to GrB_Scalar via binary op
+// GrB_Vector_reduce_BinaryOp_Scalar: reduce vector to GrB_Scalar via binary op
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Vector_nameless        // FIXME: spec leaves it nameless
+GrB_Info GrB_Vector_reduce_BinaryOp_Scalar
 (
     GrB_Scalar S,                   // result scalar
     const GrB_BinaryOp accum,       // optional accum for c=accum(c,t)
@@ -111,7 +111,8 @@ GrB_Info GrB_Vector_nameless        // FIXME: spec leaves it nameless
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE (S, "GrB_Vector_nameless (s, accum, binaryop, u, desc)") ;
+    GB_WHERE (S, "GrB_Vector_reduce_BinaryOp_Scalar (s, accum, binaryop, u, "
+        "desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     if (op->ztype != op->xtype || op->ztype != op->ytype)
