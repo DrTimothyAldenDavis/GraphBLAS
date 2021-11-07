@@ -138,7 +138,7 @@ find_package ( OpenMP )
         set ( RMM_WRAP off )
     endif ( )
 
-# FIXME: CUDA disabled for now
+# TODO: CUDA disabled for now
 set ( CMAKE_CUDA off )
 set ( RMM_WRAP off )
 
