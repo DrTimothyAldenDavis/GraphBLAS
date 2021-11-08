@@ -11,6 +11,7 @@
 # get the version
 #-------------------------------------------------------------------------------
 
+# cmake 3.13 is required; cmake 3.17 or later required for CUDA
 cmake_minimum_required ( VERSION 3.13 )
 
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
@@ -114,6 +115,11 @@ find_package ( OpenMP )
 # Intel(R) IPP not yet supported
 # find_package ( IPP )
 
+if ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
+    set ( CMAKE_CUDA off )
+    set ( RMM_WRAP off )
+    message ( STATUS "CUDA: not enabled (cmake 3.17.0 or later required)" )
+else ( )
     include ( CheckLanguage )
     check_language ( CUDA )
     if ( CMAKE_CUDA_COMPILER )
@@ -137,6 +143,7 @@ find_package ( OpenMP )
         set ( CMAKE_CUDA off )
         set ( RMM_WRAP off )
     endif ( )
+endif ( )
 
 # TODO: CUDA disabled for now
 set ( CMAKE_CUDA off )
