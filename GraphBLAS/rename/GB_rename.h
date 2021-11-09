@@ -3722,6 +3722,7 @@
 #define GB_LZ4_uncompress_unknownOutputSize GM_LZ4_uncompress_unknownOutputSize
 #define GB_LZ4_versionNumber GM_LZ4_versionNumber
 #define GB_LZ4_versionString GM_LZ4_versionString
+#define GB_make_shallow GM_make_shallow
 #define GB_malloc_memory GM_malloc_memory
 #define GB_mask GM_mask
 #define GB_Mask_compatible GM_Mask_compatible
