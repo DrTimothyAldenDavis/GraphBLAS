@@ -1,4 +1,4 @@
-function C = gbeunion (Cin, M, accum, semiring, A, alpha, B, beta, desc) %#ok
+function [C,k] = gbeunion (Cin, M, accum, semiring, A, alpha, B, beta, desc) %#ok
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
