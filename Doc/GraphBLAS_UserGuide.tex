@@ -5876,8 +5876,10 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
 (the blob), which is \verb'malloc''ed and filled with the serialized vector.
 By default, LZ4 compression is used, but other options can be selected
 via the descriptor.
+Serializing a vector is identical to serializing a matrix;
+see Section \ref{matrix_serialize_GxB} for more information.
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 % \subsubsection{{\sf GrB\_Vector\_deserialize:}    deserialize a vector}
 %-------------------------------------------------------------------------------
@@ -5930,11 +5932,12 @@ This method creates a vector \verb'w' by deserializing the contents of the
 blob, constructed by
 % either \verb'GrB_Vector_serialize' or
 \verb'GxB_Vector_serialize'.
+Deserializing a vector is identical to deserializing a matrix;
+see Section \ref{matrix_deserialize_GxB} for more information.
 
 % Identical to \verb'GrB_Vector_deserialize', except that the descriptor
 % appears as the last parameter to control the number of threads used.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_serializeSize:}  return size of serialized matrix}
 %-------------------------------------------------------------------------------
@@ -5958,9 +5961,9 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
 needed to serialize a \verb'GrB_Matrix' with \verb'GrB_Matrix_serialize'.
 After the matrix is serialized, the actual size used is returned, and the blob
 may be \verb'realloc''d to that size if desired.
-
 This method is not required for \verb'GxB_Matrix_serialize'.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_serialize:}      serialize a matrix}
 %-------------------------------------------------------------------------------
@@ -5990,7 +5993,6 @@ the matrix.  After calling \verb'GrB_Matrix_serialize', the blob may be
 \verb'realloc''d to this revised size if desired (this is optional).
 LZ4 compression is used to construct a compact blob.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_serialize:}      serialize a matrix}
 %-------------------------------------------------------------------------------
@@ -6018,6 +6020,7 @@ blob internally, and fills it with the serialized matrix.
 By default, LZ4 compression is used, but other options can be selected
 via the descriptor.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_deserialize:}    deserialize a matrix}
 %-------------------------------------------------------------------------------
@@ -6045,7 +6048,12 @@ This method creates a matrix \verb'A' by deserializing the contents of the
 blob, constructed by either \verb'GrB_Matrix_serialize' or
 \verb'GxB_Matrix_serialize'.
 
-\newpage
+\begin{alert}
+{\bf SPEC:} The spec requires the \verb'type' to always be non-NULL.
+As an extension, SuiteSparse:GraphBLAS allows \verb'type' to be NULL if
+the blob contains a serialized matrix with a built-in type.
+\end{alert}
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_deserialize:}    deserialize a matrix}
 %-------------------------------------------------------------------------------
@@ -6073,6 +6081,7 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 Identical to \verb'GrB_Matrix_deserialize', except that the descriptor
 appears as the last parameter to control the number of threads used.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_deserialize\_type\_name:} name of the type of a blob}
 %-------------------------------------------------------------------------------

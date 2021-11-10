@@ -10831,7 +10831,7 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 
 // No typecasting of the values is done on import or export.
 
-// The GrB C API specification supports 5 formats:
+// The GrB C API specification supports 3 formats:
 
 typedef enum
 {
