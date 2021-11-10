@@ -10829,6 +10829,8 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 // untrusted, via the descriptor).  GxB unpack takes O(1) time unless the
 // matrix is exported in a different format than it currently has.
 
+// No typecasting of the values is done on import or export.
+
 // The GrB C API specification supports 5 formats:
 
 typedef enum
@@ -10840,15 +10842,15 @@ typedef enum
 GrB_Format ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_import  // import a matrix
+GrB_Info GrB_Matrix_import_BOOL     // import a GrB_BOOL matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
-    GrB_Type type,          // type of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GrB_BOOL)
     GrB_Index nrows,        // number of rows of the matrix
     GrB_Index ncols,        // number of columns of the matrix
     const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
     const GrB_Index *Ai,    // row indices for CSR, CSC
-    const void *Ax,         // values
+    const bool *Ax,         // values
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
@@ -10856,11 +10858,396 @@ GrB_Info GrB_Matrix_import  // import a matrix
 ) ;
 
 GB_PUBLIC
-GrB_Info GrB_Matrix_export  // export a matrix
+GrB_Info GrB_Matrix_import_INT8     // import a GrB_INT8 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GrB_iNT8)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const int8_t *Ax,       // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_import_INT16    // import a GrB_INT16 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GrB_INT16)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const int16_t *Ax,      // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_import_INT32    // import a GrB_INT32 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GrB_INT32)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const int32_t *Ax,      // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_import_INT64    // import a GrB_INT64 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GrB_INT64)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const int64_t *Ax,      // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_import_UINT8    // import a GrB_UINT8 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GrB_UINT8)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const uint8_t *Ax,      // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_import_UINT16   // import a GrB_UINT16 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GrB_UINT16)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const uint16_t *Ax,     // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_import_UINT32   // import a GrB_UINT32 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GrB_UINT32)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const uint32_t *Ax,     // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_import_UINT64   // import a GrB_UINT64 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GrB_UINT64)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const uint64_t *Ax,     // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_import_FP32   // import a GrB_FP32 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GrB_FP32)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const float *Ax,        // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_import_FP64   // import a GrB_FP64 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GrB_FP64)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const double *Ax,       // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_import_FC32   // import a GxB_FC32 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GxB_FC32)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const GxB_FC32_t *Ax,   // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_import_FC64   // import a GxB_FC64 matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create (must be GxB_FC64)
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const GxB_FC64_t *Ax,   // values
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_import_UDT    // import a matrix with a user-defined type
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    GrB_Type type,          // type of matrix to create
+    GrB_Index nrows,        // number of rows of the matrix
+    GrB_Index ncols,        // number of columns of the matrix
+    const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
+    const GrB_Index *Ai,    // row indices for CSR, CSC
+    const void *Ax,         // values (must match the type parameter)
+    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
+    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
+    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    GrB_Format format       // import format
+) ;
+
+// For GrB_Matrix_export_T: on input, Ap_len, Ai_len, and Ax_len are
+// the size of the 3 arrays Ap, Ai, and Ax, in terms of the # of entries.
+// On output, these 3 values are modified to be the # of entries copied
+// into those 3 arrays.
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_BOOL     // export a GrB_BOOL matrix
 (
     GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
     GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
-    void *Ax,               // values (must match the type of A_input)
+    bool *Ax,               // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_BOOL)
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_INT8     // export a GrB_INT8 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    int8_t *Ax,             // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_INT8)
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_INT16     // export a GrB_INT16 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    int16_t *Ax,            // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_INT16)
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_INT32     // export a GrB_INT32 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    int32_t *Ax,            // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_INT32)
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_INT64     // export a GrB_INT64 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    int64_t *Ax,            // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_INT64)
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_UINT8     // export a GrB_UINT8 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    uint8_t *Ax,            // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_UINT8)
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_UINT16     // export a GrB_UINT16 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    uint16_t *Ax,           // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_UINT16)
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_UINT32     // export a GrB_UINT32 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    uint32_t *Ax,           // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_UINT32)
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_UINT64     // export a GrB_UINT64 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    uint64_t *Ax,           // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_UINT64)
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_FP32     // export a GrB_FP32 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    float *Ax,              // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_FP32)
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_FP64     // export a GrB_FP64 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    double *Ax,             // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_FP64)
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_export_FC32     // export a GrB_FC32 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    GxB_FC32_t *Ax,         // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_FC32)
+) ;
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_export_FC64     // export a GrB_FC64 matrix
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    GxB_FC64_t *Ax,         // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    GrB_Format format,      // export format
+    GrB_Matrix A            // matrix to export (must be of type GrB_FC64)
+) ;
+
+GB_PUBLIC
+GrB_Info GrB_Matrix_export_UDT      // export a matrix with a user-defined type
+(
+    GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
+    GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
+    void *Ax,               // values (must match the type of A)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
     GrB_Format format,      // export format
     GrB_Matrix A            // matrix to export
 ) ;

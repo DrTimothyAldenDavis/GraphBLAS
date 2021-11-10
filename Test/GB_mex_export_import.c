@@ -100,6 +100,66 @@ GrB_Info export_import ( int format_matrix, int format_export) ;
 GrB_Info vector_export_import ( int format_matrix, int format_export) ;
 
 //------------------------------------------------------------------------------
+// GB_exporter: export a matrix with GrB_Matrix_export_T
+//------------------------------------------------------------------------------
+
+static GrB_Info GB_exporter (GrB_Index *Ap, GrB_Index *Ai, void *Ax,
+    GrB_Index *Ap_len, GrB_Index *Ai_len, GrB_Index *Ax_len, GrB_Format format,
+    GrB_Matrix A)
+{
+    switch (A->type->code)
+    {
+        case GB_BOOL_code   : return (GrB_Matrix_export_BOOL   (Ap, Ai, (bool       *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_INT8_code   : return (GrB_Matrix_export_INT8   (Ap, Ai, (int8_t     *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_INT16_code  : return (GrB_Matrix_export_INT16  (Ap, Ai, (int16_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_INT32_code  : return (GrB_Matrix_export_INT32  (Ap, Ai, (int32_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_INT64_code  : return (GrB_Matrix_export_INT64  (Ap, Ai, (int64_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_UINT8_code  : return (GrB_Matrix_export_UINT8  (Ap, Ai, (uint8_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_UINT16_code : return (GrB_Matrix_export_UINT16 (Ap, Ai, (uint16_t   *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_UINT32_code : return (GrB_Matrix_export_UINT32 (Ap, Ai, (uint32_t   *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_UINT64_code : return (GrB_Matrix_export_UINT64 (Ap, Ai, (uint64_t   *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_FP32_code   : return (GrB_Matrix_export_FP32   (Ap, Ai, (float      *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_FP64_code   : return (GrB_Matrix_export_FP64   (Ap, Ai, (double     *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_FC32_code   : return (GxB_Matrix_export_FC32   (Ap, Ai, (GxB_FC32_t *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_FC64_code   : return (GxB_Matrix_export_FC64   (Ap, Ai, (GxB_FC64_t *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_UDT_code    : return (GrB_Matrix_export_UDT    (Ap, Ai, (void       *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        default             : ;
+    }
+    mexErrMsgTxt ("unknown type") ;
+}
+
+//------------------------------------------------------------------------------
+// GB_importer: import a matrix with GrB_Matrix_import_T
+//------------------------------------------------------------------------------
+
+static GrB_Info GB_importer (GrB_Matrix *A, GrB_Type type, GrB_Index nrows,
+    GrB_Index ncols, const GrB_Index *Ap, const GrB_Index *Ai, const void *Ax,
+    GrB_Index Ap_len, GrB_Index Ai_len, GrB_Index Ax_len, GrB_Format format)
+{
+    switch (type->code)
+    {
+        case GB_BOOL_code   : return (GrB_Matrix_import_BOOL   (A, type, nrows, ncols, Ap, Ai, (const bool       *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_INT8_code   : return (GrB_Matrix_import_INT8   (A, type, nrows, ncols, Ap, Ai, (const int8_t     *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_INT16_code  : return (GrB_Matrix_import_INT16  (A, type, nrows, ncols, Ap, Ai, (const int16_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_INT32_code  : return (GrB_Matrix_import_INT32  (A, type, nrows, ncols, Ap, Ai, (const int32_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_INT64_code  : return (GrB_Matrix_import_INT64  (A, type, nrows, ncols, Ap, Ai, (const int64_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_UINT8_code  : return (GrB_Matrix_import_UINT8  (A, type, nrows, ncols, Ap, Ai, (const uint8_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_UINT16_code : return (GrB_Matrix_import_UINT16 (A, type, nrows, ncols, Ap, Ai, (const uint16_t   *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_UINT32_code : return (GrB_Matrix_import_UINT32 (A, type, nrows, ncols, Ap, Ai, (const uint32_t   *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_UINT64_code : return (GrB_Matrix_import_UINT64 (A, type, nrows, ncols, Ap, Ai, (const uint64_t   *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_FP32_code   : return (GrB_Matrix_import_FP32   (A, type, nrows, ncols, Ap, Ai, (const float      *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_FP64_code   : return (GrB_Matrix_import_FP64   (A, type, nrows, ncols, Ap, Ai, (const double     *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_FC32_code   : return (GxB_Matrix_import_FC32   (A, type, nrows, ncols, Ap, Ai, (const GxB_FC32_t *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_FC64_code   : return (GxB_Matrix_import_FC64   (A, type, nrows, ncols, Ap, Ai, (const GxB_FC64_t *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_UDT_code    : return (GrB_Matrix_import_UDT    (A, type, nrows, ncols, Ap, Ai, (const void       *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        default             : ;
+    }
+    mexErrMsgTxt ("unknown type") ;
+}
+
+//------------------------------------------------------------------------------
+// GB_mex_export_import mexFunction
+//------------------------------------------------------------------------------
 
 void mexFunction
 (
@@ -473,10 +533,10 @@ GrB_Info export_import
             Tp = mxMalloc ((Tp_len+1) * sizeof (GrB_Index)) ;
             Ti = mxMalloc ((Ti_len+1) * sizeof (GrB_Index)) ;
             Tx = mxMalloc ((Tx_len+1) * typesize) ;
-            OK (GrB_Matrix_export (Tp, Ti, Tx, GrB_CSR_FORMAT, C)) ;
+            OK (GB_exporter (Tp, Ti, Tx, &Tp_len, &Ti_len, &Tx_len, GrB_CSR_FORMAT, C)) ;
             OK (GrB_Matrix_free (&C)) ;
             // import in CSR format, then free Tp, Ti, Tx
-            OK (GrB_Matrix_import (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
+            OK (GB_importer (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
                 Tp_len, Ti_len, Tx_len, GrB_CSR_FORMAT)) ;
             mxFree (Tp) ;
             mxFree (Ti) ;
@@ -493,10 +553,10 @@ GrB_Info export_import
             Tp = mxMalloc ((Tp_len+1) * sizeof (GrB_Index)) ;
             Ti = mxMalloc ((Ti_len+1) * sizeof (GrB_Index)) ;
             Tx = mxMalloc ((Tx_len+1) * typesize) ;
-            OK (GrB_Matrix_export (Tp, Ti, Tx, GrB_CSC_FORMAT, C)) ;
+            OK (GB_exporter (Tp, Ti, Tx, &Tp_len, &Ti_len, &Tx_len, GrB_CSC_FORMAT, C)) ;
             OK (GrB_Matrix_free (&C)) ;
             // import in CSC format, then free Tp, Ti, Tx
-            OK (GrB_Matrix_import (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
+            OK (GB_importer (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
                 Tp_len, Ti_len, Tx_len, GrB_CSC_FORMAT)) ;
             mxFree (Tp) ;
             mxFree (Ti) ;
@@ -511,10 +571,10 @@ GrB_Info export_import
 //          OK (GrB_Matrix_exportSize (&Tp_len, &Ti_len, &Tx_len,
 //              GrB_DENSE_ROW_FORMAT, C)) ;
 //          Tx = mxMalloc ((Tx_len+1) * typesize) ;
-//          OK (GrB_Matrix_export (Tp, Ti, Tx, GrB_DENSE_ROW_FORMAT, C)) ;
+//          OK (GB_exporter (Tp, Ti, Tx, &Tp_len, &Ti_len, &Tx_len, GrB_DENSE_ROW_FORMAT, C)) ;
 //          OK (GrB_Matrix_free (&C)) ;
 //          // import in FullR format, then free Tx
-//          OK (GrB_Matrix_import (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
+//          OK (GB_importer (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
 //              Tp_len, Ti_len, Tx_len, GrB_DENSE_ROW_FORMAT)) ;
 //          mxFree (Tx) ;
 //          break ;
@@ -527,10 +587,10 @@ GrB_Info export_import
 //          OK (GrB_Matrix_exportSize (&Tp_len, &Ti_len, &Tx_len,
 //              GrB_DENSE_COL_FORMAT, C)) ;
 //          Tx = mxMalloc ((Tx_len+1) * typesize) ;
-//          OK (GrB_Matrix_export (Tp, Ti, Tx, GrB_DENSE_COL_FORMAT, C)) ;
+//          OK (GB_exporter (Tp, Ti, Tx, &Tp_len, &Ti_len, &Tx_len, GrB_DENSE_COL_FORMAT, C)) ;
 //          OK (GrB_Matrix_free (&C)) ;
 //          // import in CSR format, then free Tx
-//          OK (GrB_Matrix_import (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
+//          OK (GB_importer (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
 //              Tp_len, Ti_len, Tx_len, GrB_DENSE_COL_FORMAT)) ;
 //          mxFree (Tx) ;
 //          break ;
@@ -545,11 +605,11 @@ GrB_Info export_import
             Tp = mxMalloc ((Tp_len+1) * sizeof (GrB_Index)) ;
             Ti = mxMalloc ((Ti_len+1) * sizeof (GrB_Index)) ;
             Tx = mxMalloc ((Tx_len+1) * typesize) ;
-            info = GrB_Matrix_export (Tp, Ti, Tx, GrB_COO_FORMAT, C) ;
+            info = GB_exporter (Tp, Ti, Tx, &Tp_len, &Ti_len, &Tx_len, GrB_COO_FORMAT, C) ;
             OK (info) ;
             OK (GrB_Matrix_free (&C)) ;
             // import in COO format, then free Tp, Ti, Tx
-            info = (GrB_Matrix_import (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
+            info = (GB_importer (&C, type2, nrows2, ncols2, Tp, Ti, Tx,
                 Tp_len, Ti_len, Tx_len, GrB_COO_FORMAT)) ;
             OK (info) ;
             mxFree (Tp) ;

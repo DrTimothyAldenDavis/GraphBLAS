@@ -4928,8 +4928,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Matrix_unpack_FullC'    & unpack FullC         & \ref{matrix_unpack_fullc} \\
 \hline
 \hline
-\verb'GrB_Matrix_import'        & import in various formats & \ref{GrB_matrix_import} \\
-\verb'GrB_Matrix_export'        & export in various formats & \ref{GrB_matrix_export} \\
+\verb'GrB_Matrix_import_'$T$    & import in various formats & \ref{GrB_matrix_import} \\
+\verb'GrB_Matrix_export_'$T$    & export in various formats & \ref{GrB_matrix_export} \\
 \verb'GrB_Matrix_exportSize'    & array sizes for export & \ref{export_size} \\
 \verb'GrB_Matrix_exportHint'    & hint best export format & \ref{export_hint} \\
 \hline
@@ -6110,7 +6110,7 @@ The pack/unpack functions allow the user application to create a
 faster and with less memory overhead than the \verb'GrB_*_build' and
 \verb'GrB_*_extractTuples' functions.
 
-The \verb'GrB_Matrix_import' and \verb'GrB_Matrix_export' are not
+The \verb'GrB_Matrix_import_'$T$ and \verb'GrB_Matrix_export_'$T$ are not
 described in this section.  Refer to Section~\ref{GrB_import_export} instead.
 
 The semantics of the \verb'GxB' pack/unpack are the same as the
@@ -7423,7 +7423,7 @@ and requires more memory.  It has the advantage that it does not require
 GraphBLAS and the user application to agree on what memory manager to use,
 since no ownership of allocated arrays is changed.
 
-The format for \verb'GrB_Matrix_import' and \verb'GrB_Matrix_export' is
+The format for \verb'GrB_Matrix_import_'$T$ and \verb'GrB_Matrix_export_'$T$ is
 controlled by the following enum:
 
 {\footnotesize
@@ -7445,7 +7445,7 @@ GrB_Format ; \end{verbatim}}
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_Matrix_import  // import a matrix
+GrB_Info GrB_Matrix_import_TYPE  // import a matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
     GrB_Type type,          // type of matrix to create
@@ -7453,7 +7453,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
     GrB_Index ncols,        // number of columns of the matrix
     const GrB_Index *Ap,    // pointers for CSR, CSC, column indices for COO
     const GrB_Index *Ai,    // row indices for CSR, CSC
-    const void *Ax,         // values
+    const <type> *Ax,       // values
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
@@ -7462,9 +7462,16 @@ GrB_Info GrB_Matrix_import  // import a matrix
 \end{verbatim}
 } \end{mdframed}
 
-The \verb'GrB_Matrix_import' method copies from user-provided arrays into an
-opaque \verb'GrB_Matrix' and \verb'GrB_Matrix_export' copies data out, from an
-opaque \verb'GrB_Matrix' into user-provided arrays.  Unlike the \verb'GxB'
+The \verb'GrB_Matrix_import_'$T$ method copies from user-provided arrays into an
+opaque \verb'GrB_Matrix' and \verb'GrB_Matrix_export_'$T$ copies data out, from an
+opaque \verb'GrB_Matrix' into user-provided arrays.
+
+The suffix \verb'TYPE' in the prototype above is one of \verb'BOOL',
+\verb'INT8', \verb'INT16', etc, for built-n types, or \verb'UDT' for
+user-defined types.  The type of the \verb'Ax' array must match this type.  No
+typecasting is performed.
+
+Unlike the \verb'GxB'
 pack/unpack methods, memory is not handed off between the user application
 and GraphBLAS.   The three arrays \verb'Ap', \verb'Ai'.  and \verb'Ax' are not
 modified, and are still owned by the user application when the method finishes.
@@ -7518,28 +7525,43 @@ The matrix can be imported in one of three different formats:
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_Matrix_export  // export a matrix
+GrB_Info GrB_Matrix_export_TYPE  // export a matrix
 (
     GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
     GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
-    void *Ax,               // values (must match the type of A_input)
+    <type> *Ax,             // values (must match the type of A_input)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
     GrB_Format format,      // export format
     GrB_Matrix A            // matrix to export
 ) ;
 \end{verbatim}
 } \end{mdframed}
 
-\verb'GrB_Matrix_export' copies the contents of a matrix into three
-user-provided arrays, using any one of the five different formats
+\verb'GrB_Matrix_export_'$T$ copies the contents of a matrix into three
+user-provided arrays, using any one of the three different formats
 described in Section~\ref{GrB_matrix_import}.  The size of the arrays must be
 at least as large as the lengths returned by \verb'GrB_Matrix_exportSize'.  The
 matrix \verb'A' is not modified.
+
+On input, the size of the three arrays \verb'Ap', \verb'Ai', and \verb'Ax' is
+given by \verb'Ap_len', \verb'Ai_len', and \verb'Ax_len', respectively.  These
+values are in terms of the number of entries in these arrays, not the number of
+bytes.  On output, these three value are adjusted to report the number of
+entries written to the three arrays.
+
+The suffix \verb'TYPE' in the prototype above is one of \verb'BOOL',
+\verb'INT8', \verb'INT16', etc, for built-n types, or \verb'UDT' for
+user-defined types.  The type of the \verb'Ax' array must match this type.  No
+typecasting is performed.
 
 % The \verb'GrB_DENSE_ROW_FORMAT' and \verb'GrB_DENSE_COL_FORMAT' formats can
 % only be used if all entries are present in the matrix.  That is,
 % \verb'GrB_Matrix_nvals (&nvals,A)' must return \verb'nvals' equal to
 % \verb'nrows*ncols'.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_exportSize:} determine size of export}
 %-------------------------------------------------------------------------------
@@ -7560,10 +7582,9 @@ GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
 } \end{mdframed}
 
 Returns the required sizes of the arrays \verb'Ap', \verb'Ai', and \verb'Ax'
-for exporting a matrix using \verb'GrB_Matrix_export', using the same
+for exporting a matrix using \verb'GrB_Matrix_export_'$T$, using the same
 \verb'format'.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_exportHint:} determine best export format}
 %-------------------------------------------------------------------------------

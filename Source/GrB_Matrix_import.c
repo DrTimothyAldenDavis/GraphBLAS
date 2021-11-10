@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // No typecasting is done.  The type of entries in the Ax array must match
-// the GrB_Type type parameter; behavior is undefined otherwise.
+// the GrB_Type type parameter.
 
 #include "GB_export.h"
 #include "GB_build.h"
@@ -21,7 +21,11 @@
     GB_FREE (&Ax_copy, Ax_size) ;   \
 }
 
-GrB_Info GrB_Matrix_import  // import a matrix
+//------------------------------------------------------------------------------
+// GB_import_worker: import a matrix of any type
+//------------------------------------------------------------------------------
+
+static GrB_Info GB_import_worker   // import a matrix of any type
 (
     GrB_Matrix *A,          // handle of matrix to create
     GrB_Type type,          // type of matrix to create
@@ -33,7 +37,8 @@ GrB_Info GrB_Matrix_import  // import a matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    GrB_Format format,      // import format
+    GB_Context Context
 )
 { 
 
@@ -41,13 +46,9 @@ GrB_Info GrB_Matrix_import  // import a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Matrix_import (&A, type, nrows, ncols, Ap, Ai, Ax, "
-        "Ap_len, Ai_len, Ax_len, format") ;
-    GB_BURBLE_START ("GrB_Matrix_import") ;
     GB_RETURN_IF_NULL (A) ;
     (*A) = NULL ;
     GB_RETURN_IF_NULL (Ax) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (type) ;
     ASSERT_TYPE_OK (type, "type for GrB_Matrix_import", GB0) ;
     GrB_Info info ;
 
@@ -319,7 +320,52 @@ GrB_Info GrB_Matrix_import  // import a matrix
 
     GB_OK (GB_conform (*A, Context)) ;
     ASSERT_MATRIX_OK (*A, "final A imported", GB0) ;
-    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
+
+//------------------------------------------------------------------------------
+// GrB_Matrix_import_*: import a matrix of a given type
+//------------------------------------------------------------------------------
+
+#define GB_IMPORT(prefix,ctype,T,acode)                                        \
+GrB_Info GB_EVAL3 (prefix, _Matrix_import_, T) /* import a matrix */           \
+(                                                                              \
+    GrB_Matrix *A,          /* handle of matrix to create                    */\
+    GrB_Type type,          /* type of matrix to create                      */\
+    GrB_Index nrows,        /* number of rows of the matrix                  */\
+    GrB_Index ncols,        /* number of columns of the matrix               */\
+    const GrB_Index *Ap,    /* pointers for CSR, CSC, row indices for COO    */\
+    const GrB_Index *Ai,    /* row indices for CSR, CSC, col indices for COO */\
+    const ctype *Ax,        /* values (must match GrB_Type type parameter)   */\
+    GrB_Index Ap_len,       /* number of entries in Ap (not # of bytes)      */\
+    GrB_Index Ai_len,       /* number of entries in Ai (not # of bytes)      */\
+    GrB_Index Ax_len,       /* number of entries in Ax (not # of bytes)      */\
+    GrB_Format format       /* import format                                 */\
+)                                                                              \
+{                                                                              \
+    GB_WHERE1 (GB_STR(prefix) "_Matrix_import_" GB_STR(T) " (&A, type, nrows," \
+        " ncols, Ap, Ai, Ax, Ap_len, Ai_len, Ax_len, format)") ;               \
+    GB_BURBLE_START (GB_STR(prefix) "_Matrix_import_" GB_STR(T)) ;             \
+    GB_RETURN_IF_NULL_OR_FAULTY (type) ;                                       \
+    if (type->code != acode) return (GrB_DOMAIN_MISMATCH) ;                    \
+    GrB_Info info = GB_import_worker (A, type, nrows, ncols, Ap, Ai,           \
+        (const void *) Ax, Ap_len, Ai_len, Ax_len, format, Context) ;          \
+    GB_BURBLE_END ;                                                            \
+    return (info) ;                                                            \
+}
+
+GB_IMPORT (GrB, bool      , BOOL   , GB_BOOL_code  )
+GB_IMPORT (GrB, int8_t    , INT8   , GB_INT8_code  )
+GB_IMPORT (GrB, int16_t   , INT16  , GB_INT16_code )
+GB_IMPORT (GrB, int32_t   , INT32  , GB_INT32_code )
+GB_IMPORT (GrB, int64_t   , INT64  , GB_INT64_code )
+GB_IMPORT (GrB, uint8_t   , UINT8  , GB_UINT8_code )
+GB_IMPORT (GrB, uint16_t  , UINT16 , GB_UINT16_code)
+GB_IMPORT (GrB, uint32_t  , UINT32 , GB_UINT32_code)
+GB_IMPORT (GrB, uint64_t  , UINT64 , GB_UINT64_code)
+GB_IMPORT (GrB, float     , FP32   , GB_FP32_code  )
+GB_IMPORT (GrB, double    , FP64   , GB_FP64_code  )
+GB_IMPORT (GxB, GxB_FC32_t, FC32   , GB_FC32_code  )
+GB_IMPORT (GxB, GxB_FC64_t, FC64   , GB_FC64_code  )
+GB_IMPORT (GrB, void      , UDT    , GB_UDT_code   )
 

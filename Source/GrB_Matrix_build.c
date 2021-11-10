@@ -25,7 +25,8 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_build_, T) /* build a matrix from tuples */\
     const GrB_BinaryOp dup          /* binary op to assemble duplicates   */  \
 )                                                                             \
 {                                                                             \
-    GB_WHERE (C, "GrB_Matrix_build_" GB_STR(T) " (C, I, J, X, nvals, dup)") ; \
+    GB_WHERE (C, GB_STR(prefix) "_Matrix_build_" GB_STR(T)                    \
+        " (C, I, J, X, nvals, dup)") ;                                        \
     GB_BURBLE_START ("GrB_Matrix_build_" GB_STR(T)) ;                         \
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;  /* check now so C->type can be done */ \
     GrB_Info info = GB_build (C, I, J, X, nvals, dup,                         \
@@ -47,7 +48,5 @@ GB_MATRIX_BUILD (GrB, float     , FP32   , GrB_FP32  )
 GB_MATRIX_BUILD (GrB, double    , FP64   , GrB_FP64  )
 GB_MATRIX_BUILD (GxB, GxB_FC32_t, FC32   , GxB_FC32  )
 GB_MATRIX_BUILD (GxB, GxB_FC64_t, FC64   , GxB_FC64  )
-
-// for user-defined types, X is assumed to have the same type as C:
 GB_MATRIX_BUILD (GrB, void      , UDT    , C->type   )
 

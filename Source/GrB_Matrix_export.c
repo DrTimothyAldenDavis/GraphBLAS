@@ -7,11 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// Exports the contents of a matrix in one of 5 formats: CSR, CSC, FullC,
-// FullR, or COO (triplet format).  The exported matrix is not modified.
-// No typecast is performed; the output array Ax must be of the same type as
-// the input matrix A.  This condition cannot be checked, and behavior is
-// undefined if this condition does not hold.
+// Exports the contents of a matrix in one of 3 formats: CSR, CSC, or COO
+// (triplet format).  The exported matrix is not modified.  No typecast is
+// performed; the output array Ax must be of the same type as the input matrix
+// A.
 
 // The required sizes of the Ap, Ai, and Ax arrays are given by
 // GrB_Matrix_exportSize.
@@ -31,13 +30,21 @@
     GB_phbix_free (T) ;             \
 }
 
-GrB_Info GrB_Matrix_export  // export a matrix
+//------------------------------------------------------------------------------
+// GB_export_worker: export a matrix of any type
+//------------------------------------------------------------------------------
+
+static GrB_Info GB_export_worker  // export a matrix
 (
     GrB_Index *Ap,          // pointers for CSR, CSC, row indices for COO
     GrB_Index *Ai,          // row indices for CSR, CSC, col indices for COO
     void *Ax,               // values (must match the type of A_input)
+    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
+    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
+    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
     GrB_Format format,      // export format
-    GrB_Matrix A_input      // matrix to export
+    GrB_Matrix A_input,     // matrix to export
+    GB_Context Context
 )
 { 
 
@@ -45,24 +52,21 @@ GrB_Info GrB_Matrix_export  // export a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Matrix_export (Ap, Ai, Ax, format, A)") ;
-    GB_BURBLE_START ("GrB_Matrix_export") ;
-
     GrB_Info info ;
+
     GrB_Matrix A = A_input ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = GB_clear_static_header (&T_header) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     switch (format)
     {
         case GrB_CSR_FORMAT :
         case GrB_CSC_FORMAT :
         case GrB_COO_FORMAT :
-            GB_RETURN_IF_NULL (Ap) ;
-            GB_RETURN_IF_NULL (Ai) ;
+            GB_RETURN_IF_NULL (Ap) ; GB_RETURN_IF_NULL (Ap_len) ;
+            GB_RETURN_IF_NULL (Ai) ; GB_RETURN_IF_NULL (Ai_len) ;
         default:
-            GB_RETURN_IF_NULL (Ax) ;
+            GB_RETURN_IF_NULL (Ax) ; GB_RETURN_IF_NULL (Ax_len) ;
     }
 
     // finish any pending work
@@ -115,7 +119,7 @@ GrB_Info GrB_Matrix_export  // export a matrix
             csc_requested = is_csc ;
             break ;
 
-        default :
+        default : 
             // unknown format
             return (GrB_INVALID_VALUE) ;
     }
@@ -144,12 +148,10 @@ GrB_Info GrB_Matrix_export  // export a matrix
             case GrB_CSC_FORMAT :
                 GB_OK (GB_convert_any_to_sparse (T, Context)) ;
                 break ;
-
 //          case GrB_DENSE_ROW_FORMAT :
 //          case GrB_DENSE_COL_FORMAT :
 //              GB_convert_any_to_full (T) ;
 //              break ;
-
             default :
                 break ;
         }
@@ -169,11 +171,24 @@ GrB_Info GrB_Matrix_export  // export a matrix
     {
         case GrB_CSR_FORMAT : 
         case GrB_CSC_FORMAT : 
+            if (plen > (*Ap_len) || nvals > (*Ai_len))
+            { 
+                GB_FREE_ALL ;
+                return (GrB_INSUFFICIENT_SPACE) ;
+            }
             GB_memcpy (Ap, A->p, plen  * sizeof (GrB_Index), nthreads_max) ;
             GB_memcpy (Ai, A->i, nvals * sizeof (GrB_Index), nthreads_max) ;
+            (*Ap_len) = plen ;
+            (*Ai_len) = nvals ;
 
 //      case GrB_DENSE_ROW_FORMAT :
 //      case GrB_DENSE_COL_FORMAT :
+            if (nvals > (*Ax_len))
+            { 
+                GB_FREE_ALL ;
+                return (GrB_INSUFFICIENT_SPACE) ;
+            }
+            (*Ax_len) = nvals ;
             ASSERT (csc_requested == A->is_csc) ;
             if (A->iso)
             { 
@@ -189,8 +204,16 @@ GrB_Info GrB_Matrix_export  // export a matrix
 
         default:
         case GrB_COO_FORMAT : 
+            if (nvals > (*Ap_len) || nvals > (*Ai_len) || nvals > (*Ax_len))
+            { 
+                GB_FREE_ALL ;
+                return (GrB_INSUFFICIENT_SPACE) ;
+            }
             GB_OK (GB_extractTuples (Ap, Ai, Ax, &nvals, A->type->code, A,
                 Context)) ;
+            (*Ap_len) = nvals ;
+            (*Ai_len) = nvals ;
+            (*Ax_len) = nvals ;
             break ;
     }
 
@@ -201,4 +224,50 @@ GrB_Info GrB_Matrix_export  // export a matrix
     GB_FREE_ALL ;
     return (GrB_SUCCESS) ;
 }
+
+//------------------------------------------------------------------------------
+// GrB_Matrix_export_*: export a matrix of a given type
+//------------------------------------------------------------------------------
+
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL ;
+
+#define GB_EXPORT(prefix,ctype,T,acode)                                        \
+GrB_Info GB_EVAL3 (prefix, _Matrix_export_, T) /* export a matrix */           \
+(                                                                              \
+    GrB_Index *Ap,          /* pointers for CSR, CSC, row indices for COO    */\
+    GrB_Index *Ai,          /* row indices for CSR, CSC, col indices for COO */\
+    ctype *Ax,              /* values (must match the type of A)             */\
+    GrB_Index *Ap_len,      /* number of entries in Ap (not # of bytes)      */\
+    GrB_Index *Ai_len,      /* number of entries in Ai (not # of bytes)      */\
+    GrB_Index *Ax_len,      /* number of entries in Ax (not # of bytes)      */\
+    GrB_Format format,      /* export format                                 */\
+    GrB_Matrix A            /* matrix to export                              */\
+)                                                                              \
+{                                                                              \
+    GB_WHERE1 (GB_STR(prefix) "_Matrix_export_" GB_STR(T)                      \
+        " (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, format, A)") ;               \
+    GB_BURBLE_START (GB_STR(prefix) "_Matrix_export_" GB_STR(T)) ;             \
+    GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                          \
+    if (A->type->code != acode) return (GrB_DOMAIN_MISMATCH) ;                 \
+    GrB_Info info = GB_export_worker (Ap, Ai, (void *) Ax,                     \
+        Ap_len, Ai_len, Ax_len, format, A, Context) ;                          \
+    GB_BURBLE_END ;                                                            \
+    return (info) ;                                                            \
+}
+
+GB_EXPORT (GrB, bool      , BOOL   , GB_BOOL_code  )
+GB_EXPORT (GrB, int8_t    , INT8   , GB_INT8_code  )
+GB_EXPORT (GrB, int16_t   , INT16  , GB_INT16_code )
+GB_EXPORT (GrB, int32_t   , INT32  , GB_INT32_code )
+GB_EXPORT (GrB, int64_t   , INT64  , GB_INT64_code )
+GB_EXPORT (GrB, uint8_t   , UINT8  , GB_UINT8_code )
+GB_EXPORT (GrB, uint16_t  , UINT16 , GB_UINT16_code)
+GB_EXPORT (GrB, uint32_t  , UINT32 , GB_UINT32_code)
+GB_EXPORT (GrB, uint64_t  , UINT64 , GB_UINT64_code)
+GB_EXPORT (GrB, float     , FP32   , GB_FP32_code  )
+GB_EXPORT (GrB, double    , FP64   , GB_FP64_code  )
+GB_EXPORT (GxB, GxB_FC32_t, FC32   , GB_FC32_code  )
+GB_EXPORT (GxB, GxB_FC64_t, FC64   , GB_FC64_code  )
+GB_EXPORT (GrB, void      , UDT    , GB_UDT_code   )
 

@@ -963,31 +963,47 @@ void mexFunction
     // import/export
     //--------------------------------------------------------------------------
 
-    GrB_Index *Ap = mxCalloc (5 , sizeof (GrB_Index)) ;
-    GrB_Index *Ai = mxCalloc (16, sizeof (GrB_Index)) ;
-    float *Ax = mxCalloc (16, sizeof (float))  ;
+    GrB_Index Ap_len = 5 ;
+    GrB_Index Ai_len = 16 ;
+    GrB_Index Ax_len = 16 ;
+    GrB_Index *Ap = mxCalloc (Ap_len , sizeof (GrB_Index)) ;
+    GrB_Index *Ai = mxCalloc (Ax_len, sizeof (GrB_Index)) ;
+    float *Ax = mxCalloc (Ax_len, sizeof (float))  ;
     OK (GrB_Matrix_new (&A, GrB_FP32, 4, 4)) ;
     OK (GrB_Matrix_setElement_FP32 (A, 1, 0, 0)) ;
 //  expected = GrB_INVALID_VALUE ;
-//  ERR (GrB_Matrix_export (Ap, Ai, Ax, GrB_DENSE_ROW_FORMAT, A)) ;
-//  ERR (GrB_Matrix_export (Ap, Ai, Ax, GrB_DENSE_COL_FORMAT, A)) ;
+//  ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_DENSE_ROW_FORMAT, A)) ;
+//  ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_DENSE_COL_FORMAT, A)) ;
     OK (GrB_Matrix_assign_FP32 (A, NULL, NULL, (float) 2.0, GrB_ALL, 4,
         GrB_ALL, 4, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A iso to export", 3, NULL)) ;
-    OK (GrB_Matrix_export (Ap, Ai, Ax, GrB_CSC_FORMAT, A)) ;
-//  OK (GrB_Matrix_export (Ap, Ai, Ax, GrB_DENSE_COL_FORMAT, A)) ;
+    OK (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_CSC_FORMAT, A)) ;
+//  OK (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_DENSE_COL_FORMAT, A)) ;
     for (int i = 0 ; i < 16 ; i++)
     {
         CHECK (Ax [i] == 2.0) ;
     }
+
+    expected = GrB_INSUFFICIENT_SPACE ;
+    Ap_len = 1 ;
+    ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_CSC_FORMAT, A)) ;
+    Ap_len = 5 ;
+    Ai_len = 1 ;
+    ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_CSC_FORMAT, A)) ;
+    Ai_len = 5 ;
+    Ax_len = 1 ;
+    ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_COO_FORMAT, A)) ;
+    ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_COO_FORMAT, A)) ;
+    Ax_len = 16 ;
+
     OK (GrB_Matrix_free_ (&A)) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GrB_Matrix_import (&A, GrB_FP32, 2 * GB_NMAX, 1, Ap, Ai, Ax,
+    ERR (GrB_Matrix_import_FP32 (&A, GrB_FP32, 2 * GB_NMAX, 1, Ap, Ai, Ax,
         5, 16, 16, GrB_CSR_FORMAT)) ;
     CHECK (A == NULL) ;
 
-    ERR (GrB_Matrix_import (&A, GrB_FP32, 100, 100, Ap, Ai, Ax,
+    ERR (GrB_Matrix_import_FP32 (&A, GrB_FP32, 100, 100, Ap, Ai, Ax,
         5, 16, 16, GrB_CSC_FORMAT)) ;
     CHECK (A == NULL) ;
 
@@ -995,15 +1011,15 @@ void mexFunction
     { 
         Ap [j] = j ;
     }
-    ERR (GrB_Matrix_import (&A, GrB_FP32, 4, 4, Ap, Ai, Ax,
+    ERR (GrB_Matrix_import_FP32 (&A, GrB_FP32, 4, 4, Ap, Ai, Ax,
         5, 3, 3, GrB_CSC_FORMAT)) ;
     CHECK (A == NULL) ;
 
-//  ERR (GrB_Matrix_import (&A, GrB_FP32, 4, 4, Ap, Ai, Ax,
+//  ERR (GrB_Matrix_import_FP32 (&A, GrB_FP32, 4, 4, Ap, Ai, Ax,
 //      0, 0, 3, GrB_DENSE_COL_FORMAT)) ;
 //  CHECK (A == NULL) ;
 
-    ERR (GrB_Matrix_import (&A, GrB_FP32, 4, 4, Ap, Ai, Ax,
+    ERR (GrB_Matrix_import_FP32 (&A, GrB_FP32, 4, 4, Ap, Ai, Ax,
         5, 6, 7, GrB_COO_FORMAT)) ;
     CHECK (A == NULL) ;
 
