@@ -990,11 +990,15 @@ void mexFunction
     Ap_len = 5 ;
     Ai_len = 1 ;
     ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_CSC_FORMAT, A)) ;
-    Ai_len = 5 ;
+    Ai_len = 16 ;
     Ax_len = 1 ;
+    ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_CSC_FORMAT, A)) ;
     ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_COO_FORMAT, A)) ;
     ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, GrB_COO_FORMAT, A)) ;
     Ax_len = 16 ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, -1, A)) ;
 
     OK (GrB_Matrix_free_ (&A)) ;
 
