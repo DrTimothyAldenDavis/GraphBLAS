@@ -50,7 +50,7 @@ void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use
 
     if (bnvec < n)
     {
-        printf ("anz %g bnz %b bnvec_nonempty %g n %g  bnvec/n %g\n", // FIXME
+        printf ("anz %g bnz %g bnvec_nonempty %g n %g  bnvec/n %g\n", // FIXME
             anz, bnz, bnvec, n, bnvec/n) ;
     }
 
