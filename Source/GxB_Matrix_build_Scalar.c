@@ -36,7 +36,7 @@ GrB_Info GxB_Matrix_build_Scalar
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
     { 
-        GB_ERROR (GrB_INVALID_VALUE, "Scalar value is %s", "missing") ;
+        GB_ERROR (GrB_EMPTY_OBJECT, "Scalar value is %s", "missing") ;
     }
 
     //--------------------------------------------------------------------------

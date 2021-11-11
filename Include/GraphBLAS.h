@@ -11069,7 +11069,7 @@ GrB_Info GrB_Matrix_import_UDT    // import a matrix with a user-defined type
 #define GrB_Matrix_import(A,type,nrows,ncols,Ap,Ai,Ax,Ap_len,Ai_len,Ax_len,fmt)\
     _Generic                                                    \
     (                                                           \
-        (X),                                                    \
+        (Ax),                                                   \
             GB_CASES (*, GrB, Matrix_import)                    \
     )                                                           \
     (A, type, nrows, ncols, Ap, Ai, Ax, Ap_len, Ai_len, Ax_len, fmt)
@@ -11266,7 +11266,7 @@ GrB_Info GrB_Matrix_export_UDT      // export a matrix with a user-defined type
 #define GrB_Matrix_export(Ap,Ai,Ax,Ap_len,Ai_len,Ax_len,fmt,A)  \
     _Generic                                                    \
     (                                                           \
-        (X),                                                    \
+        (Ax),                                                   \
             GB_CASES (*, GrB, Matrix_export)                    \
     )                                                           \
     (Ap, Ai, Ax, Ap_len, Ai_len, Ax_len, fmt, A)

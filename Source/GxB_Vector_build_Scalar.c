@@ -37,7 +37,7 @@ GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
     { 
-        GB_ERROR (GrB_INVALID_VALUE, "Scalar value is %s", "missing") ;
+        GB_ERROR (GrB_EMPTY_OBJECT, "Scalar value is %s", "missing") ;
     }
 
     //--------------------------------------------------------------------------

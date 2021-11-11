@@ -186,7 +186,7 @@ void mexFunction
     OK (GxB_Scalar_fprint (scalar, "scalar init", GxB_COMPLETE, NULL)) ;
     OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
     OK (GrB_Vector_new (&w, GrB_FP32, 10)) ;
-    expected = GrB_INVALID_VALUE ;
+    expected = GrB_EMPTY_OBJECT ;
     ERR (GxB_Matrix_build_Scalar (C, I, I, scalar, 4)) ;
     OK (GrB_error (&s, C)) ;
     printf ("expected error: [%s]\n", s) ;

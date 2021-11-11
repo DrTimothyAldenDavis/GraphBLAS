@@ -237,7 +237,7 @@ GrB_Info GB_serialize_array
     {
         // compression failure: this can "never" occur
         GB_FREE_ALL ;
-        return (GrB_PANIC) ;
+        return (GrB_INVALID_OBJECT) ;   // TODO: find a better error code
     }
 
     //--------------------------------------------------------------------------
