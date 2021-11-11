@@ -66,6 +66,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     ASSERT_MATRIX_OK_OR_NULL (C_in, "C_in for meta A*B", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M_in, "M for meta A*B", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for meta A*B", GB0) ;
     ASSERT_MATRIX_OK (A_in, "A_in for meta A*B", GB0) ;
     ASSERT_MATRIX_OK (B_in, "B_in for meta A*B", GB0) ;
 
@@ -237,27 +238,84 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // of the desired format C_is_csc.  This ensures that GB_accum_mask will
     // transpose C when this function is done.
 
-    // For these 4 cases, the swap_rule is true:
+    double A_work = GB_nnz_held (A_in) ;    // work to transpose A
+    double B_work = GB_nnz_held (B_in) ;    // work to transpose B
+    // work to transpose C cannot be determined; assume it is full
+    double C_work = ((double) A_in->vlen) * ((double) B_in->vlen) ;
+
+    bool swap_rule ;
+
+    if (( C_transpose &&  A_transpose &&  B_transpose) ||   // C' = A'*B'
+        ( C_transpose &&  A_transpose && !B_transpose) ||   // C' = A'*B
+        (!C_transpose &&  A_transpose &&  B_transpose))     // C  = A'*B'
+    {
+
+        //----------------------------------------------------------------------
+        // For these 3 cases, the swap_rule is true:
+        //----------------------------------------------------------------------
 
         // C' = A'*B'       becomes C = B*A
         // C' = A'*B        becomes C = B'*A
-        // C' = A*B'        becomes C = B*A'
         // C  = A'*B'       becomes C = (B*A)'
 
-    // For these 4 cases, the swap_rule is false:
+        swap_rule = true ;
 
-        // C' = A*B         C = (A*B)'
+    }
+    else if (C_transpose && !A_transpose &&  B_transpose)   // C' = A*B'
+    {
+
+        //----------------------------------------------------------------------
+        // C' = A*B'        becomes C = B*A', or stays as C' = A*B'
+        //----------------------------------------------------------------------
+
+        // C'=A*B' is either computed as-is with C'=A*B', or C=B*A' with
+        // swap_rule true.  Both require explicit transpose(s).
+        // C'=A*B' requires B to be transposed, then C on output.
+        // C=B*A' requires A to be transposed.
+
+        // In v5.1 and earlier swap_rule = true was used for this case.
+        // If C is very large, this will still be true.  swap_rule can only be
+        // false if C is small.
+
+        swap_rule = (A_work < B_work + C_work) ;
+//      printf ("A_work %g < B_work %g C_work %g: %d\n", A_work, B_work, C_work,
+//          swap_rule) ;
+
+    }
+    else if (!C_transpose && !A_transpose &&  B_transpose)  // C = A*B'
+    {
+
+        //----------------------------------------------------------------------
+        // C  = A*B'        becomes C'=B*A' or stays C=A*B'
+        //----------------------------------------------------------------------
+
+        // C=A*B' is either computed as-is with C=A*B', or C'=B*A' with
+        // swap_rule true.  Both require explicit transpose(s).
+        // C'=B*A' requires A to be transposed, then C on output.
+        // C=A*B' requires B to be transposed.
+
+        // In v5.1 and earlier swap_rule = false was used for this case.
+        // If C is very large, this will still be false.  swap_rule can only be
+        // true if C is small.
+
+        swap_rule = (B_work > A_work + C_work) ;
+//      printf ("B_work %g > A_work %g C_work %g: %d\n", B_work, A_work, C_work,
+//          swap_rule) ;
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // For these 3 cases, the swap_rule is false:
+        //----------------------------------------------------------------------
+
+        // C' = A*B         use as-is, doing C = (A*B)'
         // C  = A'*B        use as-is
-        // C  = A*B'        use as-is
         // C  = A*B         use as-is
 
-    // This rule is the same as that used by SSMULT in SuiteSparse.
-
-    bool swap_rule =
-        ( C_transpose &&  A_transpose &&  B_transpose) ||   // C' = A'*B'
-        ( C_transpose &&  A_transpose && !B_transpose) ||   // C' = A'*B
-        ( C_transpose && !A_transpose &&  B_transpose) ||   // C' = A*B'
-        (!C_transpose &&  A_transpose &&  B_transpose) ;    // C  = A'*B'
+        swap_rule = false ;
+    }
 
     GrB_Matrix A, B ;
     bool atrans, btrans ;

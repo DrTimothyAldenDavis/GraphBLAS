@@ -9,7 +9,7 @@ void GB (_Cdense_ewise3_accum)
 ) ;
 endif_is_binop_subset
 
-GrB_Info GB (_Cdense_ewise3_noaccum)
+void GB (_Cdense_ewise3_noaccum)
 (
     GrB_Matrix C,
     const GrB_Matrix A,

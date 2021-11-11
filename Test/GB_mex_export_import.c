@@ -109,20 +109,20 @@ static GrB_Info GB_exporter (GrB_Index *Ap, GrB_Index *Ai, void *Ax,
 {
     switch (A->type->code)
     {
-        case GB_BOOL_code   : return (GrB_Matrix_export_BOOL   (Ap, Ai, (bool       *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_INT8_code   : return (GrB_Matrix_export_INT8   (Ap, Ai, (int8_t     *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_INT16_code  : return (GrB_Matrix_export_INT16  (Ap, Ai, (int16_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_INT32_code  : return (GrB_Matrix_export_INT32  (Ap, Ai, (int32_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_INT64_code  : return (GrB_Matrix_export_INT64  (Ap, Ai, (int64_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_UINT8_code  : return (GrB_Matrix_export_UINT8  (Ap, Ai, (uint8_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_UINT16_code : return (GrB_Matrix_export_UINT16 (Ap, Ai, (uint16_t   *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_UINT32_code : return (GrB_Matrix_export_UINT32 (Ap, Ai, (uint32_t   *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_UINT64_code : return (GrB_Matrix_export_UINT64 (Ap, Ai, (uint64_t   *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_FP32_code   : return (GrB_Matrix_export_FP32   (Ap, Ai, (float      *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_FP64_code   : return (GrB_Matrix_export_FP64   (Ap, Ai, (double     *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_FC32_code   : return (GxB_Matrix_export_FC32   (Ap, Ai, (GxB_FC32_t *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_FC64_code   : return (GxB_Matrix_export_FC64   (Ap, Ai, (GxB_FC64_t *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
-        case GB_UDT_code    : return (GrB_Matrix_export_UDT    (Ap, Ai, (void       *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_BOOL_code   : return (GrB_Matrix_export_BOOL_  (Ap, Ai, (bool       *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_INT8_code   : return (GrB_Matrix_export_INT8_  (Ap, Ai, (int8_t     *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_INT16_code  : return (GrB_Matrix_export_INT16_ (Ap, Ai, (int16_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_INT32_code  : return (GrB_Matrix_export_INT32_ (Ap, Ai, (int32_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_INT64_code  : return (GrB_Matrix_export_INT64_ (Ap, Ai, (int64_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_UINT8_code  : return (GrB_Matrix_export_UINT8_ (Ap, Ai, (uint8_t    *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_UINT16_code : return (GrB_Matrix_export_UINT16_(Ap, Ai, (uint16_t   *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_UINT32_code : return (GrB_Matrix_export_UINT32_(Ap, Ai, (uint32_t   *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_UINT64_code : return (GrB_Matrix_export_UINT64_(Ap, Ai, (uint64_t   *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_FP32_code   : return (GrB_Matrix_export_FP32_  (Ap, Ai, (float      *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_FP64_code   : return (GrB_Matrix_export_FP64_  (Ap, Ai, (double     *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_FC32_code   : return (GxB_Matrix_export_FC32_  (Ap, Ai, (GxB_FC32_t *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_FC64_code   : return (GxB_Matrix_export_FC64_  (Ap, Ai, (GxB_FC64_t *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
+        case GB_UDT_code    : return (GrB_Matrix_export_UDT_   (Ap, Ai, (void       *) Ax, Ap_len, Ai_len, Ax_len, format, A)) ;
         default             : ;
     }
     mexErrMsgTxt ("unknown type") ;
@@ -138,20 +138,20 @@ static GrB_Info GB_importer (GrB_Matrix *A, GrB_Type type, GrB_Index nrows,
 {
     switch (type->code)
     {
-        case GB_BOOL_code   : return (GrB_Matrix_import_BOOL   (A, type, nrows, ncols, Ap, Ai, (const bool       *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_INT8_code   : return (GrB_Matrix_import_INT8   (A, type, nrows, ncols, Ap, Ai, (const int8_t     *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_INT16_code  : return (GrB_Matrix_import_INT16  (A, type, nrows, ncols, Ap, Ai, (const int16_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_INT32_code  : return (GrB_Matrix_import_INT32  (A, type, nrows, ncols, Ap, Ai, (const int32_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_INT64_code  : return (GrB_Matrix_import_INT64  (A, type, nrows, ncols, Ap, Ai, (const int64_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_UINT8_code  : return (GrB_Matrix_import_UINT8  (A, type, nrows, ncols, Ap, Ai, (const uint8_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_UINT16_code : return (GrB_Matrix_import_UINT16 (A, type, nrows, ncols, Ap, Ai, (const uint16_t   *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_UINT32_code : return (GrB_Matrix_import_UINT32 (A, type, nrows, ncols, Ap, Ai, (const uint32_t   *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_UINT64_code : return (GrB_Matrix_import_UINT64 (A, type, nrows, ncols, Ap, Ai, (const uint64_t   *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_FP32_code   : return (GrB_Matrix_import_FP32   (A, type, nrows, ncols, Ap, Ai, (const float      *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_FP64_code   : return (GrB_Matrix_import_FP64   (A, type, nrows, ncols, Ap, Ai, (const double     *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_FC32_code   : return (GxB_Matrix_import_FC32   (A, type, nrows, ncols, Ap, Ai, (const GxB_FC32_t *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_FC64_code   : return (GxB_Matrix_import_FC64   (A, type, nrows, ncols, Ap, Ai, (const GxB_FC64_t *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
-        case GB_UDT_code    : return (GrB_Matrix_import_UDT    (A, type, nrows, ncols, Ap, Ai, (const void       *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_BOOL_code   : return (GrB_Matrix_import_BOOL_  (A, type, nrows, ncols, Ap, Ai, (const bool       *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_INT8_code   : return (GrB_Matrix_import_INT8_  (A, type, nrows, ncols, Ap, Ai, (const int8_t     *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_INT16_code  : return (GrB_Matrix_import_INT16_ (A, type, nrows, ncols, Ap, Ai, (const int16_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_INT32_code  : return (GrB_Matrix_import_INT32_ (A, type, nrows, ncols, Ap, Ai, (const int32_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_INT64_code  : return (GrB_Matrix_import_INT64_ (A, type, nrows, ncols, Ap, Ai, (const int64_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_UINT8_code  : return (GrB_Matrix_import_UINT8_ (A, type, nrows, ncols, Ap, Ai, (const uint8_t    *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_UINT16_code : return (GrB_Matrix_import_UINT16_(A, type, nrows, ncols, Ap, Ai, (const uint16_t   *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_UINT32_code : return (GrB_Matrix_import_UINT32_(A, type, nrows, ncols, Ap, Ai, (const uint32_t   *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_UINT64_code : return (GrB_Matrix_import_UINT64_(A, type, nrows, ncols, Ap, Ai, (const uint64_t   *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_FP32_code   : return (GrB_Matrix_import_FP32_  (A, type, nrows, ncols, Ap, Ai, (const float      *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_FP64_code   : return (GrB_Matrix_import_FP64_  (A, type, nrows, ncols, Ap, Ai, (const double     *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_FC32_code   : return (GxB_Matrix_import_FC32_  (A, type, nrows, ncols, Ap, Ai, (const GxB_FC32_t *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_FC64_code   : return (GxB_Matrix_import_FC64_  (A, type, nrows, ncols, Ap, Ai, (const GxB_FC64_t *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
+        case GB_UDT_code    : return (GrB_Matrix_import_UDT_   (A, type, nrows, ncols, Ap, Ai, (const void       *) Ax, Ap_len, Ai_len, Ax_len, format)) ;
         default             : ;
     }
     mexErrMsgTxt ("unknown type") ;

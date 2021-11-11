@@ -77,7 +77,7 @@ else ( )
     message ( STATUS "Building dynamic GraphBLAS library" )
 endif ( )
 
-# Uncomment this line for for development only, not for end-users:
+# Uncomment this line for development only, not for end-users:
 # set ( GBCOMPACT true )
 
 if ( GBCOMPACT )

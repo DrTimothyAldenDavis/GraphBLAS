@@ -205,11 +205,11 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Nov 9, 2021 (alpha21)"
+#define GxB_IMPLEMENTATION_DATE "Nov 10, 2021 (alpha21)"
 #define GxB_IMPLEMENTATION_MAJOR 6
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
-#define GxB_SPEC_DATE "Nov 9, 2021 (draft)"
+#define GxB_SPEC_DATE "Nov 10, 2021 (draft)"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 0
 #define GxB_SPEC_SUB   0
@@ -10831,7 +10831,7 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 
 // No typecasting of the values is done on import or export.
 
-// The GrB C API specification supports 5 formats:
+// The GrB C API specification supports 3 formats:
 
 typedef enum
 {
@@ -11065,6 +11065,16 @@ GrB_Info GrB_Matrix_import_UDT    // import a matrix with a user-defined type
     GrB_Format format       // import format
 ) ;
 
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Matrix_import(A,type,nrows,ncols,Ap,Ai,Ax,Ap_len,Ai_len,Ax_len,fmt)\
+    _Generic                                                    \
+    (                                                           \
+        (X),                                                    \
+            GB_CASES (*, GrB, Matrix_import)                    \
+    )                                                           \
+    (A, type, nrows, ncols, Ap, Ai, Ax, Ap_len, Ai_len, Ax_len, fmt)
+#endif
+
 // For GrB_Matrix_export_T: on input, Ap_len, Ai_len, and Ax_len are
 // the size of the 3 arrays Ap, Ai, and Ax, in terms of the # of entries.
 // On output, these 3 values are modified to be the # of entries copied
@@ -11251,6 +11261,16 @@ GrB_Info GrB_Matrix_export_UDT      // export a matrix with a user-defined type
     GrB_Format format,      // export format
     GrB_Matrix A            // matrix to export
 ) ;
+
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Matrix_export(Ap,Ai,Ax,Ap_len,Ai_len,Ax_len,fmt,A)  \
+    _Generic                                                    \
+    (                                                           \
+        (X),                                                    \
+            GB_CASES (*, GrB, Matrix_export)                    \
+    )                                                           \
+    (Ap, Ai, Ax, Ap_len, Ai_len, Ax_len, fmt, A)
+#endif
 
 GB_PUBLIC
 GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export

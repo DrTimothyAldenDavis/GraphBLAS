@@ -145,7 +145,7 @@ void GB ((none))
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_Cdense_ewise3_noaccum__pow_fc32)
+void GB (_Cdense_ewise3_noaccum__pow_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -153,12 +153,7 @@ GrB_Info GB (_Cdense_ewise3_noaccum__pow_fc32)
     const int nthreads
 )
 { 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
     #include "GB_dense_ewise3_noaccum_template.c"
-    return (GrB_SUCCESS) ;
-    #endif
 }
 
 //------------------------------------------------------------------------------

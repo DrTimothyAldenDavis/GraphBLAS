@@ -59,6 +59,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     #ifdef GBCOMPACT
+    GBURBLE ("(always punt) ") ;
     return (GrB_NO_VALUE) ;
     #else
 
@@ -177,22 +178,6 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     GB_pslice (B_slice, B->p, bnvec, nbslice, false) ;
 
     //--------------------------------------------------------------------------
-    // if C is iso on input: get the iso scalar and convert C to non-iso
-    //--------------------------------------------------------------------------
-
-    const size_t csize = C->type->size ;
-    GB_void cinput [GB_VLA(csize)] ;
-    memset (cinput, 0, csize) ;
-    const bool C_in_iso = C->iso ;
-    if (C->iso)
-    { 
-        // allocate but do not initialize C->x
-        memcpy (cinput, C->x, csize) ;
-        GB_OK (GB_convert_any_to_non_iso (C, false, Context)) ;
-        ASSERT (!C->iso) ;
-    }
-
-    //--------------------------------------------------------------------------
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
@@ -201,8 +186,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     #define GB_Adot4B(add,mult,xname) GB (_Adot4B_ ## add ## mult ## xname)
     #define GB_AxB_WORKER(add,mult,xname)                           \
     {                                                               \
-        info = GB_Adot4B (add,mult,xname) (C, C_in_iso, cinput,     \
-            A, A_slice, naslice, B, B_slice, nbslice, nthreads) ;   \
+        info = GB_Adot4B (add,mult,xname) (C, A, A_slice, naslice,  \
+            B, B_slice, nbslice, nthreads, Context) ;               \
     }                                                               \
     break ;
 
@@ -223,17 +208,13 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     { 
         // dot4 doesn't handle this case; punt to dot2 or dot3
         GBURBLE ("(punt) ") ;
-        return (info) ;
     }
-    else
+    else if (info == GrB_SUCCESS)
     { 
-        // the dot4 template does not allocate any memory
-        ASSERT (info == GrB_SUCCESS) ;
         ASSERT_MATRIX_OK (C, "dot4: output", GB0) ;
         (*done_in_place) = true ;
-        return (GrB_SUCCESS) ;
     }
-
+    return (info) ;
     #endif
 }
 

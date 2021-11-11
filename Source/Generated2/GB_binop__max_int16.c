@@ -145,7 +145,7 @@ void GB (_Cdense_ewise3_accum__max_int16)
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB (_Cdense_ewise3_noaccum__max_int16)
+void GB (_Cdense_ewise3_noaccum__max_int16)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -153,12 +153,7 @@ GrB_Info GB (_Cdense_ewise3_noaccum__max_int16)
     const int nthreads
 )
 { 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
     #include "GB_dense_ewise3_noaccum_template.c"
-    return (GrB_SUCCESS) ;
-    #endif
 }
 
 //------------------------------------------------------------------------------

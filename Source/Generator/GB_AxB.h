@@ -23,12 +23,11 @@ GrB_Info GB (_Adot3B)
 if_dot4_enabled
 GrB_Info GB (_Adot4B)
 (
-    GrB_Matrix C, const bool C_in_iso, const GB_void *cinput_void,
-    const GrB_Matrix A,
-    int64_t *restrict A_slice, int naslice,
-    const GrB_Matrix B,
-    int64_t *restrict B_slice, int nbslice,
-    const int nthreads
+    GrB_Matrix C,
+    const GrB_Matrix A, int64_t *restrict A_slice, int naslice,
+    const GrB_Matrix B, int64_t *restrict B_slice, int nbslice,
+    const int nthreads,
+    GB_Context Context
 ) ;
 #endif
 

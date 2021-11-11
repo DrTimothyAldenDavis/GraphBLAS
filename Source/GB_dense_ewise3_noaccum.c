@@ -108,7 +108,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
 
     #define GB_BINOP_WORKER(op,xname)                                       \
     {                                                                       \
-        info = GB_Cdense_ewise3_noaccum(op,xname) (C, A, B, nthreads) ;     \
+        GB_Cdense_ewise3_noaccum(op,xname) (C, A, B, nthreads) ;            \
     }                                                                       \
     break ;
 

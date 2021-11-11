@@ -4928,8 +4928,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Matrix_unpack_FullC'    & unpack FullC         & \ref{matrix_unpack_fullc} \\
 \hline
 \hline
-\verb'GrB_Matrix_import_'$T$    & import in various formats & \ref{GrB_matrix_import} \\
-\verb'GrB_Matrix_export_'$T$    & export in various formats & \ref{GrB_matrix_export} \\
+\verb'GrB_Matrix_import'        & import in various formats & \ref{GrB_matrix_import} \\
+\verb'GrB_Matrix_export'        & export in various formats & \ref{GrB_matrix_export} \\
 \verb'GrB_Matrix_exportSize'    & array sizes for export & \ref{export_size} \\
 \verb'GrB_Matrix_exportHint'    & hint best export format & \ref{export_hint} \\
 \hline
@@ -6119,7 +6119,7 @@ The pack/unpack functions allow the user application to create a
 faster and with less memory overhead than the \verb'GrB_*_build' and
 \verb'GrB_*_extractTuples' functions.
 
-The \verb'GrB_Matrix_import_'$T$ and \verb'GrB_Matrix_export_'$T$ are not
+The \verb'GrB_Matrix_import' and \verb'GrB_Matrix_export' are not
 described in this section.  Refer to Section~\ref{GrB_import_export} instead.
 
 The semantics of the \verb'GxB' pack/unpack are the same as the
@@ -7432,7 +7432,7 @@ and requires more memory.  It has the advantage that it does not require
 GraphBLAS and the user application to agree on what memory manager to use,
 since no ownership of allocated arrays is changed.
 
-The format for \verb'GrB_Matrix_import_'$T$ and \verb'GrB_Matrix_export_'$T$ is
+The format for \verb'GrB_Matrix_import' and \verb'GrB_Matrix_export' is
 controlled by the following enum:
 
 {\footnotesize
@@ -7454,7 +7454,7 @@ GrB_Format ; \end{verbatim}}
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_Matrix_import_TYPE  // import a matrix
+GrB_Info GrB_Matrix_import  // import a matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
     GrB_Type type,          // type of matrix to create
@@ -7471,8 +7471,8 @@ GrB_Info GrB_Matrix_import_TYPE  // import a matrix
 \end{verbatim}
 } \end{mdframed}
 
-The \verb'GrB_Matrix_import_'$T$ method copies from user-provided arrays into an
-opaque \verb'GrB_Matrix' and \verb'GrB_Matrix_export_'$T$ copies data out, from an
+The \verb'GrB_Matrix_import' method copies from user-provided arrays into an
+opaque \verb'GrB_Matrix' and \verb'GrB_Matrix_export' copies data out, from an
 opaque \verb'GrB_Matrix' into user-provided arrays.
 
 The suffix \verb'TYPE' in the prototype above is one of \verb'BOOL',
@@ -7534,7 +7534,7 @@ The matrix can be imported in one of three different formats:
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_Matrix_export_TYPE  // export a matrix
+GrB_Info GrB_Matrix_export  // export a matrix
 (
     GrB_Index *Ap,          // pointers for CSR, CSC, column indices for COO
     GrB_Index *Ai,          // col indices for CSR/COO, row indices for CSC
@@ -7548,7 +7548,7 @@ GrB_Info GrB_Matrix_export_TYPE  // export a matrix
 \end{verbatim}
 } \end{mdframed}
 
-\verb'GrB_Matrix_export_'$T$ copies the contents of a matrix into three
+\verb'GrB_Matrix_export' copies the contents of a matrix into three
 user-provided arrays, using any one of the three different formats
 described in Section~\ref{GrB_matrix_import}.  The size of the arrays must be
 at least as large as the lengths returned by \verb'GrB_Matrix_exportSize'.  The
@@ -7591,7 +7591,7 @@ GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
 } \end{mdframed}
 
 Returns the required sizes of the arrays \verb'Ap', \verb'Ai', and \verb'Ax'
-for exporting a matrix using \verb'GrB_Matrix_export_'$T$, using the same
+for exporting a matrix using \verb'GrB_Matrix_export', using the same
 \verb'format'.
 
 %-------------------------------------------------------------------------------
@@ -14361,9 +14361,9 @@ include file as \verb'/usr/local/include/GraphBLAS.h'.  This command fails:
     gcc prog.c -lgraphblas \end{verbatim} }
 
 Revising my \verb'LD_LIBRARY_PATH' to put \verb'/usr/local/lib' first in the
-library director order didn't help.  If you encounter this problem, try one of
+library directory order didn't help.  If you encounter this problem, try one of
 the following options (all four work for me, and link against the proper
-version, \verb'/usr/local/lib/libgraphblas.so.5.2.0'):
+version (\verb'/usr/local/lib/libgraphblas.so.5.2.0' for example):
 
     {\small
     \begin{verbatim}
