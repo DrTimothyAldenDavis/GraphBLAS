@@ -152,9 +152,9 @@ are extensions to the GraphBLAS C API.
 \item Version 6.0.0 (FIXME: DATE TO BE DETERMINED)
 
     \begin{packed_itemize}
-    \item this release will contain only a few changes that cause a
-        break with backward compatibility.
-    \item It will be fully compliant with the v2.0 C API Specification.
+    \item this release contains only a few changes that cause a
+        break with backward compatibility.  It is otherwise identical to v5.2.0.
+    \item v6.0.0 is fully compliant with the v2.0 C API Specification.
         Three changes from the v2.0 C API Spec are not backward compatible
         (\verb'GrB_*wait', \verb'GrB_Info', \verb'GrB_SCMP').
         \verb'GxB_init' has also changed.
@@ -163,7 +163,7 @@ are extensions to the GraphBLAS C API.
         \item \verb'GrB_Info': changed enum values
         \item \verb'GrB_SCMP': removed
         \item \verb'GxB_init (mode, malloc, calloc, realloc, free, is_thread_safe)':
-            the last parameter, \verb'is_thread_safe', will be deleted.
+            the last parameter, \verb'is_thread_safe', is deleted.
             The malloc, calloc, realloc, and free functions must be thread-safe.
         \end{packed_itemize}
     \end{packed_itemize}

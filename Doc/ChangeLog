@@ -1,7 +1,7 @@
-Version 6.0.0, FUTURE
+Version 6.0.0, FIXME: date
 
-    * v6.0.0: this release will contain only a few changes that cause a
-        break with backward compatibility.
+    * v6.0.0: this release contains only a few changes that cause a
+        break with backward compatibility.  It is otherwise identical to v5.2.0.
     * Fully compliant with the v2.0 C API Specification: three changes from the
         v2.0 C API Spec are not backward compatible: (GrB_*wait, GrB_Info
         enum, and GrB_SCMP).  GxB_init has also changed.
@@ -9,7 +9,7 @@ Version 6.0.0, FUTURE
         * GrB_Info: changed enum values
         * GrB_SCMP: removed
         * GxB_init (mode, malloc, calloc, realloc, free, is_thread_safe): the
-            last parameter, is_thread_safe, will be deleted.
+            last parameter, is_thread_safe, is deleted.
             The malloc/calloc/realloc/free functions must be thread-safe.
 
 Version 5.2.0, FIXME: date
@@ -50,8 +50,7 @@ Version 5.2.0, FIXME: date
     * GxB_BinaryOp_xtype, GxB_BinaryOp_ytype, GxB_BinaryOp_ztype,
         GxB_Matrix_type, GxB_Scalar_type, GxB_SelectOp_ttype,
         GxB_SelectOp_xtype, GxB_UnaryOp_xtype, GxB_UnaryOp_ztype,
-        GxB_Vector_type: declared historical; will be kept but not
-        recommended (use *type_name methods).
+        GxB_Vector_type: declared historical; use *type_name methods.
     * GxB_*_serialize/deserialize: with compression; optional descriptor
     * GxB_Matrix_sort, GxB_Vector_sort: sort a matrix or vector
     * GxB_eWiseUnion: like GrB_eWiseAdd except for how entries in A\B
