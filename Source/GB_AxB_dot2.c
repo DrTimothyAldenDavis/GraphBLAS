@@ -235,8 +235,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         }
     }
 
-    GBURBLE ("(nthreads: %d naslice %ld nbslice %ld) ", nthreads, naslice,
-        nbslice) ;
+    GBURBLE ("(nthreads: %d naslice %g nbslice %g) ", nthreads,
+        (double) naslice, (double) nbslice) ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
