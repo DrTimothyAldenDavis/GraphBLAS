@@ -73,7 +73,7 @@ tic
 X2 = X*X ;
 builtin_time = toc ;
 fprintf ('\nGraphBLAS time: %g sec (in single)\n', gb_time) ;
-fprintf ('%s time:    %g sec (in double)\n', builtin_time, demo_whoami) ;
+fprintf ('%s time:    %g sec (in double)\n', demo_whoami, builtin_time) ;
 fprintf ('Speedup of GraphBLAS over %s: %g\n', ...
     demo_whoami, builtin_time / gb_time) ;
 fprintf ('\n# of threads used by GraphBLAS: %d\n', GrB.threads) ;
@@ -100,7 +100,7 @@ G2 = G*G ;
 gb_time = toc ;
 err = norm (X2 - G2, 1) / norm (X2,1)
 fprintf ('\nGraphBLAS time: %g sec (in double)\n', gb_time) ;
-fprintf ('%s time:    %g sec (in double)\n', builtin_time, demo_whoami) ;
+fprintf ('%s time:    %g sec (in double)\n', demo_whoami, builtin_time) ;
 fprintf ('Speedup of GraphBLAS over %s: %g\n', ...
     demo_whoami, builtin_time / gb_time) ;
 fprintf ('\n# of threads used by GraphBLAS: %d\n', GrB.threads) ;
