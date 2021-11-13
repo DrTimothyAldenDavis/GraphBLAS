@@ -35,6 +35,7 @@ GrB_Info GxB_IndexUnaryOp_xtype_name    // return the name of the type of x
     { 
         memcpy (type_name, op->xtype->name, GxB_MAX_NAME_LEN) ;
     }
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

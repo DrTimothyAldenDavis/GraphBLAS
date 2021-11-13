@@ -30,6 +30,7 @@ GrB_Info GxB_Monoid_operator        // return the monoid operator
     //--------------------------------------------------------------------------
 
     (*op) = monoid->op ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

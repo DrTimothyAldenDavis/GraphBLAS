@@ -70,6 +70,7 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
         (*blob_size_handle) = (GrB_Index) blob_size ;
     }
     GB_BURBLE_END ;
+    #pragma omp flush
     return (info) ;
 }
 

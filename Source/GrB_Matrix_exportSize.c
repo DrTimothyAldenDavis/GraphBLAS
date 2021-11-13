@@ -73,6 +73,7 @@ GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
             return (GrB_INVALID_VALUE) ;
     }
 
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

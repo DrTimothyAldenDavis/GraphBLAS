@@ -31,6 +31,7 @@ GrB_Info GrB_Semiring_free          // free a user-created semiring
         }
     }
 
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

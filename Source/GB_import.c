@@ -367,6 +367,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     // If debug is enabled, this check repeats the GB_matvec_check for the
     // secure import.
     ASSERT_MATRIX_OK (*A, "A imported", GB0) ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

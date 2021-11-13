@@ -33,6 +33,7 @@ GrB_Info GrB_Monoid_free            // free a user-created monoid
         }
     }
 
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

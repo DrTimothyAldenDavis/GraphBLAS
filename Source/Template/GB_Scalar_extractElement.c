@@ -77,6 +77,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
         // typecast S into x
         GB_cast_scalar (x, GB_XCODE, S->x, scode, S->type->size) ;
     }
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

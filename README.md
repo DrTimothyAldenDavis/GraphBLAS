@@ -8,7 +8,7 @@ For the GraphBLAS/GraphBLAS Octave/MATLAB interface *only*:
 SPDX-License-Identifier: GPL-3.0-or-later
 (see below for a discussion of the licensing of this package).
 
-VERSION 6.0.0, Nov 11, 2021 (alpha22)
+VERSION 6.0.0, Nov 16, 2021
 
 SuiteSparse:GraphBLAS is a complete implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -19,12 +19,12 @@ framework for creating graph algorithms based on the elegant mathematics of
 sparse matrix operations on a semiring.
 
 SuiteSparse:GraphBLAS is used heavily in production.  It appears as the
-underlying graph engine in the RedisGraph database by Redis Labs, and as the
+underlying graph engine in the RedisGraph database by Redis, and as the
 built-in sparse matrix multiply in MATLAB R2021a, where `C=A*B` is now up to
 30x faster than in prior versions of MATLAB (on my 20-core NVIDIA DGX Station).
 
 The development of this package is supported by NVIDIA (including the donation
-of the 20-core DGX Station), Redis Labs, MIT Lincoln Lab, Intel, IBM, and
+of the 20-core DGX Station), Redis, MIT Lincoln Lab, Intel, IBM, and
 Julia Computing.
 
 See the user guide in `Doc/GraphBLAS_UserGuide.pdf` for documentation on the
@@ -145,10 +145,10 @@ SuiteSparse:GraphBLAS and LAGraph.
 ## Licensing and supporting SuiteSparse:GraphBLAS
 
 SuiteSparse:GraphBLAS is released primarily under the Apache-2.0 license,
-because of how the project is supported by many organizations (NVIDIA, Redis
-Labs, MIT Lincoln Lab, Intel, IBM, and Julia Computing), primarily through
-gifts to the Texas A&M Foundation.  Because of this support, and to facilitate
-the wide-spread use of GraphBLAS, the decision was made to give this library a
+because of how the project is supported by many organizations (NVIDIA, Redis,
+MIT Lincoln Lab, Intel, IBM, and Julia Computing), primarily through gifts to
+the Texas A&M Foundation.  Because of this support, and to facilitate the
+wide-spread use of GraphBLAS, the decision was made to give this library a
 permissive open-source license (Apache-2.0).  Currently all source code
 required to create the C-callable library libgraphblas.so is licensed with
 Apache-2.0, and there are no plans to change this.

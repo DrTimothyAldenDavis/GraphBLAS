@@ -32,6 +32,7 @@ GrB_Info GxB_SelectOp_ttype         // return type of thunk or NULL if generic
     //--------------------------------------------------------------------------
 
     (*ttype) = selectop->ytype ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

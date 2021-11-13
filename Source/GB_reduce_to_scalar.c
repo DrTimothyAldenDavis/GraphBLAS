@@ -321,6 +321,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

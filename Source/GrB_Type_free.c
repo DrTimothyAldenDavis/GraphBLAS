@@ -31,6 +31,7 @@ GrB_Info GrB_Type_free          // free a user-defined type
         }
     }
 
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

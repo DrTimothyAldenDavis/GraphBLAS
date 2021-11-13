@@ -32,6 +32,7 @@ GrB_Info GxB_BinaryOp_xtype         // type of x
     //--------------------------------------------------------------------------
 
     (*xtype) = binaryop->xtype ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

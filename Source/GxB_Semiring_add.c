@@ -30,6 +30,7 @@ GrB_Info GxB_Semiring_add           // return the additive monoid of a semiring
     //--------------------------------------------------------------------------
 
     (*add) = semiring->add ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

@@ -31,6 +31,7 @@ GrB_Info GxB_BinaryOp_ztype_name    // return the name of the type of x
     //--------------------------------------------------------------------------
 
     memcpy (type_name, binaryop->ztype->name, GxB_MAX_NAME_LEN) ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

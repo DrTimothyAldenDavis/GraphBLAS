@@ -30,6 +30,7 @@ GrB_Info GxB_Type_name      // return the name of a GraphBLAS type
     //--------------------------------------------------------------------------
 
     memcpy (type_name, type->name, GxB_MAX_NAME_LEN) ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

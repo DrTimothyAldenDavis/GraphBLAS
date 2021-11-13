@@ -48,6 +48,7 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
     GrB_Info info = GB_serialize (NULL, &blob_size, A, method, Context) ;
     (*blob_size_handle) = (GrB_Index) blob_size ;
     GB_BURBLE_END ;
+    #pragma omp flush
     return (info) ;
 }
 

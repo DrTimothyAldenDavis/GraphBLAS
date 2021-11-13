@@ -30,6 +30,7 @@ GrB_Info GB_matvec_type_name  // return the name of the type of a matrix
     //--------------------------------------------------------------------------
 
     memcpy (type_name, A->type->name, GxB_MAX_NAME_LEN) ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

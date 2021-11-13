@@ -31,6 +31,7 @@ GrB_Info GxB_IndexUnaryOp_ytype_name    // return name of type of scalar y
     //--------------------------------------------------------------------------
 
     memcpy (type_name, op->ytype->name, GxB_MAX_NAME_LEN) ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

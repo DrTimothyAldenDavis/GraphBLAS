@@ -28,7 +28,9 @@ GrB_Info GrB_Scalar_nvals   // get the number of entries in a GrB_Scalar
     // get the number of entries
     //--------------------------------------------------------------------------
 
-    return (GB_nvals (nvals, (GrB_Matrix) s, Context)) ;
+    GrB_Info info = GB_nvals (nvals, (GrB_Matrix) s, Context) ;
+    #pragma omp flush
+    return (info) ;
 }
 
 //------------------------------------------------------------------------------

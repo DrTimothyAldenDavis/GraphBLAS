@@ -222,6 +222,7 @@ static GrB_Info GB_export_worker  // export a matrix
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

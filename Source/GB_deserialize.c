@@ -208,6 +208,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
     (*Chandle) = C ;
     ASSERT_MATRIX_OK (*Chandle, "Final result from deserialize", GB0) ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

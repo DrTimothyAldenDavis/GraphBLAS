@@ -104,6 +104,7 @@ GrB_Info GxB_Type_from_name     // return the GrB_Type from a name
         (*type) = NULL ;
     }
 
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

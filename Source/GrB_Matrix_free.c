@@ -19,6 +19,7 @@ GrB_Info GrB_Matrix_free        // free a matrix
 { 
 
     GB_Matrix_free (A) ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

@@ -320,6 +320,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
 
     GB_OK (GB_conform (*A, Context)) ;
     ASSERT_MATRIX_OK (*A, "final A imported", GB0) ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

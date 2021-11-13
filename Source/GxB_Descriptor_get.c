@@ -58,6 +58,7 @@ GrB_Info GxB_Descriptor_get     // get a parameter from a descriptor
             return (GrB_INVALID_VALUE) ;
     }
 
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

@@ -32,6 +32,7 @@ GrB_Info GxB_BinaryOp_ztype         // return the type of z
     //--------------------------------------------------------------------------
 
     (*ztype) = binaryop->ztype ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

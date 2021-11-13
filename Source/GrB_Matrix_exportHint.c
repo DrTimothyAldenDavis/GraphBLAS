@@ -64,6 +64,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     }
 
     GB_BURBLE_END ;
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

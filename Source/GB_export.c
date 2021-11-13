@@ -265,6 +265,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
         ASSERT ((*A) == NULL) ;
     }
 
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 
