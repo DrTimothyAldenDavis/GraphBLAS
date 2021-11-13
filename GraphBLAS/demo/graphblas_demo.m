@@ -234,11 +234,16 @@ C1 = A-B
 C2 = GrB.eadd ('-', A, B)
 
 %% 
-% But these give the same result
+% But these give the same result.  GrB.eunion applies the operator
+% as op(alpha,B) when A(i,j) is not present but B(i,j) is, and
+% as op(A,beta) when A(i,j) is present but B(i,j) is not.
+% In this case, both alpha and beta are zero.
 
 C1 = A-B 
 C2 = GrB.eadd ('+', A, GrB.apply ('-', B))
+C3 = GrB.eunion ('-', A, 0, B, 0)
 err = norm (C1-C2,1)
+err = norm (C1-C3,1)
 
 %% Element-wise 'multiplication'
 % For C = A.*B, the result C is the set intersection of the pattern of A
@@ -250,7 +255,7 @@ C2 = GrB.emult ('*', A, B)
 C3 = double (A) .* double (B)
 
 %%
-% Just as in GrB.eadd, any operator can be used in GrB.emult:
+% Just as in GrB.eadd and GrB.eunion, any operator can be used in GrB.emult:
 
 A
 B
