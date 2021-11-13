@@ -1067,6 +1067,20 @@ between built-in types in SuiteSparse:GraphBLAS is precisely defined, as an
 extension to the spec.
 \end{alert}
 
+\begin{alert}
+{\bf SPEC:} Some functions do not make use of all of their inputs; in
+particular the binary operators \verb'FIRST', \verb'SECOND', and \verb'ONEB',
+and many of the index unary operators.  The Specification requires that the
+inputs to these operators must be compatible with (that is, can be typecasted
+to) the inputs to the operators, even if those inputs are not used and no
+typecasting would ever occur.  As an extension to the specification,
+SuiteSparse:GraphBLAS does not perform this error check.  For example, the
+\verb'GrB_FIRST_INT64' operator can be used in
+\verb'GrB_eWiseAdd(C,..,A,B,...)' on a matrix \verb'B' of any type, including
+user-defined types.  For this case, the matrix \verb'A' must be compatible with
+\verb'GrB_INT64'.
+\end{alert}
+
 %===============================================================================
 \subsection{Notation and list of GraphBLAS operations} %========================
 %===============================================================================
@@ -1076,6 +1090,24 @@ As a summary of what GraphBLAS can do, the following table lists all GraphBLAS
 operations.  Upper case letters denote a matrix, lower case letters are
 vectors, and ${\bf AB}$ denote the multiplication of two matrices over a
 semiring.
+
+Each operation takes an optional \verb'GrB_Descriptor' argument that modifies
+the operation.  The input matrices ${\bf A}$ and ${\bf B}$ can be optionally
+transposed, the mask ${\bf M}$ can be complemented, and ${\bf C}$ can be
+cleared of its entries after it is used in ${\bf Z = C \odot T}$ but before
+the ${\bf C \langle M \rangle = Z}$ assignment.
+Vectors are never transposed via the descriptor.
+
+Let ${\bf A \oplus B}$ denote the element-wise operator that produces a set
+union pattern (like \verb'A+B' in MATLAB).  Any binary operator can be used
+this way in GraphBLAS, not just plus.  Let ${\bf A \otimes B}$ denote the
+element-wise operator that produces a set intersection pattern (like
+\verb'A.*B' in MATLAB); any binary operator can be used this way, not just
+times.
+
+Reduction of a matrix ${\bf A}$ to a vector reduces the $i$th row of ${\bf A}$
+to a scalar $w_i$.  This is like \verb"w=sum(A')" since by default, MATLAB
+reduces down the columns, not across the rows.
 
 \vspace{0.05in}
 {\footnotesize
@@ -1127,24 +1159,6 @@ semiring.
 \end{tabular}
 }
 \vspace{0.15in}
-
-Each operation takes an optional \verb'GrB_Descriptor' argument that modifies
-the operation.  The input matrices ${\bf A}$ and ${\bf B}$ can be optionally
-transposed, the mask ${\bf M}$ can be complemented, and ${\bf C}$ can be
-cleared of its entries after it is used in ${\bf Z = C \odot T}$ but before
-the ${\bf C \langle M \rangle = Z}$ assignment.
-Vectors are never transposed via the descriptor.
-
-Let ${\bf A \oplus B}$ denote the element-wise operator that produces a set
-union pattern (like \verb'A+B' in MATLAB).  Any binary operator can be used
-this way in GraphBLAS, not just plus.  Let ${\bf A \otimes B}$ denote the
-element-wise operator that produces a set intersection pattern (like
-\verb'A.*B' in MATLAB); any binary operator can be used this way, not just
-times.
-
-Reduction of a matrix ${\bf A}$ to a vector reduces the $i$th row of ${\bf A}$
-to a scalar $w_i$.  This is like \verb"w=sum(A')" since by default, MATLAB
-reduces down the columns, not across the rows.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
