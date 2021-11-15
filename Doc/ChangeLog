@@ -1,4 +1,4 @@
-Version 6.0.0, Nov 16, 2021
+Version 6.0.0, Nov 15, 2021
 
     * v6.0.0: this release contains only a few changes that cause a
         break with backward compatibility.  It is otherwise identical to v5.2.0.
@@ -12,7 +12,7 @@ Version 6.0.0, Nov 16, 2021
             last parameter, is_thread_safe, is deleted.
             The malloc/calloc/realloc/free functions must be thread-safe.
 
-Version 5.2.0, Nov 16, 2021
+Version 5.2.0, Nov 15, 2021
 
     * Added for the v2.0 C API Specification: only features that are
         backward compatible with SuiteSparse:GraphBLAS v5.x have been
