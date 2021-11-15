@@ -59,7 +59,7 @@ Version 5.2.0, Nov 16, 2021
         v1.9.3, Copyright (c) 2011-2016, Yann Collet, All Rights Reserved.
     * mis and pagerank demos: removed; mis added to LAGraph/experimental
     * disabled free memory pool if OpenMP not available
-    * (35) bug fix: ewise C=A+B when all matrices are full, GBCOMPACT
+    * (36) bug fix: ewise C=A+B when all matrices are full, GBCOMPACT
         not used, but GB_control.h disabled the operator or type.
         Caught by Roi Lipman, Redis.
     * (34) bug fix: C<M>=Z not returning C as iso if Z iso and C initialy
