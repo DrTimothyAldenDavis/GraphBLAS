@@ -19,7 +19,6 @@ GrB_Info GrB_Vector_free    // free a vector
 { 
 
     GB_Matrix_free ((GrB_Matrix *) v) ;
-    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

@@ -32,7 +32,6 @@ GrB_Info GxB_SelectOp_xtype         // return the type of x or NULL if generic
     //--------------------------------------------------------------------------
 
     (*xtype) = selectop->xtype ;
-    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

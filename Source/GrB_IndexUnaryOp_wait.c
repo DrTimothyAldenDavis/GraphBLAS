@@ -28,7 +28,6 @@ GrB_Info GrB_IndexUnaryOp_wait   // no work, just check if valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    #pragma omp flush
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GB_WHERE1 ("GrB_IndexUnaryOp_wait (&op)") ;
     GB_RETURN_IF_NULL (op) ;

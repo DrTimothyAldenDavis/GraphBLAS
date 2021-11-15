@@ -32,7 +32,6 @@ GrB_Info GxB_UnaryOp_xtype          // return the type of x
     //--------------------------------------------------------------------------
 
     (*xtype) = unaryop->xtype ;
-    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

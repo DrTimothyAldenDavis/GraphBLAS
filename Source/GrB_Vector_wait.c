@@ -28,7 +28,6 @@ GrB_Info GrB_Vector_wait    // finish all work on a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    #pragma omp flush
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GB_WHERE ((*v), "GrB_Vector_wait (&v)") ;
     GB_RETURN_IF_NULL (v) ;

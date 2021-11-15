@@ -28,7 +28,6 @@ GrB_Info GrB_Scalar_wait    // finish all work on a scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    #pragma omp flush
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GB_WHERE ((*s), "GrB_Scalar_wait (&s)") ;
     GB_RETURN_IF_NULL (s) ;

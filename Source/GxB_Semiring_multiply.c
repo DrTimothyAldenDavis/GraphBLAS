@@ -30,7 +30,6 @@ GrB_Info GxB_Semiring_multiply      // return multiply operator of a semiring
     //--------------------------------------------------------------------------
 
     (*multiply) = semiring->multiply ;
-    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

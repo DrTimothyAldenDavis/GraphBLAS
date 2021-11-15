@@ -31,7 +31,6 @@ GrB_Info GB_Op_free             // free a user-created op
         }
     }
 
-    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

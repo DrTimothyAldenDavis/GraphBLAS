@@ -28,7 +28,6 @@ GrB_Info GrB_BinaryOp_wait   // no work, just check if the GrB_BinaryOp is valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    #pragma omp flush
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GB_WHERE1 ("GrB_BinaryOp_wait (&op)") ;
     GB_RETURN_IF_NULL (op) ;

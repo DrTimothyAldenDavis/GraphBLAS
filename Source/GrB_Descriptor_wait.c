@@ -30,7 +30,6 @@ GrB_Info GrB_Descriptor_wait // no work, just check if GrB_Descriptor is valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    #pragma omp flush
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GB_WHERE1 ("GrB_Descriptor_wait (&desc)") ;
     if (desc != NULL && (*desc) != NULL) GB_RETURN_IF_FAULTY (*desc) ;

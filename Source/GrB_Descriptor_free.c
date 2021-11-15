@@ -36,7 +36,6 @@ GrB_Info GrB_Descriptor_free            // free a descriptor
         }
     }
 
-    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

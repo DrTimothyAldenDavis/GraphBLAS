@@ -32,7 +32,6 @@ GrB_Info GxB_UnaryOp_ztype          // return the type of z
     //--------------------------------------------------------------------------
 
     (*ztype) = unaryop->ztype ;
-    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

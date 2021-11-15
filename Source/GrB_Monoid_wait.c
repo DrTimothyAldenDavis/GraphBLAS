@@ -28,7 +28,6 @@ GrB_Info GrB_Monoid_wait   // no work, just check if the GrB_Monoid is valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    #pragma omp flush
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GB_WHERE1 ("GrB_Monoid_wait (&monoid)") ;
     GB_RETURN_IF_NULL (monoid) ;

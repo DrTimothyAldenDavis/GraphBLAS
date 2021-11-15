@@ -28,7 +28,6 @@ GrB_Info GrB_Matrix_wait    // finish all work on a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    #pragma omp flush
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GB_WHERE ((*A), "GrB_Matrix_wait (&A)") ;
     GB_RETURN_IF_NULL (A) ;

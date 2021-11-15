@@ -18,7 +18,6 @@ GrB_Info GrB_Scalar_free    // free a GrB_Scalar
 )
 { 
     GB_Matrix_free ((GrB_Matrix *) s) ;
-    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 
