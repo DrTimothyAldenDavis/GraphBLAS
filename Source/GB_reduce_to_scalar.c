@@ -321,8 +321,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
-    // FIXME: do this for non-opaque scalar only
-    // #pragma omp flush
+    #pragma omp flush
     return (GrB_SUCCESS) ;
 }
 

@@ -123,7 +123,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
             void *vx = ((GB_void *) V->x) + (V->iso ? 0 : (pleft*vsize)) ;
             GB_cast_scalar (x, GB_XCODE, vx, vcode, vsize) ;
         }
-        // FIXME: do not flush if extracting to GrB_Scalar
+        // TODO: do not flush if extracting to GrB_Scalar
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
