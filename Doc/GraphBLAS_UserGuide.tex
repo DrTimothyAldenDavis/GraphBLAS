@@ -8438,17 +8438,14 @@ repl & accum & ${\bf C}$ & ${\bf T}$ & mask & action taken by ${\bf C \langle M 
 \caption{Results of the mask/accumulator phase. \label{tab:maskaccum}}
 \end{table}
 
-When there is no mask and the mask \verb'COMPLEMENT' option is not selected
-the table simplifies (Table~\ref{tab:maskaccum_nomask}).  The
-\verb'REPLACE' option no longer has any effect.
-The \verb'GrB_SECOND_T' binary operator when used as the accumulator
-unifies the first cases, shown in
-Table~\ref{tab:maskaccum_nomask_2nd}.  The only difference now is the behavior when
-$c_{ij}$ is present but $t_{ij}$ is not.
-% With no accumulator at all, $c_{ij}$ is deleted;
-% with the \verb'GrB_SECOND_T' operator as the accumulator, $c_{ij}$ remains unchanged.
-Finally, the effect of \verb'GrB_FIRST_T' as the accumulator
-is shown in Table~\ref{tab:maskaccum_nomask_1st}.
+When there is no mask and the mask \verb'GrB_COMP' option is not selected, the
+table simplifies (Table~\ref{tab:maskaccum_nomask}).  The \verb'GrB_REPLACE'
+option no longer has any effect.  The \verb'GrB_SECOND_T' binary operator when
+used as the accumulator unifies the first cases, shown in
+Table~\ref{tab:maskaccum_nomask_2nd}.  The only difference now is the behavior
+when $c_{ij}$ is present but $t_{ij}$ is not.  Finally, the effect of
+\verb'GrB_FIRST_T' as the accumulator is shown in
+Table~\ref{tab:maskaccum_nomask_1st}. 
 
 \begin{table}[h]
 \begin{center}
@@ -14144,6 +14141,23 @@ Finally, you can run the tests to see if your installation works:
     \begin{verbatim}
     cd ../../test
     gbtest \end{verbatim} }
+
+%----------------------------------------
+\subsection{On the ARM64 architecture}
+%----------------------------------------
+
+You may encounter a compiler error on the ARM64 architecture when using
+the gcc compiler, versions 6.x and earlier.  This error was
+encountered on ARM64 Linux with gcc 6.x:
+
+\begin{verbatim}
+`In function GrB_Matrix_apply_BinaryOp1st_Scalar.part.1':
+GrB_Matrix_apply.c:(.text+0x210): relocation truncated to
+fit: R_AARCH64_CALL26 against `.text.unlikely'
+\end{verbatim}
+
+For the ARM64, this error is silenced with gcc v7.x and later, at least on
+Linux.
 
 %----------------------------------------
 \subsection{On Microsoft Windows}
