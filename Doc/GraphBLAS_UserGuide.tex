@@ -8435,9 +8435,82 @@ repl & accum & ${\bf C}$ & ${\bf T}$ & mask & action taken by ${\bf C \langle M 
 \hline
 \end{tabular}
 }
-\caption{Results of the mask/accumulator phase \label{tab:maskaccum}}
+\caption{Results of the mask/accumulator phase. \label{tab:maskaccum}}
 \end{table}
 
+When there is no mask and the mask \verb'COMPLEMENT' option is not selected
+the table simplifies (Table~\ref{tab:maskaccum_nomask}).  The
+\verb'REPLACE' option no longer has any effect.
+The \verb'GrB_SECOND_T' binary operator when used as the accumulator
+unifies the first cases, shown in
+Table~\ref{tab:maskaccum_nomask_2nd}.  The only difference now is the behavior when
+$c_{ij}$ is present but $t_{ij}$ is not.
+% With no accumulator at all, $c_{ij}$ is deleted;
+% with the \verb'GrB_SECOND_T' operator as the accumulator, $c_{ij}$ remains unchanged.
+Finally, the effect of \verb'GrB_FIRST_T' as the accumulator
+is shown in Table~\ref{tab:maskaccum_nomask_1st}.
+
+\begin{table}[h]
+\begin{center}
+{\small
+\begin{tabular}{lll|l}
+\hline
+       accum & ${\bf C}$ & ${\bf T}$        & action taken by ${\bf C = C \odot T}$ \\
+\hline
+        -   & $c_{ij}$ & $t_{ij}$         &  $c_{ij} = t_{ij}$, update \\
+        -   &  -       & $t_{ij}$         &  $c_{ij} = t_{ij}$, insert \\
+        -   & $c_{ij}$ &  -               &  delete $c_{ij}$ because $t_{ij}$ not present \\
+        -   &  -       &  -               &   \\
+\hline
+        yes & $c_{ij}$ & $t_{ij}$         &  $c_{ij} = c_{ij} \odot t_{ij}$, apply accumulator \\
+        yes &  -       & $t_{ij}$         &  $c_{ij} = t_{ij}$, insert \\
+        yes & $c_{ij}$ &  -               &   \\
+        yes &  -       &  -               &   \\
+\hline
+\end{tabular}
+}
+\caption{When no mask is present (and not complemented).
+\label{tab:maskaccum_nomask}}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+{\small
+\begin{tabular}{lll|l}
+\hline
+       accum & ${\bf C}$ & ${\bf T}$        & action taken by ${\bf C = C \odot T}$ \\
+\hline
+        yes & $c_{ij}$ & $t_{ij}$         &  $c_{ij} = t_{ij}$, apply \verb'GrB_SECOND' accumulator \\
+        yes &  -       & $t_{ij}$         &  $c_{ij} = t_{ij}$, insert \\
+        yes & $c_{ij}$ &  -               &   \\
+        yes &  -       &  -               &   \\
+\hline
+\end{tabular}
+}
+\caption{No mask, with the SECOND operator as the accumulator.
+\label{tab:maskaccum_nomask_2nd}}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+{\small
+\begin{tabular}{lll|l}
+\hline
+       accum & ${\bf C}$ & ${\bf T}$        & action taken by ${\bf C = C \odot T}$ \\
+\hline
+        yes & $c_{ij}$ & $t_{ij}$         &  \\ 
+        yes &  -       & $t_{ij}$         &  $c_{ij} = t_{ij}$, insert \\
+        yes & $c_{ij}$ &  -               &   \\
+        yes &  -       &  -               &   \\
+\hline
+\end{tabular}
+}
+\caption{No Mask, with the FIRST operator as the accumulator.
+\label{tab:maskaccum_nomask_1st}}
+\end{center}
+\end{table}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
