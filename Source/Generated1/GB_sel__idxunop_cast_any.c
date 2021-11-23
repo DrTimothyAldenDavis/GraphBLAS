@@ -17,11 +17,11 @@
 // The selection is defined by the following types and operators:
 
 // functions:
-// phase1: GB (_sel_phase1__gt_thunk_uint64)
-// phase2: GB (_sel_phase2__gt_thunk_uint64)
-// bitmap: GB (_sel_bitmap__gt_thunk_uint64)
+// phase1: GB (_sel_phase1__idxunop_cast_any)
+// phase2: GB (_sel_phase2__idxunop_cast_any)
+// bitmap: GB (_sel_bitmap__idxunop_cast_any)
 
-// A type: uint64_t
+// A type: GB_void
 
 #define GB_ISO_SELECT \
     0
@@ -30,15 +30,15 @@
 #define GB_ENTRY_SELECTOR
 
 #define GB_ATYPE \
-    uint64_t
+    GB_void
 
 // test value of Ax [p]
 #define GB_TEST_VALUE_OF_ENTRY(keep,p)                  \
-    bool keep = (Ax [p] > thunk)
+    GB_void z [GB_VLA(zsize)] ; GB_void x [GB_VLA(xsize)] ; cast_A_to_X (x, Ax +(p)*asize, asize) ; idxunop_func (z, x, flipij ? j : i, flipij ? i : j, ythunk) ; bool keep ; cast_Z_to_bool (&keep, z, zsize) ;
 
 // Cx [pC] = Ax [pA], no typecast
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
-    Cx [pC] = Ax [pA]
+    memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize)
 
 //------------------------------------------------------------------------------
 // GB_sel_phase1
@@ -46,7 +46,7 @@
 
 
 
-void GB (_sel_phase1__gt_thunk_uint64)
+void GB (_sel_phase1__idxunop_cast_any)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -55,15 +55,15 @@ void GB (_sel_phase1__gt_thunk_uint64)
     const GrB_Matrix A,
     const bool flipij,
     const int64_t ithunk,
-    const uint64_t *restrict athunk,
+    const GB_void *restrict athunk,
     const GB_void *restrict ythunk,
     const GB_Operator op,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
-    uint64_t thunk = (*athunk) ;
     
-    
+    GB_Type_code zcode = op->ztype->code, xcode = op->xtype->code, acode = A->type->code ; size_t zsize = op->ztype->size, xsize = op->xtype->size ;
+    GxB_index_unary_function idxunop_func = op->idxunop_function ; GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ; GB_cast_function cast_Z_to_bool = GB_cast_factory (GB_BOOL_code, zcode) ; 
     #include "GB_select_phase1.c"
 }
 
@@ -75,25 +75,25 @@ void GB (_sel_phase1__gt_thunk_uint64)
 
 
 
-void GB (_sel_phase2__gt_thunk_uint64)
+void GB (_sel_phase2__idxunop_cast_any)
 (
     int64_t *restrict Ci,
-    uint64_t *restrict Cx,
+    GB_void *restrict Cx,
     const int64_t *restrict Zp,
     const int64_t *restrict Cp,
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,
     const int64_t ithunk,
-    const uint64_t *restrict athunk,
+    const GB_void *restrict athunk,
     const GB_void *restrict ythunk,
     const GB_Operator op,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads
 )
 { 
-    uint64_t thunk = (*athunk) ;
     
-    
+    GB_Type_code zcode = op->ztype->code, xcode = op->xtype->code, acode = A->type->code ; size_t zsize = op->ztype->size, xsize = op->xtype->size ;
+    GxB_index_unary_function idxunop_func = op->idxunop_function ; GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ; GB_cast_function cast_Z_to_bool = GB_cast_factory (GB_BOOL_code, zcode) ; 
     #include "GB_select_phase2.c"
 }
 
@@ -105,23 +105,23 @@ void GB (_sel_phase2__gt_thunk_uint64)
 
 
 
-void GB (_sel_bitmap__gt_thunk_uint64)
+void GB (_sel_bitmap__idxunop_cast_any)
 (
     int8_t *Cb,
-    uint64_t *restrict Cx,
+    GB_void *restrict Cx,
     int64_t *cnvals_handle,
     GrB_Matrix A,
     const bool flipij,
     const int64_t ithunk,
-    const uint64_t *restrict athunk,
+    const GB_void *restrict athunk,
     const GB_void *restrict ythunk,
     const GB_Operator op,
     const int nthreads
 )
 { 
-    uint64_t thunk = (*athunk) ;
     
-    
+    GB_Type_code zcode = op->ztype->code, xcode = op->xtype->code, acode = A->type->code ; size_t zsize = op->ztype->size, xsize = op->xtype->size ;
+    GxB_index_unary_function idxunop_func = op->idxunop_function ; GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ; GB_cast_function cast_Z_to_bool = GB_cast_factory (GB_BOOL_code, zcode) ; 
     #include "GB_bitmap_select_template.c"
 }
 

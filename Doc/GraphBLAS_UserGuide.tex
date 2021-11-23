@@ -148,6 +148,13 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 6.0.1 (Nov 23, 2021)
+
+    \begin{packed_itemize}
+    \item performance: \verb'GrB_select' with user-defined \verb'GrB_IndexUnaryOp'
+        about 2x faster.
+    \end{packed_itemize}
+
 \item Version 6.0.0 (Nov 15, 2021)
 
     \begin{packed_itemize}
@@ -9741,6 +9748,14 @@ discussion applies equally to the row indices \verb'I' and the column indices
     has \verb'm' rows, with length \verb'|I|=m'.  If \verb'J' is used the
     columns of an \verb'm'-by-\verb'n' matrix, then \verb'J=GrB_ALL' refers to
     all columns, and is the sequence \verb'0:(n-1)', of length \verb'|J|=n'.
+
+    \begin{alert}
+    {\bf SPEC:} If \verb'I' or \verb'J' are \verb'GrB_ALL', the specification
+    requires that \verb'ni' be passed in as \verb'm' (the number of rows)
+    and \verb'nj' be passed in as \verb'n'.  Any other value is an error.
+    SuiteSparse:GraphBLAS ignores these scalar inputs and treats them as if
+    they are equal to their only possible correct value.
+    \end{alert}
 
 \item To specify a contiguous range of indices, such as \verb'I=10:20'
     in MATLAB, the array \verb'I' has size 2, and \verb'ni' is passed to

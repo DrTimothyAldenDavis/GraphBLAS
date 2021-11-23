@@ -1,3 +1,7 @@
+Version 6.0.1, Nov 23, 2021
+
+    * performance: GrB_select with user-defined GrB_IndexUnaryOp about 2x faster.
+
 Version 6.0.0, Nov 15, 2021
 
     * v6.0.0: this release contains only a few changes that cause a
