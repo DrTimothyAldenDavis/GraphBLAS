@@ -153,7 +153,7 @@
                 #if ( !GB_C_IS_BITMAP )
                 if (np == 1)
                 { 
-                    // Make H and alias to C(:,j1)
+                    // Make H an alias to C(:,j1)
                     int64_t j = j1 ;
                     int64_t pC_start = j * cvlen ;    // get pointer to C(:,j)
                     Hx = Cx + pC_start ;
