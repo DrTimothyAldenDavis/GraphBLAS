@@ -151,8 +151,11 @@ are extensions to the GraphBLAS C API.
 \item Version 6.0.1 (Nov 23, 2021)
 
     \begin{packed_itemize}
-    \item performance: \verb'GrB_select' with user-defined \verb'GrB_IndexUnaryOp'
-        about 2x faster.
+    \item (37) bug fix:  \verb"C+=A'*B" when the accum operator is the same as
+        the monoid and C is iso-full, and \verb'A' or \verb'B' are hypersparse.
+        (dot4 method).
+    \item performance: \verb'GrB_select' with user-defined
+        \verb'GrB_IndexUnaryOp' about 2x faster.
     \end{packed_itemize}
 
 \item Version 6.0.0 (Nov 15, 2021)

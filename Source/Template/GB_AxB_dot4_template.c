@@ -15,7 +15,7 @@
 
 // The matrix C is the user input matrix.  C is not iso on output, but might
 // iso on input, in which case the input iso scalar is cinput, and C->x has
-// been expanded but is not initialized.  A and/or B can be iso.
+// been expanded to non-iso.  A and/or B can be iso.
 
 {
 

@@ -1,6 +1,8 @@
-Version 6.0.1, Nov 23, 2021
+Version 6.0.1, Nov 24, 2021
 
-    * performance: GrB_select with user-defined GrB_IndexUnaryOp about 2x faster.
+    * (37) bug fix:  C+=A'*B when the accum operator is the same as the monoid
+        and C is iso-full, and A or B are hypersparse (dot4 method).
+    * performance: GrB_select with user-defined GrB_IndexUnaryOp ~2x faster.
 
 Version 6.0.0, Nov 15, 2021
 
