@@ -82,7 +82,7 @@ logstat ('test74' ,t) ; % test GrB_mxm on all semirings
 hack (2) = 1 ;
 GB_mex_hack (hack) ;
 
-logstat ('test238',t) ; % test GrB_mxm (dot4)
+logstat ('test238',t) ; % test GrB_mxm (dot4 and dot2)
 logstat ('test237',t) ; % test GrB_mxm (saxpy4)
 logstat ('test236',t) ; % test GxB_Matrix_sort and GxB_Vector_sort
 logstat ('test192',t) ; % test C<C,struct>=scalar

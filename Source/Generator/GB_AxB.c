@@ -249,6 +249,10 @@ if_not_any_pair_semiring
 #define GB_IS_SECONDJ_MULTIPLIER \
     GB_is_secondj_multiplier
 
+// 1 for the FIRSTI1, FIRSTJ1, SECONDI1, or SECONDJ1 multiply operators
+#define GB_OFFSET \
+    GB_offset
+
 // atomic compare-exchange
 #define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \
     GB_atomic_compare_exchange

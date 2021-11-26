@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot4_template:  C+=A'*B via dot products, where C is dense
+// GB_AxB_dot4_template:  C+=A'*B via dot products, where C is full
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -7,15 +7,21 @@
 
 //------------------------------------------------------------------------------
 
-// C+=A'*B where C is a dense matrix and computed in-place.  The monoid of the
-// semiring matches the accum operator, and the type of C matches the ztype of
-// accum.  That is, no typecasting can be done with C.
+// C+=A'*B where C is full and computed in-place.  The monoid of the semiring
+// matches the accum operator, and the type of C matches the ztype of accum.
 
-// The PAIR operator as the multiplier provides important special cases.
+// The PAIR and FIRSTJ multiplicative operators are important special cases.
 
 // The matrix C is the user input matrix.  C is not iso on output, but might
 // iso on input, in which case the input iso scalar is cinput, and C->x has
-// been expanded to non-iso.  A and/or B can be iso.
+// been expanded to non-iso, and initialized if A and/or B are hypersparse.
+// A and/or B can be iso.
+
+// MIN_FIRSTJ or MIN_FIRSTJ1 semirings:
+#define GB_IS_MIN_FIRSTJ_SEMIRING (GB_IS_IMIN_MONOID && GB_IS_FIRSTJ_MULTIPLIER)
+// MAX_FIRSTJ or MAX_FIRSTJ1 semirings:
+#define GB_IS_MAX_FIRSTJ_SEMIRING (GB_IS_IMAX_MONOID && GB_IS_FIRSTJ_MULTIPLIER)
+// GB_OFFSET is 1 for the MIN/MAX_FIRSTJ1 semirings, and 0 otherwise.
 
 {
 
@@ -120,6 +126,7 @@
                     { 
                         #if GB_IS_ANY_MONOID
                         // ANY monoid: take the first entry found
+                        // cij = 1, or CMPLX(1,0) for complex ANY
                         GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
                         #elif GB_IS_EQ_MONOID
                         // EQ_PAIR semiring
@@ -140,6 +147,24 @@
                         cij += (GB_CTYPE) vlen ;
                         #endif
                     }
+                    #elif GB_IS_MIN_FIRSTJ_SEMIRING
+                    {
+                        // MIN_FIRSTJ semiring: take the first entry
+                        if (vlen > 0)
+                        { 
+                            int64_t k = GB_OFFSET ;
+                            cij = GB_IMIN (cij, k) ;
+                        }
+                    }
+                    #elif GB_IS_MAX_FIRSTJ_SEMIRING
+                    {
+                        // MAX_FIRSTJ semiring: take the last entry
+                        if (vlen > 0)
+                        { 
+                            int64_t k = vlen-1 + GB_OFFSET ;
+                            cij = GB_IMAX (cij, k) ;
+                        }
+                    }
                     #else
                     {
                         GB_PRAGMA_SIMD_DOT (cij)
@@ -158,14 +183,42 @@
                     // A is full and B is bitmap
                     //----------------------------------------------------------
 
-                    GB_PRAGMA_SIMD_DOT (cij)
-                    for (int64_t k = 0 ; k < vlen ; k++)
+                    #if GB_IS_MIN_FIRSTJ_SEMIRING
                     {
-                        if (Bb [pB+k])
-                        { 
-                            GB_DOT (k, pA+k, pB+k) ;
+                        // MIN_FIRSTJ semiring: take the first entry in B(:,j)
+                        for (int64_t k = 0 ; k < vlen ; k++)
+                        {
+                            if (Bb [pB+k])
+                            { 
+                                cij = GB_IMIN (cij, k + GB_OFFSET) ;
+                                break ;
+                            }
                         }
                     }
+                    #elif GB_IS_MAX_FIRSTJ_SEMIRING
+                    {
+                        // MAX_FIRSTJ semiring: take the last entry in B(:,j)
+                        for (int64_t k = vlen-1 ; k >= 0 ; k--)
+                        {
+                            if (Bb [pB+k])
+                            { 
+                                cij = GB_IMAX (cij, k + GB_OFFSET) ;
+                                break ;
+                            }
+                        }
+                    }
+                    #else
+                    {
+                        GB_PRAGMA_SIMD_DOT (cij)
+                        for (int64_t k = 0 ; k < vlen ; k++)
+                        {
+                            if (Bb [pB+k])
+                            { 
+                                GB_DOT (k, pA+k, pB+k) ;
+                            }
+                        }
+                    }
+                    #endif
 
                 }
                 #elif ( GB_A_IS_FULL && ( GB_B_IS_SPARSE || GB_B_IS_HYPER ) )
@@ -200,6 +253,24 @@
                         cij += (GB_CTYPE) bjnz ;
                         #endif
                     }
+                    #elif GB_IS_MIN_FIRSTJ_SEMIRING
+                    {
+                        // MIN_FIRSTJ semiring: take the first entry in B(:,j)
+                        if (bjnz > 0)
+                        { 
+                            int64_t k = Bi [pB] + GB_OFFSET ;
+                            cij = GB_IMIN (cij, k) ;
+                        }
+                    }
+                    #elif GB_IS_MAX_FIRSTJ_SEMIRING
+                    {
+                        // MAX_FIRSTJ semiring: take the last entry in B(:,j)
+                        if (bjnz > 0)
+                        { 
+                            int64_t k = Bi [pB_end-1] + GB_OFFSET ;
+                            cij = GB_IMAX (cij, k) ;
+                        }
+                    }
                     #else
                     {
                         GB_PRAGMA_SIMD_DOT (cij)
@@ -219,14 +290,42 @@
                     // A is bitmap and B is full
                     //----------------------------------------------------------
 
-                    GB_PRAGMA_SIMD_DOT (cij)
-                    for (int64_t k = 0 ; k < vlen ; k++)
+                    #if GB_IS_MIN_FIRSTJ_SEMIRING
                     {
-                        if (Ab [pA+k])
-                        { 
-                            GB_DOT (k, pA+k, pB+k) ;
+                        // MIN_FIRSTJ semiring: take the first entry in A(:,i)
+                        for (int64_t k = 0 ; k < vlen ; k++)
+                        {
+                            if (Ab [pA+k])
+                            { 
+                                cij = GB_IMIN (cij, k + GB_OFFSET) ;
+                                break ;
+                            }
                         }
                     }
+                    #elif GB_IS_MAX_FIRSTJ_SEMIRING
+                    {
+                        // MAX_FIRSTJ semiring: take the last entry in A(:,i)
+                        for (int64_t k = vlen-1 ; k >= 0 ; k--)
+                        {
+                            if (Ab [pA+k])
+                            { 
+                                cij = GB_IMAX (cij, k + GB_OFFSET) ;
+                                break ;
+                            }
+                        }
+                    }
+                    #else
+                    {
+                        GB_PRAGMA_SIMD_DOT (cij)
+                        for (int64_t k = 0 ; k < vlen ; k++)
+                        {
+                            if (Ab [pA+k])
+                            { 
+                                GB_DOT (k, pA+k, pB+k) ;
+                            }
+                        }
+                    }
+                    #endif
 
                 }
                 #elif ( GB_A_IS_BITMAP && GB_B_IS_BITMAP )
@@ -236,14 +335,42 @@
                     // both A and B are bitmap
                     //----------------------------------------------------------
 
-                    GB_PRAGMA_SIMD_DOT (cij)
-                    for (int64_t k = 0 ; k < vlen ; k++)
+                    #if GB_IS_MIN_FIRSTJ_SEMIRING
                     {
-                        if (Ab [pA+k] && Bb [pB+k])
-                        { 
-                            GB_DOT (k, pA+k, pB+k) ;
+                        // MIN_FIRSTJ semiring: take the first entry
+                        for (int64_t k = 0 ; k < vlen ; k++)
+                        {
+                            if (Ab [pA+k] && Bb [pB+k])
+                            { 
+                                cij = GB_IMIN (cij, k + GB_OFFSET) ;
+                                break ;
+                            }
                         }
                     }
+                    #elif GB_IS_MAX_FIRSTJ_SEMIRING
+                    {
+                        // MAX_FIRSTJ semiring: take the last entry
+                        for (int64_t k = vlen-1 ; k >= 0 ; k--)
+                        {
+                            if (Ab [pA+k] && Bb [pB+k])
+                            { 
+                                cij = GB_IMAX (cij, k + GB_OFFSET) ;
+                                break ;
+                            }
+                        }
+                    }
+                    #else
+                    {
+                        GB_PRAGMA_SIMD_DOT (cij)
+                        for (int64_t k = 0 ; k < vlen ; k++)
+                        {
+                            if (Ab [pA+k] && Bb [pB+k])
+                            { 
+                                GB_DOT (k, pA+k, pB+k) ;
+                            }
+                        }
+                    }
+                    #endif
 
                 }
                 #elif ( GB_A_IS_BITMAP && ( GB_B_IS_SPARSE || GB_B_IS_HYPER ) )
@@ -253,15 +380,45 @@
                     // A is bitmap and B is sparse/hyper
                     //----------------------------------------------------------
 
-                    GB_PRAGMA_SIMD_DOT (cij)
-                    for (int64_t p = pB ; p < pB_end ; p++)
+                    #if GB_IS_MIN_FIRSTJ_SEMIRING
                     {
-                        int64_t k = Bi [p] ;
-                        if (Ab [pA+k])
-                        { 
-                            GB_DOT (k, pA+k, p) ;
+                        // MIN_FIRSTJ semiring: take the first entry
+                        for (int64_t p = pB ; p < pB_end ; p++)
+                        {
+                            int64_t k = Bi [p] ;
+                            if (Ab [pA+k])
+                            { 
+                                cij = GB_IMIN (cij, k + GB_OFFSET) ;
+                                break ;
+                            }
                         }
                     }
+                    #elif GB_IS_MAX_FIRSTJ_SEMIRING
+                    {
+                        // MAX_FIRSTJ semiring: take the last entry
+                        for (int64_t p = pB_end-1 ; p >= pB ; p--)
+                        {
+                            int64_t k = Bi [p] ;
+                            if (Ab [pA+k])
+                            { 
+                                cij = GB_IMAX (cij, k + GB_OFFSET) ;
+                                break ;
+                            }
+                        }
+                    }
+                    #else
+                    {
+                        GB_PRAGMA_SIMD_DOT (cij)
+                        for (int64_t p = pB ; p < pB_end ; p++)
+                        {
+                            int64_t k = Bi [p] ;
+                            if (Ab [pA+k])
+                            { 
+                                GB_DOT (k, pA+k, p) ;
+                            }
+                        }
+                    }
+                    #endif
 
                 }
                 #elif ( (GB_A_IS_SPARSE || GB_A_IS_HYPER) && GB_B_IS_FULL )
@@ -275,6 +432,7 @@
                     { 
                         #if GB_IS_ANY_MONOID
                         // ANY monoid: take the first entry found
+                        // cij = 1, or CMPLX(1,0) for complex ANY
                         GB_MULT (cij, ignore, ignore, 0, 0, 0) ;
                         #elif GB_IS_EQ_MONOID
                         // EQ_PAIR semiring
@@ -295,6 +453,24 @@
                         cij += (GB_CTYPE) ainz ;
                         #endif
                     }
+                    #elif GB_IS_MIN_FIRSTJ_SEMIRING
+                    {
+                        // MIN_FIRSTJ semiring: take the first entry in A(:,i)
+                        if (ainz > 0)
+                        { 
+                            int64_t k = Ai [pA] + GB_OFFSET ;
+                            cij = GB_IMIN (cij, k) ;
+                        }
+                    }
+                    #elif GB_IS_MAX_FIRSTJ_SEMIRING
+                    {
+                        // MAX_FIRSTJ semiring: take the last entry in A(:,i)
+                        if (ainz > 0)
+                        { 
+                            int64_t k = Ai [pA_end-1] + GB_OFFSET ;
+                            cij = GB_IMAX (cij, k) ;
+                        }
+                    }
                     #else
                     {
                         GB_PRAGMA_SIMD_DOT (cij)
@@ -314,15 +490,45 @@
                     // A is sparse/hyper and B is bitmap
                     //----------------------------------------------------------
 
-                    GB_PRAGMA_SIMD_DOT (cij)
-                    for (int64_t p = pA ; p < pA_end ; p++)
+                    #if GB_IS_MIN_FIRSTJ_SEMIRING
                     {
-                        int64_t k = Ai [p] ;
-                        if (Bb [pB+k])
-                        { 
-                            GB_DOT (k, p, pB+k) ;
+                        // MIN_FIRSTJ semiring: take the first entry
+                        for (int64_t p = pA ; p < pA_end ; p++)
+                        {
+                            int64_t k = Ai [p] ;
+                            if (Bb [pB+k])
+                            { 
+                                cij = GB_IMIN (cij, k + GB_OFFSET) ;
+                                break ;
+                            }
                         }
                     }
+                    #elif GB_IS_MAX_FIRSTJ_SEMIRING
+                    {
+                        // MAX_FIRSTJ semiring: take the last entry
+                        for (int64_t p = pA_end-1 ; p >= pA ; p--)
+                        {
+                            int64_t k = Ai [p] ;
+                            if (Bb [pB+k])
+                            { 
+                                cij = GB_IMAX (cij, k + GB_OFFSET) ;
+                                break ;
+                            }
+                        }
+                    }
+                    #else
+                    {
+                        GB_PRAGMA_SIMD_DOT (cij)
+                        for (int64_t p = pA ; p < pA_end ; p++)
+                        {
+                            int64_t k = Ai [p] ;
+                            if (Bb [pB+k])
+                            { 
+                                GB_DOT (k, p, pB+k) ;
+                            }
+                        }
+                    }
+                    #endif
 
                 }
                 #else
@@ -332,9 +538,15 @@
                     // both A and B are sparse/hyper
                     //----------------------------------------------------------
 
+                    // The MIN_FIRSTJ semirings are exploited, by terminating as
+                    // soon as any entry is found.  The MAX_FIRSTJ semirings are
+                    // not treated specially here.  They could be done with a
+                    // backwards traversal of the sparse vectors A(:,i) and
+                    // B(:,j).
+
                     if (ainz == 0 || bjnz == 0 || 
                         Ai [pA_end-1] < Bi [pB_start] ||
-                        Bi [pB_end-1] < Ai[pA])
+                        Bi [pB_end-1] < Ai [pA])
                     { 
 
                         //------------------------------------------------------
@@ -372,6 +584,9 @@
                             { 
                                 // A(k,i) and B(k,j) are next entries to merge
                                 GB_DOT (ia, pA, pB) ;
+                                #if GB_IS_MIN_FIRSTJ_SEMIRING
+                                break ;
+                                #endif
                                 pA++ ;
                                 pB++ ;
                             }
@@ -408,6 +623,9 @@
                             { 
                                 // A(k,i) and B(k,j) are next entries to merge
                                 GB_DOT (ia, pA, pB) ;
+                                #if GB_IS_MIN_FIRSTJ_SEMIRING
+                                break ;
+                                #endif
                                 pA++ ;
                                 pB++ ;
                             }
@@ -439,6 +657,9 @@
                             { 
                                 // A(k,i) and B(k,j) are the entries to merge
                                 GB_DOT (ia, pA, pB) ;
+                                #if GB_IS_MIN_FIRSTJ_SEMIRING
+                                break ;
+                                #endif
                                 pA++ ;
                                 pB++ ;
                             }

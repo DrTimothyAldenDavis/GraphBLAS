@@ -314,25 +314,32 @@ else
     fprintf (f, 'define(`if_dot4_enabled'', `#if 1'')\n') ;
 end
 
-% firsti multiply operator
+% firsti or firsti1 multiply operator
 if (codegen_contains (multop, 'firsti'))
     fprintf (f, 'define(`GB_is_firsti_multiplier'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_is_firsti_multiplier'', `0'')\n') ;
 end
 
-% firstj multiply operator
+% firstj or firstj1 multiply operator
 if (codegen_contains (multop, 'firstj'))
     fprintf (f, 'define(`GB_is_firstj_multiplier'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_is_firstj_multiplier'', `0'')\n') ;
 end
 
-% secondj multiply operator
+% secondj or secondj1 multiply operator
 if (codegen_contains (multop, 'secondj'))
     fprintf (f, 'define(`GB_is_secondj_multiplier'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_is_secondj_multiplier'', `0'')\n') ;
+end
+
+% offset for (first,second)*i1 or (first,second)*j1 multiply operator
+if (codegen_contains (multop, 'i1') || codegen_contains (multop, 'j1'))
+    fprintf (f, 'define(`GB_offset'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_offset'', `0'')\n') ;
 end
 
 % plus_fc32 monoid:
@@ -622,7 +629,7 @@ end
 
 fclose (f) ;
 
-nprune = 71 ;
+nprune = 72 ;
 
 if (is_any_pair)
     % the ANY_PAIR_ISO semiring goes in Generated1

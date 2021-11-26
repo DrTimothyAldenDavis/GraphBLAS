@@ -249,6 +249,10 @@
 #define GB_IS_SECONDJ_MULTIPLIER \
     1
 
+// 1 for the FIRSTI1, FIRSTJ1, SECONDI1, or SECONDJ1 multiply operators
+#define GB_OFFSET \
+    1
+
 // atomic compare-exchange
 #define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \
     GB_ATOMIC_COMPARE_EXCHANGE_64 (target, expected, desired)
