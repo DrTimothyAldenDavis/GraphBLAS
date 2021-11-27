@@ -41,6 +41,28 @@ void banded_idx
     (*z) = (d <= *thunk) ;
 }
 
+void banded_idx_32
+(
+    int32_t *z,
+    const int64_t *x,   // unused
+    int64_t i,
+    int64_t j,
+    const int64_t *thunk
+) ;
+
+void banded_idx_32
+(
+    int32_t *z,
+    const int64_t *x,   // unused
+    int64_t i,
+    int64_t j,
+    const int64_t *thunk
+)
+{
+    int64_t d = GB_IABS (j-i) ;
+    (*z) = (d <= *thunk) ;
+}
+
 void upperbanded_idx
 (
     bool *z,
@@ -145,7 +167,7 @@ void mexFunction
     GrB_Vector w = NULL ;
     GrB_Scalar scalar = NULL ;
     GrB_IndexUnaryOp Banded = NULL, UpperBanded = NULL, 
-        UpperBanded_int64 = NULL, Gunk = NULL ;
+        UpperBanded_int64 = NULL, Gunk = NULL, Banded32 = NULL ;
     GrB_Type type = NULL, MyType = NULL, MyInt64 = NULL ;
     char *err ;
     mytype scalar1 ;
@@ -426,6 +448,10 @@ void mexFunction
 
     OK (GrB_IndexUnaryOp_new (&Banded, banded_idx,
         GrB_BOOL, GrB_INT64, GrB_INT64)) ;
+
+    OK (GrB_IndexUnaryOp_new (&Banded32, banded_idx_32,
+        GrB_INT32, GrB_INT64, GrB_INT64)) ;
+
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GrB_IndexUnaryOp_wait_ (&Banded)) ;
     #else
@@ -443,198 +469,44 @@ void mexFunction
         GrB_INT64, GrB_INT64, GrB_INT64)) ;
     OK (GxB_IndexUnaryOp_fprint (UpperBanded_int64, "upperbanded64", 3, NULL)) ;
 
-    OK (GrB_Matrix_new (&A, GrB_INT64, 5, 6)) ;
-    for (int i = 0 ; i < 5 ; i++)
+    for (int trial = 0 ; trial <= 3 ; trial++)
     {
-        for (int j = 0 ; j < 6 ; j++)
+        OK (GrB_Matrix_new (&A, (trial == 0) ? GrB_INT64 : GrB_INT32, 5, 6)) ;
+        for (int i = 0 ; i < 5 ; i++)
         {
-            OK (GrB_Matrix_setElement_INT64 (A, i*100 + j, i, j)) ;
-        }
-    }
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&A)) ;
-    #else
-    OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
-    #endif
-    OK (GxB_Matrix_fprint (A, "A", 3, NULL)) ;
-
-    OK (GrB_Matrix_new (&C, GrB_INT64, 5, 6)) ;
-    int64_t cnvals ;
-
-    OK (GxB_Matrix_fprint (A, "A for select:banded", 3, NULL)) ;
-    OK (GrB_Matrix_select_INT64 (C, NULL, NULL, Banded, A, 1, NULL)) ;
-    OK (GxB_Matrix_fprint (C, "C = select:banded (A)", 3, NULL)) ;
-    OK (GrB_Matrix_nvals (&cnvals, C)) ;
-    CHECK (cnvals == 14) ;
-    for (int i = 0 ; i < 5 ; i++)
-    {
-        for (int j = i-1 ; j <= i+1 ; j++)
-        {
-            if (j >= 0 && j < 6)
+            for (int j = 0 ; j < 6 ; j++)
             {
-                int64_t cij = -999 ;
-                OK (GrB_Matrix_extractElement_INT64 (&cij, C, i, j)) ;
-                CHECK (cij == i*100 + j) ;
-                cnvals -- ;
+                OK (GrB_Matrix_setElement_INT64 (A, i*100 + j, i, j)) ;
             }
         }
-    }
-    CHECK (cnvals == 0) ;
-
-    OK (GrB_Matrix_apply_IndexOp_INT32 (C, NULL, NULL, Banded, A, 1, NULL)) ;
-    OK (GxB_Matrix_fprint (C, "C = apply:banded (A)", 3, NULL)) ;
-    OK (GrB_Matrix_nvals (&cnvals, C)) ;
-    CHECK (cnvals == 30) ;
-    for (int i = 0 ; i < 5 ; i++)
-    {
-        for (int j = 0 ; j < 6 ; j++)
-        {
-            int64_t cij = -999 ;
-            int d = GB_IABS (j-i) ;
-            OK (GrB_Matrix_extractElement_INT64 (&cij, C, i, j)) ;
-            CHECK (cij == (d <= 1)) ;
-        }
-    }
-
-    OK (GrB_Matrix_select_INT64 (C, NULL, NULL, UpperBanded, A, 1, NULL)) ;
-    OK (GxB_Matrix_fprint (C, "C = upper_banded (A)", 3, NULL)) ;
-    OK (GrB_Matrix_nvals (&cnvals, C)) ;
-    CHECK (cnvals == 10) ;
-    for (int i = 0 ; i < 5 ; i++)
-    {
-        for (int j = i ; j <= i+1 ; j++)
-        {
-            if (j >= 0 && j < 6)
-            {
-                int64_t cij = -999 ;
-                OK (GrB_Matrix_extractElement_INT64 (&cij, C, i, j)) ;
-                CHECK (cij == i*100 + j) ;
-                cnvals -- ;
-            }
-        }
-    }
-    CHECK (cnvals == 0) ;
-
-    OK (GrB_Matrix_new (&E, GrB_INT64, 6, 5)) ;
-    OK (GrB_Matrix_select_INT64 (E, NULL, NULL, UpperBanded, A, 1,
-        GrB_DESC_T0)) ;
-    OK (GxB_Matrix_fprint (E, "E = upper_banded (A')", 3, NULL)) ;
-    int64_t envals ;
-    OK (GrB_Matrix_nvals (&envals, E)) ;
-    CHECK (envals == 9) ;
-    for (int i = 0 ; i < 6 ; i++)
-    {
-        for (int j = i ; j <= i+1 ; j++)
-        {
-            if (j >= 0 && j < 5)
-            {
-                int64_t eij = -999 ;
-                OK (GrB_Matrix_extractElement_INT64 (&eij, E, i, j)) ;
-                CHECK (eij == j*100 + i) ;
-                envals -- ;
-            }
-        }
-    }
-    CHECK (envals == 0) ;
-
-    OK (GrB_Matrix_apply_IndexOp_INT64 (E, NULL, NULL, UpperBanded, A, 1,
-        GrB_DESC_T0)) ;
-    OK (GxB_Matrix_fprint (E, "E = apply:upper_banded (A')", 3, NULL)) ;
-    OK (GrB_Matrix_nvals (&envals, E)) ;
-    CHECK (envals == 30) ;
-    for (int i = 0 ; i < 6 ; i++)
-    {
-        for (int j = 0 ; j < 5 ; j++)
-        {
-            int64_t eij = -999 ;
-            OK (GrB_Matrix_extractElement_INT64 (&eij, E, i, j)) ;
-            CHECK (eij == (j == i || j == i+1)) ;
-        }
-    }
-
-    OK (GrB_Matrix_free (&E)) ;
-
-    OK (GrB_Matrix_new (&E, GrB_BOOL, 6, 5)) ;
-    malloc_debug = true ;
-    METHOD (GrB_Matrix_apply_IndexOp_INT64 (E, NULL, NULL, UpperBanded, A, 1,
-        GrB_DESC_T0)) ;
-    malloc_debug = false ;
-    OK (GxB_Matrix_fprint (E, "E = apply:upper_banded (A')", 3, NULL)) ;
-    OK (GrB_Matrix_nvals (&envals, E)) ;
-    CHECK (envals == 30) ;
-    for (int i = 0 ; i < 6 ; i++)
-    {
-        for (int j = 0 ; j < 5 ; j++)
-        {
-            bool eij = true ;
-            OK (GrB_Matrix_extractElement_BOOL (&eij, E, i, j)) ;
-            CHECK (eij == (j == i || j == i+1)) ;
-        }
-    }
-    OK (GrB_Matrix_free (&E)) ;
-
-    OK (GrB_Matrix_new (&E, GrB_INT64, 6, 5)) ;
-    OK (GrB_Matrix_apply_IndexOp_INT64 (E, NULL, NULL, UpperBanded_int64, A, 1,
-        GrB_DESC_T0)) ;
-    OK (GxB_Matrix_fprint (E, "E = apply:upper_banded64 (A')", 3, NULL)) ;
-    OK (GrB_Matrix_nvals (&envals, E)) ;
-    CHECK (envals == 30) ;
-    for (int i = 0 ; i < 6 ; i++)
-    {
-        for (int j = 0 ; j < 5 ; j++)
-        {
-            int64_t eij = true ;
-            OK (GrB_Matrix_extractElement_INT64 (&eij, E, i, j)) ;
-            CHECK (eij == (j == i || j == i+1)) ;
-        }
-    }
-
-    // change A to iso
-    OK (GrB_Matrix_assign_INT64 (A, NULL, NULL, 42, GrB_ALL, 5, GrB_ALL, 6,
-        NULL)) ;
-    OK (GrB_Matrix_apply_IndexOp_INT64 (E, NULL, NULL, UpperBanded_int64, A, 1,
-        GrB_DESC_T0)) ;
-    OK (GxB_Matrix_fprint (E, "E = apply:upper_banded64 (A')", 3, NULL)) ;
-    OK (GrB_Matrix_nvals (&envals, E)) ;
-    CHECK (envals == 30) ;
-    for (int i = 0 ; i < 6 ; i++)
-    {
-        for (int j = 0 ; j < 5 ; j++)
-        {
-            int64_t eij = true ;
-            OK (GrB_Matrix_extractElement_INT64 (&eij, E, i, j)) ;
-            CHECK (eij == (j == i || j == i+1)) ;
-        }
-    }
-
-    // make A sparse
-    OK (GrB_Matrix_clear (A)) ;
-    for (int i = 0 ; i < 5 ; i++)
-    {
-        for (int j = 0 ; j < 6 ; j++)
-        {
-            OK (GrB_Matrix_setElement_INT64 (A, i*100 + j, i, j)) ;
-        }
-    }
-    OK (GrB_Matrix_removeElement (A, 0, 0)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&A)) ;
-    #else
-    OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
-    #endif
-    OK (GxB_Matrix_Option_set_ (A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
-    for (int k = 0 ; k <= 1 ; k++)
-    {
-        printf ("\n %d ##########################################\n", k) ;
-        if (k == 1)
+        OK (GrB_Matrix_removeElement (A, 0, 0)) ;
+        if (trial >= 2)
         {
             // make A iso
-            OK (GrB_Matrix_assign_INT64 (A, NULL, NULL, 99,
-                GrB_ALL, 5, GrB_ALL, 6, NULL)) ;
-            OK (GrB_Matrix_removeElement (A, 0, 0)) ;
+            OK (GrB_assign (A, A, NULL, 42, GrB_ALL, 5, GrB_ALL, 6,
+                GrB_DESC_S)) ;
         }
+        if (trial >= 3)
+        {
+            // make A sparse
+            OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+        }
+
+        #if (GxB_IMPLEMENTATION_MAJOR <= 5)
+        OK (GrB_Matrix_wait (&A)) ;
+        #else
+        OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
+        #endif
+        OK (GxB_Matrix_fprint (A, "A", 3, NULL)) ;
+
+        OK (GrB_Matrix_new (&C, GrB_INT64, 5, 6)) ;
+        int64_t cnvals ;
+
         OK (GxB_Matrix_fprint (A, "A for select:banded", 3, NULL)) ;
-        OK (GrB_Matrix_select_INT64 (C, NULL, NULL, Banded, A, 1, NULL)) ;
+        OK (GxB_Global_Option_set (GxB_BURBLE, true)) ;
+        OK (GrB_Matrix_select_INT64 (C, NULL, NULL,
+            (trial == 3) ? Banded32 : Banded, A, 1, NULL)) ;
+        OK (GxB_Global_Option_set (GxB_BURBLE, false)) ;
         OK (GxB_Matrix_fprint (C, "C = select:banded (A)", 3, NULL)) ;
         OK (GrB_Matrix_nvals (&cnvals, C)) ;
         CHECK (cnvals == 13) ;
@@ -647,17 +519,214 @@ void mexFunction
                 {
                     int64_t cij = -999 ;
                     OK (GrB_Matrix_extractElement_INT64 (&cij, C, i, j)) ;
-                    CHECK (cij == ((k == 0) ? (i*100 + j) : 99)) ;
+                    CHECK (cij == ((trial >= 2) ? 42 : (i*100 + j))) ;
                     cnvals -- ;
                 }
             }
         }
         CHECK (cnvals == 0) ;
-    }
 
-    OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Matrix_free (&C)) ;
-    OK (GrB_Matrix_free (&E)) ;
+        OK (GrB_Matrix_apply_IndexOp_INT32 (C, NULL, NULL, Banded, A, 1,
+            NULL)) ;
+        OK (GxB_Matrix_fprint (C, "C = apply:banded (A)", 3, NULL)) ;
+        OK (GrB_Matrix_nvals (&cnvals, C)) ;
+        CHECK (cnvals == 29) ;
+        for (int i = 0 ; i < 5 ; i++)
+        {
+            for (int j = 0 ; j < 6 ; j++)
+            {
+                if (i == 0 && j == 0) continue ;
+                int64_t cij = -999 ;
+                int d = GB_IABS (j-i) ;
+                OK (GrB_Matrix_extractElement_INT64 (&cij, C, i, j)) ;
+                CHECK (cij == (d <= 1)) ;
+            }
+        }
+
+        OK (GrB_Matrix_select_INT64 (C, NULL, NULL, UpperBanded, A, 1, NULL)) ;
+        OK (GxB_Matrix_fprint (C, "C = upper_banded (A)", 3, NULL)) ;
+        OK (GrB_Matrix_nvals (&cnvals, C)) ;
+        CHECK (cnvals == 9) ;
+        for (int i = 0 ; i < 5 ; i++)
+        {
+            for (int j = i ; j <= i+1 ; j++)
+            {
+                if (i == 0 && j == 0) continue ;
+                if (j >= 0 && j < 6)
+                {
+                    int64_t cij = -999 ;
+                    OK (GrB_Matrix_extractElement_INT64 (&cij, C, i, j)) ;
+                    CHECK (cij == ((trial >= 2) ? 42 : (i*100 + j))) ;
+                    cnvals -- ;
+                }
+            }
+        }
+        CHECK (cnvals == 0) ;
+
+        OK (GrB_Matrix_new (&E, GrB_INT64, 6, 5)) ;
+        OK (GrB_Matrix_select_INT64 (E, NULL, NULL, UpperBanded, A, 1,
+            GrB_DESC_T0)) ;
+        OK (GxB_Matrix_fprint (E, "E = upper_banded (A')", 3, NULL)) ;
+        int64_t envals ;
+        OK (GrB_Matrix_nvals (&envals, E)) ;
+        CHECK (envals == 8) ;
+        for (int i = 0 ; i < 6 ; i++)
+        {
+            for (int j = i ; j <= i+1 ; j++)
+            {
+                if (i == 0 && j == 0) continue ;
+                if (j >= 0 && j < 5)
+                {
+                    int64_t eij = -999 ;
+                    OK (GrB_Matrix_extractElement_INT64 (&eij, E, i, j)) ;
+                    CHECK (eij == ((trial >= 2) ? 42 : (j*100 + i))) ;
+                    envals -- ;
+                }
+            }
+        }
+        CHECK (envals == 0) ;
+
+        OK (GrB_Matrix_apply_IndexOp_INT64 (E, NULL, NULL, UpperBanded, A, 1,
+            GrB_DESC_T0)) ;
+        OK (GxB_Matrix_fprint (E, "E = apply:upper_banded (A')", 3, NULL)) ;
+        OK (GrB_Matrix_nvals (&envals, E)) ;
+        CHECK (envals == 29) ;
+        for (int i = 0 ; i < 6 ; i++)
+        {
+            for (int j = 0 ; j < 5 ; j++)
+            {
+                if (i == 0 && j == 0) continue ;
+                int64_t eij = -999 ;
+                OK (GrB_Matrix_extractElement_INT64 (&eij, E, i, j)) ;
+                CHECK (eij == (j == i || j == i+1)) ;
+            }
+        }
+
+        OK (GrB_Matrix_free (&E)) ;
+
+        OK (GrB_Matrix_new (&E, GrB_BOOL, 6, 5)) ;
+        malloc_debug = true ;
+        printf ("=======================================MALLOC DEBUG ON %d\n",
+            trial) ;
+        #undef  GB_DUMP_STUFF
+        #define GB_DUMP_STUFF \
+        { \
+            printf ("dump stuff:\n") ; \
+            GxB_print (A,3) ; GxB_print (UpperBanded,3) ; GxB_print (E,3) ; \
+        }
+        GB_DUMP_STUFF ;
+        #undef  FREE_DEEP_COPY
+        #define FREE_DEEP_COPY OK (GrB_Matrix_free (&E)) ;
+        #undef  GET_DEEP_COPY
+        #define GET_DEEP_COPY  OK (GrB_Matrix_new (&E, GrB_BOOL, 6, 5)) ;
+        OK (GxB_Global_Option_set (GxB_BURBLE, true)) ;
+        METHOD (GrB_Matrix_apply_IndexOp_INT64 (E, NULL, NULL, UpperBanded, A,
+            1, GrB_DESC_T0)) ;
+        OK (GxB_Global_Option_set (GxB_BURBLE, false)) ;
+        malloc_debug = false ;
+        printf ("MALLOC DEBUG OFF\n") ;
+        OK (GxB_Matrix_fprint (E, "E = apply:upper_banded (A')", 3, NULL)) ;
+        OK (GrB_Matrix_nvals (&envals, E)) ;
+        CHECK (envals == 29) ;
+        for (int i = 0 ; i < 6 ; i++)
+        {
+            for (int j = 0 ; j < 5 ; j++)
+            {
+                if (i == 0 && j == 0) continue ;
+                bool eij = true ;
+                OK (GrB_Matrix_extractElement_BOOL (&eij, E, i, j)) ;
+                CHECK (eij == (j == i || j == i+1)) ;
+            }
+        }
+        OK (GrB_Matrix_free (&E)) ;
+
+        OK (GrB_Matrix_new (&E, GrB_INT64, 6, 5)) ;
+        OK (GrB_Matrix_apply_IndexOp_INT64 (E, NULL, NULL, UpperBanded_int64,
+            A, 1, GrB_DESC_T0)) ;
+        OK (GxB_Matrix_fprint (E, "E = apply:upper_banded64 (A')", 3, NULL)) ;
+        OK (GrB_Matrix_nvals (&envals, E)) ;
+        CHECK (envals == 29) ;
+        for (int i = 0 ; i < 6 ; i++)
+        {
+            for (int j = 0 ; j < 5 ; j++)
+            {
+                if (i == 0 && j == 0) continue ;
+                int64_t eij = true ;
+                OK (GrB_Matrix_extractElement_INT64 (&eij, E, i, j)) ;
+                CHECK (eij == (j == i || j == i+1)) ;
+            }
+        }
+
+        // change A to iso-full
+        OK (GrB_Matrix_assign_INT64 (A, NULL, NULL, 42, GrB_ALL, 5, GrB_ALL, 6,
+            NULL)) ;
+        OK (GrB_Matrix_apply_IndexOp_INT64 (E, NULL, NULL, UpperBanded_int64,
+            A, 1, GrB_DESC_T0)) ;
+        OK (GxB_Matrix_fprint (E, "E = apply:upper_banded64 (A')", 3, NULL)) ;
+        OK (GrB_Matrix_nvals (&envals, E)) ;
+        CHECK (envals == 30) ;
+        for (int i = 0 ; i < 6 ; i++)
+        {
+            for (int j = 0 ; j < 5 ; j++)
+            {
+                if (i == 0 && j == 0) continue ;
+                int64_t eij = true ;
+                OK (GrB_Matrix_extractElement_INT64 (&eij, E, i, j)) ;
+                CHECK (eij == (j == i || j == i+1)) ;
+            }
+        }
+
+        // make A sparse
+        OK (GrB_Matrix_clear (A)) ;
+        for (int i = 0 ; i < 5 ; i++)
+        {
+            for (int j = 0 ; j < 6 ; j++)
+            {
+                OK (GrB_Matrix_setElement_INT64 (A, i*100 + j, i, j)) ;
+            }
+        }
+        #if (GxB_IMPLEMENTATION_MAJOR <= 5)
+        OK (GrB_Matrix_wait (&A)) ;
+        #else
+        OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
+        #endif
+        OK (GxB_Matrix_Option_set_ (A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+        for (int k = 0 ; k <= 1 ; k++)
+        {
+            printf ("\n %d ##########################################\n", k) ;
+            if (k == 1)
+            {
+                // make A iso
+                OK (GrB_Matrix_assign_INT64 (A, NULL, NULL, 99,
+                    GrB_ALL, 5, GrB_ALL, 6, NULL)) ;
+            }
+            OK (GxB_Matrix_fprint (A, "A for select:banded", 3, NULL)) ;
+            OK (GrB_Matrix_select_INT64 (C, NULL, NULL, Banded, A, 1, NULL)) ;
+            OK (GxB_Matrix_fprint (C, "C = select:banded (A)", 3, NULL)) ;
+            OK (GrB_Matrix_nvals (&cnvals, C)) ;
+            CHECK (cnvals == 14) ;
+            for (int i = 0 ; i < 5 ; i++)
+            {
+                for (int j = i-1 ; j <= i+1 ; j++)
+                {
+                    if (j >= 0 && j < 6)
+                    {
+                        int64_t cij = -999 ;
+                        OK (GrB_Matrix_extractElement_INT64 (&cij, C, i, j)) ;
+                        printf ("C(%d,%d) = %ld\n", i, j, cij) ;
+                        printf ("%ld \n", ((k == 0) ? (i*100 + j) : 99)) ;
+                        CHECK (cij == ((k == 0) ? (i*100 + j) : 99)) ;
+                        cnvals -- ;
+                    }
+                }
+            }
+            CHECK (cnvals == 0) ;
+        }
+
+        OK (GrB_Matrix_free (&A)) ;
+        OK (GrB_Matrix_free (&C)) ;
+        OK (GrB_Matrix_free (&E)) ;
+    }
 
     // mangle the user-defined operators
     expected = GrB_INVALID_OBJECT ;
@@ -690,6 +759,7 @@ void mexFunction
     ERR (GrB_IndexUnaryOp_error (NULL, Banded)) ;
 
     OK (GrB_IndexUnaryOp_free_ (&Banded)) ;
+    OK (GrB_IndexUnaryOp_free_ (&Banded32)) ;
     OK (GrB_IndexUnaryOp_free_ (&UpperBanded)) ;
     OK (GrB_IndexUnaryOp_free_ (&UpperBanded_int64)) ;
 

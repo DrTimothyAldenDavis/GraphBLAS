@@ -129,7 +129,7 @@ switch (opcode)
         ASSERT (op->xtype != NULL) ;
         ASSERT (op->ytype != NULL) ;
         if ((op->ztype != GrB_BOOL) ||
-           ((op->xtype != A->type) && typecode != GB_ignore_code))
+           ((typecode != GB_ignore_code) && (op->xtype != A->type)))
         {
             // typecasting is required
             #ifdef GB_SELECT_PHASE1
@@ -137,8 +137,10 @@ switch (opcode)
             #endif
             switch (typecode)
             {
-                case GB_ignore_code : GB_SEL_WORKER (_idxunop_cast, _iso, GB_void)
-                default             : GB_SEL_WORKER (_idxunop_cast, _any, GB_void)
+                case GB_ignore_code :   // A is iso
+                    GB_SEL_WORKER (_idxunop_cast, _iso, GB_void)
+                default             :   // A is non-iso
+                    GB_SEL_WORKER (_idxunop_cast, _any, GB_void)
             }
         }
         else
