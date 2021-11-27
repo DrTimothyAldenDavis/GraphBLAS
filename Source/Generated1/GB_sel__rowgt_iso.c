@@ -63,6 +63,7 @@ void GB (_sel_phase1__rowgt_iso)
 { 
     
     
+    
     #include "GB_select_phase1.c"
 }
 
@@ -92,6 +93,7 @@ void GB (_sel_phase2__rowgt_iso)
 { 
     
     
+    
     #include "GB_select_phase2.c"
 }
 
@@ -117,6 +119,7 @@ void GB (_sel_bitmap__rowgt_iso)
     const int nthreads
 )
 { 
+    
     
     
     #include "GB_bitmap_select_template.c"

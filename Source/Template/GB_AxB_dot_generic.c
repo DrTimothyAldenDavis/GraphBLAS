@@ -69,6 +69,13 @@
     #define GB_PRAGMA_SIMD_VECTORIZE ;
     #define GB_PRAGMA_SIMD_DOT(cij) ;
 
+    // no special semirings or operators
+    #define GB_IS_PAIR_MULTIPLIER 0
+    #define GB_IS_ANY_PAIR_SEMIRING 0
+    #define GB_IS_IMIN_MONOID 0
+    #define GB_IS_IMAX_MONOID 0
+    #define GB_IS_FIRSTJ_MULTIPLIER 0
+
     if (op_is_positional)
     { 
 

@@ -148,6 +148,20 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
+\item Versions 6.0.1 and 5.2.1 (Nov 27, 2021)
+
+    \begin{packed_itemize}
+    \item v6.0.x and v5.2.x (for the same x):
+        differ only in \verb'GrB_wait', \verb'GrB_Info',
+        \verb'GrB_SCMP', and \verb'GxB_init'.
+    \item (37) bug fix:  \verb"C+=A'*B" when the accum operator is the same as
+        the monoid and C is iso-full, and \verb'A' or \verb'B' are hypersparse.
+        (dot4 method).
+    \item performance: \verb'GrB_select' with user-defined
+        \verb'GrB_IndexUnaryOp' about 2x faster.
+    \item performance: faster \verb'(MIN,MAX)_(FIRSTJ,SECONDI)' semirings
+    \end{packed_itemize}
+
 \item Version 6.0.0 (Nov 15, 2021)
 
     \begin{packed_itemize}
@@ -1270,11 +1284,11 @@ Both of them allow for pending work to be left pending in a \verb'GrB_Matrix'.
 
 The Julia interface is at
 \url{https://github.com/JuliaSparse/SuiteSparseGraphBLAS.jl}, developed by Will
-Kimmerer, Abhinav Mehndiratta, and Viral Shah.  Unlike the Octave/MATLAB
-interface (and like the Python interfaces) the Julia interface can keep pending
-work (zombies, pending tuples, jumbled state) in a \verb'GrB_Matrix'.
-This makes Python and Julia the best high-level interfaces for
-SuiteSparse:GraphBLAS.  MATLAB is not as well suited, since it does not
+Kimmerer, Abhinav Mehndiratta, Miha Zgubic, and Viral Shah.  
+Unlike the Octave/MATLABinterface (and like the Python interfaces) the Julia 
+interface can keep pending work (zombies, pending tuples, jumbled state) in
+a \verb'GrB_Matrix'. This makes Python and Julia the best high-level interfaces
+for SuiteSparse:GraphBLAS.  MATLAB is not as well suited, since it does not
 allow inputs to a function or mexFunction to be modified, so any pending
 work must be finished before a matrix can be used as input.
 
@@ -8435,9 +8449,79 @@ repl & accum & ${\bf C}$ & ${\bf T}$ & mask & action taken by ${\bf C \langle M 
 \hline
 \end{tabular}
 }
-\caption{Results of the mask/accumulator phase \label{tab:maskaccum}}
+\caption{Results of the mask/accumulator phase. \label{tab:maskaccum}}
 \end{table}
 
+When there is no mask and the mask \verb'GrB_COMP' option is not selected, the
+table simplifies (Table~\ref{tab:maskaccum_nomask}).  The \verb'GrB_REPLACE'
+option no longer has any effect.  The \verb'GrB_SECOND_T' binary operator when
+used as the accumulator unifies the first cases, shown in
+Table~\ref{tab:maskaccum_nomask_2nd}.  The only difference now is the behavior
+when $c_{ij}$ is present but $t_{ij}$ is not.  Finally, the effect of
+\verb'GrB_FIRST_T' as the accumulator is shown in
+Table~\ref{tab:maskaccum_nomask_1st}. 
+
+\begin{table}[h]
+\begin{center}
+{\small
+\begin{tabular}{lll|l}
+\hline
+       accum & ${\bf C}$ & ${\bf T}$        & action taken by ${\bf C = C \odot T}$ \\
+\hline
+        -   & $c_{ij}$ & $t_{ij}$         &  $c_{ij} = t_{ij}$, update \\
+        -   &  -       & $t_{ij}$         &  $c_{ij} = t_{ij}$, insert \\
+        -   & $c_{ij}$ &  -               &  delete $c_{ij}$ because $t_{ij}$ not present \\
+        -   &  -       &  -               &   \\
+\hline
+        yes & $c_{ij}$ & $t_{ij}$         &  $c_{ij} = c_{ij} \odot t_{ij}$, apply accumulator \\
+        yes &  -       & $t_{ij}$         &  $c_{ij} = t_{ij}$, insert \\
+        yes & $c_{ij}$ &  -               &   \\
+        yes &  -       &  -               &   \\
+\hline
+\end{tabular}
+}
+\caption{When no mask is present (and not complemented).
+\label{tab:maskaccum_nomask}}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+{\small
+\begin{tabular}{lll|l}
+\hline
+       accum & ${\bf C}$ & ${\bf T}$        & action taken by ${\bf C = C \odot T}$ \\
+\hline
+        yes & $c_{ij}$ & $t_{ij}$         &  $c_{ij} = t_{ij}$, apply \verb'GrB_SECOND' accumulator \\
+        yes &  -       & $t_{ij}$         &  $c_{ij} = t_{ij}$, insert \\
+        yes & $c_{ij}$ &  -               &   \\
+        yes &  -       &  -               &   \\
+\hline
+\end{tabular}
+}
+\caption{No mask, with the SECOND operator as the accumulator.
+\label{tab:maskaccum_nomask_2nd}}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+{\small
+\begin{tabular}{lll|l}
+\hline
+       accum & ${\bf C}$ & ${\bf T}$        & action taken by ${\bf C = C \odot T}$ \\
+\hline
+        yes & $c_{ij}$ & $t_{ij}$         &  \\ 
+        yes &  -       & $t_{ij}$         &  $c_{ij} = t_{ij}$, insert \\
+        yes & $c_{ij}$ &  -               &   \\
+        yes &  -       &  -               &   \\
+\hline
+\end{tabular}
+}
+\caption{No Mask, with the FIRST operator as the accumulator.
+\label{tab:maskaccum_nomask_1st}}
+\end{center}
+\end{table}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -9671,6 +9755,14 @@ discussion applies equally to the row indices \verb'I' and the column indices
     has \verb'm' rows, with length \verb'|I|=m'.  If \verb'J' is used the
     columns of an \verb'm'-by-\verb'n' matrix, then \verb'J=GrB_ALL' refers to
     all columns, and is the sequence \verb'0:(n-1)', of length \verb'|J|=n'.
+
+    \begin{alert}
+    {\bf SPEC:} If \verb'I' or \verb'J' are \verb'GrB_ALL', the specification
+    requires that \verb'ni' be passed in as \verb'm' (the number of rows)
+    and \verb'nj' be passed in as \verb'n'.  Any other value is an error.
+    SuiteSparse:GraphBLAS ignores these scalar inputs and treats them as if
+    they are equal to their only possible correct value.
+    \end{alert}
 
 \item To specify a contiguous range of indices, such as \verb'I=10:20'
     in MATLAB, the array \verb'I' has size 2, and \verb'ni' is passed to
@@ -14071,6 +14163,23 @@ Finally, you can run the tests to see if your installation works:
     \begin{verbatim}
     cd ../../test
     gbtest \end{verbatim} }
+
+%----------------------------------------
+\subsection{On the ARM64 architecture}
+%----------------------------------------
+
+You may encounter a compiler error on the ARM64 architecture when using
+the gcc compiler, versions 6.x and earlier.  This error was
+encountered on ARM64 Linux with gcc 6.x:
+
+\begin{verbatim}
+`In function GrB_Matrix_apply_BinaryOp1st_Scalar.part.1':
+GrB_Matrix_apply.c:(.text+0x210): relocation truncated to
+fit: R_AARCH64_CALL26 against `.text.unlikely'
+\end{verbatim}
+
+For the ARM64, this error is silenced with gcc v7.x and later, at least on
+Linux.
 
 %----------------------------------------
 \subsection{On Microsoft Windows}

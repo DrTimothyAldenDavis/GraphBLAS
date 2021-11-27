@@ -1738,9 +1738,9 @@
 // semirings with the TIMES monoid
 //------------------------------------------------------------
 
-// No builtin GrB_* semirings use the TIMES monoid, and none are used
-// in LAGraph 0.1 yet.  TIMES_FIRST and TIMES_SECOND are needed by
-// GrB_reduce to vector.
+// No builtin GrB_* semirings use the TIMES monoid, and none are used in
+// LAGraph yet.  TIMES_FIRST and TIMES_SECOND are needed by GrB_reduce to
+// vector.
 
 //  60 semirings with TIMES monoids (10 real types each):
 //
@@ -1955,7 +1955,7 @@
 // #define GxB_NO_TIMES_FIRST_FC32      1
 // #define GxB_NO_TIMES_FIRST_FC64      1
 
-// needed by GrB_reduce to vecto, or s = prod (A) in @GrB interface
+// needed by GrB_reduce to vector, or s = prod (A) in @GrB interface
 // #define GxB_NO_TIMES_SECOND_FC32     1
 // #define GxB_NO_TIMES_SECOND_FC64     1
 
@@ -2331,44 +2331,44 @@
 //      mult:    (FIRSTI, FIRSTI1, FIRSTJ, FIRSTJ1, SECONDJ, SECONDJ1) x
 //      types:   (int32, int64)
 
-// #define GxB_NO_MIN_FIRSTI_INT32      1
-// #define GxB_NO_MIN_FIRSTI_INT64      1
-// #define GxB_NO_MIN_FIRSTI1_INT32     1
-// #define GxB_NO_MIN_FIRSTI1_INT64     1
+   #define GxB_NO_MIN_FIRSTI_INT32      1
+   #define GxB_NO_MIN_FIRSTI_INT64      1
+   #define GxB_NO_MIN_FIRSTI1_INT32     1
+   #define GxB_NO_MIN_FIRSTI1_INT64     1
 // #define GxB_NO_MIN_FIRSTJ_INT32      1
 // #define GxB_NO_MIN_FIRSTJ_INT64      1
 // #define GxB_NO_MIN_FIRSTJ1_INT32     1
 // #define GxB_NO_MIN_FIRSTJ1_INT64     1
-// #define GxB_NO_MIN_SECONDJ_INT32     1
-// #define GxB_NO_MIN_SECONDJ_INT64     1
-// #define GxB_NO_MIN_SECONDJ1_INT32    1
-// #define GxB_NO_MIN_SECONDJ1_INT64    1
+   #define GxB_NO_MIN_SECONDJ_INT32     1
+   #define GxB_NO_MIN_SECONDJ_INT64     1
+   #define GxB_NO_MIN_SECONDJ1_INT32    1
+   #define GxB_NO_MIN_SECONDJ1_INT64    1
 
-// #define GxB_NO_MAX_FIRSTI_INT32      1
-// #define GxB_NO_MAX_FIRSTI_INT64      1
-// #define GxB_NO_MAX_FIRSTI1_INT32     1
-// #define GxB_NO_MAX_FIRSTI1_INT64     1
+   #define GxB_NO_MAX_FIRSTI_INT32      1
+   #define GxB_NO_MAX_FIRSTI_INT64      1
+   #define GxB_NO_MAX_FIRSTI1_INT32     1
+   #define GxB_NO_MAX_FIRSTI1_INT64     1
 // #define GxB_NO_MAX_FIRSTJ_INT32      1
 // #define GxB_NO_MAX_FIRSTJ_INT64      1
 // #define GxB_NO_MAX_FIRSTJ1_INT32     1
 // #define GxB_NO_MAX_FIRSTJ1_INT64     1
-// #define GxB_NO_MAX_SECONDJ_INT32     1
-// #define GxB_NO_MAX_SECONDJ_INT64     1
-// #define GxB_NO_MAX_SECONDJ1_INT32    1
-// #define GxB_NO_MAX_SECONDJ1_INT64    1
+   #define GxB_NO_MAX_SECONDJ_INT32     1
+   #define GxB_NO_MAX_SECONDJ_INT64     1
+   #define GxB_NO_MAX_SECONDJ1_INT32    1
+   #define GxB_NO_MAX_SECONDJ1_INT64    1
 
-// #define GxB_NO_ANY_FIRSTI_INT32      1
-// #define GxB_NO_ANY_FIRSTI_INT64      1
-// #define GxB_NO_ANY_FIRSTI1_INT32     1
-// #define GxB_NO_ANY_FIRSTI1_INT64     1
+   #define GxB_NO_ANY_FIRSTI_INT32      1
+   #define GxB_NO_ANY_FIRSTI_INT64      1
+   #define GxB_NO_ANY_FIRSTI1_INT32     1
+   #define GxB_NO_ANY_FIRSTI1_INT64     1
 // #define GxB_NO_ANY_FIRSTJ_INT32      1
 // #define GxB_NO_ANY_FIRSTJ_INT64      1
 // #define GxB_NO_ANY_FIRSTJ1_INT32     1
 // #define GxB_NO_ANY_FIRSTJ1_INT64     1
-// #define GxB_NO_ANY_SECONDJ_INT32     1
-// #define GxB_NO_ANY_SECONDJ_INT64     1
-// #define GxB_NO_ANY_SECONDJ1_INT32    1
-// #define GxB_NO_ANY_SECONDJ1_INT64    1
+   #define GxB_NO_ANY_SECONDJ_INT32     1
+   #define GxB_NO_ANY_SECONDJ_INT64     1
+   #define GxB_NO_ANY_SECONDJ1_INT32    1
+   #define GxB_NO_ANY_SECONDJ1_INT64    1
 
    #define GxB_NO_PLUS_FIRSTI_INT32     1
    #define GxB_NO_PLUS_FIRSTI_INT64     1

@@ -49,6 +49,7 @@
 #include "GB_partition.h"
 #include "GB_omp.h"
 #include "GB_context.h"
+#include "GB_nthreads.h"
 #include "GB_memory.h"
 #include "GB_werk.h"
 #include "GB_log2.h"

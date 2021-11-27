@@ -34,7 +34,7 @@
 
 // test value of Ax [p]
 #define GB_TEST_VALUE_OF_ENTRY(keep,p)                  \
-    bool keep = op->selop_function (flipij ? j : i, flipij ? i : j, Ax +(p)*asize, ythunk)
+    bool keep = selop_func (flipij ? j : i, flipij ? i : j, Ax +(p)*asize, ythunk)
 
 // Cx [pC] = Ax [pA], no typecast
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
@@ -63,6 +63,7 @@ void GB (_sel_phase1__user_any)
 { 
     
     
+    GxB_select_function selop_func = op->selop_function ;
     #include "GB_select_phase1.c"
 }
 
@@ -92,6 +93,7 @@ void GB (_sel_phase2__user_any)
 { 
     
     
+    GxB_select_function selop_func = op->selop_function ;
     #include "GB_select_phase2.c"
 }
 
@@ -119,6 +121,7 @@ void GB (_sel_bitmap__user_any)
 { 
     
     
+    GxB_select_function selop_func = op->selop_function ;
     #include "GB_bitmap_select_template.c"
 }
 

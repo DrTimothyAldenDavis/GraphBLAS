@@ -15,6 +15,8 @@
 
 #include "GB.h"
 
+GB_PUBLIC double GB_helper0 (void) ;
+
 GB_PUBLIC
 void GB_helper1              // convert zero-based indices to one-based
 (
