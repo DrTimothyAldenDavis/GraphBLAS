@@ -148,14 +148,18 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 6.0.1 (Nov 23, 2021)
+\item Versions 6.0.1 and 5.2.1 (Nov 27, 2021)
 
     \begin{packed_itemize}
+    \item v6.0.x and v5.2.x (for the same x):
+        differ only in \verb'GrB_wait', \verb'GrB_Info',
+        \verb'GrB_SCMP', and \verb'GxB_init'.
     \item (37) bug fix:  \verb"C+=A'*B" when the accum operator is the same as
         the monoid and C is iso-full, and \verb'A' or \verb'B' are hypersparse.
         (dot4 method).
     \item performance: \verb'GrB_select' with user-defined
         \verb'GrB_IndexUnaryOp' about 2x faster.
+    \item performance: faster \verb'(MIN,MAX)_(FIRSTJ,SECONDI)' semirings
     \end{packed_itemize}
 
 \item Version 6.0.0 (Nov 15, 2021)

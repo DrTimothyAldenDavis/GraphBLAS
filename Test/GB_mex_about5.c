@@ -166,7 +166,7 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
     GrB_Vector w = NULL ;
     GrB_Scalar scalar = NULL ;
-    GrB_IndexUnaryOp Banded = NULL, UpperBanded = NULL, 
+    GrB_IndexUnaryOp Banded = NULL, UpperBanded = NULL,
         UpperBanded_int64 = NULL, Gunk = NULL, Banded32 = NULL ;
     GrB_Type type = NULL, MyType = NULL, MyInt64 = NULL ;
     char *err ;
@@ -469,9 +469,14 @@ void mexFunction
         GrB_INT64, GrB_INT64, GrB_INT64)) ;
     OK (GxB_IndexUnaryOp_fprint (UpperBanded_int64, "upperbanded64", 3, NULL)) ;
 
-    for (int trial = 0 ; trial <= 3 ; trial++)
+    for (int trial = 0 ; trial <= 15 ; trial++)
     {
-        OK (GrB_Matrix_new (&A, (trial == 0) ? GrB_INT64 : GrB_INT32, 5, 6)) ;
+        bool cast = (trial & 1) ;
+        bool A_iso = (trial & 2) ;
+        bool A_sparse = (trial & 4 ) ;
+        bool use_Banded32 = (trial & 8) ;
+
+        OK (GrB_Matrix_new (&A, cast ? GrB_INT64 : GrB_INT32, 5, 6)) ;
         for (int i = 0 ; i < 5 ; i++)
         {
             for (int j = 0 ; j < 6 ; j++)
@@ -480,16 +485,21 @@ void mexFunction
             }
         }
         OK (GrB_Matrix_removeElement (A, 0, 0)) ;
-        if (trial >= 2)
+        if (A_iso)
         {
             // make A iso
             OK (GrB_assign (A, A, NULL, 42, GrB_ALL, 5, GrB_ALL, 6,
                 GrB_DESC_S)) ;
         }
-        if (trial >= 3)
+        if (A_sparse)
         {
             // make A sparse
             OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+        }
+        else
+        {
+            // make A bitmap
+            OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
         }
 
         #if (GxB_IMPLEMENTATION_MAJOR <= 5)
@@ -505,7 +515,7 @@ void mexFunction
         OK (GxB_Matrix_fprint (A, "A for select:banded", 3, NULL)) ;
         OK (GxB_Global_Option_set (GxB_BURBLE, true)) ;
         OK (GrB_Matrix_select_INT64 (C, NULL, NULL,
-            (trial == 3) ? Banded32 : Banded, A, 1, NULL)) ;
+            (use_Banded32) ? Banded32 : Banded, A, 1, NULL)) ;
         OK (GxB_Global_Option_set (GxB_BURBLE, false)) ;
         OK (GxB_Matrix_fprint (C, "C = select:banded (A)", 3, NULL)) ;
         OK (GrB_Matrix_nvals (&cnvals, C)) ;
@@ -519,7 +529,7 @@ void mexFunction
                 {
                     int64_t cij = -999 ;
                     OK (GrB_Matrix_extractElement_INT64 (&cij, C, i, j)) ;
-                    CHECK (cij == ((trial >= 2) ? 42 : (i*100 + j))) ;
+                    CHECK (cij == (A_iso ? 42 : (i*100 + j))) ;
                     cnvals -- ;
                 }
             }
@@ -556,7 +566,7 @@ void mexFunction
                 {
                     int64_t cij = -999 ;
                     OK (GrB_Matrix_extractElement_INT64 (&cij, C, i, j)) ;
-                    CHECK (cij == ((trial >= 2) ? 42 : (i*100 + j))) ;
+                    CHECK (cij == (A_iso ? 42 : (i*100 + j))) ;
                     cnvals -- ;
                 }
             }
@@ -579,7 +589,7 @@ void mexFunction
                 {
                     int64_t eij = -999 ;
                     OK (GrB_Matrix_extractElement_INT64 (&eij, E, i, j)) ;
-                    CHECK (eij == ((trial >= 2) ? 42 : (j*100 + i))) ;
+                    CHECK (eij == (A_iso ? 42 : (j*100 + i))) ;
                     envals -- ;
                 }
             }
@@ -1082,7 +1092,7 @@ void mexFunction
     CHECK (A == NULL) ;
 
     for (int j = 0 ; j <= 4 ; j++)
-    { 
+    {
         Ap [j] = j ;
     }
     ERR (GrB_Matrix_import_FP32 (&A, GrB_FP32, 4, 4, Ap, Ai, Ax,
@@ -1219,7 +1229,7 @@ void mexFunction
 
     OK (GrB_Vector_new (&w, GrB_INT64, 5)) ;
     for (int i = 0 ; i < 5 ; i++)
-    { 
+    {
         OK (GrB_Vector_setElement_INT64 (w, (int64_t) i, i)) ;
     }
     OK (GxB_Vector_fprint (w, "w for select Banded", 3, NULL)) ;
@@ -1234,7 +1244,7 @@ void mexFunction
     OK (GrB_Vector_apply_IndexOp_UDT (w, NULL, NULL, Banded, w, &one, NULL)) ;
     OK (GxB_Vector_fprint (w, "w from apply Banded output", 3, NULL)) ;
     for (int i = 0 ; i < 5 ; i++)
-    { 
+    {
         int64_t wi = 3 ;
         OK (GrB_Vector_extractElement_INT64 (&wi, w, i)) ;
         CHECK (wi == (i <= 1)) ;
@@ -1248,7 +1258,7 @@ void mexFunction
     OK (GrB_Matrix_apply_IndexOp_UDT (A, NULL, NULL, Banded, A, &one, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A from apply Banded output", 3, NULL)) ;
     for (int i = 0 ; i < 5 ; i++)
-    { 
+    {
         for (int j = 0 ; j < 5 ; j++)
         {
             int64_t aij = 3 ;
@@ -1363,7 +1373,7 @@ void mexFunction
     // wrapup
     //--------------------------------------------------------------------------
 
-    GB_mx_put_global (true) ;   
+    GB_mx_put_global (true) ;
     printf ("\nGB_mex_about5: all tests passed\n\n") ;
 }
 
