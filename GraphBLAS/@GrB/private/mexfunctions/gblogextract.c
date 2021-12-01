@@ -77,8 +77,6 @@
 
 // C is always returned as a GrB matrix.
 
-// TODO:: do not directly access opaque content
-
 #include "gb_interface.h"
 #include "GB_transpose.h"
 
@@ -98,7 +96,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin == 2 && nargout <= 1, USAGE) ;
-    GB_CONTEXT ("gblogextract") ;       // TODO: remove this
+    GB_CONTEXT ("gblogextract") ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -163,7 +161,6 @@ void mexFunction
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 0") ;
 
     // Remove G->x from G
-    // TODO: use GxB*export to access the content of G
     void *Gx = G->x ;
     size_t Gx_size = G->x_size ;
     #ifdef GB_MEMDUMP

@@ -26,7 +26,7 @@ void gb_usage       // check usage and make sure GrB.init has been called
     // make sure GrB.init has been called
     //--------------------------------------------------------------------------
 
-    if (!GB_Global_GrB_init_called_get ( )) // TODO::: add this as GxB_get
+    if (!GB_Global_GrB_init_called_get ( ))
     {
 
         //----------------------------------------------------------------------
@@ -59,7 +59,7 @@ void gb_usage       // check usage and make sure GrB.init has been called
         OK (GxB_Global_Option_set (GxB_PRINT_1BASED, true)) ;
 
         // for debug only
-        GB_Global_abort_function_set (gb_abort) ;   // TODO:: add as GxB_set/get
+        GB_Global_abort_function_set (gb_abort) ;
 
         // for printing memory sizes of matrices
         GB_Global_print_mem_shallow_set (true) ;

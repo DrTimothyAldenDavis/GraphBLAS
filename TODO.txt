@@ -1,6 +1,0 @@
-
-
-TODO:       GrB_Vector_extract should have a variant where the index
-            list is not given by an array, but as a GrB_Vector of type
-            GrB_UINT64 or GrB_INT64.
-            Likewise GrB_Matrix_extract, and all forms of GrB_assign.

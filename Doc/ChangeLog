@@ -1,3 +1,7 @@
+Versions 6.0.2 and 5.2.2, Nov 30, 2021
+
+    * (38) bug fix: GrB_Matrix_export; numerical values not properly exported
+
 Versions 6.0.1 and 5.2.1, Nov 27, 2021
 
     * v6.x and v5.x: differ only in GrB_wait, GrB_Info, GrB_SCMP, and GxB_init

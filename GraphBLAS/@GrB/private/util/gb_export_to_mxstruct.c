@@ -69,7 +69,6 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     if (GB_is_shallow (*A_handle))
     {
         // A is shallow so make a deep copy
-        // TODO:: do this in GxB*export*
         OK (GrB_Matrix_dup (&T, *A_handle)) ;
         OK (GrB_Matrix_free (A_handle)) ;
         (*A_handle) = T ;
@@ -81,7 +80,6 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     // make sure the matrix is finished
     //--------------------------------------------------------------------------
 
-    // TODO: this is done in GxB*export* and can be removed here
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK1 (A, GrB_Matrix_wait (&A)) ;
     #else
@@ -102,7 +100,6 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     // extract the opaque content not provided by GxB*export
     //--------------------------------------------------------------------------
 
-    // TODO: this content is opaque, try to remove it here
     int64_t nzmax = GB_nnz_max (A) ;
     int64_t plen = A->plen ;
     int64_t nvec_nonempty = A->nvec_nonempty ;
@@ -121,8 +118,6 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     int64_t nvals = 0, nvec = 0 ;
     bool by_col = (fmt == GxB_BY_COL) ;
     bool iso = false ;
-
-    // TODO write GxB_Matrix_export which exports the matrix as-is
 
     switch (sparsity_status)
     {
