@@ -198,7 +198,7 @@ static GrB_Info GB_export_worker  // export a matrix
             }
             else
             { 
-                GB_memcpy (Ax, A->x, nvals, nthreads_max) ;
+                GB_memcpy (Ax, A->x, nvals * A->type->size, nthreads_max) ;
             }
             break ;
 
