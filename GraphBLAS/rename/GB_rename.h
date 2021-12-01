@@ -3631,6 +3631,7 @@
 #define GB_Global_timing_clear_all GM_Global_timing_clear_all
 #define GB_Global_timing_get GM_Global_timing_get
 #define GB_Global_timing_set GM_Global_timing_set
+#define GB_helper0 GM_helper0
 #define GB_helper1 GM_helper1
 #define GB_helper10 GM_helper10
 #define GB_helper1i GM_helper1i
@@ -3679,8 +3680,8 @@
 #define GB_LZ4_compress_fast_extState GM_LZ4_compress_fast_extState
 #define GB_LZ4_compress_fast_extState_fastReset GM_LZ4_compress_fast_extState_fastReset
 #define GB_LZ4_compress_forceExtDict GM_LZ4_compress_forceExtDict
-#define GB_LZ4_compressHC GM_LZ4_compressHC
 #define GB_LZ4_compress_HC GM_LZ4_compress_HC
+#define GB_LZ4_compressHC GM_LZ4_compressHC
 #define GB_LZ4_compressHC2 GM_LZ4_compressHC2
 #define GB_LZ4_compressHC2_continue GM_LZ4_compressHC2_continue
 #define GB_LZ4_compressHC2_limitedOutput GM_LZ4_compressHC2_limitedOutput
