@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
+#pragma once
+
 #include <cmath>
 #include <cstdint>
 #include <random>
+
+// #include "GraphBLAS.h"
+#include "../GB_Matrix_allocate.h"
 
 static const char *_cudaGetErrorEnum(cudaError_t error) {
   return cudaGetErrorName(error);
@@ -89,71 +94,80 @@ template<typename T>
 class matrix : public Managed {
   public:
     uint64_t zombie_count = 0;
+    GrB_Matrix mat;
      int64_t vlen;
      int64_t vdim;
-     int64_t nnz; 
-     int64_t *p = nullptr;
-     int64_t *h = nullptr;
-     int64_t *i = nullptr;
-     T *x = nullptr;
+     int64_t nnz;
+//     int64_t *p = nullptr;
+//     int64_t *h = nullptr;
+//     int64_t *i = nullptr;
+//     T *x = nullptr;
      bool is_filled = false;
 
-     matrix(){};
+//     // TODO: Need to figure out whether this container is needed or whether it should wrap the GB_Matrix
+//     int64_t nzmax;
+//    int64_t nvals;
 
-     matrix( int64_t N, int64_t nvecs){
-        vlen = N;
-        vdim = nvecs;
+     matrix(){
+     };
+
+//     matrix( int64_t N, int64_t nvecs) {
+//        vlen = N;
+//        vdim = nvecs;
+//     }
+
+     GrB_Matrix get_grb_matrix() {
+         return mat;
      }
 
-     void set_zombie_count( uint64_t zc) { zombie_count = zc;}
-     uint64_t get_zombie_count() { return zombie_count;}
-     void add_zombie_count( int nz) { zombie_count += nz;}
+     void set_zombie_count( uint64_t zc) { mat->nzombies = zc;}
+     uint64_t get_zombie_count() { return mat->nzombies;}
+     void add_zombie_count( int nz) { mat->nzombies += nz;}
 
      void clear() {
-        if ( p != nullptr){  cudaFree(p); p = nullptr; }
-        if ( h != nullptr){  cudaFree(h); h = nullptr; }
-        if ( i != nullptr){  cudaFree(i); i = nullptr; }
-        if ( x != nullptr){  cudaFree(x); x = nullptr; } 
-        is_filled = false;
-        vlen = 0;
-        vdim = 0;
-        nnz  = 0;
-        zombie_count = 0;
+//        if ( mat->p != nullptr){  cudaFree(mat->p); mat->p = nullptr; }
+//        if ( mat->h != nullptr){  cudaFree(mat->h); mat->h = nullptr; }
+//        if ( mat->i != nullptr){  cudaFree(mat->i); mat->i = nullptr; }
+//        if ( mat->x != nullptr){  cudaFree(mat->x); mat->x = nullptr; }
+//        is_filled = false;
+//         nnz  = 0;
+//        mat->vlen = 0;
+//        mat->vdim = 0;
+//        mat->nzombies = 0;
      }
 
      void alloc( int64_t N, int64_t Nz) {
-
-        //cudaMallocManaged((void**)&p, (Nz+N+1)*sizeof(int64_t)+ (Nz*sizeof(T)));
-        //i = p+(N+1);
-        //x = (T*)(p + (Nz+N+1));
-        CHECK_CUDA( cudaMallocManaged((void**)&p, (N+1)*sizeof(int64_t)) );
-        CHECK_CUDA( cudaMallocManaged((void**)&i, Nz*sizeof(int64_t)) );
-        CHECK_CUDA( cudaMallocManaged((void**)&x, Nz*sizeof(T)) );
-
+         // allocate a GrB_FP32 matrix (but the A->type is NULL;
+         // the GPU kernel cannot access it anyway since GrB_FP32
+         // is a pointer to a global, statically declared struct on the CPU.
+         mat = GB_matrix_allocate(NULL, sizeof(float), N, N, 2, false, false, Nz, -1);
      }
  
      void fill_random(  int64_t N, int64_t Nz, std::mt19937 r) {
-  
+
+         std::cout << "inside fill" << std::endl;
+         alloc( N, Nz);
+         int64_t *p = mat->p;
+         int64_t *i = mat->i;
+         T *x = (T*)mat->x;
         int64_t inv_sparsity = (N*N)/Nz;   //= values not taken per value occupied in index space
 
-        //std::cout<< "fill_random N="<< N<<" need "<< Nz<<" values, invsparse = "<<inv_sparsity<<std::endl;
-        alloc( N, Nz);
+        std::cout<< "fill_random N="<< N<<" need "<< Nz<<" values, invsparse = "<<inv_sparsity<<std::endl;
 
-        //std::cout<< "fill_random"<<" after alloc values"<<std::endl;
-        vdim = N; 
-        //std::cout<<"vdim ready "<<std::endl;
-        vlen = N;
-        //std::cout<<"vlen ready "<<std::endl;
+        std::cout<< "fill_random"<<" after alloc values"<<std::endl;
+        mat->vdim = N;
+        std::cout<<"vdim ready "<<std::endl;
+        mat->vlen = N;
+        std::cout<<"vlen ready "<<std::endl;
         nnz = Nz;
-        //std::cout<<"ready to fill p"<<std::endl;
+        std::cout<<"ready to fill p"<<std::endl;
 
-        p[0] = 0; 
-        p[N] = nnz;
+        mat->p[0] = 0;
+        mat->p[N] = nnz;
 
-        //std::cout<<"   in fill loop"<<std::endl;
+        std::cout<<"   in fill loop"<<std::endl;
         for (int64_t j = 0; j < N; ++j) {
-           p[j+1] = p[j] + Nz/N; 
-           //std::cout<<" row "<<j<<" has "<< p[j+1]-p[j]<<" entries."<<std::endl;
+           p[j+1] = p[j] + Nz/N;
            for ( int k = p[j] ; k < p[j+1]; ++k) {
                i[k] = (k-p[j])*inv_sparsity +  r() % inv_sparsity;
                x[k] = (T) (k & 63) ;
@@ -171,6 +185,7 @@ class SpGEMM_problem_generator {
     float Anzpercent,Bnzpercent,Cnzpercent;
     int64_t Cnz;
     int64_t *Bucket = nullptr;
+
     int64_t BucketStart[13];
     unsigned seed = 13372801;
     std::mt19937 r; //random number generator Mersenne Twister
@@ -217,9 +232,9 @@ class SpGEMM_problem_generator {
     void loadCj() {
 
        // Load C_i with column j info to avoid another lookup
-       for (int c = 0 ; c< M->vdim; ++c) {
-           for ( int r = M->p[c]; r< M->p[c+1]; ++r){
-               C->i[r] = c << 4 ; //shift to store bucket info
+       for (int c = 0 ; c< M->mat->vdim; ++c) {
+           for ( int r = M->mat->p[c]; r< M->mat->p[c+1]; ++r){
+               C->mat->i[r] = c << 4 ; //shift to store bucket info
            }
        }
 
@@ -245,7 +260,7 @@ class SpGEMM_problem_generator {
        B->fill_random( N, Bnz, r);
 
        std::cout<<"fill complete"<<std::endl;
-       C->p = M->p; //same column pointers (assuming CSC here)
+       C->mat->p = M->mat->p; //same column pointers (assuming CSC here)
 
        loadCj();
 

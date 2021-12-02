@@ -488,6 +488,7 @@ GB_CAST_FUNCTION (GxB_FC64_t, uint32_t  )
 GB_CAST_FUNCTION (GxB_FC64_t, uint64_t  )
 GB_CAST_FUNCTION (GxB_FC64_t, float     )
 GB_CAST_FUNCTION (GxB_FC64_t, double    )
+
 #ifndef GBCUDA
 // TODO: this does not work on CUDA yet
 #undef  GB_CAST
@@ -496,10 +497,10 @@ GB_CAST_FUNCTION (GxB_FC64_t, GxB_FC32_t)
 #undef  GB_CAST
 #define GB_CAST(ztype,x) x
 GB_CAST_FUNCTION (GxB_FC64_t, GxB_FC64_t)
+#endif
 
 #undef  GB_CAST
 #undef  GB_CAST_FUNCTION
-#endif
 
 //------------------------------------------------------------------------------
 // GB_mcast: cast a mask entry from any native type to boolean

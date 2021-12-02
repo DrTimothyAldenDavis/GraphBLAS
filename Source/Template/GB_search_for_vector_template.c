@@ -16,7 +16,7 @@
 #ifndef GB_SEARCH_FOR_VECTOR_H
 #define GB_SEARCH_FOR_VECTOR_H
 
-#ifdef GB_KERNEL
+#ifdef GB_CUDA_KERNEL
 __device__
 static inline int64_t GB_search_for_vector_device
 #else

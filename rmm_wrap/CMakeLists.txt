@@ -5,6 +5,8 @@ project(rmm_wrap VERSION 0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+
 
 find_package(CUDA REQUIRED)
 

@@ -39,7 +39,7 @@ bool GB_AxB_dot3_cuda_branch
             && (semiring->header_size == 0)     // semiring is built-in
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code)
-            && !A->iso && !B->iso
+            // && !A->iso && !B->iso            // TODO, handle this
             && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B))
         {
             return true;

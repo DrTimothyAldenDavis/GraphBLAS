@@ -128,7 +128,7 @@ void GB_enumify_semiring   // enumerate a semiring
 
         // handle the flip
         bool handled ;
-        mult_opcode = GB_binop_flip (mult_opcode, &handled) ;
+        mult_opcode = GB_flip_binop_code (mult_opcode, &handled) ;
 
         if (handled)
         {
@@ -319,7 +319,7 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     // be filled with all 1's later.
     bool c_is_one = false ;
     // TODO:
-    // (add_ecode == GB_ANY_opcode && mult_opcode == GB_PAIR_binop_code) ;
+    // (add_ecode == GB_ANY_binop_code && mult_opcode == GB_PAIR_binop_code) ;
     char ccast_macro [GB_CUDA_STRLEN+1] ;
     GB_stringify_load ( fp, "GB_PUTC", c_is_one) ;
 

@@ -10,8 +10,7 @@
 #include <cmath>
 #include <random>
 #include <algorithm>
-#include <cstdint>
-#include "jitTestFactory.hpp"
+#include <stdint.h>
 
 //Test instances and groupings
 

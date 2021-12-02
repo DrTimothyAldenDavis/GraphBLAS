@@ -140,6 +140,19 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     GB_Context Context
 ) ;
 
+
+bool GB_AxB_dot3_cuda_branch
+(
+    const GrB_Matrix M,             // mask matrix
+    const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_Matrix A,             // input matrix
+    const GrB_Matrix B,             // input matrix
+    const GrB_Semiring semiring,    // semiring that defines C=A*B
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    GB_Context Context
+);
+
+
 #if defined ( GB_NVCC )
 }
 #endif

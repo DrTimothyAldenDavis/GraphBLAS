@@ -23,7 +23,7 @@
 #include <sys/types.h>
 
 #include "GB_jit_cache.h"
-#include "GraphBLAS.h"
+// #include "GraphBLAS.h"
 // in GraphBLAS.h
 // #define GxB_IMPLEMENTATION_MAJOR 5
 // #define GxB_IMPLEMENTATION_MINOR 0
@@ -91,18 +91,24 @@ GBJitCache::GBJitCache() { }
 
 GBJitCache::~GBJitCache() { }
 
+
+//void GBJitCache::macrofy() {
+//    printf("GOT HERE and shouldn't have!\n");
+//}
+
+
 std::mutex GBJitCache::_kernel_cache_mutex;
 std::mutex GBJitCache::_program_cache_mutex;
 
 std::string GBJitCache::getFile(
-    File_Desc const &file_object )
+    File_Desc &file_object )
 {
     // Lock for thread safety
     std::lock_guard<std::mutex> lock(_program_cache_mutex);
 
+    // Macrofied version
     auto cached_file = getCachedFile( file_object, file_map );
     return *std::get<1>( cached_file ).get();
-
 }
 
 named_prog<jitify::experimental::Program> GBJitCache::getProgram(
@@ -114,7 +120,7 @@ named_prog<jitify::experimental::Program> GBJitCache::getProgram(
 {
     // Lock for thread safety
     std::lock_guard<std::mutex> lock(_program_cache_mutex);
-    //printf(" jit_cache get program %s\n", prog_name.c_str());
+    printf(" jit_cache get program %s\n", prog_name.c_str());
 
     return getCached(prog_name, program_map, 
         [&](){
@@ -141,7 +147,7 @@ named_prog<jitify::experimental::KernelInstantiation> GBJitCache::getKernelInsta
     std::string kern_inst_name = prog_name + '.' + kern_name;
     for ( auto&& arg : arguments ) kern_inst_name += '_' + arg;
 
-    //printf(" got kernel instance %s\n",kern_inst_name.c_str());
+    printf(" got kernel instance %s\n",kern_inst_name.c_str());
 
     return getCached(kern_inst_name, kernel_inst_map, 
         [&](){return program.kernel(kern_name)

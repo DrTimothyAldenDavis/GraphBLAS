@@ -54,6 +54,7 @@
 #include "GB_werk.h"
 #include "GB_log2.h"
 #include "GB_iso.h"
+#include "GB_Pending_n.h"
 
 #if defined ( GB_HAVE_IPP )
 // Intel(R) IPP, not yet supported
@@ -63,11 +64,6 @@
 //------------------------------------------------------------------------------
 // more internal definitions
 //------------------------------------------------------------------------------
-
-int64_t GB_Pending_n        // return # of pending tuples in A
-(
-    GrB_Matrix A
-) ;
 
 // A is nrows-by-ncols, in either CSR or CSC format
 #define GB_NROWS(A) ((A)->is_csc ? (A)->vlen : (A)->vdim)

@@ -264,7 +264,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
     GB_Context Context
 ) ;
 
-static inline char *GB_sparsity_char (int sparsity)
+static inline const char *GB_sparsity_char (int sparsity)
 {
     switch (sparsity)
     {

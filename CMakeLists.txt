@@ -51,7 +51,7 @@ endif ( )
 message ( STATUS "GraphBLAS C API: v" "${GraphBLAS_API_VERSION_MAJOR}.${GraphBLAS_API_VERSION_MINOR}, date: ${GraphBLAS_API_DATE}" )
 
 project ( graphblas
-        VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" LANGUAGES C )
+        VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" LANGUAGES CUDA C )
 
 #-------------------------------------------------------------------------------
 # determine build type
@@ -60,7 +60,8 @@ project ( graphblas
 include ( GNUInstallDirs )
 
 # Uncomment this line for for development only, not for end-users:
-# set ( CMAKE_BUILD_TYPE Debug )
+# FIXME
+set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
     set ( CMAKE_BUILD_TYPE Release )
@@ -78,7 +79,8 @@ else ( )
 endif ( )
 
 # Uncomment this line for development only, not for end-users:
-# set ( GBCOMPACT true )
+# FIXME
+set ( GBCOMPACT true )
 
 if ( GBCOMPACT )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCOMPACT=1 " )
@@ -109,7 +111,6 @@ configure_file (
 # find packages
 #-------------------------------------------------------------------------------
 
-# include ( FindOpenMP  )
 find_package ( OpenMP )
 
 # Intel(R) IPP not yet supported
@@ -145,12 +146,13 @@ else ( )
     endif ( )
 endif ( )
 
+# TODO: merge CMAKE_CUDA and RMM_WRAP into a single flag
+
 # TODO: CUDA disabled for now
-set ( CMAKE_CUDA off )
-set ( RMM_WRAP off )
+# set ( CMAKE_CUDA off )
+# set ( RMM_WRAP off )
 
 if ( CMAKE_CUDA )
-    # find_package (CUDA REQUIRED )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
     add_subdirectory(CUDA)
     set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES})
@@ -229,9 +231,9 @@ message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 if ( GBCOMPACT )
-    include_directories ( Source/Template Source Include Source/Generated1 lz4 Demo/Include )
+    include_directories ( Source/Template Source Include Source/Generated1 lz4 Demo/Include rmm_wrap )
 else ( )
-    include_directories ( Source/Template Source Include Source/Generated1 lz4 Source/Generated2 Demo/Include )
+    include_directories ( Source/Template Source Include Source/Generated1 lz4 Source/Generated2 Demo/Include rmm_wrap )
 endif ( )
 
 #-------------------------------------------------------------------------------
