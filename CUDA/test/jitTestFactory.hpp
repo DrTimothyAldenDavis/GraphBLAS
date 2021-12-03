@@ -6,11 +6,12 @@
 #include <cmath>
 #include <random>
 #include <algorithm>
-#include "../jitFactory.hpp"
 //#include "GB_binary_search.h"
 #include "GpuTimer.h"
 #include "../../rmm_wrap/rmm_wrap.h"
 #include <gtest/gtest.h>
+
+#include "../jitFactory.hpp"
 #include "dataFactory.hpp"
 
 ////Operations for test results on CPU

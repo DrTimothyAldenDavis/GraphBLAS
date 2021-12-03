@@ -16,10 +16,11 @@
     // create static inline device functions for the GPU
     //--------------------------------------------------------------------------
 
-    #include "GB_nnz_template.c"
+    #include "GB_int64_multiply.c"
     #include "GB_nnz_full_template.c"
     #include "GB_nnz_held_template.c"
     #include "GB_nnz_max_template.c"
+    #include "GB_nnz_template.c"
 
 #else
 
