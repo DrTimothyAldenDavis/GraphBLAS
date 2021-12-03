@@ -60,8 +60,7 @@ project ( graphblas
 include ( GNUInstallDirs )
 
 # Uncomment this line for for development only, not for end-users:
-# FIXME
-set ( CMAKE_BUILD_TYPE Debug )
+# set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
     set ( CMAKE_BUILD_TYPE Release )
@@ -79,8 +78,7 @@ else ( )
 endif ( )
 
 # Uncomment this line for development only, not for end-users:
-# FIXME
-set ( GBCOMPACT true )
+# set ( GBCOMPACT true )
 
 if ( GBCOMPACT )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCOMPACT=1 " )
@@ -149,8 +147,8 @@ endif ( )
 # TODO: merge CMAKE_CUDA and RMM_WRAP into a single flag
 
 # TODO: CUDA disabled for now
-# set ( CMAKE_CUDA off )
-# set ( RMM_WRAP off )
+set ( CMAKE_CUDA off )
+set ( RMM_WRAP off )
 
 if ( CMAKE_CUDA )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
