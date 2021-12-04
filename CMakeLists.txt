@@ -24,10 +24,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Nov 30, 2021")
+set ( GraphBLAS_DATE "Dec 4, 2021")
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 0 )
-set ( GraphBLAS_VERSION_SUB   2 )
+set ( GraphBLAS_VERSION_SUB   3 )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 
@@ -50,8 +50,53 @@ endif ( )
 
 message ( STATUS "GraphBLAS C API: v" "${GraphBLAS_API_VERSION_MAJOR}.${GraphBLAS_API_VERSION_MINOR}, date: ${GraphBLAS_API_DATE}" )
 
-project ( graphblas
-        VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" LANGUAGES CUDA C )
+#-------------------------------------------------------------------------------
+# find CUDA
+#-------------------------------------------------------------------------------
+
+if ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
+    set ( CMAKE_CUDA off )
+    set ( RMM_WRAP off )
+    message ( STATUS "CUDA: not enabled (cmake 3.17.0 or later required)" )
+else ( )
+    include ( CheckLanguage )
+    check_language ( CUDA )
+    if ( CMAKE_CUDA_COMPILER )
+        # with CUDA:
+        include ( FindCUDAToolkit )
+        message ( STATUS "CUDA toolkit found:   " ${CUDAToolkit_FOUND} )
+        message ( STATUS "CUDA toolkit version: " ${CUDAToolkit_VERSION} )
+        if ( CUDAToolkit_VERSION VERSION_LESS "11.2" )
+            message ( STATUS "CUDA: not enabled (CUDA 11.2 or later required)" )
+            set ( CMAKE_CUDA off )
+            set ( RMM_WRAP off )
+        else ( )
+            enable_language ( CUDA )
+            message ( STATUS "CUDA: enabled")
+            set ( CMAKE_CUDA on )
+            set ( RMM_WRAP on )
+        endif ()
+    else ( )
+        # without CUDA:
+        message ( STATUS "CUDA: not enabled")
+        set ( CMAKE_CUDA off )
+        set ( RMM_WRAP off )
+    endif ( )
+endif ( )
+# TODO: merge CMAKE_CUDA and RMM_WRAP into a single flag
+# TODO: CUDA disabled for now
+set ( CMAKE_CUDA off )
+set ( RMM_WRAP off )
+
+if ( CMAKE_CUDA )
+    project ( graphblas
+            VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
+            LANGUAGES CUDA C )
+else ( )
+    project ( graphblas
+            VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
+            LANGUAGES C )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # determine build type
@@ -113,42 +158,6 @@ find_package ( OpenMP )
 
 # Intel(R) IPP not yet supported
 # find_package ( IPP )
-
-if ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
-    set ( CMAKE_CUDA off )
-    set ( RMM_WRAP off )
-    message ( STATUS "CUDA: not enabled (cmake 3.17.0 or later required)" )
-else ( )
-    include ( CheckLanguage )
-    check_language ( CUDA )
-    if ( CMAKE_CUDA_COMPILER )
-        # with CUDA:
-        include ( FindCUDAToolkit )
-        message ( STATUS "CUDA toolkit found:   " ${CUDAToolkit_FOUND} )
-        message ( STATUS "CUDA toolkit version: " ${CUDAToolkit_VERSION} )
-        if ( CUDAToolkit_VERSION VERSION_LESS "11.2" )
-            message ( STATUS "CUDA: not enabled (CUDA 11.2 or later required)" )
-            set ( CMAKE_CUDA off )
-            set ( RMM_WRAP off )
-        else ( )
-            enable_language ( CUDA )
-            message ( STATUS "CUDA: enabled")
-            set ( CMAKE_CUDA on )
-            set ( RMM_WRAP on )
-        endif ()
-    else ( )
-        # without CUDA:
-        message ( STATUS "CUDA: not enabled")
-        set ( CMAKE_CUDA off )
-        set ( RMM_WRAP off )
-    endif ( )
-endif ( )
-
-# TODO: merge CMAKE_CUDA and RMM_WRAP into a single flag
-
-# TODO: CUDA disabled for now
-set ( CMAKE_CUDA off )
-set ( RMM_WRAP off )
 
 if ( CMAKE_CUDA )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
