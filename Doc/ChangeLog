@@ -1,3 +1,7 @@
+Versions 6.0.3 and 5.2.3, FIXME
+
+    * (39) bug fix: deserialization of iso and empty matrices/vectors
+
 Versions 6.0.2 and 5.2.2, Nov 30, 2021
 
     * (38) bug fix: GrB_Matrix_export; numerical values not properly exported
