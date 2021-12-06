@@ -93,7 +93,7 @@ GrB_Info GB_deserialize_from_blob
         // no compression; the array is held in a single block
         //----------------------------------------------------------------------
 
-        if (nblocks != 1 || Sblocks [0] != X_len || s + X_len > blob_size)
+        if (nblocks > 1 || Sblocks [0] != X_len || s + X_len > blob_size)
         {
             // blob is invalid: guard against an unsafe memcpy
             ok = false ;
