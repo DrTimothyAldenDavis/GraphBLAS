@@ -86,7 +86,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     GB_BLOB_READ (Cx_nblocks, int32_t) ; GB_BLOB_READ (Cx_method, int32_t) ;
 
     int32_t sparsity = sparsity_iso_csc / 4 ;
-    bool iso = ((sparsity_iso_csc & 2) == 1) ;
+    bool iso = ((sparsity_iso_csc & 2) == 2) ;
     bool is_csc = ((sparsity_iso_csc & 1) == 1) ;
 
     //--------------------------------------------------------------------------

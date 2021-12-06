@@ -11337,7 +11337,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     GxB_Matrix_serialize (&blob, &blob_size, A, NULL) ;
     FILE *f = fopen ("myblob", "w") ;
     fwrite (blob_size, sizeof (size_t), 1, f) ;
-    fwrite (blob, blob_size, sizeof (uint8_t), f) ;
+    fwrite (blob, sizeof (uint8_t), blob_size, f) ;
     fclose (f) ;
     GrB_Matrix_free (&A) ;
     // B is a copy of A
@@ -11376,7 +11376,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     blob = realloc (blob, blob_size) ;              // user can shrink the blob
     FILE *f = fopen ("myblob", "w") ;
     fwrite (blob_size, sizeof (size_t), 1, f) ;
-    fwrite (blob, blob_size, sizeof (uint8_t), f) ;
+    fwrite (blob, sizeof (uint8_t), blob_size, f) ;
     fclose (f) ;
     GrB_Matrix_free (&A) ;
     // B is a copy of A:
