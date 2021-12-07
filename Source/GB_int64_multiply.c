@@ -16,7 +16,10 @@ __device__ static inline
 
 #include "../GB_index.h"
 
-#define GrB_INDEX_MAX ((GrB_Index) (1ULL << 60) - 1) // FIXME: This should probably be pulled out of graphblas.h into its own file
+// "do not FIXME": This should probably be pulled out of graphblas.h into its
+// own file.  comment by Tim: no, it has to be duplicated here since
+// GraphBLAS.h need to be self-contained.
+#define GrB_INDEX_MAX ((GrB_Index) (1ULL << 60) - 1)
 
 #else
 #include "GB.h"

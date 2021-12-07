@@ -125,7 +125,7 @@ const char *GB_status_code (GrB_Info info) ;
         if (logger_handle != NULL)                                          \
         {                                                                   \
             size_t *logger_size_handle = Context->logger_size_handle ;      \
-            (*logger_handle) = GB_MALLOC (GB_LOGGER_LEN+1, char,            \
+            (*logger_handle) = GB_CALLOC (GB_LOGGER_LEN+1, char,            \
                 logger_size_handle) ;                                       \
             if ((*logger_handle) != NULL)                                   \
             {                                                               \

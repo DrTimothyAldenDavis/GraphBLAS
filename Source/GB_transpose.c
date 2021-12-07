@@ -371,7 +371,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         if (allocate_Tx)
         { 
             // allocate new space for the new typecasted numerical values of T
-            T->x = GB_XALLOC (C_iso, anz, csize, &(T->x_size)) ;
+            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ; // x:OK
         }
         if (T->p == NULL || T->i == NULL || (allocate_Tx && T->x == NULL))
         { 
@@ -505,7 +505,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         if (allocate_Tx)
         { 
             // allocate new space for the new typecasted numerical values of T
-            T->x = GB_XALLOC (C_iso, anz, csize, &(T->x_size)) ;
+            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ; // x:OK
         }
 
         if (T->p == NULL || (T->i == NULL && !A_is_hyper) ||
@@ -753,7 +753,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
             if (op != NULL && !C_iso)
             { 
-                Swork = (GB_void *) GB_XALLOC (C_iso, anz, csize, &Swork_size) ;
+                Swork = (GB_void *) GB_XALLOC (false, C_iso, anz,   // x:OK
+                    csize, &Swork_size) ;
                 ok = ok && (Swork != NULL) ;
             }
 
@@ -950,19 +951,29 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             ctype = op->ztype ;
             csize = ctype->size ;
             size_t Cx_size = 0 ;
-            GB_void *Cx_final = GB_MALLOC (anz_held*csize, GB_void, &Cx_size) ;
-            if (Cx_final == NULL)
+            GB_void *Cx_new = NULL ;
+            if (GB_IS_BITMAP (C))
+            { 
+                // calloc the space so the new C->x has no uninitialized space
+                Cx_new = GB_CALLOC (anz_held*csize, GB_void, &Cx_size) ; // x:OK
+            }
+            else
+            { 
+                // malloc is fine; all C->x will be written
+                Cx_new = GB_MALLOC (anz_held*csize, GB_void, &Cx_size) ; // x:OK
+            }
+            if (Cx_new == NULL)
             { 
                 // out of memory
                 GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
-            // Cx_final = op (C)
-            GB_OK (GB_apply_op (Cx_final, ctype, GB_NON_ISO, op,
+            // Cx_new = op (C)
+            GB_OK (GB_apply_op (Cx_new, ctype, GB_NON_ISO, op,
                 scalar, false, flipij, C, Context)) ;
-            // transplant Cx_final as C->x and finalize the type of C
+            // transplant Cx_new as C->x and finalize the type of C
             GB_FREE (&(C->x), C->x_size) ;
-            C->x = Cx_final ;
+            C->x = Cx_new ;
             C->x_size = Cx_size ;
             C->type = ctype ;
             C->iso = false ;

@@ -24,7 +24,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Dec 4, 2021")
+set ( GraphBLAS_DATE "Dec 7, 2021")
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   3 )
@@ -55,14 +55,27 @@ message ( STATUS "GraphBLAS C API: v" "${GraphBLAS_API_VERSION_MAJOR}.${GraphBLA
 #-------------------------------------------------------------------------------
 
 if ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
+
+    project ( graphblas
+            VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
+            LANGUAGES C )
+
     set ( CMAKE_CUDA off )
     set ( RMM_WRAP off )
     message ( STATUS "CUDA: not enabled (cmake 3.17.0 or later required)" )
+
 else ( )
+
+    project ( graphblas
+            VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
+            LANGUAGES CUDA C )
+
+    message ( STATUS "Looking for CUDA" )
     include ( CheckLanguage )
     check_language ( CUDA )
     if ( CMAKE_CUDA_COMPILER )
         # with CUDA:
+        message ( STATUS "Find CUDA tool kit:" )
         include ( FindCUDAToolkit )
         message ( STATUS "CUDA toolkit found:   " ${CUDAToolkit_FOUND} )
         message ( STATUS "CUDA toolkit version: " ${CUDAToolkit_VERSION} )
@@ -82,21 +95,13 @@ else ( )
         set ( CMAKE_CUDA off )
         set ( RMM_WRAP off )
     endif ( )
+
 endif ( )
+
 # TODO: merge CMAKE_CUDA and RMM_WRAP into a single flag
 # TODO: CUDA disabled for now
 set ( CMAKE_CUDA off )
 set ( RMM_WRAP off )
-
-if ( CMAKE_CUDA )
-    project ( graphblas
-            VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
-            LANGUAGES CUDA C )
-else ( )
-    project ( graphblas
-            VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
-            LANGUAGES C )
-endif ( )
 
 #-------------------------------------------------------------------------------
 # determine build type
@@ -229,7 +234,12 @@ else ( )
 endif ( )
 
 message ( STATUS "CMAKE compiler ID:         " ${CMAKE_C_COMPILER_ID} )
-message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
+if ( USE_OPENMP )
+    message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
+else ( )
+    message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
+    message ( STATUS "CMAKE OpenMP disabled" )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # include directories for both graphblas and graphblasdemo libraries

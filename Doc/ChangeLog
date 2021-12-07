@@ -1,6 +1,6 @@
-Versions 6.0.3 and 5.2.3, FIXME
+Versions 6.0.3 and 5.2.3, Dec FIXME, 2021
 
-    * (39) bug fix: deserialization of iso and empty matrices/vectors
+    * bug fix: deserialization of iso and empty matrices/vectors was broken
 
 Versions 6.0.2 and 5.2.2, Nov 30, 2021
 

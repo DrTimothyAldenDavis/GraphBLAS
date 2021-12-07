@@ -79,6 +79,7 @@ void GB_free_pool_finalize (void) ;
 void *GB_xalloc_memory      // return the newly-allocated space
 (
     // input
+    bool use_calloc,        // if true, use calloc
     bool iso,               // if true, only allocate a single entry
     int64_t n,              // # of entries to allocate if non iso
     size_t type_size,       // size of each entry
@@ -119,8 +120,8 @@ void *GB_xalloc_memory      // return the newly-allocated space
         ; printf ("realloc (%s, line %d): size %lu\n", \
             __FILE__, __LINE__, *(s)) ; \
 
-    #define GB_XALLOC(iso,n,type_size,s) \
-        GB_xalloc_memory (iso, n, type_size, s, Context) ; \
+    #define GB_XALLOC(use_calloc,iso,n,type_size,s) \
+        GB_xalloc_memory (use_calloc, iso, n, type_size, s, Context) ; \
         ; printf ("xalloc (%s, line %d): size %lu\n", \
             __FILE__, __LINE__, *(s)) ; \
 
@@ -139,8 +140,8 @@ void *GB_xalloc_memory      // return the newly-allocated space
         p = (type *) GB_realloc_memory (nnew, sizeof (type), \
             (void *) p, s, ok, Context)
 
-    #define GB_XALLOC(iso,n,type_size,s) \
-        GB_xalloc_memory (iso, n, type_size, s, Context)
+    #define GB_XALLOC(use_calloc,iso,n,type_size,s) \
+        GB_xalloc_memory (use_calloc, iso, n, type_size, s, Context)
 
 #endif
 

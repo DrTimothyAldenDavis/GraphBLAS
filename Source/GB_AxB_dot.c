@@ -43,7 +43,7 @@
 #include "GB_mxm.h"
 #define GB_FREE_ALL ;
 #if defined ( GBCUDA )
-// FIXME: add to GB.h
+// FIXME: add GB_cuda_gateway.h to GB.h
 #include "GB_cuda_gateway.h"
 #endif
 

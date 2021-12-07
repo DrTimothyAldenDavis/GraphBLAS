@@ -66,7 +66,7 @@ GrB_Info GB_deserialize_from_blob
     //--------------------------------------------------------------------------
 
     size_t X_size = 0 ;
-    GB_void *X = GB_MALLOC (X_len, GB_void, &X_size) ;
+    GB_void *X = GB_MALLOC (X_len, GB_void, &X_size) ;  // OK
     if (X == NULL)
     { 
         // out of memory
@@ -175,7 +175,10 @@ GrB_Info GB_deserialize_from_blob
 
     (*X_handle) = X ;
     (*X_size_handle) = X_size ;
-    s += Sblocks [nblocks-1] ;
+    if (nblocks > 0)
+    {
+        s += Sblocks [nblocks-1] ;
+    }
     (*s_handle) = s ;
     return (GrB_SUCCESS) ;
 }

@@ -160,14 +160,15 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     switch (sparsity)
     {
         case GxB_HYPERSPARSE : 
-
             // decompress Cp, Ch, and Ci
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->p), &(C->p_size),
                 Cp_len, blob, blob_size, Cp_Sblocks, Cp_nblocks, Cp_method,
                 &s, Context)) ;
+
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->h), &(C->h_size),
                 Ch_len, blob, blob_size, Ch_Sblocks, Ch_nblocks, Ch_method,
                 &s, Context)) ;
+
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->i), &(C->i_size),
                 Ci_len, blob, blob_size, Ci_Sblocks, Ci_nblocks, Ci_method,
                 &s, Context)) ;
@@ -179,6 +180,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->p), &(C->p_size),
                 Cp_len, blob, blob_size, Cp_Sblocks, Cp_nblocks, Cp_method,
                 &s, Context)) ;
+
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->i), &(C->i_size),
                 Ci_len, blob, blob_size, Ci_Sblocks, Ci_nblocks, Ci_method,
                 &s, Context)) ;

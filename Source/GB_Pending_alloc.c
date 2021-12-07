@@ -64,7 +64,7 @@ bool GB_Pending_alloc       // create a list of pending tuples
     Pending->x = NULL ;
     if (!iso)
     { 
-        Pending->x = GB_MALLOC (nmax * Pending->size, GB_void,
+        Pending->x = GB_MALLOC (nmax * Pending->size, GB_void,  // x:OK
             &(Pending->x_size)) ;
     }
 
