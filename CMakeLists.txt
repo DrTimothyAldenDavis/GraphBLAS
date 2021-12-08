@@ -54,28 +54,44 @@ message ( STATUS "GraphBLAS C API: v" "${GraphBLAS_API_VERSION_MAJOR}.${GraphBLA
 # find CUDA
 #-------------------------------------------------------------------------------
 
+# TODO: use something like this:
+# if ( set some flag to ignore cuda )
+#   set ( CMAKE_CUDA off )
+#   set ( RMM_WRAP off )
+#   message ( STATUS "CUDA: disabled" )
+# elseif ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
+#   ...
+
 if ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
 
+
+    # CUDA requires cmake 3.17 or later
     set ( CMAKE_CUDA off )
     set ( RMM_WRAP off )
     message ( STATUS "CUDA: not enabled (cmake 3.17.0 or later required)" )
 
 else ( )
 
+    # try finding CUDA
     include ( CheckLanguage )
     check_language ( CUDA )
     message ( STATUS "Looking for CUDA" )
     if ( CMAKE_CUDA_COMPILER )
         # with CUDA:
         message ( STATUS "Find CUDA tool kit:" )
+        # FindCUDAToolKit needs to have C or CXX enabled first
+        project ( graphblas LANGUAGES C )
+        # now C is enabled so FindCudaToolKit will work
         include ( FindCUDAToolkit )
         message ( STATUS "CUDA toolkit found:   " ${CUDAToolkit_FOUND} )
         message ( STATUS "CUDA toolkit version: " ${CUDAToolkit_VERSION} )
         if ( CUDAToolkit_VERSION VERSION_LESS "11.2" )
+            # CUDA is present but too old
             message ( STATUS "CUDA: not enabled (CUDA 11.2 or later required)" )
             set ( CMAKE_CUDA off )
             set ( RMM_WRAP off )
         else ( )
+            # CUDA 11.2 or later present
             enable_language ( CUDA )
             message ( STATUS "CUDA: enabled")
             set ( CMAKE_CUDA on )
