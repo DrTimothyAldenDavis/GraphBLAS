@@ -169,6 +169,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //cudaMemcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), cudaMemcpyDefault) ;
     if (M_is_hyper)
     { 
+        // FIXME
         //cudaMemcpy (Ch, Mh, cnvec * sizeof (int64_t), cudaMemcpyDefault) ;
     }
     C->magic = GB_MAGIC ;
