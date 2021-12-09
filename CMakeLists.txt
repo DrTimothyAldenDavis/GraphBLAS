@@ -73,6 +73,7 @@ if ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
 else ( )
 
     # try finding CUDA
+    project ( graphblas LANGUAGES CUDA C )
     include ( CheckLanguage )
     check_language ( CUDA )
     message ( STATUS "Looking for CUDA" )
@@ -80,7 +81,6 @@ else ( )
         # with CUDA:
         message ( STATUS "Find CUDA tool kit:" )
         # FindCUDAToolKit needs to have C or CXX enabled first
-        project ( graphblas LANGUAGES C )
         # now C is enabled so FindCudaToolKit will work
         include ( FindCUDAToolkit )
         message ( STATUS "CUDA toolkit found:   " ${CUDAToolkit_FOUND} )
