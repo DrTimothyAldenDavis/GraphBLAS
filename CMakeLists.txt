@@ -57,7 +57,6 @@ message ( STATUS "GraphBLAS C API: v" "${GraphBLAS_API_VERSION_MAJOR}.${GraphBLA
 # TODO: use something like this:
 # if ( set some flag to ignore cuda )
 #   set ( CMAKE_CUDA off )
-#   set ( RMM_WRAP off )
 #   message ( STATUS "CUDA: disabled" )
 # elseif ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
 #   ...
@@ -67,7 +66,6 @@ if ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
 
     # CUDA requires cmake 3.17 or later
     set ( CMAKE_CUDA off )
-    set ( RMM_WRAP off )
     message ( STATUS "CUDA: not enabled (cmake 3.17.0 or later required)" )
 
 else ( )
@@ -89,27 +87,26 @@ else ( )
             # CUDA is present but too old
             message ( STATUS "CUDA: not enabled (CUDA 11.2 or later required)" )
             set ( CMAKE_CUDA off )
-            set ( RMM_WRAP off )
         else ( )
             # CUDA 11.2 or later present
             enable_language ( CUDA )
             message ( STATUS "CUDA: enabled")
             set ( CMAKE_CUDA on )
-            set ( RMM_WRAP on )
         endif ()
     else ( )
         # without CUDA:
         message ( STATUS "CUDA: not enabled")
         set ( CMAKE_CUDA off )
-        set ( RMM_WRAP off )
     endif ( )
 
 endif ( )
 
-# TODO: merge CMAKE_CUDA and RMM_WRAP into a single flag
-# TODO: CUDA disabled for now
+#FIXME: CUDA disabled for now
 set ( CMAKE_CUDA off )
-set ( RMM_WRAP off )
+
+# Uncomment this line for development only, not for end-users:
+# FIXME
+# set ( GBCOMPACT true )
 
 if ( CMAKE_CUDA )
     project ( graphblas
@@ -144,9 +141,6 @@ if ( BUILD_GRB_STATIC_LIBRARY )
 else ( )
     message ( STATUS "Building dynamic GraphBLAS library" )
 endif ( )
-
-# Uncomment this line for development only, not for end-users:
-# set ( GBCOMPACT true )
 
 if ( GBCOMPACT )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCOMPACT=1 " )
@@ -196,7 +190,7 @@ else ( )
 endif ( )
 
 # TODO: Eventually this should be nested under CMAKE_CUDA conditional(?)
-if ( RMM_WRAP )
+if ( CMAKE_CUDA )
     message ( STATUS "RMM enabled" )
     set ( CMAKE_RMM_FLAG " -DGBRMM" )
     set ( GB_RMM rmm_wrap ${CUDA_LIBRARIES} stdc++ )
@@ -373,9 +367,6 @@ add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )
 
 if ( CMAKE_CUDA )
     add_dependencies(graphblas graphblascuda)
-endif()
-
-if ( RMM_WRAP )
     add_dependencies(graphblas rmm_wrap)
 endif()
 
