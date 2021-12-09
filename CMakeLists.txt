@@ -73,7 +73,7 @@ if ( ${CMAKE_VERSION} VERSION_LESS "3.17.0" )
 else ( )
 
     # try finding CUDA
-    project ( graphblas LANGUAGES CUDA C )
+    project ( graphblas LANGUAGES C )
     include ( CheckLanguage )
     check_language ( CUDA )
     message ( STATUS "Looking for CUDA" )
