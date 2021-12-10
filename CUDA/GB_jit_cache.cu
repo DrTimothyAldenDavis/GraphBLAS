@@ -23,9 +23,9 @@
 #include <sys/types.h>
 
 #include "GB_jit_cache.h"
-// #include "GraphBLAS.h"
-// in GraphBLAS.h
-// #define GxB_IMPLEMENTATION_MAJOR 5
+#include "GraphBLAS.h"
+// from GraphBLAS.h (for example):
+// #define GxB_IMPLEMENTATION_MAJOR 6
 // #define GxB_IMPLEMENTATION_MINOR 0
 // #define GxB_IMPLEMENTATION_SUB   3
 
@@ -36,9 +36,9 @@ namespace jit {
 std::string get_user_home_cache_dir() {
   auto home_dir = std::getenv("HOME");
   if (home_dir != nullptr) {
-    std::string Major_ver = "5";
-    std::string Minor_ver = "1";
-    std::string Imple_sub = "4";
+    std::string Major_ver = GB_XSTR (GxB_IMPLEMENTATION_MAJOR) ;
+    std::string Minor_ver = GB_XSTR (GxB_IMPLEMENTATION_MINOR) ;
+    std::string Imple_sub = GB_XSTR (GxB_IMPLEMENTATION_SUB) ;
     return std::string(home_dir) + "/.SuiteSparse/GraphBLAS/" 
                                  + Major_ver+"."+Minor_ver+"."+Imple_sub;
   } else {
