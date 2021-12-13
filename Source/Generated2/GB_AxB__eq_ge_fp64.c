@@ -36,10 +36,11 @@
 // C+=A'*B (dot4):     GB (_Adot4B__eq_ge_fp64)
 // A*B (saxpy bitmap): GB (_AsaxbitB__eq_ge_fp64)
 // A*B (saxpy3):       GB (_Asaxpy3B__eq_ge_fp64)
-// A*B (saxpy4):       GB (_Asaxpy4B__eq_ge_fp64)
 //     no mask:        GB (_Asaxpy3B_noM__eq_ge_fp64)
 //     mask M:         GB (_Asaxpy3B_M__eq_ge_fp64)
 //     mask !M:        GB (_Asaxpy3B_notM__eq_ge_fp64)
+// A*B (saxpy4):       GB (_Asaxpy4B__eq_ge_fp64)
+// A*B (saxpy5):       GB (_Asaxpy5B__eq_ge_fp64)
 
 // C type:     bool
 // A type:     double
@@ -47,12 +48,12 @@
 // B type:     double
 // B pattern?  0
 
-// Multiply: z = (aik >= bkj)
-// Add:      cij = (cij == z)
+// Multiply: z = (x >= y)
+// Add:      cij = (cij == t)
 //           'any' monoid?  0
 //           atomic?        1
 //           OpenMP atomic? 0
-// MultAdd:  cij = (cij == (aik >= bkj))
+// MultAdd:  z = (z == (x >= y))
 // Identity: true
 // Terminal: ;
 
@@ -400,6 +401,33 @@ GrB_Info GB (_AsaxbitB__eq_ge_fp64)
         return (GrB_NO_VALUE) ;
         #else
         #include "GB_AxB_saxpy4_template.c"
+        return (GrB_SUCCESS) ;
+        #endif
+    }
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
+//------------------------------------------------------------------------------
+
+#if 1
+
+    GrB_Info GB (_Asaxpy5B__eq_ge_fp64)
+    (
+        GrB_Matrix C,
+        const GrB_Matrix A,
+        const GrB_Matrix B,
+        const int ntasks,
+        const int nthreads,
+        const int64_t *B_slice,
+        GB_Context Context
+    )
+    { 
+        #if GB_DISABLE
+        return (GrB_NO_VALUE) ;
+        #else
+        #include "GB_AxB_saxpy5_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }

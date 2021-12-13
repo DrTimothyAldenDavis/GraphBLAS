@@ -80,7 +80,7 @@ GrB_Info GB_AxB_saxpy_generic
 ) ;
 
 //------------------------------------------------------------------------------
-// saxpy4:
+// saxpy4: C+=A*B where A is sparse/hyper and B is bitmap/full
 //------------------------------------------------------------------------------
 
 GrB_Info GB_AxB_saxpy4              // C += A*B
@@ -107,6 +107,21 @@ void GB_AxB_saxpy4_tasks
     int64_t bnz,                    // # of entries held in B
     int64_t bvdim,                  // # of vectors of B (bitmap or full)
     int64_t cvlen,                  // # of vectors of C (bitmap or full)
+    GB_Context Context
+) ;
+
+//------------------------------------------------------------------------------
+// saxpy5: C+=A*B where A is bitmap/full and B is sparse/hyper
+//------------------------------------------------------------------------------
+
+GrB_Info GB_AxB_saxpy5              // C += A*B
+(
+    GrB_Matrix C,                   // users input/output matrix
+    const GrB_Matrix A,             // input matrix A
+    const GrB_Matrix B,             // input matrix B
+    const GrB_Semiring semiring,    // semiring that defines C=A*B and accum
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    bool *done_in_place,            // if true, saxpy5 has computed the result
     GB_Context Context
 ) ;
 

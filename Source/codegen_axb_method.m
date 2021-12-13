@@ -314,6 +314,15 @@ else
     fprintf (f, 'define(`if_dot4_enabled'', `#if 1'')\n') ;
 end
 
+if (is_any)
+    % saxpy5 is disabled for the ANY monoid
+    fprintf (f, 'define(`_Asaxpy5B'', `_Asaxpy5B__%s'')\n', '(none)') ;
+    fprintf (f, 'define(`if_saxpy5_enabled'', `#if 0'')\n') ;
+else
+    fprintf (f, 'define(`_Asaxpy5B'', `_Asaxpy5B__%s'')\n', name) ;
+    fprintf (f, 'define(`if_saxpy5_enabled'', `#if 1'')\n') ;
+end
+
 % firsti or firsti1 multiply operator
 if (codegen_contains (multop, 'firsti'))
     fprintf (f, 'define(`GB_is_firsti_multiplier'', `1'')\n') ;
@@ -455,9 +464,14 @@ end
 if (~isempty (strfind (mult, 'IDIV')))
     if (unsigned)
         mult = strrep (mult, 'IDIV', 'IDIV_UNSIGNED') ;
+        % TODO: use this instead
+        % mult = strrep (mult, 'IDIV', 'idiv_uint%d', bits) ;
     else
         mult = strrep (mult, 'IDIV', 'IDIV_SIGNED') ;
+        % TODO: use this instead
+        % mult = strrep (mult, 'IDIV', 'idiv_int%d', bits) ;
     end
+    % TODO: remove this
     mult = strrep (mult, ')', sprintf (', %d)', bits)) ;
 end
 
@@ -524,8 +538,8 @@ else
     fprintf (f, 'define(`GB_add_function'', `%s'')\n', add2) ;
 end
 
-% create the multiply-add operator
-need_mult_typecast = false ;
+% create the multiply-add statement, of the form:
+%   z += x*y ;
 is_imin_or_imax = (isequal (addop, 'min') || isequal (addop, 'max')) && codegen_contains (ztype, 'int') ;
 if (is_any_pair)
     fprintf (f, 'define(`GB_multiply_add'', `'')\n') ;
@@ -545,9 +559,8 @@ else
     % use explicit typecasting to avoid ANSI C integer promotion.
     add2 = strrep (add,  'w', '`$1''') ;
     add2 = strrep (add2, 't', 'x_op_y') ;
-    fprintf (f, 'define(`GB_multiply_add'', `%s x_op_y = %s ; %s'')\n', ...
+    fprintf (f, 'define(`GB_multiply_add'', `{ %s x_op_y = %s ; %s ; }'')\n', ...
         ztype, mult2, add2) ;
-    need_mult_typecast = true ;
 end
 
 % determine the identity byte
@@ -629,7 +642,7 @@ end
 
 fclose (f) ;
 
-nprune = 72 ;
+nprune = 74 ;
 
 if (is_any_pair)
     % the ANY_PAIR_ISO semiring goes in Generated1

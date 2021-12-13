@@ -112,3 +112,16 @@ GrB_Info GB (_Asaxpy4B__(none))
 ) ;
 #endif
 
+#if 0
+GrB_Info GB (_Asaxpy5B__(none))
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int ntasks,
+    const int nthreads,
+    const int64_t *B_slice,
+    GB_Context Context
+) ;
+#endif
+

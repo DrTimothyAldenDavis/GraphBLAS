@@ -36,10 +36,11 @@
 // C+=A'*B (dot4):     GB (_Adot4B__times_rdiv_uint16)
 // A*B (saxpy bitmap): GB (_AsaxbitB__times_rdiv_uint16)
 // A*B (saxpy3):       GB (_Asaxpy3B__times_rdiv_uint16)
-// A*B (saxpy4):       GB (_Asaxpy4B__times_rdiv_uint16)
 //     no mask:        GB (_Asaxpy3B_noM__times_rdiv_uint16)
 //     mask M:         GB (_Asaxpy3B_M__times_rdiv_uint16)
 //     mask !M:        GB (_Asaxpy3B_notM__times_rdiv_uint16)
+// A*B (saxpy4):       GB (_Asaxpy4B__times_rdiv_uint16)
+// A*B (saxpy5):       GB (_Asaxpy5B__times_rdiv_uint16)
 
 // C type:     uint16_t
 // A type:     uint16_t
@@ -47,12 +48,12 @@
 // B type:     uint16_t
 // B pattern?  0
 
-// Multiply: z = GB_IDIV_UNSIGNED (bkj, aik, 16)
-// Add:      cij *= z
+// Multiply: z = GB_IDIV_UNSIGNED (y, x, 16)
+// Add:      cij *= t
 //           'any' monoid?  0
 //           atomic?        1
 //           OpenMP atomic? 1
-// MultAdd:  uint16_t x_op_y = GB_IDIV_UNSIGNED (bkj, aik, 16) ; cij *= x_op_y
+// MultAdd:  { uint16_t x_op_y = GB_IDIV_UNSIGNED (y, x, 16) ; z *= x_op_y ; }
 // Identity: 1
 // Terminal: if (cij == 0) { break ; }
 
@@ -119,7 +120,7 @@
 
 // multiply-add
 #define GB_MULTADD(z, x, y, i, k, j) \
-    uint16_t x_op_y = GB_IDIV_UNSIGNED (y, x, 16) ; z *= x_op_y
+    { uint16_t x_op_y = GB_IDIV_UNSIGNED (y, x, 16) ; z *= x_op_y ; }
 
 // monoid identity value
 #define GB_IDENTITY \
@@ -400,6 +401,33 @@ GrB_Info GB (_AsaxbitB__times_rdiv_uint16)
         return (GrB_NO_VALUE) ;
         #else
         #include "GB_AxB_saxpy4_template.c"
+        return (GrB_SUCCESS) ;
+        #endif
+    }
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
+//------------------------------------------------------------------------------
+
+#if 1
+
+    GrB_Info GB (_Asaxpy5B__times_rdiv_uint16)
+    (
+        GrB_Matrix C,
+        const GrB_Matrix A,
+        const GrB_Matrix B,
+        const int ntasks,
+        const int nthreads,
+        const int64_t *B_slice,
+        GB_Context Context
+    )
+    { 
+        #if GB_DISABLE
+        return (GrB_NO_VALUE) ;
+        #else
+        #include "GB_AxB_saxpy5_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }

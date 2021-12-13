@@ -36,10 +36,11 @@
 // C+=A'*B (dot4):     GB (_Adot4B__times_times_int8)
 // A*B (saxpy bitmap): GB (_AsaxbitB__times_times_int8)
 // A*B (saxpy3):       GB (_Asaxpy3B__times_times_int8)
-// A*B (saxpy4):       GB (_Asaxpy4B__times_times_int8)
 //     no mask:        GB (_Asaxpy3B_noM__times_times_int8)
 //     mask M:         GB (_Asaxpy3B_M__times_times_int8)
 //     mask !M:        GB (_Asaxpy3B_notM__times_times_int8)
+// A*B (saxpy4):       GB (_Asaxpy4B__times_times_int8)
+// A*B (saxpy5):       GB (_Asaxpy5B__times_times_int8)
 
 // C type:     int8_t
 // A type:     int8_t
@@ -47,12 +48,12 @@
 // B type:     int8_t
 // B pattern?  0
 
-// Multiply: z = (aik * bkj)
-// Add:      cij *= z
+// Multiply: z = (x * y)
+// Add:      cij *= t
 //           'any' monoid?  0
 //           atomic?        1
 //           OpenMP atomic? 1
-// MultAdd:  int8_t x_op_y = (aik * bkj) ; cij *= x_op_y
+// MultAdd:  { int8_t x_op_y = (x * y) ; z *= x_op_y ; }
 // Identity: 1
 // Terminal: if (cij == 0) { break ; }
 
@@ -119,7 +120,7 @@
 
 // multiply-add
 #define GB_MULTADD(z, x, y, i, k, j) \
-    int8_t x_op_y = (x * y) ; z *= x_op_y
+    { int8_t x_op_y = (x * y) ; z *= x_op_y ; }
 
 // monoid identity value
 #define GB_IDENTITY \
@@ -400,6 +401,33 @@ GrB_Info GB (_AsaxbitB__times_times_int8)
         return (GrB_NO_VALUE) ;
         #else
         #include "GB_AxB_saxpy4_template.c"
+        return (GrB_SUCCESS) ;
+        #endif
+    }
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
+//------------------------------------------------------------------------------
+
+#if 1
+
+    GrB_Info GB (_Asaxpy5B__times_times_int8)
+    (
+        GrB_Matrix C,
+        const GrB_Matrix A,
+        const GrB_Matrix B,
+        const int ntasks,
+        const int nthreads,
+        const int64_t *B_slice,
+        GB_Context Context
+    )
+    { 
+        #if GB_DISABLE
+        return (GrB_NO_VALUE) ;
+        #else
+        #include "GB_AxB_saxpy5_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }

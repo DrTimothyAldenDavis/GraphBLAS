@@ -36,10 +36,11 @@ if_not_any_pair_semiring
 // C+=A'*B (dot4):     GB (_Adot4B)
 // A*B (saxpy bitmap): GB (_AsaxbitB)
 // A*B (saxpy3):       GB (_Asaxpy3B)
-// A*B (saxpy4):       GB (_Asaxpy4B)
 //     no mask:        GB (_Asaxpy3B_noM)
 //     mask M:         GB (_Asaxpy3B_M)
 //     mask !M:        GB (_Asaxpy3B_notM)
+// A*B (saxpy4):       GB (_Asaxpy4B)
+// A*B (saxpy5):       GB (_Asaxpy5B)
 
 // C type:     GB_ctype
 // A type:     GB_atype
@@ -47,12 +48,12 @@ if_not_any_pair_semiring
 // B type:     GB_btype
 // B pattern?  GB_b_is_pattern
 
-// Multiply: GB_multiply(z,aik,bkj,i,k,j)
-// Add:      GB_add_update(cij, z)
+// Multiply: GB_multiply(z,x,y,i,k,j)
+// Add:      GB_add_update(cij, t)
 //           'any' monoid?  GB_is_any_monoid
 //           atomic?        GB_has_atomic
 //           OpenMP atomic? GB_has_omp_atomic
-// MultAdd:  GB_multiply_add(cij,aik,bkj,i,k,j)
+// MultAdd:  GB_multiply_add(z,x,y,i,k,j)
 // Identity: GB_identity
 // Terminal: GB_terminal
 
@@ -400,6 +401,33 @@ if_saxpy4_enabled
         return (GrB_NO_VALUE) ;
         #else
         #include "GB_AxB_saxpy4_template.c"
+        return (GrB_SUCCESS) ;
+        #endif
+    }
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
+//------------------------------------------------------------------------------
+
+if_saxpy5_enabled
+
+    GrB_Info GB (_Asaxpy5B)
+    (
+        GrB_Matrix C,
+        const GrB_Matrix A,
+        const GrB_Matrix B,
+        const int ntasks,
+        const int nthreads,
+        const int64_t *B_slice,
+        GB_Context Context
+    )
+    { 
+        if_disabled
+        return (GrB_NO_VALUE) ;
+        #else
+        #include "GB_AxB_saxpy5_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }

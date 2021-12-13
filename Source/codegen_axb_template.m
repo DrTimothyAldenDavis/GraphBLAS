@@ -65,21 +65,21 @@ end
 if (~no_min_max_any_times_monoids && ~is_pair)
     add = 'w = t' ;
     addfunc = 't' ;
-    codegen_axb_method ('any', multop, add, addfunc, imult, 'int8_t'  , 'int8_t'  , '0' , [ ], 0, 0) ;
-    codegen_axb_method ('any', multop, add, addfunc, imult, 'int16_t' , 'int16_t' , '0' , [ ], 0, 0) ;
-    codegen_axb_method ('any', multop, add, addfunc, imult, 'int32_t' , 'int32_t' , '0' , [ ], 0, 0) ;
-    codegen_axb_method ('any', multop, add, addfunc, imult, 'int64_t' , 'int64_t' , '0' , [ ], 0, 0) ;
-    codegen_axb_method ('any', multop, add, addfunc, imult, 'uint8_t' , 'uint8_t' , '0' , [ ], 0, 0) ;
-    codegen_axb_method ('any', multop, add, addfunc, imult, 'uint16_t', 'uint16_t', '0' , [ ], 0, 0) ;
-    codegen_axb_method ('any', multop, add, addfunc, imult, 'uint32_t', 'uint32_t', '0' , [ ], 0, 0) ;
-    codegen_axb_method ('any', multop, add, addfunc, imult, 'uint64_t', 'uint64_t', '0' , [ ], 0, 0) ;
-    codegen_axb_method ('any', multop, add, addfunc, fmult, 'float'   , 'float'   , '0' , [ ], 0, 0) ;
-    codegen_axb_method ('any', multop, add, addfunc, dmult, 'double'  , 'double'  , '0' , [ ], 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, imult, 'int8_t'  , 'int8_t'  , '0' , '(any value)', 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, imult, 'int16_t' , 'int16_t' , '0' , '(any value)', 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, imult, 'int32_t' , 'int32_t' , '0' , '(any value)', 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, imult, 'int64_t' , 'int64_t' , '0' , '(any value)', 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, imult, 'uint8_t' , 'uint8_t' , '0' , '(any value)', 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, imult, 'uint16_t', 'uint16_t', '0' , '(any value)', 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, imult, 'uint32_t', 'uint32_t', '0' , '(any value)', 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, imult, 'uint64_t', 'uint64_t', '0' , '(any value)', 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, fmult, 'float'   , 'float'   , '0' , '(any value)', 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, dmult, 'double'  , 'double'  , '0' , '(any value)', 0, 0) ;
     % complex case:
     id = 'GxB_CMPLXF(0,0)' ;
-    codegen_axb_method ('any', multop, add, addfunc, fcmult, 'GxB_FC32_t', 'GxB_FC32_t', id, [ ], 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, fcmult, 'GxB_FC32_t', 'GxB_FC32_t', id, '(any value)', 0, 0) ;
     id = 'GxB_CMPLX(0,0)' ;
-    codegen_axb_method ('any', multop, add, addfunc, dcmult, 'GxB_FC64_t', 'GxB_FC64_t', id, [ ], 0, 0) ;
+    codegen_axb_method ('any', multop, add, addfunc, dcmult, 'GxB_FC64_t', 'GxB_FC64_t', id, '(any value)', 0, 0) ;
 end
 
 % PLUS monoid: none are terminal.  All reals can be done with OpenMP atomic update
@@ -138,7 +138,7 @@ codegen_axb_method ('lor',  multop, 'w |= t', 'w | t', bmult, 'bool', 'bool', 'f
 codegen_axb_method ('land', multop, 'w &= t', 'w & t', bmult, 'bool', 'bool', 'true' , 'false', 1, 0) ;
 codegen_axb_method ('lxor', multop, 'w ^= t', 'w ^ t', bmult, 'bool', 'bool', 'false', [ ]    , 1, 0) ;
 if (~is_pair)
-    codegen_axb_method ('any' , multop, 'w = t' , 't'    , bmult, 'bool', 'bool', '0'    , [ ]    , 0, 0) ;
+    codegen_axb_method ('any', multop, 'w = t' , 't' , bmult, 'bool', 'bool', '0'    , '(any value)', 0, 0) ;
 end
 add = 'w = (w == t)' ;
 addfunc = 'w == t' ;

@@ -36,10 +36,11 @@
 // C+=A'*B (dot4):     GB (_Adot4B__(none))
 // A*B (saxpy bitmap): GB (_AsaxbitB__any_pair_iso)
 // A*B (saxpy3):       GB (_Asaxpy3B__any_pair_iso)
-// A*B (saxpy4):       GB (_Asaxpy4B__(none))
 //     no mask:        GB (_Asaxpy3B_noM__any_pair_iso)
 //     mask M:         GB (_Asaxpy3B_M__any_pair_iso)
 //     mask !M:        GB (_Asaxpy3B_notM__any_pair_iso)
+// A*B (saxpy4):       GB (_Asaxpy4B__(none))
+// A*B (saxpy5):       GB (_Asaxpy5B__(none))
 
 // C type:     iso
 // A type:     any type
@@ -400,6 +401,33 @@ GrB_Info GB (_AsaxbitB__any_pair_iso)
         return (GrB_NO_VALUE) ;
         #else
         #include "GB_AxB_saxpy4_template.c"
+        return (GrB_SUCCESS) ;
+        #endif
+    }
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_Asaxpy5B: C += A*B when C is full, A is bitmap/full, B is sparse/hyper
+//------------------------------------------------------------------------------
+
+#if 0
+
+    GrB_Info GB (_Asaxpy5B__(none))
+    (
+        GrB_Matrix C,
+        const GrB_Matrix A,
+        const GrB_Matrix B,
+        const int ntasks,
+        const int nthreads,
+        const int64_t *B_slice,
+        GB_Context Context
+    )
+    { 
+        #if 0
+        return (GrB_NO_VALUE) ;
+        #else
+        #include "GB_AxB_saxpy5_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }
