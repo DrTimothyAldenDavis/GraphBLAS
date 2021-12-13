@@ -1,5 +1,7 @@
 Versions 6.0.3 and 5.2.3, Dec FIXME, 2021
 
+    * performance: faster C+=A*B when C is full, A is bitmap/full, and B is
+        sparse/hyper; added saxpy5 kernel
     * bug fix: deserialization of iso and empty matrices/vectors was broken
 
 Versions 6.0.2 and 5.2.2, Nov 30, 2021

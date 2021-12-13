@@ -151,6 +151,9 @@ are extensions to the GraphBLAS C API.
 \item Versions 6.0.3 and 5.2.3 (Dec FIXME, 2021)
 
     \begin{packed_itemize}
+    \item performance: faster \verb'C+=A*B' when \verb'C' is full,
+        \verb'A' is bitmap/full, and \verb'B' is sparse/hyper;
+        added saxpy5 kernel.
     \item bug fix: deserialization of iso and empty matrices/vectors was
         incorrect
     \end{packed_itemize}
