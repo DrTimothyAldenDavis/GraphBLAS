@@ -50,12 +50,13 @@ if_not_any_pair_semiring
 
 // Multiply: GB_multiply(z,x,y,i,k,j)
 // Add:      GB_add_update(cij, t)
-//           'any' monoid?  GB_is_any_monoid
-//           atomic?        GB_has_atomic
-//           OpenMP atomic? GB_has_omp_atomic
+//    'any' monoid?  GB_is_any_monoid
+//    atomic?        GB_has_atomic
+//    OpenMP atomic? GB_has_omp_atomic
+//    identity:      GB_identity
+//    terminal?      GB_monoid_is_terminal
+//    terminal condition: GB_terminal
 // MultAdd:  GB_multiply_add(z,x,y,i,k,j)
-// Identity: GB_identity
-// Terminal: GB_terminal
 
 #define GB_ATYPE \
     GB_atype
@@ -134,6 +135,10 @@ if_not_any_pair_semiring
 #define GB_IDENTITY_BYTE \
     GB_identity_byte
 
+// true if the monoid has a terminal value
+#define GB_MONOID_IS_TERMINAL \
+    GB_monoid_is_terminal
+
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
     GB_terminal
@@ -152,10 +157,6 @@ if_not_any_pair_semiring
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
 #define GB_CIJ_DECLARE(cij) \
     GB_cij_declare
-
-// cij = Cx [pC] for dot4 method only
-#define GB_GET4C(cij,p) \
-    GB_get4c
 
 // Cx [pC] = cij
 #define GB_PUTC(cij,p) \

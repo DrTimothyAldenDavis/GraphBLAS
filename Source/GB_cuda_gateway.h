@@ -34,22 +34,10 @@ extern "C" {
 #endif
 
 //------------------------------------------------------------------------------
-// GB_cuda_device: properties of each GPU in the system
+// rmm_device: properties of each GPU in the system
 //------------------------------------------------------------------------------
 
-typedef struct
-{
-    char    name [256] ;
-    size_t  total_global_memory ;
-    int  number_of_sms ;
-    int  compute_capability_major;
-    int  compute_capability_minor;
-    bool use_memory_pool;
-    int  pool_size;             // TODO: should this be size_t?
-    int  max_pool_size;         // TODO: should this be size_t?
-    void *memory_resource;
-}
-GB_cuda_device ;
+#include "rmm_device.h"
 
 //------------------------------------------------------------------------------
 // GB_ngpus_to_use: determine # of GPUs to use for the next computation
@@ -110,7 +98,7 @@ bool GB_cuda_set_device( int device) ;
 bool GB_cuda_get_device_properties
 (
     int device,
-    GB_cuda_device *prop
+    rmm_device *prop
 ) ;
 
 bool GB_reduce_to_scalar_cuda_branch 

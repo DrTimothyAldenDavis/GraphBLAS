@@ -50,12 +50,13 @@
 
 // Multiply: z = (x * y)
 // Add:      cij += t
-//           'any' monoid?  0
-//           atomic?        1
-//           OpenMP atomic? 1
+//    'any' monoid?  0
+//    atomic?        1
+//    OpenMP atomic? 1
+//    identity:      0
+//    terminal?      0
+//    terminal condition: ;
 // MultAdd:  z += (x * y)
-// Identity: 0
-// Terminal: ;
 
 #define GB_ATYPE \
     double
@@ -134,6 +135,10 @@
 #define GB_IDENTITY_BYTE \
     0
 
+// true if the monoid has a terminal value
+#define GB_MONOID_IS_TERMINAL \
+    0
+
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
     ;
@@ -152,10 +157,6 @@
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
 #define GB_CIJ_DECLARE(cij) \
     double cij
-
-// cij = Cx [pC] for dot4 method only
-#define GB_GET4C(cij,p) \
-    cij = (C_in_iso) ? cinput : Cx [p]
 
 // Cx [pC] = cij
 #define GB_PUTC(cij,p) \
@@ -413,6 +414,13 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
 
 #if 1
 
+    // FIXME: do this for just some semrings, and only for the gcc, clang,
+    // and icc (icx) compilers.
+    __attribute__ ((target ("avx512f")))
+    #define GB_AVX512F
+    // For Microsoft, use this:
+    // __declspec ((target ("avx512f")))
+    // provide -DNAVX512 to disable the use of AVX512
     GrB_Info GB (_Asaxpy5B__plus_times_fp64)
     (
         GrB_Matrix C,
@@ -427,10 +435,93 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
         #if GB_DISABLE
         return (GrB_NO_VALUE) ;
         #else
-        #include "GB_AxB_saxpy5_meta.c"
+//      #include "GB_AxB_saxpy5_meta.c"
+//------------------------------------------------------------------------------
+// GB_AxB_saxpy5_meta.c: C+=A*B when C is full
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+// This method is only used for built-in semirings with no typecasting.
+// The accumulator matches the semiring monoid.
+// The ANY monoid is not supported.
+
+// C is as-if-full.
+// A is bitmap or full.
+// B is sparse or hypersparse.
+
+#if GB_IS_ANY_MONOID
+#error "saxpy5 not defined for the ANY monoid"
+#endif
+
+{
+
+    //--------------------------------------------------------------------------
+    // get C, A, and B
+    //--------------------------------------------------------------------------
+
+    ASSERT (GB_as_if_full (C)) ;
+    const int64_t m = C->vlen ;     // # of rows of C
+    ASSERT (C->vlen == A->vlen) ;
+    ASSERT (C->vdim == B->vdim) ;
+    ASSERT (A->vdim == B->vlen) ;
+
+    const int8_t *restrict Ab = A->b ;
+    const bool A_iso = A->iso ;
+    const int64_t avlen = A->vlen ;
+    const int64_t avdim = A->vdim ;
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    ASSERT (A_is_bitmap || GB_as_if_full (A)) ;
+
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bh = B->h ;
+    const int64_t *restrict Bi = B->i ;
+    const bool B_iso = B->iso ;
+    const int64_t bnvec = B->nvec ;
+    const int64_t bvlen = B->vlen ;
+    const int64_t bvdim = B->vdim ;
+    ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
+
+    #if !GB_A_IS_PATTERN
+    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    #endif
+    #if !GB_B_IS_PATTERN
+    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
+    #endif
+          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+
+    //--------------------------------------------------------------------------
+    // C += A*B, no mask, A bitmap/full, B sparse/hyper
+    //--------------------------------------------------------------------------
+
+    if (A_is_bitmap)
+    { 
+        // A is bitmap, B is sparse/hyper
+        #undef  GB_A_IS_BITMAP
+        #define GB_A_IS_BITMAP 1
+        #include "GB_AxB_saxpy5_template.c"
+    }
+    else
+    { 
+        // A is full, B is sparse/hyper
+        #undef  GB_A_IS_BITMAP
+        #define GB_A_IS_BITMAP 0
+        // #include "GB_AxB_saxpy5_template.c"
+        #include "saxpy5_new.c"
+    }
+}
+
+#undef GB_A_IS_BITMAP
+#undef GB_B_IS_HYPER
+
         return (GrB_SUCCESS) ;
         #endif
     }
+
+    #undef GB_AVX512F
 
 #endif
 

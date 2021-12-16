@@ -105,8 +105,6 @@ GrB_Info GB_init            // start up GraphBLAS
     void * (* realloc_function ) (void *, size_t),
     void   (* free_function    ) (void *),
 
-    bool caller_is_GxB_cuda_init,       // true for GxB_cuda_init only
-
     GB_Context Context      // from GrB_init or GxB_init
 ) ;
 
@@ -280,6 +278,7 @@ bool GB_Type_compatible             // check if two types can be typecast
 // function does not have the type itself, but just the code.  If the types are
 // available, GB_Type_compatible should be called instead.
 
+// TODO: move to GB_code_compatible.h
 static inline bool GB_code_compatible       // true if two types can be typecast
 (
     const GB_Type_code acode,   // type code of a

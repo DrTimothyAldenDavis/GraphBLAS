@@ -50,12 +50,13 @@
 
 // Multiply: z = (x * y)
 // Add:      cij += t
-//           'any' monoid?  0
-//           atomic?        1
-//           OpenMP atomic? 1
+//    'any' monoid?  0
+//    atomic?        1
+//    OpenMP atomic? 1
+//    identity:      0
+//    terminal?      0
+//    terminal condition: ;
 // MultAdd:  { uint32_t x_op_y = (x * y) ; z += x_op_y ; }
-// Identity: 0
-// Terminal: ;
 
 #define GB_ATYPE \
     uint32_t
@@ -134,6 +135,10 @@
 #define GB_IDENTITY_BYTE \
     0
 
+// true if the monoid has a terminal value
+#define GB_MONOID_IS_TERMINAL \
+    0
+
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
     ;
@@ -152,10 +157,6 @@
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
 #define GB_CIJ_DECLARE(cij) \
     uint32_t cij
-
-// cij = Cx [pC] for dot4 method only
-#define GB_GET4C(cij,p) \
-    cij = (C_in_iso) ? cinput : Cx [p]
 
 // Cx [pC] = cij
 #define GB_PUTC(cij,p) \

@@ -33,7 +33,6 @@ GrB_Info GrB_init           // start up GraphBLAS
     return (GB_init
         (mode,                          // blocking or non-blocking mode
         malloc, realloc, free,          // ANSI C memory management functions
-        false,                          // do not use CUDA
         Context)) ;
 }
 

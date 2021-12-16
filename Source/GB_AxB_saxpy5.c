@@ -179,21 +179,13 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
     { 
         // saxpy5 doesn't handle this case; punt to saxpy3, bitmap saxpy, etc
         GBURBLE ("(punt) ") ;
-        return (info) ;
     }
-    else if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-    else
+    else if (info == GrB_SUCCESS)
     { 
         ASSERT_MATRIX_OK (C, "saxpy5: output", GB0) ;
         (*done_in_place) = true ;
-        return (GrB_SUCCESS) ;
     }
-
+    return (info) ;
     #endif
 }
 

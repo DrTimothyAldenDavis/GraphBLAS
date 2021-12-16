@@ -145,7 +145,7 @@ typedef struct
     GrB_Desc_Value gpu_control ;    // always, never, or default
     double gpu_chunk ;              // min problem size for using a GPU
     // properties of each GPU:
-    GB_cuda_device gpu_properties [GB_CUDA_MAX_GPUS] ;
+    rmm_device gpu_properties [GB_CUDA_MAX_GPUS] ;
 
 }
 GB_Global_struct ;

@@ -50,12 +50,13 @@
 
 // Multiply: z = (x - y)
 // Add:      if (cij < t) { cij = t ; }
-//           'any' monoid?  0
-//           atomic?        1
-//           OpenMP atomic? 0
+//    'any' monoid?  0
+//    atomic?        1
+//    OpenMP atomic? 0
+//    identity:      INT16_MIN
+//    terminal?      1
+//    terminal condition: if (cij == INT16_MAX) { break ; }
 // MultAdd:  { int16_t x_op_y = (x - y) ; z = GB_IMAX (z, x_op_y) ; }
-// Identity: INT16_MIN
-// Terminal: if (cij == INT16_MAX) { break ; }
 
 #define GB_ATYPE \
     int16_t
@@ -134,6 +135,10 @@
 #define GB_IDENTITY_BYTE \
     (none)
 
+// true if the monoid has a terminal value
+#define GB_MONOID_IS_TERMINAL \
+    1
+
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
     if (cij == INT16_MAX) { break ; }
@@ -152,10 +157,6 @@
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
 #define GB_CIJ_DECLARE(cij) \
     int16_t cij
-
-// cij = Cx [pC] for dot4 method only
-#define GB_GET4C(cij,p) \
-    cij = (C_in_iso) ? cinput : Cx [p]
 
 // Cx [pC] = cij
 #define GB_PUTC(cij,p) \

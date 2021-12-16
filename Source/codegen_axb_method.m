@@ -238,16 +238,19 @@ if (is_any)
     fprintf (f, 'define(`GB_is_any_monoid'', `1'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `break ;'')\n') ;
     fprintf (f, 'define(`GB_dot_simd_vectorize'', `;'')\n') ;
+    fprintf (f, 'define(`GB_monoid_is_terminal'', `1'')\n') ;
 elseif (~isempty (terminal))
     % terminal monoids terminate when cij equals the terminal value
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `if (cij == %s) { break ; }'')\n', ...
         terminal) ;
     fprintf (f, 'define(`GB_dot_simd_vectorize'', `;'')\n') ;
+    fprintf (f, 'define(`GB_monoid_is_terminal'', `1'')\n') ;
 else
     % non-terminal monoids
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
+    fprintf (f, 'define(`GB_monoid_is_terminal'', `0'')\n') ;
     op = '' ;
     if (ztype_is_real)
         switch (addop)
@@ -450,12 +453,10 @@ end
 % access the values of C
 if (is_any_pair)
     fprintf (f, 'define(`GB_cx'', `'')\n') ;
-    fprintf (f, 'define(`GB_get4c'', `'')\n') ;
     fprintf (f, 'define(`GB_putc'', `'')\n') ;
     fprintf (f, 'define(`GB_cij_write'', `'')\n') ;
 else
     fprintf (f, 'define(`GB_cx'', `Cx [p]'')\n') ;
-    fprintf (f, 'define(`GB_get4c'', `cij = (C_in_iso) ? cinput : Cx [p]'')\n');
     fprintf (f, 'define(`GB_putc'', `Cx [p] = cij'')\n') ;
     fprintf (f, 'define(`GB_cij_write'', `Cx [p] = t'')\n') ;
 end
