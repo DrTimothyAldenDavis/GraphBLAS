@@ -37,12 +37,18 @@ void GB_stringify_semiring     // build a semiring (name and code)
 {
 
     uint64_t scode ;
+
+    printf("Inside stringify semiring\n");
+
     GB_enumify_semiring (&scode,
-        semiring, flipxy, 
+        semiring, flipxy,
         ctype, mtype, atype, btype, Mask_struct, Mask_comp,
         C_sparsity, M_sparsity, A_sparsity, B_sparsity) ;
+    printf("done enumify semiring\n");
 
     GB_macrofy_semiring ( fp, scode) ;
+
+    printf("done macrofy semiring\n");
 }
 
 //------------------------------------------------------------------------------
@@ -72,19 +78,34 @@ void GB_enumify_semiring   // enumerate a semiring
     //--------------------------------------------------------------------------
     // get the semiring
     //--------------------------------------------------------------------------
+    printf("inside enumify: %d\n", semiring);
 
+
+
+    printf("Getting semiring add\n");
     GrB_Monoid add = semiring->add ;
+
+    printf("Getting semiring mult\n");
     GrB_BinaryOp mult = semiring->multiply ;
+
+    printf("Getting semiring add op\n");
     GrB_BinaryOp addop = add->op ;
+
+    printf("Getting types\n");
     GrB_Type xtype = mult->xtype ;
     GrB_Type ytype = mult->ytype ;
     GrB_Type ztype = mult->ztype ;
+
+    printf("Getting opcodes\n");
     GB_Opcode mult_opcode = mult->opcode ;
     GB_Opcode add_opcode  = addop->opcode ;
+
+    printf("Getting typecodes\n");
     GB_Type_code xcode = xtype->code ;
     GB_Type_code ycode = ytype->code ;
     GB_Type_code zcode = ztype->code ;
 
+    printf("Performing asserts\n");
     // these must always be true for any semiring:
     ASSERT (mult->ztype == addop->ztype) ;
     ASSERT (addop->xtype == addop->ztype && addop->ytype == addop->ztype) ;
@@ -105,14 +126,17 @@ void GB_enumify_semiring   // enumerate a semiring
     // ISGE becomes GE
     // ISLE becomes LE
 
+    printf("Invoking boolean rename\n");
     if (zcode == GB_BOOL_code)
     {
         // rename the monoid
         add_opcode = GB_boolean_rename (add_opcode) ;
     }
 
+    printf("Invoking boolean rename\n");
+
     if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
-    { 
+    {
         // rename the multiplicative operator
         mult_opcode = GB_boolean_rename (mult_opcode) ;
     }
@@ -122,7 +146,7 @@ void GB_enumify_semiring   // enumerate a semiring
     //--------------------------------------------------------------------------
 
     if (flipxy)
-    { 
+    {
         // z = fmult (b,a) will be computed: handle this by renaming the
         // multiplicative operator, if possible.
 
@@ -155,6 +179,7 @@ void GB_enumify_semiring   // enumerate a semiring
     //--------------------------------------------------------------------------
     // enumify the multiplier
     //--------------------------------------------------------------------------
+    printf("Invoking enumify binop\n");
 
     int mult_ecode ;
     GB_enumify_binop (&mult_ecode, mult_opcode, xcode, true) ;
@@ -162,6 +187,7 @@ void GB_enumify_semiring   // enumerate a semiring
     //--------------------------------------------------------------------------
     // enumify the monoid
     //--------------------------------------------------------------------------
+    printf("Invoking enumify monoid\n");
 
     int add_ecode, id_ecode, term_ecode ;
     GB_enumify_monoid (&add_ecode, &id_ecode, &term_ecode, add_opcode, zcode ) ;
@@ -178,6 +204,7 @@ void GB_enumify_semiring   // enumerate a semiring
     // enumify the mask
     //--------------------------------------------------------------------------
 
+    printf("Invoking enumify_mask\n");
     int mtype_code = (mtype == NULL) ? 0 : mtype->code ; // 0 to 14
     int mask_ecode ;
     GB_enumify_mask (&mask_ecode, mtype_code, Mask_struct, Mask_comp) ;
@@ -198,7 +225,9 @@ void GB_enumify_semiring   // enumerate a semiring
 
     // total scode bits: 60
 
-    #define LSHIFT(x,k) (((uint64_t) x) << k)
+    printf("coinstructing semiring scode\n");
+
+#define LSHIFT(x,k) (((uint64_t) x) << k)
 
     (*scode) =
                                             // range        bits
@@ -227,6 +256,9 @@ void GB_enumify_semiring   // enumerate a semiring
                 LSHIFT (msparsity  ,  4) |  // 0 to 3       2
                 LSHIFT (asparsity  ,  2) |  // 0 to 3       2
                 LSHIFT (bsparsity  ,  0) ;  // 0 to 3       2
+
+    printf("done enumify semiring\n");
+
 }
 
 //------------------------------------------------------------------------------

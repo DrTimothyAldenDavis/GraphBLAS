@@ -102,11 +102,11 @@ else ( )
 endif ( )
 
 #FIXME: CUDA disabled for now
-set ( CMAKE_CUDA off )
+set ( CMAKE_CUDA on )
 
 # Uncomment this line for development only, not for end-users:
 # FIXME
-# set ( GBCOMPACT true )
+ set ( GBCOMPACT true )
 
 if ( CMAKE_CUDA )
     project ( graphblas

@@ -68,7 +68,7 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
         int B_sparsity          // sparsity structure of B
     )
     {
-       std::cout<<" calling stringify semiring"<< std::endl; 
+       std::cout<<" calling stringify semiring: " << semiring << std::endl;
        uint64_t scode; 
        GB_enumify_semiring (
 	    // output:
@@ -87,6 +87,8 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
 	    A_sparsity,    // sparsity structure of A
 	    B_sparsity     // sparsity structure of B
        ) ;
+
+       std::cout << "done stringify semiring" << std::endl;
        this->sr_code = scode;
        snprintf( this->filename, 256, "GB_semiring_%016lx.h",
         this->sr_code );

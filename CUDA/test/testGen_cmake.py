@@ -18,7 +18,7 @@ def buildTest(ts="TestsuiteName",kern="vsvs", ds= "tiny-tiny", SR = "PLUS_TIMES"
     phase2_body= f""" test_AxB_phase2_factory< {typeC} >( 5, {N}, {Anz},{Bnz});"""
     # phase2_end_body= f""" test_AxB_dot3_phase2end_factory< {typeC} >( 5, {N}, {Anz},{Bnz});"""
     # phase3_body = f""" test_AxB_dot3_{kern}_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > (5, {N}, {Anz}, {Bnz}, SR);"""
-    phasedict = { 2: phase2_body }
+    phasedict = { 1: phase1_body, 2: phase2_body }
     TEST_BODY= phasedict[phase]
 
     return TEST_HEAD,TEST_BODY
@@ -57,7 +57,7 @@ def write_test_instances_header(test_suite_name, Monoids, Binops, Semirings, Dat
                 for dtA in DataTypes:
                     for dtB in DataTypes:
                         for ds in DataShapes:
-                            for phase in [2]:
+                            for phase in [1, 2]:
 
                                 TEST_HEAD, TEST_BODY = buildTest( Test_suite, Kernels, ds, Semirings, phase,
                                                                   dtC, dtM, dtA, dtB, dtX, dtY, dtZ)

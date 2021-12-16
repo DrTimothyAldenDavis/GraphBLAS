@@ -114,10 +114,7 @@ set(GRAPHBLAS_CUDA_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 message(STATUS "${CUDA_TEST_CPP_FILES}")
 
-add_executable(graphblascuda_test ${CUDA_TEST_CPP_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/test/run_tests.cu)
-target_include_directories(graphblascuda_test PUBLIC
-        ${CUDA_INCLUDE_DIRECTORIES}
-        ${GRAPHBLAS_CUDA_INCLUDES})
+add_executable(graphblascuda_test ${CUDA_TEST_CPP_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/test/run_tests.cpp)
 
 set_target_properties(graphblascuda_test PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(graphblascuda_test PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
@@ -131,8 +128,8 @@ add_dependencies(graphblascuda_test gtest_main)
 add_dependencies(graphblascuda_test rmm_wrap)
 
 target_link_libraries(graphblascuda_test
-        graphblascuda
         graphblas
+        graphblascuda
         gtest_main
         nvrtc
         cuda

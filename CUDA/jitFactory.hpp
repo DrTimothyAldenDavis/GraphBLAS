@@ -38,6 +38,11 @@
 #include "GB_jit_launcher.h"
 #include "GB_cuda_semiring_factory.hpp"
 
+// FIXME: Is this okay or will it bring in too much (GB.h is brought in transitively)
+#include "GraphBLAS.h"
+#include "GrB_Semiring_new.c"
+#include "GrB_Monoid_new.c"
+
 #include "type_name.hpp"
 
 #undef  JITIFY_PRINT_INSTANTIATION
@@ -118,7 +123,6 @@ public:
       semiring = str_semiring;
   }
 
-
   bool jitGridBlockLaunch(int gridsz, int blocksz, 
                           int64_t *nanobuckets, int64_t *blockBucket, 
                           matrix<T_C> *C, matrix<T_M> *M, matrix<T_A> *A, matrix<T_B> *B) 
@@ -138,7 +142,6 @@ public:
       hashable_name << std::endl <<
       R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
 
-
 //      std::string hashable_name = base_name + "_" + kernel_name;
 //      std::cout<< kernel_name<<
 //                      " with types "<<GET_TYPE_NAME(dumC)<<","
@@ -153,35 +156,37 @@ public:
 
       // dump it:
     std::cout << string_to_be_jitted.str();
-
     std::vector<std::string> template_types = {GET_TYPE_NAME(dumM)};
 
-//    GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
-//
-//    GrB_Semiring mysemiring;
-//    GrB_Monoid mymonoid;
-//
-//    // TODO: These should be created from the given templated types and maybe a semiring string
-//    GrB_Monoid_new(&mymonoid, GrB_PLUS_UINT64, 0ul);
-//    Grb_Info GrB_Semiring_new(&mysemiring, mymonoid, GrB_TIME_UINT64);
-//
-//
-//    // (1) create the semiring code and name
-//    mysemiringfactory.semiring_factory ( semiring, flipxy,
-//        ctype, A->get_grb_matrix()->type,
-//        B->get_grb_matrix()->type, M->get_grb_matrix()->type,
-//        Mask_struct,  // matrix types
-//        false, GB_sparsity(C->get_grb_matrix()),
-//        GB_sparsity(M->get_grb_matrix()),
-//        GB_sparsity(A->get_grb_matrix()),
-//        GB_sparsity(B->get_grb_matrix()) ) ;
-//
-//
-//
-//    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
-//    jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
-//    filecache.getFile (mysemiringfactory) ;
+    std::cout << "Semiring: " << semiring << std::endl;
 
+    GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
+
+    /**
+     * Build semiring
+     */
+    GrB_Semiring mysemiring;
+//
+//    // FIXME: These should be created from the given template types
+    auto grb_info = GrB_Semiring_new(&mysemiring, GrB_PLUS_MONOID_UINT64, GrB_TIMES_UINT64);
+
+    std::cout << "semiring pointer: " << mysemiring << std::endl;
+    bool flipxy = false;
+    bool mask_struct = false;
+    bool mask_comp = false;
+//    // (1) create the semiring code and name
+    mysemiringfactory.semiring_factory ( mysemiring, flipxy,
+        C->get_grb_matrix()->type, A->get_grb_matrix()->type,
+        B->get_grb_matrix()->type, M->get_grb_matrix()->type,
+        mask_struct,  // matrix types
+        mask_comp, GB_sparsity(C->get_grb_matrix()),
+        GB_sparsity(M->get_grb_matrix()),
+        GB_sparsity(A->get_grb_matrix()),
+        GB_sparsity(B->get_grb_matrix()) ) ;
+
+    //    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
+    jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
+    filecache.getFile (mysemiringfactory) ;
 
     jit::launcher( hashable_name,
                    string_to_be_jitted.str(),
@@ -193,7 +198,7 @@ public:
                  .launch( nanobuckets, blockBucket, C->mat, M->mat, A->mat, B->mat);
 
       checkCudaErrors( cudaDeviceSynchronize() );
-      result= true;
+      result = true;
 
       return result;
      }
