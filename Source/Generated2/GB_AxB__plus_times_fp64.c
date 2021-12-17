@@ -416,8 +416,9 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
 
     // FIXME: do this for just some semrings, and only for the gcc, clang,
     // and icc (icx) compilers.
-    __attribute__ ((target ("avx512f")))
-    #define GB_AVX512F
+    __attribute__ ((target ("avx2")))
+    #define GB_AVX2
+    // #define GB_AVX512F
     // For Microsoft, use this:
     // __declspec ((target ("avx512f")))
     // provide -DNAVX512 to disable the use of AVX512
