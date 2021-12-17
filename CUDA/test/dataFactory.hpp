@@ -259,6 +259,7 @@ class SpGEMM_problem_generator {
        A->fill_random( N, Anz, r);
        B->fill_random( N, Bnz, r);
 
+
        std::cout<<"fill complete"<<std::endl;
        C->mat->p = M->mat->p; //same column pointers (assuming CSC here)
 
