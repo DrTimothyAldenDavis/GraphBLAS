@@ -1,9 +1,11 @@
 #include <gtest/gtest.h>
+
+extern "C" {
 #include "GraphBLAS.h"
+}
 #include "../../rmm_wrap/rmm_wrap.h"
 
 int main(int argc, char **argv) {
-
 
     // TODO: Need to invoke GB_Init
     size_t init_size, max_size;

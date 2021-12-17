@@ -26,9 +26,7 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
 
     public:
 
-        const char *include_filename = "";
         uint64_t sr_code;
-        char filename[256];    // GB_semiring_0238402984398AC0DE.h where the numbers are the sr_code
 
         // file ptr
         FILE *fp;
@@ -88,11 +86,18 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
 	    B_sparsity     // sparsity structure of B
        ) ;
 
+       printf("scode=%uld\n", scode);
        std::cout << "done stringify semiring" << std::endl;
        this->sr_code = scode;
-       snprintf( this->filename, 256, "GB_semiring_%016lx.h",
-        this->sr_code );
-       std::cout<<" returned from  stringify semiring"<< std::endl; 
+
+       std::stringstream ss;
+       ss << "GB_semiring_" << this->sr_code << ".h";
+
+       std::string new_filename = ss.str();
+       filename.resize(new_filename.size());
+       strcpy(filename.data(), new_filename.data());
+
+       std::cout<<" returned from  stringify semiring"<< std::endl;
     }
 
 //------------------------------------------------------------------------------
@@ -100,9 +105,9 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
 // operators, datatypes, sparsity formats and produces a character buffer. 
 //------------------------------------------------------------------------------
 
-    void macrofy ( )
+    void macrofy ( ) override
     {
-       std::cout<<" calling macrofy semiring"<< std::endl; 
+       std::cout<<" calling macrofy semiring. sr_code="<< this->sr_code << std::endl;
        GB_macrofy_semiring (
 	    // output to file :
 	    fp, 

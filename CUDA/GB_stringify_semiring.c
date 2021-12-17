@@ -78,9 +78,7 @@ void GB_enumify_semiring   // enumerate a semiring
     //--------------------------------------------------------------------------
     // get the semiring
     //--------------------------------------------------------------------------
-    printf("inside enumify: %d\n", semiring);
-
-
+    printf("inside enumify: %lu\n", semiring);
 
     printf("Getting semiring add\n");
     GrB_Monoid add = semiring->add ;
@@ -99,6 +97,8 @@ void GB_enumify_semiring   // enumerate a semiring
     printf("Getting opcodes\n");
     GB_Opcode mult_opcode = mult->opcode ;
     GB_Opcode add_opcode  = addop->opcode ;
+
+
 
     printf("Getting typecodes\n");
     GB_Type_code xcode = xtype->code ;
@@ -196,8 +196,14 @@ void GB_enumify_semiring   // enumerate a semiring
     // enumify the types
     //--------------------------------------------------------------------------
 
+    printf("Done invoking enumify monoid\n");
+
+
+    printf("atype\n");
     int acode = A_is_pattern ? 0 : atype->code ;   // 0 to 14
+    printf("btype\n");
     int bcode = B_is_pattern ? 0 : btype->code ;   // 0 to 14
+    printf("ctype\n");
     int ccode = ctype->code ;                      // 1 to 14
 
     //--------------------------------------------------------------------------
@@ -228,6 +234,8 @@ void GB_enumify_semiring   // enumerate a semiring
     printf("coinstructing semiring scode\n");
 
 #define LSHIFT(x,k) (((uint64_t) x) << k)
+
+    printf("add_ecode: %d, mult_ecode: %d\n", add_ecode, mult_ecode);
 
     (*scode) =
                                             // range        bits
@@ -273,40 +281,42 @@ void GB_macrofy_semiring   // construct all macros for a semiring
 )
 {
 
+    printf("scode in macrofy_semiring: %lu\n", scode);
+
     //--------------------------------------------------------------------------
     // extract the semiring scode
     //--------------------------------------------------------------------------
 
-    #define RSHIFT(x,k,b) (x >> k) && ((((uint64_t) 1) << b) - 1)
+    #define RSHIFT(x,k) (x >> k) & (((uint64_t) 0xffffffff) >> (64-k-1))
 
     // monoid
-    int add_ecode   = RSHIFT (scode, 55, 5) ;
-    int id_ecode    = RSHIFT (scode, 50, 5) ;
-    int term_ecode  = RSHIFT (scode, 45, 5) ;
+    int add_ecode   = RSHIFT (scode, 55) ;
+    int id_ecode    = RSHIFT (scode, 50) ;
+    int term_ecode  = RSHIFT (scode, 45) ;
     bool is_term    = (term_ecode < 30) ;
 
     // multiplier
-    int mult_ecode  = RSHIFT (scode, 37, 8) ;
-    bool flipxy     = RSHIFT (scode, 36, 1) ;
+    int mult_ecode  = RSHIFT (scode, 37) ;
+    bool flipxy     = RSHIFT (scode, 36) ;
 //  x,y,z types are not needed here for macrofy:
 //  int zcode       = RSHIFT (scode, 32, 4) ;
 //  int xcode       = RSHIFT (scode, 28, 4) ;
 //  int ycode       = RSHIFT (scode, 24, 4) ;
 
     // mask
-    int mask_ecode  = RSHIFT (scode, 20, 4) ;
+    int mask_ecode  = RSHIFT (scode, 20) ;
 
     // types of C, A, and B
-    int acode       = RSHIFT (scode, 16, 4) ;
-    int bcode       = RSHIFT (scode, 12, 4) ;
+    int acode       = RSHIFT (scode, 16) ;
+    int bcode       = RSHIFT (scode, 12) ;
 //  C type is not needed here for macrofy:
 //  int ccode       = RSHIFT (scode,  8, 4) ;
 
     // formats of C, A, and B
-    int csparsity   = RSHIFT (scode,  6, 2) ;
-    int msparsity   = RSHIFT (scode,  4, 2) ;
-    int asparsity   = RSHIFT (scode,  2, 2) ;
-    int bsparsity   = RSHIFT (scode,  0, 2) ;
+    int csparsity   = RSHIFT (scode,  6) ;
+    int msparsity   = RSHIFT (scode,  4) ;
+    int asparsity   = RSHIFT (scode,  2) ;
+    int bsparsity   = RSHIFT (scode,  0) ;
 
     //--------------------------------------------------------------------------
     // construct macros to load scalars from A and B (and typecast) them
@@ -329,6 +339,8 @@ void GB_macrofy_semiring   // construct all macros for a semiring
 
     printf("stringify mult \n");
     char s [GB_CUDA_STRLEN+1] ;
+
+    printf("mult_ecode: %d\n", mult_ecode);
     GB_charify_binop ( &s, mult_ecode) ;
     GB_macrofy_binop ( fp, "GB_MULT", s, flipxy) ;
 
@@ -359,7 +371,8 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------
 
-    GB_macrofy_mask ( fp, mask_ecode) ;
+    printf("MACROFY MASK!\n");
+    GB_macrofy_mask ( fp, mask_ecode);
 
     //--------------------------------------------------------------------------
     // determine the sparsity formats of C, M, A, and B

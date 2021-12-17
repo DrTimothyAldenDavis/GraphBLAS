@@ -102,7 +102,7 @@ else ( )
 endif ( )
 
 #FIXME: CUDA disabled for now
-set ( CMAKE_CUDA on )
+set ( CMAKE_CUDA off )
 
 # Uncomment this line for development only, not for end-users:
 # FIXME

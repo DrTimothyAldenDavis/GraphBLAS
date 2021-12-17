@@ -137,10 +137,8 @@ public:
       dim3 block(blocksz);
 
       std::string hashable_name = base_name + "_" + kernel_name;
-      std::stringstream string_to_be_jitted ;
-      string_to_be_jitted <<
-      hashable_name << std::endl <<
-      R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
+
+
 
 //      std::string hashable_name = base_name + "_" + kernel_name;
 //      std::cout<< kernel_name<<
@@ -155,8 +153,7 @@ public:
 //      #include )" << hashable_name << R"(".cu")";
 
       // dump it:
-    std::cout << string_to_be_jitted.str();
-    std::vector<std::string> template_types = {GET_TYPE_NAME(dumM)};
+
 
     std::cout << "Semiring: " << semiring << std::endl;
 
@@ -174,10 +171,16 @@ public:
     bool flipxy = false;
     bool mask_struct = false;
     bool mask_comp = false;
+
+    std::cout << "A TYpe: " << A->get_grb_matrix()->type << std::endl;
+    std::cout << "B TYpe: " << B->get_grb_matrix()->type << std::endl;
 //    // (1) create the semiring code and name
     mysemiringfactory.semiring_factory ( mysemiring, flipxy,
-        C->get_grb_matrix()->type, A->get_grb_matrix()->type,
-        B->get_grb_matrix()->type, M->get_grb_matrix()->type,
+        // GB_Matrix_allocate doesn't accept/allocate type information so we explicitly pass
+        // the types in here
+        // FIXME: Figure out a good method for getting the GrB_Type from a string
+        GrB_UINT64, GrB_UINT64,
+        GrB_UINT64, GrB_UINT64,
         mask_struct,  // matrix types
         mask_comp, GB_sparsity(C->get_grb_matrix()),
         GB_sparsity(M->get_grb_matrix()),
@@ -187,6 +190,14 @@ public:
     //    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (mysemiringfactory) ;
+
+    std::stringstream string_to_be_jitted ;
+    std::vector<std::string> template_types = {GET_TYPE_NAME(dumM)};
+
+      string_to_be_jitted << hashable_name << std::endl <<
+      R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mysemiringfactory.filename << R"(")" << std::endl <<
+      R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
+    std::cout << string_to_be_jitted.str();
 
     jit::launcher( hashable_name,
                    string_to_be_jitted.str(),
