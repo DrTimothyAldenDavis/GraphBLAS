@@ -20,7 +20,7 @@ GrB_Info GB_Semiring_new            // create a semiring
 {
 
 
-    printf("inside GB_semiring_new\n");
+    printf("inside GB_semiring_new\n"); // FIXME: remove for v6.0.3 stable
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
@@ -38,7 +38,7 @@ GrB_Info GB_Semiring_new            // create a semiring
     // z = multiply(x,y); type of z must match monoid z = add(z,z)
     if (multiply->ztype != add->op->ztype)
     {
-        printf("z doesn't match monoid z\n");
+        printf("z doesn't match monoid z\n");   // FIXME: remove for v6.0.3 stable
         return (GrB_DOMAIN_MISMATCH) ;
     }
 
