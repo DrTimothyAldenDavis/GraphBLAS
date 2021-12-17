@@ -91,10 +91,11 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, const
     int64_t Cnz = N;
     float Cnzpercent = (float) Cnz/(N*N);
 
+    // TODO: Allocate and fill arrays for buckets and nano buckets
     G.init(N, Annz, Bnnz, Cnzpercent);
     G.fill_buckets( TB ); // all elements go to testbucket= TB
 
-    // TODO: Allocate and fill arrays for buckets and nano buckets
+
 
 
     matrix<T_C>* C = G.getCptr();

@@ -30,18 +30,22 @@
 
 namespace jit {
 
+std::string get_user_home_cache_dir();
 std::string getCacheDir(void);
 
-        template <typename Tv>
+template <typename Tv>
 using named_prog = std::pair<std::string, std::shared_ptr<Tv>>;
 
 // Basic file descriptor to enable file manipulation with caching 
 class File_Desc
 {
 public:
-   void open( const char *path_and_file, const char *mode) {}
-   void close() {}
-   void macrofy() {}
+   virtual void open( const char *path_and_file, const char *mode) {}
+   virtual void close() {}
+   virtual void macrofy() {
+
+       printf("Uh oh. this isn't good\n");
+   }
    std::string filename;
 };
 
@@ -148,7 +152,7 @@ private:
 private:
     /**---------------------------------------------------------------------------*
      * @brief Class to allow process wise exclusive access to cache files
-     * 
+     *
      *---------------------------------------------------------------------------**/
     class cacheFile
     {
@@ -192,12 +196,13 @@ private:
 
 private:
 
-    template <typename T>
-    named_prog<T> getCachedFile( 
-        File_Desc &file_object,
+    template <typename T, typename FileDescType>
+    named_prog<T> getCachedFile(
+            FileDescType &file_object,
         umap_str_shptr<T>& map )
     {
-     
+
+        printf("INside get cached file\n");
         std::string name = file_object.filename;
 
         // Find memory cached T object
@@ -210,18 +215,23 @@ private:
             bool successful_read = false;
             std::string serialized;
             std::string cache_dir = getCacheDir();
-            std::string file_name = cache_dir + "/" + name + ".gblas_kernel";
+            std::string file_name = cache_dir + "/" + name;
             if (not cache_dir.empty() ) {
                 // TODO: Use OS-agnostic path separator here
-                //std::cout<<"looking for prog in file "<<file_name<<std::endl;
+                std::cout<<"looking for prog in file "<<file_name<<std::endl;
                 file_object.open(file_name.c_str(), "r");
                 cacheFile file{file_name};
                 serialized = file.read_file();
                 successful_read = file.is_read_successful();
-                file_object.close();
+                std::cout << "successful_read: " << successful_read << std::endl;
+                if(successful_read) {
+                    file_object.close();
+                    std::cout << "Just closed" << std::endl;
+                }
             }
             if (not successful_read) {
                 // JIT compile and write to file if possible
+                std::cout << "not successful read. macrofying" << std::endl;
                 file_object.open(file_name.c_str(), "w");
                 file_object.macrofy();
                 std::cout<<" got fresh content for "<<name<<std::endl;

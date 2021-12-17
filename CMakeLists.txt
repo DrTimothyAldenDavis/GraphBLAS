@@ -106,7 +106,7 @@ set ( CMAKE_CUDA off )
 
 # Uncomment this line for development only, not for end-users:
 # FIXME
-# set ( GBCOMPACT true )
+ set ( GBCOMPACT true )
 
 if ( CMAKE_CUDA )
     project ( graphblas
