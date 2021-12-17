@@ -422,6 +422,10 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
     // For Microsoft, use this:
     // __declspec ((target ("avx512f")))
     // provide -DNAVX512 to disable the use of AVX512
+
+
+
+
     GrB_Info GB (_Asaxpy5B__plus_times_fp64)
     (
         GrB_Matrix C,
@@ -437,82 +441,94 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
         return (GrB_NO_VALUE) ;
         #else
 //      #include "GB_AxB_saxpy5_meta.c"
-//------------------------------------------------------------------------------
-// GB_AxB_saxpy5_meta.c: C+=A*B when C is full
-//------------------------------------------------------------------------------
-
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
-
-//------------------------------------------------------------------------------
-
-// This method is only used for built-in semirings with no typecasting.
-// The accumulator matches the semiring monoid.
-// The ANY monoid is not supported.
-
-// C is as-if-full.
-// A is bitmap or full.
-// B is sparse or hypersparse.
-
-#if GB_IS_ANY_MONOID
-#error "saxpy5 not defined for the ANY monoid"
-#endif
 
 {
 
-    //--------------------------------------------------------------------------
-    // get C, A, and B
-    //--------------------------------------------------------------------------
-
     ASSERT (GB_as_if_full (C)) ;
-    const int64_t m = C->vlen ;     // # of rows of C
     ASSERT (C->vlen == A->vlen) ;
     ASSERT (C->vdim == B->vdim) ;
     ASSERT (A->vdim == B->vlen) ;
-
-    const int8_t *restrict Ab = A->b ;
-    const bool A_iso = A->iso ;
-    const int64_t avlen = A->vlen ;
-    const int64_t avdim = A->vdim ;
-    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    ASSERT (A_is_bitmap || GB_as_if_full (A)) ;
-
-    const int64_t *restrict Bp = B->p ;
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
-    const bool B_iso = B->iso ;
-    const int64_t bnvec = B->nvec ;
-    const int64_t bvlen = B->vlen ;
-    const int64_t bvdim = B->vdim ;
+    ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
     ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
 
-    #if !GB_A_IS_PATTERN
-    const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
-    #endif
-    #if !GB_B_IS_PATTERN
-    const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
-    #endif
-          GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
+    // const int64_t avlen = A->vlen ;
+    // const int64_t avdim = A->vdim ;
+    // const int64_t bnvec = B->nvec ;
+    // const int64_t bvlen = B->vlen ;
+    // const int64_t bvdim = B->vdim ;
+
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    const bool A_iso = A->iso ;
 
     //--------------------------------------------------------------------------
     // C += A*B, no mask, A bitmap/full, B sparse/hyper
     //--------------------------------------------------------------------------
 
-    if (A_is_bitmap)
-    { 
-        // A is bitmap, B is sparse/hyper
-        #undef  GB_A_IS_BITMAP
-        #define GB_A_IS_BITMAP 1
-        #include "GB_AxB_saxpy5_template.c"
+    #if GB_A_IS_PATTERN
+    {
+        // A is pattern-only
+        if (A_is_bitmap)
+        {
+            #undef  GB_A_IS_BITMAP
+            #define GB_A_IS_BITMAP 1
+            #include "saxpy5_iso_or_pattern.c"
+        }
+        else
+        {
+            #undef  GB_A_IS_BITMAP
+            #define GB_A_IS_BITMAP 0
+            #include "saxpy5_iso_or_pattern.c"
+        }
     }
-    else
-    { 
-        // A is full, B is sparse/hyper
-        #undef  GB_A_IS_BITMAP
-        #define GB_A_IS_BITMAP 0
-        // #include "GB_AxB_saxpy5_template.c"
-        #include "saxpy5_new.c"
+    #else
+    {
+        // A is valued
+        if (A_iso)
+        {
+
+            // A is iso-valued
+            if (A_is_bitmap)
+            { 
+                // A is bitmap, iso-valued, B is sparse/hyper
+                #undef  GB_A_IS_BITMAP
+                #define GB_A_IS_BITMAP 1
+                #include "saxpy5_iso_or_pattern.c"
+            }
+            else
+            { 
+                // A is full, iso-valued, B is sparse/hyper
+                #undef  GB_A_IS_BITMAP
+                #define GB_A_IS_BITMAP 0
+                // #include "GB_AxB_saxpy5_template.c"
+                #include "saxpy5_iso_or_pattern.c"
+            }
+
+        }
+        else
+        {
+            // general case: A is non-iso and valued
+            if (A_is_bitmap)
+            { 
+                // A is bitmap, non-iso-valued, B is sparse/hyper
+                #undef  GB_A_IS_BITMAP
+                #define GB_A_IS_BITMAP 1
+                #include "saxpy5_bitmap.c"
+            }
+            else
+            { 
+                // A is full, non-iso-valued, B is sparse/hyper
+                #undef  GB_A_IS_BITMAP
+                #define GB_A_IS_BITMAP 0
+                // TODO: none of the above should use AVX2 or AVX512.
+                // Place saxpy5_new.c in 2 or 3 functions (AVX512,
+                // AVX2, and generic), and determine from GB_Global
+                // what architecture we're running on, and call the
+                // right function.
+                #include "saxpy5_new.c"
+            }
+        }
     }
+    #endif
 }
 
 #undef GB_A_IS_BITMAP
