@@ -63,12 +63,13 @@ purge: distclean
 
 # remove all files not in the distribution
 distclean:
-	rm -rf build/* Demo/*.out Demo/complex_demo_out*.m Tcov/log.txt
-	rm -rf Config/*.tmp Source/control.m4
-	rm -rf Doc/html/* Doc/*.tmp
+	- rm -rf build/* Demo/*.out Demo/complex_demo_out*.m Tcov/log.txt
+	- rm -rf Config/*.tmp Source/control.m4
+	- rm -rf Doc/html/* Doc/*.tmp
 	( cd GraphBLAS ; $(MAKE) distclean )
 	( cd Test ; $(MAKE) distclean )
 	( cd Tcov ; $(MAKE) distclean )
 	( cd Doc  ; $(MAKE) distclean )
 	( cd alternative  ; $(MAKE) distclean )
+	( cd cpu_features  ; $(MAKE) distclean )
 

@@ -14,6 +14,8 @@
 # cmake 3.13 is required; cmake 3.17 or later required for CUDA
 cmake_minimum_required ( VERSION 3.13 )
 
+message ( STATUS "GrapphBLAS source: " ${CMAKE_SOURCE_DIR} )
+message ( STATUS "GrapphBLAS build:  " ${CMAKE_BINARY_DIR} )
 message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 
 if ( CMAKE_VERSION VERSION_GREATER "3.0" )
@@ -168,13 +170,21 @@ configure_file (
 )
 
 #-------------------------------------------------------------------------------
-# find packages
+# find OpenMP
 #-------------------------------------------------------------------------------
 
 find_package ( OpenMP )
 
+#-------------------------------------------------------------------------------
+# find Intel IPP (FUTURE)
+#-------------------------------------------------------------------------------
+
 # Intel(R) IPP not yet supported
 # find_package ( IPP )
+
+#-------------------------------------------------------------------------------
+# add CUDA
+#-------------------------------------------------------------------------------
 
 if ( CMAKE_CUDA )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
@@ -204,7 +214,16 @@ else ( )
 endif ( )
 
 #-------------------------------------------------------------------------------
-# find the BLAS
+# add cpu_features
+#-------------------------------------------------------------------------------
+
+set (BUILD_TESTING off)
+message ( STATUS "Adding cpu_features (by google.com): " )
+add_subdirectory (cpu_features)
+include_directories ( "cpu_features/include" )
+
+#-------------------------------------------------------------------------------
+# find the BLAS (FUTURE)
 #-------------------------------------------------------------------------------
 
 #   if ( CMAKE_VERSION VERSION_GREATER "3.13" )
@@ -260,9 +279,9 @@ endif ( )
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 if ( GBCOMPACT )
-    include_directories ( Source/Template Source Include Source/Generated1 lz4 Demo/Include rmm_wrap )
+    include_directories ( Source/Template Source Include Source/Generated1 lz4 cpu_features/include Demo/Include rmm_wrap )
 else ( )
-    include_directories ( Source/Template Source Include Source/Generated1 lz4 Source/Generated2 Demo/Include rmm_wrap )
+    include_directories ( Source/Template Source Include Source/Generated1 lz4 cpu_features/include Source/Generated2 Demo/Include rmm_wrap )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -420,6 +439,8 @@ endif ( )
 #-------------------------------------------------------------------------------
 # add the OpenMP, IPP, CUDA, BLAS, etc libraries
 #-------------------------------------------------------------------------------
+
+target_link_libraries ( graphblas PUBLIC cpu_features )
 
 if ( USE_OPENMP )
     message ( STATUS "CMAKE OpenMP libraries:    " ${OpenMP_C_LIBRARIES} )
