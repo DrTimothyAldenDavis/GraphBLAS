@@ -154,6 +154,10 @@
 #define GB_IS_PLUS_PAIR_REAL_SEMIRING \
     0
 
+// 1 if the semiring is accelerated with AVX2 or AVX512f
+#define GB_SEMIRING_HAS_AVX_IMPLEMENTATION \
+    0
+
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
 #define GB_CIJ_DECLARE(cij) \
     float cij
@@ -413,6 +417,92 @@ GrB_Info GB (_AsaxbitB__min_minus_fp32)
 //------------------------------------------------------------------------------
 
 #if 1
+
+    #if GB_DISABLE
+    #elif ( !GB_A_IS_PATTERN )
+
+        #if defined ( CPU_FEATURES_ARCH_X86 )           \
+            && GB_SEMIRING_HAS_AVX_IMPLEMENTATION
+
+            //------------------------------------------------------------------
+            // saxpy5 method with vectors of length 4 for double, 8 for single
+            //------------------------------------------------------------------
+
+            //------------------------------------------------------------------
+            // saxpy5 method with vectors of length 8 for double, 16 for single
+            //------------------------------------------------------------------
+
+            // TODO use GB_V16 for FP32
+            #define GB_V16 0
+            #define GB_V8  1
+            #define GB_V4  1
+            #if defined ( CPU_FEATURES_COMPILER_MSC )
+            __declspec (target ("avx512f"))
+            #else
+            __attribute__ ((target ("avx512f")))
+            #endif
+            static inline void GB_AxB_saxpy5_unrolled_avx512f
+            (
+                GrB_Matrix C,
+                const GrB_Matrix A,
+                const GrB_Matrix B,
+                const int ntasks,
+                const int nthreads,
+                const int64_t *B_slice,
+                GB_Context Context
+            )
+            {
+                #include "GB_AxB_saxpy5_unrolled.c"
+            }
+
+            // TODO use GB_V8 for FP32
+            #define GB_V16 0
+            #define GB_V8  0
+            #define GB_V4  1
+            #if defined ( CPU_FEATURES_COMPILER_MSC )
+            __declspec (target ("avx2"))
+            #else
+            __attribute__ ((target ("avx2")))
+            #endif
+            static inline void GB_AxB_saxpy5_unrolled_avx2
+            (
+                GrB_Matrix C,
+                const GrB_Matrix A,
+                const GrB_Matrix B,
+                const int ntasks,
+                const int nthreads,
+                const int64_t *B_slice,
+                GB_Context Context
+            )
+            {
+                #include "GB_AxB_saxpy5_unrolled.c"
+            }
+
+        #endif
+
+            //------------------------------------------------------------------
+            // saxpy5 method unrolled, with no vectors
+            //------------------------------------------------------------------
+
+            #define GB_V16 0
+            #define GB_V8  0
+            #define GB_V4  0
+            static inline void GB_AxB_saxpy5_unrolled_vanilla
+            (
+                GrB_Matrix C,
+                const GrB_Matrix A,
+                const GrB_Matrix B,
+                const int ntasks,
+                const int nthreads,
+                const int64_t *B_slice,
+                GB_Context Context
+            )
+            {
+                #include "GB_AxB_saxpy5_unrolled.c"
+            }
+
+    #endif
+
 
     GrB_Info GB (_Asaxpy5B__min_minus_fp32)
     (

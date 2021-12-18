@@ -27,6 +27,7 @@
 // internal #include files
 //------------------------------------------------------------------------------
 
+#include "GB_cpu_features.h"
 #include "GB_prefix.h"
 #include "GB_dev.h"
 #include "GB_bytes.h"

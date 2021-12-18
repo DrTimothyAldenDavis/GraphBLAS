@@ -1,7 +1,9 @@
 Versions 6.0.3 and 5.2.3, Dec FIXME, 2021
 
+    * added package: https://github.com/google/cpu_features,
+        Oct 29, 2021 version
     * performance: faster C+=A*B when C is full, A is bitmap/full, and B is
-        sparse/hyper; added saxpy5 kernel
+        sparse/hyper; added saxpy5 kernel.  faster C+=A'*B (dot4 kernel).
     * bug fix: deserialization of iso and empty matrices/vectors was broken
 
 Versions 6.0.2 and 5.2.2, Nov 30, 2021

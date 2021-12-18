@@ -32,11 +32,6 @@
 
 #include "GB.h"
 
-#include "cpu_features_macros.h"
-#if defined ( CPU_FEATURES_ARCH_X86 )
-#include "cpuinfo_x86.h"
-#endif
-
 //------------------------------------------------------------------------------
 // GB_init
 //------------------------------------------------------------------------------
@@ -58,15 +53,6 @@ GrB_Info GB_init            // start up GraphBLAS
     // check inputs
     //--------------------------------------------------------------------------
 
-// FIXME: add cpu/os/features detection to GB_Global.[ch]
-#if defined ( CPU_FEATURES_ARCH_X86 )
-    X86Features features = GetX86Info().features ;
-//  printf ("I have aes: %d\n", features.aes) ;
-//  printf ("I have avx: %d\n", features.avx) ;
-//  printf ("I have avx2: %d\n", features.avx2) ;
-//  printf ("I have avx512f: %d\n", features.avx512f) ;
-#endif
-
     if (GB_Global_GrB_init_called_get ( ))
     { 
         // GrB_init can only be called once
@@ -80,6 +66,12 @@ GrB_Info GB_init            // start up GraphBLAS
         // invalid mode
         return (GrB_INVALID_VALUE) ;
     }
+
+    //--------------------------------------------------------------------------
+    // query hardware features for future use
+    //--------------------------------------------------------------------------
+
+    GB_Global_cpu_features_query ( ) ;
 
     //--------------------------------------------------------------------------
     // establish malloc/realloc/free

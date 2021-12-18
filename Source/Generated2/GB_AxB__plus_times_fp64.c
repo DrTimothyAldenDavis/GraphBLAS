@@ -154,6 +154,10 @@
 #define GB_IS_PLUS_PAIR_REAL_SEMIRING \
     0
 
+// 1 if the semiring is accelerated with AVX2 or AVX512f
+#define GB_SEMIRING_HAS_AVX_IMPLEMENTATION \
+    1
+
 // declare the cij scalar (initialize cij to zero for PLUS_PAIR)
 #define GB_CIJ_DECLARE(cij) \
     double cij
@@ -414,16 +418,90 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
 
 #if 1
 
-    // FIXME: do this for just some semrings, and only for the gcc, clang,
-    // and icc (icx) compilers.
-    __attribute__ ((target ("avx2")))
-    #define GB_AVX2
-    // #define GB_AVX512F
-    // For Microsoft, use this:
-    // __declspec ((target ("avx512f")))
-    // provide -DNAVX512 to disable the use of AVX512
+    #if GB_DISABLE
+    #elif ( !GB_A_IS_PATTERN )
 
+        #if defined ( CPU_FEATURES_ARCH_X86 )           \
+            && GB_SEMIRING_HAS_AVX_IMPLEMENTATION
 
+            //------------------------------------------------------------------
+            // saxpy5 method with vectors of length 4 for double, 8 for single
+            //------------------------------------------------------------------
+
+            //------------------------------------------------------------------
+            // saxpy5 method with vectors of length 8 for double, 16 for single
+            //------------------------------------------------------------------
+
+            // TODO use GB_V16 for FP32
+            #define GB_V16 0
+            #define GB_V8  1
+            #define GB_V4  1
+            #if defined ( CPU_FEATURES_COMPILER_MSC )
+            __declspec (target ("avx512f"))
+            #else
+            __attribute__ ((target ("avx512f")))
+            #endif
+            static inline void GB_AxB_saxpy5_unrolled_avx512f
+            (
+                GrB_Matrix C,
+                const GrB_Matrix A,
+                const GrB_Matrix B,
+                const int ntasks,
+                const int nthreads,
+                const int64_t *B_slice,
+                GB_Context Context
+            )
+            {
+                #include "GB_AxB_saxpy5_unrolled.c"
+            }
+
+            // TODO use GB_V8 for FP32
+            #define GB_V16 0
+            #define GB_V8  0
+            #define GB_V4  1
+            #if defined ( CPU_FEATURES_COMPILER_MSC )
+            __declspec (target ("avx2"))
+            #else
+            __attribute__ ((target ("avx2")))
+            #endif
+            static inline void GB_AxB_saxpy5_unrolled_avx2
+            (
+                GrB_Matrix C,
+                const GrB_Matrix A,
+                const GrB_Matrix B,
+                const int ntasks,
+                const int nthreads,
+                const int64_t *B_slice,
+                GB_Context Context
+            )
+            {
+                #include "GB_AxB_saxpy5_unrolled.c"
+            }
+
+        #endif
+
+            //------------------------------------------------------------------
+            // saxpy5 method unrolled, with no vectors
+            //------------------------------------------------------------------
+
+            #define GB_V16 0
+            #define GB_V8  0
+            #define GB_V4  0
+            static inline void GB_AxB_saxpy5_unrolled_vanilla
+            (
+                GrB_Matrix C,
+                const GrB_Matrix A,
+                const GrB_Matrix B,
+                const int ntasks,
+                const int nthreads,
+                const int64_t *B_slice,
+                GB_Context Context
+            )
+            {
+                #include "GB_AxB_saxpy5_unrolled.c"
+            }
+
+    #endif
 
 
     GrB_Info GB (_Asaxpy5B__plus_times_fp64)
@@ -440,105 +518,10 @@ GrB_Info GB (_AsaxbitB__plus_times_fp64)
         #if GB_DISABLE
         return (GrB_NO_VALUE) ;
         #else
-//      #include "GB_AxB_saxpy5_meta.c"
-
-{
-
-    ASSERT (GB_as_if_full (C)) ;
-    ASSERT (C->vlen == A->vlen) ;
-    ASSERT (C->vdim == B->vdim) ;
-    ASSERT (A->vdim == B->vlen) ;
-    ASSERT (GB_IS_BITMAP (A) || GB_as_if_full (A)) ;
-    ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
-
-    // const int64_t avlen = A->vlen ;
-    // const int64_t avdim = A->vdim ;
-    // const int64_t bnvec = B->nvec ;
-    // const int64_t bvlen = B->vlen ;
-    // const int64_t bvdim = B->vdim ;
-
-    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const bool A_iso = A->iso ;
-
-    //--------------------------------------------------------------------------
-    // C += A*B, no mask, A bitmap/full, B sparse/hyper
-    //--------------------------------------------------------------------------
-
-    #if GB_A_IS_PATTERN
-    {
-        // A is pattern-only
-        if (A_is_bitmap)
-        {
-            #undef  GB_A_IS_BITMAP
-            #define GB_A_IS_BITMAP 1
-            #include "saxpy5_iso_or_pattern.c"
-        }
-        else
-        {
-            #undef  GB_A_IS_BITMAP
-            #define GB_A_IS_BITMAP 0
-            #include "saxpy5_iso_or_pattern.c"
-        }
-    }
-    #else
-    {
-        // A is valued
-        if (A_iso)
-        {
-
-            // A is iso-valued
-            if (A_is_bitmap)
-            { 
-                // A is bitmap, iso-valued, B is sparse/hyper
-                #undef  GB_A_IS_BITMAP
-                #define GB_A_IS_BITMAP 1
-                #include "saxpy5_iso_or_pattern.c"
-            }
-            else
-            { 
-                // A is full, iso-valued, B is sparse/hyper
-                #undef  GB_A_IS_BITMAP
-                #define GB_A_IS_BITMAP 0
-                // #include "GB_AxB_saxpy5_template.c"
-                #include "saxpy5_iso_or_pattern.c"
-            }
-
-        }
-        else
-        {
-            // general case: A is non-iso and valued
-            if (A_is_bitmap)
-            { 
-                // A is bitmap, non-iso-valued, B is sparse/hyper
-                #undef  GB_A_IS_BITMAP
-                #define GB_A_IS_BITMAP 1
-                #include "saxpy5_bitmap.c"
-            }
-            else
-            { 
-                // A is full, non-iso-valued, B is sparse/hyper
-                #undef  GB_A_IS_BITMAP
-                #define GB_A_IS_BITMAP 0
-                // TODO: none of the above should use AVX2 or AVX512.
-                // Place saxpy5_new.c in 2 or 3 functions (AVX512,
-                // AVX2, and generic), and determine from GB_Global
-                // what architecture we're running on, and call the
-                // right function.
-                #include "saxpy5_new.c"
-            }
-        }
-    }
-    #endif
-}
-
-#undef GB_A_IS_BITMAP
-#undef GB_B_IS_HYPER
-
+        #include "GB_AxB_saxpy5_meta.c"
         return (GrB_SUCCESS) ;
         #endif
     }
-
-    #undef GB_AVX512F
 
 #endif
 

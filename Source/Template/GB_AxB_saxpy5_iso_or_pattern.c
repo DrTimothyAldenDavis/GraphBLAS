@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// saxpy5_bitmap.c: C+=A*B when C is full
+// GB_AxB_saxpy5_iso_or_pattern.c: C+=A*B; C full, A bitmap/full and iso/pattern
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -8,33 +8,42 @@
 //------------------------------------------------------------------------------
 
 // C is as-if-full.
-// A is bitmap, and not iso-valued no pattern-only
+// A is bitmap or full, and either iso or pattern-only
 // B is sparse or hypersparse.
 
 {
-
     //--------------------------------------------------------------------------
-    // C += A*B where A is bitmap (and not iso or pattern-only)
+    // get C, A, and B
     //--------------------------------------------------------------------------
 
     const int64_t m = C->vlen ;     // # of rows of C and A
-    const int8_t *restrict Ab = A->b ;
+    #if A_IS_BITMAP
+    const int8_t  *restrict Ab = A->b ;
+    #endif
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
     const bool B_iso = B->iso ;
+    #if !GB_A_IS_PATTERN
     const GB_ATYPE *restrict Ax = (GB_ATYPE *) A->x ;
+    #endif
     #if !GB_B_IS_PATTERN
     const GB_BTYPE *restrict Bx = (GB_BTYPE *) B->x ;
     #endif
           GB_CTYPE *restrict Cx = (GB_CTYPE *) C->x ;
 
     //--------------------------------------------------------------------------
+    // C += A*B where A is bitmap/full, and either iso-valued or pattern-only
+    //--------------------------------------------------------------------------
 
     int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (tid = 0 ; tid < ntasks ; tid++)
     {
+        #if !GB_A_IS_PATTERN
+        // get the iso value of A
+        const GB_ATYPE ax = Ax [0] ;
+        #endif
         // get the task descriptor
         const int64_t jB_start = B_slice [tid] ;
         const int64_t jB_end   = B_slice [tid+1] ;
@@ -48,22 +57,42 @@
             const int64_t pB_end   = Bp [jB+1] ;
             // C(:,j) += A*B(:,j)
             for (int64_t pB = pB_start ; pB < pB_end ; pB++)
-            { 
+            {
                 // get B(k,j)
                 const int64_t k = Bi [pB] ;
-                GB_GETB (bkj, Bx, pB, B_iso) ;
+                #if A_IS_BITMAP
                 // get A(:,k)
                 const int64_t pA = k * m ;
-                // C(:,j) += A(:,k)*B(k,j)
-                for (int64_t i = 0 ; i < m ; i++)
-                { 
-                    if (!Ab [pA+i]) continue ;
-                    // C(i,j) += A(i,k)*B(k,j) ;
-                    GB_MULTADD (Cx [pC + i], Ax [pA + i], bkj, i, k, j) ;
+                #endif
+                #if GB_IS_FIRSTI_MULTIPLIER
+                {
+                    for (int64_t i = 0 ; i < m ; i++)
+                    { 
+                        #if A_IS_BITMAP
+                        if (!Ab [pA + i]) continue ;
+                        #endif
+                        // C(i,j) += (i + GB_OFFSET) ;
+                        GB_CIJ_UPDATE (pC + i, i + GB_OFFSET) ;
+                    }
                 }
+                #else
+                {
+                    // s = ax * bkj
+                    GB_CTYPE s ;
+                    GB_MULT (s, ax, GBX (Bx, pB, B_iso), ignore, k, j) ;
+                    // C(:,j) += s
+                    for (int64_t i = 0 ; i < m ; i++)
+                    { 
+                        #if A_IS_BITMAP
+                        if (!Ab [pA + i]) continue ;
+                        #endif
+                        // C(i,j) += s ;
+                        GB_CIJ_UPDATE (pC + i, s) ;
+                    }
+                }
+                #endif
             }
         }
     }
 }
-
 
