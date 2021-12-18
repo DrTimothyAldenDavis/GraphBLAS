@@ -3379,6 +3379,7 @@
 #define GB_AxB_saxpy3_sym_ss GM_AxB_saxpy3_sym_ss
 #define GB_AxB_saxpy4 GM_AxB_saxpy4
 #define GB_AxB_saxpy4_tasks GM_AxB_saxpy4_tasks
+#define GB_AxB_saxpy5 GM_AxB_saxpy5
 #define GB_AxB_saxpy_generic GM_AxB_saxpy_generic
 #define GB_AxB_saxpy_sparsity GM_AxB_saxpy_sparsity
 #define GB_AxB_semiring_builtin GM_AxB_semiring_builtin
@@ -3645,6 +3646,14 @@
 #define GB_hyper_prune GM_hyper_prune
 #define GB_hyper_realloc GM_hyper_realloc
 #define GB_hyper_shallow GM_hyper_shallow
+#define GB_idiv_int16 GM_idiv_int16
+#define GB_idiv_int32 GM_idiv_int32
+#define GB_idiv_int64 GM_idiv_int64
+#define GB_idiv_int8 GM_idiv_int8
+#define GB_idiv_uint16 GM_idiv_uint16
+#define GB_idiv_uint32 GM_idiv_uint32
+#define GB_idiv_uint64 GM_idiv_uint64
+#define GB_idiv_uint8 GM_idiv_uint8
 #define GB_I_inverse GM_I_inverse
 #define GB_ijlength GM_ijlength
 #define GB_ijproperties GM_ijproperties
