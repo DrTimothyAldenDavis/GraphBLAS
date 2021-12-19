@@ -21,7 +21,7 @@ GrB_Info GB_EVAL3 (prefix, _Monoid_new_, T) /* create a new monoid */       \
     type identity                   /* identity value of the monoid  */     \
 )                                                                           \
 {                                                                           \
-    printf("inside GB_monoid_new\n"); /* FIXME: remove for v6.0.3. stable*/ \
+/*  printf("inside GB_monoid_new\n");*//*FIXME: remove for v6.0.3. stable*/ \
     GB_WHERE1 ("GrB_Monoid_new_" GB_STR(T) " (&monoid, op, identity)") ;    \
     type id = identity ;                                                    \
     return (GB_Monoid_new (monoid, op, &id, NULL, GB_ ## T ## _code,        \

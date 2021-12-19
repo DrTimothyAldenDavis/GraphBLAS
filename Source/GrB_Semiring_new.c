@@ -42,7 +42,7 @@ GrB_Info GrB_Semiring_new           // create a semiring
 )
 {
 
-    printf("inside GrB_semiring_new\n");    // FIXME: remove for v6.0.3 stable
+//  printf("inside GrB_semiring_new\n");    // FIXME: remove for v6.0.3 stable
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -50,15 +50,15 @@ GrB_Info GrB_Semiring_new           // create a semiring
 
     GrB_Info info ;
 
-    printf("About to call GB_WHERE1\n");    // FIXME: remove for v6.0.3 stable
+//  printf("About to call GB_WHERE1\n");    // FIXME: remove for v6.0.3 stable
     GB_WHERE1 ("GrB_Semiring_new (&semiring, add, multiply)") ;
 
-    printf("Done calling GB_WHERE1\n"); // FIXME: remove for v6.0.3 stable
+//  printf("Done calling GB_WHERE1\n"); // FIXME: remove for v6.0.3 stable
 
-    printf("Aout to return if null\n"); // FIXME: remove for v6.0.3 stable
+//  printf("Aout to return if null\n"); // FIXME: remove for v6.0.3 stable
     GB_RETURN_IF_NULL (semiring) ;
 
-    printf("Didn't return!\n"); // FIXME: remove for v6.0.3 stable
+//  printf("Didn't return!\n"); // FIXME: remove for v6.0.3 stable
     (*semiring) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (add) ;
     GB_RETURN_IF_NULL_OR_FAULTY (multiply) ;
@@ -73,12 +73,12 @@ GrB_Info GrB_Semiring_new           // create a semiring
     (*semiring) = GB_MALLOC (1, struct GB_Semiring_opaque, &header_size) ;
     if (*semiring == NULL)
     {
-        printf("alloc failed\n");   // FIXME: remove for v6.0.3 stable
+//      printf("alloc failed\n");   // FIXME: remove for v6.0.3 stable
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    printf("Alloc succeess\n"); // FIXME: remove for v6.0.3 stable
+//  printf("Alloc succeess\n"); // FIXME: remove for v6.0.3 stable
     (*semiring)->header_size = header_size ;
 
     //--------------------------------------------------------------------------

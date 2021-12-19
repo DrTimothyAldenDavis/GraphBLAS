@@ -32,7 +32,7 @@ GrB_Info GB_Monoid_new          // create a monoid
 )
 {
 
-    printf("Inside GB_Monoid_new\n");   // FIXME: remove for v6.0.3 stable
+//  printf("Inside GB_Monoid_new\n");   // FIXME: remove for v6.0.3 stable
 
     //--------------------------------------------------------------------------
     // check inputs
