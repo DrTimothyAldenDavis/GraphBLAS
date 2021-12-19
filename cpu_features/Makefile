@@ -9,5 +9,8 @@ go:
 
 distclean: purge
 
+install:
+	( cd build ; make install )
+
 purge:
 	- rm -rf ./build/*

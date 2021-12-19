@@ -63,6 +63,10 @@
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (tid = 0 ; tid < ntasks ; tid++)
     {
+        #if ! ( GB_V16 || GB_V8 || GB_V4 )
+        // get workspace
+        GB_CTYPE cx [16] ;
+        #endif
         // get the task descriptor
         const int64_t jB_start = B_slice [tid] ;
         const int64_t jB_end   = B_slice [tid+1] ;
@@ -93,7 +97,6 @@
                 v4  c3 = (*((v4u  *) (Cxj + i + 8))) ;
                 v4  c4 = (*((v4u  *) (Cxj + i +12))) ;
                 #else
-                GB_CTYPE cx [16] ;
                 memcpy (cx, Cxj + i, 16 * sizeof (GB_CTYPE)) ;
                 #endif
                 // get A(i,0)
@@ -176,10 +179,8 @@
                         #endif
                         #if GB_V16 || GB_V8 || GB_V4
                         v2 c4 = (*((v2u *) (Cxm + 12))) ;
-                        GB_CTYPE cx [1] ;
-                        cx [0] = Cxm [14] ;
+                        GB_CTYPE c5 = Cxm [14] ;
                         #else
-                        GB_CTYPE cx [15] ;
                         memcpy (cx, Cxm, 15 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-15,0)
@@ -202,7 +203,7 @@
                             #endif
                             #if GB_V16 || GB_V8 || GB_V4
                             GB_CIJ_MULTADD (c4, (*((v2u *) (ax +12))), bkj) ;
-                            GB_CIJ_MULTADD (cx [ 0], ax [14], bkj) ;
+                            GB_CIJ_MULTADD (c5, ax [14], bkj) ;
                             #else
                             GB_CIJ_MULTADD (cx [ 0], ax [ 0], bkj) ;
                             GB_CIJ_MULTADD (cx [ 1], ax [ 1], bkj) ;
@@ -232,7 +233,7 @@
                         #endif
                         #if GB_V16 || GB_V8 || GB_V4
                         (*((v2u *) (Cxm + 12))) = c4 ;
-                        Cxm [14] = cx [0] ;
+                        Cxm [14] = c5 ;
                         #else
                         memcpy (Cxm, cx, 15 * sizeof (GB_CTYPE)) ;
                         #endif
@@ -258,7 +259,6 @@
                         #if GB_V16 || GB_V8 || GB_V4
                         v2 c4 = (*((v2u *) (Cxm + 12))) ;
                         #else
-                        GB_CTYPE cx [14] ;
                         memcpy (cx, Cxm, 14 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-14,0)
@@ -332,10 +332,8 @@
                         v4 c3 = (*((v4u *) (Cxm +  8))) ;
                         #endif
                         #if GB_V16 || GB_V8 || GB_V4
-                        GB_CTYPE cx [1] ;
-                        cx [0] = Cxm [12] ;
+                        GB_CTYPE c4 = Cxm [12] ;
                         #else
-                        GB_CTYPE cx [13] ;
                         memcpy (cx, Cxm, 13 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-13,0)
@@ -357,7 +355,7 @@
                             GB_CIJ_MULTADD (c3, (*((v4u *) (ax + 8))), bkj) ;
                             #endif
                             #if GB_V16 || GB_V8 || GB_V4
-                            GB_CIJ_MULTADD (cx [ 0], ax [12], bkj) ;
+                            GB_CIJ_MULTADD (c4, ax [12], bkj) ;
                             #else
                             GB_CIJ_MULTADD (cx [ 0], ax [ 0], bkj) ;
                             GB_CIJ_MULTADD (cx [ 1], ax [ 1], bkj) ;
@@ -384,7 +382,7 @@
                         (*((v4u *) (Cxm +  8))) = c3 ;
                         #endif
                         #if GB_V16 || GB_V8 || GB_V4
-                        Cxm [12] = cx [0] ;
+                        Cxm [12] = c4 ;
                         #else
                         memcpy (Cxm, cx, 13 * sizeof (GB_CTYPE)) ;
                         #endif
@@ -407,7 +405,6 @@
                         v4 c2 = (*((v4u *) (Cxm +  4))) ;
                         v4 c3 = (*((v4u *) (Cxm +  8))) ;
                         #else
-                        GB_CTYPE cx [12] ;
                         memcpy (cx, Cxm, 12 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-12,0)
@@ -473,10 +470,8 @@
                         v2 c3 = (*((v2u *) (Cxm +  8))) ;
                         #endif
                         #if GB_V16 || GB_V8 || GB_V4
-                        GB_CTYPE cx [1] ;
-                        cx [0] = Cxm [10] ;
+                        GB_CTYPE c4 = Cxm [10] ;
                         #else
-                        GB_CTYPE cx [11] ;
                         memcpy (cx, Cxm, 11 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-11,0)
@@ -498,7 +493,7 @@
                             GB_CIJ_MULTADD (c3, (*((v2u *) (ax + 8))), bkj) ;
                             #endif
                             #if GB_V16 || GB_V8 || GB_V4
-                            GB_CIJ_MULTADD (cx [ 0], ax [10], bkj) ;
+                            GB_CIJ_MULTADD (c4, ax [10], bkj) ;
                             #else
                             GB_CIJ_MULTADD (cx [ 0], ax [ 0], bkj) ;
                             GB_CIJ_MULTADD (cx [ 1], ax [ 1], bkj) ;
@@ -523,7 +518,7 @@
                         (*((v2u *) (Cxm +  8))) = c3 ;
                         #endif
                         #if GB_V16 || GB_V8 || GB_V4
-                        Cxm [10] = cx [0] ;
+                        Cxm [10] = c4 ;
                         #else
                         memcpy (Cxm, cx, 11 * sizeof (GB_CTYPE)) ;
                         #endif
@@ -546,7 +541,6 @@
                         v4 c2 = (*((v4u *) (Cxm +  4))) ;
                         v2 c3 = (*((v2u *) (Cxm +  8))) ;
                         #else
-                        GB_CTYPE cx [10] ;
                         memcpy (cx, Cxm, 10 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-10,0)
@@ -608,10 +602,8 @@
                         v4 c2 = (*((v4u *) (Cxm +  4))) ;
                         #endif
                         #if GB_V16 || GB_V8 || GB_V4
-                        GB_CTYPE cx [1] ;
-                        cx [0] = Cxm [8] ;
+                        GB_CTYPE c3 = Cxm [8] ;
                         #else
-                        GB_CTYPE cx [9] ;
                         memcpy (cx, Cxm, 9 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-9,0)
@@ -631,7 +623,7 @@
                             GB_CIJ_MULTADD (c2, (*((v4u *) (ax + 4))), bkj) ;
                             #endif
                             #if GB_V16 || GB_V8 || GB_V4
-                            GB_CIJ_MULTADD (cx [ 0], ax [ 8], bkj) ;
+                            GB_CIJ_MULTADD (c3, ax [ 8], bkj) ;
                             #else
                             GB_CIJ_MULTADD (cx [ 0], ax [ 0], bkj) ;
                             GB_CIJ_MULTADD (cx [ 1], ax [ 1], bkj) ;
@@ -652,7 +644,7 @@
                         (*((v4u *) (Cxm +  4))) = c2 ;
                         #endif
                         #if GB_V16 || GB_V8 || GB_V4
-                        Cxm [8] = cx [0] ;
+                        Cxm [8] = c3 ;
                         #else
                         memcpy (Cxm, cx, 9 * sizeof (GB_CTYPE)) ;
                         #endif
@@ -673,7 +665,6 @@
                         v4 c1 = (*((v4u *) (Cxm     ))) ;
                         v4 c2 = (*((v4u *) (Cxm +  4))) ;
                         #else
-                        GB_CTYPE cx [8] ;
                         memcpy (cx, Cxm, 8 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-8,0)
@@ -725,10 +716,8 @@
                         #if GB_V16 || GB_V8 || GB_V4
                         v4 c1 = (*((v4u *) (Cxm     ))) ;
                         v2 c2 = (*((v2u *) (Cxm +  4))) ;
-                        GB_CTYPE cx [1] ;
-                        cx [0] = Cxm [6] ;
+                        GB_CTYPE c3 = Cxm [6] ;
                         #else
-                        GB_CTYPE cx [7] ;
                         memcpy (cx, Cxm, 7 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-7,0)
@@ -744,7 +733,7 @@
                             #if GB_V16 || GB_V8 || GB_V4
                             GB_CIJ_MULTADD (c1, (*((v4u *) (ax    ))), bkj) ;
                             GB_CIJ_MULTADD (c2, (*((v2u *) (ax + 4))), bkj) ;
-                            GB_CIJ_MULTADD (cx [ 0], ax [ 6], bkj) ;
+                            GB_CIJ_MULTADD (c3, ax [ 6], bkj) ;
                             #else
                             GB_CIJ_MULTADD (cx [ 0], ax [ 0], bkj) ;
                             GB_CIJ_MULTADD (cx [ 1], ax [ 1], bkj) ;
@@ -759,7 +748,7 @@
                         #if GB_V16 || GB_V8 || GB_V4
                         (*((v4u *) (Cxm     ))) = c1 ;
                         (*((v2u *) (Cxm +  4))) = c2 ;
-                        Cxm [6] = cx [0] ;
+                        Cxm [6] = c3 ;
                         #else
                         memcpy (Cxm, cx, 7 * sizeof (GB_CTYPE)) ;
                         #endif
@@ -778,7 +767,6 @@
                         v4 c1 = (*((v4u *) (Cxm     ))) ;
                         v2 c2 = (*((v2u *) (Cxm +  4))) ;
                         #else
-                        GB_CTYPE cx [6] ;
                         memcpy (cx, Cxm, 6 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-6,0)
@@ -823,10 +811,8 @@
                         GB_CTYPE *restrict Cxm = Cxj + m - 5 ;
                         #if GB_V16 || GB_V8 || GB_V4
                         v4 c1 = (*((v4u *) (Cxm))) ;
-                        GB_CTYPE cx [1] ;
-                        cx [0] = Cxm [4] ;
+                        GB_CTYPE c2 = Cxm [4] ;
                         #else
-                        GB_CTYPE cx [5] ;
                         memcpy (cx, Cxm, 5 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-5,0)
@@ -841,7 +827,7 @@
                             // C(m-5:m-1,j) += A(m-5:m-1,k)*B(k,j)
                             #if GB_V16 || GB_V8 || GB_V4
                             GB_CIJ_MULTADD (c1, (*((v4u *) (ax    ))), bkj) ;
-                            GB_CIJ_MULTADD (cx [ 0], ax [ 4], bkj) ;
+                            GB_CIJ_MULTADD (c2, ax [ 4], bkj) ;
                             #else
                             GB_CIJ_MULTADD (cx [ 0], ax [ 0], bkj) ;
                             GB_CIJ_MULTADD (cx [ 1], ax [ 1], bkj) ;
@@ -853,7 +839,7 @@
                         // save C(m-5:m-1,j)
                         #if GB_V16 || GB_V8 || GB_V4
                         (*((v4u *) (Cxm))) = c1 ;
-                        Cxm [4] = cx [0] ;
+                        Cxm [4] = c2 ;
                         #else
                         memcpy (Cxm, cx, 5 * sizeof (GB_CTYPE)) ;
                         #endif
@@ -871,7 +857,6 @@
                         #if GB_V16 || GB_V8 || GB_V4
                         v4 c1 = (*((v4u *) (Cxm))) ;
                         #else
-                        GB_CTYPE cx [4] ;
                         memcpy (cx, Cxm, 4 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-4,0)
@@ -912,10 +897,8 @@
                         GB_CTYPE *restrict Cxm = Cxj + m - 3 ;
                         #if GB_V16 || GB_V8 || GB_V4
                         v2 c1 = (*((v2u *) (Cxm))) ;
-                        GB_CTYPE cx [1] ;
-                        cx [0] = Cxm [2] ;
+                        GB_CTYPE c2 = Cxm [2] ;
                         #else
-                        GB_CTYPE cx [3] ;
                         memcpy (cx, Cxm, 3 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-3,0)
@@ -930,7 +913,7 @@
                             // C(m-3:m-1,j) += A(m-3:m-1,k)*B(k,j)
                             #if GB_V16 || GB_V8 || GB_V4
                             GB_CIJ_MULTADD (c1, (*((v2u *) ax)), bkj) ;
-                            GB_CIJ_MULTADD (cx [ 0], ax [ 2], bkj) ;
+                            GB_CIJ_MULTADD (c2, ax [ 2], bkj) ;
                             #else
                             GB_CIJ_MULTADD (cx [ 0], ax [ 0], bkj) ;
                             GB_CIJ_MULTADD (cx [ 1], ax [ 1], bkj) ;
@@ -940,7 +923,7 @@
                         // save C(m-3:m-1,j)
                         #if GB_V16 || GB_V8 || GB_V4
                         (*((v2u *) (Cxm))) = c1 ;
-                        Cxm [2] = cx [0] ;
+                        Cxm [2] = c1 ;
                         #else
                         memcpy (Cxm, cx, 3 * sizeof (GB_CTYPE)) ;
                         #endif
@@ -958,7 +941,6 @@
                         #if GB_V16 || GB_V8 || GB_V4
                         v2 c1 = (*((v2u *) (Cxm))) ;
                         #else
-                        GB_CTYPE cx [2] ;
                         memcpy (cx, Cxm, 2 * sizeof (GB_CTYPE)) ;
                         #endif
                         // get A(m-2,0)
@@ -995,8 +977,7 @@
                     {
                         // load C(m-1,j)
                         GB_CTYPE *restrict Cxm = Cxj + m - 1 ;
-                        GB_CTYPE cx [1] ;
-                        cx [0] = Cxm [0] ;
+                        GB_CTYPE c1 = Cxm [0] ;
                         // get A(m-1,0)
                         const GB_ATYPE *restrict Axm = Ax + m - 1 ;
                         for (int64_t pB = pB_start ; pB < pB_end ; pB++)
@@ -1007,10 +988,10 @@
                             // get A(m-1,k)
                             const GB_ATYPE *restrict ax = Axm + (k * m) ;
                             // C(m-1,j) += A(m-1,k)*B(k,j)
-                            GB_CIJ_MULTADD (cx [0], ax [0], bkj) ;
+                            GB_CIJ_MULTADD (c1, ax [0], bkj) ;
                         }
                         // save C(m-1,j)
-                        Cxm [0] = cx [0] ;
+                        Cxm [0] = c1 ;
                     }
                     break ;
 
