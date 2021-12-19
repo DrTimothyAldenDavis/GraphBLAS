@@ -101,9 +101,9 @@ endif ( )
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 if ( GBCOMPACT )
-    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../cpu_features/include ../lz4 ../rmm_wrap )
 else ( )
-    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 ../Source/Generated2 )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../cpu_features/include ../lz4 ../rmm_wrap ../Source/Generated2 )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -171,6 +171,11 @@ if ( OPENMP_FOUND )
     set ( USE_OPENMP true )
 endif ( )
 
+set (BUILD_TESTING off)
+message ( STATUS "Adding cpu_features (by google.com): " )
+add_subdirectory (../cpu_features build)
+include_directories ( "../cpu_features/include" )
+
 #-------------------------------------------------------------------------------
 # select the math library (not required for Microsoft Visual Studio)
 #-------------------------------------------------------------------------------
@@ -182,6 +187,7 @@ else ( )
 endif ( )
 
 target_link_libraries ( graphblas_renamed PUBLIC ${M_LIB} )
+target_link_libraries ( graphblas_renamed PUBLIC cpu_features )
 
 #-------------------------------------------------------------------------------
 # add the OpenMP, CUDA, BLAS, ... libraries
