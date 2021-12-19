@@ -923,7 +923,7 @@
                         // save C(m-3:m-1,j)
                         #if GB_V16 || GB_V8 || GB_V4
                         (*((v2u *) (Cxm))) = c1 ;
-                        Cxm [2] = c1 ;
+                        Cxm [2] = c2 ;
                         #else
                         memcpy (Cxm, cx, 3 * sizeof (GB_CTYPE)) ;
                         #endif
