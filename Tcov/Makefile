@@ -26,7 +26,8 @@ SRC = tmp_source/*
 INC = tmp_include/*
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
-LDFLAGS = -fopenmp ../cpu_features/build/libcpu_features.a
+LDFLAGS = -fopenmp
+LIBS = -L../cpu_features/build -lcpu_features
 CFLAGS = -g -std=c11 -fopenmp -fexceptions -fPIC -Wno-pragmas
 CPPFLAGS = -Itmp_include -I../cpu_features/include -I../rmm_wrap -DGBCOVER $(RENAME)
 SO_OPTS = $(LDFLAGS)
@@ -48,7 +49,7 @@ default: $(SO_NAME)
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $(notdir $@)
 
 $(SO_NAME): $(OBJ)
-	$(CC) $(SO_OPTS) $^ -o $@ -lm
+	$(CC) $(SO_OPTS) $^ $(LIBS) -o $@ -lm
 
 .KEEP: $(OBJ)
 
