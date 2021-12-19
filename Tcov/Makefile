@@ -28,7 +28,7 @@ SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
 LDFLAGS = -fopenmp
 CFLAGS = -g -std=c11 -fopenmp -fexceptions -fPIC -Wno-pragmas
-CPPFLAGS = -Itmp_include -DGBCOVER $(RENAME)
+CPPFLAGS = -Itmp_include -I../cpu_features/include -I../rmm_wrap -DGBCOVER $(RENAME)
 SO_OPTS = $(LDFLAGS)
 
 ifeq ($(UNAME),Darwin)

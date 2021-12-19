@@ -40,7 +40,7 @@ cfiles = [ dir('../Test/GB_mx_*.c') ; dir('GB_cover_util.c') ; ] ;
 hfiles = [ dir('../Test/*.h') ; dir('../Test/Template/*.c') ] ;
 
 % list of include directories
-inc = '-Itmp_include -I../Test -I../Test/Template -I../lz4 -I../cpu_features -I../rmm_wrap' ;
+inc = '-Itmp_include -I../Test -I../Test/Template -I../lz4 -I../cpu_features/include -I../rmm_wrap' ;
 
 have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 if (have_octave)
