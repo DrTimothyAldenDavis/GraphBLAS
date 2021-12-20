@@ -163,14 +163,14 @@ void GB_macrofy_mask       // return enum to define mask macros
         //----------------------------------------------------------------------
 
         case 0 :    // mask not complemented
-            f = "#define GB_MTYPE (no mask present)\n"
-                "#define MX(p)    (no mask present)\n"
+            f = "#define GB_MTYPE false\n" //(no mask present)\n"
+                "#define MX(p)    false\n" //(no mask present)\n"
                 "#define GB_MASK_COMP false" ;
             break ;
 
         case 1 :    // mask complemented
-            f = "#define GB_MTYPE (no mask present)\n"
-                "#define MX(p)    (no mask present)\n"
+            f = "#define GB_MTYPE false\n" //(no mask present)\n"
+                "#define MX(p)    false\n" //(no mask present)\n"
                 "#define GB_MASK_COMP true" ;
             break ;
 

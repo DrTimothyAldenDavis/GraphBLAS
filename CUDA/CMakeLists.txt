@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.20.1)
 
 project(GRAPHBLAS_CUDA VERSION 0.1 LANGUAGES CXX CUDA)
 
-set(CMAKE_CUDA_FLAGS "-cudart static")
+set(CMAKE_CUDA_FLAGS "-cudart static -lineinfo -G")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC")
 set(CMAKE_C_STANDARD 11)

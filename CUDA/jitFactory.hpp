@@ -102,7 +102,7 @@ const std::vector<std::string> compiler_flags{
    "-I../../Source/Template",
    "-I../local_cub/block",
    "-I../templates",
-   "-I/usr/local/cuda/include"
+   "-I/usr/local/cuda/include",
 };
 
 const std::vector<std::string> header_names ={};
@@ -135,25 +135,6 @@ public:
 
       dim3 grid(gridsz);
       dim3 block(blocksz);
-
-      std::string hashable_name = base_name + "_" + kernel_name;
-
-
-
-//      std::string hashable_name = base_name + "_" + kernel_name;
-//      std::cout<< kernel_name<<
-//                      " with types "<<GET_TYPE_NAME(dumC)<<","
-//                                    <<GET_TYPE_NAME(dumM)<<","
-//                                    <<GET_TYPE_NAME(dumA)<<","
-//                                    <<GET_TYPE_NAME(dumB)<<std::endl;
-
-//      std::stringstream string_to_be_jitted ;
-//      string_to_be_jitted <<
-//      kernel_name << R"("
-//      #include )" << hashable_name << R"(".cu")";
-
-      // dump it:
-
 
     std::cout << "Semiring: " << semiring << std::endl;
 
@@ -194,6 +175,7 @@ public:
     std::stringstream string_to_be_jitted ;
     std::vector<std::string> template_types = {GET_TYPE_NAME(dumM)};
 
+      std::string hashable_name = base_name + "_" + kernel_name;
       string_to_be_jitted << hashable_name << std::endl <<
       R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mysemiringfactory.filename << R"(")" << std::endl <<
       R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
