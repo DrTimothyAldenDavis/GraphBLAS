@@ -17,7 +17,7 @@
     //--------------------------------------------------------------------------
 
     const int64_t m = C->vlen ;     // # of rows of C and A
-    #if A_IS_BITMAP
+    #if GB_A_IS_BITMAP
     const int8_t  *restrict Ab = A->b ;
     #endif
     const int64_t *restrict Bp = B->p ;
@@ -60,39 +60,32 @@
             {
                 // get B(k,j)
                 const int64_t k = Bi [pB] ;
-                #if A_IS_BITMAP
+                #if GB_A_IS_BITMAP
                 // get A(:,k)
                 const int64_t pA = k * m ;
                 #endif
                 #if GB_IS_FIRSTI_MULTIPLIER
-                {
-                    for (int64_t i = 0 ; i < m ; i++)
-                    { 
-                        #if A_IS_BITMAP
-                        if (!Ab [pA + i]) continue ;
-                        #endif
-                        // C(i,j) += (i + GB_OFFSET) ;
-                        GB_CIJ_UPDATE (pC + i, i + GB_OFFSET) ;
-                    }
-                }
+                    // s depends on i
+                    printf ("#") ;
+                    #define s (i + GB_OFFSET)
                 #else
-                {
-                    // s = ax * bkj
+                    // s = ax * bkj, not dependent on i
                     GB_CTYPE s ;
                     GB_MULT (s, ax, GBX (Bx, pB, B_iso), ignore, k, j) ;
-                    // C(:,j) += s
-                    for (int64_t i = 0 ; i < m ; i++)
-                    { 
-                        #if A_IS_BITMAP
-                        if (!Ab [pA + i]) continue ;
-                        #endif
-                        // C(i,j) += s ;
-                        GB_CIJ_UPDATE (pC + i, s) ;
-                    }
-                }
                 #endif
+                // C(:,j) += s
+                for (int64_t i = 0 ; i < m ; i++)
+                { 
+                    #if GB_A_IS_BITMAP
+                    if (!Ab [pA + i]) continue ;
+                    #endif
+                    // C(i,j) += s ;
+                    GB_CIJ_UPDATE (pC + i, s) ;
+                }
             }
         }
     }
 }
+
+#undef s
 

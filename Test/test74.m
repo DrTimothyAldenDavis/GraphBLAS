@@ -94,7 +94,9 @@ for k0 = 1:size(m_list,2)
 
                 n_semirings = n_semirings + 1 ;
                 fprintf ('.') ;
-                % fprintf ('[%s.%s.%s]', addop, mulop, semiring_type) ;
+                if (test_contains (mulop, 'firsti'))
+                    fprintf ('[%s.%s.%s]', addop, mulop, semiring_type) ;
+                end
 
                 AT.class = semiring_type ;
                 A.class = semiring_type ;
@@ -103,8 +105,8 @@ for k0 = 1:size(m_list,2)
                 A_bitmap.class = semiring_type ;
                 B_bitmap.class = semiring_type ;
                 F.class = monoid.optype ;
-                Afull.class = monoid.optype ;
-                Bfull.class = monoid.optype ;
+                Afull.class = semiring_type ;
+                Bfull.class = semiring_type ;
 
                 % C<M> = A'*B, with Mask, no typecasting
                 C1 = GB_mex_mxm  (C, M, [ ], semiring, AT, B, dtn) ;
@@ -181,6 +183,21 @@ for k0 = 1:size(m_list,2)
                     C1 = GB_mex_mxm_update  (F, semiring, A, Bfull, [ ]) ;
                     C0 = GB_spec_mxm (F, [ ], monoid, semiring, A, Bfull, [ ]) ;
                     GB_spec_compare (C0, C1, identity) ;
+
+                    % F += A_iso_full * B
+                    Afull.iso = true ;
+                    C1 = GB_mex_mxm_update  (F, semiring, Afull, B, [ ]) ;
+                    C0 = GB_spec_mxm (F, [ ], monoid, semiring, Afull, B, [ ]) ;
+                    GB_spec_compare (C0, C1, identity) ;
+                    Afull.iso = false ;
+
+% save gunk F semiring A_bitmap B monoid identity
+                    % F += A_iso_bitmap * B
+                    % A_bitmap.iso = true ;
+                    C1 = GB_mex_mxm_update  (F, semiring, A_bitmap, B, [ ]) ;
+                    C0 = GB_spec_mxm (F, [ ], monoid, semiring, A_bitmap, B, [ ]) ;
+                    GB_spec_compare (C0, C1, identity) ;
+                    % A_bitmap.iso = false ;
 
                 end
 
