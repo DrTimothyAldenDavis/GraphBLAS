@@ -46,6 +46,12 @@ for k0 = 1:size(m_list,2)
     A_bitmap = A ; A_bitmap.sparsity = 4 ;
     B_bitmap = B ; B_bitmap.sparsity = 4 ;
 
+    Bfull = GB_spec_random (k,n,inf,2,'none') ;
+    Bfull.sparsity = 8 ;
+
+    Afull = GB_spec_random (m,k,inf,2,'none') ;
+    Afull.sparsity = 8 ;
+
     clear AT
     AT = A ;
     AT.matrix  = A.matrix.' ;
@@ -97,6 +103,8 @@ for k0 = 1:size(m_list,2)
                 A_bitmap.class = semiring_type ;
                 B_bitmap.class = semiring_type ;
                 F.class = monoid.optype ;
+                Afull.class = monoid.optype ;
+                Bfull.class = monoid.optype ;
 
                 % C<M> = A'*B, with Mask, no typecasting
                 C1 = GB_mex_mxm  (C, M, [ ], semiring, AT, B, dtn) ;
@@ -132,6 +140,49 @@ for k0 = 1:size(m_list,2)
                 C1 = GB_mex_mxm  (F, [ ], monoid, semiring, A, B_bitmap, [ ]) ;
                 C0 = GB_spec_mxm (F, [ ], monoid, semiring, A, B, [ ]) ;
                 GB_spec_compare (C0, C1, identity) ;
+
+                if (isequal (monoid.opname, 'times'))
+
+                    F2 = F ;
+                    F2.matrix = F2.matrix / max (F2.matrix, [ ], 'all') ;
+                    A2 = A ;
+                    A2.matrix = A2.matrix / max (A2.matrix, [ ], 'all') ;
+                    B2 = B ;
+                    B2.matrix = B2.matrix / max (B2.matrix, [ ], 'all') ;
+                    A3 = Afull ;
+                    A3.matrix = A3.matrix / max (A3.matrix, [ ], 'all') ;
+                    B3 = Bfull ;
+                    B3.matrix = B3.matrix / max (B3.matrix, [ ], 'all') ;
+
+                    % F2 += A * B
+                    C1 = GB_mex_mxm_update  (F2, semiring, A2, B2, [ ]) ;
+                    C0 = GB_spec_mxm (F2, [ ], monoid, semiring, A2, B2, [ ]) ;
+                    GB_spec_compare (C0, C1, identity) ;
+                    % F2 += A3 * B
+                    C1 = GB_mex_mxm_update  (F2, semiring, A3, B2, [ ]) ;
+                    C0 = GB_spec_mxm (F2, [ ], monoid, semiring, A3, B2, [ ]) ;
+                    GB_spec_compare (C0, C1, identity) ;
+                    % F2 += A2 * B3
+                    C1 = GB_mex_mxm_update  (F2, semiring, A2, B3, [ ]) ;
+                    C0 = GB_spec_mxm (F2, [ ], monoid, semiring, A2, B3, [ ]) ;
+                    GB_spec_compare (C0, C1, identity) ;
+
+                else
+
+                    % F += A * B
+                    C1 = GB_mex_mxm_update  (F, semiring, A, B, [ ]) ;
+                    C0 = GB_spec_mxm (F, [ ], monoid, semiring, A, B, [ ]) ;
+                    GB_spec_compare (C0, C1, identity) ;
+                    % F += Afull * B
+                    C1 = GB_mex_mxm_update  (F, semiring, Afull, B, [ ]) ;
+                    C0 = GB_spec_mxm (F, [ ], monoid, semiring, Afull, B, [ ]) ;
+                    GB_spec_compare (C0, C1, identity) ;
+                    % F += A * Bfull
+                    C1 = GB_mex_mxm_update  (F, semiring, A, Bfull, [ ]) ;
+                    C0 = GB_spec_mxm (F, [ ], monoid, semiring, A, Bfull, [ ]) ;
+                    GB_spec_compare (C0, C1, identity) ;
+
+                end
 
             end
             end

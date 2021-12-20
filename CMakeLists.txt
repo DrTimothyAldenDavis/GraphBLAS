@@ -26,7 +26,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Dec 20, 2021")
+set ( GraphBLAS_DATE "Dec 21, 2021")
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   3 )
@@ -92,12 +92,11 @@ else ( )
         else ( )
             # CUDA 11.2 or later present
             enable_language ( CUDA )
-            message ( STATUS "CUDA: enabled")
             set ( CMAKE_CUDA on )
         endif ()
     else ( )
         # without CUDA:
-        message ( STATUS "CUDA: not enabled")
+        message ( STATUS "CUDA: not found")
         set ( CMAKE_CUDA off )
     endif ( )
 
@@ -170,87 +169,38 @@ configure_file (
 )
 
 #-------------------------------------------------------------------------------
-# find OpenMP
+# find OpenMP, CUDA, RMM, and cpu_features
 #-------------------------------------------------------------------------------
 
 find_package ( OpenMP )
-
-#-------------------------------------------------------------------------------
-# find Intel IPP (FUTURE)
-#-------------------------------------------------------------------------------
-
-# Intel(R) IPP not yet supported
-# find_package ( IPP )
-
-#-------------------------------------------------------------------------------
-# add CUDA
-#-------------------------------------------------------------------------------
 
 if ( CMAKE_CUDA )
     set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
     add_subdirectory(CUDA)
     set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES})
     link_directories ( "CUDA" ${CUDA_LIBRARIES})
-
-    # TODO: Need to be able to enable this. For now, use make already in ${REPO_ROOT}/CUDA
-    #add_subdirectory("CUDA")
 else ( )
     set ( CMAKE_CUDA_FLAG " " )
     set ( GB_CUDA )
 endif ( )
 
-# TODO: Eventually this should be nested under CMAKE_CUDA conditional(?)
 if ( CMAKE_CUDA )
-    message ( STATUS "RMM enabled" )
+    message ( STATUS "CUDA: enabled" )
     set ( CMAKE_RMM_FLAG " -DGBRMM" )
     set ( GB_RMM rmm_wrap ${CUDA_LIBRARIES} stdc++ )
     add_subdirectory(rmm_wrap)
     include_directories ( "rmm_wrap" ${CUDA_INCLUDE_DIRS})
     link_directories ( "CUDA" "${CUDA_LIBRARIES}" "/usr/local/cuda/lib64/stubs" "rmm_wrap"  )
 else ( )
-    message ( STATUS "RMM not enabled" )
+    message ( STATUS "CUDA: not enabled" )
     set ( CMAKE_RMM_FLAG " " )
     set ( GB_RMM )
 endif ( )
 
-#-------------------------------------------------------------------------------
-# add cpu_features
-#-------------------------------------------------------------------------------
-
-set (BUILD_TESTING off)
+set ( BUILD_TESTING off )
 message ( STATUS "Adding cpu_features (by google.com): " )
-add_subdirectory (cpu_features)
+add_subdirectory ( cpu_features )
 include_directories ( "cpu_features/include" )
-
-#-------------------------------------------------------------------------------
-# find the BLAS (FUTURE)
-#-------------------------------------------------------------------------------
-
-#   if ( CMAKE_VERSION VERSION_GREATER "3.13" )
-#       # Look for the parallel 64-bit MKL BLAS by default
-#       set ( BLA_VENDOR OpenBLAS )
-#       include ( FindBLAS )
-#       if ( ${BLAS_FOUND} )
-#           message ( STATUS "CBLAS : found" )
-#           set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -lopenblas " )
-#       else ( )
-#           message ( STATUS "CBLAS : not found" )
-#           # FUTURE: enable other BLAS flavors here
-#           # set ( BLA_VENDOR ... )
-#           # include ( FindBLAS )
-#       endif ( )
-#   endif ( )
-
-#   if ( ${BLAS_FOUND} )
-#       # BLAS_LINKER_FLAGS: uncached list of required linker flags
-#       # (excluding -l and -L).
-#       message ( STATUS "CBLAS:                     found" )
-#       message ( STATUS "CBLAS linker flags:        " ${BLAS_LINKER_FLAGS} )
-#       # BLAS_LIBRARIES: list of libraries to link against (may be empty)
-#       message ( STATUS "CBLAS libraries:    " ${BLAS_LIBRARIES} )
-#   else ( )
-#       message ( STATUS "CBLAS:                     not found" )
-#   endif ( )
 
 #-------------------------------------------------------------------------------
 # report status
@@ -265,12 +215,7 @@ else ( )
 endif ( )
 
 message ( STATUS "CMAKE compiler ID:         " ${CMAKE_C_COMPILER_ID} )
-if ( USE_OPENMP )
-    message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
-else ( )
-    message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
-    message ( STATUS "CMAKE OpenMP disabled" )
-endif ( )
+message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 
 #-------------------------------------------------------------------------------
 # include directories for both graphblas and graphblasdemo libraries
@@ -412,16 +357,6 @@ if ( BUILD_GRB_STATIC_LIBRARY )
 endif ( )
 
 #-------------------------------------------------------------------------------
-# select the threading library
-#-------------------------------------------------------------------------------
-
-if ( OPENMP_FOUND )
-#   set this to 'false' if you do not want OpenMP
-#   set ( USE_OPENMP false )
-    set ( USE_OPENMP true )
-endif ( )
-
-#-------------------------------------------------------------------------------
 # select the math library (not required for Microsoft Visual Studio)
 #-------------------------------------------------------------------------------
 
@@ -442,7 +377,7 @@ endif ( )
 
 target_link_libraries ( graphblas PUBLIC cpu_features )
 
-if ( USE_OPENMP )
+if ( OPENMP_FOUND )
     message ( STATUS "CMAKE OpenMP libraries:    " ${OpenMP_C_LIBRARIES} )
     message ( STATUS "CMAKE OpenMP include:      " ${OpenMP_C_INCLUDE_DIRS} )
     target_link_libraries ( graphblas PUBLIC ${OpenMP_C_LIBRARIES} )
@@ -454,36 +389,12 @@ if ( USE_OPENMP )
     include_directories ( ${OpenMP_C_INCLUDE_DIRS} )
 endif ( )
 
-# Intel(R) IPP not yet supported
-#   message ( STATUS "CMAKE have IPP:            " ${IPP_FOUND} )
-#   if ( IPP_FOUND )
-#       message ( STATUS "Intel(R) IPP variant:      " ${IPP_TL_VARIANT} )
-#       message ( STATUS "Intel(R) IPP arch:         " ${IPP_ARCH} )
-#       message ( STATUS "Intel(R) IPP version:      " ${IPP_VERSION} )
-#       set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAVE_IPP=1 " )
-#       target_link_libraries ( graphblas PUBLIC ippdc ippcore )
-#       if ( BUILD_GRB_STATIC_LIBRARY )
-#           target_link_libraries ( graphblas_static PUBLIC ippdc ippcore )
-#       endif ( )
-#   endif ( )
-
 if ( CMAKE_CUDA )
     target_link_libraries ( graphblas PUBLIC ${GB_CUDA} ${GB_RMM} )
     if ( BUILD_GRB_STATIC_LIBRARY )
         target_link_libraries ( graphblas_static PUBLIC ${GB_CUDA} ${GB_RMM} )
     endif ( )
 endif ( )
-
-#-------------------------------------------------------------------------------
-# add the BLAS
-#-------------------------------------------------------------------------------
-
-# if ( BLAS_FOUND )
-#     # use the dense CBLAS
-#     message ( STATUS "Using dense CBLAS for faster dense matrix/vector operations" )
-#     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAS_CBLAS " )
-#     target_link_libraries ( graphblas PUBLIC ${BLAS_LIBRARIES} )
-# endif ( )
 
 #-------------------------------------------------------------------------------
 # print final C flags
