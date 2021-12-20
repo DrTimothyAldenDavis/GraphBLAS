@@ -53,10 +53,11 @@ static inline void *GB_werk_push    // return pointer to newly allocated space
 
     size_t size ;
     if (Context == NULL || nitems > GB_WERK_SIZE || size_of_item > GB_WERK_SIZE
-        #ifdef GBCOVER
+// FIXME
+//        #ifdef GBCOVER
         // Werk stack can be disabled for test coverage
         || (GB_Global_hack_get (1) != 0)
-        #endif
+//        #endif
     )
     { 
         // no context, or werkspace is too large to allocate from the Werk stack

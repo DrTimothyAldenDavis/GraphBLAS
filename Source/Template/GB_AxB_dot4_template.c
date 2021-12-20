@@ -516,11 +516,11 @@
         // C += A'*B: with workspace W for transposing B, one panel at a time
         //----------------------------------------------------------------------
 
-        size_t W_size ;
-        GB_CTYPE *restrict W = NULL ;
+        size_t W_size = 0 ;
+        GB_BTYPE *restrict W = NULL ;
         if (bvdim > 1)
         {
-            W = GB_MALLOC (wp * vlen, GB_CTYPE, &W_size) ;
+            W = GB_MALLOC_WORK (wp * vlen, GB_BTYPE, &W_size) ;
             if (W == NULL)
             { 
                 // out of memory
@@ -774,7 +774,7 @@
         }
 
         // free workspace
-        GB_FREE (&W, W_size) ;
+        GB_FREE_WORK (&W, W_size) ;
     }
     #endif
 
