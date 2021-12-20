@@ -66,7 +66,6 @@
                 #endif
                 #if GB_IS_FIRSTI_MULTIPLIER
                     // s depends on i
-                    printf ("#") ;
                     #define s (i + GB_OFFSET)
                 #else
                     // s = ax * bkj, not dependent on i
