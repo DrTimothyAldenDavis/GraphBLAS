@@ -549,13 +549,8 @@
 
                     const GB_BTYPE *restrict G = Bx + j1 * vlen ;
                     int tid ;
-                    #if (! defined ( GBCOVER ))
-                    // test coverage on hypersparse with MATLAB 2020b and
-                    // libiomp triggers a segfault on a small problem with 1
-                    // thread and 1 task (testca, built-in complex).
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(dynamic,1)
-                    #endif
                     for (tid = 0 ; tid < ntasks ; tid++)
                     {
                         // get the task descriptor
@@ -567,7 +562,7 @@
                             const int64_t pA = Ap [i] ;
                             const int64_t pA_end = Ap [i+1] ;
                             // cx [0] = C(i,j1)
-                            GB_CTYPE cx [0] ;
+                            GB_CTYPE cx [1] ;
                             GB_GET4C (cx [0], i + j1*cvlen) ;
                             // cx [0] += A (:,i)'*G
                             for (int64_t p = pA ; p < pA_end ; p++)
