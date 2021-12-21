@@ -75,9 +75,6 @@ GB_mex_hack (hack) ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
-logstat ('test239',t) ; % test GxB_eWiseUnion
-logstat ('test74' ,t) ; % test GrB_mxm on all semirings
-
 % disable the Werk stack for these tests:
 hack (2) = 1 ;
 GB_mex_hack (hack) ;
@@ -105,6 +102,8 @@ logstat ('test151b',t); % test bshift operator
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
+logstat ('test239',t) ; % test GxB_eWiseUnion
+logstat ('test74' ,t) ; % test GrB_mxm on all semirings
 logstat ('test235',t) ; % test GxB_eWiseUnion and GrB_eWiseAdd
 logstat ('test234',t) ; % test GxB_eWiseUnion
 logstat ('test233',t) ; % test bitmap saxpy C=A*B with A sparse and B bitmap
