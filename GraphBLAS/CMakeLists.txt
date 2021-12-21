@@ -201,16 +201,6 @@ if ( USE_OPENMP )
     include_directories ( ${OpenMP_C_INCLUDE_DIRS} )
 endif ( )
 
-# Intel(R) IPP not yet supported
-#   message ( STATUS "CMAKE have IPP:            " ${IPP_FOUND} )
-#   if ( IPP_FOUND )
-#       message ( STATUS "Intel(R) IPP variant:      " ${IPP_TL_VARIANT} )
-#       message ( STATUS "Intel(R) IPP arch:         " ${IPP_ARCH} )
-#       message ( STATUS "Intel(R) IPP version:      " ${IPP_VERSION} )
-#       set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAVE_IPP=1 " )
-#       target_link_libraries ( graphblas_renamed PUBLIC ippdc ippcore )
-#   endif ( )
-
 #-------------------------------------------------------------------------------
 # print final C flags
 #-------------------------------------------------------------------------------
