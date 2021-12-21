@@ -7,7 +7,6 @@ function grbcov
 clear all
 tstart = tic ;
 system ('make purge') ;
-system ('cd ../cpu_features ; make') ;
 grbmake ;
 testcov ;
 grbshow ;
