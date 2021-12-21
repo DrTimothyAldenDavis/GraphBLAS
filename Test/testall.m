@@ -76,11 +76,13 @@ GB_mex_hack (hack) ;
 %----------------------------------------
 
 logstat ('testca',t) ;  % test complex mxm, mxv, and vxm
+logstat ('test240',t) ; % test dot4 and saxpy5
 
 % disable the Werk stack for these tests:
 hack (2) = 1 ;
 GB_mex_hack (hack) ;
 
+logstat ('test240',t) ; % test dot4 and saxpy5 again
 logstat ('testca',t) ;  % test complex mxm, mxv, and vxm
 logstat ('test238',t) ; % test GrB_mxm (dot4 and dot2)
 logstat ('test237',t) ; % test GrB_mxm (saxpy4)
