@@ -25,7 +25,7 @@
 // complex macros
 //------------------------------------------------------------------------------
 
-#if ( _MSC_VER && !__INTEL_COMPILER )
+#if GB_COMPILER_MSC
 
     //--------------------------------------------------------------------------
     // Microsoft Visual Studio compiler with its own complex type

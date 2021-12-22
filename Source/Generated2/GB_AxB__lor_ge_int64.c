@@ -195,7 +195,8 @@
     1
 
 // 1 if monoid update can be done with an OpenMP atomic update, 0 otherwise
-#if GB_MICROSOFT
+#if GB_COMPILER_MSC
+    /* MS Visual Studio only has OpenMP 2.0, with fewer atomics */
     #define GB_HAS_OMP_ATOMIC \
         0
 #else
@@ -421,50 +422,17 @@ GrB_Info GB (_AsaxbitB__lor_ge_int64)
     #if GB_DISABLE
     #elif ( !GB_A_IS_PATTERN )
 
-        #if defined ( CPU_FEATURES_ARCH_X86 )           \
-            && GB_SEMIRING_HAS_AVX_IMPLEMENTATION
+        //----------------------------------------------------------------------
+        // saxpy5 method with vectors of length 8 for double, 16 for single
+        //----------------------------------------------------------------------
 
-            //------------------------------------------------------------------
-            // saxpy5 method with vectors of length 4 for double, 8 for single
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // saxpy5 method with vectors of length 8 for double, 16 for single
-            //------------------------------------------------------------------
+        #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX512F
 
             // TODO use GB_V16 for FP32
             #define GB_V16 0
             #define GB_V8  1
             #define GB_V4  1
-            #if defined ( CPU_FEATURES_COMPILER_MSC )
-            __declspec (target ("avx512f"))
-            #else
-            __attribute__ ((target ("avx512f")))
-            #endif
-            static inline void GB_AxB_saxpy5_unrolled_avx512f
-            (
-                GrB_Matrix C,
-                const GrB_Matrix A,
-                const GrB_Matrix B,
-                const int ntasks,
-                const int nthreads,
-                const int64_t *B_slice,
-                GB_Context Context
-            )
-            {
-                #include "GB_AxB_saxpy5_unrolled.c"
-            }
-
-            // TODO use GB_V8 for FP32
-            #define GB_V16 0
-            #define GB_V8  0
-            #define GB_V4  1
-            #if defined ( CPU_FEATURES_COMPILER_MSC )
-            __declspec (target ("avx2"))
-            #else
-            __attribute__ ((target ("avx2")))
-            #endif
-            static inline void GB_AxB_saxpy5_unrolled_avx2
+            GB_TARGET_AVX512F static inline void GB_AxB_saxpy5_unrolled_avx512f
             (
                 GrB_Matrix C,
                 const GrB_Matrix A,
@@ -480,9 +448,35 @@ GrB_Info GB (_AsaxbitB__lor_ge_int64)
 
         #endif
 
-            //------------------------------------------------------------------
-            // saxpy5 method unrolled, with no vectors
-            //------------------------------------------------------------------
+        //----------------------------------------------------------------------
+        // saxpy5 method with vectors of length 4 for double, 8 for single
+        //----------------------------------------------------------------------
+
+        #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX2
+
+            // TODO use GB_V8 for FP32
+            #define GB_V16 0
+            #define GB_V8  0
+            #define GB_V4  1
+            GB_TARGET_AVX2 static inline void GB_AxB_saxpy5_unrolled_avx2
+            (
+                GrB_Matrix C,
+                const GrB_Matrix A,
+                const GrB_Matrix B,
+                const int ntasks,
+                const int nthreads,
+                const int64_t *B_slice,
+                GB_Context Context
+            )
+            {
+                #include "GB_AxB_saxpy5_unrolled.c"
+            }
+
+        #endif
+
+        //----------------------------------------------------------------------
+        // saxpy5 method unrolled, with no vectors
+        //----------------------------------------------------------------------
 
             #define GB_V16 0
             #define GB_V8  0
@@ -502,7 +496,6 @@ GrB_Info GB (_AsaxbitB__lor_ge_int64)
             }
 
     #endif
-
 
     GrB_Info GB (_Asaxpy5B__lor_ge_int64)
     (

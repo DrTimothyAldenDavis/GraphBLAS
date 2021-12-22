@@ -86,7 +86,7 @@
 
 // Exporting/importing symbols for Microsoft Visual Studio
 
-#if ( _MSC_VER && !__INTEL_COMPILER )
+#if ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
 #ifdef GB_LIBRARY
 // compiling SuiteSparse:GraphBLAS itself, exporting symbols to user apps
 #define GB_PUBLIC extern __declspec ( dllexport )
@@ -107,6 +107,7 @@
 // used.  Earlier versions of the language do not have this feature.
 
 #ifdef __STDC_VERSION__
+// ANSI C17: 201710L
 // ANSI C11: 201112L
 // ANSI C99: 199901L
 // ANSI C95: 199409L
@@ -138,7 +139,7 @@
     #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)
     #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)
 
-#elif ( _MSC_VER && !__INTEL_COMPILER )
+#elif ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
 
     // Microsoft Windows complex types
     #include <complex.h>

@@ -89,27 +89,32 @@
             else
             { 
                 // A is full, non-iso-valued, B is sparse/hyper
-                #if defined ( CPU_FEATURES_ARCH_X86 )           \
-                    && GB_SEMIRING_HAS_AVX_IMPLEMENTATION
+
+                #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION          \
+                    && GB_COMPILER_SUPPORTS_AVX512F
                 if (GB_Global_cpu_features_avx512f ( ))
                 {
-                    // x86 with AVX512f
+                    // x86_64 with AVX512f
                     GB_AxB_saxpy5_unrolled_avx512f (C, A, B,
                         ntasks, nthreads, B_slice, Context) ;
+                    return (GrB_SUCCESS) ;
                 }
-                else if (GB_Global_cpu_features_avx2 ( ))
+                #endif
+
+                #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION          \
+                    && GB_COMPILER_SUPPORTS_AVX2
+                if (GB_Global_cpu_features_avx2 ( ))
                 {
-                    // x86 with AVX2
+                    // x86_64 with AVX2
                     GB_AxB_saxpy5_unrolled_avx2 (C, A, B,
                         ntasks, nthreads, B_slice, Context) ;
+                    return (GrB_SUCCESS) ;
                 }
-                else
                 #endif
-                {
-                    // any architecture and any built-in semiring
-                    GB_AxB_saxpy5_unrolled_vanilla (C, A, B,
-                        ntasks, nthreads, B_slice, Context) ;
-                }
+
+                // any architecture and any built-in semiring
+                GB_AxB_saxpy5_unrolled_vanilla (C, A, B,
+                    ntasks, nthreads, B_slice, Context) ;
             }
         }
     }

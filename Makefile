@@ -18,6 +18,7 @@ default: library
 
 # just build the dynamic library, not the demos
 library:
+	( cd cpu_features ; make )
 	( cd build ; cmake $(CMAKE_OPTIONS) .. ; $(MAKE) --jobs=$(JOBS) )
 
 # build the dynamic library and the demos

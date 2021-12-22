@@ -14,6 +14,8 @@
 // definitions that modify GraphBLAS.h
 //------------------------------------------------------------------------------
 
+#include "GB_cpu_features.h"
+#include "GB_compiler.h"
 #include "GB_warnings.h"
 #define GB_LIBRARY
 
@@ -27,12 +29,10 @@
 // internal #include files
 //------------------------------------------------------------------------------
 
-#include "GB_cpu_features.h"
 #include "GB_prefix.h"
 #include "GB_dev.h"
 #include "GB_bytes.h"
 #include "GB_defaults.h"
-#include "GB_compiler.h"
 #include "GB_coverage.h"
 #include "GB_index.h"
 #include "GB_cplusplus.h"
@@ -56,11 +56,6 @@
 #include "GB_log2.h"
 #include "GB_iso.h"
 #include "GB_Pending_n.h"
-
-#if defined ( GB_HAVE_IPP )
-// Intel(R) IPP, not yet supported
-#include <ipp.h>
-#endif
 
 //------------------------------------------------------------------------------
 // more internal definitions
@@ -117,43 +112,7 @@ typedef enum                    // input parameter to GB_new and GB_new_bix
 }
 GB_Ap_code ;
 
-GB_PUBLIC
-GrB_Info GB_new                 // create matrix, except for indices & values
-(
-    GrB_Matrix *Ahandle,        // handle of matrix to create
-    const bool A_static_header, // true if Ahandle is statically allocated
-    const GrB_Type type,        // matrix type
-    const int64_t vlen,         // length of each vector
-    const int64_t vdim,         // number of vectors
-    const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
-    const bool is_csc,          // true if CSC, false if CSR
-    const int sparsity,         // hyper, sparse, bitmap, full, or
-                                // auto (hyper + sparse)
-    const float hyper_switch,   // A->hyper_switch, ignored if auto
-    const int64_t plen,         // size of A->p and A->h, if A hypersparse.
-                                // Ignored if A is not hypersparse.
-    GB_Context Context
-) ;
-
-GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
-(
-    GrB_Matrix *Ahandle,        // output matrix to create
-    const bool A_static_header, // true if Ahandle is statically allocated.
-    const GrB_Type type,        // type of output matrix
-    const int64_t vlen,         // length of each vector
-    const int64_t vdim,         // number of vectors
-    const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
-    const bool is_csc,          // true if CSC, false if CSR
-    const int sparsity,         // hyper, sparse, bitmap, full, or auto
-    const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
-    const float hyper_switch,   // A->hyper_switch, unless auto
-    const int64_t plen,         // size of A->p and A->h, if hypersparse
-    const int64_t nzmax,        // number of nonzeros the matrix must hold;
-                                // ignored if A is iso and full
-    const bool numeric,         // if true, allocate A->x, else A->x is NULL
-    const bool iso,             // if true, allocate A as iso
-    GB_Context Context
-) ;
+#include "GB_new.h"
 
 GrB_Info GB_hyper_realloc
 (
@@ -226,44 +185,6 @@ GrB_Info GB_matvec_type_name  // return the name of the type of a matrix
 ) ;
 
 GB_PUBLIC
-GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x space in a matrix
-(
-    GrB_Matrix A,           // matrix to allocate space for
-    const GrB_Index nzmax,  // number of entries the matrix can hold;
-                            // ignored if A is iso and full
-    const int sparsity,     // sparse (=hyper/auto) / bitmap / full
-    const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
-    const bool numeric,     // if true, allocate A->x, otherwise A->x is NULL
-    const bool iso,         // if true, allocate A as iso
-    GB_Context Context
-) ;
-
-GB_PUBLIC
-GrB_Info GB_ix_realloc      // reallocate space in a matrix
-(
-    GrB_Matrix A,               // matrix to allocate space for
-    const int64_t nzmax_new,    // new number of entries the matrix can hold
-    GB_Context Context
-) ;
-
-GB_PUBLIC
-void GB_bix_free                // free A->b, A->i, and A->x of a matrix
-(
-    GrB_Matrix A                // matrix with content to free
-) ;
-
-GB_PUBLIC
-void GB_ph_free                 // free A->p and A->h of a matrix
-(
-    GrB_Matrix A                // matrix with content to free
-) ;
-
-void GB_phbix_free              // free all content of a matrix
-(
-    GrB_Matrix A                // matrix with content to free
-) ;
-
-GB_PUBLIC
 bool GB_Type_compatible             // check if two types can be typecast
 (
     const GrB_Type atype,
@@ -271,41 +192,8 @@ bool GB_Type_compatible             // check if two types can be typecast
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_code_compatible: return true if domains are compatible
-//------------------------------------------------------------------------------
 
-// Two domains are compatible for typecasting between them if both are built-in
-// types (of any kind) or if both are the same user-defined type.  This
-// function does not have the type itself, but just the code.  If the types are
-// available, GB_Type_compatible should be called instead.
-
-// TODO: move to GB_code_compatible.h
-static inline bool GB_code_compatible       // true if two types can be typecast
-(
-    const GB_Type_code acode,   // type code of a
-    const GB_Type_code bcode    // type code of b
-)
-{
-
-    bool a_user = (acode == GB_UDT_code) ;
-    bool b_user = (bcode == GB_UDT_code) ;
-
-    if (a_user || b_user)
-    { 
-        // both a and b must be user-defined.  They should be the same
-        // user-defined type, but the caller does not have the actual type,
-        // just the code.
-        return (a_user && b_user) ;
-    }
-    else
-    { 
-        // any built-in domain is compatible with any other built-in domain
-        return (true) ;
-    }
-}
-
-//------------------------------------------------------------------------------
-
+#include "GB_code_compatible.h"
 #include "GB_task_struct.h"
 
 //------------------------------------------------------------------------------
@@ -331,11 +219,6 @@ size_t GB_code_size             // return the size of a type, given its code
 (
     const GB_Type_code code,    // input code of the type to find the size of
     const size_t usize          // known size of user-defined type
-) ;
-
-void GB_Matrix_free             // free a matrix
-(
-    GrB_Matrix *Ahandle         // handle of matrix to free
 ) ;
 
 GrB_Info GB_Op_free             // free a user-created op

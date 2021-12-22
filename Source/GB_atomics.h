@@ -19,26 +19,6 @@
 #include "GB.h"
 
 //------------------------------------------------------------------------------
-// determine the architecture
-//------------------------------------------------------------------------------
-
-#if __x86_64__
-
-    // on the x86, atomic updates can be more aggresive.  The MIN, MAX, EQ,
-    // XNOR, and ANY monoids are implemented with atomic compare/exchange.
-
-    #define GB_X86_64 1
-
-#else
-
-    // on the ARM, Power8/9, and others, only use built-in #pragma omp atomic
-    // updates.  Do not use atomic compare/exchange.
-
-    #define GB_X86_64 0
-
-#endif
-
-//------------------------------------------------------------------------------
 // atomic updates
 //------------------------------------------------------------------------------
 
@@ -103,6 +83,10 @@
 // atomic read and write
 //------------------------------------------------------------------------------
 
+// x86_64: no atomic read/write is needed.
+
+// ARM, Power8/9, and others need the explicit atomic read/write.
+
 // In Microsoft Visual Studio, simple reads and writes to properly aligned
 // 64-bit values are already atomic on 64-bit Windows for any architecture
 // supported by Windows (any Intel or ARM architecture). See:
@@ -111,10 +95,7 @@
 // is no need for atomic reads/writes when compiling GraphBLAS on Windows
 // with MS Visual Studio.
 
-// ARM, Power8/9, and others need the explicit atomic read/write.
-// x86: no atomic read/write is needed.
-
-#if GB_X86_64
+#if defined ( CPU_FEATURES_ARCH_X86_64 )
 
     // x86: no atomic read/write is needed.
     #define GB_ATOMIC_READ
@@ -223,7 +204,7 @@
     // int64_t result, target, value ;
     // do this atomically: { result = target ; target = value ; }
 
-    #if GB_MICROSOFT
+    #if GB_COMPILER_MSC
 
         #define GB_ATOMIC_CAPTURE_INT64(result, target, value)          \
         {                                                               \
@@ -251,7 +232,7 @@
     // int8_t result, target, value ;
     // do this atomically: { result = target ; target = value ; }
 
-    #if GB_MICROSOFT
+    #if GB_COMPILER_MSC
 
         #define GB_ATOMIC_CAPTURE_INT8(result, target, value)           \
         {                                                               \
@@ -279,7 +260,7 @@
     // int64_t result, target, value ;
     // do this atomically: { result = target ; target |= value ; }
 
-    #if GB_MICROSOFT
+    #if GB_COMPILER_MSC
 
         #define GB_ATOMIC_CAPTURE_INT64_OR(result, target, value)       \
         {                                                               \
@@ -314,7 +295,7 @@
     // The MS Visual Studio version computes result = ++target, so result must
     // be decremented by one.
 
-    #if GB_MICROSOFT
+    #if GB_COMPILER_MSC
 
         #define GB_ATOMIC_CAPTURE_INC64(result,target)                  \
         {                                                               \
@@ -409,7 +390,7 @@
 // Type punning is used to extend these signed integer types to unsigned
 // integers of the same number of bytes, and to float and double.
 
-#if GB_MICROSOFT
+#if GB_COMPILER_MSC
 
     //--------------------------------------------------------------------------
     // GB_PUN: type punning

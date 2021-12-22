@@ -268,6 +268,8 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 19.0 )
         message ( FATAL_ERROR "icc version must be at least 19.0" )
     endif ( )
+elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "IntelLLVM" )
+    # options for icx
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
     # options for clang
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wno-pointer-sign " )

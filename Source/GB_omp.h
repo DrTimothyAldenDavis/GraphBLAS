@@ -14,7 +14,7 @@
 // determine the OpenMP version
 //------------------------------------------------------------------------------
 
-#if GB_MICROSOFT
+#if GB_COMPILER_MSC
 
     // MS Visual Studio supports OpenMP 2.0, and does not have the atomic
     // capture clause.  However, it has interlocked compare/exchange functions

@@ -11,20 +11,77 @@
 #define GB_COMPILER_H
 
 //------------------------------------------------------------------------------
+// determine which compiler is in use
+//------------------------------------------------------------------------------
+
+#if defined ( __INTEL_CLANG_COMPILER )
+
+    // Intel icx compiler, 2022.0.0 based on clang/llvm 14.0.0
+    #define GB_COMPILER_ICX     1
+    #define GB_COMPILER_ICC     0
+    #define GB_COMPILER_CLANG   0
+    #define GB_COMPILER_GCC     0
+    #define GB_COMPILER_MSC     0
+
+#elif defined ( __INTEL_COMPILER )
+
+    // Intel icc compiler: 2021.5.0 uses "gcc 7.5 mode"
+    #define GB_COMPILER_ICX     0
+    #define GB_COMPILER_ICC     1
+    #define GB_COMPILER_CLANG   0
+    #define GB_COMPILER_GCC     0
+    #define GB_COMPILER_MSC     0
+
+#elif defined ( __clang__ )
+
+    // clang
+    #define GB_COMPILER_ICX     0
+    #define GB_COMPILER_ICC     0
+    #define GB_COMPILER_CLANG   1
+    #define GB_COMPILER_GCC     0
+    #define GB_COMPILER_MSC     0
+
+#elif defined ( __GNUC__ )
+
+    // gcc
+    #define GB_COMPILER_ICX     0
+    #define GB_COMPILER_ICC     0
+    #define GB_COMPILER_CLANG   0
+    #define GB_COMPILER_GCC     1
+    #define GB_COMPILER_MSC     0
+
+#elif defined ( _MSC_VER )
+
+    // Microsoft Visual Studio
+    #define GB_COMPILER_ICX     0
+    #define GB_COMPILER_ICC     0
+    #define GB_COMPILER_CLANG   0
+    #define GB_COMPILER_GCC     0
+    #define GB_COMPILER_MSC     1
+
+#else
+
+    // other compiler
+    #define GB_COMPILER_ICX     0
+    #define GB_COMPILER_ICC     1
+    #define GB_COMPILER_CLANG   0
+    #define GB_COMPILER_GCC     0
+    #define GB_COMPILER_MSC     0
+
+#endif
+
+//------------------------------------------------------------------------------
 // compiler variations
 //------------------------------------------------------------------------------
 
 // Determine the restrict keyword, and whether or not variable-length arrays
 // are supported.
 
-#if ( _MSC_VER && !__INTEL_COMPILER )
+#if GB_COMPILER_MSC
 
     // Microsoft Visual Studio does not have the restrict keyword, but it does
     // support __restrict, which is equivalent.  Variable-length arrays are
-    // not supported.  OpenMP tasks are not available, GraphBLAS no longer
-    // uses OpenMP tasks.
-
-    #define GB_MICROSOFT 1
+    // not supported.  OpenMP tasks are not available.
     #define GB_HAS_VLA  0
     #if defined ( __cplusplus )
         // C++ does not have the restrict keyword
@@ -33,10 +90,11 @@
         // C uses __restrict
         #define restrict __restrict
     #endif
+    // Microsoft-specific include file
+    #include <malloc.h>
 
 #elif defined ( __cplusplus )
 
-    #define GB_MICROSOFT 0
     #define GB_HAS_VLA  1
     // C++ does not have the restrict keyword
     #define restrict
@@ -44,24 +102,14 @@
 #elif GxB_STDC_VERSION >= 199901L
 
     // ANSI C99 and later have the restrict keyword and variable-length arrays.
-    #define GB_MICROSOFT 0
     #define GB_HAS_VLA  1
 
 #else
 
     // ANSI C95 and earlier have neither
-    #define GB_MICROSOFT 0
     #define GB_HAS_VLA  0
     #define restrict
 
-#endif
-
-//------------------------------------------------------------------------------
-// Microsoft specific include files
-//------------------------------------------------------------------------------
-
-#if GB_MICROSOFT
-#include <malloc.h>
 #endif
 
 //------------------------------------------------------------------------------
@@ -86,23 +134,18 @@
 
 // GB_PRAGMA(x) becomes "#pragma x", but the way to do this depends on the
 // compiler:
-#if GB_MICROSOFT
+#if GB_COMPILER_MSC
+
     // MS Visual Studio is not ANSI C11 compliant, and uses __pragma:
     #define GB_PRAGMA(x) __pragma (x)
-#else
-    // ANSI C11 compilers use _Pragma:
-    #define GB_PRAGMA(x) _Pragma (#x)
-#endif
-
-// construct pragmas for loop vectorization:
-#if GB_MICROSOFT
-
     // no #pragma omp simd is available in MS Visual Studio
     #define GB_PRAGMA_SIMD
     #define GB_PRAGMA_SIMD_REDUCTION(op,s)
 
 #else
 
+    // ANSI C11 compilers use _Pragma:
+    #define GB_PRAGMA(x) _Pragma (#x)
     // create two kinds of SIMD pragmas:
     // GB_PRAGMA_SIMD becomes "#pragma omp simd"
     // GB_PRAGMA_SIMD_REDUCTION (+,cij) becomes
@@ -144,5 +187,61 @@
     #define GB_VLA(s) GB_VLA_MAXSIZE
 
 #endif
+
+//------------------------------------------------------------------------------
+// AVX2 and AVX512 support for the x86_64 architecture
+//------------------------------------------------------------------------------
+
+// gcc 7.5.0 cannot compile code with __attribute__ ((target ("avx512f"))), or
+// avx2, but those targets fine with gcc 9.3.0 or later.
+
+#if defined ( CPU_FEATURES_ARCH_X86_64 )
+
+    #if GB_COMPILER_GCC
+        #if __GNUC__ >= 9
+            // enable avx512f on gcc 9.x and later
+            #define GB_COMPILER_SUPPORTS_AVX512F 1
+            #define GB_COMPILER_SUPPORTS_AVX2 1
+        #else
+            // disable avx2 and avx512f on gcc 8.x and earlier
+            #define GB_COMPILER_SUPPORTS_AVX512F 0
+            #define GB_COMPILER_SUPPORTS_AVX2 0
+        #endif
+    #else
+        // assume all other compilers can handle AVX512F and AVX2 on x86
+        #define GB_COMPILER_SUPPORTS_AVX512F 1
+        #define GB_COMPILER_SUPPORTS_AVX2 1
+    #endif
+
+#else
+
+    // non-X86_64 architecture
+    #define GB_COMPILER_SUPPORTS_AVX512F 0
+    #define GB_COMPILER_SUPPORTS_AVX2 0
+
+#endif
+
+// prefix for function with target avx512f
+#if GB_COMPILER_SUPPORTS_AVX512F
+    #if GB_COMPILER_MSC
+        #define GB_TARGET_AVX512F __declspec (target ("avx512f"))
+    #else
+        #define GB_TARGET_AVX512F __attribute__ ((target ("avx512f")))
+    #endif
+#else
+#define GB_TARGET_AVX512F
+#endif
+
+// prefix for function with target avx2
+#if GB_COMPILER_SUPPORTS_AVX2
+    #if GB_COMPILER_MSC
+        #define GB_TARGET_AVX2 __declspec (target ("avx2"))
+    #else
+        #define GB_TARGET_AVX2 __attribute__ ((target ("avx2")))
+    #endif
+#else
+#define GB_TARGET_AVX2
+#endif
+
 #endif
 
