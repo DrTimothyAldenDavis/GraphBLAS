@@ -25,9 +25,9 @@
     //  1572: floating point compares
     //  1599: shadow
     //  2259: typecasting may lose bits
-    //  2282: unrecognized pragma
+    //  161, 2282: unrecognized pragma
     //  2557: sign compare
-    #pragma warning (disable: 144 181 869 1572 1599 2259 2282 2557 )
+    #pragma warning (disable: 161 144 181 869 1572 1599 2259 2282 2557 )
 
     // See GB_unused.h, for warnings 177 and 593, which are not globally
     // disabled, but selectively by #include'ing GB_unused.h as needed.
