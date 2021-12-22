@@ -126,6 +126,7 @@ static GrB_Info GB_exporter (GrB_Index *Ap, GrB_Index *Ai, void *Ax,
         default             : ;
     }
     mexErrMsgTxt ("unknown type") ;
+    return (GrB_PANIC) ;
 }
 
 //------------------------------------------------------------------------------
@@ -155,6 +156,7 @@ static GrB_Info GB_importer (GrB_Matrix *A, GrB_Type type, GrB_Index nrows,
         default             : ;
     }
     mexErrMsgTxt ("unknown type") ;
+    return (GrB_PANIC) ;
 }
 
 //------------------------------------------------------------------------------
