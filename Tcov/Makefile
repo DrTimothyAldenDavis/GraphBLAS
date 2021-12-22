@@ -54,7 +54,7 @@ $(SO_NAME): $(OBJ)
 .KEEP: $(OBJ)
 
 clean:
-	$(RM) *.o
+	$(RM) *.o *.d
 
 distclean: clean
 	$(RM) *.mex* tmp*/* errlog*.txt grbstat.mat fprint.txt
