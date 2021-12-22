@@ -125,6 +125,25 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
         message ( FATAL_ERROR "gcc version must be at least 4.9" )
     endif ( )
+elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
+    # options for icc: also needs -std=c11
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -diag-disable 10397,15552 " )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -qopt-report=5 -qopt-report-phase=vec" )
+    # the -mp1 option is important for predictable floating-point results with
+    # the icc compiler.  Without, ((float) 1.)/((float) 0.) produces NaN,
+    # instead of the correct result, Inf.
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -mp1" )
+    # The -g option is useful for the Intel VTune tool, but it should be
+    # removed in production.  Comment this line out if not in use:
+    # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -qopt-malloc-options=3" )
+    # check all warnings and remarks (uncomment for development only):
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 -Wremarks -Werror " )
+    if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 19.0 )
+        message ( FATAL_ERROR "icc version must be at least 19.0" )
+    endif ( )
+elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "IntelLLVM" )
+    # options for icx
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
     # options for clang
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wno-pointer-sign " )
