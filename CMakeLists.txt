@@ -26,7 +26,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Dec 21, 2021")
+set ( GraphBLAS_DATE "Dec 22, 2021")
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   3 )
@@ -102,12 +102,11 @@ else ( )
 
 endif ( )
 
-#FIXME: CUDA disabled for now
-set ( CMAKE_CUDA off )
-
-# Uncomment this line for development only, not for end-users:
-# FIXME
+# Edit these lines for code development only, not for end-users:
+# CUDA is under developent for now, and not deployed in production
+  set ( CMAKE_CUDA off )
 # set ( GBCOMPACT true )
+# set ( CMAKE_BUILD_TYPE Debug )
 
 if ( CMAKE_CUDA )
     project ( graphblas
@@ -124,9 +123,6 @@ endif ( )
 #-------------------------------------------------------------------------------
 
 include ( GNUInstallDirs )
-
-# Uncomment this line for for development only, not for end-users:
-# set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
     set ( CMAKE_BUILD_TYPE Release )

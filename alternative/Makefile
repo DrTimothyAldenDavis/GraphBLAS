@@ -48,7 +48,7 @@ CFLAGS = -fopenmp -fexceptions -fPIC
 ifneq ($(CC),c++)
     CFLAGS += -std=c11
 endif
-CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated1 -I../Source/Generated2 -I../lz4
+CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated1 -I../Source/Generated2 -I../lz4 -I../cpu_features/include
 SO_OPTS = $(LDFLAGS)
 CFLAGS += -Wno-pragmas
 

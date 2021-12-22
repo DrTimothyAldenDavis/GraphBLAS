@@ -29,7 +29,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS (must match ../CMakeLists.txt)
-set ( GraphBLAS_DATE "Dec 21, 2021")
+set ( GraphBLAS_DATE "Dec 22, 2021")
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   3 )
@@ -64,7 +64,8 @@ project ( graphblas_renamed
 
 include ( GNUInstallDirs )
 
-# Uncomment this line for development only, not for end-users:
+# Edit these lines for code development only, not for end-users:
+# set ( GBCOMPACT true )
 # set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
@@ -74,7 +75,6 @@ endif ( )
 set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRENAME=1 " )
 
 find_package ( OpenMP )
-# find_package ( IPP )
 
 message ( STATUS "CMAKE build type:          " ${CMAKE_BUILD_TYPE} )
 
@@ -86,9 +86,6 @@ endif ( )
 
 message ( STATUS "CMAKE compiler ID:         " ${CMAKE_C_COMPILER_ID} )
 message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
-
-# Uncomment this line for for development only, not for end-users:
-# set ( GBCOMPACT true )
 
 if ( GBCOMPACT )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCOMPACT=1 " )
