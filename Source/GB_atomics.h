@@ -60,7 +60,8 @@
 #if ( _OPENMP >= 201307 )
 
     // OpenMP 4.0 or later
-    #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic update seq_cst)
+    // #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic update seq_cst)
+    #define GB_ATOMIC_UPDATE GB_PRAGMA (omp atomic update)
 
 #elif ( _OPENMP >= 201107 )
 
@@ -104,14 +105,18 @@
 #elif ( _OPENMP >= 201811 )
 
     // OpenMP 5.0 or later
-    #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read acquire)
-    #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write release)
+    // #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read acquire)
+    // #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write release)
+    #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
+    #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
 
 #elif ( _OPENMP >= 201307 )
 
     // OpenMP 4.0 and 4.5
-    #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read seq_cst)
-    #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write seq_cst)
+    // #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read seq_cst)
+    // #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write seq_cst)
+    #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
+    #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
 
 #elif ( _OPENMP >= 201107 )
 
@@ -177,7 +182,8 @@
 #if ( _OPENMP >= 201307 )
 
     // OpenMP 4.0 or later
-    #define GB_ATOMIC_CAPTURE GB_PRAGMA (omp atomic capture seq_cst)
+    // #define GB_ATOMIC_CAPTURE GB_PRAGMA (omp atomic capture seq_cst)
+    #define GB_ATOMIC_CAPTURE GB_PRAGMA (omp atomic capture)
 
 #elif ( _OPENMP >= 201107 )
 
