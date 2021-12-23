@@ -22,6 +22,12 @@
     #define GB_COMPILER_CLANG   0
     #define GB_COMPILER_GCC     0
     #define GB_COMPILER_MSC     0
+    #define GB_COMPILER_XLC     0
+
+    #define GB_COMPILER_MAJOR __INTEL_CLANG_COMPILER
+    #define GB_COMPILER_MINOR 0
+    #define GB_COMPILER_SUB   0
+    #define GB_COMPILER_NAME  __VERSION__
 
 #elif defined ( __INTEL_COMPILER )
 
@@ -31,6 +37,12 @@
     #define GB_COMPILER_CLANG   0
     #define GB_COMPILER_GCC     0
     #define GB_COMPILER_MSC     0
+    #define GB_COMPILER_XLC     0
+
+    #define GB_COMPILER_MAJOR __INTEL_COMPILER
+    #define GB_COMPILER_MINOR __INTEL_COMPILER_UPDATE
+    #define GB_COMPILER_SUB   0
+    #define GB_COMPILER_NAME  __VERSION__
 
 #elif defined ( __clang__ )
 
@@ -40,6 +52,27 @@
     #define GB_COMPILER_CLANG   1
     #define GB_COMPILER_GCC     0
     #define GB_COMPILER_MSC     0
+    #define GB_COMPILER_XLC     0
+
+    #define GB_COMPILER_MAJOR __clang_major__
+    #define GB_COMPILER_MINOR __clang_minor__
+    #define GB_COMPILER_SUB   __clang_patchlevel__
+    #define GB_COMPILER_NAME  "clang " __clang_version__
+
+#elif defined ( __xlC__ )
+
+    // xlc
+    #define GB_COMPILER_ICX     0
+    #define GB_COMPILER_ICC     0
+    #define GB_COMPILER_CLANG   0
+    #define GB_COMPILER_GCC     0
+    #define GB_COMPILER_MSC     0
+    #define GB_COMPILER_XLC     1
+
+    #define GB_COMPILER_MAJOR ( __xlC__ / 256 )
+    #define GB_COMPILER_MINOR ( __xlC__ - 256 * GB_COMPILER_MAJOR)
+    #define GB_COMPILER_SUB   0
+    #define GB_COMPILER_NAME  "IBM xlc " GB_XSTR (__xlC__)
 
 #elif defined ( __GNUC__ )
 
@@ -49,6 +82,13 @@
     #define GB_COMPILER_CLANG   0
     #define GB_COMPILER_GCC     1
     #define GB_COMPILER_MSC     0
+    #define GB_COMPILER_XLC     0
+
+    #define GB_COMPILER_MAJOR __GNUC__
+    #define GB_COMPILER_MINOR __GNUC_MINOR__
+    #define GB_COMPILER_SUB   __GNUC_PATCHLEVEL__
+    #define GB_COMPILER_NAME  "GNU gcc " GB_XSTR (__GNUC__) "." \
+        GB_XSTR (__GNUC_MINOR__) "." GB_XSTR (__GNUC_PATCHLEVEL__)
 
 #elif defined ( _MSC_VER )
 
@@ -58,15 +98,27 @@
     #define GB_COMPILER_CLANG   0
     #define GB_COMPILER_GCC     0
     #define GB_COMPILER_MSC     1
+    #define GB_COMPILER_XLC     0
+
+    #define GB_COMPILER_MAJOR ( _MSC_VER / 100 )
+    #define GB_COMPILER_MINOR ( _MSC_VER - 100 * GB_COMPILER_MAJOR)
+    #define GB_COMPILER_SUB   0
+    #define GB_COMPILER_NAME  "Microsoft Visual Studio " GB_XSTR (_MSC_VER)
 
 #else
 
     // other compiler
     #define GB_COMPILER_ICX     0
-    #define GB_COMPILER_ICC     1
+    #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   0
     #define GB_COMPILER_GCC     0
     #define GB_COMPILER_MSC     0
+    #define GB_COMPILER_XLC     0
+
+    #define GB_COMPILER_MAJOR 0
+    #define GB_COMPILER_MINOR 0
+    #define GB_COMPILER_SUB   0
+    #define GB_COMPILER_NAME  "other C compiler"
 
 #endif
 
