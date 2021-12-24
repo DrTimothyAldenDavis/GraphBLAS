@@ -12,6 +12,7 @@
 // identity value.
 
 #include "GB.h"
+#include "GB_Monoid_new.h"
 
 #define GB_MONOID_TERMINAL_NEW(type,T)                                      \
 GrB_Info GB_EVAL2 (GXB (Monoid_terminal_new_), T) /* create a new monoid */ \

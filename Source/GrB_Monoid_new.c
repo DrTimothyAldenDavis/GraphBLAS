@@ -12,6 +12,7 @@
 // same type.  No typecasting is done for the identity value.
 
 #include "GB.h"
+#include "GB_Monoid_new.h"
 
 #define GB_MONOID_NEW(prefix,type,T)                                        \
 GrB_Info GB_EVAL3 (prefix, _Monoid_new_, T) /* create a new monoid */       \

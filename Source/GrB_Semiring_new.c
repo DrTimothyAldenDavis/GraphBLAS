@@ -28,6 +28,7 @@
 // operator is not assumed to be commutative.
 
 #include "GB.h"
+#include "GB_Semiring_new.h"
 
 #define GB_FREE_ALL                     \
 {                                       \

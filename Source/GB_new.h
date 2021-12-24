@@ -10,6 +10,14 @@
 #ifndef GB_NEW_H
 #define GB_NEW_H
 
+typedef enum                    // input parameter to GB_new and GB_new_bix
+{
+    GB_Ap_calloc,               // 0: calloc A->p, malloc A->h if hypersparse
+    GB_Ap_malloc,               // 1: malloc A->p, malloc A->h if hypersparse
+    GB_Ap_null                  // 2: do not allocate A->p or A->h
+}
+GB_Ap_code ;
+
 GB_PUBLIC
 GrB_Info GB_new                 // create matrix, except for indices & values
 (

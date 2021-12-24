@@ -20,6 +20,7 @@
 
 #include "GB.h"
 #include "GB_binop.h"
+#include "GB_Monoid_new.h"
 
 GrB_Info GB_Monoid_new          // create a monoid
 (

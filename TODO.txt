@@ -1,5 +1,4 @@
 extend saxpy5 vectorization to single complex and double complex
-mklgrb: test with single, single complex, double complex
 
 Change min/max monoids for fp32 nd fp64: not terminal
 

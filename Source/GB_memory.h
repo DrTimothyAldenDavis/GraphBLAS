@@ -89,6 +89,26 @@ void *GB_xalloc_memory      // return the newly-allocated space
 ) ;
 
 //------------------------------------------------------------------------------
+// parallel memcpy and memset
+//------------------------------------------------------------------------------
+
+void GB_memcpy                  // parallel memcpy
+(
+    void *dest,                 // destination
+    const void *src,            // source
+    size_t n,                   // # of bytes to copy
+    int nthreads                // # of threads to use
+) ;
+
+void GB_memset                  // parallel memset
+(
+    void *dest,                 // destination
+    const int c,                // value to to set
+    size_t n,                   // # of bytes to set
+    int nthreads                // # of threads to use
+) ;
+
+//------------------------------------------------------------------------------
 // malloc/calloc/realloc/free: for permanent contents of GraphBLAS objects
 //------------------------------------------------------------------------------
 
