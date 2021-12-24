@@ -1,0 +1,13 @@
+extend saxpy5 vectorization to single complex and double complex
+mklgrb: test with single, single complex, double complex
+
+Change min/max monoids for fp32 nd fp64: not terminal
+
+Split saxpy_generic.c into multiple modules.  Also dot2, dot3, generics?
+
+clang/icx: silence or find warnings about failed vectorization
+
+Apple clang: silence the many warnings in the @GrB interface?
+(clang doesn't work for MATLAB anyway...)
+
+Linux: try clang

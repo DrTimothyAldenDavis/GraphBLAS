@@ -148,9 +148,10 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
-\item Versions 6.0.3 and 5.2.3 (Dec 21, 2021)
+\item Versions 6.1.0 and 5.3.0 (Dec 23, 2021)
 
     \begin{packed_itemize}
+    \item added \verb'GxB_get' options: compiler name and version.
     \item added package: \url{https://github.com/google/cpu_features},
         Oct 29, 2021 version.
     \item performance: faster \verb'C+=A*B' when \verb'C' is full,
@@ -14130,6 +14131,15 @@ Next, install brew, at \url{https://brew.sh}.
 If not used for the MATLAB mexFunction interface,
 Clang now works with \verb'libomp' and the \verb'GraphBLAS/CMakeLists.txt'.
 To use the MATLAB mexFunction, however, you must use \verb'gcc-11'.
+Using Clang will result in a segfault when you attempt to use the \verb'@GrB'
+interface in MATLAB.
+
+\begin{note}
+{\bf NOTE:} On the Mac, do not use the Apple compiler (clang, also called cc) 
+if you also want to use the MATLAB \verb'@GrB' interface.  GraphBLAS will
+work outside of MATLAB, but it will fail with a segfault inside MATLAB
+when it attempts to use any OpenMP parallelism.
+\end{note}
 
 With MacOS Big Sur install \verb'gcc-11', \verb'cmake', and OpenMP, and then
 compile GraphBLAS.  cmake 3.13 or later is required.
