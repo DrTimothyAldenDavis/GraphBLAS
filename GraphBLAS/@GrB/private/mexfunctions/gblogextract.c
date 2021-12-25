@@ -257,9 +257,9 @@ void mexFunction
     printf ("remove V->x from memtable: %p\n", V->x) ;
     #endif
     GB_Global_memtable_remove (V->i) ;
-    gb_mxfree (&V->i) ;
+    gb_mxfree ((void **) (&V->i)) ;
     GB_Global_memtable_remove (V->x) ;
-    gb_mxfree (&V->x) ;
+    gb_mxfree ((void **) (&V->x)) ;
 
     // transplant values of T as the row indices of V
     V->i = (int64_t *) Tx ;

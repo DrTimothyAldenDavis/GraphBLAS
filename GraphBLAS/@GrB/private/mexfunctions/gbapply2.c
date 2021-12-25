@@ -249,7 +249,7 @@ void mexFunction
     OK (GrB_Matrix_free (&M)) ;
     OK (GrB_Matrix_free (&A)) ;
     OK (GrB_Matrix_free (&B)) ;
-    OK (GrB_Matrix_free (&scalar0)) ;
+    OK (GrB_Scalar_free (&scalar0)) ;
     OK (GrB_Scalar_free (&Thunk)) ;
     OK (GrB_Descriptor_free (&desc)) ;
 

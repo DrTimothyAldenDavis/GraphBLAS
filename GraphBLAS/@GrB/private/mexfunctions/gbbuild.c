@@ -125,7 +125,7 @@ void mexFunction
     { 
         GrB_Index *I2 = (GrB_Index *) mxMalloc (nvals * sizeof (GrB_Index)) ;
         GB_helper8 ((GB_void *) I2, (GB_void *) I, nvals, sizeof (GrB_Index)) ;
-        if (I_allocated) gb_mxfree (&I) ;
+        if (I_allocated) gb_mxfree ((void **) (&I)) ;
         I_allocated = true ;
         I = I2 ;
     }
@@ -134,7 +134,7 @@ void mexFunction
     { 
         GrB_Index *J2 = (GrB_Index *) mxMalloc (nvals * sizeof (GrB_Index)) ;
         GB_helper8 ((GB_void *) J2, (GB_void *) J, nvals, sizeof (GrB_Index)) ;
-        if (J_allocated) gb_mxfree (&J) ;
+        if (J_allocated) gb_mxfree ((void **) (&J)) ;
         J_allocated = true ;
         J = J2 ;
     }
@@ -456,9 +456,9 @@ void mexFunction
     // free workspace
     //--------------------------------------------------------------------------
 
-    if (X2 != NULL ) gb_mxfree (&X2) ;
-    if (I_allocated) gb_mxfree (&I) ;
-    if (J_allocated) gb_mxfree (&J) ;
+    if (X2 != NULL ) gb_mxfree ((void **) (&X2)) ;
+    if (I_allocated) gb_mxfree ((void **) (&I)) ;
+    if (J_allocated) gb_mxfree ((void **) (&J)) ;
 
     //--------------------------------------------------------------------------
     // export the output matrix A

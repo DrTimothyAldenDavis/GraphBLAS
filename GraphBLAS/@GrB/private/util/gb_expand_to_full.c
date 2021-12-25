@@ -63,8 +63,7 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
     { 
         // T = (type) round (A)
         T = gb_new (type, nrows, ncols, fmt, 0) ;
-        OK1 (T, GrB_Matrix_apply (T, NULL, NULL, gb_round_binop (atype), A,
-            NULL)) ;
+        OK1 (T, GrB_Matrix_apply (T, NULL, NULL, gb_round_op (atype), A, NULL));
         S = T ;
     }
     else

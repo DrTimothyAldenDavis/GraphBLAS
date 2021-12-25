@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_round_binop: get a rounding operator
+// gb_round_op: get a rounding operator
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 #include "gb_interface.h"
 
-GrB_BinaryOp gb_round_binop (GrB_Type type)
+GrB_UnaryOp gb_round_op (GrB_Type type)
 { 
     if (type == GrB_FP32) return (GxB_ROUND_FP32) ;
     if (type == GrB_FP64) return (GxB_ROUND_FP64) ;
