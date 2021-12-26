@@ -36,7 +36,7 @@
     info = method ;                                                         \
     if (info != expected)                                                   \
     {                                                                       \
-        char *error_logger = NULL ;                                         \
+        const char *error_logger = NULL ;                                   \
         GrB_Matrix_error_(&error_logger, ((GrB_Matrix) C)) ;                \
         if (error_logger != NULL) mexPrintf ("[%s]\n", error_logger) ;      \
         mexPrintf ("got %d expected %d\n", info, expected) ;                \
@@ -51,7 +51,7 @@
     info = method ;                                                         \
     if (info != expected)                                                   \
     {                                                                       \
-        char *error_logger = NULL ;                                         \
+        const char *error_logger = NULL ;                                   \
         GrB_Descriptor_error_(&error_logger, descriptor) ;                  \
         if (error_logger != NULL) mexPrintf ("[%s]\n", error_logger) ;      \
         mexPrintf ("got %d expected %d\n", info, expected) ;                \

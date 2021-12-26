@@ -56,7 +56,7 @@ void mexFunction
 
     FILE *f = fopen ("errlog2.txt", "w") ;
     printf ("in %s\n", __FILE__) ;
-    char *err ;
+    const char *err ;
 
     //--------------------------------------------------------------------------
     // test GrB_init with invalid mode
@@ -919,7 +919,8 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GxB_SelectOp selectop = NULL ;
-    OK (GxB_SelectOp_new (&selectop, select_plus_one, GrB_FP64, GrB_FP64)) ;
+    OK (GxB_SelectOp_new (&selectop, 
+        (GxB_select_function) select_plus_one, GrB_FP64, GrB_FP64)) ;
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     OK (GxB_SelectOp_wait_(&selectop)) ;
     #else
@@ -965,7 +966,8 @@ void mexFunction
     printf ("Error expected: %d\n%s\n", info, err) ;
 
     GxB_SelectOp_free_(&selectop) ;
-    OK (GxB_SelectOp_new (&selectop, select_nothing, GrB_FP64, NULL)) ;
+    OK (GxB_SelectOp_new (&selectop, 
+        (GxB_select_function) select_nothing, GrB_FP64, NULL)) ;
     ERR1 (C, GxB_Matrix_select_(C, NULL, NULL, selectop, A, thunk, NULL)) ;
     GrB_Matrix_error_(&err, C) ;
     printf ("Error expected: %d\n%s\n", info, err) ;

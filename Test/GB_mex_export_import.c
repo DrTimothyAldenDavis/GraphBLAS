@@ -76,7 +76,7 @@ GrB_Descriptor desc = NULL ;
 GrB_Matrix A = NULL ;
 GrB_Matrix C = NULL ;
 GrB_Index *Cp = NULL, *Ch = NULL, *Ci = NULL, *Tp = NULL, *Ti = NULL ;
-GB_void *Cx = NULL, *Tx = NULL ;
+void *Cx = NULL, *Tx = NULL ;
 int8_t *Cb = NULL ;
 GB_Context Context = NULL ;
 GrB_Index nvec = 0, nvals = 0, nrows = 0, ncols = 0 ;

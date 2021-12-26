@@ -130,7 +130,7 @@ GrB_Info assign ( )
         }
         else
         {
-            OK (GrB_Matrix_assign_Scalar ((GrB_Vector) C, (GrB_Vector) Mask,
+            OK (GrB_Matrix_assign_Scalar ((GrB_Matrix) C, (GrB_Matrix) Mask,
                 accum, S, I, ni, J, nj, desc)) ;
         }
     }

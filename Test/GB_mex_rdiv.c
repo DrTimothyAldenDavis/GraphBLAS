@@ -56,7 +56,8 @@ void my_rdiv (double *z, const double *x, const double *y)
 GrB_Info axb (GB_Context Context, bool cprint)
 {
     // create the rdiv operator
-    info = GrB_BinaryOp_new (&My_rdiv, my_rdiv, GrB_FP64, GrB_FP64, GrB_FP64) ;
+    info = GrB_BinaryOp_new (&My_rdiv,
+        (GxB_binary_function) my_rdiv, GrB_FP64, GrB_FP64, GrB_FP64) ;
     if (info != GrB_SUCCESS) return (info) ;
     #if (GxB_IMPLEMENTATION_MAJOR <= 5)
     GrB_BinaryOp_wait_(&My_rdiv) ;
