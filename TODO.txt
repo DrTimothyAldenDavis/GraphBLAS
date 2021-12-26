@@ -1,12 +1,10 @@
-extend saxpy5 vectorization to single complex and double complex
+extend saxpy5 vectorization to single complex and double complex?
 
-Change min/max monoids for fp32 nd fp64: not terminal
+Test the change for min/max monoids for fp32/fp64: not terminal
 
-Split saxpy_generic.c into multiple modules.  Also dot2, dot3, generics?
+Split dot2, dot3, add_phase2 into multiple generics?
 
-clang/icx: silence or find warnings about failed vectorization
-
-Apple clang: silence the many warnings in the @GrB interface?
-(clang doesn't work for MATLAB anyway...)
+clang/icx: silence warnings
 
 Linux: try clang
+
