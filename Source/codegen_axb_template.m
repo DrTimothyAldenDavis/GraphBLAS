@@ -20,7 +20,7 @@ neginf32  = '(-INFINITY)' ;
 plusinf64 = '((double) INFINITY)' ;
 neginf64  = '((double) -INFINITY)' ;
 
-% MIN monoid: all are terminal.  None can be done with OpenMP atomic update
+% MIN monoid: integer types are terminal, float and double are not.  None can be done with OpenMP atomic update
 if (~no_min_max_any_times_monoids)
     add = 'w = GB_IMIN (w, t)' ;
     addfunc = 'GB_IMIN (w, t)' ;
@@ -34,13 +34,13 @@ if (~no_min_max_any_times_monoids)
     codegen_axb_method ('min', multop, add, addfunc, imult, 'uint64_t', 'uint64_t', 'UINT64_MAX', '0'         , 0, 0) ;
     add = 'w = fminf (w, t)' ;
     addfunc = 'fminf (w, t)' ;
-    codegen_axb_method ('min', multop, add, addfunc, fmult, 'float'   , 'float'   , plusinf32   , neginf32    , 0, 0) ;
+    codegen_axb_method ('min', multop, add, addfunc, fmult, 'float'   , 'float'   , plusinf32   , [ ]         , 0, 0) ;
     add = 'w = fmin (w, t)' ;
     addfunc = 'fmin (w, t)' ;
-    codegen_axb_method ('min', multop, add, addfunc, dmult, 'double'  , 'double'  , plusinf64   , neginf64    , 0, 0) ;
+    codegen_axb_method ('min', multop, add, addfunc, dmult, 'double'  , 'double'  , plusinf64   , [ ]         , 0, 0) ;
 end
 
-% MAX monoid: all are terminal.  None can be done with OpenMP atomic update
+% MAX monoid: integer types are terminal, float and double are not.  None can be done with OpenMP atomic update
 if (~no_min_max_any_times_monoids)
     add = 'w = GB_IMAX (w, t)' ;
     addfunc = 'GB_IMAX (w, t)' ;
@@ -55,10 +55,10 @@ if (~no_min_max_any_times_monoids)
     % floating-point MAX must use unsigned integer puns for compare-and-swap
     add = 'w = fmaxf (w, t)' ;
     addfunc = 'fmaxf (w, t)' ;
-    codegen_axb_method ('max', multop, add, addfunc, fmult, 'float'   , 'float'   , neginf32    , plusinf32   , 0, 0) ;
+    codegen_axb_method ('max', multop, add, addfunc, fmult, 'float'   , 'float'   , neginf32    , [ ]         , 0, 0) ;
     add = 'w = fmax (w, t)' ;
     addfunc = 'fmax (w, t)' ;
-    codegen_axb_method ('max', multop, add, addfunc, dmult, 'double'  , 'double'  , neginf64    , plusinf64   , 0, 0) ;
+    codegen_axb_method ('max', multop, add, addfunc, dmult, 'double'  , 'double'  , neginf64    , [ ]         , 0, 0) ;
 end
 
 % ANY monoid: all are terminal.
