@@ -17,14 +17,14 @@
 
 #define USAGE "C = GB_mex_unpack_pack (A, format_matrix, format_export)"
 
-#define FREE_WORK                                 \
-{                                                 \
-    if (Cp != NULL) mxFree (Cp) ; Cp = NULL ;     \
-    if (Ch != NULL) mxFree (Ch) ; Ch = NULL ;     \
-    if (Cb != NULL) mxFree (Cb) ; Cb = NULL ;     \
-    if (Ci != NULL) mxFree (Ci) ; Ci = NULL ;     \
-    if (Cx != NULL) mxFree (Cx) ; Cx = NULL ;     \
-    GrB_Matrix_free_(&C) ;                        \
+#define FREE_WORK                                   \
+{                                                   \
+    if (Cp != NULL) { mxFree (Cp) ; Cp = NULL ; }   \
+    if (Ch != NULL) { mxFree (Ch) ; Ch = NULL ; }   \
+    if (Cb != NULL) { mxFree (Cb) ; Cb = NULL ; }   \
+    if (Ci != NULL) { mxFree (Ci) ; Ci = NULL ; }   \
+    if (Cx != NULL) { mxFree (Cx) ; Cx = NULL ; }   \
+    GrB_Matrix_free_(&C) ;                          \
 }
 
 #define FREE_ALL                        \
