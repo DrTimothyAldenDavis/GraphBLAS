@@ -86,17 +86,17 @@ GrB_Scalar GB_mx_get_Scalar
     }
     else if (scalar_type == GxB_FC32)
     {
-        GxB_FC32_t *p = mxGetComplexSingles (mx_scalar) ;
+        GxB_FC32_t *p = (GxB_FC32_t *) mxGetComplexSingles (mx_scalar) ;
         GxB_Scalar_setElement_FC32_(Scalar, *p) ;
     }
     else if (scalar_type == GxB_FC64)
     {
-        GxB_FC64_t *p = mxGetComplexDoubles (mx_scalar) ;
+        GxB_FC64_t *p = (GxB_FC64_t *) mxGetComplexDoubles (mx_scalar) ;
         GxB_Scalar_setElement_FC64_(Scalar, *p) ;
     }
     else if (scalar_type == Complex)
     {
-        GxB_FC64_t *p = mxGetComplexDoubles (mx_scalar) ;
+        GxB_FC64_t *p = (GxB_FC64_t *) mxGetComplexDoubles (mx_scalar) ;
         GrB_Scalar_setElement_UDT (Scalar, p) ;
     }
     else

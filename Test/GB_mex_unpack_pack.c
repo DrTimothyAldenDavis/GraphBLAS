@@ -47,7 +47,7 @@
 GrB_Matrix A = NULL ;
 GrB_Matrix C = NULL ;
 GrB_Index *Cp = NULL, *Ch = NULL, *Ci = NULL ;
-GB_void *Cx = NULL ;
+void *Cx = NULL ;
 int8_t *Cb = NULL ;
 GB_Context Context = NULL ;
 GrB_Index nvec = 0, nvals = 0 ;

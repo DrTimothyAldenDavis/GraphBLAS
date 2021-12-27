@@ -88,6 +88,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
+#include "GB_AxB_saxpy_generic.h"
 #include "GB_control.h"
 #include "GB_AxB__include1.h"
 #ifndef GBCOMPACT

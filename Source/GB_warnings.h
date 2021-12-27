@@ -63,7 +63,7 @@
 
     // disable warnings for clang
     #pragma clang diagnostic ignored "-Wpointer-sign"
-
+    #pragma clang diagnostic ignored "-Wpass-failed"
 
 #elif GB_COMPILER_MSC
 
