@@ -120,6 +120,7 @@ end
 
 % bits: special cases for the PAIR multiplier
 fprintf (f, 'define(`GB_ctype_bits'', `%s'')\n', bits) ;
+fprintf (f, 'define(`GB_cnbits'', `%d'')\n', nbits) ;
 
 % nbits: # of bits in the type, needed for the atomic compare-exchange:
 if (nbits == 0)
@@ -652,7 +653,7 @@ end
 
 fclose (f) ;
 
-nprune = 75 ;
+nprune = 76 ;
 
 if (is_any_pair)
     % the ANY_PAIR_ISO semiring goes in Generated1

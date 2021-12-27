@@ -1,8 +1,0 @@
-extend saxpy5 vectorization to single complex and double complex?
-
-Test the change for min/max monoids for fp32/fp64: not terminal
-
-Split dot2, dot3, add_phase2 into multiple generics?
-
-Linux: try clang
-

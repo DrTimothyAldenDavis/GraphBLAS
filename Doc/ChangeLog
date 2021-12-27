@@ -1,4 +1,4 @@
-Versions 6.1.0 and 5.3.0, Dec FIXME, 2021
+Versions 6.1.0 and 5.3.0, Dec 26, 2021
 
     * added GxB_get options: compiler name and version
     * added package: https://github.com/google/cpu_features,

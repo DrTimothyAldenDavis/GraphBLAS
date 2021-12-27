@@ -76,6 +76,10 @@
 #define GB_CSIZE \
     sizeof (uint16_t)
 
+// # of bits in the type of C, for AVX2 and AVX512F
+#define GB_CNBITS \
+    16
+
 // true for int64, uint64, float, double, float complex, and double complex 
 #define GB_CTYPE_IGNORE_OVERFLOW \
     0
@@ -426,12 +430,16 @@ GrB_Info GB (_AsaxbitB__max_div_uint16)
         // saxpy5 method with vectors of length 8 for double, 16 for single
         //----------------------------------------------------------------------
 
-        #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX512F
+        // AVX512F: vector registers are 512 bits, or 64 bytes, which can hold
+        // 16 floats or 8 doubles.
 
-            // TODO use GB_V16 for FP32
-            #define GB_V16 0
-            #define GB_V8  1
-            #define GB_V4  1
+        #define GB_V16 (16 * GB_CNBITS <= 512)
+        #define GB_V8  ( 8 * GB_CNBITS <= 512)
+        #define GB_V4  ( 4 * GB_CNBITS <= 512)
+
+        #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX512F \
+            && GB_V4
+
             GB_TARGET_AVX512F static inline void GB_AxB_saxpy5_unrolled_avx512f
             (
                 GrB_Matrix C,
@@ -452,12 +460,19 @@ GrB_Info GB (_AsaxbitB__max_div_uint16)
         // saxpy5 method with vectors of length 4 for double, 8 for single
         //----------------------------------------------------------------------
 
-        #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX2
+        // AVX2: vector registers are 256 bits, or 32 bytes, which can hold
+        // 8 floats or 4 doubles.
 
-            // TODO use GB_V8 for FP32
-            #define GB_V16 0
-            #define GB_V8  0
-            #define GB_V4  1
+        #undef  GB_V16
+        #undef  GB_V8
+        #undef  GB_V4
+        #define GB_V16 (16 * GB_CNBITS <= 256)
+        #define GB_V8  ( 8 * GB_CNBITS <= 256)
+        #define GB_V4  ( 4 * GB_CNBITS <= 256)
+
+        #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX2 \
+            && GB_V4
+
             GB_TARGET_AVX2 static inline void GB_AxB_saxpy5_unrolled_avx2
             (
                 GrB_Matrix C,
@@ -478,22 +493,26 @@ GrB_Info GB (_AsaxbitB__max_div_uint16)
         // saxpy5 method unrolled, with no vectors
         //----------------------------------------------------------------------
 
-            #define GB_V16 0
-            #define GB_V8  0
-            #define GB_V4  0
-            static inline void GB_AxB_saxpy5_unrolled_vanilla
-            (
-                GrB_Matrix C,
-                const GrB_Matrix A,
-                const GrB_Matrix B,
-                const int ntasks,
-                const int nthreads,
-                const int64_t *B_slice,
-                GB_Context Context
-            )
-            {
-                #include "GB_AxB_saxpy5_unrolled.c"
-            }
+        #undef  GB_V16
+        #undef  GB_V8
+        #undef  GB_V4
+        #define GB_V16 0
+        #define GB_V8  0
+        #define GB_V4  0
+
+        static inline void GB_AxB_saxpy5_unrolled_vanilla
+        (
+            GrB_Matrix C,
+            const GrB_Matrix A,
+            const GrB_Matrix B,
+            const int ntasks,
+            const int nthreads,
+            const int64_t *B_slice,
+            GB_Context Context
+        )
+        {
+            #include "GB_AxB_saxpy5_unrolled.c"
+        }
 
     #endif
 
