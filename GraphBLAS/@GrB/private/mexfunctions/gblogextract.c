@@ -250,7 +250,7 @@ void mexFunction
 
     GrB_Vector V ;
     OK (GrB_Vector_new (&V, type, mnz)) ;
-    OK1 (V, GxB_Vector_Option_set (V, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    OK (GxB_Vector_Option_set (V, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
 
     #ifdef GB_MEMDUMP
     printf ("remove V->i from memtable: %p\n", V->i) ;
