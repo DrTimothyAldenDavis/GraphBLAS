@@ -9,7 +9,7 @@
 
 #include "gb_interface.h"
 
-GrB_Type gb_type_to_mxstring    // return the built-in string from a GrB_Type
+mxArray * gb_type_to_mxstring    // return the built-in string from a GrB_Type
 (
     const GrB_Type type
 )

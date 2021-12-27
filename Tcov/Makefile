@@ -11,29 +11,30 @@ UNAME := $(shell uname)
 
 # pick your compiler:
 # CC = gcc
-# CC = cc
+  CC = cc
 # CC = clang
 # CC = xlc
 # CC = gcc-8
+# CC = gcc-11
 # CC = icc
 ifeq ($(UNAME),Darwin)
-    CC = gcc-11
+    CFLAGS  = -g -Xclang -fopenmp -std=c11 -fPIC -Wno-pragmas -fno-common
+    LDFLAGS = -Xclang -fopenmp
 else
-    CC = gcc
+    CFLAGS  = -g -std=c11 -fopenmp -fexceptions -fPIC -Wno-pragmas
+    LDFLAGS = -fopenmp
 endif
 
 SRC = tmp_source/*
 INC = tmp_include/*
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
-LDFLAGS = -fopenmp
-CFLAGS = -g -std=c11 -fopenmp -fexceptions -fPIC -Wno-pragmas
-CPPFLAGS = -Itmp_include -DGBCOVER $(RENAME)
+LIBS = -L../cpu_features/build -lcpu_features
+CPPFLAGS = -Itmp_include -I../cpu_features/include -I../rmm_wrap -DGBCOVER $(RENAME)
 SO_OPTS = $(LDFLAGS)
 
 ifeq ($(UNAME),Darwin)
     # Mac
-    CFLAGS += -fno-common
     SO_NAME = libgraphblas_tcov.dylib
     SO_OPTS += -dynamiclib -shared -Wl,-install_name -Wl,$(SO_NAME) -undefined dynamic_lookup
 else
@@ -48,12 +49,12 @@ default: $(SO_NAME)
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $(notdir $@)
 
 $(SO_NAME): $(OBJ)
-	$(CC) $(SO_OPTS) $^ -o $@ -lm
+	$(CC) $(SO_OPTS) $^ $(LIBS) -o $@ -lm
 
 .KEEP: $(OBJ)
 
 clean:
-	$(RM) *.o
+	$(RM) *.o *.d
 
 distclean: clean
 	$(RM) *.mex* tmp*/* errlog*.txt grbstat.mat fprint.txt

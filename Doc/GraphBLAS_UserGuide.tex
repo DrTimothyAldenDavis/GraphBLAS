@@ -148,6 +148,20 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
+\item Versions 6.1.0 and 5.3.0 (Dec 26, 2021)
+
+    \begin{packed_itemize}
+    \item added \verb'GxB_get' options: compiler name and version.
+    \item added package: \url{https://github.com/google/cpu_features},
+        Oct 29, 2021 version.
+    \item performance: faster \verb'C+=A*B' when \verb'C' is full,
+        \verb'A' is bitmap/full, and \verb'B' is sparse/hyper.  % saxpy5
+        Faster \verb"C+=A'*B" when
+        \verb'A' is sparse/hyper, and \verb'B' is bitmap/full.  % dot4
+    \item bug fix: deserialization of iso and empty matrices/vectors was
+        incorrect
+    \end{packed_itemize}
+
 \item Versions 6.0.2 and 5.2.2 (Nov 30, 2021)
 
     \begin{packed_itemize}
@@ -1292,7 +1306,7 @@ Both of them allow for pending work to be left pending in a \verb'GrB_Matrix'.
 The Julia interface is at
 \url{https://github.com/JuliaSparse/SuiteSparseGraphBLAS.jl}, developed by Will
 Kimmerer, Abhinav Mehndiratta, Miha Zgubic, and Viral Shah.  
-Unlike the Octave/MATLABinterface (and like the Python interfaces) the Julia 
+Unlike the Octave/MATLAB interface (and like the Python interfaces) the Julia 
 interface can keep pending work (zombies, pending tuples, jumbled state) in
 a \verb'GrB_Matrix'. This makes Python and Julia the best high-level interfaces
 for SuiteSparse:GraphBLAS.  MATLAB is not as well suited, since it does not
@@ -8660,6 +8674,8 @@ field                       & value         & description \\
 \verb'GxB_API_DATE'             & \verb'char *' & C API date \\
 \verb'GxB_API_ABOUT'            & \verb'char *' & about the C API \\
 \verb'GxB_API_URL'              & \verb'char *' & \verb'http://graphblas.org' \\
+\verb'GxB_COMPILER_NAME'        & \verb'char *' & C compiler name \\
+\verb'GxB_COMPILER_VERSION'     & \verb'int [3]' & C compiler version \\
 \hline
 \end{tabular}
 }
@@ -14099,7 +14115,8 @@ in the top-level \verb'GraphBLAS' folder.  OpenMP will be found automatically:
     \begin{verbatim}
     make CC=icc CXX=icc \end{verbatim} }
 
-The following instructions work on MacOS Big Sur (v11.3), using
+The following instructions work on MacOS Big Sur (v11.3)
+and MacOS Monterey (12.1), using
 cmake 3.13 or later:
 
 First install Xcode (see \url{https://developer.apple.com/xcode},
@@ -14115,6 +14132,17 @@ Next, install brew, at \url{https://brew.sh}.
 If not used for the MATLAB mexFunction interface,
 Clang now works with \verb'libomp' and the \verb'GraphBLAS/CMakeLists.txt'.
 To use the MATLAB mexFunction, however, you must use \verb'gcc-11'.
+Using Clang will result in a segfault when you attempt to use the \verb'@GrB'
+interface in MATLAB.
+
+\begin{note}
+{\bf NOTE:} On the Mac, do not use the Apple compiler (clang, also called cc) 
+if you also want to use the MATLAB \verb'@GrB' interface.  GraphBLAS will
+work outside of MATLAB, but it will fail with a segfault inside MATLAB
+when it attempts to use any OpenMP parallelism.  This limitation
+does not apply to using GraphBLAS in MATLAB on Linux, which works with any
+compiler.
+\end{note}
 
 With MacOS Big Sur install \verb'gcc-11', \verb'cmake', and OpenMP, and then
 compile GraphBLAS.  cmake 3.13 or later is required.

@@ -151,7 +151,7 @@ GrB_Info assign (GB_Context Context)
         }
         else
         {
-            OK (GxB_Matrix_subassign_Scalar ((GrB_Vector) C, (GrB_Vector) M,
+            OK (GxB_Matrix_subassign_Scalar ((GrB_Matrix) C, (GrB_Matrix) M,
                 accum, S, I, ni, J, nj, desc)) ;
         }
 

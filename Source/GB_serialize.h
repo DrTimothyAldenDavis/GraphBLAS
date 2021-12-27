@@ -44,8 +44,8 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
 typedef struct
 {
-    void *p ;           // pointer to the compressed block
-    size_t p_size ;     // size of compressed block, or zero if p NULL
+    void *p ;                   // pointer to the compressed block
+    size_t p_size_allocated ;   // allocated size of compressed block
 }
 GB_blocks ;
 

@@ -14,6 +14,7 @@
 #include "GB_binop.h"
 #include "GB_mxm.h"
 #include "GB_get_mask.h"
+#include "GB_Semiring_new.h"
 
 #define GB_FREE_ALL ;
 

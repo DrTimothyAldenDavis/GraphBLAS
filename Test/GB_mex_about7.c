@@ -67,6 +67,25 @@ void mexFunction
     OK (GrB_Matrix_free (&A)) ;
 
     //--------------------------------------------------------------------------
+    // axv2 and avx512f
+    //--------------------------------------------------------------------------
+
+    bool have_avx2 = GB_Global_cpu_features_avx2 ( ) ;
+    bool have_avx512f = GB_Global_cpu_features_avx512f ( ) ;
+    printf ("avx2: %d avx512f: %d\n", have_avx2, have_avx512f) ;
+
+    //--------------------------------------------------------------------------
+    // compiler
+    //--------------------------------------------------------------------------
+
+    char *compiler ;
+    int compiler_version [3] ;
+    OK (GxB_Global_Option_get (GxB_COMPILER_NAME, &compiler)) ;
+    OK (GxB_Global_Option_get (GxB_COMPILER_VERSION, &compiler_version)) ;
+    printf ("GraphBLAS compiled with:\n[%s] [v%d.%d.%d]\n", compiler,
+        compiler_version [0], compiler_version [1], compiler_version [2]) ;
+
+    //--------------------------------------------------------------------------
     // wrapup
     //--------------------------------------------------------------------------
 

@@ -16,6 +16,7 @@ default: library
 
 # just build the dynamic library; do not run the demo
 library:
+	( cd ../cpu_features ; make )
 	( cd build ; cmake $(CMAKE_OPTIONS) .. ; $(MAKE) --jobs=$(JOBS) )
 
 # just do 'make' in build; do not rerun the cmake script
@@ -44,5 +45,4 @@ distclean:
 	rm -rf build/*
 	( cd test/tcov ; $(MAKE) distclean )
 	( cd @GrB/private ; $(MAKE) distclean )
-
 

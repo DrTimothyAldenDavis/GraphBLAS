@@ -2331,7 +2331,8 @@
 //      mult:    (FIRSTI, FIRSTI1, FIRSTJ, FIRSTJ1, SECONDJ, SECONDJ1) x
 //      types:   (int32, int64)
 
-   #define GxB_NO_MIN_FIRSTI_INT32      1
+// enable GxB_MIN_FIRSTI_INT32 for test coverage:
+// #define GxB_NO_MIN_FIRSTI_INT32      1
    #define GxB_NO_MIN_FIRSTI_INT64      1
    #define GxB_NO_MIN_FIRSTI1_INT32     1
    #define GxB_NO_MIN_FIRSTI1_INT64     1

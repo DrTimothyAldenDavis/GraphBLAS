@@ -179,8 +179,8 @@ void mexFunction
     OK (GrB_Matrix_free (&M)) ;
     OK (GrB_Matrix_free (&A)) ;
     OK (GrB_Descriptor_free (&desc)) ;
-    if (I_allocated) gb_mxfree (&I) ;
-    if (J_allocated) gb_mxfree (&J) ;
+    if (I_allocated) gb_mxfree ((void **) (&I)) ;
+    if (J_allocated) gb_mxfree ((void **) (&J)) ;
 
     //--------------------------------------------------------------------------
     // export the output matrix C

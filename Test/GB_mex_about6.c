@@ -35,7 +35,7 @@ void mexFunction
     GrB_Scalar alpha = NULL, beta = NULL, S = NULL ;
     GrB_Vector u = NULL ;
     GrB_Type MyType = NULL ;
-    char *err ;
+    const char *err ;
 
     //--------------------------------------------------------------------------
     // startup GraphBLAS

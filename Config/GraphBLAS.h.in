@@ -86,7 +86,7 @@
 
 // Exporting/importing symbols for Microsoft Visual Studio
 
-#if ( _MSC_VER && !__INTEL_COMPILER )
+#if ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
 #ifdef GB_LIBRARY
 // compiling SuiteSparse:GraphBLAS itself, exporting symbols to user apps
 #define GB_PUBLIC extern __declspec ( dllexport )
@@ -107,6 +107,7 @@
 // used.  Earlier versions of the language do not have this feature.
 
 #ifdef __STDC_VERSION__
+// ANSI C17: 201710L
 // ANSI C11: 201112L
 // ANSI C99: 199901L
 // ANSI C95: 199409L
@@ -138,7 +139,7 @@
     #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)
     #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)
 
-#elif ( _MSC_VER && !__INTEL_COMPILER )
+#elif ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
 
     // Microsoft Windows complex types
     #include <complex.h>
@@ -4366,6 +4367,8 @@ typedef enum            // for global options or matrix options
     GxB_API_DATE = 17,              // date of the API (char *)
     GxB_API_ABOUT = 18,             // about the API (char *)
     GxB_API_URL = 19,               // URL for the API (char *)
+    GxB_COMPILER_VERSION = 23,      // compiler version (3 int's)
+    GxB_COMPILER_NAME = 24,         // compiler name (char *)
 
     //------------------------------------------------------------
     // for GxB_Global_Option_get/set only:
@@ -11337,7 +11340,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     GxB_Matrix_serialize (&blob, &blob_size, A, NULL) ;
     FILE *f = fopen ("myblob", "w") ;
     fwrite (blob_size, sizeof (size_t), 1, f) ;
-    fwrite (blob, blob_size, sizeof (uint8_t), f) ;
+    fwrite (blob, sizeof (uint8_t), blob_size, f) ;
     fclose (f) ;
     GrB_Matrix_free (&A) ;
     // B is a copy of A
@@ -11376,7 +11379,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     blob = realloc (blob, blob_size) ;              // user can shrink the blob
     FILE *f = fopen ("myblob", "w") ;
     fwrite (blob_size, sizeof (size_t), 1, f) ;
-    fwrite (blob, blob_size, sizeof (uint8_t), f) ;
+    fwrite (blob, sizeof (uint8_t), blob_size, f) ;
     fclose (f) ;
     GrB_Matrix_free (&A) ;
     // B is a copy of A:

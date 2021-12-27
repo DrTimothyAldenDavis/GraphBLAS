@@ -120,8 +120,10 @@ GrB_Info GB_resize              // change the size of a matrix
             }
             else
             { 
-                // allocate new space for A->x
-                Ax_new = GB_MALLOC (nzmax_new*asize, GB_void, &Ax_new_size) ;
+                // allocate new space for A->x; use calloc to ensure all space
+                // is initialized.
+                Ax_new = GB_CALLOC (nzmax_new*asize, GB_void, // x:OK:calloc
+                    &Ax_new_size) ;
                 ok = (Ax_new != NULL) ;
             }
         }

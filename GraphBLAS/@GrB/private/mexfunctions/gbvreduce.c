@@ -150,7 +150,8 @@ void mexFunction
     // compute C<M> += reduce(A)
     //--------------------------------------------------------------------------
 
-    OK1 (C, GrB_Matrix_reduce_Monoid (C, M, accum, monoid, A, desc)) ;
+    OK1 (C, GrB_Matrix_reduce_Monoid ((GrB_Vector) C, (GrB_Vector) M,
+        accum, monoid, A, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies

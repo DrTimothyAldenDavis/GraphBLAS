@@ -134,8 +134,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     if (allocate_Cx)
     { 
-        // allocate new C->x component
-        C->x = GB_XALLOC (A_iso, anz, C->type->size, &(C->x_size)) ;
+        // allocate new C->x component; use calloc if C is bitmap
+        C->x = GB_XALLOC (C_is_bitmap, A_iso, anz, // x:OK
+            C->type->size, &(C->x_size)) ;
         ok = ok && (C->x != NULL) ;
     }
 

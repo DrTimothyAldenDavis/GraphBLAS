@@ -16,19 +16,18 @@
 // compiler flags
 //------------------------------------------------------------------------------
 
-#if defined __INTEL_COMPILER
-// disable icc warnings
-//  144:  initialize with incompatible pointer
-#pragma warning (disable: 144 )
-#elif defined __GNUC__
-#if !defined ( __cplusplus )
-#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
-#endif
-#endif
-
-#if ( _MSC_VER && !__INTEL_COMPILER )
-// disable MS Visual Studio warnings
-GB_PRAGMA (warning (disable : 4146 ))
+#if GB_COMPILER_ICC || GB_COMPILER_ICX
+    // disable icc warnings
+    //  144:  initialize with incompatible pointer
+    #pragma warning (disable: 144 )
+#elif GB_COMPILER_GCC
+    // disable gcc warnings
+    #if !defined ( __cplusplus )
+    #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+    #endif
+#elif GB_COMPILER_MSC
+    // disable MS Visual Studio warnings
+    GB_PRAGMA (warning (disable : 4146 ))
 #endif
 
 //------------------------------------------------------------------------------
@@ -537,7 +536,7 @@ const GxB_Format_Value GxB_FORMAT_DEFAULT = GxB_BY_ROW ;
 // predefined built-in monoids
 //------------------------------------------------------------------------------
 
-#if ( _MSC_VER && !__INTEL_COMPILER )
+#if GB_COMPILER_MSC
 #define GB_FC32_ONE  {1.0f, 0.0f}
 #define GB_FC64_ONE  {1.0 , 0.0 }
 #define GB_FC32_ZERO {0.0f, 0.0f}

@@ -56,9 +56,10 @@ else
 end
 
 ztype_is_real = ~codegen_contains (ztype, 'FC') ;
+ztype_is_fp = isequal (ztype, 'float') || isequal (ztype, 'double') ;
 is_any_complex = is_any && ~ztype_is_real ;
-is_plus_pair_real = isequal (addop, 'plus') && isequal (multop, 'pair') ...
-    && ztype_is_real ;
+is_plus_pair_real  = isequal (addop, 'plus') && isequal (multop, 'pair' ) && ztype_is_real ;
+is_plus_times_fp = isequal (addop, 'plus') && isequal (multop, 'times') && ztype_is_fp ;
 
 t_is_simple = isequal (multop, 'pair') || codegen_contains (multop, 'first') || codegen_contains (multop, 'second') ;
 t_is_nonnan = isequal (multop (1:2), 'is') || (multop (1) == 'l') ;
@@ -119,6 +120,7 @@ end
 
 % bits: special cases for the PAIR multiplier
 fprintf (f, 'define(`GB_ctype_bits'', `%s'')\n', bits) ;
+fprintf (f, 'define(`GB_cnbits'', `%d'')\n', nbits) ;
 
 % nbits: # of bits in the type, needed for the atomic compare-exchange:
 if (nbits == 0)
@@ -221,6 +223,14 @@ else
     fprintf (f, 'define(`GB_cij_declare'', `%s cij'')\n', ztype) ;
 end
 
+if (is_plus_times_fp)
+    % plus_times_fp32 and plus_times_fp64 are accelerated with AVX2 or AVX512f instructions.
+    % More semirings will be accelerated in the future.
+    fprintf (f, 'define(`GB_semiring_has_avx_implementation'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_semiring_has_avx_implementation'', `0'')\n') ;
+end
+
 if (is_pair)
     fprintf (f, 'define(`GB_is_pair_multiplier'', `1'')\n') ;
 else
@@ -238,16 +248,19 @@ if (is_any)
     fprintf (f, 'define(`GB_is_any_monoid'', `1'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `break ;'')\n') ;
     fprintf (f, 'define(`GB_dot_simd_vectorize'', `;'')\n') ;
+    fprintf (f, 'define(`GB_monoid_is_terminal'', `1'')\n') ;
 elseif (~isempty (terminal))
     % terminal monoids terminate when cij equals the terminal value
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `if (cij == %s) { break ; }'')\n', ...
         terminal) ;
     fprintf (f, 'define(`GB_dot_simd_vectorize'', `;'')\n') ;
+    fprintf (f, 'define(`GB_monoid_is_terminal'', `1'')\n') ;
 else
     % non-terminal monoids
     fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
+    fprintf (f, 'define(`GB_monoid_is_terminal'', `0'')\n') ;
     op = '' ;
     if (ztype_is_real)
         switch (addop)
@@ -312,6 +325,15 @@ if (is_any)
 else
     fprintf (f, 'define(`_Adot4B'', `_Adot4B__%s'')\n', name) ;
     fprintf (f, 'define(`if_dot4_enabled'', `#if 1'')\n') ;
+end
+
+if (is_any)
+    % saxpy5 is disabled for the ANY monoid
+    fprintf (f, 'define(`_Asaxpy5B'', `_Asaxpy5B__%s'')\n', '(none)') ;
+    fprintf (f, 'define(`if_saxpy5_enabled'', `#if 0'')\n') ;
+else
+    fprintf (f, 'define(`_Asaxpy5B'', `_Asaxpy5B__%s'')\n', name) ;
+    fprintf (f, 'define(`if_saxpy5_enabled'', `#if 1'')\n') ;
 end
 
 % firsti or firsti1 multiply operator
@@ -441,12 +463,10 @@ end
 % access the values of C
 if (is_any_pair)
     fprintf (f, 'define(`GB_cx'', `'')\n') ;
-    fprintf (f, 'define(`GB_get4c'', `'')\n') ;
     fprintf (f, 'define(`GB_putc'', `'')\n') ;
     fprintf (f, 'define(`GB_cij_write'', `'')\n') ;
 else
     fprintf (f, 'define(`GB_cx'', `Cx [p]'')\n') ;
-    fprintf (f, 'define(`GB_get4c'', `cij = (C_in_iso) ? cinput : Cx [p]'')\n');
     fprintf (f, 'define(`GB_putc'', `Cx [p] = cij'')\n') ;
     fprintf (f, 'define(`GB_cij_write'', `Cx [p] = t'')\n') ;
 end
@@ -455,9 +475,14 @@ end
 if (~isempty (strfind (mult, 'IDIV')))
     if (unsigned)
         mult = strrep (mult, 'IDIV', 'IDIV_UNSIGNED') ;
+        % TODO: use this instead
+        % mult = strrep (mult, 'IDIV', 'idiv_uint%d', bits) ;
     else
         mult = strrep (mult, 'IDIV', 'IDIV_SIGNED') ;
+        % TODO: use this instead
+        % mult = strrep (mult, 'IDIV', 'idiv_int%d', bits) ;
     end
+    % TODO: remove this
     mult = strrep (mult, ')', sprintf (', %d)', bits)) ;
 end
 
@@ -524,8 +549,8 @@ else
     fprintf (f, 'define(`GB_add_function'', `%s'')\n', add2) ;
 end
 
-% create the multiply-add operator
-need_mult_typecast = false ;
+% create the multiply-add statement, of the form:
+%   z += x*y ;
 is_imin_or_imax = (isequal (addop, 'min') || isequal (addop, 'max')) && codegen_contains (ztype, 'int') ;
 if (is_any_pair)
     fprintf (f, 'define(`GB_multiply_add'', `'')\n') ;
@@ -545,9 +570,8 @@ else
     % use explicit typecasting to avoid ANSI C integer promotion.
     add2 = strrep (add,  'w', '`$1''') ;
     add2 = strrep (add2, 't', 'x_op_y') ;
-    fprintf (f, 'define(`GB_multiply_add'', `%s x_op_y = %s ; %s'')\n', ...
+    fprintf (f, 'define(`GB_multiply_add'', `{ %s x_op_y = %s ; %s ; }'')\n', ...
         ztype, mult2, add2) ;
-    need_mult_typecast = true ;
 end
 
 % determine the identity byte
@@ -629,7 +653,7 @@ end
 
 fclose (f) ;
 
-nprune = 72 ;
+nprune = 76 ;
 
 if (is_any_pair)
     % the ANY_PAIR_ISO semiring goes in Generated1

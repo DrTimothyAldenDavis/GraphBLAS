@@ -20,6 +20,7 @@
 
 #include "GB.h"
 #include "GB_binop.h"
+#include "GB_Monoid_new.h"
 
 GrB_Info GB_Monoid_new          // create a monoid
 (
@@ -31,6 +32,8 @@ GrB_Info GB_Monoid_new          // create a monoid
     GB_Context Context
 )
 {
+
+//  printf("Inside GB_Monoid_new\n");
 
     //--------------------------------------------------------------------------
     // check inputs

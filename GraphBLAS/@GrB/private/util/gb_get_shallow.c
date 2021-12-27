@@ -176,7 +176,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         }
 
         // each component
-        int64_t *Ap = NULL, *Ai = NULL, *Ah = NULL ;
+        uint64_t *Ap = NULL, *Ai = NULL, *Ah = NULL ;
         int8_t *Ab = NULL ;
         void *Ax = NULL ;
 

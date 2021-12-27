@@ -40,7 +40,7 @@ cfiles = [ dir('../Test/GB_mx_*.c') ; dir('GB_cover_util.c') ; ] ;
 hfiles = [ dir('../Test/*.h') ; dir('../Test/Template/*.c') ] ;
 
 % list of include directories
-inc = '-Itmp_include -I../Test -I../Test/Template' ;
+inc = '-Itmp_include -I../Test -I../Test/Template -I../lz4 -I../cpu_features/include -I../rmm_wrap' ;
 
 have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 if (have_octave)
@@ -144,8 +144,9 @@ for k = 1:length (cfiles)
 end
 
 if (ismac)
-    objlist = [objlist ' libgraphblas_tcov.dylib'] ;
+    objlist = [objlist ' libgraphblas_tcov.dylib '] ;
 end
+objlist = [objlist ' ../cpu_features/build/libcpu_features.a'] ;
 
 % compile the mexFunctions
 for k = 1:length (mexfunctions)

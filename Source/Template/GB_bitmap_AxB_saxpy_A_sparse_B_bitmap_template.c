@@ -261,6 +261,7 @@
                             GB_GETB (gk1, Gx, k +   bvlen, B_iso) ;
                             GB_GETB (gk2, Gx, k + 2*bvlen, B_iso) ;
                             GB_GETB (gk3, Gx, k + 3*bvlen, B_iso) ;
+                            // H += A(:,k)*B(k,j1:j2-1)
                             const int64_t pA_end = Ap [kA+1] ;
                             for (int64_t pA = Ap [kA] ; pA < pA_end ; pA++)
                             { 
@@ -291,6 +292,7 @@
                             GB_GETB (gk0, Gx, k          , B_iso) ;
                             GB_GETB (gk1, Gx, k +   bvlen, B_iso) ;
                             GB_GETB (gk2, Gx, k + 2*bvlen, B_iso) ;
+                            // H += A(:,k)*B(k,j1:j2-1)
                             const int64_t pA_end = Ap [kA+1] ;
                             for (int64_t pA = Ap [kA] ; pA < pA_end ; pA++)
                             { 
@@ -316,6 +318,7 @@
                             const int8_t gb1 = Gb [k +   bvlen] ;
                             if (!(gb0 || gb1)) continue ;
                             #endif
+                            // H += A(:,k)*B(k,j1:j2-1)
                             GB_GETB (gk0, Gx, k          , B_iso) ;
                             GB_GETB (gk1, Gx, k +   bvlen, B_iso) ;
                             const int64_t pA_end = Ap [kA+1] ;
@@ -336,11 +339,12 @@
                         {
                             // get A(:,k)
                             const int64_t k = GBH (Ah, kA) ;
-                            // get B(k,j1:j2-1)
+                            // get B(k,j1:j2-1) where j1 == j2-1
                             #if GB_B_IS_BITMAP
                             const int8_t gb0 = Gb [k] ;
                             if (!gb0) continue ;
                             #endif
+                            // H += A(:,k)*B(k,j1:j2-1)
                             GB_GETB (gk0, Gx, k, B_iso) ;
                             const int64_t pA_end = Ap [kA+1] ;
                             for (int64_t pA = Ap [kA] ; pA < pA_end ; pA++)

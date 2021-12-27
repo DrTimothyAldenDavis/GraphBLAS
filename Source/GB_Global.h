@@ -14,6 +14,10 @@
 #ifndef GB_GLOBAL_H
 #define GB_GLOBAL_H
 
+GB_PUBLIC void     GB_Global_cpu_features_query (void) ;
+GB_PUBLIC bool     GB_Global_cpu_features_avx2 (void) ;
+GB_PUBLIC bool     GB_Global_cpu_features_avx512f (void) ;
+
 GB_PUBLIC void     GB_Global_mode_set (GrB_Mode mode) ;
           GrB_Mode GB_Global_mode_get (void) ;
 

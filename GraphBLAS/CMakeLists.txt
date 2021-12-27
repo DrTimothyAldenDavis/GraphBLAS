@@ -29,10 +29,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS (must match ../CMakeLists.txt)
-set ( GraphBLAS_DATE "Nov 30, 2021")
+set ( GraphBLAS_DATE "Dec 26, 2021")
 set ( GraphBLAS_VERSION_MAJOR 6 )
-set ( GraphBLAS_VERSION_MINOR 0 )
-set ( GraphBLAS_VERSION_SUB   2 )
+set ( GraphBLAS_VERSION_MINOR 1 )
+set ( GraphBLAS_VERSION_SUB   0 )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 
@@ -64,7 +64,8 @@ project ( graphblas_renamed
 
 include ( GNUInstallDirs )
 
-# Uncomment this line for development only, not for end-users:
+# Edit these lines for code development only, not for end-users:
+# set ( GBCOMPACT true )
 # set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
@@ -74,7 +75,6 @@ endif ( )
 set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRENAME=1 " )
 
 find_package ( OpenMP )
-# find_package ( IPP )
 
 message ( STATUS "CMAKE build type:          " ${CMAKE_BUILD_TYPE} )
 
@@ -87,9 +87,6 @@ endif ( )
 message ( STATUS "CMAKE compiler ID:         " ${CMAKE_C_COMPILER_ID} )
 message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 
-# Uncomment this line for for development only, not for end-users:
-# set ( GBCOMPACT true )
-
 if ( GBCOMPACT )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCOMPACT=1 " )
 endif ( )
@@ -101,9 +98,9 @@ endif ( )
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 if ( GBCOMPACT )
-    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../cpu_features/include ../lz4 ../rmm_wrap )
 else ( )
-    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 ../Source/Generated2 )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../cpu_features/include ../lz4 ../rmm_wrap ../Source/Generated2 )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -128,6 +125,25 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
         message ( FATAL_ERROR "gcc version must be at least 4.9" )
     endif ( )
+elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
+    # options for icc: also needs -std=c11
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -diag-disable 10397,15552 " )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -qopt-report=5 -qopt-report-phase=vec" )
+    # the -mp1 option is important for predictable floating-point results with
+    # the icc compiler.  Without, ((float) 1.)/((float) 0.) produces NaN,
+    # instead of the correct result, Inf.
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -mp1" )
+    # The -g option is useful for the Intel VTune tool, but it should be
+    # removed in production.  Comment this line out if not in use:
+    # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -qopt-malloc-options=3" )
+    # check all warnings and remarks (uncomment for development only):
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 -Wremarks -Werror " )
+    if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 19.0 )
+        message ( FATAL_ERROR "icc version must be at least 19.0" )
+    endif ( )
+elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "IntelLLVM" )
+    # options for icx
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
     # options for clang
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wno-pointer-sign " )
@@ -171,6 +187,11 @@ if ( OPENMP_FOUND )
     set ( USE_OPENMP true )
 endif ( )
 
+set (BUILD_TESTING off)
+message ( STATUS "Adding cpu_features (by google.com): " )
+add_subdirectory (../cpu_features build)
+include_directories ( "../cpu_features/include" )
+
 #-------------------------------------------------------------------------------
 # select the math library (not required for Microsoft Visual Studio)
 #-------------------------------------------------------------------------------
@@ -182,6 +203,7 @@ else ( )
 endif ( )
 
 target_link_libraries ( graphblas_renamed PUBLIC ${M_LIB} )
+target_link_libraries ( graphblas_renamed PUBLIC cpu_features )
 
 #-------------------------------------------------------------------------------
 # add the OpenMP, CUDA, BLAS, ... libraries
@@ -194,16 +216,6 @@ if ( USE_OPENMP )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} " )
     include_directories ( ${OpenMP_C_INCLUDE_DIRS} )
 endif ( )
-
-# Intel(R) IPP not yet supported
-#   message ( STATUS "CMAKE have IPP:            " ${IPP_FOUND} )
-#   if ( IPP_FOUND )
-#       message ( STATUS "Intel(R) IPP variant:      " ${IPP_TL_VARIANT} )
-#       message ( STATUS "Intel(R) IPP arch:         " ${IPP_ARCH} )
-#       message ( STATUS "Intel(R) IPP version:      " ${IPP_VERSION} )
-#       set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAVE_IPP=1 " )
-#       target_link_libraries ( graphblas_renamed PUBLIC ippdc ippcore )
-#   endif ( )
 
 #-------------------------------------------------------------------------------
 # print final C flags

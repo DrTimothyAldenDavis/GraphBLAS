@@ -138,6 +138,13 @@ typedef struct
     int64_t free_pool_limit [64] ;
 
     //--------------------------------------------------------------------------
+    // CPU features
+    //--------------------------------------------------------------------------
+
+    bool cpu_features_avx2 ;        // x86 with AVX2
+    bool cpu_features_avx512f ;     // x86 with AVX512f
+
+    //--------------------------------------------------------------------------
     // CUDA (DRAFT: in progress)
     //--------------------------------------------------------------------------
 
@@ -145,7 +152,7 @@ typedef struct
     GrB_Desc_Value gpu_control ;    // always, never, or default
     double gpu_chunk ;              // min problem size for using a GPU
     // properties of each GPU:
-    GB_cuda_device gpu_properties [GB_CUDA_MAX_GPUS] ;
+    rmm_device gpu_properties [GB_CUDA_MAX_GPUS] ;
 
 }
 GB_Global_struct ;
@@ -331,6 +338,10 @@ GB_Global_struct GB_Global =
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 #endif
 
+    // CPU features
+    .cpu_features_avx2 = false,         // x86 with AVX2
+    .cpu_features_avx512f = false,      // x86 with AVX512f
+
     // CUDA environment (DRAFT: in progress)
     .gpu_count = 0,                     // # of GPUs in the system
     .gpu_control = GxB_DEFAULT,         // always, never, or default
@@ -370,6 +381,35 @@ GB_PUBLIC
 bool GB_Global_GrB_init_called_get (void)
 { 
     return (GB_Global.GrB_init_called) ;
+}
+
+//------------------------------------------------------------------------------
+// cpu features
+//------------------------------------------------------------------------------
+
+GB_PUBLIC
+void GB_Global_cpu_features_query (void)
+{ 
+    #if defined ( CPU_FEATURES_ARCH_X86 )
+    X86Features features = GetX86Info ( ).features ;
+    GB_Global.cpu_features_avx2 = (bool) (features.avx2) ;
+    GB_Global.cpu_features_avx512f = (bool) (features.avx512f) ;
+    #else
+    GB_Global.cpu_features_avx2 = false ;
+    GB_Global.cpu_features_avx512f = false ;
+    #endif
+}
+
+GB_PUBLIC
+bool GB_Global_cpu_features_avx2 (void)
+{ 
+    return (GB_Global.cpu_features_avx2) ;
+}
+
+GB_PUBLIC
+bool GB_Global_cpu_features_avx512f (void)
+{ 
+    return (GB_Global.cpu_features_avx512f) ;
 }
 
 //------------------------------------------------------------------------------

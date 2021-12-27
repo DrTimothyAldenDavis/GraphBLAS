@@ -258,7 +258,7 @@ void mexFunction
     if (mxIsComplex (pargin [3]))
     {
         xtype = Complex ;
-        Y = mxGetComplexDoubles (pargin [3]) ;
+        Y = (GB_void *) mxGetComplexDoubles (pargin [3]) ;
     }
     else
     {

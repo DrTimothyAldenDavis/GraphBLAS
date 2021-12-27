@@ -44,6 +44,7 @@
     const int64_t  *restrict Bi = B->i ;
     const bool B_iso = B->iso ;
     const int64_t vlen = B->vlen ;
+    const int64_t bvdim = B->vdim ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
@@ -53,7 +54,9 @@
     const int64_t  *restrict Ah = A->h ;
     const int64_t  *restrict Ai = A->i ;
     const bool A_iso = A->iso ;
+    const int64_t avdim = A->vdim ;
     ASSERT (A->vlen == B->vlen) ;
+    ASSERT (A->vdim == C->vlen) ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;

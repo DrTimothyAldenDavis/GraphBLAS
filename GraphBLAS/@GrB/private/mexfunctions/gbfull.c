@@ -55,7 +55,7 @@ void mexFunction
     // get the type of C
     //--------------------------------------------------------------------------
 
-    GrB_Matrix type ;
+    GrB_Type type ;
     if (nargin > 1)
     { 
         type = gb_mxstring_to_type (pargin [1]) ;

@@ -158,7 +158,7 @@ void mexFunction
     }
     else
     {
-        METHOD (GrB_Matrix_assign_Scalar ((GrB_Vector) C, (GrB_Vector) Mask,
+        METHOD (GrB_Matrix_assign_Scalar ((GrB_Matrix) C, (GrB_Matrix) Mask,
             accum, S, I, ni, J, nj, desc)) ;
     }
 

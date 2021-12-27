@@ -201,9 +201,14 @@ end
 if (~isempty (strfind (op, 'IDIV')))
     if (unsigned)
         op = strrep (op, 'IDIV', 'IDIV_UNSIGNED') ;
+        % TODO: use this instead
+        % mult = strrep (op, 'IDIV', 'idiv_uint%d', bits) ;
     else
         op = strrep (op, 'IDIV', 'IDIV_SIGNED') ;
+        % TODO: use this instead
+        % mult = strrep (op, 'IDIV', 'idiv_int%d', bits) ;
     end
+    % TODO: remove this
     op = strrep (op, ')', sprintf (', %d)', bits)) ;
 end
 

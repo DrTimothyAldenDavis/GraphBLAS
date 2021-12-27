@@ -10,7 +10,17 @@
 // c = a*b where c is GrB_Index (uint64_t), and a and b are int64_t.
 // Check for overflow.  Requires a >= 0 and b >= 0.
 
+#ifdef GB_CUDA_KERNEL
+__device__ static inline
+#define restrict __restrict__
+
+// from GraphBLAS.h, duplicated here since GraphBLAS.h must be self-contained
+#define GrB_INDEX_MAX ((GrB_Index) (1ULL << 60) - 1)
+#include "../GB_index.h"
+
+#else
 #include "GB.h"
+#endif
 
 bool GB_int64_multiply      // true if ok, false if overflow
 (
@@ -34,11 +44,13 @@ bool GB_int64_multiply      // true if ok, false if overflow
         return (false) ;
     }
 
+#ifndef GB_CUDA_KERNEL // FIXME
     if (GB_CEIL_LOG2 (a) + GB_CEIL_LOG2 (b) > 60)
     { 
         // a * b may overflow
         return (false) ;
     }
+#endif
 
     // a * b will not overflow
     (*c) = a * b ;

@@ -135,13 +135,13 @@ static GrB_Info GB_import_worker   // import a matrix of any type
         case GrB_CSC_FORMAT : 
             Ap_copy = GB_MALLOC (plen,           GrB_Index, &Ap_size) ;
             Ai_copy = GB_MALLOC (nvals,          GrB_Index, &Ai_size) ;
-            Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ;
+            Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ; // x:OK
             ok = (Ap_copy != NULL && Ai_copy != NULL && Ax_copy != NULL) ;
             break ;
 
 //      case GrB_DENSE_ROW_FORMAT :
 //      case GrB_DENSE_COL_FORMAT :
-//          Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ;
+//          Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ; // x:OK
 //          ok = (Ax_copy != NULL) ;
 //          break ;
 

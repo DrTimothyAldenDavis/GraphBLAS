@@ -8,19 +8,5 @@
 //------------------------------------------------------------------------------
 
 #include "GB_Pending.h"
-
-int64_t GB_Pending_n        // return # of pending tuples in A
-(
-    GrB_Matrix A
-)
-{
-
-    int64_t n = 0 ;
-    if (A != NULL && A->Pending != NULL)
-    { 
-        // only sparse and hypersparse matries can have pending tuples
-        n = A->Pending->n ;
-    }
-    return (n) ;
-}
+#include "GB_Pending_n_template.c"
 
