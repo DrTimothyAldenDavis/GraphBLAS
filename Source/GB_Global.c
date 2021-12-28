@@ -390,7 +390,7 @@ bool GB_Global_GrB_init_called_get (void)
 GB_PUBLIC
 void GB_Global_cpu_features_query (void)
 { 
-    #if defined ( CPU_FEATURES_ARCH_X86 )
+    #if defined ( CPU_FEATURES_ARCH_X86_64 )
     X86Features features = GetX86Info ( ).features ;
     GB_Global.cpu_features_avx2 = (bool) (features.avx2) ;
     GB_Global.cpu_features_avx512f = (bool) (features.avx512f) ;

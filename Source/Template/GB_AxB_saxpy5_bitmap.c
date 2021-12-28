@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy5_bitmap.c: C+=A*B when C is full, A is bitmap B is sparse/hyper
+// GB_AxB_saxpy5_bitmap.c: C+=A*B when C is full, A is bitmap, B is sparse/hyper
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
