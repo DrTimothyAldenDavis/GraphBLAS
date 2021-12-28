@@ -5,7 +5,6 @@
 go:
 	cmake -S. -Bbuild -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
 	cmake --build build --config Release -j
-	./build/list_cpu_features --json
 
 distclean: purge
 
