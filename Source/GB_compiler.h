@@ -245,7 +245,8 @@
 //------------------------------------------------------------------------------
 
 // gcc 7.5.0 cannot compile code with __attribute__ ((target ("avx512f"))), or
-// avx2, but those targets fine with gcc 9.3.0 or later.
+// avx2, but those targets are fine with gcc 9.3.0 or later.  It might be OK
+// on gcc 8.x but I haven't tested this.
 
 #if defined ( CPU_FEATURES_ARCH_X86_64 )
 
@@ -259,10 +260,16 @@
             #define GB_COMPILER_SUPPORTS_AVX512F 0
             #define GB_COMPILER_SUPPORTS_AVX2 0
         #endif
-    #else
-        // assume all other compilers can handle AVX512F and AVX2 on x86
+    #elif GB_COMPILER_ICX || GB_COMPILER_ICC || GB_COMPILER_CLANG || \
+          GB_COMPILER_GCC || GB_COMPILER_MSC
+        // all these compilers can handle AVX512F and AVX2 on x86
         #define GB_COMPILER_SUPPORTS_AVX512F 1
         #define GB_COMPILER_SUPPORTS_AVX2 1
+    #else
+        // unsure if xlc can handle AVX, but it is not likely to be used on
+        // the x86 anyay
+        #define GB_COMPILER_SUPPORTS_AVX512F 0
+        #define GB_COMPILER_SUPPORTS_AVX2 0
     #endif
 
 #else

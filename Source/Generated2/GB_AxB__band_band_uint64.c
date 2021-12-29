@@ -433,12 +433,16 @@ GrB_Info GB (_AsaxbitB__band_band_uint64)
         // AVX512F: vector registers are 512 bits, or 64 bytes, which can hold
         // 16 floats or 8 doubles.
 
-        #define GB_V16 (16 * GB_CNBITS <= 512)
-        #define GB_V8  ( 8 * GB_CNBITS <= 512)
-        #define GB_V4  ( 4 * GB_CNBITS <= 512)
+        #define GB_V16_512 (16 * GB_CNBITS <= 512)
+        #define GB_V8_512  ( 8 * GB_CNBITS <= 512)
+        #define GB_V4_512  ( 4 * GB_CNBITS <= 512)
+
+        #define GB_V16 GB_V16_512
+        #define GB_V8  GB_V8_512
+        #define GB_V4  GB_V4_512
 
         #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX512F \
-            && GB_V4
+            && GB_V4_512
 
             GB_TARGET_AVX512F static inline void GB_AxB_saxpy5_unrolled_avx512f
             (
@@ -463,15 +467,20 @@ GrB_Info GB (_AsaxbitB__band_band_uint64)
         // AVX2: vector registers are 256 bits, or 32 bytes, which can hold
         // 8 floats or 4 doubles.
 
+        #define GB_V16_256 (16 * GB_CNBITS <= 256)
+        #define GB_V8_256  ( 8 * GB_CNBITS <= 256)
+        #define GB_V4_256  ( 4 * GB_CNBITS <= 256)
+
         #undef  GB_V16
         #undef  GB_V8
         #undef  GB_V4
-        #define GB_V16 (16 * GB_CNBITS <= 256)
-        #define GB_V8  ( 8 * GB_CNBITS <= 256)
-        #define GB_V4  ( 4 * GB_CNBITS <= 256)
+
+        #define GB_V16 GB_V16_256
+        #define GB_V8  GB_V8_256
+        #define GB_V4  GB_V4_256
 
         #if GB_SEMIRING_HAS_AVX_IMPLEMENTATION && GB_COMPILER_SUPPORTS_AVX2 \
-            && GB_V4
+            && GB_V4_256
 
             GB_TARGET_AVX2 static inline void GB_AxB_saxpy5_unrolled_avx2
             (
@@ -496,6 +505,7 @@ GrB_Info GB (_AsaxbitB__band_band_uint64)
         #undef  GB_V16
         #undef  GB_V8
         #undef  GB_V4
+
         #define GB_V16 0
         #define GB_V8  0
         #define GB_V4  0

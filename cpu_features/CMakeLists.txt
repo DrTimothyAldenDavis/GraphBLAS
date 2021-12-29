@@ -9,6 +9,8 @@ endif()
 project(CpuFeatures VERSION 0.6.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)
+# fPIC added by Tim Davis, so that libcpu_features.a can be included inside
+# libgraphblas.so
 set(CMAKE_C_FLAGS "-fPIC")
 
 # Default Build Type to be Release
