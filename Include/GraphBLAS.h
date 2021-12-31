@@ -206,10 +206,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Dec 28, 2021"
+#define GxB_IMPLEMENTATION_DATE "Dec 31, 2021"
 #define GxB_IMPLEMENTATION_MAJOR 6
 #define GxB_IMPLEMENTATION_MINOR 1
-#define GxB_IMPLEMENTATION_SUB   1
+#define GxB_IMPLEMENTATION_SUB   2
 #define GxB_SPEC_DATE "Nov 15, 2021"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 0
@@ -751,7 +751,7 @@ GrB_Info GRB (Type_new)         // create a new GraphBLAS type
 // characters, including the required null-terminating character) that may
 // appear as the name of a C type created by a C "typedef" statement.  It must
 // not contain any white-space characters.  Example, creating a type of size
-// 16*4+1 = 65 bytes, with a 4-by-4 dense float array and a 32-bit integer:
+// 16*4+4 = 68 bytes, with a 4-by-4 dense float array and a 32-bit integer:
 //
 //      typedef struct { float x [4][4] ; int color ; } myquaternion ;
 //      GrB_Type MyQtype ;

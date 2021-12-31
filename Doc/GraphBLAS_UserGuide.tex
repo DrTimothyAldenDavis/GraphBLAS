@@ -148,7 +148,16 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 6.1.1 (Dec 28, 2021)  % FIXME
+\item Version 6.1.2 (Dec 31, 2021)
+
+    \begin{packed_itemize}
+    \item performance: revised \verb'swap_rule' in \verb'GrB_mxm', which decides whether
+        to compute \verb"C=A*B" or \verb"C=(B'*A')'", and variants, resulting in up
+        to 3x performance gain over v6.1.1 for \verb'GrB_mxm' (observed;
+        could be higher in other cases).
+    \end{packed_itemize}
+
+\item Version 6.1.1 (Dec 28, 2021) 
 
     \begin{packed_itemize}
     \item minor revision to AVX2 and AVX512f selection

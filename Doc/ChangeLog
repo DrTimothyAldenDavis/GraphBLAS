@@ -1,3 +1,10 @@
+Version 6.1.2, Dec 31, 2021
+
+    * performance: revised swap_rule in GrB_mxm, which decides whether
+        to compute C=A*B or C=(B'*A')', and variants, resulting in up
+        to 3x performance gain over v6.1.1 for GrB_mxm (observed;
+        could be higher in other cases).
+
 Version 6.1.1, Dec 28, 2021
 
     * minor revision to AVX2 and AVX512f selection
