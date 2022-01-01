@@ -306,7 +306,7 @@ GrB_Info GxB_Iterator_query
     char *type_name,        // name of the type of the matrix (char array of
                             // size at least GxB_MAX_NAME_LEN, owned by the
                             // user application); see also GxB_Matrix_type_name.
-    size_t type_size,       // size of the matrix type
+    size_t *type_size,      // size of the matrix type
     GrB_Index *nrows,       // matrix dimension or vector length
     GrB_Index *ncols,       // matrix dimension; 1 if vector
     // input:
