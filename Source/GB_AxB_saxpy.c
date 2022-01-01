@@ -144,10 +144,11 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
     if (M == NULL)
     { 
-        GBURBLE ("(%s = %s*%s) ",
+        GBURBLE ("(%s = %s*%s, anz: %g bnz: %g) ",
             GB_sparsity_char (C_sparsity),
             GB_sparsity_char_matrix (A),
-            GB_sparsity_char_matrix (B)) ;
+            GB_sparsity_char_matrix (B),
+            (double) GB_nnz (A), (double) GB_nnz (B)) ;
     }
     else
     { 
