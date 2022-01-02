@@ -2,7 +2,7 @@
 # GraphBLAS/alternative/Makefile
 #-------------------------------------------------------------------------------
 
-# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 #-------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ default: library
 # This version info must match ../CMakeLists.txt 
 VER1 = 6
 VER2 = 1
-VER3 = 2
+VER3 = 3
 
 # pick your compiler:
   CC = gcc

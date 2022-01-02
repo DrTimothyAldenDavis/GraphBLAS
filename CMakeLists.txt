@@ -2,7 +2,7 @@
 # GraphBLAS/CMakeLists.txt:  cmake script for GraphBLAS
 #-------------------------------------------------------------------------------
 
-# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 # See the User Guide for details on how to compile SuiteSparse:GraphBLAS.
@@ -26,10 +26,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Dec 31, 2021")
+set ( GraphBLAS_DATE "Jan 1, 2022")
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 1 )
-set ( GraphBLAS_VERSION_SUB   2 )
+set ( GraphBLAS_VERSION_SUB   3 )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 
