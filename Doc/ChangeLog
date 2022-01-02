@@ -1,3 +1,10 @@
+Version 6.1.3, Jan 1, 2022
+
+    * performance: task creation for GrB_mxm (saxpy method) didn't
+        account for any work for A(:,k)*B(k,j) when nnz(A(:,k))==0,
+        but this takes O(1) work to examine B(k,j).  Performance
+        improvement of up to 10x when nnz(A)<<nnz(B).
+
 Version 6.1.2, Dec 31, 2021
 
     * performance: revised swap_rule in GrB_mxm, which decides whether
