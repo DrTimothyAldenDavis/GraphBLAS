@@ -272,7 +272,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     int A_in_is_diagonal = -1 ;            // not yet computed
     int B_in_is_diagonal = -1 ;            // not yet computed
 
-    if ( C_transpose &&  A_transpose &&  B_transpose)
+    if (C_transpose && A_transpose && B_transpose)
     { 
 
         //----------------------------------------------------------------------
@@ -282,7 +282,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         swap_rule = true ;
 
     }
-    else if (!C_transpose &&  A_transpose &&  B_transpose)
+    else if (!C_transpose && A_transpose && B_transpose)
     { 
 
         //----------------------------------------------------------------------
@@ -292,7 +292,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         swap_rule = true ;
 
     }
-    else if ( C_transpose &&  A_transpose && !B_transpose)
+    else if (C_transpose && A_transpose && !B_transpose)
     { 
 
         //----------------------------------------------------------------------
@@ -324,7 +324,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
 
     }
-    else if (C_transpose && !A_transpose &&  B_transpose)
+    else if (C_transpose && !A_transpose && B_transpose)
     { 
 
         //----------------------------------------------------------------------
@@ -343,7 +343,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         swap_rule = (A_work < B_work + C_work) ;
 
     }
-    else if (!C_transpose && !A_transpose &&  B_transpose)
+    else if (!C_transpose && !A_transpose && B_transpose)
     { 
 
         //----------------------------------------------------------------------
@@ -552,8 +552,11 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
         // explicitly transpose B
         if (btrans && !B_is_diagonal)
-        { 
+        {
             // B = B', or B = one(B') if only the pattern of B is needed.
+            // This is currently unused, since C=A'*B' and C'=A'*B' are always
+            // converted to C=(B*A)' and C=B*A, respectively.  It is left here
+            // in case the swap_rule changes.
             GB_OK (GB_transpose_cast (BT, btype_cast, true, B, B_is_pattern,
                 Context)) ;
             B = BT ;
