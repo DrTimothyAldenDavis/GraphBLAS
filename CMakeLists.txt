@@ -203,6 +203,30 @@ else ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBNCPUFEAT=1 " )
 endif ( )
 
+if ( DEFINED GBX86 )
+    if ( GBX86 )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBX86=1 " )
+    else ( )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBX86=0 " )
+    endif ( )
+endif ( )
+
+if ( DEFINED GBAVX2 )
+    if ( GBAVX2 )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX2=1 " )
+    else ( )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX2=0 " )
+    endif ( )
+endif ( )
+
+if ( DEFINED GBAVX512F )
+    if ( GBAVX512F )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX512F=1 " )
+    else ( )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX512F=0 " )
+    endif ( )
+endif ( )
+
 #-------------------------------------------------------------------------------
 # report status
 #-------------------------------------------------------------------------------

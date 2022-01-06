@@ -15,19 +15,22 @@
 #
 # To compile without using Google's cpu_features package:
 #
-#       make CMAKE_OPTIONS='-DGBNCPUFEAT=1'
+#       make CMAKE_OPTIONS='-DGBNCPUFEAT=1' library
 #
-# To use multiple options, separate them by a space:
+# To use multiple options, separate them by a space.  For example, to build
+# just the library but not cpu_features, and to enable AVX2 but not AVX512F:
 #
-#       make CMAKE_OPTIONS='-DGBNCPUFEAT=1 -DGBCOMPACT=1'
+#       make CMAKE_OPTIONS='-DGBNCPUFEAT=1 -DGBAVX2=1' JOBS=40 library
 
 JOBS ?= 8
 
-default: library
-
-# just build the dynamic library, not the demos
-library:
+# just build the dynamic library and cpu_features, but not the demos
+default:
 	( cd cpu_features ; make )
+	( cd build ; cmake $(CMAKE_OPTIONS) .. ; $(MAKE) --jobs=$(JOBS) )
+
+# build just the dynamic library, do not build the cpu_features library
+library:
 	( cd build ; cmake $(CMAKE_OPTIONS) .. ; $(MAKE) --jobs=$(JOBS) )
 
 # build the dynamic library and the demos
