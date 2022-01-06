@@ -408,9 +408,6 @@ void GB_Global_cpu_features_query (void)
             X86Features features = GetX86Info ( ).features ;
             GB_Global.cpu_features_avx2 = (bool) (features.avx2) ;
             GB_Global.cpu_features_avx512f = (bool) (features.avx512f) ;
-printf ("cpu_features: avx2 %d avx512f %d\n",      // FIXME: delete this
-            GB_Global.cpu_features_avx2,
-            GB_Global.cpu_features_avx512f) ;
         }
         #else
         {
@@ -437,10 +434,6 @@ printf ("cpu_features: avx2 %d avx512f %d\n",      // FIXME: delete this
                 GB_Global.cpu_features_avx512f = false ;
             }
             #endif
-printf ("cpu_features not used: avx2 %d avx512f %d\n", // FIXME: delete this
-            GB_Global.cpu_features_avx2,
-            GB_Global.cpu_features_avx512f) ;
-
         }
         #endif
 
