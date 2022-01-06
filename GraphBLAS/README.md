@@ -78,7 +78,7 @@ this folder.
 The name "GraphBLAS/GraphBLAS" is used for this folder so that this can be done
 in Octave/MATLAB:
 
-    help graphblas
+    help GraphBLAS
 
 To get additional help, type:
 
