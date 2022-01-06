@@ -26,7 +26,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Jan 6, 2022")
+set ( GraphBLAS_DATE "Jan 6, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 1 )
 set ( GraphBLAS_VERSION_SUB   4 )
@@ -93,10 +93,10 @@ else ( )
             # CUDA 11.2 or later present
             enable_language ( CUDA )
             set ( CMAKE_CUDA on )
-        endif ()
+        endif ( )
     else ( )
         # without CUDA:
-        message ( STATUS "CUDA: not found")
+        message ( STATUS "CUDA: not found" )
         set ( CMAKE_CUDA off )
     endif ( )
 
@@ -116,6 +116,72 @@ else ( )
     project ( graphblas
             VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
             LANGUAGES C )
+endif ( )
+
+#-------------------------------------------------------------------------------
+# find OpenMP, CUDA, RMM, and cpu_features
+#-------------------------------------------------------------------------------
+
+find_package ( OpenMP )
+
+if ( CMAKE_CUDA )
+    set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
+    add_subdirectory ( CUDA )
+    set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES} )
+    link_directories ( "CUDA" ${CUDA_LIBRARIES} )
+else ( )
+    set ( CMAKE_CUDA_FLAG " " )
+    set ( GB_CUDA )
+endif ( )
+
+if ( CMAKE_CUDA )
+    message ( STATUS "CUDA: enabled" )
+    set ( CMAKE_RMM_FLAG " -DGBRMM" )
+    set ( GB_RMM rmm_wrap ${CUDA_LIBRARIES} stdc++ )
+    add_subdirectory ( rmm_wrap )
+    include_directories ( "rmm_wrap" ${CUDA_INCLUDE_DIRS} )
+    link_directories ( "CUDA" "${CUDA_LIBRARIES}" "/usr/local/cuda/lib64/stubs" "rmm_wrap"  )
+else ( )
+    message ( STATUS "CUDA: not enabled" )
+    set ( CMAKE_RMM_FLAG " " )
+    set ( GB_RMM )
+endif ( )
+
+if ( NOT GBNCPUFEAT )
+    # default: enable Google's cpu_features package
+    message ( STATUS "cpu_features (by google.com): enabled " )
+    include_directories ( "cpu_features/include" "cpu_features" "cpu_features/src" "cpu_features/include/internal" )
+else ( )
+    # disable Google's cpu_features package
+    message ( STATUS "cpu_features (by google.com): disabled" )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBNCPUFEAT=1 " )
+endif ( )
+
+if ( DEFINED GBX86 )
+    # default: this is detected automatically, but can be set here also
+    if ( GBX86 )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBX86=1 " )
+    else ( )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBX86=0 " )
+    endif ( )
+endif ( )
+
+if ( DEFINED GBAVX2 )
+    # default: this is detected automatically, but can be set here also
+    if ( GBAVX2 )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX2=1 " )
+    else ( )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX2=0 " )
+    endif ( )
+endif ( )
+
+if ( DEFINED GBAVX512F )
+    # default: this is detected automatically, but can be set here also
+    if ( GBAVX512F )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX512F=1 " )
+    else ( )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX512F=0 " )
+    endif ( )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -165,75 +231,12 @@ configure_file (
 )
 
 #-------------------------------------------------------------------------------
-# find OpenMP, CUDA, RMM, and cpu_features
-#-------------------------------------------------------------------------------
-
-find_package ( OpenMP )
-
-if ( CMAKE_CUDA )
-    set ( CMAKE_CUDA_FLAG " -DGBCUDA" )
-    add_subdirectory(CUDA)
-    set ( GB_CUDA graphblascuda  ${CUDA_LIBRARIES})
-    link_directories ( "CUDA" ${CUDA_LIBRARIES})
-else ( )
-    set ( CMAKE_CUDA_FLAG " " )
-    set ( GB_CUDA )
-endif ( )
-
-if ( CMAKE_CUDA )
-    message ( STATUS "CUDA: enabled" )
-    set ( CMAKE_RMM_FLAG " -DGBRMM" )
-    set ( GB_RMM rmm_wrap ${CUDA_LIBRARIES} stdc++ )
-    add_subdirectory(rmm_wrap)
-    include_directories ( "rmm_wrap" ${CUDA_INCLUDE_DIRS})
-    link_directories ( "CUDA" "${CUDA_LIBRARIES}" "/usr/local/cuda/lib64/stubs" "rmm_wrap"  )
-else ( )
-    message ( STATUS "CUDA: not enabled" )
-    set ( CMAKE_RMM_FLAG " " )
-    set ( GB_RMM )
-endif ( )
-
-if ( NOT GBNCPUFEAT )
-    set ( BUILD_TESTING off )
-    message ( STATUS "cpu_features (by google.com): enabled " )
-    add_subdirectory ( cpu_features )
-    include_directories ( "cpu_features/include" )
-else ( )
-    message ( STATUS "cpu_features (by google.com): disabled" )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBNCPUFEAT=1 " )
-endif ( )
-
-if ( DEFINED GBX86 )
-    if ( GBX86 )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBX86=1 " )
-    else ( )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBX86=0 " )
-    endif ( )
-endif ( )
-
-if ( DEFINED GBAVX2 )
-    if ( GBAVX2 )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX2=1 " )
-    else ( )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX2=0 " )
-    endif ( )
-endif ( )
-
-if ( DEFINED GBAVX512F )
-    if ( GBAVX512F )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX512F=1 " )
-    else ( )
-        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX512F=0 " )
-    endif ( )
-endif ( )
-
-#-------------------------------------------------------------------------------
 # report status
 #-------------------------------------------------------------------------------
 
 message ( STATUS "CMAKE build type:          " ${CMAKE_BUILD_TYPE} )
 
-if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug" )
     message ( STATUS "CMAKE C Flags debug:       " ${CMAKE_C_FLAGS_DEBUG} )
 else ( )
     message ( STATUS "CMAKE C Flags release:     " ${CMAKE_C_FLAGS_RELEASE} )
@@ -260,8 +263,8 @@ endif ( )
 
 # check which compiler is being used.  If you need to make
 # compiler-specific modifications, here is the place to do it.
-if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-    # The -g option is useful for the Intel(R) VTune tool, but it should be
+if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" )
+    # The -g option is useful for the Intel VTune tool, but it should be
     # removed in production.  Comment this line out if not in use:
     # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
     # cmake 2.8 workaround: gcc needs to be told to do ANSI C11.
@@ -272,9 +275,9 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # faster single complex multiplication and division
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fcx-limited-range " )
     # math functions do not need to report errno
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fno-math-errno ")
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fno-math-errno " )
     # integer operations wrap
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fwrapv ")
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fwrapv " )
     # check all warnings (uncomment for development only)
 #   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
@@ -307,7 +310,7 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
     endif ( )
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
     # options for MicroSoft Visual Studio
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O2 -wd\"4244\" -wd\"4146\" -wd\"4018\" -wd\"4996\" -wd\"4047\" -wd\"4554\"")
+    set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O2 -wd\"4244\" -wd\"4146\" -wd\"4018\" -wd\"4996\" -wd\"4047\" -wd\"4554\"" )
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "PGI" )
     # options for PGI pgcc compiler.  The compiler has a bug, and the
     # -DPGI_COMPILER_BUG causes GraphBLAS to use a workaround.
@@ -315,10 +318,10 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "PGI" )
     set ( CMAKE_CXX_FLAGS  "${CMAKE_C_FLAGS} -Mnoopenmp -D__GCC_ATOMIC_TEST_AND_SET_TRUEVAL=1 -noswitcherror --c++11 -lm -DPGI_COMPILER_BUG" )
 endif ( )
 
-if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug" )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}" )
 else ( )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}" )
 endif ( )
 
 set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_CUDA_FLAG}" )
@@ -356,11 +359,6 @@ endif ( )
 
 add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )
 
-if ( CMAKE_CUDA )
-    add_dependencies(graphblas graphblascuda)
-    add_dependencies(graphblas rmm_wrap)
-endif()
-
 SET_TARGET_PROPERTIES ( graphblas PROPERTIES
     VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
     SOVERSION ${GraphBLAS_VERSION_MAJOR}
@@ -368,19 +366,57 @@ SET_TARGET_PROPERTIES ( graphblas PROPERTIES
     PUBLIC_HEADER "Include/GraphBLAS.h" )
 set_property ( TARGET graphblas PROPERTY C_STANDARD 11 )
 
+if ( CMAKE_CUDA )
+    add_dependencies ( graphblas graphblascuda )
+    add_dependencies ( graphblas rmm_wrap )
+endif ( )
+
 #-------------------------------------------------------------------------------
 # static graphblas library properties
 #-------------------------------------------------------------------------------
 
 if ( BUILD_GRB_STATIC_LIBRARY )
+
     add_library ( graphblas_static STATIC ${GRAPHBLAS_SOURCES} )
+
     SET_TARGET_PROPERTIES ( graphblas_static PROPERTIES
        VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
        OUTPUT_NAME graphblas
        SOVERSION ${GraphBLAS_VERSION_MAJOR}
        C_STANDARD_REQUIRED 11
        PUBLIC_HEADER "Include/GraphBLAS.h" )
-   set_property ( TARGET graphblas_static PROPERTY C_STANDARD 11 )
+    set_property ( TARGET graphblas_static PROPERTY C_STANDARD 11 )
+
+    if ( CMAKE_CUDA )
+        add_dependencies ( graphblas_static graphblascuda )
+        add_dependencies ( graphblas_static rmm_wrap )
+    endif ( )
+endif ( )
+
+#-------------------------------------------------------------------------------
+# cpu_features settings
+#-------------------------------------------------------------------------------
+
+if ( NOT GBNCPUFEAT )
+    if ( UNIX )
+        # look for requirements for cpu_features/src/hwcaps.c
+        include ( CheckIncludeFile )
+        include ( CheckSymbolExists )
+        check_include_file ( dlfcn.h HAVE_DLFCN_H )
+        if ( HAVE_DLFCN_H )
+            target_compile_definitions ( graphblas PRIVATE HAVE_DLFCN_H )
+            if ( BUILD_GRB_STATIC_LIBRARY )
+                target_compile_definitions ( graphblas_static PRIVATE HAVE_DLFCN_H )
+            endif ( )
+        endif ( )
+        check_symbol_exists ( getauxval "sys/auxv.h" HAVE_STRONG_GETAUXVAL )
+        if ( HAVE_STRONG_GETAUXVAL )
+            target_compile_definitions ( graphblas PRIVATE HAVE_STRONG_GETAUXVAL )
+            if ( BUILD_GRB_STATIC_LIBRARY )
+                target_compile_definitions ( graphblas_static PRIVATE HAVE_STRONG_GETAUXVAL )
+            endif ( )
+        endif ( )
+    endif ( )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -401,13 +437,6 @@ endif ( )
 #-------------------------------------------------------------------------------
 # add the OpenMP, IPP, CUDA, BLAS, etc libraries
 #-------------------------------------------------------------------------------
-
-if ( NOT GBNCPUFEAT )
-    target_link_libraries ( graphblas PUBLIC cpu_features )
-    if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static PUBLIC cpu_features )
-    endif ( )
-endif ( )
 
 if ( OPENMP_FOUND )
     message ( STATUS "CMAKE OpenMP libraries:    " ${OpenMP_C_LIBRARIES} )
@@ -454,7 +483,7 @@ if ( DEMO )
         SOVERSION ${GraphBLAS_VERSION_MAJOR}
         C_STANDARD_REQUIRED 11 )
     set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
-    target_link_libraries ( graphblasdemo PUBLIC ${M_LIB} graphblas  ${GB_CUDA} ${GB_RMM})
+    target_link_libraries ( graphblasdemo PUBLIC ${M_LIB} graphblas  ${GB_CUDA} ${GB_RMM} )
 
     if ( BUILD_GRB_STATIC_LIBRARY )
         add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
@@ -522,9 +551,10 @@ endif ( )
 # set ( DUMP true )
 
 if ( DUMP )
-    get_cmake_property(_variableNames VARIABLES)
-    list (SORT _variableNames)
-    foreach (_variableName ${_variableNames})
-        message(STATUS "${_variableName}=${${_variableName}}")
-    endforeach()
+    get_cmake_property ( _variableNames VARIABLES )
+    list ( SORT _variableNames )
+    foreach ( _variableName ${_variableNames} )
+        message ( STATUS "${_variableName}=${${_variableName}}" )
+    endforeach ( )
 endif ( )
+

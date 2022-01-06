@@ -148,6 +148,15 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 6.1.4, Jan 6, 2022 (DRAFT)
+
+    \item \verb'cpu_features':  no longer built as a separate library,
+        but built directly into \verb'libgraphblas.so' and
+        \verb'libgraphblas.a'.  Added compile-time flags to disable the use of
+        \verb'cpu_features' completely.
+    \item Octave 7: port to Apple Silicon (thanks to 
+            G{\'{a}}bor Sz{\'{a}}rnyas).
+
 \item Version 6.1.3 (Jan 1, 2022)
 
     \begin{packed_itemize}
@@ -14061,8 +14070,8 @@ all features of GraphBLAS.  On the Mac
 (OS X), \verb'clang' 8.0.0 in \verb'Xcode' version 8.2.1 is sufficient,
 although earlier versions of \verb'Xcode' may work as well.  For the GNU
 \verb'gcc' compiler, version 4.9 or later is required.  For the Intel
-\verb'icc' compiler, version 18.0 or later is required.  Version 2.8.12 or
-later of \verb'cmake' is required; version 3.0.0 is preferred.
+\verb'icc' compiler, version 18.0 or later is required.  Version 3.13 or
+later of \verb'cmake' is required; version 3.17 is preferred.
 
 If you are using a pre-C11 ANSI C compiler, or Microsoft Visual Studio,
 then the \verb'_Generic' keyword is not available.  SuiteSparse:GraphBLAS
@@ -14092,7 +14101,33 @@ To use a non-default compiler with 4 threads:
 
     {\small
     \begin{verbatim}
-    make CC=icc CXX=icc JOBS=4 \end{verbatim} }
+    make CC=icx CXX=icpx JOBS=4 \end{verbatim} }
+
+GraphBLAS v6.1.3 and later use the \verb'cpu_features' package by Google to
+determine if the target architecture supports AVX2 and/or AVX512F (on Intel
+x86\_64 architectures only).  In case you have build issues with this package,
+you can compile without it (and then AVX2 and AVX512F acceleration will not
+be used):
+
+    {\small
+    \begin{verbatim}
+    make CMAKE_OPTIONS='-DGBNCPUFEAT=1'  \end{verbatim} }
+
+Without \verb'cpu_features', it is still possible to enable AVX2 and AVX512F.
+Rather than relying on run-time tests, you can use these flags to enable
+both AVX2 and AVX512F, without relying on \verb'cpu_features':
+
+    {\small
+    \begin{verbatim}
+    make CMAKE_OPTIONS='-DGBNCPUFEAT=1 -DGBAVX2=1 -DGBAVX512F' \end{verbatim} }
+
+To use multiple options, separate them by a space.  For example, to build
+just the library but not \verb'cpu_features', and to enable
+AVX2 but not AVX512F, and use 40 threads to compile:
+
+    {\small
+    \begin{verbatim}
+    make CMAKE_OPTIONS='-DGBNCPUFEAT=1 -DGBAVX2=1' JOBS=40 \end{verbatim} }
 
 After compiling the library, you can compile the demos with
 \verb'make all' and then \verb'make run'.
