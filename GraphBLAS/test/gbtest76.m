@@ -429,7 +429,7 @@ function gbtest76b (A, B, G, H, tol)
     C1 = A.^1 ;
     C2 = G.^1 ;
     err = norm (C1-C2, 1) ;
-    assert (err == 0) ;
+    assert (err < tol) ;
 
 end
 
