@@ -27,7 +27,7 @@ need_rename = false ;
 
 if (have_octave)
     if verLessThan ('octave', '7')
-        gb_error ('Octave 7 or later is required') ;
+        error ('Octave 7 or later is required') ;
     end
 else
     if verLessThan ('matlab', '9.4')

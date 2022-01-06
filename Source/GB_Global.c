@@ -141,8 +141,8 @@ typedef struct
     // CPU features
     //--------------------------------------------------------------------------
 
-    bool cpu_features_avx2 ;        // x86 with AVX2
-    bool cpu_features_avx512f ;     // x86 with AVX512f
+    bool cpu_features_avx2 ;        // x86_64 with AVX2
+    bool cpu_features_avx512f ;     // x86_64 with AVX512f
 
     //--------------------------------------------------------------------------
     // CUDA (DRAFT: in progress)
@@ -339,8 +339,8 @@ GB_Global_struct GB_Global =
 #endif
 
     // CPU features
-    .cpu_features_avx2 = false,         // x86 with AVX2
-    .cpu_features_avx512f = false,      // x86 with AVX512f
+    .cpu_features_avx2 = false,         // x86_64 with AVX2
+    .cpu_features_avx512f = false,      // x86_64 with AVX512f
 
     // CUDA environment (DRAFT: in progress)
     .gpu_count = 0,                     // # of GPUs in the system
@@ -387,16 +387,69 @@ bool GB_Global_GrB_init_called_get (void)
 // cpu features
 //------------------------------------------------------------------------------
 
+// GB_Global_cpu_features_query is used just once, by GrB_init or GxB_init,
+// to determine at run-time whether or not AVX2 and/or AVX512F is available.
+// Once these two flags are set, they are saved in the GB_Global struct, and
+// can then be queried later by GB_Global_cpu_features_avx*.
+
 GB_PUBLIC
 void GB_Global_cpu_features_query (void)
 { 
-    #if defined ( CPU_FEATURES_ARCH_X86_64 )
-    X86Features features = GetX86Info ( ).features ;
-    GB_Global.cpu_features_avx2 = (bool) (features.avx2) ;
-    GB_Global.cpu_features_avx512f = (bool) (features.avx512f) ;
+    #if defined ( GBX86 )
+    {
+
+        //----------------------------------------------------------------------
+        // x86_64 architecture: see if AVX2 and/or AVX512F are supported
+        //----------------------------------------------------------------------
+
+        #if !defined ( GBNCPUFEAT )
+        {
+            // Google's cpu_features package is available: use run-time tests
+            X86Features features = GetX86Info ( ).features ;
+            GB_Global.cpu_features_avx2 = (bool) (features.avx2) ;
+            GB_Global.cpu_features_avx512f = (bool) (features.avx512f) ;
+        }
+        #else
+        {
+            // cpu_features package not available; use compile-time tests
+            #if defined ( GBAVX2 )
+            {
+                // the build system asserts whether or not AVX2 is available
+                GB_Global.cpu_features_avx2 = (bool) (GBAVX2) ;
+            }
+            #else
+            {
+                // AVX2 not available
+                GB_Global.cpu_features_avx2 = false ;
+            }
+            #endif
+            #if defined ( GBAVX512F )
+            {
+                // the build system asserts whether or not AVX512F is available
+                GB_Global.cpu_features_avx512f = (bool) (GBAVX512F) ;
+            }
+            #else
+            {
+                // AVX512F not available
+                GB_Global.cpu_features_avx512f = false ;
+            }
+            #endif
+
+        }
+        #endif
+
+    }
     #else
-    GB_Global.cpu_features_avx2 = false ;
-    GB_Global.cpu_features_avx512f = false ;
+    {
+
+        //----------------------------------------------------------------------
+        // not on the x86_64 architecture, so no AVX2 or AVX512F acceleration
+        //----------------------------------------------------------------------
+
+        GB_Global.cpu_features_avx2 = false ;
+        GB_Global.cpu_features_avx512f = false ;
+
+    }
     #endif
 }
 

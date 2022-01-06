@@ -10,7 +10,16 @@
 # simple Makefile for GraphBLAS, relies on cmake to do the actual build.  Use
 # the CMAKE_OPTIONS argument to this Makefile to pass options to cmake.
 # For example, to compile in compact mode with 40 threads, use:
+#
 #       make CMAKE_OPTIONS='-DGBCOMPACT=1' JOBS=40
+#
+# To compile without using Google's cpu_features package:
+#
+#       make CMAKE_OPTIONS='-DGBNCPUFEAT=1'
+#
+# To use multiple options, separate them by a space:
+#
+#       make CMAKE_OPTIONS='-DGBNCPUFEAT=1 -DGBCOMPACT=1'
 
 JOBS ?= 8
 

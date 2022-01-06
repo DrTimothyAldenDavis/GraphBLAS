@@ -293,7 +293,6 @@ else
 end
 
 if (ztype_is_real)
-    % on x86: all built-in real monoids are atomic.
     % The ANY monoid is atomic on any architecture.
     % MIN, MAX, EQ, XNOR are implemented with atomic compare/exchange.
     fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;

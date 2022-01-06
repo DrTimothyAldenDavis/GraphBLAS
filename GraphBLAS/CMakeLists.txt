@@ -29,10 +29,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS (must match ../CMakeLists.txt)
-set ( GraphBLAS_DATE "Jan 1, 2022")
+set ( GraphBLAS_DATE "Jan 6, 2022")
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 1 )
-set ( GraphBLAS_VERSION_SUB   3 )
+set ( GraphBLAS_VERSION_SUB   4 )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 
@@ -186,11 +186,15 @@ set_property ( TARGET graphblas_renamed PROPERTY C_STANDARD 11 )
 if ( OPENMP_FOUND )
     set ( USE_OPENMP true )
 endif ( )
-
-set (BUILD_TESTING off)
-message ( STATUS "Adding cpu_features (by google.com): " )
-add_subdirectory (../cpu_features build)
-include_directories ( "../cpu_features/include" )
+if ( NOT GBNCPUFEAT )
+    set ( BUILD_TESTING off )
+    message ( STATUS "cpu_features (by google.com): enabled " )
+    add_subdirectory ( ../cpu_features build )
+    include_directories ( "../cpu_features/include" )
+else ( )
+    message ( STATUS "cpu_features (by google.com): disabled" )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBNCPUFEAT=1 " )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # select the math library (not required for Microsoft Visual Studio)
@@ -203,7 +207,10 @@ else ( )
 endif ( )
 
 target_link_libraries ( graphblas_renamed PUBLIC ${M_LIB} )
-target_link_libraries ( graphblas_renamed PUBLIC cpu_features )
+
+if ( NOT GBNCPUFEAT )
+    target_link_libraries ( graphblas PUBLIC cpu_features )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # add the OpenMP, CUDA, BLAS, ... libraries

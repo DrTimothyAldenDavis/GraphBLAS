@@ -26,10 +26,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Jan 1, 2022")
+set ( GraphBLAS_DATE "Jan 6, 2022")
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 1 )
-set ( GraphBLAS_VERSION_SUB   3 )
+set ( GraphBLAS_VERSION_SUB   4 )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 
@@ -193,10 +193,15 @@ else ( )
     set ( GB_RMM )
 endif ( )
 
-set ( BUILD_TESTING off )
-message ( STATUS "Adding cpu_features (by google.com): " )
-add_subdirectory ( cpu_features )
-include_directories ( "cpu_features/include" )
+if ( NOT GBNCPUFEAT )
+    set ( BUILD_TESTING off )
+    message ( STATUS "cpu_features (by google.com): enabled " )
+    add_subdirectory ( cpu_features )
+    include_directories ( "cpu_features/include" )
+else ( )
+    message ( STATUS "cpu_features (by google.com): disabled" )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBNCPUFEAT=1 " )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # report status
@@ -220,9 +225,9 @@ message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 if ( GBCOMPACT )
-    include_directories ( Source/Template Source Include Source/Generated1 lz4 cpu_features/include Demo/Include rmm_wrap )
+    include_directories ( Source/Template Source Include Source/Generated1 lz4 Demo/Include rmm_wrap )
 else ( )
-    include_directories ( Source/Template Source Include Source/Generated1 lz4 cpu_features/include Source/Generated2 Demo/Include rmm_wrap )
+    include_directories ( Source/Template Source Include Source/Generated1 lz4 Source/Generated2 Demo/Include rmm_wrap )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -373,7 +378,12 @@ endif ( )
 # add the OpenMP, IPP, CUDA, BLAS, etc libraries
 #-------------------------------------------------------------------------------
 
-target_link_libraries ( graphblas PUBLIC cpu_features )
+if ( NOT GBNCPUFEAT )
+    target_link_libraries ( graphblas PUBLIC cpu_features )
+    if ( BUILD_GRB_STATIC_LIBRARY )
+        target_link_libraries ( graphblas_static PUBLIC cpu_features )
+    endif ( )
+endif ( )
 
 if ( OPENMP_FOUND )
     message ( STATUS "CMAKE OpenMP libraries:    " ${OpenMP_C_LIBRARIES} )
