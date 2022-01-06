@@ -248,7 +248,7 @@
 // avx2 (it triggers a bug in the compiler), but those targets are fine with
 // gcc 9.3.0 or later.  It might be OK on gcc 8.x but I haven't tested this.
 
-#if defined ( GBX86 )
+#if GBX86
 
     #if GB_COMPILER_GCC
         #if __GNUC__ >= 9

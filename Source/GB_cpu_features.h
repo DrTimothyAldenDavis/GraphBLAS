@@ -55,9 +55,9 @@
 
 #if !defined ( GBNCPUFEAT )
 
-    #include "cpu_features_macros.h"
-    #if defined ( GBX86 )
+    #if GBX86
     // Intel x86 (also AMD)
+    #include "cpu_features_macros.h"
     #include "cpuinfo_x86.h"
     #endif
 

@@ -96,7 +96,7 @@
 // is no need for atomic reads/writes when compiling GraphBLAS on Windows
 // with MS Visual Studio.
 
-#if defined ( GBX86 )
+#if GBX86
 
     // x86_64: no atomic read/write is needed.
     #define GB_ATOMIC_READ
