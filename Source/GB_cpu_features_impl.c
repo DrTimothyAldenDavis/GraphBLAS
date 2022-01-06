@@ -9,7 +9,7 @@
 
 // Google's cpu_features package makes extensive use of bit field manipulation.
 // This makes the code easy to read, but the layout of the bits can depend on
-// the implemenation by the compiler.  The cpu_features/CMakeLists.txt file
+// the implementation by the compiler.  The cpu_features/CMakeLists.txt file
 // has this recommendation:
 
     // cpu_features uses bit-fields which are to some extent implementation
