@@ -39,8 +39,14 @@
     #include "src/impl_ppc_linux.c"
     #include "src/impl_x86_freebsd.c"
     #include "src/impl_x86_linux_or_android.c"
-    #include "src/impl_x86_macos.c"
     #include "src/impl_x86_windows.c"
+    #if GBX86
+        #if (defined(__apple__) || defined(__APPLE__) || defined(__MACH__))
+        // needed for src/impl_x86_macos.c:
+        #define HAVE_SYSCTLBYNAME
+        #endif
+    #endif
+    #include "src/impl_x86_macos.c"
 
 #endif
 
