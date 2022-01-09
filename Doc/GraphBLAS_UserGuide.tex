@@ -14085,7 +14085,7 @@ code than gcc for SuiteSparse:GraphBLAS.  This is because of how the two
 compilers treat \verb'#pragma omp atomic'. The use of gcc is strongly
 recommended.  Atomics are far slower in icc as compared to gcc.
 Intel has a new \verb'icx' compiler that has much better performance for
-atomics, but I have not tested it with GraphBLAS.
+atomics, and results in very good performance when used to compile SuiteSparse:GraphBLAS.
 \end{note}
 
 To compile SuiteSparse:GraphBLAS, simply type \verb'make'
