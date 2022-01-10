@@ -14069,9 +14069,13 @@ C compiler supporting this version of the C standard is required to use
 all features of GraphBLAS.  On the Mac
 (OS X), \verb'clang' 8.0.0 in \verb'Xcode' version 8.2.1 is sufficient,
 although earlier versions of \verb'Xcode' may work as well.  For the GNU
-\verb'gcc' compiler, version 4.9 or later is required.  For the Intel
-\verb'icc' compiler, version 18.0 or later is required.  Version 3.13 or
-later of \verb'cmake' is required; version 3.17 is preferred.
+\verb'gcc' compiler, version 4.9 or later is required, but best performance is
+obtained in 9.3 or later.  For the Intel \verb'icc' compiler (which is not recommended), version 18.0 or
+later is required.  Any version of the Intel \verb'icx' compiler is recommended.  Version
+3.13 or later of \verb'cmake' is required; version 3.17 is preferred.
+
+In most cases, \verb'icx' and the Intel OpenMP library result in better
+performance than \verb'gcc' and the GNU OpenMP library.
 
 If you are using a pre-C11 ANSI C compiler, or Microsoft Visual Studio,
 then the \verb'_Generic' keyword is not available.  SuiteSparse:GraphBLAS
@@ -14080,12 +14084,13 @@ such as \verb'GrB_assign'.  You will need to use the non-polymorphic functions
 instead.
 
 \begin{note}
-{\bf NOTE:} icc is generally an excellent compiler, but it will generate slower
-code than gcc for SuiteSparse:GraphBLAS.  This is because of how the two
-compilers treat \verb'#pragma omp atomic'. The use of gcc is strongly
-recommended.  Atomics are far slower in icc as compared to gcc.
-Intel has a new \verb'icx' compiler that has much better performance for
-atomics, and results in very good performance when used to compile SuiteSparse:GraphBLAS.
+{\bf NOTE:} \verb'icc' is generally an excellent compiler, but it will generate
+slower code than \verb'gcc' or \verb'icx' for SuiteSparse:GraphBLAS.  This is
+because of how the \verb'icc' compiler treats \verb'#pragma omp atomic'. The
+use of \verb'gcc' or \verb'icx' is strongly recommended instead of \verb'icc'.
+Atomics are far slower in \verb'icc' as compared to \verb'gcc' and \verb'icx';
+the latter two compilers have much faster atomics and work well for
+SuiteSparse:GraphBLAS.
 \end{note}
 
 To compile SuiteSparse:GraphBLAS, simply type \verb'make'
