@@ -1,5 +1,7 @@
 Version 6.1.4, Jan 11, 2022
 
+    * added section to User Guide: how to get the best performance out of
+        algorithms based on GraphBLAS
     * cpu_features:  no longer built as a separate library, but built directly
         into libgraphblas.so and libgraphblas.a.  Added compile-time flags to
         optionally disable the use of cpu_features completely.
