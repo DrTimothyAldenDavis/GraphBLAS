@@ -13595,7 +13595,7 @@ are slow.  A future JIT will avoid this problem.
 
 The only time that typecasting is fast is when computing \verb'C=A' via
 \verb'GrB_assign' or \verb'GrB_apply', where the data types of \verb'C' and
-\verb'A' are the same.  In this case, one of $13^2 = 169$ kernels are called,
+\verb'A' can differ.  In this case, one of $13^2 = 169$ kernels are called,
 each of which performs the specific typecasting requested, without relying on
 function pointers.
 
