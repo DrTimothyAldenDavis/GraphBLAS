@@ -148,14 +148,16 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 6.1.4, Jan 10, 2022
+\item Version 6.1.4 (Jan 11, 2022)
 
+    \begin{packed_itemize}
     \item \verb'cpu_features':  no longer built as a separate library,
         but built directly into \verb'libgraphblas.so' and
-        \verb'libgraphblas.a'.  Added compile-time flags to disable the use of
-        \verb'cpu_features' completely.
+        \verb'libgraphblas.a'.  Added compile-time flags to
+        optionally disable the use of \verb'cpu_features' completely.
     \item Octave 7: port to Apple Silicon (thanks to 
             G{\'{a}}bor Sz{\'{a}}rnyas).
+    \end{packed_itemize}
 
 \item Version 6.1.3 (Jan 1, 2022)
 
@@ -14383,15 +14385,14 @@ subsections.
 On the Mac, SuiteSparse:GraphBLAS v6.1.4 and Octave 7 will work 
 Apple Silicon (thanks to G{\'{a}}bor Sz{\'{a}}rnyas).  Here are his instructions
 (replicated from
-\url{https://github.com/DrTimothyAldenDavis/GraphBLAS/issues/90})
+\url{https://github.com/DrTimothyAldenDavis/GraphBLAS/issues/90}); do
+these in your Mac Terminal:
 
 \begin{itemize}
-\item Building Octave.
-Grab the brew formula:
+\item Building Octave.  Grab the brew formula:
 
-    {\small
+    {\scriptsize
     \begin{verbatim}
-    bash
     wget https://raw.githubusercontent.com/Homebrew/homebrew-core/master/Formula/octave.rb
     \end{verbatim} }
 
@@ -14404,7 +14405,6 @@ Grab the brew formula:
 
     {\small
     \begin{verbatim}
-    bash
     brew install --head ./octave.rb
     \end{verbatim} }
 
@@ -14412,18 +14412,16 @@ Grab the brew formula:
     Grab the OpenMP binaries as described at
     \url{https://mac.r-project.org/openmp/}
 
-    {\small
+    {\scriptsize
     \begin{verbatim}
-    bash
     curl -O https://mac.r-project.org/openmp/openmp-13.0.0-darwin21-Release.tar.gz
     sudo tar fvxz openmp-13.0.0-darwin21-Release.tar.gz -C /
     \end{verbatim} }
 
-\item Run
+\item Do the following to edit \verb'gbmake.m':
 
-    {\small
+    {\scriptsize
     \begin{verbatim}
-    bash
     sed -i.bkp 's/-fopenmp/-Xclang -fopenmp/g' @GrB/private/gbmake.m
     \end{verbatim} }
 

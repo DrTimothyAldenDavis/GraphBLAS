@@ -1,8 +1,8 @@
-Version 6.1.4, Jan 6, 2022 (draft)
+Version 6.1.4, Jan 11, 2022
 
     * cpu_features:  no longer built as a separate library, but built directly
         into libgraphblas.so and libgraphblas.a.  Added compile-time flags to
-        disable the use of cpu_features completely.
+        optionally disable the use of cpu_features completely.
     * Octave 7: port to Apple Silicon (thanks to Gabor Szarnyas)
 
 Version 6.1.3, Jan 1, 2022
