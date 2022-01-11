@@ -53,6 +53,12 @@
 // rely on Google's cpu_features package for run-time tests
 //------------------------------------------------------------------------------
 
+#if GB_COMPILER_MSC
+// entirely disable cpu_features for MS Visual Studio
+#undef  GBNCPUFEAT
+#define GBNCPUFEAT 1
+#endif
+
 #if !defined ( GBNCPUFEAT )
 
     #include "cpu_features_macros.h"

@@ -260,14 +260,13 @@
             #define GB_COMPILER_SUPPORTS_AVX512F 0
             #define GB_COMPILER_SUPPORTS_AVX2 0
         #endif
-    #elif GB_COMPILER_ICX || GB_COMPILER_ICC || GB_COMPILER_CLANG || \
-          GB_COMPILER_GCC || GB_COMPILER_MSC
+    #elif GB_COMPILER_ICX || GB_COMPILER_ICC || GB_COMPILER_CLANG
         // all these compilers can handle AVX512F and AVX2 on x86
         #define GB_COMPILER_SUPPORTS_AVX512F 1
         #define GB_COMPILER_SUPPORTS_AVX2 1
     #else
         // unsure if xlc can handle AVX, but it is not likely to be used on
-        // the x86 anyay
+        // the x86 anyway.  cpu_features is disabled for MS Visual Studio.
         #define GB_COMPILER_SUPPORTS_AVX512F 0
         #define GB_COMPILER_SUPPORTS_AVX2 0
     #endif
@@ -282,7 +281,9 @@
 
 // prefix for function with target avx512f
 #if GB_COMPILER_SUPPORTS_AVX512F
-    #if GB_COMPILER_MSC
+    #if (defined (_WIN64) || defined (_WIN32)) && \
+        (GB_COMPILER_ICC || GB_COMPILER_ICX)
+        // the Intel compilers on Windows support this feature:
         #define GB_TARGET_AVX512F __declspec (target ("avx512f"))
     #else
         #define GB_TARGET_AVX512F __attribute__ ((target ("avx512f")))
@@ -293,7 +294,9 @@
 
 // prefix for function with target avx2
 #if GB_COMPILER_SUPPORTS_AVX2
-    #if GB_COMPILER_MSC
+    #if (defined (_WIN64) || defined (_WIN32)) && \
+        (GB_COMPILER_ICC || GB_COMPILER_ICX)
+        // the Intel compilers on Windows support this feature:
         #define GB_TARGET_AVX2 __declspec (target ("avx2"))
     #else
         #define GB_TARGET_AVX2 __attribute__ ((target ("avx2")))
