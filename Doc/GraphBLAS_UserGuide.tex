@@ -1,5 +1,5 @@
 \documentclass[12pt]{article}
-% \batchmode
+\batchmode
 \usepackage{url}
 \urlstyle{sf}
 \usepackage[svgnames]{xcolor}
@@ -14907,14 +14907,13 @@ The \verb'./demo' command is a script that runs the demos with various input
 matrices in the \verb'Demo/Matrix' folder.  The output of the demos will be
 compared with expected output files in \verb'Demo/Output'.
 
-\begin{note}
+NOTE:
 DO NOT publish benchmarks of these demos, and do not link against the
 demo library in any user application.  These codes are sometimes slow,
 and are meant as simple illustrations only, not for performance.  The fastest
 methods are in LAGraph, not in SuiteSparse/GraphBLAS/Demo.  Benchmark LAGraph
 instead.  Eventually, all GraphBLAS/Demos methods will be removed, and LAGraph
 will serve all uses: for illustration, benchmarking, and production uses.
-\end{note}
 
 %----------------------------------------
 \subsection{Installing SuiteSparse:GraphBLAS}
@@ -14946,12 +14945,12 @@ include file as \verb'/usr/local/include/GraphBLAS.h'.  This command fails:
 Revising my \verb'LD_LIBRARY_PATH' to put \verb'/usr/local/lib' first in the
 library directory order didn't help.  If you encounter this problem, try one of
 the following options (all four work for me, and link against the proper
-version (\verb'/usr/local/lib/libgraphblas.so.5.2.0' for example):
+version (\verb'/usr/local/lib/libgraphblas.so.6.1.4' for example):
 
     {\small
     \begin{verbatim}
-    gcc prog.c -l:libgraphblas.so.5
-    gcc prog.c -l:libgraphblas.so.5.2.0
+    gcc prog.c -l:libgraphblas.so.6
+    gcc prog.c -l:libgraphblas.so.6.1.4
     gcc prog.c /usr/local/lib/libgraphblas.so
     gcc prog.c -Wl,-v -L/usr/local/lib -lgraphblas \end{verbatim} }
 
@@ -14968,7 +14967,7 @@ later:
     } \end{verbatim} }
 
 Compile the program above, then use this command to ensure
-\verb'libgraphblas.so.5' appears:
+\verb'libgraphblas.so.6' appears:
 
     {\small
     \begin{verbatim}
