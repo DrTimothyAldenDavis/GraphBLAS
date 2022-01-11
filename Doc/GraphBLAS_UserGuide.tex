@@ -1,5 +1,5 @@
 \documentclass[12pt]{article}
-\batchmode
+% \batchmode
 \usepackage{url}
 \urlstyle{sf}
 \usepackage[svgnames]{xcolor}
@@ -148,7 +148,7 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 6.1.4, Jan 6, 2022 (DRAFT)
+\item Version 6.1.4, Jan 10, 2022
 
     \item \verb'cpu_features':  no longer built as a separate library,
         but built directly into \verb'libgraphblas.so' and
@@ -14066,37 +14066,32 @@ other threading library.  In all cases, GraphBLAS will be thread safe.
 
 GraphBLAS makes extensive use of features in the ANSI C11 standard, and thus a
 C compiler supporting this version of the C standard is required to use
-all features of GraphBLAS.  On the Mac
-(OS X), \verb'clang' 8.0.0 in \verb'Xcode' version 8.2.1 is sufficient,
-although earlier versions of \verb'Xcode' may work as well.  For the GNU
-\verb'gcc' compiler, version 4.9 or later is required, but best performance is
-obtained in 9.3 or later.  For the Intel \verb'icc' compiler (which is not recommended), version 18.0 or
-later is required.  Any version of the Intel \verb'icx' compiler is recommended.  Version
-3.13 or later of \verb'cmake' is required; version 3.17 is preferred.
+all features of GraphBLAS. 
 
-In most cases, \verb'icx' and the Intel OpenMP library result in better
-performance than \verb'gcc' and the GNU OpenMP library.
+{\bf Any version of the Intel \verb'icx' compiler is highly recommended.} In
+most cases, the Intel \verb'icx' and the Intel OpenMP library (\verb'libiomp')
+result in the best performance.  The \verb'gcc' and the GNU OpenMP library
+(\verb'libgomp') generally gives good performance: typically on par with icx
+but in a few special cases significantly slower.  The Intel \verb'icc' compiler
+is not recommended; it results in poor performance for
+\verb'#pragma omp atomic'.
 
-If you are using a pre-C11 ANSI C compiler, or Microsoft Visual Studio,
+On the Mac (OS X), \verb'clang' 8.0.0 in \verb'Xcode' version 8.2.1 is
+sufficient, although earlier versions of \verb'Xcode' may work as well.  For
+the GNU \verb'gcc' compiler, version 4.9 or later is required, but best
+performance is obtained in 9.3 or later.  Version 3.13 or later of \verb'cmake'
+is required; version 3.17 is preferred.
+
+If you are using a pre-C11 ANSI C compiler, such as Microsoft Visual Studio,
 then the \verb'_Generic' keyword is not available.  SuiteSparse:GraphBLAS
 will still compile, but you will not have access to polymorphic functions
 such as \verb'GrB_assign'.  You will need to use the non-polymorphic functions
 instead.
 
-\begin{note}
-{\bf NOTE:} \verb'icc' is generally an excellent compiler, but it will generate
-slower code than \verb'gcc' or \verb'icx' for SuiteSparse:GraphBLAS.  This is
-because of how the \verb'icc' compiler treats \verb'#pragma omp atomic'. The
-use of \verb'gcc' or \verb'icx' is strongly recommended instead of \verb'icc'.
-Atomics are far slower in \verb'icc' as compared to \verb'gcc' and \verb'icx';
-the latter two compilers have much faster atomics and work well for
-SuiteSparse:GraphBLAS.
-\end{note}
-
-To compile SuiteSparse:GraphBLAS, simply type \verb'make'
-in the main GraphBLAS folder, which compiles the library.  This will be a
-single-threaded compilation, which will take a long time.  To compile in 
-parallel (40 threads for example), use:
+To compile SuiteSparse:GraphBLAS, simply type \verb'make' in the main GraphBLAS
+folder, which compiles the library with your default system compiler.  This
+compile GraphBLAS using 8 threads, which will take a long time.  To compile with
+more threads (40, for this example), use:
 
     {\small
     \begin{verbatim}
@@ -14144,18 +14139,18 @@ these options.  Go into the \verb'build' directory and type one of these:
     {\small
     \begin{verbatim}
     CC=gcc cmake ..
-    CC=gcc-6 cmake ..
+    CC=gcc-11 cmake ..
     CC=xlc cmake ..
-    CC=icc cmake ..  \end{verbatim} }
+    CC=icx cmake ..  \end{verbatim} }
 
 You can also do the following in the top-level GraphBLAS folder instead:
 
     {\small
     \begin{verbatim}
     CC=gcc make
-    CC=gcc-6 cmake
-    CC=xlc cmake
-    CC=icc cmake \end{verbatim} }
+    CC=gcc-11 make
+    CC=xlc make
+    CC=icx make \end{verbatim} }
 
 For faster compilation, you can specify a parallel make.  For example,
 to use 32 parallel jobs and the \verb'gcc' compiler, do the following:
@@ -14178,7 +14173,7 @@ in the top-level \verb'GraphBLAS' folder.  OpenMP will be found automatically:
 
     {\small
     \begin{verbatim}
-    make CC=icc CXX=icc \end{verbatim} }
+    make CC=icc CXX=icpc \end{verbatim} }
 
 The following instructions work on MacOS Big Sur (v11.3)
 and MacOS Monterey (12.1), using
@@ -14194,26 +14189,16 @@ and then install the command line tools for Xcode:
 
 Next, install brew, at \url{https://brew.sh}.
 
-If not used for the MATLAB mexFunction interface,
-Clang now works with \verb'libomp' and the \verb'GraphBLAS/CMakeLists.txt'.
-To use the MATLAB mexFunction, however, you must use \verb'gcc-11'.
-Using Clang will result in a segfault when you attempt to use the \verb'@GrB'
-interface in MATLAB.
-
-\begin{note}
-{\bf NOTE:} On the Mac, do not use the Apple compiler (clang, also called cc) 
-if you also want to use the MATLAB \verb'@GrB' interface.  GraphBLAS will
-work outside of MATLAB, but it will fail with a segfault inside MATLAB
-when it attempts to use any OpenMP parallelism.  This limitation
-does not apply to using GraphBLAS in MATLAB on Linux, which works with any
-compiler.
-\end{note}
+If not used for the MATLAB mexFunction interface, a recent update of the Apple
+Clang compiler now works with \verb'libomp' and the
+\verb'GraphBLAS/CMakeLists.txt'.  To use the MATLAB mexFunction, however, you
+must use \verb'gcc' (\verb'gcc-11' is recommended).  Using Clang will result in
+a segfault when you attempt to use the \verb'@GrB' interface in MATLAB.
 
 With MacOS Big Sur install \verb'gcc-11', \verb'cmake', and OpenMP, and then
-compile GraphBLAS.  cmake 3.13 or later is required.
-For the MATLAB mexFunctions, you must use \verb'gcc-11'; the
-\verb'libomp' from \verb'brew' will allow you to compile the mexFunctions
-but they will not work properly.
+compile GraphBLAS.  cmake 3.13 or later is required.  For the MATLAB
+mexFunctions, you must use \verb'gcc-11'; the \verb'libomp' from \verb'brew'
+will allow you to compile the mexFunctions but they will not work properly.
 
     {\small
     \begin{verbatim}
@@ -14240,17 +14225,15 @@ must become \verb"MACOSX_DEPLOYMENT_TARGET=11.3".  Otherwise, MATLAB
 complains that the \verb'libgraphblas_renamed.dylib' was built for 11.3 but
 linked for 10.14.
 
-Next, type the following in the MATLAB Command
-Window:
+Next, type the following in the MATLAB Command Window:
 
     {\small
     \begin{verbatim}
     cd GraphBLAS/GraphBLAS/@GrB/private
     gbmake \end{verbatim} }
 
-Then add the paths to your \verb'startup.m' file
-(usually in \verb'~/Documents/MATLAB/startup.m').
-For example, my path is:
+Then add the paths to your \verb'startup.m' file (usually in
+\verb'~/Documents/MATLAB/startup.m').  For example, my path is:
 
     {\small
     \begin{verbatim}
@@ -14268,9 +14251,9 @@ Finally, you can run the tests to see if your installation works:
 \subsection{On the ARM64 architecture}
 %----------------------------------------
 
-You may encounter a compiler error on the ARM64 architecture when using
-the gcc compiler, versions 6.x and earlier.  This error was
-encountered on ARM64 Linux with gcc 6.x:
+You may encounter a compiler error on the ARM64 architecture when using the
+\verb'gcc' compiler, versions 6.x and earlier.  This error was encountered on
+ARM64 Linux with gcc 6.x:
 
 \begin{verbatim}
 `In function GrB_Matrix_apply_BinaryOp1st_Scalar.part.1':
@@ -14299,9 +14282,11 @@ will need to use \verb'GrB_Matrix_free' instead of just \verb'GrB_free'.
 types are limited to 128 bytes in size.  This can be changed by editing
 \verb'GB_VLA_MAXSIZE' in \verb'Source/GB_compiler.h', and recompiling
 SuiteSparse:GraphBLAS.
+
+\item AVX acceleration is not enabled.
 \end{itemize}
 
-If you use a recent \verb'gcc' or \verb'icc' compiler on Windows other than the
+If you use a recent \verb'gcc' or \verb'icx' compiler on Windows other than the
 Microsoft Compiler (\verb'cl'), these limitations can be avoided.
 
 The following instructions apply to Windows 10, CMake 3.16, and
@@ -14384,10 +14369,69 @@ Visual Studio 2019, but may work for earlier versions.
 %----------------------------------------
 \label{gbmake}
 
+I'm working closely with John Eaton (the primary developer of Octave) to
+enable SuiteSparse:GraphBLAS to work with Octave, and thus Octave 7 is
+required.  The latest version of Octave is 6.4.0, so you need to download and
+install the development version of Octave 7 to use SuiteSparse:GraphBLAS within
+Octave.
+
 First, compile the SuiteSparse:GraphBLAS dynamic library
 (\verb'libgraphblas.so' for Linux, \verb'libgraphblas.dylib' for Mac,
 or \verb'graphblas.dll' for Windows), as described in the prior two
-subsections.  Next:
+subsections.
+
+On the Mac, SuiteSparse:GraphBLAS v6.1.4 and Octave 7 will work 
+Apple Silicon (thanks to G{\'{a}}bor Sz{\'{a}}rnyas).  Here are his instructions
+(replicated from
+\url{https://github.com/DrTimothyAldenDavis/GraphBLAS/issues/90})
+
+\begin{itemize}
+\item Building Octave.
+Grab the brew formula:
+
+    {\small
+    \begin{verbatim}
+    bash
+    wget https://raw.githubusercontent.com/Homebrew/homebrew-core/master/Formula/octave.rb
+    \end{verbatim} }
+
+\item Edit \verb'octave.rb'.
+
+   Add \verb`"disable-docs"` to \verb`args` (or ensure that you have a working
+   texinfo installation).
+   Edit Mercurial (\verb`hg`) repository: switch from the \verb`default` branch
+   (containing code for Octave v8.0) to \verb`stable` (v7.0).  Then do:
+
+    {\small
+    \begin{verbatim}
+    bash
+    brew install --head ./octave.rb
+    \end{verbatim} }
+
+\item Building the tests (\verb'gbmake').
+    Grab the OpenMP binaries as described at
+    \url{https://mac.r-project.org/openmp/}
+
+    {\small
+    \begin{verbatim}
+    bash
+    curl -O https://mac.r-project.org/openmp/openmp-13.0.0-darwin21-Release.tar.gz
+    sudo tar fvxz openmp-13.0.0-darwin21-Release.tar.gz -C /
+    \end{verbatim} }
+
+\item Run
+
+    {\small
+    \begin{verbatim}
+    bash
+    sed -i.bkp 's/-fopenmp/-Xclang -fopenmp/g' @GrB/private/gbmake.m
+    \end{verbatim} }
+
+\end{itemize}
+
+Once Octave 7 and SuiteSparse:GraphBLAS are compiled and installed,
+and \verb'gbmake.m' is modified if needed for Octave 7 on the Mac,
+(or if using MATLAB) continue with the following instructions:
 
 \begin{enumerate}
 \item In the Octave/MATLAB command window:
@@ -14692,6 +14736,9 @@ collaboration and for the support of Intel.
 
 I would like to thank Joe Eaton and Corey Nolet for their collaboration on the
 CUDA kernels (still in progress), and for the support of NVIDIA.
+
+I would like to thank John Eaton for his collaboration on the integration
+with Octave 7.
 
 I would like to thank Michel Pelletier for his collaboration and work on the
 pygraphblas interface, and Jim Kitchen and Erik Welch for their work on
