@@ -10,13 +10,12 @@
 # simple Makefile for GraphBLAS, relies on cmake to do the actual build.  Use
 # the CMAKE_OPTIONS argument to this Makefile to pass options to cmake.
 
-JOBS ?= 4
+JOBS ?= 8
 
 default: library
 
 # just build the dynamic library; do not run the demo
 library:
-	( cd ../cpu_features ; make )
 	( cd build ; cmake $(CMAKE_OPTIONS) .. ; $(MAKE) --jobs=$(JOBS) )
 
 # just do 'make' in build; do not rerun the cmake script

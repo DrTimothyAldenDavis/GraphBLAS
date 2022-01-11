@@ -67,7 +67,7 @@ find_package ( OpenMP )
 if ( NOT GBNCPUFEAT )
     # default: enable Google's cpu_features package
     message ( STATUS "cpu_features (by google.com): enabled " )
-    include_directories ( "cpu_features/include" "cpu_features" "cpu_features/src" "cpu_features/include/internal" )
+    include_directories ( "../cpu_features/include" "../cpu_features" "../cpu_features/src" "../cpu_features/include/internal" )
 else ( )
     # disable Google's cpu_features package
     message ( STATUS "cpu_features (by google.com): disabled" )
@@ -139,9 +139,9 @@ endif ( )
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 if ( GBCOMPACT )
-    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../cpu_features/include ../lz4 ../rmm_wrap )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 ../rmm_wrap )
 else ( )
-    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../cpu_features/include ../lz4 ../rmm_wrap ../Source/Generated2 )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 ../rmm_wrap ../Source/Generated2 )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -227,15 +227,6 @@ set_property ( TARGET graphblas_renamed PROPERTY C_STANDARD 11 )
 if ( OPENMP_FOUND )
     set ( USE_OPENMP true )
 endif ( )
-if ( NOT GBNCPUFEAT )
-    set ( BUILD_TESTING off )
-    message ( STATUS "cpu_features (by google.com): enabled " )
-    add_subdirectory ( ../cpu_features build )
-    include_directories ( "../cpu_features/include" )
-else ( )
-    message ( STATUS "cpu_features (by google.com): disabled" )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBNCPUFEAT=1 " )
-endif ( )
 
 #-------------------------------------------------------------------------------
 # select the math library (not required for Microsoft Visual Studio)
@@ -248,9 +239,8 @@ else ( )
 endif ( )
 
 target_link_libraries ( graphblas_renamed PUBLIC ${M_LIB} )
-
 if ( NOT GBNCPUFEAT )
-    target_link_libraries ( graphblas PUBLIC cpu_features )
+    target_link_libraries ( graphblas_renamed PUBLIC cpu_features )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -263,6 +253,32 @@ if ( USE_OPENMP )
     target_link_libraries ( graphblas_renamed PUBLIC ${OpenMP_C_LIBRARIES} )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} " )
     include_directories ( ${OpenMP_C_INCLUDE_DIRS} )
+endif ( )
+
+#-------------------------------------------------------------------------------
+# cpu_features settings
+#-------------------------------------------------------------------------------
+
+if ( NOT GBNCPUFEAT )
+    if ( UNIX )
+        # look for requirements for cpu_features/src/hwcaps.c
+        include ( CheckIncludeFile )
+        include ( CheckSymbolExists )
+        check_include_file ( dlfcn.h HAVE_DLFCN_H )
+        if ( HAVE_DLFCN_H )
+            target_compile_definitions ( graphblas_renamed PRIVATE HAVE_DLFCN_H )
+            if ( BUILD_GRB_STATIC_LIBRARY )
+                target_compile_definitions ( graphblas_static PRIVATE HAVE_DLFCN_H )
+            endif ( )
+        endif ( )
+        check_symbol_exists ( getauxval "sys/auxv.h" HAVE_STRONG_GETAUXVAL )
+        if ( HAVE_STRONG_GETAUXVAL )
+            target_compile_definitions ( graphblas_renamed PRIVATE HAVE_STRONG_GETAUXVAL )
+            if ( BUILD_GRB_STATIC_LIBRARY )
+                target_compile_definitions ( graphblas_static PRIVATE HAVE_STRONG_GETAUXVAL )
+            endif ( )
+        endif ( )
+    endif ( )
 endif ( )
 
 #-------------------------------------------------------------------------------
