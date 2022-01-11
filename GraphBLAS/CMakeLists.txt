@@ -239,9 +239,6 @@ else ( )
 endif ( )
 
 target_link_libraries ( graphblas_renamed PUBLIC ${M_LIB} )
-if ( NOT GBNCPUFEAT )
-    target_link_libraries ( graphblas_renamed PUBLIC cpu_features )
-endif ( )
 
 #-------------------------------------------------------------------------------
 # add the OpenMP, CUDA, BLAS, ... libraries
