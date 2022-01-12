@@ -2,7 +2,7 @@
 // GB_ops.c: built-in types, functions, operators, and other externs
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -591,8 +591,8 @@ GB_MONOID_DEFT ( MIN_UINT8    , uint8_t   , UINT8_MAX   , 0         )
 GB_MONOID_DEFT ( MIN_UINT16   , uint16_t  , UINT16_MAX  , 0         )
 GB_MONOID_DEFT ( MIN_UINT32   , uint32_t  , UINT32_MAX  , 0         )
 GB_MONOID_DEFT ( MIN_UINT64   , uint64_t  , UINT64_MAX  , 0         )
-GB_MONOID_DEFT ( MIN_FP32     , float     , INFINITY    , -INFINITY )
-GB_MONOID_DEFT ( MIN_FP64     , double    , INFINITY    , -INFINITY )
+GB_MONOID_DEF  ( MIN_FP32     , float     , INFINITY    )
+GB_MONOID_DEF  ( MIN_FP64     , double    , INFINITY    )
 
 GB_MONOID_GRB  ( MIN, INT8     )
 GB_MONOID_GRB  ( MIN, INT16    )
@@ -614,8 +614,8 @@ GB_MONOID_DEFT ( MAX_UINT8    , uint8_t   , 0           , UINT8_MAX )
 GB_MONOID_DEFT ( MAX_UINT16   , uint16_t  , 0           , UINT16_MAX)
 GB_MONOID_DEFT ( MAX_UINT32   , uint32_t  , 0           , UINT32_MAX)
 GB_MONOID_DEFT ( MAX_UINT64   , uint64_t  , 0           , UINT64_MAX)
-GB_MONOID_DEFT ( MAX_FP32     , float     , -INFINITY   , INFINITY  )
-GB_MONOID_DEFT ( MAX_FP64     , double    , -INFINITY   , INFINITY  )
+GB_MONOID_DEF  ( MAX_FP32     , float     , -INFINITY   )
+GB_MONOID_DEF  ( MAX_FP64     , double    , -INFINITY   )
 
 GB_MONOID_GRB  ( MAX, INT8     )
 GB_MONOID_GRB  ( MAX, INT16    )

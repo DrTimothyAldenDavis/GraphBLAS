@@ -2,12 +2,10 @@
 // GB_helper.c: helper functions for @GrB interface
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// TODO::: move these into the @GrB interface instead
 
 // These functions are only used by the @GrB interface for
 // SuiteSparse:GraphBLAS.

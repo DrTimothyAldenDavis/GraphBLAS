@@ -5,7 +5,7 @@ function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, ...
 % codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, ...
 %   identity, terminal, omp_atomic, omp_microsoft_atomic)
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin >= 5 && isempty (mult))

@@ -2,7 +2,7 @@
 // GB_AxB_saxpy5: compute C+=A*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -21,7 +21,7 @@
 // needed.
 
 // The ANY monoid is not supported, since its use as accum would be unusual.
-// FIXME: if the monoid is ANY, quick return GrB_SUCCESS and done_in_place
+// TODO: if the monoid is ANY, quick return GrB_SUCCESS and done_in_place
 // true, also for saxpy4.  No work is needed and C doesn't change.
 
 //------------------------------------------------------------------------------

@@ -151,12 +151,17 @@ are extensions to the GraphBLAS C API.
 \item Version 6.1.4 (Jan 11, 2022)
 
     \begin{packed_itemize}
+    \item added Section~\ref{perf} to User Guide: how to get the best
+        performance out of algorithms based on GraphBLAS.
     \item \verb'cpu_features':  no longer built as a separate library,
         but built directly into \verb'libgraphblas.so' and
         \verb'libgraphblas.a'.  Added compile-time flags to
         optionally disable the use of \verb'cpu_features' completely.
     \item Octave 7: port to Apple Silicon (thanks to 
             G{\'{a}}bor Sz{\'{a}}rnyas).
+    \item min/max monoids:  real case (FP32 and FP64) no longer terminal
+    \item \verb'@GrB' interface: overloaded \verb'C=A*B' syntax where one
+        matrix is full always results in a full matrix \verb'C'.
     \end{packed_itemize}
 
 \item Version 6.1.3 (Jan 1, 2022)
@@ -13564,7 +13569,7 @@ these cases.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Performance} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{performance}
+\label{perf}
 
 Getting the best performance out of an algorithm that relies on GraphBLAS can
 depend on many factors.  This section describes some of the possible
