@@ -80,7 +80,7 @@ mexfunctions = dir ('GB_mex_*.c') ;
 cfiles = [ dir('GB_mx_*.c') ] ;
 
 hfiles = [ dir('*.h') ; dir('Template/*.c') ] ;
-inc = '-ITemplate -I../Include -I../Source -I../Source/Template -I../lz4 -I../cpu_features/include -I../rmm_wrap' ;
+inc = '-ITemplate -I../Include -I../Source -I../Source/Template -I../lz4 -I../cpu_features/include -I../rmm_wrap -I../cpu_features -I../cpu_features/src -I../cpu_features/include/internal' ;
 
 if (ismac)
     % Mac (do 'make install' for GraphBLAS first)
