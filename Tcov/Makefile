@@ -29,8 +29,8 @@ SRC = tmp_source/*
 INC = tmp_include/*
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
-LIBS = -L../cpu_features/build -lcpu_features
-CPPFLAGS = -Itmp_include -I../cpu_features/include -I../cpu_features -I../cpu_features/src -I../cpu_features/include/internal -I../rmm_wrap -DGBCOVER $(RENAME)
+LIBS = 
+CPPFLAGS = -Itmp_include -DGBNCPUFEAT -I../rmm_wrap -DGBCOVER $(RENAME)
 SO_OPTS = $(LDFLAGS)
 
 ifeq ($(UNAME),Darwin)

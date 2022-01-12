@@ -50,7 +50,7 @@ end
 
 make_all = (isequal (what, 'all')) ;
 
-flags = '-g -R2018a' ;
+flags = '-g -R2018a -DGBNCPUFEAT' ;
 
 if (~have_octave)
     try
@@ -80,7 +80,7 @@ mexfunctions = dir ('GB_mex_*.c') ;
 cfiles = [ dir('GB_mx_*.c') ] ;
 
 hfiles = [ dir('*.h') ; dir('Template/*.c') ] ;
-inc = '-ITemplate -I../Include -I../Source -I../Source/Template -I../lz4 -I../cpu_features/include -I../rmm_wrap -I../cpu_features -I../cpu_features/src -I../cpu_features/include/internal' ;
+inc = '-ITemplate -I../Include -I../Source -I../Source/Template -I../lz4 -I../rmm_wrap' ;
 
 if (ismac)
     % Mac (do 'make install' for GraphBLAS first)

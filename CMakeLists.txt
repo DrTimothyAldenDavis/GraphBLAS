@@ -154,7 +154,7 @@ if ( NOT GBNCPUFEAT )
 else ( )
     # disable Google's cpu_features package
     message ( STATUS "cpu_features (by google.com): disabled" )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBNCPUFEAT=1 " )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBNCPUFEAT " )
 endif ( )
 
 if ( DEFINED GBX86 )
