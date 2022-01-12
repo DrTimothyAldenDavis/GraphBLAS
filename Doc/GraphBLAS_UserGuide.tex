@@ -148,7 +148,7 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 6.1.4 (Jan 11, 2022)
+\item Version 6.1.4 (Jan 12, 2022)
 
     \begin{packed_itemize}
     \item added Section~\ref{perf} to User Guide: how to get the best
@@ -162,6 +162,8 @@ are extensions to the GraphBLAS C API.
     \item min/max monoids:  real case (FP32 and FP64) no longer terminal
     \item \verb'@GrB' interface: overloaded \verb'C=A*B' syntax where one
         matrix is full always results in a full matrix \verb'C'.
+    \item Faster \verb'C=A*B' for sparse-times-full and full-times-sparse
+        for \verb'@GrB' interface.
     \end{packed_itemize}
 
 \item Version 6.1.3 (Jan 1, 2022)
@@ -1417,6 +1419,40 @@ to 1000x faster than the same statement with the same syntax, when using MATLAB
 sparse matrices instead.  Matrix concatenation \verb'C = [A B]' is about 17
 times faster in GraphBLAS, on a 20-core Intel Xeon.  For more details, see the
 \verb'GraphBLAS/GraphBLAS/demo' folder and its contents.
+
+Below is a comparison of other methods in SuiteSparse:GraphBLAS, compared with
+MATLAB 2021a.  SuiteSparse:GraphBLAS: v6.1.4 (Jan 12, 2022), was used, compiled
+with gcc 11.2.0.  The system is an Intel(R) Xeon(R) CPU E5-2698 v4 @ 2.20GHz
+(20 hardware cores, 40 threads), Ubuntu 20.04, 256GB RAM.  Full details appear
+in the \verb'GraphBLAS/GraphBLAS/demo/benchmark' folder.  For this matrix,
+SuiteSparse:GraphBLAS is anywhere from 3x to 17x faster than the built-in
+methods in MATLAB.  This matrix is not special, but is typical of the relative
+performance of many large matrices.  Note that two of these (\verb'C=L*S' and
+\verb'C=S*R') rely on an older version of SuiteSparse:GraphBLAS (v3.3.3) built
+into MATLAB R2021a.
+
+{\footnotesize
+\begin{verbatim}
+    Legend:
+    S: large input sparse matrix (n-by-n), the GAP-twitter matrix
+    x: dense vector (1-by-n or n-by-1)
+    F: dense matrix (4-by-n or n-by-4)
+    L: 8-by-n sparse matrix, about 1000 entries
+    R: n-by-8 sparse matrix, about 1000 entries
+    B: n-by-n sparse matrix, about nnz(S)/10 entries
+    p,q: random permutation vectors
+
+    GAP/GAP-twitter: n: 61.5784 million nnz: 1468.36 million
+    y=S*x:   MATLAB:  22.8012 GrB:   2.4018 speedup:     9.49
+    y=x*S:   MATLAB:  16.1618 GrB:   1.1610 speedup:    13.92
+    C=S*F:   MATLAB:  30.6121 GrB:   9.7052 speedup:     3.15
+    C=F*S:   MATLAB:  26.4044 GrB:   1.5245 speedup:    17.32
+    C=L*S:   MATLAB:  19.1228 GrB:   2.4301 speedup:     7.87
+    C=S*R:   MATLAB:   0.0087 GrB:   0.0020 speedup:     4.40
+    C=S'     MATLAB: 224.7268 GrB:  22.6855 speedup:     9.91
+    C=S+S:   MATLAB:  14.3368 GrB:   1.5539 speedup:     9.23
+    C=S+B:   MATLAB:  15.5600 GrB:   1.5098 speedup:    10.31
+    C=S(p,q) MATLAB:  95.6219 GrB:  15.9468 speedup:     6.00    \end{verbatim}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

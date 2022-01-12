@@ -8,7 +8,8 @@ Version 6.1.4, Jan 12, 2022
     * Octave 7: port to Apple Silicon (thanks to Gabor Szarnyas)
     * min/max monoids:  real case (FP32 and FP64) no longer terminal
     * @GrB interface: overloaded C=A*B syntax where one matrix is full always
-        results in a full matrix C.
+        results in a full matrix C, which is faster and matches the Octave/
+        MATLAB policy.
 
 Version 6.1.3, Jan 1, 2022
 
