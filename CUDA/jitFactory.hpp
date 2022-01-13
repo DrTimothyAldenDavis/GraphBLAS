@@ -40,7 +40,9 @@
 
 // FIXME: Is this okay or will it bring in too much (GB.h is brought in transitively)
 #include "GraphBLAS.h"
+#include "GB_Semiring_new.c"
 #include "GrB_Semiring_new.c"
+#include "GB_Monoid_new.c"
 #include "GrB_Monoid_new.c"
 
 #include "type_name.hpp"
