@@ -14,9 +14,26 @@
 // determine which compiler is in use
 //------------------------------------------------------------------------------
 
-#if defined ( __INTEL_CLANG_COMPILER )
+#if defined ( __NVCC__ )
+
+    // NVIDIA nvcc compiler
+    #define GB_COMPILER_NVCC    1
+    #define GB_COMPILER_ICX     0
+    #define GB_COMPILER_ICC     0
+    #define GB_COMPILER_CLANG   0
+    #define GB_COMPILER_GCC     0
+    #define GB_COMPILER_MSC     0
+    #define GB_COMPILER_XLC     0
+
+    #define GB_COMPILER_MAJOR __CUDACC_VER_MAJOR__
+    #define GB_COMPILER_MINOR __CUDACC_VER_MINOR__
+    #define GB_COMPILER_SUB   __CUDACC_VER_BUILD__
+    #define GB_COMPILER_NAME  "nvcc"
+
+#elif defined ( __INTEL_CLANG_COMPILER )
 
     // Intel icx compiler, 2022.0.0 based on clang/llvm 14.0.0
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     1
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   0
@@ -32,6 +49,7 @@
 #elif defined ( __INTEL_COMPILER )
 
     // Intel icc compiler: 2021.5.0 uses "gcc 7.5 mode"
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     1
     #define GB_COMPILER_CLANG   0
@@ -47,6 +65,7 @@
 #elif defined ( __clang__ )
 
     // clang
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   1
@@ -62,6 +81,7 @@
 #elif defined ( __xlC__ )
 
     // xlc
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   0
@@ -77,6 +97,7 @@
 #elif defined ( __GNUC__ )
 
     // gcc
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   0
@@ -93,6 +114,7 @@
 #elif defined ( _MSC_VER )
 
     // Microsoft Visual Studio
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   0
@@ -108,6 +130,7 @@
 #else
 
     // other compiler
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   0
@@ -129,7 +152,14 @@
 // Determine the restrict keyword, and whether or not variable-length arrays
 // are supported.
 
-#if GB_COMPILER_MSC
+
+#if GB_COMPILER_NVCC
+
+    // NVIDIA nvcc compiler for host or device code
+    #define GB_HAS_VLA 1
+    #define restrict __restrict__
+
+#elif GB_COMPILER_MSC
 
     // Microsoft Visual Studio does not have the restrict keyword, but it does
     // support __restrict, which is equivalent.  Variable-length arrays are
