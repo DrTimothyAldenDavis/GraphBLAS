@@ -42,10 +42,6 @@
 
 #include "GB_mxm.h"
 #define GB_FREE_ALL ;
-#if defined ( GBCUDA )
-// FIXME: add GB_cuda_gateway.h to GB.h
-#include "GB_cuda_gateway.h"
-#endif
 
 GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 (
