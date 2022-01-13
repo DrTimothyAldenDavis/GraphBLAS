@@ -59,9 +59,6 @@
 #define GBNCPUFEAT 1
 #endif
 
-//
-//#define  GBNCPUFEAT 1
-
 #if !defined ( GBNCPUFEAT )
 
     #include "cpu_features_macros.h"
