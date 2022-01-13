@@ -2,7 +2,7 @@
 // GB_AxB_saxpy: compute C=A*B, C<M>=A*B, or C<!M>=A*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -100,20 +100,21 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         if ((GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
         &&  (GB_IS_BITMAP (B) || GB_as_if_full (B)))
         { 
-            // GB_AxB_saxpy4 computes C += A*B where C is as-if-full, no mask is
-            // present, accum is present and matches the monoid, no typecasting, A
-            // is sparse or hypersparse, and B is bitmap or as-if-full.  Only
-            // built-in semirings are supported, but not all: (1) the ANY monoid is
-            // not supported since it would be unusual to use ANY as the accum, and
-            // (2) only monoids that can be done atomically without a critical
-            // section are supported.  The method is not used if A*B is iso;
-            // C may be iso on input but it is non-iso on output.
+            // GB_AxB_saxpy4 computes C += A*B where C is as-if-full, no mask
+            // is present, accum is present and matches the monoid, no
+            // typecasting, A is sparse or hypersparse, and B is bitmap or
+            // as-if-full.  Only built-in semirings are supported, but not all:
+            // (1) the ANY monoid is not supported since it would be unusual to
+            // use ANY as the accum, and (2) only monoids that can be done
+            // atomically without a critical section are supported.  The method
+            // is not used if A*B is iso; C may be iso on input but it is
+            // non-iso on output.
             info = GB_AxB_saxpy4 (C_in, A, B, semiring, flipxy, done_in_place,
                 Context) ;
             if (info != GrB_NO_VALUE)
             { 
-                // return if saxpy4 has handled this case, otherwise fall through
-                // to saxpy3, dot2, or bitmap_saxpy below.
+                // return if saxpy4 has handled this case, otherwise fall
+                // through to saxpy3, dot2, or bitmap_saxpy below.
                 return (info) ;
             }
         }
@@ -130,8 +131,8 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
                 Context) ;
             if (info != GrB_NO_VALUE)
             { 
-                // return if saxpy5 has handled this case, otherwise fall through
-                // to saxpy3, dot2, or bitmap_saxpy below.
+                // return if saxpy5 has handled this case, otherwise fall
+                // through to saxpy3, dot2, or bitmap_saxpy below.
                 return (info) ;
             }
         }
@@ -143,10 +144,11 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 
     if (M == NULL)
     { 
-        GBURBLE ("(%s = %s*%s) ",
+        GBURBLE ("(%s = %s*%s, anz: %g bnz: %g) ",
             GB_sparsity_char (C_sparsity),
             GB_sparsity_char_matrix (A),
-            GB_sparsity_char_matrix (B)) ;
+            GB_sparsity_char_matrix (B),
+            (double) GB_nnz (A), (double) GB_nnz (B)) ;
     }
     else
     { 

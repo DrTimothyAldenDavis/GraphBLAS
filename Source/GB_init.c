@@ -2,7 +2,7 @@
 // GB_init: initialize GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -66,6 +66,12 @@ GrB_Info GB_init            // start up GraphBLAS
         // invalid mode
         return (GrB_INVALID_VALUE) ;
     }
+
+    //--------------------------------------------------------------------------
+    // query hardware features for future use
+    //--------------------------------------------------------------------------
+
+    GB_Global_cpu_features_query ( ) ;
 
     //--------------------------------------------------------------------------
     // establish malloc/realloc/free

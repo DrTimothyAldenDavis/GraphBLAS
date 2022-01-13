@@ -2,7 +2,7 @@
 // gb_export_to_mxstruct: export a GrB_Matrix to a built-in struct
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 //------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     GrB_Type type = NULL ;
     GrB_Index nrows = 0, ncols = 0 ;
     int8_t *Ab = NULL ;
-    int64_t *Ap = NULL, *Ah = NULL, *Ai = NULL ;
+    uint64_t *Ap = NULL, *Ah = NULL, *Ai = NULL ;
     void *Ax = NULL ;
     int64_t Ap_size = 0, Ah_size = 0, Ab_size = 0, Ai_size = 0, Ax_size = 0 ;
     int64_t nvals = 0, nvec = 0 ;

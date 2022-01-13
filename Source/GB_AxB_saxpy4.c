@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy4: compute C+=A*B
+// GB_AxB_saxpy4: compute C+=A*B: C full, A sparse/hyper, B bitmap/full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -36,7 +36,7 @@
 }
 
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy4: compute C+=A*B in-place
+// GB_AxB_saxpy4: compute C+=A*B: C full, A sparse/hyper, B bitmap/full
 //------------------------------------------------------------------------------
 
 GrB_Info GB_AxB_saxpy4              // C += A*B

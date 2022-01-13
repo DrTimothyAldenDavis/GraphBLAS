@@ -5,7 +5,7 @@ function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, ...
 % codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, ...
 %   identity, terminal, omp_atomic, omp_microsoft_atomic)
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin >= 5 && isempty (mult))
@@ -56,9 +56,10 @@ else
 end
 
 ztype_is_real = ~codegen_contains (ztype, 'FC') ;
+ztype_is_fp = isequal (ztype, 'float') || isequal (ztype, 'double') ;
 is_any_complex = is_any && ~ztype_is_real ;
-is_plus_pair_real = isequal (addop, 'plus') && isequal (multop, 'pair') ...
-    && ztype_is_real ;
+is_plus_pair_real  = isequal (addop, 'plus') && isequal (multop, 'pair' ) && ztype_is_real ;
+is_plus_times_fp = isequal (addop, 'plus') && isequal (multop, 'times') && ztype_is_fp ;
 
 t_is_simple = isequal (multop, 'pair') || codegen_contains (multop, 'first') || codegen_contains (multop, 'second') ;
 t_is_nonnan = isequal (multop (1:2), 'is') || (multop (1) == 'l') ;
@@ -119,6 +120,7 @@ end
 
 % bits: special cases for the PAIR multiplier
 fprintf (f, 'define(`GB_ctype_bits'', `%s'')\n', bits) ;
+fprintf (f, 'define(`GB_cnbits'', `%d'')\n', nbits) ;
 
 % nbits: # of bits in the type, needed for the atomic compare-exchange:
 if (nbits == 0)
@@ -221,6 +223,14 @@ else
     fprintf (f, 'define(`GB_cij_declare'', `%s cij'')\n', ztype) ;
 end
 
+if (is_plus_times_fp)
+    % plus_times_fp32 and plus_times_fp64 are accelerated with AVX2 or AVX512f instructions.
+    % More semirings will be accelerated in the future.
+    fprintf (f, 'define(`GB_semiring_has_avx_implementation'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_semiring_has_avx_implementation'', `0'')\n') ;
+end
+
 if (is_pair)
     fprintf (f, 'define(`GB_is_pair_multiplier'', `1'')\n') ;
 else
@@ -283,7 +293,6 @@ else
 end
 
 if (ztype_is_real)
-    % on x86: all built-in real monoids are atomic.
     % The ANY monoid is atomic on any architecture.
     % MIN, MAX, EQ, XNOR are implemented with atomic compare/exchange.
     fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
@@ -643,7 +652,7 @@ end
 
 fclose (f) ;
 
-nprune = 74 ;
+nprune = 76 ;
 
 if (is_any_pair)
     % the ANY_PAIR_ISO semiring goes in Generated1

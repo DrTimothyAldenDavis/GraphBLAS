@@ -2,7 +2,7 @@
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -86,7 +86,7 @@
 
 // Exporting/importing symbols for Microsoft Visual Studio
 
-#if ( _MSC_VER && !__INTEL_COMPILER )
+#if ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
 #ifdef GB_LIBRARY
 // compiling SuiteSparse:GraphBLAS itself, exporting symbols to user apps
 #define GB_PUBLIC extern __declspec ( dllexport )
@@ -107,6 +107,7 @@
 // used.  Earlier versions of the language do not have this feature.
 
 #ifdef __STDC_VERSION__
+// ANSI C17: 201710L
 // ANSI C11: 201112L
 // ANSI C99: 199901L
 // ANSI C95: 199409L
@@ -138,7 +139,7 @@
     #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)
     #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)
 
-#elif ( _MSC_VER && !__INTEL_COMPILER )
+#elif ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
 
     // Microsoft Windows complex types
     #include <complex.h>
@@ -225,12 +226,12 @@
 
 // The 'about' string the describes this particular implementation of GraphBLAS:
 #define GxB_IMPLEMENTATION_ABOUT \
-"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved." \
+"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved." \
 "\nhttp://suitesparse.com  Dept of Computer Sci. & Eng, Texas A&M University.\n"
 
 // The GraphBLAS license for this particular implementation of GraphBLAS:
 #define GxB_IMPLEMENTATION_LICENSE \
-"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved." \
+"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved." \
 "\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may\n"\
 "not use SuiteSparse:GraphBLAS except in compliance with the License.  You\n"  \
 "may obtain a copy of the License at\n\n"                                      \
@@ -750,7 +751,7 @@ GrB_Info GRB (Type_new)         // create a new GraphBLAS type
 // characters, including the required null-terminating character) that may
 // appear as the name of a C type created by a C "typedef" statement.  It must
 // not contain any white-space characters.  Example, creating a type of size
-// 16*4+1 = 65 bytes, with a 4-by-4 dense float array and a 32-bit integer:
+// 16*4+4 = 68 bytes, with a 4-by-4 dense float array and a 32-bit integer:
 //
 //      typedef struct { float x [4][4] ; int color ; } myquaternion ;
 //      GrB_Type MyQtype ;
@@ -4366,6 +4367,8 @@ typedef enum            // for global options or matrix options
     GxB_API_DATE = 17,              // date of the API (char *)
     GxB_API_ABOUT = 18,             // about the API (char *)
     GxB_API_URL = 19,               // URL for the API (char *)
+    GxB_COMPILER_VERSION = 23,      // compiler version (3 int's)
+    GxB_COMPILER_NAME = 24,         // compiler name (char *)
 
     //------------------------------------------------------------
     // for GxB_Global_Option_get/set only:

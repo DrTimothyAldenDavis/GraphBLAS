@@ -2,7 +2,7 @@
 // GB_mex_subassign: C(I,J)<M> = accum (C (I,J), A)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 // This function is a wrapper for all GxB_*_subassign functions.
@@ -151,7 +151,7 @@ GrB_Info assign (GB_Context Context)
         }
         else
         {
-            OK (GxB_Matrix_subassign_Scalar ((GrB_Vector) C, (GrB_Vector) M,
+            OK (GxB_Matrix_subassign_Scalar ((GrB_Matrix) C, (GrB_Matrix) M,
                 accum, S, I, ni, J, nj, desc)) ;
         }
 

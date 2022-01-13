@@ -2,7 +2,7 @@
 // GB_memory.h: memory allocation
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -86,6 +86,26 @@ void *GB_xalloc_memory      // return the newly-allocated space
     // output
     size_t *size,           // resulting size
     GB_Context Context
+) ;
+
+//------------------------------------------------------------------------------
+// parallel memcpy and memset
+//------------------------------------------------------------------------------
+
+void GB_memcpy                  // parallel memcpy
+(
+    void *dest,                 // destination
+    const void *src,            // source
+    size_t n,                   // # of bytes to copy
+    int nthreads                // # of threads to use
+) ;
+
+void GB_memset                  // parallel memset
+(
+    void *dest,                 // destination
+    const int c,                // value to to set
+    size_t n,                   // # of bytes to set
+    int nthreads                // # of threads to use
 ) ;
 
 //------------------------------------------------------------------------------

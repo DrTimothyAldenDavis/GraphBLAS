@@ -2,7 +2,7 @@
 // GrB_Semiring_new: create a new semiring
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -28,6 +28,7 @@
 // operator is not assumed to be commutative.
 
 #include "GB.h"
+#include "GB_Semiring_new.h"
 
 #define GB_FREE_ALL                     \
 {                                       \
@@ -42,7 +43,7 @@ GrB_Info GrB_Semiring_new           // create a semiring
 )
 {
 
-    printf("inside GrB_semiring_new\n");
+//  printf("inside GrB_semiring_new\n");
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -50,15 +51,15 @@ GrB_Info GrB_Semiring_new           // create a semiring
 
     GrB_Info info ;
 
-    printf("About to call GB_WHERE1\n");
+//  printf("About to call GB_WHERE1\n");
     GB_WHERE1 ("GrB_Semiring_new (&semiring, add, multiply)") ;
 
-    printf("Done calling GB_WHERE1\n");
+//  printf("Done calling GB_WHERE1\n");
 
-    printf("Aout to return if null\n");
+//  printf("Aout to return if null\n");
     GB_RETURN_IF_NULL (semiring) ;
 
-    printf("Didn't return!\n");
+//  printf("Didn't return!\n");
     (*semiring) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (add) ;
     GB_RETURN_IF_NULL_OR_FAULTY (multiply) ;
@@ -73,12 +74,12 @@ GrB_Info GrB_Semiring_new           // create a semiring
     (*semiring) = GB_MALLOC (1, struct GB_Semiring_opaque, &header_size) ;
     if (*semiring == NULL)
     {
-        printf("alloc failed\n");
+//      printf("alloc failed\n");
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    printf("Alloc succeess\n");
+//  printf("Alloc succeess\n");
     (*semiring)->header_size = header_size ;
 
     //--------------------------------------------------------------------------

@@ -2,6 +2,11 @@
 // GB_lookup_template: find k so that j == Ah [k]
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
 // For a sparse, bitmap, or full matrix j == k.
 // For a hypersparse matrix, find k so that j == Ah [k], if it
 // appears in the list.

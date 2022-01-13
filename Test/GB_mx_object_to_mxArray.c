@@ -2,7 +2,7 @@
 // GB_mx_object_to_mxArray
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -294,7 +294,8 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
         double *Sx = (double *) GB_malloc_memory (cnz+1, sizeof (double),
             &Sx_size) ;
         if (Sx == NULL && cnz > 0) mexErrMsgTxt ("Sx is NULL!\n") ;
-        GB_cast_array (Sx, GB_FP64_code, C->x, C->type->code, NULL, cnz, 1) ;
+        GB_cast_array ((GB_void *) Sx, GB_FP64_code, C->x, C->type->code,
+            NULL, cnz, 1) ;
         mexMakeMemoryPersistent (Sx) ;
         mxSetPr (A, Sx) ;
 

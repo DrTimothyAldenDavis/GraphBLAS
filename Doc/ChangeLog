@@ -1,7 +1,42 @@
-Versions 6.0.3 and 5.2.3, Dec FIXME, 2021
+Version 6.1.4, Jan 12, 2022
 
+    * added section to User Guide: how to get the best performance out of
+        algorithms based on GraphBLAS
+    * cpu_features:  no longer built as a separate library, but built directly
+        into libgraphblas.so and libgraphblas.a.  Added compile-time flags to
+        optionally disable the use of cpu_features completely.
+    * Octave 7: port to Apple Silicon (thanks to Gabor Szarnyas)
+    * min/max monoids:  real case (FP32 and FP64) no longer terminal
+    * @GrB interface: overloaded C=A*B syntax where one matrix is full always
+        results in a full matrix C, which is faster and matches the Octave/
+        MATLAB policy.
+
+Version 6.1.3, Jan 1, 2022
+
+    * performance: task creation for GrB_mxm (saxpy method) didn't
+        account for any work for A(:,k)*B(k,j) when nnz(A(:,k))==0,
+        but this takes O(1) work to examine B(k,j).  Performance
+        improvement of up to 10x when nnz(A)<<nnz(B).
+
+Version 6.1.2, Dec 31, 2021
+
+    * performance: revised swap_rule in GrB_mxm, which decides whether
+        to compute C=A*B or C=(B'*A')', and variants, resulting in up
+        to 3x performance gain over v6.1.1 for GrB_mxm (observed;
+        could be higher in other cases).
+
+Version 6.1.1, Dec 28, 2021
+
+    * minor revision to AVX2 and AVX512f selection
+    * cpu_features/Makefile: remove test of list_cpu_features
+
+Version 6.1.0, Dec 26, 2021
+
+    * added GxB_get options: compiler name and version
+    * added package: https://github.com/google/cpu_features,
+        Nov 30, 2021 version
     * performance: faster C+=A*B when C is full, A is bitmap/full, and B is
-        sparse/hyper; added saxpy5 kernel
+        sparse/hyper; added saxpy5 kernel.  faster C+=A'*B (dot4 kernel).
     * bug fix: deserialization of iso and empty matrices/vectors was broken
 
 Versions 6.0.2 and 5.2.2, Nov 30, 2021
