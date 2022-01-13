@@ -7851,7 +7851,7 @@ GrB_Info GxB_sort
 
 \verb'GxB_Matrix_sort' sorts all the rows or all the columns of a matrix.
 Each row (or column) is sorted separately.  The rows are sorted by default.
-To sort the columns, use \verb'GrB_DESC_IN0'.  A comparator operator is
+To sort the columns, use \verb'GrB_DESC_T0'.  A comparator operator is
 provided to define the sorting order (ascending or descending).
 For example, to sort a \verb'GrB_FP64' matrix in ascending order,
 use \verb'GrB_LT_FP64' as the \verb'op', and to sort in descending order,
@@ -7866,7 +7866,7 @@ must match the type of \verb'A', and whose output is \verb'GrB_BOOL'.
 The two matrix outputs are \verb'C' and \verb'P'.  Any entries present on input
 in \verb'C' or \verb'P' are discarded on output.  The type of \verb'C' must
 match the type of \verb'A' exactly.  The dimensions of \verb'C', \verb'P', and
-\verb'A' must also match exactly (even with the \verb'GrB_DESC_IN0'
+\verb'A' must also match exactly (even with the \verb'GrB_DESC_T0'
 descriptor).
 
 With the default sort (by row), suppose \verb'A(i,:)' contains \verb'k'
