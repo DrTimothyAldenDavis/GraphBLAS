@@ -29,10 +29,6 @@
 // The default value of this parameter is GB_GPU_CHUNK_DEFAULT:
 #define GB_GPU_CHUNK_DEFAULT (1024*1024)
 
-#if defined ( GB_COMPILER_NVCC )
-extern "C" {
-#endif
-
 //------------------------------------------------------------------------------
 // rmm_device: properties of each GPU in the system
 //------------------------------------------------------------------------------
@@ -139,11 +135,6 @@ bool GB_AxB_dot3_cuda_branch
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Context Context
 );
-
-
-#if defined ( GB_COMPILER_NVCC )
-}
-#endif
 
 #endif
 

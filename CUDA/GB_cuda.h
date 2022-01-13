@@ -17,8 +17,6 @@ extern "C"
     #include "GB.h"
 }
 
-#include "GB_cuda_gateway.h"
-
 // Finally, include the CUDA definitions
 #include "cuda.h"
 #include "cuda_runtime.h"
