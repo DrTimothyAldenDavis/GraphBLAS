@@ -14,8 +14,8 @@
 // definitions that modify GraphBLAS.h
 //------------------------------------------------------------------------------
 
-#include "GB_cpu_features.h"
 #include "GB_compiler.h"
+#include "GB_cpu_features.h"
 #include "GB_warnings.h"
 #define GB_LIBRARY
 

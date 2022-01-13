@@ -29,7 +29,7 @@
 // The default value of this parameter is GB_GPU_CHUNK_DEFAULT:
 #define GB_GPU_CHUNK_DEFAULT (1024*1024)
 
-#if defined ( GB_NVCC )
+#if defined ( GB_COMPILER_NVCC )
 extern "C" {
 #endif
 
@@ -141,7 +141,7 @@ bool GB_AxB_dot3_cuda_branch
 );
 
 
-#if defined ( GB_NVCC )
+#if defined ( GB_COMPILER_NVCC )
 }
 #endif
 
