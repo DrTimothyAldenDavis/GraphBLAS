@@ -2,7 +2,7 @@
 // GB_AxB_saxpy3_generic_firstj32.c: C=A*B, C sparse/hyper, FIRSTJ multiplier
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------

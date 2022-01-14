@@ -2,7 +2,7 @@
 // GB_mex_errors: test error handling
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -676,9 +676,9 @@ void mexFunction
     CHECK (!has_terminal) ;
     CHECK (x_double == 42.0) ;
 
-    OK (GxB_Monoid_terminal (&has_terminal, &x_double, GxB_MAX_FP64_MONOID)) ;
+    OK (GxB_Monoid_terminal (&has_terminal, &x_int64, GxB_MAX_INT64_MONOID)) ;
     CHECK (has_terminal) ;
-    CHECK (x_double == ((double) INFINITY)) ;
+    CHECK (x_int64 == INT64_MAX) ;
 
     ERR (GxB_Monoid_terminal (NULL, NULL, GxB_MAX_FP64_MONOID)) ;
     ERR (GxB_Monoid_terminal (&has_terminal, NULL, GxB_MAX_FP64_MONOID)) ;

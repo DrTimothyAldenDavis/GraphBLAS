@@ -1,6 +1,6 @@
 # GraphBLAS/GraphBLAS: Octave/MATLAB interface for SuiteSparse:GraphBLAS
 
-SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 The @GrB interface (including its test suite and demos) is under the GNU
 GPLv3 (or later) license.
 SPDX-License-Identifier: GPL-3.0-or-later

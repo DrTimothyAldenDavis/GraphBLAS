@@ -2,7 +2,7 @@
 // GB_int64_multiply:  multiply two integers and guard against overflow
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -14,9 +14,7 @@
 __device__ static inline
 #define restrict __restrict__
 
-// from GraphBLAS.h, duplicated here since GraphBLAS.h must be self-contained
-#define GrB_INDEX_MAX ((GrB_Index) (1ULL << 60) - 1)
-#include "../GB_index.h"
+#include "GB_index.h"
 
 #else
 #include "GB.h"

@@ -2,7 +2,7 @@
 // GB_AxB_dot: C<M>=A'*B using dot products
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -42,10 +42,6 @@
 
 #include "GB_mxm.h"
 #define GB_FREE_ALL ;
-#if defined ( GBCUDA )
-// FIXME: add GB_cuda_gateway.h to GB.h
-#include "GB_cuda_gateway.h"
-#endif
 
 GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 (

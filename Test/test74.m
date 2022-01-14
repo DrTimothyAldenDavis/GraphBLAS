@@ -1,7 +1,7 @@
 function test74
 %TEST74 test GrB_mxm: all built-in semirings
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 [binops, ~, add_ops, types, ~, ~] = GB_spec_opsall ;
@@ -94,9 +94,9 @@ for k0 = 1:size(m_list,2)
 
                 n_semirings = n_semirings + 1 ;
                 fprintf ('.') ;
-                if (test_contains (mulop, 'firsti'))
-                    fprintf ('[%s.%s.%s]', addop, mulop, semiring_type) ;
-                end
+%               if (test_contains (mulop, 'firsti'))
+%                   fprintf ('[%s.%s.%s]', addop, mulop, semiring_type) ;
+%               end
 
                 AT.class = semiring_type ;
                 A.class = semiring_type ;
@@ -191,7 +191,6 @@ for k0 = 1:size(m_list,2)
                     GB_spec_compare (C0, C1, identity) ;
                     Afull.iso = false ;
 
-% save gunk F semiring A_bitmap B monoid identity
                     % F += A_iso_bitmap * B
                     % A_bitmap.iso = true ;
                     C1 = GB_mex_mxm_update  (F, semiring, A_bitmap, B, [ ]) ;

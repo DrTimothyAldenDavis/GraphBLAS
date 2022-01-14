@@ -29,10 +29,10 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS (must match ../CMakeLists.txt)
-set ( GraphBLAS_DATE "Jan 1, 2022")
+set ( GraphBLAS_DATE "Jan 13, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 1 )
-set ( GraphBLAS_VERSION_SUB   3 )
+set ( GraphBLAS_VERSION_SUB   4 )
 
 message ( STATUS "Building SuiteSparse:GraphBLAS version: v" ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}  " date: " ${GraphBLAS_DATE} )
 
@@ -59,6 +59,49 @@ project ( graphblas_renamed
     VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}" LANGUAGES C )
 
 #-------------------------------------------------------------------------------
+# find OpenMP and cpu_features
+#-------------------------------------------------------------------------------
+
+find_package ( OpenMP )
+
+if ( NOT GBNCPUFEAT )
+    # default: enable Google's cpu_features package
+    message ( STATUS "cpu_features (by google.com): enabled " )
+    include_directories ( "../cpu_features/include" "../cpu_features" "../cpu_features/src" "../cpu_features/include/internal" )
+else ( )
+    # disable Google's cpu_features package
+    message ( STATUS "cpu_features (by google.com): disabled" )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBNCPUFEAT " )
+endif ( )
+
+if ( DEFINED GBX86 )
+    # default: this is detected automatically, but can be set here also
+    if ( GBX86 )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBX86=1 " )
+    else ( )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBX86=0 " )
+    endif ( )
+endif ( )
+
+if ( DEFINED GBAVX2 )
+    # default: this is detected automatically, but can be set here also
+    if ( GBAVX2 )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX2=1 " )
+    else ( )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX2=0 " )
+    endif ( )
+endif ( )
+
+if ( DEFINED GBAVX512F )
+    # default: this is detected automatically, but can be set here also
+    if ( GBAVX512F )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX512F=1 " )
+    else ( )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBAVX512F=0 " )
+    endif ( )
+endif ( )
+
+#-------------------------------------------------------------------------------
 # determine build type
 #-------------------------------------------------------------------------------
 
@@ -73,8 +116,6 @@ if ( NOT CMAKE_BUILD_TYPE )
 endif ( )
 
 set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBRENAME=1 " )
-
-find_package ( OpenMP )
 
 message ( STATUS "CMAKE build type:          " ${CMAKE_BUILD_TYPE} )
 
@@ -98,9 +139,9 @@ endif ( )
 set ( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 if ( GBCOMPACT )
-    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../cpu_features/include ../lz4 ../rmm_wrap )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 ../rmm_wrap )
 else ( )
-    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../cpu_features/include ../lz4 ../rmm_wrap ../Source/Generated2 )
+    include_directories ( ../Source/Template ../Source ../Include rename ../Source/Generated1 ../lz4 ../rmm_wrap ../Source/Generated2 )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -187,11 +228,6 @@ if ( OPENMP_FOUND )
     set ( USE_OPENMP true )
 endif ( )
 
-set (BUILD_TESTING off)
-message ( STATUS "Adding cpu_features (by google.com): " )
-add_subdirectory (../cpu_features build)
-include_directories ( "../cpu_features/include" )
-
 #-------------------------------------------------------------------------------
 # select the math library (not required for Microsoft Visual Studio)
 #-------------------------------------------------------------------------------
@@ -203,7 +239,6 @@ else ( )
 endif ( )
 
 target_link_libraries ( graphblas_renamed PUBLIC ${M_LIB} )
-target_link_libraries ( graphblas_renamed PUBLIC cpu_features )
 
 #-------------------------------------------------------------------------------
 # add the OpenMP, CUDA, BLAS, ... libraries
@@ -215,6 +250,32 @@ if ( USE_OPENMP )
     target_link_libraries ( graphblas_renamed PUBLIC ${OpenMP_C_LIBRARIES} )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} " )
     include_directories ( ${OpenMP_C_INCLUDE_DIRS} )
+endif ( )
+
+#-------------------------------------------------------------------------------
+# cpu_features settings
+#-------------------------------------------------------------------------------
+
+if ( NOT GBNCPUFEAT )
+    if ( UNIX )
+        # look for requirements for cpu_features/src/hwcaps.c
+        include ( CheckIncludeFile )
+        include ( CheckSymbolExists )
+        check_include_file ( dlfcn.h HAVE_DLFCN_H )
+        if ( HAVE_DLFCN_H )
+            target_compile_definitions ( graphblas_renamed PRIVATE HAVE_DLFCN_H )
+            if ( BUILD_GRB_STATIC_LIBRARY )
+                target_compile_definitions ( graphblas_static PRIVATE HAVE_DLFCN_H )
+            endif ( )
+        endif ( )
+        check_symbol_exists ( getauxval "sys/auxv.h" HAVE_STRONG_GETAUXVAL )
+        if ( HAVE_STRONG_GETAUXVAL )
+            target_compile_definitions ( graphblas_renamed PRIVATE HAVE_STRONG_GETAUXVAL )
+            if ( BUILD_GRB_STATIC_LIBRARY )
+                target_compile_definitions ( graphblas_static PRIVATE HAVE_STRONG_GETAUXVAL )
+            endif ( )
+        endif ( )
+    endif ( )
 endif ( )
 
 #-------------------------------------------------------------------------------

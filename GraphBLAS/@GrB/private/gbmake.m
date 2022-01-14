@@ -16,7 +16,7 @@ function gbmake (what)
 %
 % See also mex, version, GrB.clear.
 %
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 fprintf ('Note that this @GrB interface is under the GNU GPLv3 (or later).\n') ;
@@ -44,13 +44,14 @@ end
 
 make_all = (isequal (what, 'all')) ;
 
+flags = '-O -R2018a -DGBNCPUFEAT' ;
+
 % use -R2018a for the new interleaved complex API
 if (have_octave)
     % Octave does not have the new MEX classdef object and as of version 7, the
     % mex command doesn't handle compiler options the same way.
-    flags = '-O -R2018a -std=c11 -fopenmp -fPIC -Wno-pragmas' ;
+    flags = [flags ' -std=c11 -fopenmp -fPIC -Wno-pragmas' ] ;
 else
-    flags = '-O -R2018a' ;
     try
         if (strncmp (computer, 'GLNX', 4))
             % remove -ansi from CFLAGS and replace it with -std=c11
@@ -87,7 +88,7 @@ else
     object_suffix = '.o' ;
 end
 
-inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Template -I../../../cpu_features/include -I../../../rmm_wrap' ;
+inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Template -I../../../rmm_wrap' ;
 
 if ispc
     % First do the following in GraphBLAS/build, in the Windows console:

@@ -14,7 +14,7 @@
 // The output matrix C always has a static header.  The input matrices M, A,
 // and B may have static or dynamic headers.
 
-extern "C" 
+extern "C"
 {
   #include "GB_mxm.h"
   #include "GB_dynamic.h"

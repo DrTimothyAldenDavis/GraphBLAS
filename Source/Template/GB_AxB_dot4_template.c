@@ -2,7 +2,7 @@
 // GB_AxB_dot4_template:  C+=A'*B via dot products, where C is full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -588,9 +588,10 @@
                     //----------------------------------------------------------
 
                     GB_BTYPE *restrict G = W ;
+                    int64_t k ;
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(static)
-                    for (int64_t k = 0 ; k < vlen ; k++)
+                    for (k = 0 ; k < vlen ; k++)
                     {
                         // G (k,0:1) = B (k,j1:j1+1)
                         const int64_t k2 = k << 1 ;
@@ -646,9 +647,10 @@
                     //----------------------------------------------------------
 
                     GB_BTYPE *restrict G = W ;
+                    int64_t k ;
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(static)
-                    for (int64_t k = 0 ; k < vlen ; k++)
+                    for (k = 0 ; k < vlen ; k++)
                     {
                         // G (k,0:2) = B (k,j1:j1+2)
                         const int64_t k3 = k * 3 ;
@@ -708,9 +710,10 @@
                     //----------------------------------------------------------
 
                     GB_BTYPE *restrict G = W ;
+                    int64_t k ;
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(static)
-                    for (int64_t k = 0 ; k < vlen ; k++)
+                    for (k = 0 ; k < vlen ; k++)
                     {
                         // G (k,0:3) = B (k,j1:j1+3)
                         const int64_t k4 = k << 2 ;

@@ -6,7 +6,7 @@ function grbcover (what)
 %
 % See also: grbcover_edit, grbmake
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (ispc)
@@ -40,7 +40,7 @@ cfiles = [ dir('../Test/GB_mx_*.c') ; dir('GB_cover_util.c') ; ] ;
 hfiles = [ dir('../Test/*.h') ; dir('../Test/Template/*.c') ] ;
 
 % list of include directories
-inc = '-Itmp_include -I../Test -I../Test/Template -I../lz4 -I../cpu_features/include -I../rmm_wrap' ;
+inc = '-Itmp_include -I../Test -I../Test/Template -I../lz4 -I../rmm_wrap' ;
 
 have_octave = (exist ('OCTAVE_VERSION', 'builtin') == 5) ;
 if (have_octave)
@@ -52,7 +52,7 @@ end
 addpath ../Test
 addpath ../Test/spok
 
-flags = '-g -DGBCOVER -R2018a' ;
+flags = '-g -DGBCOVER -R2018a -DGBNCPUFEAT' ;
 if (need_rename)
     flags = [flags ' -DGBRENAME=1 '] ;
 end

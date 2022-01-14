@@ -2,7 +2,7 @@
 // GB_atomics.h: definitions for atomic operations
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -96,31 +96,15 @@
 // is no need for atomic reads/writes when compiling GraphBLAS on Windows
 // with MS Visual Studio.
 
-#if defined ( CPU_FEATURES_ARCH_X86_64 )
+#if GBX86
 
-    // x86: no atomic read/write is needed.
+    // x86_64: no atomic read/write is needed.
     #define GB_ATOMIC_READ
     #define GB_ATOMIC_WRITE
 
-#elif ( _OPENMP >= 201811 )
-
-    // OpenMP 5.0 or later
-    // #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read acquire)
-    // #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write release)
-    #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
-    #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
-
-#elif ( _OPENMP >= 201307 )
-
-    // OpenMP 4.0 and 4.5
-    // #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read seq_cst)
-    // #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write seq_cst)
-    #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
-    #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
-
 #elif ( _OPENMP >= 201107 )
 
-    // OpenMP 3.1
+    // OpenMP 3.1 and later have atomic reads and writes
     #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
     #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
 

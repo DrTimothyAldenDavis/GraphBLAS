@@ -5,7 +5,7 @@ function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, ...
 % codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, ...
 %   identity, terminal, omp_atomic, omp_microsoft_atomic)
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin >= 5 && isempty (mult))
@@ -293,7 +293,6 @@ else
 end
 
 if (ztype_is_real)
-    % on x86: all built-in real monoids are atomic.
     % The ANY monoid is atomic on any architecture.
     % MIN, MAX, EQ, XNOR are implemented with atomic compare/exchange.
     fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;

@@ -2,7 +2,7 @@
 // GB_AxB__include1.h: definitions for Generated1/GB_AxB__*.c
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 // This file has been automatically generated from Generator/GB_AxB.h

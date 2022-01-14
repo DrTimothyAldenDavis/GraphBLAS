@@ -2,7 +2,7 @@
 // GB.h: definitions visible only inside GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -14,8 +14,8 @@
 // definitions that modify GraphBLAS.h
 //------------------------------------------------------------------------------
 
-#include "GB_cpu_features.h"
 #include "GB_compiler.h"
+#include "GB_cpu_features.h"
 #include "GB_warnings.h"
 #define GB_LIBRARY
 

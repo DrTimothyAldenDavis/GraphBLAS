@@ -2,7 +2,7 @@
 // GB_cumsum.h: definitions for GB_cumsum
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -10,6 +10,7 @@
 #ifndef GB_CUMSUM_H
 #define GB_CUMSUM_H
 
+GB_PUBLIC
 void GB_cumsum                      // cumulative sum of an array
 (
     int64_t *restrict count,     // size n+1, input/output

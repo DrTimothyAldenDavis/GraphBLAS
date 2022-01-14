@@ -7,9 +7,9 @@ cmake_minimum_required(VERSION 3.20.1)
 
 project(GRAPHBLAS_CUDA VERSION 0.1 LANGUAGES CXX CUDA)
 
-set(CMAKE_CUDA_FLAGS "-cudart static")
+set(CMAKE_CUDA_FLAGS "-cudart static -lineinfo -G")
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC ")
 set(CMAKE_C_STANDARD 11)
 
 message(STATUS "${CMAKE_CXX_FLAGS}")
@@ -55,6 +55,7 @@ set(CUDA_TEST_BINOPS TIMES) #PLUS MIN MAX DIV MINUS RDIV RMINUS FIRST SECOND PAI
 set(CUDA_TEST_SEMIRINGS PLUS_TIMES) # MIN_PLUS MAX_PLUS)
 set(CUDA_TEST_DATATYPES int32_t ) #int64_t uint32_t uint64_t float double)
 set(CUDA_TEST_KERNELS vsvs) # mp vsvs dndn spdn vssp)
+
 
 # TODO: Update testGen.py to accept the above CUDA_TEST_* params as arguments
 

@@ -2,7 +2,7 @@
 # GraphBLAS/Tcov/Makefile
 #-------------------------------------------------------------------------------
 
-# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 #-------------------------------------------------------------------------------
@@ -29,8 +29,8 @@ SRC = tmp_source/*
 INC = tmp_include/*
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
-LIBS = -L../cpu_features/build -lcpu_features
-CPPFLAGS = -Itmp_include -I../cpu_features/include -I../rmm_wrap -DGBCOVER $(RENAME)
+LIBS = 
+CPPFLAGS = -Itmp_include -DGBNCPUFEAT -I../rmm_wrap -DGBCOVER $(RENAME)
 SO_OPTS = $(LDFLAGS)
 
 ifeq ($(UNAME),Darwin)

@@ -2,7 +2,7 @@
 // GB_compiler.h: handle compiler variations
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2021, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -14,9 +14,26 @@
 // determine which compiler is in use
 //------------------------------------------------------------------------------
 
-#if defined ( __INTEL_CLANG_COMPILER )
+#if defined ( __NVCC__ )
+
+    // NVIDIA nvcc compiler
+    #define GB_COMPILER_NVCC    1
+    #define GB_COMPILER_ICX     0
+    #define GB_COMPILER_ICC     0
+    #define GB_COMPILER_CLANG   0
+    #define GB_COMPILER_GCC     0
+    #define GB_COMPILER_MSC     0
+    #define GB_COMPILER_XLC     0
+
+    #define GB_COMPILER_MAJOR __CUDACC_VER_MAJOR__
+    #define GB_COMPILER_MINOR __CUDACC_VER_MINOR__
+    #define GB_COMPILER_SUB   __CUDACC_VER_BUILD__
+    #define GB_COMPILER_NAME  "nvcc"
+
+#elif defined ( __INTEL_CLANG_COMPILER )
 
     // Intel icx compiler, 2022.0.0 based on clang/llvm 14.0.0
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     1
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   0
@@ -32,6 +49,7 @@
 #elif defined ( __INTEL_COMPILER )
 
     // Intel icc compiler: 2021.5.0 uses "gcc 7.5 mode"
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     1
     #define GB_COMPILER_CLANG   0
@@ -47,6 +65,7 @@
 #elif defined ( __clang__ )
 
     // clang
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   1
@@ -62,6 +81,7 @@
 #elif defined ( __xlC__ )
 
     // xlc
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   0
@@ -77,6 +97,7 @@
 #elif defined ( __GNUC__ )
 
     // gcc
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   0
@@ -93,6 +114,7 @@
 #elif defined ( _MSC_VER )
 
     // Microsoft Visual Studio
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   0
@@ -108,6 +130,7 @@
 #else
 
     // other compiler
+    #define GB_COMPILER_NVCC    0
     #define GB_COMPILER_ICX     0
     #define GB_COMPILER_ICC     0
     #define GB_COMPILER_CLANG   0
@@ -129,7 +152,14 @@
 // Determine the restrict keyword, and whether or not variable-length arrays
 // are supported.
 
-#if GB_COMPILER_MSC
+
+#if GB_COMPILER_NVCC
+
+    // NVIDIA nvcc compiler for host or device code
+    #define GB_HAS_VLA 1
+    #define restrict __restrict__
+
+#elif GB_COMPILER_MSC
 
     // Microsoft Visual Studio does not have the restrict keyword, but it does
     // support __restrict, which is equivalent.  Variable-length arrays are
@@ -241,14 +271,14 @@
 #endif
 
 //------------------------------------------------------------------------------
-// AVX2 and AVX512 support for the x86_64 architecture
+// AVX2 and AVX512F support for the x86_64 architecture
 //------------------------------------------------------------------------------
 
 // gcc 7.5.0 cannot compile code with __attribute__ ((target ("avx512f"))), or
-// avx2, but those targets are fine with gcc 9.3.0 or later.  It might be OK
-// on gcc 8.x but I haven't tested this.
+// avx2 (it triggers a bug in the compiler), but those targets are fine with
+// gcc 9.3.0 or later.  It might be OK on gcc 8.x but I haven't tested this.
 
-#if defined ( CPU_FEATURES_ARCH_X86_64 )
+#if GBX86
 
     #if GB_COMPILER_GCC
         #if __GNUC__ >= 9
@@ -260,14 +290,13 @@
             #define GB_COMPILER_SUPPORTS_AVX512F 0
             #define GB_COMPILER_SUPPORTS_AVX2 0
         #endif
-    #elif GB_COMPILER_ICX || GB_COMPILER_ICC || GB_COMPILER_CLANG || \
-          GB_COMPILER_GCC || GB_COMPILER_MSC
+    #elif GB_COMPILER_ICX || GB_COMPILER_ICC || GB_COMPILER_CLANG
         // all these compilers can handle AVX512F and AVX2 on x86
         #define GB_COMPILER_SUPPORTS_AVX512F 1
         #define GB_COMPILER_SUPPORTS_AVX2 1
     #else
         // unsure if xlc can handle AVX, but it is not likely to be used on
-        // the x86 anyay
+        // the x86 anyway.  cpu_features is disabled for MS Visual Studio.
         #define GB_COMPILER_SUPPORTS_AVX512F 0
         #define GB_COMPILER_SUPPORTS_AVX2 0
     #endif
@@ -282,7 +311,9 @@
 
 // prefix for function with target avx512f
 #if GB_COMPILER_SUPPORTS_AVX512F
-    #if GB_COMPILER_MSC
+    #if (defined (_WIN64) || defined (_WIN32)) && \
+        (GB_COMPILER_ICC || GB_COMPILER_ICX)
+        // the Intel compilers on Windows support this feature:
         #define GB_TARGET_AVX512F __declspec (target ("avx512f"))
     #else
         #define GB_TARGET_AVX512F __attribute__ ((target ("avx512f")))
@@ -293,7 +324,9 @@
 
 // prefix for function with target avx2
 #if GB_COMPILER_SUPPORTS_AVX2
-    #if GB_COMPILER_MSC
+    #if (defined (_WIN64) || defined (_WIN32)) && \
+        (GB_COMPILER_ICC || GB_COMPILER_ICX)
+        // the Intel compilers on Windows support this feature:
         #define GB_TARGET_AVX2 __declspec (target ("avx2"))
     #else
         #define GB_TARGET_AVX2 __attribute__ ((target ("avx2")))
