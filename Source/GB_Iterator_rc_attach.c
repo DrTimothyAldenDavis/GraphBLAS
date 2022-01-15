@@ -14,7 +14,7 @@ GrB_Info GB_Iterator_rc_attach
     GrB_Matrix A,
     GrB_Index j,
     bool kth_vector,
-    bool by_col,
+    GxB_Format_Value format,
     GrB_Descriptor desc
 )
 {
@@ -26,7 +26,8 @@ GrB_Info GB_Iterator_rc_attach
     GB_RETURN_IF_NULL (iterator) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
-    if ((A->is_csc && !by_col) || (!A->is_csc && by_col))
+    if ((format == GxB_BY_ROW &&  A->is_csc) ||
+        (format == GxB_BY_COL && !A->is_csc))
     {
         return (GrB_NOT_IMPLEMENTED) ;
     }
@@ -52,6 +53,7 @@ GrB_Info GB_Iterator_rc_attach
     // get the matrix and save its contents in the iterator
     //--------------------------------------------------------------------------
 
+    iterator->pmax = GB_nnz_held (A) ;
     iterator->avlen = A->vlen ;
     iterator->avdim = A->vdim ;
     iterator->anvec = A->nvec ;
@@ -60,9 +62,10 @@ GrB_Info GB_Iterator_rc_attach
     iterator->Ab = A->b ;
     iterator->Ai = A->i ;
     iterator->Ax = A->x ;
+    iterator->type_size = A->type->size ;
     iterator->A_sparsity = GB_sparsity (A) ;
     iterator->iso = A->iso ;
-    iterator->type_size = A->type->size ;
+    iterator->by_col = A->is_csc ;
 
     //--------------------------------------------------------------------------
     // attach the iterator to A(:,j)

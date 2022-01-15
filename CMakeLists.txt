@@ -105,7 +105,8 @@ endif ( )
 # Edit these lines for code development only, not for end-users:
 # CUDA is under developent for now, and not deployed in production
   set ( CMAKE_CUDA off )
-# set ( GBCOMPACT true )
+# FIXME
+  set ( GBCOMPACT true )
 # set ( CMAKE_BUILD_TYPE Debug )
 
 if ( CMAKE_CUDA )
