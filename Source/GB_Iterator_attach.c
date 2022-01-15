@@ -1,20 +1,22 @@
 //------------------------------------------------------------------------------
-// GB_Iterator_rc_attach: attach a row/col iterator to matrix and seek to A(:,j)
+// GB_Iterator_attach: attach an iterator to matrix
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 //------------------------------------------------------------------------------
 
 #include "GB.h"
-
 #define GB_FREE_ALL ;
 
-GB_PUBLIC
-GrB_Info GB_Iterator_rc_attach
+GrB_Info GB_Iterator_attach
 (
-    GxB_Iterator iterator,
+    // input/output:
+    GxB_Iterator iterator,      // iterator to attach to the matrix A
     // input
-    GrB_Matrix A,
-    GrB_Index j,
-    bool kth_vector,
-    GxB_Format_Value format,
+    GrB_Matrix A,               // matrix to attach
+    GxB_Format_Value format,    // by row, by col, or by entry (GxB_NO_FORMAT)
     GrB_Descriptor desc
 )
 {
@@ -50,10 +52,19 @@ GrB_Info GB_Iterator_rc_attach
     }
 
     //--------------------------------------------------------------------------
+    // clear the current position
+    //--------------------------------------------------------------------------
+
+    iterator->pstart = 0 ;
+    iterator->pend = 0 ;
+    iterator->p = 0 ;
+    iterator->k = 0 ;
+
+    //--------------------------------------------------------------------------
     // get the matrix and save its contents in the iterator
     //--------------------------------------------------------------------------
 
-    iterator->pmax = GB_nnz_held (A) ;
+    iterator->pmax = (GB_nnz (A) == 0) ? 0 : GB_nnz_held (A) ;
     iterator->avlen = A->vlen ;
     iterator->avdim = A->vdim ;
     iterator->anvec = A->nvec ;
@@ -67,10 +78,6 @@ GrB_Info GB_Iterator_rc_attach
     iterator->iso = A->iso ;
     iterator->by_col = A->is_csc ;
 
-    //--------------------------------------------------------------------------
-    // attach the iterator to A(:,j)
-    //--------------------------------------------------------------------------
-
-    return (GB_Iterator_rc_seek (iterator, j, kth_vector)) ;
+    return (GrB_SUCCESS) ;
 }
 

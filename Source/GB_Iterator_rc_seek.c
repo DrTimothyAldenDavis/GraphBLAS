@@ -1,19 +1,29 @@
 //------------------------------------------------------------------------------
-// GB_Iterator_rc_seek: attach an iterator to A(:,j) or to the jth vector of A
+// GB_Iterator_rc_seek: seek a row/col iterator to A(:,j) or to jth vector of A
 //------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+//------------------------------------------------------------------------------
+
+// Seek a row iterator to A(j,:), a col iterator to A(:,j).  If kth_vector is
+// true, seek to the jth vector instead.  For sparse, bitmap, or full matrices,
+// this is the same as A(j,:) for a row iterator or A(:,j) for a col iterator.
+// It only affects how hypersparse matrices are traversed.
 
 #include "GB.h"
 
-GB_PUBLIC GrB_Info GB_Iterator_rc_seek
+GrB_Info GB_Iterator_rc_seek
 (
     GxB_Iterator iterator,
     GrB_Index j,
-    bool kth_vector     // only affects how hypersparse matrices are accessed
+    bool kth_vector
 )
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check if the iterator is exhausted
     //--------------------------------------------------------------------------
 
     if (j >= ((kth_vector) ? iterator->anvec : iterator->avdim))
@@ -32,9 +42,8 @@ GB_PUBLIC GrB_Info GB_Iterator_rc_seek
         case GxB_SPARSE : 
         {
             // attach to A(:,j), which is also the jth vector of A
-            const int64_t *restrict Ap = iterator->Ap ;
-            iterator->pstart = Ap [j] ;
-            iterator->pend = Ap [j+1] ;
+            iterator->pstart = iterator->Ap [j] ;
+            iterator->pend = iterator->Ap [j+1] ;
             iterator->p = iterator->pstart ;
             iterator->k = j ;
         }
@@ -46,9 +55,8 @@ GB_PUBLIC GrB_Info GB_Iterator_rc_seek
             {
                 // attach to the jth vector of A; this is much faster than
                 // searching Ah for the value j, to attach to A(:,j)
-                const int64_t *restrict Ap = iterator->Ap ;
-                iterator->pstart = Ap [j] ;
-                iterator->pend = Ap [j+1] ;
+                iterator->pstart = iterator->Ap [j] ;
+                iterator->pend = iterator->Ap [j+1] ;
                 iterator->p = iterator->pstart ;
                 iterator->k = j ;
             }
@@ -70,9 +78,8 @@ GB_PUBLIC GrB_Info GB_Iterator_rc_seek
                 if (found)
                 {
                     // A(:,j) is the kth vector in the Ah hyperlist
-                    const int64_t *restrict Ap = iterator->Ap ;
-                    iterator->pstart = Ap [k] ;
-                    iterator->pend = Ap [k+1] ;
+                    iterator->pstart = iterator->Ap [k] ;
+                    iterator->pend = iterator->Ap [k+1] ;
                     iterator->p = iterator->pstart ;
                     iterator->k = k ;
                 }
@@ -98,7 +105,7 @@ GB_PUBLIC GrB_Info GB_Iterator_rc_seek
             iterator->pend = (j+1) * iterator->avlen ;
             iterator->p = iterator->pstart ;
             iterator->k = j ;
-            return (GB_Iterator_bitmap_next (iterator)) ;
+            return (GB_Iterator_rc_bitmap_next (iterator)) ;
         }
         break ;
 
