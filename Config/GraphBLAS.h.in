@@ -11621,7 +11621,7 @@ single thread iteration of a whole matrix
         {
             // get the entry A(i,j)
             GrB_Index j = GxB_rowIterator_getColIndex (iterator) ;
-            double  aij = GxB_rowIterator_getValue_FP64 (iterator) ;
+            double  aij = GxB_Iterator_get_FP64 (iterator) ;
             // move to the next entry in A(i,:)
             info = GxB_rowIterator_nextCol (iterator) ;
         }
@@ -11654,7 +11654,7 @@ parallel iteration using 4 threads (work may be imbalanced however).
             {
                 // get the entry A(i,j)
                 GrB_Index j = GxB_rowIterator_getColIndex (iterator) ;
-                double  aij = GxB_rowIterator_getValue_FP64 (iterator) ;
+                double  aij = GxB_Iterator_get_FP64 (iterator) ;
                 // move to the next entry in A(i,:)
                 info = GxB_rowIterator_nextCol (iterator) ;
             }
@@ -11878,82 +11878,6 @@ static inline GrB_Index GB_Iterator_rc_geti (GxB_Iterator iterator)
         iterator->Ai [iterator->p] : (iterator->p - iterator->pstart)) ;
 }
 
-//------------------------------------------------------------------------------
-// GB_Iterator_get_TYPE: get value of the current entry for any iterator
-//------------------------------------------------------------------------------
-
-static inline bool GB_Iterator_get_BOOL (GxB_Iterator iterator)
-{
-    return (((bool *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline int8_t GB_Iterator_get_INT8 (GxB_Iterator iterator)
-{
-    return (((int8_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline int16_t GB_Iterator_get_INT16 (GxB_Iterator iterator)
-{
-    return (((int16_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline int32_t GB_Iterator_get_INT32 (GxB_Iterator iterator)
-{
-    return (((int32_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline int64_t GB_Iterator_get_INT64 (GxB_Iterator iterator)
-{
-    return (((uint64_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline uint8_t GB_Iterator_get_UINT8 (GxB_Iterator iterator)
-{
-    return (((uint8_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline uint16_t GB_Iterator_get_UINT16 (GxB_Iterator iterator)
-{
-    return (((uint16_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline uint32_t GB_Iterator_get_UINT32 (GxB_Iterator iterator)
-{
-    return (((uint32_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline uint64_t GB_Iterator_get_UINT64 (GxB_Iterator iterator)
-{
-    return (((uint64_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline float GB_Iterator_get_FP32 (GxB_Iterator iterator)
-{
-    return (((float *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline double GB_Iterator_get_FP64 (GxB_Iterator iterator)
-{
-    return (((double *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline GxB_FC32_t GB_Iterator_get_FC32 (GxB_Iterator iterator)
-{
-    return (((GxB_FC32_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline GxB_FC64_t GB_Iterator_get_FC64 (GxB_Iterator iterator)
-{
-    return (((GxB_FC64_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
-}
-
-static inline void GB_Iterator_get_UDT (GxB_Iterator iterator, void *value)
-{
-    memcpy (value, iterator->Ax +
-        (iterator->iso ? 0 : (iterator->type_size * iterator->p)),
-        iterator->type_size) ;
-}
-
 //==============================================================================
 // GxB_rowIterator_*: iterate over the rows of a matrix
 //==============================================================================
@@ -11975,9 +11899,10 @@ static inline void GB_Iterator_get_UDT (GxB_Iterator iterator, void *value)
 // GrB_NO_VALUE:        if the row index is valid but A(row,:) has no entries;
 //                      the row iterator is attached to A(row,:).
 // GrB_SUCCESS:         if the row index is valid and A(row,:) has at least
-//                      one entry. The row iterator is attached to A(row,:),
-//                      and the GxB_rowIterator_get* can be used to return
-//                      the first entry in A(row,:).
+//                      one entry. The row iterator is attached to A(row,:).
+//                      GxB_rowIterator_get* can be used to return the indices
+//                      of the first entry in A(row,:), and GxB_Iterator_get*
+//                      can return its value.
 
 static inline
 GrB_Info GxB_rowIterator_attach
@@ -12128,94 +12053,14 @@ GrB_Index GxB_rowIterator_getRowIndex (GxB_Iterator iterator)
 // On input, the iterator must be already successfully attached to matrix as a
 // row iterator, and in addition, the row iterator must be positioned at a
 // valid entry present in the matrix.  That is, the last call to
-// GxB_rowIterator_attach, GxB_rowIterator_seekRow, GxB_rowIterator_nextRow, or
-// GxB_rowIterator_nextCol must have returned GrB_SUCCESS.  Results are
-// undefined if this condition is not met.
+// GxB_rowIterator_*attach, GxB_rowIterator_*seek*, or GxB_rowIterator_*next*,
+// must have returned GrB_SUCCESS.  Results are undefined if this condition is
+// not met.
 
 static inline
 GrB_Index GxB_rowIterator_getColIndex (GxB_Iterator iterator)
 {
     return (GB_Iterator_rc_geti (iterator)) ;
-}
-
-//------------------------------------------------------------------------------
-// GxB_rowIterator_getValue_TYPE: get the current value of a row iterator
-//------------------------------------------------------------------------------
-
-// On input, the same conditions must hold as for GxB_rowIterator_getColIndex.
-// Returns the value of the current entry at the position determined by the
-// row iterator.  No typecasting is permitted; the method name must match the
-// type of the matrix.
-
-static inline bool GxB_rowIterator_getValue_BOOL (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_BOOL (iterator)) ;
-}
-
-static inline int8_t GxB_rowIterator_getValue_INT8 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_INT8 (iterator)) ;
-}
-
-static inline int16_t GxB_rowIterator_getValue_INT16 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_INT16 (iterator)) ;
-}
-
-static inline int32_t GxB_rowIterator_getValue_INT32 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_INT32 (iterator)) ;
-}
-
-static inline int64_t GxB_rowIterator_getValue_INT64 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_INT64 (iterator)) ;
-}
-
-static inline uint8_t GxB_rowIterator_getValue_UINT8 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_UINT8 (iterator)) ;
-}
-
-static inline uint16_t GxB_rowIterator_getValue_UINT16 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_UINT16 (iterator)) ;
-}
-
-static inline uint32_t GxB_rowIterator_getValue_UINT32 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_UINT32 (iterator)) ;
-}
-
-static inline uint64_t GxB_rowIterator_getValue_UINT64 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_UINT64 (iterator)) ;
-}
-
-static inline float GxB_rowIterator_getValue_FP32 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_FP32 (iterator)) ;
-}
-
-static inline double GxB_rowIterator_getValue_FP64 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_FP64 (iterator)) ;
-}
-
-static inline GxB_FC32_t GxB_rowIterator_getValue_FC32 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_FC32 (iterator)) ;
-}
-
-static inline GxB_FC64_t GxB_rowIterator_getValue_FC64 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_FC64 (iterator)) ;
-}
-
-static inline
-void GxB_rowIterator_getValue_UDT (GxB_Iterator iterator, void *value)
-{
-    GB_Iterator_get_UDT (iterator, value) ;
 }
 
 //==============================================================================
@@ -12302,78 +12147,6 @@ GrB_Index GxB_colIterator_getRowIndex (GxB_Iterator iterator)
     return (GB_Iterator_rc_geti (iterator)) ;
 }
 
-// get the value of the current entry for a column iterator
-static inline bool GxB_colIterator_getValue_BOOL (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_BOOL (iterator)) ;
-}
-
-static inline int8_t GxB_colIterator_getValue_INT8 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_INT8 (iterator)) ;
-}
-
-static inline int16_t GxB_colIterator_getValue_INT16 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_INT16 (iterator)) ;
-}
-
-static inline int32_t GxB_colIterator_getValue_INT32 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_INT32 (iterator)) ;
-}
-
-static inline int64_t GxB_colIterator_getValue_INT64 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_INT64 (iterator)) ;
-}
-
-static inline uint8_t GxB_colIterator_getValue_UINT8 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_UINT8 (iterator)) ;
-}
-
-static inline uint16_t GxB_colIterator_getValue_UINT16 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_UINT16 (iterator)) ;
-}
-
-static inline uint32_t GxB_colIterator_getValue_UINT32 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_UINT32 (iterator)) ;
-}
-
-static inline uint64_t GxB_colIterator_getValue_UINT64 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_UINT64 (iterator)) ;
-}
-
-static inline float GxB_colIterator_getValue_FP32 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_FP32 (iterator)) ;
-}
-
-static inline double GxB_colIterator_getValue_FP64 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_FP64 (iterator)) ;
-}
-
-static inline GxB_FC32_t GxB_colIterator_getValue_FC32 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_FC32 (iterator)) ;
-}
-
-static inline GxB_FC64_t GxB_colIterator_getValue_FC64 (GxB_Iterator iterator)
-{
-    return (GB_Iterator_get_FC64 (iterator)) ;
-}
-
-static inline
-void GxB_colIterator_getValue_UDT (GxB_Iterator iterator, void *value)
-{
-    GB_Iterator_get_UDT (iterator, value) ;
-}
-
 //==============================================================================
 // GxB_Matrix_Iterator_*: iterate over the entries of a matrix
 //==============================================================================
@@ -12432,23 +12205,17 @@ static inline GrB_Info GxB_Matrix_Iterator_next
             if (iterator->p >= iterator->pend)
             {
                 // the kth vector is done; advance to the next non-empty vector
-//              printf ("at end of k %ld (%ld : %ld) \n", iterator->k,
-//                  iterator->pstart, iterator->pend) ;
                 iterator->pstart = iterator->pend ;
                 iterator->k++ ;
                 while (iterator->k < iterator->anvec
                     && iterator->Ap [iterator->k+1] == iterator->pend)
                 {
                     // iterator->k is an empty vector; advance to the next one
-//                  printf ("new start of %ld: (%ld) pend %ld\n",
-//                      iterator->Ap [iterator->k], iterator->pend) ;
                     iterator->k++ ;
                 }
                 // iterator->k is now the next non-empty vector, or iterator->k
-                // is equal to iterator->anvec and the iterator is exhausted>
+                // is equal to iterator->anvec and the iterator is exhausted
                 iterator->pend = iterator->Ap [iterator->k+1] ;
-//              printf ("now at k %ld (%ld : %ld) \n", iterator->k,
-//                  iterator->pstart, iterator->pend) ;
                 return ((iterator->k < iterator->anvec)
                     ? GrB_SUCCESS : GxB_EXHAUSTED) ;
             }
@@ -12556,81 +12323,88 @@ static inline void GxB_Matrix_Iterator_getIndex
     }
 }
 
-// get the value of the current entry for a matrix iterator
-static inline bool GxB_Matrix_Iterator_getValue_BOOL (GxB_Iterator iterator)
+//==============================================================================
+// GxB_Iterator_get_TYPE: get value of the current entry for any iterator
+//==============================================================================
+
+// On input, the prior call to GxB_*Iterator_*attach, GxB_*Iterator_*seek*,
+// or GxB_*Iterator_*next* must have returned GrB_SUCCESS, indicating that the
+// iterator is at a valid current entry.
+
+// Returns the value of the current entry at the position determined by the
+// iterator.  No typecasting is permitted; the method name must match the
+// type of the matrix.
+
+static inline bool GxB_Iterator_get_BOOL (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_BOOL (iterator)) ;
+    return (((bool *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline int8_t GxB_Matrix_Iterator_getValue_INT8 (GxB_Iterator iterator)
+static inline int8_t GxB_Iterator_get_INT8 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_INT8 (iterator)) ;
+    return (((int8_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline int16_t GxB_Matrix_Iterator_getValue_INT16 (GxB_Iterator iterator)
+static inline int16_t GxB_Iterator_get_INT16 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_INT16 (iterator)) ;
+    return (((int16_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline int32_t GxB_Matrix_Iterator_getValue_INT32 (GxB_Iterator iterator)
+static inline int32_t GxB_Iterator_get_INT32 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_INT32 (iterator)) ;
+    return (((int32_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline int64_t GxB_Matrix_Iterator_getValue_INT64 (GxB_Iterator iterator)
+static inline int64_t GxB_Iterator_get_INT64 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_INT64 (iterator)) ;
+    return (((uint64_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline uint8_t GxB_Matrix_Iterator_getValue_UINT8 (GxB_Iterator iterator)
+static inline uint8_t GxB_Iterator_get_UINT8 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_UINT8 (iterator)) ;
+    return (((uint8_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline
-uint16_t GxB_Matrix_Iterator_getValue_UINT16 (GxB_Iterator iterator)
+static inline uint16_t GxB_Iterator_get_UINT16 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_UINT16 (iterator)) ;
+    return (((uint16_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline
-uint32_t GxB_Matrix_Iterator_getValue_UINT32 (GxB_Iterator iterator)
+static inline uint32_t GxB_Iterator_get_UINT32 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_UINT32 (iterator)) ;
+    return (((uint32_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline
-uint64_t GxB_Matrix_Iterator_getValue_UINT64 (GxB_Iterator iterator)
+static inline uint64_t GxB_Iterator_get_UINT64 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_UINT64 (iterator)) ;
+    return (((uint64_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline float GxB_Matrix_Iterator_getValue_FP32 (GxB_Iterator iterator)
+static inline float GxB_Iterator_get_FP32 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_FP32 (iterator)) ;
+    return (((float *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline double GxB_Matrix_Iterator_getValue_FP64 (GxB_Iterator iterator)
+static inline double GxB_Iterator_get_FP64 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_FP64 (iterator)) ;
+    return (((double *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline
-GxB_FC32_t GxB_Matrix_Iterator_getValue_FC32 (GxB_Iterator iterator)
+static inline GxB_FC32_t GxB_Iterator_get_FC32 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_FC32 (iterator)) ;
+    return (((GxB_FC32_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline
-GxB_FC64_t GxB_Matrix_Iterator_getValue_FC64 (GxB_Iterator iterator)
+static inline GxB_FC64_t GxB_Iterator_get_FC64 (GxB_Iterator iterator)
 {
-    return (GB_Iterator_get_FC64 (iterator)) ;
+    return (((GxB_FC64_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
-static inline
-void GxB_Matrix_Iterator_getValue_UDT (GxB_Iterator iterator, void *value)
+static inline void GxB_Iterator_get_UDT (GxB_Iterator iterator, void *value)
 {
-    GB_Iterator_get_UDT (iterator, value) ;
+    memcpy (value, iterator->Ax +
+        (iterator->iso ? 0 : (iterator->type_size * iterator->p)),
+        iterator->type_size) ;
 }
 
 #endif
