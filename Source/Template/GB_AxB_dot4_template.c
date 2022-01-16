@@ -332,12 +332,9 @@
     #if GB_UNROLL
     const int64_t wp = (bvdim == 1) ? 0 : GB_IMIN (bvdim, 4) ;
     const int64_t anz = GB_nnz (A) ;
-printf ("C=A'*B anz %ld wp %ld\n", anz, wp) ;
     if (anz < wp * vlen || B_iso)
     #endif
     {
-
-printf ("C=A'*B no workspace\n") ;
 
         //----------------------------------------------------------------------
         // C += A'*B without workspace
@@ -359,154 +356,62 @@ printf ("C=A'*B no workspace\n") ;
             // C+=A'*B where A is sparse/hyper and B is bitmap/full
             //------------------------------------------------------------------
 
-            for (int64_t kA = kA_start ; kA < kA_end ; kA++)
+            if (bvdim == 1)
             {
-                // get A(:,i)
-                #if GB_A_IS_HYPER
-                const int64_t i = Ah [kA] ;
-                #else
-                const int64_t i = kA ;
-                #endif
-                int64_t pA = Ap [kA] ;
-                const int64_t pA_end = Ap [kA+1] ;
-                // TODO skip if ainz is zero, but be careful of iso expansion
-                const int64_t ainz = pA_end - pA ;
 
                 //--------------------------------------------------------------
-                // C(i,:) = A(:,i)'*B
+                // C += A'*B where C is a single vector
                 //--------------------------------------------------------------
 
-                for (int64_t j = 0 ; j < bvdim ; j++)
+                #define pC_start 0
+                #define pB 0
+                #define j 0
+                for (int64_t kA = kA_start ; kA < kA_end ; kA++)
                 {
-                    // get B(:,j) and C(:,j)
-                    const int64_t pC_start = j * cvlen ;
-                    const int64_t pB = j * vlen ;
-
-                    //----------------------------------------------------------
-                    // get C(i,j)
-                    //----------------------------------------------------------
-
-                    const int64_t pC = i + pC_start ;   // C(i,j) is at Cx [pC]
-                    GB_CTYPE GB_GET4C (cij, pC) ;       // cij = Cx [pC]
-
-                    //----------------------------------------------------------
-                    // C(i,j) += A (:,i)*B(:,j): a single dot product
-                    //----------------------------------------------------------
-
-                    #if ( GB_B_IS_FULL )
-                    {
-
-                        //------------------------------------------------------
-                        // A is sparse/hyper and B is full
-                        //------------------------------------------------------
-
-                        #if GB_IS_PAIR_MULTIPLIER
-                        { 
-                            #if GB_IS_EQ_MONOID
-                            // EQ_PAIR semiring
-                            cij = (cij == 1) ;
-                            #elif (GB_CTYPE_BITS > 0)
-                            // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
-                            // for bool, 8-bit, 16-bit, or 32-bit integer
-                            uint64_t t = ((uint64_t) cij) + ainz ;
-                            cij = (GB_CTYPE) (t & GB_CTYPE_BITS) ;
-                            #elif GB_IS_PLUS_FC32_MONOID
-                            // PLUS monoid for float complex
-                            cij = GxB_CMPLXF (crealf (cij) + (float) ainz, 0) ;
-                            #elif GB_IS_PLUS_FC64_MONOID
-                            // PLUS monoid for double complex
-                            cij = GxB_CMPLX (creal (cij) + (double) ainz, 0) ;
-                            #else
-                            // PLUS monoid for float, double, or 64-bit integers 
-                            cij += (GB_CTYPE) ainz ;
-                            #endif
-                        }
-                        #elif GB_IS_MIN_FIRSTJ_SEMIRING
-                        {
-                            // MIN_FIRSTJ semiring: take the 1st entry in A(:,i)
-                            if (ainz > 0)
-                            { 
-                                int64_t k = Ai [pA] + GB_OFFSET ;
-                                cij = GB_IMIN (cij, k) ;
-                            }
-                        }
-                        #elif GB_IS_MAX_FIRSTJ_SEMIRING
-                        {
-                            // MAX_FIRSTJ semiring: take last entry in A(:,i)
-                            if (ainz > 0)
-                            { 
-                                int64_t k = Ai [pA_end-1] + GB_OFFSET ;
-                                cij = GB_IMAX (cij, k) ;
-                            }
-                        }
-                        #else
-                        {
-                            GB_PRAGMA_SIMD_DOT (cij)
-                            for (int64_t p = pA ; p < pA_end ; p++)
-                            { 
-                                int64_t k = Ai [p] ;
-                                GB_DOT (k, p, pB+k) ;   // cij += A(k,i)*B(k,j)
-                            }
-                        }
-                        #endif
-
-                    }
+                    // get A(:,i)
+                    #if GB_A_IS_HYPER
+                    const int64_t i = Ah [kA] ;
                     #else
-                    {
-
-                        //------------------------------------------------------
-                        // A is sparse/hyper and B is bitmap
-                        //------------------------------------------------------
-
-                        #if GB_IS_MIN_FIRSTJ_SEMIRING
-                        {
-                            // MIN_FIRSTJ semiring: take the first entry
-                            for (int64_t p = pA ; p < pA_end ; p++)
-                            {
-                                int64_t k = Ai [p] ;
-                                if (Bb [pB+k])
-                                { 
-                                    cij = GB_IMIN (cij, k + GB_OFFSET) ;
-                                    break ;
-                                }
-                            }
-                        }
-                        #elif GB_IS_MAX_FIRSTJ_SEMIRING
-                        {
-                            // MAX_FIRSTJ semiring: take the last entry
-                            for (int64_t p = pA_end-1 ; p >= pA ; p--)
-                            {
-                                int64_t k = Ai [p] ;
-                                if (Bb [pB+k])
-                                { 
-                                    cij = GB_IMAX (cij, k + GB_OFFSET) ;
-                                    break ;
-                                }
-                            }
-                        }
-                        #else
-                        {
-                            GB_PRAGMA_SIMD_DOT (cij)
-                            for (int64_t p = pA ; p < pA_end ; p++)
-                            {
-                                int64_t k = Ai [p] ;
-                                if (Bb [pB+k])
-                                { 
-                                    GB_DOT (k, p, pB+k) ; // cij+=A(k,i)*B(k,j)
-                                }
-                            }
-
-                        }
-                        #endif
-
-                    }
+                    const int64_t i = kA ;
                     #endif
+                    int64_t pA = Ap [kA] ;
+                    const int64_t pA_end = Ap [kA+1] ;
+                    const int64_t ainz = pA_end - pA ;
+                    // C(i) += A(:,i)'*B(:,0)
+                    #include "GB_AxB_dot4_cij.c"
+                }
+                #undef pC_start
+                #undef pB
+                #undef j
 
-                    //----------------------------------------------------------
-                    // save C(i,j)
-                    //----------------------------------------------------------
+            }
+            else
+            {
 
-                    Cx [pC] = cij ;
+                //--------------------------------------------------------------
+                // C += A'*B where C is a matrix
+                //--------------------------------------------------------------
+
+                for (int64_t kA = kA_start ; kA < kA_end ; kA++)
+                {
+                    // get A(:,i)
+                    #if GB_A_IS_HYPER
+                    const int64_t i = Ah [kA] ;
+                    #else
+                    const int64_t i = kA ;
+                    #endif
+                    int64_t pA = Ap [kA] ;
+                    const int64_t pA_end = Ap [kA+1] ;
+                    const int64_t ainz = pA_end - pA ;
+                    // C(i,:) += A(:,i)'*B
+                    for (int64_t j = 0 ; j < bvdim ; j++)
+                    {
+                        // get B(:,j) and C(:,j)
+                        const int64_t pC_start = j * cvlen ;
+                        const int64_t pB = j * vlen ;
+                        // C(i,j) += A(:,i)'*B(:,j)
+                        #include "GB_AxB_dot4_cij.c"
+                    }
                 }
             }
         }
@@ -514,8 +419,6 @@ printf ("C=A'*B no workspace\n") ;
     #if GB_UNROLL
     else
     {
-
-printf ("C=A'*B unrolled\n") ;
 
         //----------------------------------------------------------------------
         // C += A'*B: with workspace W for transposing B, one panel at a time
@@ -803,7 +706,6 @@ printf ("C=A'*B unrolled\n") ;
         const int64_t kB_start = B_slice [tid] ;
         const int64_t kB_end   = B_slice [tid+1] ;
 
-        // TODO: reverse the order of this for loop and the for-i loop below
         for (int64_t kB = kB_start ; kB < kB_end ; kB++)
         {
 
@@ -1189,4 +1091,5 @@ printf ("C=A'*B unrolled\n") ;
 #undef GB_GET4C
 #undef GB_SPECIAL_CASE_OR_TERMINAL
 #undef GB_UNROLL
+
 

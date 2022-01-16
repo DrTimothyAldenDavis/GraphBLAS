@@ -79,8 +79,6 @@
     // if C is iso on input: get the iso scalar and convert C to non-iso
     //--------------------------------------------------------------------------
 
-double t = omp_get_wtime ( ) ;
-
     const bool C_in_iso = C->iso ;
     const GB_CTYPE cinput = (C_in_iso) ? Cx [0] : GB_IDENTITY ;
     if (C_in_iso)
@@ -96,9 +94,6 @@ double t = omp_get_wtime ( ) ;
         ASSERT (!C->iso) ;
         Cx = (GB_CTYPE *) C->x ;
     }
-
-t = omp_get_wtime ( ) - t ;
-printf ("to non-iso time: %g\n", t) ;
 
     //--------------------------------------------------------------------------
     // C += A'*B

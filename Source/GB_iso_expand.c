@@ -121,10 +121,7 @@ void GB_iso_expand          // expand an iso scalar into an entire array
         // the scalar is zero: use memset
         //----------------------------------------------------------------------
 
-double t = omp_get_wtime () ;
         GB_memset (X, 0, n*size, nthreads_max) ;
-t = omp_get_wtime ( ) - t ;
-printf ("memset %g\n", t) ;
     }
 }
 

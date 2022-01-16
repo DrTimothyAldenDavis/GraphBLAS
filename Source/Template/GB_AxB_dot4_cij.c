@@ -74,8 +74,7 @@
             for (int64_t p = pA ; p < pA_end ; p++)
             { 
                 int64_t k = Ai [p] ;
-//                GB_DOT (k, p, pB+k) ;   // cij += A(k,i)*B(k,j)
-cij += Ax [p] * Bx [k] ;
+                GB_DOT (k, p, pB+k) ;   // cij += A(k,i)*B(k,j)
             }
         }
         #endif
