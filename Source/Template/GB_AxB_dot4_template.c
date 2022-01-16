@@ -332,9 +332,12 @@
     #if GB_UNROLL
     const int64_t wp = (bvdim == 1) ? 0 : GB_IMIN (bvdim, 4) ;
     const int64_t anz = GB_nnz (A) ;
+printf ("C=A'*B anz %ld wp %ld\n", anz, wp) ;
     if (anz < wp * vlen || B_iso)
     #endif
     {
+
+printf ("C=A'*B no workspace\n") ;
 
         //----------------------------------------------------------------------
         // C += A'*B without workspace
@@ -511,6 +514,8 @@
     #if GB_UNROLL
     else
     {
+
+printf ("C=A'*B unrolled\n") ;
 
         //----------------------------------------------------------------------
         // C += A'*B: with workspace W for transposing B, one panel at a time
