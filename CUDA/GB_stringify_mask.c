@@ -29,6 +29,7 @@ void GB_stringify_mask     // return string to define mask macros
 {
 
     int mask_ecode ;
+    printf ("GB_stringify_mask gets mcode: %d\n", mcode) ;
 
     // get mask_ecode from mask type (mask_ecode) and mask descriptor
     GB_enumify_mask (&mask_ecode, mcode, Mask_struct, Mask_comp) ;
@@ -57,6 +58,8 @@ void GB_enumify_mask       // return enum to define mask macros
     // Mask_comp = (mask_ecode & 0x1) can be computed later.
     // Mask_struct = (mask_ecode == 2 || mask_ecode == 3)
 
+    printf ("GB_enumify_mask gets mcode: %d Mask_struct: %d Mask_comp: %d\n",
+        mcode, Mask_struct, Mask_comp) ;
     int e = -1 ;
 
     if (mcode == 0)
@@ -154,6 +157,7 @@ void GB_macrofy_mask       // return enum to define mask macros
 {
 
     const char *f ;
+    printf ("GB_macrofy_mask gets mask_ecode: %d\n", mask_ecode) ;
 
     switch (mask_ecode)
     {
