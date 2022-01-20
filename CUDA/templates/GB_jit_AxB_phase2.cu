@@ -155,8 +155,8 @@ void AxB_phase2
     const int nblocks         // input number of blocks to reduce
 )
 {
-    printf("In AxB_phase2 kernel\n");
-    printf("nanobuckets: %ld\n", nanobuckets[0]);
+    //printf("In AxB_phase2 kernel\n");
+    //printf("nanobuckets: %ld\n", nanobuckets[0]);
 
     //--------------------------------------------------------------------------
     // get C and M
