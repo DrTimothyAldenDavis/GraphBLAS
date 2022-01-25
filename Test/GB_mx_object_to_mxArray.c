@@ -70,11 +70,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
     else
     {
         // this may convert C to full
-        #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-        GrB_Matrix_wait (&C) ;
-        #else
         GrB_Matrix_wait (C, GrB_MATERIALIZE) ;
-        #endif
         C = (*handle) ;
     }
 
@@ -102,11 +98,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
 
     // setting to CSC may have transposed the matrix
     ASSERT (GB_JUMBLED_OK (C)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    GrB_Matrix_wait (&C) ;
-    #else
     GrB_Matrix_wait (C, GrB_MATERIALIZE) ;
-    #endif
     ASSERT (!GB_JUMBLED (C)) ;
     cnz = GB_nnz (C) ;
 

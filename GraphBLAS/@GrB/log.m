@@ -10,5 +10,5 @@ function C = log (G)
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 G = G.opaque ;
-C = GrB (gb_to_real_if_imag_zero (gb_trig ('log', gbfull (G)))) ;
+C = GrB (gb_check_imag_zero (gb_trig ('log', gbfull (G)))) ;
 

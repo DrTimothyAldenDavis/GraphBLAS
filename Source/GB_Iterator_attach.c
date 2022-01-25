@@ -30,7 +30,7 @@ GrB_Info GB_Iterator_attach
 
     if ((format == GxB_BY_ROW &&  A->is_csc) ||
         (format == GxB_BY_COL && !A->is_csc))
-    {
+    { 
         return (GrB_NOT_IMPLEMENTED) ;
     }
 
@@ -43,7 +43,7 @@ GrB_Info GB_Iterator_attach
         GrB_Info info ;
         GB_CONTEXT ("GxB_Iterator_attach") ;
         if (desc != NULL)
-        {
+        { 
             // get the # of threads to use
             Context->nthreads_max = desc->nthreads_max ;
             Context->chunk = desc->chunk ;

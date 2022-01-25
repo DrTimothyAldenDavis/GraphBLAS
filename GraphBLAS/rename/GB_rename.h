@@ -182,7 +182,6 @@
 #define GrB_IDENTITY_UINT8 GrM_IDENTITY_UINT8
 #define GrB_IndexUnaryOp_error GrM_IndexUnaryOp_error
 #define GrB_IndexUnaryOp_free GrM_IndexUnaryOp_free
-#define GrB_IndexUnaryOp_new GrM_IndexUnaryOp_new
 #define GrB_IndexUnaryOp_wait GrM_IndexUnaryOp_wait
 #define GrB_init GrM_init
 #define GrB_INT16 GrM_INT16

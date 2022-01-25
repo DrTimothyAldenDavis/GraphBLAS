@@ -1,4 +1,4 @@
-function C = gb_to_real_if_imag_zero (G)
+function C = gb_check_imag_zero (G)
 %GB_TO_REAL_IF_IMAG_ZERO convert complex matrix to real if imag(G) is zero
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.

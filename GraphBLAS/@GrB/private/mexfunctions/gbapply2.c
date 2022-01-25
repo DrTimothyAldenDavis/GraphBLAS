@@ -135,11 +135,7 @@ void mexFunction
         OK (GrB_Scalar_dup (&scalar0, scalar)) ;
         // the scalar need not be int32; this will typecast as needed
         OK (GrB_Scalar_setElement_INT32 (scalar0, 0)) ;
-        #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-        OK (GrB_Scalar_wait (&scalar0)) ;
-        #else
         OK (GrB_Scalar_wait (scalar0, GrB_MATERIALIZE)) ;
-        #endif
         scalar = scalar0 ;
     }
 

@@ -17,6 +17,7 @@
 #include "GB_compiler.h"
 #include "GB_cpu_features.h"
 #include "GB_warnings.h"
+#include "GB_coverage.h"
 #define GB_LIBRARY
 
 //------------------------------------------------------------------------------
@@ -29,11 +30,12 @@
 // internal #include files
 //------------------------------------------------------------------------------
 
+#define restrict GB_restrict
+
 #include "GB_prefix.h"
 #include "GB_dev.h"
 #include "GB_bytes.h"
 #include "GB_defaults.h"
-#include "GB_coverage.h"
 #include "GB_index.h"
 #include "GB_cplusplus.h"
 #include "GB_Global.h"

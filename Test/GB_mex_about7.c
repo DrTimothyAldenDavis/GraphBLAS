@@ -43,11 +43,7 @@ void mexFunction
     OK (GrB_Matrix_new (&A, GrB_FP64, 100, 100)) ;
     OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
     OK (GrB_Matrix_setElement_FP64 (A, (double) 1.2, 0, 0)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&A)) ;
-    #else
     OK (GrB_Matrix_wait (A, 1)) ;
-    #endif
     OK (GxB_Matrix_fprint (A, "A valid", 3, NULL)) ;
 
     printf ("\ninvalid A->p:\n") ;
@@ -84,6 +80,14 @@ void mexFunction
     OK (GxB_Global_Option_get (GxB_COMPILER_VERSION, &compiler_version)) ;
     printf ("GraphBLAS compiled with:\n[%s] [v%d.%d.%d]\n", compiler,
         compiler_version [0], compiler_version [1], compiler_version [2]) ;
+
+    //--------------------------------------------------------------------------
+    // iterator errors
+    //--------------------------------------------------------------------------
+
+    GxB_Iterator iterator = NULL ;
+    METHOD (GxB_Iterator_new (&iterator)) ;
+    GxB_Iterator_free (&iterator) ;
 
     //--------------------------------------------------------------------------
     // wrapup
