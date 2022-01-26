@@ -290,11 +290,11 @@ void mexFunction
                 Assert (i >= 0 && i < nrows) ;
                 // Y (i) += A(i,j) * X (j)
                 MULTADD ;
-                // move to the next entry in A(i,:)
+                // move to the next entry in A(:,j)
                 info = GxB_colIterator_nextRow (iterator) ;
                 OK (info) ;
             }
-            // move to the next row, A(:,j+1)
+            // move to the next column, A(:,j+1)
             info = GxB_colIterator_nextCol (iterator) ;
             OK (info) ;
         }

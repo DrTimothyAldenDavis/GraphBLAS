@@ -29,6 +29,9 @@ GrB_Info GB_Iterator_rc_seek
 
     if (j >= ((jth_vector) ? iterator->anvec : iterator->avdim))
     { 
+        iterator->pstart = 0 ;
+        iterator->pend = 0 ;
+        iterator->p = 0 ;
         iterator->k = iterator->anvec ;
         return (GxB_EXHAUSTED) ;
     }
@@ -58,6 +61,10 @@ GrB_Info GB_Iterator_rc_seek
                 // attach to the jth vector of A; this is much faster than
                 // searching Ah for the value j, to attach to A(:,j)
                 k = j ;
+                iterator->pstart = iterator->Ap [k] ;
+                iterator->pend = iterator->Ap [k+1] ;
+                iterator->p = iterator->pstart ;
+                iterator->k = k ;
             }
             else
             {
@@ -74,11 +81,24 @@ GrB_Info GB_Iterator_rc_seek
             }
             // If j is found, A(:,j) is the kth vector in the Ah hyperlist.
             // If j is not found, the iterator is placed at the first vector
-            // after j in the hyperlist.
-            iterator->pstart = iterator->Ap [k] ;
-            iterator->pend = iterator->Ap [k+1] ;
-            iterator->p = iterator->pstart ;
-            iterator->k = k ;
+            // after j in the hyperlist, if this vector exists.
+            if (k >= iterator->anvec)
+            { 
+                // the kth vector does not exist
+                iterator->pstart = 0 ;
+                iterator->pend = 0 ;
+                iterator->p = 0 ;
+                iterator->k = iterator->anvec ;
+                return (GxB_EXHAUSTED) ;
+            }
+            else
+            { 
+                // the kth vector exists
+                iterator->pstart = iterator->Ap [k] ;
+                iterator->pend = iterator->Ap [k+1] ;
+                iterator->p = iterator->pstart ;
+                iterator->k = k ;
+            }
         }
         break ;
 

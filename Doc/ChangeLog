@@ -1,6 +1,6 @@
-Version 6.2.0, Jan TODO, 2022
+Version 6.2.0.beta1, Jan 26, 2022
 
-    * added row/column/matrix/vector iterators
+    * added row/column/entry/vector iterators
 
 Version 6.1.4, Jan 13, 2022
 

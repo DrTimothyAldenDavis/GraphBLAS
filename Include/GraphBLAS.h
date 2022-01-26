@@ -221,7 +221,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Jan 24, 2022"
+#define GxB_IMPLEMENTATION_DATE "Jan 26, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 6
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -11876,9 +11876,9 @@ static inline GrB_Index GxB_rowIterator_kount (GxB_Iterator iterator)
 // GxB_EXHAUSTED:   if the row index is >= nrows(A); the row iterator is
 //                  exhausted, but is still attached to the matrix.
 // GrB_NO_VALUE:    if the row index is valid but A(row,:) has no entries; the
-//                  row iterator is attached to A(row,:).
+//                  row iterator is positioned at A(row,:).
 // GrB_SUCCESS:     if the row index is valid and A(row,:) has at least one
-//                  entry. The row iterator is attached to A(row,:).
+//                  entry. The row iterator is positioned at A(row,:).
 //                  GxB_rowIterator_get* can be used to return the indices of
 //                  the first entry in A(row,:), and GxB_Iterator_get* can
 //                  return its value.
@@ -11897,9 +11897,9 @@ GrB_Info GxB_rowIterator_seekRow (GxB_Iterator iterator, GrB_Index row)
 // any specific row; results are undefined if this condition is not met.
 
 // GxB_rowIterator_kseek is identical to GxB_rowIterator_seekRow, except for
-// how the row index to attach to is specified.  The row is the kth non-empty
-// row of A.  More precisely, k is in the range 0 to kount-1, where kount is
-// the value returned by GxB_rowIterator_kount.
+// how the row index is specified.  The row is the kth non-empty row of A.
+// More precisely, k is in the range 0 to kount-1, where kount is the value
+// returned by GxB_rowIterator_kount.
 
 static inline
 GrB_Info GxB_rowIterator_kseek (GxB_Iterator iterator, GrB_Index k)
@@ -11911,8 +11911,9 @@ GrB_Info GxB_rowIterator_kseek (GxB_Iterator iterator, GrB_Index k)
 // GxB_rowIterator_nextRow: move a row iterator to the next row of a matrix
 //------------------------------------------------------------------------------
 
-// On input, the row iterator must already be attached to a row of matrix via
-// a prior to call to GxB_rowIterator_*seek* or GxB_rowIterator_nextRow;
+// On input, the row iterator must already be attached to a matrix via a prior
+// call to GxB_rowIterator_attach, and the iterator must be at a specific row,
+// via a prior call to GxB_rowIterator_*seek* or GxB_rowIterator_nextRow;
 // results are undefined if this condition is not met.
 
 // If the the row iterator is currently at A(row,:), it is moved to A(row+1,:),
@@ -11920,7 +11921,7 @@ GrB_Info GxB_rowIterator_kseek (GxB_Iterator iterator, GrB_Index k)
 // method.  That is, empty rows may be skipped.
 
 // The method is always successful, and the return conditions are identical to
-// the successful return conditions of GxB_rowIterator_seekRow.
+// the return conditions of GxB_rowIterator_seekRow.
 
 static inline GrB_Info GxB_rowIterator_nextRow (GxB_Iterator iterator)
 { 
@@ -11931,8 +11932,9 @@ static inline GrB_Info GxB_rowIterator_nextRow (GxB_Iterator iterator)
 // GxB_rowIterator_nextCol: move a row iterator to the next entry in A(row,:)
 //------------------------------------------------------------------------------
 
-// On input, the row iterator must be already attached to a row of matrix via
-// a prior to call to GxB_rowIterator_*seek* or GxB_rowIterator_nextRow;
+// On input, the row iterator must already be attached to a matrix via a prior
+// call to GxB_rowIterator_attach, and the iterator must be at a specific row,
+// via a prior call to GxB_rowIterator_*seek* or GxB_rowIterator_nextRow;
 // results are undefined if this condition is not met.
 
 // The method is always successful, and returns the following conditions:
@@ -11956,7 +11958,8 @@ static inline GrB_Info GxB_rowIterator_nextCol (GxB_Iterator iterator)
 // The method returns nrows(A) if the iterator is exhausted, or the current
 // row index otherwise.  There need not be any entry in the current row.
 // Zero is returned if the iterator is attached to the matrix but
-// GxB_rowIterator_*seek* has not been called.
+// GxB_rowIterator_*seek* has not been called, but this does not mean the
+// iterator is positioned at row zero.
 
 static inline GrB_Index GxB_rowIterator_getRowIndex (GxB_Iterator iterator)
 { 
@@ -12062,7 +12065,7 @@ single thread iteration of a whole matrix, one entry at at time
         // get the entry A(i,j)
         GrB_Index i, j ;
         GxB_Matrix_Iterator_getIndex (iterator, &i, &j) ;
-        double  aij = GxB_Iterator_get_FP64 (iterator) ;
+        double aij = GxB_Iterator_get_FP64 (iterator) ;
         // move to the next entry in A
         info = GxB_Matrix_Iterator_next (iterator) ;
     }
@@ -12084,7 +12087,6 @@ single thread iteration of a whole matrix, one entry at at time
 // The following error conditions are returned:
 // GrB_NULL_POINTER:    if the iterator or A are NULL.
 // GrB_INVALID_OBJECT:  if the matrix A is invalid.
-// GrB_NOT_IMPLEMENTED: if the matrix A cannot be iterated by row.
 // GrB_OUT_OF_MEMORY:   if the method runs out of memory.
 
 // If successful, the entry iterator is attached to the matrix, but not to any
@@ -12237,16 +12239,187 @@ static inline void GxB_Matrix_Iterator_getIndex
 }
 
 //==============================================================================
+// GxB_Vector_Iterator_*: iterate over the entries of a vector
+//==============================================================================
+
+/* Example usage:
+
+single thread iteration of a whole vector, one entry at at time
+
+    // create an iterator
+    GxB_Iterator iterator ;
+    GxB_Iterator_new (&iterator) ;
+    // attach it to the vector v, known to be type GrB_FP64
+    GrB_Info info = GxB_Vector_Iterator_attach (iterator, v, NULL) ;
+    if (info < 0) { handle the failure ... }
+    // seek to the first entry
+    info = GxB_Vector_Iterator_seek (iterator, 0) ;
+    while (info != GxB_EXHAUSTED)
+    {
+        // get the entry v(i)
+        GrB_Index i = GxB_Vector_Iterator_getIndex (iterator) ;
+        double vi = GxB_Iterator_get_FP64 (iterator) ;
+        // move to the next entry in v
+        info = GxB_Vector_Iterator_next (iterator) ;
+    }
+    GrB_free (&iterator) ;
+
+*/
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_attach: attach an iterator to a vector
+//------------------------------------------------------------------------------
+
+// On input, the iterator must already exist, having been created by
+// GxB_Iterator_new.
+
+// GxB_Vector_Iterator_attach attaches an iterator to a vector.  If the
+// iterator is already attached to a vector or matrix, it is detached and then
+// attached to the given vector v.
+
+// The following error conditions are returned:
+// GrB_NULL_POINTER:    if the iterator or v are NULL.
+// GrB_INVALID_OBJECT:  if the vector v is invalid.
+// GrB_OUT_OF_MEMORY:   if the method runs out of memory.
+
+// If successful, the iterator is attached to the vector, but not to any
+// specific entry.  Use GxB_Vector_Iterator_seek to move the iterator to a
+// particular entry.
+
+GB_PUBLIC GrB_Info GxB_Vector_Iterator_attach
+(
+    GxB_Iterator iterator,
+    GrB_Vector v,
+    GrB_Descriptor desc
+) ;
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_getpmax: return the range of the iterator
+//------------------------------------------------------------------------------
+
+// On input, the iterator must be already attached to a vector via
+// GxB_Vector_Iterator_attach; results are undefined if this condition is not
+// met.
+
+// Entries in a vector are given an index p, ranging from 0 to pmax-1, where
+// pmax >= nvals(v).  For sparse and full vectors, pmax is equal to nvals(v).
+// For a size-m bitmap vector, pmax=m, or pmax=0 if the vector has no entries.
+
+static inline GrB_Index GxB_Vector_Iterator_getpmax (GxB_Iterator iterator)
+{ 
+    return (iterator->pmax) ;
+}
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_seek: seek to a specific entry
+//------------------------------------------------------------------------------
+
+// On input, the iterator must be already attached to a vector via
+// GxB_Vector_Iterator_attach; results are undefined if this condition is not
+// met.
+
+// The input p is in range 0 to pmax-1, which points to an entry in the vector,
+// or p >= pmax if the iterator is exhausted, where pmax is the return value
+// from GxB_Vector_Iterator_getpmax.
+
+// Returns GrB_SUCCESS if the iterator is at an entry that exists in the
+// vector, or GxB_EXHAUSTED if the iterator is exhausted.
+
+static inline
+GrB_Info GxB_Vector_Iterator_seek (GxB_Iterator iterator, GrB_Index p)
+{
+    if (p >= iterator->pmax)
+    { 
+        // the iterator is exhausted
+        iterator->p = iterator->pmax ;
+        return (GxB_EXHAUSTED) ;
+    }
+    else
+    {
+        // seek to an arbitrary position in the vector
+        iterator->p = p ;
+        if (iterator->A_sparsity == GxB_BITMAP)
+        {
+            for ( ; iterator->p < iterator->pmax ; iterator->p++)
+            {
+                if (iterator->Ab [iterator->p])
+                { 
+                    // found next entry
+                    return (GrB_SUCCESS) ;
+                }
+            }
+            return (GxB_EXHAUSTED) ;
+        }
+    }
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_next: move to the next entry of a vector
+//------------------------------------------------------------------------------
+
+// On input, the iterator must be already attached to a vector via
+// GxB_Vector_Iterator_attach, and the position of the iterator must also have
+// been defined by a prior call to GxB_Vector_Iterator_seek or
+// GxB_Vector_Iterator_next.  Results are undefined if these conditions are not
+// met.
+
+// Returns GrB_SUCCESS if the iterator is at an entry that exists in the
+// vector, or GxB_EXHAUSTED if the iterator is exhausted.
+
+static inline GrB_Info GxB_Vector_Iterator_next (GxB_Iterator iterator)
+{
+    // move to the next entry
+    if (++iterator->p >= iterator->pmax)
+    { 
+        // the iterator is exhausted
+        iterator->p = iterator->pmax ;
+        return (GxB_EXHAUSTED) ;
+    }
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_getp: get the current position of a vector iterator
+//------------------------------------------------------------------------------
+
+// On input, the iterator must be already attached to a vector via
+// GxB_Vector_Iterator_attach, and the position of the iterator must also have
+// been defined by a prior call to GxB_Vector_Iterator_seek or
+// GxB_Vector_Iterator_next.  Results are undefined if these conditions are not
+// met.
+
+static inline GrB_Index GxB_Vector_Iterator_getp (GxB_Iterator iterator)
+{ 
+    return (iterator->p) ;
+}
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_getIndex: get the index of a vector entry
+//------------------------------------------------------------------------------
+
+// On input, the iterator must be already attached to a vector via
+// GxB_Vector_Iterator_attach, and the position of the iterator must also have
+// been defined by a prior call to GxB_Vector_Iterator_seek or
+// GxB_Vector_Iterator_next, with a return value of GrB_SUCCESS.  Results are
+// undefined if these conditions are not met.
+
+static inline GrB_Index GxB_Vector_Iterator_getIndex (GxB_Iterator iterator)
+{ 
+    return ((iterator->Ai != NULL) ? iterator->Ai [iterator->p] : iterator->p) ;
+}
+
+//==============================================================================
 // GxB_Iterator_get_TYPE: get value of the current entry for any iterator
 //==============================================================================
 
 // On input, the prior call to GxB_*Iterator_*seek*, or GxB_*Iterator_*next*
 // must have returned GrB_SUCCESS, indicating that the iterator is at a valid
-// current entry.
+// current entry for either a matrix or vector.
 
 // Returns the value of the current entry at the position determined by the
 // iterator.  No typecasting is permitted; the method name must match the
-// type of the matrix.
+// type of the matrix or vector.
 
 static inline bool GxB_Iterator_get_BOOL (GxB_Iterator iterator)
 { 

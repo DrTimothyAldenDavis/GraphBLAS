@@ -75,7 +75,8 @@ GB_mex_hack (hack) ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
-logstat ('test242',t) ; % test GxB_Iterator
+logstat ('test243',t) ; % test GxB_Vector_Iterator
+logstat ('test242',t) ; % test GxB_Iterator for matrices
 logstat ('test241',t) ; % test GrB_mxm, triggering the swap_rule
 logstat ('testca',t) ;  % test complex mxm, mxv, and vxm
 logstat ('test240',t) ; % test dot4 and saxpy5

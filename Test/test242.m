@@ -1,5 +1,5 @@
-% function test242
-%TEST242 test GxB_Iterator
+function test242
+%TEST242 test GxB_Iterator for matrices
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2022, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
