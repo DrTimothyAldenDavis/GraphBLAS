@@ -11,6 +11,10 @@
 #include "../../rmm_wrap/rmm_wrap.h"
 #include <gtest/gtest.h>
 
+extern "C" {
+    #include "GB.h"
+}
+
 #include "../jitFactory.hpp"
 #include "dataFactory.hpp"
 
@@ -76,14 +80,14 @@ class AxB_dot3_Test : public ::testing::Test
 // Test generator code, to allow parameterized tests
 // Uses jitFactory, dataFactory and GB_jit 
 template <typename T_C, typename T_M, typename T_A,typename T_B>
-bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, const char *str_semiring) {
+bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_Monoid monoid, GrB_BinaryOp binop) {
 
     int gpuID;
     cudaGetDevice( &gpuID);
 
     std::cout<< "found device "<<gpuID<<std::endl;
 
-    phase1launchFactory<T_C, T_M, T_A, T_B> p1lF(str_semiring);
+    phase1launchFactory<T_C, T_M, T_A, T_B> p1lF(monoid, binop);
 
     SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G;
     int64_t Annz = N*N;
@@ -94,9 +98,6 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, const
     // TODO: Allocate and fill arrays for buckets and nano buckets
     G.init(N, Annz, Bnnz, Cnzpercent);
     G.fill_buckets( TB ); // all elements go to testbucket= TB
-
-
-
 
     matrix<T_C>* C = G.getCptr();
     matrix<T_M>* M = G.getMptr();
@@ -131,7 +132,8 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, const
     int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
 
     p1lF.jitGridBlockLaunch( nblck, nthrd, Nanobuckets, Blockbucket,
-                             C, M, A, B);
+                             C->get_grb_matrix(), M->get_grb_matrix(),
+                             A->get_grb_matrix(), B->get_grb_matrix());
 
     kernTimer.Stop();
     std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;

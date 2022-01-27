@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <random>
 
-// #include "GraphBLAS.h"
+#include "../type_convert.hpp"
 #include "../GB_Matrix_allocate.h"
 
 static const char *_cudaGetErrorEnum(cudaError_t error) {
@@ -89,14 +89,12 @@ public:
   }
 };
 
+// FIXME: We should just be able to get rid of this now.
 //Basic matrix container class
 template<typename T>
 class matrix : public Managed {
   public:
     GrB_Matrix mat;
-
-     matrix(){
-     };
 
      GrB_Matrix get_grb_matrix() {
          return mat;
@@ -109,7 +107,8 @@ class matrix : public Managed {
      }
 
      void alloc( int64_t nrows, int64_t ncols) {
-         GrB_Type type ;
+         GrB_Type type = cuda::to_grb_type<T>();
+
          // FIXME:
          // if T is bool: type = GrB_BOOL
          // if T is int8_t: type = GrB_INT8
@@ -120,12 +119,13 @@ class matrix : public Managed {
             // or:
             // GxB_HYPERSPARSE, GxB_BITMAP, GxB_FULL
 
-         mat = GB_Matrix_allocate(
-            type,   /// <<<<<<<BUG HERE, was NULL, which is broken
-            sizeof(T), N, N, 2, false, false, Nz, -1);
+//         mat = GB_Matrix_allocate(
+//            type,   /// <<<<<<<BUG HERE, was NULL, which is broken
+//            sizeof(T), nrows, ncols, 2, false, false, Nz, -1);
      }
- 
-     void fill_random(  int64_t N, int64_t Nz, std::mt19937 r) {
+
+     // FIXME: We probably want this to go away
+     void fill_random(  int64_t N, int64_t Nz, std::mt19937 r, bool debug_print = false) {
 
          std::cout << "inside fill" << std::endl;
          alloc( N, Nz);
@@ -141,12 +141,12 @@ class matrix : public Managed {
         std::cout<<"vdim ready "<<std::endl;
         mat->vlen = N;
         std::cout<<"vlen ready "<<std::endl;
-        nnz = Nz;
         std::cout<<"ready to fill p"<<std::endl;
 
         mat->p[0] = 0;
-        mat->p[N] = nnz;
+        mat->p[N] = Nz;
 
+        // FIXME: Use random matrix generator from Demi/random_matrix.c
         std::cout<<"   in fill loop"<<std::endl;
         for (int64_t j = 0; j < N; ++j) {
            p[j+1] = p[j] + Nz/N;
@@ -155,12 +155,11 @@ class matrix : public Managed {
                x[k] = (T) (k & 63) ;
            }
         }
-        is_filled = true;
         mat->jumbled = true ;
 
         GrB_Info info = GrB_Matrix_wait (mat, GrB_MATERIALIZE) ;
         assert (info == GrB_SUCCESS) ;
-        GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE) ;
+        GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, GxB_SPARSE) ;
      }
 };
 

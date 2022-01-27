@@ -109,25 +109,28 @@ const std::vector<std::string> compiler_flags{
 
 const std::vector<std::string> header_names ={};
 
+
+// FIXME: Need to be able to convert from GrB_Type->std::type to populate these templates
+// this isn't going to be known at compile time.
 template<  typename T_C, typename T_M, typename T_A, typename T_B> 
 class phase1launchFactory 
 {
   std::string base_name = "GB_jit";
   std::string kernel_name = "AxB_phase1";
 //  TODO REMOVE: std::string template_name = "GB_jit_AxB_phase1.cu";
-  const char *semiring;
+  GrB_Monoid monoid_;
+  GrB_BinaryOp binop_;
 
 public:
 
   // This assumes the needed state on the GB_cuda_semiring_factory
   // has already been populated
-  phase1launchFactory(const char *str_semiring) {
-      semiring = str_semiring;
-  }
+  phase1launchFactory(GrB_Monoid monoid, GrB_BinaryOp binop): monoid_(monoid), binop_(binop){}
 
   bool jitGridBlockLaunch(int gridsz, int blocksz, 
-                          int64_t *nanobuckets, int64_t *blockBucket, 
-                          matrix<T_C> *C, matrix<T_M> *M, matrix<T_A> *A, matrix<T_B> *B) 
+                          int64_t *nanobuckets, int64_t *blockBucket,
+                          // FIXME: This should be GrB_Matrix directly (matrix is just a builder for testing)
+                          GrB_Matrix C, GrB_Matrix M, GrB_Matrix A, GrB_Matrix B)
      {
       
       bool result = false; 
@@ -138,7 +141,7 @@ public:
       dim3 grid(gridsz);
       dim3 block(blocksz);
 
-    std::cout << "Semiring: " << semiring << std::endl;
+//    std::cout << "Semiring: " << semiring << std::endl;
 
     GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
 
@@ -148,24 +151,24 @@ public:
     GrB_Semiring mysemiring;
 //
 //    // FIXME: These should be created from the given template types
-    auto grb_info = GrB_Semiring_new(&mysemiring, GrB_PLUS_MONOID_UINT64, GrB_TIMES_UINT64);
+    auto grb_info = GrB_Semiring_new(&mysemiring, monoid_, binop_);
 
     std::cout << "semiring pointer: " << mysemiring << std::endl;
     bool flipxy = false;
     bool mask_struct = false;
     bool mask_comp = false;
 
-    std::cout << "A TYpe: " << A->get_grb_matrix()->type << std::endl;
-    std::cout << "B TYpe: " << B->get_grb_matrix()->type << std::endl;
+    std::cout << "A TYpe: " << A->type << std::endl;
+    std::cout << "B TYpe: " << B->type << std::endl;
 //    // (1) create the semiring code and name
     mysemiringfactory.semiring_factory ( mysemiring, flipxy,
-        C->get_grb_matrix->()->type, M->get_grb_matrix->()->type,
-        A->get_grb_matrix->()->type, B->get_grb_matrix->()->type,
+        C->type, M->type,
+        A->type, B->type,
         mask_struct,  // matrix types
-        mask_comp, GB_sparsity(C->get_grb_matrix()),
-        GB_sparsity(M->get_grb_matrix()),
-        GB_sparsity(A->get_grb_matrix()),
-        GB_sparsity(B->get_grb_matrix()) ) ;
+        mask_comp, GB_sparsity(C),
+        GB_sparsity(M),
+        GB_sparsity(A),
+        GB_sparsity(B) ) ;
 
     //    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
@@ -187,7 +190,7 @@ public:
                    file_callback)
                  .set_kernel_inst(  kernel_name, template_types)
                  .configure(grid, block)
-                 .launch( nanobuckets, blockBucket, C->mat, M->mat, A->mat, B->mat);
+                 .launch( nanobuckets, blockBucket, C, M, A, B);
 
       checkCudaErrors( cudaDeviceSynchronize() );
       result = true;
