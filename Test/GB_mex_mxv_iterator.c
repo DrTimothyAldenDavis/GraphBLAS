@@ -420,11 +420,12 @@ void mexFunction
 
         // attach it to the matrix A
         OK (GxB_rowIterator_attach (iterator, A, NULL)) ;
+
         for (int k = 0 ; k < nrows ; k++)
         {
             // seek to A(k,:)
             info = GxB_rowIterator_seekRow (iterator, (GrB_Index) k) ;
-            Assert (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
+            Assert (info >= GrB_SUCCESS) ;
 
             // get the row index
             GrB_Index i = GxB_rowIterator_getRowIndex (iterator) ;
@@ -465,7 +466,7 @@ void mexFunction
         {
             // seek to A(:,k)
             info = GxB_colIterator_seekCol (iterator, (GrB_Index) k) ;
-            Assert (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
+            Assert (info >= GrB_SUCCESS) ;
 
             // get the col index
             GrB_Index j = GxB_colIterator_getColIndex (iterator) ;
