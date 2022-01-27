@@ -96,11 +96,7 @@ void mexFunction
 
     OK (GrB_Scalar_new (&Thunk, Thunk_type)) ;
     OK (GrB_Scalar_setElement_UDT (Thunk, (void *) &bandwidth)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Scalar_wait_(&Thunk)) ;
-    #else
     OK (GrB_Scalar_wait_(Thunk, GrB_MATERIALIZE)) ;
-    #endif
 
     // get atranspose
     bool atranspose = false ;

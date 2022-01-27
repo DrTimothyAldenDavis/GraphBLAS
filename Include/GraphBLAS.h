@@ -19,9 +19,8 @@
 // to #include.  A few functions and variables with the prefix GB_ need to be
 // defined in this file and are thus technically visible to the user, but they
 // must not be accessed in user code.  They are here only so that the ANSI C11
-// _Generic feature can be used in the user-accessible polymorphic functions.
-// For example GrB_free is a macro that uses _Generic to select the right
-// method, depending on the type of its argument.
+// _Generic feature can be used in the user-accessible polymorphic functions,
+// or to implement a fast GxB_Iterator using static inline methods.
 
 // This implementation conforms to the GraphBLAS API Specification and also
 // includes functions and features that are extensions to the spec, which are
@@ -118,8 +117,10 @@
 #endif
 
 //------------------------------------------------------------------------------
-// definitions for complex types
+// definitions for complex types, and restrict keyword
 //------------------------------------------------------------------------------
+
+#undef GB_restrict
 
 // See:
 // https://www.drdobbs.com/complex-arithmetic-in-the-intersection-o/184401628#
@@ -138,6 +139,7 @@
 
     #define GxB_CMPLXF(r,i) GxB_FC32_t(r,i)
     #define GxB_CMPLX(r,i)  GxB_FC64_t(r,i)
+    #define GB_restrict
 
 #elif ( _MSC_VER && !(__INTEL_COMPILER || __INTEL_CLANG_COMPILER) )
 
@@ -149,6 +151,7 @@
 
     #define GxB_CMPLXF(r,i) (_FCbuild (r,i))
     #define GxB_CMPLX(r,i)  ( _Cbuild (r,i))
+    #define GB_restrict __restrict
 
 #else
 
@@ -174,6 +177,18 @@
     #else
         // use the ANSI C11 CMPLXF macro
         #define GxB_CMPLXF(r,i) CMPLXF (r,i)
+    #endif
+
+    // restrict keyword
+    #if defined ( __NVCC__ )
+        // NVIDIA nvcc
+        #define GB_restrict __restrict__
+    #elif GxB_STDC_VERSION >= 199901L
+        // ANSI C99 or later
+        #define GB_restrict restrict
+    #else
+        // ANSI C95 and earlier: no restrict keyword
+        #define GB_restrict
     #endif
 
 #endif
@@ -206,7 +221,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Jan 15, 2022"
+#define GxB_IMPLEMENTATION_DATE "Jan 26, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 6
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -302,23 +317,6 @@ typedef enum
     // errors:
     //--------------------------------------------------------------------------
 
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    GrB_UNINITIALIZED_OBJECT = 2,   // object has not been initialized
-    GrB_NULL_POINTER = 4,           // input pointer is NULL
-    GrB_INVALID_VALUE = 5,          // generic error; some value is bad
-    GrB_INVALID_INDEX = 6,          // row or column index is out of bounds
-    GrB_DOMAIN_MISMATCH = 7,        // object domains are not compatible
-    GrB_DIMENSION_MISMATCH = 8,     // matrix dimensions do not match
-    GrB_OUTPUT_NOT_EMPTY = 9,       // output matrix already has values
-    GrB_NOT_IMPLEMENTED = -8,       // method not implemented
-    GrB_PANIC = 13,                 // unknown error
-    GrB_OUT_OF_MEMORY = 10,         // out of memory
-    GrB_INSUFFICIENT_SPACE = 11,    // output array not large enough
-    GrB_INVALID_OBJECT = 3,         // object is corrupted
-    GrB_INDEX_OUT_OF_BOUNDS = 12,   // row or col index out of bounds
-    GrB_EMPTY_OBJECT = -106         // an object does not contain a value
-    #else
-    // v2.0 C API Specification, in v6.0 of SuiteSparse:GraphBLAS:
     GrB_UNINITIALIZED_OBJECT = -1,  // object has not been initialized
     GrB_NULL_POINTER = -2,          // input pointer is NULL
     GrB_INVALID_VALUE = -3,         // generic error; some value is bad
@@ -333,7 +331,6 @@ typedef enum
     GrB_INVALID_OBJECT = -104,      // object is corrupted
     GrB_INDEX_OUT_OF_BOUNDS = -105, // row or col index out of bounds
     GrB_EMPTY_OBJECT = -106         // an object does not contain a value
-    #endif
 
 }
 GrB_Info ;
@@ -375,10 +372,6 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void * (* user_calloc_function  ) (size_t, size_t),
     void * (* user_realloc_function ) (void *, size_t),
     void   (* user_free_function    ) (void *)
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    // parameter added in v3.0, unused in this v5.2.0, removed in v6.0
-    , bool ignored
-    #endif
 ) ;
 
 GB_PUBLIC
@@ -525,9 +518,6 @@ typedef enum
 
     // for GrB_MASK only:
     GrB_COMP = 2,       // use the structural complement of the input
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    GrB_SCMP = 2,       // same as GrB_COMP (deprecated; use GrB_COMP instead)
-    #endif
     GrB_STRUCTURE = 4,  // use the only pattern of the mask, not its values
 
     // for GrB_INP0 and GrB_INP1 only:
@@ -3048,7 +3038,7 @@ GrB_Info GrB_Vector_setElement          // w(i) = x
     (                                                       \
         (x),                                                \
             GB_CASES (, GrB, Vector_setElement),            \
-            default : GrB_Vector_setElement_Scalar          \
+            default:  GrB_Vector_setElement_Scalar          \
     )                                                       \
     (w, x, i)
 #endif
@@ -3201,7 +3191,7 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
     (                                                           \
         (x),                                                    \
             GB_CASES (*, GrB, Vector_extractElement),           \
-            default : GrB_Vector_extractElement_Scalar          \
+            default:  GrB_Vector_extractElement_Scalar          \
     )                                                           \
     (x, v, i)
 #endif
@@ -3830,7 +3820,7 @@ GrB_Info GrB_Matrix_setElement          // C (i,j) = x
     (                                                       \
         (x),                                                \
             GB_CASES (, GrB, Matrix_setElement),            \
-            default : GrB_Matrix_setElement_Scalar          \
+            default:  GrB_Matrix_setElement_Scalar          \
     )                                                       \
     (C, x, i, j)
 #endif
@@ -3999,7 +3989,7 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
     (                                                           \
         (x),                                                    \
             GB_CASES (*, GrB, Matrix_extractElement),           \
-            default : GrB_Matrix_extractElement_Scalar          \
+            default:  GrB_Matrix_extractElement_Scalar          \
     )                                                           \
     (x, A, i, j)
 #endif
@@ -4767,91 +4757,37 @@ GrB_WaitMode ;
 
 // Finish all pending work in a specific object.
 
-#if (GxB_IMPLEMENTATION_MAJOR <= 5)
+GB_PUBLIC GrB_Info GrB_Type_wait         (GrB_Type       type    , GrB_WaitMode waitmode) ;
+GB_PUBLIC GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    op      , GrB_WaitMode waitmode) ;
+GB_PUBLIC GrB_Info GrB_BinaryOp_wait     (GrB_BinaryOp   op      , GrB_WaitMode waitmode) ;
+GB_PUBLIC GrB_Info GxB_SelectOp_wait     (GxB_SelectOp   op      , GrB_WaitMode waitmode) ;
+GB_PUBLIC GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp op    , GrB_WaitMode waitmode) ;
+GB_PUBLIC GrB_Info GrB_Monoid_wait       (GrB_Monoid     monoid  , GrB_WaitMode waitmode) ;
+GB_PUBLIC GrB_Info GrB_Semiring_wait     (GrB_Semiring   semiring, GrB_WaitMode waitmode) ;
+GB_PUBLIC GrB_Info GrB_Descriptor_wait   (GrB_Descriptor desc    , GrB_WaitMode waitmode) ;
+GB_PUBLIC GrB_Info GrB_Scalar_wait       (GrB_Scalar     s       , GrB_WaitMode waitmode) ;
+GB_PUBLIC GrB_Info GrB_Vector_wait       (GrB_Vector     v       , GrB_WaitMode waitmode) ;
+GB_PUBLIC GrB_Info GrB_Matrix_wait       (GrB_Matrix     A       , GrB_WaitMode waitmode) ;
 
-    //--------------------------------------------------------------------------
-    // GrB_wait: in the v4 and v5 of SuiteSparse:GraphBLAS
-    //--------------------------------------------------------------------------
-
-    // v1.x of the C API Specification had a GrB_wait() with no inputs, which
-    // finished all computations on all objects.  This had performance issues,
-    // so in v4.0.x of SuiteSparse:GraphBLAS, it was replaced with a
-    // single-object GrB_wait (&object), which came from an early draft of the
-    // v2.0 C API.  However, in the final v2.0 C API, GrB_wait has taken a
-    // different form: GrB_wait (object, mode).
-
-    GB_PUBLIC GrB_Info GrB_Type_wait         (GrB_Type       *type    ) ;
-    GB_PUBLIC GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    *op      ) ;
-    GB_PUBLIC GrB_Info GrB_BinaryOp_wait     (GrB_BinaryOp   *op      ) ;
-    GB_PUBLIC GrB_Info GxB_SelectOp_wait     (GxB_SelectOp   *op      ) ;
-    GB_PUBLIC GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp *op    ) ;
-    GB_PUBLIC GrB_Info GrB_Monoid_wait       (GrB_Monoid     *monoid  ) ;
-    GB_PUBLIC GrB_Info GrB_Semiring_wait     (GrB_Semiring   *semiring) ;
-    GB_PUBLIC GrB_Info GrB_Descriptor_wait   (GrB_Descriptor *desc    ) ;
-    GB_PUBLIC GrB_Info GrB_Scalar_wait       (GrB_Scalar     *s       ) ;
-    GB_PUBLIC GrB_Info GrB_Vector_wait       (GrB_Vector     *v       ) ;
-    GB_PUBLIC GrB_Info GrB_Matrix_wait       (GrB_Matrix     *A       ) ;
-
-    // GrB_wait (&object) polymorphic function:
-    #if GxB_STDC_VERSION >= 201112L
-    #define GrB_wait(object)                                \
-        _Generic                                            \
-        (                                                   \
-            (object),                                       \
-                GrB_Type         *: GrB_Type_wait         , \
-                GrB_UnaryOp      *: GrB_UnaryOp_wait      , \
-                GrB_BinaryOp     *: GrB_BinaryOp_wait     , \
-                GxB_SelectOp     *: GxB_SelectOp_wait     , \
-                GrB_IndexUnaryOp *: GrB_IndexUnaryOp_wait , \
-                GrB_Monoid       *: GrB_Monoid_wait       , \
-                GrB_Semiring     *: GrB_Semiring_wait     , \
-                GrB_Scalar       *: GrB_Scalar_wait       , \
-                GrB_Vector       *: GrB_Vector_wait       , \
-                GrB_Matrix       *: GrB_Matrix_wait       , \
-                GrB_Descriptor   *: GrB_Descriptor_wait     \
-        )                                                   \
-        (object)
-    #endif
-
-#else
-
-    //--------------------------------------------------------------------------
-    // GrB_wait: in the v2.0 C API Spec and v6.0 of SuiteSparse:GraphBLAS
-    //--------------------------------------------------------------------------
-
-    GB_PUBLIC GrB_Info GrB_Type_wait         (GrB_Type       type    , GrB_WaitMode waitmode) ;
-    GB_PUBLIC GrB_Info GrB_UnaryOp_wait      (GrB_UnaryOp    op      , GrB_WaitMode waitmode) ;
-    GB_PUBLIC GrB_Info GrB_BinaryOp_wait     (GrB_BinaryOp   op      , GrB_WaitMode waitmode) ;
-    GB_PUBLIC GrB_Info GxB_SelectOp_wait     (GxB_SelectOp   op      , GrB_WaitMode waitmode) ;
-    GB_PUBLIC GrB_Info GrB_IndexUnaryOp_wait (GrB_IndexUnaryOp op    , GrB_WaitMode waitmode) ;
-    GB_PUBLIC GrB_Info GrB_Monoid_wait       (GrB_Monoid     monoid  , GrB_WaitMode waitmode) ;
-    GB_PUBLIC GrB_Info GrB_Semiring_wait     (GrB_Semiring   semiring, GrB_WaitMode waitmode) ;
-    GB_PUBLIC GrB_Info GrB_Descriptor_wait   (GrB_Descriptor desc    , GrB_WaitMode waitmode) ;
-    GB_PUBLIC GrB_Info GrB_Scalar_wait       (GrB_Scalar     s       , GrB_WaitMode waitmode) ;
-    GB_PUBLIC GrB_Info GrB_Vector_wait       (GrB_Vector     v       , GrB_WaitMode waitmode) ;
-    GB_PUBLIC GrB_Info GrB_Matrix_wait       (GrB_Matrix     A       , GrB_WaitMode waitmode) ;
-
-    // GrB_wait (object,waitmode) polymorphic function:
-    #if GxB_STDC_VERSION >= 201112L
-    #define GrB_wait(object,waitmode)                       \
-        _Generic                                            \
-        (                                                   \
-            (object),                                       \
-                GrB_Type         : GrB_Type_wait         ,  \
-                GrB_UnaryOp      : GrB_UnaryOp_wait      ,  \
-                GrB_BinaryOp     : GrB_BinaryOp_wait     ,  \
-                GxB_SelectOp     : GxB_SelectOp_wait     ,  \
-                GrB_IndexUnaryOp : GrB_IndexUnaryOp_wait ,  \
-                GrB_Monoid       : GrB_Monoid_wait       ,  \
-                GrB_Semiring     : GrB_Semiring_wait     ,  \
-                GrB_Scalar       : GrB_Scalar_wait       ,  \
-                GrB_Vector       : GrB_Vector_wait       ,  \
-                GrB_Matrix       : GrB_Matrix_wait       ,  \
-                GrB_Descriptor   : GrB_Descriptor_wait      \
-        )                                                   \
-        (object, waitmode)
-    #endif
-
+// GrB_wait (object,waitmode) polymorphic function:
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_wait(object,waitmode)                       \
+    _Generic                                            \
+    (                                                   \
+        (object),                                       \
+            GrB_Type         : GrB_Type_wait         ,  \
+            GrB_UnaryOp      : GrB_UnaryOp_wait      ,  \
+            GrB_BinaryOp     : GrB_BinaryOp_wait     ,  \
+            GxB_SelectOp     : GxB_SelectOp_wait     ,  \
+            GrB_IndexUnaryOp : GrB_IndexUnaryOp_wait ,  \
+            GrB_Monoid       : GrB_Monoid_wait       ,  \
+            GrB_Semiring     : GrB_Semiring_wait     ,  \
+            GrB_Scalar       : GrB_Scalar_wait       ,  \
+            GrB_Vector       : GrB_Vector_wait       ,  \
+            GrB_Matrix       : GrB_Matrix_wait       ,  \
+            GrB_Descriptor   : GrB_Descriptor_wait      \
+    )                                                   \
+    (object, waitmode)
 #endif
 
 // NOTE: GxB_Scalar_wait is historical; use GrB_Scalar_wait instead
@@ -5885,9 +5821,9 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<Mask> = accum (C(I,J),x)
                     GB_CASES (, GxB, Vector_subassign) ,                \
                     const GrB_Scalar : GxB_Vector_subassign_Scalar,     \
                           GrB_Scalar : GxB_Vector_subassign_Scalar,     \
-                    default : GxB_Vector_subassign                      \
+                    default:  GxB_Vector_subassign                      \
             ),                                                          \
-        default :                                                       \
+        default:                                                        \
             _Generic                                                    \
             (                                                           \
                 (arg4),                                                 \
@@ -5900,7 +5836,7 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<Mask> = accum (C(I,J),x)
                             (arg5),                                     \
                                 const GrB_Index *: GxB_Col_subassign ,  \
                                       GrB_Index *: GxB_Col_subassign ,  \
-                                default          : GxB_Row_subassign    \
+                                default:           GxB_Row_subassign    \
                         ),                                              \
                     GrB_Vector :                                        \
                         _Generic                                        \
@@ -5908,9 +5844,9 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<Mask> = accum (C(I,J),x)
                             (arg5),                                     \
                                 const GrB_Index *: GxB_Col_subassign ,  \
                                       GrB_Index *: GxB_Col_subassign ,  \
-                                default          : GxB_Row_subassign    \
+                                default:           GxB_Row_subassign    \
                         ),                                              \
-                    default : GxB_Matrix_subassign                      \
+                    default:  GxB_Matrix_subassign                      \
             )                                                           \
     )                                                                   \
     (arg1, Mask, accum, arg4, arg5, __VA_ARGS__)
@@ -6407,9 +6343,9 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)
                         GB_CASES (, GrB, Vector_assign) ,               \
                         const GrB_Scalar : GrB_Vector_assign_Scalar ,   \
                               GrB_Scalar : GrB_Vector_assign_Scalar ,   \
-                        default : GrB_Vector_assign                     \
+                        default:  GrB_Vector_assign                     \
                 ),                                                      \
-            default :                                                   \
+            default:                                                    \
                 _Generic                                                \
                 (                                                       \
                     (arg4),                                             \
@@ -6422,7 +6358,7 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)
                                 (arg5),                                 \
                                 const GrB_Index *: GrB_Col_assign ,     \
                                       GrB_Index *: GrB_Col_assign ,     \
-                                default          : GrB_Row_assign       \
+                                default:           GrB_Row_assign       \
                             ),                                          \
                         GrB_Vector :                                    \
                             _Generic                                    \
@@ -6430,9 +6366,9 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)
                                 (arg5),                                 \
                                 const GrB_Index *: GrB_Col_assign ,     \
                                       GrB_Index *: GrB_Col_assign ,     \
-                                default          : GrB_Row_assign       \
+                                default:           GrB_Row_assign       \
                             ),                                          \
-                        default : GrB_Matrix_assign                     \
+                        default:  GrB_Matrix_assign                     \
                 )                                                       \
     )                                                                   \
     (arg1, Mask, accum, arg4, arg5, __VA_ARGS__)
@@ -7668,12 +7604,12 @@ GrB_Info GrB_Matrix_apply_IndexOp_UDT       // C<M>=accum(C,op(A))
         const GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar), \
               GrB_Scalar: GB_CONCAT ( GrB,_,kind,_apply_BinaryOp1st_Scalar), \
         GB_CASES (, GrB, GB_CONCAT ( kind, _apply_BinaryOp1st,, )) ,         \
-        default :                                                            \
+        default:                                                             \
             _Generic                                                         \
             (                                                                \
                 (y),                                                         \
                 GB_CASES (, GrB, GB_CONCAT ( kind , _apply_BinaryOp2nd,, )), \
-                default : GB_CONCAT ( GrB,_,kind,_apply_BinaryOp2nd_Scalar)  \
+                default:  GB_CONCAT ( GrB,_,kind,_apply_BinaryOp2nd_Scalar)  \
             )                                                                \
     )
 
@@ -7682,7 +7618,7 @@ GrB_Info GrB_Matrix_apply_IndexOp_UDT       // C<M>=accum(C,op(A))
     (                                                                        \
         (y),                                                                 \
             GB_CASES (, GrB, GB_CONCAT ( kind, _apply_IndexOp,, )),          \
-            default : GB_CONCAT ( GrB, _, kind, _apply_IndexOp_Scalar)       \
+            default:  GB_CONCAT ( GrB, _, kind, _apply_IndexOp_Scalar)       \
     )
 
 #define GrB_apply(C,Mask,accum,op,...)                                       \
@@ -8097,14 +8033,14 @@ GrB_Info GrB_Matrix_select_UDT      // C<M>=accum(C,op(A))
                 (                                                       \
                     (y),                                                \
                         GB_CASES (, GrB, Vector_select),                \
-                        default : GrB_Vector_select_Scalar              \
+                        default:  GrB_Vector_select_Scalar              \
                 ),                                                      \
             GrB_Matrix :                                                \
                 _Generic                                                \
                 (                                                       \
                     (y),                                                \
                         GB_CASES (, GrB, Matrix_select),                \
-                        default : GrB_Matrix_select_Scalar              \
+                        default:  GrB_Matrix_select_Scalar              \
                 )                                                       \
     )                                                                   \
     (C, Mask, accum, op, x, y, d)
@@ -8550,7 +8486,7 @@ GrB_Info GrB_Matrix_reduce_BinaryOp_Scalar
     (                                                                          \
         (c),                                                                   \
             GB_CASES (*, GrB, GB_CONCAT ( kind, _reduce,, )),                  \
-            default :                                                          \
+            default:                                                           \
                 _Generic                                                       \
                 (                                                              \
                     (op),                                                      \
@@ -8558,7 +8494,7 @@ GrB_Info GrB_Matrix_reduce_BinaryOp_Scalar
                                 GB_CONCAT (GrB,_,kind,_reduce_BinaryOp_Scalar),\
                               GrB_BinaryOp :                                   \
                                 GB_CONCAT (GrB,_,kind,_reduce_BinaryOp_Scalar),\
-                        default : GB_CONCAT (GrB,_,kind,_reduce_Monoid_Scalar) \
+                        default:  GB_CONCAT (GrB,_,kind,_reduce_Monoid_Scalar) \
                 )                                                              \
     )
 
@@ -11683,7 +11619,8 @@ parallel iteration using 4 threads (work may be imbalanced however).
 // The contents of an iterator must not be directly accessed by the user
 // application.  Only the functions provide here may access "iterator->..."
 // contents.  The iterator is defined here only so that static inline functions
-// can be used to speed up the use of the iterator methods.
+// can be used to speed up the use of the iterator methods.  User applications
+// must not use "iterator->...".
 
 struct GB_Iterator_opaque
 {
@@ -11701,12 +11638,12 @@ struct GB_Iterator_opaque
     int64_t avlen ;             // length of each vector in the matrix
     int64_t avdim ;             // number of vectors in the matrix dimension
     int64_t anvec ;             // # of vectors present in the matrix
-    int64_t *Ap ;      // pointers for sparse and hypersparse
-    int64_t *Ah ;      // vector names for hypersparse
-    int8_t  *Ab ;      // bitmap
-    int64_t *Ai ;      // indices for sparse and hypersparse
-    void    *Ax ;      // values for all 4 data structures
-    size_t  type_size ;         // size of the type of A
+    const int64_t *GB_restrict Ap ;      // pointers for sparse and hypersparse
+    const int64_t *GB_restrict Ah ;      // vector names for hypersparse
+    const int8_t  *GB_restrict Ab ;      // bitmap
+    const int64_t *GB_restrict Ai ;      // indices for sparse and hypersparse
+    const void    *GB_restrict Ax ;      // values for all 4 data structures
+    size_t type_size ;          // size of the type of A
     int A_sparsity ;            // sparse, hyper, bitmap, or full
     bool iso ;                  // true if A is iso-valued, false otherwise
     bool by_col ;               // true if A is held by column, false if by row
@@ -11747,7 +11684,7 @@ GB_PUBLIC GrB_Info GB_Iterator_rc_seek
 (
     GxB_Iterator iterator,
     GrB_Index j,
-    bool kth_vector
+    bool jth_vector
 ) ;
 
 //------------------------------------------------------------------------------
@@ -11759,7 +11696,7 @@ static inline GrB_Info GB_Iterator_rc_bitmap_next (GxB_Iterator iterator)
     for ( ; iterator->p < iterator->pend ; iterator->p++)
     {
         if (iterator->Ab [iterator->p])
-        {
+        { 
             // found the next entry in this vector
             return (GrB_SUCCESS) ;
         }
@@ -11775,7 +11712,7 @@ static inline GrB_Info GB_Iterator_rc_knext (GxB_Iterator iterator)
 {
     // move to the next vector, and check if iterator is exhausted
     if ((++iterator->k) >= iterator->anvec)
-    {
+    { 
         // iterator is at the end of the matrix
         iterator->pstart = 0 ;
         iterator->pend = 0 ;
@@ -11786,17 +11723,17 @@ static inline GrB_Info GB_Iterator_rc_knext (GxB_Iterator iterator)
     // find the first entry in the vector, and the pstart/pend for this vector
     switch (iterator->A_sparsity)
     {
-        default : 
+        default:  
         case GxB_SPARSE : 
         case GxB_HYPERSPARSE : 
-        {
+        { 
             iterator->pstart = iterator->Ap [iterator->k] ;
             iterator->pend = iterator->Ap [iterator->k+1] ;
             iterator->p = iterator->pstart ;
         }
         break ;
         case GxB_BITMAP : 
-        {
+        { 
             iterator->pstart += iterator->avlen ;
             iterator->pend += iterator->avlen ;
             iterator->p = iterator->pstart ;
@@ -11804,7 +11741,7 @@ static inline GrB_Info GB_Iterator_rc_knext (GxB_Iterator iterator)
         }
         break ;
         case GxB_FULL : 
-        {
+        { 
             iterator->pstart += iterator->avlen ;
             iterator->pend += iterator->avlen ;
             iterator->p = iterator->pstart ;
@@ -11822,40 +11759,40 @@ static inline GrB_Info GB_Iterator_rc_inext (GxB_Iterator iterator)
 {
     // move to the next entry in the vector
     if (++iterator->p >= iterator->pend)
-    {
+    { 
         // no more entries in the current vector
         return (GrB_NO_VALUE) ;
     }
     else if (iterator->A_sparsity == GxB_BITMAP)
-    {
+    { 
         // the matrix is in bitmap form
         return (GB_Iterator_rc_bitmap_next (iterator)) ;
     }
     else
-    {
+    { 
         return (GrB_SUCCESS) ;
     }
 }
 
 //------------------------------------------------------------------------------
-// GB_Iterator_rc_getk: get index of current vector for row/col iterator
+// GB_Iterator_rc_getj: get index of current vector for row/col iterator
 //------------------------------------------------------------------------------
 
-static inline GrB_Index GB_Iterator_rc_getk (GxB_Iterator iterator)
+static inline GrB_Index GB_Iterator_rc_getj (GxB_Iterator iterator)
 {
     if (iterator->k >= iterator->anvec)
-    {
+    { 
         // iterator is past the end of the matrix
         return (iterator->avdim) ;
     }
-    else if (iterator->Ah != NULL)
-    {
-        // return the name of the kth vector
+    else if (iterator->A_sparsity == GxB_HYPERSPARSE)
+    { 
+        // return the name of the kth vector: j = Ah [k] if it appears
         return (iterator->Ah [iterator->k]) ;
     }
     else
-    {
-        // return the kth vector
+    { 
+        // return the kth vector: j = k
         return (iterator->k) ;
     }
 }
@@ -11865,7 +11802,7 @@ static inline GrB_Index GB_Iterator_rc_getk (GxB_Iterator iterator)
 //------------------------------------------------------------------------------
 
 static inline GrB_Index GB_Iterator_rc_geti (GxB_Iterator iterator)
-{
+{ 
     return ((iterator->Ai != NULL) ?
         iterator->Ai [iterator->p] : (iterator->p - iterator->pstart)) ;
 }
@@ -11896,7 +11833,7 @@ static inline GrB_Info GxB_rowIterator_attach
     GrB_Matrix A,
     GrB_Descriptor desc
 )
-{
+{ 
     return (GB_Iterator_attach (iterator, A, GxB_BY_ROW, desc)) ;
 }
 
@@ -11918,7 +11855,7 @@ static inline GrB_Info GxB_rowIterator_attach
 // matrix, some of which may actually be empty, and kount <= m.
 
 static inline GrB_Index GxB_rowIterator_kount (GxB_Iterator iterator)
-{
+{ 
     return (iterator->anvec) ;
 }
 
@@ -11930,22 +11867,25 @@ static inline GrB_Index GxB_rowIterator_kount (GxB_Iterator iterator)
 // any specific row; results are undefined if this condition is not met.
 
 // GxB_rowIterator_seekRow: moves a row iterator to the first entry of
-// A(row,:) for the given row.
+// A(row,:) for the given row.  If the matrix is hypersparse, and the row
+// does not appear in the hyperlist, then the iterator is moved to the first
+// row after the given row that does appear in the hyperlist.  The row index
+// can be determined by GxB_rowIterator_getRowIndex.
 
 // The method is always successful; the following are conditions are returned:
 // GxB_EXHAUSTED:   if the row index is >= nrows(A); the row iterator is
 //                  exhausted, but is still attached to the matrix.
 // GrB_NO_VALUE:    if the row index is valid but A(row,:) has no entries; the
-//                  row iterator is attached to A(row,:).
+//                  row iterator is positioned at A(row,:).
 // GrB_SUCCESS:     if the row index is valid and A(row,:) has at least one
-//                  entry. The row iterator is attached to A(row,:).
+//                  entry. The row iterator is positioned at A(row,:).
 //                  GxB_rowIterator_get* can be used to return the indices of
 //                  the first entry in A(row,:), and GxB_Iterator_get* can
 //                  return its value.
 
 static inline
 GrB_Info GxB_rowIterator_seekRow (GxB_Iterator iterator, GrB_Index row)
-{
+{ 
     return (GB_Iterator_rc_seek (iterator, row, false)) ;
 }
 
@@ -11957,13 +11897,13 @@ GrB_Info GxB_rowIterator_seekRow (GxB_Iterator iterator, GrB_Index row)
 // any specific row; results are undefined if this condition is not met.
 
 // GxB_rowIterator_kseek is identical to GxB_rowIterator_seekRow, except for
-// how the row index to attach to is specified.  The row is the kth non-empty
-// row of A.  More precisely, k is in the range 0 to kount-1, where kount is
-// the value returned by GxB_rowIterator_kount.
+// how the row index is specified.  The row is the kth non-empty row of A.
+// More precisely, k is in the range 0 to kount-1, where kount is the value
+// returned by GxB_rowIterator_kount.
 
 static inline
 GrB_Info GxB_rowIterator_kseek (GxB_Iterator iterator, GrB_Index k)
-{
+{ 
     return (GB_Iterator_rc_seek (iterator, k, true)) ;
 }
 
@@ -11971,8 +11911,9 @@ GrB_Info GxB_rowIterator_kseek (GxB_Iterator iterator, GrB_Index k)
 // GxB_rowIterator_nextRow: move a row iterator to the next row of a matrix
 //------------------------------------------------------------------------------
 
-// On input, the row iterator must already be attached to a row of matrix via
-// a prior to call to GxB_rowIterator_*seek* or GxB_rowIterator_nextRow;
+// On input, the row iterator must already be attached to a matrix via a prior
+// call to GxB_rowIterator_attach, and the iterator must be at a specific row,
+// via a prior call to GxB_rowIterator_*seek* or GxB_rowIterator_nextRow;
 // results are undefined if this condition is not met.
 
 // If the the row iterator is currently at A(row,:), it is moved to A(row+1,:),
@@ -11980,10 +11921,10 @@ GrB_Info GxB_rowIterator_kseek (GxB_Iterator iterator, GrB_Index k)
 // method.  That is, empty rows may be skipped.
 
 // The method is always successful, and the return conditions are identical to
-// the successful return conditions of GxB_rowIterator_seekRow.
+// the return conditions of GxB_rowIterator_seekRow.
 
 static inline GrB_Info GxB_rowIterator_nextRow (GxB_Iterator iterator)
-{
+{ 
     return (GB_Iterator_rc_knext (iterator)) ;
 }
 
@@ -11991,8 +11932,9 @@ static inline GrB_Info GxB_rowIterator_nextRow (GxB_Iterator iterator)
 // GxB_rowIterator_nextCol: move a row iterator to the next entry in A(row,:)
 //------------------------------------------------------------------------------
 
-// On input, the row iterator must be already attached to a row of matrix via
-// a prior to call to GxB_rowIterator_*seek* or GxB_rowIterator_nextRow;
+// On input, the row iterator must already be attached to a matrix via a prior
+// call to GxB_rowIterator_attach, and the iterator must be at a specific row,
+// via a prior call to GxB_rowIterator_*seek* or GxB_rowIterator_nextRow;
 // results are undefined if this condition is not met.
 
 // The method is always successful, and returns the following conditions:
@@ -12002,7 +11944,7 @@ static inline GrB_Info GxB_rowIterator_nextRow (GxB_Iterator iterator)
 //                  A(row,:).
 
 static inline GrB_Info GxB_rowIterator_nextCol (GxB_Iterator iterator)
-{
+{ 
     return (GB_Iterator_rc_inext (iterator)) ;
 }
 
@@ -12016,11 +11958,12 @@ static inline GrB_Info GxB_rowIterator_nextCol (GxB_Iterator iterator)
 // The method returns nrows(A) if the iterator is exhausted, or the current
 // row index otherwise.  There need not be any entry in the current row.
 // Zero is returned if the iterator is attached to the matrix but
-// GxB_rowIterator_*seek* has not been called.
+// GxB_rowIterator_*seek* has not been called, but this does not mean the
+// iterator is positioned at row zero.
 
 static inline GrB_Index GxB_rowIterator_getRowIndex (GxB_Iterator iterator)
-{
-    return (GB_Iterator_rc_getk (iterator)) ;
+{ 
+    return (GB_Iterator_rc_getj (iterator)) ;
 }
 
 //------------------------------------------------------------------------------
@@ -12034,7 +11977,7 @@ static inline GrB_Index GxB_rowIterator_getRowIndex (GxB_Iterator iterator)
 // GrB_SUCCESS.  Results are undefined if this condition is not met.
 
 static inline GrB_Index GxB_rowIterator_getColIndex (GxB_Iterator iterator)
-{
+{ 
     return (GB_Iterator_rc_geti (iterator)) ;
 }
 
@@ -12050,20 +11993,20 @@ static inline GrB_Info GxB_colIterator_attach
     GrB_Matrix A,
     GrB_Descriptor desc
 )
-{
+{ 
     // attach a column iterator to a matrix
     return (GB_Iterator_attach (iterator, A, GxB_BY_COL, desc)) ;
 }
 
 static inline GrB_Index GxB_colIterator_kount (GxB_Iterator iterator)
-{
+{ 
     // return # of nonempty columns of the matrix
     return (iterator->anvec) ;
 }
 
 static inline
 GrB_Info GxB_colIterator_seekCol (GxB_Iterator iterator, GrB_Index col)
-{
+{ 
     // move a column iterator that is already attached to A, to the first
     // entry of A(:,col)
     return (GB_Iterator_rc_seek (iterator, col, false)) ;
@@ -12071,32 +12014,32 @@ GrB_Info GxB_colIterator_seekCol (GxB_Iterator iterator, GrB_Index col)
 
 static inline
 GrB_Info GxB_colIterator_kseek (GxB_Iterator iterator, GrB_Index k)
-{
+{ 
     // move a column iterator that is already attached to A, to the first
     // entry of the kth non-empty column of A
     return (GB_Iterator_rc_seek (iterator, k, true)) ;
 }
 
 static inline GrB_Info GxB_colIterator_nextCol (GxB_Iterator iterator)
-{
+{ 
     // move a column iterator to the first entry of the next column
     return (GB_Iterator_rc_knext (iterator)) ;
 }
 
 static inline GrB_Info GxB_colIterator_nextRow (GxB_Iterator iterator)
-{
+{ 
     // move a column iterator to the next row in the same column
     return (GB_Iterator_rc_inext (iterator)) ;
 }
 
 static inline GrB_Index GxB_colIterator_getColIndex (GxB_Iterator iterator)
-{
+{ 
     // return the column index of the current entry for a column iterator
-    return (GB_Iterator_rc_getk (iterator)) ;
+    return (GB_Iterator_rc_getj (iterator)) ;
 }
 
 static inline GrB_Index GxB_colIterator_getRowIndex (GxB_Iterator iterator)
-{
+{ 
     // return the row index of the current entry for a column iterator
     return (GB_Iterator_rc_geti (iterator)) ;
 }
@@ -12122,7 +12065,7 @@ single thread iteration of a whole matrix, one entry at at time
         // get the entry A(i,j)
         GrB_Index i, j ;
         GxB_Matrix_Iterator_getIndex (iterator, &i, &j) ;
-        double  aij = GxB_Iterator_get_FP64 (iterator) ;
+        double aij = GxB_Iterator_get_FP64 (iterator) ;
         // move to the next entry in A
         info = GxB_Matrix_Iterator_next (iterator) ;
     }
@@ -12144,7 +12087,6 @@ single thread iteration of a whole matrix, one entry at at time
 // The following error conditions are returned:
 // GrB_NULL_POINTER:    if the iterator or A are NULL.
 // GrB_INVALID_OBJECT:  if the matrix A is invalid.
-// GrB_NOT_IMPLEMENTED: if the matrix A cannot be iterated by row.
 // GrB_OUT_OF_MEMORY:   if the method runs out of memory.
 
 // If successful, the entry iterator is attached to the matrix, but not to any
@@ -12157,7 +12099,7 @@ static inline GrB_Info GxB_Matrix_Iterator_attach
     GrB_Matrix A,
     GrB_Descriptor desc
 )
-{
+{ 
     return (GB_Iterator_attach (iterator, A, GxB_NO_FORMAT, desc)) ;
 }
 
@@ -12175,7 +12117,7 @@ static inline GrB_Info GxB_Matrix_Iterator_attach
 // matrix has no entries.
 
 static inline GrB_Index GxB_Matrix_Iterator_getpmax (GxB_Iterator iterator)
-{
+{ 
     return (iterator->pmax) ;
 }
 
@@ -12223,7 +12165,7 @@ GB_PUBLIC GrB_Info GxB_Matrix_Iterator_next (GxB_Iterator iterator) ;
 // met.
 
 static inline GrB_Index GxB_Matrix_Iterator_getp (GxB_Iterator iterator)
-{
+{ 
     return (iterator->p) ;
 }
 
@@ -12247,16 +12189,16 @@ static inline void GxB_Matrix_Iterator_getIndex
     // get row and column index of current entry, for matrix iterator
     switch (iterator->A_sparsity)
     {
-        default : 
+        default:  
         case GxB_SPARSE : 
         {
             if (iterator->by_col)
-            {
+            { 
                 (*row) = iterator->Ai [iterator->p] ;
                 (*col) = iterator->k ;
             }
             else
-            {
+            { 
                 (*row) = iterator->k ;
                 (*col) = iterator->Ai [iterator->p] ;
             }
@@ -12266,12 +12208,12 @@ static inline void GxB_Matrix_Iterator_getIndex
         case GxB_HYPERSPARSE : 
         {
             if (iterator->by_col)
-            {
+            { 
                 (*row) = iterator->Ai [iterator->p] ;
                 (*col) = iterator->Ah [iterator->k] ;
             }
             else
-            {
+            { 
                 (*row) = iterator->Ah [iterator->k] ;
                 (*col) = iterator->Ai [iterator->p] ;
             }
@@ -12282,12 +12224,12 @@ static inline void GxB_Matrix_Iterator_getIndex
         case GxB_FULL : 
         {
             if (iterator->by_col)
-            {
+            { 
                 (*row) = iterator->p - iterator->pstart ;
                 (*col) = iterator->k ;
             }
             else
-            {
+            { 
                 (*row) = iterator->k ;
                 (*col) = iterator->p - iterator->pstart ;
             }
@@ -12297,84 +12239,255 @@ static inline void GxB_Matrix_Iterator_getIndex
 }
 
 //==============================================================================
+// GxB_Vector_Iterator_*: iterate over the entries of a vector
+//==============================================================================
+
+/* Example usage:
+
+single thread iteration of a whole vector, one entry at at time
+
+    // create an iterator
+    GxB_Iterator iterator ;
+    GxB_Iterator_new (&iterator) ;
+    // attach it to the vector v, known to be type GrB_FP64
+    GrB_Info info = GxB_Vector_Iterator_attach (iterator, v, NULL) ;
+    if (info < 0) { handle the failure ... }
+    // seek to the first entry
+    info = GxB_Vector_Iterator_seek (iterator, 0) ;
+    while (info != GxB_EXHAUSTED)
+    {
+        // get the entry v(i)
+        GrB_Index i = GxB_Vector_Iterator_getIndex (iterator) ;
+        double vi = GxB_Iterator_get_FP64 (iterator) ;
+        // move to the next entry in v
+        info = GxB_Vector_Iterator_next (iterator) ;
+    }
+    GrB_free (&iterator) ;
+
+*/
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_attach: attach an iterator to a vector
+//------------------------------------------------------------------------------
+
+// On input, the iterator must already exist, having been created by
+// GxB_Iterator_new.
+
+// GxB_Vector_Iterator_attach attaches an iterator to a vector.  If the
+// iterator is already attached to a vector or matrix, it is detached and then
+// attached to the given vector v.
+
+// The following error conditions are returned:
+// GrB_NULL_POINTER:    if the iterator or v are NULL.
+// GrB_INVALID_OBJECT:  if the vector v is invalid.
+// GrB_OUT_OF_MEMORY:   if the method runs out of memory.
+
+// If successful, the iterator is attached to the vector, but not to any
+// specific entry.  Use GxB_Vector_Iterator_seek to move the iterator to a
+// particular entry.
+
+GB_PUBLIC GrB_Info GxB_Vector_Iterator_attach
+(
+    GxB_Iterator iterator,
+    GrB_Vector v,
+    GrB_Descriptor desc
+) ;
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_getpmax: return the range of the iterator
+//------------------------------------------------------------------------------
+
+// On input, the iterator must be already attached to a vector via
+// GxB_Vector_Iterator_attach; results are undefined if this condition is not
+// met.
+
+// Entries in a vector are given an index p, ranging from 0 to pmax-1, where
+// pmax >= nvals(v).  For sparse and full vectors, pmax is equal to nvals(v).
+// For a size-m bitmap vector, pmax=m, or pmax=0 if the vector has no entries.
+
+static inline GrB_Index GxB_Vector_Iterator_getpmax (GxB_Iterator iterator)
+{ 
+    return (iterator->pmax) ;
+}
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_seek: seek to a specific entry
+//------------------------------------------------------------------------------
+
+// On input, the iterator must be already attached to a vector via
+// GxB_Vector_Iterator_attach; results are undefined if this condition is not
+// met.
+
+// The input p is in range 0 to pmax-1, which points to an entry in the vector,
+// or p >= pmax if the iterator is exhausted, where pmax is the return value
+// from GxB_Vector_Iterator_getpmax.
+
+// Returns GrB_SUCCESS if the iterator is at an entry that exists in the
+// vector, or GxB_EXHAUSTED if the iterator is exhausted.
+
+static inline
+GrB_Info GxB_Vector_Iterator_seek (GxB_Iterator iterator, GrB_Index p)
+{
+    if (p >= iterator->pmax)
+    { 
+        // the iterator is exhausted
+        iterator->p = iterator->pmax ;
+        return (GxB_EXHAUSTED) ;
+    }
+    else
+    {
+        // seek to an arbitrary position in the vector
+        iterator->p = p ;
+        if (iterator->A_sparsity == GxB_BITMAP)
+        {
+            for ( ; iterator->p < iterator->pmax ; iterator->p++)
+            {
+                if (iterator->Ab [iterator->p])
+                { 
+                    // found next entry
+                    return (GrB_SUCCESS) ;
+                }
+            }
+            return (GxB_EXHAUSTED) ;
+        }
+    }
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_next: move to the next entry of a vector
+//------------------------------------------------------------------------------
+
+// On input, the iterator must be already attached to a vector via
+// GxB_Vector_Iterator_attach, and the position of the iterator must also have
+// been defined by a prior call to GxB_Vector_Iterator_seek or
+// GxB_Vector_Iterator_next.  Results are undefined if these conditions are not
+// met.
+
+// Returns GrB_SUCCESS if the iterator is at an entry that exists in the
+// vector, or GxB_EXHAUSTED if the iterator is exhausted.
+
+static inline GrB_Info GxB_Vector_Iterator_next (GxB_Iterator iterator)
+{
+    // move to the next entry
+    if (++iterator->p >= iterator->pmax)
+    { 
+        // the iterator is exhausted
+        iterator->p = iterator->pmax ;
+        return (GxB_EXHAUSTED) ;
+    }
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_getp: get the current position of a vector iterator
+//------------------------------------------------------------------------------
+
+// On input, the iterator must be already attached to a vector via
+// GxB_Vector_Iterator_attach, and the position of the iterator must also have
+// been defined by a prior call to GxB_Vector_Iterator_seek or
+// GxB_Vector_Iterator_next.  Results are undefined if these conditions are not
+// met.
+
+static inline GrB_Index GxB_Vector_Iterator_getp (GxB_Iterator iterator)
+{ 
+    return (iterator->p) ;
+}
+
+//------------------------------------------------------------------------------
+// GxB_Vector_Iterator_getIndex: get the index of a vector entry
+//------------------------------------------------------------------------------
+
+// On input, the iterator must be already attached to a vector via
+// GxB_Vector_Iterator_attach, and the position of the iterator must also have
+// been defined by a prior call to GxB_Vector_Iterator_seek or
+// GxB_Vector_Iterator_next, with a return value of GrB_SUCCESS.  Results are
+// undefined if these conditions are not met.
+
+static inline GrB_Index GxB_Vector_Iterator_getIndex (GxB_Iterator iterator)
+{ 
+    return ((iterator->Ai != NULL) ? iterator->Ai [iterator->p] : iterator->p) ;
+}
+
+//==============================================================================
 // GxB_Iterator_get_TYPE: get value of the current entry for any iterator
 //==============================================================================
 
 // On input, the prior call to GxB_*Iterator_*seek*, or GxB_*Iterator_*next*
 // must have returned GrB_SUCCESS, indicating that the iterator is at a valid
-// current entry.
+// current entry for either a matrix or vector.
 
 // Returns the value of the current entry at the position determined by the
 // iterator.  No typecasting is permitted; the method name must match the
-// type of the matrix.
+// type of the matrix or vector.
 
 static inline bool GxB_Iterator_get_BOOL (GxB_Iterator iterator)
-{
+{ 
     return (((bool *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline int8_t GxB_Iterator_get_INT8 (GxB_Iterator iterator)
-{
+{ 
     return (((int8_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline int16_t GxB_Iterator_get_INT16 (GxB_Iterator iterator)
-{
+{ 
     return (((int16_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline int32_t GxB_Iterator_get_INT32 (GxB_Iterator iterator)
-{
+{ 
     return (((int32_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline int64_t GxB_Iterator_get_INT64 (GxB_Iterator iterator)
-{
+{ 
     return (((uint64_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline uint8_t GxB_Iterator_get_UINT8 (GxB_Iterator iterator)
-{
+{ 
     return (((uint8_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline uint16_t GxB_Iterator_get_UINT16 (GxB_Iterator iterator)
-{
+{ 
     return (((uint16_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline uint32_t GxB_Iterator_get_UINT32 (GxB_Iterator iterator)
-{
+{ 
     return (((uint32_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline uint64_t GxB_Iterator_get_UINT64 (GxB_Iterator iterator)
-{
+{ 
     return (((uint64_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline float GxB_Iterator_get_FP32 (GxB_Iterator iterator)
-{
+{ 
     return (((float *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline double GxB_Iterator_get_FP64 (GxB_Iterator iterator)
-{
+{ 
     return (((double *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline GxB_FC32_t GxB_Iterator_get_FC32 (GxB_Iterator iterator)
-{
+{ 
     return (((GxB_FC32_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline GxB_FC64_t GxB_Iterator_get_FC64 (GxB_Iterator iterator)
-{
+{ 
     return (((GxB_FC64_t *) iterator->Ax) [iterator->iso ? 0 : iterator->p]) ;
 }
 
 static inline void GxB_Iterator_get_UDT (GxB_Iterator iterator, void *value)
-{
+{ 
     memcpy (value, iterator->Ax +
         (iterator->iso ? 0 : (iterator->type_size * iterator->p)),
         iterator->type_size) ;

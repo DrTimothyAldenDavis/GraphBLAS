@@ -33,11 +33,7 @@ void gb_usage       // check usage and make sure GrB.init has been called
         // initialize GraphBLAS
         //----------------------------------------------------------------------
 
-        OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree
-            #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-            , false // unused in v5.2.0, removed in v6.0
-            #endif
-            )) ;
+        OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
 
         // mxMalloc, mxCalloc, mxRealloc, and mxFree are not thread safe
         GB_Global_malloc_is_thread_safe_set (false) ;

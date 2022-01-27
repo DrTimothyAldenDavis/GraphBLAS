@@ -156,11 +156,7 @@ void mexFunction
             A_copy = gb_new (atype, mnz, 1, GxB_BY_COL, 
                 GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
-            #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-            OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
-            #else
             OK1 (A_copy, GrB_Matrix_wait (A_copy, GrB_MATERIALIZE)) ;
-            #endif
             A = A_copy ;
         }
     }
@@ -175,11 +171,7 @@ void mexFunction
             A_copy = gb_new (atype, 1, mnz, GxB_BY_ROW,
                 GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
-            #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-            OK1 (A_copy, GrB_Matrix_wait (&A_copy)) ;
-            #else
             OK1 (A_copy, GrB_Matrix_wait (A_copy, GrB_MATERIALIZE)) ;
-            #endif
             A = A_copy ;
         }
     }

@@ -16,7 +16,7 @@ GrB_Info GxB_Iterator_new (GxB_Iterator *iterator)
     size_t header_size ;
     (*iterator) = GB_CALLOC (1, struct GB_Iterator_opaque, &header_size) ;
     if (*iterator == NULL)
-    {
+    { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }

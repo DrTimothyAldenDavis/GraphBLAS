@@ -146,68 +146,11 @@
 #endif
 
 //------------------------------------------------------------------------------
-// compiler variations
+// malloc.h: required include file for Microsoft Visual Studio
 //------------------------------------------------------------------------------
 
-// Determine the restrict keyword, and whether or not variable-length arrays
-// are supported.
-
-
-#if GB_COMPILER_NVCC
-
-    // NVIDIA nvcc compiler for host or device code
-    #define GB_HAS_VLA 1
-    #define restrict __restrict__
-
-#elif GB_COMPILER_MSC
-
-    // Microsoft Visual Studio does not have the restrict keyword, but it does
-    // support __restrict, which is equivalent.  Variable-length arrays are
-    // not supported.  OpenMP tasks are not available.
-    #define GB_HAS_VLA  0
-    #if defined ( __cplusplus )
-        // C++ does not have the restrict keyword
-        #define restrict
-    #else
-        // C uses __restrict
-        #define restrict __restrict
-    #endif
-    // Microsoft-specific include file
+#if GB_COMPILER_MSC
     #include <malloc.h>
-
-#elif defined ( __cplusplus )
-
-    #define GB_HAS_VLA  1
-    // C++ does not have the restrict keyword
-    #define restrict
-
-#elif GxB_STDC_VERSION >= 199901L
-
-    // ANSI C99 and later have the restrict keyword and variable-length arrays.
-    #define GB_HAS_VLA  1
-
-#else
-
-    // ANSI C95 and earlier have neither
-    #define GB_HAS_VLA  0
-    #define restrict
-
-#endif
-
-//------------------------------------------------------------------------------
-// PGI_COMPILER_BUG
-//------------------------------------------------------------------------------
-
-// If GraphBLAS is compiled with -DPGI_COMPILER_BUG, then a workaround is
-// enabled for a bug in the PGI compiler.  The compiler does not correctly
-// handle automatic arrays of variable size.
-
-#ifdef PGI_COMPILER_BUG
-
-    // override the ANSI C compiler to turn off variable-length arrays
-    #undef  GB_HAS_VLA
-    #define GB_HAS_VLA  0
-
 #endif
 
 //------------------------------------------------------------------------------
@@ -216,6 +159,7 @@
 
 // GB_PRAGMA(x) becomes "#pragma x", but the way to do this depends on the
 // compiler:
+
 #if GB_COMPILER_MSC
 
     // MS Visual Studio is not ANSI C11 compliant, and uses __pragma:
@@ -237,8 +181,6 @@
 
 #endif
 
-#define GB_PRAGMA_IVDEP GB_PRAGMA(ivdep)
-
 //------------------------------------------------------------------------------
 // variable-length arrays
 //------------------------------------------------------------------------------
@@ -256,6 +198,41 @@
 // GB_VLA(xsize) is either defined as xsize (for ANSI C99 or later), or a fixed
 // size of 128, in which case user-defined types
 // are limited to a max of 128 bytes.
+
+#if GB_COMPILER_NVCC
+
+    // NVIDIA nvcc compiler for host or device code
+    #define GB_HAS_VLA 1
+
+#elif GB_COMPILER_MSC
+
+    // Microsoft Visual Studio does not support variable-length arrays.
+    #define GB_HAS_VLA  0
+
+#elif defined ( __cplusplus )
+
+    #define GB_HAS_VLA  1
+
+#elif GxB_STDC_VERSION >= 199901L
+
+    // ANSI C99 and later
+    #define GB_HAS_VLA  1
+
+#else
+
+    // ANSI C95 and earlier
+    #define GB_HAS_VLA  0
+
+#endif
+
+#ifdef PGI_COMPILER_BUG
+    // If GraphBLAS is compiled with -DPGI_COMPILER_BUG, then a workaround is
+    // enabled for a bug in the PGI compiler.  The compiler does not correctly
+    // handle automatic arrays of variable size.
+    #undef  GB_HAS_VLA
+    #define GB_HAS_VLA  0
+#endif
+
 
 #if ( GB_HAS_VLA )
 

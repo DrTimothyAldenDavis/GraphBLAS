@@ -7,9 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GraphBLAS.h"
-#include "GB_assert.h"
-#include "GB_opaque.h"
+#include "GB.h"
 #include "GB_Semiring_new.h"
 
 GrB_Info GB_Semiring_new            // create a semiring

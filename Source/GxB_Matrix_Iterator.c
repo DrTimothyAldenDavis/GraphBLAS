@@ -13,8 +13,8 @@
 //------------------------------------------------------------------------------
 
 static inline GrB_Info GB_full_position (GxB_Iterator iterator)
-{
-    iterator->k = iterator->p % iterator->avlen ;
+{ 
+    iterator->k = iterator->p / iterator->avlen ;
     iterator->pstart = iterator->k * iterator->avlen ;
     iterator->pend = iterator->pstart + iterator->avlen ;
     return (GrB_SUCCESS) ;
@@ -29,7 +29,7 @@ static inline GrB_Info GB_check_for_end_of_vector (GxB_Iterator iterator)
     // move to the next vector if p has reached the end of the current vector 
     switch (iterator->A_sparsity)
     {
-        default : 
+        default: 
         case GxB_SPARSE : 
         case GxB_HYPERSPARSE : 
         {
@@ -39,7 +39,7 @@ static inline GrB_Info GB_check_for_end_of_vector (GxB_Iterator iterator)
                 iterator->pstart = iterator->pend ;
                 iterator->k++ ;
                 while (iterator->Ap [iterator->k+1] == iterator->pend)
-                {
+                { 
                     // iterator->k is an empty vector; move to the next one
                     iterator->k++ ;
                     ASSERT (iterator->k < iterator->anvec) ;
@@ -59,7 +59,7 @@ static inline GrB_Info GB_check_for_end_of_vector (GxB_Iterator iterator)
                 {
                     // found the next entry; check if it is past the kth vector
                     if (iterator->p >= iterator->pend)
-                    {
+                    { 
                         // find the vector of this entry
                         return (GB_full_position (iterator)) ;
                     }
@@ -73,7 +73,7 @@ static inline GrB_Info GB_check_for_end_of_vector (GxB_Iterator iterator)
         case GxB_FULL : 
         {
             if (iterator->p >= iterator->pend)
-            {
+            { 
                 // kth vector is done; move to the next vector
                 iterator->k++ ;
                 iterator->pstart += iterator->avlen ;
@@ -94,13 +94,13 @@ GrB_Info GxB_Matrix_Iterator_next (GxB_Iterator iterator)
 {
     // move to the next entry
     if (++iterator->p >= iterator->pmax)
-    {
+    { 
         // the iterator is exhausted
         iterator->p = iterator->pmax ;
         return (GxB_EXHAUSTED) ;
     }
     else
-    {
+    { 
         // move to next vector if iterator has reached the end of a vector
         return (GB_check_for_end_of_vector (iterator)) ;
     }
@@ -117,13 +117,13 @@ GrB_Info GxB_Matrix_Iterator_seek
 )
 {
     if (p >= iterator->pmax)
-    {
+    { 
         // the iterator is exhausted
         iterator->p = iterator->pmax ;
         return (GxB_EXHAUSTED) ;
     }
     else if (p == 0)
-    {
+    { 
         // seek to the first entry of the first vector A(:,0)
         iterator->pstart = 0 ;
         iterator->pend = (iterator->Ap != NULL) ?
@@ -139,10 +139,10 @@ GrB_Info GxB_Matrix_Iterator_seek
         iterator->p = p ;
         switch (iterator->A_sparsity)
         {
-            default : 
+            default: 
             case GxB_SPARSE : 
             case GxB_HYPERSPARSE : 
-            {
+            { 
                 // find the vector k that contains position p
                 iterator->k = GB_search_for_vector (p, iterator->Ap,
                     0, iterator->anvec, iterator->avlen) ;
@@ -155,7 +155,7 @@ GrB_Info GxB_Matrix_Iterator_seek
                 for ( ; iterator->p < iterator->pmax ; iterator->p++)
                 {
                     if (iterator->Ab [iterator->p])
-                    {
+                    { 
                         // found next entry; find the vector that contains it
                         return (GB_full_position (iterator)) ;
                     }
@@ -164,7 +164,7 @@ GrB_Info GxB_Matrix_Iterator_seek
             }
             break ;
             case GxB_FULL : 
-            {
+            { 
                 // find the vector k that contains position p
                 return (GB_full_position (iterator)) ;
             }

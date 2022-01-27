@@ -105,11 +105,7 @@ GrB_Scalar GB_mx_get_Scalar
         mexErrMsgTxt ("unknown scalar type") ;
     }
 
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    GrB_Scalar_wait_(&Scalar) ;
-    #else
     GrB_Scalar_wait_(Scalar, GrB_MATERIALIZE) ;
-    #endif
 
     return (Scalar) ;
 }

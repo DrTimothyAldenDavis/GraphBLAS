@@ -7,10 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// Seek a row iterator to A(j,:), a col iterator to A(:,j).  If kth_vector is
+// Seek a row iterator to A(j,:), a col iterator to A(:,j).  If jth_vector is
 // true, seek to the jth vector instead.  For sparse, bitmap, or full matrices,
 // this is the same as A(j,:) for a row iterator or A(:,j) for a col iterator.
-// It only affects how hypersparse matrices are traversed.
+// The jth_vector parameter only affects how hypersparse matrices are
+// traversed.
 
 #include "GB.h"
 
@@ -18,7 +19,7 @@ GrB_Info GB_Iterator_rc_seek
 (
     GxB_Iterator iterator,
     GrB_Index j,
-    bool kth_vector
+    bool jth_vector
 )
 {
 
@@ -26,8 +27,11 @@ GrB_Info GB_Iterator_rc_seek
     // check if the iterator is exhausted
     //--------------------------------------------------------------------------
 
-    if (j >= ((kth_vector) ? iterator->anvec : iterator->avdim))
-    {
+    if (j >= ((jth_vector) ? iterator->anvec : iterator->avdim))
+    { 
+        iterator->pstart = 0 ;
+        iterator->pend = 0 ;
+        iterator->p = 0 ;
         iterator->k = iterator->anvec ;
         return (GxB_EXHAUSTED) ;
     }
@@ -38,9 +42,9 @@ GrB_Info GB_Iterator_rc_seek
 
     switch (iterator->A_sparsity)
     {
-        default : 
+        default: 
         case GxB_SPARSE : 
-        {
+        { 
             // attach to A(:,j), which is also the jth vector of A
             iterator->pstart = iterator->Ap [j] ;
             iterator->pend = iterator->Ap [j+1] ;
@@ -51,55 +55,55 @@ GrB_Info GB_Iterator_rc_seek
 
         case GxB_HYPERSPARSE : 
         {
-            if (kth_vector)
-            {
+            int64_t k ;
+            if (jth_vector)
+            { 
                 // attach to the jth vector of A; this is much faster than
                 // searching Ah for the value j, to attach to A(:,j)
-                iterator->pstart = iterator->Ap [j] ;
-                iterator->pend = iterator->Ap [j+1] ;
+                k = j ;
+                iterator->pstart = iterator->Ap [k] ;
+                iterator->pend = iterator->Ap [k+1] ;
                 iterator->p = iterator->pstart ;
-                iterator->k = j ;
+                iterator->k = k ;
             }
             else
             {
-                // find the A(:,j) vector in Ah [0:anvec-1]
-                int64_t k = 0 ;
-                bool found ;
+                // find k so that j = Ah [k], or if not found, return k as the
+                // smallest value so that j < Ah [k]. 
+                k = 0 ;
                 const int64_t *restrict Ah = iterator->Ah ;
-                if (j == 0)
-                {
-                    found = (Ah [0] == 0) ;
-                }
-                else
-                {
+                if (j > 0)
+                { 
+                    bool found ;
                     int64_t pright = iterator->anvec-1 ;
                     GB_SPLIT_BINARY_SEARCH (j, Ah, k, pright, found) ;
                 }
-                if (found)
-                {
-                    // A(:,j) is the kth vector in the Ah hyperlist
-                    iterator->pstart = iterator->Ap [k] ;
-                    iterator->pend = iterator->Ap [k+1] ;
-                    iterator->p = iterator->pstart ;
-                    iterator->k = k ;
-                }
-                else
-                {
-                    // A(:,j) is not in the hyperlist; point the iterator to the
-                    // vector that appears just before j, or -1 if j < Ah [0],
-                    // so that seeking to the next vector with iterator->k++
-                    // moves to the first vector larger than j.
-                    iterator->pstart = 0 ;
-                    iterator->pend = 0 ;
-                    iterator->p = 0 ;
-                    iterator->k = --k ;
-                }
+            }
+            // If j is found, A(:,j) is the kth vector in the Ah hyperlist.
+            // If j is not found, the iterator is placed at the first vector
+            // after j in the hyperlist, if this vector exists.
+            if (k >= iterator->anvec)
+            { 
+                // the kth vector does not exist
+                iterator->pstart = 0 ;
+                iterator->pend = 0 ;
+                iterator->p = 0 ;
+                iterator->k = iterator->anvec ;
+                return (GxB_EXHAUSTED) ;
+            }
+            else
+            { 
+                // the kth vector exists
+                iterator->pstart = iterator->Ap [k] ;
+                iterator->pend = iterator->Ap [k+1] ;
+                iterator->p = iterator->pstart ;
+                iterator->k = k ;
             }
         }
         break ;
 
         case GxB_BITMAP : 
-        {
+        { 
             // attach to A(:,j), which is also the jth vector of A
             iterator->pstart = j * iterator->avlen ;
             iterator->pend = (j+1) * iterator->avlen ;
@@ -110,7 +114,7 @@ GrB_Info GB_Iterator_rc_seek
         break ;
 
         case GxB_FULL : 
-        {
+        { 
             // attach to A(:,j), which is also the jth vector of A
             iterator->pstart = j * iterator->avlen ;
             iterator->pend = (j+1) * iterator->avlen ;

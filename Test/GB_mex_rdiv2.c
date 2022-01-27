@@ -65,11 +65,7 @@ GrB_Info axb (GB_Context Context)
     // create the rdiv2 operator
     info = GrB_BinaryOp_new (&My_rdiv2,
         (GxB_binary_function) my_rdiv2, GrB_FP64, GrB_FP64, GrB_FP32);
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    GrB_BinaryOp_wait_(&My_rdiv2) ;
-    #else
     GrB_BinaryOp_wait_(My_rdiv2, GrB_MATERIALIZE) ;
-    #endif
     if (info != GrB_SUCCESS) return (info) ;
     info = GrB_Semiring_new (&My_plus_rdiv2, GxB_PLUS_FP64_MONOID, My_rdiv2) ;
     if (info != GrB_SUCCESS)
@@ -253,11 +249,7 @@ void mexFunction
     GrB_Matrix_assign_(B, NULL, NULL, B64, GrB_ALL, 0, GrB_ALL, 0, NULL) ;
 
     // B must be completed
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    GrB_Matrix_wait (&B) ;
-    #else
     GrB_Matrix_wait (B, GrB_MATERIALIZE) ;
-    #endif
 
     METHOD (axb (Context)) ;
 

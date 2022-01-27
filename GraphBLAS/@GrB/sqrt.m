@@ -8,5 +8,5 @@ function C = sqrt (G)
 % SPDX-License-Identifier: GPL-3.0-or-later
 
 G = G.opaque ;
-C = GrB (gb_to_real_if_imag_zero (gb_trig ('sqrt', G))) ;
+C = GrB (gb_check_imag_zero (gb_trig ('sqrt', G))) ;
 

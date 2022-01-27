@@ -542,11 +542,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // return the GraphBLAS matrix
     //--------------------------------------------------------------------------
 
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    info = GrB_Matrix_wait (&A) ;
-    #else
     info = GrB_Matrix_wait (A, GrB_MATERIALIZE) ;
-    #endif
     if (info != GrB_SUCCESS)
     {
         FREE_ALL ;
