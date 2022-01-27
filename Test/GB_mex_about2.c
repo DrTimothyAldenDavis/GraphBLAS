@@ -91,11 +91,7 @@ void mexFunction
 
     // force a zombie into the scalar
     OK (GrB_Scalar_setElement_INT32 (scalar, 707)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Scalar_wait (&scalar)) ;
-    #else
     OK (GrB_Scalar_wait (scalar, GrB_MATERIALIZE)) ;
-    #endif
     OK (GxB_Scalar_fprint (scalar, "scalar after wait", 3, NULL)) ;
     OK (GxB_Matrix_Option_set ((GrB_Matrix) scalar, GxB_SPARSITY_CONTROL,
         GxB_SPARSE)) ;
@@ -159,11 +155,7 @@ void mexFunction
     OK (GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
     OK (GrB_Matrix_assign_INT32 (A, NULL, NULL, 3, GrB_ALL, n, GrB_ALL, n,
         NULL)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&A)) ;
-    #else
     OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
-    #endif
     OK (GxB_Matrix_fprint (A, "valid matrix", GxB_SHORT, NULL)) ;
     // mangle the matrix
     GB_FREE (&(A->p), A->p_size) ;
@@ -180,11 +172,7 @@ void mexFunction
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
     OK (GrB_Matrix_assign_INT32 (A, NULL, NULL, 3, GrB_ALL, n, GrB_ALL, n,
         NULL)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&A)) ;
-    #else
     OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
-    #endif
 
     A->jumbled = true ;
     ERR (GxB_Matrix_fprint (A, "full matrix cannot be jumbled", GxB_SHORT,
@@ -380,11 +368,7 @@ void mexFunction
     OK (GxB_Matrix_fprint (C, "wild matrix jumbled", GxB_SHORT, NULL)) ;
 
     // unjumble the matrix
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&C)) ;
-    #else
     OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
-    #endif
     OK (GxB_Matrix_fprint (C, "wild matrix unjumbled", GxB_SHORT, NULL)) ;
 
     GrB_Matrix_free_(&C) ;
@@ -431,11 +415,7 @@ void mexFunction
 
     OK (GrB_Matrix_new (&C, GrB_FP32, GB_NMAX, GB_NMAX)) ;
     OK (GrB_Matrix_setElement_FP32 (C, (double) 3, 0, 0)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&C)) ;
-    #else
     OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
-    #endif
     OK (GxB_Matrix_fprint (C, "huge matrix", GxB_SHORT, NULL)) ;
     C->nvec_nonempty = -1 ;
     OK (GB_hypermatrix_prune (C, NULL)) ;
@@ -597,11 +577,7 @@ void mexFunction
     {
         OK (GrB_Matrix_setElement_UDT (C, &ww, kk, kk)) ;
     }
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&C)) ;
-    #else
     OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
-    #endif
     info = GrB_Matrix_assign_UDT (C, C, NULL, &w2, GrB_ALL, 20, GrB_ALL, 20,
         GrB_DESC_S) ;
     wild w3 ;

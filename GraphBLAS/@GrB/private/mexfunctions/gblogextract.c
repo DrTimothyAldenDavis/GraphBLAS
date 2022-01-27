@@ -151,11 +151,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Index gnvals ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK1 (G, GrB_Matrix_wait (&G)) ;
-    #else
     OK1 (G, GrB_Matrix_wait (G, GrB_MATERIALIZE)) ;
-    #endif
     OK (GrB_Matrix_nvals (&gnvals, G)) ;
     OK (GxB_Matrix_Option_get (G, GxB_SPARSITY_STATUS, &sparsity)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 0") ;
@@ -223,11 +219,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Index tnvals ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK1 (T, GrB_Matrix_wait (&T)) ;
-    #else
     OK1 (T, GrB_Matrix_wait (T, GrB_MATERIALIZE)) ;
-    #endif
     OK (GrB_Matrix_nvals (&tnvals, T)) ;
     uint64_t *Tx = T->x ;
     size_t Tx_size = T->x_size ;

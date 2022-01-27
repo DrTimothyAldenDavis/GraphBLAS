@@ -105,10 +105,6 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void * (* user_calloc_function  ) (size_t, size_t), // no longer used
     void * (* user_realloc_function ) (void *, size_t), // optional, can be NULL
     void   (* user_free_function    ) (void *)          // required
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    // parameter added in v3.0, unused in this v5.2.0, to be removed in v6.0
-    , bool ignored
-    #endif
 )
 {
 

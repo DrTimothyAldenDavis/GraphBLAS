@@ -210,10 +210,11 @@ void GB_enumify_semiring   // enumerate a semiring
     // enumify the mask
     //--------------------------------------------------------------------------
 
-    printf("Invoking enumify_mask\n");
+    printf("Invoking enumify_mask, mtype %p\n", mtype);
     int mtype_code = (mtype == NULL) ? 0 : mtype->code ; // 0 to 14
     int mask_ecode ;
     GB_enumify_mask (&mask_ecode, mtype_code, Mask_struct, Mask_comp) ;
+    printf ("got mask_ecode: %d\n", mask_ecode) ;
 
     //--------------------------------------------------------------------------
     // enumify the sparsity structures of C, M, A, and B
@@ -338,8 +339,7 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     //--------------------------------------------------------------------------
 
     printf("stringify mult \n");
-    char s [GB_CUDA_STRLEN+1] ;
-
+    const char *s ;
     printf("mult_ecode: %d\n", mult_ecode);
     GB_charify_binop ( &s, mult_ecode) ;
     GB_macrofy_binop ( fp, "GB_MULT", s, flipxy) ;
@@ -349,10 +349,6 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     //--------------------------------------------------------------------------
 
     printf("stringify monoid \n");
-    char add_macro [GB_CUDA_STRLEN+1] ;
-    char identity_macro [GB_CUDA_STRLEN+1] ;
-    char terminal_expression_macro [GB_CUDA_STRLEN+1] ;
-    char terminal_statement_macro  [GB_CUDA_STRLEN+1] ;
     GB_macrofy_monoid ( fp, add_ecode, id_ecode, term_ecode, is_term) ;
 
     //--------------------------------------------------------------------------
@@ -364,7 +360,6 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     bool c_is_one = false ;
     // TODO:
     // (add_ecode == GB_ANY_binop_code && mult_opcode == GB_PAIR_binop_code) ;
-    char ccast_macro [GB_CUDA_STRLEN+1] ;
     GB_stringify_load ( fp, "GB_PUTC", c_is_one) ;
 
     //--------------------------------------------------------------------------

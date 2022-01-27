@@ -30,7 +30,7 @@ GrB_Scalar GB_Scalar_allocate
 )
 {
     assert (sparsity != GxB_HYPERSPARSE) ;
-    GrB_Scalar s = (GrB_Scalar) GB_matrix_allocate (type, type_size,
+    GrB_Scalar s = (GrB_Scalar) GB_Matrix_allocate (type, type_size,
         1, 1, sparsity, true, false, 1, 1) ;
     return (s) ;
 }
@@ -59,7 +59,7 @@ GrB_Vector GB_Vector_allocate
 )
 {
     assert (sparsity != GxB_HYPERSPARSE) ;
-    GrB_Vector v = (GrB_Vector) GB_matrix_allocate (type, type_size,
+    GrB_Vector v = (GrB_Vector) GB_Matrix_allocate (type, type_size,
         1, length, sparsity, true, iso, anz, 1) ;
     return (v) ;
 }
@@ -68,7 +68,7 @@ GrB_Vector GB_Vector_allocate
 // GB_Matrix_allocate
 //------------------------------------------------------------------------------
 
-GrB_Matrix GB_matrix_allocate
+GrB_Matrix GB_Matrix_allocate
 (
         GrB_Type type,          // NULL on the GPU
         size_t type_size,       // type->size

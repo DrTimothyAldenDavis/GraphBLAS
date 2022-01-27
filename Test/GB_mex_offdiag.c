@@ -73,11 +73,7 @@ void mexFunction
 
     GrB_Scalar_new (&Thunk, GrB_INT64) ;
     GrB_Scalar_setElement_INT64_(Thunk, k) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    GrB_Scalar_wait (&Thunk) ;
-    #else
     GrB_Scalar_wait (Thunk, GrB_MATERIALIZE) ;
-    #endif
 
     // C = offdiag (A,k)
     METHOD (GxB_Matrix_select_(C, NULL, NULL, GxB_OFFDIAG, A, Thunk, NULL)) ;

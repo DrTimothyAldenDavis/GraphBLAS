@@ -208,11 +208,7 @@ void mexFunction
     OK (GxB_Matrix_Option_set ((GrB_Matrix) scalar, GxB_SPARSITY_CONTROL,
         GxB_SPARSE)) ;
     scalar->jumbled = true ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Scalar_wait (&scalar)) ;
-    #else
     OK (GrB_Scalar_wait (scalar, GrB_MATERIALIZE)) ;
-    #endif
 
     OK (GxB_Scalar_fprint (scalar, "scalar", GxB_COMPLETE, NULL)) ;
 
@@ -243,11 +239,7 @@ void mexFunction
     GrB_Index *Ap = NULL, *Ai = NULL, *Ah = NULL ;
     float *Ax = NULL ;
     bool iso, jumbled ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&C)) ;
-    #else
     OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
-    #endif
     OK (GxB_Matrix_fprint (C, "C to export", GxB_COMPLETE, NULL)) ;
 
     // export as CSC
@@ -358,11 +350,7 @@ void mexFunction
                 OK (GrB_Matrix_setElement_UDT (C, &blob_scalar, i, j)) ;
             }
         }
-        #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-        OK (GrB_Matrix_wait (&C)) ;
-        #else
         OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
-        #endif
         OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity_control)) ;
         OK (GxB_Matrix_fprint (C, "C blob", GxB_SHORT, NULL)) ;
 
@@ -449,11 +437,7 @@ void mexFunction
     OK (GrB_Matrix_setElement_UDT (C, &blob_scalar, 1, 1)) ;
     C->jumbled = true ;
     OK (GxB_Matrix_fprint (C, "C blob jumbled", GxB_COMPLETE, NULL)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&C)) ;
-    #else
     OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
-    #endif
     OK (GxB_Matrix_fprint (C, "C blob wait", GxB_COMPLETE, NULL)) ;
 
     // converting a non-iso matrix to non-iso does nothing
@@ -569,11 +553,7 @@ void mexFunction
     OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
     OK (GrB_Matrix_setElement_FP32 (C, 9.9, 4, 4)) ;
     OK (GrB_Matrix_setElement_FP32 (C, 9.7, 3, 3)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&C)) ;
-    #else
     OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
-    #endif
     OK (GrB_Matrix_dup (&A, C)) ;
     save = A->x ;
     A->x = C->x ;
@@ -664,11 +644,7 @@ void mexFunction
     OK (GrB_Matrix_assign_FP32 (C, NULL, NULL, 1, GrB_ALL, 4, GrB_ALL, 4,
         NULL)) ;
     OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait_(&C)) ;
-    #else
     OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
-    #endif
     CHECK (GB_iso_check (C, NULL)) ;
     GrB_Matrix_free_(&C) ;
 
@@ -681,21 +657,13 @@ void mexFunction
     OK (GrB_Matrix_setElement_UDT (C, &blob_scalar, 3, 2)) ;
     OK (GrB_Matrix_setElement_UDT (C, &blob_scalar, 0, 0)) ;
     CHECK (!GB_iso_check (C, NULL)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait_(&C)) ;
-    #else
     OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
-    #endif
     CHECK (GB_iso_check (C, NULL)) ;
 
     blob_scalar.blob [0] = 4 ;
     OK (GrB_Matrix_setElement_UDT (C, &blob_scalar, 4, 4)) ;
     CHECK (!GB_iso_check (C, NULL)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait_(&C)) ;
-    #else
     OK (GrB_Matrix_wait_(C, GrB_MATERIALIZE)) ;
-    #endif
     CHECK (!GB_iso_check (C, NULL)) ;
     GrB_Matrix_free_(&C) ;
 
@@ -743,13 +711,8 @@ void mexFunction
     OK (GxB_Scalar_memoryUsage (&size, scalar)) ;
     printf ("size of scalar: %lu bytes\n", size) ;
 
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Matrix_wait (&C)) ;
-    OK (GrB_Vector_wait (&w)) ;
-    #else
     OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
     OK (GrB_Vector_wait (w, GrB_MATERIALIZE)) ;
-    #endif
 
     OK (GxB_Matrix_fprint (C, "non-empty C for size (no pending)",
         GxB_COMPLETE, NULL)) ;

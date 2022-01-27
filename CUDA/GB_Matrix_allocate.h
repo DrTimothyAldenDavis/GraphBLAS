@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-GrB_Matrix GB_matrix_allocate
+GrB_Matrix GB_Matrix_allocate
         (
                 GrB_Type type,          // NULL on the GPU
                 size_t type_size,       // type->size

@@ -63,7 +63,7 @@
 #define OK(method)                                                          \
 {                                                                           \
     info = method ;                                                         \
-    if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))                    \
+    if (info < 0)                                                           \
     {                                                                       \
         mexPrintf ("[%d] Test failed\n", info) ;                            \
         FAIL (method) ;                                                     \

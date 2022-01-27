@@ -13,9 +13,10 @@
 #define GB_COVERAGE_H
 
 #ifdef GBCOVER
+#include <stdint.h>
 #define GBCOVER_MAX 30000
-GB_PUBLIC int64_t GB_cov [GBCOVER_MAX] ;
-GB_PUBLIC int GB_cover_max ;
+extern int64_t GB_cov [GBCOVER_MAX] ;
+extern int GB_cover_max ;
 #endif
 
 #endif

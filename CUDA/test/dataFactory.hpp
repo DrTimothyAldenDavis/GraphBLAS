@@ -93,54 +93,36 @@ public:
 template<typename T>
 class matrix : public Managed {
   public:
-    uint64_t zombie_count = 0;
     GrB_Matrix mat;
-     int64_t vlen;
-     int64_t vdim;
-     int64_t nnz;
-//     int64_t *p = nullptr;
-//     int64_t *h = nullptr;
-//     int64_t *i = nullptr;
-//     T *x = nullptr;
-     bool is_filled = false;
-
-//     // TODO: Need to figure out whether this container is needed or whether it should wrap the GB_Matrix
-//     int64_t nzmax;
-//    int64_t nvals;
 
      matrix(){
      };
-
-//     matrix( int64_t N, int64_t nvecs) {
-//        vlen = N;
-//        vdim = nvecs;
-//     }
 
      GrB_Matrix get_grb_matrix() {
          return mat;
      }
 
-     void set_zombie_count( uint64_t zc) { mat->nzombies = zc;}
      uint64_t get_zombie_count() { return mat->nzombies;}
-     void add_zombie_count( int nz) { mat->nzombies += nz;}
 
      void clear() {
-//        if ( mat->p != nullptr){  cudaFree(mat->p); mat->p = nullptr; }
-//        if ( mat->h != nullptr){  cudaFree(mat->h); mat->h = nullptr; }
-//        if ( mat->i != nullptr){  cudaFree(mat->i); mat->i = nullptr; }
-//        if ( mat->x != nullptr){  cudaFree(mat->x); mat->x = nullptr; }
-//        is_filled = false;
-//         nnz  = 0;
-//        mat->vlen = 0;
-//        mat->vdim = 0;
-//        mat->nzombies = 0;
+        GrB_Matrix_clear (mat) ;
      }
 
-     void alloc( int64_t N, int64_t Nz) {
-         // allocate a GrB_FP32 matrix (but the A->type is NULL;
-         // the GPU kernel cannot access it anyway since GrB_FP32
-         // is a pointer to a global, statically declared struct on the CPU.
-         mat = GB_matrix_allocate(NULL, sizeof(float), N, N, 2, false, false, Nz, -1);
+     void alloc( int64_t nrows, int64_t ncols) {
+         GrB_Type type ;
+         // FIXME:
+         // if T is bool: type = GrB_BOOL
+         // if T is int8_t: type = GrB_INT8
+         // etc
+         GrB_Matrix_new (&mat, type, nrows, ncols) ;
+         // GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL,
+            // GxB_SPARSE) ;
+            // or:
+            // GxB_HYPERSPARSE, GxB_BITMAP, GxB_FULL
+
+         mat = GB_Matrix_allocate(
+            type,   /// <<<<<<<BUG HERE, was NULL, which is broken
+            sizeof(T), N, N, 2, false, false, Nz, -1);
      }
  
      void fill_random(  int64_t N, int64_t Nz, std::mt19937 r) {
@@ -174,6 +156,11 @@ class matrix : public Managed {
            }
         }
         is_filled = true;
+        mat->jumbled = true ;
+
+        GrB_Info info = GrB_Matrix_wait (mat, GrB_MATERIALIZE) ;
+        assert (info == GrB_SUCCESS) ;
+        GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE) ;
      }
 };
 
@@ -262,6 +249,7 @@ class SpGEMM_problem_generator {
 
        std::cout<<"fill complete"<<std::endl;
        C->mat->p = M->mat->p; //same column pointers (assuming CSC here)
+       C->mat->p_shallow = true ; // C->mat does not own M->mat->p
 
        loadCj();
 

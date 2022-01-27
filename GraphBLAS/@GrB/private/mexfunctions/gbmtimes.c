@@ -136,11 +136,7 @@ void mexFunction
     // zero = (ctype) 0
     OK (GrB_Scalar_new (&zero, ctype)) ;
     OK (GrB_Scalar_setElement_FP64 (zero, 0)) ;
-    #if (GxB_IMPLEMENTATION_MAJOR <= 5)
-    OK (GrB_Scalar_wait (&zero)) ;
-    #else
     OK (GrB_Scalar_wait (zero, GrB_MATERIALIZE)) ;
-    #endif
 
     //--------------------------------------------------------------------------
     // compute C = A*B
@@ -209,7 +205,7 @@ void mexFunction
 
     OK (GrB_Matrix_free (&A)) ;
     OK (GrB_Matrix_free (&B)) ;
-    OK (GrB_Matrix_free (&zero)) ;
+    OK (GrB_Scalar_free (&zero)) ;
     OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------

@@ -159,11 +159,8 @@ public:
     std::cout << "B TYpe: " << B->get_grb_matrix()->type << std::endl;
 //    // (1) create the semiring code and name
     mysemiringfactory.semiring_factory ( mysemiring, flipxy,
-        // GB_Matrix_allocate doesn't accept/allocate type information so we explicitly pass
-        // the types in here
-        // FIXME: Figure out a good method for getting the GrB_Type from a string
-        GrB_UINT64, GrB_UINT64,
-        GrB_UINT64, GrB_UINT64,
+        C->get_grb_matrix->()->type, M->get_grb_matrix->()->type,
+        A->get_grb_matrix->()->type, B->get_grb_matrix->()->type,
         mask_struct,  // matrix types
         mask_comp, GB_sparsity(C->get_grb_matrix()),
         GB_sparsity(M->get_grb_matrix()),

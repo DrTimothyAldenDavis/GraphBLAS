@@ -55,7 +55,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 )
 {
 
-    char s [GB_CUDA_STRLEN+1] ;
+    const char *s ;
 
     GB_charify_binop (&s, add_ecode) ;
     GB_macrofy_binop ( fp, "GB_ADD", s, false) ;

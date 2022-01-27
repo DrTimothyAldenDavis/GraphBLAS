@@ -10,6 +10,7 @@ project(GRAPHBLAS_CUDA VERSION 0.1 LANGUAGES CXX CUDA)
 set(CMAKE_CUDA_FLAGS "-cudart static -lineinfo -G")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fPIC ")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DGBNCPUFEAT=OFF")
 set(CMAKE_C_STANDARD 11)
 
 message(STATUS "${CMAKE_CXX_FLAGS}")
@@ -17,7 +18,7 @@ message(STATUS "${CMAKE_CXX_FLAGS}")
 file(GLOB GRAPHBLAS_CUDA_SOURCES "*.cu" "*.c")
 
 add_library(graphblascuda SHARED
-        ${GRAPHBLAS_CUDA_SOURCES}
+            ${GRAPHBLAS_CUDA_SOURCES}
 )
 
 set(RMM_WRAP_INCLUDES "../rmm_wrap")
