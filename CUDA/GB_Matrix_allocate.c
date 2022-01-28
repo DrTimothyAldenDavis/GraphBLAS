@@ -4,6 +4,8 @@
 
 // A mock of the actual methods in ../Source.  These are just for testing.
 
+// FIXME: We should remove this altogether and use GrB_Matrix_allocate
+
 #include <assert.h>
 #include "GB_Matrix_allocate.h"
 
