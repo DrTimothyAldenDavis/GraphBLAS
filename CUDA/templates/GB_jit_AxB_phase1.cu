@@ -220,6 +220,8 @@ __global__ void AxB_phase1
 )
 {
 
+    printf("Inside phase1 kernel\n");
+
     //--------------------------------------------------------------------------
     // get C, M, A, and B
     //--------------------------------------------------------------------------
@@ -263,6 +265,7 @@ __global__ void AxB_phase1
 
     //ASSERT (mnz > 0) ;
     //ASSERT (gridDim.x <= mnz) ;
+
 
     // each thread uses 12 bucket counters, held in register
     int64_t my_bucket_0  = 0 ;

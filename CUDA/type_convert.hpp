@@ -17,11 +17,9 @@
 #ifndef GB_CONV_TYPE_H
 #define GB_CONV_TYPE_H
 extern "C" {
-
 #include "GB.h"
 };
 #include <stdint.h>
-
 
 /**---------------------------------------------------------------------------*
  * @file type_convert.hpp
@@ -43,6 +41,22 @@ template<> GrB_Type to_grb_type<uint64_t>() { return GrB_UINT64; }
 template<> GrB_Type to_grb_type<float>() { return GrB_FP32; }
 template<> GrB_Type to_grb_type<double>() { return GrB_FP64; }
 template<> GrB_Type to_grb_type<bool>() { return GrB_BOOL; }
+
+template <typename T>
+void set_element(GrB_Matrix A, T x, int64_t i, int64_t j);
+
+template<> void set_element<int8_t>(GrB_Matrix A, int8_t x, int64_t i, int64_t j) { GrB_Matrix_setElement_INT8(A, x, i, j); }
+template<> void set_element<int16_t>(GrB_Matrix A, int16_t x, int64_t i, int64_t j) { GrB_Matrix_setElement_INT16(A, x, i, j); }
+template<> void set_element<int32_t>(GrB_Matrix A, int32_t x, int64_t i, int64_t j) { GrB_Matrix_setElement_INT32(A, x, i, j); }
+template<> void set_element<int64_t>(GrB_Matrix A, int64_t x, int64_t i, int64_t j) { GrB_Matrix_setElement_INT64(A, x, i, j); }
+template<> void set_element<uint8_t>(GrB_Matrix A, uint8_t x, int64_t i, int64_t j) { GrB_Matrix_setElement_UINT8(A, x, i, j); }
+template<> void set_element<uint16_t>(GrB_Matrix A, uint16_t x, int64_t i, int64_t j) { GrB_Matrix_setElement_UINT16(A, x, i, j); }
+template<> void set_element<uint32_t>(GrB_Matrix A, uint32_t x, int64_t i, int64_t j) { GrB_Matrix_setElement_UINT32(A, x, i, j); }
+template<> void set_element<uint64_t>(GrB_Matrix A, uint64_t x, int64_t i, int64_t j) { GrB_Matrix_setElement_UINT64(A, x, i, j); }
+template<> void set_element<float>(GrB_Matrix A, float x, int64_t i, int64_t j) { GrB_Matrix_setElement_FP32(A, x, i, j); }
+template<> void set_element<double>(GrB_Matrix A, double x, int64_t i, int64_t j) { GrB_Matrix_setElement_FP64(A, x, i, j); }
+template<> void set_element<bool>(GrB_Matrix A, bool x, int64_t i, int64_t j) { GrB_Matrix_setElement_BOOL(A, x, i, j); }
+
 
 }  // namespace cuda
 #endif
