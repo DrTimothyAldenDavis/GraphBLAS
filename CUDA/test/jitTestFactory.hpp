@@ -89,14 +89,14 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
 
     phase1launchFactory<T_C, T_M, T_A, T_B> p1lF(monoid, binop);
 
-    SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G;
+    SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G(N, N);
     int64_t Annz = N*N;
     int64_t Bnnz = N*N;
     int64_t Cnz = N;
     float Cnzpercent = (float) Cnz/(N*N);
 
     // TODO: Allocate and fill arrays for buckets and nano buckets
-    G.init(N, Annz, Bnnz, Cnzpercent);
+    G.init(Annz, Bnnz, Cnzpercent);
     G.fill_buckets( TB ); // all elements go to testbucket= TB
 
     matrix<T_C>* C = G.getCptr();
@@ -161,13 +161,13 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
 
     phase2launchFactory<T_C> p2lF;
 
-    SpGEMM_problem_generator<T_C, T_C, T_C, T_C> G;
+    SpGEMM_problem_generator<T_C, T_C, T_C, T_C> G(N, N);
     int64_t Annz = N*N;
     int64_t Bnnz = N*N;
     int64_t Cnz = N;
     float Cnzpercent = (float) Cnz/(N*N);
 
-    G.init(N, Annz, Bnnz, Cnzpercent);
+    G.init(Annz, Bnnz, Cnzpercent);
     G.fill_buckets( TB ); // all elements go to testbucket= TB
 
     matrix<T_C>* C = G.getCptr();
