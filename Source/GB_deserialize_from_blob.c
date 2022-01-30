@@ -56,10 +56,8 @@ GrB_Info GB_deserialize_from_blob
     // parse the method
     //--------------------------------------------------------------------------
 
-    bool intel ;
     int32_t algo, level ;
-    GB_serialize_method (&intel, &algo, &level, method) ;
-    // method = (intel ? GxB_COMPRESSION_INTEL : 0) + (algo) + (level) ;
+    GB_serialize_method (&algo, &level, method) ;
 
     //--------------------------------------------------------------------------
     // allocate the output array
