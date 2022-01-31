@@ -102,7 +102,7 @@ GrB_Info GB_deserialize_from_blob
     int32_t nblocks,            // # of compressed blocks for this array
     int32_t method_used,        // compression method used for each block
     // input/output:
-    size_t *s_handle,           // location to write into the blob
+    size_t *s_handle,           // where to read from the blob
     GB_Context Context
 ) ;
 
