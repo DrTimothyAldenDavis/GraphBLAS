@@ -1,6 +1,7 @@
-Version 6.2.0.beta1, Jan 26, 2022
+Version 6.2.0.beta2, Jan 28, 2022
 
     * added row/column/entry/vector iterators
+    * @GrB C=A*B: revised sparse-times-full rule
 
 Version 6.1.4, Jan 13, 2022
 
