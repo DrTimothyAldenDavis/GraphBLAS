@@ -1,6 +1,7 @@
-Version 6.2.0.beta1, Jan 26, 2022
+Version 6.2.0.beta3, Feb 3, 2022
 
     * added row/column/entry/vector iterators
+    * @GrB C=A*B: revised sparse-times-full rule
 
 Version 6.1.4, Jan 13, 2022
 
@@ -41,7 +42,7 @@ Version 6.1.0, Dec 26, 2021
         Nov 30, 2021 version
     * performance: faster C+=A*B when C is full, A is bitmap/full, and B is
         sparse/hyper; added saxpy5 kernel.  faster C+=A'*B (dot4 kernel).
-    * bug fix: deserialization of iso and empty matrices/vectors was broken
+    * (39) bug fix: deserialization of iso and empty matrices/vectors was broken
 
 Versions 6.0.2 and 5.2.2, Nov 30, 2021
 
