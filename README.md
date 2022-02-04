@@ -8,7 +8,7 @@ For the GraphBLAS/GraphBLAS Octave/MATLAB interface *only*:
 SPDX-License-Identifier: GPL-3.0-or-later
 (see below for a discussion of the licensing of this package).
 
-VERSION 6.2.0, Jan 26, 2022
+VERSION 6.2.0, Feb 3, 2022
 
 SuiteSparse:GraphBLAS is a complete implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -192,4 +192,18 @@ McGinnis, kmcginnis@txamfoundation.com) for details.
 
 SuiteSparse:GraphBLAS, is copyrighted by Timothy A. Davis, (c) 2017-2022, All
 Rights Reserved.  davis@tamu.edu.  Contact me if you need a non-GNU license.
+
+--------------------------------------------------------------------------------
+
+## Software Acknowledgements
+
+SuiteSparse:GraphBLAS relies on the following packages (details in the LICENSE
+file, and in the GraphBLAS User Guide):
+
+(1) the LZ4 compression package (c) by Yann Collet, appearing here under the
+BSD-2-clause license.
+
+(2) cpu_features (c) Google, Apache 2.0 license with components (c) IBM and
+Intel (also Apache 2.0), and the cpu_featurer/ndk_compat component (c)
+The Android Open Source Project (BSD-2-clause)
 
