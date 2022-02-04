@@ -447,9 +447,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
                         Bucketp,           // global bucket cumsum, of size NBUCKETS+1
                         Bucket,            // global buckets, of size cnz (== mnz)
                         offset,
-                        C,                 // final output matrix
-                                           // inputs, not modified:
-                        cnz,               // number of entries in mask and output matrix
                         nblock
                     );
 

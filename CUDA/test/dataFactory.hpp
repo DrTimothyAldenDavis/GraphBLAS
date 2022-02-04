@@ -148,8 +148,8 @@ class matrix : public Managed {
         std::uniform_real_distribution<double> dis(0.0, 1.0);
          for (int64_t k = 0 ; k < nnz ; k++)
          {
-             GrB_Index i = dis(r) * nrows_ ;
-             GrB_Index j = dis(r) * ncols_ ;
+             GrB_Index i = ((GrB_Index) (dis(r) * nrows_)) % ((GrB_Index) nrows_) ;
+             GrB_Index j = ((GrB_Index) (dis(r) * ncols_)) % ((GrB_Index) ncols_) ;
              if (no_self_edges && (i == j)) continue ;
              double x = dis(r) ;
              // A (i,j) = x
@@ -165,10 +165,13 @@ class matrix : public Managed {
         // TODO: Need to specify these
         GxB_Matrix_Option_set (mat, GxB_FORMAT, GxB_BY_ROW) ;
         GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, GxB_SPARSE) ;
-
+        GrB_Matrix_nvals ((GrB_Index *) &nnz, mat) ;
+        GxB_Matrix_fprint (mat, "my mat", GxB_SHORT_VERBOSE, stdout) ;
+    
         printf("a_vector = [");
-        for (int i = 0;  i < nnz; i++) {
-            printf("%ld, ", mat->i);
+        for (int p = 0;  p < nnz; p++) {
+            printf("%ld, ", mat->i [p]);
+            if (p > 100) { printf ("...\n") ; break ; }
         }
         printf("]\n");
 
