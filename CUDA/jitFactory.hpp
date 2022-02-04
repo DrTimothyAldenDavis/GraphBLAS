@@ -94,6 +94,7 @@ template<  typename T_C, typename T_M,
 
 const std::vector<std::string> compiler_flags{
    "-std=c++14",
+   "-G",
    "-remove-unused-globals",
    "-w",
    "-D__CUDACC_RTC__",
@@ -182,6 +183,8 @@ public:
       R"(#include ")" << jit::get_user_home_cache_dir() << "/" << mysemiringfactory.filename << R"(")" << std::endl <<
       R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
     std::cout << string_to_be_jitted.str();
+
+
 
     jit::launcher( hashable_name,
                    string_to_be_jitted.str(),

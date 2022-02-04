@@ -103,10 +103,6 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     matrix<T_M>* M = G.getMptr();
     matrix<T_A>* A = G.getAptr();
     matrix<T_B>* B = G.getBptr();
-//
-//    T_C *Cx = (T_C*)C->mat->x;
-//    T_A *Ax = (T_A*)A->mat->x;
-//    T_B *Bx = (T_B*)B->mat->x;
 
     int nblck = Cnz;
     int nthrd = 32;
@@ -116,20 +112,25 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     GpuTimer kernTimer;
     kernTimer.Start();
 
-    #define NBUCKETS 12 + 1 // TODO: This should be set in GB_buckets
+    #define NBUCKETS 12 //+ 1 // TODO: This should be set in GB_buckets
     #define chunksize 128
 
     const int64_t mnz = GB_nnz (M->mat) ;
 
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
-    int ntasks =  ( mnz +chunksize -1)/chunksize;
+    int ntasks =  ( mnz + chunksize - 1)/chunksize;
+
     // Idea is to have each task work on a continguous block of columns of C
-    ntasks = GB_IMIN( ntasks,  128*number_of_sms) ;    // ntasks will be grid.x
+    //ntasks =; //GB_IMIN( ntasks,  128*number_of_sms) ;    // ntasks will be grid.x
 
     // TODO: Verify that RMM is checking and throwing exceptions
-    int64_t *Nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
-    int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
+    int nanobuckets_size = NBUCKETS * nthrd * ntasks;
+
+    printf("nanobuckets_size: %d\n", nanobuckets_size);
+    int64_t *Nanobuckets = (int64_t*)rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
+    int blockbuckets_size = NBUCKETS * ntasks;
+    int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
 
     p1lF.jitGridBlockLaunch( nblck, nthrd, Nanobuckets, Blockbucket,
                              C->get_grb_matrix(), M->get_grb_matrix(),
