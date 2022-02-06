@@ -145,7 +145,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     { 
         // M2 = M_in (Ah, Bh), where M2 has a static header
         // if Mask_struct then M2 is extracted as iso
-        GB_CLEAR_STATIC_HEADER (M2, M2_header) ;
+        GB_CLEAR_STATIC_HEADER (M2, &M2_header) ;
         GB_OK (GB_subref (M2, Mask_struct, M_in->is_csc, M_in,
             (A_is_hyper) ? Ah : GrB_ALL, cvlen,
             (B_is_hyper) ? Bh : GrB_ALL, cvdim, false, Context)) ;

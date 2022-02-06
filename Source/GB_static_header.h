@@ -20,7 +20,7 @@
 #if GBNSTATIC
 
     // do not use any static headers
-    #define GB_CLEAR_STATIC_HEADER(XX,XX_header)                            \
+    #define GB_CLEAR_STATIC_HEADER(XX,XX_header_handle)                     \
     {                                                                       \
         size_t XX_size ;                                                    \
         XX = GB_CALLOC (1, struct GB_Matrix_opaque, &XX_size) ;             \
@@ -37,9 +37,9 @@
 #else
 
     // use static headers
-    #define GB_CLEAR_STATIC_HEADER(XX,XX_header)                            \
+    #define GB_CLEAR_STATIC_HEADER(XX,XX_header_handle)                     \
     {                                                                       \
-        XX = GB_clear_static_header (&XX_header) ;                          \
+        XX = GB_clear_static_header (XX_header_handle) ;                    \
     }
 
 #endif

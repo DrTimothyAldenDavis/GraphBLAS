@@ -1017,7 +1017,6 @@ void mexFunction
     Ax_len = 16 ;
 
     expected = GrB_INVALID_VALUE ;
-    // leak here:
     ERR (GrB_Matrix_export_FP32 (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, -1, A)) ;
 
     OK (GrB_Matrix_free_ (&A)) ;

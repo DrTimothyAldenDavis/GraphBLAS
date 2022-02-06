@@ -135,8 +135,8 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // semiring->add->ztype if accum is not present.  To compute in-place,
     // C must also not be transposed, and it cannot be aliased with M, A, or B.
 
-    GB_CLEAR_STATIC_HEADER (MT, MT_header) ;    // leak
-    GB_CLEAR_STATIC_HEADER (T, T_header) ;
+    GB_CLEAR_STATIC_HEADER (MT, &MT_header) ;
+    GB_CLEAR_STATIC_HEADER (T, &T_header) ;
 
 // for (int k = 0 ; k < 40 ; k++) GB_Global_timing_clear (k) ;
 
