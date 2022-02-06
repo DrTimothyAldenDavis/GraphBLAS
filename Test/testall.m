@@ -75,19 +75,16 @@ GB_mex_hack (hack) ;
 % tests with high rates (over 100/sec)
 %----------------------------------------
 
-if (1)
 logstat ('test243',t) ; % test GxB_Vector_Iterator
 logstat ('test242',t) ; % test GxB_Iterator for matrices
 logstat ('test241',t) ; % test GrB_mxm, triggering the swap_rule
 logstat ('testca',t) ;  % test complex mxm, mxv, and vxm
 logstat ('test240',t) ; % test dot4 and saxpy5
-end
 
 % disable the Werk stack for these tests:
 hack (2) = 1 ;
 GB_mex_hack (hack) ;
 
-if (1)
 logstat ('test240',t) ; % test dot4 and saxpy5 again
 logstat ('testca',t) ;  % test complex mxm, mxv, and vxm
 logstat ('test238',t) ; % test GrB_mxm (dot4 and dot2)
@@ -108,13 +105,11 @@ logstat ('test150',t) ; % mxm with zombies and typecasting (dot3 and saxpy)
 logstat ('test14' ,t) ; % GrB_reduce
 logstat ('test154',t) ; % apply with binop and scalar binding
 logstat ('test151b',t); % test bshift operator
-end
 
 % re-enable the Werk stack for most tests:
 hack (2) = 0 ;
 GB_mex_hack (hack) ;
 
-if (1)
 logstat ('test239',t) ; % test GxB_eWiseUnion
 logstat ('test74' ,t) ; % test GrB_mxm on all semirings
 logstat ('test235',t) ; % test GxB_eWiseUnion and GrB_eWiseAdd
@@ -278,7 +273,6 @@ if (malloc_debugging)
 end
 
 logstat ('test10' ,t) ; % GrB_apply
-end
 logstat ('test75b',t) ; % test GrB_mxm A'*B (quicker than test75)
 logstat ('test16' ,t) ; % user-defined complex operators
 logstat ('test81' ,t) ; % GrB_Matrix_extract with stride, range, backwards
