@@ -10,7 +10,8 @@
 // This method construct a shallow statically-defined scalar, with no memory
 // allocations.  The scalar is iso full, with a single entry.
 
-// FIXME: allow the header to be dynamic
+// Note that since the header is statically allocated, it cannot be transfered
+// automatically to the GPU when using CUDA.
 
 #include "GB.h"
 #include "GB_scalar.h"

@@ -172,14 +172,14 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         (*done_in_place) = false ;
 
         #if defined ( GBCUDA )
-        if (!C_iso &&   // FIXME, remove this and create C iso on output
+        if (!C_iso &&   // FIXME for CUDA, remove and create C iso on output
             GB_AxB_dot3_cuda_branch (M, Mask_struct, A, B, semiring,
             flipxy, Context))
         {
-            // FIXME: can M be jumbled for the CUDA kernel?
+            // FIXME for CUDA: can M be jumbled for the CUDA kernel?
             GB_MATRIX_WAIT (M) ;    // make sure it's not jumbled
             if (GB_AxB_dot3_control (M, Mask_comp)
-                && !GB_IS_HYPERSPARSE (M)   // FIXME, remove this
+                && !GB_IS_HYPERSPARSE (M)   // FIXME for CUDA, remove this
             )
             {
                 return (GB_AxB_dot3_cuda (C, M, Mask_struct, A, B, semiring,

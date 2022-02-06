@@ -11,7 +11,7 @@
 #define GB_DEV_H
 
 //------------------------------------------------------------------------------
-// code development settings
+// code development settings: by default, all settings should be commented out
 //------------------------------------------------------------------------------
 
 // to turn on Debug for a single file of GraphBLAS, add '#define GB_DEBUG'
@@ -36,7 +36,7 @@
 // transfered to the GPU.  Only dynamically allocated headers, allocated by
 // rmm_wrap_malloc, get transfered.  Set this to 1 to turn off static headers
 // (required for CUDA; see GB_static_headers.h).  Leave static headers
-// enabled by default commenting this out or setting it to 0.
+// enabled by default by leaving this commented out or setting GBNSTATIC to 0.
 // #undef  GBNSTATIC
 // #define GBNSTATIC 1
 
