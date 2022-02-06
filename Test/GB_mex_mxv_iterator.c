@@ -65,7 +65,6 @@ void mexFunction
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
     GB_Global_print_one_based_set (0) ;
-    // GxB_print (A, 3) ;
 
     // get X (shallow copy)
     X = GB_mx_mxArray_to_Vector (pargin [1], "X input", false, true) ;

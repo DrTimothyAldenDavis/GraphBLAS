@@ -3538,7 +3538,6 @@
 #define GB_deserialize GM_deserialize
 #define GB_deserialize_from_blob GM_deserialize_from_blob
 #define GB_divcomplex GM_divcomplex
-#define GB_do_dynamic_header GM_do_dynamic_header
 #define GB_dup GM_dup
 #define GB_dup_worker GM_dup_worker
 #define GB_ek_slice GM_ek_slice
@@ -3931,7 +3930,6 @@
 #define GB_Type_new GM_Type_new
 #define GB_UnaryOp_check GM_UnaryOp_check
 #define GB_UnaryOp_new GM_UnaryOp_new
-#define GB_undo_dynamic_header GM_undo_dynamic_header
 #define GB_unjumble GM_unjumble
 #define GB_unop_one GM_unop_one
 #define GB_Vector_check GM_Vector_check

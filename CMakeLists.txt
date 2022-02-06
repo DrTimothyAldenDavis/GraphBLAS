@@ -26,7 +26,7 @@ endif ( )
 set ( CMAKE_MACOSX_RPATH TRUE )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Feb 3, 2022" )
+set ( GraphBLAS_DATE "Feb 5, 2022" )
 set ( GraphBLAS_VERSION_MAJOR 6 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -104,9 +104,8 @@ endif ( )
 
 # Edit these lines for code development only, not for end-users:
 # CUDA is under developent for now, and not deployed in production
-# FIXME:
-  set ( CMAKE_CUDA on )
-  set ( GBCOMPACT true )
+# set ( CMAKE_CUDA on )
+# set ( GBCOMPACT true )
 # set ( CMAKE_BUILD_TYPE Debug )
 
 if ( CMAKE_CUDA )

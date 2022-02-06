@@ -191,7 +191,7 @@
         //----------------------------------------------------------------------
 
         // useless descriptor, just to test nthreads extraction for GB_wait
-        A->jumbled = true ;
+        if (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) A->jumbled = true ;
 
         // attach it to the matrix A
         OK (GxB_Matrix_Iterator_attach (iterator, A, GrB_DESC_S)) ;

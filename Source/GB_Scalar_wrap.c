@@ -10,6 +10,8 @@
 // This method construct a shallow statically-defined scalar, with no memory
 // allocations.  The scalar is iso full, with a single entry.
 
+// FIXME: allow the header to be dynamic
+
 #include "GB.h"
 #include "GB_scalar.h"
 

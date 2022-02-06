@@ -66,7 +66,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (C != NULL && C->static_header) ;
+    ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for dot A'*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -110,7 +110,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             (*done_in_place) = false ;
             (*mask_applied) = false ;
             // set C->iso = true    OK
-            info = GB_new_bix (&C, true,    // static header
+            info = GB_new_bix (&C, // existing header
                 ztype, A->vdim, B->vdim, GB_Ap_null, true, GxB_FULL, false,
                 GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true, Context) ;
             if (info == GrB_SUCCESS)
@@ -153,7 +153,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // no work to do; C is an empty matrix, normally hypersparse
         GBURBLE ("(empty dot) ") ;
         if (C_in != NULL) return (GrB_SUCCESS) ;
-        return (GB_new (&C, true, // auto sparsity, static header
+        return (GB_new (&C, // auto sparsity, existing header
             ztype, A->vdim, B->vdim, GB_Ap_calloc, true, GxB_AUTO_SPARSITY,
             GB_Global_hyper_switch_get ( ), 1, Context)) ;
     }
