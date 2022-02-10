@@ -272,8 +272,7 @@ class phase2endlaunchFactory
 {
 
   std::string base_name = "GB_jit";
-  std::string kernel_name = "AxB_dot3";
-  std::string op_name = "phase2end";
+  std::string kernel_name = "AxB_phase2end";
 
 public: 
 
@@ -307,25 +306,20 @@ public:
       dim3 grid(gridsz);
       dim3 block(blocksz);
 
-      std::cout<< kernel_name<<" with types " <<GET_TYPE_NAME(dumC)<<std::endl;
-
-      std::string hashable_name = base_name + "_" + kernel_name + "_" + op_name;
-
+      std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
-      string_to_be_jitted << "\n" <<
-      kernel_name << R"("#include )" << hashable_name << R"(".cuh")";
+      string_to_be_jitted <<
+      hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
 
       // dump it:
       std::cout << string_to_be_jitted.str();
 
-    
-      jit::launcher( base_name + kernel_name, 
+      jit::launcher( hashable_name,
                      string_to_be_jitted.str(),
                      header_names, 
                      compiler_flags,
                      file_callback)
-                   .set_kernel_inst(  base_name + kernel_name ,
-                                    { GET_TYPE_NAME(dumC) })
+                   .set_kernel_inst(  kernel_name , {})
                    .configure(grid, block)
                    .launch( nanobuckets, blockBucket, bucketp, bucket, offset, C, cnz);
 

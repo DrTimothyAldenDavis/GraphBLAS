@@ -8,6 +8,7 @@
 #include <algorithm>
 //#include "GB_binary_search.h"
 #include "GpuTimer.h"
+#include "GB_cuda_buckets.h"
 #include "../../rmm_wrap/rmm_wrap.h"
 #include <gtest/gtest.h>
 
@@ -121,8 +122,6 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     GpuTimer kernTimer;
     kernTimer.Start();
 
-    // HACK:
-    #define NBUCKETS 12 // + 1 // TODO: This should be set in GB_buckets
     #define chunksize 128
 
     const int64_t mnz = GB_nnz (M->mat) ;
@@ -145,7 +144,6 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     p1lF.jitGridBlockLaunch( nblck, nthrd, Nanobuckets, Blockbucket,
                              C->get_grb_matrix(), M->get_grb_matrix(),
                              A->get_grb_matrix(), B->get_grb_matrix());
-
     kernTimer.Stop();
     std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
@@ -166,6 +164,8 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
     std::cout<< "found device "<<gpuID<<std::endl;
 
     phase2launchFactory<T_C> p2lF;
+    phase2endlaunchFactory<T_C> p2elF;
+
 
     SpGEMM_problem_generator<T_C, T_C, T_C, T_C> G(N, N);
     int64_t Annz = N*N;
@@ -193,9 +193,6 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
    GpuTimer kernTimer;
    kernTimer.Start();
 
-    // HACK
-    #undef  NBUCKETS
-    #define NBUCKETS 12 + 1 // TODO: This should be set in GB_buckets
     #define chunksize 128
 
     const int64_t mnz = GB_nnz (M->mat) ;
@@ -229,33 +226,22 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
     fillvector_constant(NBUCKETS * ntasks, blockbucket, (int64_t)1);
     fillvector_constant(NBUCKETS, bucketp, (int64_t)1);
 
-//  print_array<T_C>(C->mat->x, mnz, "C");
     print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
     print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
-//  print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
-//  print_array<int64_t>(bucket, mnz, "bucket");
-
-//
-//    std::stringstream string_to_be_jitted ;
-//    string_to_be_jitted << "testInt" << std::endl << R"(#include "GB_jit_AxB_phase2.cu")" << std::endl;
-//
-//    dim3 grid(1);
-//    dim3 block(1);
-//
-//    jit::launcher( "testInt",
-//                   string_to_be_jitted.str(),
-//                   header_names,
-//                   compiler_flags,
-//                   file_callback)
-//            .set_kernel_inst( "simple_nongrb_test", { })
-//            .configure(grid, block)
-//            .launch( C->mat );
-
 
 
     p2lF.jitGridBlockLaunch( nblck, nthrd, nanobuckets, blockbucket,
                             bucketp, bucket, offset, nblck);
+    int64_t s= 0;
+    for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
+    {
+        bucketp[bucket] = s;
+        s+= offset[bucket];
+        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
+    }
 
+    p2elF.jitGridBlockLaunch( nblck, nthrd, nanobuckets, blockbucket,
+                              bucketp, bucket, offset, C, Cnz);
     kernTimer.Stop();
     std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
@@ -265,6 +251,8 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
 
    return true;
 }
+
+
 
 //template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
 //bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, std::string& SEMI_RING) {

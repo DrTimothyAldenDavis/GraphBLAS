@@ -14,6 +14,7 @@
 #ifndef GB_CUDA_BUCKETS_H
 #define GB_CUDA_BUCKETS_H
 
+#define NBUCKETS 12
 // 12 buckets: computed by up to 11 kernel launches (zombies need no work...),
 // using 5 different kernels (with different configurations depending on the
 // bucket).
