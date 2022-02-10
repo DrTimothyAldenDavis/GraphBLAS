@@ -14,7 +14,6 @@
 extern "C"
 {
   #include "GB_mxm.h"
-  #include "GB_dynamic.h"
 }
 #include "GB_cuda.h"
 
@@ -92,7 +91,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // initializations
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL, M = NULL, A = NULL, B = NULL ;
     int ntasks = 0, number_of_sms = 0 ;
     int64_t *Nanobuckets = NULL, *Blockbucket = NULL ;
     int64_t *Bucket = NULL;
