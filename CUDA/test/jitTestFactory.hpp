@@ -164,7 +164,6 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
     phase2launchFactory<T_C> p2lF;
     phase2endlaunchFactory<T_C> p2elF;
 
-
     SpGEMM_problem_generator<T_C, T_C, T_C, T_C> G(N, N);
     int64_t Annz = N*N;
     int64_t Bnnz = N*N;
@@ -176,17 +175,9 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
 
     matrix<T_C>* C = G.getCptr();
     matrix<T_C>* M = G.getMptr();       // note: values are not accessed
-//  matrix<T_C>* A = G.getAptr();
-//  matrix<T_C>* B = G.getBptr();
-//
-//    T_C *Cx = C->mat->x;
-//    T_C *Ax = A->mat->x;
-//    T_C *Bx = B->mat->x;
 
     int nblck = N;
    int nthrd = 32;
-   // int sz = 4;
-   //int m = 256/sz;
 
    GpuTimer kernTimer;
    kernTimer.Start();
@@ -249,228 +240,203 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
    return true;
 }
 
+template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
+bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
+                                 GrB_Monoid monoid, GrB_BinaryOp binop) {
+
+    // Generates three randomized matrices, builds buckets and calls a kernel.
+    // This is the full version as called in SuiteSparse:GraphBLAS
+    phase1launchFactory<T_C, T_M, T_A, T_B> p1lF;
+    phase2launchFactory<T_C> p2lF;
+    phase2endlaunchFactory<T_C> p2lF(monoid, binop);
+    phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(SEMI_RING, "dndn");
+
+    //Generate test data and setup for using a jitify kernel with 'bucket' interface
+    // The testBucket arg tells the generator which bucket we want to exercise
+    SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G(N, N);
+    int64_t Annz = N*N;
+    int64_t Bnnz = N*N;
+    int64_t Cnz = N;
+    float Cnzpercent = (float) Cnz/(N*N);
+
+    G.init(N, Annz, Bnnz, Cnzpercent);
+
+    G.fill_buckets( TB); // all elements go to testbucket= TB
+
+    matrix<T_C>* C = G.getCptr();
+    matrix<T_M>* M = G.getMptr();
+    matrix<T_A>* A = G.getAptr();
+    matrix<T_B>* B = G.getBptr();
+
+    T_C *Cx = C->get_grb_matrix()->x;
+    T_A *Ax = A->get_grb_matrix()->x;
+    T_B *Bx = B->get_grb_matrix()->x;
+
+    // Set clear zombie count
+    C->zombie_count = 0;
+
+    int64_t *Bucket = G.getBucket();
+    int64_t *BucketStart = G.getBucketStart();
+
+    int zc_valid = 0;
+
+    bool result = false;
+
+    /**
+     * Run Phase 1: Compute nanobuckets and blockbuckets
+     */
+    int nblck = Cnz;
+    int nthrd = 32;
+    int sz = 4;
+
+    int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
+    int64_t *blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
+    int64_t *bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
+    int64_t *bucket = (int64_t*)rmm_wrap_malloc(Cnz * sizeof (int64_t));
+
+    fillvector_constant(NBUCKETS * nthrd * ntasks, nanobuckets, (int64_t)1);
+    fillvector_constant(NBUCKETS * ntasks, nanobuckets, (int64_t)1);
+
+    GpuTimer kernTimer;
+    kernTimer.Start();
+    p1lF.jitGridBlockLaunch( nblck, nthrd, nanobuckets, Bucket,
+                            C->get_grb_matrix(),
+                            M->get_grb_matrix(),
+                            A->get_grb_matrix(),
+                            B->get_grb_matrix());
+
+    kernTimer.Stop();
+    std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+
+    /**
+     * Run Phase 2: Cumsum over nanobuckets
+     */
+    int nblck = Cnz;
+    int nthrd = 32;
+    int sz = 4;
+    //int m = 256/sz;
+    std::cout<< nblck<< " blocks of "<<nthrd<<" threads, "<<b_start<<","<<b_end<<std::endl;
+
+    GpuTimer kernTimer;
+    kernTimer.Start();
+    p2lF.jitGridBlockLaunch( nblck, nthrd, nanobuckets, Bucket, bucketp,
+                            bucket, C->get_grb_matrix(), Cnz);
+
+    kernTimer.Stop();
+    std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
 
-//template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
-//bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, std::string& SEMI_RING) {
-//// Generates three randomized matrices, builds buckets and calls a kernel.
-//// This is the full version as called in SuiteSparse:GraphBLAS
-//
-//phase1launchFactory<T_C, T_M, T_A, T_B> p1lF();
-//phase2launchFactory p2lF();
-//launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(SEMI_RING, "dndn");
-//
-//int testBucket = TB;
-//
-////unsigned seed = 13372801;
-////std::mt19937 r; //random number generator Mersenne Twister
-////r.seed(seed);
-//int gpuID;
-//cudaGetDevice( &gpuID);
-//
-//std::cout<< "found device "<<gpuID<<std::endl;
-//
-//T_Z MONOID_IDENTITY;
-//if (SEMI_RING == "PLUS_TIMES") {
-//   std::cout << "Plus Times (+,*) semiring"<<std::endl;
-//   MONOID_IDENTITY = 0;
-//   ADD_ptr<T_Z> = myOP_plus<T_Z>;
-//   MUL_ptr<T_Z> = myOP_times<T_Z>;
-//}
-//else if(SEMI_RING == "MIN_PLUS") {
-//   std::cout << "Min Plus Times (min,+) semiring"<<std::endl;
-//   MONOID_IDENTITY = std::numeric_limits<T_Z>::max();
-//   ADD_ptr<T_Z> = myOP_min<T_Z>;
-//   MUL_ptr<T_Z> = myOP_plus<T_Z>;
-//
-//}
-//else if(SEMI_RING == "MAX_PLUS") {
-//   MONOID_IDENTITY = std::numeric_limits<T_Z>::min();
-//   std::cout << "Max Plus Times (max,+) semiring"<<std::endl;
-//   ADD_ptr<T_Z> = myOP_max<T_Z>;
-//   MUL_ptr<T_Z> = myOP_plus<T_Z>;
-//}
-//
-////Generate test data and setup for using a jitify kernel with 'bucket' interface
-//// The testBucket arg tells the generator which bucket we want to exercise
-//SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G( testBucket);
-//int64_t Annz = N*N;
-//int64_t Bnnz = N*N;
-//int64_t Cnz = N;
-//float Cnzpercent = (float) Cnz/(N*N);
-//
-//G.init(N, Annz, Bnnz, Cnzpercent);
-//
-//G.fill_buckets( testBucket); // all elements go to testbucket= TB
-//
-//matrix<T_C>* C = G.getCptr();
-//matrix<T_M>* M = G.getMptr();
-//matrix<T_A>* A = G.getAptr();
-//matrix<T_B>* B = G.getBptr();
-//
-//T_C *Cx = C->x;
-//T_A *Ax = A->x;
-//T_B *Bx = B->x;
-//
-//// Set clear zombie count
-//C->zombie_count = 0;
-//
-////std::cout<<"got all matrices"<<std::endl;
-//int64_t *Bucket = G.getBucket();
-//int64_t *BucketStart = G.getBucketStart();
-//
-//int zc_valid = 0;
-//
-//bool result = false;
-//
-//// Phase 1
-//int nblck = Cnz;
-//int nthrd = 32;
-//int sz = 4;
-////int m = 256/sz;
-////std::cout<< nblck<< " blocks of "<<nthrd<<" threads, "<<b_start<<","<<b_end<<std::endl;
-//
-//int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
-//int64_t *blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
-//int64_t *bucketp = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
-//int64_t *bucket = (int64_t*)rmm_wrap_malloc(Cnz * sizeof (int64_t));
-//
-//fillvector_constant(NBUCKETS * nthrd * ntasks, nanobuckets, (int64_t)1);
-//fillvector_constant(NBUCKETS * ntasks, nanobuckets, (int64_t)1);
-//
-//
-//GpuTimer kernTimer;
-//kernTimer.Start();
-//p1lF.jitGridBlockLaunch( nblck, nthrd, nanobuckets, Bucket,
-//                        C, M, A, B);
-//
-//kernTimer.Stop();
-//std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
-//
-//// Phase 2
-//int nblck = Cnz;
-//int nthrd = 32;
-//int sz = 4;
-////int m = 256/sz;
-//std::cout<< nblck<< " blocks of "<<nthrd<<" threads, "<<b_start<<","<<b_end<<std::endl;
-//
-//GpuTimer kernTimer;
-//kernTimer.Start();
-//p2lF.jitGridBlockLaunch( nblck, nthrd, nanobuckets, Bucket, bucketp,
-//                        C);
-//
-//kernTimer.Stop();
-//std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
-//
-//
-//for (int b =0; b < 12; ++b) {// loop on buckets
-//
-//    int64_t b_start = BucketStart [b] ;
-//    int64_t b_end   = BucketStart [b+1] ;
-//    int64_t nvecs = b_end - b_start ;
-//    if (nvecs > 0) std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
-//
-//    T_C *X_valid  = (T_C*) malloc( Cnz*sizeof(T_C));
-//    int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
-//    if (b == TB) { //test cases for dense-dense kernels
-//       int nthrd = 32;
-//       int sz = 4;
-//       //int m = 256/sz;
-//       int nblck = Cnz;
-//       std::cout<< nblck<< " blocks of "<<nthrd<<" threads, "<<b_start<<","<<b_end<<std::endl;
-//
-//       GpuTimer kernTimer;
-//       kernTimer.Start();
-//       lF.jitGridBlockLaunch( nblck, nthrd, b_start, b_end, Bucket,
-//                                C, M, A, B, sz);
-//
-//       kernTimer.Stop();
-//       std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
-//
-//       zc_valid = C->zombie_count;
-//       C->zombie_count = 0;
-//       for (int i =0 ; i< Cnz; ++i) {
-//            //std::cout<<"Cx[i] = "<<Cx[i]<<std::endl;
-//            X_valid[i] = Cx[i];
-//            Cx[i] = 0;
-//            i_valid[i] = C->i[i];
-//       }
-//       G.loadCj();
-//
-//       for (int64_t pair = b_start ; pair < b_end ; pair++) {
-//
-//        // get the kth entry in bucket b
-//        //std::cout<< " pair ="<<pair<<std::endl;
-//        int64_t pC = (Bucket == nullptr) ? pair : Bucket [pair] ;
-//        int64_t i = M->i[pC] ;          // row index of C(i,j)
-//
-//        // get C(i,j)
-//        int64_t k = (C->i [pC] >> 4) ;    // col index of C(i,j)
-//        //ASSERT ((C->i [pC] & 4) == b) ;
-//        int64_t j = (C->h == nullptr) ? k : C->h [k] ; // Mh has been copied into Ch
-//        //std::cout<<" found dot "<<pair<<" at ("<<i<<","<<j<<")"<<std::endl;
-//
-//        // xvp, xvi, xvals:  A(:,i)
-//        // xvp is Ap [i] and Ap [i+1]
-//        int64_t pA_start = A->p [i] ;
-//        int64_t pA_end   = A->p [i+1] ;
-//        // indices are in Ai [pA_start ... pA_end-1]
-//        // values  are in Ax [pA_start ... pA_end-1]
-//
-//        // yvp, yvi, yvals:  B(:,j)
-//        // yvp is Bp [j] and Bp [j+1]
-//        int64_t pB_start = B->p [j] ;
-//        int64_t pB_end   = B->p [j+1] ;
-//        // indices are in Bi [pB_start ... pB_end-1]
-//        // values  are in Bx [pB_start ... pB_end-1]
-//        k = pA_start;
-//        int64_t l = pB_start;
-//        T_Z cij = MONOID_IDENTITY;
-//        while( k < pA_end && l < pB_end) {
-//           //std::cout<<" A*B="<< (*MUL_ptr<T_Z>) ( (T_Z)Ax[k] , (T_Z) Bx[l]) <<std::endl ;
-//           cij = (*ADD_ptr<T_Z>)( cij, (*MUL_ptr<T_Z>)( (T_Z)Ax[k] , (T_Z) Bx[l]) ) ;
-//           k++;
-//           l++;
-//           //std::cout<<"Ak = "<< Ax[k]<< " Bl = "<< Bx[l]<< "sum ="<<sum<<std::endl;
-//        }
-//        //std::cout<< " dot  = "<< sum << std::endl;
-//
-//        // output for this dot product is
-//
-//        if (cij == MONOID_IDENTITY) {
-//            C->i [pC] = -1;//GB_FLIP (i)
-//            C->zombie_count++;
-//        }
-//        else {
-//            Cx [pC] = (T_C)cij;
-//            C->i [pC] = i;
-//        }
-//    }
-//       T_C err = 0;
-//       for (int j =0 ; j< N; ++j) {
-//         for ( int l = C->p[j]; l< C->p[j+1]; ++l) {
-//             int64_t i =  C->i[l];
-//             //std::cout<<i<<","<<j<<","<<l <<" Cx = "<<Cx[l]<<"x_val="<<X_valid[l]<<std::endl;
-//             if (i >= 0)
-//                err +=  ( X_valid[l] - Cx[l])*(X_valid[l] - Cx[l]);
-//         }
-//       }
-//       std::cout<< " 2-norm of err ="<< err<<std::endl;
-//       std::cout<< " zombie count CPU = "<<C->get_zombie_count()<<" zGPU ="<<zc_valid<<std::endl;
-//
-//       EXPECT_EQ(err,0);
-//       EXPECT_EQ( zc_valid, C->get_zombie_count());
-//
-//       free(X_valid);
-//       free(i_valid);
-//     }
-//    }
-//
-//G.del();
-//
-//return result;
-//
-//}
+    /**
+     * Run Phase 3: Execute dot3 on all buckets
+     */
+    for (int b =0; b < 12; ++b) {// loop on buckets
+
+        int64_t b_start = BucketStart [b] ;
+        int64_t b_end   = BucketStart [b+1] ;
+        int64_t nvecs = b_end - b_start ;
+        if (nvecs > 0) std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
+
+        T_C *X_valid  = (T_C*) malloc( Cnz*sizeof(T_C));
+        int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
+        if (b == TB) { //test cases for dense-dense kernels
+           int nthrd = 32;
+           int sz = 4;
+           //int m = 256/sz;
+           int nblck = Cnz;
+           std::cout<< nblck<< " blocks of "<<nthrd<<" threads, "<<b_start<<","<<b_end<<std::endl;
+
+           GpuTimer kernTimer;
+           kernTimer.Start();
+           lF.jitGridBlockLaunch( nblck, nthrd, b_start, b_end, Bucket,
+                                    C, M, A, B, sz);
+
+           kernTimer.Stop();
+           std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+
+           zc_valid = C->zombie_count;
+           C->zombie_count = 0;
+           for (int i =0 ; i< Cnz; ++i) {
+                //std::cout<<"Cx[i] = "<<Cx[i]<<std::endl;
+                X_valid[i] = Cx[i];
+                Cx[i] = 0;
+                i_valid[i] = C->i[i];
+           }
+           G.loadCj();
+
+           for (int64_t pair = b_start ; pair < b_end ; pair++) {
+
+            // get the kth entry in bucket b
+            //std::cout<< " pair ="<<pair<<std::endl;
+            int64_t pC = (Bucket == nullptr) ? pair : Bucket [pair] ;
+            int64_t i = M->i[pC] ;          // row index of C(i,j)
+
+            // get C(i,j)
+            int64_t k = (C->i [pC] >> 4) ;    // col index of C(i,j)
+            //ASSERT ((C->i [pC] & 4) == b) ;
+            int64_t j = (C->h == nullptr) ? k : C->h [k] ; // Mh has been copied into Ch
+            //std::cout<<" found dot "<<pair<<" at ("<<i<<","<<j<<")"<<std::endl;
+
+            // xvp, xvi, xvals:  A(:,i)
+            // xvp is Ap [i] and Ap [i+1]
+            int64_t pA_start = A->p [i] ;
+            int64_t pA_end   = A->p [i+1] ;
+            // indices are in Ai [pA_start ... pA_end-1]
+            // values  are in Ax [pA_start ... pA_end-1]
+
+            // yvp, yvi, yvals:  B(:,j)
+            // yvp is Bp [j] and Bp [j+1]
+            int64_t pB_start = B->p [j] ;
+            int64_t pB_end   = B->p [j+1] ;
+            // indices are in Bi [pB_start ... pB_end-1]
+            // values  are in Bx [pB_start ... pB_end-1]
+            k = pA_start;
+            int64_t l = pB_start;
+            T_Z cij = MONOID_IDENTITY;
+            while( k < pA_end && l < pB_end) {
+               //std::cout<<" A*B="<< (*MUL_ptr<T_Z>) ( (T_Z)Ax[k] , (T_Z) Bx[l]) <<std::endl ;
+               cij = (*ADD_ptr<T_Z>)( cij, (*MUL_ptr<T_Z>)( (T_Z)Ax[k] , (T_Z) Bx[l]) ) ;
+               k++;
+               l++;
+               //std::cout<<"Ak = "<< Ax[k]<< " Bl = "<< Bx[l]<< "sum ="<<sum<<std::endl;
+            }
+            //std::cout<< " dot  = "<< sum << std::endl;
+
+            // output for this dot product is
+
+            if (cij == MONOID_IDENTITY) {
+                C->i [pC] = -1;//GB_FLIP (i)
+                C->zombie_count++;
+            }
+            else {
+                Cx [pC] = (T_C)cij;
+                C->i [pC] = i;
+            }
+        }
+           T_C err = 0;
+           for (int j =0 ; j< N; ++j) {
+             for ( int l = C->p[j]; l< C->p[j+1]; ++l) {
+                 int64_t i =  C->i[l];
+                 //std::cout<<i<<","<<j<<","<<l <<" Cx = "<<Cx[l]<<"x_val="<<X_valid[l]<<std::endl;
+                 if (i >= 0)
+                    err +=  ( X_valid[l] - Cx[l])*(X_valid[l] - Cx[l]);
+             }
+           }
+           std::cout<< " 2-norm of err ="<< err<<std::endl;
+           std::cout<< " zombie count CPU = "<<C->get_zombie_count()<<" zGPU ="<<zc_valid<<std::endl;
+
+           EXPECT_EQ(err,0);
+           EXPECT_EQ( zc_valid, C->get_zombie_count());
+
+           free(X_valid);
+           free(i_valid);
+         }
+        }
+
+    G.del();
+
+    return result;
+
+}
 
 //template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
 //bool test_AxB_dot3_dndn_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, std::string& SEMI_RING) {
