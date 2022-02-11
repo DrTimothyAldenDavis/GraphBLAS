@@ -52,7 +52,7 @@ void AxB_phase2end
     // The taskbucket for this threadblock is an array of size
     // 12-by-blockDim.x, held by row.  It forms a 2D array within the 3D
     // nanobuckets array.
-    int64_t *__restrict__ taskbucket = nanobuckets + blockIdx.x * (12 * blockDim.x) ;
+    int64_t *__restrict__ taskbucket = nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) ;
 
     //printf("block%d thd%d blockbucket= %ld\n", blockIdx.x, threadIdx.x,
     //                                           blockbucket[blockIdx.x*gridDim.x+blockIdx.x]);
@@ -65,9 +65,9 @@ void AxB_phase2end
     // Each thread loads its 12 nanobucket values into registers.
 #define LOAD_NANOBUCKET(bucket)                     \
         int64_t my_bucket_ ## bucket =                  \
-            nanobucket [bucket * blockDim.x]            \
+            nanobucket [bucket * blockDim.x]        \
          + blockbucket [bucket * gridDim.x + blockIdx.x]\
-         + bucketp [bucket] ;
+         + bucketp [bucket] ; 
 
     LOAD_NANOBUCKET (0) ;
     LOAD_NANOBUCKET (1) ;

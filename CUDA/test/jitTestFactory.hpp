@@ -39,9 +39,6 @@ bool test_AxB_phase1_factory( int64_t , int64_t , int64_t , int64_t ) ;
 template <typename T_C>
 bool test_AxB_dot3_phase2_factory( int , int64_t , int64_t , int64_t, int64_t ) ;
 
-template <typename T_C>
-bool test_AxB_dot3_phase2end_factory( int , int64_t , int64_t , int64_t ) ;
-
 ////AxB_dot3_phase3 kernels
 //template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
 //bool test_AxB_dot3_dndn_factory( int , int64_t , int64_t , int64_t , std::string&) ;
@@ -75,7 +72,6 @@ class AxB_dot3_Test : public ::testing::Test
    {
 
    }
-
 };
 
 template<typename T, typename I>
@@ -139,9 +135,11 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     printf("nanobuckets_size: %d\n", nanobuckets_size);
     int64_t *Nanobuckets = (int64_t*)rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
     int blockbuckets_size = NBUCKETS * ntasks;
+
+    printf("blockbuckets_size: %d\n", blockbuckets_size);
     int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
 
-    p1lF.jitGridBlockLaunch( nblck, nthrd, Nanobuckets, Blockbucket,
+    p1lF.jitGridBlockLaunch( ntasks, nthrd, Nanobuckets, Blockbucket,
                              C->get_grb_matrix(), M->get_grb_matrix(),
                              A->get_grb_matrix(), B->get_grb_matrix());
     kernTimer.Stop();
@@ -217,7 +215,7 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
     // TODO: Verify that RMM is checking and throwing exceptions
     int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
     int64_t *blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
-    int64_t *bucketp = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
+    int64_t *bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
     int64_t *bucket = (int64_t*)rmm_wrap_malloc(mnz * sizeof (int64_t));
     int64_t *offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
 
@@ -229,7 +227,6 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
     print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
     print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
 
-
     p2lF.jitGridBlockLaunch( nblck, nthrd, nanobuckets, blockbucket,
                             bucketp, bucket, offset, nblck);
     int64_t s= 0;
@@ -240,8 +237,8 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
         //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
     }
 
-    p2elF.jitGridBlockLaunch( nblck, nthrd, nanobuckets, blockbucket,
-                              bucketp, bucket, offset, C, Cnz);
+    p2elF.jitGridBlockLaunch( ntasks, nthrd, nanobuckets, blockbucket,
+                              bucketp, bucket, offset, C->get_grb_matrix(), Cnz);
     kernTimer.Stop();
     std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 

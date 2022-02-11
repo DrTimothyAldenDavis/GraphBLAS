@@ -296,7 +296,7 @@ public:
   bool jitGridBlockLaunch(int gridsz, int blocksz, 
                           int64_t *nanobuckets, int64_t *blockBucket, 
                           int64_t *bucketp, int64_t *bucket, int64_t *offset,
-                          matrix<T_C> *C, const int64_t cnz) 
+                          GrB_Matrix C, const int64_t cnz)
      {
       
       bool result = false; 
