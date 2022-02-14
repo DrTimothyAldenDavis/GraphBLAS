@@ -13087,11 +13087,12 @@ vector do not return error conditions.  Instead, they have well-defined
 preconditions that must be met (and which should be checked by the user
 application).  If those preconditions are not met, results are undefined.
 
-Most of the iterator methods are implemented in SuiteSparse:GraphBLAS as
-\verb'static' \verb'inline' functions.  This requires that the opaque contents
-of the iterator object are defined in \verb'GraphBLAS.h' itself.  The user
-application must not access these contents directly, but can only do so safely
-via the iterator methods provided by SuiteSparse:GraphBLAS.
+The iterator methods are implemented in SuiteSparse:GraphBLAS as both macros
+(via \verb'#define') and as functions of the same name that appear in the
+compiled \verb'libgraphblas.so' library.  This requires that the opaque
+contents of the iterator object be defined in \verb'GraphBLAS.h' itself.  The
+user application must not access these contents directly, but can only do so
+safely via the iterator methods provided by SuiteSparse:GraphBLAS.
 
 The iterator object can be used in one of four sets of methods,
 for four different access patterns:
@@ -13121,6 +13122,7 @@ for four different access patterns:
         just a single loop.  Any vector can be accessed with a vector iterator.
     \end{enumerate}
 
+\newpage
 %===============================================================================
 \subsection{Creating and destroying an iterator}
 %===============================================================================
@@ -13202,6 +13204,7 @@ The return values for row/column methods are:
     \end{itemize}
 
 The other two methods (entry iterator for matrices, or the vector iterator)
+return the same error codes, except that they
 do not return \verb'GrB_NOT_IMPLEMENTED'.
 
 %===============================================================================
@@ -13358,7 +13361,7 @@ for changing the position of the iterator is the corresponding {\em next}
 method, described below for each iterator:
 
     \begin{enumerate}
-    \item {\em row iterator}: 
+    \item {\em row iterator}:  To move to the next row.
 
     {\footnotesize
     \begin{verbatim}
@@ -13377,6 +13380,8 @@ method, described below for each iterator:
     \verb'GxB_rowIterator_*seek*' or \verb'GxB_rowIterator_nextRow'. 
     Results are undefined if these conditions are not met.
 
+    \item {\em row iterator}:  To move to the next entry within a row.
+
     {\footnotesize
     \begin{verbatim}
     GrB_Info info = GxB_rowIterator_nextCol (iterator) ; \end{verbatim}}
@@ -13389,7 +13394,7 @@ method, described below for each iterator:
 
     Preconditions: the same as \verb'GxB_rowIterator_nextRow'.
 
-    \item {\em column iterator}: 
+    \item {\em column iterator}:  To move to the next column
 
     {\footnotesize
     \begin{verbatim}
@@ -13409,6 +13414,8 @@ method, described below for each iterator:
     Results are undefined if these conditions are not met.
 
     {\footnotesize
+    \item {\em column iterator}:  To move to the next entry within a column.
+
     \begin{verbatim}
     GrB_Info info = GxB_colIterator_nextRow (iterator) ; \end{verbatim}}
 
@@ -13420,7 +13427,7 @@ method, described below for each iterator:
 
     Preconditions: the same as \verb'GxB_colIterator_nextCol'.
 
-    \item {\em entry iterator}:
+    \item {\em entry iterator}: To move to the next entry.
     {\footnotesize
     \begin{verbatim}
     GrB_Info info = GxB_Matrix_Iterator_next (iterator) ; \end{verbatim}}
@@ -13435,7 +13442,7 @@ method, described below for each iterator:
     \verb'GxB_Matrix_Iterator_seek' or \verb'GxB_Matrix_Iterator_next'.
     Results are undefined if these conditions are not met.
 
-    \item {\em vector iterator}:
+    \item {\em vector iterator}: To move to the next entry.
     {\footnotesize
     \begin{verbatim}
     GrB_Info info = GxB_Vector_Iterator_next (iterator) ; \end{verbatim}}
@@ -13459,11 +13466,11 @@ method, described below for each iterator:
 Once the iterator is attached to a matrix or vector, and is placed in position
 at an entry in the matrix or vector, the indices and value of this entry can be
 obtained.  The methods for accessing the value of the entry are described in
-the next sectio.  Accessing the indices is performed with four different sets
-of methods, depending on which access pattern is in use, described below:
+Section~\ref{getvalu}.  Accessing the indices is performed with four different
+sets of methods, depending on which access pattern is in use, described below:
 
     \begin{enumerate}
-    \item {\em row iterator}: 
+    \item {\em row iterator}:  To get the current row index.
     {\footnotesize
     \begin{verbatim}
     GrB_Index i = GxB_rowIterator_getRowIndex (iterator) ; \end{verbatim}}
@@ -13478,6 +13485,7 @@ of methods, depending on which access pattern is in use, described below:
     to matrix as a row iterator via \verb'GxB_rowIterator_attach'.
     Results are undefined if this condition is not met.
 
+    \item {\em row iterator}:  To get the current column index.
     {\footnotesize
     \begin{verbatim}
     GrB_Index j = GxB_rowIterator_getColIndex (iterator) ; \end{verbatim}}
@@ -13489,7 +13497,7 @@ of methods, depending on which access pattern is in use, described below:
     \verb'GxB_rowIterator_*next*', must have returned \verb'GrB_SUCCESS'.
     Results are undefined if these conditions are not met.
 
-    \item {\em column iterator}: 
+    \item {\em column iterator}:  To get the current column index.
     {\footnotesize
     \begin{verbatim}
     GrB_Index j = GxB_colIterator_getColIndex (iterator) ; \end{verbatim}}
@@ -13504,6 +13512,7 @@ of methods, depending on which access pattern is in use, described below:
     to matrix as a column iterator via \verb'GxB_colIterator_attach'.
     Results are undefined if this condition is not met.
 
+    \item {\em column iterator}:  To get the current row index.
     {\footnotesize
     \begin{verbatim}
     GrB_Index i = GxB_colIterator_getRowIndex (iterator) ; \end{verbatim}}
@@ -13515,7 +13524,7 @@ of methods, depending on which access pattern is in use, described below:
     \verb'GxB_colIterator_*next*', must have returned \verb'GrB_SUCCESS'.
     Results are undefined if these conditions are not met.
 
-    \item {\em entry iterator}:
+    \item {\em entry iterator}: To get the current row and column index.
     {\footnotesize
     \begin{verbatim}
     GrB_Index i, j ;
@@ -13530,7 +13539,7 @@ of methods, depending on which access pattern is in use, described below:
     return value of \verb'GrB_SUCCESS'.
     Results are undefined if these conditions are not met.
 
-    \item {\em vector iterator}:
+    \item {\em vector iterator}: To get the current index.
     {\footnotesize
     \begin{verbatim}
     GrB_Index i = GxB_Vector_Iterator_getIndex (iterator) ; \end{verbatim}}
@@ -13548,6 +13557,7 @@ of methods, depending on which access pattern is in use, described below:
 
 %===============================================================================
 \subsection{Accessing the value of the current entry}
+\label{getvalu}
 %===============================================================================
 
 So far, all methods that create or use an iterator have been split into four
@@ -13636,7 +13646,7 @@ The following example uses a column iterator to access all of the entries in a
 matrix \verb'A' of type \verb'GrB_FP64'.  The outer loop iterates over all
 columns of the matrix.  The inner loop iterates over all entries in the column
 \verb'j'.  This access pattern requires the matrix to be held by-column, but
-otherwise it works for any matrix.  If the matrix is held by-column, then use
+otherwise it works for any matrix.  If the matrix is held by-row, then use
 the row iterator methods instead.
 
     {\footnotesize
