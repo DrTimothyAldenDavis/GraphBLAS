@@ -131,12 +131,10 @@ T block_ReduceSum(thread_block g, T val)
 
 __global__
 void simple_nongrb_test(int i) {
-   printf("I'M HERE no GRB!");
 }
 
 __global__
 void simple_grb_test(GrB_Matrix C) {
-    printf("I'M HERE GRB");
 }
 
 __global__
@@ -302,7 +300,7 @@ void AxB_phase2
 
 
 __global__ 
-void GB_AxB_dot3_phase2end
+void AxB_phase2end
 (
     // input, not modified:
           int64_t *__restrict__ nanobuckets,    // array of size 12-blockDim.x-by-nblocks

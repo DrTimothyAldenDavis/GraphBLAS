@@ -220,8 +220,6 @@ __global__ void AxB_phase1
 )
 {
 
-    printf("Inside phase1 kernel\n");
-
     //--------------------------------------------------------------------------
     // get C, M, A, and B
     //--------------------------------------------------------------------------
@@ -436,7 +434,6 @@ j = k ;
             int64_t pB, pB_end ;
 // HACK: for sparse only, not hypersparse
 
-printf("Bp[j]= %ld", Bp[j]);
 pB = Bp [j] ;
 pB_end = Bp [j+1] ;
 //              GB_lookup_device (B_is_hyper, Bh, Bp, &bpleft, bnvec-1, j,
@@ -508,23 +505,29 @@ pA_end = Ap [i+1] ;
     // taskbucket, the nanobucket.  The nanobucket is a column of length 12,
     // with stride equal to blockDim.x.
     int64_t *nanobucket =
-        nanobuckets + blockIdx.x * (12 * blockDim.x) + threadIdx.x ;
+        nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) + threadIdx.x ;
 
     #define CUMSUM_AND_STORE_NANOBUCKET(bucket) \
-        printf("blockbucket %d, %ld", bucket, blockbucket[blockIdx.x + bucket * gridDim.x]); \
+        BlockCumSum(temp_storage).ExclusiveSum                              \
+            ( my_bucket_ ## bucket, my_bucket_ ## bucket) ;                 \
+            __syncthreads();                                                \
         if( threadIdx.x == blockDim.x-1)                                    \
             blockbucket [blockIdx.x + bucket * gridDim.x] =                 \
             my_bucket_ ## bucket ;                                          \
-        BlockCumSum(temp_storage).ExclusiveSum                              \
-            ( my_bucket_ ## bucket, my_bucket_ ## bucket) ;                 \
-            __syncthreads();                    \
-        printf("nanobucket %d, %ld", nanobucket, nanobucket[bucket * blockDim.x]); \
         nanobucket [bucket * blockDim.x] = my_bucket_ ## bucket ;
 
     CUMSUM_AND_STORE_NANOBUCKET (0) ;
     CUMSUM_AND_STORE_NANOBUCKET (1) ;
     CUMSUM_AND_STORE_NANOBUCKET (2) ;
-    CUMSUM_AND_STORE_NANOBUCKET (3) ;
+//    CUMSUM_AND_STORE_NANOBUCKET (3) ;
+    if( threadIdx.x == blockDim.x-1)
+            blockbucket [blockIdx.x + 3 * gridDim.x] =
+            my_bucket_3 ;
+        BlockCumSum(temp_storage).ExclusiveSum
+            ( my_bucket_3, my_bucket_3) ;
+            __syncthreads();                    \
+        nanobucket [3 * blockDim.x] = my_bucket_3 ;
+
     CUMSUM_AND_STORE_NANOBUCKET (4) ;
     CUMSUM_AND_STORE_NANOBUCKET (5) ;
     CUMSUM_AND_STORE_NANOBUCKET (6) ;
@@ -549,12 +552,10 @@ pA_end = Ap [i+1] ;
        printf("thd %d blk%d nbucket9 has %ld prev\n",threadIdx.x, blockIdx.x, nanobucket[9*blockDim.x]);
        printf("thd %d blk%d nbucket10 has %ld prev\n",threadIdx.x, blockIdx.x, nanobucket[10*blockDim.x]);
        printf("thd %d blk%d nbucket11 has %ld prev\n",threadIdx.x, blockIdx.x, nanobucket[11*blockDim.x]);
-
     }
     __syncthreads();
     */
         
-
     // The last thread now has the sum of all nanobuckets, which is then saved
     // to the global bucket counts.   blockbucket is an array of size
     // 12-by-gridDim.x, held by row, with one column per thread block.
