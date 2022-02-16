@@ -221,10 +221,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Feb 14, 2022"
+#define GxB_IMPLEMENTATION_DATE "Feb 16, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 6
 #define GxB_IMPLEMENTATION_MINOR 2
-#define GxB_IMPLEMENTATION_SUB   0
+#define GxB_IMPLEMENTATION_SUB   1
 #define GxB_SPEC_DATE "Nov 15, 2021"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 0
@@ -12510,7 +12510,7 @@ GB_PUBLIC void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
 
 #define GxB_Iterator_get_UDT(iterator, value)                               \
 (                                                                           \
-    (void) memcpy ((void *) value, (iterator)->Ax +                         \
+    (void) memcpy ((void *) value, ((const uint8_t *) ((iterator)->Ax)) +   \
         ((iterator)->iso ? 0 : ((iterator)->type_size * (iterator)->p)),    \
         (iterator)->type_size)                                              \
 )
