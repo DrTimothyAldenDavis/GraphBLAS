@@ -12510,7 +12510,7 @@ GB_PUBLIC void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
 
 #define GxB_Iterator_get_UDT(iterator, value)                               \
 (                                                                           \
-    (void) memcpy ((void *) value, (iterator)->Ax +                         \
+    (void) memcpy ((void *) value, ((const uint8_t *) ((iterator)->Ax)) +   \
         ((iterator)->iso ? 0 : ((iterator)->type_size * (iterator)->p)),    \
         (iterator)->type_size)                                              \
 )

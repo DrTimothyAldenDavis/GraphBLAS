@@ -83,10 +83,15 @@ void print_array(void *arr, I size, const char *name) {
     std::cout << std::endl << "Done." << std::endl;
 }
 
+//------------------------------------------------------------------------------
+// test_AxB_phase1_factory: test phase1
+//------------------------------------------------------------------------------
+
 // Test generator code, to allow parameterized tests
 // Uses jitFactory, dataFactory and GB_jit 
 template <typename T_C, typename T_M, typename T_A,typename T_B>
-bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_Monoid monoid, GrB_BinaryOp binop) {
+bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_Monoid monoid, GrB_BinaryOp binop)
+{
 
     int gpuID;
     cudaGetDevice( &gpuID);
@@ -110,7 +115,6 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     matrix<T_A>* A = G.getAptr();
     matrix<T_B>* B = G.getBptr();
 
-    int nblck = N;
     int nthrd = 32;
     int sz = 4;
     //int m = 256/sz;
@@ -127,7 +131,11 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     int ntasks =  ( mnz + chunksize - 1)/chunksize;
 
     // Idea is to have each task work on a continguous block of columns of C
-    //ntasks =; //GB_IMIN( ntasks,  128*number_of_sms) ;    // ntasks will be grid.x
+    // Note: for small tests, mnz is small so ntasks is be governed by
+    // chunksize, not 128*number_of_sms.  For large problems in production,
+    // chunksize is less important since ntasks will likely be bounded by
+    // 128*number_of_sms (say 128*80 = 10,240 on a V100).
+    ntasks = GB_IMIN( ntasks,  128*number_of_sms) ;    // ntasks will be grid.x
 
     // TODO: Verify that RMM is checking and throwing exceptions
     int nanobuckets_size = NBUCKETS * nthrd * ntasks;
@@ -152,9 +160,13 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     return true;
 }
 
+//------------------------------------------------------------------------------
+// test_AxB_phase2_factory: test phase2 and phase2end
+//------------------------------------------------------------------------------
 
 template <typename T_C>
-bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
+bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
+{
 
     int gpuID;
     cudaGetDevice( &gpuID);
@@ -176,7 +188,13 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
     matrix<T_C>* C = G.getCptr();
     matrix<T_C>* M = G.getMptr();       // note: values are not accessed
 
-    int nblck = N;
+//  matrix<T_C>* A = G.getAptr();
+//  matrix<T_C>* B = G.getBptr();
+//
+//    T_C *Cx = C->mat->x;
+//    T_C *Ax = A->mat->x;
+//    T_C *Bx = B->mat->x;
+
    int nthrd = 32;
 
    GpuTimer kernTimer;
@@ -188,21 +206,26 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
 
     std::cout << "mnz: " << mnz << std::endl;
 
-//    int number_of_sms = GB_Global_gpu_sm_get (0) ;
-    int number_of_sms = 1;
+    int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
     printf("number of sms: %d\n", number_of_sms);
 
-    int ntasks =  ( mnz +chunksize -1)/chunksize;
-
+    int ntasks = ( mnz +chunksize -1)/chunksize;
 
     printf("ntasks before: %d\n", ntasks);
 
     // Idea is to have each task work on a continguous block of columns of C
     ntasks = GB_IMIN( ntasks,  128*number_of_sms) ;    // ntasks will be grid.x
 
-    printf("ntasks after: %d\n", ntasks);
+    printf("ntasks after: %d (done in phase1)\n", ntasks);
 
+    // ntasks is the # of tasks that were created by phase1.  phase2 uses a
+    // much smaller grid (fewer thread blocks) than phase1 or phase2end,
+    // with p2ntasks.
+    int p2ntasks = (ntasks + nthrd - 1) / nthrd ;
+    printf("p2ntasks %d\n", p2ntasks);
+
+    // fabricate data as if it came from phase1:
     // TODO: Verify that RMM is checking and throwing exceptions
     int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
     int64_t *blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
@@ -218,8 +241,11 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
     print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
     print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
 
-    p2lF.jitGridBlockLaunch( nblck, nthrd, nanobuckets, blockbucket,
-                            bucketp, bucket, offset, nblck);
+    // launch phase2 (just with p2ntasks as the # of tasks)
+    p2lF.jitGridBlockLaunch( p2ntasks, nthrd, nanobuckets, blockbucket,
+                            bucketp, bucket, offset, /* phase1 size was: */ ntasks);
+
+    // do the reduction between phase2 and phase2end
     int64_t s= 0;
     for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
     {
@@ -228,8 +254,10 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz) {
         //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
     }
 
+    // launch phase2end: note same # of tasks as phase1
+    const int64_t cnz = mnz ; // the size of M and C (including the zombie count in C)
     p2elF.jitGridBlockLaunch( ntasks, nthrd, nanobuckets, blockbucket,
-                              bucketp, bucket, offset, C->get_grb_matrix(), Cnz);
+                              bucketp, bucket, offset, C->get_grb_matrix(), cnz);
     kernTimer.Stop();
     std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
