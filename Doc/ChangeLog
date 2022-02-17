@@ -1,3 +1,7 @@
+Version 6.2.1 Feb 16, 2022
+
+    * (41) bug fix: GxB_Iterator_get used (void *) + siz arithmetic
+
 Version 6.2.0 Feb 14, 2022
 
     * added row/column/entry/vector iterators
