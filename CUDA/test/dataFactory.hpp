@@ -282,7 +282,7 @@ class SpGEMM_problem_generator {
            BucketStart[0] = 0; 
            BucketStart[12] = Cnz;
            for (int b = 1; b < 12; ++b){
-              BucketStart[b] = BucketStart[b-1] + (Cnz / 12);  
+              BucketStart[b] = BucketStart[b-1] + (Cnz / 12);
               //std::cout<< "bucket "<< b<<" starts at "<<BucketStart[b]<<std::endl;
               for (int j = BucketStart[b-1]; j < BucketStart[b]; ++j) { 
                 Bucket[j] = b ; 

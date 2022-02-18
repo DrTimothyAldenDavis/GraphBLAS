@@ -326,9 +326,7 @@ public:
   phase3launchFactory(GB_cuda_semiring_factory &mysemiringfactory, GB_bucket_code bucket_code):
       semiring_factory_(mysemiringfactory), bucket_code_(bucket_code) {}
 
-  bool jitGridBlockLaunch(int64_t *nanobuckets, int64_t *blockBucket,
-                          int64_t *bucketp,
-                          int64_t start, int64_t end, int64_t *bucket,
+  bool jitGridBlockLaunch(int64_t *bucketp, int64_t start, int64_t end, int64_t *bucket,
                           GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
       
       bool result = false; 
@@ -351,31 +349,38 @@ public:
 
     int gridsz, blocksz, sz = 4;
 
-    std::stringstream hashable_name_ss;
-    hashable_name_ss << base_name << "_" << kernel_name << "_";
+    std::stringstream final_kernel_name_ss;
+    final_kernel_name_ss << kernel_name << "_";
 
     /**
      * Configure geometry and kernel function name based on sparsity of C and number of vectors in M
      */
-    configure(Cnz, mnvec, hashable_name_ss, blocksz, gridsz, sz);
+    configure(Cnz, mnvec, final_kernel_name_ss, blocksz, gridsz, sz);
 
-    std::string hashable_name = hashable_name_ss.str();
+    std::string hashable_name = base_name + "_" + final_kernel_name_ss.str();
     std::stringstream string_to_be_jitted ;
-    string_to_be_jitted <<
+
+    jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
+    filecache.getFile (semiring_factory_) ;
+
+    string_to_be_jitted << hashable_name << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << semiring_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
+
+    std::cout << "String to be jitted: " << string_to_be_jitted.str() << std::endl;
 
     dim3 grid(gridsz);
     dim3 block(blocksz);
 
-    std::cout<< "Kernel name =" <<hashable_name<<std::endl;
+    std::cout<< "program name =" <<hashable_name<<std::endl;
+    std::cout << "Final kernel name =" << final_kernel_name_ss.str() << std::endl;
     GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
     jit::launcher( hashable_name,
                    string_to_be_jitted.str(),
                    header_names,
-                   jit::compiler_flags,
-                   dummy_callback)
-               .set_kernel_inst(hashable_name,
+                   compiler_flags,
+                   file_callback)
+               .set_kernel_inst(final_kernel_name_ss.str(),
                                 { GET_TYPE_NAME(dumC),
                                   GET_TYPE_NAME(dumA),
                                   GET_TYPE_NAME(dumB),

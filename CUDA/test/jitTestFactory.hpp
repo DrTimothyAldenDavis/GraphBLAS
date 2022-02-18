@@ -253,6 +253,8 @@ template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, t
 bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                                  GrB_Monoid monoid, GrB_BinaryOp binop) {
 
+    // FIXME: Allow the adaptive tests in this guy
+
     //Generate test data and setup for using a jitify kernel with 'bucket' interface
     // The testBucket arg tells the generator which bucket we want to exercise
     SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G(N, N);
@@ -262,7 +264,6 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     float Cnzpercent = (float) Cnz/(N*N);
 
     G.init(Annz, Bnnz, Cnzpercent);
-
     G.fill_buckets( TB); // all elements go to testbucket= TB
 
     matrix<T_C>* C = G.getCptr();
@@ -292,14 +293,12 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                                          GB_sparsity(B->get_grb_matrix()) ) ;
 
 
-    // Generates three randomized matrices, builds buckets and calls a kernel.
-    // This is the full version as called in SuiteSparse:GraphBLAS
-    phase1launchFactory<T_C, T_M, T_A, T_B> p1lF(mysemiringfactory);
-    phase2launchFactory<T_C> p2lF;
-    phase2endlaunchFactory<T_C> p2elF;
-
-    int64_t *Bucket = G.getBucket();
-    int64_t *BucketStart = G.getBucketStart();
+//    // Generates three randomized matrices, builds buckets and calls a kernel.
+//    // This is the full version as called in SuiteSparse:GraphBLAS
+//    phase1launchFactory<T_C, T_M, T_A, T_B> p1lF(mysemiringfactory);
+//    phase2launchFactory<T_C> p2lF;
+//    phase2endlaunchFactory<T_C> p2elF;
+//
 
     int zc_valid = 0;
 
@@ -310,65 +309,75 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
      */
     const int64_t mnz = GB_nnz (M->mat) ;
 
-    int phase_1_nthrd = p1lF.get_threads_per_block();
-    int phase_1_ntasks = p1lF.get_number_of_blocks(M->get_grb_matrix());
-    int phase_2_ntasks = p2lF.get_number_of_blocks(M->get_grb_matrix());
+    int chunk_size = 128;
 
-    int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * phase_1_nthrd * phase_1_ntasks * sizeof (int64_t));
-    int64_t *blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * phase_1_ntasks * sizeof (int64_t));
+    int number_of_sms = GB_Global_gpu_sm_get (0);
+    int nblks = ( GB_nnz (M->get_grb_matrix()) + chunk_size - 1)/chunk_size;
+    int ntasks = GB_IMIN( nblks,  128 * number_of_sms);
+    int nthrd = 32;
+//    int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
+//    int64_t *blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
     int64_t *bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
+
+    bucketp[1] = 0;
+
     int64_t *bucket = (int64_t*)rmm_wrap_malloc(Cnz * sizeof (int64_t));
     int64_t *offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
 
-    fillvector_constant(NBUCKETS * phase_1_nthrd * phase_1_ntasks, nanobuckets, (int64_t)1);
-    fillvector_constant(NBUCKETS * phase_1_ntasks, nanobuckets, (int64_t)1);
+//    fillvector_constant(NBUCKETS * nthrd * ntasks, nanobuckets, (int64_t)1);
+//    fillvector_constant(NBUCKETS * ntasks, nanobuckets, (int64_t)1);
 
     GpuTimer kernTimer;
-    kernTimer.Start();
-    p1lF.jitGridBlockLaunch(nanobuckets, Bucket,
-                            C->get_grb_matrix(),
-                            M->get_grb_matrix(),
-                            A->get_grb_matrix(),
-                            B->get_grb_matrix());
+//    kernTimer.Start();
+//    p1lF.jitGridBlockLaunch(nanobuckets, Bucket,
+//                            C->get_grb_matrix(),
+//                            M->get_grb_matrix(),
+//                            A->get_grb_matrix(),
+//                            B->get_grb_matrix());
 
-    kernTimer.Stop();
-    std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+//    kernTimer.Stop();
+//    std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
     /**
      * Run Phase 2: Cumsum over nanobuckets
      */
 
-    kernTimer.Start();
-    // launch phase2 (just with p2ntasks as the # of tasks)
-    p2lF.jitGridBlockLaunch( nanobuckets, blockbucket,
-                             bucketp, bucket, offset, M->get_grb_matrix());
-
-    // do the reduction between phase2 and phase2end
-    int64_t s= 0;
-    for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
-    {
-        bucketp[bucket] = s;
-        s+= offset[bucket];
-        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
-    }
-
-    // launch phase2end: note same # of tasks as phase1
-    const int64_t cnz = mnz ; // the size of M and C (including the zombie count in C)
-    p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
-                              bucketp, bucket, offset, C->get_grb_matrix(),
-                              M->get_grb_matrix(), cnz);
-
-    kernTimer.Stop();
-    std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+//    kernTimer.Start();
+//    // launch phase2 (just with p2ntasks as the # of tasks)
+//    p2lF.jitGridBlockLaunch( nanobuckets, blockbucket,
+//                             bucketp, bucket, offset, M->get_grb_matrix());
+//
+//    // do the reduction between phase2 and phase2end
+//    int64_t s= 0;
+//    for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
+//    {
+//        bucketp[bucket] = s;
+//        s+= offset[bucket];
+//        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
+//    }
+//
+//    // launch phase2end: note same # of tasks as phase1
+//    const int64_t cnz = mnz ; // the size of M and C (including the zombie count in C)
+//    p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
+//                              bucketp, bucket, offset, C->get_grb_matrix(),
+//                              M->get_grb_matrix());
+//
+//    kernTimer.Stop();
+//    std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
     /**
      * Run Phase 3: Execute dot3 on all buckets
      */
     for (int b =0; b < 12; ++b) {// loop on buckets
 
+        G.fill_buckets(b);
+        int64_t *Bucket = G.getBucket();
+        int64_t *BucketStart = G.getBucketStart();
+
         int64_t b_start = BucketStart [b] ;
         int64_t b_end   = BucketStart [b+1] ;
         int64_t nvecs = b_end - b_start ;
+
         if (nvecs > 0) std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
 
         T_C *X_valid  = (T_C*) malloc( Cnz*sizeof(T_C));
@@ -382,8 +391,9 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            GpuTimer kernTimer;
            kernTimer.Start();
             phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
-            lF.jitGridBlockLaunch(nanobuckets, blockbucket, bucketp, b_start, b_end, Bucket,
-                                    C->get_grb_matrix(), M->get_grb_matrix(), A->get_grb_matrix(), B->get_grb_matrix());
+            lF.jitGridBlockLaunch(bucketp, b_start, b_end, Bucket,
+                                  C->get_grb_matrix(), M->get_grb_matrix(),
+                                  A->get_grb_matrix(), B->get_grb_matrix());
 
            kernTimer.Stop();
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;

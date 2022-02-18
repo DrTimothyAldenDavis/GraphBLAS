@@ -122,10 +122,13 @@ GrB_Desc_Value ;
 #include "GB_opaque.h"
 #endif
 
+
 #include "GB_imin.h"
 #include "GB_zombie.h"
 #include "GB_nnz.h"
 #include "GB_partition.h"
-#include "GB_binary_search.h"
-#include "GB_search_for_vector_template.c"
+
+// FIXME: Only needed for certain dot3 kernels
+//#include "GB_binary_search.h"
+//#include "GB_search_for_vector_template.c"
 

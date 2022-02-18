@@ -83,7 +83,7 @@ def write_test_instances_header(test_suite_name, Monoids, Binops, Semirings, Dat
                         for dtA in DataTypes:
                             for dtB in DataTypes:
                                 for ds in DataShapes:
-                                    for phase in [1, 2]:
+                                    for phase in [1, 2, 3]:
 
                                         TEST_HEAD, TEST_BODY, gb_monoid, gb_binop = buildTest( Test_suite, Kernels, ds, m, b, phase,
                                                                           dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
