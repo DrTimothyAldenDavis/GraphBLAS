@@ -91,6 +91,11 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
 
     std::cout<< "found device "<<gpuID<<std::endl;
 
+    /**************************
+     * Create reference and input data
+     */
+
+    // FIXME: This should be getting set automatically somehow.
     bool flipxy = false;
     bool mask_struct = false;
     bool mask_comp = false;
@@ -110,6 +115,10 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     matrix<T_A>* A = G.getAptr();
     matrix<T_B>* B = G.getBptr();
 
+    /************************
+     * Create semiring factory
+     */
+
     GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
     GrB_Semiring mysemiring;
     auto grb_info = GrB_Semiring_new(&mysemiring, monoid, binop);
@@ -126,44 +135,32 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
                                          GB_sparsity(B->get_grb_matrix()));
 
 
-    phase1launchFactory<T_C, T_M, T_A, T_B> p1lF(mysemiringfactory);
+    /********************
+     * Launch kernel
+     */
 
-    int nthrd = 32;
-    int sz = 4;
-    //int m = 256/sz;
+    phase1launchFactory<T_C, T_M, T_A, T_B> p1lF(mysemiringfactory);
 
     GpuTimer kernTimer;
     kernTimer.Start();
 
-    #define chunksize 128
-
-    const int64_t mnz = GB_nnz (M->mat) ;
-
-    int number_of_sms = GB_Global_gpu_sm_get (0) ;
-
-    int ntasks =  ( mnz + chunksize - 1)/chunksize;
-
-    // Idea is to have each task work on a continguous block of columns of C
-    // Note: for small tests, mnz is small so ntasks is be governed by
-    // chunksize, not 128*number_of_sms.  For large problems in production,
-    // chunksize is less important since ntasks will likely be bounded by
-    // 128*number_of_sms (say 128*80 = 10,240 on a V100).
-    ntasks = GB_IMIN( ntasks,  128*number_of_sms) ;    // ntasks will be grid.x
+    int nthrd = p1lF.get_threads_per_block();
+    int ntasks = p1lF.get_number_of_blocks(M->get_grb_matrix());
 
     // TODO: Verify that RMM is checking and throwing exceptions
     int nanobuckets_size = NBUCKETS * nthrd * ntasks;
-
-    printf("nanobuckets_size: %d\n", nanobuckets_size);
-    int64_t *Nanobuckets = (int64_t*)rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
     int blockbuckets_size = NBUCKETS * ntasks;
 
+    printf("nanobuckets_size: %d\n", nanobuckets_size);
     printf("blockbuckets_size: %d\n", blockbuckets_size);
+
+    int64_t *Nanobuckets = (int64_t*)rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
     int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
 
     std::cout << "INvoking grid block launch for phase1" << std::endl;
-    p1lF.jitGridBlockLaunch( ntasks, nthrd, Nanobuckets, Blockbucket,
-                             C->get_grb_matrix(), M->get_grb_matrix(),
-                             A->get_grb_matrix(), B->get_grb_matrix());
+    p1lF.jitGridBlockLaunch(Nanobuckets, Blockbucket,
+                            C->get_grb_matrix(), M->get_grb_matrix(),
+                            A->get_grb_matrix(), B->get_grb_matrix());
     kernTimer.Stop();
     std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
@@ -202,35 +199,12 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     matrix<T_C>* C = G.getCptr();
     matrix<T_C>* M = G.getMptr();       // note: values are not accessed
 
-   int nthrd = 32;
-
    GpuTimer kernTimer;
    kernTimer.Start();
+    const int64_t mnz = GB_nnz (M->get_grb_matrix()) ;
 
-    #define chunksize 128
-
-    const int64_t mnz = GB_nnz (M->mat) ;
-
-    std::cout << "mnz: " << mnz << std::endl;
-
-    int number_of_sms = GB_Global_gpu_sm_get (0) ;
-
-    printf("number of sms: %d\n", number_of_sms);
-
-    int ntasks = ( mnz +chunksize -1)/chunksize;
-
-    printf("ntasks before: %d\n", ntasks);
-
-    // Idea is to have each task work on a continguous block of columns of C
-    ntasks = GB_IMIN( ntasks,  128*number_of_sms) ;    // ntasks will be grid.x
-
-    printf("ntasks after: %d (done in phase1)\n", ntasks);
-
-    // ntasks is the # of tasks that were created by phase1.  phase2 uses a
-    // much smaller grid (fewer thread blocks) than phase1 or phase2end,
-    // with p2ntasks.
-    int p2ntasks = (ntasks + nthrd - 1) / nthrd ;
-    printf("p2ntasks %d\n", p2ntasks);
+   int nthrd = p2lF.get_threads_per_block();
+   int ntasks = p2elF.get_number_of_blocks(M->get_grb_matrix());
 
     // fabricate data as if it came from phase1:
     int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
@@ -248,8 +222,8 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
 
     // launch phase2 (just with p2ntasks as the # of tasks)
-    p2lF.jitGridBlockLaunch( p2ntasks, nthrd, nanobuckets, blockbucket,
-                            bucketp, bucket, offset, /* phase1 size was: */ ntasks);
+    p2lF.jitGridBlockLaunch(nanobuckets, blockbucket,
+                            bucketp, bucket, offset, M->get_grb_matrix());
 
     // do the reduction between phase2 and phase2end
     int64_t s= 0;
@@ -261,9 +235,9 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     }
 
     // launch phase2end: note same # of tasks as phase1
-    const int64_t cnz = mnz ; // the size of M and C (including the zombie count in C)
-    p2elF.jitGridBlockLaunch( ntasks, nthrd, nanobuckets, blockbucket,
-                              bucketp, bucket, offset, C->get_grb_matrix(), cnz);
+    p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
+                              bucketp, bucket, offset, C->get_grb_matrix(),
+                              M->get_grb_matrix());
     kernTimer.Stop();
     std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
@@ -334,27 +308,24 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     /**
      * Run Phase 1: Compute nanobuckets and blockbuckets
      */
-    int nblck = Cnz;
-    int nthrd = 32;
-    int sz = 4;
-
     const int64_t mnz = GB_nnz (M->mat) ;
 
-    int ntasks = ( mnz +chunksize -1)/chunksize;
-    int p2ntasks = (ntasks + nthrd - 1) / nthrd ;
+    int phase_1_nthrd = p1lF.get_threads_per_block();
+    int phase_1_ntasks = p1lF.get_number_of_blocks(M->get_grb_matrix());
+    int phase_2_ntasks = p2lF.get_number_of_blocks(M->get_grb_matrix());
 
-    int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
-    int64_t *blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
+    int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * phase_1_nthrd * phase_1_ntasks * sizeof (int64_t));
+    int64_t *blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * phase_1_ntasks * sizeof (int64_t));
     int64_t *bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
     int64_t *bucket = (int64_t*)rmm_wrap_malloc(Cnz * sizeof (int64_t));
     int64_t *offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
 
-    fillvector_constant(NBUCKETS * nthrd * ntasks, nanobuckets, (int64_t)1);
-    fillvector_constant(NBUCKETS * ntasks, nanobuckets, (int64_t)1);
+    fillvector_constant(NBUCKETS * phase_1_nthrd * phase_1_ntasks, nanobuckets, (int64_t)1);
+    fillvector_constant(NBUCKETS * phase_1_ntasks, nanobuckets, (int64_t)1);
 
     GpuTimer kernTimer;
     kernTimer.Start();
-    p1lF.jitGridBlockLaunch( nblck, nthrd, nanobuckets, Bucket,
+    p1lF.jitGridBlockLaunch(nanobuckets, Bucket,
                             C->get_grb_matrix(),
                             M->get_grb_matrix(),
                             A->get_grb_matrix(),
@@ -369,8 +340,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
     kernTimer.Start();
     // launch phase2 (just with p2ntasks as the # of tasks)
-    p2lF.jitGridBlockLaunch( p2ntasks, nthrd, nanobuckets, blockbucket,
-                             bucketp, bucket, offset, /* phase1 size was: */ ntasks);
+    p2lF.jitGridBlockLaunch( nanobuckets, blockbucket,
+                             bucketp, bucket, offset, M->get_grb_matrix());
 
     // do the reduction between phase2 and phase2end
     int64_t s= 0;
@@ -383,8 +354,9 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
     // launch phase2end: note same # of tasks as phase1
     const int64_t cnz = mnz ; // the size of M and C (including the zombie count in C)
-    p2elF.jitGridBlockLaunch( ntasks, nthrd, nanobuckets, blockbucket,
-                              bucketp, bucket, offset, C->get_grb_matrix(), cnz);
+    p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
+                              bucketp, bucket, offset, C->get_grb_matrix(),
+                              M->get_grb_matrix(), cnz);
 
     kernTimer.Stop();
     std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
@@ -402,17 +374,16 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
         T_C *X_valid  = (T_C*) malloc( Cnz*sizeof(T_C));
         int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
         if (b == TB) { //test cases for dense-dense kernels
-           int nthrd = 32;
-           int sz = 4;
-           //int m = 256/sz;
-           int nblck = Cnz;
-           std::cout<< nblck<< " blocks of "<<nthrd<<" threads, "<<b_start<<","<<b_end<<std::endl;
+//           int nthrd = 32;
+//           //int m = 256/sz;
+//           int nblck = Cnz;
+//           std::cout<< nblck<< " blocks of "<<nthrd<<" threads, "<<b_start<<","<<b_end<<std::endl;
 
            GpuTimer kernTimer;
            kernTimer.Start();
             phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
-            lF.jitGridBlockLaunch( nblck, nthrd, nanobuckets, blockbucket, bucketp, b_start, b_end, Bucket,
-                                    C->get_grb_matrix(), M->get_grb_matrix(), A->get_grb_matrix(), B->get_grb_matrix(), sz);
+            lF.jitGridBlockLaunch(nanobuckets, blockbucket, bucketp, b_start, b_end, Bucket,
+                                    C->get_grb_matrix(), M->get_grb_matrix(), A->get_grb_matrix(), B->get_grb_matrix());
 
            kernTimer.Stop();
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
