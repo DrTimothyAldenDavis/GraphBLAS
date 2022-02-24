@@ -126,6 +126,7 @@ class matrix : public Managed {
      }
 
      // FIXME: We probably want this to go away
+     // FIXME: pass in a seed
      void fill_random( int64_t nnz, bool debug_print = false) {
 
 
@@ -143,6 +144,7 @@ class matrix : public Managed {
         bool make_symmetric = false;
         bool no_self_edges = false;
 
+        // FIXME: use a repeatable seed
         std::random_device rd;
         std::mt19937 r(rd());
         std::uniform_real_distribution<double> dis(0.0, 1.0);
@@ -151,7 +153,7 @@ class matrix : public Managed {
              GrB_Index i = ((GrB_Index) (dis(r) * nrows_)) % ((GrB_Index) nrows_) ;
              GrB_Index j = ((GrB_Index) (dis(r) * ncols_)) % ((GrB_Index) ncols_) ;
              if (no_self_edges && (i == j)) continue ;
-             double x = dis(r) ;
+             T x = (T) dis(r) ;    // FIXME for int32, etc
              // A (i,j) = x
              cuda::set_element<T> (mat, x, i, j) ;
              if (make_symmetric)
@@ -162,11 +164,19 @@ class matrix : public Managed {
          }
 
         GrB_Matrix_wait (mat, GrB_MATERIALIZE) ;
+        GB_convert_any_to_non_iso (mat, true, NULL) ;
         // TODO: Need to specify these
         GxB_Matrix_Option_set (mat, GxB_FORMAT, GxB_BY_ROW) ;
         GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, GxB_SPARSE) ;
         GrB_Matrix_nvals ((GrB_Index *) &nnz, mat) ;
         GxB_Matrix_fprint (mat, "my mat", GxB_SHORT_VERBOSE, stdout) ;
+        bool iso ;
+        GxB_Matrix_iso (&iso, mat) ;
+        if (iso)
+        {
+            printf ("Die! (cannot do iso)\n") ;
+            GrB_Matrix_free (&mat) ;
+        }
     
         printf("a_vector = [");
         for (int p = 0;  p < nnz; p++) {

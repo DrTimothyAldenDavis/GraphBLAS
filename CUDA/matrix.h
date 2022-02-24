@@ -39,6 +39,15 @@
 
 // #include "GraphBLAS.h"
 
+#undef restrict
+#undef GB_restrict
+#if defined ( GB_CUDA_KERNEL ) || defined ( __NVCC__ )
+    #define GB_restrict __restrict__
+#else
+    #define GB_restrict
+#endif
+#define restrict GB_restrict
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -127,8 +136,6 @@ GrB_Desc_Value ;
 #include "GB_zombie.h"
 #include "GB_nnz.h"
 #include "GB_partition.h"
-
-// FIXME: Only needed for certain dot3 kernels
-//#include "GB_binary_search.h"
-//#include "GB_search_for_vector_template.c"
+#include "GB_binary_search.h"
+#include "GB_search_for_vector_template.c"
 

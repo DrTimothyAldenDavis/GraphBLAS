@@ -78,7 +78,8 @@ void GB_enumify_semiring   // enumerate a semiring
     //--------------------------------------------------------------------------
     // get the semiring
     //--------------------------------------------------------------------------
-    printf("inside enumify: %lu\n", semiring);
+    printf("inside enumify: %p\n", semiring);
+    GxB_print (semiring, 3) ;
 
     printf("Getting semiring add\n");
     GrB_Monoid add = semiring->add ;
