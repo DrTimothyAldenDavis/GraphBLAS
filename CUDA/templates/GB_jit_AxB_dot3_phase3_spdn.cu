@@ -33,7 +33,6 @@ __global__ void AxB_dot3_phase3_spdn
   int sz 
 )
 {
-
    T_A *Ax = (T_A*)A->x;
    T_B *Bx = (T_B*)B->x;
    T_C *Cx = (T_C*)C->x;
@@ -45,23 +44,25 @@ __global__ void AxB_dot3_phase3_spdn
    int64_t *Bp = B->p;
 
    // sz = expected non-zeros per dot 
-   int m = 256/sz;
+   int m = 256.0/sz;
    int nvecs = end - start;
-   int dpt = nvecs/32;
+   int dpt = nvecs/32.0;
    m = dpt < m ? dpt : m;
-   //if( threadIdx.x ==0)
-   //   printf("thd:%d %d dots/thrd, nvecs = %d blockDim=%d\n",threadIdx.x, sz, nvecs, blockDim.x);
-   //__syncthreads();
-   int dots = (nvecs +m -1)/m; 
+//   if( threadIdx.x ==0)
+//      printf("thd:%d %d dots/thrd, nvecs = %d blockDim=%d\n",threadIdx.x, sz, nvecs, blockDim.x);
+//   __syncthreads();
+   int dots = (nvecs +m -1)/m;
+
+//   printf("dots=%d, m=%d, dpt=%d\n", dots, m, dpt);
    int zc = 0;
      
    for ( int tid= threadIdx.x +blockDim.x*blockIdx.x;
              tid < dots;
              tid += blockDim.x * gridDim.x) {
       int pair_id, im; 
-       //if (threadIdx.x ==0)
-       //  printf("thd%u pi=%lld\n",tid, start+threadIdx.x); 
-       //  __syncthreads();
+//       if (threadIdx.x ==0)
+//         printf("thd%u pi=%lld\n",tid, start+threadIdx.x);
+//         __syncthreads();
 
       for (pair_id = start+tid, im = 0; 
            im < m && pair_id < end;  
@@ -69,17 +70,19 @@ __global__ void AxB_dot3_phase3_spdn
 
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
-      //if (threadIdx.x ==0)
-      //   printf("thd%u i,j=%lld,%lld\n",tid, i,j); 
+//      if (threadIdx.x ==0)
+//         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
       //   __syncthreads();
          
-     //  printf("thd%d pi=%d xn=%lld yn=%lld\n",tid, pair_id, 
-     //                 A->p[i+1]- A->p[i],
-     //                 B->p[j+1]- B->p[j]);
+//       printf("thd%d pi=%d xn=%lld yn=%lld\n",tid, pair_id,
+//                      A->p[i+1]- A->p[i],
+//                      B->p[j+1]- B->p[j]);
 
          int64_t pA = Ap[i];
          int64_t pA_end   = Ap[i+1];
          int64_t nnzA   = pA_end - pA;
+
+         printf("tid=%d, i=%ld\n", threadIdx.x, i);
          int64_t pB = Bp[i];
          int64_t pB_end   = Bp[i+1];
          int64_t nnzB   = pB_end - pB;

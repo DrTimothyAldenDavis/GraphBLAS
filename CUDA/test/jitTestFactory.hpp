@@ -267,7 +267,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
     // FIXME: Allow the adaptive tests in this guy
 
-    N = 2;
+    N = 100;
 
     //Generate test data and setup for using a jitify kernel with 'bucket' interface
     // The testBucket arg tells the generator which bucket we want to exercise
@@ -282,8 +282,12 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     std::cout << "Filling A" << std::endl;
     G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW);
     std::cout << "Filling B" << std::endl;
-    G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW);
-    std::cout << "Filling C" << std::endl;
+    G.init_B(Bnnz, GxB_FULL, GxB_BY_ROW);
+
+    /**
+     * For testing, we need to create our output C and configure
+     * it w/ the necessary sparsity.
+     */
     G.init_C(Cnzpercent);
     std::cout << "Filling buckets" << std::endl;
     G.fill_buckets( TB); // all elements go to testbucket= TB
@@ -292,7 +296,6 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     GrB_Matrix M = G.getM();
     GrB_Matrix A = G.getA();
     GrB_Matrix B = G.getB();
-
 
     GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout) ;
     GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout) ;

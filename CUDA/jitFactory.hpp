@@ -456,6 +456,7 @@ private:
         case GB_BUCKET_DNSP :
         // A(:,i) is sparse (>= 256 entries) and B(:,j) is dense
         case GB_BUCKET_SPDN :
+            printf("Confiring spdn");
             sz = 256 ;
             Opname = "phase3_spdn" ;
             blocksz = 32;
