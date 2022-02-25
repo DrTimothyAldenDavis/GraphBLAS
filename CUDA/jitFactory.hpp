@@ -375,6 +375,7 @@ public:
     std::cout<< "program name =" <<hashable_name<<std::endl;
     std::cout << "Final kernel name =" << final_kernel_name_ss.str() << std::endl;
     GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
+    printf("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
     jit::launcher( hashable_name,
                    string_to_be_jitted.str(),
                    header_names,

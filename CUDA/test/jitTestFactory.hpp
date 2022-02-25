@@ -107,13 +107,15 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     float Cnzpercent = (float) Cnz/(N*N);
 
     // TODO: Allocate and fill arrays for buckets and nano buckets
-    G.init(Annz, Bnnz, Cnzpercent);
+    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW);
+    G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW);
+    G.init_C(Cnzpercent);
     G.fill_buckets( TB ); // all elements go to testbucket= TB
 
-    matrix<T_C>* C = G.getCptr();
-    matrix<T_M>* M = G.getMptr();
-    matrix<T_A>* A = G.getAptr();
-    matrix<T_B>* B = G.getBptr();
+    GrB_Matrix C = G.getC();
+    GrB_Matrix M = G.getM();
+    GrB_Matrix A = G.getA();
+    GrB_Matrix B = G.getB();
 
     /************************
      * Create semiring factory
@@ -124,15 +126,15 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     auto grb_info = GrB_Semiring_new(&mysemiring, monoid, binop);
 
     mysemiringfactory.semiring_factory ( mysemiring, flipxy,
-                                         C->get_grb_matrix()->type,
-                                         M->get_grb_matrix()->type,
-                                         A->get_grb_matrix()->type,
-                                         B->get_grb_matrix()->type,
+                                         C->type,
+                                         M->type,
+                                         A->type,
+                                         B->type,
                                          mask_struct,  // matrix types
-                                         mask_comp, GB_sparsity(C->get_grb_matrix()),
-                                         GB_sparsity(M->get_grb_matrix()),
-                                         GB_sparsity(A->get_grb_matrix()),
-                                         GB_sparsity(B->get_grb_matrix()));
+                                         mask_comp, GB_sparsity(C),
+                                         GB_sparsity(M),
+                                         GB_sparsity(A),
+                                         GB_sparsity(B));
 
 
     /********************
@@ -145,7 +147,7 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     kernTimer.Start();
 
     int nthrd = p1lF.get_threads_per_block();
-    int ntasks = p1lF.get_number_of_blocks(M->get_grb_matrix());
+    int ntasks = p1lF.get_number_of_blocks(M);
 
     // TODO: Verify that RMM is checking and throwing exceptions
     int nanobuckets_size = NBUCKETS * nthrd * ntasks;
@@ -158,15 +160,16 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
 
     std::cout << "INvoking grid block launch for phase1" << std::endl;
-    p1lF.jitGridBlockLaunch(Nanobuckets, Blockbucket,
-                            C->get_grb_matrix(), M->get_grb_matrix(),
-                            A->get_grb_matrix(), B->get_grb_matrix());
+    p1lF.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B);
     kernTimer.Stop();
     std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 
     print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
     print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
     std::cout<<"==== phase1 done=============================" <<std::endl;
+
+    rmm_wrap_free(Nanobuckets);
+    rmm_wrap_free(Blockbucket);
 
     return true;
 }
@@ -193,18 +196,22 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     int64_t Cnz = N;
     float Cnzpercent = (float) Cnz/(N*N);
 
-    G.init(Annz, Bnnz, Cnzpercent);
+    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW);
+    G.init_B(Bnnz, GxB_FULL, GxB_BY_ROW);
+    G.init_C(Cnzpercent);
     G.fill_buckets( TB ); // all elements go to testbucket= TB
+    G.loadCj(); // FIXME: Figure out why this is needed here
 
-    matrix<T_C>* C = G.getCptr();
-    matrix<T_C>* M = G.getMptr();       // note: values are not accessed
+
+    GrB_Matrix C = G.getC();
+    GrB_Matrix M = G.getM();       // note: values are not accessed
 
    GpuTimer kernTimer;
    kernTimer.Start();
-    const int64_t mnz = GB_nnz (M->get_grb_matrix()) ;
+    const int64_t mnz = GB_nnz (M) ;
 
    int nthrd = p2lF.get_threads_per_block();
-   int ntasks = p2elF.get_number_of_blocks(M->get_grb_matrix());
+   int ntasks = p2elF.get_number_of_blocks(M);
 
     // fabricate data as if it came from phase1:
     int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
@@ -223,7 +230,7 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
 
     // launch phase2 (just with p2ntasks as the # of tasks)
     p2lF.jitGridBlockLaunch(nanobuckets, blockbucket,
-                            bucketp, bucket, offset, M->get_grb_matrix());
+                            bucketp, bucket, offset, M);
 
     // do the reduction between phase2 and phase2end
     int64_t s= 0;
@@ -236,15 +243,20 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
 
     // launch phase2end: note same # of tasks as phase1
     p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
-                              bucketp, bucket, offset, C->get_grb_matrix(),
-                              M->get_grb_matrix());
+                              bucketp, bucket, offset, C,
+                              M);
     kernTimer.Stop();
     std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+
 
     print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
     print_array<int64_t>(bucket, mnz, "bucket");
     std::cout<<"phase2 kernel done =================="<<std::endl;
-
+    rmm_wrap_free(nanobuckets);
+    rmm_wrap_free(blockbucket);
+    rmm_wrap_free(bucketp);
+    rmm_wrap_free(bucket);
+    rmm_wrap_free(offset);
     G.del();
    return true;
 }
@@ -255,6 +267,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
     // FIXME: Allow the adaptive tests in this guy
 
+    N = 2;
+
     //Generate test data and setup for using a jitify kernel with 'bucket' interface
     // The testBucket arg tells the generator which bucket we want to exercise
     SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G(N, N);
@@ -263,17 +277,31 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     int64_t Cnz = N;
     float Cnzpercent = (float) Cnz/(N*N);
 
-    G.init(Annz, Bnnz, Cnzpercent);
+    // FIXME: These need to be set based on the bucket being tests
+
+    std::cout << "Filling A" << std::endl;
+    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW);
+    std::cout << "Filling B" << std::endl;
+    G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW);
+    std::cout << "Filling C" << std::endl;
+    G.init_C(Cnzpercent);
+    std::cout << "Filling buckets" << std::endl;
     G.fill_buckets( TB); // all elements go to testbucket= TB
 
-    matrix<T_C>* C = G.getCptr();
-    matrix<T_M>* M = G.getMptr();
-    matrix<T_A>* A = G.getAptr();
-    matrix<T_B>* B = G.getBptr();
+    GrB_Matrix C = G.getC();
+    GrB_Matrix M = G.getM();
+    GrB_Matrix A = G.getA();
+    GrB_Matrix B = G.getB();
 
-    T_C *Cx = (T_C*)C->get_grb_matrix()->x;
-    T_A *Ax = (T_A*)A->get_grb_matrix()->x;
-    T_B *Bx = (T_B*)B->get_grb_matrix()->x;
+
+    GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout) ;
+    GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout) ;
+    GxB_Matrix_fprint (M, "M", GxB_SHORT_VERBOSE, stdout) ;
+    GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout) ;
+
+    T_C *Cx = (T_C*)C->x;
+    T_A *Ax = (T_A*)A->x;
+    T_B *Bx = (T_B*)B->x;
 
     GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
     GrB_Semiring mysemiring;
@@ -284,39 +312,28 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     bool mask_comp = false;
 
     mysemiringfactory.semiring_factory ( mysemiring, flipxy,
-                                         C->get_grb_matrix()->type, M->get_grb_matrix()->type,
-                                         A->get_grb_matrix()->type, B->get_grb_matrix()->type,
+                                         C->type, M->type,
+                                         A->type, B->type,
                                          mask_struct,  // matrix types
-                                         mask_comp, GB_sparsity(C->get_grb_matrix()),
-                                         GB_sparsity(M->get_grb_matrix()),
-                                         GB_sparsity(A->get_grb_matrix()),
-                                         GB_sparsity(B->get_grb_matrix()) ) ;
-
-
-//    // Generates three randomized matrices, builds buckets and calls a kernel.
-//    // This is the full version as called in SuiteSparse:GraphBLAS
-//    phase1launchFactory<T_C, T_M, T_A, T_B> p1lF(mysemiringfactory);
-//    phase2launchFactory<T_C> p2lF;
-//    phase2endlaunchFactory<T_C> p2elF;
-//
+                                         mask_comp, GB_sparsity(C),
+                                         GB_sparsity(M),
+                                         GB_sparsity(A),
+                                         GB_sparsity(B) ) ;
 
     int zc_valid = 0;
-
     bool result = false;
 
     /**
      * Run Phase 1: Compute nanobuckets and blockbuckets
      */
-    const int64_t mnz = GB_nnz (M->mat) ;
+    const int64_t mnz = GB_nnz (M) ;
 
     int chunk_size = 128;
 
     int number_of_sms = GB_Global_gpu_sm_get (0);
-    int nblks = ( GB_nnz (M->get_grb_matrix()) + chunk_size - 1)/chunk_size;
+    int nblks = ( GB_nnz (M) + chunk_size - 1)/chunk_size;
     int ntasks = GB_IMIN( nblks,  128 * number_of_sms);
     int nthrd = 32;
-//    int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
-//    int64_t *blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
     int64_t *bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
 
     bucketp[1] = 0;
@@ -324,115 +341,70 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     int64_t *bucket = (int64_t*)rmm_wrap_malloc(Cnz * sizeof (int64_t));
     int64_t *offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
 
-//    fillvector_constant(NBUCKETS * nthrd * ntasks, nanobuckets, (int64_t)1);
-//    fillvector_constant(NBUCKETS * ntasks, nanobuckets, (int64_t)1);
-
-    GpuTimer kernTimer;
-//    kernTimer.Start();
-//    p1lF.jitGridBlockLaunch(nanobuckets, Bucket,
-//                            C->get_grb_matrix(),
-//                            M->get_grb_matrix(),
-//                            A->get_grb_matrix(),
-//                            B->get_grb_matrix());
-
-//    kernTimer.Stop();
-//    std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
-
-    /**
-     * Run Phase 2: Cumsum over nanobuckets
-     */
-
-//    kernTimer.Start();
-//    // launch phase2 (just with p2ntasks as the # of tasks)
-//    p2lF.jitGridBlockLaunch( nanobuckets, blockbucket,
-//                             bucketp, bucket, offset, M->get_grb_matrix());
-//
-//    // do the reduction between phase2 and phase2end
-//    int64_t s= 0;
-//    for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
-//    {
-//        bucketp[bucket] = s;
-//        s+= offset[bucket];
-//        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
-//    }
-//
-//    // launch phase2end: note same # of tasks as phase1
-//    const int64_t cnz = mnz ; // the size of M and C (including the zombie count in C)
-//    p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
-//                              bucketp, bucket, offset, C->get_grb_matrix(),
-//                              M->get_grb_matrix());
-//
-//    kernTimer.Stop();
-//    std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
-
     /**
      * Run Phase 3: Execute dot3 on all buckets
      */
     for (int b =0; b < 12; ++b) {// loop on buckets
 
-        G.fill_buckets(b);
-        int64_t *Bucket = G.getBucket();
-        int64_t *BucketStart = G.getBucketStart();
+        if (b == TB) {
 
-        int64_t b_start = BucketStart [b] ;
-        int64_t b_end   = BucketStart [b+1] ;
-        int64_t nvecs = b_end - b_start ;
+            G.fill_buckets(b);
+            int64_t *Bucket = G.getBucket();
+            int64_t *BucketStart = G.getBucketStart();
 
-        if (nvecs > 0) std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
+            int64_t b_start = BucketStart [b] ;
+            int64_t b_end   = BucketStart [b+1] ;
+            int64_t nvecs = b_end - b_start ;
 
-        T_C *X_valid  = (T_C*) malloc( Cnz*sizeof(T_C));
-        int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
-        if (b == TB) { //test cases for dense-dense kernels
-//           int nthrd = 32;
-//           //int m = 256/sz;
-//           int nblck = Cnz;
-//           std::cout<< nblck<< " blocks of "<<nthrd<<" threads, "<<b_start<<","<<b_end<<std::endl;
+            if (nvecs > 0) std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
+
+            T_C *X_valid  = (T_C*) malloc( Cnz*sizeof(T_C));
+            int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
 
            GpuTimer kernTimer;
            kernTimer.Start();
-            phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
-            lF.jitGridBlockLaunch(bucketp, b_start, b_end, Bucket,
-                                  C->get_grb_matrix(), M->get_grb_matrix(),
-                                  A->get_grb_matrix(), B->get_grb_matrix());
+           phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
+           lF.jitGridBlockLaunch(bucketp, b_start, b_end, Bucket, C, M, A, B);
 
            kernTimer.Stop();
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+            GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout) ;
 
-//           zc_valid = C->zombie_count;
-//           C->zombie_count = 0;
-//           for (int i =0 ; i< Cnz; ++i) {
-//                //std::cout<<"Cx[i] = "<<Cx[i]<<std::endl;
-//                X_valid[i] = Cx[i];
-//                Cx[i] = 0;
-//                i_valid[i] = C->i[i];
-//           }
            G.loadCj();
 
+           std::cout << "Printing loadCJ" << std::endl;
+           std::cout << "Looping through pairs b_start=" << b_start << ", b_end=" << b_end << std::endl;
            for (int64_t pair = b_start ; pair < b_end ; pair++) {
 
-            // get the kth entry in bucket b
-            //std::cout<< " pair ="<<pair<<std::endl;
             int64_t pC = (Bucket == nullptr) ? pair : Bucket [pair] ;
-            int64_t i = M->get_grb_matrix()->i[pC] ;          // row index of C(i,j)
+            int64_t i = M->i[pC] ;          // row index of C(i,j)
 
+               std::cout << "Getting C(i,j). pC=" << pC << "i=" << i << std::endl;
             // get C(i,j)
-            int64_t k = (C->get_grb_matrix()->i [pC] >> 4) ;    // col index of C(i,j)
-            //ASSERT ((C->i [pC] & 4) == b) ;
-            int64_t j = (C->get_grb_matrix()->h == nullptr) ? k : C->get_grb_matrix()->h [k] ; // Mh has been copied into Ch
-            //std::cout<<" found dot "<<pair<<" at ("<<i<<","<<j<<")"<<std::endl;
+            int64_t k = (C->i [pC] >> 4) ;    // col index of C(i,j)
+
+            std::cout << "Loading j" << std::endl;
+            int64_t j = (C->h == nullptr) ? k : C->h [k] ; // Mh has been copied into Ch
+
+            std::cout << "Done." << std::endl;
 
             // xvp, xvi, xvals:  A(:,i)
             // xvp is Ap [i] and Ap [i+1]
-            int64_t pA_start = A->get_grb_matrix()->p [i] ;
-            int64_t pA_end   = A->get_grb_matrix()->p [i+1] ;
+            int64_t pA_start = A->p [i] ;
+            int64_t pA_end   = A->p [i+1] ;
             // indices are in Ai [pA_start ... pA_end-1]
             // values  are in Ax [pA_start ... pA_end-1]
 
+            std::cout << "pA_start=" << pA_start << ", pA_end=" << pA_end << std::endl;
+
             // yvp, yvi, yvals:  B(:,j)
             // yvp is Bp [j] and Bp [j+1]
-            int64_t pB_start = B->get_grb_matrix()->p [j] ;
-            int64_t pB_end   = B->get_grb_matrix()->p [j+1] ;
-            // indices are in Bi [pB_start ... pB_end-1]
+            int64_t pB_start = B->p [j] ;
+            int64_t pB_end   = B->p [j+1] ;
+
+               std::cout << "Getting 2" << std::endl;
+
+               // indices are in Bi [pB_start ... pB_end-1]
             // values  are in Bx [pB_start ... pB_end-1]
             k = pA_start;
             int64_t l = pB_start;
@@ -442,40 +414,38 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                cij += (T_Z)Ax[k] * (T_Z) Bx[l];  // FIXME: need to replace w/ the actual monoid/binop evaluations
                k++;
                l++;
-               //std::cout<<"Ak = "<< Ax[k]<< " Bl = "<< Bx[l]<< "sum ="<<sum<<std::endl;
             }
-            //std::cout<< " dot  = "<< sum << std::endl;
-
             // output for this dot product is
-
             if (cij == *(T_Z*)monoid->identity) {
-                C->get_grb_matrix()->i [pC] = -1;//GB_FLIP (i)
-//                C->get_grb_matrix()->zombie_count++;
+                C->i [pC] = -1;//GB_FLIP (i)
             }
             else {
                 Cx [pC] = (T_C)cij;
-                C->get_grb_matrix()->i [pC] = i;
+                C->i [pC] = i;
             }
         }
            T_C err = 0;
            for (int j =0 ; j< N; ++j) {
-             for ( int l = C->get_grb_matrix()->p[j]; l< C->get_grb_matrix()->p[j+1]; ++l) {
-                 int64_t i =  C->get_grb_matrix()->i[l];
-                 //std::cout<<i<<","<<j<<","<<l <<" Cx = "<<Cx[l]<<"x_val="<<X_valid[l]<<std::endl;
+             for ( int l = C->p[j]; l< C->p[j+1]; ++l) {
+                 int64_t i =  C->i[l];
                  if (i >= 0)
                     err +=  ( X_valid[l] - Cx[l])*(X_valid[l] - Cx[l]);
              }
            }
            std::cout<< " 2-norm of err ="<< err<<std::endl;
-           std::cout<< " zombie count CPU = "<<C->get_zombie_count()<<" zGPU ="<<zc_valid<<std::endl;
 
            EXPECT_EQ(err,0);
-//           EXPECT_EQ( zc_valid, C->get_grb_matrix()->get_zombie_count());
 
            free(X_valid);
            free(i_valid);
          }
         }
+
+//    rmm_wrap_free(bucket);
+//    rmm_wrap_free(bucketp);
+//    rmm_wrap_free(offset);
+
+//    G.del();
 
     return result;
 

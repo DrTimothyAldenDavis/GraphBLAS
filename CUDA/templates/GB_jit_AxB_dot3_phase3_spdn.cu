@@ -125,6 +125,7 @@ __global__ void AxB_dot3_phase3_spdn
             }
          }
 
+         printf("i=%ld\n", i);
          GB_PUTC( Ci[pair_id]=i ) ;
          GB_PUTC( Cx[pair_id]=cij ) ;
         

@@ -125,13 +125,10 @@ class matrix : public Managed {
 //            sizeof(T), nrows, ncols, 2, false, false, Nz, -1);
      }
 
-     // FIXME: We probably want this to go away
-     // FIXME: pass in a seed
-     void fill_random( int64_t nnz, bool debug_print = false) {
+    void fill_random( int64_t nnz, int gxb_sparsity_control, int gxb_format, std::int64_t seed = 12345ULL, T val_min = 0.0, T val_max = 2.0 , bool debug_print = false) {
 
-
-         std::cout << "inside fill" << std::endl;
-         alloc();
+        std::cout << "inside fill" << std::endl;
+        alloc();
 
         int64_t inv_sparsity = (nrows_*ncols_)/nnz;   //= values not taken per value occupied in index space
 
@@ -144,32 +141,30 @@ class matrix : public Managed {
         bool make_symmetric = false;
         bool no_self_edges = false;
 
-        // FIXME: use a repeatable seed
-        std::random_device rd;
-        std::mt19937 r(rd());
+        std::mt19937 r(seed);
         std::uniform_real_distribution<double> dis(0.0, 1.0);
-         for (int64_t k = 0 ; k < nnz ; k++)
-         {
-             GrB_Index i = ((GrB_Index) (dis(r) * nrows_)) % ((GrB_Index) nrows_) ;
-             GrB_Index j = ((GrB_Index) (dis(r) * ncols_)) % ((GrB_Index) ncols_) ;
-             if (no_self_edges && (i == j)) continue ;
-             T x = (T) dis(r) ;    // FIXME for int32, etc
-             // A (i,j) = x
-             cuda::set_element<T> (mat, x, i, j) ;
-             if (make_symmetric)
-             {
-                 // A (j,i) = x
-                 cuda::set_element<T>(mat, x, j, i) ;
-             }
-         }
+        for (int64_t k = 0 ; k < nnz ; k++)
+        {
+            GrB_Index i = ((GrB_Index) (dis(r) * nrows_)) % ((GrB_Index) nrows_) ;
+            GrB_Index j = ((GrB_Index) (dis(r) * ncols_)) % ((GrB_Index) ncols_) ;
+            if (no_self_edges && (i == j)) continue ;
+            T x = (T)(dis(r) * (val_max - val_min)) + val_min ;
+            // A (i,j) = x
+            cuda::set_element<T> (mat, x, i, j) ;
+            if (make_symmetric) {
+                // A (j,i) = x
+                cuda::set_element<T>(mat, x, j, i) ;
+            }
+        }
 
         GrB_Matrix_wait (mat, GrB_MATERIALIZE) ;
         GB_convert_any_to_non_iso (mat, true, NULL) ;
         // TODO: Need to specify these
-        GxB_Matrix_Option_set (mat, GxB_FORMAT, GxB_BY_ROW) ;
-        GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, GxB_SPARSE) ;
+        GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, gxb_sparsity_control) ;
+        GxB_Matrix_Option_set(mat, GxB_FORMAT, gxb_format);
         GrB_Matrix_nvals ((GrB_Index *) &nnz, mat) ;
         GxB_Matrix_fprint (mat, "my mat", GxB_SHORT_VERBOSE, stdout) ;
+
         bool iso ;
         GxB_Matrix_iso (&iso, mat) ;
         if (iso)
@@ -177,19 +172,10 @@ class matrix : public Managed {
             printf ("Die! (cannot do iso)\n") ;
             GrB_Matrix_free (&mat) ;
         }
-    
-        printf("a_vector = [");
-        for (int p = 0;  p < nnz; p++) {
-            printf("%ld, ", mat->i [p]);
-            if (p > 100) { printf ("...\n") ; break ; }
-        }
-        printf("]\n");
 
+    }
 
-     }
 };
-
-
 
 template< typename T_C, typename T_M, typename T_A, typename T_B>
 class SpGEMM_problem_generator {
@@ -226,6 +212,21 @@ class SpGEMM_problem_generator {
     matrix<T_A>* getAptr(){ return A;}
     matrix<T_B>* getBptr(){ return B;}
 
+    void init_A(std::int64_t Anz, int gxb_sparsity_control, int gxb_format, std::int64_t seed = 12345ULL, T_A min_val = 0.0, T_A max_val = 2.0) {
+        Anzpercent = float(Anz)/float(nrows_*ncols_);
+        A->fill_random(Anz, gxb_sparsity_control, gxb_format, seed, min_val, max_val);
+    }
+
+    void init_B(std::int64_t Bnz, int gxb_sparsity_control, int gxb_format, std::int64_t seed = 54321ULL, T_B min_val = 0.0, T_B max_val = 2.0) {
+        Bnzpercent = float(Bnz)/float(nrows_*ncols_);
+        B->fill_random(Bnz, gxb_sparsity_control, gxb_format, seed, min_val, max_val);
+    }
+
+    GrB_Matrix getC(){ return C->get_grb_matrix();}
+    GrB_Matrix getM(){ return M->get_grb_matrix();}
+    GrB_Matrix getA(){ return A->get_grb_matrix();}
+    GrB_Matrix getB(){ return B->get_grb_matrix();}
+
     int64_t* getBucket() { return Bucket;}
     int64_t* getBucketStart(){ return BucketStart;}
 
@@ -240,30 +241,22 @@ class SpGEMM_problem_generator {
 
     }
 
-    void init(int64_t Anz, int64_t Bnz, float Cnzpercent){
+    void init_C(float Cnzp, std::int64_t seed_c = 23456ULL, std::int64_t seed_m = 4567ULL){
 
        // Get sizes relative to fully dense matrices
-       Anzpercent = float(Anz)/float(nrows_*ncols_);
-       Bnzpercent = float(Bnz)/float(nrows_*ncols_);
-       Cnzpercent = Cnzpercent;
-       Cnz = (int64_t)(Cnzpercent * nrows_ * ncols_);
-       std::cout<<"Anz% ="<<Anzpercent<<" Bnz% ="<<Bnzpercent<<" Cnz% ="<<Cnzpercent<<std::endl;
+       Cnzpercent = Cnzp;
+       Cnz = (int64_t)(Cnzp * nrows_ * ncols_);
+//       std::cout<<"Anz% ="<<Anzpercent<<" Bnz% ="<<Bnzpercent<<" Cnz% ="<<Cnzpercent<<std::endl;
 
        //Seed the generator
        std::cout<<"filling matrices"<<std::endl;
 
-       C->fill_random(Cnz);
-       M->fill_random(Cnz);
-       A->fill_random(Anz);
-       B->fill_random(Bnz);
+       C->fill_random(Cnz, GxB_SPARSE, GxB_BY_ROW, seed_c);
+       M->fill_random(Cnz, GxB_SPARSE, GxB_BY_ROW, seed_m);
 
-
-       std::cout<<"fill complete"<<std::endl;
-       C->mat->p = M->mat->p; //same column pointers (assuming CSC here)
-       C->mat->p_shallow = true ; // C->mat does not own M->mat->p
-
-       loadCj();
-
+//       std::cout<<"fill complete"<<std::endl;
+//       C->mat->p = M->mat->p; //same column pointers (assuming CSC here)
+//       C->mat->p_shallow = true ; // C->mat does not own M->mat->p
     }
 
     void del(){
