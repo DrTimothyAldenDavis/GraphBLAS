@@ -84,6 +84,8 @@ __global__ void AxB_dot3_phase3_spdn
 
          printf("tid=%d, i=%ld\n", threadIdx.x, i);
          int64_t pB = Bp[i];
+
+         printf("tid=%d, i=%ld, pB=%ld", threadIdx.x, i, pB);
          int64_t pB_end   = Bp[i+1];
          int64_t nnzB   = pB_end - pB;
          T_A aki;
@@ -128,7 +130,7 @@ __global__ void AxB_dot3_phase3_spdn
             }
          }
 
-         printf("i=%ld\n", i);
+         printf("i=%ld, cij=%d\n", i, cij);
          GB_PUTC( Ci[pair_id]=i ) ;
          GB_PUTC( Cx[pair_id]=cij ) ;
         
