@@ -11,6 +11,7 @@
 #include "GB_cuda_buckets.h"
 #include "../../rmm_wrap/rmm_wrap.h"
 #include <gtest/gtest.h>
+#include "test_data.hpp"
 
 extern "C" {
     #include "GB.h"
@@ -267,7 +268,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
     // FIXME: Allow the adaptive tests in this guy
 
-    N = 100;
+    N = 20;
 
     //Generate test data and setup for using a jitify kernel with 'bucket' interface
     // The testBucket arg tells the generator which bucket we want to exercise
@@ -277,12 +278,19 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     int64_t Cnz = N;
     float Cnzpercent = (float) Cnz/(N*N);
 
-    // FIXME: These need to be set based on the bucket being tests
+    // FIXME: These need to be set based on the bucket being tested
+    std::unique_ptr<TestData<T_A, T_B, T_C, T_M>> karate_tricount = make_karate_tricount<T_A, T_B, T_C, T_M>();
 
     std::cout << "Filling A" << std::endl;
-    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW);
+    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW, 543210, 0, 50);
     std::cout << "Filling B" << std::endl;
-    //G.init_B(Bnnz, GxB_FULL, GxB_BY_ROW);
+
+    // TODO: The spdn kernel seems to think B->p should be non-empty
+    // for the full side  but changing C to be GxB_FULL fails when
+    // the kernel tries to access any element of B->p. Naturally, I
+    // wouldn't expect a full or bitmap format to use the additional
+    // arrays when B-x should already be nxk. Using csr here in the
+    // meantime.
     G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW);
 
     /**
@@ -350,6 +358,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
      */
     for (int b =0; b < 12; ++b) {// loop on buckets
 
+
         if (b == TB) {
 
             G.fill_buckets(b);
@@ -365,6 +374,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             T_C *X_valid  = (T_C*) malloc( Cnz*sizeof(T_C));
             int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
 
+            printf("B[0]=%ld\n", B->p[0]);
+
            GpuTimer kernTimer;
            kernTimer.Start();
            phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
@@ -374,60 +385,69 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
             GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout) ;
 
+            // printing manually since (I think) the jumbled form is causing issues for the standard GB_Matrix printer
+            std::cout << "Printing matrix C:" << std::endl;
+            for(int64_t i = 0; i < N; ++i) {
+                for (int64_t j = C->p[i]; j < C->p[i+1]; ++j) {
+                    std::cout << "(" << i << ", " << C->i[j] << ") = " << Cx[j] << std::endl;
+                }
+            }
+            std::cout << "Done." << std::endl;
+
            G.loadCj();
 
            std::cout << "Printing loadCJ" << std::endl;
            std::cout << "Looping through pairs b_start=" << b_start << ", b_end=" << b_end << std::endl;
-           for (int64_t pair = b_start ; pair < b_end ; pair++) {
-
-            int64_t pC = (Bucket == nullptr) ? pair : Bucket [pair] ;
-            int64_t i = M->i[pC] ;          // row index of C(i,j)
-
-               std::cout << "Getting C(i,j). pC=" << pC << "i=" << i << std::endl;
-            // get C(i,j)
-            int64_t k = (C->i [pC] >> 4) ;    // col index of C(i,j)
-
-            std::cout << "Loading j" << std::endl;
-            int64_t j = (C->h == nullptr) ? k : C->h [k] ; // Mh has been copied into Ch
-
-            std::cout << "Done." << std::endl;
-
-            // xvp, xvi, xvals:  A(:,i)
-            // xvp is Ap [i] and Ap [i+1]
-            int64_t pA_start = A->p [i] ;
-            int64_t pA_end   = A->p [i+1] ;
-            // indices are in Ai [pA_start ... pA_end-1]
-            // values  are in Ax [pA_start ... pA_end-1]
-
-            std::cout << "pA_start=" << pA_start << ", pA_end=" << pA_end << std::endl;
-
-            // yvp, yvi, yvals:  B(:,j)
-            // yvp is Bp [j] and Bp [j+1]
-            int64_t pB_start = B->p [j] ;
-            int64_t pB_end   = B->p [j+1] ;
-
-               std::cout << "Getting 2" << std::endl;
-
-               // indices are in Bi [pB_start ... pB_end-1]
-            // values  are in Bx [pB_start ... pB_end-1]
-            k = pA_start;
-            int64_t l = pB_start;
-            T_Z cij = *((T_Z*)monoid->identity) ;
-            while( k < pA_end && l < pB_end) {
-               //std::cout<<" A*B="<< (*MUL_ptr<T_Z>) ( (T_Z)Ax[k] , (T_Z) Bx[l]) <<std::endl ;
-               cij += (T_Z)Ax[k] * (T_Z) Bx[l];  // FIXME: need to replace w/ the actual monoid/binop evaluations
-               k++;
-               l++;
-            }
-            // output for this dot product is
-            if (cij == *(T_Z*)monoid->identity) {
-                C->i [pC] = -1;//GB_FLIP (i)
-            }
-            else {
-                Cx [pC] = (T_C)cij;
-                C->i [pC] = i;
-            }
-        }
+//           for (int64_t pair = b_start ; pair < b_end ; pair++) {
+//
+//            int64_t pC = (Bucket == nullptr) ? pair : Bucket [pair] ;
+//            int64_t i = M->i[pC] ;          // row index of C(i,j)
+//
+//               std::cout << "Getting C(i,j). pC=" << pC << "i=" << i << std::endl;
+//            // get C(i,j)
+//            int64_t k = (C->i [pC] >> 4) ;    // col index of C(i,j)
+//
+//            std::cout << "Loading j" << std::endl;
+//            int64_t j = (C->h == nullptr) ? k : C->h [k] ; // Mh has been copied into Ch
+//
+//            std::cout << "Done." << std::endl;
+//
+//            // xvp, xvi, xvals:  A(:,i)
+//            // xvp is Ap [i] and Ap [i+1]
+//            int64_t pA_start = A->p [i] ;
+//            int64_t pA_end   = A->p [i+1] ;
+//            // indices are in Ai [pA_start ... pA_end-1]
+//            // values  are in Ax [pA_start ... pA_end-1]
+//
+//            std::cout << "pA_start=" << pA_start << ", pA_end=" << pA_end << std::endl;
+//
+//            // yvp, yvi, yvals:  B(:,j)
+//            // yvp is Bp [j] and Bp [j+1]
+//            int64_t pB_start = B->p [j] ;
+//            int64_t pB_end   = B->p [j+1] ;
+//
+//               std::cout << "Getting 2" << std::endl;
+//
+//               // indices are in Bi [pB_start ... pB_end-1]
+//            // values  are in Bx [pB_start ... pB_end-1]
+//            k = pA_start;
+//            int64_t l = pB_start;
+//            T_Z cij = *((T_Z*)monoid->identity) ;
+//            while( k < pA_end && l < pB_end) {
+//               //std::cout<<" A*B="<< (*MUL_ptr<T_Z>) ( (T_Z)Ax[k] , (T_Z) Bx[l]) <<std::endl ;
+//               cij += (T_Z)Ax[k] * (T_Z) Bx[l];  // FIXME: need to replace w/ the actual monoid/binop evaluations
+//               k++;
+//               l++;
+//            }
+//            // output for this dot product is
+//            if (cij == *(T_Z*)monoid->identity) {
+//                C->i [pC] = -1;//GB_FLIP (i)
+//            }
+//            else {
+//                Cx [pC] = (T_C)cij;
+//                C->i [pC] = i;
+//            }
+//        }
            T_C err = 0;
            for (int j =0 ; j< N; ++j) {
              for ( int l = C->p[j]; l< C->p[j+1]; ++l) {
