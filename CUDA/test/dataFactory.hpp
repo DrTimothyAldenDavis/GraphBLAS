@@ -127,7 +127,7 @@ class matrix : public Managed {
 
     void fill_random( int64_t nnz, int gxb_sparsity_control, int gxb_format, std::int64_t seed = 12345ULL, T val_min = 0.0, T val_max = 2.0 , bool debug_print = false) {
 
-        std::cout << "inside fill" << std::endl;
+        std::cout << "inside fill, using seed "<< seed << std::endl;
         alloc();
 
         int64_t inv_sparsity = (nrows_*ncols_)/nnz;   //= values not taken per value occupied in index space
@@ -148,12 +148,13 @@ class matrix : public Managed {
             GrB_Index i = ((GrB_Index) (dis(r) * nrows_)) % ((GrB_Index) nrows_) ;
             GrB_Index j = ((GrB_Index) (dis(r) * ncols_)) % ((GrB_Index) ncols_) ;
             if (no_self_edges && (i == j)) continue ;
-            T x = (T)(dis(r) * (val_max - val_min)) + val_min ;
+            T x = (T)(dis(r) * (val_max - val_min)) + (T)val_min ;
             // A (i,j) = x
             cuda::set_element<T> (mat, x, i, j) ;
             if (make_symmetric) {
                 // A (j,i) = x
                 cuda::set_element<T>(mat, x, j, i) ;
+                k++; // count the element
             }
         }
 

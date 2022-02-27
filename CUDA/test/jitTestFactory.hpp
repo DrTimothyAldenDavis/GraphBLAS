@@ -282,7 +282,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     std::cout << "Filling A" << std::endl;
     G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW);
     std::cout << "Filling B" << std::endl;
-    G.init_B(Bnnz, GxB_FULL, GxB_BY_ROW);
+    //G.init_B(Bnnz, GxB_FULL, GxB_BY_ROW);
+    G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW);
 
     /**
      * For testing, we need to create our output C and configure
@@ -367,7 +368,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            GpuTimer kernTimer;
            kernTimer.Start();
            phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
-           lF.jitGridBlockLaunch(bucketp, b_start, b_end, Bucket, C, M, A, B);
+           lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C, M, A, B);
 
            kernTimer.Stop();
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;

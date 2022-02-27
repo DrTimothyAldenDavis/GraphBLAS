@@ -326,7 +326,7 @@ public:
   phase3launchFactory(GB_cuda_semiring_factory &mysemiringfactory, GB_bucket_code bucket_code):
       semiring_factory_(mysemiringfactory), bucket_code_(bucket_code) {}
 
-  bool jitGridBlockLaunch(int64_t *bucketp, int64_t start, int64_t end, int64_t *bucket,
+  bool jitGridBlockLaunch(int64_t start, int64_t end, int64_t *bucketp, int64_t *bucket,
                           GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
       
       bool result = false; 
@@ -404,7 +404,7 @@ public:
     GBURBLE ("(GPU phase3 done) ") ;
 
     // do we really want to sync after each kernel launch in production?
-    checkCudaErrors( cudaDeviceSynchronize() );
+    //checkCudaErrors( cudaDeviceSynchronize() );
     result= true;
 
     return result;
