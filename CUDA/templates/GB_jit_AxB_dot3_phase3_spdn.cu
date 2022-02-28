@@ -48,21 +48,21 @@ __global__ void AxB_dot3_phase3_spdn
    int nvecs = end - start;
    int dpt = nvecs/32.0;
    m = dpt < m ? dpt : m;
-//   if( threadIdx.x ==0)
-//      printf("thd:%d %d dots/thrd, nvecs = %d blockDim=%d\n",threadIdx.x, sz, nvecs, blockDim.x);
-//   __syncthreads();
+   if( threadIdx.x ==0)
+      printf("thd:%d %d dots/thrd, nvecs = %d blockDim=%d\n",threadIdx.x, sz, nvecs, blockDim.x);
+   __syncthreads();
    int dots = (nvecs +m -1)/m;
 
-//   printf("dots=%d, m=%d, dpt=%d\n", dots, m, dpt);
+   printf("dots=%d, m=%d, dpt=%d\n", dots, m, dpt);
    int zc = 0;
      
    for ( int tid= threadIdx.x +blockDim.x*blockIdx.x;
              tid < dots;
              tid += blockDim.x * gridDim.x) {
       int pair_id, im; 
-//       if (threadIdx.x ==0)
-//         printf("thd%u pi=%lld\n",tid, start+threadIdx.x);
-//         __syncthreads();
+       if (threadIdx.x ==0)
+         printf("thd%u pi=%lld\n",tid, start+threadIdx.x);
+         __syncthreads();
 
       for (pair_id = start+tid, im = 0; 
            im < m && pair_id < end;  
@@ -70,9 +70,9 @@ __global__ void AxB_dot3_phase3_spdn
 
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
-//      if (threadIdx.x ==0)
-//         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
-      //   __syncthreads();
+      if (threadIdx.x ==0)
+         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
+         __syncthreads();
          
 //       printf("thd%d pi=%d xn=%lld yn=%lld\n",tid, pair_id,
 //                      A->p[i+1]- A->p[i],
@@ -85,15 +85,18 @@ __global__ void AxB_dot3_phase3_spdn
          printf("tid=%d, i=%ld\n", threadIdx.x, i);
          int64_t pB = Bp[i];
 
-         printf("tid=%d, i=%ld, pB=%ld", threadIdx.x, i, pB);
+         printf("tid=%d, i=%ld, pB=%ld\n", threadIdx.x, i, pB);
          int64_t pB_end   = Bp[i+1];
          int64_t nnzB   = pB_end - pB;
          T_A aki;
          T_B bkj;
-         T_Z cij;
+         T_Z cij = 0;
 
+         // TODO: Since neither side is dense, neither
+         // of these conditionals pass.
          if( nnzA == A->vlen) // A is dense
          {
+             printf("tid=%d, A is dense\n", threadIdx.x);
             int64_t k = Bi [pB] ;               // first row index of B(:,j)
             // cij = A(k,i) * B(k,j)
             GB_GETA ( aki=(T_Z)Ax[pA+k] ) ;           // aki = A(k,i)
@@ -111,8 +114,12 @@ __global__ void AxB_dot3_phase3_spdn
             }
 
          }
+
+         // TODO: Should this have an else?
          if( nnzB == B->vlen) // B is dense
          {
+
+             printf("tid=%d, B is dense\n", threadIdx.x);
             int64_t k = Ai [pA] ;               // first row index of A(:,i)
             // cij = A(k,i) * B(k,j)
             GB_GETA ( aki=(T_Z)Ax[ pA ] ) ;           // aki = A(k,i)
@@ -130,6 +137,7 @@ __global__ void AxB_dot3_phase3_spdn
             }
          }
 
+         // TODO: How is cij even anything other than garbage here ?!?!
          printf("i=%ld, cij=%d\n", i, cij);
          GB_PUTC( Ci[pair_id]=i ) ;
          GB_PUTC( Cx[pair_id]=cij ) ;
