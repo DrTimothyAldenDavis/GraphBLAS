@@ -338,12 +338,11 @@ GrB_Info GB_sort
         }
     }
 
-    // ensure C is sparse or hypersparse CSC
+    // ensure C is sparse or hypersparse
     if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
     { 
         GB_OK (GB_convert_any_to_sparse (C, Context)) ;
     }
-
 
     //--------------------------------------------------------------------------
     // sort C in place
@@ -549,12 +548,22 @@ GrB_Info GB_sort
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and return result
+    // free workspace, and comform/return result
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    if (!C_is_NULL) { ASSERT_MATRIX_OK (C, "C output of GB_sort", GB0) ; }
-    if (P != NULL)  { ASSERT_MATRIX_OK (P, "P output of GB_sort", GB0) ; }
+    if (!C_is_NULL)
+    { 
+        ASSERT_MATRIX_OK (C, "C output of GB_sort (before conform)", GB0) ;
+        GB_OK (GB_conform (C, Context)) ;
+        ASSERT_MATRIX_OK (C, "C output of GB_sort", GB0) ;
+    }
+    if (P != NULL)
+    { 
+        ASSERT_MATRIX_OK (P, "P output of GB_sort (before conform)", GB0) ;
+        GB_OK (GB_conform (P, Context)) ;
+        ASSERT_MATRIX_OK (P, "P output of GB_sort", GB0) ;
+    }
     return (GrB_SUCCESS) ;
 }
 

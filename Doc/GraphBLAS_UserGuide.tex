@@ -148,6 +148,21 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 6.2.2 (Feb 28, 2022)
+
+    \begin{packed_itemize}
+    \item revised output of \verb'GxB_*_sort' to return newly created matrices
+        C and P as full or bitmap matrices, as appropriate, instead of
+        sparse/hypersparse, following their sparsity control settings.
+    \end{packed_itemize}
+
+\item Version 6.2.1 (Feb 14, 2022)
+
+    \begin{packed_itemize}
+    \item  (41) bug fix: \verb'GxB_Iterator_get' used \verb'(void *) + size'
+        arithmetic
+    \end{packed_itemize}
+
 \item Version 6.2.0 (Feb 14, 2022)
 
     \begin{packed_itemize}
