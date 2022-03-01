@@ -324,8 +324,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // phase1: assign each C(i,j) to a bucket, and count them
     //----------------------------------------------------------------------
     dim3 grid( ntasks) ; 
-    dim3 p2grid( (ntasks +  SYMBOLIC_PHASE_NTHREADS -1)
-                          / (SYMBOLIC_PHASE_NTHREADS) ) ; 
+
     dim3 block( SYMBOLIC_PHASE_NTHREADS ) ;
 
     std::string base_name = "GB_jit_AxB_dot3_";
@@ -367,6 +366,11 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //----------------------------------------------------------------------
     // phase2: cumsum across the blockbuckets, propagate to thread level
     //----------------------------------------------------------------------
+
+    // p2grid is for phase2, which uses # of tasks (aka thread blocks)
+    // equal to ceil (ntasks / SYMBOLIC_PHASE_NTHREADS).
+    int p2ntasks = ( (ntasks +  SYMBOLIC_PHASE_NTHREADS -1) / (SYMBOLIC_PHASE_NTHREADS) ) ;
+    dim3 p2grid( p2ntasks ) ;
 
     Opname = "phase2";
 
@@ -428,7 +432,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //----------------------------------------------------------------------
     // phase2: cumsum across the blockbuckets, propagate to thread level
     //----------------------------------------------------------------------
-    int nblock = ntasks;
+    int nblock = ntasks;    // # of tasks from phase1
 
     phase2Kernel.launch(                    // input
                         Nanobuckets,       // array of size NBUCKETS-blockDim.x-by-gridDim.x

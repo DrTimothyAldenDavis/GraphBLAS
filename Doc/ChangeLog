@@ -1,3 +1,9 @@
+Version 6.2.2 Feb 28, 2022
+
+    * revised output of GxB_*_sort: to return newly created matrices
+        C and P as full or bitmap matrices, as appropriate, instead of
+        sparse/hypersparse, following their sparsity control settings
+
 Version 6.2.1 Feb 16, 2022
 
     * (41) bug fix: GxB_Iterator_get used (void *) + siz arithmetic

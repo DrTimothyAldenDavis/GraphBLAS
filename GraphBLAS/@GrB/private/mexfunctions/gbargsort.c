@@ -111,14 +111,7 @@ void mexFunction
     // sort the matrix
     //--------------------------------------------------------------------------
 
-    // GxB_print (A, 3) ;
-    // GxB_print (op, 3) ;
-    // GxB_print (desc, 3) ;
-    // GxB_print (P, 3) ;
     GrB_Info info = (GxB_Matrix_sort (C, P, op, A, desc)) ;
-    // printf ("info: %d\n", info) ;
-    // GxB_print (C, 3) ;
-    // GxB_print (P, 3) ;
     OK (info) ;
 
     //--------------------------------------------------------------------------

@@ -148,6 +148,21 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 6.2.2 (Feb 28, 2022)
+
+    \begin{packed_itemize}
+    \item revised output of \verb'GxB_*_sort' to return newly created matrices
+        C and P as full or bitmap matrices, as appropriate, instead of
+        sparse/hypersparse, following their sparsity control settings.
+    \end{packed_itemize}
+
+\item Version 6.2.1 (Feb 14, 2022)
+
+    \begin{packed_itemize}
+    \item  (41) bug fix: \verb'GxB_Iterator_get' used \verb'(void *) + size'
+        arithmetic
+    \end{packed_itemize}
+
 \item Version 6.2.0 (Feb 14, 2022)
 
     \begin{packed_itemize}
@@ -1696,7 +1711,6 @@ When the user application is finished, exactly one user thread must call
 The mode of a GraphBLAS session can be queried with \verb'GxB_get';
 see Section~\ref{options} for details.
 
-\newpage
 %===============================================================================
 \subsection{{\sf GrB\_getVersion:} determine the C API Version} %===============
 %===============================================================================
@@ -1723,6 +1737,7 @@ compile-time version check with \verb'GRB_VERSION' would be stale.
 \verb'GrB_getVersion' thus provides a runtime access of the version of the C
 API Specification supported by the library.
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_init:} initialize with alternate malloc} %================
 %===============================================================================
@@ -1731,19 +1746,6 @@ API Specification supported by the library.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-% in SuiteSparse:GraphBLAS v5.2.0 or earlier:
-GrB_Info GxB_init           // start up GraphBLAS and also define malloc
-(
-    GrB_Mode mode,          // blocking or non-blocking mode
-    // pointers to memory management functions.
-    void * (* user_malloc_function  ) (size_t),
-    void * (* user_calloc_function  ) (size_t, size_t),
-    void * (* user_realloc_function ) (void *, size_t),
-    void   (* user_free_function    ) (void *),
-    bool ignored            // unused parameter to be removed in v6.0
-) ;
-
-% in SuiteSparse:GraphBLAS v6.0.0 or later:
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc
 (
     GrB_Mode mode,          // blocking or non-blocking mode
@@ -1778,14 +1780,9 @@ The following usage is identical to \verb'GrB_init(mode)':
 
     {\footnotesize
     \begin{verbatim}
-    % in SuiteSparse:GraphBLAS v5.2.0:
-    GxB_init (mode, malloc, calloc, realloc, free, true) ;
-    % in SuiteSparse:GraphBLAS v6.0.0:
     GxB_init (mode, malloc, calloc, realloc, free) ; \end{verbatim}}
 
-The last parameter (\verb'ignored') is ignored in v5.2
-and is removed in v6.0.
-
+\newpage
 %===============================================================================
 \subsection{{\sf GrB\_Info:} status code returned by GraphBLAS} %===============
 %===============================================================================
@@ -1794,10 +1791,7 @@ and is removed in v6.0.
 Each GraphBLAS method and operation returns its status to the caller as its
 return value, an enumerated type (an \verb'enum') called \verb'GrB_Info'.  The
 first two values in the following table denote a successful status, the rest
-are error codes.  SuiteSparse:GraphBLAS v5.x and earlier use the enum values
-in the v5 column, since the C API Specification did not define them.
-The values are now defined in the v2.0 C API Specification, and appear
-in SuiteSparse:GraphBLAS v6.0.0 with the values in the v6 column.
+are error codes.
 
 Not all GraphBLAS methods or operations can return all status codes.
 In the discussions of each method and operation in this User Guide, most of the
@@ -1810,35 +1804,36 @@ refer to {\em The GraphBLAS C API Specification} \cite{spec,spec2}.
 \vspace{0.2in}
 \noindent
 {\small
-\begin{tabular}{lrrp{2.8in}}
+\begin{tabular}{lrp{2.8in}}
 \hline
-Error                           &  v5  & v6  & description \\
+Error                         & value & description \\
 \hline
-\verb'GrB_SUCCESS'              &  0   & 0   & the method or operation was successful \\
-\verb'GrB_NO_VALUE'             &  1   & 1   & the method was successful, but the entry \\
-                                &      &     & does not appear in the matrix or vector. \\
-\verb'GxB_EXHAUSTED'            &  -   & 2   & the iterator is exhausted \\
+\verb'GrB_SUCCESS'              & 0   & the method or operation was successful \\
+\verb'GrB_NO_VALUE'             & 1   & the method was successful, but the entry \\
+                                &     & does not appear in the matrix or vector. \\
+\verb'GxB_EXHAUSTED'            & 2   & the iterator is exhausted \\
 \hline
 \hline
-\verb'GrB_UNINITIALIZED_OBJECT' &  2   & -1   & object has not been initialized \\
-\verb'GrB_NULL_POINTER'         &  4   & -2   & input pointer is \verb'NULL' \\
-\verb'GrB_INVALID_VALUE'        &  5   & -3   & generic error code; some value is bad \\
-\verb'GrB_INVALID_INDEX'        &  6   & -4   & a row or column index is out of bounds \\
-\verb'GrB_DOMAIN_MISMATCH'      &  7   & -5   & object domains are not compatible \\
-\verb'GrB_DIMENSION_MISMATCH'   &  8   & -6   & matrix dimensions do not match \\
-\verb'GrB_OUTPUT_NOT_EMPTY'     &  9   & -7   & output matrix already has values in it \\
-\verb'GrB_NOT_IMPLEMENTED'      &  -8  & -8   & not implemented in SS:GrB \\
-\verb'GrB_PANIC'                &  13  & -101 & unrecoverable error \\
-\verb'GrB_OUT_OF_MEMORY'        &  10  & -102 & out of memory \\
-\verb'GrB_INSUFFICIENT_SPACE'   &  11  & -103 & output array not large enough \\
-\verb'GrB_INVALID_OBJECT'       &  3   & -104 & object is corrupted \\
-\verb'GrB_INDEX_OUT_OF_BOUNDS'  &  12  & -105 & a row or column index is out of bounds \\
-\verb'GrB_EMPTY_OBJECT'         & -106 & -106 & a input scalar has no entry \\
+\verb'GrB_UNINITIALIZED_OBJECT' & -1   & object has not been initialized \\
+\verb'GrB_NULL_POINTER'         & -2   & input pointer is \verb'NULL' \\
+\verb'GrB_INVALID_VALUE'        & -3   & generic error code; some value is bad \\
+\verb'GrB_INVALID_INDEX'        & -4   & a row or column index is out of bounds \\
+\verb'GrB_DOMAIN_MISMATCH'      & -5   & object domains are not compatible \\
+\verb'GrB_DIMENSION_MISMATCH'   & -6   & matrix dimensions do not match \\
+\verb'GrB_OUTPUT_NOT_EMPTY'     & -7   & output matrix already has values in it \\
+\verb'GrB_NOT_IMPLEMENTED'      & -8   & not implemented in SS:GrB \\
+\verb'GrB_PANIC'                & -101 & unrecoverable error \\
+\verb'GrB_OUT_OF_MEMORY'        & -102 & out of memory \\
+\verb'GrB_INSUFFICIENT_SPACE'   & -103 & output array not large enough \\
+\verb'GrB_INVALID_OBJECT'       & -104 & object is corrupted \\
+\verb'GrB_INDEX_OUT_OF_BOUNDS'  & -105 & a row or column index is out of bounds \\
+\verb'GrB_EMPTY_OBJECT'         & -106 & a input scalar has no entry \\
 \hline
 \end{tabular}
 \vspace{0.2in}
 }
 
+\newpage
 %===============================================================================
 \subsection{{\sf GrB\_error:} get more details on the last error} %=============
 %===============================================================================
@@ -1934,7 +1929,7 @@ string.
 % Section~\ref{operations} can return an error string in their input/output
 % object, except for \verb'GrB_reduce' when reducing to a scalar.
 
-% \newpage
+\newpage
 %===============================================================================
 \subsection{{\sf GrB\_finalize:} finish GraphBLAS} %============================
 %===============================================================================
@@ -2202,13 +2197,6 @@ characters beyond that limit are silently ignored.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-// in SuiteSparse:GraphBLAS v5.x and earlier:
-GrB_Info GrB_wait               // wait for a user-defined type
-(
-    GrB_Type *type              // type to wait for
-) ;
-
-// in SuiteSparse:GraphBLAS v6 (v2.0 C API):
 GrB_Info GrB_wait               // wait for a user-defined type
 (
     GrB_Type type,              // type to wait for
@@ -2221,7 +2209,6 @@ After creating a user-defined type, a GraphBLAS library may choose to exploit
 non-blocking mode to delay its creation.  Currently, SuiteSparse:GraphBLAS
 currently does nothing except to ensure that \verb'type' is valid.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Type\_size:} return the size of a type}
 %-------------------------------------------------------------------------------
@@ -2242,6 +2229,7 @@ This function acts just like \verb'sizeof(type)' in the C language.  For
 example \verb'GxB_Type_size (&s, GrB_INT32)' sets \verb's' to 4, the same as
 \verb'sizeof(int32_t)'.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Type\_name:} return the name of a type}
 %-------------------------------------------------------------------------------
@@ -2576,6 +2564,7 @@ object:
 
 \vspace{0.1in}
 {\footnotesize
+\noindent
 \begin{tabular}{lll}
 \hline
 GraphBLAS function   & purpose                                      & Section \\
@@ -2683,13 +2672,6 @@ rely on the \verb'unop_defn' when employing a JIT for better performance.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-// in SuiteSparse:GraphBLAS v5.x and earlier:
-GrB_Info GrB_wait               // wait for a user-defined unary operator
-(
-    GrB_UnaryOp *unaryop        // unary operator to wait for
-) ;
-
-// in SuiteSparse:GraphBLAS v6 (v2.0 C API):
 GrB_Info GrB_wait               // wait for a user-defined unary operator
 (
     GrB_UnaryOp unaryop,        // unary operator to wait for
@@ -2703,6 +2685,7 @@ exploit non-blocking mode to delay its creation.  Currently,
 SuiteSparse:GraphBLAS currently does nothing except to ensure that the
 \verb'unaryop' is valid.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_UnaryOp\_ztype\_name:} return the name of the type of $z$}
 %-------------------------------------------------------------------------------
@@ -2783,6 +2766,7 @@ listed in the tables below.  The notation $T$ refers to any of the 13
 built-in types, but two of those types are SuiteSparse extensions
 (\verb'GxB_FC32' and \verb'GxB_FC64').  For those types, the operator name
 always starts with \verb'GxB', not \verb'GrB').
+The notation $R$ refers to any real type (all but \verb'FC32' and \verb'FC64').
 
 The six \verb'GxB_IS*' comparators and the \verb'GxB_*' logical
 operators all return a result one for true and zero for false, in the same
@@ -3180,13 +3164,6 @@ rely on the \verb'binop_defn' when employing a JIT for better performance.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-// in SuiteSparse:GraphBLAS v5.x and earlier:
-GrB_Info GrB_wait               // wait for a user-defined binary operator
-(
-    GrB_BinaryOp *binaryop      // binary operator to wait for
-) ;
-
-// in SuiteSparse:GraphBLAS v6 (v2.0 C API):
 GrB_Info GrB_wait               // wait for a user-defined binary operator
 (
     GrB_BinaryOp binaryop,      // binary operator to wait for
@@ -3240,7 +3217,6 @@ GrB_Info GxB_BinaryOp_xtype_name    // return the type_name of x
 returns name of the \verb'xtype' of the binary operator, which is the
 type of $x$ in the function $z=f(x,y)$.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_BinaryOp\_ytype\_name:} return the name of the type of $y$}
 %-------------------------------------------------------------------------------
@@ -3508,13 +3484,6 @@ better performance.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-// in SuiteSparse:GraphBLAS v5.x and earlier:
-GrB_Info GrB_wait               // wait for a user-defined index-unary operator
-(
-    GrB_IndexUnaryOp *op        // index-unary operator to wait for   
-) ;
-
-// in SuiteSparse:GraphBLAS v6 (v2.0 C API):
 GrB_Info GrB_wait               // wait for a user-defined binary operator
 (
     GrB_IndexUnaryOp op,        // index-unary operator to wait for   
@@ -3547,7 +3516,6 @@ GrB_Info GxB_IndexUnaryOp_ztype_name    // return the type_name of x
 \verb'GrB_IndexUnaryOp_ztype_name' returns the \verb'ztype' of the index-unary
 operator, which is the type of $z$ in the function $z=f(x,i,j,y)$.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_IndexUnaryOp\_xtype\_name:} return the name of the type of $x$}
 %-------------------------------------------------------------------------------
@@ -3569,6 +3537,7 @@ operator, which is the type of $x$ in the function $z=f(x,i,j,y)$.
 This input is used for the entry \verb'A(i,j)' of a matrix or \verb'v(i)' of a
 vector.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_IndexUnaryOp\_ytype\_name:} return the name of the type of scalar $y$}
 %-------------------------------------------------------------------------------
@@ -3631,54 +3600,22 @@ $f(x,y)$ is one for which the condition $f(a, f(b,c)) = f(f (a,b),c)$ always
 holds.  That is, operator can be applied in any order and the results remain
 the same.  If used in a semiring, the operator must also be commutative.
 
-Predefined binary operators that can be used to form monoids are listed in the
-table below.  Most of these are the binary operators of predefined monoids,
-except that the bitwise monoids are predefined only for the unsigned integer
-types, not the signed integers.
+The 77 predefined monoids are listed in the table below, which
+includes nearly all monoids that can be constructed from built-in binary
+operators.  A few additional monoids can be defined with \verb'GrB_Monoid_new'
+using built-in operators, such as bitwise monoids for signed integers.
+Recall that $T$ denotes any built-in type (including boolean, integer, floating
+point real, and complex), $R$ denotes any non-complex type (including bool),
+$I$ denotes any integer type, and $Z$ denotes any complex type.  Let $S$ denote
+the 10 non-boolean real types.  Let $U$ denote all unsigned integer types.
 
-Recall that $T$ denotes any built-in type (including boolean, integer,
-floating point real, and complex), $R$ denotes any non-complex type, and
-$I$ denotes any integer type.
-
-\vspace{0.2in}
-\noindent
-{\footnotesize
-\begin{tabular}{lllll}
-\hline
-GraphBLAS             & types (domains)            & expression      & identity  & terminal \\
-operator              &                            & $z=f(x,y)$      &           & \\
-\hline
-% numeric TxT->T
-\verb'GrB_PLUS_'$T$   & $T \times T \rightarrow T$ & $z = x+y$       & 0         & none \\
-\verb'GrB_TIMES_'$T$  & $T \times T \rightarrow T$ & $z = xy$        & 1         & 0 or none (see note) \\
-\verb'GxB_ANY_'$T$    & $T \times T \rightarrow T$ & $z = x$ or $y$  & any       & any        \\
-\hline
-\verb'GrB_MIN_'$R$    & $R \times R \rightarrow R$ & $z = \min(x,y)$ & $+\infty$ & $-\infty$ \\
-\verb'GrB_MAX_'$R$    & $R \times R \rightarrow R$ & $z = \max(x,y)$ & $-\infty$ & $+\infty$ \\
-\hline
-% bool x bool -> bool
-\verb'GrB_LOR'        & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \vee    y $ & false & true  \\
-\verb'GrB_LAND'       & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \wedge  y $ & true  & false \\
-\verb'GrB_LXOR'       & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \veebar y $ & false & none \\
-\verb'GrB_LXNOR'      & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z =(x ==      y)$ & true  & none \\
-\hline
-% bitwise
-\verb'GrB_BOR_'$I$    & $I$ $\times$ $I$ $\rightarrow$ $I$ & \verb'z=x|y'    & all bits zero & all bits one  \\
-\verb'GrB_BAND_'$I$   & $I$ $\times$ $I$ $\rightarrow$ $I$ & \verb'z=x&y'    & all bits one  & all bits zero \\
-\verb'GrB_BXOR_'$I$   & $I$ $\times$ $I$ $\rightarrow$ $I$ & \verb'z=x^y'    & all bits zero & none \\
-\verb'GrB_BXNOR_'$I$  & $I$ $\times$ $I$ $\rightarrow$ $I$ & \verb'z=~(x^y)' & all bits one  & none \\
-\hline
-\end{tabular}
-}
-\vspace{0.2in}
-
-The above table lists the GraphBLAS operator, its type, expression, identity
-value, and {\em terminal} value (if any).  For these built-in operators, the
+The table lists the GraphBLAS monoid, its type, expression, identity
+value, and {\em terminal} value (if any).  For these built-in monoids, the
 terminal values are the {\em annihilators} of the function, which is the value
 $z$ so that $z=f(z,y)$ regardless of the value of $y$.  For example
 $\min(-\infty,y) = -\infty$ for any $y$.  For integer domains, $+\infty$ and
 $-\infty$ are the largest and smallest integer in their range.  With unsigned
-integers, the smallest value is zero, and thus \verb'GrB_MIN_UINT8' has an
+integers, the smallest value is zero, and thus \verb'GrB_MIN_MONOID_UINT8' has an
 identity of 255 and a terminal value of 0.
 
 When computing with a monoid, the computation can terminate early if the
@@ -3689,11 +3626,42 @@ an annihilator.  See Section~\ref{monoid_terminal_new} for an example.
 
 The \verb'GxB_ANY_*' monoid can terminate as soon as it finds any value at all.
 
-{\bf NOTE:}
-The \verb'GrB_TIMES_FP*' operators do not have a terminal value of zero, since
-they comply with the IEEE 754 standard, and \verb'0*NaN' is not zero, but
-\verb'NaN'.  Technically, their terminal value is \verb'NaN', but this value is
-rare in practice and thus the terminal condition is not worth checking.
+\vspace{0.2in}
+\noindent
+{\footnotesize
+\begin{tabular}{lllll}
+\hline
+GraphBLAS             & types (domains)            & expression      & identity  & terminal \\
+operator              &                            & $z=f(x,y)$      &           & \\
+\hline
+% numeric SxS -> S
+\verb'GrB_PLUS_MONOID_'$S$   & $S \times S \rightarrow S$ & $z = x+y$       & 0         & none \\
+\verb'GrB_TIMES_MONOID_'$S$  & $S \times S \rightarrow S$ & $z = xy$        & 1         & 0 or none (see note) \\
+\verb'GrB_MIN_MONOID_'$S$    & $S \times S \rightarrow S$ & $z = \min(x,y)$ & $+\infty$ & $-\infty$ \\
+\verb'GrB_MAX_MONOID_'$S$    & $S \times S \rightarrow S$ & $z = \max(x,y)$ & $-\infty$ & $+\infty$ \\
+\hline
+% complex ZxZ -> Z
+\verb'GxB_PLUS_'$Z$\verb'_MONOID'   & $Z \times Z \rightarrow Z$ & $z = x+y$       & 0         & none \\
+\verb'GxB_TIMES_'$Z$\verb'_MONOID'  & $Z \times Z \rightarrow Z$ & $z = xy$        & 1         & none \\
+\hline
+% any TxT -> T
+\verb'GxB_ANY_'$T$\verb'_MONOID'   & $T \times T \rightarrow T$ & $z = x$ or $y$  & any       & any        \\
+\hline
+% bool x bool -> bool
+\verb'GrB_LOR_MONOID'        & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \vee    y $ & false & true  \\
+\verb'GrB_LAND_MONOID'       & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \wedge  y $ & true  & false \\
+\verb'GrB_LXOR_MONOID'       & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \veebar y $ & false & none \\
+\verb'GrB_LXNOR_MONOID'      & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z =(x ==      y)$ & true  & none \\
+\hline
+% bitwise: UxU -> U
+\verb'GxB_BOR_'$U$\verb'_MONOID'    & $U$ $\times$ $U$ $\rightarrow$ $U$ & \verb'z=x|y'    & all bits zero & all bits one  \\
+\verb'GxB_BAND_'$U$\verb'_MONOID'   & $U$ $\times$ $U$ $\rightarrow$ $U$ & \verb'z=x&y'    & all bits one  & all bits zero \\
+\verb'GxB_BXOR_'$U$\verb'_MONOID'   & $U$ $\times$ $U$ $\rightarrow$ $U$ & \verb'z=x^y'    & all bits zero & none \\
+\verb'GxB_BXNOR_'$U$\verb'_MONOID'  & $U$ $\times$ $U$ $\rightarrow$ $U$ & \verb'z=~(x^y)' & all bits one  & none \\
+\hline
+\end{tabular}
+}
+\vspace{0.2in}
 
 % 40: (min,max,+,*) x (int8,16,32,64, uint8,16,32,64, fp32, fp64)
 The C API Specification includes 44 predefined monoids, with the naming
@@ -3715,6 +3683,12 @@ These all appear in SuiteSparse:GraphBLAS, which adds 33 additional predefined
 operators (\verb'BOR', \verb'BAND', \verb'BXOR', and \verb'BNXOR'), each with
 four unsigned integer types (\verb'UINT8', \verb'UINT16', \verb'UINT32', and
 \verb'UINT64').
+
+{\bf NOTE:}
+The \verb'GrB_TIMES_FP*' operators do not have a terminal value of zero, since
+they comply with the IEEE 754 standard, and \verb'0*NaN' is not zero, but
+\verb'NaN'.  Technically, their terminal value is \verb'NaN', but this value is
+rare in practice and thus the terminal condition is not worth checking.
 
 The next sections define the following methods for the \verb'GrB_Monoid'
 object:
@@ -3779,13 +3753,6 @@ instead.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-// in SuiteSparse:GraphBLAS v5.x and earlier:
-GrB_Info GrB_wait               // wait for a user-defined monoid
-(
-    GrB_Monoid *monoid          // monoid to wait for
-) ;
-
-// in SuiteSparse:GraphBLAS v6 (v2.0 C API):
 GrB_Info GrB_wait               // wait for a user-defined monoid
 (
     GrB_Monoid monoid,          // monoid to wait for
@@ -4105,7 +4072,7 @@ use is preferred, for portability to other GraphBLAS implementations.
     \item 4 unsigned integer types
     \end{itemize}
 
-\item 80 positional semirings, $X \times X \rightarrow T$ where $T$ is
+\item 80 positional semirings, $X \times X \rightarrow N$ where $N$ is
     \verb'INT32' or \verb'INT64':
 
     \vspace{-0.05in}
@@ -4119,6 +4086,7 @@ use is preferred, for portability to other GraphBLAS implementations.
 
 \end{itemize}
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Semiring\_wait:} wait for a semiring}
 %-------------------------------------------------------------------------------
@@ -4127,13 +4095,6 @@ use is preferred, for portability to other GraphBLAS implementations.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-// in SuiteSparse:GraphBLAS v5.x and earlier:
-GrB_Info GrB_wait               // wait for a user-defined semiring
-(
-    GrB_Semiring *semiring      // semiring to wait for
-) ;
-
-// in SuiteSparse:GraphBLAS v6 (v2.0 C API):
 GrB_Info GrB_wait               // wait for a user-defined semiring
 (
     GrB_Semiring semiring,      // semiring to wait for
@@ -4147,7 +4108,6 @@ exploit non-blocking mode to delay its creation.  Currently,
 SuiteSparse:GraphBLAS currently does nothing except to ensure that the
 \verb'semiring' is valid.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Semiring\_add:} return the additive monoid of a semiring}
 %-------------------------------------------------------------------------------
@@ -4262,7 +4222,6 @@ entry in it, of the given type.  This is analogous to Octave/MATLAB statement
 \verb's = sparse(0)', except that GraphBLAS can create scalars any
 type.  The pattern of the new scalar is empty.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Scalar\_wait:} wait for a scalar}
 %-------------------------------------------------------------------------------
@@ -4271,13 +4230,6 @@ type.  The pattern of the new scalar is empty.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-// in SuiteSparse:GraphBLAS v5.x and earlier:
-GrB_Info GrB_wait               // wait for a scalar
-(
-    GrB_Scalar *s               // scalar to wait for
-) ;
-
-// in SuiteSparse:GraphBLAS v6 (v2.0 C API):
 GrB_Info GrB_wait               // wait for a scalar
 (
     GrB_Scalar s,               // scalar to wait for
@@ -4296,6 +4248,7 @@ all pending computations are finished, and different user threads may
 simultaneously call GraphBLAS operations that use the scalar \verb's' as an
 input parameter.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Scalar\_dup:} copy a scalar}
 %-------------------------------------------------------------------------------
@@ -4356,6 +4309,7 @@ GrB_Info GrB_Scalar_clear   // clear a GrB_Scalar of its entry
 Analogous with \verb's = sparse (0)' in Octave/MATLAB.  The type of \verb's' does not
 change.  Any pending updates to the scalar are discarded.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Scalar\_nvals:} return the number of entries in a scalar}
 %-------------------------------------------------------------------------------
@@ -4378,7 +4332,6 @@ except that the implicit value in GraphBLAS need not be zero and \verb'nnz'
 (short for ``number of nonzeros'') in MATLAB is better described as ``number of
 entries'' in GraphBLAS.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Scalar\_type\_name:} return name of the type of a scalar}
 %-------------------------------------------------------------------------------
@@ -4422,6 +4375,7 @@ The scalar \verb'x' can be any non-opaque C scalar corresponding to
 a built-in type, or \verb'void *' for a user-defined type.  It cannot be
 a \verb'GrB_Scalar'.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Scalar\_extractElement:} get the single entry from a scalar}
 %-------------------------------------------------------------------------------
@@ -4588,13 +4542,6 @@ type.  The pattern of the new vector is empty.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-// in SuiteSparse:GraphBLAS v5.x and earlier:
-GrB_Info GrB_wait               // wait for a vector
-(
-    GrB_Vector *w               // vector to wait for
-) ;
-
-// in SuiteSparse:GraphBLAS v6 (v2.0 C API):
 GrB_Info GrB_wait               // wait for a vector
 (
     GrB_Vector w,               // vector to wait for
@@ -4676,6 +4623,7 @@ empty, just as if it were created fresh with \verb'GrB_Vector_new'.  Analogous
 with \verb'v (:) = sparse(0)' in MATLAB.  The type and dimension of \verb'v' do
 not change.  Any pending updates to the vector are discarded.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_size:}          return the size of a vector}
 %-------------------------------------------------------------------------------
@@ -4804,6 +4752,7 @@ returned by \verb'GrB_Vector_nvals' after the vector is constructed).  All
 entries in the sparsity pattern of \verb'w' are identical, and equal to the
 input scalar value.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_setElement:}    add an entry to a vector}
 %-------------------------------------------------------------------------------
@@ -4855,7 +4804,6 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 \verb'x = A(i,0)' from an \verb'n'-by-1 matrix; see
 Section~\ref{matrix_extractElement}.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_removeElement:} remove an entry from a vector}
 %-------------------------------------------------------------------------------
@@ -5166,13 +5114,6 @@ as an extension to the specification.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-// in SuiteSparse:GraphBLAS v5.x and earlier:
-GrB_Info GrB_wait               // wait for a matrix
-(
-    GrB_Matrix *C               // matrix to wait for
-) ;
-
-// in SuiteSparse:GraphBLAS v6 (v2.0 C API):
 GrB_Info GrB_wait               // wait for a matrix
 (
     GrB_Matrix C,               // matrix to wait for
@@ -5191,7 +5132,6 @@ all pending computations are finished, and different user threads may
 simultaneously call GraphBLAS operations that use the matrix \verb'C' as an
 input parameter.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_dup:}          copy a matrix}
 %-------------------------------------------------------------------------------
@@ -5231,6 +5171,7 @@ Then \verb'C' and \verb'A' are two different matrices that currently have the
 same set of values, but they do not depend on each other.  Modifying one has
 no effect on the other.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_clear:}        clear a matrix of all entries}
 %-------------------------------------------------------------------------------
@@ -5436,6 +5377,7 @@ do.  In particular, the MATLAB \verb'sparse' function only provides one option
 for assembling duplicates (summation), and it can only build double, double
 complex, and logical sparse matrices.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_build\_Scalar:} build a matrix from a set of tuples}
 %-------------------------------------------------------------------------------
@@ -5464,7 +5406,6 @@ returned by \verb'GrB_Vector_nvals' after the matrix is constructed).  All
 entries in the sparsity pattern of \verb'C' are identical, and equal to the
 input scalar value.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_setElement:}   add an entry to a matrix}
 %-------------------------------------------------------------------------------
@@ -5546,6 +5487,7 @@ See Section~\ref{random} for an example of how to use
 \verb'GrB_Matrix_setElement'.
 If an error occurs, \verb'GrB_error(&err,C)' returns details about the error.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_extractElement:} get an entry from a matrix}
 %-------------------------------------------------------------------------------
@@ -5600,6 +5542,7 @@ function should not be arbitrarily intermixed with calls to these other two
 functions.  Everything will work correctly and results will be predictable, it
 will just be slow.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_removeElement:} remove an entry from a matrix}
 %-------------------------------------------------------------------------------
@@ -5620,7 +5563,6 @@ GrB_Info GrB_Matrix_removeElement
 If no entry is present at \verb'A(i,j)', then the matrix is not modified.
 If an error occurs, \verb'GrB_error(&err,A)' returns details about the error.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_extractTuples:} get all entries from a matrix}
 %-------------------------------------------------------------------------------
@@ -5666,6 +5608,7 @@ extracted.
 \verb'NULL'.  This is not an error condition.
 \end{alert}
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_resize:}          resize a matrix}
 %-------------------------------------------------------------------------------
@@ -5806,6 +5749,7 @@ the type of \verb'C'.  Any settings made to \verb'C' by
 \verb'GxB_Matrix_Option_set' (format by row or by column, bitmap switch, hyper
 switch, and sparsity control) are unchanged.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_diag:} construct a diagonal matrix}
 %-------------------------------------------------------------------------------
@@ -5860,7 +5804,6 @@ GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
 
 Returns the memory space required for a matrix, in bytes.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_free:} free a matrix}
 %-------------------------------------------------------------------------------
@@ -8176,13 +8119,6 @@ the final sort as pending work).
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-// in SuiteSparse:GraphBLAS v5.x and earlier:
-GrB_Info GrB_wait                   // wait for a descriptor
-(
-    GrB_Descriptor *descriptor      // descriptor to wait for
-) ;
-
-// in SuiteSparse:GraphBLAS v6 (v2.0 C API):
 GrB_Info GrB_wait                   // wait for a descriptor
 (
     GrB_Descriptor descriptor,      // descriptor to wait for
@@ -14624,18 +14560,10 @@ collaboration with Joe Eaton and Corey Nolet.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{examples}
 
-\begin{note}
-{\bf NOTE:} The programs in the \verb'Demo' folder are not always the fastest
-methods.  They are simple methods for illustration only, not performance.  Do
-not benchmark them.  Refer to the latest (draft) \verb'LAGraph' package for the
-fastest methods.  Be sure to use the right combination of package versions
-between LAGraph and SuiteSparse:GraphBLAS.  Contact the author (davis@tamu.edu)
-if you have any questions about how to properly benchmark LAGraph +
-SuiteSparse:GraphBLAS.
-\end{note}
-
 Several examples of how to use GraphBLAS are listed below.  They all
-appear in the \verb'Demo' folder of SuiteSparse:GraphBLAS.
+appear in the \verb'Demo' folder of SuiteSparse:GraphBLAS.  Programs in
+the \verb'Demo' folder are meant as simple examples; for the fastest methods,
+see LAgraph (Section~\ref{lagraph}).
 
 \begin{enumerate}
 \item creating a random matrix
@@ -14991,8 +14919,10 @@ are fairly straightforward, computing \verb"A=[0 C ; C' 0]".
     // A (0:nrows-1, nrows:n-1) = C
     GrB_assign (A, NULL, NULL, C, I, nrows, J, ncols, NULL) ; \end{verbatim}}
 
-This takes 1.38 seconds for the \verb'Freescale2' matrix, almost as fast as
+This takes 1.38 seconds for the \verb'Freescale2' matrix, almost as fast as \newline
 \verb"A=[sparse(m,m) C ; C' sparse(n,n)]" in MATLAB (1.25 seconds).
+The \verb'GxB_Matrix_concat' function would be faster still (this example
+was written prior to \verb'GxB_Matrix_concat' was added to SuiteSparse:GraphBLAS).
 
 Both calls to \verb'GrB_assign' use no accumulator, so the second one
 causes the partial matrix \verb"A=[0 0 ; C' 0]" to be built first, followed by
