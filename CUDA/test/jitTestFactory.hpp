@@ -138,7 +138,6 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
                                          GB_sparsity(A),
                                          GB_sparsity(B));
 
-
     /********************
      * Launch kernel
      */
@@ -155,24 +154,24 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     int nanobuckets_size = NBUCKETS * nthrd * ntasks;
     int blockbuckets_size = NBUCKETS * ntasks;
 
-    printf("nanobuckets_size: %d\n", nanobuckets_size);
-    printf("blockbuckets_size: %d\n", blockbuckets_size);
-
-    int64_t *Nanobuckets = (int64_t*)rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
-    int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
-
-    std::cout << "INvoking grid block launch for phase1" << std::endl;
-    p1lF.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B);
-    kernTimer.Stop();
-    std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
-
-    print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
-    print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
-    std::cout<<"==== phase1 done=============================" <<std::endl;
-
-    rmm_wrap_free(Nanobuckets);
-    rmm_wrap_free(Blockbucket);
-
+//    printf("nanobuckets_size: %d\n", nanobuckets_size);
+//    printf("blockbuckets_size: %d\n", blockbuckets_size);
+//
+//    int64_t *Nanobuckets = (int64_t*)rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
+//    int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
+//
+//    std::cout << "INvoking grid block launch for phase1" << std::endl;
+//    p1lF.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B);
+//    kernTimer.Stop();
+//    std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+//
+//    print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
+//    print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
+//    std::cout<<"==== phase1 done=============================" <<std::endl;
+//
+//    rmm_wrap_free(Nanobuckets);
+//    rmm_wrap_free(Blockbucket);
+//
     return true;
 }
 
@@ -227,39 +226,39 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     fillvector_constant(NBUCKETS * ntasks, blockbucket, (int64_t)1);
     fillvector_constant(NBUCKETS, bucketp, (int64_t)1);
 
-    print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
-    print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
-
-    // launch phase2 (just with p2ntasks as the # of tasks)
-    p2lF.jitGridBlockLaunch(nanobuckets, blockbucket,
-                            bucketp, bucket, offset, M);
-
-    // do the reduction between phase2 and phase2end
-    int64_t s= 0;
-    for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
-    {
-        bucketp[bucket] = s;
-        s+= offset[bucket];
-        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
-    }
-
-    // launch phase2end: note same # of tasks as phase1
-    p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
-                              bucketp, bucket, offset, C,
-                              M);
-    kernTimer.Stop();
-    std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
-
-
-    print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
-    print_array<int64_t>(bucket, mnz, "bucket");
-    std::cout<<"phase2 kernel done =================="<<std::endl;
-    rmm_wrap_free(nanobuckets);
-    rmm_wrap_free(blockbucket);
-    rmm_wrap_free(bucketp);
-    rmm_wrap_free(bucket);
-    rmm_wrap_free(offset);
-    G.del();
+//    print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
+//    print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
+//
+//    // launch phase2 (just with p2ntasks as the # of tasks)
+//    p2lF.jitGridBlockLaunch(nanobuckets, blockbucket,
+//                            bucketp, bucket, offset, M);
+//
+//    // do the reduction between phase2 and phase2end
+//    int64_t s= 0;
+//    for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
+//    {
+//        bucketp[bucket] = s;
+//        s+= offset[bucket];
+//        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
+//    }
+//
+//    // launch phase2end: note same # of tasks as phase1
+//    p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
+//                              bucketp, bucket, offset, C,
+//                              M);
+//    kernTimer.Stop();
+//    std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+//
+//
+//    print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
+//    print_array<int64_t>(bucket, mnz, "bucket");
+//    std::cout<<"phase2 kernel done =================="<<std::endl;
+//    rmm_wrap_free(nanobuckets);
+//    rmm_wrap_free(blockbucket);
+//    rmm_wrap_free(bucketp);
+//    rmm_wrap_free(bucket);
+//    rmm_wrap_free(offset);
+//    G.del();
    return true;
 }
 
@@ -335,8 +334,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
     GrB_Matrix C_actual = G.getC();
 
-    make_grb_matrix<T_A>(A, data.A_indptr, data.A_indices, data.A_data);
-    make_grb_matrix<T_B>(B, data.B_indptr, data.B_indices, data.B_data);
+    make_grb_matrix<T_A>(A, data.A_indptr, data.A_indices, data.A_data, GxB_SPARSE);
+    make_grb_matrix<T_B>(B, data.B_indptr, data.B_indices, data.B_data, GxB_FULL, GxB_BY_COL);
     make_grb_matrix<T_C>(C, data.C_indptr, data.C_indices, data.C_data);
     make_grb_matrix<T_M>(M, data.M_indptr, data.M_indices, data.M_data);
 
@@ -438,15 +437,12 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 //            T_C *X_valid  = (T_C*) malloc( Cnz*sizeof(T_C));
 //            int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
 
-            printf("B[0]=%ld\n", B->p[0]);
-
            GpuTimer kernTimer;
            kernTimer.Start();
            phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
            lF.jitGridBlockLaunch(bucketp, b_start, b_end, Bucket, C_actual, M, A, B);
            kernTimer.Stop();
 
-            GrB_Matrix_wait (C_actual, GrB_COMPLETE) ;
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
             GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout) ;
             GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout) ;
