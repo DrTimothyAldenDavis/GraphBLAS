@@ -6,6 +6,7 @@
 #include <cmath>
 #include <random>
 #include <algorithm>
+#include <iostream>
 //#include "GB_binary_search.h"
 #include "GpuTimer.h"
 #include "GB_cuda_buckets.h"
@@ -137,7 +138,6 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
                                          GB_sparsity(A),
                                          GB_sparsity(B));
 
-
     /********************
      * Launch kernel
      */
@@ -154,24 +154,24 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     int nanobuckets_size = NBUCKETS * nthrd * ntasks;
     int blockbuckets_size = NBUCKETS * ntasks;
 
-    printf("nanobuckets_size: %d\n", nanobuckets_size);
-    printf("blockbuckets_size: %d\n", blockbuckets_size);
-
-    int64_t *Nanobuckets = (int64_t*)rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
-    int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
-
-    std::cout << "INvoking grid block launch for phase1" << std::endl;
-    p1lF.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B);
-    kernTimer.Stop();
-    std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
-
-    print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
-    print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
-    std::cout<<"==== phase1 done=============================" <<std::endl;
-
-    rmm_wrap_free(Nanobuckets);
-    rmm_wrap_free(Blockbucket);
-
+//    printf("nanobuckets_size: %d\n", nanobuckets_size);
+//    printf("blockbuckets_size: %d\n", blockbuckets_size);
+//
+//    int64_t *Nanobuckets = (int64_t*)rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
+//    int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
+//
+//    std::cout << "INvoking grid block launch for phase1" << std::endl;
+//    p1lF.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B);
+//    kernTimer.Stop();
+//    std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+//
+//    print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
+//    print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
+//    std::cout<<"==== phase1 done=============================" <<std::endl;
+//
+//    rmm_wrap_free(Nanobuckets);
+//    rmm_wrap_free(Blockbucket);
+//
     return true;
 }
 
@@ -226,40 +226,80 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     fillvector_constant(NBUCKETS * ntasks, blockbucket, (int64_t)1);
     fillvector_constant(NBUCKETS, bucketp, (int64_t)1);
 
-    print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
-    print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
+//    print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
+//    print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
+//
+//    // launch phase2 (just with p2ntasks as the # of tasks)
+//    p2lF.jitGridBlockLaunch(nanobuckets, blockbucket,
+//                            bucketp, bucket, offset, M);
+//
+//    // do the reduction between phase2 and phase2end
+//    int64_t s= 0;
+//    for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
+//    {
+//        bucketp[bucket] = s;
+//        s+= offset[bucket];
+//        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
+//    }
+//
+//    // launch phase2end: note same # of tasks as phase1
+//    p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
+//                              bucketp, bucket, offset, C,
+//                              M);
+//    kernTimer.Stop();
+//    std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+//
+//
+//    print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
+//    print_array<int64_t>(bucket, mnz, "bucket");
+//    std::cout<<"phase2 kernel done =================="<<std::endl;
+//    rmm_wrap_free(nanobuckets);
+//    rmm_wrap_free(blockbucket);
+//    rmm_wrap_free(bucketp);
+//    rmm_wrap_free(bucket);
+//    rmm_wrap_free(offset);
+//    G.del();
+   return true;
+}
 
-    // launch phase2 (just with p2ntasks as the # of tasks)
-    p2lF.jitGridBlockLaunch(nanobuckets, blockbucket,
-                            bucketp, bucket, offset, M);
+template<typename T>
+void make_grb_matrix(GrB_Matrix &mat, std::vector<int64_t> &indptr, std::vector<int64_t> &indices, std::vector<T> &data,
+                     int gxb_sparsity_control = GxB_SPARSE, int gxb_format = GxB_BY_ROW) {
 
-    // do the reduction between phase2 and phase2end
-    int64_t s= 0;
-    for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
-    {
-        bucketp[bucket] = s;
-        s+= offset[bucket];
-        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
+    GrB_Type type = cuda::to_grb_type<T>();
+
+    int64_t n_rows = indptr.size() -1;
+    int64_t n_cols = n_rows;
+    GrB_Matrix_new (&mat, type, n_rows, n_cols) ;
+
+    for(int64_t row = 0; row < n_rows; ++row) {
+        int64_t start = indptr[row];
+        int64_t stop = indptr[row+1];
+
+        for(int64_t offset = start; offset < stop; ++offset) {
+            GrB_Index i = (GrB_Index) row;
+            GrB_Index j = (GrB_Index) indices[offset];
+            T x = data[offset];
+
+            cuda::set_element<T> (mat, x, i, j) ;
+        }
     }
 
-    // launch phase2end: note same # of tasks as phase1
-    p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
-                              bucketp, bucket, offset, C,
-                              M);
-    kernTimer.Stop();
-    std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+    GrB_Matrix_wait (mat, GrB_MATERIALIZE) ;
+    GB_convert_any_to_non_iso (mat, true, NULL) ;
+    // TODO: Need to specify these
+    GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, gxb_sparsity_control) ;
+    GxB_Matrix_Option_set(mat, GxB_FORMAT, gxb_format);
+    GxB_Matrix_fprint (mat, "my mat", GxB_SHORT_VERBOSE, stdout) ;
 
+    bool iso ;
+    GxB_Matrix_iso (&iso, mat) ;
+    if (iso)
+    {
+        printf ("Die! (cannot do iso)\n") ;
+        GrB_Matrix_free (&mat) ;
+    }
 
-    print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
-    print_array<int64_t>(bucket, mnz, "bucket");
-    std::cout<<"phase2 kernel done =================="<<std::endl;
-    rmm_wrap_free(nanobuckets);
-    rmm_wrap_free(blockbucket);
-    rmm_wrap_free(bucketp);
-    rmm_wrap_free(bucket);
-    rmm_wrap_free(offset);
-    G.del();
-   return true;
 }
 
 template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
@@ -268,22 +308,45 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
     // FIXME: Allow the adaptive tests in this guy
 
-    N = 20;
+//    N = 20;
 
     //Generate test data and setup for using a jitify kernel with 'bucket' interface
     // The testBucket arg tells the generator which bucket we want to exercise
-    SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G(N, N);
-    int64_t Annz = N*N;
-    int64_t Bnnz = N*N;
-    int64_t Cnz = N;
-    float Cnzpercent = (float) Cnz/(N*N);
+//    int64_t Annz = N*N;
+//    int64_t Bnnz = N*N;
+//    int64_t Cnz = N;
+//    float Cnzpercent = (float) Cnz/(N*N);
 
+
+    std::cout << "Getting test data" << std::endl;
     // FIXME: These need to be set based on the bucket being tested
-    std::unique_ptr<TestData<T_A, T_B, T_C, T_M>> karate_tricount = make_karate_tricount<T_A, T_B, T_C, T_M>();
+    TestData<T_A, T_B, T_C, T_M> data = *make_karate_tricount<T_A, T_B, T_C, T_M>();
 
-    std::cout << "Filling A" << std::endl;
-    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW, 543210, 0, 50);
-    std::cout << "Filling B" << std::endl;
+    std::cout << "Creating problem gen" << std::endl;
+    N = data.A_indptr.size()-1;
+    SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G(N, N);
+    G.init_C(float(data.C_indices.size()) / (N * N));
+
+    GrB_Matrix A;
+    GrB_Matrix B;
+    GrB_Matrix C;
+    GrB_Matrix M;
+
+    GrB_Matrix C_actual = G.getC();
+
+    make_grb_matrix<T_A>(A, data.A_indptr, data.A_indices, data.A_data, GxB_SPARSE);
+    make_grb_matrix<T_B>(B, data.B_indptr, data.B_indices, data.B_data, GxB_FULL, GxB_BY_COL);
+    make_grb_matrix<T_C>(C, data.C_indptr, data.C_indices, data.C_data);
+    make_grb_matrix<T_M>(M, data.M_indptr, data.M_indices, data.M_data);
+
+//    GrB_Type type = cuda::to_grb_type<T_C>();
+//    GrB_Matrix_new (&C, type, N, N) ;
+
+
+
+//    std::cout << "Filling A" << std::endl;
+//    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW, 543210, 0, 50);
+//    std::cout << "Filling B" << std::endl;
 
     // TODO: The spdn kernel seems to think B->p should be non-empty
     // for the full side  but changing C to be GxB_FULL fails when
@@ -291,30 +354,30 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     // wouldn't expect a full or bitmap format to use the additional
     // arrays when B-x should already be nxk. Using csr here in the
     // meantime.
-    G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW);
+//    G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW);
 
     /**
      * For testing, we need to create our output C and configure
      * it w/ the necessary sparsity.
      */
-    G.init_C(Cnzpercent);
-    std::cout << "Filling buckets" << std::endl;
+//    std::cout << "Filling buckets" << std::endl;
     G.fill_buckets( TB); // all elements go to testbucket= TB
 
-    GrB_Matrix C = G.getC();
-    GrB_Matrix M = G.getM();
-    GrB_Matrix A = G.getA();
-    GrB_Matrix B = G.getB();
-
+//    GrB_Matrix C = G.getC();
+//    GrB_Matrix M = G.getM();
+//    GrB_Matrix A = G.getA();
+//    GrB_Matrix B = G.getB();
+//
     GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout) ;
     GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout) ;
     GxB_Matrix_fprint (M, "M", GxB_SHORT_VERBOSE, stdout) ;
     GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout) ;
+//
+//    T_C *Cx = (T_C*)C->x;
+//    T_A *Ax = (T_A*)A->x;
+//    T_B *Bx = (T_B*)B->x;
 
-    T_C *Cx = (T_C*)C->x;
-    T_A *Ax = (T_A*)A->x;
-    T_B *Bx = (T_B*)B->x;
-
+    std::cout << "Building semiring factgory" << std::endl;
     GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
     GrB_Semiring mysemiring;
     auto grb_info = GrB_Semiring_new(&mysemiring, monoid, binop);
@@ -324,10 +387,10 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     bool mask_comp = false;
 
     mysemiringfactory.semiring_factory ( mysemiring, flipxy,
-                                         C->type, M->type,
+                                         C_actual->type, M->type,
                                          A->type, B->type,
                                          mask_struct,  // matrix types
-                                         mask_comp, GB_sparsity(C),
+                                         mask_comp, GB_sparsity(C_actual),
                                          GB_sparsity(M),
                                          GB_sparsity(A),
                                          GB_sparsity(B) ) ;
@@ -350,7 +413,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
     bucketp[1] = 0;
 
-    int64_t *bucket = (int64_t*)rmm_wrap_malloc(Cnz * sizeof (int64_t));
+    int64_t *bucket = (int64_t*)rmm_wrap_malloc(data.C_indices.size() * sizeof (int64_t));
     int64_t *offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
 
     /**
@@ -371,10 +434,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
             if (nvecs > 0) std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
 
-            T_C *X_valid  = (T_C*) malloc( Cnz*sizeof(T_C));
-            int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
-
-            printf("B[0]=%ld\n", B->p[0]);
+//            T_C *X_valid  = (T_C*) malloc( Cnz*sizeof(T_C));
+//            int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
 
            GpuTimer kernTimer;
            kernTimer.Start();
@@ -382,19 +443,21 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C, M, A, B);
 
            kernTimer.Stop();
+
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
             GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout) ;
+            GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout) ;
 
             // printing manually since (I think) the jumbled form is causing issues for the standard GB_Matrix printer
-            std::cout << "Printing matrix C:" << std::endl;
-            for(int64_t i = 0; i < N; ++i) {
-                for (int64_t j = C->p[i]; j < C->p[i+1]; ++j) {
-                    std::cout << "(" << i << ", " << C->i[j] << ") = " << Cx[j] << std::endl;
-                }
-            }
-            std::cout << "Done." << std::endl;
+//            std::cout << "Printing matrix C:" << std::endl;
+//            for(int64_t i = 0; i < N; ++i) {
+//                for (int64_t j = C->p[i]; j < C->p[i+1]; ++j) {
+//                    std::cout << "(" << i << ", " << C->i[j] << ") = " << Cx[j] << std::endl;
+//                }
+//            }
+//            std::cout << "Done." << std::endl;
 
-           G.loadCj();
+//           G.loadCj();
 
            std::cout << "Printing loadCJ" << std::endl;
            std::cout << "Looping through pairs b_start=" << b_start << ", b_end=" << b_end << std::endl;
@@ -448,20 +511,20 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 //                C->i [pC] = i;
 //            }
 //        }
-           T_C err = 0;
-           for (int j =0 ; j< N; ++j) {
-             for ( int l = C->p[j]; l< C->p[j+1]; ++l) {
-                 int64_t i =  C->i[l];
-                 if (i >= 0)
-                    err +=  ( X_valid[l] - Cx[l])*(X_valid[l] - Cx[l]);
-             }
-           }
-           std::cout<< " 2-norm of err ="<< err<<std::endl;
+//           T_C err = 0;
+//           for (int j =0 ; j< N; ++j) {
+//             for ( int l = C->p[j]; l< C->p[j+1]; ++l) {
+//                 int64_t i =  C->i[l];
+//                 if (i >= 0)
+//                    err +=  ( X_valid[l] - Cx[l])*(X_valid[l] - Cx[l]);
+//             }
+//           }
+//           std::cout<< " 2-norm of err ="<< err<<std::endl;
+//
+//           EXPECT_EQ(err,0);
 
-           EXPECT_EQ(err,0);
-
-           free(X_valid);
-           free(i_valid);
+//           free(X_valid);
+//           free(i_valid);
          }
         }
 
