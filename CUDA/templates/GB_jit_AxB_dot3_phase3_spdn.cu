@@ -53,7 +53,7 @@ __global__ void AxB_dot3_phase3_spdn
    __syncthreads();
    int dots = (nvec +m -1)/m;
 
-   printf("dots=%d, m=%d, dpt=%d\n", dots, m, dpt);
+//   printf("dots=%d, m=%d, dpt=%d\n", dots, m, dpt);
    int zc = 0;
      
    for ( int tid= threadIdx.x +blockDim.x*blockIdx.x;
@@ -61,7 +61,7 @@ __global__ void AxB_dot3_phase3_spdn
              tid += blockDim.x * gridDim.x) {
       int pair_id, im; 
        if (threadIdx.x ==0)
-         printf("thd%u pi=%lld\n",tid, start+threadIdx.x);
+//         printf("thd%u pi=%lld\n",tid, start+threadIdx.x);
          __syncthreads();
 
       for (pair_id = start+tid, im = 0; 
@@ -75,7 +75,7 @@ __global__ void AxB_dot3_phase3_spdn
          }
          int64_t j = Ci[pair_id] >> 4;
       if (threadIdx.x ==0)
-         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
+//         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
          __syncthreads();
          
          T_A aki;
@@ -91,7 +91,7 @@ __global__ void AxB_dot3_phase3_spdn
             int64_t k = Bi [pB] ;               // first row index of B(:,j)
             // cij = A(k,i) * B(k,j)
 
-             printf("tid=%d, A is dense, k=%ld, i=%ld\n", threadIdx.x, k, i);
+//             printf("tid=%d, A is dense, k=%ld, i=%ld\n", threadIdx.x, k, i);
             GB_GETA ( aki=(T_Z)Ax[A->nvec * k + i] ) ;           // aki = A(k,i)
             GB_GETB ( bkj=(T_Z)Bx[pB] ) ;           // bkj = B(k,j)
             cij = GB_MULT(aki, bkj ) ;           // cij = aki * bkj
@@ -114,13 +114,13 @@ __global__ void AxB_dot3_phase3_spdn
              int64_t nnzA   = pA_end - pA;
 
             int64_t k = Ai [pA] ;               // first row index of A(:,i)
-             printf("tid=%d, B is dense, k=%ld, j=%ld\n", threadIdx.x, k, j);
+//             printf("tid=%d, B is dense, k=%ld, j=%ld\n", threadIdx.x, k, j);
             // cij = A(k,i) * B(k,j)
             GB_GETA ( aki= (T_Z)Ax[ pA ] ) ;           // aki = A(k,i)
-            GB_GETB ( bkj=(T_Z)Bx[ B->vlen*j+k ] ) ;           // bkj = B(k,j)
+            GB_GETB ( bkj=(T_Z)Bx[ B->vlen*k+j ] ) ;           // bkj = B(k,j)
 
             cij =  GB_MULT(aki, bkj) ;           // cij = aki * bkj
-             printf("aki=%d, bkj=%d, cij=%d\n", aki, bkj, cij);
+//             printf("aki=%d, bkj=%d, cij=%d\n", aki, bkj, cij);
 
             for (int64_t p = pA+1 ; p < pA_end ; p++)
             { 
@@ -128,9 +128,9 @@ __global__ void AxB_dot3_phase3_spdn
                 int64_t k = Ai [p] ;                // next row index of A(:,i)
                 // cij += A(k,i) * B(k,j)
                 GB_GETA ( aki=(T_Z)Ax[ p ] ) ;           // aki = A(k,i)
-                GB_GETB ( bkj=(T_Z)Bx[ B->vlen*j+k] ) ;           // bkj = B(k,j)
+                GB_GETB ( bkj=(T_Z)Bx[ B->vlen*k+j] ) ;           // bkj = B(k,j)
                 cij = GB_ADD ( cij, GB_MULT(aki, bkj) );        // cij += aki * bkj
-                printf("aki=%d, bkj=%d, cij=%d\n", aki, bkj, cij);
+//                printf("aki=%d, bkj=%d, cij=%d\n", aki, bkj, cij);
             }
          } else {
              if(threadIdx.x == 0 && blockIdx.x == 0) {
