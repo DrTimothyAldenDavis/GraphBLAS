@@ -353,7 +353,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     // wouldn't expect a full or bitmap format to use the additional
     // arrays when B-x should already be nxk. Using csr here in the
     // meantime.
-    G.init_B(Bnnz, GxB_FULL, GxB_BY_ROW);
+    G.init_B(Bnnz, GxB_FULL, GxB_BY_COL);
 
     /**
      * For testing, we need to create our output C and configure
@@ -436,7 +436,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
             if (nvecs > 0) std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
 
-            T_C *X_valid  = (T_C*) malloc( Cnz*sizeof(T_C));
+            T_C *X_valid  = (T_C*) malloc( GB_nnz(C)*sizeof(T_C));
             int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
 
 //            T_C *Cx = (T_C*)C->x;
@@ -473,17 +473,25 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             // printing manually since (I think) the jumbled form is causing issues for the standard GB_Matrix printer
 //            std::cout << "Printing matrix C:" << std::endl;
 
+//       zc_valid = C->zombie_count;
+//       C->zombie_count = 0;
+       for (int i =0 ; i< GB_nnz(C); ++i) {
+            //std::cout<<"Cx[i] = "<<Cx[i]<<std::endl;
+            X_valid[i] = Cx[i];
+            Cx[i] = 0;
+            i_valid[i] = C->i[i];
+       }
+
            G.loadCj();
 
 
            std::cout << "Printing loadCJ" << std::endl;
            std::cout << "Looping through pairs b_start=" << b_start << ", b_end=" << b_end << std::endl;
-           for (int64_t pair = b_start ; pair < b_end ; ++pair) {
+           for (int64_t pair = b_start ; pair < min(b_end, GB_nnz(C)) ; ++pair) {
 
-               // Little note to self: Investigate why hbucket is nullptr
+               // bucket is nullptr
             int64_t pC = (Bucket == nullptr) ? pair : Bucket [pair] ;
 
-            if(pC < 31) {
                 int64_t i = M->i[pC] ;          // row index of C(i,j)
 
                 // get C(i,j)
@@ -506,22 +514,22 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
                 // yvp, yvi, yvals:  B(:,j)
                 // yvp is Bp [j] and Bp [j+1]
-//            int64_t pB_start = B->p [j] ;
-//            int64_t pB_end   = B->p [j+1] ;
+            int64_t pB_start = N*j;
+            int64_t pB_end   = N*j+N ;
 
                 std::cout << "Getting 2" << std::endl;
 
                 // indices are in Bi [pB_start ... pB_end-1]
                 // values  are in Bx [pB_start ... pB_end-1]
                 k = pA_start;
-                int64_t l = 0;//pB_start;
+                int64_t l = pB_start;
                 T_Z cij = *((T_Z*)monoid->identity) ;
 
                 std::cout << "running loop" << std::endl;
-                while( k < pA_end && l < N) {
+                while( k < pA_end && l < pB_end) {
                     //std::cout<<" A*B="<< (*MUL_ptr<T_Z>) ( (T_Z)Ax[k] , (T_Z) Bx[l]) <<std::endl ;
                     T_A Axk = (T_Z)Ax[k];
-                    T_B Bxk = (T_Z)Bx[N*j+l];
+                    T_B Bxk = (T_Z)Bx[pB_start+l];
 
                     cij += Axk * Bxk;  // FIXME: need to replace w/ the actual monoid/binop evaluations
                     k++;
@@ -538,7 +546,6 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                     C->i [pC] = i;
                 }
 
-            }
         }
            T_C err = 0;
            for (int j =0 ; j< N; ++j) {
