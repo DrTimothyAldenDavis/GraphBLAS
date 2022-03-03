@@ -7,7 +7,6 @@ extern "C" {
 
 int main(int argc, char **argv) {
 
-    // TODO: Need to invoke GB_Init
     size_t init_size, max_size;
     init_size = 256*(1ULL<<10);
     max_size  = 256*(1ULL<<20);
@@ -25,6 +24,8 @@ int main(int argc, char **argv) {
 
     rmm_wrap_deallocate( p, buff_size);
     rmm_wrap_finalize();
+
+    GrB_finalize();
 
     return r;
 }
