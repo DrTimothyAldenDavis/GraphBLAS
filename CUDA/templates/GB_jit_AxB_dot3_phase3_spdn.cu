@@ -82,8 +82,14 @@ __global__ void AxB_dot3_phase3_spdn
          T_B bkj;
          T_Z cij;
 
-         if( GB_A_IS_FULL || GB_A_IS_BITMAP ) // A is dense
-         {
+         // C(i,j) = A(:,i) * B(:,j)
+
+        #if ( GB_A_IS_BITMAP ) // A is dense
+
+        ...
+
+        #elif ( GB_A_IS_FULL ) // A is dense
+        {
              int64_t pB = Bp[i];
              int64_t pB_end   = Bp[i+1];
              int64_t nnzB   = pB_end - pB;
@@ -92,7 +98,7 @@ __global__ void AxB_dot3_phase3_spdn
             // cij = A(k,i) * B(k,j)
 
 //             printf("tid=%d, A is dense, k=%ld, i=%ld\n", threadIdx.x, k, i);
-            GB_GETA ( aki=(T_Z)Ax[A->nvec * k + i] ) ;           // aki = A(k,i)
+            GB_GETA ( aki=(T_Z)Ax[pA + i] ) ;           // aki = A(k,i)
             GB_GETB ( bkj=(T_Z)Bx[pB] ) ;           // bkj = B(k,j)
             cij = GB_MULT(aki, bkj ) ;           // cij = aki * bkj
 
@@ -101,14 +107,13 @@ __global__ void AxB_dot3_phase3_spdn
                 //GB_DOT_TERMINAL (cij) ;           // break if cij == terminal
                 int64_t k = Bi [p] ;                // next row index of B(:,j)
                 // cij += A(k,i) * B(k,j)
-                GB_GETA ( aki=(T_Z)Ax[A->nvec * k + i] ) ;      // aki = A(k,i)
+                GB_GETA ( aki=(T_Z)Ax[A->vlen * i + k] ) ;      // aki = A(k,i)
                 GB_GETB ( bkj=(T_Z)Bx[p] ) ;                    // bkj = B(k,j)
                 cij = GB_ADD ( cij, GB_MULT(aki, bkj ) ) ;      // cij += aki * bkj
             }
-         }
-
-         else if( GB_B_IS_FULL || GB_B_IS_BITMAP )//nnzB == B->vlen) // B is dense
-         {
+        }
+        #elif ( GB_B_IS_FULL || GB_B_IS_BITMAP )//nnzB == B->vlen) // B is dense
+        {
              int64_t pA = Ap[i];
              int64_t pA_end   = Ap[i+1];
              int64_t nnzA   = pA_end - pA;

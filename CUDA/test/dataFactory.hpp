@@ -130,7 +130,16 @@ class matrix : public Managed {
         std::cout << "inside fill, using seed "<< seed << std::endl;
         alloc();
 
-        int64_t inv_sparsity = (nrows_*ncols_)/nnz;   //= values not taken per value occupied in index space
+        double inv_sparsity ;
+        if (nnz < 0)
+        {
+            // build a matrix with all entries present
+            inv_sparsity = 1 ;
+        }
+        else
+        {
+            inv_sparsity = (nrows_*ncols_)/nnz;   //= values not taken per value occupied in index space
+        }
 
         std::cout<< "fill_random nrows="<< nrows_<<"ncols=" << ncols_ <<" need "<< nnz<<" values, invsparse = "<<inv_sparsity<<std::endl;
         std::cout<< "fill_random"<<" after alloc values"<<std::endl;
@@ -143,18 +152,44 @@ class matrix : public Managed {
 
         std::mt19937 r(seed);
         std::uniform_real_distribution<double> dis(0.0, 1.0);
-        for (int64_t k = 0 ; k < nnz ; k++)
+
+        if (nnz < 0)
         {
-            GrB_Index i = ((GrB_Index) (dis(r) * nrows_)) % ((GrB_Index) nrows_) ;
-            GrB_Index j = ((GrB_Index) (dis(r) * ncols_)) % ((GrB_Index) ncols_) ;
-            if (no_self_edges && (i == j)) continue ;
-            T x = (T)(dis(r) * (val_max - val_min)) + (T)val_min ;
-            // A (i,j) = x
-            cuda::set_element<T> (mat, x, i, j) ;
-            if (make_symmetric) {
-                // A (j,i) = x
-                cuda::set_element<T>(mat, x, j, i) ;
-                k++; // count the element
+            for (int64_t i = 0 ; i < nrows_ ; i++)
+            {
+                for (int64_t j = 0 ; j < ncols_ ; j++)
+                {
+                    T x = (T)(dis(r) * (val_max - val_min)) + (T)val_min ;
+                    if (make_symmetric)
+                    {
+                        // A (i,j) = x
+                        cuda::set_element<T> (mat, x, i, j) ;
+                        // A (j,i) = x
+                        cuda::set_element<T> (mat, x, j, i) ;
+                    }
+                    else
+                    {
+                        // A (i,j) = x
+                        cuda::set_element<T> (mat, x, i, j) ;
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int64_t k = 0 ; k < nnz ; k++)
+            {
+                GrB_Index i = ((GrB_Index) (dis(r) * nrows_)) % ((GrB_Index) nrows_) ;
+                GrB_Index j = ((GrB_Index) (dis(r) * ncols_)) % ((GrB_Index) ncols_) ;
+                if (no_self_edges && (i == j)) continue ;
+                T x = (T)(dis(r) * (val_max - val_min)) + (T)val_min ;
+                // A (i,j) = x
+                cuda::set_element<T> (mat, x, i, j) ;
+                if (make_symmetric) {
+                    // A (j,i) = x
+                    cuda::set_element<T>(mat, x, j, i) ;
+                    k++; // count the element
+                }
             }
         }
 

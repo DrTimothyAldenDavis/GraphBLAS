@@ -491,8 +491,72 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
             GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout);
 
+            // ensure the GPU is not used
+            GxB_set (GxB_GPU_CONTROL, GxB_GPU_NEVER) ;
+
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
-            GrB_mxm(C_actual, M, NULL, mysemiring, A, B, Mask_struct ? GrB_DESC_S : NULL);
+            GrB_mxm(C_actual, M, NULL, mysemiring, A, B,
+                Mask_struct ? GrB_DESC_S : NULL);
+
+            // re-enable the GPU
+            GxB_set (GxB_GPU_CONTROL, GxB_GPU_ALWAYS) ;
+
+            // compare
+            double tol = 0 ;
+            GrB_Index nvals1 = 0, nvals2 = 0 ;
+            GrB_Matrix_nvals (&nvals1, C) ;
+            GrB_Matrix_nvals (&nvals2, C_actual) ;
+            if (nvals1 != nvals2) { printf ("!!\n") ; abort ( ) ; } 
+            GrB_Index nrows, ncols ;
+            GrB_Matrix_nrows (&nrows, C) ;
+            GrB_Matrix_ncols (&ncols, C) ;
+            GrB_Matrix_new (&T, GrB_BOOL, nrows, ncols) ;
+            GrB_BinaryOp op = NULL, op_abs = NULL ;
+            GrB_Monoid monoid_sum = NULL ;
+            if      (type == GrB_BOOL  ) op = GrB_EQ_BOOL   ;
+            else if (type == GrB_INT8  ) op = GrB_EQ_INT8   ;
+            else if (type == GrB_INT16 ) op = GrB_EQ_INT16  ;
+            else if (type == GrB_INT32 ) op = GrB_EQ_INT32  ;
+            else if (type == GrB_INT64 ) op = GrB_EQ_INT64  ;
+            else if (type == GrB_UINT8 ) op = GrB_EQ_UINT8  ;
+            else if (type == GrB_UINT16) op = GrB_EQ_UINT16 ;
+            else if (type == GrB_UINT32) op = GrB_EQ_UINT32 ;
+            else if (type == GrB_UINT64) op = GrB_EQ_UINT64 ;
+            else if (type == GrB_FP32  )
+            {
+                op = (tol == 0)? GrB_EQ_FP32 : GrB_MINUS_FP32   ;
+                op_abs = GrB_ABS_FP32 ;
+            }
+            else if (type == GrB_FP64  )
+            {
+                op = (tol == 0)? GrB_EQ_FP64 : GrB_MINUS_FP64   ;
+                op_abs = GrB_ABS_FP64 ;
+            }
+            else if (type == GxB_FC32  )
+            {
+                op = (tol == 0)? GxB_EQ_FC32 : GxB_MINUS_FC32   ;
+                op_abs = GxB_ABS_FC32 ;
+            }
+            else if (type == GxB_FC64  )
+            {
+                op = (tol == 0)? GxB_EQ_FC64 : GxB_MINUS_FC64   ;
+                op_abs = GxB_ABS_FC64 ;
+            }
+            if (op_abs != NULL)
+            {
+                GrB_eWiseMult (T, NULL, NULL, op, C, C_actual, NULL) ;
+                GrB_Index nvals3 = 1 ;
+                GrB_Matrix_nvals (&nvals3, T) ;
+                if (nvals1 != nvals3) { printf ("!!\n") ; abort ( ) ; } 
+                bool is_same ;
+                GrB_reduce (&is_same, NULL, GrB_LAND_MONOID_BOOL, T, NULL) ;
+                if (!is_same) { printf ("!!\n") ; abort ( ) ; } 
+                GrB_free (&T) ;
+            }
+            else
+            {
+                // TODO
+            }
 
 //           std::cout << "Printing loadCJ" << std::endl;
 //           std::cout << "Looping through pairs b_start=" << b_start << ", b_end=" << b_end << std::endl;

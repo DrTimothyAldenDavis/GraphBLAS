@@ -15,6 +15,7 @@ int main(int argc, char **argv) {
     rmm_wrap_initialize( rmm_wrap_managed, init_size, max_size );
 
     GrB_Info i = GxB_init(GrB_NONBLOCKING, rmm_wrap_malloc, rmm_wrap_calloc, rmm_wrap_realloc, rmm_wrap_free);
+    GxB_set (GxB_GPU_CONTROL, GxB_GPU_ALWAYS) ;
 
     size_t buff_size = (1ULL<<13)+152;
     void *p = (void *)rmm_wrap_allocate( &buff_size );

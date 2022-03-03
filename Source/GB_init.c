@@ -148,8 +148,10 @@ GrB_Info GB_init            // start up GraphBLAS
 
     #if defined ( GBCUDA )
     {
-        // TODO: must NOT be here
-
+        // TODO: move this code into a function inside CUDA folder
+#if 0
+        GB_cuda_init ( ) ; or something
+#else
         // If CUDA exists (#define GBCUDA) and if the caller is GxB_cuda_init,
         // then query the system for the # of GPUs available, their memory
         // sizes, SM counts, and other capabilities.  Unified Memory support is
@@ -176,6 +178,7 @@ GrB_Info GB_init            // start up GraphBLAS
         GB_cuda_set_device( 0 );
 
         // also check for jit cache, pre-load library of common kernels ...
+#endif
     }
     #else
     { 
