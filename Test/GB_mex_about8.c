@@ -47,7 +47,7 @@ void mexFunction
     // released on June 29, 2021.
 
     GrB_init (GrB_NONBLOCKING) ;
-    GxB_set (GxB_BURBLE, true) ;
+    // GxB_set (GxB_BURBLE, true) ;
     GrB_Matrix M_0 ;
     GrB_Vector v_0, v_1 ;
     GrB_Matrix_new (&M_0, GrB_INT64, 0, 0) ;
