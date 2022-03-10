@@ -494,10 +494,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
             GRB_TRY (GrB_mxm(C_actual, M, NULL, mysemiring, A, B,
-                Mask_struct ? GrB_DESC_S : NULL));
+                Mask_struct ? GrB_DESC_ST1 : GrB_DESC_T1));
 
-            // re-enable the GPU
-            GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
             GRB_TRY (GxB_Matrix_fprint (M, "M actual", GxB_COMPLETE, stdout));
             GRB_TRY (GxB_Matrix_fprint (A, "A actual", GxB_COMPLETE, stdout));
             GRB_TRY (GxB_Matrix_fprint (B, "B actual", GxB_COMPLETE, stdout));
@@ -548,14 +546,26 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                 op = (tol == 0)? GxB_EQ_FC64 : GxB_MINUS_FC64   ;
                 op_abs = GxB_ABS_FC64 ;
             }
-            if (op_abs != NULL)
+
+            // Diff = C - C_actual
+            GrB_Matrix Diff ;
+            GRB_TRY (GrB_Matrix_new (&Diff, GrB_FP64, nrows, ncols)) ;
+            GRB_TRY (GrB_Matrix_apply (Diff, NULL, NULL, GrB_AINV_FP64, C_actual, NULL)) ;
+            GRB_TRY (GrB_Matrix_eWiseAdd_BinaryOp (Diff, NULL, NULL, GrB_PLUS_FP64,
+                C, Diff, NULL)) ;
+            GRB_TRY (GxB_Matrix_fprint (Diff, "Diff actual", GxB_COMPLETE, stdout));
+            GRB_TRY (GrB_Matrix_free (&Diff)) ;
+
+            if (tol == 0)
             {
+                // check for perfect equality
                 GRB_TRY (GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_actual,
                     NULL)) ;
                 GrB_Index nvals3 = 1 ;
+                GRB_TRY (GxB_Matrix_fprint (T, "T actual", GxB_COMPLETE, stdout));
                 GRB_TRY (GrB_Matrix_nvals (&nvals3, T)) ;
                 if (nvals1 != nvals3) { printf ("!!\n") ; abort ( ) ; } 
-                bool is_same ;
+                bool is_same = false ;
                 GRB_TRY (GrB_Matrix_reduce_BOOL (&is_same, NULL, GrB_LAND_MONOID_BOOL,
                     T, NULL)) ;
                 if (!is_same) { printf ("!!\n") ; abort ( ) ; } 
@@ -563,8 +573,12 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             }
             else
             {
-                // TODO
+                // TODO: check with roundoff
+                { printf ("!!\n") ; abort ( ) ; } 
             }
+
+            // re-enable the GPU
+            GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
 
 //           std::cout << "Printing loadCJ" << std::endl;
 //           std::cout << "Looping through pairs b_start=" << b_start << ", b_end=" << b_end << std::endl;
