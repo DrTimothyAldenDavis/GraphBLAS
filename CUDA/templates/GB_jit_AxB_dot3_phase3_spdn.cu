@@ -77,72 +77,158 @@ __global__ void AxB_dot3_phase3_spdn
       if (threadIdx.x ==0)
 //         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
          __syncthreads();
-         
-         T_A aki;
-         T_B bkj;
-         T_Z cij;
 
+          int64_t pA = Ap[i];
+          int64_t pA_end   = Ap[i+1];
+          int64_t nnzA   = pA_end - pA;
+          int64_t pB = Bp[i];
+          int64_t pB_end   = Bp[i+1];
+          int64_t nnzB   = pB_end - pB;
+          T_A aki;
+          T_B bkj;
+          T_Z cij;
+
+          if( nnzA == A->vlen) // A is dense
+          {
+              int64_t k = Bi [pB] ;               // first row index of B(:,j)
+              // cij = A(k,i) * B(k,j)
+              GB_GETA ( aki=(T_Z)Ax[pA+k] ) ;           // aki = A(k,i)
+              GB_GETB ( bkj=(T_Z)Bx[pB] ) ;           // bkj = B(k,j)
+              GB_C_MULT ( cij, aki, bkj ) ;           // cij = aki * bkj
+
+              for (int64_t p = pB+1 ; p < pB_end ; p++)
+              {
+                  //GB_DOT_TERMINAL (cij) ;             // break if cij == terminal
+                  int64_t k = Bi [p] ;                // next row index of B(:,j)
+                  // cij += A(k,i) * B(k,j)
+                  GB_GETA ( aki=(T_Z)Ax[pA+k] ) ;           // aki = A(k,i)
+                  GB_GETB ( bkj=(T_Z)Bx[p] ) ;           // bkj = B(k,j)
+                  GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
+              }
+
+          }
+          if( nnzB == B->vlen) // B is dense
+          {
+              int64_t k = Ai [pA] ;               // first row index of A(:,i)
+              // cij = A(k,i) * B(k,j)
+              GB_GETA ( aki=(T_Z)Ax[ pA ] ) ;           // aki = A(k,i)
+              GB_GETB ( bkj=(T_Z)Bx[ pB+k ] ) ;           // bkj = B(k,j)
+              GB_C_MULT ( cij, aki, bkj) ;           // cij = aki * bkj
+
+              for (int64_t p = pA+1 ; p < pA_end ; p++)
+              {
+                  //GB_DOT_TERMINAL (cij) ;             // break if cij == terminal
+                  int64_t k = Ai [p] ;                // next row index of A(:,i)
+                  // cij += A(k,i) * B(k,j)
+                  GB_GETA ( aki=(T_Z)Ax[ p ] ) ;           // aki = A(k,i)
+                  GB_GETB ( bkj=(T_Z)Bx[ pB+k] ) ;           // bkj = B(k,j)
+                  GB_MULTADD ( cij, aki, bkj) ;        // cij += aki * bkj
+              }
+          }
          // C(i,j) = A(:,i) * B(:,j)
-
-        #if ( GB_A_IS_BITMAP ) // A is dense
-
-        ...
-
-        #elif ( GB_A_IS_FULL ) // A is dense
-        {
-             int64_t pB = Bp[i];
-             int64_t pB_end   = Bp[i+1];
-             int64_t nnzB   = pB_end - pB;
-
-            int64_t k = Bi [pB] ;               // first row index of B(:,j)
-            // cij = A(k,i) * B(k,j)
-
-//             printf("tid=%d, A is dense, k=%ld, i=%ld\n", threadIdx.x, k, i);
-            GB_GETA ( aki=(T_Z)Ax[pA + i] ) ;           // aki = A(k,i)
-            GB_GETB ( bkj=(T_Z)Bx[pB] ) ;           // bkj = B(k,j)
-            cij = GB_MULT(aki, bkj ) ;           // cij = aki * bkj
-
-            for (int64_t p = pB+1 ; p < pB_end ; p++)
-            {
-                //GB_DOT_TERMINAL (cij) ;           // break if cij == terminal
-                int64_t k = Bi [p] ;                // next row index of B(:,j)
-                // cij += A(k,i) * B(k,j)
-                GB_GETA ( aki=(T_Z)Ax[A->vlen * i + k] ) ;      // aki = A(k,i)
-                GB_GETB ( bkj=(T_Z)Bx[p] ) ;                    // bkj = B(k,j)
-                cij = GB_ADD ( cij, GB_MULT(aki, bkj ) ) ;      // cij += aki * bkj
-            }
-        }
-        #elif ( GB_B_IS_FULL || GB_B_IS_BITMAP )//nnzB == B->vlen) // B is dense
-        {
-             int64_t pA = Ap[i];
-             int64_t pA_end   = Ap[i+1];
-             int64_t nnzA   = pA_end - pA;
-
-            int64_t k = Ai [pA] ;               // first row index of A(:,i)
-//             printf("tid=%d, B is dense, k=%ld, j=%ld\n", threadIdx.x, k, j);
-            // cij = A(k,i) * B(k,j)
-            GB_GETA ( aki= (T_Z)Ax[ pA ] ) ;           // aki = A(k,i)
-            GB_GETB ( bkj=(T_Z)Bx[ B->vlen*k+j ] ) ;           // bkj = B(k,j)
-
-            cij =  GB_MULT(aki, bkj) ;           // cij = aki * bkj
-//             printf("aki=%d, bkj=%d, cij=%d\n", aki, bkj, cij);
-
-            for (int64_t p = pA+1 ; p < pA_end ; p++)
-            { 
-                //GB_DOT_TERMINAL (cij) ;             // break if cij == terminal
-                int64_t k = Ai [p] ;                // next row index of A(:,i)
-                // cij += A(k,i) * B(k,j)
-                GB_GETA ( aki=(T_Z)Ax[ p ] ) ;           // aki = A(k,i)
-                GB_GETB ( bkj=(T_Z)Bx[ B->vlen*k+j] ) ;           // bkj = B(k,j)
-                cij = GB_ADD ( cij, GB_MULT(aki, bkj) );        // cij += aki * bkj
-//                printf("aki=%d, bkj=%d, cij=%d\n", aki, bkj, cij);
-            }
-         } else {
-             if(threadIdx.x == 0 && blockIdx.x == 0) {
-                 printf("ERROR: At least one side must be dense.\n");
-                 break;
-             }
-         }
+//        /**
+//         * If A is bitmap, we need to look up offset and nnz of B
+//         * and treat Ax as fully dense (size=n*k).
+//         */
+//
+//        // TODO: We probably want to pull this into a separate and
+//        //  much smaller kernel just for these formats (e.g. spdn w/ B=bitmap, A=sparse)
+//        #if ( GB_A_IS_BITMAP ) // A is dense
+//        {
+//             int64_t pB = Bp[i];
+//             int64_t pB_end   = Bp[i+1];
+//             int64_t nnzB   = pB_end - pB;
+//             int64_t k = Bi [pB] ;               // first row index of B(:,j)
+//            // cij = A(k,i) * B(k,j)
+//
+////             printf("tid=%d, A is dense, k=%ld, i=%ld\n", threadIdx.x, k, i);
+//            GB_GETA ( aki=(T_Z)Ax[pA + i] ) ;           // aki = A(k,i)
+//            GB_GETB ( bkj=(T_Z)Bx[pB] ) ;           // bkj = B(k,j)
+//            cij = GB_MULT(aki, bkj ) ;           // cij = aki * bkj
+//
+//        }
+//
+//        //TODO: We probably want to pull this into a separate
+//        // much smaller kernel just for these formats (e.g. spdn w/ B=full, A=sparse)
+//        /**
+//         * If A is full, we need to look up offset and nzz of B
+//         * and treat Ax as fully dense (size=n*k)
+//         */
+//        #elif ( GB_A_IS_FULL ) // A is dense
+//        {
+//             int64_t pB = Bp[i];
+//             int64_t pB_end   = Bp[i+1];
+//             int64_t nnzB   = pB_end - pB;
+//
+//            int64_t k = Bi [pB] ;               // first row index of B(:,j)
+//            // cij = A(k,i) * B(k,j)
+//
+////             printf("tid=%d, A is dense, k=%ld, i=%ld\n", threadIdx.x, k, i);
+//            GB_GETA ( aki=(T_Z)Ax[pA + i] ) ;           // aki = A(k,i)
+//            GB_GETB ( bkj=(T_Z)Bx[pB] ) ;           // bkj = B(k,j)
+//            cij = GB_MULT(aki, bkj ) ;           // cij = aki * bkj
+//
+//            for (int64_t p = pB+1 ; p < pB_end ; p++)
+//            {
+//                //GB_DOT_TERMINAL (cij) ;           // break if cij == terminal
+//                int64_t k = Bi [p] ;                // next row index of B(:,j)
+//                // cij += A(k,i) * B(k,j)
+//                GB_GETA ( aki=(T_Z)Ax[A->vlen * i + k] ) ;      // aki = A(k,i)
+//                GB_GETB ( bkj=(T_Z)Bx[p] ) ;                    // bkj = B(k,j)
+//                cij = GB_ADD ( cij, GB_MULT(aki, bkj ) ) ;      // cij += aki * bkj
+//            }
+//        }
+//
+//        /**
+//         * If A is sparse but current row of A is dense, we need to look up
+//         * offset of B and offset of A
+//         */
+//        #elif (GB_B_IS_BITMAP)
+//        {
+//
+//        }
+//
+//        #elif (GB_B_IS_FULL)
+//        {
+//
+//        }
+//
+//        /**
+//         * If
+//         */
+//        #else
+//        {
+//
+//
+//             int64_t pA = Ap[i];
+//             int64_t pA_end   = Ap[i+1];
+//             int64_t nnzA   = pA_end - pA;
+//
+//            int64_t k = Ai [pA] ;               // first row index of A(:,i)
+////             printf("tid=%d, B is dense, k=%ld, j=%ld\n", threadIdx.x, k, j);
+//            // cij = A(k,i) * B(k,j)
+//            GB_GETA ( aki= (T_Z)Ax[ pA ] ) ;           // aki = A(k,i)
+//            GB_GETB ( bkj=(T_Z)Bx[ B->vlen*k+j ] ) ;           // bkj = B(k,j)
+//
+//            cij =  GB_MULT(aki, bkj) ;           // cij = aki * bkj
+////             printf("aki=%d, bkj=%d, cij=%d\n", aki, bkj, cij);
+//
+//            for (int64_t p = pA+1 ; p < pA_end ; p++)
+//            {
+//                //GB_DOT_TERMINAL (cij) ;             // break if cij == terminal
+//                int64_t k = Ai [p] ;                // next row index of A(:,i)
+//                // cij += A(k,i) * B(k,j)
+//                GB_GETA ( aki=(T_Z)Ax[ p ] ) ;           // aki = A(k,i)
+//                GB_GETB ( bkj=(T_Z)Bx[ B->vlen*k+j] ) ;           // bkj = B(k,j)
+//                cij = GB_ADD ( cij, GB_MULT(aki, bkj) );        // cij += aki * bkj
+////                printf("aki=%d, bkj=%d, cij=%d\n", aki, bkj, cij);
+//            }
+//         } else {
+//             if(threadIdx.x == 0 && blockIdx.x == 0) {
+//                 printf("ERROR: At least one side must be dense.\n");
+//                 break;
+//             }
+//         }
 
          GB_PUTC( Ci[pair_id]=i ) ;
          GB_PUTC( Cx[pair_id]=cij ) ;

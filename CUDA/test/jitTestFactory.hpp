@@ -15,7 +15,7 @@
 #include "test_data.hpp"
 
 extern "C" {
-    #include "GB.h"
+    #include "GraphBLAS.h"
 }
 
 #include "../jitFactory.hpp"
@@ -387,10 +387,10 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 //    GrB_Matrix C_actual = C;
 
     mysemiringfactory.semiring_factory ( mysemiring, flipxy,
-                                         C_actual->type, M->type,
+                                         C->type, M->type,
                                          A->type, B->type,
                                          mask_struct,  // matrix types
-                                         mask_comp, GB_sparsity(C_actual),
+                                         mask_comp, GB_sparsity(C),
                                          GB_sparsity(M),
                                          GB_sparsity(A),
                                          GB_sparsity(B) ) ;
@@ -456,7 +456,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            GpuTimer kernTimer;
            kernTimer.Start();
            phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
-           lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C_actual, M, A, B);
+           lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C, M, A, B);
 
            kernTimer.Stop();
 
@@ -510,8 +510,12 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             GrB_Index nrows, ncols ;
             GrB_Matrix_nrows (&nrows, C) ;
             GrB_Matrix_ncols (&ncols, C) ;
+
+            GrB_Matrix T;
+
             GrB_Matrix_new (&T, GrB_BOOL, nrows, ncols) ;
-            GrB_BinaryOp op = NULL, op_abs = NULL ;
+            GrB_BinaryOp op = NULL;
+            GrB_UnaryOp op_abs = NULL ;
             GrB_Monoid monoid_sum = NULL ;
             if      (type == GrB_BOOL  ) op = GrB_EQ_BOOL   ;
             else if (type == GrB_INT8  ) op = GrB_EQ_INT8   ;
