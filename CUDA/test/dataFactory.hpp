@@ -288,7 +288,7 @@ class SpGEMM_problem_generator {
        //Seed the generator
        std::cout<<"filling matrices"<<std::endl;
 
-       C->fill_random(Cnz, GxB_SPARSE, GxB_BY_ROW, seed_c);
+       C->fill_random(Cnz, GxB_SPARSE, GxB_BY_ROW, seed_m);
        M->fill_random(Cnz, GxB_SPARSE, GxB_BY_ROW, seed_m);
 
 //       std::cout<<"fill complete"<<std::endl;

@@ -271,7 +271,7 @@ void GB_enumify_semiring   // enumerate a semiring
                 LSHIFT (asparsity  ,  2) |  // 0 to 3       2
                 LSHIFT (bsparsity  ,  0) ;  // 0 to 3       2
 
-                printf("serialized_scode: %ul\n", scode);
+                printf("serialized_scode: %lu\n", *scode);
 
 
     printf("done enumify semiring\n");
@@ -290,7 +290,7 @@ void GB_macrofy_semiring   // construct all macros for a semiring
 )
 {
 
-    printf("scode in macrofy_semiring: %ul\n", scode);
+    printf("scode in macrofy_semiring: %lu\n", scode);
 
     //--------------------------------------------------------------------------
     // extract the semiring scode
