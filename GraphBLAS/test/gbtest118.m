@@ -46,7 +46,9 @@ for k = 1:length (types)
             error ('type not supported') ;
     end 
 
-    A = GrB.random (m, n, 0.2, 'range', range) ;
+for d = [0.2 inf]
+
+    A = GrB.random (m, n, d, 'range', range) ;
 
     [C, P] = GrB.argsort (A) ;
     for k = 1:n
@@ -107,8 +109,10 @@ for k = 1:length (types)
         a = Aj (p) ;
         assert (isequal (Pk', a)) ;
     end
+end
 
-    X = GrB.random (100000, 1, 0.8, 'range', range) ;
+for d = [0.8 inf]
+    X = GrB.random (100000, 1, d, 'range', range) ;
     [C, P] = GrB.argsort (X) ;
     [Xi, ~, Xx] = GrB.extracttuples (X) ;
     [x, p] = sort (Xx) ;
@@ -118,6 +122,7 @@ for k = 1:length (types)
     Pk = double (P (1:nz)) ;
     a = Xi (p) ;
     assert (isequal (Pk, a)) ;
+end
 
 end
 
