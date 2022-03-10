@@ -548,12 +548,14 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             }
             if (op_abs != NULL)
             {
-                GrB_eWiseMult (T, NULL, NULL, op, C, C_actual, NULL) ;
+                GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_actual,
+                    NULL) ;
                 GrB_Index nvals3 = 1 ;
                 GrB_Matrix_nvals (&nvals3, T) ;
                 if (nvals1 != nvals3) { printf ("!!\n") ; abort ( ) ; } 
                 bool is_same ;
-                GrB_reduce (&is_same, NULL, GrB_LAND_MONOID_BOOL, T, NULL) ;
+                GrB_Matrix_reduce_BOOL (&is_same, NULL, GrB_LAND_MONOID_BOOL,
+                    T, NULL) ;
                 if (!is_same) { printf ("!!\n") ; abort ( ) ; } 
                 GrB_free (&T) ;
             }
