@@ -83,14 +83,18 @@ __global__ void AxB_dot3_phase3_spdn
           int64_t pA = Ap[i];
           int64_t pA_end   = Ap[i+1];
           int64_t nnzA   = pA_end - pA;
-          int64_t pB = Bp[i];
-          int64_t pB_end   = Bp[i+1];
+          int64_t pB = Bp[j];
+          int64_t pB_end   = Bp[j+1];
           int64_t nnzB   = pB_end - pB;
           T_A aki;
           T_B bkj;
           T_Z cij;
 
-          if( nnzA == A->vlen) // A is dense
+          if (nnzA == 0 || nnzB == 0)
+          {
+              i = GB_FLIP (i) ;
+          }
+          else if( nnzA == A->vlen) // A is dense
           {
               int64_t k = Bi [pB] ;               // first row index of B(:,j)
               // cij = A(k,i) * B(k,j)
@@ -109,7 +113,7 @@ __global__ void AxB_dot3_phase3_spdn
               }
 
           }
-          if( nnzB == B->vlen) // B is dense
+          else if( nnzB == B->vlen) // B is dense
           {
               int64_t k = Ai [pA] ;               // first row index of A(:,i)
               // cij = A(k,i) * B(k,j)
