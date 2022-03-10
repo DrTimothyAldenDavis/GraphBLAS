@@ -505,6 +505,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
             // re-enable the GPU
             GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
+            GRB_TRY (GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout));
 
             // compare
             double tol = 0 ;
