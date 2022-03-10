@@ -353,7 +353,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     // wouldn't expect a full or bitmap format to use the additional
     // arrays when B-x should already be nxk. Using csr here in the
     // meantime.
-    G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW);
+    G.init_B(-1, GxB_SPARSE, GxB_BY_ROW);
 
     /**
      * For testing, we need to create our output C and configure
@@ -491,11 +491,10 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                 return false;
             }
 
-
-            GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout);
-
             // ensure the GPU is not used
             GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER) ;
+
+            GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout);
 
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
             GrB_mxm(C_actual, M, NULL, mysemiring, A, B,

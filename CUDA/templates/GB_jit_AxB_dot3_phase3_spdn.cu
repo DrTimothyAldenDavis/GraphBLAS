@@ -43,6 +43,8 @@ __global__ void AxB_dot3_phase3_spdn
    int64_t *Ap = A->p;
    int64_t *Bp = B->p;
 
+   C->jumbled = true;
+
    // sz = expected non-zeros per dot 
    int m = 256.0/sz;
    int nvec = end - start;
