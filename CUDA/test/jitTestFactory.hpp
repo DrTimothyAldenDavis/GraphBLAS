@@ -353,7 +353,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     // wouldn't expect a full or bitmap format to use the additional
     // arrays when B-x should already be nxk. Using csr here in the
     // meantime.
-    G.init_B(Bnnz, GxB_FULL, GxB_BY_COL);
+    G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW);
 
     /**
      * For testing, we need to create our output C and configure
@@ -467,6 +467,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout) ;
 
 
+            GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout) ;
+
             // printing manually since (I think) the jumbled form is causing issues for the standard GB_Matrix printer
 //            std::cout << "Printing matrix C:" << std::endl;
 
@@ -488,6 +490,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                 printf("Couldn't allocate C_acual\n");
                 return false;
             }
+
 
             GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout);
 
