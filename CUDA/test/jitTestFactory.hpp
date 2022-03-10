@@ -469,7 +469,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
 
 
-            GRB_TRY (GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout)) ;
+            GRB_TRY (GxB_Matrix_fprint (C, "C", GxB_COMPLETE, stdout)) ;
 
             // printing manually since (I think) the jumbled form is causing issues for the standard GB_Matrix printer
 //            std::cout << "Printing matrix C:" << std::endl;
@@ -498,7 +498,10 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
             // re-enable the GPU
             GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
-            GRB_TRY (GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout));
+            GRB_TRY (GxB_Matrix_fprint (M, "M actual", GxB_COMPLETE, stdout));
+            GRB_TRY (GxB_Matrix_fprint (A, "A actual", GxB_COMPLETE, stdout));
+            GRB_TRY (GxB_Matrix_fprint (B, "B actual", GxB_COMPLETE, stdout));
+            GRB_TRY (GxB_Matrix_fprint (C_actual, "C_actual", GxB_COMPLETE, stdout));
 
             // compare
             double tol = 0 ;
