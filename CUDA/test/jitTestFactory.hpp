@@ -487,14 +487,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
             GrB_Matrix C_actual;
             GrB_Type type = cuda::to_grb_type<T_C>();
-            GrB_Info info = GrB_Matrix_new (&C_actual, type, N, N) ;
-            if(info != GrB_SUCCESS) {
-                printf("Couldn't allocate C_acual\n");
-                return false;
-            }
-
-
-            GRB_TRY (GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout));
+            GRB_TRY (GrB_Matrix_new (&C_actual, type, N, N)) ;
 
             // ensure the GPU is not used
             GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
