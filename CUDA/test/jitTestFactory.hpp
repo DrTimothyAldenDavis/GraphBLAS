@@ -15,7 +15,7 @@
 #include "test_data.hpp"
 
 extern "C" {
-    #include "GraphBLAS.h"
+    #include "GB.h"
 }
 
 #include "../jitFactory.hpp"
@@ -486,20 +486,20 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             GrB_Info info = GrB_Matrix_new (&C_actual, type, N, N) ;
             if(info != GrB_SUCCESS) {
                 printf("Couldn't allocate C_acual\n");
-                return;
+                return false;
             }
 
             GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout);
 
             // ensure the GPU is not used
-            GxB_set (GxB_GPU_CONTROL, GxB_GPU_NEVER) ;
+            GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER) ;
 
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
             GrB_mxm(C_actual, M, NULL, mysemiring, A, B,
                 Mask_struct ? GrB_DESC_S : NULL);
 
             // re-enable the GPU
-            GxB_set (GxB_GPU_CONTROL, GxB_GPU_ALWAYS) ;
+            GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS) ;
 
             // compare
             double tol = 0 ;
@@ -548,14 +548,14 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             }
             if (op_abs != NULL)
             {
-                GrB_eWiseMult (T, NULL, NULL, op, C, C_actual, NULL) ;
+                GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_actual, NULL) ;
                 GrB_Index nvals3 = 1 ;
                 GrB_Matrix_nvals (&nvals3, T) ;
                 if (nvals1 != nvals3) { printf ("!!\n") ; abort ( ) ; } 
                 bool is_same ;
-                GrB_reduce (&is_same, NULL, GrB_LAND_MONOID_BOOL, T, NULL) ;
+                GrB_Matrix_reduce_BOOL (&is_same, NULL, GrB_LAND_MONOID_BOOL, T, NULL) ;
                 if (!is_same) { printf ("!!\n") ; abort ( ) ; } 
-                GrB_free (&T) ;
+                GrB_Matrix_free (&T) ;
             }
             else
             {
