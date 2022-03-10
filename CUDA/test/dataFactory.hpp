@@ -9,6 +9,18 @@
 #include "../type_convert.hpp"
 #include "../GB_Matrix_allocate.h"
 
+// try calling a GrB_method and check the result
+#define GRB_TRY(GrB_method)                                     \
+{                                                               \
+    GrB_Info GB_info_result = GrB_method ;                      \
+    if (GB_info_result < GrB_SUCCESS)                           \
+    {                                                           \
+        printf ("test failure: file %s line %d status %d\n",    \
+            __FILE__, __LINE__, GB_info_result) ;               \
+        exit (EXIT_FAILURE) ;                                   \
+    }                                                           \
+}
+
 static const char *_cudaGetErrorEnum(cudaError_t error) {
   return cudaGetErrorName(error);
 }
@@ -108,13 +120,13 @@ class matrix : public Managed {
      uint64_t get_zombie_count() { return mat->nzombies;}
 
      void clear() {
-        GrB_Matrix_clear (mat) ;
+        GRB_TRY (GrB_Matrix_clear (mat)) ;
      }
 
      void alloc() {
          GrB_Type type = cuda::to_grb_type<T>();
 
-         GrB_Matrix_new (&mat, type, nrows_, ncols_) ;
+         GRB_TRY (GrB_Matrix_new (&mat, type, nrows_, ncols_)) ;
          // GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL,
             // GxB_SPARSE) ;
             // or:
@@ -193,20 +205,20 @@ class matrix : public Managed {
             }
         }
 
-        GrB_Matrix_wait (mat, GrB_MATERIALIZE) ;
+        GRB_TRY (GrB_Matrix_wait (mat, GrB_MATERIALIZE)) ;
         GB_convert_any_to_non_iso (mat, true, NULL) ;
         // TODO: Need to specify these
-        GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, gxb_sparsity_control) ;
-        GxB_Matrix_Option_set(mat, GxB_FORMAT, gxb_format);
-        GrB_Matrix_nvals ((GrB_Index *) &nnz, mat) ;
-        GxB_Matrix_fprint (mat, "my mat", GxB_SHORT_VERBOSE, stdout) ;
+        GRB_TRY (GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, gxb_sparsity_control)) ;
+        GRB_TRY (GxB_Matrix_Option_set(mat, GxB_FORMAT, gxb_format));
+        GRB_TRY (GrB_Matrix_nvals ((GrB_Index *) &nnz, mat)) ;
+        GRB_TRY (GxB_Matrix_fprint (mat, "my mat", GxB_SHORT_VERBOSE, stdout)) ;
 
         bool iso ;
-        GxB_Matrix_iso (&iso, mat) ;
+        GRB_TRY (GxB_Matrix_iso (&iso, mat)) ;
         if (iso)
         {
             printf ("Die! (cannot do iso)\n") ;
-            GrB_Matrix_free (&mat) ;
+            GRB_TRY (GrB_Matrix_free (&mat) ;
         }
 
     }

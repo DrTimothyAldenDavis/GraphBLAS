@@ -14,8 +14,8 @@ int main(int argc, char **argv) {
     //printf(" pool init size %ld, max size %ld\n", init_size, max_size);
     rmm_wrap_initialize( rmm_wrap_managed, init_size, max_size );
 
-    GrB_Info i = GxB_init(GrB_NONBLOCKING, rmm_wrap_malloc, rmm_wrap_calloc, rmm_wrap_realloc, rmm_wrap_free);
-    GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS) ;
+    GRB_TRY (GxB_init(GrB_NONBLOCKING, rmm_wrap_malloc, rmm_wrap_calloc, rmm_wrap_realloc, rmm_wrap_free)) ;
+    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
 
     size_t buff_size = (1ULL<<13)+152;
     void *p = (void *)rmm_wrap_allocate( &buff_size );
@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     rmm_wrap_deallocate( p, buff_size);
     rmm_wrap_finalize();
 
-    GrB_finalize();
+    GRB_TRY (GrB_finalize());
 
     return r;
 }

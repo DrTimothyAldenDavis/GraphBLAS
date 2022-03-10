@@ -126,6 +126,7 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
     GrB_Semiring mysemiring;
     auto grb_info = GrB_Semiring_new(&mysemiring, monoid, binop);
+    GRB_TRY (grb_info) ;
 
     mysemiringfactory.semiring_factory ( mysemiring, flipxy,
                                          C->type,
@@ -270,7 +271,7 @@ void make_grb_matrix(GrB_Matrix &mat, std::vector<int64_t> &indptr, std::vector<
 
     int64_t n_rows = indptr.size() -1;
     int64_t n_cols = n_rows;
-    GrB_Matrix_new (&mat, type, n_rows, n_cols) ;
+    GRB_TRY (GrB_Matrix_new (&mat, type, n_rows, n_cols)) ;
 
     for(int64_t row = 0; row < n_rows; ++row) {
         int64_t start = indptr[row];
@@ -285,15 +286,15 @@ void make_grb_matrix(GrB_Matrix &mat, std::vector<int64_t> &indptr, std::vector<
         }
     }
 
-    GrB_Matrix_wait (mat, GrB_MATERIALIZE) ;
-    GB_convert_any_to_non_iso (mat, true, NULL) ;
+    GRB_TRY (GrB_Matrix_wait (mat, GrB_MATERIALIZE)) ;
+    GRB_TRY (GB_convert_any_to_non_iso (mat, true, NULL)) ;
     // TODO: Need to specify these
-    GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, gxb_sparsity_control) ;
-    GxB_Matrix_Option_set(mat, GxB_FORMAT, gxb_format);
-    GxB_Matrix_fprint (mat, "my mat", GxB_SHORT_VERBOSE, stdout) ;
+    GRB_TRY (GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, gxb_sparsity_control)) ;
+    GRB_TRY (GxB_Matrix_Option_set(mat, GxB_FORMAT, gxb_format));
+    GRB_TRY (GxB_Matrix_fprint (mat, "my mat", GxB_SHORT_VERBOSE, stdout)) ;
 
     bool iso ;
-    GxB_Matrix_iso (&iso, mat) ;
+    GRB_TRY (GxB_Matrix_iso (&iso, mat)) ;
     if (iso)
     {
         printf ("Die! (cannot do iso)\n") ;
@@ -367,10 +368,10 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     GrB_Matrix A = G.getA();
     GrB_Matrix B = G.getB();
 
-    GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout) ;
-    GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout) ;
-    GxB_Matrix_fprint (M, "M", GxB_SHORT_VERBOSE, stdout) ;
-    GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout) ;
+    GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
+    GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
+    GRB_TRY (GxB_Matrix_fprint (M, "M", GxB_SHORT_VERBOSE, stdout)) ;
+    GRB_TRY (GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout)) ;
 //
     T_C *Cx = (T_C*)C->x;
     T_A *Ax = (T_A*)A->x;
@@ -380,6 +381,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
     GrB_Semiring mysemiring;
     auto grb_info = GrB_Semiring_new(&mysemiring, monoid, binop);
+    GRB_TRY (grb_info) ;
 
     bool flipxy = false;
     bool mask_struct = false;
@@ -461,13 +463,13 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            kernTimer.Stop();
 
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
-           GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout) ;
+           GRB_TRY (GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout)) ;
 
-           GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout) ;
-           GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout) ;
+           GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
+           GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
 
 
-            GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout) ;
+            GRB_TRY (GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout)) ;
 
             // printing manually since (I think) the jumbled form is causing issues for the standard GB_Matrix printer
 //            std::cout << "Printing matrix C:" << std::endl;
@@ -491,23 +493,24 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                 return false;
             }
 
-            // ensure the GPU is not used
-            GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER) ;
 
-            GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout);
+            GRB_TRY (GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout));
+
+            // ensure the GPU is not used
+            GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
-            GrB_mxm(C_actual, M, NULL, mysemiring, A, B,
-                Mask_struct ? GrB_DESC_S : NULL);
+            GRB_TRY (GrB_mxm(C_actual, M, NULL, mysemiring, A, B,
+                Mask_struct ? GrB_DESC_S : NULL));
 
             // re-enable the GPU
-            GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS) ;
+            GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
 
             // compare
             double tol = 0 ;
             GrB_Index nvals1 = 0, nvals2 = 0 ;
-            GrB_Matrix_nvals (&nvals1, C) ;
-            GrB_Matrix_nvals (&nvals2, C_actual) ;
+            GRB_TRY (GrB_Matrix_nvals (&nvals1, C)) ;
+            GRB_TRY (GrB_Matrix_nvals (&nvals2, C_actual)) ;
             if (nvals1 != nvals2) { printf ("!!\n") ; abort ( ) ; } 
             GrB_Index nrows, ncols ;
             GrB_Matrix_nrows (&nrows, C) ;
@@ -515,7 +518,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
             GrB_Matrix T;
 
-            GrB_Matrix_new (&T, GrB_BOOL, nrows, ncols) ;
+            GRB_TRY (GrB_Matrix_new (&T, GrB_BOOL, nrows, ncols)) ;
             GrB_BinaryOp op = NULL;
             GrB_UnaryOp op_abs = NULL ;
             GrB_Monoid monoid_sum = NULL ;
@@ -550,16 +553,16 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             }
             if (op_abs != NULL)
             {
-                GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_actual,
-                    NULL) ;
+                GRB_TRY (GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_actual,
+                    NULL)) ;
                 GrB_Index nvals3 = 1 ;
-                GrB_Matrix_nvals (&nvals3, T) ;
+                GRB_TRY (GrB_Matrix_nvals (&nvals3, T)) ;
                 if (nvals1 != nvals3) { printf ("!!\n") ; abort ( ) ; } 
                 bool is_same ;
-                GrB_Matrix_reduce_BOOL (&is_same, NULL, GrB_LAND_MONOID_BOOL,
-                    T, NULL) ;
+                GRB_TRY (GrB_Matrix_reduce_BOOL (&is_same, NULL, GrB_LAND_MONOID_BOOL,
+                    T, NULL)) ;
                 if (!is_same) { printf ("!!\n") ; abort ( ) ; } 
-                GrB_Matrix_free (&T) ;
+                GRB_TRY (GrB_Matrix_free (&T)) ;
             }
             else
             {
