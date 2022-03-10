@@ -46,9 +46,9 @@ __global__ void AxB_dot3_phase3_spdn
    C->jumbled = true;
 
    // sz = expected non-zeros per dot 
-   int m = 256.0/sz;
+   int m = 256/sz;
    int nvec = end - start;
-   int dpt = nvec/32.0;
+   int dpt = nvec/32;
    m = dpt < m ? dpt : m;
    if( threadIdx.x ==0)
       printf("thd:%d %d dots/thrd, nvec = %d blockDim=%d\n",threadIdx.x, sz, nvec, blockDim.x);
@@ -62,29 +62,25 @@ __global__ void AxB_dot3_phase3_spdn
              tid < dots;
              tid += blockDim.x * gridDim.x) {
       int pair_id, im; 
-       if (threadIdx.x ==0)
+//       if (threadIdx.x ==0)
 //         printf("thd%u pi=%lld\n",tid, start+threadIdx.x);
-         __syncthreads();
+//       __syncthreads();
 
       for (pair_id = start+tid, im = 0; 
            im < m && pair_id < end;  
            ++im,     pair_id += dots ){
 
          int64_t i = Mi[pair_id];
-
-         if(threadIdx.x == 23) {
-             printf("ci[pair_id=%ld, pair_id=%d\n", Ci[pair_id], pair_id);
-         }
          int64_t j = Ci[pair_id] >> 4;
-      if (threadIdx.x ==0)
+//      if (threadIdx.x ==0)
 //         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
-         __syncthreads();
+//      __syncthreads();
 
-          int64_t pA = Ap[i];
+          int64_t pA       = Ap[i];
           int64_t pA_end   = Ap[i+1];
           int64_t nnzA   = pA_end - pA;
-          int64_t pB = Bp[i];
-          int64_t pB_end   = Bp[i+1];
+          int64_t pB       = Bp[j];
+          int64_t pB_end   = Bp[j+1];
           int64_t nnzB   = pB_end - pB;
           T_A aki;
           T_B bkj;
@@ -109,7 +105,7 @@ __global__ void AxB_dot3_phase3_spdn
               }
 
           }
-          if( nnzB == B->vlen) // B is dense
+          else if( nnzB == B->vlen) // B is dense
           {
               int64_t k = Ai [pA] ;               // first row index of A(:,i)
               // cij = A(k,i) * B(k,j)
