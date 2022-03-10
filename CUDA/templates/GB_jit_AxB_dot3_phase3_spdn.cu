@@ -86,7 +86,11 @@ __global__ void AxB_dot3_phase3_spdn
           T_B bkj;
           T_Z cij;
 
-          if( nnzA == A->vlen) // A is dense
+          if (nnzA == 0 || nnzB == 0)
+          {
+              i = GB_FLIP (i) ;
+          }
+          else if( nnzA == A->vlen) // A is dense
           {
               int64_t k = Bi [pB] ;               // first row index of B(:,j)
               // cij = A(k,i) * B(k,j)
