@@ -5,7 +5,9 @@
 #include <cmath>
 #include <cstdint>
 #include <random>
+#include <unordered_set>
 
+#include "GB.h"
 #include "../type_convert.hpp"
 #include "../GB_Matrix_allocate.h"
 #include "test_utility.hpp"
@@ -60,6 +62,11 @@ inline void __printLastCudaError(const char *errorMessage, const char *file,
   }
 }
 #define CHECK_CUDA(call) checkCudaErrors( call )
+
+// CAUTION: This assumes our indices are small enough to fit into a 32-bit int.
+inline std::int64_t gen_key(std::int64_t i, std::int64_t j) {
+    return (std::int64_t) i << 32 | (std::int64_t) j;
+}
 
 //Vector generators
 template<typename T>
@@ -126,6 +133,7 @@ class matrix : public Managed {
 //            sizeof(T), nrows, ncols, 2, false, false, Nz, -1);
      }
 
+
     void fill_random( int64_t nnz, int gxb_sparsity_control, int gxb_format, std::int64_t seed = 12345ULL, T val_min = 0.0, T val_max = 2.0 , bool debug_print = false) {
 
         std::cout << "inside fill, using seed "<< seed << std::endl;
@@ -139,7 +147,7 @@ class matrix : public Managed {
         }
         else
         {
-            inv_sparsity = (nrows_*ncols_)/nnz;   //= values not taken per value occupied in index space
+            inv_sparsity = ceil(((double)nrows_*ncols_)/nnz);   //= values not taken per value occupied in index space
         }
 
         std::cout<< "fill_random nrows="<< nrows_<<"ncols=" << ncols_ <<" need "<< nnz<<" values, invsparse = "<<inv_sparsity<<std::endl;
@@ -178,10 +186,20 @@ class matrix : public Managed {
         }
         else
         {
-            for (int64_t k = 0 ; k < nnz ; k++)
-            {
+            unordered_set<std::int64_t> key_lookup;
+
+            while(key_lookup.size() < nnz) {
                 GrB_Index i = ((GrB_Index) (dis(r) * nrows_)) % ((GrB_Index) nrows_) ;
                 GrB_Index j = ((GrB_Index) (dis(r) * ncols_)) % ((GrB_Index) ncols_) ;
+
+                key_lookup.insert(gen_key(i, j));
+            }
+
+            for (int64_t k : key_lookup)
+            {
+                GrB_Index i = k >> 32;
+                GrB_Index j = k & 0x0000ffff;
+
                 if (no_self_edges && (i == j)) continue ;
                 T x = (T)(dis(r) * (val_max - val_min)) + (T)val_min ;
                 // A (i,j) = x
@@ -189,7 +207,6 @@ class matrix : public Managed {
                 if (make_symmetric) {
                     // A (j,i) = x
                     cuda::set_element<T>(mat, x, j, i) ;
-                    k++; // count the element
                 }
             }
         }
@@ -275,7 +292,6 @@ class SpGEMM_problem_generator {
                C->mat->i[r] = c << 4 ; //shift to store bucket info
            }
        }
-
     }
 
     void init_C(float Cnzp, std::int64_t seed_c = 23456ULL, std::int64_t seed_m = 4567ULL){
@@ -283,7 +299,6 @@ class SpGEMM_problem_generator {
        // Get sizes relative to fully dense matrices
        Cnzpercent = Cnzp;
        Cnz = (int64_t)(Cnzp * nrows_ * ncols_);
-//       std::cout<<"Anz% ="<<Anzpercent<<" Bnz% ="<<Bnzpercent<<" Cnz% ="<<Cnzpercent<<std::endl;
 
        //Seed the generator
        std::cout<<"filling matrices"<<std::endl;

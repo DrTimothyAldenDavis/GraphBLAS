@@ -404,7 +404,7 @@ public:
     GBURBLE ("(GPU phase3 done) ") ;
 
     // do we really want to sync after each kernel launch in production?
-    //checkCudaErrors( cudaDeviceSynchronize() );
+    checkCudaErrors( cudaDeviceSynchronize() );
     result= true;
 
     return result;
