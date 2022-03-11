@@ -19,8 +19,7 @@
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
 // (GraphBLAS will be exceedingly slow; this is for development only)
-// FIXME:
-#define GB_DEBUG
+// #define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower.  Alternatively, use cmake with -DGBCOMPACT=1.
