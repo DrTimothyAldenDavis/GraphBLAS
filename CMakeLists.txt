@@ -103,13 +103,11 @@ else ( )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-# FIXME
-# set ( CMAKE_CUDA off)
+  set ( CMAKE_CUDA off)
 
 # Edit these lines for code development only, not for end-users:
-# FIXME
-  set ( GBCOMPACT true )
-  set ( CMAKE_BUILD_TYPE Debug )
+# set ( GBCOMPACT true )
+# set ( CMAKE_BUILD_TYPE Debug )
 
 if ( CMAKE_CUDA )
     project ( graphblas
