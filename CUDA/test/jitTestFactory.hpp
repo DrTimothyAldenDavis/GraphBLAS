@@ -310,11 +310,12 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     // FIXME: Allow the adaptive tests in this guy
 
 //    N = 20;
+      TB= 5;
 
     //Generate test data and setup for using a jitify kernel with 'bucket' interface
     // The testBucket arg tells the generator which bucket we want to exercise
     int64_t Annz = N * 5;
-    int64_t Bnnz = N*5;
+    int64_t Bnnz = N * 5;
     int64_t Cnz = N;
     float Cnzpercent = (float) Cnz/(N*N);
 
@@ -347,7 +348,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW, 543210, 0, 2);
 //    std::cout << "Filling B" << std::endl;
 
-    G.init_B(-1, GxB_SPARSE, GxB_BY_ROW, 32, 0, 2);
+    G.init_B(N*N, GxB_SPARSE, GxB_BY_ROW, 32, 0, 2);
 
     /**
      * For testing, we need to create our output C and configure
@@ -425,8 +426,6 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
             if (nvecs > 0) std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
 
-            T_C *X_valid  = (T_C*) malloc( GB_nnz(C)*sizeof(T_C));
-            int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
 
             G.loadCj();
 
@@ -438,13 +437,15 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            kernTimer.Stop();
 
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
-           GRB_TRY (GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout)) ;
+           GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout)) ;
 
-           GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_COMPLETE, stdout)) ;
-           GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_COMPLETE, stdout)) ;
+           //GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
+           //GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
 
             // printing manually since (I think) the jumbled form is causing issues for the standard GB_Matrix printer
 //            std::cout << "Printing matrix C:" << std::endl;
+            //T_C *X_valid  = (T_C*) malloc( GB_nnz(C)*sizeof(T_C));
+            //int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
 
 //       zc_valid = C->zombie_count;
 //       C->zombie_count = 0;
@@ -473,7 +474,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             GRB_TRY (GxB_Matrix_fprint (M, "M actual", GxB_SHORT_VERBOSE, stdout));
             GRB_TRY (GxB_Matrix_fprint (A, "A actual", GxB_SHORT_VERBOSE, stdout));
             GRB_TRY (GxB_Matrix_fprint (B, "B actual", GxB_SHORT_VERBOSE, stdout));
-            GRB_TRY (GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout));
+            GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout));
             GRB_TRY (GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout));
 
             // compare
@@ -528,7 +529,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             GRB_TRY (GrB_Matrix_apply (Diff, NULL, NULL, GrB_AINV_FP64, C_actual, NULL)) ;
             GRB_TRY (GrB_Matrix_eWiseAdd_BinaryOp (Diff, NULL, NULL, GrB_PLUS_FP64,
                 C, Diff, NULL)) ;
-            GRB_TRY (GxB_Matrix_fprint (Diff, "Diff actual", GxB_COMPLETE, stdout));
+            GRB_TRY (GxB_Matrix_fprint (Diff, "Diff actual", GxB_SHORT_VERBOSE, stdout));
             GRB_TRY (GrB_Matrix_free (&Diff)) ;
 
             if (tol == 0)
@@ -537,7 +538,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                 GRB_TRY (GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_actual,
                     NULL)) ;
                 GrB_Index nvals3 = 1 ;
-                GRB_TRY (GxB_Matrix_fprint (T, "T actual", GxB_COMPLETE, stdout));
+                GRB_TRY (GxB_Matrix_fprint (T, "T actual", GxB_SHORT_VERBOSE, stdout));
                 GRB_TRY (GrB_Matrix_nvals (&nvals3, T)) ;
                 if (nvals1 != nvals3) { printf ("!!\n") ; abort ( ) ; } 
                 bool is_same = false ;
