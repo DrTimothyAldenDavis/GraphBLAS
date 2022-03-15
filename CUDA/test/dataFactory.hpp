@@ -162,8 +162,9 @@ class matrix : public Managed {
         std::mt19937 r(seed);
         std::uniform_real_distribution<double> dis(0.0, 1.0);
 
-        if (nnz < 0)
+        if (nnz < 0 || inv_sparsity == 1.)
         {
+            std::cout<<"filling dense"<<std::endl;
             for (int64_t i = 0 ; i < nrows_ ; i++)
             {
                 for (int64_t j = 0 ; j < ncols_ ; j++)
@@ -186,22 +187,69 @@ class matrix : public Managed {
         }
         else
         {
+            std::cout<<"filling sparse"<<std::endl;
+            unordered_set<std::int64_t> row_lookup;
             unordered_set<std::int64_t> key_lookup;
+            for ( int co = 0; co < nrows_; co++ )
+            {
+                GrB_Index i = ((GrB_Index) (dis(r) * nrows_)) % ((GrB_Index) nrows_) ;
 
+                row_lookup.insert( i );
+            }
+            int remain= nnz; //countdown to done
+
+            while ( remain > 0) 
+            { 
+            std::cout<< remain<<" nonzeroes left to fill.."<<std::endl;
+            for ( GrB_Index i : row_lookup)
+            {
+                GrB_Index col_guess = ((GrB_Index) (dis(r) * nnz/row_lookup.size() )) % ((GrB_Index) ncols_) ;
+                col_guess++;  // make it at least 1
+
+                //std::cout<<"putting "<< col_guess<<" values in row "<<i<<std::endl;
+                while (col_guess > 0 )
+                {
+                    GrB_Index j = ((GrB_Index) (dis(r) * ncols_)) % ((GrB_Index) ncols_) ;
+                    if (key_lookup.count( gen_key(i,j) ) == 1) continue;
+                    if (no_self_edges && (i == j)) continue ;
+
+                    key_lookup.insert( gen_key(i, j) );
+                    col_guess--;
+                    remain= (nnz- key_lookup.size() );
+                    if (remain <= 0) break;
+                    if (make_symmetric) {
+                      // A (j,i) = x
+                      if (key_lookup.count( gen_key( j, i) ) == 0)
+                      {
+                         key_lookup.insert( gen_key( j, i) ) ;
+                         col_guess--;
+                         remain= (nnz- key_lookup.size() );
+                      }
+                    }
+                    if (remain <= 0) break;
+                }
+                if (remain <= 0) break;
+                //std::cout<< remain<<" nonzeroes left..."<<std::endl;
+            }
+            } //remain > 0
+            /*
             while(key_lookup.size() < nnz) {
                 GrB_Index i = ((GrB_Index) (dis(r) * nrows_)) % ((GrB_Index) nrows_) ;
                 GrB_Index j = ((GrB_Index) (dis(r) * ncols_)) % ((GrB_Index) ncols_) ;
 
-                key_lookup.insert(gen_key(i, j));
-            }
+                key_lookup.insert( gen_key(i, j) );
+                if (make_symmetric) {
+                    // A (j,i) = x
+                    key_lookup.insert( gen_key( j, i) ) ;
+                }
+            } */
 
             for (int64_t k : key_lookup)
             {
                 GrB_Index i = k >> 32;
                 GrB_Index j = k & 0x0000ffff;
 
-                if (no_self_edges && (i == j)) continue ;
-                T x = (T)(dis(r) * (val_max - val_min)) + (T)val_min ;
+                T x = (T)val_min + (T)(dis(r) * (val_max - val_min)) ;
                 // A (i,j) = x
                 cuda::set_element<T> (mat, x, i, j) ;
                 if (make_symmetric) {
@@ -217,7 +265,7 @@ class matrix : public Managed {
         GRB_TRY (GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL, gxb_sparsity_control)) ;
         GRB_TRY (GxB_Matrix_Option_set(mat, GxB_FORMAT, gxb_format));
         GRB_TRY (GrB_Matrix_nvals ((GrB_Index *) &nnz, mat)) ;
-        GRB_TRY (GxB_Matrix_fprint (mat, "my mat", GxB_SHORT_VERBOSE, stdout)) ;
+        //GRB_TRY (GxB_Matrix_fprint (mat, "my random mat", GxB_SHORT_VERBOSE, stdout)) ;
 
         bool iso ;
         GRB_TRY (GxB_Matrix_iso (&iso, mat)) ;
