@@ -310,7 +310,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     // FIXME: Allow the adaptive tests in this guy
 
 //    N = 20;
-      TB= 5;
+      TB= 7;
 
     //Generate test data and setup for using a jitify kernel with 'bucket' interface
     // The testBucket arg tells the generator which bucket we want to exercise
@@ -345,10 +345,10 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
 
 //    std::cout << "Filling A" << std::endl;
-    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW, 543210, 0, 2);
+    G.init_A(N*2, GxB_SPARSE, GxB_BY_ROW, 543210, 0, 2);
 //    std::cout << "Filling B" << std::endl;
 
-    G.init_B(N*N, GxB_SPARSE, GxB_BY_ROW, 32, 0, 2);
+    G.init_B(N*2, GxB_SPARSE, GxB_BY_ROW, 32, 0, 2);
 
     /**
      * For testing, we need to create our output C and configure
@@ -426,13 +426,12 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
             if (nvecs > 0) std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
 
-
             G.loadCj();
 
            GpuTimer kernTimer;
            kernTimer.Start();
            phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
-           lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C, M, A, B);
+           lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C, M, A, A);
 
            kernTimer.Stop();
 
@@ -466,7 +465,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
-            GRB_TRY (GrB_mxm(C_actual, M, NULL, mysemiring, A, B,
+            GRB_TRY (GrB_mxm(C_actual, M, NULL, mysemiring, A, A,
                 Mask_struct ? GrB_DESC_ST1 : GrB_DESC_T1));
 //            GRB_TRY (GrB_mxm(C_actual, M, NULL, mysemiring, A, B,
 //                             Mask_struct ? GrB_DESC_S : NULL));

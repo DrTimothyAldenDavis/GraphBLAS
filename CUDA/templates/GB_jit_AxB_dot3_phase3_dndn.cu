@@ -120,12 +120,12 @@ __global__ void AxB_dot3_phase3_dndn
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
 
-         int64_t pA = Ap[i];
-         int64_t xend   = Ap[i+1];
+         int64_t pA = Ap[j];
+         int64_t xend   = Ap[j+1];
          nnzA = xend - pA;
 
-         int64_t pB = Bp[j]; 
-         int64_t yend   = Bp[j+1]; 
+         int64_t pB = Bp[i];
+         int64_t yend   = Bp[i+1];
          nnzB = yend - pB;
 
     /*

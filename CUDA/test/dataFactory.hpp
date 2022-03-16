@@ -388,7 +388,7 @@ class SpGEMM_problem_generator {
               BucketStart[b] = BucketStart[b-1] + (Cnz / 12);
               //std::cout<< "bucket "<< b<<" starts at "<<BucketStart[b]<<std::endl;
               for (int j = BucketStart[b-1]; j < BucketStart[b]; ++j) { 
-                Bucket[j] = b ; 
+                Bucket[j] = b ;
               }
            }
            int b = 11;
@@ -397,8 +397,13 @@ class SpGEMM_problem_generator {
            }
        }
        else {// all in one test bucket
-           Bucket = nullptr;
-           BucketStart[0] = 0; 
+
+           CHECK_CUDA( cudaMallocManaged((void**)&Bucket, Cnz*sizeof(int64_t)) );
+           for (int j = 0; j < Cnz; ++j) {
+               Bucket[j] = j ;
+           }
+
+           BucketStart[0] = 0;
            BucketStart[12] = Cnz;
            for (int b= 0; b<12; ++b){
               if (b <= fill_bucket) BucketStart[b] = 0;

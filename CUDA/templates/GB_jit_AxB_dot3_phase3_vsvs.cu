@@ -85,25 +85,26 @@ T block_ReduceSum(thread_block g, T val)
 template< typename T_C, typename T_A, typename T_B, typename T_X, typename T_Y, typename T_Z>
 __global__ void AxB_dot3_phase3_vsvs
 ( 
-  const int64_t start, 
-  const int64_t end,
-  const int64_t *__restrict__ Bucket, 
-  const GrB_Matrix C, 
-  const GrB_Matrix M, 
-  const GrB_Matrix A, 
-  const GrB_Matrix B,
-  const int sz 
+  int64_t start,
+  int64_t end,
+  int64_t *Bucket,
+  GrB_Matrix C,
+  GrB_Matrix M,
+  GrB_Matrix A,
+  GrB_Matrix B,
+  int sz
 )
 {
+    printf("start=%lu, end=%lu\n", start, end);
    int dots = end - start;
-   // sz = expected non-zeros per dot 
-   /*
-   int m = (gridDim.x*blockDim.x)*256/sz;
-   int dpt = (nvecs+ gridDim.x*blockDim.x -1)/(gridDim.x*blockDim.x);
-   m = dpt < m ? dpt : m;
-   
-   int dots = (nvecs +m -1)/m; 
-   */
+   // sz = expected non-zeros per dot
+//   /*
+//   int m = (gridDim.x*blockDim.x)*256/sz;
+//   int dpt = (nvecs+ gridDim.x*blockDim.x -1)/(gridDim.x*blockDim.x);
+//   m = dpt < m ? dpt : m;
+//
+//   int dots = (nvecs +m -1)/m;
+//   */
    const T_A *__restrict__ Ax = (T_A *)A->x  ;
    const T_B *__restrict__ Bx = (T_B *)B->x  ;
    T_C *__restrict__ Cx = (T_C *)C->x  ;
@@ -116,13 +117,19 @@ __global__ void AxB_dot3_phase3_vsvs
 
    int pfirst, plast;
 
-   GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
-   if( threadIdx.x ==0 )
-   {
+    C->jumbled = true;
+
+    //#define GB_PARTITION(k1,k2,n,tid,nthreads)                                  \
+
+    GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
+//   if( threadIdx.x ==0 )
+//   {
+//   if( threadIdx.x ==0 )
+//   {
       printf("block%d %d dots/thrd, start,end = %ld,%ld pf,pl=%d,%d blockDim=%d\n",
                blockIdx.x, (dots + blockDim.x*gridDim.x -1)/(blockDim.x*gridDim.x),
                start, end, pfirst, plast, blockDim.x);
-   }
+//   }
    __syncthreads();
 
 
@@ -137,16 +144,16 @@ __global__ void AxB_dot3_phase3_vsvs
              tid < plast;
              tid += blockDim.x )
    {
-
-         pair_id = Bucket[ start + tid ]; 
+         pair_id = Bucket[ start + tid ];
+       printf("start=%d, tid=%d, pair_id=%lu\n", pfirst, tid, pair_id);
 
          int64_t i = Mi [pair_id] ;
          int64_t j = Ci [pair_id]>>4 ; 
 
-         int64_t pA       = Ap[i] ;
-         int64_t pA_end   = Ap[i+1] ;
-         int64_t pB       = Bp[j] ; 
-         int64_t pB_end   = Bp[j+1] ; 
+         int64_t pA       = Ap[j] ;
+         int64_t pA_end   = Ap[j+1] ;
+         int64_t pB       = Bp[i] ;
+         int64_t pB_end   = Bp[i+1] ;
 
          T_A aki;
          T_B bkj;

@@ -480,12 +480,13 @@ private:
 
         // let len = nnz (A (:,i) + nnz (B (:,j)), then:
 
+        printf("number_of_sms=%d\n", number_of_sms);
         case GB_BUCKET_VSVS_256 : sz += 256-64 ;
         case GB_BUCKET_VSVS_64 :  sz += 64-16  ;
         case GB_BUCKET_VSVS_16 :  sz += 16-4   ;
         case GB_BUCKET_VSVS_4 :   sz += 4      ;
             Opname = "phase3_vsvs" ;
-            blocksz = 1024;
+            blocksz = 512;
             gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + blocksz -1 )/blocksz);
             gridsz =  ( Cnz  + blocksz -1 )/blocksz;
             break ;
