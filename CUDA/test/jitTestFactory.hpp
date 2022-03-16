@@ -454,7 +454,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            GpuTimer kernTimer;
            kernTimer.Start();
            phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
-           lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C, M, A, A);
+           lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C, M, A, B);
 
            kernTimer.Stop();
 
@@ -488,7 +488,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
             // Use GrB_DESC_S for structural because dot3 mask will never be complemented
-            GRB_TRY (GrB_mxm(C_actual, M, NULL, mysemiring, A, A,
+            GRB_TRY (GrB_mxm(C_actual, M, NULL, mysemiring, A, B,
                 Mask_struct ? GrB_DESC_ST1 : GrB_DESC_T1));
 //            GRB_TRY (GrB_mxm(C_actual, M, NULL, mysemiring, A, B,
 //                             Mask_struct ? GrB_DESC_S : NULL));

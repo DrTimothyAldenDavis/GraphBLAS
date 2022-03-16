@@ -60,6 +60,7 @@ def load_types(argv):
     DataTypes = argv[6].split(";")
 
     # Hard-coding data shapes for now
+.
     DataShapes ={
         "tinyxtiny": {'N':32, 'Anz':256, 'Bnz':128},
         "smallxsmall": {'N':1024, 'Anz': 65_536, 'Bnz':65_536}
