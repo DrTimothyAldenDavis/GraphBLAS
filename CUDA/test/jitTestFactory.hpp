@@ -587,8 +587,40 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 //    G.del();
 
     return result;
-
 }
+
+template <typename T>
+bool test_reducefactory( unsigned int N, GrB_BinaryOp binop ) {
+
+    reduceFactory<T> rF;
+
+    //std::cout<<" alloc'ing data and output"<<std::endl;
+    T* d_data = (T*)rmm_wrap_malloc(N*sizeof(T));
+    T* output = (T*)rmm_wrap_malloc(rF.get_number_of_blocks(N)*sizeof(T));
+    //std::cout<<" alloc done"<<std::endl;
+    //std::cout<<" data fill start"<<std::endl;
+
+    fillvector_linear<T> ( N, d_data);
+
+    T sum;
+    rF.jitGridBlockLaunch( d_data, output, N, binop );
+
+    for (int i =0; i< rF.get_number_of_blocks(N); ++i) std::cout<< output[i] <<" ";
+
+    GrB_Vector v;
+    GrB_Type t = cuda::to_grb_type<T>();
+    GrB_Vector_new(&v, t, N);
+
+    for(int i = 0; i < N; ++i) {
+        cuda::vector_set_element<T>(v, i, d_data[i]);
+    }
+
+    T reduced;
+    cuda::vector_reduce<T>(&reduced, v, binop);
+
+    return true;
+}
+
 
 //template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
 //bool test_AxB_dot3_dndn_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, std::string& SEMI_RING) {
@@ -1823,82 +1855,6 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 //
 //}
 //
-//template <typename T>
-//bool test_reducefactoryUM( unsigned int N, std::string OP) {
-//
-//  reduceFactory<T> rF;
-//
-//  int block(32);
-//  int nblock= (N + 8*block -1)/(8*block);
-//  int grid(nblock);
-//  T* d_data;
-//  T* output;
-//
-//  //std::cout<<" alloc'ing data and output"<<std::endl;
-//  CHECK_CUDA( cudaMallocManaged((void**) &d_data, nblock*sizeof(T)) );
-//  CHECK_CUDA( cudaMallocManaged((void**) &output, nblock*sizeof(T)) );
-//  //std::cout<<" alloc done"<<std::endl;
-//  //std::cout<<" data fill start"<<std::endl;
-//
-//  fillvector_linear<T> ( N, d_data);
-//
-//  //std::cout<<" data fill complete"<<std::endl;
-//  //we will get a triangular sum = N*(N+1)/2 with this input
-//  //for (unsigned int i =0; i < N; ++i) d_data[i] = i;
-//
-//  //std::cout<< " init data done"<<std::endl;
-//  //for (unsigned int i =0; i < N; ++i) std::cout<< d_data[i] <<" ";
-//
-//
-//  T sum;
-//  std::cout << "Launching reduce"<<OP<<GET_TYPE_NAME(sum)<<" kernel..."<<std::endl;
-//  rF.jitGridBlockLaunch( grid, block, d_data, output, N, OP );
-//
-//  for (int i =0; i< nblock; ++i) std::cout<< output[i] <<" ";
-//
-//  if (OP == "PLUS"){
-//      sum = (T) 0;
-//      myOpPTR<T> = myOP_plus<T>;
-//  }
-//  if (OP == "MIN") {
-//      sum = (T)std::numeric_limits<T>::max();
-//      myOpPTR<T> = myOP_min<T>;
-//  }
-//  if (OP == "MAX") {
-//      sum = (T)std::numeric_limits<T>::min();
-//      myOpPTR<T> = myOP_max<T>;
-//  }
-//
-//  for (int i =0; i< nblock; ++i) sum = (*myOpPTR<T>)(sum ,output[i]);
-//
-//  T expect;
-//  bool result = false;
-//  if (OP == "PLUS") {
-//     expect  = (T)(N*(N-1)/2);
-//     T temp = (sum - expect) ;
-//     if (temp < 0) temp = -temp ;
-//     //result = (temp < (T)1) ; //adjust formula for leading 0
-//     EXPECT_LE(temp, 1);
-//  }
-//  else if (OP == "MAX") {
-//     expect = (T)(N-1);
-//     //result = (sum)== (T)(N-1) ; //max is N-1
-//     EXPECT_EQ( sum , (T)(N-1) );
-//
-//  }
-//  else if (OP == "MIN") {
-//     expect = (T)0;
-//     //result = (sum)== (T)(0) ;   //min is 0
-//     EXPECT_EQ( sum , (T)(0) );
-//  }
-//  else expect = (T) 0;
-//  std::cout <<std::endl<<"result of test_reducefactoryUM with "<< OP<< " operation ="<< sum
-//            <<" expected "<<expect << std::endl;
-//
-//  cudaFree(d_data);
-//  cudaFree(output);
-//  return result;
-//}
 //
 //template <typename T1,typename T2,typename T3>
 //bool test_dndotfactoryUM( unsigned int N, std::string SEMI_RING) {

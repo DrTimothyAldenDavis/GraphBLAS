@@ -8,7 +8,7 @@ SUPPORTED_TYPES = {
     "uint32_t": "UINT32"
 }
 
-DOT3_BUCKETS = [1, 5, 6, 7, 8, 9, 10, ]
+DOT3_BUCKETS = [1, 5, 6, 7, 8, 9, 10]
 
 def std_type_to_gb_type(t):
     return SUPPORTED_TYPES[t]
@@ -60,7 +60,7 @@ def load_types(argv):
     DataTypes = argv[6].split(";")
 
     # Hard-coding data shapes for now
-.
+
     DataShapes ={
         "tinyxtiny": {'N':32, 'Anz':256, 'Bnz':128},
         "smallxsmall": {'N':1024, 'Anz': 65_536, 'Bnz':65_536}

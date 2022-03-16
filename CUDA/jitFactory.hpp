@@ -517,6 +517,73 @@ private:
   }
 };
 
+template<typename T>
+class reduceFactory
+{
+  std::string base_name = "GB_jit";
+  std::string kernel_name = "reduceUnrolled";
+
+  int threads_per_block = 32;
+
+public:
+
+  int get_threads_per_block() {
+    return threads_per_block;
+  }
+
+  int get_number_of_blocks(unsigned int N) {
+      return (N + 8*threads_per_block -1)/(8*threads_per_block);
+  }
+
+  bool jitGridBlockLaunch(T* indata, T* output, unsigned int N,
+                          // TODO: need to figure out
+                          GrB_BinaryOp op)
+  {
+      int blocksz = get_threads_per_block();
+      int gridsz = get_number_of_blocks(N);
+      dim3 grid(gridsz);
+      dim3 block(blocksz);
+      T dummy;
+
+      std::cout<<" indata type ="<< GET_TYPE_NAME(dummy)<<std::endl;
+
+      // TODO: We probably want to "macrofy" the GrB_BinaryOp and define it in the `string_to_be_jitted`
+//      void GB_stringify_binop
+//        (
+//            // input:
+//            FILE *fp,                 // File to write macros, assumed open already
+//            const char *macro_name,   // name of macro to construct
+//            GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
+//            GB_Type_code xcode, // op->xtype->code of the operator
+//            bool for_semiring,  // if true: op is a multiplier in a semiring
+//            bool flipxy         // if true, use mult(y,x) else mult(x,y)
+//        )
+
+
+
+      std::string hashable_name = base_name + "_" + kernel_name;
+      std::stringstream string_to_be_jitted ;
+      string_to_be_jitted <<
+      hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
+
+
+
+      jit::launcher(hashable_name,
+                    string_to_be_jitted.str(),
+                    header_names,
+                    compiler_flags,
+                    file_callback)
+               .set_kernel_inst(  kernel_name , { GET_TYPE_NAME(dummy) })
+               .configure(grid, block)
+               .launch( indata, output, N);
+
+      checkCudaErrors( cudaDeviceSynchronize() );
+
+      return true;
+  }
+};
+
+
 //template<typename T1, typename T2, typename T3>
 //class spdotFactory
 //{
@@ -615,56 +682,6 @@ private:
 //
 //};
 //
-//template<typename T>
-//class reduceFactory
-//{
-//  std::string base_name = "GBjit_reduce_";
-//
-//public:
-//  reduceFactory() {
-//  }
-//
-//  bool jitGridBlockLaunch(int gridsz, int blocksz,
-//                          T* indata, T* output, unsigned int N,
-//                          std::string OpName)
-//  {
-//      dim3 grid(gridsz);
-//      dim3 block(blocksz);
-//      bool result = false;
-//      T dummy;
-//
-//      std::cout<<" indata type ="<< GET_TYPE_NAME(dummy)<<std::endl;
-//
-//      if (OpName == "PLUS") {
-//         file_callback = &file_callback_plus;
-//      }
-//      else if (OpName == "MIN") {
-//         file_callback = &file_callback_min;
-//      }
-//      else if (OpName == "MAX") {
-//         file_callback = &file_callback_max;
-//      }
-//
-//
-//      jit::launcher( base_name + OpName,
-//                     ___templates_reduceUnrolled_cu,
-//                     header_names,
-//                     compiler_flags,
-//                     file_callback)
-//                   .set_kernel_inst("reduceUnrolled",
-//                                    { GET_TYPE_NAME(dummy) })
-//                   .configure(grid, block)
-//                   .launch( indata, output, N);
-//
-//      checkCudaErrors( cudaDeviceSynchronize() );
-//
-//      result= true;
-//
-//
-//      return result;
-//  }
-//
-//};
 //
 #endif  // C++11
 
