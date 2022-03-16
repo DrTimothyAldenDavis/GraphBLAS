@@ -487,6 +487,8 @@ private:
         case GB_BUCKET_VSVS_4 :   sz += 4      ;
             Opname = "phase3_vsvs" ;
             blocksz = 512;
+
+            // FIXME: Is the first line not needed?
             gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + blocksz -1 )/blocksz);
             gridsz =  ( Cnz  + blocksz -1 )/blocksz;
             break ;
