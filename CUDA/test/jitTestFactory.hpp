@@ -309,13 +309,36 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
     // FIXME: Allow the adaptive tests in this guy
 
-//    N = 20;
-      TB= 7;
-
     //Generate test data and setup for using a jitify kernel with 'bucket' interface
     // The testBucket arg tells the generator which bucket we want to exercise
-    int64_t Annz = N * 5;
-    int64_t Bnnz = N * 5;
+    int64_t Annz;
+    int64_t Bnnz;
+
+    switch(TB) {
+        case GB_BUCKET_DNDN:
+            Annz = N * N;
+            Bnnz = N * N;
+            break;
+        case GB_BUCKET_SPDN:
+            Annz = N * N;
+            Bnnz = N * 5;
+            break;
+        case GB_BUCKET_VSSP:
+            Annz = N * 2;
+            Bnnz = N * 10;
+            break;
+        case GB_BUCKET_VSVS_4:
+        case GB_BUCKET_VSVS_16:
+        case GB_BUCKET_VSVS_64:
+        case GB_BUCKET_VSVS_256:
+            Annz = N * 2;
+            Bnnz = N * 4;
+            break;
+        case GB_BUCKET_MERGEPATH:
+            Annz = N * 5;
+            Bnnz = N * 2;
+            break;
+    }
     int64_t Cnz = N;
     float Cnzpercent = (float) Cnz/(N*N);
 
@@ -345,10 +368,10 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
 
 //    std::cout << "Filling A" << std::endl;
-    G.init_A(N*2, GxB_SPARSE, GxB_BY_ROW, 543210, 0, 2);
+    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW, 543210, 0, 2);
 //    std::cout << "Filling B" << std::endl;
 
-    G.init_B(N*2, GxB_SPARSE, GxB_BY_ROW, 32, 0, 2);
+    G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW, 32, 0, 2);
 
     /**
      * For testing, we need to create our output C and configure

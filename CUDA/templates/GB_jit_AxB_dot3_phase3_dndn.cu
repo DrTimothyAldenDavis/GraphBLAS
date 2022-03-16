@@ -95,6 +95,7 @@ __global__ void AxB_dot3_phase3_dndn
 )
 {
 
+    C->jumbled = true;
     T_A *Ax = (T_A*)A->x;
     T_B *Bx = (T_B*)B->x;
     T_C *Cx = (T_C*)C->x;

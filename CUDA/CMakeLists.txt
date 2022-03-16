@@ -77,8 +77,8 @@ foreach(var ${CUDA_TEST_SUITES})
             # easily ignore them from the build
             add_custom_command(
                     OUTPUT
-                    ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${kernel}_test_instances.hpp
-                    ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${kernel}_cuda_tests.cu
+                    ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_test_instances.hpp
+                    ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_cuda_tests.cu
                     DEPENDS
                     jitFactory.hpp
                     COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/test/testGen_cmake.py "\"${CMAKE_CURRENT_SOURCE_DIR}\"" "\"${var}\"" "\"${CUDA_TEST_MONOIDS}\""
@@ -87,7 +87,7 @@ foreach(var ${CUDA_TEST_SUITES})
             )
 
             # Construct final list of files to compile (in parallel)
-            list(APPEND CUDA_TEST_CPP_FILES ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_${kernel}_cuda_tests.cu)
+            list(APPEND CUDA_TEST_CPP_FILES ${CMAKE_CURRENT_BINARY_DIR}/${var}_${semiring}_cuda_tests.cu)
         endforeach()
     endforeach()
 endforeach()

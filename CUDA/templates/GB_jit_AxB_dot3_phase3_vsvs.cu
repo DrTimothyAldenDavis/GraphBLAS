@@ -95,7 +95,7 @@ __global__ void AxB_dot3_phase3_vsvs
   int sz
 )
 {
-    printf("start=%lu, end=%lu\n", start, end);
+//    printf("start=%lu, end=%lu\n", start, end);
    int dots = end - start;
    // sz = expected non-zeros per dot
 //   /*
@@ -200,7 +200,7 @@ __global__ void AxB_dot3_phase3_vsvs
    __syncthreads();
 
    //printf("thd%d zombie count = %d\n",threadIdx.x,zc);
-   zc = block_ReduceSum<int , 32>( this_thread_block(), zc); 
+   zc = block_ReduceSum<int , 32>( this_thread_block(), zc);
    __syncthreads();
 
    if( threadIdx.x == 0 && zc > 0) {
