@@ -454,7 +454,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            GpuTimer kernTimer;
            kernTimer.Start();
            phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
-           lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C, M, A, B);
+           lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C, M, B, A);
 
            kernTimer.Stop();
 

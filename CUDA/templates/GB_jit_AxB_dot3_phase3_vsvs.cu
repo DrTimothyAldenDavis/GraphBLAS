@@ -150,10 +150,10 @@ __global__ void AxB_dot3_phase3_vsvs
          int64_t i = Mi [pair_id] ;
          int64_t j = Ci [pair_id]>>4 ; 
 
-         int64_t pA       = Ap[j] ;
-         int64_t pA_end   = Ap[j+1] ;
-         int64_t pB       = Bp[i] ;
-         int64_t pB_end   = Bp[i+1] ;
+         int64_t pA       = Ap[i] ;
+         int64_t pA_end   = Ap[i+1] ;
+         int64_t pB       = Bp[j] ;
+         int64_t pB_end   = Bp[j+1] ;
 
          T_A aki;
          T_B bkj;
