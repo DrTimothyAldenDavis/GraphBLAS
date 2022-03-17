@@ -170,8 +170,10 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
 //    print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
 //    std::cout<<"==== phase1 done=============================" <<std::endl;
 //
-//    rmm_wrap_free(Nanobuckets);
-//    rmm_wrap_free(Blockbucket);
+    rmm_wrap_free(Nanobuckets);
+    rmm_wrap_free(Blockbucket);
+
+    G.del();
 //
     return true;
 }
@@ -254,12 +256,12 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
 //    print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
 //    print_array<int64_t>(bucket, mnz, "bucket");
 //    std::cout<<"phase2 kernel done =================="<<std::endl;
-//    rmm_wrap_free(nanobuckets);
-//    rmm_wrap_free(blockbucket);
-//    rmm_wrap_free(bucketp);
-//    rmm_wrap_free(bucket);
-//    rmm_wrap_free(offset);
-//    G.del();
+    rmm_wrap_free(nanobuckets);
+    rmm_wrap_free(blockbucket);
+    rmm_wrap_free(bucketp);
+    rmm_wrap_free(bucket);
+    rmm_wrap_free(offset);
+    G.del();
    return true;
 }
 
@@ -566,7 +568,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     rmm_wrap_free(bucketp);
     rmm_wrap_free(offset);
 
-//    G.del();
+    G.del();
 
     return result;
 }
