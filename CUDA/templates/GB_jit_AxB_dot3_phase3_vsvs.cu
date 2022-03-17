@@ -126,11 +126,11 @@ __global__ void AxB_dot3_phase3_vsvs
 //   {
 //   if( threadIdx.x ==0 )
 //   {
-      printf("block%d %d dots/thrd, start,end = %ld,%ld pf,pl=%d,%d blockDim=%d\n",
-               blockIdx.x, (dots + blockDim.x*gridDim.x -1)/(blockDim.x*gridDim.x),
-               start, end, pfirst, plast, blockDim.x);
+//      printf("block%d %d dots/thrd, start,end = %ld,%ld pf,pl=%d,%d blockDim=%d\n",
+//               blockIdx.x, (dots + blockDim.x*gridDim.x -1)/(blockDim.x*gridDim.x),
+//               start, end, pfirst, plast, blockDim.x);
 //   }
-   __syncthreads();
+//   __syncthreads();
 
 
    int zc = 0 ;
@@ -145,7 +145,7 @@ __global__ void AxB_dot3_phase3_vsvs
              tid += blockDim.x )
    {
          pair_id = Bucket[ start + tid ];
-       printf("start=%d, tid=%d, pair_id=%lu\n", pfirst, tid, pair_id);
+//       printf("start=%d, tid=%d, pair_id=%lu\n", pfirst, tid, pair_id);
 
          int64_t i = Mi [pair_id] ;
          int64_t j = Ci [pair_id]>>4 ; 
