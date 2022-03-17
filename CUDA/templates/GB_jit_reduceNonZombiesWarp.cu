@@ -95,7 +95,7 @@ __global__ void reduceNonZombiesWarp
         T fold = g_idata[i];
         sum = GB_ADD( sum, fold );
     }
-    printf("thd%d  sum is %d\n", threadIdx.x + blockDim.x*blockIdx.x, sum);
+//    printf("thd%d  sum is %d\n", threadIdx.x + blockDim.x*blockIdx.x, sum);
     __syncthreads();
     //--------------------------------------------------------------------------
     // reduce work [0..s-1] to a single scalar
@@ -108,7 +108,7 @@ __global__ void reduceNonZombiesWarp
     {
         if(atomic_reduce) {
             // TODO: Assuming sum for now (liek the rest of the kernel)
-            atomicAdd(g_odata, sum);
+            T oldval = atomicAdd(g_odata, sum);
         } else {
             g_odata [blockIdx.x] = sum ;
         }

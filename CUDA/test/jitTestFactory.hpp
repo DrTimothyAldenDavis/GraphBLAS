@@ -592,30 +592,26 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 template <typename T>
 bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
 
-    reduceFactory<T> rF;
-
     //std::cout<<" alloc'ing data and output"<<std::endl;
     int64_t* index = (int64_t*)rmm_wrap_malloc(N*sizeof(T));
     T* d_data = (T*)rmm_wrap_malloc(N*sizeof(T));
     T* output = (T*)rmm_wrap_malloc(sizeof(T));
-    output[0] = 0;
-    //std::cout<<" alloc done"<<std::endl;
-    //std::cout<<" data fill start"<<std::endl;
 
     fillvector_constant<int64_t>((int)N, index, (int64_t)1);
     fillvector_linear<T> ( N, d_data);
 
-    T actual;
+    output[0] = 0;
+
+    reduceFactory<T> rF;
     rF.jitGridBlockLaunch( index, d_data, output, N, monoid );
 
-    actual = output[0];
-
-    for (int i =0; i< rF.get_number_of_blocks(N); ++i) std::cout<< output[i] <<" ";
+    T actual = output[0];
 
     GrB_Vector v;
     GrB_Type t = cuda::to_grb_type<T>();
     GrB_Vector_new(&v, t, N);
 
+    // Just sum in place for now (since we are assuming sum)
     int sum = 0;
     for(int i = 0; i < N; ++i) {
         sum+= d_data[i];
@@ -627,7 +623,6 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
 
     T expected;
     cuda::vector_reduce<T>(&expected, v, monoid);
-
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
     if(expected != actual) {
