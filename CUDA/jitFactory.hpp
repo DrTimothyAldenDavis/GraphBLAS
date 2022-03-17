@@ -521,9 +521,9 @@ template<typename T>
 class reduceFactory
 {
   std::string base_name = "GB_jit";
-  std::string kernel_name = "reduceUnrolled";
+  std::string kernel_name = "reduceNonZombiesWarp";
 
-  int threads_per_block = 32;
+  int threads_per_block = 128;
 
 public:
 
@@ -532,12 +532,11 @@ public:
   }
 
   int get_number_of_blocks(unsigned int N) {
-      return (N + 8*threads_per_block -1)/(8*threads_per_block);
+      return (N + threads_per_block - 1)/threads_per_block;
   }
 
-  bool jitGridBlockLaunch(T* indata, T* output, unsigned int N,
-                          // TODO: need to figure out
-                          GrB_BinaryOp op)
+  bool jitGridBlockLaunch(int64_t *index, T* indata, T* output, unsigned int N,
+                          GrB_Monoid op)
   {
       int blocksz = get_threads_per_block();
       int gridsz = get_number_of_blocks(N);
@@ -547,7 +546,7 @@ public:
 
       std::cout<<" indata type ="<< GET_TYPE_NAME(dummy)<<std::endl;
 
-      // TODO: We probably want to "macrofy" the GrB_BinaryOp and define it in the `string_to_be_jitted`
+      // TODO: We probably want to "macrofy" the GrB_Monoid and define it in the `string_to_be_jitted`
 //      void GB_stringify_binop
 //        (
 //            // input:
@@ -559,23 +558,21 @@ public:
 //            bool flipxy         // if true, use mult(y,x) else mult(x,y)
 //        )
 
-
-
       std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
       string_to_be_jitted <<
       hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
-
-
 
       jit::launcher(hashable_name,
                     string_to_be_jitted.str(),
                     header_names,
                     compiler_flags,
                     file_callback)
-               .set_kernel_inst(  kernel_name , { GET_TYPE_NAME(dummy) })
+               .set_kernel_inst(  kernel_name , { GET_TYPE_NAME(dummy), "true" })
                .configure(grid, block)
-               .launch( indata, output, N);
+
+               // FIXME: GB_ADD is hardcoded into kernel for now
+               .launch( index, indata, output, N);
 
       checkCudaErrors( cudaDeviceSynchronize() );
 

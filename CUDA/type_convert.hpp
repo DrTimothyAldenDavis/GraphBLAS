@@ -79,19 +79,19 @@ template<> void vector_set_element<bool>(GrB_Vector A, bool x, int64_t i) { GrB_
 
 
 template<typename T>
-void vector_reduce(T *scalar, GrB_Vector A, GrB_BinaryOp op);
+void vector_reduce(T *scalar, GrB_Vector A, GrB_Monoid op);
 
-template<> void vector_reduce<int8_t>(int8_t *scalar, GrB_Vector A, GrB_BinaryOp op) { GrB_Vector_reduce_INT8(scalar, op, NULL, A, NULL); }
-template<> void vector_reduce<int16_t>(int16_t *scalar, GrB_Vector A, GrB_BinaryOp op) { GrB_Vector_reduce_INT16(scalar, op, NULL, A, NULL); }
-template<> void vector_reduce<int32_t>(int32_t *scalar, GrB_Vector A, GrB_BinaryOp op) { GrB_Vector_reduce_INT32(scalar, op, NULL, A, NULL); }
-template<> void vector_reduce<int64_t>(int64_t *scalar, GrB_Vector A, GrB_BinaryOp op) { GrB_Vector_reduce_INT64(scalar, op, NULL, A, NULL); }
-template<> void vector_reduce<uint8_t>(uint8_t *scalar, GrB_Vector A, GrB_BinaryOp op) { GrB_Vector_reduce_UINT8(scalar, op, NULL, A, NULL); }
-template<> void vector_reduce<uint16_t>(uint16_t *scalar, GrB_Vector A, GrB_BinaryOp op) { GrB_Vector_reduce_UINT16(scalar, op, NULL, A, NULL); }
-template<> void vector_reduce<uint32_t>(uint32_t *scalar, GrB_Vector A, GrB_BinaryOp op) { GrB_Vector_reduce_UINT32(scalar, op, NULL, A, NULL); }
-template<> void vector_reduce<uint64_t>(uint64_t *scalar, GrB_Vector A, GrB_BinaryOp op) { GrB_Vector_reduce_UINT64(scalar, op, NULL, A, NULL); }
-template<> void vector_reduce<float>(float *scalar, GrB_Vector A, GrB_BinaryOp op) { GrB_Vector_reduce_FP32(scalar, op, NULL, A, NULL); }
-template<> void vector_reduce<double>(double *scalar, GrB_Vector A, GrB_BinaryOp op) { GrB_Vector_reduce_FP64(scalar, op, NULL, A, NULL); }
-template<> void vector_reduce<bool>(bool *scalar, GrB_Vector A, GrB_BinaryOp op) { GrB_Vector_reduce_BOOL(scalar, op, NULL, A, NULL); }
+template<> void vector_reduce<int8_t>(int8_t *scalar, GrB_Vector A, GrB_Monoid op) { GrB_Vector_reduce_INT8(scalar, NULL, op, A, NULL); }
+template<> void vector_reduce<int16_t>(int16_t *scalar, GrB_Vector A, GrB_Monoid op) { GrB_Vector_reduce_INT16(scalar, NULL, op, A, NULL); }
+template<> void vector_reduce<int32_t>(int32_t *scalar, GrB_Vector A, GrB_Monoid op) { GrB_Vector_reduce_INT32(scalar, NULL, op, A, NULL); }
+template<> void vector_reduce<int64_t>(int64_t *scalar, GrB_Vector A, GrB_Monoid op) { GrB_Vector_reduce_INT64(scalar, NULL, op, A, NULL); }
+template<> void vector_reduce<uint8_t>(uint8_t *scalar, GrB_Vector A, GrB_Monoid op) { GrB_Vector_reduce_UINT8(scalar, NULL, op, A, NULL); }
+template<> void vector_reduce<uint16_t>(uint16_t *scalar, GrB_Vector A, GrB_Monoid op) { GrB_Vector_reduce_UINT16(scalar, NULL, op, A, NULL); }
+template<> void vector_reduce<uint32_t>(uint32_t *scalar, GrB_Vector A, GrB_Monoid op) { GrB_Vector_reduce_UINT32(scalar, NULL, op, A, NULL); }
+template<> void vector_reduce<uint64_t>(uint64_t *scalar, GrB_Vector A, GrB_Monoid op) { GrB_Vector_reduce_UINT64(scalar, NULL, op, A, NULL); }
+template<> void vector_reduce<float>(float *scalar, GrB_Vector A, GrB_Monoid op) { GrB_Vector_reduce_FP32(scalar, NULL, op, A, NULL); }
+template<> void vector_reduce<double>(double *scalar, GrB_Vector A, GrB_Monoid op) { GrB_Vector_reduce_FP64(scalar, NULL, op, A, NULL); }
+template<> void vector_reduce<bool>(bool *scalar, GrB_Vector A, GrB_Monoid op) { GrB_Vector_reduce_BOOL(scalar, NULL, op, A, NULL); }
 
 template <typename T>
 GrB_Info get_element(GrB_Matrix A, T* x, int64_t i, int64_t j);

@@ -20,6 +20,10 @@
 #include <cstdint>
 #include <cooperative_groups.h>
 
+// TODO: Temporary
+#define GB_IDENTITY 0
+#define GB_ADD(a, b) a + b
+
 using namespace cooperative_groups;
 
 template< typename T, int tile_sz>
@@ -36,6 +40,7 @@ T warp_ReduceSum( thread_block_tile<tile_sz> g, T val)
     //if (threadIdx.x ==0) printf("thd%d single warp sum is %d\n", threadIdx.x,  val);
     return val; // note: only thread 0 will return full sum
 }
+
 
 template<typename T, int warpSize>
 __inline__ __device__
@@ -68,12 +73,12 @@ T block_ReduceSum(thread_block g, T val)
   return val;
 }
 
-template< typename T>
+template< typename T, bool atomic_reduce = true>
 __global__ void reduceNonZombiesWarp
 (
     int64_t *index,  // array of size n
     T *g_idata,      // array of size n
-    T *g_odata,      // array of size grid.x
+    T *g_odata,      // array of size grid.x if atomic_reduce==false and size 1 if atomic_reduce==true
     unsigned int N
 )
 {
@@ -84,13 +89,13 @@ __global__ void reduceNonZombiesWarp
     T sum = (T) GB_IDENTITY;
 
     for(int i = blockIdx.x * blockDim.x + threadIdx.x; 
-        i < N; 
+        i < N;  
         i += blockDim.x * gridDim.x) {
-        if ( index[i] < 0) continue;
+        if ( index[i] < 0) continue; // skip zombies
         T fold = g_idata[i];
         sum = GB_ADD( sum, fold );
     }
-    //printf("thd%d  sum is %d\n", threadIdx.x + blockDim.x*blockIdx.x, sum);
+    printf("thd%d  sum is %d\n", threadIdx.x + blockDim.x*blockIdx.x, sum);
     __syncthreads();
     //--------------------------------------------------------------------------
     // reduce work [0..s-1] to a single scalar
@@ -101,7 +106,12 @@ __global__ void reduceNonZombiesWarp
     // write result for this block to global mem
     if (tid == 0)
     {
-        g_odata [blockIdx.x] = sum ;
+        if(atomic_reduce) {
+            // TODO: Assuming sum for now (liek the rest of the kernel)
+            atomicAdd(g_odata, sum);
+        } else {
+            g_odata [blockIdx.x] = sum ;
+        }
     }
 }
 

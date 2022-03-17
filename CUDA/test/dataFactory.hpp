@@ -70,8 +70,8 @@ inline std::int64_t gen_key(std::int64_t i, std::int64_t j) {
 
 //Vector generators
 template<typename T>
-void fillvector_linear( int N, T *vec) {
-   for (int i = 0; i< N; ++i) vec[i] = T(i);
+void fillvector_linear( int N, T *vec, int start=0) {
+   for (int i = start; i< N+start; ++i) vec[i] = T(i);
 }
 template<typename T>
 void fillvector_constant( int N, T *vec, T val) {

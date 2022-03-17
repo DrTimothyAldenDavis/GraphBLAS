@@ -42,10 +42,9 @@ def buildTest(ts="TestsuiteName",kernels=DOT3_BUCKETS, ds= "tiny-tiny", SUM="PLU
 
     phase1_body= f""" test_AxB_phase1_factory< {typeC}, {typeM}, {typeA}, {typeB}>( 5, {N}, {Anz}, {Bnz}, monoid, binop);"""
     phase2_body= f""" test_AxB_phase2_factory< {typeC} >( 5, {N}, {Anz},{Bnz});"""
-    # phase2_end_body= f""" test_AxB_dot3_phase2end_factory< {typeC} >( 5, {N}, {Anz},{Bnz});"""
-
     phase3_body = ''.join([f""" test_AxB_dot3_full_factory< {typeC},{typeM},{typeA},{typeB},{type_x},{type_y},{type_z} > ({kern}, {N}, {Anz}, {Bnz}, monoid, binop);\n""" for kern in kernels])
-    phasedict = { 1: phase1_body, 2: phase2_body, 3: phase3_body }
+    reduce_body = f""" test_reduce_factory<{typeC}>({N}, monoid);"""
+    phasedict = { 1: phase1_body, 2: phase2_body, 3: phase3_body, 4: reduce_body }
     TEST_BODY= phasedict[phase]
 
     return TEST_HEAD,TEST_BODY, gb_monoid, gb_binop
@@ -87,7 +86,7 @@ def write_test_instances_header(test_suite_name, Monoids, Binops, Semirings, Dat
                         for dtA in DataTypes:
                             for dtB in DataTypes:
                                 for ds in DataShapes:
-                                    for phase in [1, 2, 3]:
+                                    for phase in [1, 2, 3, 4]:
 
                                         TEST_HEAD, TEST_BODY, gb_monoid, gb_binop = buildTest( Test_suite, Kernels, ds, m, b, phase,
                                                                           dtC, dtM, dtA, dtB, dtX, dtY, dtZ)
