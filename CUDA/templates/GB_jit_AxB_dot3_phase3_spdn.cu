@@ -108,11 +108,11 @@ __global__ void AxB_dot3_phase3_spdn
 //      __syncthreads();
 
           // Prime row offsets for both A and B
-          int64_t pA       = Ap[j];   // row of C
-          int64_t pA_end   = Ap[j+1];
+          int64_t pA       = Ap[i];   // row of C
+          int64_t pA_end   = Ap[i+1];
           int64_t nnzA   = pA_end - pA;
-          int64_t pB       = Bp[i];   // col of C
-          int64_t pB_end   = Bp[i+1];
+          int64_t pB       = Bp[j];   // col of C
+          int64_t pB_end   = Bp[j+1];
           int64_t nnzB   = pB_end - pB;
           T_A aki;
           T_B bkj;
