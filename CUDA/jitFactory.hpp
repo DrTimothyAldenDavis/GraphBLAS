@@ -580,6 +580,48 @@ public:
   }
 };
 
+template<  typename T_C, typename T_M, typename T_A, typename T_B, int threads_per_block=32, int chunk_size = 128>
+bool GB_cuda_mxm_phase1(GB_cuda_semiring_factory &semiring_factory, int64_t *nanobuckets, int64_t *blockBucket,
+                        GrB_Matrix C, GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
+    phase1launchFactory<T_C, T_M, T_A, T_B, threads_per_block, chunk_size> lf(semiring_factory);
+    return lf.jitGridBlockLaunch(nanobuckets, blockBucket, C, M, A, B);
+}
+
+
+template<  typename T_C, int threads_per_block = 32, int chunk_size = 128>
+bool GB_cuda_mxm_phase2(int64_t *nanobuckets, int64_t *blockBucket,
+                          int64_t *bucketp, int64_t *bucket, int64_t *offset,
+                          GrB_Matrix M) {
+
+  phase2launchFactory<T_C, threads_per_block, chunk_size> lf;
+  return lf.jitGridBlockLaunch(nanobuckets, blockBucket, bucketp, bucket, offset, M);
+}
+
+template<  typename T_C, int threads_per_block = 32, int chunk_size = 128>
+bool GB_cuda_mxm_phase2end(int64_t *nanobuckets, int64_t *blockBucket,
+                           int64_t *bucketp, int64_t *bucket, int64_t *offset,
+                           GrB_Matrix C, GrB_Matrix M) {
+    phase2endlaunchFactory<T_C, threads_per_block, chunk_size> lf;
+    return lf.jitGridBlockLaunch(nanobuckets, blockBucket, bucketp, bucket, offset, C, M);
+}
+
+
+
+template<  typename T_C, typename T_M, typename T_A, typename T_B, typename T_XY, typename T_Z>
+bool GB_cuda_mxm_phase3(GB_cuda_semiring_factory &mysemiringfactory, GB_bucket_code bucket_code,
+                        int64_t start, int64_t end, int64_t *bucketp, int64_t *bucket,
+                          GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
+    phase3launchFactory<T_C, T_M, T_A, T_B, T_XY, T_Z> lf(mysemiringfactory, bucket_code);
+    return lf.jitGridBlockLaunch(start, end, bucketp, bucket, C, M, A, B);
+}
+
+
+template<typename T>
+bool GB_cuda_reduce(int64_t *index, T *in_data, T *output, unsigned int N, GrB_Monoid op) {
+    reduceFactory<T> rf;
+    return rf.jitGridBlockLaunch(index, in_data, output, N, op);
+}
+
 
 //template<typename T1, typename T2, typename T3>
 //class spdotFactory

@@ -170,8 +170,10 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
 //    print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
 //    std::cout<<"==== phase1 done=============================" <<std::endl;
 //
-//    rmm_wrap_free(Nanobuckets);
-//    rmm_wrap_free(Blockbucket);
+    rmm_wrap_free(Nanobuckets);
+    rmm_wrap_free(Blockbucket);
+
+    G.del();
 //
     return true;
 }
@@ -254,12 +256,12 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
 //    print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
 //    print_array<int64_t>(bucket, mnz, "bucket");
 //    std::cout<<"phase2 kernel done =================="<<std::endl;
-//    rmm_wrap_free(nanobuckets);
-//    rmm_wrap_free(blockbucket);
-//    rmm_wrap_free(bucketp);
-//    rmm_wrap_free(bucket);
-//    rmm_wrap_free(offset);
-//    G.del();
+    rmm_wrap_free(nanobuckets);
+    rmm_wrap_free(blockbucket);
+    rmm_wrap_free(bucketp);
+    rmm_wrap_free(bucket);
+    rmm_wrap_free(offset);
+    G.del();
    return true;
 }
 
@@ -453,32 +455,14 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
            GpuTimer kernTimer;
            kernTimer.Start();
-           phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
-           lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C, M, B, A);
+
+           GB_cuda_mxm_phase3<T_C, T_M, T_A, T_B, T_X, T_Z>(mysemiringfactory, (GB_bucket_code )b,
+                                                            b_start, b_end, bucketp, Bucket, C, M, B, A);
 
            kernTimer.Stop();
 
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
            GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout)) ;
-
-           //GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
-           //GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
-
-            // printing manually since (I think) the jumbled form is causing issues for the standard GB_Matrix printer
-//            std::cout << "Printing matrix C:" << std::endl;
-            //T_C *X_valid  = (T_C*) malloc( GB_nnz(C)*sizeof(T_C));
-            //int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
-
-//       zc_valid = C->zombie_count;
-//       C->zombie_count = 0;
-//           for (int i =0 ; i< GB_nnz(C); ++i) {
-//                //std::cout<<"Cx[i] = "<<Cx[i]<<std::endl;
-//                X_valid[i] = Cx[i];
-//                Cx[i] = 0;
-//                i_valid[i] = C->i[i];
-//           }
-
-//           G.loadCj();
 
             GrB_Matrix C_actual;
             GrB_Type type = cuda::to_grb_type<T_C>();
@@ -584,7 +568,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     rmm_wrap_free(bucketp);
     rmm_wrap_free(offset);
 
-//    G.del();
+    G.del();
 
     return result;
 }
@@ -592,30 +576,25 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 template <typename T>
 bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
 
-    reduceFactory<T> rF;
-
     //std::cout<<" alloc'ing data and output"<<std::endl;
     int64_t* index = (int64_t*)rmm_wrap_malloc(N*sizeof(T));
     T* d_data = (T*)rmm_wrap_malloc(N*sizeof(T));
     T* output = (T*)rmm_wrap_malloc(sizeof(T));
-    output[0] = 0;
-    //std::cout<<" alloc done"<<std::endl;
-    //std::cout<<" data fill start"<<std::endl;
 
     fillvector_constant<int64_t>((int)N, index, (int64_t)1);
     fillvector_linear<T> ( N, d_data);
 
-    T actual;
-    rF.jitGridBlockLaunch( index, d_data, output, N, monoid );
+    output[0] = 0;
 
-    actual = output[0];
+    GB_cuda_reduce<T>( index, d_data, output, N, monoid );
 
-    for (int i =0; i< rF.get_number_of_blocks(N); ++i) std::cout<< output[i] <<" ";
+    T actual = output[0];
 
     GrB_Vector v;
     GrB_Type t = cuda::to_grb_type<T>();
     GrB_Vector_new(&v, t, N);
 
+    // Just sum in place for now (since we are assuming sum)
     int sum = 0;
     for(int i = 0; i < N; ++i) {
         sum+= d_data[i];
@@ -627,7 +606,6 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
 
     T expected;
     cuda::vector_reduce<T>(&expected, v, monoid);
-
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
     if(expected != actual) {
