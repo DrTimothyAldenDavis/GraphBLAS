@@ -56,6 +56,7 @@ __global__ void AxB_dot3_phase3_spdn
   int sz 
 )
 {
+/*
    T_A *Ax = (T_A*)A->x;
    T_B *Bx = (T_B*)B->x;
    T_C *Cx = (T_C*)C->x;
@@ -65,6 +66,16 @@ __global__ void AxB_dot3_phase3_spdn
    int64_t *Bi = B->i;
    int64_t *Ap = A->p;
    int64_t *Bp = B->p;
+*/
+   const T_A *__restrict__ Ax = (T_A *)A->x  ;
+   const T_B *__restrict__ Bx = (T_B *)B->x  ;
+         T_C *__restrict__ Cx = (T_C *)C->x  ;
+         int64_t *__restrict__ Ci = C->i ;
+   const int64_t *__restrict__ Mi = M->i ;
+   const int64_t *__restrict__ Ai = A->i ;
+   const int64_t *__restrict__ Bi = B->i ;
+   const int64_t *__restrict__ Ap = A->p ;
+   const int64_t *__restrict__ Bp = B->p ;
 
    C->jumbled = true;
 
@@ -76,9 +87,9 @@ __global__ void AxB_dot3_phase3_spdn
    int nvec = end - start;
    int dpt = nvec/32;
    m = dpt < m ? dpt : m;
-   if( threadIdx.x ==0)
-      printf("thd:%d %d dots/thrd, nvec = %d blockDim=%d\n",threadIdx.x, sz, nvec, blockDim.x);
-   __syncthreads();
+//   if( threadIdx.x ==0)
+//      printf("thd:%d %d dots/thrd, nvec = %d blockDim=%d\n",threadIdx.x, sz, nvec, blockDim.x);
+//   __syncthreads();
    int dots = (nvec +m -1)/m;
 
 //   printf("dots=%d, m=%d, dpt=%d\n", dots, m, dpt);
@@ -88,9 +99,9 @@ __global__ void AxB_dot3_phase3_spdn
              tid < dots;
              tid += blockDim.x * gridDim.x) {
       int pair_id, im; 
-       if (threadIdx.x ==0)
-         printf("thd%u pi=%lld\n",tid, start+threadIdx.x);
-       __syncthreads();
+//       if (threadIdx.x ==0)
+//         printf("thd%u pi=%lld\n",tid, start+threadIdx.x);
+//       __syncthreads();
 
       for (pair_id = start+tid, im = 0; 
            im < m && pair_id < end;  
@@ -101,11 +112,11 @@ __global__ void AxB_dot3_phase3_spdn
          // TODO: column of Ci / 16?
          int64_t j = Ci[pair_id] >> 4;  // row number of C
 
-         printf("tid=%d, i=%lu, j=%lu\n", threadIdx.x, i, j);
+         //printf("tid=%d, i=%lu, j=%lu\n", threadIdx.x, i, j);
 
-      if (threadIdx.x ==0)
-         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
-      __syncthreads();
+//      if (threadIdx.x ==0)
+//         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
+//      __syncthreads();
 
           // Prime row offsets for both A and B
           int64_t pA       = Ap[j];   // row of C
@@ -139,7 +150,7 @@ __global__ void AxB_dot3_phase3_spdn
               // TODO: Check tha GB_C_MULT applies the identity automatically since cij has not been initialized
               GB_C_MULT ( cij, aki, bkj ) ;           // cij = aki * bkj
 
-              printf("A_dense: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
+              //printf("A_dense: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
 
               /**
                *
@@ -152,7 +163,7 @@ __global__ void AxB_dot3_phase3_spdn
                   GB_GETA ( aki=(T_Z)Ax[pA+k] ) ;           // aki = A(k,i)
                   GB_GETB ( bkj=(T_Z)Bx[p] ) ;           // bkj = B(k,j)
                   GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
-                  printf("in_loop: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
+                  //printf("in_loop: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
               }
 
           }
@@ -166,7 +177,7 @@ __global__ void AxB_dot3_phase3_spdn
               GB_GETB ( bkj=(T_Z)Bx[ pB+k ] ) ;           // bkj = B(k,j)
 
               GB_C_MULT ( cij, aki, bkj) ;           // cij = aki * bkj
-              printf("B_dense: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
+              //printf("B_dense: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
 
               for (int64_t p = pA+1 ; p < pA_end ; ++p)
               {
@@ -176,7 +187,7 @@ __global__ void AxB_dot3_phase3_spdn
                   GB_GETA ( aki=(T_Z)Ax[ p ] ) ;           // aki = A(i,k)
                   GB_GETB ( bkj=(T_Z)Bx[ pB+k] ) ;           // bkj = B(j,k)
                   GB_MULTADD ( cij, aki, bkj) ;        // cij += aik * bjk
-                  printf("in_loop: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
+                  //printf("in_loop: tid=%d, pair_id=%d, i=%lu, j=%lu, nnzA=%lu, nnzB=%lu, k[B]=%lu, aki=%d, bkj=%d, cij=%d\n", threadIdx.x, pair_id, i, j, nnzA, nnzB, k, aki, bkj, cij);
               }
           }
          // C(i,j) = A(:,i) * B(:,j)
