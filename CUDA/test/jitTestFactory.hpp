@@ -590,20 +590,25 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 }
 
 template <typename T>
-bool test_reducefactory( unsigned int N, GrB_BinaryOp binop ) {
+bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
 
     reduceFactory<T> rF;
 
     //std::cout<<" alloc'ing data and output"<<std::endl;
+    int64_t* index = (int64_t*)rmm_wrap_malloc(N*sizeof(T));
     T* d_data = (T*)rmm_wrap_malloc(N*sizeof(T));
-    T* output = (T*)rmm_wrap_malloc(rF.get_number_of_blocks(N)*sizeof(T));
+    T* output = (T*)rmm_wrap_malloc(sizeof(T));
+    output[0] = 0;
     //std::cout<<" alloc done"<<std::endl;
     //std::cout<<" data fill start"<<std::endl;
 
+    fillvector_constant<int64_t>((int)N, index, (int64_t)1);
     fillvector_linear<T> ( N, d_data);
 
-    T sum;
-    rF.jitGridBlockLaunch( d_data, output, N, binop );
+    T actual;
+    rF.jitGridBlockLaunch( index, d_data, output, N, monoid );
+
+    actual = output[0];
 
     for (int i =0; i< rF.get_number_of_blocks(N); ++i) std::cout<< output[i] <<" ";
 
@@ -611,14 +616,28 @@ bool test_reducefactory( unsigned int N, GrB_BinaryOp binop ) {
     GrB_Type t = cuda::to_grb_type<T>();
     GrB_Vector_new(&v, t, N);
 
+    int sum = 0;
     for(int i = 0; i < N; ++i) {
+        sum+= d_data[i];
         cuda::vector_set_element<T>(v, i, d_data[i]);
     }
+    printf("Sum: %d\n", sum);
 
-    T reduced;
-    cuda::vector_reduce<T>(&reduced, v, binop);
+    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
-    return true;
+    T expected;
+    cuda::vector_reduce<T>(&expected, v, monoid);
+
+
+    GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
+    if(expected != actual) {
+        std::cout << "results do not match: reduced=" << expected << ", actual=" << actual << std::endl;
+        exit(1);
+    } else {
+        std::cout << "Results matched!" << std::endl;
+    }
+
+    return expected == actual;
 }
 
 
