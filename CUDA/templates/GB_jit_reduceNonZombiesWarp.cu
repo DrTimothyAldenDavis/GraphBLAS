@@ -89,7 +89,7 @@ __global__ void reduceNonZombiesWarp
     T sum = (T) GB_IDENTITY;
 
     for(int i = blockIdx.x * blockDim.x + threadIdx.x; 
-        i < N;  
+        i < N;
         i += blockDim.x * gridDim.x) {
         if ( index[i] < 0) continue; // skip zombies
         T fold = g_idata[i];
