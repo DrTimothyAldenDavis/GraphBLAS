@@ -453,32 +453,14 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
            GpuTimer kernTimer;
            kernTimer.Start();
-           phase3launchFactory<T_C, T_M, T_A, T_B, T_X, T_Z > lF(mysemiringfactory, (GB_bucket_code)b);
-           lF.jitGridBlockLaunch(b_start, b_end, bucketp, Bucket, C, M, B, A);
+
+           GB_cuda_mxm_phase3<T_C, T_M, T_A, T_B, T_X, T_Z>(mysemiringfactory, (GB_bucket_code )b,
+                                                            b_start, b_end, bucketp, Bucket, C, M, B, A);
 
            kernTimer.Stop();
 
            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
            GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout)) ;
-
-           //GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
-           //GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
-
-            // printing manually since (I think) the jumbled form is causing issues for the standard GB_Matrix printer
-//            std::cout << "Printing matrix C:" << std::endl;
-            //T_C *X_valid  = (T_C*) malloc( GB_nnz(C)*sizeof(T_C));
-            //int64_t *i_valid = (int64_t*)malloc( Cnz *sizeof(int64_t));
-
-//       zc_valid = C->zombie_count;
-//       C->zombie_count = 0;
-//           for (int i =0 ; i< GB_nnz(C); ++i) {
-//                //std::cout<<"Cx[i] = "<<Cx[i]<<std::endl;
-//                X_valid[i] = Cx[i];
-//                Cx[i] = 0;
-//                i_valid[i] = C->i[i];
-//           }
-
-//           G.loadCj();
 
             GrB_Matrix C_actual;
             GrB_Type type = cuda::to_grb_type<T_C>();
@@ -602,8 +584,7 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
 
     output[0] = 0;
 
-    reduceFactory<T> rF;
-    rF.jitGridBlockLaunch( index, d_data, output, N, monoid );
+    GB_cuda_reduce<T>( index, d_data, output, N, monoid );
 
     T actual = output[0];
 
