@@ -211,6 +211,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // phase1 and phase2: place each C(i,j) in a bucket
     //--------------------------------------------------------------------------
 
+    // TODO: These need to use rmm_wrap_malloc
     cudaMalloc ((void**) &Nanobuckets,
         NBUCKETS * SYMBOLIC_PHASE_NTHREADS * ntasks * sizeof (int64_t)) ;
 
@@ -236,14 +237,14 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     */
 
     cudaMalloc ((void**) &Bucketp, (NBUCKETS+1)*sizeof(int64_t)) ;
-    cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId); 
-    cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device); 
+    CHECK_CUDA_SIMPLE(cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
+    CHECK_CUDA_SIMPLE(cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device));
 
     cudaMalloc ((void**) &offset, (NBUCKETS)*sizeof(int64_t)) ;
-    cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId); 
-    cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device); 
+    CHECK_CUDA_SIMPLE(cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
+    CHECK_CUDA_SIMPLE(cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device));
 
-    memset( offset, 0, NBUCKETS * sizeof(int64_t) ); 
+    memset( offset, 0, NBUCKETS * sizeof(int64_t) );
     
   /* 
     if (Blockbucket == NULL || Nanobuckets == NULL || Bucket == NULL || Bucketp == NULL )
@@ -284,206 +285,75 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     cudaMemAdvise( M->x, mnz * M->type->size, cudaMemAdviseSetReadMostly,device) ;
     */
 
-    cudaMemPrefetchAsync( M->p, (mnvec+1) * sizeof (int64_t), device, NULL) ; //stream_data) ;
-    cudaMemPrefetchAsync( M->i, mnz * sizeof (int64_t), device, NULL ) ; //stream_data) ;
-    cudaMemPrefetchAsync( M->x, mnz * M->type->size, device, NULL ) ; //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->p, (mnvec+1) * sizeof (int64_t), device, NULL)) ; //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->i, mnz * sizeof (int64_t), device, NULL )) ; //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->x, mnz * M->type->size, device, NULL )) ; //stream_data) ;
     /*
     cudaMemAdvise( C->p, (mnvec+1) * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
     cudaMemAdvise( C->i, mnz * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
     cudaMemAdvise( C->x, mnz * C->type->size, cudaMemAdviseSetReadMostly,device) ;
     */
     //cudaMemPrefetchAsync( C->p, (mnvec+1) * sizeof (int64_t), device, NULL) ; //stream_data) ;
-    cudaMemPrefetchAsync( C->i, mnz * sizeof (int64_t), device, NULL ); //stream_data) ;
-    cudaMemPrefetchAsync( C->x, mnz * C->type->size, device, NULL ); //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->i, mnz * sizeof (int64_t), device, NULL )); //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->x, mnz * C->type->size, device, NULL )); //stream_data) ;
     
     /*
     cudaMemAdvise( A->p, (anvec+1) * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
     cudaMemAdvise( A->i, anz * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
     cudaMemAdvise( A->x, anz * A->type->size, cudaMemAdviseSetReadMostly,device) ;
     */
-    cudaMemPrefetchAsync( A->p, (anvec+1) * sizeof (int64_t), device, NULL); // stream_data) ;
-    cudaMemPrefetchAsync( A->i, anz * sizeof (int64_t), device, NULL ) ; //stream_data) ;
-    cudaMemPrefetchAsync( A->x, anz * A->type->size, device, NULL ) ; //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->p, (anvec+1) * sizeof (int64_t), device, NULL)); // stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->i, anz * sizeof (int64_t), device, NULL )) ; //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->x, anz * A->type->size, device, NULL )) ; //stream_data) ;
 
     /*
     cudaMemAdvise( B->p, (bnvec+1) * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
     cudaMemAdvise( B->i, bnz * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
     cudaMemAdvise( B->x, bnz * B->type->size, cudaMemAdviseSetReadMostly, device) ;
     */
-    cudaMemPrefetchAsync( B->p, (bnvec+1) * sizeof (int64_t), device, NULL) ; //stream_data) ;
-    cudaMemPrefetchAsync( B->i, bnz * sizeof (int64_t), device, NULL ) ; //stream_data) ;
-    cudaMemPrefetchAsync( B->x, bnz * B->type->size, device, NULL ) ; //stream_data) ;
-
-    
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( B->p, (bnvec+1) * sizeof (int64_t), device, NULL)); //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( B->i, bnz * sizeof (int64_t), device, NULL )); //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( B->x, bnz * B->type->size, device, NULL )); //stream_data) ;
 
     // The work to compute C(i,j) is held in Ci [p], if C(i,j) appears in
     // as the pth entry in C.
     
-
     cudaStream_t stream_AxB = NULL;
     //cudaStreamCreate ( &stream_AxB);
     //----------------------------------------------------------------------
     // phase1: assign each C(i,j) to a bucket, and count them
     //----------------------------------------------------------------------
-    dim3 grid( ntasks) ; 
 
-    dim3 block( SYMBOLIC_PHASE_NTHREADS ) ;
-
-    std::string base_name = "GB_jit_AxB_dot3_";
-    std::string Opname = "phase1_" ;
-
-    // create a single string of 4 lines, containining the following, for some
-    // semiring code.  Note that R "eats" the left and right parentheses.
-    /*
-        phase1_program
-        #include "GB_semiring_23030928029.h"
-        #include "GB_jit_AxB_dot3_phase1.cu"
-    */
-    // where GB_semiring_23030928029.h is mysemiring.filename
-
-
-    /**
-     * JIT Instantiation Calls
-     */
     phase1launchFactory p1lf(mysemiring);
     p1lf.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B);
 
-//    std::stringstream phase1_program ;
-//    phase1_program <<
-//    R"(phase1_program
-//    #include ")" << mysemiring.filename << R"("
-//    #include "GB_jit_AxB_phase1.cu"
-//    )";
-//
-//    // dump it:
-//    std::cout << phase1_program.str() ;
-//
-//    jitify::experimental::KernelLauncher phase1Kernel =
-//    jit::launcher( base_name + Opname + mysemiring.filename,
-//                   phase1_program.str(),
-//                   header_names,
-//                   jit::compiler_flags,
-//                   dummy_callback,
-//                   stream_AxB)
-//               .set_kernel_inst("GB_AxB_cuda_phase1",
-//                                {M->type->name})
-//               .configure(grid, block);
-
-    //----------------------------------------------------------------------
-    // phase2: cumsum across the blockbuckets, propagate to thread level
-    //----------------------------------------------------------------------
-
-    // p2grid is for phase2, which uses # of tasks (aka thread blocks)
-    // equal to ceil (ntasks / SYMBOLIC_PHASE_NTHREADS).
-    int p2ntasks = ( (ntasks +  SYMBOLIC_PHASE_NTHREADS -1) / (SYMBOLIC_PHASE_NTHREADS) ) ;
-    dim3 p2grid( p2ntasks ) ;
-
-    Opname = "phase2";
-
-    std::stringstream phase2_program ;
-    phase2_program <<
-    R"(phase2_program
-    #include ")" << mysemiring.filename << R"("
-    #include "GB_jit_AxB_dot3_phase2.cu"
-    )" ;
-    // dump it:
-    std::cout << phase2_program.str() ;
-
-    jitify::experimental::KernelLauncher phase2Kernel =
-    jit::launcher( base_name + Opname + mysemiring.filename,
-                   phase2_program.str(),
-                   header_names,
-                   jit::compiler_flags,
-                   dummy_callback) 
-                   //stream_AxB)
-               .set_kernel_inst("GB_AxB_dot3_phase2",
-                                {})
-               .configure(p2grid, block);
-
-    Opname = "phase2";
-    jitify::experimental::KernelLauncher phase2endKernel =
-    jit::launcher( base_name + Opname + mysemiring.filename,
-                   phase2_program.str(),
-                   header_names,
-                   jit::compiler_flags,
-                   dummy_callback)
-                   //stream_AxB)
-               .set_kernel_inst("GB_AxB_dot3_phase2end",
-                                {})
-               .configure(grid, block);
-
-
-    /**
-     * JIT Kernel Launch
-     */
-//    phase1Kernel.launch(
-//                        Nanobuckets,       // array of size NBUCKETS-blockDim.x-by-gridDim.x
-//                        Blockbucket,       // bucket counts, of size NBUCKETS-by-gridDim.x
-//                                           // input/output:
-//                        C,                 // final output matrix
-//                                           // inputs, not modified:
-//                        M,                 // mask matrix
-//                        A,                 // input matrix
-//                        B                  // input matrix
-//                    );
-
-
-    // cudaDeviceSynchronize();
-
-
     GBURBLE ("(GPU phase1 done) ") ;
-    //for (int i = 0; i< cnz; i++){
-    //  printf("C[%d] = %ld\n", i , Ci[i]);
-    //}
+
     //----------------------------------------------------------------------
     // phase2: cumsum across the blockbuckets, propagate to thread level
     //----------------------------------------------------------------------
-    int nblock = ntasks;    // # of tasks from phase1
 
-    phase2Kernel.launch(                    // input
-                        Nanobuckets,       // array of size NBUCKETS-blockDim.x-by-gridDim.x
-                        Blockbucket,       // bucket counts, of size NBUCKETS-by-gridDim.x
-                                           // input/output:
-                        Bucketp,           // global bucket cumsum, of size NBUCKETS+1
-                        Bucket,            // global buckets, of size cnz (== mnz)
-                        offset,
-                        nblock
-                    );
+    phase2launchFactory p2lf;
+    p2lf.jitGridBlockLaunch(Nanobuckets, Blockbucket,
+            Bucketp, Bucket, offset, M);
 
-    cudaDeviceSynchronize();
-    //cudaMemPrefetchAsync( offset, (NBUCKETS) * sizeof (int64_t), cudaCpuDeviceId, NULL) ;
 
     int64_t s= 0;
     for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
     {
-       Bucketp[bucket] = s; 
-       s+= offset[bucket];
-       //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
+        Bucketp[bucket] = s;
+        s+= offset[bucket];
+        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
     }
 
     GBURBLE ("(GPU phase2 done) ") ;
 
-    phase2endKernel.launch(                    // input
-                        Nanobuckets,       // array of size NBUCKETS-blockDim.x-by-gridDim.x
-                        Blockbucket,       // bucket counts, of size NBUCKETS-by-gridDim.x
-                                           // input/output:
-                        Bucketp,           // global bucket cumsum, of size NBUCKETS+1
-                        Bucket,            // global buckets, of size cnz (== mnz)
-                        offset,
-                        C,                 // final output matrix
-                                           // inputs, not modified:
-                        cnz                // number of entries in mask and output matrix
-                    );
-
-    cudaDeviceSynchronize();
+    phase2endlaunchFactory p2elf;
+    p2elf.jitGridBlockLaunch(Nanobuckets, Blockbucket,
+                             Bucketp, Bucket, offset, C, M);
 
     GBURBLE ("(GPU phase2end done) ") ;
-    /* 
-    for (int i = 0; i< cnz; i++){
-      printf("C[%d],Bucket = %ld,%ld\n", i , Ci[i], Bucket[i]);
-    }
-    */
-    
+
     //----------------------------------------------------------------------
     // phase3: do the numerical work
     //----------------------------------------------------------------------
@@ -497,152 +367,13 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         int64_t start = Bucketp[bucket];
         int64_t end = Bucketp[bucket+1];
 
-        //if( (end-start>0)  && (start == Bucketp[1]) ) start = Bucketp[0]; //add in zombie slots
-
         int64_t Cnz = end- start;
 
-        int gridsz, blocksz;
+        phase3launchFactory p3lf(mysemiring, (GB_bucket_code)bucket);
+        p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C,  M, A, B);
 
-        //Nothing to do, next bucket
-        if ( Cnz == 0 ) continue;
-
-        GBURBLE ("\n\n(GPU phase3 bucket,bucketsize= %d,%ld) ",bucket,Cnz) ;
-        std::stringstream phase3_program ;
-
-        switch (bucket)
-        {
-
-            //--------------------------------------------------------------
-            // not a bucket ... bring out your dead:
-            //--------------------------------------------------------------
-
-            case GB_BUCKET_ZOMBIE : // C(i,j) is a zombie (not a bucket)
-                break ;
-
-            //--------------------------------------------------------------
-            // CUDA kernel: dndn, handles a single bucket:
-            //--------------------------------------------------------------
-
-            // both A(:,i) and B(:,j) are dense
-            case GB_BUCKET_DNDN :
-                Opname = "phase3_dndn" ;
-
-                blocksz = 32;
-                gridsz = ( Cnz -1 + blocksz)/blocksz;
-                break ;
-
-            //--------------------------------------------------------------
-            // CUDA kernel: spdn, handles 4 buckets:
-            //--------------------------------------------------------------
-
-            // A(:,i) is dense and B(:,j) is very sparse (< 256 entries)
-            case GB_BUCKET_DNVS :
-            // A(:,i) is very sparse (< 256 entries) and B(:,j) is dense
-            case GB_BUCKET_VSDN :
-                sz = 64 ;
-                Opname = "phase3_spdn" ;
-                blocksz = 32;
-                gridsz = ( Cnz -1 + blocksz)/blocksz;
-                break ;
-
-            // A(:,i) is dense and B(:,j) is sparse (>= 256 entries)
-            case GB_BUCKET_DNSP :
-            // A(:,i) is sparse (>= 256 entries) and B(:,j) is dense
-            case GB_BUCKET_SPDN :
-                sz = 256 ;
-                Opname = "phase3_spdn" ;
-                blocksz = 32;
-                gridsz = ( Cnz -1 + blocksz)/blocksz;
-                break ;
-
-            //--------------------------------------------------------------
-            // CUDA kernel: vssp, handles 1 bucket, uses binary search:
-            //--------------------------------------------------------------
-
-            // A(:,i) is very sparse compared to B(:,j), or visa versa
-            case GB_BUCKET_VSSP :
-                Opname = "phase3_vssp" ;
-                blocksz = 32;
-                gridsz = ( Cnz -1 + blocksz)/blocksz;
-                break ;
-
-            //--------------------------------------------------------------
-            // CUDA kernel: vsvs, handles 4 buckets:
-            //--------------------------------------------------------------
-
-            // let len = nnz (A (:,i) + nnz (B (:,j)), then:
-            
-            case GB_BUCKET_VSVS_256 : sz += 256-64 ;
-            case GB_BUCKET_VSVS_64 :  sz += 64-16  ;
-            case GB_BUCKET_VSVS_16 :  sz += 16-4   ;
-            case GB_BUCKET_VSVS_4 :   sz += 4      ;
-                Opname = "phase3_vsvs" ;
-                blocksz = 1024;
-                gridsz = GB_IMIN( 1024*number_of_sms, ( Cnz  + blocksz -1 )/blocksz);
-                gridsz =  ( Cnz  + blocksz -1 )/blocksz;
-                break ;
-            
-            //--------------------------------------------------------------
-            // CUDA kernel: mp, use the merge-path method:
-            //--------------------------------------------------------------
-
-            case GB_BUCKET_MERGEPATH :
-                Opname = "phase3_mp" ;
-                blocksz = 32;
-                gridsz = ( Cnz -1 + blocksz)/blocksz;
-                break ;
-
-            case GB_BUCKET_WARP_IX :   sz = 32      ;
-                Opname = "phase3_warpix" ;
-                blocksz = 32;
-                gridsz =  GB_IMIN( (mnvec+15)/16, 256*number_of_sms);
-                break ;
-
-            default:
-                break ;
-        }
-
-        phase3_program <<
-        R"(phase3_program
-        #include ")" << mysemiring.filename << R"("
-        #include "GB_jit_AxB_dot3_)" << Opname << R"(.cu"
-        )" ;
-
-        dim3 grid(gridsz);
-        dim3 block(blocksz);
-
-        std::string kernel_name = "AxB_dot3_" ;
-
-        std::cout<< "Kernel name =" <<Opname<<std::endl; 
-        GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
-        jit::launcher( base_name + Opname + "_" + mysemiring.filename,
-                       phase3_program.str(),
-                       header_names,
-                       jit::compiler_flags,
-                       dummy_callback)
-                   .set_kernel_inst(kernel_name + Opname,
-                                    { ctype->name,
-                                      A->type->name,
-                                      B->type->name,
-                                      semiring->multiply->xtype->name,
-                                      semiring->multiply->ytype->name,
-                                      semiring->multiply->ztype->name  })
-                   .configure(grid, block) //if commented, use implicit 1D configure in launch
-                   .launch(
-                            start,   // input/output:
-                            end, // global bucket cumsum, of size NBUCKETS+1
-                            Bucket,            // global buckets, of size cnz (== mnz)
-                            C,                 // final output matrix
-                                               // inputs, not modified:
-                            M,                 // Mi used for column index
-                            A,                 // A matrix
-                            B,                 // B matrix
-                            sz                 // only used for sparse-sparse cases
-                        );
-
-        cudaDeviceSynchronize();
+        GBURBLE ("(GPU phase3 done) ") ;
     }
-    GBURBLE ("(GPU phase3 done) ") ;
 
     //----------------------------------------------------------------------
     // reduce C to a scalar, just for testing:
