@@ -28,11 +28,11 @@ extern "C"
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                               \
 {                                                                       \
-    if (Nanobuckets != NULL) cudaFree (Nanobuckets) ; Nanobuckets = NULL ; \
-    if (Blockbucket != NULL) cudaFree (Blockbucket) ; Blockbucket = NULL ; \
-    if (Bucket      != NULL) cudaFree (Bucket);       Bucket      = NULL ; \
-    if (Bucketp     != NULL) cudaFree (Bucketp);      Bucketp     = NULL ; \
-    if (offset      != NULL) cudaFree (offset);       offset      = NULL ; \
+    if (Nanobuckets != NULL) rmm_wrap_free (Nanobuckets) ; Nanobuckets = NULL ; \
+    if (Blockbucket != NULL) rmm_wrap_free (Blockbucket) ; Blockbucket = NULL ; \
+    if (Bucket      != NULL) rmm_wrap_free (Bucket);       Bucket      = NULL ; \
+    if (Bucketp     != NULL) rmm_wrap_free (Bucketp);      Bucketp     = NULL ; \
+    if (offset      != NULL) rmm_wrap_free (offset);       offset      = NULL ; \
 }
 
 #undef  GB_FREE_ALL
@@ -91,7 +91,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // initializations
     //--------------------------------------------------------------------------
 
-    int ntasks = 0, number_of_sms = 0 ;
     int64_t *Nanobuckets = NULL, *Blockbucket = NULL ;
     int64_t *Bucket = NULL;
     int64_t *Bucketp = NULL;
@@ -191,126 +190,47 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     // on the CPU: nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
     // on the GPU:
+    phase1launchFactory p1lf(mysemiring);
+    phase2launchFactory p2lf;
+    phase2endlaunchFactory p2elf;
+
 
     // # of threads in phase1 and phase2 kernel launches must be the same
-    #define chunksize 128 
-    #define SYMBOLIC_PHASE_NTHREADS 32 
-    #define NBUCKETS (GB_BUCKET_MERGEPATH + 1)
+    int nthrd = p2lf.get_threads_per_block();
+    int ntasks = p2elf.get_number_of_blocks(M);
 
-    number_of_sms = GB_Global_gpu_sm_get (0) ;
-    // C and M have cnz entries, so create ...
-    //ntasks = ( (mnvec +7)/8   + SYMBOLIC_PHASE_NTHREADS -1 )/SYMBOLIC_PHASE_NTHREADS;
-    ntasks =  ( mnz +chunksize -1)/chunksize;
-    // Idea is to have each task work on a continguous block of columns of C
-    ntasks = GB_IMIN( ntasks,  128*number_of_sms) ;    // ntasks will be grid.x
+    // fabricate data as if it came from phase1:
+    Nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
+    Blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
+    Bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
+    Bucket = (int64_t*)rmm_wrap_malloc(mnz * sizeof (int64_t));
+    offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
 
-    GBURBLE ("(GPU mnz=%ld mnvec=%ld blockDim=32, nblock= %d) ", mnz, mnvec, ntasks ) ;
-
-    std::cout<< "ntasks, nthreads = " <<ntasks<<","<<SYMBOLIC_PHASE_NTHREADS<<std::endl; 
     //--------------------------------------------------------------------------
     // phase1 and phase2: place each C(i,j) in a bucket
     //--------------------------------------------------------------------------
 
-    // TODO: These need to use rmm_wrap_malloc
-    cudaMalloc ((void**) &Nanobuckets,
-        NBUCKETS * SYMBOLIC_PHASE_NTHREADS * ntasks * sizeof (int64_t)) ;
-
-    //Nanobuckets = (int64_t*)GB_cuda_malloc (
-    //    NBUCKETS * SYMBOLIC_PHASE_NTHREADS * ntasks * sizeof (int64_t)) ;
-    //cudaMemAdvise( Nanobuckets, NBUCKETS * SYMBOLIC_PHASE_NTHREADS * ntasks
-    //                           * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, device); 
-    /*
-    */
-
-    cudaMalloc ((void**) &Blockbucket,
-        NBUCKETS * ntasks* sizeof (int64_t) ) ;
-    //Blockbucket = (int64_t*)GB_cuda_malloc ( NBUCKETS * ntasks* sizeof (int64_t) ) ;
-    //cudaMemAdvise( Blockbucket, NBUCKETS * ntasks
-    //                           * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, device); 
-    /*
-    */
-
-    cudaMalloc ((void**) &Bucket, cnz*sizeof(int64_t));
-    //Bucket = (int64_t*)GB_cuda_malloc ( cnz*sizeof(int64_t) );
-    //cudaMemAdvise( Bucket, cnz * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, device); 
-    /*
-    */
-
-    cudaMalloc ((void**) &Bucketp, (NBUCKETS+1)*sizeof(int64_t)) ;
     CHECK_CUDA_SIMPLE(cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
     CHECK_CUDA_SIMPLE(cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device));
 
-    cudaMalloc ((void**) &offset, (NBUCKETS)*sizeof(int64_t)) ;
+    offset = (int64_t*)rmm_wrap_malloc( (NBUCKETS)*sizeof(int64_t)) ;
     CHECK_CUDA_SIMPLE(cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
     CHECK_CUDA_SIMPLE(cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device));
 
     memset( offset, 0, NBUCKETS * sizeof(int64_t) );
-    
-  /* 
-    if (Blockbucket == NULL || Nanobuckets == NULL || Bucket == NULL || Bucketp == NULL )
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
-    }
-    */
-    
 
     //--------------------------------------------------------------------------
     // Pre-fetch arrays that will be used on the device
     //--------------------------------------------------------------------------
 
-    
-    //cudaMemPrefetchAsync( Nanobuckets, NBUCKETS * SYMBOLIC_PHASE_NTHREADS
-    //                     * ntasks * sizeof (int64_t), device, NULL) ;
-
-    //cudaMemPrefetchAsync( Blockbucket, NBUCKETS * ntasks 
-    //                        * sizeof (int64_t), device, NULL) ;
-
-    //cudaMemPrefetchAsync( Bucket, cnz * sizeof (int64_t), device, NULL) ;
-    
-
-    /*
-    
-    //cudaStream_t stream_data;
-    //cudaStreamCreate ( &stream_data);
-    */
-    /* 
-    cudaMemAdvise( M->p, (mnvec+1) * sizeof (int64_t), cudaMemAdviseSetPreferredLocation, device) ;
-    cudaMemAdvise( M->i, mnz * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, device); 
-    cudaMemAdvise( M->x, mnz * M->type->size, cudaMemAdviseSetPreferredLocation,device) ;
-    
-    cudaMemAdvise( M->p, (mnvec+1) * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
-    cudaMemAdvise( M->i, mnz * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
-    cudaMemAdvise( M->x, mnz * M->type->size, cudaMemAdviseSetReadMostly,device) ;
-    */
-
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->p, (mnvec+1) * sizeof (int64_t), device, NULL)) ; //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->i, mnz * sizeof (int64_t), device, NULL )) ; //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->x, mnz * M->type->size, device, NULL )) ; //stream_data) ;
-    /*
-    cudaMemAdvise( C->p, (mnvec+1) * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
-    cudaMemAdvise( C->i, mnz * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
-    cudaMemAdvise( C->x, mnz * C->type->size, cudaMemAdviseSetReadMostly,device) ;
-    */
-    //cudaMemPrefetchAsync( C->p, (mnvec+1) * sizeof (int64_t), device, NULL) ; //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->i, mnz * sizeof (int64_t), device, NULL )); //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->x, mnz * C->type->size, device, NULL )); //stream_data) ;
-    
-    /*
-    cudaMemAdvise( A->p, (anvec+1) * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
-    cudaMemAdvise( A->i, anz * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
-    cudaMemAdvise( A->x, anz * A->type->size, cudaMemAdviseSetReadMostly,device) ;
-    */
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->p, (anvec+1) * sizeof (int64_t), device, NULL)); // stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->i, anz * sizeof (int64_t), device, NULL )) ; //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->x, anz * A->type->size, device, NULL )) ; //stream_data) ;
-
-    /*
-    cudaMemAdvise( B->p, (bnvec+1) * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
-    cudaMemAdvise( B->i, bnz * sizeof (int64_t), cudaMemAdviseSetReadMostly, device) ;
-    cudaMemAdvise( B->x, bnz * B->type->size, cudaMemAdviseSetReadMostly, device) ;
-    */
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( B->p, (bnvec+1) * sizeof (int64_t), device, NULL)); //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( B->i, bnz * sizeof (int64_t), device, NULL )); //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( B->x, bnz * B->type->size, device, NULL )); //stream_data) ;
@@ -318,13 +238,12 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // The work to compute C(i,j) is held in Ci [p], if C(i,j) appears in
     // as the pth entry in C.
     
-    cudaStream_t stream_AxB = NULL;
-    //cudaStreamCreate ( &stream_AxB);
     //----------------------------------------------------------------------
     // phase1: assign each C(i,j) to a bucket, and count them
     //----------------------------------------------------------------------
 
-    phase1launchFactory p1lf(mysemiring);
+    GBURBLE ("(GPU phase1 start) ") ;
+
     p1lf.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B);
 
     GBURBLE ("(GPU phase1 done) ") ;
@@ -333,7 +252,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // phase2: cumsum across the blockbuckets, propagate to thread level
     //----------------------------------------------------------------------
 
-    phase2launchFactory p2lf;
+    GBURBLE ("(GPU phase1 start) ") ;
+
     p2lf.jitGridBlockLaunch(Nanobuckets, Blockbucket,
             Bucketp, Bucket, offset, M);
 
@@ -348,7 +268,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GBURBLE ("(GPU phase2 done) ") ;
 
-    phase2endlaunchFactory p2elf;
+    GBURBLE ("(GPU phase2end start) ") ;
+
     p2elf.jitGridBlockLaunch(Nanobuckets, Blockbucket,
                              Bucketp, Bucket, offset, C, M);
 
@@ -369,6 +290,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
         int64_t Cnz = end- start;
 
+        // TODO: We might want to consider submitting these in different cuda streams (maybe use RMM stream pool?)
         phase3launchFactory p3lf(mysemiring, (GB_bucket_code)bucket);
         p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C,  M, A, B);
 
@@ -379,6 +301,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // reduce C to a scalar, just for testing:
     //----------------------------------------------------------------------
 
+    // TODO: The reduce depends on type information at the moment. We should probably have it accept a vector directly
     std::stringstream reduce_program ;
     reduce_program <<
     R"(reduce_program
@@ -389,6 +312,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     std::string reduce_kernel_name = "reduceNonZombiesWarp";
     #define red_blocksz 1024
 
+    int number_of_sms = GB_Global_gpu_sm_get (0);
     int num_reduce_blocks = GB_IMIN( 32*number_of_sms, (cnz + red_blocksz -1)/ red_blocksz  ) ;
     dim3 red_grid( num_reduce_blocks ) ; 
     dim3 red_block( red_blocksz ) ;
