@@ -69,7 +69,7 @@ T reduce_plus(thread_block_tile<warp_sz> g, T val)
 
 #define intersects_per_thread 8
 
-template< typename T_C, typename T_A, typename T_B, typename T_X, typename T_Y, typename T_Z>  
+template< typename T_C, typename T_A, typename T_B>
 __global__ void AxB_dot3_phase3_mp
 (
     int64_t start,
@@ -197,7 +197,7 @@ __global__ void AxB_dot3_phase3_mp
 
     T_A aki;
     T_B bkj;
-    T_Z cij = GB_IDENTITY ;
+    T_C cij = GB_IDENTITY ;
 
     // TODO PLUS_PAIR_INT64, FP32, FP64: no need for cij_exists.
     // just check if cij > 0
@@ -212,18 +212,18 @@ __global__ void AxB_dot3_phase3_mp
     {
        if (Ai [k] == Bi [l])
        {
-          GB_GETA ( aki=(T_Z)Ax[k] ) ;
-          GB_GETB ( bkj=(T_Z)Bx[l] ) ;
+          GB_GETA ( aki=(T_C)Ax[k] ) ;
+          GB_GETB ( bkj=(T_C)Bx[l] ) ;
           if (cij_exists)
           {
-            T_Z t = GB_MULT( (T_Z)aki, (T_Z)bkj );
+            T_Z t = GB_MULT( (T_C)aki, (T_C)bkj );
             GB_ADD_F (cij, t ) ;
           //printf("  thd%d ix at %lld   cij += %d * %d \n", tid_global, Ai[k], aki, bkj);
           }
           else
           {
             cij_exists = 1 ;
-            cij = GB_MULT ( (T_Z)aki, (T_Z)bkj ) ;
+            cij = GB_MULT ( (T_C)aki, (T_C)bkj ) ;
           //printf("  thd%d ix at %lld   cij = %d * %d \n", tid_global, Ai[k], Ax[k], Bx[l]);
           }
           // TODO check terminal condition
@@ -256,7 +256,7 @@ __global__ void AxB_dot3_phase3_mp
 
     if (cij_exists)
     {
-       cij = GB_reduce_sum<T_Z, tile_sz>( tile, cij );
+       cij = GB_reduce_sum<T_C, tile_sz>( tile, cij );
        
     }
     // else has_zombies = 1;

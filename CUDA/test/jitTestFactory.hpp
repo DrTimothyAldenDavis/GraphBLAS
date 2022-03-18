@@ -143,7 +143,7 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
      * Launch kernel
      */
 
-    phase1launchFactory<T_C, T_M, T_A, T_B> p1lF(mysemiringfactory);
+    phase1launchFactory p1lF(mysemiringfactory);
 
     GpuTimer kernTimer;
     kernTimer.Start();
@@ -191,8 +191,8 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
 
     std::cout<< "found device "<<gpuID<<std::endl;
 
-    phase2launchFactory<T_C> p2lF;
-    phase2endlaunchFactory<T_C> p2elF;
+    phase2launchFactory p2lF;
+    phase2endlaunchFactory p2elF;
 
     SpGEMM_problem_generator<T_C, T_C, T_C, T_C> G(N, N);
     int64_t Annz = N*N;
@@ -456,8 +456,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            GpuTimer kernTimer;
            kernTimer.Start();
 
-           GB_cuda_mxm_phase3<T_C, T_M, T_A, T_B, T_X, T_Z>(mysemiringfactory, (GB_bucket_code )b,
-                                                            b_start, b_end, bucketp, Bucket, C, M, B, A);
+           GB_cuda_mxm_phase3(mysemiringfactory, (GB_bucket_code )b,
+                              b_start, b_end, bucketp, Bucket, C, M, B, A);
 
            kernTimer.Stop();
 

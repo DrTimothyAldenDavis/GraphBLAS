@@ -17,13 +17,13 @@ extern "C"
 }
 #include "GB_cuda.h"
 
-
-
+//TODO: These should go away once we're fully using the jitFactory
 #include "GB_callback.hpp"
 #include "GB_jit_launcher.h"
 #include "GB_jit_cache.h"
 
-const std::vector<std::string> header_names ={};
+#include "jitFactory.hpp"
+#include "type_name.hpp"
 
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                               \
@@ -99,9 +99,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     int device = -1;
 
-    cudaSetDevice( 0 ) ;
-
-    cudaGetDevice(&device);
+    CHECK_CUDA_SIMPLE(cudaSetDevice( 0 ));
+    CHECK_CUDA_SIMPLE(cudaGetDevice(&device));
 
     //--------------------------------------------------------------------------
     // get M
@@ -148,8 +147,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //auto *Cxtemp = C->x ;        
     //cudaMalloc ((void**) &(C->i), cnz * sizeof( int64_t) ); 
     //cudaMalloc ((void**) &(C->x), cnz * C->type->size ); 
-    cudaMemAdvise( C->i, cnz * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, device); 
-    cudaMemAdvise( C->x, cnz * C->type->size , cudaMemAdviseSetPreferredLocation, device); 
+    CHECK_CUDA_SIMPLE(cudaMemAdvise( C->i, cnz * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, device));
+    CHECK_CUDA_SIMPLE(cudaMemAdvise( C->x, cnz * C->type->size , cudaMemAdviseSetPreferredLocation, device));
 
 
     //--------------------------------------------------------------------------
@@ -342,29 +341,33 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     */
     // where GB_semiring_23030928029.h is mysemiring.filename
 
+
     /**
      * JIT Instantiation Calls
      */
-    std::stringstream phase1_program ;
-    phase1_program <<
-    R"(phase1_program
-    #include ")" << mysemiring.filename << R"("
-    #include "GB_jit_AxB_phase1.cu"
-    )";
+    phase1launchFactory p1lf(mysemiring);
+    p1lf.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B);
 
-    // dump it:
-    std::cout << phase1_program.str() ;
-
-    jitify::experimental::KernelLauncher phase1Kernel =
-    jit::launcher( base_name + Opname + mysemiring.filename, 
-                   phase1_program.str(),
-                   header_names,
-                   jit::compiler_flags,
-                   dummy_callback,
-                   stream_AxB)
-               .set_kernel_inst("GB_AxB_cuda_phase1",
-                                {M->type->name})
-               .configure(grid, block); 
+//    std::stringstream phase1_program ;
+//    phase1_program <<
+//    R"(phase1_program
+//    #include ")" << mysemiring.filename << R"("
+//    #include "GB_jit_AxB_phase1.cu"
+//    )";
+//
+//    // dump it:
+//    std::cout << phase1_program.str() ;
+//
+//    jitify::experimental::KernelLauncher phase1Kernel =
+//    jit::launcher( base_name + Opname + mysemiring.filename,
+//                   phase1_program.str(),
+//                   header_names,
+//                   jit::compiler_flags,
+//                   dummy_callback,
+//                   stream_AxB)
+//               .set_kernel_inst("GB_AxB_cuda_phase1",
+//                                {M->type->name})
+//               .configure(grid, block);
 
     //----------------------------------------------------------------------
     // phase2: cumsum across the blockbuckets, propagate to thread level
@@ -413,16 +416,16 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     /**
      * JIT Kernel Launch
      */
-    phase1Kernel.launch(
-                        Nanobuckets,       // array of size NBUCKETS-blockDim.x-by-gridDim.x
-                        Blockbucket,       // bucket counts, of size NBUCKETS-by-gridDim.x
-                                           // input/output:
-                        C,                 // final output matrix
-                                           // inputs, not modified:
-                        M,                 // mask matrix
-                        A,                 // input matrix
-                        B                  // input matrix
-                    );
+//    phase1Kernel.launch(
+//                        Nanobuckets,       // array of size NBUCKETS-blockDim.x-by-gridDim.x
+//                        Blockbucket,       // bucket counts, of size NBUCKETS-by-gridDim.x
+//                                           // input/output:
+//                        C,                 // final output matrix
+//                                           // inputs, not modified:
+//                        M,                 // mask matrix
+//                        A,                 // input matrix
+//                        B                  // input matrix
+//                    );
 
 
     // cudaDeviceSynchronize();

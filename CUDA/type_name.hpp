@@ -25,6 +25,10 @@
 #include <stdint.h>
 #include <cstdlib>
 
+extern "C" {
+#include "GB.h"
+};
+
 /**---------------------------------------------------------------------------*
  * @file type_name.hpp
  * @brief Defines the mapping between concrete C++ types and strings.
@@ -68,5 +72,35 @@ DECLARE_TYPE_NAME(bool);
 
 
 
-}  // namespace jit 
+const std::string grb_str_type(GB_Type_code grb_type_code) {
+    switch(grb_type_code) {
+        case GB_BOOL_code:
+            return "bool";
+        case GB_INT8_code:
+            return "int8_t";
+        case GB_UINT8_code:
+            return "uint8_t";
+        case GB_INT16_code:
+            return "int16_t";
+        case GB_UINT16_code:
+            return "uint16_t";
+        case GB_INT32_code:
+            return "int32_t";
+        case GB_UINT32_code:
+            return "uint32_t";
+        case GB_INT64_code:
+            return "int64_t";
+        case GB_UINT64_code:
+            return "uint64_t";
+        case GB_FP32_code:
+            return "float";
+        case GB_FP64_code:
+            return "double";
+        default:
+            printf("Error: GrB_Type not supported.\n");
+            exit(1);
+    }
+}
+}  // namespace jit
+
 #endif

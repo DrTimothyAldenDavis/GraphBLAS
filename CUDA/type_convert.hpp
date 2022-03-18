@@ -16,6 +16,7 @@
 
 #ifndef GB_CONV_TYPE_H
 #define GB_CONV_TYPE_H
+
 extern "C" {
 #include "GB.h"
 };
@@ -26,8 +27,6 @@ extern "C" {
  * @brief Defines the mapping between concrete C++ types and Grb types.
  *---------------------------------------------------------------------------**/
 namespace cuda {
-
-
 
 template <typename T>
 GrB_Type to_grb_type();
@@ -44,7 +43,6 @@ template<> GrB_Type to_grb_type<float>() { return GrB_FP32; }
 template<> GrB_Type to_grb_type<double>() { return GrB_FP64; }
 template<> GrB_Type to_grb_type<bool>() { return GrB_BOOL; }
 
-// TODO: Need to have these functions return the GrB_Info instead of void
 
 template <typename T>
 void set_element(GrB_Matrix A, T x, int64_t i, int64_t j);
