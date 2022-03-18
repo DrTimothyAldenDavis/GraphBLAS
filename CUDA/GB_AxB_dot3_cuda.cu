@@ -300,52 +300,14 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //----------------------------------------------------------------------
     // reduce C to a scalar, just for testing:
     //----------------------------------------------------------------------
+    int32_t *n_triangles = (int32_t*)rmm_wrap_malloc(sizeof(int32_t)) ;
+    n_triangles[0] = 0;
 
-    // TODO: The reduce depends on type information at the moment. We should probably have it accept a vector directly
-    std::stringstream reduce_program ;
-    reduce_program <<
-    R"(reduce_program
-    #include ")" << mysemiring.filename << R"("
-    #include "reduceNonZombiesWarp.cu"
-    )" ;
+    GB_cuda_reduce( C->i, C->x, n_triangles, (unsigned int)cnz, GB_binop_to_monoid(semiring->add->op));
 
-    std::string reduce_kernel_name = "reduceNonZombiesWarp";
-    #define red_blocksz 1024
+    printf("num_triangles = %d\n",  n_triangles[0] );
 
-    int number_of_sms = GB_Global_gpu_sm_get (0);
-    int num_reduce_blocks = GB_IMIN( 32*number_of_sms, (cnz + red_blocksz -1)/ red_blocksz  ) ;
-    dim3 red_grid( num_reduce_blocks ) ; 
-    dim3 red_block( red_blocksz ) ;
-
-    int32_t *block_sum;
-    cudaMallocManaged ((void**) &block_sum, (num_reduce_blocks)*sizeof(int32_t)) ;
-
-    GBURBLE ("(GPU reduce launch nblocks,blocksize= %d,%d )\n", num_reduce_blocks, red_blocksz) ;
-    jit::launcher( reduce_kernel_name + "_" + mysemiring.filename,
-                   reduce_program.str(),
-                   header_names,
-                   jit::compiler_flags,
-                   dummy_callback)
-                   .set_kernel_inst( reduce_kernel_name , { ctype->name })
-                   .configure(red_grid, red_block) //if commented, use implicit 1D configure in launch
-                   .launch(
-                            C->i,               // index vector, only sum up values >= 0
-                            C->x,               // input pointer to vector to reduce, with zombies
-                            block_sum,          // Block sums on return 
-                            (unsigned int)cnz   // length of vector to reduce to scalar
-
-                        );
-
-    cudaDeviceSynchronize();
-
-    int32_t num_triangles = 0;
-    for (int i = 0; i< num_reduce_blocks; i++){
-       //printf("block%d num_triangles = %d\n", i, block_sum[i] );
-       num_triangles += block_sum[i] ;
-    }
-    printf("num_triangles = %d\n",  num_triangles );
-
-    if (block_sum != NULL) cudaFree( block_sum );  block_sum = NULL ;
+    if (n_triangles != NULL) cudaFree( n_triangles );  n_triangles = NULL ;
 
     GB_FREE_WORKSPACE ;
     return GrB_SUCCESS; 

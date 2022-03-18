@@ -79,7 +79,7 @@
  */
 
 //Kernel jitifiers
-template<typename T> class reduceFactory ;
+class reduceFactory ;
 template<typename T1, typename T2, typename T3> class dotFactory ;
 template<typename T1, typename T2, typename T3> class spdotFactory ;
 
@@ -158,7 +158,7 @@ public:
     filecache.getFile (semiring_factory_) ;
 
     std::stringstream string_to_be_jitted ;
-    std::vector<std::string> template_types = {jit::grb_str_type(M->type->code)};
+    std::vector<std::string> template_types = {M->type->name};
 
     std::string hashable_name = base_name + "_" + kernel_name;
     string_to_be_jitted << hashable_name << std::endl <<
@@ -371,9 +371,9 @@ public:
                    compiler_flags,
                    file_callback)
                .set_kernel_inst(final_kernel_name_ss.str(),
-                                { jit::grb_str_type(C->type->code),
-                                  jit::grb_str_type(A->type->code),
-                                  jit::grb_str_type(B->type->code) })
+                                { C->type->name,
+                                  A->type->name,
+                                  B->type->name })
                .configure(grid, block) //if commented, use implicit 1D configure in launch
                .launch(
                         start,             // input/output:
@@ -503,7 +503,6 @@ private:
   }
 };
 
-template<typename T>
 class reduceFactory
 {
   std::string base_name = "GB_jit";
@@ -521,16 +520,14 @@ public:
       return (N + threads_per_block - 1)/threads_per_block;
   }
 
-  bool jitGridBlockLaunch(int64_t *index, T* indata, T* output, unsigned int N,
+  // Note: this does assume the erased types are compatible w/ the monoid's ztype
+  bool jitGridBlockLaunch(int64_t *index, void* indata, void* output, unsigned int N,
                           GrB_Monoid op)
   {
       int blocksz = get_threads_per_block();
       int gridsz = get_number_of_blocks(N);
       dim3 grid(gridsz);
       dim3 block(blocksz);
-      T dummy;
-
-      std::cout<<" indata type ="<< GET_TYPE_NAME(dummy)<<std::endl;
 
       // TODO: We probably want to "macrofy" the GrB_Monoid and define it in the `string_to_be_jitted`
 //      void GB_stringify_binop
@@ -554,7 +551,7 @@ public:
                     header_names,
                     compiler_flags,
                     file_callback)
-               .set_kernel_inst(  kernel_name , { GET_TYPE_NAME(dummy), "true" })
+               .set_kernel_inst(  kernel_name , { op->op->ztype->name, "true" })
                .configure(grid, block)
 
                // FIXME: GB_ADD is hardcoded into kernel for now
@@ -601,9 +598,8 @@ bool GB_cuda_mxm_phase3(GB_cuda_semiring_factory &mysemiringfactory, GB_bucket_c
 }
 
 
-template<typename T>
-bool GB_cuda_reduce(int64_t *index, T *in_data, T *output, unsigned int N, GrB_Monoid op) {
-    reduceFactory<T> rf;
+bool GB_cuda_reduce(int64_t *index, void *in_data, void *output, unsigned int N, GrB_Monoid op) {
+    reduceFactory rf;
     return rf.jitGridBlockLaunch(index, in_data, output, N, op);
 }
 

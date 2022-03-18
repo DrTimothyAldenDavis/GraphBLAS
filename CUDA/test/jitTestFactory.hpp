@@ -586,7 +586,7 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
 
     output[0] = 0;
 
-    GB_cuda_reduce<T>( index, d_data, output, N, monoid );
+    GB_cuda_reduce( index, d_data, output, N, monoid );
 
     T actual = output[0];
 
@@ -605,7 +605,7 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
     T expected;
-    cuda::vector_reduce<T>(&expected, v, monoid);
+    cuda::vector_reduce(&expected, v, monoid);
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
     if(expected != actual) {
