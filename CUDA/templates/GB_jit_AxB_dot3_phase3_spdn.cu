@@ -56,17 +56,6 @@ __global__ void AxB_dot3_phase3_spdn
   int sz 
 )
 {
-/*
-   T_A *Ax = (T_A*)A->x;
-   T_B *Bx = (T_B*)B->x;
-   T_C *Cx = (T_C*)C->x;
-   int64_t *Ci = C->i;
-   int64_t *Mi = M->i;
-   int64_t *Ai = A->i;
-   int64_t *Bi = B->i;
-   int64_t *Ap = A->p;
-   int64_t *Bp = B->p;
-*/
    const T_A *__restrict__ Ax = (T_A *)A->x  ;
    const T_B *__restrict__ Bx = (T_B *)B->x  ;
          T_C *__restrict__ Cx = (T_C *)C->x  ;
