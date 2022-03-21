@@ -1,3 +1,8 @@
+Version 6.3.0, Mar 18, 2022
+
+    * GrB_assign: better performance for C(i,j)=scalar and C(i,j)+=scalar
+        when i and j have length 1 (scalar assigment with no scalar expansion).
+
 Version 6.2.5, Mar 14, 2022
 
     * For SuiteSparse v5.11.0
