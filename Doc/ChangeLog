@@ -1,7 +1,12 @@
 Version 6.3.0, Mar 18, 2022
 
-    * GrB_assign: better performance for C(i,j)=scalar and C(i,j)+=scalar
-        when i and j have length 1 (scalar assigment with no scalar expansion).
+    * (43) performance bug fix for GrB_assign: better performance for
+        C(i,j)=scalar and C(i,j)+=scalar when i and j have length 1 (scalar
+        assigment with no scalar expansion).  The prior code worked but this is
+        a performance bug introduced in the parallel GraphBLAS.  The bug likely
+        doesn't appear in v2.x (the sequential version of SS:GrB).  This
+        affects method 1 of Demo/Source/wathen.c.  Caught by a reviewer of the
+        ACM TOMS paper on the parallel GraphBLAS.
 
 Version 6.2.5, Mar 14, 2022
 
