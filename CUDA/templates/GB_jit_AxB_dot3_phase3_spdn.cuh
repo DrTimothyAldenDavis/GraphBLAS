@@ -15,6 +15,8 @@
 //  matrix<T_B> *B         <- B matrix to multiply, dense in sparse format? 
 //  int sz                 <- size hint for smaller vector
 //******************************************************************************
+#pragma once
+
 #include <limits>
 #include <cstdint>
 #include <stdio.h>

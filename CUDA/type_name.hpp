@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#pragma once
 
 #ifndef GB_TYPE_NAME_H
 #define GB_TYPE_NAME_H
@@ -72,7 +73,7 @@ DECLARE_TYPE_NAME(bool);
 
 
 
-const std::string grb_str_type(GB_Type_code grb_type_code) {
+    inline const std::string grb_str_type(GB_Type_code grb_type_code) {
     switch(grb_type_code) {
         case GB_BOOL_code:
             return "bool";

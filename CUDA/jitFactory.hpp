@@ -33,17 +33,22 @@
     and call kernels.
  */
 
+#ifndef GB_JITFACTORY_H
+#define GB_JITFACTORY_H
+
+
 #pragma once
 
 #include "GB_jit_launcher.h"
 #include "GB_cuda_semiring_factory.hpp"
 
 // FIXME: Is this okay or will it bring in too much (GB.h is brought in transitively)
-#include "GraphBLAS.h"
-#include "GB_Semiring_new.c"
-#include "GrB_Semiring_new.c"
-#include "GB_Monoid_new.c"
-#include "GrB_Monoid_new.c"
+//#include "GraphBLAS.h"
+
+//#include "GB_Semiring_new.c"
+//#include "GrB_Semiring_new.c"
+//#include "GB_Monoid_new.c"
+//#include "GrB_Monoid_new.c"
 #include "GB_cuda_buckets.h"
 
 #include "type_name.hpp"
@@ -78,6 +83,8 @@
  * Kernel factory says "Here's the actual instance I want you to build with the given parameters"
  */
 
+//bool GB_cuda_reduce(int64_t *index, void *in_data, void *output, unsigned int N, GrB_Monoid op);
+
 //Kernel jitifiers
 class reduceFactory ;
 template<typename T1, typename T2, typename T3> class dotFactory ;
@@ -93,7 +100,7 @@ template<  typename T_C, typename T_M,
          typename T_A, typename T_B, typename T_xy, typename T_z> class launchFactory ;
 
 
-const std::vector<std::string> compiler_flags{
+static const std::vector<std::string> compiler_flags{
    "-std=c++14",
    "-G",
    "-remove-unused-globals",
@@ -101,15 +108,14 @@ const std::vector<std::string> compiler_flags{
    "-D__CUDACC_RTC__",
    "-I.",
    "-I..",
-// "-I../../Include",
    "-I../../Source",
    "-I../../Source/Template",
-   "-I../local_cub/block",
+//   "-I../local_cub/block",
    "-I../templates",
    "-I/usr/local/cuda/include",
 };
 
-const std::vector<std::string> header_names ={};
+static const std::vector<std::string> header_names ={};
 
 // FIXME: We probably want to remove this type template altogether and provide a
 // macro/function that can convert from a GrB_Type instance to the name of a type
@@ -163,7 +169,7 @@ public:
     std::string hashable_name = base_name + "_" + kernel_name;
     string_to_be_jitted << hashable_name << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << semiring_factory_.filename << R"(")" << std::endl <<
-    R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
+    R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
     std::cout << string_to_be_jitted.str();
 
     bool result = false;
@@ -221,7 +227,7 @@ public:
       std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
       string_to_be_jitted <<
-      hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
+      hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
       // dump it:
       std::cout << string_to_be_jitted.str();
@@ -280,7 +286,7 @@ public:
       std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
       string_to_be_jitted <<
-      hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
+      hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
       // dump it:
       std::cout << string_to_be_jitted.str();
@@ -354,7 +360,7 @@ public:
 
     string_to_be_jitted << hashable_name << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << semiring_factory_.filename << R"(")" << std::endl <<
-    R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
+    R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
     std::cout << "String to be jitted: " << string_to_be_jitted.str() << std::endl;
 
@@ -544,7 +550,7 @@ public:
       std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
       string_to_be_jitted <<
-      hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cu")" << std::endl;
+      hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
       jit::launcher(hashable_name,
                     string_to_be_jitted.str(),
@@ -564,7 +570,7 @@ public:
 };
 
 template<  int threads_per_block=32, int chunk_size = 128>
-bool GB_cuda_mxm_phase1(GB_cuda_semiring_factory &semiring_factory, int64_t *nanobuckets, int64_t *blockBucket,
+inline bool GB_cuda_mxm_phase1(GB_cuda_semiring_factory &semiring_factory, int64_t *nanobuckets, int64_t *blockBucket,
                         GrB_Matrix C, GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
     phase1launchFactory<threads_per_block, chunk_size> lf(semiring_factory);
     return lf.jitGridBlockLaunch(nanobuckets, blockBucket, C, M, A, B);
@@ -581,7 +587,7 @@ bool GB_cuda_mxm_phase2(int64_t *nanobuckets, int64_t *blockBucket,
 }
 
 template<int threads_per_block = 32, int chunk_size = 128>
-bool GB_cuda_mxm_phase2end(int64_t *nanobuckets, int64_t *blockBucket,
+inline bool GB_cuda_mxm_phase2end(int64_t *nanobuckets, int64_t *blockBucket,
                            int64_t *bucketp, int64_t *bucket, int64_t *offset,
                            GrB_Matrix C, GrB_Matrix M) {
     phase2endlaunchFactory lf;
@@ -590,7 +596,7 @@ bool GB_cuda_mxm_phase2end(int64_t *nanobuckets, int64_t *blockBucket,
 
 
 
-bool GB_cuda_mxm_phase3(GB_cuda_semiring_factory &mysemiringfactory, GB_bucket_code bucket_code,
+inline bool GB_cuda_mxm_phase3(GB_cuda_semiring_factory &mysemiringfactory, GB_bucket_code bucket_code,
                         int64_t start, int64_t end, int64_t *bucketp, int64_t *bucket,
                           GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
     phase3launchFactory lf(mysemiringfactory, bucket_code);
@@ -598,7 +604,7 @@ bool GB_cuda_mxm_phase3(GB_cuda_semiring_factory &mysemiringfactory, GB_bucket_c
 }
 
 
-bool GB_cuda_reduce(int64_t *index, void *in_data, void *output, unsigned int N, GrB_Monoid op) {
+inline bool GB_cuda_reduce(int64_t *index, void *in_data, void *output, unsigned int N, GrB_Monoid op) {
     reduceFactory rf;
     return rf.jitGridBlockLaunch(index, in_data, output, N, op);
 }
@@ -704,4 +710,4 @@ bool GB_cuda_reduce(int64_t *index, void *in_data, void *output, unsigned int N,
 //
 //
 #endif  // C++11
-
+#endif

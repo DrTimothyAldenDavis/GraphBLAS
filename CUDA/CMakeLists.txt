@@ -22,7 +22,6 @@ add_library(graphblascuda SHARED
             ${GRAPHBLAS_CUDA_SOURCES}
 )
 
-
 set(RMM_WRAP_INCLUDES "../rmm_wrap")
 
 message(STATUS "RMM_WRAP_INCLUDES: ${RMM_WRAP_INCLUDES}")
