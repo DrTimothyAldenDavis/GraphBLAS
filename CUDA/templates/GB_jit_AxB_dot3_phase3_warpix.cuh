@@ -30,6 +30,8 @@
 //  matrix<T_M> *M         <- mask matrix
 //  matrix<T_A> *A         <- input matrix A
 //  matrix<T_B> *B         <- input matrix B
+
+#pragma once
 #define GB_CUDA_KERNEL
 #include <limits>
 #include <cstdint>

@@ -30,6 +30,7 @@
 //  GrB_Matrix M         <- mask matrix
 //  GrB_Matrix A         <- input matrix A
 //  GrB_Matrix B         <- input matrix B
+#pragma once
 
 #include <limits>
 #include <cstdint>

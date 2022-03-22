@@ -31,10 +31,12 @@
 //  GrB_Matrix B           <- input matrix B
 //  int sz                 <- size parameter (not used) 
 
+#pragma once
 #include <limits>
 #include <cstdint>
-#include <cooperative_groups.h>
 #include "matrix.h"
+
+#include <cooperative_groups.h>
 
 // Using tile size fixed at compile time, we don't need shared memory
 #define tile_sz 32 
@@ -96,6 +98,7 @@ __global__ void AxB_dot3_phase3_dndn
 {
 
     C->jumbled = true;
+
     T_A *Ax = (T_A*)A->x;
     T_B *Bx = (T_B*)B->x;
     T_C *Cx = (T_C*)C->x;

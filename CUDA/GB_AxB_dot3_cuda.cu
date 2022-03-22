@@ -15,11 +15,9 @@ extern "C"
 {
   #include "GB_mxm.h"
 }
+
 #include "GB_cuda.h"
 
-//TODO: These should go away once we're fully using the jitFactory
-#include "GB_callback.hpp"
-#include "GB_jit_launcher.h"
 #include "GB_jit_cache.h"
 
 #include "jitFactory.hpp"
@@ -199,7 +197,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     int nthrd = p2lf.get_threads_per_block();
     int ntasks = p2elf.get_number_of_blocks(M);
 
-    // fabricate data as if it came from phase1:
     Nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
     Blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
     Bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
@@ -290,24 +287,13 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
         int64_t Cnz = end- start;
 
-        // TODO: We might want to consider submitting these in different cuda streams (maybe use RMM stream pool?)
+        // TODO: We might want to consider submitting these in different cuda streams (maybe use cuda stream pool?)
         phase3launchFactory p3lf(mysemiring, (GB_bucket_code)bucket);
         p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C,  M, A, B);
 
         GBURBLE ("(GPU phase3 done) ") ;
     }
 
-    //----------------------------------------------------------------------
-    // reduce C to a scalar, just for testing:
-    //----------------------------------------------------------------------
-    int32_t *n_triangles = (int32_t*)rmm_wrap_malloc(sizeof(int32_t)) ;
-    n_triangles[0] = 0;
-
-    GB_cuda_reduce( C->i, C->x, n_triangles, (unsigned int)cnz, GB_binop_to_monoid(semiring->add->op));
-
-    printf("num_triangles = %d\n",  n_triangles[0] );
-
-    if (n_triangles != NULL) cudaFree( n_triangles );  n_triangles = NULL ;
 
     GB_FREE_WORKSPACE ;
     return GrB_SUCCESS; 
