@@ -6,6 +6,7 @@
 //  This kernel scans the non-zero pattern in A and B, takes into account the
 //  mask and computes total work required to form C. Then it classifies each
 //  dot product into a set of buckets for efficient compute. 
+#pragma once
 
 #define GB_CUDA_KERNEL
 #include <limits>

@@ -41,6 +41,12 @@ set_target_properties(graphblascuda PROPERTIES CUDA_ARCHITECTURES "75")
 
 target_link_libraries(graphblascuda nvrtc cuda)
 
+install ( TARGETS graphblascuda
+        LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+
+
 # 1. Execute enumify/stringify/jitify logic to compile ptx kernels and compile/link w/ relevant *.cu files.
 
 # TODO: Need to do this piece in cmake
@@ -100,7 +106,13 @@ FetchContent_Declare(
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+FetchContent_GetProperties(googletest)
+if(NOT googletest_POPULATED)
+    FetchContent_Populate(googletest)
+    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+
+#FetchContent_MakeAvailable(googletest EC)
 
 
 #file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external_includes)
@@ -131,14 +143,18 @@ add_dependencies(graphblascuda_test gtest_main)
 add_dependencies(graphblascuda_test rmm_wrap)
 
 target_link_libraries(graphblascuda_test
+        PUBLIC
         graphblas
         graphblascuda
-        gtest_main
-        nvrtc
         cuda
-        ${ADDITIONAL_DEPS})
+        nvrtc
+        ${ADDITIONAL_DEPS}
+        PRIVATE
+        gtest_main)
 
-target_include_directories(graphblascuda_test PUBLIC
+target_include_directories(graphblascuda_test
+        PUBLIC
         ${ADDITIONAL_INCLUDES}
         ${CUDA_INCLUDE_DIRECTORIES}
         ${GRAPHBLAS_CUDA_INCLUDES})
+

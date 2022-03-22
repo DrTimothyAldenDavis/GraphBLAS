@@ -30,6 +30,9 @@
 //  matrix<T_M> *M         <- mask matrix
 //  matrix<T_A> *A         <- input matrix A
 //  matrix<T_B> *B         <- input matrix B
+
+#pragma once
+
 #include <limits>
 #include <cstdint>
 #include <cooperative_groups.h>
