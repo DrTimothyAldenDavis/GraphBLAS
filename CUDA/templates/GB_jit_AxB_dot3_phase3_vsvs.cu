@@ -82,7 +82,7 @@ T block_ReduceSum(thread_block g, T val)
   return val;
 }
 
-template< typename T_C, typename T_A, typename T_B, typename T_X, typename T_Y, typename T_Z>
+template< typename T_C, typename T_A, typename T_B>
 __global__ void AxB_dot3_phase3_vsvs
 ( 
   int64_t start,
@@ -157,7 +157,7 @@ __global__ void AxB_dot3_phase3_vsvs
 
          T_A aki;
          T_B bkj;
-         T_Z cij ;
+         T_C cij ;
 
          bool cij_exists = false;
 

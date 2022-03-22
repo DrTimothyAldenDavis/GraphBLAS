@@ -81,7 +81,7 @@ T block_ReduceSum(thread_block g, T val, T Ident)
 }
 
 
-template< typename T_C, typename T_A, typename T_B, typename T_X, typename T_Y, typename T_Z>
+template< typename T_C, typename T_A, typename T_B>
 __global__ void AxB_dot3_phase3_dndn 
 (
     int64_t start,
@@ -143,17 +143,17 @@ __global__ void AxB_dot3_phase3_dndn
     // convert global data pointer to the local pointer of this block
     T_A  aki; // *xdata = &Ax[xstart]; 
     T_B  bkj; // *ydata = &Bx[ystart];
-    T_Z  cij;
+    T_C  cij;
 
-    GB_GETA ( aki=(T_Z)Ax[pA+threadIdx.x] ) ;             // aki = A(0,i)
-    GB_GETB ( bkj=(T_Z)Bx[pB+threadIdx.x] ) ;             // bkj = B(0,j)
+    GB_GETA ( aki=(T_C)Ax[pA+threadIdx.x] ) ;             // aki = A(0,i)
+    GB_GETB ( bkj=(T_C)Bx[pB+threadIdx.x] ) ;             // bkj = B(0,j)
     GB_C_MULT ( cij, aki, bkj ) ;                        // cij = aki * bkj
 
     for ( int tid = threadIdx.x + s; tid < nnzA; tid+= s) { 
           // cij += A(k,i) * B(k,j)
           // GB_DOT_TERMINAL ( cij ) ;             // break if cij == terminal
-          GB_GETA ( aki=(T_Z)Ax[pA+tid] ) ;         // aki = A(k,i)
-          GB_GETB ( bkj=(T_Z)Bx[pB+tid] ) ;        // bkj = B(k,j)
+          GB_GETA ( aki=(T_C)Ax[pA+tid] ) ;         // aki = A(k,i)
+          GB_GETB ( bkj=(T_C)Bx[pB+tid] ) ;        // bkj = B(k,j)
           GB_MULTADD ( cij, aki, bkj ) ;        // cij += aki * bkj
     }
 
@@ -162,7 +162,7 @@ __global__ void AxB_dot3_phase3_dndn
     // reduce per-thread sums to a single scalar
     //--------------------------------------------------------------------------
     thread_block_tile<32> tile = tiled_partition<32>( this_thread_block() );
-    cij = warp_ReduceSum<T_Z, 32> ( tile, cij);
+    cij = warp_ReduceSum<T_C, 32> ( tile, cij);
 
     // write result for this block to global mem
     if (threadIdx.x == 0)

@@ -70,7 +70,7 @@ T reduce_plus(thread_block_tile<warp_sz> g, T val)
 
 #define intersects_per_thread 8
 
-template< typename T_C, typename T_A, typename T_B, typename T_X, typename T_Y, typename T_Z>  
+template< typename T_C, typename T_A, typename T_B>
 __global__ void AxB_dot3_phase3_warpix
 (
     int64_t start,
@@ -83,7 +83,6 @@ __global__ void AxB_dot3_phase3_warpix
     int sz
 )
 {
-
     T_A *__restrict__ Ax = (T_A*)A->x;
     T_B *__restrict__ Bx = (T_B*)B->x;
     T_C *__restrict__ Cx = (T_C*)C->x;

@@ -148,6 +148,14 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 6.3.0 (Mar 18, 2022)
+
+    \begin{packed_itemize}
+    \item \verb'GrB_assign': better performance for \verb'C(i,j)=scalar' and
+        \verb'C(i,j)+=scalar' when \verb'i' and \verb'j' have length 1 (scalar
+        assigment with no scalar expansion).
+    \end{packed_itemize}
+
 \item Version 6.2.5 (Mar 14, 2022)
 
     \begin{packed_itemize}
@@ -15142,7 +15150,8 @@ AVX2 but not AVX512F, and use 40 threads to compile:
     make CMAKE_OPTIONS='-DGBNCPUFEAT=1 -DGBAVX2=1' JOBS=40 \end{verbatim} }
 
 After compiling the library, you can compile the demos with
-\verb'make all' and then \verb'make run'.
+\verb'make all' and then \verb'make run' while in the top-level
+GraphBLAS folder.
 
 If \verb'cmake' or \verb'make' fail, it might be that your default compiler
 does not support ANSI C11.  Try another compiler.  For example, try one of
@@ -15613,10 +15622,12 @@ from \verb'libgraphblas' to \verb'libgraphbas_renamed'.
 %----------------------------------------
 
 After \verb'make' in the top-level directory to compile the library, type
-\verb'make run' to run the demos.  You can also run the demos after compiling:
+\verb'make run' to run the demos (also in the top-level directory).
+You can also run the demos after compiling with \verb'make all':
 
     {\small
     \begin{verbatim}
+    make all
     cd Demo
     ./demo \end{verbatim} }
 

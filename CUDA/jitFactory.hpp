@@ -79,13 +79,13 @@
  */
 
 //Kernel jitifiers
-template<typename T> class reduceFactory ;
+class reduceFactory ;
 template<typename T1, typename T2, typename T3> class dotFactory ;
 template<typename T1, typename T2, typename T3> class spdotFactory ;
 
 
 //AxB_dot3_phase1 kernel launchers
-template<  typename T_C, typename T_M, typename T_A, typename T_B, int threads_per_block, int chunk_size> class phase1launchFactory ;
+template<int threads_per_block, int chunk_size> class phase1launchFactory ;
 
 //AxB_dot3_phase3 kernel launchers
 
@@ -111,9 +111,10 @@ const std::vector<std::string> compiler_flags{
 
 const std::vector<std::string> header_names ={};
 
-// FIXME: Need to be able to convert from GrB_Type->std::type to populate these templates
-// this isn't going to be known at compile time.
-template<  typename T_C, typename T_M, typename T_A, typename T_B, int threads_per_block=32, int chunk_size = 128>
+// FIXME: We probably want to remove this type template altogether and provide a
+// macro/function that can convert from a GrB_Type instance to the name of a type
+// that the jitifier will accept.
+template<int threads_per_block=32, int chunk_size = 128>
 class phase1launchFactory 
 {
   std::string base_name = "GB_jit";
@@ -147,7 +148,6 @@ public:
     // 128*number_of_sms (say 128*80 = 10,240 on a V100).
 
     // Defining dummy instance only so we can introspect type
-    T_M dumM;
 
     std::cout << "A TYpe: " << A->type << std::endl;
     std::cout << "B TYpe: " << B->type << std::endl;
@@ -158,7 +158,7 @@ public:
     filecache.getFile (semiring_factory_) ;
 
     std::stringstream string_to_be_jitted ;
-    std::vector<std::string> template_types = {GET_TYPE_NAME(dumM)};
+    std::vector<std::string> template_types = {M->type->name};
 
     std::string hashable_name = base_name + "_" + kernel_name;
     string_to_be_jitted << hashable_name << std::endl <<
@@ -187,7 +187,7 @@ public:
      }
 };
 
-template<  typename T_C, int threads_per_block = 32, int chunk_size = 128>
+template<int threads_per_block = 32, int chunk_size = 128>
 class phase2launchFactory
 {
 
@@ -245,7 +245,7 @@ public:
 
 };
 
-template<  typename T_C, int threads_per_block = 32, int chunk_size = 128>
+template< int threads_per_block = 32, int chunk_size = 128>
 class phase2endlaunchFactory 
 {
 
@@ -273,8 +273,6 @@ public:
      {
       
       bool result = false; 
-
-      T_C dumC;
 
       dim3 grid(get_number_of_blocks(M));
       dim3 block(get_threads_per_block());
@@ -304,7 +302,6 @@ public:
 
 };
 
-template<  typename T_C, typename T_M, typename T_A, typename T_B, typename T_XY, typename T_Z>
 class phase3launchFactory
 {
   std::string base_name = "GB_jit";
@@ -330,14 +327,6 @@ public:
                           GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
       
       bool result = false; 
-
-      T_C dumC;
-      T_M dumM;
-      T_A dumA;
-      T_B dumB;
-      T_XY dumXY;
-      T_Z dumZ;
-
 
     //----------------------------------------------------------------------
     // phase3: do the numerical work
@@ -382,12 +371,9 @@ public:
                    compiler_flags,
                    file_callback)
                .set_kernel_inst(final_kernel_name_ss.str(),
-                                { GET_TYPE_NAME(dumC),
-                                  GET_TYPE_NAME(dumA),
-                                  GET_TYPE_NAME(dumB),
-                                  GET_TYPE_NAME(dumXY),
-                                  GET_TYPE_NAME(dumXY),
-                                  GET_TYPE_NAME(dumZ) })
+                                { C->type->name,
+                                  A->type->name,
+                                  B->type->name })
                .configure(grid, block) //if commented, use implicit 1D configure in launch
                .launch(
                         start,             // input/output:
@@ -517,7 +503,6 @@ private:
   }
 };
 
-template<typename T>
 class reduceFactory
 {
   std::string base_name = "GB_jit";
@@ -535,16 +520,14 @@ public:
       return (N + threads_per_block - 1)/threads_per_block;
   }
 
-  bool jitGridBlockLaunch(int64_t *index, T* indata, T* output, unsigned int N,
+  // Note: this does assume the erased types are compatible w/ the monoid's ztype
+  bool jitGridBlockLaunch(int64_t *index, void* indata, void* output, unsigned int N,
                           GrB_Monoid op)
   {
       int blocksz = get_threads_per_block();
       int gridsz = get_number_of_blocks(N);
       dim3 grid(gridsz);
       dim3 block(blocksz);
-      T dummy;
-
-      std::cout<<" indata type ="<< GET_TYPE_NAME(dummy)<<std::endl;
 
       // TODO: We probably want to "macrofy" the GrB_Monoid and define it in the `string_to_be_jitted`
 //      void GB_stringify_binop
@@ -568,7 +551,7 @@ public:
                     header_names,
                     compiler_flags,
                     file_callback)
-               .set_kernel_inst(  kernel_name , { GET_TYPE_NAME(dummy), "true" })
+               .set_kernel_inst(  kernel_name , { op->op->ztype->name, "true" })
                .configure(grid, block)
 
                // FIXME: GB_ADD is hardcoded into kernel for now
@@ -580,45 +563,43 @@ public:
   }
 };
 
-template<  typename T_C, typename T_M, typename T_A, typename T_B, int threads_per_block=32, int chunk_size = 128>
+template<  int threads_per_block=32, int chunk_size = 128>
 bool GB_cuda_mxm_phase1(GB_cuda_semiring_factory &semiring_factory, int64_t *nanobuckets, int64_t *blockBucket,
                         GrB_Matrix C, GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
-    phase1launchFactory<T_C, T_M, T_A, T_B, threads_per_block, chunk_size> lf(semiring_factory);
+    phase1launchFactory<threads_per_block, chunk_size> lf(semiring_factory);
     return lf.jitGridBlockLaunch(nanobuckets, blockBucket, C, M, A, B);
 }
 
 
-template<  typename T_C, int threads_per_block = 32, int chunk_size = 128>
+template<int threads_per_block = 32, int chunk_size = 128>
 bool GB_cuda_mxm_phase2(int64_t *nanobuckets, int64_t *blockBucket,
                           int64_t *bucketp, int64_t *bucket, int64_t *offset,
                           GrB_Matrix M) {
 
-  phase2launchFactory<T_C, threads_per_block, chunk_size> lf;
+  phase2launchFactory<threads_per_block, chunk_size> lf;
   return lf.jitGridBlockLaunch(nanobuckets, blockBucket, bucketp, bucket, offset, M);
 }
 
-template<  typename T_C, int threads_per_block = 32, int chunk_size = 128>
+template<int threads_per_block = 32, int chunk_size = 128>
 bool GB_cuda_mxm_phase2end(int64_t *nanobuckets, int64_t *blockBucket,
                            int64_t *bucketp, int64_t *bucket, int64_t *offset,
                            GrB_Matrix C, GrB_Matrix M) {
-    phase2endlaunchFactory<T_C, threads_per_block, chunk_size> lf;
+    phase2endlaunchFactory lf;
     return lf.jitGridBlockLaunch(nanobuckets, blockBucket, bucketp, bucket, offset, C, M);
 }
 
 
 
-template<  typename T_C, typename T_M, typename T_A, typename T_B, typename T_XY, typename T_Z>
 bool GB_cuda_mxm_phase3(GB_cuda_semiring_factory &mysemiringfactory, GB_bucket_code bucket_code,
                         int64_t start, int64_t end, int64_t *bucketp, int64_t *bucket,
                           GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
-    phase3launchFactory<T_C, T_M, T_A, T_B, T_XY, T_Z> lf(mysemiringfactory, bucket_code);
+    phase3launchFactory lf(mysemiringfactory, bucket_code);
     return lf.jitGridBlockLaunch(start, end, bucketp, bucket, C, M, A, B);
 }
 
 
-template<typename T>
-bool GB_cuda_reduce(int64_t *index, T *in_data, T *output, unsigned int N, GrB_Monoid op) {
-    reduceFactory<T> rf;
+bool GB_cuda_reduce(int64_t *index, void *in_data, void *output, unsigned int N, GrB_Monoid op) {
+    reduceFactory rf;
     return rf.jitGridBlockLaunch(index, in_data, output, N, op);
 }
 

@@ -227,6 +227,7 @@ logstat ('test82' ,t) ; % GrB_extract with index range (hypersparse)
 logstat ('test158',t) ; % test colscale and rowscale
 logstat ('test84' ,t) ; % GrB_assign (row and column with C in CSR/CSC format)
 logstat ('test130',t) ; % GrB_apply, hypersparse cases
+
 logstat ('test19b',t) ; % GrB_assign, many pending operators
 logstat ('test19b',s) ; % GrB_assign, many pending operators
 logstat ('test133',t) ; % test mask operations (GB_masker)
