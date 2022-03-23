@@ -13,7 +13,9 @@
 
     // include the support files from cpu_features/src/*.c
     #include "filesystem.c"
+#ifndef _WIN32
     #include "hwcaps.c"
+#endif
     #include "stack_line_reader.c"
     #include "string_view.c"
 
