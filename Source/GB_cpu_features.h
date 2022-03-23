@@ -53,8 +53,8 @@
 // rely on Google's cpu_features package for run-time tests
 //------------------------------------------------------------------------------
 
-#if GB_COMPILER_MSC || GB_COMPILER_NVCC
-// entirely disable cpu_features for MS Visual Studio and nvcc
+#if defined(_WIN32) || GB_COMPILER_NVCC
+// entirely disable cpu_features for windows or nvcc
 #undef  GBNCPUFEAT
 #define GBNCPUFEAT 1
 #endif
