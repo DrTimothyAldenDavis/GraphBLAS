@@ -96,16 +96,17 @@ __global__ void AxB_dot3_phase3_dndn
     int sz
 )
 {
+   const T_A *__restrict__ Ax = (T_A *)A->x  ;
+   const T_B *__restrict__ Bx = (T_B *)B->x  ;
+         T_C *__restrict__ Cx = (T_C *)C->x  ;
+         int64_t *__restrict__ Ci = C->i ;
+   const int64_t *__restrict__ Mi = M->i ;
+   const int64_t *__restrict__ Ai = A->i ;
+   const int64_t *__restrict__ Bi = B->i ;
+   const int64_t *__restrict__ Ap = A->p ;
+   const int64_t *__restrict__ Bp = B->p ;
 
     C->jumbled = true;
-
-    T_A *Ax = (T_A*)A->x;
-    T_B *Bx = (T_B*)B->x;
-    T_C *Cx = (T_C*)C->x;
-    int64_t *Mi = M->i;
-    int64_t *Ci = C->i;
-    int64_t *Ap = A->p;
-    int64_t *Bp = B->p;
 
     // zombie count
     int zc = 0;

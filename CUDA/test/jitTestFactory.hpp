@@ -386,9 +386,9 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     GrB_Matrix A = G.getA();
     GrB_Matrix B = G.getB();
 
-    GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
-    GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
-    GRB_TRY (GxB_Matrix_fprint (M, "M", GxB_SHORT_VERBOSE, stdout)) ;
+//    GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout)) ;
+//    GRB_TRY (GxB_Matrix_fprint (B, "B", GxB_SHORT_VERBOSE, stdout)) ;
+//    GRB_TRY (GxB_Matrix_fprint (M, "M", GxB_SHORT_VERBOSE, stdout)) ;
 //    GRB_TRY (GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout)) ;
 //
     std::cout << "Building semiring factgory" << std::endl;
