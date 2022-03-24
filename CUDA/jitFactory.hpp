@@ -36,40 +36,15 @@
 #ifndef GB_JITFACTORY_H
 #define GB_JITFACTORY_H
 
-
 #pragma once
 
 #include "GB_jit_launcher.h"
 #include "GB_cuda_semiring_factory.hpp"
-
-// FIXME: Is this okay or will it bring in too much (GB.h is brought in transitively)
-//#include "GraphBLAS.h"
-
-//#include "GB_Semiring_new.c"
-//#include "GrB_Semiring_new.c"
-//#include "GB_Monoid_new.c"
-//#include "GrB_Monoid_new.c"
 #include "GB_cuda_buckets.h"
-
 #include "GB_cuda_type_wrap.hpp"
-
-#undef  JITIFY_PRINT_INSTANTIATION
-#define JITIFY_PRINT_INSTANTIATION 1
-#undef  JITIFY_PRINT_SOURCE
-#define JITIFY_PRINT_SOURCE 1
-#undef  JITIFY_PRINT_LOG
-#define JITIFY_PRINT_LOG 1
-#undef  JITIFY_PRINT_PTX
-#define JITIFY_PRINT_PTX 1
-#undef  JITIFY_PRINT_LINKER_LOG
-#define JITIFY_PRINT_LINKER_LOG 1
-#undef  JITIFY_PRINT_LAUNCH
-#define JITIFY_PRINT_LAUNCH 1
-
-#include "test/dataFactory.hpp"
-#include "test/semiringFactory.hpp"
-// #include "GB_cuda.h"
-
+#include "GB_callback.hpp"
+#include "GB_cuda_error.h"
+#include "../rmm_wrap/rmm_wrap.h"
 
 #if __cplusplus >= 201103L
 
@@ -89,6 +64,8 @@
 class reduceFactory ;
 template<typename T1, typename T2, typename T3> class dotFactory ;
 template<typename T1, typename T2, typename T3> class spdotFactory ;
+
+inline std::istream* (*file_callback)(std::string, std::iostream&);
 
 
 //AxB_dot3_phase1 kernel launchers
