@@ -42,7 +42,6 @@
 #include "GB_cuda_semiring_factory.hpp"
 #include "GB_cuda_buckets.h"
 #include "GB_cuda_type_wrap.hpp"
-#include "GB_callback.hpp"
 #include "GB_cuda_error.h"
 #include "../rmm_wrap/rmm_wrap.h"
 
@@ -293,7 +292,6 @@ class phase3launchFactory
   GB_cuda_semiring_factory &semiring_factory_;
 
   GB_bucket_code bucket_code_;
-  GB_callback callback_generator;
 
 public:
 

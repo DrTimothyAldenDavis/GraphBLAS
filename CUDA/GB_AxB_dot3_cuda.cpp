@@ -40,6 +40,7 @@ extern "C"
     GB_Matrix_free (&C) ;                                               \
 }
 
+
 GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 (
     GrB_Matrix C,                   // output matrix

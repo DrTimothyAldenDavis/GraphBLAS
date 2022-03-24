@@ -5,6 +5,7 @@ extern "C"
   #include "GB_mxm.h"
 }
 #include "GB_cuda.h"
+#include <cuda_runtime.h>
 
 bool GB_AxB_dot3_cuda_branch 
 (

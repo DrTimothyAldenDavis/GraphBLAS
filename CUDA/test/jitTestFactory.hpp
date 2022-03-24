@@ -596,8 +596,10 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
+    printf("Invoking grb reduce\n");
     T expected;
-    cuda::jit::vector_reduce(&expected, v, monoid);
+    GRB_TRY(cuda::jit::vector_reduce(&expected, v, monoid));
+    printf("Done.\n");
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
     if(expected != actual) {
@@ -606,6 +608,9 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
     } else {
         std::cout << "Results matched!" << std::endl;
     }
+
+    rmm_wrap_free(d_data);
+    rmm_wrap_free(output);
 
     return expected == actual;
 }
