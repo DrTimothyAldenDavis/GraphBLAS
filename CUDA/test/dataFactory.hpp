@@ -190,7 +190,7 @@ class matrix : public Managed {
             std::cout<<"filling sparse"<<std::endl;
             unordered_set<std::int64_t> row_lookup;
             unordered_set<std::int64_t> key_lookup;
-            for ( int co = 0; co < nrows_; co++ )
+            for ( int co = 0; co < 2*nrows_; co++ )
             {
                 GrB_Index i = ((GrB_Index) (dis(r) * nrows_)) % ((GrB_Index) nrows_) ;
 
