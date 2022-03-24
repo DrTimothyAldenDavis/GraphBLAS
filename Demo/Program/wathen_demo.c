@@ -92,19 +92,22 @@ int main (int argc, char **argv)
             "nx %5ld n %10.3fM nvals %10.3fM create: %10.3f sec\n",
             nx, (double) n / 1e6, (double) nvals1 / 1e6, t) ;
 
-        int Nthreads [7] = {1, 2, 4, 8, 16, 20, 40} ;
-        for (int k = 0 ; k < 7 ; k++)
-        {
-            // set the # of threads to use
-            int nth = Nthreads [k] ;
-            GxB_set (GxB_NTHREADS, nth) ;
+        double T2 [3][7], T4 [3][7], T8 [3][7] ;
+        double T2best [7], T4best [7], T8best [7] ;
 
-            // for (int algo = 0 ; algo <= 2 ; algo++)
-            for (int algo = 0 ; algo <= 1 ; algo++)
+        for (int algo = 0 ; algo <= 2 ; algo++)
+        // for (int algo = 0 ; algo <= 1 ; algo++)
+        {
+            GrB_Descriptor desc = NULL ;
+            if (algo == 1) desc = Desc_Gustavson ;
+            if (algo == 2) desc = Desc_Hash ;
+
+            int Nthreads [7] = {1, 2, 4, 8, 16, 20, 40} ;
+            for (int k = 0 ; k < 7 ; k++)
             {
-                GrB_Descriptor desc = NULL ;
-                if (algo == 1) desc = Desc_Gustavson ;
-                if (algo == 2) desc = Desc_Hash ;
+                // set the # of threads to use
+                int nth = Nthreads [k] ;
+                GxB_set (GxB_NTHREADS, nth) ;
 
                 GrB_Matrix C = NULL ;
                 OK (GrB_Matrix_new (&C, GrB_FP64, n, n)) ;
@@ -126,6 +129,7 @@ int main (int argc, char **argv)
                     nth, t2, ((double) nvals2) / 1e6) ;
                 if (nth == 1) t2_sequential = t2 ;
                 printf ("speedup: %g\n", t2_sequential/t2) ;
+                T2 [algo][k] = t2 ;
 
                 // square it again: C = C*C to get A^4
                 // if (nx <= 4000)
@@ -141,6 +145,7 @@ int main (int argc, char **argv)
                         nth, t4, ((double) nvals2) / 1e6) ;
                     if (nth == 1) t4_sequential = t4 ;
                     printf ("speedup: %g\n", t4_sequential/t4) ;
+                    T4 [algo][k] = t4 ;
                 }
 
                 // square it again: C = C*C to get A^8
@@ -157,6 +162,7 @@ int main (int argc, char **argv)
                         nth, t8, ((double) nvals2) / 1e6) ;
                     if (nth == 1) t8_sequential = t8 ;
                     printf ("speedup: %g\n", t8_sequential/t8) ;
+                    T8 [algo][k] = t8 ;
                 }
 
                 GxB_set (GxB_BURBLE, false) ;
@@ -164,6 +170,64 @@ int main (int argc, char **argv)
             }
         }
         GrB_Matrix_free (&A) ;
+
+        printf ("\nSummary:\n") ;
+        for (int algo = 0 ; algo <= 2 ; algo++)
+        {
+            char *algo_name = (algo == 0) ? "Auto" : ((algo == 1) ? "Gus " : "Hash") ;
+            printf ("algo %s : ", algo_name) ;
+            printf ("| T2: ") ;
+            for (int k = 0 ; k < 7 ; k++)
+            {
+                printf ("%10.2f ", T2 [algo][k]) ;
+            }
+            printf ("| T4: ") ;
+            for (int k = 0 ; k < 7 ; k++)
+            {
+                printf ("%10.2f ", T4 [algo][k]) ;
+            }
+            printf ("| T8: ") ;
+            for (int k = 0 ; k < 7 ; k++)
+            {
+                printf ("%10.2f ", T8 [algo][k]) ;
+            }
+            printf ("\n") ;
+        }
+
+        for (int k = 0 ; k < 7 ; k++)
+        {
+            T2best [k] = fmin (fmin (T2 [0][k], T2 [1][k]), T2 [2][k]) ;
+            T4best [k] = fmin (fmin (T4 [0][k], T4 [1][k]), T4 [2][k]) ;
+            T8best [k] = fmin (fmin (T8 [0][k], T8 [1][k]), T8 [2][k]) ;
+        }
+
+        printf ("\nRelative:\n") ;
+        for (int algo = 0 ; algo <= 2 ; algo++)
+        {
+            char *algo_name = (algo == 0) ? "Auto" : ((algo == 1) ? "Gus " : "Hash") ;
+            printf ("algo %s : ", algo_name) ;
+            printf ("| T2: ") ;
+            for (int k = 0 ; k < 7 ; k++)
+            {
+                if (T2 [algo][k] == T2best [k]) printf ("      1    ") ;
+                else printf ("%10.2f ", T2 [algo][k] / T2best [k]) ;
+            }
+            printf ("| T4: ") ;
+            for (int k = 0 ; k < 7 ; k++)
+            {
+                if (T4 [algo][k] == T4best [k]) printf ("      1    ") ;
+                else printf ("%10.2f ", T4 [algo][k] / T4best [k]) ;
+            }
+            printf ("| T8: ") ;
+            for (int k = 0 ; k < 7 ; k++)
+            {
+                if (T8 [algo][k] == T8best [k]) printf ("      1    ") ;
+                else printf ("%10.2f ", T8 [algo][k] / T8best [k]) ;
+            }
+            printf ("\n") ;
+        }
+
+
     }
 
     GrB_free (&Desc_Gustavson) ;
