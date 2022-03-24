@@ -413,7 +413,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         GBURBLE ("(intensity: %0.3g workspace/(nnz(A)+nnz(B)): %0.3g",
             intensity, workspace / abnz) ;
         if (((*nthreads) <= 8 && intensity >= 8  && workspace < abnz)
-        ||  (                    intensity >= 16 && workspace < abnz*2))
+        ||  (                    intensity >= 16 && workspace < abnz))
         { 
             // work intensity is large, and Gustvason workspace is modest;
             // use Gustavson for all tasks
