@@ -269,7 +269,7 @@ template<typename T>
 void make_grb_matrix(GrB_Matrix &mat, std::vector<int64_t> &indptr, std::vector<int64_t> &indices, std::vector<T> &data,
                      int gxb_sparsity_control = GxB_SPARSE, int gxb_format = GxB_BY_ROW) {
 
-    GrB_Type type = cuda::to_grb_type<T>();
+    GrB_Type type = cuda::jit::to_grb_type<T>();
 
     int64_t n_rows = indptr.size() -1;
     int64_t n_cols = n_rows;
@@ -284,7 +284,7 @@ void make_grb_matrix(GrB_Matrix &mat, std::vector<int64_t> &indptr, std::vector<
             GrB_Index j = (GrB_Index) indices[offset];
             T x = data[offset];
 
-            cuda::set_element<T> (mat, x, i, j) ;
+            cuda::jit::set_element<T> (mat, x, i, j) ;
         }
     }
 
@@ -391,10 +391,6 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     GRB_TRY (GxB_Matrix_fprint (M, "M", GxB_SHORT_VERBOSE, stdout)) ;
 //    GRB_TRY (GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout)) ;
 //
-    T_C *Cx = (T_C*)C->x;
-    T_A *Ax = (T_A*)A->x;
-    T_B *Bx = (T_B*)B->x;
-
     std::cout << "Building semiring factgory" << std::endl;
     GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
     GrB_Semiring mysemiring;
@@ -415,7 +411,6 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                                          GB_sparsity(A),
                                          GB_sparsity(B) ) ;
 
-    int zc_valid = 0;
     bool result = false;
 
     /**
@@ -427,8 +422,6 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
     int number_of_sms = GB_Global_gpu_sm_get (0);
     int nblks = ( GB_nnz (M) + chunk_size - 1)/chunk_size;
-    int ntasks = GB_IMIN( nblks,  128 * number_of_sms);
-    int nthrd = 32;
     int64_t *bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
 
     bucketp[1] = 0;
@@ -465,7 +458,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout)) ;
 
             GrB_Matrix C_actual;
-            GrB_Type type = cuda::to_grb_type<T_C>();
+            GrB_Type type = cuda::jit::to_grb_type<T_C>();
             GRB_TRY (GrB_Matrix_new (&C_actual, type, N, N)) ;
 
             // ensure the GPU is not used
@@ -498,7 +491,6 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             GRB_TRY (GrB_Matrix_new (&T, GrB_BOOL, nrows, ncols)) ;
             GrB_BinaryOp op = NULL;
             GrB_UnaryOp op_abs = NULL ;
-            GrB_Monoid monoid_sum = NULL ;
             if      (type == GrB_BOOL  ) op = GrB_EQ_BOOL   ;
             else if (type == GrB_INT8  ) op = GrB_EQ_INT8   ;
             else if (type == GrB_INT16 ) op = GrB_EQ_INT16  ;
@@ -591,21 +583,21 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
     T actual = output[0];
 
     GrB_Vector v;
-    GrB_Type t = cuda::to_grb_type<T>();
+    GrB_Type t = cuda::jit::to_grb_type<T>();
     GrB_Vector_new(&v, t, N);
 
     // Just sum in place for now (since we are assuming sum)
     int sum = 0;
     for(int i = 0; i < N; ++i) {
         sum+= d_data[i];
-        cuda::vector_set_element<T>(v, i, d_data[i]);
+        cuda::jit::vector_set_element<T>(v, i, d_data[i]);
     }
     printf("Sum: %d\n", sum);
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
 
     T expected;
-    cuda::vector_reduce(&expected, v, monoid);
+    cuda::jit::vector_reduce(&expected, v, monoid);
 
     GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
     if(expected != actual) {
@@ -617,6 +609,191 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
 
     return expected == actual;
 }
+
+//bool test_triangle_counting() {
+//
+//    // FIXME: Allow the adaptive tests in this guy
+//
+//    //Generate test data and setup for using a jitify kernel with 'bucket' interface
+//    // The testBucket arg tells the generator which bucket we want to exercise
+//
+//    using T = int64_t;
+//
+//    int64_t Annz;
+//    int64_t Bnnz;
+//
+//    GrB_Semiring mysemiring;
+//    auto grb_info = GrB_Semiring_new(&mysemiring, monoid, binop);
+//    GRB_TRY (grb_info) ;
+//
+//    mysemiringfactory.semiring_factory ( mysemiring, flipxy,
+//                                         C->type, M->type,
+//                                         A->type, B->type,
+//                                         mask_struct,  // matrix types
+//                                         mask_comp, GB_sparsity(C),
+//                                         GB_sparsity(M),
+//                                         GB_sparsity(A),
+//                                         GB_sparsity(B) ) ;
+//
+//    int zc_valid = 0;
+//    bool result = false;
+//
+//    /**
+//     * Run Phase 1: Compute nanobuckets and blockbuckets
+//     */
+//    const int64_t mnz = GB_nnz (M) ;
+//
+//    int chunk_size = 128;
+//
+//    int number_of_sms = GB_Global_gpu_sm_get (0);
+//    int nblks = ( GB_nnz (M) + chunk_size - 1)/chunk_size;
+//    int ntasks = GB_IMIN( nblks,  128 * number_of_sms);
+//    int nthrd = 32;
+//    int64_t *bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
+//
+//    bucketp[1] = 0;
+//
+//    int64_t *bucket = (int64_t*)rmm_wrap_malloc(Cnz * sizeof (int64_t));
+//    int64_t *offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
+//
+//    /**
+//     * Run Phase 3: Execute dot3 on all buckets
+//     */
+//    for (int b =0; b < 12; ++b) {// loop on buckets
+//        if (b == TB) {
+//            G.fill_buckets(b);
+//            int64_t *Bucket = G.getBucket();
+//            int64_t *BucketStart = G.getBucketStart();
+//
+//            int64_t b_start = BucketStart [b] ;
+//            int64_t b_end   = BucketStart [b+1] ;
+//            int64_t nvecs = b_end - b_start ;
+//
+//            if (nvecs > 0) std::cout<< "bucket "<<b<<" has "<<nvecs<<" dots to do"<<std::endl;
+//
+//            G.loadCj();
+//
+//            GpuTimer kernTimer;
+//            kernTimer.Start();
+//
+//            GB_cuda_mxm_phase3(mysemiringfactory, (GB_bucket_code )b,
+//                               b_start, b_end, bucketp, Bucket, C, M, B, A);
+//
+//            kernTimer.Stop();
+//
+//            std::cout<<"returned from kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+//            GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout)) ;
+//
+//            GrB_Matrix C_actual;
+//            GrB_Type type = cuda::jit::to_grb_type<T_C>();
+//            GRB_TRY (GrB_Matrix_new (&C_actual, type, N, N)) ;
+//
+//            // ensure the GPU is not used
+//            GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_NEVER)) ;
+//
+//            // Use GrB_DESC_S for structural because dot3 mask will never be complemented
+//            GRB_TRY (GrB_mxm(C_actual, M, NULL, mysemiring, A, B,
+//                             Mask_struct ? GrB_DESC_ST1 : GrB_DESC_T1));
+////            GRB_TRY (GrB_mxm(C_actual, M, NULL, mysemiring, A, B,
+////                             Mask_struct ? GrB_DESC_S : NULL));
+//
+//            GRB_TRY (GxB_Matrix_fprint (M, "M actual", GxB_SHORT_VERBOSE, stdout));
+//            GRB_TRY (GxB_Matrix_fprint (A, "A actual", GxB_SHORT_VERBOSE, stdout));
+//            GRB_TRY (GxB_Matrix_fprint (B, "B actual", GxB_SHORT_VERBOSE, stdout));
+//            GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout));
+//            GRB_TRY (GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout));
+//
+//            // compare
+//            double tol = 0 ;
+//            GrB_Index nvals1 = 0, nvals2 = 0 ;
+//            GRB_TRY (GrB_Matrix_nvals (&nvals1, C)) ;
+//            GRB_TRY (GrB_Matrix_nvals (&nvals2, C_actual)) ;
+//            if (nvals1 != nvals2) { printf ("!!\n") ; abort ( ) ; }
+//            GrB_Index nrows, ncols ;
+//            GrB_Matrix_nrows (&nrows, C) ;
+//            GrB_Matrix_ncols (&ncols, C) ;
+//
+//            GrB_Matrix T;
+//
+//            GRB_TRY (GrB_Matrix_new (&T, GrB_BOOL, nrows, ncols)) ;
+//            GrB_BinaryOp op = NULL;
+//            GrB_UnaryOp op_abs = NULL ;
+//            GrB_Monoid monoid_sum = NULL ;
+//            if      (type == GrB_BOOL  ) op = GrB_EQ_BOOL   ;
+//            else if (type == GrB_INT8  ) op = GrB_EQ_INT8   ;
+//            else if (type == GrB_INT16 ) op = GrB_EQ_INT16  ;
+//            else if (type == GrB_INT32 ) op = GrB_EQ_INT32  ;
+//            else if (type == GrB_INT64 ) op = GrB_EQ_INT64  ;
+//            else if (type == GrB_UINT8 ) op = GrB_EQ_UINT8  ;
+//            else if (type == GrB_UINT16) op = GrB_EQ_UINT16 ;
+//            else if (type == GrB_UINT32) op = GrB_EQ_UINT32 ;
+//            else if (type == GrB_UINT64) op = GrB_EQ_UINT64 ;
+//            else if (type == GrB_FP32  )
+//            {
+//                op = (tol == 0)? GrB_EQ_FP32 : GrB_MINUS_FP32   ;
+//                op_abs = GrB_ABS_FP32 ;
+//            }
+//            else if (type == GrB_FP64  )
+//            {
+//                op = (tol == 0)? GrB_EQ_FP64 : GrB_MINUS_FP64   ;
+//                op_abs = GrB_ABS_FP64 ;
+//            }
+//            else if (type == GxB_FC32  )
+//            {
+//                op = (tol == 0)? GxB_EQ_FC32 : GxB_MINUS_FC32   ;
+//                op_abs = GxB_ABS_FC32 ;
+//            }
+//            else if (type == GxB_FC64  )
+//            {
+//                op = (tol == 0)? GxB_EQ_FC64 : GxB_MINUS_FC64   ;
+//                op_abs = GxB_ABS_FC64 ;
+//            }
+//
+//            // Diff = C - C_actual
+//            GrB_Matrix Diff ;
+//            GRB_TRY (GrB_Matrix_new (&Diff, GrB_FP64, nrows, ncols)) ;
+//            GRB_TRY (GrB_Matrix_apply (Diff, NULL, NULL, GrB_AINV_FP64, C_actual, NULL)) ;
+//            GRB_TRY (GrB_Matrix_eWiseAdd_BinaryOp (Diff, NULL, NULL, GrB_PLUS_FP64,
+//                                                   C, Diff, NULL)) ;
+//            GRB_TRY (GxB_Matrix_fprint (Diff, "Diff actual", GxB_SHORT_VERBOSE, stdout));
+//            GRB_TRY (GrB_Matrix_free (&Diff)) ;
+//
+//            if (tol == 0)
+//            {
+//                // check for perfect equality
+//                GRB_TRY (GrB_Matrix_eWiseMult_BinaryOp (T, NULL, NULL, op, C, C_actual,
+//                                                        NULL)) ;
+//                GrB_Index nvals3 = 1 ;
+//                GRB_TRY (GxB_Matrix_fprint (T, "T actual", GxB_SHORT_VERBOSE, stdout));
+//                GRB_TRY (GrB_Matrix_nvals (&nvals3, T)) ;
+//                if (nvals1 != nvals3) { printf ("!!\n") ; abort ( ) ; }
+//                bool is_same = false ;
+//                GRB_TRY (GrB_Matrix_reduce_BOOL (&is_same, NULL, GrB_LAND_MONOID_BOOL,
+//                                                 T, NULL)) ;
+//                if (!is_same) { printf ("!!\n") ; abort ( ) ; }
+//                GRB_TRY (GrB_Matrix_free (&T)) ;
+//            }
+//            else
+//            {
+//                // TODO: check with roundoff
+//                { printf ("!!\n") ; abort ( ) ; }
+//            }
+//
+//            // re-enable the GPU
+//            GRB_TRY (GxB_Global_Option_set (GxB_GLOBAL_GPU_CONTROL, GxB_GPU_ALWAYS)) ;
+//        }
+//    }
+//
+//    rmm_wrap_free(bucket);
+//    rmm_wrap_free(bucketp);
+//    rmm_wrap_free(offset);
+//
+//    G.del();
+//
+//    return result;
+//
+//}
+
 
 
 //template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>

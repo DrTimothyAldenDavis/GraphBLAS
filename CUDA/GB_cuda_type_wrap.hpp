@@ -22,12 +22,17 @@ extern "C" {
 #include "GB.h"
 };
 #include <stdint.h>
+#include <string>
+#include <typeinfo>
+#include <type_traits>
+#include <memory>
+#include <cstdlib>
 
 /**---------------------------------------------------------------------------*
  * @file type_convert.hpp
  * @brief Defines the mapping between concrete C++ types and Grb types.
  *---------------------------------------------------------------------------**/
-namespace cuda {
+namespace cuda::jit {
 
 template <typename T>
 GrB_Type to_grb_type();
@@ -106,6 +111,73 @@ template<> inline GrB_Info get_element<float>(GrB_Matrix A, float *x, int64_t i,
 template<> inline GrB_Info get_element<double>(GrB_Matrix A, double *x, int64_t i, int64_t j) { return GrB_Matrix_extractElement_FP64(x, A, i, j); }
 template<> inline GrB_Info get_element<bool>(GrB_Matrix A, bool *x, int64_t i, int64_t j) { return GrB_Matrix_extractElement_BOOL(x, A, i, j); }
 
+template<typename T>
+class type_name {
+public:
+    static const char *name;
+};
 
-}  // namespace cuda
+#define DECLARE_TYPE_NAME(x)  template<> inline const char *type_name<x>::name = #x;
+#define GET_TYPE_NAME(x) (type_name<decltype(x)>::name)
+
+    DECLARE_TYPE_NAME(int);
+    DECLARE_TYPE_NAME(int&);
+    DECLARE_TYPE_NAME(int*);
+    DECLARE_TYPE_NAME(int8_t);
+    DECLARE_TYPE_NAME(int8_t&);
+    DECLARE_TYPE_NAME(int8_t*);
+    DECLARE_TYPE_NAME(unsigned char);
+    DECLARE_TYPE_NAME(unsigned char&);
+    DECLARE_TYPE_NAME(unsigned char*);
+    DECLARE_TYPE_NAME(unsigned int);
+    DECLARE_TYPE_NAME(unsigned int&);
+    DECLARE_TYPE_NAME(unsigned int*);
+    DECLARE_TYPE_NAME(unsigned int64_t);
+    DECLARE_TYPE_NAME(unsigned int64_t&);
+    DECLARE_TYPE_NAME(unsigned int64_t*);
+    DECLARE_TYPE_NAME(long);
+    DECLARE_TYPE_NAME(long&);
+    DECLARE_TYPE_NAME(long*);
+    DECLARE_TYPE_NAME(float);
+    DECLARE_TYPE_NAME(float&);
+    DECLARE_TYPE_NAME(float*);
+    DECLARE_TYPE_NAME(double);
+    DECLARE_TYPE_NAME(double&);
+    DECLARE_TYPE_NAME(double*);
+    DECLARE_TYPE_NAME(bool);
+
+
+
+    inline const std::string grb_str_type(GB_Type_code grb_type_code) {
+        switch(grb_type_code) {
+            case GB_BOOL_code:
+                return "bool";
+            case GB_INT8_code:
+                return "int8_t";
+            case GB_UINT8_code:
+                return "uint8_t";
+            case GB_INT16_code:
+                return "int16_t";
+            case GB_UINT16_code:
+                return "uint16_t";
+            case GB_INT32_code:
+                return "int32_t";
+            case GB_UINT32_code:
+                return "uint32_t";
+            case GB_INT64_code:
+                return "int64_t";
+            case GB_UINT64_code:
+                return "uint64_t";
+            case GB_FP32_code:
+                return "float";
+            case GB_FP64_code:
+                return "double";
+            default:
+                printf("Error: GrB_Type not supported.\n");
+                exit(1);
+        }
+    }
+
+
+}  // namespace cuda::jit
 #endif

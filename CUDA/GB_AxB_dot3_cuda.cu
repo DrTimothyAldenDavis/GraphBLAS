@@ -21,7 +21,7 @@ extern "C"
 #include "GB_jit_cache.h"
 
 #include "jitFactory.hpp"
-#include "type_name.hpp"
+#include "GB_cuda_type_wrap.hpp"
 
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                               \

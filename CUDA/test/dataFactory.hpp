@@ -8,7 +8,7 @@
 #include <unordered_set>
 
 #include "GB.h"
-#include "../type_convert.hpp"
+#include "../GB_cuda_type_wrap.hpp"
 #include "../GB_Matrix_allocate.h"
 #include "test_utility.hpp"
 
@@ -120,7 +120,7 @@ class matrix : public Managed {
      }
 
      void alloc() {
-         GrB_Type type = cuda::to_grb_type<T>();
+         GrB_Type type = cuda::jit::to_grb_type<T>();
 
          GRB_TRY (GrB_Matrix_new (&mat, type, nrows_, ncols_)) ;
          // GxB_Matrix_Option_set (mat, GxB_SPARSITY_CONTROL,
@@ -173,14 +173,14 @@ class matrix : public Managed {
                     if (make_symmetric)
                     {
                         // A (i,j) = x
-                        cuda::set_element<T> (mat, x, i, j) ;
+                        cuda::jit::set_element<T> (mat, x, i, j) ;
                         // A (j,i) = x
-                        cuda::set_element<T> (mat, x, j, i) ;
+                        cuda::jit::set_element<T> (mat, x, j, i) ;
                     }
                     else
                     {
                         // A (i,j) = x
-                        cuda::set_element<T> (mat, x, i, j) ;
+                        cuda::jit::set_element<T> (mat, x, i, j) ;
                     }
                 }
             }
@@ -251,10 +251,10 @@ class matrix : public Managed {
 
                 T x = (T)val_min + (T)(dis(r) * (val_max - val_min)) ;
                 // A (i,j) = x
-                cuda::set_element<T> (mat, x, i, j) ;
+                cuda::jit::set_element<T> (mat, x, i, j) ;
                 if (make_symmetric) {
                     // A (j,i) = x
-                    cuda::set_element<T>(mat, x, j, i) ;
+                    cuda::jit::set_element<T>(mat, x, j, i) ;
                 }
             }
         }

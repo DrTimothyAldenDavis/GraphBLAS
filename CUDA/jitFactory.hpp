@@ -51,7 +51,7 @@
 //#include "GrB_Monoid_new.c"
 #include "GB_cuda_buckets.h"
 
-#include "type_name.hpp"
+#include "GB_cuda_type_wrap.hpp"
 
 #undef  JITIFY_PRINT_INSTANTIATION
 #define JITIFY_PRINT_INSTANTIATION 1
