@@ -98,9 +98,9 @@ def write_test_instances_header(test_suite_name, Monoids, Binops, Semirings, Dat
 def write_cuda_test(source_dir, test_suite_name, semiring, kernel):
     import shutil
 
-    shutil.copy(f"{source_dir}/test/cuda_tests_template.cpp", f"{test_suite_name}_{semiring}_cuda_tests.cu")
+    shutil.copy(f"{source_dir}/test/cuda_tests_template.cpp", f"{test_suite_name}_{semiring}_cuda_tests.cpp")
 
-    with open(f"{test_suite_name}_{semiring}_cuda_tests.cu", "a") as file_object:
+    with open(f"{test_suite_name}_{semiring}_cuda_tests.cpp", "a") as file_object:
         # Keeping this as a separate file for now to allow for further nesting
         # of test instances for each test_suite_name
         file_object.write(f"\n#include \"{test_suite_name}_{semiring}_test_instances.hpp\"")

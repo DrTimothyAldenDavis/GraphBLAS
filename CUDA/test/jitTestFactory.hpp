@@ -340,6 +340,9 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             Annz = N * 5;
             Bnnz = N * 2;
             break;
+        default:
+            printf("Bucket not yet being tested!\n");
+            exit(1);
     }
     int64_t Cnz = N;
     float Cnzpercent = (float) Cnz/(N*N);
