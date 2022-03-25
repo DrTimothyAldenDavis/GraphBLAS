@@ -64,8 +64,10 @@ int main (int argc, char **argv)
 
     FREE_ALL ;
 
+#if 0
+
     //--------------------------------------------------------------------------
-    // benchmark wathen matrices
+    // benchmark Wathen matrices (for ACM TOMS submission)
     //--------------------------------------------------------------------------
 
     GrB_Descriptor Desc_Gustavson = NULL, Desc_Hash = NULL ;
@@ -74,7 +76,7 @@ int main (int argc, char **argv)
     GxB_Desc_set (Desc_Gustavson, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON) ;
     GxB_Desc_set (Desc_Hash     , GxB_AxB_METHOD, GxB_AxB_HASH     ) ;
 
-    for (nx = 1500 ; nx <= 4000 ; nx += 100)
+    for (nx = 100 ; nx <= 2200 ; nx += 100)
     {
         printf ("\n ------------------- nx %ld\n", nx) ;
         GxB_set (GxB_NTHREADS, 40) ;
@@ -232,6 +234,7 @@ int main (int argc, char **argv)
 
     GrB_free (&Desc_Gustavson) ;
     GrB_free (&Desc_Hash) ;
+#endif
 
     OK (GrB_finalize ( )) ;
 }
