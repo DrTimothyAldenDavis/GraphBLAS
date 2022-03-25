@@ -75,7 +75,9 @@ T block_ReduceSum(thread_block g, T val)
   return val;
 }
 
-template< typename T, typename Accum, bool atomic_reduce = true>
+
+
+template< typename T, typename Accum, int type_code, bool atomic_reduce = true>
 __global__ void reduceNonZombiesWarp
 (
     GrB_Matrix A,
@@ -114,13 +116,11 @@ __global__ void reduceNonZombiesWarp
         if(atomic_reduce) {
 
             // TODO: This isn't the prettiest way to do this (and slows compile time)
-            if(std::is_same<Accum, __jitify_stdint_ns::int64_t>::value) {
-
+            if(type_code == 8) {
                 atomicAdd((unsigned long long *)g_odata, (unsigned long long)sum);
             }
             else {
-                atomicAdd(g_odata, (Accum)sum);
-
+                atomicAdd(g_odata, sum);
             }
 
         } else {

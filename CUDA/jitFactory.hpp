@@ -543,16 +543,18 @@ public:
         hashable_name << R"(.cuh")" << std::endl;
 
       printf("About to launch1...\n");
+      printf("Out type code: %d\n", (int)(temp_scalar->type->code));
       jit::launcher(hashable_name,
                     string_to_be_jitted.str(),
                     header_names,
                     compiler_flags,
                     file_callback)
-               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, "true" })
+               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, std::to_string(temp_scalar->type->code), "true" })
                .configure(grid, block)
 
                // FIXME: GB_ADD is hardcoded into kernel for now
                .launch( A, temp_scalar, N);
+
 
       checkCudaErrors( cudaDeviceSynchronize() );
 
