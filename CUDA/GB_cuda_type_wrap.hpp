@@ -82,6 +82,22 @@ template<> inline void vector_set_element<double>(GrB_Vector A, double x, int64_
 template<> inline void vector_set_element<bool>(GrB_Vector A, bool x, int64_t i) { GrB_Vector_setElement_BOOL(A, x, i); }
 
 
+    template <typename T>
+    void scalar_set_element(GrB_Scalar A, T x);
+
+    template<> inline void scalar_set_element<int8_t>(GrB_Scalar A, int8_t x) { GrB_Scalar_setElement_INT8(A, x); }
+    template<> inline void scalar_set_element<int16_t>(GrB_Scalar A, int16_t x) { GrB_Scalar_setElement_INT16(A, x); }
+    template<> inline void scalar_set_element<int32_t>(GrB_Scalar A, int32_t x) { GrB_Scalar_setElement_INT32(A, x); }
+    template<> inline void scalar_set_element<int64_t>(GrB_Scalar A, int64_t x) { GrB_Scalar_setElement_INT64(A, x); }
+    template<> inline void scalar_set_element<uint8_t>(GrB_Scalar A, uint8_t x) { GrB_Scalar_setElement_UINT8(A, x); }
+    template<> inline void scalar_set_element<uint16_t>(GrB_Scalar A, uint16_t x) { GrB_Scalar_setElement_UINT16(A, x); }
+    template<> inline void scalar_set_element<uint32_t>(GrB_Scalar A, uint32_t x) { GrB_Scalar_setElement_UINT32(A, x); }
+    template<> inline void scalar_set_element<uint64_t>(GrB_Scalar A, uint64_t x) { GrB_Scalar_setElement_UINT64(A, x); }
+    template<> inline void scalar_set_element<float>(GrB_Scalar A, float x) { GrB_Scalar_setElement_FP32(A, x); }
+    template<> inline void scalar_set_element<double>(GrB_Scalar A, double x) { GrB_Scalar_setElement_FP64(A, x); }
+    template<> inline void scalar_set_element<bool>(GrB_Scalar A, bool x) { GrB_Scalar_setElement_BOOL(A, x); }
+
+
 template<typename T>
 GrB_Info vector_reduce(T *scalar, GrB_Vector A, GrB_Monoid op);
 
@@ -110,6 +126,10 @@ template<> inline GrB_Info get_element<uint64_t>(GrB_Matrix A, uint64_t *x, int6
 template<> inline GrB_Info get_element<float>(GrB_Matrix A, float *x, int64_t i, int64_t j) { return GrB_Matrix_extractElement_FP32(x, A, i, j); }
 template<> inline GrB_Info get_element<double>(GrB_Matrix A, double *x, int64_t i, int64_t j) { return GrB_Matrix_extractElement_FP64(x, A, i, j); }
 template<> inline GrB_Info get_element<bool>(GrB_Matrix A, bool *x, int64_t i, int64_t j) { return GrB_Matrix_extractElement_BOOL(x, A, i, j); }
+
+
+
+
 
 template<typename T>
 class type_name {

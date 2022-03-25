@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <cooperative_groups.h>
 #include "matrix.h"
-//#include "GB_binary_search.h"
 
 using namespace cooperative_groups;
 

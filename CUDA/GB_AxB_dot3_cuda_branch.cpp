@@ -49,10 +49,18 @@ bool GB_AxB_dot3_cuda_branch
             && !GB_IS_BITMAP (A) && !GB_IS_BITMAP (B)
             && !GB_IS_FULL (A) && !GB_IS_FULL (B))
         {
+            printf("Using CUDA Path.\n");
             return true;
         }
         else
-        { 
+        {
+            std::cout << "Not using cuda path. M_is_hypersparse: " << GB_IS_HYPERSPARSE(M) <<
+                         ", A->iso: " << A->iso << ", B->iso: " << B->iso << ", A_BITMAP: " << GB_IS_BITMAP(A) <<
+                         ", B_BITMAP: " << GB_IS_BITMAP(B) << ", GB_IS_FULL(A): " << GB_IS_FULL(A)
+                         << ", GB_IS_FULL(B): " << GB_IS_FULL(B) << ", semiring header size: " << semiring->header_size <<
+
+                         std::endl;
+
             return false;
         }
 

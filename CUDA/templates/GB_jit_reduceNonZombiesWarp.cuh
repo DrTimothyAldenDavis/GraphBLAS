@@ -14,10 +14,11 @@
 
 // Thus, threadblock b owns g_idata [b*s*8 ... min(n,(b+1)*s*8-1)].  It's job
 // is to reduce this data to a scalar, and write it to g_odata [b].
-#pragma once
 
 #define GB_CUDA_KERNEL
 #include <limits>
+#include <type_traits>
+#include "matrix.h"
 #include <cstdint>
 #include <cooperative_groups.h>
 
@@ -74,20 +75,23 @@ T block_ReduceSum(thread_block g, T val)
   return val;
 }
 
-template< typename T, bool atomic_reduce = true>
+template< typename T, typename Accum, bool atomic_reduce = true>
 __global__ void reduceNonZombiesWarp
 (
-    int64_t *index,  // array of size n
-    T *g_idata,      // array of size n
-    T *g_odata,      // array of size grid.x if atomic_reduce==false and size 1 if atomic_reduce==true
+    GrB_Matrix A,
+    GrB_Scalar O,      // array of size grid.x if atomic_reduce==false and size 1 if atomic_reduce==true
     unsigned int N
 )
 {
     // set thread ID
     int tid = threadIdx.x ;
 
+    int64_t *index = A->i;
+    T *g_idata = (T*) A->x;
+    Accum *g_odata = (Accum*) O->x;
+
     // each thread tid reduces its result into sum
-    T sum = (T) GB_IDENTITY;
+    Accum sum = (Accum) GB_IDENTITY;
 
     for(int i = blockIdx.x * blockDim.x + threadIdx.x; 
         i < N;
@@ -96,7 +100,6 @@ __global__ void reduceNonZombiesWarp
         T fold = g_idata[i];
         sum = GB_ADD( sum, fold );
     }
-//    printf("thd%d  sum is %d\n", threadIdx.x + blockDim.x*blockIdx.x, sum);
     __syncthreads();
     //--------------------------------------------------------------------------
     // reduce work [0..s-1] to a single scalar
@@ -107,9 +110,19 @@ __global__ void reduceNonZombiesWarp
     // write result for this block to global mem
     if (tid == 0)
     {
+        // TODO: Assuming sum for now (liek the rest of the kernel)
         if(atomic_reduce) {
-            // TODO: Assuming sum for now (liek the rest of the kernel)
-            T oldval = atomicAdd(g_odata, sum);
+
+            // TODO: This isn't the prettiest way to do this (and slows compile time)
+            if(std::is_same<Accum, __jitify_stdint_ns::int64_t>::value) {
+
+                atomicAdd((unsigned long long *)g_odata, (unsigned long long)sum);
+            }
+            else {
+                atomicAdd(g_odata, (Accum)sum);
+
+            }
+
         } else {
             g_odata [blockIdx.x] = sum ;
         }
