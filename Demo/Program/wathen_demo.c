@@ -74,7 +74,7 @@ int main (int argc, char **argv)
     GxB_Desc_set (Desc_Gustavson, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON) ;
     GxB_Desc_set (Desc_Hash     , GxB_AxB_METHOD, GxB_AxB_HASH     ) ;
 
-    for (nx = 100 ; nx <= 4000 ; nx += 100)
+    for (nx = 1500 ; nx <= 4000 ; nx += 100)
     {
         printf ("\n ------------------- nx %ld\n", nx) ;
         GxB_set (GxB_NTHREADS, 40) ;
