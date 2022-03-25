@@ -19,6 +19,7 @@
 #include <limits>
 #include <type_traits>
 #include "matrix.h"
+#include "GB_jit_atomics.cuh"
 #include <cstdint>
 #include <cooperative_groups.h>
 
@@ -76,7 +77,6 @@ T block_ReduceSum(thread_block g, T val)
 }
 
 
-
 template< typename T, typename Accum, int type_code, bool atomic_reduce = true>
 __global__ void reduceNonZombiesWarp
 (
@@ -116,12 +116,7 @@ __global__ void reduceNonZombiesWarp
         if(atomic_reduce) {
 
             // TODO: This isn't the prettiest way to do this (and slows compile time)
-            if(type_code == 8) {
-                atomicAdd((unsigned long long *)g_odata, (unsigned long long)sum);
-            }
-            else {
-                atomicAdd(g_odata, sum);
-            }
+            atomic_add<Accum>(g_odata, sum);
 
         } else {
             g_odata [blockIdx.x] = sum ;
