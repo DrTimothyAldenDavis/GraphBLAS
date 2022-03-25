@@ -1779,4 +1779,238 @@ algo: Auto nthreads: 4
  [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (intensity: 8.78 workspace/(nnz(A)+nnz(B)): 0.255: all Gustvason) (nthreads 4 coarse: 8) (sparse saxpy) 
    4.87 sec ]
 C=A^2 threads:  4 mxm:      4.867 nvals    808.007M speedup: 3.49443
- [ GrB_mxm C=A*B, saxpy (S = S*S, anz
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (intensity: 28.7 workspace/(nnz(A)+nnz(B)): 0.0719: all Gustvason) (nthreads 4 coarse: 8) (sparse saxpy) 
+   39.7 sec ]
+C=A^4 threads:  4 mxm:     39.687 nvals   3011.502M speedup: 3.72056
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (intensity: 105 workspace/(nnz(A)+nnz(B)): 0.0193: all Gustvason) (nthreads 4 coarse: 8) (sparse saxpy) 
+   418 sec ]
+C=A^8 threads:  4 mxm:    418.151 nvals  11575.249M speedup: 3.9408
+
+algo: Auto nthreads: 8
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (intensity: 8.78 workspace/(nnz(A)+nnz(B)): 0.511: all Gustvason) (nthreads 8 coarse: 16) (sparse saxpy) 
+   2.69 sec ]
+C=A^2 threads:  8 mxm:      2.692 nvals    808.007M speedup: 6.31795
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (intensity: 28.7 workspace/(nnz(A)+nnz(B)): 0.144: all Gustvason) (nthreads 8 coarse: 16) (sparse saxpy) 
+   20.4 sec ]
+C=A^4 threads:  8 mxm:     20.378 nvals   3011.502M speedup: 7.24585
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (intensity: 105 workspace/(nnz(A)+nnz(B)): 0.0386: all Gustvason) (nthreads 8 coarse: 16) (sparse saxpy) 
+   211 sec ]
+C=A^8 threads:  8 mxm:    211.173 nvals  11575.249M speedup: 7.8033
+
+algo: Auto nthreads: 16
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (intensity: 8.78 workspace/(nnz(A)+nnz(B)): 1.02) (nthreads 16 coarse hash: 32) (sparse saxpy) 
+   2.09 sec ]
+C=A^2 threads: 16 mxm:      2.094 nvals    808.007M speedup: 8.12232
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (intensity: 28.7 workspace/(nnz(A)+nnz(B)): 0.288: all Gustvason) (nthreads 16 coarse: 32) (sparse saxpy) 
+   10.9 sec ]
+C=A^4 threads: 16 mxm:     10.942 nvals   3011.502M speedup: 13.4949
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (intensity: 105 workspace/(nnz(A)+nnz(B)): 0.0772: all Gustvason) (nthreads 16 coarse: 32) (sparse saxpy) 
+   109 sec ]
+C=A^8 threads: 16 mxm:    108.660 nvals  11575.249M speedup: 15.1651
+
+algo: Auto nthreads: 20
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (intensity: 8.78 workspace/(nnz(A)+nnz(B)): 1.28) (nthreads 20 coarse hash: 40) (sparse saxpy) 
+   1.71 sec ]
+C=A^2 threads: 20 mxm:      1.708 nvals    808.007M speedup: 9.95476
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (intensity: 28.7 workspace/(nnz(A)+nnz(B)): 0.36: all Gustvason) (nthreads 20 coarse: 40) (sparse saxpy) 
+   9.7 sec ]
+C=A^4 threads: 20 mxm:      9.702 nvals   3011.502M speedup: 15.2194
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (intensity: 105 workspace/(nnz(A)+nnz(B)): 0.0965: all Gustvason) (nthreads 20 coarse: 40) (sparse saxpy) 
+   90.5 sec ]
+C=A^8 threads: 20 mxm:     90.541 nvals  11575.249M speedup: 18.2001
+
+algo: Auto nthreads: 40
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (intensity: 8.78 workspace/(nnz(A)+nnz(B)): 2.55) (nthreads 40 coarse hash: 80) (sparse saxpy) 
+   1.53 sec ]
+C=A^2 threads: 40 mxm:      1.531 nvals    808.007M speedup: 11.1045
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (intensity: 28.7 workspace/(nnz(A)+nnz(B)): 0.719: all Gustvason) (nthreads 40 coarse: 80) (sparse saxpy) 
+   8.67 sec ]
+C=A^4 threads: 40 mxm:      8.668 nvals   3011.502M speedup: 17.0351
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (intensity: 105 workspace/(nnz(A)+nnz(B)): 0.193: all Gustvason) (nthreads 40 coarse: 80) (sparse saxpy) 
+   84.4 sec ]
+C=A^8 threads: 40 mxm:     84.369 nvals  11575.249M speedup: 19.5314
+
+algo: Gustavson nthreads: 1
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) (single-threaded Gustavson) (nthreads 1 coarse: 1) (sparse saxpy) 
+   17 sec ]
+C=A^2 threads:  1 mxm:     17.020 nvals    808.007M speedup: 1
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) (single-threaded Gustavson) (nthreads 1 coarse: 1) (sparse saxpy) 
+   148 sec ]
+C=A^4 threads:  1 mxm:    147.590 nvals   3011.502M speedup: 1
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) (single-threaded Gustavson) (nthreads 1 coarse: 1) (sparse saxpy) 
+   1.65e+03 sec ]
+C=A^8 threads:  1 mxm:   1645.949 nvals  11575.249M speedup: 1
+
+algo: Gustavson nthreads: 2
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 2 coarse: 4) (sparse saxpy) 
+   9.35 sec ]
+C=A^2 threads:  2 mxm:      9.346 nvals    808.007M speedup: 1.82117
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 2 coarse: 4) (sparse saxpy) 
+   78.3 sec ]
+C=A^4 threads:  2 mxm:     78.346 nvals   3011.502M speedup: 1.88383
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 2 coarse: 4) (sparse saxpy) 
+   832 sec ]
+C=A^8 threads:  2 mxm:    831.980 nvals  11575.249M speedup: 1.97835
+
+algo: Gustavson nthreads: 4
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 4 coarse: 8) (sparse saxpy) 
+   4.84 sec ]
+C=A^2 threads:  4 mxm:      4.841 nvals    808.007M speedup: 3.51585
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 4 coarse: 8) (sparse saxpy) 
+   39.6 sec ]
+C=A^4 threads:  4 mxm:     39.644 nvals   3011.502M speedup: 3.72288
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 4 coarse: 8) (sparse saxpy) 
+   417 sec ]
+C=A^8 threads:  4 mxm:    416.942 nvals  11575.249M speedup: 3.94767
+
+algo: Gustavson nthreads: 8
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 8 coarse: 16) (sparse saxpy) 
+   2.66 sec ]
+C=A^2 threads:  8 mxm:      2.659 nvals    808.007M speedup: 6.4011
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 8 coarse: 16) (sparse saxpy) 
+   20.4 sec ]
+C=A^4 threads:  8 mxm:     20.422 nvals   3011.502M speedup: 7.22691
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 8 coarse: 16) (sparse saxpy) 
+   211 sec ]
+C=A^8 threads:  8 mxm:    211.170 nvals  11575.249M speedup: 7.79441
+
+algo: Gustavson nthreads: 16
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 16 coarse: 32) (sparse saxpy) 
+   1.69 sec ]
+C=A^2 threads: 16 mxm:      1.687 nvals    808.007M speedup: 10.0869
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 16 coarse: 32) (sparse saxpy) 
+   11 sec ]
+C=A^4 threads: 16 mxm:     10.990 nvals   3011.502M speedup: 13.429
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 16 coarse: 32) (sparse saxpy) 
+   108 sec ]
+C=A^8 threads: 16 mxm:    108.320 nvals  11575.249M speedup: 15.1953
+
+algo: Gustavson nthreads: 20
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 20 coarse: 40) (sparse saxpy) 
+   1.57 sec ]
+C=A^2 threads: 20 mxm:      1.569 nvals    808.007M speedup: 10.851
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 20 coarse: 40) (sparse saxpy) 
+   9.29 sec ]
+C=A^4 threads: 20 mxm:      9.291 nvals   3011.502M speedup: 15.8851
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 20 coarse: 40) (sparse saxpy) 
+   89.4 sec ]
+C=A^8 threads: 20 mxm:     89.412 nvals  11575.249M speedup: 18.4085
+
+algo: Gustavson nthreads: 40
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 40 coarse: 80) (sparse saxpy) 
+   1.86 sec ]
+C=A^2 threads: 40 mxm:      1.859 nvals    808.007M speedup: 9.15455
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 40 coarse: 80) (sparse saxpy) 
+   8.63 sec ]
+C=A^4 threads: 40 mxm:      8.628 nvals   3011.502M speedup: 17.105
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 40 coarse: 80) (sparse saxpy) 
+   83 sec ]
+C=A^8 threads: 40 mxm:     83.011 nvals  11575.249M speedup: 19.828
+
+algo: Hash nthreads: 1
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 1 coarse hash: 1) (sparse saxpy) 
+   29.7 sec ]
+C=A^2 threads:  1 mxm:     29.707 nvals    808.007M speedup: 1
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 1 coarse hash: 1) (sparse saxpy) 
+   294 sec ]
+C=A^4 threads:  1 mxm:    293.562 nvals   3011.502M speedup: 1
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 1 coarse hash: 1) (sparse saxpy) 
+   4.22e+03 sec ]
+C=A^8 threads:  1 mxm:   4218.264 nvals  11575.249M speedup: 1
+
+algo: Hash nthreads: 2
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 2 coarse hash: 4) (sparse saxpy) 
+   15.2 sec ]
+C=A^2 threads:  2 mxm:     15.230 nvals    808.007M speedup: 1.95058
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 2 coarse hash: 4) (sparse saxpy) 
+   150 sec ]
+C=A^4 threads:  2 mxm:    150.245 nvals   3011.502M speedup: 1.95388
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 2 coarse hash: 4) (sparse saxpy) 
+   2.16e+03 sec ]
+C=A^8 threads:  2 mxm:   2164.953 nvals  11575.249M speedup: 1.94843
+
+algo: Hash nthreads: 4
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 4 coarse hash: 8) (sparse saxpy) 
+   7.7 sec ]
+C=A^2 threads:  4 mxm:      7.700 nvals    808.007M speedup: 3.85818
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 4 coarse hash: 8) (sparse saxpy) 
+   76.4 sec ]
+C=A^4 threads:  4 mxm:     76.356 nvals   3011.502M speedup: 3.84464
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 4 coarse hash: 8) (sparse saxpy) 
+   1.12e+03 sec ]
+C=A^8 threads:  4 mxm:   1117.070 nvals  11575.249M speedup: 3.77619
+
+algo: Hash nthreads: 8
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 8 coarse hash: 16) (sparse saxpy) 
+   4.02 sec ]
+C=A^2 threads:  8 mxm:      4.019 nvals    808.007M speedup: 7.39086
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 8 coarse hash: 16) (sparse saxpy) 
+   37.9 sec ]
+C=A^4 threads:  8 mxm:     37.860 nvals   3011.502M speedup: 7.75384
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 8 coarse hash: 16) (sparse saxpy) 
+   562 sec ]
+C=A^8 threads:  8 mxm:    561.891 nvals  11575.249M speedup: 7.50726
+
+algo: Hash nthreads: 16
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 16 coarse hash: 32) (sparse saxpy) 
+   2.09 sec ]
+C=A^2 threads: 16 mxm:      2.091 nvals    808.007M speedup: 14.2084
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 16 coarse hash: 32) (sparse saxpy) 
+   19.6 sec ]
+C=A^4 threads: 16 mxm:     19.583 nvals   3011.502M speedup: 14.9906
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 16 coarse hash: 32) (sparse saxpy) 
+   269 sec ]
+C=A^8 threads: 16 mxm:    268.580 nvals  11575.249M speedup: 15.7058
+
+algo: Hash nthreads: 20
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 20 coarse hash: 40) (sparse saxpy) 
+   1.71 sec ]
+C=A^2 threads: 20 mxm:      1.713 nvals    808.007M speedup: 17.3371
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 20 coarse hash: 40) (sparse saxpy) 
+   16.2 sec ]
+C=A^4 threads: 20 mxm:     16.206 nvals   3011.502M speedup: 18.1142
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 20 coarse hash: 40) (sparse saxpy) 
+   232 sec ]
+C=A^8 threads: 20 mxm:    231.856 nvals  11575.249M speedup: 18.1935
+
+algo: Hash nthreads: 40
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.27515e+08 bnz: 2.27515e+08) axbwork 3.99724e+09 (nthreads 40 coarse hash: 80) (sparse saxpy) 
+   1.47 sec ]
+C=A^2 threads: 40 mxm:      1.474 nvals    808.007M speedup: 20.1501
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.08007e+08 bnz: 8.08007e+08) axbwork 4.63902e+10 (nthreads 40 coarse hash: 80) (sparse saxpy) 
+   15.8 sec ]
+C=A^4 threads: 40 mxm:     15.756 nvals   3011.502M speedup: 18.6319
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.0115e+09 bnz: 3.0115e+09) axbwork 6.29792e+11 (nthreads 40 coarse hash: 80) (sparse saxpy) 
+   240 sec ]
+C=A^8 threads: 40 mxm:    239.870 nvals  11575.249M speedup: 17.5856
+
+Summary:
+algo Auto : | T2:      17.01       9.34       4.87       2.69       2.09       1.71       1.53 | T4:     147.66      78.30      39.69      20.38      10.94       9.70       8.67 | T8:    1647.85     831.87     418.15     211.17     108.66      90.54      84.37 
+algo Gus  : | T2:      17.02       9.35       4.84       2.66       1.69       1.57       1.86 | T4:     147.59      78.35      39.64      20.42      10.99       9.29       8.63 | T8:    1645.95     831.98     416.94     211.17     108.32      89.41      83.01 
+algo Hash : | T2:      29.71      15.23       7.70       4.02       2.09       1.71       1.47 | T4:     293.56     150.25      76.36      37.86      19.58      16.21      15.76 | T8:    4218.26    2164.95    1117.07     561.89     268.58     231.86     239.87 
+
+Relative:
+algo Auto : | T2:       1          1          1.01       1.01       1.24       1.09       1.04 | T4:       1.00       1          1.00       1          1          1.04       1.00 | T8:       1.00       1          1.00       1.00       1.00       1.01       1.02 
+algo Gus  : | T2:       1.00       1.00       1          1          1          1          1.26 | T4:       1          1.00       1          1.00       1.00       1          1    | T8:       1          1.00       1          1          1          1          1    
+algo Hash : | T2:       1.75       1.63       1.59       1.51       1.24       1.09       1    | T4:       1.99       1.92       1.93       1.86       1.79       1.74       1.83 | T8:       2.56       2.60       2.68       2.66       2.48       2.59       2.89 
+
+ ------------------- nx 2300
+
+=================================
+nx  2300 n     15.879M nvals    248.667M create:     10.102 sec
+
+algo: Auto nthreads: 1
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 2.48667e+08 bnz: 2.48667e+08) (single-threaded Gustavson) (nthreads 1 coarse: 1) (sparse saxpy) 
+   18.5 sec ]
+C=A^2 threads:  1 mxm:     18.463 nvals    883.145M speedup: 1
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 8.83145e+08 bnz: 8.83145e+08) (single-threaded Gustavson) (nthreads 1 coarse: 1) (sparse saxpy) 
+   163 sec ]
+C=A^4 threads:  1 mxm:    162.565 nvals   3291.678M speedup: 1
+ [ GrB_mxm C=A*B, saxpy (S = S*S, anz: 3.29168e+09 bnz: 3.29168e+09) (single-threaded Gustavson) (nthreads 1 coarse: 1) (sparse saxpy) ^C
+[0;36mhypersparse $[0m 
+[0;36mhypersparse $[0m 
+[0;36mhypersparse $[0m jobs
+[0;36mhypersparse $[0m exit
+exit
+
+Script done on 2022-03-25 16:56:53-05:00 [COMMAND_EXIT_CODE="0"]
