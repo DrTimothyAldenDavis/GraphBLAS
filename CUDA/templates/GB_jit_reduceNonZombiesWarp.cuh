@@ -77,7 +77,7 @@ T block_ReduceSum(thread_block g, T val)
 }
 
 
-template< typename T, typename Accum, int type_code, bool atomic_reduce = true>
+template< typename T, typename Accum, bool atomic_reduce = true>
 __global__ void reduceNonZombiesWarp
 (
     GrB_Matrix A,

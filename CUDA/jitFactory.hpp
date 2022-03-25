@@ -523,14 +523,8 @@ public:
 //            bool flipxy         // if true, use mult(y,x) else mult(x,y)
 //        )
 
-
       GrB_Scalar temp_scalar;
       GrB_Scalar_new(&temp_scalar, op->op->ztype);
-
-      size_t n_bytes = op->op->ztype->size;
-
-      printf("n_bytes: %d\n", n_bytes);
-//      checkCudaErrors(cudaMemset(x, 0, n_bytes));
 
       cuda::jit::scalar_set_element(temp_scalar, 0);
 
@@ -542,14 +536,12 @@ public:
       hashable_name << std::endl << R"(#include ")" <<
         hashable_name << R"(.cuh")" << std::endl;
 
-      printf("About to launch1...\n");
-      printf("Out type code: %d\n", (int)(temp_scalar->type->code));
       jit::launcher(hashable_name,
                     string_to_be_jitted.str(),
                     header_names,
                     compiler_flags,
                     file_callback)
-               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, std::to_string(temp_scalar->type->code), "true" })
+               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, "true" })
                .configure(grid, block)
 
                // FIXME: GB_ADD is hardcoded into kernel for now
