@@ -114,10 +114,7 @@ __global__ void reduceNonZombiesWarp
     {
         // TODO: Assuming sum for now (liek the rest of the kernel)
         if(atomic_reduce) {
-
-            // TODO: This isn't the prettiest way to do this (and slows compile time)
             atomic_add<Accum>(g_odata, sum);
-
         } else {
             g_odata [blockIdx.x] = sum ;
         }
