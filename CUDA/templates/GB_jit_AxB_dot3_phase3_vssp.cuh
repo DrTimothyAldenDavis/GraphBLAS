@@ -35,7 +35,6 @@
 #include <limits>
 #include <cstdint>
 #include <cooperative_groups.h>
-//#include "GB_binary_search.h"
 #include "matrix.h"
 
 // Using tile size fixed at compile time, we don't need shared memory

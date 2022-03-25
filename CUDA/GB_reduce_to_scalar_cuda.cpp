@@ -35,7 +35,7 @@ GrB_Info GB_reduce_to_scalar_cuda
 
     int64_t nz = GB_nnz(A);
 
-    GB_cuda_reduce( A->i, A->x, s, (unsigned int)nz, reduce);
+    GB_cuda_reduce( A, s, (unsigned int)nz, reduce);
 
     printf("num_triangles = %d\n",  s[0] );
 

@@ -10,10 +10,9 @@
 
 #define GB_CUDA_KERNEL
 #include <limits>
-//#include <stdint.h>
 #include "matrix.h"
 #include "GB_cuda_buckets.h"
-#include "local_cub/block/block_scan.cuh"
+#include <cub/block/block_scan.cuh>
 
 //------------------------------------------------------------------------------
 // GB_bucket_assignment

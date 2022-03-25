@@ -266,13 +266,11 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
 }
 
 template<typename T>
-void make_grb_matrix(GrB_Matrix &mat, std::vector<int64_t> &indptr, std::vector<int64_t> &indices, std::vector<T> &data,
+void make_grb_matrix(GrB_Matrix &mat, int64_t n_rows, int64_t n_cols, std::vector<int64_t> &indptr, std::vector<int64_t> &indices, std::vector<T> &data,
                      int gxb_sparsity_control = GxB_SPARSE, int gxb_format = GxB_BY_ROW) {
 
     GrB_Type type = cuda::jit::to_grb_type<T>();
 
-    int64_t n_rows = indptr.size() -1;
-    int64_t n_cols = n_rows;
     GRB_TRY (GrB_Matrix_new (&mat, type, n_rows, n_cols)) ;
 
     for(int64_t row = 0; row < n_rows; ++row) {
@@ -572,21 +570,27 @@ template <typename T>
 bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
 
     //std::cout<<" alloc'ing data and output"<<std::endl;
-    int64_t* index = (int64_t*)rmm_wrap_malloc(N*sizeof(T));
-    T* d_data = (T*)rmm_wrap_malloc(N*sizeof(T));
-    T* output = (T*)rmm_wrap_malloc(sizeof(T));
+    std::vector<int64_t> indptr(N+1);
+    std::vector<int64_t> index(N);
+    std::vector<T> d_data(N);
 
-    fillvector_constant<int64_t>((int)N, index, (int64_t)1);
-    fillvector_linear<T> ( N, d_data);
+    indptr[N] = N;
+    fillvector_linear<int64_t>((int)N, indptr.data(), (int64_t)0);
+    fillvector_constant<int64_t>((int)N, index.data(), (int64_t)1);
+    fillvector_linear<T> ( N, d_data.data());
 
-    output[0] = 0;
+    GrB_Type t = cuda::jit::to_grb_type<T>();
 
-    GB_cuda_reduce( index, d_data, output, N, monoid );
+    GrB_Matrix A;
+    make_grb_matrix(A, N, N, indptr, index, d_data, GxB_SPARSE, GxB_BY_ROW);
 
-    T actual = output[0];
+    GRB_TRY (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
+    GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_COMPLETE, stdout));
+
+    T actual;
+    GB_cuda_reduce( A, &actual, N, monoid );
 
     GrB_Vector v;
-    GrB_Type t = cuda::jit::to_grb_type<T>();
     GrB_Vector_new(&v, t, N);
 
     // Just sum in place for now (since we are assuming sum)
@@ -611,9 +615,6 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
     } else {
         std::cout << "Results matched!" << std::endl;
     }
-
-    rmm_wrap_free(d_data);
-    rmm_wrap_free(output);
 
     return expected == actual;
 }

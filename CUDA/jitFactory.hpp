@@ -66,7 +66,6 @@ template<typename T1, typename T2, typename T3> class spdotFactory ;
 
 inline std::istream* (*file_callback)(std::string, std::iostream&);
 
-
 //AxB_dot3_phase1 kernel launchers
 template<int threads_per_block, int chunk_size> class phase1launchFactory ;
 
@@ -86,7 +85,6 @@ static const std::vector<std::string> compiler_flags{
    "-I..",
    "-I../../Source",
    "-I../../Source/Template",
-//   "-I../local_cub/block",
    "-I../templates",
    "-I/usr/local/cuda/include",
 };
@@ -502,7 +500,7 @@ public:
   }
 
   // Note: this does assume the erased types are compatible w/ the monoid's ztype
-  bool jitGridBlockLaunch(int64_t *index, void* indata, void* output, unsigned int N,
+  bool jitGridBlockLaunch(GrB_Matrix A, void* output, unsigned int N,
                           GrB_Monoid op)
   {
       int blocksz = get_threads_per_block();
@@ -522,24 +520,32 @@ public:
 //            bool flipxy         // if true, use mult(y,x) else mult(x,y)
 //        )
 
+      int32_t *temp_scalar = (int32_t*)rmm_wrap_malloc(sizeof(int32_t));
+      temp_scalar[0] = 0;
+
       std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
       string_to_be_jitted <<
-      hashable_name << std::endl << R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+      hashable_name << std::endl << R"(#include ")" <<
+        hashable_name << R"(.cuh")" << std::endl;
 
+      printf("About to launch1...\n");
       jit::launcher(hashable_name,
                     string_to_be_jitted.str(),
                     header_names,
                     compiler_flags,
                     file_callback)
-               .set_kernel_inst(  kernel_name , { op->op->ztype->name, "true" })
+               .set_kernel_inst(  kernel_name , { A->type->name, op->op->ztype->name, "true" })
                .configure(grid, block)
 
                // FIXME: GB_ADD is hardcoded into kernel for now
-               .launch( index, indata, output, N);
+               .launch( A->i, A->x, temp_scalar, N);
 
       checkCudaErrors( cudaDeviceSynchronize() );
 
+      memcpy(output, temp_scalar, sizeof(int32_t));
+
+      rmm_wrap_free(temp_scalar);
       return true;
   }
 };
@@ -579,9 +585,9 @@ inline bool GB_cuda_mxm_phase3(GB_cuda_semiring_factory &mysemiringfactory, GB_b
 }
 
 
-inline bool GB_cuda_reduce(int64_t *index, void *in_data, void *output, unsigned int N, GrB_Monoid op) {
+inline bool GB_cuda_reduce(GrB_Matrix A, void *output, unsigned int N, GrB_Monoid op) {
     reduceFactory rf;
-    return rf.jitGridBlockLaunch(index, in_data, output, N, op);
+    return rf.jitGridBlockLaunch(A, output, N, op);
 }
 
 
