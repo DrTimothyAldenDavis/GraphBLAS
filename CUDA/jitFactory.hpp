@@ -38,6 +38,9 @@
 
 #pragma once
 
+extern "C" {
+#include "GraphBLAS.h"
+};
 #include "GB_jit_launcher.h"
 #include "GB_cuda_semiring_factory.hpp"
 #include "GB_cuda_buckets.h"
@@ -520,8 +523,18 @@ public:
 //            bool flipxy         // if true, use mult(y,x) else mult(x,y)
 //        )
 
-      int32_t *temp_scalar = (int32_t*)rmm_wrap_malloc(sizeof(int32_t));
-      temp_scalar[0] = 0;
+
+      GrB_Scalar temp_scalar;
+      GrB_Scalar_new(&temp_scalar, op->op->ztype);
+
+      size_t n_bytes = op->op->ztype->size;
+
+      printf("n_bytes: %d\n", n_bytes);
+//      checkCudaErrors(cudaMemset(x, 0, n_bytes));
+
+      cuda::jit::scalar_set_element(temp_scalar, 0);
+
+      GrB_Scalar_wait(temp_scalar, GrB_MATERIALIZE);
 
       std::string hashable_name = base_name + "_" + kernel_name;
       std::stringstream string_to_be_jitted ;
@@ -539,11 +552,11 @@ public:
                .configure(grid, block)
 
                // FIXME: GB_ADD is hardcoded into kernel for now
-               .launch( A->i, A->x, temp_scalar, N);
+               .launch( A, temp_scalar, N);
 
       checkCudaErrors( cudaDeviceSynchronize() );
 
-      memcpy(output, temp_scalar, sizeof(int32_t));
+      memcpy(output, temp_scalar->x, op->op->ztype->size);
 
       rmm_wrap_free(temp_scalar);
       return true;

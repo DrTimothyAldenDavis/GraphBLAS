@@ -38,7 +38,7 @@ bool GB_AxB_dot3_cuda_branch
         GBURBLE (" work:%g GPUs:%d ", work, ngpus_to_use) ;
         if (ngpus_to_use > 0
             // FIXME: FUTURE: user-defined types and operators
-//            && (semiring->header_size == 0)     // semiring is built-in
+            && (semiring->header_size == 0)     // semiring is built-in
             && (A->type->code != GB_UDT_code)
             && (B->type->code != GB_UDT_code)
             // FIXME: M could be hypersparse.  we should handle this
