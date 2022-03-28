@@ -288,6 +288,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
         int64_t Cnz = end- start;
 
+        printf("bucket=%d, Cnz=%d\n", bucket, Cnz);
+
         // TODO: We might want to consider submitting these in different cuda streams (maybe use cuda stream pool?)
         phase3launchFactory p3lf(mysemiring, (GB_bucket_code)bucket);
         p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C,  M, A, B);

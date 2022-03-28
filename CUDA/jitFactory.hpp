@@ -89,6 +89,7 @@ static const std::vector<std::string> compiler_flags{
    "-I../../Source",
    "-I../../Source/Template",
    "-I../templates",
+//   "-L../../build/CUDA",
    "-I/usr/local/cuda/include",
 };
 
