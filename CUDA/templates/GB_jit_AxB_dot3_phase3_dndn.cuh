@@ -133,13 +133,11 @@ __global__ void AxB_dot3_phase3_dndn
          int64_t yend   = Bp[j+1];
          nnzB = yend - pB;
 
-    /*
     if (threadIdx.x == 0 ){
-        printf(" i,j = %d,%d  nnz= %d xstart,end = %d,%d  ystart,end = %d,%d\n",
-            (int)i,(int)j,  (int)nnzA, (int)xstart,(int)xend, (int)ystart, (int)yend);
+        printf("tid=%d, i,j = %d,%d  nnzA= %d, nnzB=%d\n",
+               threadIdx.x, (int)i,(int)j,  (int)nnzA, (int)nnzB);
     }
-    __syncthreads();                                          
-    */
+    __syncthreads();
 
     
     // convert global data pointer to the local pointer of this block

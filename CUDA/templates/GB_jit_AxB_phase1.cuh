@@ -519,15 +519,7 @@ pA_end = Ap [i+1] ;
     CUMSUM_AND_STORE_NANOBUCKET (0) ;
     CUMSUM_AND_STORE_NANOBUCKET (1) ;
     CUMSUM_AND_STORE_NANOBUCKET (2) ;
-//    CUMSUM_AND_STORE_NANOBUCKET (3) ;
-    if( threadIdx.x == blockDim.x-1)
-            blockbucket [blockIdx.x + 3 * gridDim.x] =
-            my_bucket_3 ;
-        BlockCumSum(temp_storage).ExclusiveSum
-            ( my_bucket_3, my_bucket_3) ;
-            __syncthreads();                    \
-        nanobucket [3 * blockDim.x] = my_bucket_3 ;
-
+    CUMSUM_AND_STORE_NANOBUCKET (3) ;
     CUMSUM_AND_STORE_NANOBUCKET (4) ;
     CUMSUM_AND_STORE_NANOBUCKET (5) ;
     CUMSUM_AND_STORE_NANOBUCKET (6) ;
@@ -563,7 +555,7 @@ pA_end = Ap [i+1] ;
     // Note that this write to global memory is not coalesced.
 
     #define STORE_GLOBAL_BUCKET_COUNT(bucket)                    \
-        blockbucket [blockIdx.x + bucket * gridDim.x] +=         \
+        blockbucket [bucket * gridDim.x + blockIdx.x] +=         \
             my_bucket_ ## bucket ;
 
     if (threadIdx.x == blockDim.x - 1 ) 

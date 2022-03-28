@@ -193,9 +193,7 @@ public:
   }
 
   bool jitGridBlockLaunch(// parameters to AxB_phase2:
-                          int64_t *nanobuckets, int64_t *blockBucket, 
-                          int64_t *bucketp, int64_t *bucket, int64_t *offset,
-                          GrB_Matrix M) {
+                          int64_t *blockBucket, int64_t *offset, GrB_Matrix M) {
 
     bool result = false;
 
@@ -219,7 +217,7 @@ public:
                    .set_kernel_inst( kernel_name, {})
                    .configure(grid, block)
                    // parameters to AxB_phase2:
-                   .launch( nanobuckets, blockBucket, bucketp, bucket, offset, mnz);
+                   .launch( blockBucket, offset, get_number_of_blocks(M));
 
       checkCudaErrors( cudaDeviceSynchronize() );
       result= true;
@@ -339,15 +337,10 @@ public:
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << semiring_factory_.filename << R"(")" << std::endl <<
     R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
 
-    std::cout << "String to be jitted: " << string_to_be_jitted.str() << std::endl;
-
     dim3 grid(gridsz);
     dim3 block(blocksz);
 
-    std::cout<< "program name =" <<hashable_name<<std::endl;
-    std::cout << "Final kernel name =" << final_kernel_name_ss.str() << std::endl;
     GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
-    printf("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
     jit::launcher( hashable_name,
                    string_to_be_jitted.str(),
                    header_names,
@@ -385,6 +378,8 @@ private:
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
     std::string Opname;
+
+    printf("LAUNCHING BUCKET CODE: %d\n", (int)bucket_code_);
     switch (bucket_code_)
     {
 

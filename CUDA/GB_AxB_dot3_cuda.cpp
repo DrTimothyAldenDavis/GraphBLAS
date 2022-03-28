@@ -23,6 +23,16 @@ extern "C"
 #include "jitFactory.hpp"
 #include "GB_cuda_type_wrap.hpp"
 
+template<typename T, typename I>
+void print_array(void *arr, I size, const char *name) {
+    std::cout << "Printing " << name << std::endl;
+    for(I i = 0; i < size; ++i) {
+        std::cout << static_cast<T*>(arr)[i] << ", ";
+    }
+    std::cout << std::endl << "Done." << std::endl;
+}
+
+
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                                               \
 {                                                                       \
@@ -198,11 +208,20 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     int nthrd = p2lf.get_threads_per_block();
     int ntasks = p2elf.get_number_of_blocks(M);
 
-    Nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
-    Blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
+    int64_t nanobuckets_size = NBUCKETS * nthrd * ntasks;
+    int64_t blockbuckets_size = NBUCKETS * ntasks;
+
+    Nanobuckets = (int64_t*)rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
+    Blockbucket = (int64_t*)rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
     Bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
     Bucket = (int64_t*)rmm_wrap_malloc(mnz * sizeof (int64_t));
     offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
+
+    CHECK_CUDA_SIMPLE(cudaMemset(Nanobuckets, 0, nanobuckets_size * sizeof(int64_t)));
+    CHECK_CUDA_SIMPLE(cudaMemset(Blockbucket, 0, blockbuckets_size * sizeof(int64_t)));
+    CHECK_CUDA_SIMPLE(cudaMemset(Bucketp, 0, (NBUCKETS+1) * sizeof(int64_t)));
+    CHECK_CUDA_SIMPLE(cudaMemset(Bucket, 0, mnz * sizeof(int64_t)));
+    CHECK_CUDA_SIMPLE(cudaMemset(offset, 0, NBUCKETS * sizeof(int64_t)));
 
     //--------------------------------------------------------------------------
     // phase1 and phase2: place each C(i,j) in a bucket
@@ -246,22 +265,23 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GBURBLE ("(GPU phase1 done) ") ;
 
+    print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
+    print_array<int64_t>(Blockbucket, blockbuckets_size , "Blockbucket");
+
     //----------------------------------------------------------------------
     // phase2: cumsum across the blockbuckets, propagate to thread level
     //----------------------------------------------------------------------
 
     GBURBLE ("(GPU phase1 start) ") ;
 
-    p2lf.jitGridBlockLaunch(Nanobuckets, Blockbucket,
-            Bucketp, Bucket, offset, M);
-
+    p2lf.jitGridBlockLaunch(Blockbucket, offset, M);
 
     int64_t s= 0;
     for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
     {
         Bucketp[bucket] = s;
         s+= offset[bucket];
-        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
+        printf("bucketp[%d] = %ld, offset=%ld\n", bucket, Bucketp[bucket], offset[bucket]);
     }
 
     GBURBLE ("(GPU phase2 done) ") ;
@@ -273,22 +293,19 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GBURBLE ("(GPU phase2end done) ") ;
 
+    print_array<int64_t>(Bucket, mnz , "Bucket");
+
     //----------------------------------------------------------------------
     // phase3: do the numerical work
     //----------------------------------------------------------------------
 
+    print_array<int64_t>(Bucketp, NBUCKETS + 1 , "Bucketp");
     C->nzombies = Bucketp[1];  //set pre-zombie counts
 
     for ( int bucket = 1 ; bucket < NBUCKETS; ++bucket)
     {
-        int sz = 0 ;
-
         int64_t start = Bucketp[bucket];
         int64_t end = Bucketp[bucket+1];
-
-        int64_t Cnz = end- start;
-
-        printf("bucket=%d, Cnz=%d\n", bucket, Cnz);
 
         // TODO: We might want to consider submitting these in different cuda streams (maybe use cuda stream pool?)
         phase3launchFactory p3lf(mysemiring, (GB_bucket_code)bucket);

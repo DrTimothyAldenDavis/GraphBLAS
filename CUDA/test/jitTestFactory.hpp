@@ -166,9 +166,9 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     kernTimer.Stop();
     std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 //
-//    print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
-//    print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
-//    std::cout<<"==== phase1 done=============================" <<std::endl;
+    print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
+    print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
+    std::cout<<"==== phase1 done=============================" <<std::endl;
 //
     rmm_wrap_free(Nanobuckets);
     rmm_wrap_free(Blockbucket);
@@ -229,12 +229,11 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     fillvector_constant(NBUCKETS * ntasks, blockbucket, (int64_t)1);
     fillvector_constant(NBUCKETS, bucketp, (int64_t)1);
 
-//    print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
-//    print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
+    print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
+    print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
 //
 //    // launch phase2 (just with p2ntasks as the # of tasks)
-    p2lF.jitGridBlockLaunch(nanobuckets, blockbucket,
-                            bucketp, bucket, offset, M);
+    p2lF.jitGridBlockLaunch(blockbucket, offset, M);
 //
 //    // do the reduction between phase2 and phase2end
     int64_t s= 0;
@@ -253,9 +252,9 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
 //    std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 //
 //
-//    print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
-//    print_array<int64_t>(bucket, mnz, "bucket");
-//    std::cout<<"phase2 kernel done =================="<<std::endl;
+    print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
+    print_array<int64_t>(bucket, mnz, "bucket");
+    std::cout<<"phase2 kernel done =================="<<std::endl;
     rmm_wrap_free(nanobuckets);
     rmm_wrap_free(blockbucket);
     rmm_wrap_free(bucketp);
