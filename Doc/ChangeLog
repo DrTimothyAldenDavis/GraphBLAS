@@ -1,5 +1,7 @@
-Version 6.3.0, Mar 18, 2022
+Version 6.3.0, Mar 25, 2022
 
+    * performance for GrB_mxm: auto selection for saxpy method (Hash vs
+        Gustavson) revised.
     * (43) performance bug fix for GrB_assign: better performance for
         C(i,j)=scalar and C(i,j)+=scalar when i and j have length 1 (scalar
         assigment with no scalar expansion).  The prior code worked but this is

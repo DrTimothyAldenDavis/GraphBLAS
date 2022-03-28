@@ -148,9 +148,11 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 6.3.0 (Mar 18, 2022)
+\item Version 6.3.0 (Mar 25, 2022)
 
     \begin{packed_itemize}
+    \item performance for \verb'GrB_mxm':
+        auto selection for saxpy method (Hash vs Gustavson) revised.
     \item \verb'GrB_assign': better performance for \verb'C(i,j)=scalar' and
         \verb'C(i,j)+=scalar' when \verb'i' and \verb'j' have length 1 (scalar
         assigment with no scalar expansion).
