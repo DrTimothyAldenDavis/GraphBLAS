@@ -1,4 +1,4 @@
-Version 6.3.0, Mar 25, 2022
+Version 6.3.0, Mar 28, 2022
 
     * performance for GrB_mxm: auto selection for saxpy method (Hash vs
         Gustavson) revised.
