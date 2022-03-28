@@ -221,7 +221,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Mar 18, 2022"
+#define GxB_IMPLEMENTATION_DATE "Mar 28, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 6
 #define GxB_IMPLEMENTATION_MINOR 3
 #define GxB_IMPLEMENTATION_SUB   0
@@ -11292,7 +11292,8 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     FILE *f = fopen ("myblob", "r") ;
     fread (&blob_size, sizeof (size_t), 1, f) ;
     blob = malloc (blob_size) ;
-    fread (&blob, sizeof (uint8_t), 1, f) ;
+    fread (blob, sizeof (uint8_t), blob_size, f) ;
+    fclose (f) ;
     char type_name [GxB_MAX_NAME_LEN] ;
     GxB_deserialize_type_name (type_name, blob, blob_size) ;
     printf ("blob type is: %s\n", type_name) ;
@@ -11331,7 +11332,8 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     FILE *f = fopen ("myblob", "r") ;
     fread (&blob_size, sizeof (size_t), 1, f) ;
     blob = malloc (blob_size) ;
-    fread (&blob, sizeof (uint8_t), 1, f) ;
+    fread (blob, sizeof (uint8_t), blob_size, f) ;
+    fclose (f) ;
     // the user must know the type of A is MyQType
     GrB_Matrix_deserialize (&A, MyQtype, blob, blob_size) ;
     free (blob) ;
