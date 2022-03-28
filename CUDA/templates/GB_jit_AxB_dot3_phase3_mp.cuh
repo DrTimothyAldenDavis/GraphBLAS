@@ -86,6 +86,7 @@ __global__ void AxB_dot3_phase3_mp
 )
 {
 
+    C->jumbled = true;
     T_A *Ax = (T_A*)A->x;
     T_B *Bx = (T_B*)B->x;
     T_C *Cx = (T_C*)C->x;
@@ -99,6 +100,7 @@ __global__ void AxB_dot3_phase3_mp
 
     // zombie count
     int zc = 0;
+
 
     int64_t pair_id;
 
@@ -219,7 +221,7 @@ __global__ void AxB_dot3_phase3_mp
           GB_GETB ( bkj=(T_C)Bx[l] ) ;
           if (cij_exists)
           {
-            T_Z t = GB_MULT( (T_C)aki, (T_C)bkj );
+            T_C t = GB_MULT( (T_C)aki, (T_C)bkj );
             GB_ADD_F (cij, t ) ;
           //printf("  thd%d ix at %lld   cij += %d * %d \n", tid_global, Ai[k], aki, bkj);
           }
@@ -291,9 +293,9 @@ __global__ void AxB_dot3_phase3_mp
 
   if( tid ==0 && zc > 0)
   {
-      //printf("warp %d zombie count = %d\n", blockIdx.x, zc);
+      printf("warp %d zombie count = %d\n", blockIdx.x, zc);
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
-      //printf(" Czombie = %lld\n",C->nzombies);
+      printf(" Czombie = %lld\n",C->nzombies);
   }
 
   //__syncthreads();

@@ -340,6 +340,7 @@ public:
     dim3 grid(gridsz);
     dim3 block(blocksz);
 
+    C->nzombies = 0;
     GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
     jit::launcher( hashable_name,
                    string_to_be_jitted.str(),

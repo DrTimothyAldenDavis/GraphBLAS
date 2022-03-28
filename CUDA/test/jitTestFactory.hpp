@@ -421,13 +421,11 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     int chunk_size = 128;
 
     int number_of_sms = GB_Global_gpu_sm_get (0);
-    int nblks = ( GB_nnz (M) + chunk_size - 1)/chunk_size;
     int64_t *bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
 
-    bucketp[1] = 0;
+    CHECK_CUDA(cudaMemset(bucketp, 0, (NBUCKETS+1)*sizeof(int64_t)));
 
     int64_t *bucket = (int64_t*)rmm_wrap_malloc(Cnz * sizeof (int64_t));
-    int64_t *offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
 
     /**
      * Run Phase 3: Execute dot3 on all buckets
@@ -451,6 +449,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
            GB_cuda_mxm_phase3(mysemiringfactory, (GB_bucket_code )b,
                               b_start, b_end, bucketp, Bucket, C, M, B, A);
+
+            print_array<int64_t>(bucketp, NBUCKETS+1, "bucketp");
 
            kernTimer.Stop();
 
@@ -521,6 +521,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                 op_abs = GxB_ABS_FC64 ;
             }
 
+
             // Diff = C - C_actual
             GrB_Matrix Diff ;
             GRB_TRY (GrB_Matrix_new (&Diff, GrB_FP64, nrows, ncols)) ;
@@ -558,7 +559,6 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 
     rmm_wrap_free(bucket);
     rmm_wrap_free(bucketp);
-    rmm_wrap_free(offset);
 
     G.del();
 
