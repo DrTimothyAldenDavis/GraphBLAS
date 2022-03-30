@@ -5116,8 +5116,9 @@ GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<Mask> = accum (C, A+B)
 // GxB_eWiseUnion: a variant of GrB_eWiseAdd
 //==============================================================================
 
-// GxB_eWiseUnion is a variant of eWiseAdd.  They differ when an entry is
-// present in A but not B, or in B but not A.
+// GxB_eWiseUnion is a variant of eWiseAdd.  The methods create a result with
+// the same sparsity structure.  They differ when an entry is present in A but
+// not B, or in B but not A.
 
 // eWiseAdd does the following, for a matrix, where "+" is the add binary op:
 
@@ -5128,7 +5129,7 @@ GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<Mask> = accum (C, A+B)
 //      else if B(i,j) is present but not A(i,j)
 //          C(i,j) = B(i,j)
 
-// by constrast, eWiseUnion always applies the operator:
+// by contrast, eWiseUnion always applies the operator:
 
 //      if A(i,j) and B(i,j) are both present:
 //          C(i,j) = A(i,j) + B(i,j)
