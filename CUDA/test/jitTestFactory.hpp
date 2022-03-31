@@ -471,14 +471,11 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 //                             Mask_struct ? GrB_DESC_S : NULL));
 
             GRB_TRY (GxB_Matrix_fprint (M, "M actual", GxB_SHORT_VERBOSE, stdout));
-//            if(TB == GB_BUCKET_MERGEPATH) {
-//                GRB_TRY (GxB_Matrix_fprint (A, "A actual", GxB_COMPLETE, stdout));
-//                GRB_TRY (GxB_Matrix_fprint (B, "B actual", GxB_COMPLETE, stdout));
-//            }
+            GRB_TRY (GxB_Matrix_fprint (A, "A actual", GxB_SHORT_VERBOSE, stdout));
+            GRB_TRY (GxB_Matrix_fprint (B, "B actual", GxB_SHORT_VERBOSE, stdout));
 
             GRB_TRY(GrB_Matrix_wait(C, GrB_MATERIALIZE));
             GRB_TRY(GrB_Matrix_wait(C_actual, GrB_MATERIALIZE));
-
 
             GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_COMPLETE, stdout));
             GRB_TRY (GxB_Matrix_fprint (C_actual, "C_actual", GxB_COMPLETE, stdout));

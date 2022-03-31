@@ -205,10 +205,10 @@ __global__ void AxB_dot3_phase3_vsvs
    __syncthreads();
 
    if( threadIdx.x == 0 && zc > 0) {
-      //printf("block%d zombie count = %d\n", blockIdx.x, zc);
+//      printf("block%d zombie count = %d\n", blockIdx.x, zc);
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
       //C->nzombies += (unsigned long long int)zc;
-      //printf("blk:%d Czombie = %lld\n", blockIdx.x,C->nzombies);
+//      printf("blk:%d Czombie = %lld\n", blockIdx.x,C->nzombies);
    }
    
 }

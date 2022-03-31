@@ -297,7 +297,7 @@ __global__ void AxB_dot3_phase3_mp
         }
         else
         {
-           //printf(" dot %d is a zombie\n", pair_id);
+           printf(" dot %d is a zombie\n", pair_id);
            zc++;
            GB_PUTC ( Ci[pair_id]=GB_FLIP (i) ) ;
         }
@@ -309,9 +309,9 @@ __global__ void AxB_dot3_phase3_mp
 
   if( tid ==0 && zc > 0)
   {
-      printf("warp %d zombie count = %d, nzombies = %d\n", blockIdx.x, zc, C->nzombies);
+//      printf("warp %d zombie count = %d, nzombies = %d\n", blockIdx.x, zc, C->nzombies);
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
-      printf(" Czombie = %lld\n",C->nzombies);
+//      printf(" Czombie = %lld\n",C->nzombies);
   }
 
   //__syncthreads();

@@ -163,16 +163,16 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // copy Mp and Mh into C
     //--------------------------------------------------------------------------
 
-    //cudaMemcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), cudaMemcpyDefault) ;
+    CHECK_CUDA_SIMPLE(cudaMemcpy (C->p, M->p, (cnvec+1) * sizeof (int64_t), cudaMemcpyDefault)) ;
     if (M_is_hyper)
     { 
         // FIXME
-        //cudaMemcpy (Ch, Mh, cnvec * sizeof (int64_t), cudaMemcpyDefault) ;
+        CHECK_CUDA_SIMPLE(cudaMemcpy (C->h, M->h, cnvec * sizeof (int64_t), cudaMemcpyDefault)) ;
     }
+
     C->magic = GB_MAGIC ;
     C->nvec_nonempty = M->nvec_nonempty ;
     C->nvec = M->nvec ;
-
     // the dot3 CUDA kernel will produce C->i with jumbled indices
     C->jumbled = true ;
 
@@ -307,13 +307,22 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
         int64_t start = Bucketp[bucket];
         int64_t end = Bucketp[bucket+1];
 
-        // TODO: We might want to consider submitting these in different cuda streams (maybe use cuda stream pool?)
-        phase3launchFactory p3lf(mysemiring, (GB_bucket_code)bucket);
-        p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C,  M, A, B);
+
+        if(end - start > 0) {
+            printf("Executing bucket: %d with %ld edges\n", bucket, end-start);
+            // TODO: We might want to consider submitting these in different cuda streams (maybe use cuda stream pool?)
+            phase3launchFactory p3lf(mysemiring, (GB_bucket_code)bucket);
+            p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C,  M, A, B);
+        } else {
+            printf("Skipping bucket %d\n", bucket);
+        }
 
         GBURBLE ("(GPU phase3 done) ") ;
     }
 
+    printf("C->p[0]=%d\n", C->p[0]);
+    printf("C->p[1]=%d\n", C->p[1]);
+    printf("C->nzombies=%d\n", C->nzombies);
 
     GB_FREE_WORKSPACE ;
     return GrB_SUCCESS; 

@@ -374,9 +374,9 @@ __global__ void AxB_dot3_phase3_warpix
 
        if( zc > 0)
        {
-          //printf("warp %d zombie count = %d\n", blockIdx.x, zc);
+          printf("warp %d zombie count = %d\n", blockIdx.x, zc);
           atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
-          //printf("blk:%d Czombie = %lld\n",blockIdx.x,C->zombies);
+          printf("blk:%d Czombie = %lld\n",blockIdx.x,C->zombies);
        }
 
     }
