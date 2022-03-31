@@ -314,10 +314,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             phase3launchFactory p3lf(mysemiring, (GB_bucket_code)bucket);
             p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C,  M, A, B);
         } else {
-            printf("Skipping bucket %d\n", bucket);
+            printf("Skipping bucket %d, no work to do\n", bucket);
         }
 
-        GBURBLE ("(GPU phase3 done) ") ;
+        GBURBLE ("(GPU phase3 done ) ") ;
     }
 
     printf("C->p[0]=%d\n", C->p[0]);

@@ -149,18 +149,15 @@ __global__ void AxB_dot3_phase3_vsvs
              tid += blockDim.x )
    {
          pair_id = Bucket[ start + tid ];
-       printf("start=%d, tid=%d, pair_id=%lu\n", pfirst, tid, pair_id);
 
          int64_t i = Mi [pair_id] ;
          int64_t j = Ci [pair_id]>>4 ; 
-
+         if (j < 0) continue; //don't operate on zombies
+       printf("start=%d, tid=%d, pair_id=%lu, (i,j)=%lu,%lu\n", pfirst, tid, pair_id,i,j);
          int64_t pA       = Ap[i] ;
          int64_t pA_end   = Ap[i+1] ;
          int64_t pB       = Bp[j] ;
          int64_t pB_end   = Bp[j+1] ;
-
-         int64_t nnzA = pA_end - pA;
-         int64_t nnzB = pB_end - pB;
 
          T_A aki;
          T_B bkj;
@@ -168,7 +165,7 @@ __global__ void AxB_dot3_phase3_vsvs
 
          bool cij_exists = false;
 
-         while (pA < pA_end && pB < pB_end && nnzA != 0 && nnzB != 0)
+         while (pA < pA_end && pB < pB_end )
          {
             int64_t ia = Ai [pA] ;
             int64_t ib = Bi [pB] ;
