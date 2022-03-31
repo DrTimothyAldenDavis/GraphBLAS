@@ -97,10 +97,8 @@ __global__ void AxB_dot3_phase3_mp
     int64_t *Ap = A->p;
     int64_t *Bp = B->p;
 
-
     // zombie count
     int zc = 0;
-
 
     int64_t pair_id;
 

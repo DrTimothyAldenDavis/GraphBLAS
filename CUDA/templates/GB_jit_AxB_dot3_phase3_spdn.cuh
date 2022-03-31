@@ -68,8 +68,6 @@ __global__ void AxB_dot3_phase3_spdn
    const int64_t *__restrict__ Ap = A->p ;
    const int64_t *__restrict__ Bp = B->p ;
 
-   C->jumbled = true;
-
 //   typedef cub::BlockReduce<int, 32> BlockReduce;
 //   __shared__ typename BlockReduce::TempStorage temp_storage;
 

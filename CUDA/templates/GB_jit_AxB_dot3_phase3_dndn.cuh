@@ -106,8 +106,6 @@ __global__ void AxB_dot3_phase3_dndn
    const int64_t *__restrict__ Ap = A->p ;
    const int64_t *__restrict__ Bp = B->p ;
 
-    C->jumbled = true;
-
     // zombie count
     int zc = 0;
     int64_t pair_id;

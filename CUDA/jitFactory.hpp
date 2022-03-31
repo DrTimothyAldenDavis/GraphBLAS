@@ -312,7 +312,7 @@ public:
     //----------------------------------------------------------------------
     // phase3: do the numerical work
     //----------------------------------------------------------------------
-
+    C->jumbled = true;
     C->nzombies = bucketp[1];  //set pre-zombie counts
     const int64_t Cnz = GB_nnz (C) ;
     const int64_t mnvec = M->nvec ;
