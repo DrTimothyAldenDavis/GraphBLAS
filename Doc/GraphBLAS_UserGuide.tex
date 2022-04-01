@@ -12315,7 +12315,7 @@ GrB_Info GrB_select                 // C<M>=accum(C,op(A))
 \end{verbatim} } \end{mdframed}
 
 \verb'GrB_Matrix_select_*' applies a \verb'GrB_IndexUnaryOp' operator to the
-entries of a vector.  If the operator evaluates as \verb'true' for the entry
+entries of a matrix.  If the operator evaluates as \verb'true' for the entry
 \verb'A(i,j)', it is copied to the matrix \verb'T', or not copied if the
 operator evaluates to \verb'false'.  The input matrix \verb'A' may be
 transposed first.  The entries in \verb'A' are typecasted into the \verb'xtype'
