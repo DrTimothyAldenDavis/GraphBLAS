@@ -1,3 +1,7 @@
+Version 7.0.1, Apr 2, 2022
+
+    * revised ACM TOMS submission: Doc/toms_parallel_grb2.pdf
+
 Version 7.0.0, Apr 2, 2022
 
     * (44) spec bug: GrB_Matrix_diag was implemented in v5.2.x and v6.x with
