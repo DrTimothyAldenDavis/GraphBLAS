@@ -6,13 +6,13 @@
 //  This kernel scans the non-zero pattern in A and B, takes into account the
 //  mask and computes total work required to form C. Then it classifies each
 //  dot product into a set of buckets for efficient compute. 
+#pragma once
 
 #define GB_CUDA_KERNEL
 #include <limits>
-//#include <stdint.h>
 #include "matrix.h"
 #include "GB_cuda_buckets.h"
-#include "local_cub/block/block_scan.cuh"
+#include <cub/block/block_scan.cuh>
 
 //------------------------------------------------------------------------------
 // GB_bucket_assignment
@@ -519,15 +519,7 @@ pA_end = Ap [i+1] ;
     CUMSUM_AND_STORE_NANOBUCKET (0) ;
     CUMSUM_AND_STORE_NANOBUCKET (1) ;
     CUMSUM_AND_STORE_NANOBUCKET (2) ;
-//    CUMSUM_AND_STORE_NANOBUCKET (3) ;
-    if( threadIdx.x == blockDim.x-1)
-            blockbucket [blockIdx.x + 3 * gridDim.x] =
-            my_bucket_3 ;
-        BlockCumSum(temp_storage).ExclusiveSum
-            ( my_bucket_3, my_bucket_3) ;
-            __syncthreads();                    \
-        nanobucket [3 * blockDim.x] = my_bucket_3 ;
-
+    CUMSUM_AND_STORE_NANOBUCKET (3) ;
     CUMSUM_AND_STORE_NANOBUCKET (4) ;
     CUMSUM_AND_STORE_NANOBUCKET (5) ;
     CUMSUM_AND_STORE_NANOBUCKET (6) ;
@@ -563,7 +555,7 @@ pA_end = Ap [i+1] ;
     // Note that this write to global memory is not coalesced.
 
     #define STORE_GLOBAL_BUCKET_COUNT(bucket)                    \
-        blockbucket [blockIdx.x + bucket * gridDim.x] +=         \
+        blockbucket [bucket * gridDim.x + blockIdx.x] +=         \
             my_bucket_ ## bucket ;
 
     if (threadIdx.x == blockDim.x - 1 ) 

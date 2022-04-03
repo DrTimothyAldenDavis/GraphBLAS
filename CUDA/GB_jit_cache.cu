@@ -21,6 +21,7 @@
 #include <pwd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <filesystem>
 
 #include "GB_jit_cache.h"
 #include "GraphBLAS.h"
@@ -81,8 +82,8 @@ std::string getCacheDir() {
     // `mkdir -p` the kernel cache path if it doesn't exist
     printf("cache is going to path %s\n", kernel_cache_path.c_str());
     int status;
-    status = mkdir(kernel_cache_path.c_str(), 0777);
-    if (status != 0 ) return std::string();
+    status = std::filesystem::create_directories(kernel_cache_path.c_str());
+//    if (status != 0 ) return std::string();
     //boost::filesystem::create_directories(kernel_cache_path);
   }
   return std::string(kernel_cache_path);
