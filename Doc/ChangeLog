@@ -1,5 +1,9 @@
-Version 6.3.0, Mar 28, 2022
+Version 7.0.0, Apr 2, 2022
 
+    * (44) spec bug: GrB_Matrix_diag was implemented in v5.2.x and v6.x with
+        the wrong signature.  This fix requires the major release to change,
+        from v6.x to v7.x, since the change means that the revised v7 is not
+        backward compatible with v6.
     * performance for GrB_mxm: auto selection for saxpy method (Hash vs
         Gustavson) revised.
     * (43) performance bug fix for GrB_assign: better performance for
