@@ -58,7 +58,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
         // entry in A(:,i) comes before the first entry in B(:,j), or visa
         // versa, then there is no work to do since C(i,j) must be a zombie.
 
-        // GB_BUCKET (ia_last < ib_first || ib_last < ia_first, GB_BUCKET_ZOMBIE);
+        //GB_BUCKET (ia_last < ib_first || ib_last < ia_first, GB_BUCKET_ZOMBIE);
 
     }
 //  else if (bjnz == vlen && ainz == vlen && vlen > 256)
@@ -347,14 +347,14 @@ __global__ void AxB_phase1
       klast = GB_search_for_vector_device (plast-1, Mp, kfirst, mnvec, mvlen) ;
 
       int k_end = GB_IMIN(  pointerchunk ,  klast - kfirst +2 ) ;
-       /* 
+        
       if( threadIdx.x ==0) 
       {
          printf("chunk%d pfirst,plast,ch_end =%d,%d,%d kfirst,klast,kend = %d,%d,%d\n",
                  chunk, pfirst, plast, chunk_end, kfirst, klast, k_end ) ;
       }
       __syncthreads();
-      */
+      
       
      
       // load pointer values for this chunk
@@ -555,7 +555,7 @@ pA_end = Ap [i+1] ;
     // Note that this write to global memory is not coalesced.
 
     #define STORE_GLOBAL_BUCKET_COUNT(bucket)                    \
-        blockbucket [bucket * gridDim.x + blockIdx.x] +=         \
+        blockbucket [bucket * gridDim.x + blockIdx.x] =         \
             my_bucket_ ## bucket ;
 
     if (threadIdx.x == blockDim.x - 1 ) 
