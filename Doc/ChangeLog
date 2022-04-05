@@ -1,4 +1,9 @@
-Version 7.0.1, Apr 2, 2022
+Version 7.0.2, Apr 5, 2022
+
+    * (45) bug fix: vector iterator was broken for iterating across a
+        vector in bitmap format.  Caught by Erik Welch.
+
+Version 7.0.1, Apr 3, 2022
 
     * revised ACM TOMS submission: Doc/toms_parallel_grb2.pdf
 
