@@ -221,10 +221,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Apr 3, 2022"
+#define GxB_IMPLEMENTATION_DATE "Apr 5, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 7
 #define GxB_IMPLEMENTATION_MINOR 0
-#define GxB_IMPLEMENTATION_SUB   1
+#define GxB_IMPLEMENTATION_SUB   2
 #define GxB_SPEC_DATE "Nov 15, 2021"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 0
@@ -12343,7 +12343,8 @@ GrB_Index GxB_Vector_Iterator_getpmax (GxB_Iterator iterator) ;
 // vector, or GxB_EXHAUSTED if the iterator is exhausted.
 
 GB_PUBLIC
-GrB_Info GB_Vector_Iterator_bitmap_seek (GxB_Iterator iterator, GrB_Index p) ;
+GrB_Info GB_Vector_Iterator_bitmap_seek (GxB_Iterator iterator,
+    GrB_Index unused) ; // unused parameter to be removed in v8.x
 
 GB_PUBLIC
 GrB_Info GxB_Vector_Iterator_seek (GxB_Iterator iterator, GrB_Index p) ;
@@ -12362,7 +12363,7 @@ GrB_Info GxB_Vector_Iterator_seek (GxB_Iterator iterator, GrB_Index p) ;
         iterator->p = q,                                                    \
         (iterator->A_sparsity == GxB_BITMAP) ?                              \
         (                                                                   \
-            GB_Vector_Iterator_bitmap_seek (iterator, q)                    \
+            GB_Vector_Iterator_bitmap_seek (iterator, 0)                    \
         )                                                                   \
         :                                                                   \
         (                                                                   \
@@ -12403,7 +12404,16 @@ GrB_Info GxB_Vector_Iterator_next (GxB_Iterator iterator) ;
     )                                                                       \
     :                                                                       \
     (                                                                       \
-        GrB_SUCCESS                                                         \
+        (iterator->A_sparsity == GxB_BITMAP) ?                              \
+        (                                                                   \
+            /* bitmap: seek to the next entry present in the bitmap */      \
+            GB_Vector_Iterator_bitmap_seek (iterator, 0)                    \
+        )                                                                   \
+        :                                                                   \
+        (                                                                   \
+            /* other formats: already at the next entry */                  \
+            GrB_SUCCESS                                                     \
+        )                                                                   \
     )                                                                       \
 )
 
