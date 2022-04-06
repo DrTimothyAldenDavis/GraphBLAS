@@ -294,6 +294,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     GBURBLE ("(GPU phase2end done) ") ;
 
     print_array<int64_t>(Bucket, mnz , "Bucket");
+    print_array<int64_t>(M->i, mnz , "M->i");
+    print_array<int64_t>(C->i, mnz , "C->i");
 
     //----------------------------------------------------------------------
     // phase3: do the numerical work
@@ -301,6 +303,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     print_array<int64_t>(Bucketp, NBUCKETS + 1 , "Bucketp");
     C->nzombies = Bucketp[1];  //set pre-zombie counts
+    printf("pre-kernel C->nzombies=%ld\n", C->nzombies);
 
     for ( int bucket = 1 ; bucket < NBUCKETS; ++bucket)
     {
@@ -319,10 +322,10 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
         GBURBLE ("(GPU phase3 done ) ") ;
     }
-
-    printf("C->p[0]=%d\n", C->p[0]);
-    printf("C->p[1]=%d\n", C->p[1]);
-    printf("C->nzombies=%d\n", C->nzombies);
+    C->nzombies += Bucketp[1];
+    printf("C->p[0]=%ld\n", C->p[0]);
+    printf("C->p[1]=%ld\n", C->p[1]);
+    printf("C->nzombies=%ld\n", C->nzombies);
 
     GB_FREE_WORKSPACE ;
     return GrB_SUCCESS; 
