@@ -500,13 +500,9 @@ public:
   }
 
   // Note: this does assume the erased types are compatible w/ the monoid's ztype
-  bool jitGridBlockLaunch(GrB_Matrix A, void* output, unsigned int N,
+  bool jitGridBlockLaunch(GrB_Matrix A, void* output,
                           GrB_Monoid op)
   {
-      int blocksz = get_threads_per_block();
-      int gridsz = get_number_of_blocks(N);
-      dim3 grid(gridsz);
-      dim3 block(blocksz);
 
       // TODO: We probably want to "macrofy" the GrB_Monoid and define it in the `string_to_be_jitted`
 //      void GB_stringify_binop
@@ -533,6 +529,14 @@ public:
       hashable_name << std::endl << R"(#include ")" <<
         hashable_name << R"(.cuh")" << std::endl;
 
+      bool is_sparse = GB_IS_SPARSE(A);
+      int64_t N = is_sparse ? GB_nnz(A) : GB_NCOLS(A) * GB_NROWS(A);
+
+      int blocksz = get_threads_per_block();
+      int gridsz = get_number_of_blocks(N);
+      dim3 grid(gridsz);
+      dim3 block(blocksz);
+
       jit::launcher(hashable_name,
                     string_to_be_jitted.str(),
                     header_names,
@@ -542,7 +546,7 @@ public:
                .configure(grid, block)
 
                // FIXME: GB_ADD is hardcoded into kernel for now
-               .launch( A, temp_scalar, N);
+               .launch( A, temp_scalar, N, is_sparse);
 
 
       checkCudaErrors( cudaDeviceSynchronize() );
@@ -589,9 +593,9 @@ inline bool GB_cuda_mxm_phase3(GB_cuda_semiring_factory &mysemiringfactory, GB_b
 }
 
 
-inline bool GB_cuda_reduce(GrB_Matrix A, void *output, unsigned int N, GrB_Monoid op) {
+inline bool GB_cuda_reduce(GrB_Matrix A, void *output, GrB_Monoid op) {
     reduceFactory rf;
-    return rf.jitGridBlockLaunch(A, output, N, op);
+    return rf.jitGridBlockLaunch(A, output, op);
 }
 
 
