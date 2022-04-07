@@ -265,8 +265,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GBURBLE ("(GPU phase1 done) ") ;
 
-    print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
-    print_array<int64_t>(Blockbucket, blockbuckets_size , "Blockbucket");
+    //print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
+    //print_array<int64_t>(Blockbucket, blockbuckets_size , "Blockbucket");
 
     //----------------------------------------------------------------------
     // phase2: cumsum across the blockbuckets, propagate to thread level
@@ -293,9 +293,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GBURBLE ("(GPU phase2end done) ") ;
 
-    print_array<int64_t>(Bucket, mnz , "Bucket");
-    print_array<int64_t>(M->i, mnz , "M->i");
-    print_array<int64_t>(C->i, mnz , "C->i");
+    //print_array<int64_t>(Bucket, mnz , "Bucket");
+    //print_array<int64_t>(M->i, mnz , "M->i");
+    //print_array<int64_t>(C->i, mnz , "C->i");
 
     //----------------------------------------------------------------------
     // phase3: do the numerical work
@@ -322,9 +322,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
         GBURBLE ("(GPU phase3 done ) ") ;
     }
-    C->nzombies += Bucketp[1];
-    printf("C->p[0]=%ld\n", C->p[0]);
-    printf("C->p[1]=%ld\n", C->p[1]);
+    C->nzombies += Bucketp[1]; //FIXME workaround for zombie counts getting reset to 0 in phase3
+    //printf("C->p[0]=%ld\n", C->p[0]);
+    //printf("C->p[1]=%ld\n", C->p[1]);
     printf("C->nzombies=%ld\n", C->nzombies);
 
     GB_FREE_WORKSPACE ;
