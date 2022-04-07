@@ -82,7 +82,8 @@ __global__ void reduceNonZombiesWarp
 (
     GrB_Matrix A,
     GrB_Scalar O,      // array of size grid.x if atomic_reduce==false and size 1 if atomic_reduce==true
-    unsigned int N
+    int64_t N,  // number of edges for sparse, size of x array for full/bitmap
+    bool is_sparse
 )
 {
     // set thread ID
@@ -98,7 +99,9 @@ __global__ void reduceNonZombiesWarp
     for(int i = blockIdx.x * blockDim.x + threadIdx.x; 
         i < N;
         i += blockDim.x * gridDim.x) {
-        if ( index[i] < 0) continue; // skip zombies
+        printf("tid=%d, N: %ud\n", tid, N);
+
+        if (is_sparse && index[i] < 0) continue; // skip zombies
         T fold = g_idata[i];
         sum = GB_ADD( sum, fold );
     }
