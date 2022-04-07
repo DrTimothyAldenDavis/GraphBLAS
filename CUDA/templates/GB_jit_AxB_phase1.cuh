@@ -310,21 +310,55 @@ __global__ void AxB_phase1
      __shared__ int64_t Mps[pointerchunk];
      __shared__ int64_t ks [chunksize];
 
+    __syncthreads();
+    if (threadIdx.x==0 && blockIdx.x == 0)
+    {
+        printf ("Here in phase1, what I see is this:\n") ;
+        printf ("MX(pM) is: %s\n", GB_XSTR (MX (pM))) ;
+        printf ("GB_MULT(x,y) is: %s\n", GB_XSTR (GB_MULT (x,y))) ;
+        printf ("GB_ADD(x,y)  is: %s\n", GB_XSTR (GB_ADD (x,y))) ;
+        // #define GB_GETA(blob)
+        // #define GB_GETB(blob)
+        // #define GB_MULT(x,y) (1)
+        // #define GB_ADD(x,y) ((x) + (y))
+        // #define GB_IDENTITY (0)
+        // #define GB_TERMINAL_CONDITION(cij) (false)
+        // #define GB_IF_TERMINAL_BREAK  
+        // #define GB_PUTC(blob) blob
+        // #define GB_MTYPE void
+        // #define MX(p) true
+        // #define GB_MASK_COMP false
+        // #define GB_NO_MASK false
+        // #define GB_C_IS_SPARSE 1
+        // #define GB_C_IS_HYPER  0
+        // #define GB_C_IS_BITMAP 0
+        // #define GB_C_IS_FULL   0
+        // #define GB_M_IS_SPARSE 1
+        // #define GB_M_IS_HYPER  0
+        // #define GB_M_IS_BITMAP 0
+        // #define GB_M_IS_FULL   0
+        // #define GB_A_IS_SPARSE 1
+        // #define GB_A_IS_HYPER  0
+        // #define GB_A_IS_BITMAP 0
+        // #define GB_A_IS_FULL   0
+        // #define GB_B_IS_SPARSE 1
+        // #define GB_B_IS_HYPER  0
+        // #define GB_B_IS_BITMAP 0
+        // #define GB_B_IS_FULL   0
+    }
+    __syncthreads();
+
     //--------------------------------------------------------------------------
     // compute the task descriptor
     //--------------------------------------------------------------------------
 
     // all threads in this block will compute the same values for these:
-    int32_t pfirst, plast, kfirst, klast ;
-    /*
-    for ( int tid_global = threadIdx.x + blockIdx.x * blockDim.x ; 
-              tid_global < (mnvec+ 7)/8 ;
-              tid_global += blockDim.x*gridDim.x) 
-              */
-    int chunk_max= (mnz + chunksize -1)/chunksize;
-    for ( int chunk = blockIdx.x;
-              chunk < chunk_max;
-              chunk += gridDim.x ) 
+    int64_t pfirst, plast, kfirst, klast ;
+
+    int64_t chunk_max= (mnz + chunksize -1)/chunksize;
+    for ( int64_t chunk = blockIdx.x;
+                  chunk < chunk_max;
+                  chunk += gridDim.x ) 
     {
 
       // The slice for each task contains entries pfirst:plast-1 of M and C.
@@ -332,12 +366,12 @@ __global__ void AxB_phase1
       pfirst = chunksize * chunk ; 
       plast  = GB_IMIN( chunksize * (chunk+1), mnz ) ;
 
-      int chunk_end;
+      int64_t chunk_end;
       if ( mnz > chunksize) chunk_end = GB_IMIN(  chunksize, 
                                                   mnz - chunksize*(chunk) ) ; 
       else chunk_end = mnz;
 
-      // find the first vector of the slice for task tid_global: the
+      // find the first vector of the slice for this chunk: the
       // vector that owns the entry Ai [pfirst] and Ax [pfirst].
       kfirst = GB_search_for_vector_device (pfirst, Mp, 0, mnvec, mvlen) ;
       //if( pfirst ==0) kfirst = 0;
@@ -346,11 +380,11 @@ __global__ void AxB_phase1
       // vector that owns the entry Ai [plast-1] and Ax [plast-1].
       klast = GB_search_for_vector_device (plast-1, Mp, kfirst, mnvec, mvlen) ;
 
-      int k_end = GB_IMIN(  pointerchunk ,  klast - kfirst +2 ) ;
+      int64_t k_end = GB_IMIN(  pointerchunk ,  klast - kfirst +2 ) ;
         
       if( threadIdx.x ==0) 
       {
-         printf("chunk%d pfirst,plast,ch_end =%d,%d,%d kfirst,klast,kend = %d,%d,%d\n",
+         printf("chunk%ld pfirst,plast,ch_end =%ld,%ld,%ld kfirst,klast,kend = %ld,%ld,%ld\n",
                  chunk, pfirst, plast, chunk_end, kfirst, klast, k_end ) ;
       }
       __syncthreads();
@@ -358,21 +392,38 @@ __global__ void AxB_phase1
       
      
       // load pointer values for this chunk
-      for ( int i = threadIdx.x; i< k_end; i+= blockDim.x)
+      for ( int64_t i = threadIdx.x; i< k_end; i+= blockDim.x)
       {
           Mps[i] = Mp[i + kfirst];
       }
       __syncthreads();
+      if (threadIdx.x == 0)
+      {
+        for (int64_t i = 0 ; i < k_end ; i++)
+        {
+            printf ("Mps [%d] = %ld\n", i, Mps [i]) ;
+        }
+      }
+      __syncthreads();
+
 
       // search for k values for each entry
       float slope = (float)(mnvec)/(float)(mnz* chunksize) ;
-      for ( int i =  threadIdx.x; i< chunk_end; i+= blockDim.x)
+      for ( int64_t i =  threadIdx.x; i< chunk_end; i+= blockDim.x)
       {   
           ks[i] = kfirst + slope*( float )(i);
           while ( Mps[ ks[i] - kfirst + 1 ] <= (i+pfirst) )
              ks[i]++;
           while ( Mps[ ks[i] - kfirst     ] >  (i+pfirst) )
              ks[i]--;
+      }
+      __syncthreads();
+      if (threadIdx.x == 0)
+      {
+        for (int64_t i = 0 ; i < chunksize ; i++)
+        {
+            printf ("ks [%d] = %ld\n", i, ks [i]) ;
+        }
       }
       __syncthreads();
 
@@ -385,8 +436,6 @@ __global__ void AxB_phase1
     }
     __syncthreads();
     */
-    
-    
 
     //--------------------------------------------------------------------------
     // assign entries in C(i,j) to the buckets
@@ -403,19 +452,18 @@ __global__ void AxB_phase1
 
         //int32_t pM_start, pM_end ;
         //for (int64_t pM = pfirst + threadIdx.x ; pM < plast ; pM += blockDim.x)
-        int32_t i,j;
-        int32_t k = kfirst ;
             
         //for (int64_t pM = pfirst; pM < plast; pM++ ) 
-        for ( int pM = pfirst + threadIdx.x;
-                  pM < pfirst + chunk_end;
-                  pM += blockDim.x )
+        for ( int64_t pM = pfirst + threadIdx.x;
+                      pM < pfirst + chunk_end;
+                      pM += blockDim.x )
         {
             GB_bucket_code bucket = GB_BUCKET_ZOMBIE ;
-            k = ks[ pM - pfirst ] ;
+            int64_t k = ks[ pM - pfirst ] ;
             //k += ( pM == Mp[k+1] ) ;
-            //printf ("tid%d  k %ld pM %ld\n", tid_global, k, pM;
-            i = Mi [ pM ] ;
+            printf ("tid%d  k %ld pM %ld MX(pM): %d\n", threadIdx.x, k, pM, MX (pM));
+            int64_t i = Mi [ pM ] ;
+int64_t j = k ; // HACK, does not need to be initialized here
 
             if ( MX ( pM ) )
             { 
@@ -466,7 +514,9 @@ pA_end = Ap [i+1] ;
                         //------------------------------------------------------
 
                         //bucket = GB_BUCKET_MERGEPATH ;
-                         bucket= GB_bucket_assignment ( ainz, bjnz, bvlen) ;
+                        bucket= GB_bucket_assignment ( ainz, bjnz, bvlen) ;
+                        printf ("tid%d  i %ld j %ld ainz %ld bjnz %ld: bucket %d\n",
+                            threadIdx.x, i, j, ainz, bjnz, (int) bucket) ;
                     }
                 }
             }
@@ -474,7 +524,7 @@ pA_end = Ap [i+1] ;
             if (bucket == GB_BUCKET_ZOMBIE)
             {
                 // mark C(i,j) is a zombie
-                //printf ("tid%d pM=%d %d,%d prezombie\n",threadIdx.x,pM,i,j) ;
+                printf ("tid%d pM=%d %d,%d prezombie\n",threadIdx.x,pM,i,j) ;
                 Ci [pM] = GB_FLIP (i) << 4 ;
                 // GB_BUCKET_COUNT (GB_BUCKET_ZOMBIE) ;
                 my_bucket_0++ ; //0 is the zombie bucket
@@ -484,7 +534,7 @@ pA_end = Ap [i+1] ;
                 // place C(i,j) in its bucket
                 Ci [pM] = (k << 4) + bucket ;
                 GB_BUCKET_COUNT (bucket) ;
-                //printf ("tid%d pM=%d %d,%d b=%d\n",threadIdx.x, pM, i,j, (int)bucket) ;
+                printf ("tid%d pM=%d %d,%d b=%d\n",threadIdx.x, pM, i,j, (int)bucket) ;
             }
          }
             
@@ -530,7 +580,7 @@ pA_end = Ap [i+1] ;
     CUMSUM_AND_STORE_NANOBUCKET (11) ;
 
     /*    
-    if(threadIdx.x +blockIdx.x*blockDim.x <= mnvec) //blockDim.x -1){ 
+    if(threadIdx.x +blockIdx.x*blockDim.x <= mnvec) //blockDim.x -1)
     {
        printf("thd %d blk%d nbucket0 has %ld prev\n",threadIdx.x, blockIdx.x, nanobucket[0]);
        printf("thd %d blk%d nbucket1 has %ld prev\n",threadIdx.x, blockIdx.x, nanobucket[1*blockDim.x]);

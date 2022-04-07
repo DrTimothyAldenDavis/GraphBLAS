@@ -68,6 +68,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     // check inputs
     //--------------------------------------------------------------------------
 
+    printf ("HERE IN cuda dot3, mask_struct is %d\n", Mask_struct) ;
+
     // when CUDA is enabled, no static headers are used in all of GraphBLAS
     GrB_Info info ;
     ASSERT (C != NULL && !(C->static_header)) ;
@@ -155,8 +157,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //auto *Cxtemp = C->x ;        
     //cudaMalloc ((void**) &(C->i), cnz * sizeof( int64_t) ); 
     //cudaMalloc ((void**) &(C->x), cnz * C->type->size ); 
-    CHECK_CUDA_SIMPLE(cudaMemAdvise( C->i, cnz * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, device));
-    CHECK_CUDA_SIMPLE(cudaMemAdvise( C->x, cnz * C->type->size , cudaMemAdviseSetPreferredLocation, device));
+    CHECK_CUDA_SIMPLE(cudaMemAdvise( C->i, (cnz+1) * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, device));
+    CHECK_CUDA_SIMPLE(cudaMemAdvise( C->x, (cnz+1) * C->type->size , cudaMemAdviseSetPreferredLocation, device));
 
 
     //--------------------------------------------------------------------------
@@ -185,7 +187,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     // (1) create the semiring code and name
     mysemiring.semiring_factory ( semiring, flipxy,
-        ctype, A->type, B->type, M->type, Mask_struct,  // matrix types
+        ctype, M->type, A->type, B->type, Mask_struct,  // matrix types
         false, GB_sparsity(C), GB_sparsity(M), GB_sparsity(A), GB_sparsity(B) ) ;
 
     // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
@@ -243,8 +245,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->p, (mnvec+1) * sizeof (int64_t), device, NULL)) ; //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->i, mnz * sizeof (int64_t), device, NULL )) ; //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( M->x, mnz * M->type->size, device, NULL )) ; //stream_data) ;
-    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->i, mnz * sizeof (int64_t), device, NULL )); //stream_data) ;
-    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->x, mnz * C->type->size, device, NULL )); //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->i, (cnz+1) * sizeof (int64_t), device, NULL )); //stream_data) ;
+    CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( C->x, (cnz+1) * C->type->size, device, NULL )); //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->p, (anvec+1) * sizeof (int64_t), device, NULL)); // stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->i, anz * sizeof (int64_t), device, NULL )) ; //stream_data) ;
     CHECK_CUDA_SIMPLE(cudaMemPrefetchAsync( A->x, anz * A->type->size, device, NULL )) ; //stream_data) ;
