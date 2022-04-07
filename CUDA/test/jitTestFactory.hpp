@@ -169,6 +169,10 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
     print_array<int64_t>(Blockbucket, blockbuckets_size, "Blockbucket");
     std::cout<<"==== phase1 done=============================" <<std::endl;
+
+    int64_t bucket_count = 0;
+    for (int i =0; i< NBUCKETS*ntasks; ++i) bucket_count += Blockbucket[i];
+    EXPECT_EQ( bucket_count, Cnz); //check we sum to the right structural counts
 //
     rmm_wrap_free(Nanobuckets);
     rmm_wrap_free(Blockbucket);
@@ -225,9 +229,12 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     int64_t *offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
 
     std::cout << "nthrd: " << nthrd << ", ntasks: " << ntasks << std::endl;
-    fillvector_constant(NBUCKETS * nthrd * ntasks, nanobuckets, (int64_t)1);
-    fillvector_constant(NBUCKETS * ntasks, blockbucket, (int64_t)1);
-    fillvector_constant(NBUCKETS, bucketp, (int64_t)1);
+    fillvector_constant(NBUCKETS * nthrd * ntasks, nanobuckets, (int64_t)0);
+    fillvector_constant(Cnz, nanobuckets, (int64_t)1);
+    fillvector_constant(NBUCKETS * ntasks, blockbucket, (int64_t)0);
+    blockbucket[10] = Cnz;
+    fillvector_constant(NBUCKETS, bucketp, (int64_t)0);
+    fillvector_constant(Cnz, bucket, (int64_t)0);
 
     print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
     print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
@@ -255,6 +262,9 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
     print_array<int64_t>(bucket, mnz, "bucket");
     std::cout<<"phase2 kernel done =================="<<std::endl;
+
+    EXPECT_EQ( bucketp[NBUCKETS], Cnz); //check we sum to the right structural counts
+
     rmm_wrap_free(nanobuckets);
     rmm_wrap_free(blockbucket);
     rmm_wrap_free(bucketp);
