@@ -205,7 +205,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 // The kernel also computes Ci, of size nnz(C), which contains the
 // zombie assignment or bucket assignment for non-zombies in C.
 
-template<typename Type_M> 
+template<typename Type_M, uint64_t srcode>
 __global__ void AxB_phase1
 (
     // outputs, preallocated in global memory:
