@@ -57,6 +57,10 @@
 // remainder of this file is extracted from GraphBLAS.h:
 //------------------------------------------------------------------------------
 
+// GB_STR: convert the content of x into a string "x"
+#define GB_XSTR(x) GB_STR(x)
+#define GB_STR(x) #x
+
 #undef  GB_PUBLIC
 #define GB_PUBLIC extern
 #undef  GxB_MAX_NAME_LEN

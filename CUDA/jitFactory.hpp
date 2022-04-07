@@ -133,8 +133,10 @@ public:
 
     // Defining dummy instance only so we can introspect type
 
-    std::cout << "A TYpe: " << A->type << std::endl;
-    std::cout << "B TYpe: " << B->type << std::endl;
+    std::cout << "A TYpe: " << std::endl;
+    GxB_Type_fprint (A->type, "A TYpe", GxB_COMPLETE, stdout) ;
+    std::cout << "B TYpe: " << std::endl;
+    GxB_Type_fprint (B->type, "B TYpe", GxB_COMPLETE, stdout) ;
 //    // (1) create the semiring code and name
 
     //    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
