@@ -67,7 +67,9 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
         int B_sparsity          // sparsity structure of B
     )
     {
-       std::cout<<" calling stringify semiring: " << semiring << std::endl;
+       std::cout<<" calling stringify semiring: " << std::endl;
+       GxB_Semiring_fprint (semiring, "stringfiy the smiering", GxB_COMPLETE, stdout) ;
+       std::cout<<" Mask_struct: " << Mask_struct << std::endl;
        uint64_t scode; 
        GB_enumify_semiring (
 	    // output:

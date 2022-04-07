@@ -18,6 +18,9 @@ bool GB_AxB_dot3_cuda_branch
     GB_Context Context
 )
 {
+
+    printf ("HERE IN cuda branch, mask_struct is %d\n", Mask_struct) ;
+
         // very rough estimate of the work to do
         double adeg = ((double) GB_nnz (A)) / ((double) GB_IMAX (1, A->nvec)) ;
         double bdeg = ((double) GB_nnz (B)) / ((double) GB_IMAX (1, B->nvec)) ;
