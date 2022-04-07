@@ -157,7 +157,7 @@ public:
     dim3 grid(get_number_of_blocks(M));
     dim3 block(get_threads_per_block());
 
-    jit::launcher( hashable_name,
+    jit::launcher( hashable_name + "_" + M->type->name + "_" + std::to_string(semiring_factory_.mask_struct),
                    string_to_be_jitted.str(),
                    header_names,
                    compiler_flags,
