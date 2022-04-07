@@ -20,8 +20,10 @@ bool GB_reduce_to_scalar_cuda_branch
     printf (" work:%g gpus:%d ", work, ngpus_to_use) ;
     if (ngpus_to_use > 0
         && (reduce->header_size == 0)     // semiring is built-in
-        && (A->type->code != GB_UDT_code))
-    {
+        && (A->type->code != GB_UDT_code)
+        // FIXME: this is easy
+        && !A->iso
+    ) {
         return true;
     }
     else
