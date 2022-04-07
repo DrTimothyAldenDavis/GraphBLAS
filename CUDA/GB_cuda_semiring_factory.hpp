@@ -27,6 +27,7 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
     public:
 
         uint64_t sr_code;
+        bool mask_struct;
 
         // file ptr
         FILE *fp;
@@ -90,6 +91,7 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
        std::cout << "done stringify semiring" << std::endl;
        this->sr_code = scode;
 
+       mask_struct = Mask_struct;
        std::stringstream ss;
        ss << "GB_semiring_" << this->sr_code << ".h";
 
