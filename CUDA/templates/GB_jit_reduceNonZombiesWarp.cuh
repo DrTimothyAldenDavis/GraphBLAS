@@ -99,8 +99,6 @@ __global__ void reduceNonZombiesWarp
     for(int i = blockIdx.x * blockDim.x + threadIdx.x; 
         i < N;
         i += blockDim.x * gridDim.x) {
-        printf("tid=%d, N: %ud\n", tid, N);
-
         if (is_sparse && index[i] < 0) continue; // skip zombies
         T fold = g_idata[i];
         sum = GB_ADD( sum, fold );
