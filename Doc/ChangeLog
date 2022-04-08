@@ -1,4 +1,4 @@
-Version 7.0.2, Apr 5, 2022
+Version 7.0.2, Apr 6, 2022
 
     * (45) bug fix: vector iterator was broken for iterating across a
         vector in bitmap format.  Caught by Erik Welch.

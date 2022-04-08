@@ -590,7 +590,7 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
     GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_COMPLETE, stdout));
 
     T actual;
-    GB_cuda_reduce( A, &actual, N, monoid );
+    GB_cuda_reduce( A, &actual, monoid );
 
     GrB_Vector v;
     GrB_Vector_new(&v, t, N);

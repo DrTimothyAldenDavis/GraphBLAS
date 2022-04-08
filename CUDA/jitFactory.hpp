@@ -89,6 +89,8 @@ static const std::vector<std::string> compiler_flags{
    "-I../../Source",
    "-I../../Source/Template",
    "-I../templates",
+   "-I/share/workspace/nvidia_projects/GraphBLAS/CUDA/templates"
+   "-I/share/workspace/nvidia_projects/GraphBLAS/CUDA/"
 //   "-L../../build/CUDA",
    "-I/usr/local/cuda/include",
 };
@@ -141,8 +143,10 @@ public:
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (semiring_factory_) ;
 
+    auto sr_code = std::to_string(semiring_factory_.sr_code);
+
     std::stringstream string_to_be_jitted ;
-    std::vector<std::string> template_types = {M->type->name};
+    std::vector<std::string> template_types = {M->type->name, sr_code};
 
     std::string hashable_name = base_name + "_" + kernel_name;
     string_to_be_jitted << hashable_name << std::endl <<
@@ -155,7 +159,7 @@ public:
     dim3 grid(get_number_of_blocks(M));
     dim3 block(get_threads_per_block());
 
-    jit::launcher( hashable_name,
+    jit::launcher( hashable_name + "_" + M->type->name + "_" + sr_code,
                    string_to_be_jitted.str(),
                    header_names,
                    compiler_flags,
@@ -211,7 +215,7 @@ public:
       const int64_t mnz = GB_nnz (M) ;
       jit::launcher( hashable_name,
                      string_to_be_jitted.str(),
-                     header_names, 
+                     header_names,
                      compiler_flags,
                      file_callback)
                    .set_kernel_inst( kernel_name, {})
@@ -228,13 +232,13 @@ public:
 };
 
 template< int threads_per_block = 32, int chunk_size = 128>
-class phase2endlaunchFactory 
+class phase2endlaunchFactory
 {
 
   std::string base_name = "GB_jit";
   std::string kernel_name = "AxB_phase2end";
 
-public: 
+public:
 
   int get_threads_per_block() {
         return threads_per_block;
@@ -253,8 +257,8 @@ public:
                           int64_t *bucketp, int64_t *bucket, int64_t *offset,
                           GrB_Matrix C, GrB_Matrix M)
      {
-      
-      bool result = false; 
+
+      bool result = false;
 
       dim3 grid(get_number_of_blocks(M));
       dim3 block(get_threads_per_block());
@@ -269,7 +273,7 @@ public:
 
       jit::launcher( hashable_name,
                      string_to_be_jitted.str(),
-                     header_names, 
+                     header_names,
                      compiler_flags,
                      file_callback)
                    .set_kernel_inst(  kernel_name , {})
@@ -306,8 +310,8 @@ public:
 
   bool jitGridBlockLaunch(int64_t start, int64_t end, int64_t *bucketp, int64_t *bucket,
                           GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
-      
-      bool result = false; 
+
+      bool result = false;
 
     //----------------------------------------------------------------------
     // phase3: do the numerical work
@@ -500,13 +504,9 @@ public:
   }
 
   // Note: this does assume the erased types are compatible w/ the monoid's ztype
-  bool jitGridBlockLaunch(GrB_Matrix A, void* output, unsigned int N,
+  bool jitGridBlockLaunch(GrB_Matrix A, void* output,
                           GrB_Monoid op)
   {
-      int blocksz = get_threads_per_block();
-      int gridsz = get_number_of_blocks(N);
-      dim3 grid(gridsz);
-      dim3 block(blocksz);
 
       // TODO: We probably want to "macrofy" the GrB_Monoid and define it in the `string_to_be_jitted`
 //      void GB_stringify_binop
@@ -533,6 +533,14 @@ public:
       hashable_name << std::endl << R"(#include ")" <<
         hashable_name << R"(.cuh")" << std::endl;
 
+      bool is_sparse = GB_IS_SPARSE(A);
+      int64_t N = is_sparse ? GB_nnz(A) : GB_NCOLS(A) * GB_NROWS(A);
+
+      int blocksz = get_threads_per_block();
+      int gridsz = get_number_of_blocks(N);
+      dim3 grid(gridsz);
+      dim3 block(blocksz);
+
       jit::launcher(hashable_name,
                     string_to_be_jitted.str(),
                     header_names,
@@ -542,7 +550,7 @@ public:
                .configure(grid, block)
 
                // FIXME: GB_ADD is hardcoded into kernel for now
-               .launch( A, temp_scalar, N);
+               .launch( A, temp_scalar, N, is_sparse);
 
 
       checkCudaErrors( cudaDeviceSynchronize() );
@@ -589,9 +597,9 @@ inline bool GB_cuda_mxm_phase3(GB_cuda_semiring_factory &mysemiringfactory, GB_b
 }
 
 
-inline bool GB_cuda_reduce(GrB_Matrix A, void *output, unsigned int N, GrB_Monoid op) {
+inline bool GB_cuda_reduce(GrB_Matrix A, void *output, GrB_Monoid op) {
     reduceFactory rf;
-    return rf.jitGridBlockLaunch(A, output, N, op);
+    return rf.jitGridBlockLaunch(A, output, op);
 }
 
 
