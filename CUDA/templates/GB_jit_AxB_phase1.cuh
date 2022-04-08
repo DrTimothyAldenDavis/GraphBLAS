@@ -397,6 +397,7 @@ __global__ void AxB_phase1
           Mps[i] = Mp[i + kfirst];
       }
       __syncthreads();
+      /*
       if (threadIdx.x == 0)
       {
         for (int64_t i = 0 ; i < k_end ; i++)
@@ -405,6 +406,7 @@ __global__ void AxB_phase1
         }
       }
       __syncthreads();
+      */
 
 
       // search for k values for each entry
@@ -418,6 +420,7 @@ __global__ void AxB_phase1
              ks[i]--;
       }
       __syncthreads();
+      /*
       if (threadIdx.x == 0)
       {
         for (int64_t i = 0 ; i < chunksize ; i++)
@@ -426,6 +429,7 @@ __global__ void AxB_phase1
         }
       }
       __syncthreads();
+      */
 
 
     //ASSERT (0 <= kfirst && kfirst <= klast && klast < mnvec) ;
