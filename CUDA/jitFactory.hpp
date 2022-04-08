@@ -89,7 +89,12 @@ static const std::vector<std::string> compiler_flags{
    "-I../../Source",
    "-I../../Source/Template",
    "-I../templates",
-//   "-L../../build/CUDA",
+
+   // Add includes relative to GRAPHBLAS_SOURCE_PATH variable
+   "-I" + jit::get_user_graphblas_source_path() + "/CUDA",
+   "-I" + jit::get_user_graphblas_source_path() + "/CUDA/templates",
+   "-I" + jit::get_user_graphblas_source_path() + "/Source",
+   "-I" + jit::get_user_graphblas_source_path() + "/Source/Template",
    "-I/usr/local/cuda/include",
 };
 
@@ -133,23 +138,23 @@ public:
 
     // Defining dummy instance only so we can introspect type
 
-    std::cout << "A TYpe: " << std::endl;
-    GxB_Type_fprint (A->type, "A TYpe", GxB_COMPLETE, stdout) ;
-    std::cout << "B TYpe: " << std::endl;
-    GxB_Type_fprint (B->type, "B TYpe", GxB_COMPLETE, stdout) ;
+    std::cout << "A TYpe: " << A->type << std::endl;
+    std::cout << "B TYpe: " << B->type << std::endl;
 //    // (1) create the semiring code and name
 
     //    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (semiring_factory_) ;
 
+    auto sr_code = std::to_string(semiring_factory_.sr_code);
+
     std::stringstream string_to_be_jitted ;
-    std::vector<std::string> template_types = {M->type->name};
+    std::vector<std::string> template_types = {M->type->name, sr_code};
 
     std::string hashable_name = base_name + "_" + kernel_name;
     string_to_be_jitted << hashable_name << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << semiring_factory_.filename << R"(")" << std::endl <<
-    R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+    R"(#include "templates/)" << hashable_name << R"(.cuh")" << std::endl;
     std::cout << string_to_be_jitted.str();
 
     bool result = false;
@@ -157,7 +162,7 @@ public:
     dim3 grid(get_number_of_blocks(M));
     dim3 block(get_threads_per_block());
 
-    jit::launcher( hashable_name + "_" + M->type->name + "_" + std::to_string(semiring_factory_.mask_struct),
+    jit::launcher( hashable_name + "_" + M->type->name + "_" + sr_code,
                    string_to_be_jitted.str(),
                    header_names,
                    compiler_flags,
@@ -213,7 +218,7 @@ public:
       const int64_t mnz = GB_nnz (M) ;
       jit::launcher( hashable_name,
                      string_to_be_jitted.str(),
-                     header_names, 
+                     header_names,
                      compiler_flags,
                      file_callback)
                    .set_kernel_inst( kernel_name, {})
@@ -230,13 +235,13 @@ public:
 };
 
 template< int threads_per_block = 32, int chunk_size = 128>
-class phase2endlaunchFactory 
+class phase2endlaunchFactory
 {
 
   std::string base_name = "GB_jit";
   std::string kernel_name = "AxB_phase2end";
 
-public: 
+public:
 
   int get_threads_per_block() {
         return threads_per_block;
@@ -255,8 +260,8 @@ public:
                           int64_t *bucketp, int64_t *bucket, int64_t *offset,
                           GrB_Matrix C, GrB_Matrix M)
      {
-      
-      bool result = false; 
+
+      bool result = false;
 
       dim3 grid(get_number_of_blocks(M));
       dim3 block(get_threads_per_block());
@@ -271,7 +276,7 @@ public:
 
       jit::launcher( hashable_name,
                      string_to_be_jitted.str(),
-                     header_names, 
+                     header_names,
                      compiler_flags,
                      file_callback)
                    .set_kernel_inst(  kernel_name , {})
@@ -308,8 +313,8 @@ public:
 
   bool jitGridBlockLaunch(int64_t start, int64_t end, int64_t *bucketp, int64_t *bucket,
                           GrB_Matrix C,  GrB_Matrix M, GrB_Matrix A, GrB_Matrix B) {
-      
-      bool result = false; 
+
+      bool result = false;
 
     //----------------------------------------------------------------------
     // phase3: do the numerical work

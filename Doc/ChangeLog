@@ -1,3 +1,7 @@
+Version 7.0.3, Apr 8, 2022
+
+    * faster transpose when using 2 threads
+
 Version 7.0.2, Apr 6, 2022
 
     * (45) bug fix: vector iterator was broken for iterating across a

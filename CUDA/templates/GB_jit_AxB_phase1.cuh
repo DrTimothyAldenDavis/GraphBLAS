@@ -205,7 +205,7 @@ __device__ static inline GB_bucket_code GB_bucket_assignment
 // The kernel also computes Ci, of size nnz(C), which contains the
 // zombie assignment or bucket assignment for non-zombies in C.
 
-template<typename Type_M> 
+template<typename Type_M, uint64_t srcode>
 __global__ void AxB_phase1
 (
     // outputs, preallocated in global memory:
@@ -313,10 +313,10 @@ __global__ void AxB_phase1
     __syncthreads();
     if (threadIdx.x==0 && blockIdx.x == 0)
     {
-        printf ("Here in phase1, what I see is this:\n") ;
-        printf ("MX(pM) is: %s\n", GB_XSTR (MX (pM))) ;
-        printf ("GB_MULT(x,y) is: %s\n", GB_XSTR (GB_MULT (x,y))) ;
-        printf ("GB_ADD(x,y)  is: %s\n", GB_XSTR (GB_ADD (x,y))) ;
+//        printf ("Here in phase1, what I see is this:\n") ;
+//        printf ("MX(pM) is: %s\n", GB_XSTR (MX (pM))) ;
+//        printf ("GB_MULT(x,y) is: %s\n", GB_XSTR (GB_MULT (x,y))) ;
+//        printf ("GB_ADD(x,y)  is: %s\n", GB_XSTR (GB_ADD (x,y))) ;
         // #define GB_GETA(blob)
         // #define GB_GETB(blob)
         // #define GB_MULT(x,y) (1)
@@ -382,11 +382,11 @@ __global__ void AxB_phase1
 
       int64_t k_end = GB_IMIN(  pointerchunk ,  klast - kfirst +2 ) ;
         
-      if( threadIdx.x ==0) 
-      {
-         printf("chunk%ld pfirst,plast,ch_end =%ld,%ld,%ld kfirst,klast,kend = %ld,%ld,%ld\n",
-                 chunk, pfirst, plast, chunk_end, kfirst, klast, k_end ) ;
-      }
+//      if( threadIdx.x ==0)
+//      {
+//         printf("chunk%ld pfirst,plast,ch_end =%ld,%ld,%ld kfirst,klast,kend = %ld,%ld,%ld\n",
+//                 chunk, pfirst, plast, chunk_end, kfirst, klast, k_end ) ;
+//      }
       __syncthreads();
       
       
@@ -400,10 +400,10 @@ __global__ void AxB_phase1
       /*
       if (threadIdx.x == 0)
       {
-        for (int64_t i = 0 ; i < k_end ; i++)
-        {
-            printf ("Mps [%d] = %ld\n", i, Mps [i]) ;
-        }
+//        for (int64_t i = 0 ; i < k_end ; i++)
+//        {
+//            printf ("Mps [%d] = %ld\n", i, Mps [i]) ;
+//        }
       }
       __syncthreads();
       */
@@ -423,10 +423,10 @@ __global__ void AxB_phase1
       /*
       if (threadIdx.x == 0)
       {
-        for (int64_t i = 0 ; i < chunksize ; i++)
-        {
-            printf ("ks [%d] = %ld\n", i, ks [i]) ;
-        }
+//        for (int64_t i = 0 ; i < chunksize ; i++)
+//        {
+//            printf ("ks [%d] = %ld\n", i, ks [i]) ;
+//        }
       }
       __syncthreads();
       */
@@ -465,7 +465,7 @@ __global__ void AxB_phase1
             GB_bucket_code bucket = GB_BUCKET_ZOMBIE ;
             int64_t k = ks[ pM - pfirst ] ;
             //k += ( pM == Mp[k+1] ) ;
-            printf ("tid%d  k %ld pM %ld MX(pM): %d\n", threadIdx.x, k, pM, MX (pM));
+//            printf ("tid%d  k %ld pM %ld MX(pM): %d\n", threadIdx.x, k, pM, MX (pM));
             int64_t i = Mi [ pM ] ;
 int64_t j = k ; // HACK, does not need to be initialized here
 
@@ -519,8 +519,8 @@ pA_end = Ap [i+1] ;
 
                         //bucket = GB_BUCKET_MERGEPATH ;
                         bucket= GB_bucket_assignment ( ainz, bjnz, bvlen) ;
-                        printf ("tid%d  i %ld j %ld ainz %ld bjnz %ld: bucket %d\n",
-                            threadIdx.x, i, j, ainz, bjnz, (int) bucket) ;
+//                        printf ("tid%d  i %ld j %ld ainz %ld bjnz %ld: bucket %d\n",
+//                            threadIdx.x, i, j, ainz, bjnz, (int) bucket) ;
                     }
                 }
             }
@@ -528,7 +528,7 @@ pA_end = Ap [i+1] ;
             if (bucket == GB_BUCKET_ZOMBIE)
             {
                 // mark C(i,j) is a zombie
-                printf ("tid%d pM=%d %d,%d prezombie\n",threadIdx.x,pM,i,j) ;
+//                printf ("tid%d pM=%d %d,%d prezombie\n",threadIdx.x,pM,i,j) ;
                 Ci [pM] = GB_FLIP (i) << 4 ;
                 // GB_BUCKET_COUNT (GB_BUCKET_ZOMBIE) ;
                 my_bucket_0++ ; //0 is the zombie bucket
@@ -538,7 +538,7 @@ pA_end = Ap [i+1] ;
                 // place C(i,j) in its bucket
                 Ci [pM] = (k << 4) + bucket ;
                 GB_BUCKET_COUNT (bucket) ;
-                printf ("tid%d pM=%d %d,%d b=%d\n",threadIdx.x, pM, i,j, (int)bucket) ;
+//                printf ("tid%d pM=%d %d,%d b=%d\n",threadIdx.x, pM, i,j, (int)bucket) ;
             }
          }
             

@@ -148,6 +148,12 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
+\item Version 7.0.3 (Apr 8, 2022)
+
+    \begin{packed_itemize}
+    \item faster transpose when using 2 threads
+    \end{packed_itemize}
+
 \item Version 7.0.2 (Apr 5, 2022)
 
     \begin{packed_itemize}
@@ -5934,8 +5940,8 @@ Deserialization of untrusted data is a common security problem; see
 \url{https://cwe.mitre.org/data/definitions/502.html}. The deserialization
 methods do a few basic checks so that no out-of-bounds access occurs during
 deserialization, but the output matrix or vector itself may still be corrupted.
-If the data is untrusted, use check the matrix or vector after
-deserializing it:
+If the data is untrusted, use \verb'GxB_*_fprint' to
+check the matrix or vector after deserializing it:
 
 {\footnotesize
 \begin{verbatim}
