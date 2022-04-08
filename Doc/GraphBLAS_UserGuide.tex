@@ -5934,7 +5934,7 @@ Deserialization of untrusted data is a common security problem; see
 \url{https://cwe.mitre.org/data/definitions/502.html}. The deserialization
 methods do a few basic checks so that no out-of-bounds access occurs during
 deserialization, but the output matrix or vector itself may still be corrupted.
-If the data is untrusted, use check the matrix or vector after
+If the data is untrusted, use \verb'fprint' to check the matrix or vector after
 deserializing it:
 
 {\footnotesize
