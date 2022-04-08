@@ -46,6 +46,12 @@ namespace jit {
         }
     }
 
+// Get the directory in home to use for storing the cache
+    std::string get_user_graphblas_source_path() {
+        auto gb_home = std::getenv("GRAPHBLAS_SOURCE_PATH");
+        if (gb_home != nullptr) return std::string(gb_home);
+        else return std::string();
+    }
 
 
 // Default `GRAPHBLAS_CACHE_PATH` to `$HOME/.GraphBLAS`.

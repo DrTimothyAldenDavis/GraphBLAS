@@ -89,9 +89,12 @@ static const std::vector<std::string> compiler_flags{
    "-I../../Source",
    "-I../../Source/Template",
    "-I../templates",
-   "-I/share/workspace/nvidia_projects/GraphBLAS/CUDA/templates"
-   "-I/share/workspace/nvidia_projects/GraphBLAS/CUDA/"
-//   "-L../../build/CUDA",
+
+   // Add includes relative to GRAPHBLAS_SOURCE_PATH variable
+   "-I" + jit::get_user_graphblas_source_path() + "/CUDA",
+   "-I" + jit::get_user_graphblas_source_path() + "/CUDA/templates",
+   "-I" + jit::get_user_graphblas_source_path() + "/Source",
+   "-I" + jit::get_user_graphblas_source_path() + "/Source/Template",
    "-I/usr/local/cuda/include",
 };
 
@@ -151,7 +154,7 @@ public:
     std::string hashable_name = base_name + "_" + kernel_name;
     string_to_be_jitted << hashable_name << std::endl <<
     R"(#include ")" << jit::get_user_home_cache_dir() << "/" << semiring_factory_.filename << R"(")" << std::endl <<
-    R"(#include ")" << hashable_name << R"(.cuh")" << std::endl;
+    R"(#include "templates/)" << hashable_name << R"(.cuh")" << std::endl;
     std::cout << string_to_be_jitted.str();
 
     bool result = false;
