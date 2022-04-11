@@ -199,6 +199,12 @@ public:
     return (ntasks + threads_per_block - 1) / threads_per_block ;
   }
 
+  int get_number_of_phase1_blocks( GrB_Matrix M){
+    const int64_t mnz = GB_nnz (M) ;
+    int ntasks = ( mnz +chunk_size -1)/chunk_size;
+    return ntasks;
+  }
+
   bool jitGridBlockLaunch(// parameters to AxB_phase2:
                           int64_t *blockBucket, int64_t *offset, GrB_Matrix M) {
 
@@ -224,7 +230,7 @@ public:
                    .set_kernel_inst( kernel_name, {})
                    .configure(grid, block)
                    // parameters to AxB_phase2:
-                   .launch( blockBucket, offset, get_number_of_blocks(M));
+                   .launch( blockBucket, offset, get_number_of_phase1_blocks(M));
 
       checkCudaErrors( cudaDeviceSynchronize() );
       result= true;
