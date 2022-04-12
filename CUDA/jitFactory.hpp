@@ -326,8 +326,8 @@ public:
     // phase3: do the numerical work
     //----------------------------------------------------------------------
     C->jumbled = true;
-    C->nzombies = bucketp[1];  //set pre-zombie counts
-    const int64_t Cnz = GB_nnz (C) ;
+    //C->nzombies = bucketp[1];  //set pre-zombie counts
+    const int64_t nz = end - start; // number of dots in this bucket  
     const int64_t mnvec = M->nvec ;
 
     int gridsz, blocksz, sz = 4;
@@ -338,7 +338,7 @@ public:
     /**
      * Configure geometry and kernel function name based on sparsity of C and number of vectors in M
      */
-    configure(Cnz, mnvec, final_kernel_name_ss, blocksz, gridsz, sz);
+    configure( nz, mnvec, final_kernel_name_ss, blocksz, gridsz, sz);
 
     std::string hashable_name = base_name + "_" + final_kernel_name_ss.str();
     std::stringstream string_to_be_jitted ;

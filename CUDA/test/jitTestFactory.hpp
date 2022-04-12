@@ -216,7 +216,7 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
 
    GpuTimer kernTimer;
    kernTimer.Start();
-    const int64_t mnz = GB_nnz (M) ;
+   const int64_t mnz = GB_nnz (M) ;
 
    int nthrd = p2lF.get_threads_per_block();
    int ntasks = p2elF.get_number_of_blocks(M);
@@ -234,6 +234,7 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     fillvector_constant(NBUCKETS * ntasks, blockbucket, (int64_t)0);
     blockbucket[10] = Cnz;
     fillvector_constant(NBUCKETS, bucketp, (int64_t)0);
+    fillvector_constant(NBUCKETS, offset, (int64_t)0);
     fillvector_constant(Cnz, bucket, (int64_t)0);
 
     print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
@@ -248,7 +249,7 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     {
         bucketp[bucket] = s;
         s+= offset[bucket];
-        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
+        printf("bucketp[%d] = %ld, offset= %ld\n", bucket, bucketp[bucket],offset[bucket]);
     }
 
     // launch phase2end: note same # of tasks as phase1

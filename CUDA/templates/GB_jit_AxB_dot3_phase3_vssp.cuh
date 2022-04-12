@@ -70,15 +70,15 @@ __global__ void AxB_dot3_phase3_vssp
 )
 {
    // Typed pointers to access data in A,B,C
-   T_A *Ax = (T_A*)A->x;
-   T_B *Bx = (T_B*)B->x;
-   T_C *Cx = (T_C*)C->x;
-   int64_t *Ci = C->i;
-   int64_t *Mi = M->i;
-   int64_t *Ai = A->i;
-   int64_t *Bi = B->i;
-   int64_t *Ap = A->p;
-   int64_t *Bp = B->p;
+   T_A *__restrict__ Ax = (T_A*)A->x;
+   T_B *__restrict__ Bx = (T_B*)B->x;
+   T_C *__restrict__ Cx = (T_C*)C->x;
+   int64_t *__restrict__ Ci = C->i;
+   int64_t *__restrict__ Mi = M->i;
+   int64_t *__restrict__ Ai = A->i;
+   int64_t *__restrict__ Bi = B->i;
+   int64_t *__restrict__ Ap = A->p;
+   int64_t *__restrict__ Bp = B->p;
 
    // sz = expected non-zeros per dot 
    int m = 256/sz;
@@ -206,8 +206,8 @@ __global__ void AxB_dot3_phase3_vssp
 
         }
         if ( cij_exists){
-           GB_PUTC ( Ci[pair_id]=i ) ;
-           GB_PUTC ( Cx[pair_id]=(T_C)cij ) ;
+           GB_PUTC ( Ci[pair_id] = i ) ;
+           GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;
         }
         else {
            zc++; 

@@ -73,15 +73,15 @@ T block_ReduceSum(thread_block g, T val)
   // Wait for all partial reductions
   if (lane==0) shared[wid]=val; // Write reduced value to shared memory
   __syncthreads();              // Wait for all partial reductions
-    for(int i = threadIdx.x; i < warpSize; i+= blockDim.x) {
-            printf("blockIdx.x=%d, wid=%d, val=%lld\n", blockIdx.x, i, shared[i]);
-    }
+  //for(int i = threadIdx.x; i < warpSize; i+= blockDim.x) {
+  //        printf("blockIdx.x=%d, wid=%d, val=%d\n", blockIdx.x, i, shared[i]);
+  //}
 
-//  if (wid > 0 || gridDim.x == 1 ) return val;
+  if (wid > 0 ) return val;
 
   //read from shared memory only if that warp existed
   val = (threadIdx.x <  (blockDim.x / warpSize ) ) ? shared[lane] : 0;
-  printf("thd%d warp loaded val = %d\n", threadIdx.x, lane, val);
+  //printf("thd%d warp loaded val = %d\n", threadIdx.x, lane, val);
 
   if (wid==0) val = warp_ReduceSumPlus<T, warpSize>( tile, val); //Final reduce within first warp
 
@@ -152,12 +152,12 @@ __global__ void AxB_dot3_phase3_vsvs
 
          int64_t i = Mi [pair_id] ;
          int64_t j = Ci [pair_id]>>4 ; 
-         if (j < 0) continue; //don't operate on zombies
-       printf("start=%d, tid=%d, pair_id=%lu, (i,j)=%lu,%lu\n", pfirst, tid, pair_id,i,j);
+         //if (j < 0) continue; //don't operate on zombies
          int64_t pA       = Ap[i] ;
          int64_t pA_end   = Ap[i+1] ;
          int64_t pB       = Bp[j] ;
          int64_t pB_end   = Bp[j+1] ;
+       printf("start=%d, tid=%d, pair_id=%lu, (i,j)=%lu,%lu, nzA=%lu, nzB=%lu\n", pfirst, tid, pair_id,i,j,pA_end-pA,pB_end-pB);
 
          T_A aki;
          T_B bkj;
@@ -172,6 +172,7 @@ __global__ void AxB_dot3_phase3_vsvs
             if( ia == ib)
             { 
                 // A(k,i) and B(k,j) are the next entries to merge
+                
                 #if defined ( GB_PHASE_1_OF_2 )
                 cij_exists = true ;
                 break ;
@@ -181,6 +182,7 @@ __global__ void AxB_dot3_phase3_vsvs
                 pA++ ;
                 pB++ ;
                 #endif
+                printf(" %lld, %lld intersect at %lld cij=%d!\n",i,j,ia,cij);
             }
             else 
             {
@@ -193,6 +195,7 @@ __global__ void AxB_dot3_phase3_vsvs
          if (cij_exists){
             GB_PUTC ( Ci[pair_id] = i ) ;
             GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;
+            printf(" %lld, %lld is alive %d!\n",i,j,cij);
          }
          else{
             printf(" %lld, %lld is zombie %d!\n",i,j,zc);
@@ -203,7 +206,7 @@ __global__ void AxB_dot3_phase3_vsvs
   
    __syncthreads();
 
-   printf("thd%d zombie count = %d\n",threadIdx.x,zc);
+   //printf("thd%d zombie count = %d\n",threadIdx.x,zc);
    zc = block_ReduceSum<int , 32>( this_thread_block(), zc);
    __syncthreads();
    if( threadIdx.x == 0 && zc > 0) {

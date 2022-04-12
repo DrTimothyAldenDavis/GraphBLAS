@@ -206,7 +206,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     phase2endlaunchFactory p2elf;
 
 
-    // # of threads in phase1 and phase2 kernel launches must be the same
+    // # of threads in phase1 and phase2 kernel launches are related
+    // # by the size of the warp.  ph2_task = ph1_task/32 for example
     int nthrd = p2lf.get_threads_per_block();
     int ntasks = p2elf.get_number_of_blocks(M);
 
@@ -268,7 +269,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     GBURBLE ("(GPU phase1 done) ") ;
 
     //print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
-    //print_array<int64_t>(Blockbucket, blockbuckets_size , "Blockbucket");
+    printf(" using %ld blockbuckets \n", blockbuckets_size); 
+    print_array<int64_t>(Blockbucket, blockbuckets_size , "Blockbucket");
 
     //----------------------------------------------------------------------
     // phase2: cumsum across the blockbuckets, propagate to thread level
@@ -276,12 +278,12 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GBURBLE ("(GPU phase1 start) ") ;
 
-    p2lf.jitGridBlockLaunch(Blockbucket, offset, M);
+    p2lf.jitGridBlockLaunch(Blockbucket, offset, M );
 
     int64_t s= 0;
-    for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
+    for ( int bucket = 1 ; bucket < NBUCKETS+1; ++bucket)
     {
-        Bucketp[bucket] = s;
+        Bucketp[bucket] = s; 
         s+= offset[bucket];
         printf("bucketp[%d] = %ld, offset=%ld\n", bucket, Bucketp[bucket], offset[bucket]);
     }

@@ -61,12 +61,12 @@ __device__ void blockBucketExclusiveSum(int bucketId, int64_t *d_data, int nbloc
       if ( loc < nblocks)
       { 
         //printf("block %di loading tid=%d\n",block_id,tid);
-        data  = blockbucket[bucketId*nblocks    +loc ] ; 
+        data  = blockbucket[bucketId*nblocks +loc ] ; 
       }
       __syncthreads();
 
       //printf("bb%d_%d s0 before prefix= %ld \n", block_id,bucketId, 
-      //                     blockbucket[bucketId*nblocks + block_id+threadIdx.x] )  ; 
+      //                     blockbucket[bucketId*nblocks +loc] )  ; 
       // Collectively compute the block-wide exclusive prefix sum
       BlockScan(temp_storage).ExclusiveSum( data, data, prefix_op);
       __syncthreads();
@@ -77,7 +77,7 @@ __device__ void blockBucketExclusiveSum(int bucketId, int64_t *d_data, int nbloc
       }
       __syncthreads();
 
-        //printf("bb%d_%d = %ld \n", block_id, bucketId, blockbucket[bucketId*nblocks+block_id+threadIdx.x] )  ; 
+      //printf("bb%d_%d = %ld \n", block_id, bucketId, blockbucket[bucketId*nblocks +loc] )  ; 
       
       data = 0;
    }
@@ -115,6 +115,9 @@ __inline__ __device__ T block_ReduceSum(thread_block g, T val)
   __syncthreads();              // Wait for all partial reductions
 
   if (wid > 0 ) return val ;
+
+  //read from shared memory only if that warp existed
+  val = (threadIdx.x <  (blockDim.x / warpSize ) ) ? shared[lane] : 0;
   //Final reduce within first warp
   if (wid==0) val = warp_ReduceSumPlus<T, warpSize>( tile, val) ; 
 
@@ -133,7 +136,7 @@ __global__ void AxB_phase2
     // output:
     int64_t *__restrict__ offset,         // global offsets, for each bucket
     // inputs, not modified:
-    const int nblocks         // input number of blocks to reduce
+    const int nblocks        // input number of blocks to reduce across, ie size of vector for 1 bucket 
 )
 {
 
@@ -162,10 +165,10 @@ __global__ void AxB_phase2
 
     thread_block_tile<32> tile = tiled_partition<32>(this_thread_block() );
 
-    //printf("block %d entering sum\n",blockIdx.x);
+    //printf("block %d,dim %d entering sum %d nblocks\n",blockIdx.x, blockDim.x, nblocks);
     int tid = threadIdx.x  + blockIdx.x * blockDim.x;
     #define reduceBucket( B )    \
-     for( tid = threadIdx.x + blockIdx.x*blockDim.x; \
+     for( tid = threadIdx.x + blockIdx.x * blockDim.x; \
           tid < nblocks;  \
           tid += blockDim.x*gridDim.x) \
      {                           \
@@ -188,10 +191,10 @@ __global__ void AxB_phase2
      reduceBucket( 11 )
 
 
-        //printf("summing blk,tid=%d,%d\n",blockIdx.x,threadIdx.x);
+       //printf("summing blk,tid=%d,%d\n",blockIdx.x,threadIdx.x);
        if (threadIdx.x ==0 )
        {
-           printf("s_0: %ld, s_1=%ld, s_10=%ld, s_11=%ld\n", s_0, s_1, s_10, s_11);
+          printf("s_0: %ld, s_1=%ld, s_10=%ld, s_11=%ld\n", s_0, s_1, s_10, s_11);
           atomicAdd( (unsigned long long int*)&(offset[0]), s_0);
           atomicAdd( (unsigned long long int*)&(offset[1]), s_1);
           atomicAdd( (unsigned long long int*)&(offset[2]), s_2);
