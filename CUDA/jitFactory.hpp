@@ -142,7 +142,7 @@ public:
     std::cout << "B TYpe: " << B->type << std::endl;
 //    // (1) create the semiring code and name
 
-    //    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
+//    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (semiring_factory_) ;
 
@@ -340,8 +340,11 @@ public:
      */
     configure( nz, mnvec, final_kernel_name_ss, blocksz, gridsz, sz);
 
+    auto sr_code = std::to_string(semiring_factory_.sr_code);
+
     std::string hashable_name = base_name + "_" + final_kernel_name_ss.str();
     std::stringstream string_to_be_jitted ;
+    std::vector<std::string> template_types = {C->type->name, A->type->name, B->type->name};
 
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (semiring_factory_) ;
@@ -355,15 +358,15 @@ public:
 
     C->nzombies = 0;
     GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
-    jit::launcher( hashable_name,
+    jit::launcher( hashable_name + "_" + M->type->name + "_" + sr_code,
                    string_to_be_jitted.str(),
                    header_names,
                    compiler_flags,
                    file_callback)
-               .set_kernel_inst(final_kernel_name_ss.str(),
-                                { C->type->name,
-                                  A->type->name,
-                                  B->type->name })
+               .set_kernel_inst(final_kernel_name_ss.str(), template_types )
+                               // { C->type->name,
+                               //   A->type->name,
+                               //   B->type->name })
                .configure(grid, block) //if commented, use implicit 1D configure in launch
                .launch(
                         start,             // input/output:
