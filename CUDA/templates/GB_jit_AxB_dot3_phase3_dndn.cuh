@@ -88,7 +88,7 @@ __global__ void AxB_dot3_phase3_dndn
 (
     int64_t start,
     int64_t end,
-    int64_t *Bucket,
+    int64_t *Bucket,    // do the work in Bucket [start:end-1]
     GrB_Matrix C,
     GrB_Matrix M,
     GrB_Matrix A,
@@ -106,8 +106,6 @@ __global__ void AxB_dot3_phase3_dndn
    const int64_t *__restrict__ Ap = A->p ;
    const int64_t *__restrict__ Bp = B->p ;
 
-    // zombie count
-    int zc = 0;
     int64_t pair_id;
 
     // total items to be inspected
@@ -116,10 +114,12 @@ __global__ void AxB_dot3_phase3_dndn
     int s = blockDim.x;
 
     // Main loop over pairs 
-    for (pair_id = start + blockIdx.x; //warp per pair 
-         pair_id < end;  
-         pair_id += gridDim.x ){
+    int64_t kk ;
+    for (kk = start + blockIdx.x; //warp per pair 
+         kk < end;  
+         kk += gridDim.x ){
 
+         pair_id = Bucket [kk] ;
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
 

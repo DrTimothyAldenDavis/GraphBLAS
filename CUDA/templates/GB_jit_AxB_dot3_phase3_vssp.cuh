@@ -208,13 +208,13 @@ __global__ void AxB_dot3_phase3_vssp
 
         }
         if ( cij_exists){
-           GB_PUTC ( Ci[pair_id] = i ) ;
+           Ci[pair_id] = i ;
            GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;
         }
         else {
            zc++; 
            //printf(" %lld, %lld is zombie %d!\n",i,j,zc);
-           GB_PUTC( Ci[pair_id] = GB_FLIP( i ) ) ;
+           Ci[pair_id] = GB_FLIP( i ) ;
         }
 
 
