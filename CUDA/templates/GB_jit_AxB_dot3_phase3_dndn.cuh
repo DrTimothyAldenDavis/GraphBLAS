@@ -117,7 +117,6 @@ __global__ void AxB_dot3_phase3_dndn
     int s = blockDim.x;
 
     // Main loop over pairs 
-<<<<<<< HEAD
     for ( int64_t kk  = start + blockIdx.x; //warp per pair 
                   kk  < end;  
                   kk += gridDim.x ){
@@ -134,11 +133,11 @@ __global__ void AxB_dot3_phase3_dndn
          int64_t yend = Bp[j+1];
          nnzB = yend - pB;
 
-    if (threadIdx.x == 0 ){
-        printf("tid=%d, i,j = %d,%d  nnzA= %d, nnzB=%d\n",
-               threadIdx.x, (int)i,(int)j,  (int)nnzA, (int)nnzB);
-    }
-    __syncthreads();
+        if (threadIdx.x == 0 ){
+            printf("tid=%d, i,j = %d,%d  nnzA= %d, nnzB=%d\n",
+                   threadIdx.x, (int)i,(int)j,  (int)nnzA, (int)nnzB);
+        }
+        __syncthreads();
 
     
     // convert global data pointer to the local pointer of this block
