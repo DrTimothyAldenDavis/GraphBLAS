@@ -93,16 +93,16 @@ __global__ void AxB_dot3_phase3_vsvs
 ( 
   int64_t start,
   int64_t end,
-  int64_t *Bucket,
+  int64_t *Bucket,  // do the work in Bucket [start:end-1]
   GrB_Matrix C,
   GrB_Matrix M,
   GrB_Matrix A,
   GrB_Matrix B,
-  int sz
+  int sz            // unused
 )
 {
 //    printf("start=%lu, end=%lu\n", start, end);
-   int dots = end - start;
+   int64_t dots = end - start;
    // sz = expected non-zeros per dot
 //   /*
 //   int m = (gridDim.x*blockDim.x)*256/sz;
@@ -135,7 +135,7 @@ __global__ void AxB_dot3_phase3_vsvs
     int my_nzombies = 0 ;
     int64_t pair_id;
 
-    for ( int kk = pfirst+ threadIdx.x ;
+    for ( int64_t kk = pfirst+ threadIdx.x ;
                   kk < plast;
                   kk += blockDim.x )
     {
