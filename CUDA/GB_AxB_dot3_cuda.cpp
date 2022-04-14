@@ -270,7 +270,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     //print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
     printf(" using %ld blockbuckets \n", blockbuckets_size); 
-    print_array<int64_t>(Blockbucket, blockbuckets_size , "Blockbucket");
+    //print_array<int64_t>(Blockbucket, blockbuckets_size , "Blockbucket");
 
     //----------------------------------------------------------------------
     // phase2: cumsum across the blockbuckets, propagate to thread level
@@ -285,7 +285,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     {
         Bucketp[bucket] = s; 
         s+= offset[bucket];
-        printf("bucketp[%d] = %ld, offset=%ld\n", bucket, Bucketp[bucket], offset[bucket]);
+        //printf("bucketp[%d] = %ld, offset=%ld\n", bucket, Bucketp[bucket], offset[bucket]);
     }
 
     GBURBLE ("(GPU phase2 done) ") ;
@@ -306,8 +306,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     //----------------------------------------------------------------------
 
     print_array<int64_t>(Bucketp, NBUCKETS + 1 , "Bucketp");
-    C->nzombies = Bucketp[1];  //set pre-zombie counts
-    printf("pre-kernel C->nzombies=%ld\n", C->nzombies);
+    printf("pre-phase3 kernel C->nzombies=%ld\n", C->nzombies);
 
     for ( int bucket = 1 ; bucket < NBUCKETS; ++bucket)
     {
