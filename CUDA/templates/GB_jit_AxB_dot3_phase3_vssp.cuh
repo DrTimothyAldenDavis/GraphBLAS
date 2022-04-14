@@ -208,13 +208,13 @@ __global__ void AxB_dot3_phase3_vssp
 
         }
         if ( cij_exists){
-           GB_PUTC ( Ci[pair_id] = i ) ;
+           Ci[pair_id] = i ;
            GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;
         }
         else {
            zc++; 
            //printf(" %lld, %lld is zombie %d!\n",i,j,zc);
-           GB_PUTC( Ci[pair_id] = GB_FLIP( i ) ) ;
+           Ci[pair_id] = GB_FLIP( i ) ;
         }
 
 
@@ -227,9 +227,9 @@ __global__ void AxB_dot3_phase3_vssp
     zc = reduce_sum<int,tile_sz>(tile, zc);
 
     if( threadIdx.x ==0) {
-      printf("vssp warp %d zombie count = %d\n", blockIdx.x, zc);
+      //printf("vssp warp %d zombie count = %d\n", blockIdx.x, zc);
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
-      printf(" vssp Czombie = %lld\n",C->nzombies);
+      //printf(" vssp Czombie = %lld\n",C->nzombies);
     }
 
 }

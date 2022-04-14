@@ -88,7 +88,7 @@ __global__ void AxB_dot3_phase3_dndn
 (
     int64_t start,
     int64_t end,
-    int64_t *Bucket,
+    int64_t *Bucket,    // do the work in Bucket [start:end-1]
     GrB_Matrix C,
     GrB_Matrix M,
     GrB_Matrix A,
@@ -117,12 +117,12 @@ __global__ void AxB_dot3_phase3_dndn
     int s = blockDim.x;
 
     // Main loop over pairs 
+<<<<<<< HEAD
     for ( int64_t kk  = start + blockIdx.x; //warp per pair 
                   kk  < end;  
                   kk += gridDim.x ){
 
          pair_id = Bucket [ kk ];
-
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
 
