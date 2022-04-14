@@ -162,6 +162,11 @@ public:
     dim3 grid(get_number_of_blocks(M));
     dim3 block(get_threads_per_block());
 
+//  for (auto s:compiler_flags)
+//  {
+//      std::cout << "Compiler Flags: " << s << std::endl ;
+//  }
+
     jit::launcher( hashable_name + "_" + M->type->name + "_" + sr_code,
                    string_to_be_jitted.str(),
                    header_names,
@@ -325,8 +330,8 @@ public:
     //----------------------------------------------------------------------
     // phase3: do the numerical work
     //----------------------------------------------------------------------
+
     C->jumbled = true;
-    //C->nzombies = bucketp[1];  //set pre-zombie counts
     const int64_t nz = end - start; // number of dots in this bucket  
     const int64_t mnvec = M->nvec ;
 
@@ -356,7 +361,6 @@ public:
     dim3 grid(gridsz);
     dim3 block(blocksz);
 
-    C->nzombies = 0;
     GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
     jit::launcher( hashable_name + "_" + M->type->name + "_" + sr_code,
                    string_to_be_jitted.str(),
@@ -395,6 +399,7 @@ private:
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
     std::string Opname;
+    // TODO: make sure this works with different geometry
 
     printf("LAUNCHING BUCKET CODE: %d\n", (int)bucket_code_);
     switch (bucket_code_)

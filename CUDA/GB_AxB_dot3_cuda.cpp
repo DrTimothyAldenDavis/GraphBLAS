@@ -326,7 +326,6 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
         GBURBLE ("(GPU phase3 done ) ") ;
     }
-    C->nzombies += Bucketp[1]; //FIXME workaround for zombie counts getting reset to 0 in phase3
     //printf("C->p[0]=%ld\n", C->p[0]);
     //printf("C->p[1]=%ld\n", C->p[1]);
     printf("C->nzombies=%ld\n", C->nzombies);

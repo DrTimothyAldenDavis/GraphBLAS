@@ -121,34 +121,25 @@ __global__ void AxB_dot3_phase3_vsvs
    const int64_t *__restrict__ Ap = A->p ;
    const int64_t *__restrict__ Bp = B->p ;
 
-   int pfirst, plast;
-
-    //#define GB_PARTITION(k1,k2,n,tid,nthreads)                                  \
+    int64_t pfirst, plast;
 
     GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
-//   if( threadIdx.x ==0 )
-//   {
-//   if( threadIdx.x ==0 )
-//   {
-//      printf("block%d %d dots/thrd, start,end = %ld,%ld pf,pl=%d,%d blockDim=%d\n",
-//               blockIdx.x, (dots + blockDim.x*gridDim.x -1)/(blockDim.x*gridDim.x),
-//               start, end, pfirst, plast, blockDim.x);
-//   }
-//   __syncthreads();
+    if( threadIdx.x ==0 )
+    {
+        printf("block%d %d dots/thrd, start,end = %ld,%ld pf,pl=%d,%d blockDim=%d\n",
+                 blockIdx.x, (dots + blockDim.x*gridDim.x -1)/(blockDim.x*gridDim.x),
+                 start, end, pfirst, plast, blockDim.x);
+    }
+    __syncthreads();
 
+    int my_nzombies = 0 ;
+    int64_t pair_id;
 
-   int zc = 0 ;
-     
-   int64_t pair_id;
-
-   //for ( int tid= threadIdx.x +blockDim.x*blockIdx.x;
-   //          tid < dots;
-   //          tid += blockDim.x * gridDim.x)
-   for ( int tid = pfirst+ threadIdx.x ;
-             tid < plast;
-             tid += blockDim.x )
-   {
-         pair_id = Bucket[ start + tid ];
+    for ( int kk = pfirst+ threadIdx.x ;
+                  kk < plast;
+                  kk += blockDim.x )
+    {
+        pair_id = Bucket[ start + kk ];
 
          int64_t i = Mi [pair_id] ;
          int64_t j = Ci [pair_id]>>4 ; 
@@ -157,7 +148,8 @@ __global__ void AxB_dot3_phase3_vsvs
          int64_t pA_end   = Ap[i+1] ;
          int64_t pB       = Bp[j] ;
          int64_t pB_end   = Bp[j+1] ;
-       printf("start=%d, tid=%d, pair_id=%lu, (i,j)=%lu,%lu, nzA=%lu, nzB=%lu\n", pfirst, tid, pair_id,i,j,pA_end-pA,pB_end-pB);
+//     printf(":pfirst=%ld, kk=%d, pair_id=%ld, ci %ld, (i,j)=%ld,%ld, nzA=%ld, nzB=%ld\n",
+//      pfirst, kk, pair_id, Ci [pair_id], i,j,pA_end-pA,pB_end-pB);
 
          T_A aki;
          T_B bkj;
@@ -182,7 +174,7 @@ __global__ void AxB_dot3_phase3_vsvs
                 pA++ ;
                 pB++ ;
                 #endif
-                printf(" %lld, %lld intersect at %lld cij=%d!\n",i,j,ia,cij);
+//              printf(" %lld, %lld intersect at %lld cij=%d!\n",i,j,ia,cij);
             }
             else 
             {
@@ -193,27 +185,26 @@ __global__ void AxB_dot3_phase3_vsvs
             }
          }
          if (cij_exists){
-            GB_PUTC ( Ci[pair_id] = i ) ;
+            Ci[pair_id] = i ;
             GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;
-            printf(" %lld, %lld is alive %d!\n",i,j,cij);
+//          printf(" %lld, %lld is alive %d!\n",i,j,cij);
          }
          else{
-            printf(" %lld, %lld is zombie %d!\n",i,j,zc);
-            zc++; 
-            GB_PUTC( Ci[pair_id] = GB_FLIP( i ) ) ;
+//          printf(" %lld, %lld is zombie %d!\n",i,j,my_nzombies);
+            my_nzombies++;
+            Ci[pair_id] = GB_FLIP( i ) ;
          }
    }
-  
+
    __syncthreads();
 
-   //printf("thd%d zombie count = %d\n",threadIdx.x,zc);
-   zc = block_ReduceSum<int , 32>( this_thread_block(), zc);
+   //printf("thd%d zombie count = %d\n",threadIdx.x,my_nzombies);
+   my_nzombies = block_ReduceSum<int , 32>( this_thread_block(), my_nzombies);
    __syncthreads();
-   if( threadIdx.x == 0 && zc > 0) {
-      printf("block%d zombie count = %d\n", blockIdx.x, zc);
-      atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
-//      C->nzombies += (unsigned long long int)zc;
-      printf("blk:%d Czombie = %lld\n", blockIdx.x,C->nzombies);
+   if( threadIdx.x == 0 && my_nzombies > 0) {
+      printf ("block%d zombie count = %ld\n", blockIdx.x, my_nzombies);
+      atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)my_nzombies);
+      printf ("blk:%d Czombie = %ld\n", blockIdx.x,C->nzombies);
    }
 
 }

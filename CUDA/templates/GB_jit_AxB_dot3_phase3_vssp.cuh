@@ -61,7 +61,7 @@ __global__ void AxB_dot3_phase3_vssp
 (
     int64_t start,
     int64_t end,
-    int64_t *Bucket,
+    int64_t *Bucket,    // do the work defined by Bucket [start:end-1]
     GrB_Matrix C,
     GrB_Matrix M,
     GrB_Matrix A,
@@ -93,14 +93,16 @@ __global__ void AxB_dot3_phase3_vssp
 
    // set thread ID
    unsigned int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
-   unsigned int tid = threadIdx.x;
 
    unsigned long int b = blockIdx.x ;
 
-   // Main loop over pairs 
-   for (pair_id = start+ tid_global, im = 0; 
-        pair_id < end && im < m;  
-        pair_id += gridDim.x*blockDim.x, ++im){
+    // Main loop over pairs in Bucket [start:end-1]
+    for (int64_t kk = start+ tid_global, im = 0; 
+                 kk < end && im < m;  
+                 kk += gridDim.x*blockDim.x, ++im)
+    {
+
+        pair_id = Bucket[ kk ];
 
         int64_t i = Mi[pair_id];
         int64_t j = Ci[pair_id] >> 4;
@@ -225,9 +227,9 @@ __global__ void AxB_dot3_phase3_vssp
     zc = reduce_sum<int,tile_sz>(tile, zc);
 
     if( threadIdx.x ==0) {
-      //printf("warp %d zombie count = %d\n", blockIdx.x, zc);
+      printf("vssp warp %d zombie count = %d\n", blockIdx.x, zc);
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
-      //printf(" Czombie = %lld\n",C->nzombies);
+      printf(" vssp Czombie = %lld\n",C->nzombies);
     }
 
 }
