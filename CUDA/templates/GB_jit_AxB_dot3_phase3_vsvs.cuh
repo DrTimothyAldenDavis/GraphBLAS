@@ -132,7 +132,7 @@ __global__ void AxB_dot3_phase3_vsvs
     }
     __syncthreads();
 
-    int my_nzombies = 0 ;
+    int64_t my_nzombies = 0 ;
     int64_t pair_id;
 
     for ( int64_t kk = pfirst+ threadIdx.x ;
@@ -199,7 +199,7 @@ __global__ void AxB_dot3_phase3_vsvs
    __syncthreads();
 
    //printf("thd%d zombie count = %d\n",threadIdx.x,my_nzombies);
-   my_nzombies = block_ReduceSum<int , 32>( this_thread_block(), my_nzombies);
+   my_nzombies = block_ReduceSum<int64_t , 32>( this_thread_block(), my_nzombies);
    __syncthreads();
    if( threadIdx.x == 0 && my_nzombies > 0) {
       printf ("block%d zombie count = %ld\n", blockIdx.x, my_nzombies);
