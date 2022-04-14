@@ -312,8 +312,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     for ( int bucket = 1 ; bucket < NBUCKETS; ++bucket)
     {
         int64_t start = Bucketp[bucket];
-        int64_t end = Bucketp[bucket+1];
-
+        int64_t end   = Bucketp[bucket + 1 ];
 
         if(end - start > 0) {
             printf("Executing bucket: %d with %ld edges\n", bucket, end-start);
