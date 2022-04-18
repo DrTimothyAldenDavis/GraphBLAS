@@ -37,8 +37,6 @@ GrB_Info GB_reduce_to_scalar_cuda
 
     GB_cuda_reduce( A, s, reduce);
 
-    printf("num_triangles = %d\n",  s[0] );
-
     return GrB_SUCCESS ;
 }
 

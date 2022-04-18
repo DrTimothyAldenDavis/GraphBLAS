@@ -227,9 +227,9 @@ __global__ void AxB_dot3_phase3_vssp
     zc = reduce_sum<int,tile_sz>(tile, zc);
 
     if( threadIdx.x ==0) {
-      printf("vssp warp %d zombie count = %d\n", blockIdx.x, zc);
+      //printf("vssp warp %d zombie count = %d\n", blockIdx.x, zc);
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
-      printf(" vssp Czombie = %lld\n",C->nzombies);
+      //printf(" vssp Czombie = %lld\n",C->nzombies);
     }
 
 }

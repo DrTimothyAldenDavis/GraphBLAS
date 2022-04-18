@@ -124,6 +124,7 @@ __global__ void AxB_dot3_phase3_vsvs
     int64_t pfirst, plast;
 
     GB_PARTITION (pfirst, plast, dots, blockIdx.x, gridDim.x ) ;
+    /*
     if( threadIdx.x ==0 )
     {
         printf("block%d %d dots/thrd, start,end = %ld,%ld pf,pl=%d,%d blockDim=%d\n",
@@ -131,6 +132,7 @@ __global__ void AxB_dot3_phase3_vsvs
                  start, end, pfirst, plast, blockDim.x);
     }
     __syncthreads();
+    */
 
     int64_t my_nzombies = 0 ;
     int64_t pair_id;
@@ -202,9 +204,9 @@ __global__ void AxB_dot3_phase3_vsvs
    my_nzombies = block_ReduceSum<int64_t , 32>( this_thread_block(), my_nzombies);
    __syncthreads();
    if( threadIdx.x == 0 && my_nzombies > 0) {
-      printf ("block%d zombie count = %ld\n", blockIdx.x, my_nzombies);
+      //printf ("block%d zombie count = %ld\n", blockIdx.x, my_nzombies);
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)my_nzombies);
-      printf ("blk:%d Czombie = %ld\n", blockIdx.x,C->nzombies);
+      //printf ("blk:%d Czombie = %ld\n", blockIdx.x,C->nzombies);
    }
 
 }

@@ -72,7 +72,7 @@ T block_ReduceSum(thread_block g, T val, T Ident)
 
   //tile.sync();                    // Wait for all partial reductions
 
-  if (wid > 0 || gridDim.x == 1 ) return val;
+  if (wid > 0 ) return val;
 
   //read from shared memory only if that warp existed
   val = (threadIdx.x < blockDim.x / warpSize) ? shared[lane] :  Ident  ;
@@ -106,6 +106,9 @@ __global__ void AxB_dot3_phase3_dndn
    const int64_t *__restrict__ Ap = A->p ;
    const int64_t *__restrict__ Bp = B->p ;
 
+    // zombie count
+    int zc = 0;
+    // dot pair and index in bucket
     int64_t pair_id;
 
     // total items to be inspected
@@ -114,28 +117,27 @@ __global__ void AxB_dot3_phase3_dndn
     int s = blockDim.x;
 
     // Main loop over pairs 
-    int64_t kk ;
-    for (kk = start + blockIdx.x; //warp per pair 
-         kk < end;  
-         kk += gridDim.x ){
+    for ( int64_t kk  = start + blockIdx.x; //warp per pair 
+                  kk  < end;  
+                  kk += gridDim.x ){
 
-         pair_id = Bucket [kk] ;
+         pair_id = Bucket [ kk ];
          int64_t i = Mi[pair_id];
          int64_t j = Ci[pair_id] >> 4;
 
-         int64_t pA = Ap[i];
-         int64_t xend   = Ap[i+1];
+         int64_t pA   = Ap[i];
+         int64_t xend = Ap[i+1];
          nnzA = xend - pA;
 
-         int64_t pB = Bp[j];
-         int64_t yend   = Bp[j+1];
+         int64_t pB   = Bp[j];
+         int64_t yend = Bp[j+1];
          nnzB = yend - pB;
 
-    if (threadIdx.x == 0 ){
-        printf("tid=%d, i,j = %d,%d  nnzA= %d, nnzB=%d\n",
-               threadIdx.x, (int)i,(int)j,  (int)nnzA, (int)nnzB);
-    }
-    __syncthreads();
+        if (threadIdx.x == 0 ){
+            printf("tid=%d, i,j = %d,%d  nnzA= %d, nnzB=%d\n",
+                   threadIdx.x, (int)i,(int)j,  (int)nnzA, (int)nnzB);
+        }
+        __syncthreads();
 
     
     // convert global data pointer to the local pointer of this block
@@ -170,6 +172,7 @@ __global__ void AxB_dot3_phase3_dndn
        GB_PUTC( Ci[pair_id]=i ) ;
     }
     //__syncthreads ( ) ;
+    // FIXME: add atomics to sum up block zombies to C->nzombies
   }
 
 }
