@@ -412,12 +412,12 @@ __global__ void AxB_phase1
 
       // search for k values for each entry
       float slope = (float)(mnvec)/(float)(mnz* chunksize) ;
-      for ( int64_t i =  threadIdx.x; i< chunk_end; i+= blockDim.x)
+      for ( int64_t i =  threadIdx.x; i < chunk_end; i+= blockDim.x)
       {   
           ks[i] = kfirst + slope*( float )(i);
-          while ( Mps[ ks[i] - kfirst + 1 ] <= (i+pfirst) && (ks[i]-kfirst+1) < pointerchunk )
+          while ( (ks[i]-kfirst+1) < pointerchunk && Mps[ ks[i] - kfirst + 1 ] <= (i+pfirst) )
              ks[i]++;
-          while ( Mps[ ks[i] - kfirst     ] >  (i+pfirst) && ks[i]-kfirst >= 0 )
+          while ( (ks[i]-kfirst) >  0             && Mps[ ks[i] - kfirst     ] >  (i+pfirst) )
              ks[i]--;
       }
       __syncthreads();

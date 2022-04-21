@@ -22,6 +22,8 @@ extern "C"
 //std::istream* (*file_callback)(std::string, std::iostream&);
 
 // Define a factory class for building any semiring text definitions
+
+// FIXME: Rename to GrB_MxM_problem_spec and delegate problem generation to data factory
 class GB_cuda_semiring_factory: public jit::File_Desc {
 
     public:
@@ -56,6 +58,8 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
         // input:
         GrB_Semiring semiring,  // the semiring to enumify
         bool flipxy,            // multiplier is: mult(a,b) or mult(b,a)
+
+        // FIXME: Just use GrB_Matrix here
         GrB_Type ctype,         // the type of C
         GrB_Type mtype,         // the type of M, or NULL if no mask
         GrB_Type atype,         // the type of A
@@ -110,6 +114,7 @@ class GB_cuda_semiring_factory: public jit::File_Desc {
 // operators, datatypes, sparsity formats and produces a character buffer. 
 //------------------------------------------------------------------------------
 
+    // FIXME: Also need mask code macrofication
     void macrofy ( ) override
     {
        std::cout<<" calling macrofy semiring. sr_code="<< this->sr_code << std::endl;

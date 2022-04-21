@@ -206,8 +206,9 @@ public:
 
   int get_number_of_phase1_blocks( GrB_Matrix M){
     const int64_t mnz = GB_nnz (M) ;
-    int ntasks = ( mnz +chunk_size -1)/chunk_size;
-    return ntasks;
+    int number_of_sms = GB_Global_gpu_sm_get (0);
+    int nblks = ( GB_nnz (M) + chunk_size - 1)/chunk_size;
+    return GB_IMIN( nblks,  128 * number_of_sms);
   }
 
   bool jitGridBlockLaunch(// parameters to AxB_phase2:
