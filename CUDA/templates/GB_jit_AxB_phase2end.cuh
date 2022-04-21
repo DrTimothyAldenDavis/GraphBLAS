@@ -66,8 +66,10 @@ void AxB_phase2end
         int64_t my_bucket_ ## bucket =                  \
             nanobucket [bucket * blockDim.x]        \
          + blockbucket [bucket * gridDim.x + blockIdx.x]\
-         + bucketp [bucket] ;
-
+         + bucketp [bucket] ;                       \
+         if(bucket == 5) {                         \
+            printf("bucketp: %ld\n", bucketp[bucket]); \
+         }
     LOAD_NANOBUCKET (0) ;
     LOAD_NANOBUCKET (1) ;
     LOAD_NANOBUCKET (2) ;
@@ -133,6 +135,7 @@ void AxB_phase2end
             // buffers are full they can be written to global.
             int ibucket = Ci[p] & 0xF;
             //printf(" thd: %d p,Ci[p] = %ld,%ld,%d\n", threadIdx.x, p, Ci[p], irow );
+
             switch (ibucket)
             {
                 case  0: bucket [my_bucket_0++ ] = p ; Ci[p] = Ci[p] >>4; break ; //unshift zombies

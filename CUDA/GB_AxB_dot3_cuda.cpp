@@ -285,7 +285,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     {
         Bucketp[bucket] = s; 
         s+= offset[bucket];
-        //printf("bucketp[%d] = %ld, offset=%ld\n", bucket, Bucketp[bucket], offset[bucket]);
+        printf("bucketp[%d] = %ld, offset=%ld\n", bucket, Bucketp[bucket], offset[bucket]);
     }
 
     GBURBLE ("(GPU phase2 done) ") ;
