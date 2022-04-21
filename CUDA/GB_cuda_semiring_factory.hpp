@@ -25,9 +25,10 @@ extern "C"
 class GB_cuda_semiring_factory: public jit::File_Desc {
 
     public:
-
+        uint32_t mask_ecode;
         uint64_t sr_code;
         bool mask_struct;
+        bool mask_comp;
 
         // file ptr
         FILE *fp;

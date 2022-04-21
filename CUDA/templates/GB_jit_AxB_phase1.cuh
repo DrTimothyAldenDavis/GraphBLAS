@@ -311,6 +311,7 @@ __global__ void AxB_phase1
      __shared__ int64_t ks [chunksize];
 
     __syncthreads();
+    /*
     if (threadIdx.x==0 && blockIdx.x == 0)
     {
 //        printf ("Here in phase1, what I see is this:\n") ;
@@ -347,7 +348,7 @@ __global__ void AxB_phase1
         // #define GB_B_IS_FULL   0
     }
     __syncthreads();
-
+    */
     //--------------------------------------------------------------------------
     // compute the task descriptor
     //--------------------------------------------------------------------------
@@ -414,9 +415,9 @@ __global__ void AxB_phase1
       for ( int64_t i =  threadIdx.x; i< chunk_end; i+= blockDim.x)
       {   
           ks[i] = kfirst + slope*( float )(i);
-          while ( Mps[ ks[i] - kfirst + 1 ] <= (i+pfirst) )
+          while ( Mps[ ks[i] - kfirst + 1 ] <= (i+pfirst) && (ks[i]-kfirst+1) < pointerchunk )
              ks[i]++;
-          while ( Mps[ ks[i] - kfirst     ] >  (i+pfirst) )
+          while ( Mps[ ks[i] - kfirst     ] >  (i+pfirst) && ks[i]-kfirst >= 0 )
              ks[i]--;
       }
       __syncthreads();
@@ -563,8 +564,9 @@ pA_end = Ap [i+1] ;
 
     #define CUMSUM_AND_STORE_NANOBUCKET(bucket) \
         if( threadIdx.x == blockDim.x-1)                                    \
-            blockbucket [blockIdx.x + bucket * gridDim.x] =                 \
-            my_bucket_ ## bucket ;                                          \
+        {   blockbucket [blockIdx.x + bucket * gridDim.x] =                 \
+            my_bucket_ ## bucket ;   }                                      \
+            __syncthreads();                                                \
         BlockCumSum(temp_storage).ExclusiveSum                              \
             ( my_bucket_ ## bucket, my_bucket_ ## bucket) ;                 \
             __syncthreads();                                                \
@@ -647,6 +649,7 @@ pA_end = Ap [i+1] ;
     }
     __syncthreads();
     */
+    
     
 }
 
