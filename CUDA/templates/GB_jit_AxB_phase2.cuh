@@ -194,7 +194,7 @@ __global__ void AxB_phase2
        //printf("summing blk,tid=%d,%d\n",blockIdx.x,threadIdx.x);
        if (threadIdx.x ==0 )
        {
-          //printf("blk_Id=%d s_0: %lu, s_1=%lu, s_10=%lu, s_11=%lu\n", blockIdx.x, s_0, s_1, s_10, s_11);
+          printf("blk_Id=%d s_0: %lu, s_1=%lu, s_10=%lu, s_11=%lu\n", blockIdx.x, s_0, s_1, s_10, s_11);
           atomicAdd( (unsigned long long int*)&(offset[0]), s_0);
           atomicAdd( (unsigned long long int*)&(offset[1]), s_1);
           atomicAdd( (unsigned long long int*)&(offset[2]), s_2);

@@ -67,9 +67,7 @@ void AxB_phase2end
             nanobucket [bucket * blockDim.x]        \
          + blockbucket [bucket * gridDim.x + blockIdx.x]\
          + bucketp [bucket] ;                       \
-         if(bucket == 5) {                         \
-            printf("bucketp: %ld\n", bucketp[bucket]); \
-         }
+
     LOAD_NANOBUCKET (0) ;
     LOAD_NANOBUCKET (1) ;
     LOAD_NANOBUCKET (2) ;

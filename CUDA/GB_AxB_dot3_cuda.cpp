@@ -280,7 +280,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     p2lf.jitGridBlockLaunch(Blockbucket, offset, M );
 
-    int64_t s= 0;
+    int64_t s= offset[0];
     for ( int bucket = 1 ; bucket < NBUCKETS+1; ++bucket)
     {
         Bucketp[bucket] = s; 
@@ -317,7 +317,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
             printf("Executing bucket: %d with %ld edges\n", bucket, end-start);
             // TODO: We might want to consider submitting these in different cuda streams (maybe use cuda stream pool?)
             phase3launchFactory p3lf(mysemiring, (GB_bucket_code)bucket);
-            p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C,  M, A, B);
+            p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C, M, A, B);
         } else {
             printf("Skipping bucket %d, no work to do\n", bucket);
         }
