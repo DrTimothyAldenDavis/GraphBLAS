@@ -233,11 +233,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     CHECK_CUDA_SIMPLE(cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
     CHECK_CUDA_SIMPLE(cudaMemAdvise( Bucketp, (NBUCKETS+1) * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device));
 
-    offset = (int64_t*)rmm_wrap_malloc( (NBUCKETS)*sizeof(int64_t)) ;
     CHECK_CUDA_SIMPLE(cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetPreferredLocation, cudaCpuDeviceId));
     CHECK_CUDA_SIMPLE(cudaMemAdvise( offset, NBUCKETS * sizeof ( int64_t), cudaMemAdviseSetAccessedBy, device));
-
-    memset( offset, 0, NBUCKETS * sizeof(int64_t) );
 
     //--------------------------------------------------------------------------
     // Pre-fetch arrays that will be used on the device
@@ -281,6 +278,7 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     p2lf.jitGridBlockLaunch(Blockbucket, offset, M );
 
     int64_t s= offset[0];
+    C->nzombies = s;
     for ( int bucket = 1 ; bucket < NBUCKETS+1; ++bucket)
     {
         Bucketp[bucket] = s; 
