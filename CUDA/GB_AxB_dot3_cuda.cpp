@@ -206,7 +206,8 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
     phase2endlaunchFactory p2elf;
 
 
-    // # of threads in phase1 and phase2 kernel launches must be the same
+    // # of threads in phase1 and phase2 kernel launches are related
+    // # by the size of the warp.  ph2_task = ph1_task/32 for example
     int nthrd = p2lf.get_threads_per_block();
     int ntasks = p2elf.get_number_of_blocks(M);
 
@@ -267,8 +268,9 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GBURBLE ("(GPU phase1 done) ") ;
 
-    print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
-    print_array<int64_t>(Blockbucket, blockbuckets_size , "Blockbucket");
+    //print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
+    printf(" using %ld blockbuckets \n", blockbuckets_size); 
+    //print_array<int64_t>(Blockbucket, blockbuckets_size , "Blockbucket");
 
     //----------------------------------------------------------------------
     // phase2: cumsum across the blockbuckets, propagate to thread level
@@ -276,12 +278,12 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GBURBLE ("(GPU phase1 start) ") ;
 
-    p2lf.jitGridBlockLaunch(Blockbucket, offset, M);
+    p2lf.jitGridBlockLaunch(Blockbucket, offset, M );
 
-    int64_t s= 0;
-    for ( int bucket = 0 ; bucket < NBUCKETS+1; ++bucket)
+    int64_t s= offset[0];
+    for ( int bucket = 1 ; bucket < NBUCKETS+1; ++bucket)
     {
-        Bucketp[bucket] = s;
+        Bucketp[bucket] = s; 
         s+= offset[bucket];
         printf("bucketp[%d] = %ld, offset=%ld\n", bucket, Bucketp[bucket], offset[bucket]);
     }
@@ -295,38 +297,35 @@ GrB_Info GB_AxB_dot3_cuda           // C<M> = A'*B using dot product method
 
     GBURBLE ("(GPU phase2end done) ") ;
 
-    print_array<int64_t>(Bucket, mnz , "Bucket");
-    print_array<int64_t>(M->i, mnz , "M->i");
-    print_array<int64_t>(C->i, mnz , "C->i");
+    //print_array<int64_t>(Bucket, mnz , "Bucket");
+    //print_array<int64_t>(M->i, mnz , "M->i");
+    //print_array<int64_t>(C->i, mnz , "C->i");
 
     //----------------------------------------------------------------------
     // phase3: do the numerical work
     //----------------------------------------------------------------------
 
     print_array<int64_t>(Bucketp, NBUCKETS + 1 , "Bucketp");
-    C->nzombies = Bucketp[1];  //set pre-zombie counts
-    printf("pre-kernel C->nzombies=%ld\n", C->nzombies);
+    printf("pre-phase3 kernel C->nzombies=%ld\n", C->nzombies);
 
     for ( int bucket = 1 ; bucket < NBUCKETS; ++bucket)
     {
         int64_t start = Bucketp[bucket];
-        int64_t end = Bucketp[bucket+1];
-
+        int64_t end   = Bucketp[bucket + 1 ];
 
         if(end - start > 0) {
             printf("Executing bucket: %d with %ld edges\n", bucket, end-start);
             // TODO: We might want to consider submitting these in different cuda streams (maybe use cuda stream pool?)
             phase3launchFactory p3lf(mysemiring, (GB_bucket_code)bucket);
-            p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C,  M, A, B);
+            p3lf.jitGridBlockLaunch(start, end, Bucketp, Bucket, C, M, A, B);
         } else {
             printf("Skipping bucket %d, no work to do\n", bucket);
         }
 
         GBURBLE ("(GPU phase3 done ) ") ;
     }
-    C->nzombies += Bucketp[1];
-    printf("C->p[0]=%ld\n", C->p[0]);
-    printf("C->p[1]=%ld\n", C->p[1]);
+    //printf("C->p[0]=%ld\n", C->p[0]);
+    //printf("C->p[1]=%ld\n", C->p[1]);
     printf("C->nzombies=%ld\n", C->nzombies);
 
     GB_FREE_WORKSPACE ;

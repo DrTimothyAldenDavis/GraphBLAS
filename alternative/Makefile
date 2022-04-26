@@ -21,7 +21,7 @@ default: library
 # This version info must match ../CMakeLists.txt 
 VER1 = 7
 VER2 = 0
-VER3 = 3
+VER3 = 4
 
 # pick your compiler:
   CC = gcc

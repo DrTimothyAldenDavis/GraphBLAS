@@ -33,12 +33,21 @@ extern "C" {
 //template<typename T> T (*ADD_ptr)(T a, T b);
 //template<typename T> T (*MUL_ptr)(T a, T b);
 
+// Problem generator creates and holds instances of C, M, A, B
+template <typename T_C, typename T_M, typename T_A,typename T_B>
+SpGEMM_problem_generator<T_C,T_M,T_A,T_B> Synth_ProblemFactory( int64_t , int64_t, int64_t );
+
+// Create a new semiring_factory according to a problem an masking spec combined with ops
+template <typename T_C, typename T_M, typename T_A,typename T_B>
+GB_cuda_semiring_factory test_get_semiring_factory( SpGEMM_problem_generator<T_C, T_M, T_A, T_B>,
+                                                    bool , bool , bool , GrB_Monoid , GrB_BinaryOp );
+
 //AxB_dot3_phase1 kernels
 template <typename T_C, typename T_M, typename T_A,typename T_B>
 bool test_AxB_phase1_factory( int64_t , int64_t , int64_t , int64_t ) ;
 
 //AxB_dot3_phase2 kernels
-template <typename T_C>
+template <typename T_C, typename T_M, typename T_A,typename T_B>
 bool test_AxB_dot3_phase2_factory( int , int64_t , int64_t , int64_t, int64_t ) ;
 
 ////AxB_dot3_phase3 kernels
@@ -82,6 +91,62 @@ void print_array(void *arr, I size, const char *name) {
 // test_AxB_phase1_factory: test phase1
 //------------------------------------------------------------------------------
 
+template <typename T_C, typename T_M, typename T_A,typename T_B>
+SpGEMM_problem_generator<T_C,T_M,T_A,T_B> Synth_ProblemFactory( int64_t N, int64_t Anz, int64_t Bnz)
+{
+    // Creates a new instance of a concrete synthetic graph
+    SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G(N, N);
+    int64_t Annz = N*N;
+    int64_t Bnnz = N*N;
+    G.Cnz = N;
+    float Cnzpercent = (float) G.Cnz/(N*N);
+
+    // TODO: Allocate and fill arrays for buckets and nano buckets
+    // Initialize matrices for testing
+    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW);
+    G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW);
+    G.init_C(Cnzpercent);
+
+    return G;
+}
+
+template <typename T_C, typename T_M, typename T_A,typename T_B>
+GB_cuda_semiring_factory test_get_semiring_factory(SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G, bool flipxy, bool mask_struct, bool mask_comp, GrB_Monoid monoid, GrB_BinaryOp binop) {
+    /***************************
+     * Create semiring factory *
+     ***************************/
+     
+    GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
+    GrB_Semiring mysemiring;
+    auto grb_info = GrB_Semiring_new(&mysemiring, monoid, binop);
+    GRB_TRY (grb_info) ;
+
+    GrB_Matrix C = G.getC();
+    GrB_Matrix M = G.getM();
+    GrB_Matrix A = G.getA();
+    GrB_Matrix B = G.getB();
+
+    mysemiringfactory.semiring_factory ( mysemiring, flipxy,
+                                         C->type,
+                                         M->type,
+                                         A->type,
+                                         B->type,
+                                         mask_struct,  // matrix types
+                                         mask_comp, GB_sparsity(C),
+                                         GB_sparsity(M),
+                                         GB_sparsity(A),
+                                         GB_sparsity(B));
+   
+    return mysemiringfactory;
+
+}
+
+template <typename T_C, typename T_M, typename T_A,typename T_B>
+bool test_AxB_phase1_new_factory( SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G, GB_cuda_semiring_factory semiring_factory_)
+{
+  return true;
+}
+
 // Test generator code, to allow parameterized tests
 // Uses jitFactory, dataFactory and GB_jit 
 template <typename T_C, typename T_M, typename T_A,typename T_B>
@@ -96,22 +161,12 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     /**************************
      * Create reference and input data
      */
-
-    // FIXME: This should be getting set automatically somehow.
     bool flipxy = false;
     bool mask_struct = false;
-    bool mask_comp = false;
+    bool mask_comp   = false;
 
-    SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G(N, N);
-    int64_t Annz = N*N;
-    int64_t Bnnz = N*N;
-    int64_t Cnz = N;
-    float Cnzpercent = (float) Cnz/(N*N);
+    SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G = Synth_ProblemFactory<T_C,T_M, T_A,T_B>( int64_t N, int64_t Anz, int64_t Bnz) ;
 
-    // TODO: Allocate and fill arrays for buckets and nano buckets
-    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW);
-    G.init_B(Bnnz, GxB_SPARSE, GxB_BY_ROW);
-    G.init_C(Cnzpercent);
     G.fill_buckets( TB ); // all elements go to testbucket= TB
 
     GrB_Matrix C = G.getC();
@@ -119,31 +174,15 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     GrB_Matrix A = G.getA();
     GrB_Matrix B = G.getB();
 
-    /************************
-     * Create semiring factory
-     */
+    // Get semiring spec
 
-    GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
-    GrB_Semiring mysemiring;
-    auto grb_info = GrB_Semiring_new(&mysemiring, monoid, binop);
-    GRB_TRY (grb_info) ;
-
-    mysemiringfactory.semiring_factory ( mysemiring, flipxy,
-                                         C->type,
-                                         M->type,
-                                         A->type,
-                                         B->type,
-                                         mask_struct,  // matrix types
-                                         mask_comp, GB_sparsity(C),
-                                         GB_sparsity(M),
-                                         GB_sparsity(A),
-                                         GB_sparsity(B));
+    GB_cuda_semiring_factory mysemiring_factory = test_get_semiring_factory( G, flipxy, mask_struct, mask_comp, monoid, binop);
 
     /********************
      * Launch kernel
      */
 
-    phase1launchFactory p1lF(mysemiringfactory);
+    phase1launchFactory p1lF(mysemiring_factory);
 
     GpuTimer kernTimer;
     kernTimer.Start();
@@ -172,7 +211,7 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
 
     int64_t bucket_count = 0;
     for (int i =0; i< NBUCKETS*ntasks; ++i) bucket_count += Blockbucket[i];
-    EXPECT_EQ( bucket_count, Cnz); //check we sum to the right structural counts
+    EXPECT_EQ( bucket_count, G.Cnz); //check we sum to the right structural counts
 //
     rmm_wrap_free(Nanobuckets);
     rmm_wrap_free(Blockbucket);
@@ -186,7 +225,7 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
 // test_AxB_phase2_factory: test phase2 and phase2end
 //------------------------------------------------------------------------------
 
-template <typename T_C>
+template <typename T_C, typename T_M, typename T_A, typename T_B>
 bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
 {
 
@@ -198,50 +237,68 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     phase2launchFactory p2lF;
     phase2endlaunchFactory p2elF;
 
-    SpGEMM_problem_generator<T_C, T_C, T_C, T_C> G(N, N);
-    int64_t Annz = N*N;
-    int64_t Bnnz = N*N;
-    int64_t Cnz = N;
-    float Cnzpercent = (float) Cnz/(N*N);
+    SpGEMM_problem_generator<T_C, T_M, T_A, T_B> G = Synth_ProblemFactory( int64_t N, int64_t Anz, int64_t Bnz) ;
 
-    G.init_A(Annz, GxB_SPARSE, GxB_BY_ROW);
-    G.init_B(Bnnz, GxB_FULL, GxB_BY_ROW);
-    G.init_C(Cnzpercent);
     G.fill_buckets( TB ); // all elements go to testbucket= TB
-    G.loadCj(); // FIXME: Figure out why this is needed here
-
 
     GrB_Matrix C = G.getC();
-    GrB_Matrix M = G.getM();       // note: values are not accessed
+    GrB_Matrix M = G.getM();
+    GrB_Matrix A = G.getA();
+    GrB_Matrix B = G.getB();
 
-   GpuTimer kernTimer;
-   kernTimer.Start();
-   const int64_t mnz = GB_nnz (M) ;
+    //G.loadCj(); // This is not needed if phase1 is called to fill Cj values with j>>4 + bucket
 
-   int nthrd = p2lF.get_threads_per_block();
-   int ntasks = p2elF.get_number_of_blocks(M);
 
-    // fabricate data as if it came from phase1:
-    int64_t *nanobuckets = (int64_t*)rmm_wrap_malloc(NBUCKETS * nthrd * ntasks * sizeof (int64_t));
-    int64_t *blockbucket = (int64_t*)rmm_wrap_malloc(NBUCKETS * ntasks * sizeof (int64_t));
+    /*******************************
+    * Create semiring using factory
+    */
+    bool flipxy = false;
+    bool mask_struct = false;
+    bool mask_comp   = false;
+
+    GB_cuda_semiring_factory mysemiringfactory = test_get_semiring_factory(  flipxy, mask_struct, mask_comp, GrB_Monoid monoid, GrB_BinaryOp binop)
+
+    phase1launchFactory p1lF(mysemiringfactory);
+
+    GpuTimer kernTimer;
+    kernTimer.Start();
+
+    int nthrd = p1lF.get_threads_per_block();
+    int ntasks = p1lF.get_number_of_blocks(M);
+
+    // TODO: Verify that RMM is checking and throwing exceptions
+    int nanobuckets_size = NBUCKETS * nthrd * ntasks;
+    int blockbuckets_size = NBUCKETS * ntasks;
+
+    printf("nanobuckets_size: %d\n", nanobuckets_size);
+    printf("blockbuckets_size: %d\n", blockbuckets_size);
+
+    int64_t *Nanobuckets = (int64_t*)rmm_wrap_malloc(nanobuckets_size * sizeof (int64_t));
+    int64_t *Blockbucket = (int64_t*)rmm_wrap_malloc(blockbuckets_size * sizeof (int64_t));
+//
+//    std::cout << "Invoking grid block launch for phase1" << std::endl;
+    p1lF.jitGridBlockLaunch(Nanobuckets, Blockbucket, C, M, A, B);
+    kernTimer.Stop();
+    std::cout<<"returned from phase1 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+
+    print_array<int64_t>(Nanobuckets, nanobuckets_size, "Nanobuckets");
+    print_array<int64_t>(Blockbucket, blockbuckets_size,  "Blockbucket");
+
+    const int64_t mnz = GB_nnz (M) ;
+
+    int nthrd2 = p2lF.get_threads_per_block();
+    int ntasks2 = p2elF.get_number_of_blocks(M);
+
     int64_t *bucketp = (int64_t*)rmm_wrap_malloc((NBUCKETS+1) * sizeof (int64_t));
     int64_t *bucket = (int64_t*)rmm_wrap_malloc(mnz * sizeof (int64_t));
     int64_t *offset = (int64_t*)rmm_wrap_malloc(NBUCKETS * sizeof (int64_t));
 
-    std::cout << "nthrd: " << nthrd << ", ntasks: " << ntasks << std::endl;
-    fillvector_constant(NBUCKETS * nthrd * ntasks, nanobuckets, (int64_t)0);
-    fillvector_constant(Cnz, nanobuckets, (int64_t)1);
-    fillvector_constant(NBUCKETS * ntasks, blockbucket, (int64_t)0);
-    blockbucket[10] = Cnz;
-    fillvector_constant(NBUCKETS, bucketp, (int64_t)0);
-    fillvector_constant(NBUCKETS, offset, (int64_t)0);
-    fillvector_constant(Cnz, bucket, (int64_t)0);
+    std::cout << "nthrd: " << nthrd2 << ", ntasks: " << ntasks2 << std::endl;
 
-    print_array<int64_t>(nanobuckets, NBUCKETS*nthrd*ntasks, "nanobuckets");
-    print_array<int64_t>(blockbucket, NBUCKETS*ntasks, "blockbucket");
+    kernTimer.Start();
 //
 //    // launch phase2 (just with p2ntasks as the # of tasks)
-    p2lF.jitGridBlockLaunch(blockbucket, offset, M);
+    p2lF.jitGridBlockLaunch(Blockbucket, offset, M);
 //
 //    // do the reduction between phase2 and phase2end
     int64_t s= 0;
@@ -249,15 +306,15 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
     {
         bucketp[bucket] = s;
         s+= offset[bucket];
-        printf("bucketp[%d] = %ld, offset= %ld\n", bucket, bucketp[bucket],offset[bucket]);
+        //printf("bucketp[%d] = %ld\n", bucket, Bucketp[bucket]);
     }
 
     // launch phase2end: note same # of tasks as phase1
-    p2elF.jitGridBlockLaunch( nanobuckets, blockbucket,
+    p2elF.jitGridBlockLaunch( Nanobuckets, Blockbucket,
                               bucketp, bucket, offset, C,
                               M);
-//    kernTimer.Stop();
-//    std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
+    kernTimer.Stop();
+    std::cout<<"returned from phase2 kernel "<<kernTimer.Elapsed()<<"ms"<<std::endl;
 //
 //
     print_array<int64_t>(bucketp, NBUCKETS, "bucketp");
@@ -266,8 +323,8 @@ bool test_AxB_phase2_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz)
 
     EXPECT_EQ( bucketp[NBUCKETS], Cnz); //check we sum to the right structural counts
 
-    rmm_wrap_free(nanobuckets);
-    rmm_wrap_free(blockbucket);
+    rmm_wrap_free(Nanobuckets);
+    rmm_wrap_free(Blockbucket);
     rmm_wrap_free(bucketp);
     rmm_wrap_free(bucket);
     rmm_wrap_free(offset);

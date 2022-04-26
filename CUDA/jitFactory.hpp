@@ -142,7 +142,7 @@ public:
     std::cout << "B TYpe: " << B->type << std::endl;
 //    // (1) create the semiring code and name
 
-    //    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
+//    // (2) ensure the jitifier has "GB_semiring_[mysemiring.sr_code].h"
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (semiring_factory_) ;
 
@@ -161,6 +161,11 @@ public:
 
     dim3 grid(get_number_of_blocks(M));
     dim3 block(get_threads_per_block());
+
+//  for (auto s:compiler_flags)
+//  {
+//      std::cout << "Compiler Flags: " << s << std::endl ;
+//  }
 
     jit::launcher( hashable_name + "_" + M->type->name + "_" + sr_code,
                    string_to_be_jitted.str(),
@@ -199,6 +204,13 @@ public:
     return (ntasks + threads_per_block - 1) / threads_per_block ;
   }
 
+  int get_number_of_phase1_blocks( GrB_Matrix M){
+    const int64_t mnz = GB_nnz (M) ;
+    int number_of_sms = GB_Global_gpu_sm_get (0);
+    int nblks = ( GB_nnz (M) + chunk_size - 1)/chunk_size;
+    return GB_IMIN( nblks,  128 * number_of_sms);
+  }
+
   bool jitGridBlockLaunch(// parameters to AxB_phase2:
                           int64_t *blockBucket, int64_t *offset, GrB_Matrix M) {
 
@@ -224,7 +236,7 @@ public:
                    .set_kernel_inst( kernel_name, {})
                    .configure(grid, block)
                    // parameters to AxB_phase2:
-                   .launch( blockBucket, offset, get_number_of_blocks(M));
+                   .launch( blockBucket, offset, get_number_of_phase1_blocks(M));
 
       checkCudaErrors( cudaDeviceSynchronize() );
       result= true;
@@ -319,9 +331,9 @@ public:
     //----------------------------------------------------------------------
     // phase3: do the numerical work
     //----------------------------------------------------------------------
+
     C->jumbled = true;
-    C->nzombies = bucketp[1];  //set pre-zombie counts
-    const int64_t Cnz = GB_nnz (C) ;
+    const int64_t nz = end - start; // number of dots in this bucket  
     const int64_t mnvec = M->nvec ;
 
     int gridsz, blocksz, sz = 4;
@@ -332,10 +344,13 @@ public:
     /**
      * Configure geometry and kernel function name based on sparsity of C and number of vectors in M
      */
-    configure(Cnz, mnvec, final_kernel_name_ss, blocksz, gridsz, sz);
+    configure( nz, mnvec, final_kernel_name_ss, blocksz, gridsz, sz);
+
+    auto sr_code = std::to_string(semiring_factory_.sr_code);
 
     std::string hashable_name = base_name + "_" + final_kernel_name_ss.str();
     std::stringstream string_to_be_jitted ;
+    std::vector<std::string> template_types = {C->type->name, A->type->name, B->type->name};
 
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (semiring_factory_) ;
@@ -347,17 +362,16 @@ public:
     dim3 grid(gridsz);
     dim3 block(blocksz);
 
-    C->nzombies = 0;
     GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
-    jit::launcher( hashable_name,
+    jit::launcher( hashable_name + "_" + M->type->name + "_" + sr_code,
                    string_to_be_jitted.str(),
                    header_names,
                    compiler_flags,
                    file_callback)
-               .set_kernel_inst(final_kernel_name_ss.str(),
-                                { C->type->name,
-                                  A->type->name,
-                                  B->type->name })
+               .set_kernel_inst(final_kernel_name_ss.str(), template_types )
+                               // { C->type->name,
+                               //   A->type->name,
+                               //   B->type->name })
                .configure(grid, block) //if commented, use implicit 1D configure in launch
                .launch(
                         start,             // input/output:
@@ -386,6 +400,7 @@ private:
     int number_of_sms = GB_Global_gpu_sm_get (0) ;
 
     std::string Opname;
+    // TODO: make sure this works with different geometry
 
     printf("LAUNCHING BUCKET CODE: %d\n", (int)bucket_code_);
     switch (bucket_code_)

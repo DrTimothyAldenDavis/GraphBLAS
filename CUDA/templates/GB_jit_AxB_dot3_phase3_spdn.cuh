@@ -50,7 +50,7 @@ __global__ void AxB_dot3_phase3_spdn
 ( 
   int64_t start, 
   int64_t end,
-  int64_t *Bucket, 
+  int64_t *Bucket,  // do the work in Bucket [start:end-1]
   GrB_Matrix C, 
   GrB_Matrix M, 
   GrB_Matrix A, 
@@ -87,19 +87,19 @@ __global__ void AxB_dot3_phase3_spdn
    for ( int tid= threadIdx.x +blockDim.x*blockIdx.x;
              tid < dots;
              tid += blockDim.x * gridDim.x) {
-      int pair_id, im; 
+      int64_t kk, pair_id, im; 
 //       if (threadIdx.x ==0)
 //         printf("thd%u pi=%lld\n",tid, start+threadIdx.x);
 //       __syncthreads();
 
-      for (pair_id = start+tid, im = 0; 
-           im < m && pair_id < end;  
-           ++im,     pair_id += dots ){
+      for (int64_t kk = start+tid, im = 0; 
+                   kk < end && im < m  ;  
+                   kk += dots,  ++im     ){
 
+         pair_id = Bucket[ kk ] ;
          int64_t i = Mi[pair_id];  // cols from mask
 
-         // TODO: column of Ci / 16?
-         int64_t j = Ci[pair_id] >> 4;  // row number of C
+         int64_t j = Ci[pair_id] >> 4;  // row number of C previously encoded in phase1
 
          //printf("tid=%d, i=%lu, j=%lu\n", threadIdx.x, i, j);
 
@@ -107,7 +107,7 @@ __global__ void AxB_dot3_phase3_spdn
 //         printf("thd%u i,j=%lld,%lld\n",tid, i,j);
 //      __syncthreads();
 
-          // Prime row offsets for both A and B
+          // Prep row offsets for both A and B
           int64_t pA       = Ap[i];   // row of C
           int64_t pA_end   = Ap[i+1];
           int64_t nnzA   = pA_end - pA;

@@ -61,7 +61,7 @@ __global__ void AxB_dot3_phase3_vssp
 (
     int64_t start,
     int64_t end,
-    int64_t *Bucket,
+    int64_t *Bucket,    // do the work defined by Bucket [start:end-1]
     GrB_Matrix C,
     GrB_Matrix M,
     GrB_Matrix A,
@@ -70,15 +70,15 @@ __global__ void AxB_dot3_phase3_vssp
 )
 {
    // Typed pointers to access data in A,B,C
-   T_A *Ax = (T_A*)A->x;
-   T_B *Bx = (T_B*)B->x;
-   T_C *Cx = (T_C*)C->x;
-   int64_t *Ci = C->i;
-   int64_t *Mi = M->i;
-   int64_t *Ai = A->i;
-   int64_t *Bi = B->i;
-   int64_t *Ap = A->p;
-   int64_t *Bp = B->p;
+   T_A *__restrict__ Ax = (T_A*)A->x;
+   T_B *__restrict__ Bx = (T_B*)B->x;
+   T_C *__restrict__ Cx = (T_C*)C->x;
+   int64_t *__restrict__ Ci = C->i;
+   int64_t *__restrict__ Mi = M->i;
+   int64_t *__restrict__ Ai = A->i;
+   int64_t *__restrict__ Bi = B->i;
+   int64_t *__restrict__ Ap = A->p;
+   int64_t *__restrict__ Bp = B->p;
 
    // sz = expected non-zeros per dot 
    int m = 256/sz;
@@ -93,14 +93,16 @@ __global__ void AxB_dot3_phase3_vssp
 
    // set thread ID
    unsigned int tid_global = threadIdx.x+ blockDim.x* blockIdx.x;
-   unsigned int tid = threadIdx.x;
 
    unsigned long int b = blockIdx.x ;
 
-   // Main loop over pairs 
-   for (pair_id = start+ tid_global, im = 0; 
-        pair_id < end && im < m;  
-        pair_id += gridDim.x*blockDim.x, ++im){
+    // Main loop over pairs in Bucket [start:end-1]
+    for (int64_t kk = start+ tid_global, im = 0; 
+                 kk < end && im < m;  
+                 kk += gridDim.x*blockDim.x, ++im)
+    {
+
+        pair_id = Bucket[ kk ];
 
         int64_t i = Mi[pair_id];
         int64_t j = Ci[pair_id] >> 4;
@@ -206,13 +208,13 @@ __global__ void AxB_dot3_phase3_vssp
 
         }
         if ( cij_exists){
-           GB_PUTC ( Ci[pair_id]=i ) ;
-           GB_PUTC ( Cx[pair_id]=(T_C)cij ) ;
+           Ci[pair_id] = i ;
+           GB_PUTC ( Cx[pair_id] = (T_C)cij ) ;
         }
         else {
            zc++; 
            //printf(" %lld, %lld is zombie %d!\n",i,j,zc);
-           GB_PUTC( Ci[pair_id] = GB_FLIP( i ) ) ;
+           Ci[pair_id] = GB_FLIP( i ) ;
         }
 
 
@@ -225,9 +227,9 @@ __global__ void AxB_dot3_phase3_vssp
     zc = reduce_sum<int,tile_sz>(tile, zc);
 
     if( threadIdx.x ==0) {
-      //printf("warp %d zombie count = %d\n", blockIdx.x, zc);
+      //printf("vssp warp %d zombie count = %d\n", blockIdx.x, zc);
       atomicAdd( (unsigned long long int*)&(C->nzombies), (unsigned long long int)zc);
-      //printf(" Czombie = %lld\n",C->nzombies);
+      //printf(" vssp Czombie = %lld\n",C->nzombies);
     }
 
 }

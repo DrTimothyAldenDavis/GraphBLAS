@@ -87,7 +87,7 @@ class matrix : public Managed {
 
     void fill_random( int64_t nnz, int gxb_sparsity_control, int gxb_format, std::int64_t seed = 12345ULL, T val_min = 0.0, T val_max = 2.0 , bool debug_print = false) {
 
-        std::cout << "inside fill, using seed "<< seed << std::endl;
+        std::cout << "inside fill_random, using seed "<< seed << std::endl;
         alloc();
 
         double inv_sparsity ;
@@ -230,6 +230,8 @@ class matrix : public Managed {
 
 };
 
+
+
 template< typename T_C, typename T_M, typename T_A, typename T_B>
 class SpGEMM_problem_generator {
 
@@ -251,6 +253,8 @@ class SpGEMM_problem_generator {
     matrix<T_A> *A= nullptr;
     matrix<T_B> *B= nullptr;
 
+    SpGEMM_problem_generator() {};
+
     SpGEMM_problem_generator(int64_t nrows, int64_t ncols): nrows_(nrows), ncols_(ncols) {
     
        // Create sparse matrices
@@ -259,6 +263,16 @@ class SpGEMM_problem_generator {
        A = new matrix<T_A>(nrows_, ncols_);
        B = new matrix<T_B>(nrows_, ncols_);
     };
+
+    void initDim ( int64_t nrows, int64_t ncols){
+       nrows_ = nrows;
+       ncols_ = ncols;
+       // Create sparse matrices
+       C = new matrix<T_C>(nrows_, ncols_);
+       M = new matrix<T_M>(nrows_, ncols_);
+       A = new matrix<T_A>(nrows_, ncols_);
+       B = new matrix<T_B>(nrows_, ncols_);
+    }
 
     matrix<T_C>* getCptr(){ return C;}
     matrix<T_M>* getMptr(){ return M;}
@@ -368,3 +382,9 @@ class SpGEMM_problem_generator {
 };
 
 
+template< typename T_C, typename T_M, typename T_A, typename T_B>
+struct MxM_problem_spec
+{
+    SpGEMM_problem_generator<T_C, T_M, T_A, T_B> *G;
+    GB_cuda_semiring_factory *mysemiring_factory;
+};

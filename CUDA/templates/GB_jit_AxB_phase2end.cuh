@@ -18,7 +18,7 @@ __global__
 void AxB_phase2end
         (
                 // input, not modified:
-                int64_t *__restrict__ nanobuckets,    // array of size 12-blockDim.x-by-nblocks
+                const int64_t *__restrict__ nanobuckets,    // array of size 12-blockDim.x-by-nblocks
                 const int64_t *__restrict__ blockbucket,    // global bucket count, of size 12*nblocks
                 // output:
                 const int64_t *__restrict__ bucketp,        // global bucket cumsum, of size 13
@@ -40,8 +40,8 @@ void AxB_phase2end
     // where bucket is the bucket assignment for C(i,j).  This phase does not
     // need k, just the bucket for each entry C(i,j).
 
-    int64_t *__restrict__ Ci = C->i ;       // for zombies, or bucket assignment
-    int64_t *__restrict__ Mp = C->p ;       // for offset calculations
+    int64_t *Ci = C->i ;       // for zombies, or bucket assignment
+    int64_t *Mp = C->p ;       // for offset calculations
     int64_t mnvec = C->nvec;
 
     //--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ void AxB_phase2end
     // The taskbucket for this threadblock is an array of size
     // 12-by-blockDim.x, held by row.  It forms a 2D array within the 3D
     // nanobuckets array.
-    int64_t *__restrict__ taskbucket = nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) ;
+    const int64_t *taskbucket = nanobuckets + blockIdx.x * (NBUCKETS * blockDim.x) ;
 
     //printf("block%d thd%d blockbucket= %ld\n", blockIdx.x, threadIdx.x,
     //                                           blockbucket[blockIdx.x*gridDim.x+blockIdx.x]);
@@ -59,14 +59,14 @@ void AxB_phase2end
     // Each thread in this threadblock owns one column of this taskbucket, for
     // its set of 12 nanobuckets.  The nanobuckets are a column of length 12,
     // with stride equal to blockDim.x.
-    int64_t *__restrict__ nanobucket = taskbucket + threadIdx.x;
+    const int64_t *nanobucket = taskbucket + threadIdx.x;
 
     // Each thread loads its 12 nanobucket values into registers.
 #define LOAD_NANOBUCKET(bucket)                     \
         int64_t my_bucket_ ## bucket =                  \
             nanobucket [bucket * blockDim.x]        \
          + blockbucket [bucket * gridDim.x + blockIdx.x]\
-         + bucketp [bucket] ;
+         + bucketp [bucket] ;                       \
 
     LOAD_NANOBUCKET (0) ;
     LOAD_NANOBUCKET (1) ;
@@ -133,6 +133,7 @@ void AxB_phase2end
             // buffers are full they can be written to global.
             int ibucket = Ci[p] & 0xF;
             //printf(" thd: %d p,Ci[p] = %ld,%ld,%d\n", threadIdx.x, p, Ci[p], irow );
+
             switch (ibucket)
             {
                 case  0: bucket [my_bucket_0++ ] = p ; Ci[p] = Ci[p] >>4; break ; //unshift zombies
