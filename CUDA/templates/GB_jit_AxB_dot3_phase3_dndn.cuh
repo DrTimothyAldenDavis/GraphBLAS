@@ -83,7 +83,7 @@ T block_ReduceSum(thread_block g, T val, T Ident)
 }
 
 
-template< typename T_C, typename T_A, typename T_B, uint64_t srcode>
+template< typename T_C, typename T_A, typename T_B>
 __global__ void AxB_dot3_phase3_dndn 
 (
     int64_t start,

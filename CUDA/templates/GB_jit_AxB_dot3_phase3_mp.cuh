@@ -72,7 +72,7 @@ T reduce_plus(thread_block_tile<warp_sz> g, T val)
 
 #define intersects_per_thread 8
 
-template< typename T_C, typename T_A, typename T_B, uint64_t srcode>
+template< typename T_C, typename T_A, typename T_B>
 __global__ void AxB_dot3_phase3_mp
 (
     int64_t start,

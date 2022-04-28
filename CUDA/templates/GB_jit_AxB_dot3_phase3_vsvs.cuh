@@ -88,7 +88,7 @@ T block_ReduceSum(thread_block g, T val)
   return val;
 }
 
-template< typename T_C, typename T_A, typename T_B, uint64_t srcode>
+template< typename T_C, typename T_A, typename T_B>
 __global__ void AxB_dot3_phase3_vsvs
 ( 
   int64_t start,
@@ -148,6 +148,10 @@ __global__ void AxB_dot3_phase3_vsvs
 //         if (j < 0) continue; //don't operate on zombies
          int64_t pA       = Ap[i] ;
          int64_t pA_end   = Ap[i+1] ;
+
+         if(j < 0) {
+             printf("J IS LESS THAN 0!!! %ld\n", j);
+         }
          int64_t pB       = Bp[j] ;
          int64_t pB_end   = Bp[j+1] ;
 //     printf(":pfirst=%ld, kk=%d, pair_id=%ld, ci %ld, (i,j)=%ld,%ld, nzA=%ld, nzB=%ld\n",

@@ -350,7 +350,7 @@ public:
 
     std::string hashable_name = base_name + "_" + final_kernel_name_ss.str();
     std::stringstream string_to_be_jitted ;
-    std::vector<std::string> template_types = {C->type->name, A->type->name, B->type->name, sr_code};
+    std::vector<std::string> template_types = {C->type->name, A->type->name, B->type->name};
 
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (semiring_factory_) ;
@@ -363,7 +363,7 @@ public:
     dim3 block(blocksz);
 
     GBURBLE ("(GPU phase3 launch st,end=%ld,%ld nblocks,blocksize= %d,%d )\n",start,end,gridsz,blocksz) ;
-    jit::launcher( hashable_name + "_" + M->type->name,
+    jit::launcher( hashable_name + "_" + M->type->name + "_" + sr_code,
                    string_to_be_jitted.str(),
                    header_names,
                    compiler_flags,
