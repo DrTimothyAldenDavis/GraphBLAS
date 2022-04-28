@@ -350,7 +350,7 @@ public:
 
     std::string hashable_name = base_name + "_" + final_kernel_name_ss.str();
     std::stringstream string_to_be_jitted ;
-    std::vector<std::string> template_types = {C->type->name, A->type->name, B->type->name};
+    std::vector<std::string> template_types = {C->type->name, A->type->name, B->type->name, sr_code};
 
     jit::GBJitCache filecache = jit::GBJitCache::Instance() ;
     filecache.getFile (semiring_factory_) ;

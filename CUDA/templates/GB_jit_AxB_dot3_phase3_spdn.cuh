@@ -45,7 +45,7 @@ __device__ T reduce_sum(thread_block_tile<warpSize> g, T val)
 }
 
 
-template< typename T_C, typename T_A, typename T_B>
+template< typename T_C, typename T_A, typename T_B, uint64_t srcode>
 __global__ void AxB_dot3_phase3_spdn
 ( 
   int64_t start, 
