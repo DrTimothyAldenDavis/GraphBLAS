@@ -136,7 +136,8 @@ void AxB_phase2end
 
             switch (ibucket)
             {
-                case  0: bucket [my_bucket_0++ ] = p ; Ci[p] = Ci[p] >>4; break ; //unshift zombies
+                case  0: bucket [my_bucket_0++ ] = p ;
+                         Ci[p] = Ci[p] >>4; break ; //unshift zombies
                 case  1: bucket [my_bucket_1++ ] = p ; break ;
                 case  2: bucket [my_bucket_2++ ] = p ; break ;
                 case  3: bucket [my_bucket_3++ ] = p ; break ;

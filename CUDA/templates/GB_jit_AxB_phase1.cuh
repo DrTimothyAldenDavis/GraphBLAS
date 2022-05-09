@@ -537,9 +537,6 @@ pA_end = Ap [i+1] ;
             else
             {
                 // place C(i,j) in its bucket
-                if(k < 0) {
-                    printf("K == %ld\n", k);
-                }
                 Ci [pM] = (k << 4) + bucket ;
                 GB_BUCKET_COUNT (bucket) ;
 //                printf ("tid%d pM=%d %d,%d b=%d\n",threadIdx.x, pM, i,j, (int)bucket) ;
