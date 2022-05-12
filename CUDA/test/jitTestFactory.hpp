@@ -41,26 +41,6 @@ bool test_AxB_phase1_factory( int64_t , int64_t , int64_t , int64_t ) ;
 template <typename T_C>
 bool test_AxB_dot3_phase2_factory( int , int64_t , int64_t , int64_t, int64_t ) ;
 
-////AxB_dot3_phase3 kernels
-//template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
-//bool test_AxB_dot3_dndn_factory( int , int64_t , int64_t , int64_t , std::string&) ;
-//
-//template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
-//bool test_AxB_dot3_vsvs_factory( int , int64_t , int64_t , int64_t , std::string&) ;
-//
-//template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
-//bool test_AxB_dot3_spdn_factory( int , int64_t , int64_t , int64_t , std::string&) ;
-//
-//template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
-//bool test_AxB_dot3_vssp_factory( int , int64_t , int64_t , int64_t , std::string&) ;
-//
-//template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
-//bool test_AxB_dot3_mp_factory( int , int64_t , int64_t , int64_t , std::string&) ;
-//
-//template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
-//bool test_AxB_dot3_warp_factory( int , int64_t , int64_t , int64_t , std::string&) ;
-
-
 //Fixture to generate valid inputs and hold them for tests
 class AxB_dot3_Test : public ::testing::Test
 {
@@ -120,30 +100,29 @@ bool test_AxB_phase1_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz, GrB_M
     GrB_Matrix B = G.getB();
 
     /************************
-     * Create semiring factory
+     * Create mxm factory
      */
 
-    GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
+    GB_cuda_mxm_factory mymxmfactory = GB_cuda_mxm_factory ( ) ;
     GrB_Semiring mysemiring;
     auto grb_info = GrB_Semiring_new(&mysemiring, monoid, binop);
     GRB_TRY (grb_info) ;
 
-    mysemiringfactory.semiring_factory ( mysemiring, flipxy,
-                                         C->type,
-                                         M->type,
-                                         A->type,
-                                         B->type,
-                                         mask_struct,  // matrix types
-                                         mask_comp, GB_sparsity(C),
-                                         GB_sparsity(M),
-                                         GB_sparsity(A),
-                                         GB_sparsity(B));
+    bool C_iso = false ;
+    int C_sparsity = GB_sparsity (M) ;
+    GrB_Type ctype = binop->ztype ;
+
+    mymxmfactory.mxm_factory (
+        C_iso, C_sparsity, ctype,
+        M, mask_struct, mask_comp,
+        mysemiring, flipxy,
+        A, B) ;
 
     /********************
      * Launch kernel
      */
 
-    phase1launchFactory p1lF(mysemiringfactory);
+    phase1launchFactory p1lF(mymxmfactory);
 
     GpuTimer kernTimer;
     kernTimer.Start();
@@ -313,7 +292,9 @@ void make_grb_matrix(GrB_Matrix &mat, int64_t n_rows, int64_t n_cols, std::vecto
 
 }
 
-template <typename T_C, typename T_M, typename T_A,typename T_B, typename T_X, typename T_Y, typename T_Z>
+template <
+    typename T_C, typename T_M, typename T_A,typename T_B,
+    typename T_X, typename T_Y, typename T_Z>
 bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
                                  GrB_Monoid monoid, GrB_BinaryOp binop) {
 
@@ -402,8 +383,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
 //    GRB_TRY (GxB_Matrix_fprint (M, "M", GxB_SHORT_VERBOSE, stdout)) ;
 //    GRB_TRY (GxB_Matrix_fprint (C, "C", GxB_SHORT_VERBOSE, stdout)) ;
 //
-    std::cout << "Building semiring factgory" << std::endl;
-    GB_cuda_semiring_factory mysemiringfactory = GB_cuda_semiring_factory ( ) ;
+    std::cout << "Building mxm factgory" << std::endl;
+    GB_cuda_mxm_factory mymxmfactory = GB_cuda_mxm_factory ( ) ;
     GrB_Semiring mysemiring;
     auto grb_info = GrB_Semiring_new(&mysemiring, monoid, binop);
     GRB_TRY (grb_info) ;
@@ -413,14 +394,15 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
     bool mask_comp = false;
 //    GrB_Matrix C_actual = C;
 
-    mysemiringfactory.semiring_factory ( mysemiring, flipxy,
-                                         C->type, M->type,
-                                         A->type, B->type,
-                                         mask_struct,  // matrix types
-                                         mask_comp, GB_sparsity(C),
-                                         GB_sparsity(M),
-                                         GB_sparsity(A),
-                                         GB_sparsity(B) ) ;
+    bool C_iso = false ;
+    int C_sparsity = GB_sparsity (M) ;
+    GrB_Type ctype = binop->ztype ;
+
+    mymxmfactory.mxm_factory (
+        C_iso, C_sparsity, ctype,
+        M, mask_struct, mask_comp,
+        mysemiring, flipxy,
+        A, B) ;
 
     bool result = false;
 
@@ -458,7 +440,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
            GpuTimer kernTimer;
            kernTimer.Start();
 
-           GB_cuda_mxm_phase3(mysemiringfactory, (GB_bucket_code )b,
+           GB_cuda_mxm_phase3(mymxmfactory, (GB_bucket_code )b,
                               b_start, b_end, bucketp, Bucket, C, M, B, A);
 
             print_array<int64_t>(bucketp, NBUCKETS+1, "bucketp");

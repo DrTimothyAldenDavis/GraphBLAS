@@ -72,7 +72,10 @@ T reduce_plus(thread_block_tile<warp_sz> g, T val)
 
 #define intersects_per_thread 8
 
-template< typename T_C, typename T_A, typename T_B, uint64_t srcode>
+template<
+    typename T_C, typename T_A, typename T_B,
+    typename T_Z, typename T_X, typename T_Y,
+    uint64_t srcode>
 __global__ void AxB_dot3_phase3_warpix
 (
     int64_t start,
@@ -127,10 +130,10 @@ __global__ void AxB_dot3_phase3_warpix
     */
     
     
-    __shared__ int64_t As[256];
-    __shared__ int64_t Bs[256];
-    __shared__ T_A Axs[256]; 
-    __shared__ T_B Bxs[256]; 
+    __shared__ int64_t As[256] ;
+    __shared__ int64_t Bs[256] ;
+    GB_SHAREDA (Axs[256]) ;
+    GB_SHAREDB (Bxs[256]) ;
 
    /* 
     int Bpl[9]; // local offsets into shared for multiple vectors of B
@@ -242,8 +245,8 @@ __global__ void AxB_dot3_phase3_warpix
     // Each 32 thread warp will handle 32 comparisons per loop.
     // Either A or B takes stride 4, other takes stride 8
     // For this version A strides 4, B strides 8
-    T_A aki;
-    T_B bkj;
+    GB_DECLAREA (aki) ;
+    GB_DECLAREB (bkj) ;
     T_Z cij = GB_IDENTITY ;
     int Astride = nnzA > nnzB ? 8 : 4;
     int Ashift  = nnzA > nnzB ? 3 : 2;
@@ -300,18 +303,17 @@ __global__ void AxB_dot3_phase3_warpix
               //Axs[kp] = Ax[k];
               //Bxs[lp] = Bx[l];
 
-              GB_GETA ( aki=(T_Z)Axs[kp] ) ;
-              GB_GETB ( bkj=(T_Z)Bxs[lp] ) ;
+              GB_GETA ( aki, Axs, kp ) ;
+              GB_GETB ( bkj, Bxs, lp ) ;
               if (cij_exists)
               {
-                T_Z t = GB_MULT( (T_Z) aki, (T_Z) bkj);
-                GB_ADD_F( cij, t ) ;
+                GB_MULTADD (cij, aki, bkj) ;    // cij += aki * bkj
                 //printf("block%d  thd%d ix at %ld(%ld)  cij += %d * %d\n",b, tid, Ai[k], As[kp], aki, bkj);
               }
               else
               {
                 cij_exists = 1 ;
-                cij = GB_MULT ( (T_Z) aki, (T_Z) bkj) ;
+                GB_C_MULT (cij, aki, bkj) ;     // cij = aki * bkj
                 //printf("  thd%d ix at %ld(%ld)  cij = %d * %d \n", tid, Ai[k], Ais[kp], aki, bkj);
               }
           }
@@ -344,12 +346,13 @@ __global__ void AxB_dot3_phase3_warpix
     cij_exists  = tile.any( cij_exists);
     tile.sync();
 
+    #if !GB_C_ISO
     if (cij_exists)
     {
        cij = GB_reduce_sum<T_Z, tile_sz>( tile, cij );
     }
     tile.sync();
-    
+    #endif
 
     // Atomic write result for this block to global mem
     if (tid == 0)
@@ -359,14 +362,14 @@ __global__ void AxB_dot3_phase3_warpix
         {
            //printf("block%d i,j =%ld,%ld cij = %d\n",b, i, j, cij);
            GB_PUTC( Cx[pair_id] = (T_C) cij ) ;
-           GB_PUTC ( Ci[pair_id] = i ) ;
+           Ci[pair_id] = i ;
            
         }
         else
         {
             //printf(" dot %d is a zombie\n", pair_id);
             zc++;
-            GB_PUTC ( Ci[pair_id] = GB_FLIP (i) ) ;
+            Ci[pair_id] = GB_FLIP (i) ;
         }
     
     //__syncthreads(); 

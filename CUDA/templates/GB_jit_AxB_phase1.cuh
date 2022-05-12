@@ -311,44 +311,7 @@ __global__ void AxB_phase1
      __shared__ int64_t ks [chunksize];
 
     __syncthreads();
-    /*
-    if (threadIdx.x==0 && blockIdx.x == 0)
-    {
-//        printf ("Here in phase1, what I see is this:\n") ;
-//        printf ("MX(pM) is: %s\n", GB_XSTR (MX (pM))) ;
-//        printf ("GB_MULT(x,y) is: %s\n", GB_XSTR (GB_MULT (x,y))) ;
-//        printf ("GB_ADD(x,y)  is: %s\n", GB_XSTR (GB_ADD (x,y))) ;
-        // #define GB_GETA(blob)
-        // #define GB_GETB(blob)
-        // #define GB_MULT(x,y) (1)
-        // #define GB_ADD(x,y) ((x) + (y))
-        // #define GB_IDENTITY (0)
-        // #define GB_TERMINAL_CONDITION(cij) (false)
-        // #define GB_IF_TERMINAL_BREAK  
-        // #define GB_PUTC(blob) blob
-        // #define GB_MTYPE void
-        // #define MX(p) true
-        // #define GB_MASK_COMP false
-        // #define GB_NO_MASK false
-        // #define GB_C_IS_SPARSE 1
-        // #define GB_C_IS_HYPER  0
-        // #define GB_C_IS_BITMAP 0
-        // #define GB_C_IS_FULL   0
-        // #define GB_M_IS_SPARSE 1
-        // #define GB_M_IS_HYPER  0
-        // #define GB_M_IS_BITMAP 0
-        // #define GB_M_IS_FULL   0
-        // #define GB_A_IS_SPARSE 1
-        // #define GB_A_IS_HYPER  0
-        // #define GB_A_IS_BITMAP 0
-        // #define GB_A_IS_FULL   0
-        // #define GB_B_IS_SPARSE 1
-        // #define GB_B_IS_HYPER  0
-        // #define GB_B_IS_BITMAP 0
-        // #define GB_B_IS_FULL   0
-    }
-    __syncthreads();
-    */
+
     //--------------------------------------------------------------------------
     // compute the task descriptor
     //--------------------------------------------------------------------------

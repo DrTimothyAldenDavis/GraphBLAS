@@ -72,7 +72,10 @@ T reduce_plus(thread_block_tile<warp_sz> g, T val)
 
 #define intersects_per_thread 8
 
-template< typename T_C, typename T_A, typename T_B, uint64_t srcode>
+template<
+    typename T_C, typename T_A, typename T_B,
+    typename T_Z, typename T_X, typename T_Y,
+    uint64_t srcode>
 __global__ void AxB_dot3_phase3_mp
 (
     int64_t start,
@@ -203,9 +206,9 @@ __global__ void AxB_dot3_phase3_mp
     int tx_end = xcoord +xstart; 
     int ty_end = diag_end - xcoord + ystart; 
 
-    T_A aki;
-    T_B bkj;
-    T_C cij = GB_IDENTITY ;
+    GB_DECLAREA (aki) ;
+    GB_DECLAREB (bkj) ;
+    T_Z cij = GB_IDENTITY ;
 
     // TODO PLUS_PAIR_INT64, FP32, FP64: no need for cij_exists.
     // just check if cij > 0
@@ -225,19 +228,18 @@ __global__ void AxB_dot3_phase3_mp
     {
         if (Ai [k] == Bi [l])
         {
-            GB_GETA ( aki=(T_C)Ax[k] ) ;
-            GB_GETB ( bkj=(T_C)Bx[l] ) ;
+            GB_GETA (aki, Ax, k) ;      // aki = Ax [k]
+            GB_GETB (bkj, Bx, l) ;      // bkj = Bx [l]
             if (cij_exists)
             {
-                T_C t = GB_MULT( (T_C)aki, (T_C)bkj );
-                GB_ADD_F (cij, t ) ;
+                GB_MULTADD (cij, aki, bkj) ;   // cij += aki * bkj
 //                    if(j == 139 && i == 945)
 //                        printf("blk%d thd%d ix at %lld  %lld cij += %d * %d \n", blockIdx.x, tid_global, Ai[k], Bi[l], aki, bkj);
             }
             else
             {
                 cij_exists = 1 ;
-                cij = GB_MULT ( (T_C)aki, (T_C)bkj ) ;
+                GB_C_MULT (cij, aki, bkj) ;    // cij = aki * bkj
 //                    if(j == 139 && i == 945)
 //                        printf("blk%d thd%d ix at %lld %lld  cij = %d * %d, k=%d, l=%d i=%lld j=%lld \n", blockIdx.x, tid_global, Ai[k], Bi[l], Ax[k], Bx[l], k, l, i, j);
             }
@@ -270,11 +272,12 @@ __global__ void AxB_dot3_phase3_mp
     cij_exists  = tile.any( cij_exists);
     //tile.sync();
 
+    #if !GB_C_ISO
     if (cij_exists)
     {
-       cij = GB_reduce_sum<T_C, tile_sz>( tile, cij );
-       
+       cij = GB_reduce_sum<T_Z, tile_sz>( tile, cij );
     }
+    #endif
     // else has_zombies = 1;
 
 
@@ -293,13 +296,13 @@ __global__ void AxB_dot3_phase3_mp
 
             //printf(" cij = %d\n", cij);
            GB_PUTC ( Cx[pair_id]=(T_C)cij ) ;
-           GB_PUTC ( Ci[pair_id]=i ) ;
+           Ci[pair_id]=i ;
         }
         else
         {
            printf(" dot %d is a zombie\n", pair_id);
            zc++;
-           GB_PUTC ( Ci[pair_id]=GB_FLIP (i) ) ;
+           Ci[pair_id]=GB_FLIP (i) ;
         }
     }
     //__syncthreads(); 
