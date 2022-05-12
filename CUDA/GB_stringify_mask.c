@@ -42,6 +42,8 @@ void GB_stringify_mask     // return string to define mask macros
 // GB_enumify_mask: return mask_ecode to define mask macros
 //------------------------------------------------------------------------------
 
+// FIXME: add M_sparsity here too?
+
 void GB_enumify_mask       // return enum to define mask macros
 (
     // output:

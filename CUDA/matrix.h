@@ -7,30 +7,65 @@
 //------------------------------------------------------------------------------
 // TODO: this will be in the jit code:
 #define chunksize 128 
+
 //#define GB_GETA( aval, ax, p) aval = (T_C)ax[ ( p )]
 //#define GB_GETB( bval, bx, p) bval = (T_C)bx[ ( p )]
-#define GB_ADD_F( f , s)  f = GB_ADD ( f, s ) 
-#define GB_C_MULT( c, a, b)  c = GB_MULT( (a), (b) )
-#define GB_MULTADD( c, a ,b ) GB_ADD_F( (c), GB_MULT( (a),(b) ) )
-#define GB_DOT_TERMINAL ( c )   
-//# if ( c == TERMINAL_VALUE) break;
+
 #undef GB_DOT_MERGE
-// cij += A(k,i) * B(k,j), for merge operation
-#define GB_DOT_MERGE                                                \
-{                                                                   \
-    GB_GETA ( aki= (T_C)Ax[pA]) ;       /* aki = A(k,i) */          \
-    GB_GETB ( bkj= (T_C)Bx[pB]) ;       /* bkj = B(k,j) */          \
-    if (cij_exists)                                                 \
-    {                                                               \
-        GB_MULTADD (cij, aki, bkj) ;    /* cij += aki * bkj */      \
-    }                                                               \
-    else                                                            \
-    {                                                               \
-        /* cij = A(k,i) * B(k,j), and add to the pattern    */      \
-        cij_exists = true ;                                         \
-        GB_C_MULT (cij, aki, bkj) ;     /* cij  = aki * bkj */      \
-    }                                                               \
-}
+
+#if GB_A_IS_PATTERN
+#define GB_GETA( aval, T_X, ax, p)
+#elif GB_A_ISO
+#define GB_GETA( aval, T_X, ax, p) aval = (T_X) (ax [0]) ;
+#else
+#define GB_GETA( aval, T_X, ax, p) aval = (T_X) (ax [p]) ;
+#endif
+
+#if GB_B_IS_PATTERN
+#define GB_GETB( bval, T_Y, bx, p)
+#elif GB_B_ISO
+#define GB_GETB( bval, T_Y, bx, p) bval = (T_Y) (bx [0]) ;
+#else
+#define GB_GETB( bval, T_Y, bx, p) bval = (T_Y) (bx [p]) ;
+#endif
+
+#if GB_C_ISO
+
+    #define GB_ADD_F( f , s)
+    #define GB_C_MULT( c, a, b)
+    #define GB_MULTADD( c, a ,b )
+    #define GB_DOT_TERMINAL ( c )   
+    #define GB_DOT_MERGE                                                \
+    {                                                                   \
+        cij_exists = true ;                                             \
+    }
+
+#else
+
+    #define GB_ADD_F( f , s)  f = GB_ADD ( f, s ) 
+    #define GB_C_MULT( c, a, b)  c = GB_MULT( (a), (b) )
+    #define GB_MULTADD( c, a ,b ) GB_ADD_F( (c), GB_MULT( (a),(b) ) )
+    #define GB_DOT_TERMINAL ( c )   
+    //# if ( c == TERMINAL_VALUE) break;
+    // cij += A(k,i) * B(k,j), for merge operation
+
+    #define GB_DOT_MERGE                                                \
+    {                                                                   \
+        GB_GETA ( aki, Ax, pA) ;       /* aki = A(k,i) */               \
+        GB_GETB ( bkj, Bx, pB) ;       /* bkj = B(k,j) */               \
+        if (cij_exists)                                                 \
+        {                                                               \
+            GB_MULTADD (cij, aki, bkj) ;    /* cij += aki * bkj */      \
+        }                                                               \
+        else                                                            \
+        {                                                               \
+            /* cij = A(k,i) * B(k,j), and add to the pattern    */      \
+            cij_exists = true ;                                         \
+            GB_C_MULT (cij, aki, bkj) ;     /* cij  = aki * bkj */      \
+        }                                                               \
+    }
+
+#endif
 
 //------------------------------------------------------------------------------
 
