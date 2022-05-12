@@ -56,7 +56,10 @@ __device__ T reduce_sum(thread_block_tile<warpSize> g, T val)
 
 #define intersects_per_thread 8
 
-template< typename T_C, typename T_A, typename T_B, uint64_t srcode>
+template<
+    typename T_C, typename T_A, typename T_B,
+    typename T_Z, typename T_X, typename T_Y,
+    uint64_t srcode>
 __global__ void AxB_dot3_phase3_vssp
 (
     int64_t start,
@@ -124,9 +127,9 @@ __global__ void AxB_dot3_phase3_vssp
         //Search for each nonzero in the smaller vector to find intersection 
         bool cij_exists = false;
 
-        T_A aki;
-        T_B bkj;
-        T_C cij;
+        GB_DECLAREA (aki) ;
+        GB_DECLAREB (bkj) ;
+        T_Z cij;
 
         if (nnzA <= nnzB) {
             //----------------------------------------------------------------------

@@ -7,24 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: the typecast should be handled better.  See ../Source/GB_casting.h,
-// and note the inline functions to cast from double to integer.
-
-// Construct a macro to load and typecast.  For example:
-//  
-//  #define GB_GETA(blob) blob
-//
-// then use as:
-//      GB_GETA (double aij = Ax [p]) ;
-//      GB_GETA (double *Ax = A->x) ;
-//      GB_GETA (T_A *restrict Ax = A->x) ;
-//
-// which become
-//      double aij = Ax [p] ;
-//      double *Ax = A->x ;
-//      T_A *Ax = A->x ;
-//
-// or, if is_pattern is true, the macro becomes the empty string.
+// TODO: delete me
 
 #include "GB.h"
 #include "GB_stringify.h"

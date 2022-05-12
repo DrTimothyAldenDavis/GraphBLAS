@@ -1,7 +1,5 @@
 
 
-#define GB_GETA( aval, ax, p) aval = (T_Z)ax[ ( p )]
-#define GB_GETB( bval, bx, p) bval = (T_Z)bx[ ( p )]
 #define GB_FLIP(i)             (-(i)-2)
 #define GB_IS_FLIPPED(i)       ((i) < 0)
 #define GB_IS_ZOMBIE(i)        ((i) < 0)

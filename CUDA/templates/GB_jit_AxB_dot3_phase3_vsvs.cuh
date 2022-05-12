@@ -88,7 +88,9 @@ T block_ReduceSum(thread_block g, T val)
   return val;
 }
 
-template< typename T_C, typename T_A, typename T_B, uint64_t srcode>
+template<
+    typename T_C, typename T_A, typename T_B,
+    typename T_Z, typename T_X, typename T_Y, uint64_t srcode>
 __global__ void AxB_dot3_phase3_vsvs
 ( 
   int64_t start,
@@ -157,9 +159,9 @@ __global__ void AxB_dot3_phase3_vsvs
 //     printf(":pfirst=%ld, kk=%d, pair_id=%ld, ci %ld, (i,j)=%ld,%ld, nzA=%ld, nzB=%ld\n",
 //      pfirst, kk, pair_id, Ci [pair_id], i,j,pA_end-pA,pB_end-pB);
 
-         T_A aki;
-         T_B bkj;
-         T_C cij ;
+         GB_DECLAREA (aki) ;
+         GB_DECLAREB (bkj) ;
+         T_Z cij ;
 
          bool cij_exists = false;
 

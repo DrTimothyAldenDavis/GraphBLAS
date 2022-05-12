@@ -28,7 +28,6 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 (
     // output:    2 x uint64?
     uint64_t *scode,        // unique encoding of the entire semiring
-
     // input:
     // C matrix:
     bool C_iso,             // if true, semiring is ignored
@@ -188,7 +187,6 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 
     printf("Done invoking enumify monoid\n");
 
-
     printf("atype\n");
     int acode = A_is_pattern ? 0 : atype->code ;   // 0 to 14
     printf("btype\n");
@@ -196,6 +194,9 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     printf("ctype\n");
 
     int ccode = C_iso ? 0 : ctype->code ;          // 0 to 14
+
+    int A_iso_code = A->iso ? 1 : 0 ;
+    int B_iso_code = B->iso ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // enumify the mask
@@ -237,10 +238,12 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
            "asparsity: %d, bsparsity: %d\n", add_ecode, id_ecode, term_ecode, mult_ecode, flipxy, zcode, xcode, ycode, mask_ecode,
            ccode, acode, bcode, csparsity, msparsity, asparsity, bsparsity);
 
-
-
     (*scode) =
                                             // range        bits
+
+                LSHIFT (A_iso_code , 61) |  // 0 or 1       1
+                LSHIFT (B_iso_code , 60) |  // 0 or 1       1
+
                 // monoid
                 LSHIFT (add_ecode  , 55) |  // 0 to 22      5
                 LSHIFT (id_ecode   , 50) |  // 0 to 31      5
@@ -275,10 +278,10 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 }
 
 //------------------------------------------------------------------------------
-// GB_macrofy_semiring: construct all macros for a semiring
+// GB_macrofy_mxm: construct all macros for a semiring
 //------------------------------------------------------------------------------
 
-void GB_macrofy_semiring   // construct all macros for a semiring
+void GB_macrofy_mxm        // construct all macros for GrB_mxm
 (
     // input:
     FILE *fp,                   // target file to write, already open
@@ -286,7 +289,7 @@ void GB_macrofy_semiring   // construct all macros for a semiring
 )
 {
 
-    printf("scode in macrofy_semiring: %lu\n", scode);
+    printf("scode in macrofy_mxm: %lu\n", scode);
 
     //--------------------------------------------------------------------------
     // extract the semiring scode
@@ -294,6 +297,10 @@ void GB_macrofy_semiring   // construct all macros for a semiring
 
 #define RSHIFT(x,k,b) (x >> k) & ((((uint64_t)0x00000001) << b) -1)
 //#define RSHIFT(x,k,b) (x >> k) & ((((uint64_t) 1) << (64-k) + b) - 1)
+
+    // A and B iso-valued
+    int A_iso_code  = RSHIFT (scode, 61, 1) ;
+    int B_iso_code  = RSHIFT (scode, 60, 1) ;
 
     // monoid
     int add_ecode   = RSHIFT (scode, 55, 5) ;
@@ -314,15 +321,12 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     printf("deserialized mask ecode: %d\n", mask_ecode);
 
     // types of C, A, and B
-    int ccode       = RSHIFT (scode, 16, 4) ;
-    int acode       = RSHIFT (scode, 12, 4) ;
-    int bcode       = RSHIFT (scode,  8, 4) ;
+    int ccode       = RSHIFT (scode, 16, 4) ;   // if 0: C is iso
+    int acode       = RSHIFT (scode, 12, 4) ;   // if 0: A is pattern
+    int bcode       = RSHIFT (scode,  8, 4) ;   // if 0: B is pattern
 
     printf("deserialized acode: %d\n", acode);
 
-    // TODO: I have a suspicion here that these might not
-    // be getting serialized properly because they are the
-    // only elements which require only 2 bits.
     // formats of C, A, and B
     int csparsity   = RSHIFT (scode,  6, 2) ;
     int msparsity   = RSHIFT (scode,  4, 2) ;
@@ -345,12 +349,14 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     // if flipxy false:  A is typecasted to x, and B is typecasted to y.
     // if flipxy true:   A is typecasted to y, and B is typecasted to x.
 
-    bool A_is_pattern = (acode == 0) ;
-    bool B_is_pattern = (bcode == 0) ;
+    int A_is_pattern = (acode == 0) ? 1 : 0 ;
+    int B_is_pattern = (bcode == 0) ? 1 : 0 ;
 
     printf("stringify loaders \n");
-    GB_stringify_load ( fp, "GB_GETA", A_is_pattern) ;
-    GB_stringify_load ( fp, "GB_GETB", B_is_pattern) ;
+    fprintf (fp, "#define GB_A_IS_PATTERN %d\n", A_is_pattern) ;
+    fprintf (fp, "#define GB_A_ISO %d\n", A_iso_code) ;
+    fprintf (fp, "#define GB_B_IS_PATTERN %d\n", B_is_pattern) ;
+    fprintf (fp, "#define GB_B_ISO %d\n", B_iso_code) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the multiply
@@ -373,12 +379,17 @@ void GB_macrofy_semiring   // construct all macros for a semiring
     // macro to typecast the result back into C
     //--------------------------------------------------------------------------
 
-    // for the ANY_PAIR semiring, "c_is_one" will be true, and Cx [0..cnz] will
-    // be filled with all 1's later.
-    bool c_is_one = false ;
-    // TODO:
-    // (add_ecode == GB_ANY_binop_code && mult_opcode == GB_PAIR_binop_code) ;
-    GB_stringify_load ( fp, "GB_PUTC", c_is_one) ;
+    bool C_iso = (ccode == 0) ;
+    if (C_iso)
+    {
+        fprintf (fp, "#define GB_PUTC(blob)\n") ;
+        fprintf (fp, "#define GB_C_ISO 1\n") ;
+    }
+    else
+    {
+        fprintf (fp, "#define GB_PUTC(blob) blob\n") ;
+        fprintf (fp, "#define GB_C_ISO 0\n") ;
+    }
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name

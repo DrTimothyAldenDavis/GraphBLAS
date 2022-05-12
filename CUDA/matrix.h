@@ -8,25 +8,68 @@
 // TODO: this will be in the jit code:
 #define chunksize 128 
 
-//#define GB_GETA( aval, ax, p) aval = (T_C)ax[ ( p )]
-//#define GB_GETB( bval, bx, p) bval = (T_C)bx[ ( p )]
-
 #undef GB_DOT_MERGE
 
-#if GB_A_IS_PATTERN
-#define GB_GETA( aval, T_X, ax, p)
-#elif GB_A_ISO
-#define GB_GETA( aval, T_X, ax, p) aval = (T_X) (ax [0]) ;
-#else
-#define GB_GETA( aval, T_X, ax, p) aval = (T_X) (ax [p]) ;
-#endif
+#if GB_FLIPXY
 
-#if GB_B_IS_PATTERN
-#define GB_GETB( bval, T_Y, bx, p)
-#elif GB_B_ISO
-#define GB_GETB( bval, T_Y, bx, p) bval = (T_Y) (bx [0]) ;
+    #if GB_A_IS_PATTERN
+        #define GB_DECLAREA(aval)
+        #define GB_SHAREDA(aval)
+        #define GB_GETA( aval, ax, p)
+    #else
+        #define GB_DECLAREA(aval) T_Y aval
+        #define GB_SHAREDA(aval) __shared__ T_Y aval
+        #if GB_A_ISO
+            #define GB_GETA( aval, ax, p) aval = (T_Y) (ax [0]) ;
+        #else
+            #define GB_GETA( aval, ax, p) aval = (T_Y) (ax [p]) ;
+        #endif
+    #endif
+
+    #if GB_B_IS_PATTERN
+        #define GB_DECLAREB(bval)
+        #define GB_SHAREDB(bval)
+        #define GB_GETB( bval, bx, p)
+    #else
+        #define GB_DECLAREB(bval) T_X bval
+        #define GB_SHAREDB(bval) __shared__ T_X bval
+        #if GB_B_ISO
+            #define GB_GETB( bval, bx, p) bval = (T_X) (bx [0]) ;
+        #else
+            #define GB_GETB( bval, bx, p) bval = (T_X) (bx [p]) ;
+        #endif
+    #endif
+
 #else
-#define GB_GETB( bval, T_Y, bx, p) bval = (T_Y) (bx [p]) ;
+
+    #if GB_A_IS_PATTERN
+        #define GB_DECLAREA(aval)
+        #define GB_SHAREDA(aval)
+        #define GB_GETA( aval, ax, p)
+    #else
+        #define GB_DECLAREA(aval) T_X aval
+        #define GB_SHAREDA(aval) __shared__ T_X aval
+        #if GB_A_ISO
+            #define GB_GETA( aval, ax, p) aval = (T_X) (ax [0]) ;
+        #else
+            #define GB_GETA( aval, ax, p) aval = (T_X) (ax [p]) ;
+        #endif
+    #endif
+
+    #if GB_B_IS_PATTERN
+        #define GB_DECLAREB(bval)
+        #define GB_SHAREDB(bval)
+        #define GB_GETB( bval, bx, p)
+    #else
+        #define GB_DECLAREB(bval) T_Y bval
+        #define GB_SHAREDB(bval) __shared__ T_Y bval
+        #if GB_B_ISO
+            #define GB_GETB( bval, bx, p) bval = (T_Y) (bx [0]) ;
+        #else
+            #define GB_GETB( bval, bx, p) bval = (T_Y) (bx [p]) ;
+        #endif
+    #endif
+
 #endif
 
 #if GB_C_ISO

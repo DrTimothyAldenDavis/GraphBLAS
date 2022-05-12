@@ -381,10 +381,3 @@ class SpGEMM_problem_generator {
     }
 };
 
-
-template< typename T_C, typename T_M, typename T_A, typename T_B>
-struct MxM_problem_spec
-{
-    SpGEMM_problem_generator<T_C, T_M, T_A, T_B> *G;
-    GB_cuda_semiring_factory *mysemiring_factory;
-};
