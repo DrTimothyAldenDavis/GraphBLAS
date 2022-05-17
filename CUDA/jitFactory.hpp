@@ -567,6 +567,9 @@ public:
       dim3 grid(gridsz);
       dim3 block(blocksz);
 
+      // FIXME: call GB_stringify_reduce to create GB_ADD and related
+      // macros, in an include file: GB_reduce_123412341234.h
+
       jit::launcher(hashable_name,
                     string_to_be_jitted.str(),
                     header_names,
