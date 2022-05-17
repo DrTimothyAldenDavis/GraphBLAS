@@ -232,7 +232,6 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 
     printf("constructing semiring scode\n");
 
-#define LSHIFT(x,k) (((uint64_t) x) << k)
     printf("before: add_ecode: %d, id_ecode: %d, term_ecode: %d, mult_ecode: %d, flipxy: %d, zcode: %d, "
            "xcode: %d, ycode: %d, mask_ecode: %d, ccode: %d, acode: %d, bcode: %d, csparsity: %d, msparsity: %d, "
            "asparsity: %d, bsparsity: %d\n", add_ecode, id_ecode, term_ecode, mult_ecode, flipxy, zcode, xcode, ycode, mask_ecode,
@@ -295,9 +294,6 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     // extract the semiring scode
     //--------------------------------------------------------------------------
 
-#define RSHIFT(x,k,b) (x >> k) & ((((uint64_t)0x00000001) << b) -1)
-//#define RSHIFT(x,k,b) (x >> k) & ((((uint64_t) 1) << (64-k) + b) - 1)
-
     // A and B iso-valued
     int A_iso_code  = RSHIFT (scode, 61, 1) ;
     int B_iso_code  = RSHIFT (scode, 60, 1) ;
@@ -353,6 +349,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     int B_is_pattern = (bcode == 0) ? 1 : 0 ;
 
     printf("stringify loaders \n");
+    fprintf (fp, "// GB_mxm_%lu.h\n", scode) ;
     fprintf (fp, "#define GB_A_IS_PATTERN %d\n", A_is_pattern) ;
     fprintf (fp, "#define GB_A_ISO %d\n", A_iso_code) ;
     fprintf (fp, "#define GB_B_IS_PATTERN %d\n", B_is_pattern) ;
@@ -367,6 +364,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     printf("mult_ecode: %d\n", mult_ecode);
     GB_charify_binop ( &s, mult_ecode) ;
     GB_macrofy_binop ( fp, "GB_MULT", s, flipxy) ;
+    fprintf (fp, "#define GB_FLIPXY %d\n", flipxy ? 1 : 0) ;
 
     //--------------------------------------------------------------------------
     // construct the monoid macros

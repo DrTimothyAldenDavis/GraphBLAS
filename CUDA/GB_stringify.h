@@ -25,6 +25,33 @@
 #define GB_CUDA_STRLEN 2048
 
 //------------------------------------------------------------------------------
+// left and right shift
+//------------------------------------------------------------------------------
+
+#define LSHIFT(x,k) (((uint64_t) x) << k)
+#define RSHIFT(x,k,b) ((x >> k) & ((((uint64_t)0x00000001) << b) -1))
+
+//------------------------------------------------------------------------------
+// GB_stringify_reduce
+//------------------------------------------------------------------------------
+
+void GB_enumify_reduce      // enumerate a GrB_reduce problem
+(
+    // output:
+    uint64_t *rcode,        // unique encoding of the entire problem
+    // input:
+    GrB_Monoid reduce,      // the monoid to enumify
+    GrB_Matrix A
+) ;
+
+void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
+(
+    // input:
+    FILE *fp,               // target file to write, already open
+    uint64_t rcode
+) ;
+
+//------------------------------------------------------------------------------
 // GB_stringify_mxm
 //------------------------------------------------------------------------------
 

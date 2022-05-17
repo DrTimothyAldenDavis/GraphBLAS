@@ -19,11 +19,13 @@ bool GB_reduce_to_scalar_cuda_branch
     GBURBLE (" work:%g gpus:%d ", work, ngpus_to_use) ;
     printf (" work:%g gpus:%d ", work, ngpus_to_use) ;
     if (ngpus_to_use > 0
+        // FIXME: need to check if the operator is built-in, but this test is too strict
         && (reduce->header_size == 0)     // semiring is built-in
+        && (reduce->op->opcode != GB_ANY_binop_code)    // takes O(1) time; do it on the CPU
         && (A->type->code != GB_UDT_code)
-        // FIXME: this is easy
-        && !A->iso
-    ) {
+        && !A->iso      // takes O(log(nvals(A))) time; do it on the CPU
+    ) 
+    {
         return true;
     }
     else

@@ -103,7 +103,7 @@ else ( )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-  set ( CMAKE_CUDA off)
+# set ( CMAKE_CUDA off)
 
 # Edit these lines for code development only, not for end-users:
 # set ( CMAKE_BUILD_TYPE Debug )
