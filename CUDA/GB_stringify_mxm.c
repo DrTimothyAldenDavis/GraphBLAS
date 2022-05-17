@@ -60,16 +60,9 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // get the semiring
     //--------------------------------------------------------------------------
 
-    printf("inside enumify: \n") ;
     GxB_print (semiring, 3) ;
-
-    printf("Getting semiring add\n");
     GrB_Monoid add = semiring->add ;
-
-    printf("Getting semiring mult\n");
     GrB_BinaryOp mult = semiring->multiply ;
-
-    printf("Getting semiring add op\n");
     GrB_BinaryOp addop = add->op ;
 
     //--------------------------------------------------------------------------
@@ -80,21 +73,17 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     GrB_Type btype = B->type ;
     GrB_Type mtype = (M == NULL) ? NULL : M->type ;
 
-    printf("Getting types\n");
     GrB_Type xtype = mult->xtype ;
     GrB_Type ytype = mult->ytype ;
     GrB_Type ztype = mult->ztype ;
 
-    printf("Getting opcodes\n");
     GB_Opcode mult_opcode = mult->opcode ;
     GB_Opcode add_opcode  = addop->opcode ;
 
-    printf("Getting typecodes\n");
     GB_Type_code xcode = xtype->code ;
     GB_Type_code ycode = ytype->code ;
     GB_Type_code zcode = ztype->code ;
 
-    printf("Performing asserts\n");
     // these must always be true for any semiring:
     ASSERT (mult->ztype == addop->ztype) ;
     ASSERT (addop->xtype == addop->ztype && addop->ytype == addop->ztype) ;
@@ -115,14 +104,11 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // ISGE becomes GE
     // ISLE becomes LE
 
-    printf("Invoking boolean rename\n");
     if (zcode == GB_BOOL_code)
     {
         // rename the monoid
         add_opcode = GB_boolean_rename (add_opcode) ;
     }
-
-    printf("Invoking boolean rename\n");
 
     if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
     {
@@ -168,7 +154,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     //--------------------------------------------------------------------------
     // enumify the multiplier
     //--------------------------------------------------------------------------
-    printf("Invoking enumify binop\n");
+
 
     int mult_ecode ;
     GB_enumify_binop (&mult_ecode, mult_opcode, xcode, true) ;
@@ -176,7 +162,6 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     //--------------------------------------------------------------------------
     // enumify the monoid
     //--------------------------------------------------------------------------
-    printf("Invoking enumify monoid\n");
 
     int add_ecode, id_ecode, term_ecode ;
     GB_enumify_monoid (&add_ecode, &id_ecode, &term_ecode, add_opcode, zcode ) ;
@@ -185,14 +170,8 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // enumify the types
     //--------------------------------------------------------------------------
 
-    printf("Done invoking enumify monoid\n");
-
-    printf("atype\n");
     int acode = A_is_pattern ? 0 : atype->code ;   // 0 to 14
-    printf("btype\n");
     int bcode = B_is_pattern ? 0 : btype->code ;   // 0 to 14
-    printf("ctype\n");
-
     int ccode = C_iso ? 0 : ctype->code ;          // 0 to 14
 
     int A_iso_code = A->iso ? 1 : 0 ;
@@ -202,11 +181,9 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // enumify the mask
     //--------------------------------------------------------------------------
 
-    printf("Invoking enumify_mask, mtype: \n");
     GxB_print (mtype, 3) ;
     int mtype_code = (mtype == NULL) ? 0 : mtype->code ; // 0 to 14
     int mask_ecode ;
-    printf("Mask_struct: %d, Mask_comp: %d\n", Mask_struct, Mask_comp);
     GB_enumify_mask (&mask_ecode, mtype_code, Mask_struct, Mask_comp) ;
     printf ("got mask_ecode: %d\n", mask_ecode) ;
 
@@ -230,12 +207,15 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 
     // total scode bits: 60
 
-    printf("constructing semiring scode\n");
+    printf ("constructing semiring scode\n") ;
 
-    printf("before: add_ecode: %d, id_ecode: %d, term_ecode: %d, mult_ecode: %d, flipxy: %d, zcode: %d, "
-           "xcode: %d, ycode: %d, mask_ecode: %d, ccode: %d, acode: %d, bcode: %d, csparsity: %d, msparsity: %d, "
-           "asparsity: %d, bsparsity: %d\n", add_ecode, id_ecode, term_ecode, mult_ecode, flipxy, zcode, xcode, ycode, mask_ecode,
-           ccode, acode, bcode, csparsity, msparsity, asparsity, bsparsity);
+    printf ("before: add_ecode: %d, id_ecode: %d, term_ecode: %d,\n"
+            " mult_ecode: %d, flipxy: %d, zcode: %d, xcode: %d, ycode: %d\n"
+            ", mask_ecode: %d, ccode: %d, acode: %d, bcode: %d, \n"
+            "csparsity: %d, msparsity: %d, asparsity: %d, bsparsity: %d\n",
+            add_ecode, id_ecode, term_ecode, mult_ecode, flipxy, zcode, xcode,
+            ycode, mask_ecode, ccode, acode, bcode, csparsity, msparsity,
+            asparsity, bsparsity) ;
 
     (*scode) =
                                             // range        bits
@@ -269,11 +249,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
                 LSHIFT (asparsity  ,  2) |  // 0 to 3       2
                 LSHIFT (bsparsity  ,  0) ;  // 0 to 3       2
 
-                printf("serialized_scode: %lu\n", *scode);
-
-
-    printf("done enumify semiring\n");
-
+    printf ("serialized_scode: %lu\n", *scode) ;
 }
 
 //------------------------------------------------------------------------------
@@ -288,7 +264,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
 )
 {
 
-    printf("scode in macrofy_mxm: %lu\n", scode);
+    printf ("scode in macrofy_mxm: %lu\n", scode) ;
 
     //--------------------------------------------------------------------------
     // extract the semiring scode
@@ -314,14 +290,12 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     // mask
     int mask_ecode  = RSHIFT (scode, 20, 4) ;
 
-    printf("deserialized mask ecode: %d\n", mask_ecode);
+    printf ("deserialized mask ecode: %d\n", mask_ecode) ;
 
     // types of C, A, and B
     int ccode       = RSHIFT (scode, 16, 4) ;   // if 0: C is iso
     int acode       = RSHIFT (scode, 12, 4) ;   // if 0: A is pattern
     int bcode       = RSHIFT (scode,  8, 4) ;   // if 0: B is pattern
-
-    printf("deserialized acode: %d\n", acode);
 
     // formats of C, A, and B
     int csparsity   = RSHIFT (scode,  6, 2) ;
@@ -329,13 +303,13 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     int asparsity   = RSHIFT (scode,  2, 2) ;
     int bsparsity   = RSHIFT (scode,  0, 2) ;
 
-    printf("after: add_ecode: %d, id_ecode: %d, term_ecode: %d, mult_ecode: %d, flipxy: %d, zcode: %d, "
-           "xcode: %d, ycode: %d, mask_ecode: %d, ccode: %d, acode: %d, bcode: %d, csparsity: %d, msparsity: %d, "
-           "asparsity: %d, bsparsity: %d\n", add_ecode, id_ecode, term_ecode, mult_ecode, flipxy, zcode, xcode, ycode, mask_ecode,
-           ccode, acode, bcode, csparsity, msparsity, asparsity, bsparsity);
-
-    printf("a sparsity ecode after rshift: %d\n", asparsity);
-
+    printf ("after:  add_ecode: %d, id_ecode: %d, term_ecode: %d,\n"
+            " mult_ecode: %d, flipxy: %d, zcode: %d, xcode: %d, ycode: %d\n"
+            ", mask_ecode: %d, ccode: %d, acode: %d, bcode: %d, \n"
+            "csparsity: %d, msparsity: %d, asparsity: %d, bsparsity: %d\n",
+            add_ecode, id_ecode, term_ecode, mult_ecode, flipxy, zcode, xcode,
+            ycode, mask_ecode, ccode, acode, bcode, csparsity, msparsity,
+            asparsity, bsparsity) ;
 
     //--------------------------------------------------------------------------
     // construct macros to load scalars from A and B (and typecast) them
@@ -348,8 +322,7 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     int A_is_pattern = (acode == 0) ? 1 : 0 ;
     int B_is_pattern = (bcode == 0) ? 1 : 0 ;
 
-    printf("stringify loaders \n");
-    fprintf (fp, "// GB_mxm_%lu.h\n", scode) ;
+    fprintf (fp, "// GB_mxm_%016" PRIX64 ".h\n", scode) ;
     fprintf (fp, "#define GB_A_IS_PATTERN %d\n", A_is_pattern) ;
     fprintf (fp, "#define GB_A_ISO %d\n", A_iso_code) ;
     fprintf (fp, "#define GB_B_IS_PATTERN %d\n", B_is_pattern) ;
@@ -359,19 +332,16 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     // construct macros for the multiply
     //--------------------------------------------------------------------------
 
-    printf("stringify mult \n");
     const char *s ;
-    printf("mult_ecode: %d\n", mult_ecode);
-    GB_charify_binop ( &s, mult_ecode) ;
-    GB_macrofy_binop ( fp, "GB_MULT", s, flipxy) ;
+    GB_charify_binop (&s, mult_ecode) ;
+    GB_macrofy_binop (fp, "GB_MULT", s, flipxy) ;
     fprintf (fp, "#define GB_FLIPXY %d\n", flipxy ? 1 : 0) ;
 
     //--------------------------------------------------------------------------
     // construct the monoid macros
     //--------------------------------------------------------------------------
 
-    printf("stringify monoid \n");
-    GB_macrofy_monoid ( fp, add_ecode, id_ecode, term_ecode, is_term) ;
+    GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode, is_term) ;
 
     //--------------------------------------------------------------------------
     // macro to typecast the result back into C
@@ -393,14 +363,12 @@ void GB_macrofy_mxm        // construct all macros for GrB_mxm
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------
 
-    printf("MACROFY MASK!\n");
-    GB_macrofy_mask ( fp, mask_ecode);
+    GB_macrofy_mask (fp, mask_ecode) ;
 
     //--------------------------------------------------------------------------
     // determine the sparsity formats of C, M, A, and B
     //--------------------------------------------------------------------------
 
-    printf("stringify sparsity \n");
     GB_macrofy_sparsity (fp, "C", csparsity) ;
     GB_macrofy_sparsity (fp, "M", msparsity) ;
     GB_macrofy_sparsity (fp, "A", asparsity) ;

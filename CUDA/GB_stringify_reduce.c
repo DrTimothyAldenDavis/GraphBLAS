@@ -148,7 +148,7 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     // construct macros to load scalars from A (and typecast) them
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "// GB_reduce_%lu.h\n", rcode) ;
+    fprintf (fp, "// GB_reduce_%016" PRIX64 ".h\n", rcode) ;
     fprintf (fp, "#define GB_A_IS_PATTERN 0\n") ;
     fprintf (fp, "#define GB_A_ISO 0\n") ;
     fprintf (fp, "#define GB_B_IS_PATTERN 1\n") ;
@@ -161,7 +161,7 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     // construct the monoid macros
     //--------------------------------------------------------------------------
 
-    GB_macrofy_monoid ( fp, red_ecode, id_ecode, term_ecode, is_term) ;
+    GB_macrofy_monoid (fp, red_ecode, id_ecode, term_ecode, is_term) ;
 
     //--------------------------------------------------------------------------
     // macro to typecast the result back into C
