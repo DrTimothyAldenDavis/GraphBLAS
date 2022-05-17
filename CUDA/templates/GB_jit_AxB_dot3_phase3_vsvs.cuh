@@ -26,7 +26,7 @@
 #include <cstdint>
 #include <stdio.h>
 #include <cooperative_groups.h>
-#include "matrix.h"
+#include "GB_cuda_kernel.h"
 
 using namespace cooperative_groups;
 

@@ -36,7 +36,7 @@
 #include <limits>
 #include <cstdint>
 #include <cooperative_groups.h>
-#include "matrix.h"
+#include "GB_cuda_kernel.h"
 
 // Using tile size fixed at compile time, we don't need shared memory
 #define tile_sz 32 

@@ -20,7 +20,7 @@
 #include <limits>
 #include <cstdint>
 #include <stdio.h>
-#include "matrix.h"
+#include "GB_cuda_kernel.h"
 
 #include <cooperative_groups.h>
 
