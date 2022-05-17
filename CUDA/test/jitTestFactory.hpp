@@ -470,8 +470,8 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             GRB_TRY(GrB_Matrix_wait(C, GrB_MATERIALIZE));
             GRB_TRY(GrB_Matrix_wait(C_actual, GrB_MATERIALIZE));
 
-            GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_COMPLETE, stdout));
-            GRB_TRY (GxB_Matrix_fprint (C_actual, "C_actual", GxB_COMPLETE, stdout));
+            GRB_TRY (GxB_Matrix_fprint (C, "C GPU", GxB_SHORT_VERBOSE, stdout));
+            GRB_TRY (GxB_Matrix_fprint (C_actual, "C_actual", GxB_SHORT_VERBOSE, stdout));
             // compare
             double tol = 0 ;
             GrB_Index nvals1 = 0, nvals2 = 0 ;
@@ -524,7 +524,7 @@ bool test_AxB_dot3_full_factory( int TB, int64_t N, int64_t Anz, int64_t Bnz,
             GRB_TRY (GrB_Matrix_apply (Diff, NULL, NULL, GrB_AINV_FP64, C_actual, NULL)) ;
             GRB_TRY (GrB_Matrix_eWiseAdd_BinaryOp (Diff, NULL, NULL, GrB_PLUS_FP64,
                 C, Diff, NULL)) ;
-            GRB_TRY (GxB_Matrix_fprint (Diff, "Diff actual", GxB_COMPLETE, stdout));
+            GRB_TRY (GxB_Matrix_fprint (Diff, "Diff actual", GxB_SHORT_VERBOSE, stdout));
             GRB_TRY (GrB_Matrix_free (&Diff)) ;
 
             if (tol == 0)
@@ -580,7 +580,7 @@ bool test_reduce_factory(unsigned int N, GrB_Monoid monoid ) {
     make_grb_matrix(A, N, N, indptr, index, d_data, GxB_SPARSE, GxB_BY_ROW);
 
     GRB_TRY (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
-    GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_COMPLETE, stdout));
+    GRB_TRY (GxB_Matrix_fprint (A, "A", GxB_SHORT_VERBOSE, stdout));
 
     T actual;
     GB_cuda_reduce( A, &actual, monoid );

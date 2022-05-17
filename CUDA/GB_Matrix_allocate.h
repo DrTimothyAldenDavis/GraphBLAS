@@ -2,7 +2,7 @@
 #ifndef GB_MATRIX_ALLOCATE_H
 #define GB_MATRIX_ALLOCATE_H
 #include "GB_cuda_kernel.h"
-#include "pmr_malloc.h"
+#include "rmm_wrap.h"
 
 #ifdef __cplusplus
 extern "C" {
