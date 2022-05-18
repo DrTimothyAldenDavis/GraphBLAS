@@ -5604,7 +5604,6 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
     GrB_Index i,                // row index
     GrB_Index j                 // column index
 ) ;
-
 GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
 (
     GrB_Scalar x,               // extracted GrB_Scalar
@@ -5616,14 +5615,11 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
 
 \verb'GrB_Matrix_extractElement' extracts a single entry from a matrix
 \verb'x=A(i,j)'.
-
 An error is returned (\verb'GrB_INVALID_INDEX') if the row index \verb'i' is
 greater than or equal to the number of rows of \verb'C', or if column index
 \verb'j' is greater than or equal to the number of columns of \verb'C'.
-
 If the entry is present, \verb'x=A(i,j)' is performed and the scalar \verb'x'
 is returned with this value.  The method returns \verb'GrB_SUCCESS'.
-
 If no entry is present at \verb'A(i,j)', and \verb'x' is a non-opaque C scalar,
 then \verb'x' is not modified, and the return value of
 \verb'GrB_Matrix_extractElement' is \verb'GrB_NO_VALUE'.  If \verb'x' is a
@@ -5644,7 +5640,6 @@ functions.  Everything will work correctly and results will be predictable, it
 will just be slow.
 
 %-------------------------------------------------------------------------------
-\newpage
 \subsubsection{{\sf GxB\_Matrix\_isStoredElement:} check if entry present in matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_isStoredElement}
@@ -5681,12 +5676,12 @@ GrB_Info GrB_Matrix_removeElement
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GrB_Matrix_removeElement' removes a single entry \verb'A(i,j)' from a matrix.
-If no entry is present at \verb'A(i,j)', then the matrix is not modified.
-If an error occurs, \verb'GrB_error(&err,A)' returns details about the error.
+\verb'GrB_Matrix_removeElement' removes a single entry \verb'A(i,j)' from a
+matrix.  If no entry is present at \verb'A(i,j)', then the matrix is not
+modified.  If an error occurs, \verb'GrB_error(&err,A)' returns details about
+the error.
 
 %-------------------------------------------------------------------------------
-\newpage
 \subsubsection{{\sf GrB\_Matrix\_extractTuples:} get all entries from a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_extractTuples}
@@ -5732,6 +5727,7 @@ extracted.
 \end{alert}
 
 %-------------------------------------------------------------------------------
+\newpage
 \subsubsection{{\sf GrB\_Matrix\_resize:}          resize a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_resize}
@@ -5752,7 +5748,6 @@ If the dimensions decrease, entries that fall outside the resized
 matrix are deleted.
 
 %-------------------------------------------------------------------------------
-\newpage
 \subsubsection{{\sf GxB\_Matrix\_concat:} concatenate matrices   }
 %-------------------------------------------------------------------------------
 \label{matrix_concat}
