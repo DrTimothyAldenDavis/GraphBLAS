@@ -1,6 +1,7 @@
-Version 7.1.0, May 17, 2022
+Version 7.1.0, May 18, 2022
 
     * added cube root: GxB_CBRT_FP* unary operators
+    * added GxB_*_isStoredElement
 
 Version 7.0.4, Apr 25, 2022
 

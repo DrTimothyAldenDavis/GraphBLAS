@@ -16,11 +16,15 @@
 // This template constructs GrB_Matrix_extractElement_[TYPE] for each of the
 // 13 built-in types, and the _UDT method for all user-defined types.
 
+// It also constructs GxB_Matrix_isStoredElement.
+
 // FUTURE: tolerate zombies
 
 GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 (
+    #ifdef GB_XTYPE
     GB_XTYPE *x,                // scalar to extract, not modified if not found
+    #endif
     const GrB_Matrix A,         // matrix to extract a scalar from
     GrB_Index row,              // row index
     GrB_Index col               // column index
@@ -32,7 +36,9 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    #ifdef GB_XTYPE
     GB_RETURN_IF_NULL (x) ;
+    #endif
 
     // TODO: do not wait unless jumbled.  First try to find the element.
     // If found (live or zombie), no need to wait.  If not found and pending
@@ -71,17 +77,6 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
             return (GrB_INVALID_INDEX) ;
         }
     }
-
-    // GB_XCODE and A must be compatible
-    GB_Type_code acode = A->type->code ;
-
-#if 0
-    if (GB_nnz (A) == 0)
-    { 
-        // quick return
-        return (GrB_NO_VALUE) ;
-    }
-#endif
 
     //--------------------------------------------------------------------------
     // find the entry A(i,j)
@@ -146,19 +141,23 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 
     if (found)
     {
+        // Entry found
+        #ifdef GB_XTYPE
+        GB_Type_code acode = A->type->code ;
         #if !defined ( GB_UDT_EXTRACT )
         if (GB_XCODE == acode)
         { 
-            // copy A [pleft] into x, no typecasting, for built-in types only.
+            // copy Ax [pleft] into x, no typecasting, for built-in types only.
             GB_XTYPE *restrict Ax = ((GB_XTYPE *) (A->x)) ;
             (*x) = Ax [A->iso ? 0:pleft] ;
         }
         else
         #endif
         { 
-            // typecast the value from A [pleft] into x
+            // typecast the value from Ax [pleft] into x
             if (!GB_code_compatible (GB_XCODE, acode))
             { 
+                // x (GB_XCODE) and A (acode) must be compatible
                 return (GrB_DOMAIN_MISMATCH) ;
             }
             size_t asize = A->type->size ;
@@ -167,6 +166,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
         }
         // TODO: do not flush if extracting to GrB_Scalar
         #pragma omp flush
+        #endif
         return (GrB_SUCCESS) ;
     }
     else

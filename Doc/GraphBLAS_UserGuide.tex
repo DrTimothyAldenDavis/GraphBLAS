@@ -148,11 +148,13 @@ are extensions to the GraphBLAS C API.
 
 \begin{itemize}
 
-\item Version 7.1.0 (May 17, 2022)
+\item Version 7.1.0 (May 18, 2022)
 
     \begin{packed_itemize}
     \item  added cube root: \verb'GxB_CBRT_FP32' and \verb'GxB_CBRT_FP64'
         unary operators
+    \item added \verb'GxB_Matrix_isStoredElement'
+        and \verb'GxB_Vector_isStoredElement'
     \end{packed_itemize}
 
 \item Version 7.0.4 (Apr 25, 2022)
@@ -4546,6 +4548,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Vector_build_Scalar'   & build a vector from tuples       & \ref{vector_build_Scalar} \\
 \verb'GrB_Vector_setElement'     & add an entry to a vector         & \ref{vector_setElement} \\
 \verb'GrB_Vector_extractElement' & get an entry from a vector       & \ref{vector_extractElement} \\
+\verb'GxB_Vector_isStoredElement'& check if entry present in vector & \ref{vector_isStoredElement} \\
 \verb'GrB_Vector_removeElement'  & remove an entry from a vector    & \ref{vector_removeElement} \\
 \verb'GrB_Vector_extractTuples'  & get all entries from a vector    & \ref{vector_extractTuples} \\
 \verb'GrB_Vector_resize'         & resize a vector                  & \ref{vector_resize} \\
@@ -4882,6 +4885,26 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 Section~\ref{matrix_extractElement}.
 
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_isStoredElement:} check if entry present in vector}
+%-------------------------------------------------------------------------------
+\label{vector_isStoredElement}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_isStoredElement
+(
+    const GrB_Vector v,         // check presence of entry v(i)
+    GrB_Index i                 // index
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Vector_isStoredElement' checks if a single entry \verb'v(i)'
+is present, returning \verb'GrB_SUCCESS' if the entry is present or
+\verb'GrB_NO_VALUE' otherwise.  The value of \verb'v(i)' is not returned.
+See also Section~\ref{matrix_isStoredElement}.
+
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_removeElement:} remove an entry from a vector}
 %-------------------------------------------------------------------------------
 \label{vector_removeElement}
@@ -5073,6 +5096,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Matrix_build_Scalar'  & build a matrix from tuples            & \ref{matrix_build_Scalar} \\
 \verb'GrB_Matrix_setElement'    & add an entry to a matrix              & \ref{matrix_setElement} \\
 \verb'GrB_Matrix_extractElement'& get an entry from a matrix            & \ref{matrix_extractElement} \\
+\verb'GxB_Matrix_isStoredElement'& check if entry present in matrix     & \ref{matrix_isStoredElement} \\
 \verb'GrB_Matrix_removeElement' & remove an entry from a matrix         & \ref{matrix_removeElement} \\
 \verb'GrB_Matrix_extractTuples' & get all entries from a matrix         & \ref{matrix_extractTuples} \\
 \verb'GrB_Matrix_resize'        & resize a matrix                       & \ref{matrix_resize} \\
@@ -5619,7 +5643,28 @@ function should not be arbitrarily intermixed with calls to these other two
 functions.  Everything will work correctly and results will be predictable, it
 will just be slow.
 
+%-------------------------------------------------------------------------------
 \newpage
+\subsubsection{{\sf GxB\_Matrix\_isStoredElement:} check if entry present in matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_isStoredElement}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_isStoredElement
+(
+    const GrB_Matrix A,         // check for A(i,j)
+    GrB_Index i,                // row index
+    GrB_Index j                 // column index
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Matrix_isStoredElement' check if the single entry \verb'A(i,j)' is
+present in the matrix \verb'A'.  It returns \verb'GrB_SUCCESS' if the entry is
+present, or \verb'GrB_NO_VALUE' otherwise.  The value of \verb'A(i,j)' is not
+returned. It is otherwise identical to \verb'GrB_Matrix_extractElement'.
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_removeElement:} remove an entry from a matrix}
 %-------------------------------------------------------------------------------
@@ -5641,6 +5686,7 @@ If no entry is present at \verb'A(i,j)', then the matrix is not modified.
 If an error occurs, \verb'GrB_error(&err,A)' returns details about the error.
 
 %-------------------------------------------------------------------------------
+\newpage
 \subsubsection{{\sf GrB\_Matrix\_extractTuples:} get all entries from a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_extractTuples}
@@ -5685,7 +5731,6 @@ extracted.
 \verb'NULL'.  This is not an error condition.
 \end{alert}
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_resize:}          resize a matrix}
 %-------------------------------------------------------------------------------
@@ -5707,6 +5752,7 @@ If the dimensions decrease, entries that fall outside the resized
 matrix are deleted.
 
 %-------------------------------------------------------------------------------
+\newpage
 \subsubsection{{\sf GxB\_Matrix\_concat:} concatenate matrices   }
 %-------------------------------------------------------------------------------
 \label{matrix_concat}
@@ -5886,6 +5932,7 @@ GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
 Returns the memory space required for a matrix, in bytes.
 
 %-------------------------------------------------------------------------------
+\newpage
 \subsubsection{{\sf GrB\_Matrix\_free:} free a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_free}

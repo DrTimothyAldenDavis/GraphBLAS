@@ -221,7 +221,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "May 17, 2022"
+#define GxB_IMPLEMENTATION_DATE "May 18, 2022"
 #define GxB_IMPLEMENTATION_MAJOR 7
 #define GxB_IMPLEMENTATION_MINOR 1
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3200,6 +3200,17 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
     (x, v, i)
 #endif
 
+// GxB_Vector_isStoredElement determines if v(i) is present in the structure
+// of the vector v, as a stored element.  It does not return the value.  It
+// returns GrB_SUCCESS if the element is present, or GrB_NO_VALUE otherwise.
+
+GB_PUBLIC
+GrB_Info GxB_Vector_isStoredElement // determine if v(i) is a stored element
+(
+    const GrB_Vector v,             // vector to check
+    GrB_Index i                     // row index
+) ;
+
 //------------------------------------------------------------------------------
 // GrB_Vector_removeElement
 //------------------------------------------------------------------------------
@@ -3997,6 +4008,18 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
     )                                                           \
     (x, A, i, j)
 #endif
+
+// GxB_Matrix_isStoredElement determines if A(i,j) is present in the structure
+// of the matrix A, as a stored element.  It does not return the value.  It
+// returns GrB_SUCCESS if the element is present, or GrB_NO_VALUE otherwise.
+
+GB_PUBLIC
+GrB_Info GxB_Matrix_isStoredElement // determine if A(i,j) is a stored element
+(
+    const GrB_Matrix A,                 // matrix to check
+    GrB_Index i,                        // row index
+    GrB_Index j                         // column index
+) ;
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_removeElement
