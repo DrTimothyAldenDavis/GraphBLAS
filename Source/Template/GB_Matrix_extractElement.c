@@ -15,7 +15,6 @@
 
 // This template constructs GrB_Matrix_extractElement_[TYPE] for each of the
 // 13 built-in types, and the _UDT method for all user-defined types.
-
 // It also constructs GxB_Matrix_isStoredElement.
 
 // FUTURE: tolerate zombies
@@ -89,9 +88,6 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     if (Ap != NULL)
     {
         // A is sparse or hypersparse
-        const int64_t *restrict Ai = A->i ;
-
-        // extract from vector j of a GrB_Matrix
         if (A->h != NULL)
         {
             // A is hypersparse: look for j in hyperlist A->h [0 ... A->nvec-1]
@@ -114,8 +110,8 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
             pleft = Ap [j] ;
             pright = Ap [j+1] - 1 ;
         }
-
         // Time taken for this step is at most O(log(nnz(A(:,j))).
+        const int64_t *restrict Ai = A->i ;
         GB_BINARY_SEARCH (i, Ai, pleft, pright, found) ;
     }
     else
@@ -141,7 +137,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 
     if (found)
     {
-        // Entry found
+        // entry found
         #ifdef GB_XTYPE
         GB_Type_code acode = A->type->code ;
         #if !defined ( GB_UDT_EXTRACT )
@@ -171,7 +167,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     }
     else
     { 
-        // Entry not found.
+        // entry not found
         return (GrB_NO_VALUE) ;
     }
 }
